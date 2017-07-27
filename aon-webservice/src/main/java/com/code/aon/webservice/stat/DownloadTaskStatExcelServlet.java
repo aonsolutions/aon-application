@@ -146,9 +146,10 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
     	// TASK HOLDER MAP
     	Map<Integer, String> taskHolderMap = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()))
     			.collect(Collectors.toMap(TaskHolder::getId, TaskHolder::getName));
-
-    	AON.getStatTaskStream(domain.getName(), domain.getId(), userName, 
-    			new StatParams().setIssueFilter(Utils.getFilter(parameters))).forEach(task -> {
+    	StatParams statParams = new StatParams().setIssueFilter(Utils.getFilter(parameters));
+    	statParams.setFrom(statParams.getIssueFilter().getFrom());
+    	statParams.setTo(statParams.getIssueFilter().getTo());
+    	AON.getStatTaskStream(domain.getName(), domain.getId(), userName, statParams).forEach(task -> {
 			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
 			
