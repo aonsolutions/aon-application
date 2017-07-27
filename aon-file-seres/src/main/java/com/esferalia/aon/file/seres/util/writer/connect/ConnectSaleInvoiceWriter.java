@@ -244,11 +244,11 @@ public class ConnectSaleInvoiceWriter {
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
 				customerEdiCabeceraCode, customer, invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
-				companyEdiCode, company, companyAddress, recordData));
+				companyEdiCode, company, companyAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PAGADOR__QUIEN_PAGA__PR,
 				customerEdiCabeceraCode, customer, invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DEL_MENSAJE_MS,
-				companyEdiCode, company, companyAddress, recordData));
+				companyEdiCode, company, companyAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.RECEPTOR_DEL_MENSAJE_MR,
 				customerEdiCabeceraCode, customer, invoiceAddress, null));
 
