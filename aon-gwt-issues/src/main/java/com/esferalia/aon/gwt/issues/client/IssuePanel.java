@@ -217,7 +217,7 @@ public class IssuePanel extends Composite{
 			desduplicatedButton.setVisible(false);
 			principalButton.setVisible(false);
 			parkIssueButton.setVisible(true);
-			removeIssueButton.setVisible(true);
+			removeIssueButton.setVisible(Utils.isAdmin(parent.getAonData().getUser()));
 		} 
 
 		initHeader(issue);

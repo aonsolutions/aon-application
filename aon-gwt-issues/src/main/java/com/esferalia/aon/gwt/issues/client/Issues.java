@@ -78,6 +78,10 @@ public class Issues implements EntryPoint {
 		return $wnd.getCurrentDomain();
 	}-*/;
 	
+	public AonData getAonData(){
+		return aonData;
+	}
+	
 	public Issues(AonData aonData) {
 		this.aonData = aonData;
 	}
