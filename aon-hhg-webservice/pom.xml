@@ -379,7 +379,7 @@
                       <include>javax.transaction:jta:1.1</include>
                       <include>org.json:json:20140107</include>
                       <!-- aon -->
-                      <include>com.code.aon:aon.pool:${project.version}</include>
+                      <include>net.aonsolutions.core:pool:9.00-SNAPSHOT</include>
                       <include>com.esferalia.aon:aon.master.jooq:${project.version}</include>
                       <include>com.esferalia.aon:aon.occam:${project.version}</include>
                       <include>com.esferalia.aon:aon.watson:${project.version}</include>

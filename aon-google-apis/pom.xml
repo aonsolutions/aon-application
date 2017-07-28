@@ -257,7 +257,7 @@
                       <include>com.fasterxml.jackson.core:jackson-core:2.1.3</include>
                       <include>commons-net:commons-net:3.3</include>
                       <!-- aon -->
-                      <include>com.code.aon:aon.pool:${project.version}</include>
+                      <include>net.aonsolutions.core:pool:9.00-SNAPSHOT</include>
                       <include>com.code.aon:aon.common:${project.version}</include>
                       <include>com.esferalia.aon:aon.entity:${project.version}</include>
                       <include>com.esferalia.aon:aon.master.jooq:${project.version}</include>

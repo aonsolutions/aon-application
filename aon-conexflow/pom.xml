@@ -372,7 +372,7 @@
                       <include>antlr:antlr:2.7.6</include>
                       <include>javax.transaction:jta:1.1</include>
                       <!-- aon -->
-                      <include>com.code.aon:aon.pool:${project.version}</include>
+                      <include>net.aonsolutions.core:pool:9.00-SNAPSHOT</include>
                       <include>com.esferalia.aon:aon.master.jooq:${project.version}</include>
                       <include>com.esferalia.aon:aon.occam:${project.version}</include>
                       <include>com.esferalia.aon:aon.watson:${project.version}</include>
