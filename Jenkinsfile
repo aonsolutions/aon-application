@@ -99,7 +99,7 @@ node {
       stage 'Docker Build'
 
       // Run the docker build
-      sh "docker build --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
+      sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
 
       // Mark the Integration Tests 'stage'....
       stage 'Integration Tests'
