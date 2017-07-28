@@ -53,19 +53,19 @@ node {
    // Mark the build 'stage'....
    stage "Build HotFix ${pom.version}"
    
-   sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=true -DskipTests clean deploy"
+   //sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=true -DskipTests clean deploy"
    
    // Mark the RPMs deploy 'stage'....
    stage 'Deploy RPMs'
    
    // Upload RPMs 
-   sh "scp `find -name *${pom.version}*.noarch.rpm` dev.esferalia.net:/var/www/rpms/aon-solutions/noarch"
+   //sh "scp `find -name *${pom.version}*.noarch.rpm` dev.esferalia.net:/var/www/rpms/aon-solutions/noarch"
    
    // Remove oldest RPMs. Keep 2 newest RPMs
-   sh "ssh dev.esferalia.net 'repomanage --keep=2 --old /var/www/rpms/aon-solutions/noarch | xargs rm -rf'"
+   //sh "ssh dev.esferalia.net 'repomanage --keep=2 --old /var/www/rpms/aon-solutions/noarch | xargs rm -rf'"
    
    // Create RPMs repository
-   sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-solutions'"
+   //sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-solutions'"
 
    if ( commits ) {
 
@@ -86,15 +86,15 @@ node {
    env.VERSION=pom.version
 
    // RPMs 2 AWS
-   sh "/bin/sh rpms2aws.sh AON-RELEASE-APP AON-RELEASE-GROUP"
+   //sh "/bin/sh rpms2aws.sh AON-RELEASE-APP AON-RELEASE-GROUP"
       
-   sh "aws s3api list-objects --bucket aon-solutions --prefix aon-release-app > aon-release-apps.json"
-   def aon_release_apps_json = readFile 'aon-release-apps.json'    
-   def keys = getKeys(aon_release_apps_json)
-   for (int i = 0; i < keys.size() - 20; i++){
-      def key = keys[i]
-      sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
-   }
+   //sh "aws s3api list-objects --bucket aon-solutions --prefix aon-release-app > aon-release-apps.json"
+   //def aon_release_apps_json = readFile 'aon-release-apps.json'    
+   //def keys = getKeys(aon_release_apps_json)
+   //for (int i = 0; i < keys.size() - 20; i++){
+   //   def key = keys[i]
+   //   sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
+   //}
 
    // Docker
    stage 'Docker Build'
