@@ -22,7 +22,7 @@ node {
    def commitsParams = parameters(cherryOut);
 
    def commits = '';
-   if ( commitsParams.size() > 1 ) {
+   if ( commitsParams.size() > 2 ) {
 
       def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: commitsParams
    
@@ -95,6 +95,40 @@ node {
       def key = keys[i]
       sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
    }
+
+   // Docker
+   stage 'Docker Build'
+
+   // Run the docker build
+   sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg AON_MAVEN_REPOSITORY_URL=http://dev.esferalia.net/maven2_repositories/inhouse/com/code/aon -t aonsolutions/aon-application:${pom.version}-tomcat9-jre8 ."
+
+   stage 'Docker Publish'
+
+   sh "docker login -u rtrepiana -p aon945121010"
+
+   sh "docker push aonsolutions/aon-application:${pom.version}-tomcat9-jre8"
+
+   sh "aws ecs list-task-definitions --family-prefix RELEASE > release-task-definitions.json"
+
+   def release_task_definitions_json = readFile 'release-task-definitions.json'
+
+   def release_task_definitions_arns = getTaskDefinitionArns(release_task_definitions_json)
+
+   def last_release_task_definition_arn = release_task_definitions_arns[release_task_definitions_arns.size()-1]
+
+   sh "aws ecs describe-task-definition --task-definition ${last_release_task_definition_arn} > last-release-task-definition.json"
+
+   def last_release_task_definition_json = readFile 'last-release-task-definition.json'
+
+   def release_container_definitions_json = getContainerDefinitions(last_release_task_definition_json, "aonsolutions/aon-application:${pom.version}-tomcat9-jre8")
+
+   sh "aws ecs register-task-definition --family RELEASE --container-definitions '${release_container_definitions_json}' > release-task-definition.json"
+
+   def release_task_definition_json = readFile 'release-task-definition.json'
+
+   def release_task_definition_arn = getTaskDefinitionArn(release_task_definition_json)
+
+   sh "aws ecs update-service --cluster RELEASE --service RELEASE --task-definition ${release_task_definition_arn}"
     
 }
 
@@ -131,5 +165,22 @@ def getKeys(def json) {
     for (int i = 0; i < objects.Contents.size(); i++)
        keys[i]=objects.Contents[i].Key
     keys
+}
+
+@NonCPS
+def getTaskDefinitionArn(def json) {
+    new groovy.json.JsonSlurper().parseText(json).taskDefinition.taskDefinitionArn
+}
+
+@NonCPS
+def getTaskDefinitionArns(def json) {
+    new groovy.json.JsonSlurper().parseText(json).taskDefinitionArns
+}
+
+@NonCPS
+def getContainerDefinitions(def json, def image) {
+    def containerDefinitions = new groovy.json.JsonSlurper().parseText(json).taskDefinition.containerDefinitions
+    containerDefinitions[0].image = image
+    groovy.json.JsonOutput.toJson(containerDefinitions)
 }
 
