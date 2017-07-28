@@ -751,7 +751,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 //		draft("NOMINA, OFICINAS Y DESPACHOS");
 	}
 	
-	@Test
+//	@Test
 	public void TestIncidencias() throws Exception {
 
 		open("incidencias");
