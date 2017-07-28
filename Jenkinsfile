@@ -99,8 +99,12 @@ node {
    // Docker
    stage 'Docker Build'
 
+   def aio_pom = readMavenPom file: 'aon-web-aio/pom.xml'
+   def pool_version = getDependencyVersion(aio_pom, "pool")
+   sh "echo ${pool_version}"
+
    // Run the docker build
-   sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg AON_MAVEN_REPOSITORY_URL=http://dev.esferalia.net/maven2_repositories/inhouse/com/code/aon -t aonsolutions/aon-application:${pom.version}-tomcat9-jre8 ."
+   sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pool_version} --build-arg AON_MAVEN_REPOSITORY_URL=http://dev.esferalia.net/maven2_repositories/inhouse/com/code/aon -t aonsolutions/aon-application:${pom.version}-tomcat9-jre8 ."
 
    stage 'Docker Publish'
 
@@ -182,5 +186,14 @@ def getContainerDefinitions(def json, def image) {
     def containerDefinitions = new groovy.json.JsonSlurper().parseText(json).taskDefinition.containerDefinitions
     containerDefinitions[0].image = image
     groovy.json.JsonOutput.toJson(containerDefinitions)
+}
+
+@NonCPS
+def getDependencyVersion(def pom, def artifactId) {
+    for (int i = 0; i < pom.dependencies.size(); i++) {
+        if ( pom.dependencies[i].artifactId == artifactId ) {
+	    return "${pom.dependencies[i].version}"
+        }
+    }
 }
 

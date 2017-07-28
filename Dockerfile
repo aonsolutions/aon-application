@@ -5,7 +5,8 @@ RUN apt-get update && apt-get install -y \
 	libreoffice-calc \
 	libreoffice-writer
 
-ARG AON_VERSION=8.95-SNAPSHOT
+ARG AON_VERSION=9.00-SNAPSHOT
+ARG POOL_VERSION=9.00-SNAPSHOT
 
 ENV CATALINA_HOME /usr/local/tomcat
 
@@ -21,7 +22,7 @@ WORKDIR $TOMCAT_LIBDIR
 RUN set -x \
 	\
 	&& wget $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/aon.jaas-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`.jar \
-	&& wget $NET_MAVEN_REPOSITORY_URL/core/pool/$AON_VERSION/pool-`wget -O - $NET_MAVEN_REPOSITORY_URL/core/pool/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`.jar
+	&& wget $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/pool-`wget -O - $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $POOL_VERSION`.jar
 
 
 ENV SLF4J_API_URL=http://central.maven.org/maven2/org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar
