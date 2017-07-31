@@ -96,7 +96,7 @@ public class GithubServlet extends HttpServlet{
 		Registry user = AON.getTaskHolder(domain.getName(), domain.getId(), login, f -> 
 			f.getNameProperty().like(assignee.getString("login")));
 		if(user.getId() != null)
-			AON.updateTaskUser(domain.getName(), domain.getId(), login, task.setTaskHolder(user.getId()));
+			AON.updateTask(domain.getName(), domain.getId(), login, task.setTaskHolder(user.getId()));
 	}
 	
 	private void unassigned(Domain domain, String login, JSONObject issue, JSONObject assignee) {
@@ -108,7 +108,7 @@ public class GithubServlet extends HttpServlet{
 		Registry user = AON.getTaskHolder(domain.getName(), domain.getId(), login, f -> 
 			f.getNameProperty().like(assignee.getString("login")));
 		if(user.getId() != null && user.getId().equals(task.getTaskHolder()))
-			AON.updateTaskUser(domain.getName(), domain.getId(), login, task.setTaskHolder(null));
+			AON.updateTask(domain.getName(), domain.getId(), login, task.setTaskHolder(null));
 	}
 	
 	private void opened(Domain domain, String login, JSONObject issue) {
@@ -147,7 +147,7 @@ public class GithubServlet extends HttpServlet{
 		if(!DB.isPrincipal(domain, login, task))
 			task.setParent(null);
 		else task.setParent(task.getId());
-		AON.updateTaskParent(domain.getName(), domain.getId(), login, task);
+		AON.updateTask(domain.getName(), domain.getId(), login, task);
 		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
 			.setEvent(MSG.REOPENED).setTask(task.getId()).setCreationUser(login);
 		AON.createTaskEvent(domain.getName(), domain.getId(), login, taskEvent, task.getId());

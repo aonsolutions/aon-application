@@ -7,10 +7,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.Utils;
+import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -58,6 +60,9 @@ public class Issue {
 	
 	private String days;
 	private String assigned;
+	
+	private TaskSource source;
+	private Integer sourceId;
 	
 	public Issue() {
 	
@@ -109,11 +114,14 @@ public class Issue {
 		if(assignee.getName() != null ) ass = ass + assignee.getName();
 		this.assigned = ass;
 		setColor(Utils.getStatusColor(task));
+		this.source = TaskSource.valueOf(task.getSource());
+		this.sourceId = task.getSourceId();
 	}
 	
 	public Integer getId() {
 		return id;
 	}
+	
 	public Issue setId(Integer id) {
 		this.id = id;
 		return this;
@@ -122,6 +130,7 @@ public class Issue {
 	public Integer getParent() {
 		return parent;
 	}
+	
 	public Issue setParent(Integer parent) {
 		this.parent = parent;
 		return this;
@@ -326,6 +335,22 @@ public class Issue {
 		return this;
 	}
 	
+	public TaskSource getSource() {
+		return source;
+	}
+
+	public void setSource(TaskSource source) {
+		this.source = source;
+	}
+
+	public Integer getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(Integer sourceId) {
+		this.sourceId = sourceId;
+	}
+
 	public Boolean isClosed() {
 		return getState().equals(TaskStatus.FINISHED.getGwtName());
 	}
@@ -347,6 +372,10 @@ public class Issue {
 	public Boolean isFaqItem() {
 		return getState().equals(TaskStatus.FAQ.getGwtName())
 				&& getParent() != null;
+	}
+	
+	public Boolean isGithub() {
+		return TaskSource.GITHUB.equals(getSource());
 	}
 	
 	public Boolean isDuplicate() {
@@ -393,6 +422,8 @@ public class Issue {
 		json.put("updated_at_hour", getUpdatedAtHour());
 		json.put("assignee", getAssignee().toJSON());		
 		json.put("user", getUser().toJSON());
+		json.put("source", ToJSON.objectToJSON(getSource().ordinal(), getSource().getName()));
+		json.put("source_id", getSourceId());
 
 		JSONArray arrayLabels = new JSONArray();
 		getLabels().stream().map(label -> label.toJSON()).forEach(s -> arrayLabels.put(s));
@@ -412,6 +443,7 @@ public class Issue {
 		json.put("is_principal_duplicate", isPrincipalDuplicate());
 		json.put("is_faq", isFaq());
 		json.put("is_faq_item", isFaqItem());
+		json.put("is_github", isGithub());
 		json.put("color", getColor());
 		json.put("days", days);
 		json.put("assigned", assigned);

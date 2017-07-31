@@ -1,7 +1,11 @@
 package com.esferalia.aon.gwt.issues.client;
 
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
+import com.esferalia.aon.gwt.api.client.AonUrlApi;
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
+import com.esferalia.aon.gwt.api.client.incidence.JsGithub;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.google.gwt.core.client.GWT;
@@ -81,7 +85,21 @@ public class IssueList extends Composite {
 						
 						@Override
 						protected void onAccept() {
-							String request = "{\"state\":\""+ "restore" +"\"}";
+							String request = "{\"state\":\""+ "restore" +"\"}";							
+							if(issue.isGithub()) {
+								String request1 = "{\"state\":\"open\"}";
+								incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+								
+									@Override
+									public void onSuccess(JSON<JsGithub> github) {
+										API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+										API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request1);
+									}	
+								
+									@Override
+									public void onFailure(Throwable caught) {}
+								});
+							}
 							incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 								
 								@Override

@@ -240,19 +240,18 @@ public class ConfPanel extends Composite {
     // -------------------- GITHUB CONFIGURATION
     
     private void initGitOptions(){
-    	gitHeading.setVisible(false);
-    	gitCollapse.setVisible(false);
     	incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsGithub> result) {
 				VerticalPanel vp = new VerticalPanel();
-				
-		    	PaperInput gitUsername = new PaperInput();
+
+				PaperInput gitUsername = new PaperInput();
 		    	gitUsername.setDisabled(admin);
 		    	gitUsername.setLabel("Nombre de usuario");
 		    	gitUsername.setValue(result.getOneData().getUsername());
 		    	gitUsername.setStyle("padding-left:20px;padding-right:20px;width:300px;");
+		    	gitUsername.setVisible(result.getOneData().isActive());
 		    	gitUsername.addChangeHandler(new ChangeEventHandler() {
 					
 					@Override
@@ -261,13 +260,14 @@ public class ConfPanel extends Composite {
 						incidence.setGithubConfiguration(requestData);
 					}
 				});
-		    	vp.add(gitUsername);
+		    	
 
 		    	PaperInput gitRepository = new PaperInput();
 		    	gitRepository.setDisabled(admin);
 		    	gitRepository.setLabel("Repositorio");
 		    	gitRepository.setValue(result.getOneData().getRepository());
 		    	gitRepository.setStyle("padding-left:20px;padding-right:20px;width:300px;");
+		    	gitRepository.setVisible(result.getOneData().isActive());
 		    	gitRepository.addChangeHandler(new ChangeEventHandler() {
 					
 					@Override
@@ -276,13 +276,14 @@ public class ConfPanel extends Composite {
 						incidence.setGithubConfiguration(requestData);
 					}
 				});
-		    	vp.add(gitRepository);
 		    	
 				PaperInput gitToken = new PaperInput();
 		    	gitToken.setDisabled(admin);
 				gitToken.setLabel("Token");
-		    	gitToken.setValue(result.getOneData().getToken());
+		    	gitToken.setValue(result.getOneData().getToken() != null && !result.getOneData().getToken().equals("")
+		    			? "**********************" : "");
 		    	gitToken.setStyle("padding-left:20px;padding-right:20px;padding-bottom:20px;width:300px;");
+		    	gitToken.setVisible(result.getOneData().isActive());
 		    	gitToken.addChangeHandler(new ChangeEventHandler() {
 					
 					@Override
@@ -291,6 +292,28 @@ public class ConfPanel extends Composite {
 						incidence.setGithubConfiguration(requestData);
 					}
 				});
+
+		    	PaperToggleButton githubActive = new PaperToggleButton();
+		    	githubActive.setDisabled(admin);
+		    	githubActive.setChecked(result.getOneData().isActive());
+		    	githubActive.setStyle("padding-left:20px;padding-right:20px;padding-top:20px;");
+		    	InlineLabel label1 = new InlineLabel("Github");
+		    	label1.getElement().getStyle().setFontSize(16, Unit.PX);
+		    	githubActive.add(label1);
+		    	githubActive.addChangeHandler(new ChangeEventHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						gitUsername.setVisible(githubActive.getChecked());
+						gitRepository.setVisible(githubActive.getChecked());
+						gitToken.setVisible(githubActive.getChecked());
+						
+						String requestData = "{\"active\":\""+ (githubActive.getChecked() ? "1" : "0")+"\"}";
+						incidence.setGithubConfiguration(requestData);
+					}
+				});
+		    	vp.add(githubActive);
+		    	vp.add(gitUsername);
+		    	vp.add(gitRepository);
 		    	vp.add(gitToken);
 		    	
 		    	gitCollapse.add(vp);

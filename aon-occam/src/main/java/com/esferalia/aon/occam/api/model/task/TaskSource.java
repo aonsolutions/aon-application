@@ -15,4 +15,18 @@ public enum TaskSource {
     public byte value() {
     	return (byte) this.ordinal();
 	}
+    
+    public static TaskSource valueOf(Integer index) {
+    	if(index != null) {
+    		return values()[index];
+    	} 
+    	return null;
+    }
+    
+    public static TaskSource valueOf(Byte index) {
+    	if(index != null) {
+    		return values()[index];
+    	} 
+    	return null;
+    }
 }

@@ -39,6 +39,7 @@ import com.vaadin.polymer.paper.widget.PaperTextarea;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
+import net.aonsolutions.polymer.aon.AonIconsElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 import net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent;
 import net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler;
@@ -92,7 +93,8 @@ public class Issues implements EntryPoint {
 				AonComboBoxElement.SRC,
 				PaperButtonElement.SRC,
 				PaperInputElement.SRC,
-				IronIconsElement.SRC
+				IronIconsElement.SRC,
+				AonIconsElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {

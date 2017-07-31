@@ -66,6 +66,7 @@
 													</div>
 													<div>
 													    <p:PaperIconButton ui:field="sendButton" icon="mail" title="{msg.sendNotificacion}" />
+													    <p:PaperIconButton ui:field="githubButton" icon="aon:github" title="Github" />
 														<p:PaperIconButton ui:field="parkIssueButton" icon="archive" title="Aparcar tarea" />
 														<p:PaperIconButton ui:field="removeIssueButton" icon="delete" title="Borrar tarea" />
 													</div>

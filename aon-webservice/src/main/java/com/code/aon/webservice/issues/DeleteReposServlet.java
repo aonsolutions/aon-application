@@ -66,11 +66,11 @@ public class DeleteReposServlet extends HttpServlet{
 							object = new Label().toJSON();
 						} else if(MSG.USER.equalsIgnoreCase(pathInfo[5])){
 							Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
-							AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setTaskHolder(null));
+							AON.updateTask(domain.getName(), domain.getId(), userName, task.setTaskHolder(null));
 							object = new User().toJSON();
 						} else if(MSG.WORKGROUP.equalsIgnoreCase(pathInfo[5])){
 							Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
-							AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setWorkgroup(null));
+							AON.updateTask(domain.getName(), domain.getId(), userName, task.setWorkgroup(null));
 							object = new User().toJSON();
 						}
 					} else {

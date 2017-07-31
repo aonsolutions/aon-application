@@ -126,6 +126,13 @@ public class JsIssue extends JavaScriptObject{
 		return this.enterprise;
 	}-*/;
 	
+	public final native JsObject getSource() /*-{
+		return this.source;
+	}-*/;
+	
+	public final native Integer getSourceId() /*-{
+		return this.source_id;
+	}-*/;
 
 	public final native Boolean isClosed() /*-{
 		return this.is_closed;
@@ -158,6 +165,10 @@ public class JsIssue extends JavaScriptObject{
 
 	public final native Boolean isFaqItem() /*-{
 		return this.is_faq_item;
+	}-*/;
+	
+	public final native Boolean isGithub() /*-{
+		return this.is_github;
 	}-*/;
 	
 	public final native String getDays() /*-{

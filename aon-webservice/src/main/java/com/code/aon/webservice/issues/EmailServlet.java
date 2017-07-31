@@ -51,7 +51,7 @@ public class EmailServlet extends HttpServlet{
 				.setEvent("closed").setTask(task.getId()).setCreationUser(login);
 		
 			AON.createTaskEvent(domain.getName(), domain.getId(), login, taskEvent, task.getId());
-			AON.updateTaskStatus(domain.getName(), domain.getId(), login, task );								
+			AON.updateTask(domain.getName(), domain.getId(), login, task);								
 		}
 	}
 }

@@ -3993,66 +3993,16 @@ public class AON {
 		}
 	}
 	
-	public static void updateTaskUser(String domainName, Integer domainId, String login, Task task){
+	public static Task updateTask(String domainName, Integer domainId, String login, Task task){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getTask().updateTaskUser(ctx, task);
+			return getTask().updateTask(ctx, task);
 		} finally {
 			if(ctx != null) ctx.close();
 		}
 	}
-	
-	public static void updateTaskStatus(String domainName, Integer domainId, String login, Task task){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getTask().updateTaskStatus(ctx, task);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static void updateTaskParent(String domainName, Integer domainId, String login, Task task){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getTask().updateTaskParent(ctx, task);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static void updateTaskDescription(String domainName, Integer domainId, String login, Task task){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getTask().updateTaskDescription(ctx, task);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static void updateTaskTitle(String domainName, Integer domainId, String login, Task task){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getTask().updateTaskTitle(ctx, task);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	public static void updateTaskPriority(String domainName, Integer domainId, String login, Task task){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getTask().updateTaskPriority(ctx, task);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
+
 	//-------------------- TASK COMMENT
 	
 	public static Stream<TaskComment> getTaskCommentStream(String domainName, Integer domainId, String login, TaskCommentFilter filter){

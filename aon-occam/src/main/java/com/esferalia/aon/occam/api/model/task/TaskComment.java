@@ -12,7 +12,7 @@ public class TaskComment implements Serializable{
 	private Integer id;
 	private Integer task;
 	
-	private Integer source;
+	private TaskSource source;
 	private Integer sourceId;
 
 	private String creationUser;
@@ -58,11 +58,11 @@ public class TaskComment implements Serializable{
 		return this;
 	}
 
-	public Integer getSource() {
+	public TaskSource getSource() {
 		return source;
 	}
 
-	public TaskComment setSource(Integer source) {
+	public TaskComment setSource(TaskSource source) {
 		this.source = source;
 		return this;
 	}

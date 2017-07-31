@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -592,54 +593,32 @@ public class TaskDAO {
 			.returning(TASK.ID).fetchOne().getId();
 	}
 	
-	public static void updateTaskStatus(AONContext ctx, Task task) {
+	public static Task updateTask(AONContext ctx, Task task) {
 		ctx.getDslContext().update(TASK)
-			.set(TASK.STATUS, task.getStatus())
+			.set(TASK.DESCRIPTION, task.getDescription())
+			.set(TASK.START_DATE, task.toTimestamp(task.getStartDate()))
 			.set(TASK.END_DATE,task.toTimestamp(task.getEndDate()))
-			.set(TASK.MODIFICATION_USER, task.getModificationUser())
-			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
-			.where(TASK.ID.eq(task.getId())).execute();
-	}
-	
-	public static void updateTaskParent(AONContext ctx, Task task) {
-		ctx.getDslContext().update(TASK)
+			.set(TASK.DUE_DATE, task.toTimestamp(task.getDueDate()))
+			.set(TASK.PRIORITY, task.getPriority())
+			.set(TASK.STATUS, task.getStatus())
+			.set(TASK.PERCENT, task.getPercent())
+			.set(TASK.TASK_HOLDER, task.getTaskHolder())
+			.set(TASK.WORKGROUP, task.getWorkgroup())
+			.set(TASK.SOURCE, task.getSource())
+			.set(TASK.SOURCE_ID, task.getSourceId())
+			.set(TASK.PROJECT, task.getProject())
+			.set(TASK.REGISTRY, task.getRegistry())
+			.set(TASK.ACTIVITY_TYPE, task.getActivityType())
+			.set(TASK.SENDER, task.getSender())
+			.set(TASK.COMMENTS, task.getComments())
+			.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod())
+			.set(TASK.GTASK_ID, task.getGtaskId())
+			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
 			.set(TASK.PARENT, task.getParent())
 			.set(TASK.MODIFICATION_USER, task.getModificationUser())
 			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
 			.where(TASK.ID.eq(task.getId())).execute();
-	}
-
-	public static void updateTaskTitle(AONContext ctx, Task task) {
-		ctx.getDslContext().update(TASK)
-			.set(TASK.DESCRIPTION, task.getComments())
-			.set(TASK.MODIFICATION_USER, task.getModificationUser())
-			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
-			.where(TASK.ID.eq(task.getId())).execute();
-	}
-	
-	public static void updateTaskDescription(AONContext ctx, Task task) {
-		ctx.getDslContext().update(TASK)
-			.set(TASK.COMMENTS, task.getComments())
-			.set(TASK.MODIFICATION_USER, task.getModificationUser())
-			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
-			.where(TASK.ID.eq(task.getId())).execute();
-	}
-	
-	public static void updateTaskPriority(AONContext ctx, Task task) {
-		ctx.getDslContext().update(TASK)
-			.set(TASK.PRIORITY, task.getPriority())
-			.set(TASK.MODIFICATION_USER, task.getModificationUser())
-			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
-			.where(TASK.ID.eq(task.getId())).execute();
-	}
-	
-	public static void updateTaskUser(AONContext ctx, Task task) {
-		ctx.getDslContext().update(TASK)			
-			.set(TASK.TASK_HOLDER, task.getTaskHolder())
-			.set(TASK.MODIFICATION_USER, task.getModificationUser())
-			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
-			.set(TASK.WORKGROUP, task.getWorkgroup())
-			.where(TASK.ID.eq(task.getId())).execute();
+		return task;
 	}
 	
 	public static TaskComment getLastTaskComment(AONContext ctx, Integer taskId) {
@@ -876,6 +855,7 @@ public class TaskDAO {
 					.setRepeatPeriod(r.getRepeatPeriod())
 					.setSender(r.getSender())
 					.setSource(r.getSource())
+					.setSourceId(r.getSourceId())
 					.setStartDate(r.getStartDate())
 					.setStatus(r.getStatus())
 					.setTaskHolder(r.getTaskHolder())
@@ -939,6 +919,8 @@ public class TaskDAO {
 					.setDomain(r.getDomain())
 					.setComment(r.getComment())
 					.setTask(r.getTask())
+					.setSource(TaskSource.valueOf(r.getSource()))
+					.setSourceId(r.getSourceId())
 					.setCreationUser(r.getCreationUser())
 					.setCreationDate(r.getCreationDate())
 					.setModificationUser(r.getModificationUser())

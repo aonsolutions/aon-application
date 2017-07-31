@@ -38,13 +38,8 @@ public interface ITask {
 	public Integer getLastTaskNumber(AONContext ctx);
 	
 	public Integer createTask(AONContext ctx, Task task);
-	public void updateTaskStatus(AONContext ctx, Task task);
-	public void updateTaskParent(AONContext ctx, Task task);
-	public void updateTaskUser(AONContext ctx, Task task);
-	public void updateTaskTitle(AONContext ctx, Task task);
-	public void updateTaskDescription(AONContext ctx, Task task);
-	public void updateTaskPriority(AONContext ctx, Task task);
-
+	public Task updateTask(AONContext ctx, Task task);
+	
 	public TaskComment getLastTaskComment(AONContext ctx, Integer taskId);
 
 	public TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId);

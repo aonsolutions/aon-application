@@ -81,18 +81,6 @@ public class DBConsults {
 		return AON.getTaskList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
 	}
 	
-	public void updateTaskDescription(Domain domain, String login, Task task){
-		AON.updateTaskDescription(domain.getName(), domain.getId(),login, task);
-	}
-	
-	public void updateTaskTitle(Domain domain, String login, Task task){
-		AON.updateTaskTitle(domain.getName(), domain.getId(),login, task);
-	}
-	
-	public void updateTaskPriority(Domain domain, String login, Task task){
-		AON.updateTaskPriority(domain.getName(), domain.getId(),login, task);
-	}
-	
 	public Boolean isPrincipal(Domain domain, String login, Task task){
 		if(task.getParent() != null && task.getParent().equals(task.getId()))
 			return true;

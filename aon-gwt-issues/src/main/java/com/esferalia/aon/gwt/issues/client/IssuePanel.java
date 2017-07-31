@@ -3,7 +3,9 @@ package com.esferalia.aon.gwt.issues.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
+import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.finance.JsBoughtProduct;
 import com.esferalia.aon.gwt.api.client.finance.JsFee;
@@ -12,6 +14,7 @@ import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsComment;
 import com.esferalia.aon.gwt.api.client.incidence.JsEvent;
 import com.esferalia.aon.gwt.api.client.incidence.JsGeneral;
+import com.esferalia.aon.gwt.api.client.incidence.JsGithub;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
@@ -93,9 +96,12 @@ public class IssuePanel extends Composite{
 	@UiField Label userLabel;
 	@UiField VerticalPanel usersVPanel;
 	@UiField FlowPanel historialVPanel;
+	
 	@UiField PaperIconButton sendButton;
+	@UiField PaperIconButton githubButton;
 	@UiField PaperIconButton parkIssueButton;
 	@UiField PaperIconButton removeIssueButton;
+	
 	@UiField PaperButton faqButton;
 	@UiField PaperButton duplicatedButton;
 	@UiField PaperButton desduplicatedButton;
@@ -148,7 +154,7 @@ public class IssuePanel extends Composite{
 		userDeleteButton.setSize("22px", "22px");
 		typeDeleteButton.setSize("22px", "22px");
 		workgroupDeleteButton.setSize("22px", "22px");
-
+		
 		if(issue.getState().equals("open")){
 			closedButton.setVisible(true);
 			reopenButton.setVisible(false);
@@ -157,6 +163,17 @@ public class IssuePanel extends Composite{
 			reopenButton.setVisible(true);
 			faqButton.setVisible(false);
 		}
+		
+		incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsGithub> result) {
+				githubButton.setVisible(result.getOneData().isActive() && !issue.isGithub() && issue.isOpen()); 
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
 		if(issue.isFaqItem()){
 			commentButton.setVisible(false);
 			closedButton.setVisible(false);
@@ -207,6 +224,7 @@ public class IssuePanel extends Composite{
 			principalButton.setVisible(false);
 
 			removeIssueButton.setVisible(false);
+			githubButton.setVisible(false);
 
 			priorityButton.setVisible(false);
 			workgroupButton.setVisible(false);
@@ -431,7 +449,19 @@ public class IssuePanel extends Composite{
 					@Override
 					protected void onAccept() {					
 						String request = "{\"title\":\""+ pi.getValue() +"\"}";
-						// TODO GITHUB!!!
+						if(issue.isGithub()) {
+							incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+							
+								@Override
+								public void onSuccess(JSON<JsGithub> github) {
+									API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+									API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request);
+								}
+							
+								@Override
+								public void onFailure(Throwable caught) {}
+							});
+						}
 						incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 							
 							@Override
@@ -820,7 +850,7 @@ public class IssuePanel extends Composite{
 	
 	private void onAcceptEditCommentButtonClick(JsComment comment, final TextArea textArea) {
 		String request = "{\"body\":\""+ Utils.checkString(textArea.getText()) +"\"}";
-		// TODO GITHUB!!!
+		// TODO GITHUB COMMENT !!!!
 		incidence.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
 			@Override
 			public void onSuccess(JsComment result) {
@@ -834,7 +864,20 @@ public class IssuePanel extends Composite{
 	
 	private void onAcceptEditDescriptionButtonClick(final TextArea textArea) {
 		String request = "{\"body\":\""+ Utils.checkString(textArea.getText()) +"\"}";
-		// TODO GITHUB!!!
+		
+		if(issue.isGithub()) {
+			incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+			
+				@Override
+				public void onSuccess(JSON<JsGithub> github) {
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -868,7 +911,20 @@ public class IssuePanel extends Composite{
 	@UiHandler("parkIssueButton")
 	void onClickParkIssueButton(ClickEvent event){
 		String request = "{\"state\":\"deleted\"}";
-		// TODO GITHUB!!!
+		if(issue.isGithub()) {
+			String request1 = "{\"state\":\"closed\"}";
+			incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+			
+				@Override
+				public void onSuccess(JSON<JsGithub> github) {
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request1);
+				}	
+			
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -887,6 +943,59 @@ public class IssuePanel extends Composite{
 		});
 	}
 	
+	@UiHandler("githubButton")
+	void onClickGithubButton(ClickEvent event){
+		String request = "{\"title\":\"" + issue.getTitle() +"\","
+				+ "\"body\":\""+ issue.getBody() + "\""
+				+ "}";
+		incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsGithub> github) {
+				API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+				API.getIncidence().createGithubIssue(github.getOneData(), request, new AsyncCallback<JsIssue>() {
+					
+					@Override
+					public void onSuccess(JsIssue ghIssue) {
+						String requestData = "{\"source\":\"" + "4" +"\","
+								+ "\"source_id\":\""+ ghIssue.getNumber() + "\""
+								+ "}";
+						incidence.updateOrgIssue(issue, requestData, new AsyncCallback<JsIssue>() {
+							
+							@Override
+							public void onSuccess(JsIssue result) {
+								githubButton.setVisible(false);
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+						
+						if(issue.getComments()>0){
+							incidence.getComments(issue, new AsyncCallback<JSON<JsComment>>() {
+								
+								@Override
+								public void onSuccess(JSON<JsComment> result) {
+									for (JsComment comment : result.getData().toLinkedList()) {
+										String requestComment = "{\"body\":\"" + comment.getBody() +"\"}";
+										API.getIncidence().createGithubComment(github.getOneData(), ghIssue.getNumber(), requestComment);
+										// TODO GITHUB COMMENT !!!!
+									}
+								}
+								
+								@Override public void onFailure(Throwable caught) {}
+							});
+						}	
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	
 	@UiHandler("removeIssueButton")
 	void onClickRemoveIssueButton(ClickEvent event){
 		AonDialog2 d = new AonDialog2("Borrar Tarea",new Label("Est\u00e1s seguro de Borrar definitivamente la tarea #" + issue.getNumber()) ) {
@@ -895,7 +1004,20 @@ public class IssuePanel extends Composite{
 			
 			@Override
 			protected void onAccept() {
-				// TODO GITHUB
+				if(issue.isGithub()) {
+					String request1 = "{\"state\":\"closed\"}";
+					incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+				
+						@Override
+						public void onSuccess(JSON<JsGithub> github) {
+							API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+							API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request1);
+						}	
+				
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				}
 				incidence.deleteTask(issue, new AsyncCallback<JsIssue>() {
 					
 					@Override
@@ -922,7 +1044,19 @@ public class IssuePanel extends Composite{
 	@UiHandler("reopenButton")
 	void onClickReopenButton(ClickEvent event){
 		String request = "{\"state\":\"open\"}";
-		// TODO GITHUB!!!
+		if(issue.isGithub()) {
+			incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+			
+				@Override
+				public void onSuccess(JSON<JsGithub> github) {
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request);
+				}	
+			
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -1426,7 +1560,20 @@ public class IssuePanel extends Composite{
 	private void comment() {
 		String str = Utils.checkString(commentTextArea.getText());
 		String request = "{\"body\":\""+ str +"\"}";
-		// TODO GITHUB!!!
+		if(issue.isGithub()) {
+			incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+			
+				@Override
+				public void onSuccess(JSON<JsGithub> github) {
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API.getIncidence().createGithubComment(github.getOneData(), issue.getSourceId(), request);
+					// TODO GITHUB COMMENT !!!!
+				}	
+			
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 		incidence.newComment(issue, request, new AsyncCallback<JsComment>() {
 			
 			@Override public void onSuccess(JsComment result) {
@@ -1441,7 +1588,19 @@ public class IssuePanel extends Composite{
 	
 	private void close() {
 		String request = "{\"state\":\"closed\"}";
-		// TODO GITHUB!!!
+		if(issue.isGithub()) {
+			incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+			
+				@Override
+				public void onSuccess(JSON<JsGithub> github) {
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request);
+				}	
+			
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override

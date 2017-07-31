@@ -538,6 +538,20 @@ public class Incidence extends Methods{
 		});
 	}
 	
+	// GITHUB
+	
+	public void createGithubIssue(JsGithub github, String requestData, AsyncCallback<JsIssue> callback) {
+		post(AonUrlApi.GITHUB.getUrl() + "repos/" + github.getRepository() + "/issues", requestData, callback);
+	}
+	
+	public void editGithubIssue(JsGithub github, Integer number, String requestData) {
+		post(AonUrlApi.GITHUB.getUrl() + "repos/" + github.getRepository() + "/issues/" + number, requestData);
+	}
+	
+	public void createGithubComment(JsGithub github, Integer number, String requestData) {
+		post(AonUrlApi.GITHUB.getUrl() + "repos/" + github.getRepository() + "/issues/" + number + "/comments", requestData);
+	}
+	
 	//---------------------- Métodos Get & Set
 
 	public String getRepositoryName() {

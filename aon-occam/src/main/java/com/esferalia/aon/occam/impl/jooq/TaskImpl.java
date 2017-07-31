@@ -96,33 +96,8 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public void updateTaskStatus(AONContext ctx, Task task) {
-		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskStatus(ctx, task));
-	}
-	
-	@Override
-	public void updateTaskParent(AONContext ctx, Task task) {
-		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskParent(ctx, task));
-	}
-	
-	@Override
-	public void updateTaskDescription(AONContext ctx, Task task) {
-		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskDescription(ctx, task));
-	}
-	
-	@Override
-	public void updateTaskTitle(AONContext ctx, Task task) {
-		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskTitle(ctx, task));
-	}
-	
-	@Override
-	public void updateTaskPriority(AONContext ctx, Task task) {
-		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskPriority(ctx, task));
-	}
-	
-	@Override
-	public void updateTaskUser(AONContext ctx, Task task) {
-		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskUser(ctx, task));
+	public Task updateTask(AONContext ctx, Task task) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.updateTask(ctx, task));
 	}
 
 	@Override

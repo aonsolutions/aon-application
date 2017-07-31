@@ -6,6 +6,10 @@ public class JsGithub extends JavaScriptObject {
 
 	protected JsGithub() {}
 	
+	public final native Boolean isActive() /*-{
+		return this.active;
+	}-*/;
+	
 	public final native String getUsername() /*-{
 		return this.username;
 	}-*/;

@@ -2,7 +2,9 @@ package com.code.aon.webservice.issues;
 
 import org.json.JSONObject;
 
+import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
+import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Comment {
@@ -10,6 +12,8 @@ public class Comment {
 	private Integer id;
 	private String url;
 	private String body;
+	private TaskSource source;
+	private Integer sourceId;
 	private User user;
 	private String createdAt;
 	private String updatedAt;
@@ -25,6 +29,8 @@ public class Comment {
 		this.user = new User(taskComment.getCreationUser());
 		this.createdAt = AonDateUtils.dateTimeFormat(taskComment.getCreationDate());
 		this.updatedAt = AonDateUtils.dateTimeFormat(taskComment.getModificationDate());
+		this.source = taskComment.getSource();
+		this.sourceId = taskComment.getSourceId();
 	}	
 	
 	public Integer getId() {
@@ -81,6 +87,22 @@ public class Comment {
 		return this;
 	}
 	
+	public TaskSource getSource() {
+		return source;
+	}
+
+	public void setSource(TaskSource source) {
+		this.source = source;
+	}
+
+	public Integer getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(Integer sourceId) {
+		this.sourceId = sourceId;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("id", getId());
@@ -89,7 +111,10 @@ public class Comment {
 		json.put("created_at", getCreatedAt());
 		json.put("updated_at", getUpdatedAt());
 		json.put("user", getUser().toJSON());
-				
+		if(getSource() != null && getSourceId() != null) {
+			json.put("source", ToJSON.objectToJSON(getSource().ordinal(), getSource().getName()));	
+			json.put("source_id", getSourceId());
+		}
 		return json;
 	}	
 }
