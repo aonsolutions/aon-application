@@ -75,6 +75,8 @@ import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
+import com.vaadin.polymer.paper.widget.event.ChangeEvent;
+import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
@@ -1419,11 +1421,39 @@ public class IssuePanel extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
+				VerticalPanel vp = new  VerticalPanel();
+				
 				IssueSelector is = new IssueSelector(incidence, issue, issueFilter, "dup", result.getData());
 				is.setHeight("400px");
 				is.setWidth("500px");
+				
+				PaperInput pi = new PaperInput();
+				pi.addChangeHandler(new ChangeEventHandler() {
+					
+					@Override
+					public void onChange(ChangeEvent event) {
+						issueFilter.setTitle(pi.getValue());
+						incidence.getLightIssues(issue.getId() ,issueFilter, new AsyncCallback<JSON<JsIssue>>() {
+							
+							@Override
+							public void onSuccess(JSON<JsIssue> result) {
+								IssueSelector is = new IssueSelector(incidence, issue, issueFilter, "dup", result.getData());
+								is.setHeight("400px");
+								is.setWidth("500px");
+								
+								vp.remove(1);
+								vp.add(is);
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				});
+				
+				vp.add(pi);
+				vp.add(is);
 
-				AonDialog2 dialog = new AonDialog2("Asignar a ", is) {
+				AonDialog2 dialog = new AonDialog2("Asignar a ", vp) {
 					
 					@Override protected void onCancel() {hide();}
 					
@@ -1449,8 +1479,7 @@ public class IssuePanel extends Composite{
 				dialog.center();
 			}
 			
-			@Override
-			public void onFailure(Throwable caught) {}
+			@Override public void onFailure(Throwable caught) {}
 		});
 	}
 
