@@ -19,6 +19,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Tag;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.file.format.model.Fd0Exception;
@@ -229,9 +230,14 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 						invoice.getRegistry(), invoice.getRegistryAddress())
 						.get(CustomerEdiSupportController.FACTURA);
 				
-				String customerPackage = ediSupport.obtainPackingTag(
+				Tag packingTag = ediSupport.obtainPackingTag(
 						invoice.getRegistry(),
-						invoice.getRegistryAddress()).getName();
+						invoice.getRegistryAddress());
+				if(packingTag==null || packingTag.getId()==null){
+					AonUtil.addErrorMessage("No se ha definido el envase para 'mensajería EDI'");
+					throw new AbortProcessingException("No se ha definido el envase para 'mensajería EDI'");
+				}
+				String customerPackage = packingTag.getName();
 
 				CompanyController company = (CompanyController) AonUtil
 						.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
