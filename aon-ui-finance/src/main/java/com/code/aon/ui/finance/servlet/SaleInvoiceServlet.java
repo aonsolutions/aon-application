@@ -3,11 +3,22 @@ package com.code.aon.ui.finance.servlet;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -27,7 +38,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.InvestAsset;
@@ -44,20 +56,36 @@ import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.StreetType;
+import com.code.aon.report.IReportConstants;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.jr.JRReportFactory;
+import com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter;
 import com.code.aon.ui.report.controller.ReportManager;
+import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 @WebServlet(name = "DownloadSaleInvoice", urlPatterns = { "/aon_gwt_aio/saleinvoice_download/*", "/sid/*" })
 public class SaleInvoiceServlet extends HttpServlet{
@@ -141,8 +169,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 		// TODO search for custom report template
 		
 		Invoice inv = AON.getInvoice(domain.getName(), domain.getId(), login, f -> 
-				f.getIdProperty().eq(Integer.parseInt(invoiceId))
-				.and(f.getDomainProperty().eq(domain.getId())));
+				f.getIdProperty().eq(Integer.parseInt(invoiceId)));
 		Set<InvoiceDetail> invoiceDetail = AON.getInvoiceDetails(domain.getName(), domain.getId(), login,
 				f-> f.getIdProperty().eq(inv.getId()))
 				.map(new InvoiceDetailFiller())
@@ -155,7 +182,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 		
 		
 		ReportManager reportManager = new ReportManager();
-		reportManager.setCollectionProvider( new SingleCollectionProvider(to) );
+		reportManager.setCollectionProvider( new InvoiceSingleCollectionProvider(to) );
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			reportManager.execute( baos, reportKey);
@@ -164,6 +191,28 @@ public class SaleInvoiceServlet extends HttpServlet{
 			return null;
 		}
 		return baos.toByteArray();
+	}
+	
+	public class InvoiceSingleCollectionProvider implements ICollectionProvider {
+		
+		private ITransferObject to;
+		
+		public InvoiceSingleCollectionProvider(ITransferObject to) {
+			this.to = to;
+		}
+
+		@SuppressWarnings("rawtypes")
+		public Collection getCollection() {
+			return getCollection(false);
+		}
+
+		@SuppressWarnings("rawtypes")	
+		public Collection getCollection(boolean forceRefresh) {
+			List<ITransferObject> l = new LinkedList<ITransferObject>();
+			l.add( to );
+			return l;
+		}	
+		
 	}
 	
 	//
@@ -211,36 +260,37 @@ public class SaleInvoiceServlet extends HttpServlet{
 	// MUTE TO OLD ENTITIES
 	//
 	
-	private RegistryAddress registryAddress(RAddress raddress){
+	private static RegistryAddress registryAddress(RAddress raddress){
 		RegistryAddress ra = new RegistryAddress();
-		ra.setAddress(raddress.getAddress());
-		ra.setAddress2(raddress.getAddress2());
-		ra.setAddress3(raddress.getAddress3());
-		ra.setAddressType(AddressType.values()[raddress.getType()]);
-		ra.setAlias(raddress.getAlias());
-		ra.setCity(raddress.getCity());
-		ra.setDomain(raddress.getDomain());
-		ra.setId(raddress.getId());
-		ra.setMunicipalityCode(raddress.getMunicipality_code());
-		ra.setNumber(raddress.getNumber());
-		ra.setProvince(raddress.getGeozoneName());
-		ra.setRecipient(raddress.getRecipient());
-		ra.setStreetType(StreetType.valueOf(raddress.getStreet_type()));
-		ra.setZip(raddress.getZip());
-		
-		Registry registry = new Registry();
-		registry.setId(raddress.getRegistry());
-		ra.setRegistry(registry);
-
-		GeoZone geoZone = new GeoZone();
-		geoZone.setId(raddress.getGeozone());
-		geoZone.setName(raddress.getGeozoneName());
-		ra.setGeozone(geoZone);
-
+		if(raddress!=null && raddress.getId()!=null){
+			ra.setAddress(raddress.getAddress());
+			ra.setAddress2(raddress.getAddress2());
+			ra.setAddress3(raddress.getAddress3());
+			ra.setAddressType(AddressType.values()[raddress.getType()]);
+			ra.setAlias(raddress.getAlias());
+			ra.setCity(raddress.getCity());
+			ra.setDomain(raddress.getDomain());
+			ra.setId(raddress.getId());
+			ra.setMunicipalityCode(raddress.getMunicipality_code());
+			ra.setNumber(raddress.getNumber());
+			ra.setProvince(raddress.getGeozoneName());
+			ra.setRecipient(raddress.getRecipient());
+			ra.setStreetType(StreetType.valueOf(raddress.getStreet_type()));
+			ra.setZip(raddress.getZip());
+			
+			Registry registry = new Registry();
+			registry.setId(raddress.getRegistry());
+			ra.setRegistry(registry);
+			
+			GeoZone geoZone = new GeoZone();
+			geoZone.setId(raddress.getGeozone());
+			geoZone.setName(raddress.getGeozoneName());
+			ra.setGeozone(geoZone);
+		}
 		return ra;
 	}
 		
-	private com.code.aon.finance.Invoice invoice(Domain domain, String login, Invoice inv,
+	private static com.code.aon.finance.Invoice invoice(Domain domain, String login, Invoice inv,
 			Set<InvoiceDetail> invoiceDetail, Set<Finance> finances){
 		com.code.aon.finance.Invoice invoice = new com.code.aon.finance.Invoice();
 		
@@ -441,5 +491,112 @@ public class SaleInvoiceServlet extends HttpServlet{
 			return finance;			
 		}
 	}	
+	
+	public class SaleInvoiceDetailByDeliveryPrinter extends InvoiceDetailByDeliveryPrinter {
+		@Override
+		public SaleInvoiceDetailByDeliveryPrinter getInstance() {
+			return new SaleInvoiceDetailByDeliveryPrinter();
+		}
+
+		@Override
+		public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder,
+				Boolean searchPrepayments, Boolean searchIncrease, ProductType type) {		
+			List<InvoiceDetail> invoiceDetailList = new LinkedList<InvoiceDetail>();
+			return invoiceDetailList;
+		}
+		
+		@Override
+		public Double getTotalFinanceAdvance(Integer invoiceId) {
+			return null;
+		}
+		
+		@Override
+		protected Delivery obtainDelivery(InvoiceDetail invoiceDetail) {
+			return null;
+		}
+
+		@Override
+		protected List<InvoiceDetail> getListOrdered(Map<Integer, List<InvoiceDetail>> deliveryMap) throws 
+			ExpressionException {
+			List<InvoiceDetail> invoiceDetailList = new LinkedList<InvoiceDetail>();
+			return invoiceDetailList;
+		}
+	}
+	
+	public static final String SALE_INVOICE_REPORT_PATH = "/com/code/aon/ui/finance/report/";
+	
+	public static void main(String[] args) {
+		
+		HashMap<String, Object> map = new HashMap<>();
+		JasperPrint jasperPrint = null;
+		Connection connection = null;
+		AONContext ctx = null;
+		String domainName = "ibaigane.esferalia.net";
+		int domainId = 2013;
+		String login = "admin";
+		String invoiceId = "10683995";
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			connection = ctx.getDslContext().configuration().connectionProvider().acquire();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+		
+		map.put(IReportConstants.SHOULD_PRINT_HEADERS, Boolean.TRUE);
+		// TODO obtain locale
+//		map.put(JRParameter.REPORT_LOCALE, Locale.US);
+		map.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle.getBundle("com.code.aon.common.i18n.messages"));
+
+//		Map<String, JasperReport> nested = new HashMap<String, JasperReport>();
+//		try {
+//			nested.put("invoiceDetailDefault", JRReportFactory.getJRReport("invoiceDetailDefault").getJasperReport());
+//			nested.put("invoiceTaxBreakDown", JRReportFactory.getJRReport("invoiceTaxBreakDown").getJasperReport());
+//			nested.put("invoicePrepaymentsDefault", JRReportFactory.getJRReport("invoicePrepaymentsDefault").getJasperReport());
+//			nested.put("invoiceFinancesDefault", JRReportFactory.getJRReport("invoiceFinancesDefault").getJasperReport());
+//		} catch (ReportException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		map.put(IReportConstants.NESTED_REPORTS, nested);
+		
+		
+		InputStream reportStream = SaleInvoiceServlet.class.getResourceAsStream(SALE_INVOICE_REPORT_PATH+"saleInvoice.jasper");
+		reportStream = SaleInvoiceServlet.class.getResourceAsStream(SALE_INVOICE_REPORT_PATH+"saleInvoiceTemplate1.jasper");
+		reportStream = SaleInvoiceServlet.class.getResourceAsStream(SALE_INVOICE_REPORT_PATH+"saleInvoiceTemplate5.jasper");
+		
+		try {
+			Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
+			String reportKey = AON.getApplicationParamenter(domain.getName(), domain.getId(), login,
+					AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM).getValue();
+			reportKey = reportKey==null?"saleInvoice":reportKey;
+			// TODO search for custom report template
+			
+			Invoice inv = AON.getInvoice(domain.getName(), domain.getId(), login, f -> 
+					f.getIdProperty().eq(Integer.parseInt(invoiceId)));
+			Set<InvoiceDetail> invoiceDetail = AON.getInvoiceDetails(domain.getName(), domain.getId(), login,
+					f-> f.getIdProperty().eq(inv.getId()))
+					.map(new InvoiceDetailFiller())
+					.collect(Collectors.toCollection(HashSet::new));
+			Set<Finance> finances = AON.getFinanceStream(domain.getName(), domain.getId(), login, 
+					f -> f.getInvoiceProperty().eq(inv.getId()))
+					.map(new FinanceFiller())
+					.collect(Collectors.toCollection(HashSet::new));
+			com.code.aon.finance.Invoice to = invoice(domain, login, inv, invoiceDetail, finances);
+			List<ITransferObject> list = new LinkedList<ITransferObject>();
+			list.add( to );
+			JRDataSource jrds = new com.code.aon.report.jr.JRBeanCollectionDataSource(list);
+			jasperPrint = JasperFillManager.fillReport(reportStream,map,jrds);
+//			jasperPrint = JasperFillManager.fillReport(reportStream,map,connection);
+			OutputStream output = new FileOutputStream(new File("/tmp/invoice_"+inv.getReferenceCode()+".pdf")); 
+			JasperExportManager.exportReportToPdfStream(jasperPrint, output); 
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }
