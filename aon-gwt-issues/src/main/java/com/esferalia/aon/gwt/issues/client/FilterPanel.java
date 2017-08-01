@@ -412,8 +412,8 @@ public class FilterPanel extends Composite {
 				PopupPanel popup = new PopupPanel();
 				AonComboBox acb = new AonComboBox();
 				acb.setItems(users);
-				acb.setItemLabelPath("login");
-				acb.setItemValuePath("login");
+				acb.setItemLabelPath("description");
+				acb.setItemValuePath("description");
 				acb.setLabel("Empresa");
 				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
