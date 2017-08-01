@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-07-20T11:13:04 -->
+<!-- 2017-08-01T13:34:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="688163e4-9f2f-471f-a4ea-83d3db2b5215">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -95,6 +95,9 @@
 		<parameter name="printDiscountPriceApplied" class="java.lang.Boolean"/>
 		<parameter name="valuated" class="java.lang.Boolean"/>
 		<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
 		<field name="price" class="java.lang.Double"/>
 		<field name="quantity" class="java.lang.Double"/>
 		<field name="discountExpression" class="com.code.aon.product.util.DiscountExpression"/>
@@ -102,6 +105,8 @@
 		<field name="description" class="java.lang.String"/>
 		<field name="invoice" class="com.code.aon.finance.Invoice"/>
 		<field name="id" class="java.lang.Integer"/>
+		<sortField name="itemProductCategory" type="Variable"/>
+		<sortField name="itemProductCode" type="Variable"/>
 		<variable name="PriceFormater" class="java.text.DecimalFormat" resetType="None">
 			<variableExpression><![CDATA[java.text.NumberFormat.getCurrencyInstance()]]></variableExpression>
 			<initialValueExpression><![CDATA[java.text.NumberFormat.getCurrencyInstance()]]></initialValueExpression>
@@ -124,6 +129,14 @@
 		<variable name="pQuantity" class="java.lang.Double" resetType="Group" resetGroup="product" calculation="Sum">
 			<variableExpression><![CDATA[$F{quantity}]]></variableExpression>
 			<initialValueExpression><![CDATA[new Double(0.0)]]></initialValueExpression>
+		</variable>
+		<variable name="itemProductCategory" class="java.lang.String" resetType="Group" resetGroup="product">
+			<variableExpression><![CDATA[$F{item}.getProduct().getCategory().getName()]]></variableExpression>
+			<initialValueExpression><![CDATA[$F{item}.getProduct().getCategory().getName()]]></initialValueExpression>
+		</variable>
+		<variable name="itemProductCode" class="java.lang.String" resetType="Group" resetGroup="product">
+			<variableExpression><![CDATA[$F{item}.getProduct().getCode()]]></variableExpression>
+			<initialValueExpression><![CDATA[$F{item}.getProduct().getCode()]]></initialValueExpression>
 		</variable>
 		<filterExpression><![CDATA[$F{item}.getProduct().getType()==ProductType.AUXILIARY]]></filterExpression>
 		<group name="pCategory">
@@ -766,7 +779,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="159" splitType="Stretch">
+		<band height="140" splitType="Stretch">
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-54" positionType="Float" x="0" y="99" width="535" height="25" isRemoveLineWhenBlank="true" uuid="b7cddbca-ad45-467d-803b-66c7a41734e9">
 					<printWhenExpression><![CDATA[$V{increaseTotal}!=null]]></printWhenExpression>
@@ -1215,8 +1228,11 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_comment} + ":"]]></textFieldExpression>
 			</textField>
+		</band>
+		<band height="15">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<componentElement>
-				<reportElement key="prepayments" positionType="Float" x="0" y="140" width="535" height="15" isRemoveLineWhenBlank="true" uuid="43581ba8-ae5a-455b-89db-ac9868e0c084">
+				<reportElement key="prepayments" positionType="Float" x="0" y="0" width="535" height="15" isRemoveLineWhenBlank="true" uuid="43581ba8-ae5a-455b-89db-ac9868e0c084">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -1365,7 +1381,6 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 				</jr:table>
 			</componentElement>
 		</band>
-		<band/>
 	</detail>
 	<pageFooter>
 		<band height="185" splitType="Stretch">
