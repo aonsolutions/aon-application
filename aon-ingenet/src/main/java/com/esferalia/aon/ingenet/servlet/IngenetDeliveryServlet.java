@@ -200,12 +200,23 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		bf.append("<ul>");
 		deliveryList.forEach(alb -> {
 			bf.append("<li>Nuevo albarán ");
-			bf.append("<b>").append(alb.getSERIE()).append("/").append(alb.getNUMERO()).append("</b> del ")
-					.append(alb.getFECHAEMISION());
+			bf.append("<b>").append(alb.getSERIE()).append("/").append(alb.getNUMERO())
+					.append("</b> del ").append(alb.getFECHAEMISION());
+			try {
+				if(!"".equals(alb.getDATOSCLIENTE().getDATOSREGISTRO().getNOMBRE()))
+					bf.append(", a nombre de ")
+						.append(alb.getDATOSCLIENTE().getDATOSREGISTRO().getNOMBRE())
+						.append(" (")
+						.append(alb.getDATOSCLIENTE().getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO())
+						.append(")");
+			} catch (Exception e) {
+				System.err.println("Error on customer name: " + e.getMessage());
+			}
 			bf.append("<ul>");
 			alb.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(lin -> {
 				bf.append("<li>Elaboración finalizada: <b>").append(lin.getDATOSELABORACIONORIGEN().getSERIE())
-						.append("/").append(lin.getDATOSELABORACIONORIGEN().getNUMERO()).append("</b></li>");
+						.append("/").append(lin.getDATOSELABORACIONORIGEN().getNUMERO()).append("</b>")
+						.append("</li>");
 			});
 			bf.append("</ul>");
 			bf.append("</li>");
@@ -501,6 +512,24 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							detail.setWarehouse(warehouse.getId());
 							detail.setQuantity(Double.valueOf(linea
 									.getCANTIDAD()));
+							if(elaboration==null || elaboration.getId()==null){
+								String number = linea.getDATOSELABORACIONORIGEN().getSERIE()
+										+ "/" + linea.getDATOSELABORACIONORIGEN().getNUMERO();
+								addError(albaran, "No hay ninguna elaboración con número '" + number
+										+ "' asociada a la linea " + linea.getLINEA());
+							} else {
+								SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration.getSourceId());
+								if(salesDetail!=null && salesDetail.getId()!=null){
+									detail.setSalesDetail(salesDetail.getId());
+									detail.setPrice(salesDetail.getPrice());
+									detail.setDiscountExpression(salesDetail.getDiscountExpression());
+								} else {
+									String number = linea.getDATOSELABORACIONORIGEN().getSERIE()
+											+ "/" + linea.getDATOSELABORACIONORIGEN().getNUMERO();
+									addError(albaran, "No hay ningún pedido asociado a la elaboración '" +
+											number + "' de a la linea " + linea.getLINEA());
+								}
+							}
 							if(customerRItem!=null){
 								detail.setPrice(customerRItem.getPrice());
 								detail.setDiscountExpression(customerRItem.getDiscountExpr());
@@ -508,13 +537,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							if(detail.getPrice()==null || detail.getPrice().equals(0.0)){
 								detail.setPrice(item.getPrice());
 								detail.setDiscountExpression("0");
-							}
-							if(elaboration==null || elaboration.getId()==null){
-								String number = linea.getDATOSELABORACIONORIGEN().getSERIE()
-										+ "/" + linea.getDATOSELABORACIONORIGEN().getNUMERO();
-								addError(albaran, "No hay ninguna elaboracion con numero '"+number+"' asociada a la linea " + linea.getLINEA());
-							} else {
-								detail.setSalesDetail(elaboration.getSourceId());
 							}
 							detailList.add(detail);
 						} catch (Exception e) {
@@ -863,6 +885,10 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			return list.get(0);
 		}
 		return null;
+	}
+	
+	private SalesDetail obtainSalesDetail(AONContext ctx, Integer detailId) {
+		return SalesDAO.getSalesDetail(ctx, detailId);
 	}
 
 	private RAddress obtainAddress(AONContext ctx, Customer customer,
