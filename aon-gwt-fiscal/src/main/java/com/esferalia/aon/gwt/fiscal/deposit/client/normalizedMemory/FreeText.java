@@ -121,9 +121,10 @@ public class FreeText extends PageAbs {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					if(!textMode) 
-						onEdit(key.getCode(), s);
-					else
+					if(!textMode) {
+						String str = s.replace("\n", "\r\n");
+						onEdit(key.getCode(), str);
+					}else
 						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), s, year, new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {}
