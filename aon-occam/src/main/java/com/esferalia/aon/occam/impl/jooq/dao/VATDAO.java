@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
+import static com.esferalia.aon.jooq.tables.AmortizationInvoice.AMORTIZATION_INVOICE;
+import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
+import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
@@ -8,18 +12,16 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
-import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
-import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
-import static com.esferalia.aon.jooq.tables.AmortizationInvoice.AMORTIZATION_INVOICE;
-import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
-
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -37,8 +39,11 @@ import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -168,6 +173,7 @@ public class VATDAO  {
 				,ENTERPRISE_ACTIVITY.ID
 				,ENTERPRISE_ACTIVITY.DESCRIPTION
 				,ENTERPRISE_ACTIVITY.VAT_REGIME
+				,ENTERPRISE_ACTIVITY.SURCHARGE
 				
 				,IAE.EPIGRAPH
 
@@ -225,6 +231,7 @@ public class VATDAO  {
 			,ENTERPRISE_ACTIVITY.ID
 			,ENTERPRISE_ACTIVITY.DESCRIPTION
 			,ENTERPRISE_ACTIVITY.VAT_REGIME
+			,ENTERPRISE_ACTIVITY.SURCHARGE
 			
 			,IAE.EPIGRAPH
 			
@@ -342,6 +349,100 @@ public class VATDAO  {
 		return ded_quota;
 	}
 	
+	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Date fromDate,Date toDate) {
+		Field<BigDecimal> sumField = DSL.sum(INVOICE_TAX.BASE);
+		Record1<BigDecimal> rec = ctx.getDslContext().select( sumField )
+				.from(INVOICE_TAX)
+				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
+				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
+				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.fetchOne()
+				;
+		if (rec != null) {
+			BigDecimal bg = rec.getValue(sumField);
+			if (bg != null) return bg.doubleValue();
+		}
+		return 0.0;
+	}
+
+	public static double getVatAccrualPaymentOutputQuota(AONContext ctx, Date fromDate,Date toDate) {
+		return ctx.getDslContext().select( INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
+				.from(INVOICE_TAX)
+				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
+				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
+				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
+				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.fetch()
+				.stream()
+				.mapToDouble( rec -> {
+					double quota = rec.getValue(INVOICE_TAX.QUOTA);
+					if (AonMathUtils.isZero(quota)) {
+						double base = rec.getValue(INVOICE_TAX.BASE);
+						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
+						quota = AonMathUtils.round(base * percent / 100);
+					}
+					return quota;
+				})
+				.sum();
+	}
+
+	public static double getVatAccrualPaymentInputBase(AONContext ctx, Date fromDate,Date toDate) {
+		Field<BigDecimal> sumField = DSL.sum(INVOICE_TAX.BASE);
+		Record1<BigDecimal> rec = ctx.getDslContext().select( sumField )
+				.from(INVOICE_TAX)
+				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
+				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
+				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.fetchOne()
+				;
+		if (rec != null) {
+			BigDecimal bg = rec.getValue(sumField);
+			if (bg != null) return bg.doubleValue();
+		}
+		return 0.0;
+	}
+
+	public static double getVatAccrualPaymentInputQuota(AONContext ctx, Date fromDate,Date toDate) {
+		return ctx.getDslContext().select( INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
+				.from(INVOICE_TAX)
+				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
+				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
+				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
+				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.fetch()
+				.stream()
+				.mapToDouble( rec -> {
+					double quota = rec.getValue(INVOICE_TAX.QUOTA);
+					if (AonMathUtils.isZero(quota)) {
+						double base = rec.getValue(INVOICE_TAX.BASE);
+						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
+						quota = AonMathUtils.round(base * percent / 100);
+					}
+					return quota;
+				})
+				.sum();
+	}
+	
+	
+	
 	public static class VatContextAccrualRegimeFiller  extends VatContextFiller {
 		@Override
 		public VatContext apply(Record rec) {
@@ -374,8 +475,8 @@ public class VATDAO  {
 				.setActivity(rec.getValue(ENTERPRISE_ACTIVITY.ID))
 				.setActivityDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
 				.setEpigraph(rec.getValue(IAE.EPIGRAPH))
-				.setVatGeneralRegime( (rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) == null 
-						|| rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) == (byte) 0) )
+				.setVatRegime( VATRegime.safeValueOf( rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) ))
+				.setVatSurchargeRegime( AonEnumUtils.getBoolean(rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) ) )		
 				.setDocumentNumber(FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE))
 						, rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 
 				.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
@@ -456,42 +557,3 @@ public class VATDAO  {
 		}
 	}
 }
-
-/*
-.forEach( vat -> {
-TreeMap<VatSummaryType,TreeMap<Double,VatContext>> map = vat.isSales()? outputMap : inputMap;
-VatSummaryType type = VatSummaryType.accept(vat);
-TreeMap<Double,VatContext> percentMap = map.get(type);
-if (percentMap == null) {
-	percentMap = new TreeMap<Double,VatContext>();
-	map.put(type,percentMap);
-}
-double percent = vat.getPercentage();
-VatContext sum = percentMap.get(percent);
-if (sum == null) {
-	sum = new VatContext();
-	percentMap.put(percent, sum);
-	sum.setPercentage(percent);
-}
-sum.setBase( sum.getBase() + vat.getBase()); 
-sum.setQuota( sum.getQuota() + vat.getQuota());
-sum.setDeductibleQuota( sum.getDeductibleQuota() + vat.getDeductibleQuota());
-if (vat.isSurcharge()) {
-	type = VatSummaryType.SURCHARGE;
-	percentMap = map.get(type);
-	if (percentMap == null) {
-		percentMap = new TreeMap<Double,VatContext>();
-		map.put(type,percentMap);
-	}
-	percent = vat.getSurchargePercent();
-	sum = percentMap.get(percent);
-	if (sum == null) {
-		sum = new VatContext();
-		percentMap.put(percent, sum);
-		sum.setPercentage(percent);
-	}
-	sum.setBase( sum.getBase() + vat.getBase()); 
-	sum.setQuota( sum.getQuota() + vat.getSurchargeQuota());
-}
-});
-*/

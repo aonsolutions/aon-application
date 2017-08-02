@@ -467,6 +467,7 @@ public class MOD303Writer {
 		if (dec.getVatTax().isComplementary()){
 			declaration.setPreviousPayBack( dec.getPreviousPayBack());
 			declaration.setPreviousDeposit( dec.getPreviousDeposit() );
+			declaration.setToDeduct(dec.getPreviousDeposit() + dec.getPreviousPayBack());
 		}
 		if (!dec.isCompensateEnabled()) {
 			declaration.setTotalDebt( dec.getTotalTaxDebt() );

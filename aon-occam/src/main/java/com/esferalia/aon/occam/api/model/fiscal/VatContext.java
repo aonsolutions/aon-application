@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 
 public class VatContext implements Serializable {
@@ -17,7 +18,8 @@ public class VatContext implements Serializable {
 	private Integer invoice;
 	private Integer activity;
 	private String activityDescription;
-	private boolean vatGeneralRegime;
+	private VATRegime vatRegime;
+	private boolean vatSurchargeRegime;
 	private String epigraph;
 	private String documentNumber;
 	private String referenceCode;
@@ -92,11 +94,27 @@ public class VatContext implements Serializable {
 		this.activityDescription = activityDescription;
 		return this;
 	}
-	public boolean isVatGeneralRegime() {
-		return vatGeneralRegime;
+	public VATRegime getVatRegime() {
+		return vatRegime;
 	}
-	public VatContext setVatGeneralRegime(boolean vatGeneralRegime) {
-		this.vatGeneralRegime = vatGeneralRegime;
+	public VatContext setVatRegime(VATRegime vatRegime) {
+		this.vatRegime = vatRegime;
+		return this;
+	}
+	public boolean isVatGeneralRegime() {
+		return getVatRegime() == null || getVatRegime() == VATRegime.GENERAL;
+	}
+	public boolean isVatSimplifiedRegime() {
+		return getVatRegime() == null || getVatRegime() == VATRegime.SIMPLIFIED;
+	}
+	public boolean isActivityVatExempt() {
+		return getVatRegime() == null || getVatRegime() == VATRegime.EXEMPT;
+	}
+	public boolean isVatSurchargeRegime() {
+		return vatSurchargeRegime;
+	}
+	public VatContext setVatSurchargeRegime(boolean vatSurchargeRegime) {
+		this.vatSurchargeRegime = vatSurchargeRegime;
 		return this;
 	}
 	public String getEpigraph() {
@@ -322,6 +340,9 @@ public class VatContext implements Serializable {
 	public boolean isExpenses() {
 		return (invoiceType == InvoiceType.EXPENSES || invoiceType == InvoiceType.UNDEDUCTIBLE);
 	}
+	public boolean isInput() {
+		return isPurchase() || isExpenses();
+	}
 	public boolean isNational() {
 		return (transaction == InvoiceTransactionType.NATIONAL);
 	}
@@ -341,8 +362,14 @@ public class VatContext implements Serializable {
 		return isNational() && isSales();
 	}
 	public boolean isIntracommunitySales() {
-	return isIntracommunity() && isSales();
-}
+		return isIntracommunity() && isSales();
+	}
+	public boolean isExtracommunitySales() {
+		return isExtracommunity() && isSales();
+	}
+	public boolean isCanCeuMelSales(){
+		return isCanCeuMel() && isSales();
+	}
 	public boolean isNationalPurchase() {
 		return isNational() && isPurchase();
 	}
@@ -363,6 +390,9 @@ public class VatContext implements Serializable {
 	}
 	public boolean isOtherISPExpenses() {
 		return isOtherISP() && isExpenses();
+	}
+	public boolean isOtherISPSales() {
+		return isOtherISP() && isSales();
 	}
 	public boolean isExtracommunityExpenses(){
 		return isExtracommunity() && isExpenses();

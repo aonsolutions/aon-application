@@ -490,6 +490,9 @@ public interface CommonMessages extends Messages {
 	String no();
 
 	// ---------------------------------------------------------Common Messages
+	@DefaultMessage("Declaraci\u00F3n")
+	String declaration();
+	
 	@DefaultMessage("A\u00F1o")
 	String year();
 	
@@ -1051,13 +1054,16 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas en R\u00E9gimen general")
 	String generalRegimeOperations();
 
+	@DefaultMessage("R\u00E9gimen general")
+	String generalRegime();
+
 	@DefaultMessage("IVA DEVENGADO")
 	String outputVat();
 
 	@DefaultMessage("IVA DEDUCIBLE")
 	String inputVat();
 
-	@DefaultMessage("R\u00E9gimen Simplificado")
+	@DefaultMessage("R\u00E9gimen simplificado")
 	String simplifiedRegime();
 
 	@DefaultMessage("Operaciones realizadas en R\u00E9gimen simplificado")
@@ -1293,6 +1299,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Prorratas")
 	String prorrata();
+	
+	@DefaultMessage("Porcentaje de prorrata")
+	String prorrataPercent();
 
 	@DefaultMessage("Actividades con reg\u00EDmenes de deducci\u00F3n diferenciados")
 	String difActivitiesRegime();

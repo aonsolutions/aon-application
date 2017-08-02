@@ -82,19 +82,22 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list aon-width-all">
 								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<!-- *********************** [MODELO 303] 
-									<aon:div>
-										<aon:commandLink id="gwt_mod303-new" action="gwt_mod303-new" 
-											title="#{bundle.fiscal_model_303_module}" styleClass="aon-menu-fiscal">
-											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="303"/>
-											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="300"/>
-											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="303"/>
-											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="300/320"/>
-											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="F69"/>
-											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_303_module}" />
-										</aon:commandLink>
-									</aon:div> -->
-
+									<!-- *********************** [MODELO 303] -->
+									<aon:if test="#{domainSwitcher.betaDomain}"> 
+										<aon:div>
+											<aon:commandLink id="gwt_mod303-new" action="gwt_mod303-new" 
+												title="#{bundle.fiscal_model_303_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="303"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="300"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="303"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="300/320"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="F69"/>
+												<aon:outputText styleClass="aon-icon-beta-text"
+													style="padding-left: 2em;margin-left: 1em;" 
+													value="IVA. Autoliquidaci&#243;n." />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
 									<!-- *********************** [MODELO 310] 
 									<aon:div>
 										<aon:commandLink id="gwt_mod310-new" action="gwt_mod310-new" 

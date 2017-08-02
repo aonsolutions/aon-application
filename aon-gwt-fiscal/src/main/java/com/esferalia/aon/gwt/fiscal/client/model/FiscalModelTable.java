@@ -23,7 +23,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 
 	private NoSelectionModel<FM> model;
 	
-	public FiscalModelTable(SelectionChangeEvent.Handler handler, ProvidesKey<FM> providesKey) {
+	public FiscalModelTable(ProvidesKey<FM> providesKey) {
 		super(1,TABLE_STYLE, providesKey);
 		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
@@ -42,9 +42,13 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		addFinanceStatusColumn();
 		
 		model = new NoSelectionModel<FM>(providesKey);
-		model.addSelectionChangeHandler( handler );
 		this.setSelectionModel(model);
 		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
+	}
+
+	public FiscalModelTable(SelectionChangeEvent.Handler handler, ProvidesKey<FM> providesKey) {
+		this(providesKey);
+		model.addSelectionChangeHandler( handler );
 	}
 
 	private void addSelectorColumn() {
@@ -68,7 +72,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		};
 		this.addColumn(yearColumn, AON.MSG.fiscalYear());
 		yearColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-		this.setColumnWidth(yearColumn, 100, Unit.PX);
+		this.setColumnWidth(yearColumn, 50, Unit.PX);
 	}
 
 	private void addPeriodColumn() {
@@ -79,7 +83,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 			}
 		};
 		this.addColumn(documentColumn, AON.MSG.period());
-		this.setColumnWidth(documentColumn, 75, Unit.PX);
+		this.setColumnWidth(documentColumn, 50, Unit.PX);
 	}
 
 	private void addAdministrationColumn() {
@@ -131,7 +135,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		};
 		this.addColumn(replacementColumn, "S" );
 		replacementColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
-		this.setColumnWidth(replacementColumn, 100, Unit.PX);
+		this.setColumnWidth(replacementColumn, 20, Unit.PX);
 	}
 
 	private void addComplementaryColumn() {
@@ -146,7 +150,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		};
 		this.addColumn(complementaryColumn, "C" );
 		complementaryColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
-		this.setColumnWidth(complementaryColumn, 100, Unit.PX);
+		this.setColumnWidth(complementaryColumn, 20, Unit.PX);
 	}
 	
 	private void addDocumentColumn() {
@@ -157,7 +161,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 			}
 		};
 		this.addColumn(documentColumn, AON.MSG.document());
-		this.setColumnWidth(documentColumn, 150, Unit.PX);
+		this.setColumnWidth(documentColumn, 100, Unit.PX);
 	}
 
 	private void addNameColumn() {
@@ -168,7 +172,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 			}
 		};
 		this.addColumn(nameColumn, AON.MSG.name());
-		this.setColumnWidth(nameColumn, 100, Unit.PCT);
+		this.setColumnWidth(nameColumn, "auto");
 	}	
 
 	private void addAmountColumn() {
@@ -180,7 +184,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		};
 		this.addColumn(amountColumn, AON.MSG.result());
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PX);
+		this.setColumnWidth(amountColumn, 100, Unit.PX);
 	}	
 
 	private void addFinanceStatusColumn() {
@@ -195,7 +199,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		};
 		this.addColumn(financeStatusColumn, AON.MSG.financeStatus());
 		financeStatusColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-		this.setColumnWidth(financeStatusColumn, 140, Unit.PX);
+		this.setColumnWidth(financeStatusColumn, 150, Unit.PX);
 	}	
 
 	public FM getSelected() {
