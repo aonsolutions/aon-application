@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-07-11T12:08:40 -->
+<!-- 2017-08-02T11:19:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="bf352430-a19b-4ee5-89ee-fc85c0ca4d0c">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -573,7 +573,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") 
 + ($F{address}.getCity()==null?"":$F{address}.getCity())
 + ($F{address}.getCity()!=null && $F{address}.getGeozone()!=null?", ":"")
-+ $F{address}.getGeozone().getName()]]></textFieldExpression>
++ ($F{address}.getGeozone()==null?"":$F{address}.getGeozone().getName())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="67" y="190" width="469" height="15" uuid="976748d3-2f6f-41e9-9d96-906a23c9d3a3">
