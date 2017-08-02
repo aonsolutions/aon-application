@@ -506,8 +506,14 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			Period intersect = var.getPeriod().intersect(p);
 			if (intersect == null)
 				continue;
+			try {
+				var.getValue(intersect);
+				ret.add(new WrapTimedVariable<T>(intersect, (ITimedVariable<T>) var));
+			} catch (Exception e) {
+				continue;
+			}
 
-			ret.add(new WrapTimedVariable<T>(intersect, (ITimedVariable<T>) var));
+//			ret.add(new WrapTimedVariable<T>(intersect, (ITimedVariable<T>) var));
 		}
 
 		return ret;
