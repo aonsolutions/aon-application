@@ -220,9 +220,9 @@ public class Mod115DAO extends FiscalModelDAO {
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod115Key.GP_C03,mod,br)
 			,null,null)
 		,GP_C04(Mod115Key.GP_C04, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
-		,GP_C05(Mod115Key.GP_C04, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
-		,GP_C06(Mod115Key.GP_C04, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
-		,GP_C07(Mod115Key.GP_C07, false, (mod -> mod.isGipuzkoa()),null,null,null,"GP_C03+GP_C07")
+		,GP_C05(Mod115Key.GP_C05, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C06(Mod115Key.GP_C06, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C07(Mod115Key.GP_C07, false, (mod -> mod.isGipuzkoa()),null,null,null,"GP_C03+GP_C06")
 		,GP_TIP(Mod115Key.GP_TIP, false,  (mod -> mod.isGipuzkoa()), null,null,null,null)
 		
 		// *************************************************************************
