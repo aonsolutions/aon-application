@@ -4,7 +4,6 @@ import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
 public interface IModelScript<T extends IFiscalModelKey> {
 	static final int FIELD_LENGTH = 12; 

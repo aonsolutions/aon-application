@@ -567,7 +567,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		surnameLabel.setText(mod303.getSurname());
 	}
 
-	private void markAsDirty() {
+	protected void markAsDirty() {
 		if (!isDirty()) {
 			setDirty(true);
 		}
@@ -916,6 +916,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	// *********** [BORRAR]
 	public boolean isSnapshot() {
-		return true;
+		return false;
 	}
 }

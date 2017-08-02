@@ -52,7 +52,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public Mod303Key getDeclarationTypeKey() {
 		if (getAdministration() == null) return null;
 		else if (isAraba()) return Mod303Key.AR_X002;
-		else if (isAEAT()) return Mod303Key.CT_A11;
+		else if (isAEAT()) return Mod303Key.CT_X02;
 		else if (isBizkaia()) return Mod303Key.BZ_X001;
 		else if (isGipuzkoa()) return null;
 		else if (isNavarra()) return null;

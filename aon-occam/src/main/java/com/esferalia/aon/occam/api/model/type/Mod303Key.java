@@ -18,6 +18,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// 	--------------------------------------------------------------------  AEAT -------
 	// 	----------------------------------------------------------------------------------
 	 CT_X01("303-CTX01", 0,"Porcentaje de prorrata.")
+	,CT_X02("303-CTX02", 0,"Tipo de declaraci\u00F3n")
 	 
 	,CT_A01("303-CTA01", 0,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual (Art. 30 RIVA)?")
 	,CT_A02("303-CTA02", 0,"\u00BFTributa exclusivamente en r\u00E9gimen simplificado?")
@@ -29,7 +30,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_A08("303-CTA08", 0,"\u00BFEs destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
 	,CT_A09("303-CTA09", 0,"Opci\u00F3n por la aplicaci\u00F3n de la prorrata especial (art\u00EDculo 103.Dos.1\u00BA LIVA)")
 	,CT_A10("303-CTA10", 0,"Revocaci\u00F3n de la opci\u00F3n por la aplicaci\u00F3n de la prorrata especial (art\u00EDculo 103.Dos.1\u00BA LIVA)")
-	,CT_A11("303-CTA11", 0,"Tipo de declaraci\u00F3n")
+	,CT_A11("303-CTA11", 0,"Exonerados de la declaraci\u00F3n-resumen anual del IVA, modelo 390: \u00BFExiste volumen de operaciones (art. 121 LIVA)?")
 	
 	,CT_C01("303-CTC01", 1,"R\u00E9gimen general - Base imponible")
 	,CT_C02("303-CTC02", 2,"R\u00E9gimen general - Tipo %")

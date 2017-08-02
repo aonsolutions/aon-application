@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -10,10 +12,18 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATAdditiona
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -31,7 +41,7 @@ public class Model3032017AEAT extends Model303Base {
 		add(centerPanel);
 		
 		paintIdentificationTab(callback,tabPanel);
-		paintDeclarationTab(callback,tabPanel);
+		paintDeclarationTab(mod303,callback,tabPanel);
 		paintGeneralRegimenTab(callback,tabPanel);
 		paintSimplifiedRegimenTab(callback,tabPanel);
 		paintResultTab(callback,tabPanel);
@@ -39,19 +49,6 @@ public class Model3032017AEAT extends Model303Base {
 		paintInformationTab(callback,tabPanel);
 		
 		
-	}
-
-	private void paintDeclarationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
-		ScrollPanel declarationScrollPanel = new ScrollPanel();
-		// ---
-		declarationScrollPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		Label notYet = new Label("NO IMPLEMENTADO");
-		notYet.setStyleName(AON.AON_CSS.aonColorRed());
-		notYet.addStyleName(AON.AON_CSS.aonFontBig());
-		// ---
-		
-		declarationScrollPanel.setWidget(notYet);
-		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 
 	private void paintIdentificationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
@@ -167,4 +164,81 @@ public class Model3032017AEAT extends Model303Base {
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G414.shtml"));
 		return list;
 	}
+	
+	private void paintDeclarationTab(Mod303 mod303,Model303Callback callback, TabLayoutPanel tabPanel) {
+		ScrollPanel declarationScrollPanel = new ScrollPanel();
+
+		FlexTable table = new FlexTable();
+		table.setWidth("100%");
+		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		
+		table.getColumnFormatter().setWidth(0, "auto");
+		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		
+		
+		paintCheck(mod303,Mod303Key.CT_A01,table);	// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?		
+		paintCheck(mod303,Mod303Key.CT_A02,table);	// ¿Tributa exclusivamente en régimen simplificado?
+		paintCheck(mod303,Mod303Key.CT_A03,table);	// ¿Es autoliquidación conjunta?
+		paintCheck(mod303,Mod303Key.CT_A07,table);	// ¿Ha optado por el régimen especial del criterio de Caja (art. 163 undecies LIVA)?
+		paintCheck(mod303,Mod303Key.CT_A08,table);	// ¿Es destinatario de operaciones a las que se aplique el régimen especial del criterio de caja?
+		paintCheck(mod303,Mod303Key.CT_A11,table);	// Exonerados de la declaraci\u00F3n-resumen anual del IVA, modelo 390: ¿Existe volumen de operaciones (art. 121 LIVA)?
+		paintCheck(mod303,Mod303Key.CT_A04,table);	// Ha sido declarado en concurso de acreedores en el presente período de liquidación?
+		
+		paintEmptyRow(table);
+		paintCheck(mod303,Mod303Key.CT_A04,table);	// Ha sido declarado en concurso de acreedores en el presente período de liquidación?
+		
+		
+		int row = table.getRowCount();
+		FlowPanel a05Panel = new FlowPanel();
+		InlineLabel a05Label = new InlineLabel(Mod303Key.CT_A05.getDescription());
+		a05Panel.add(a05Label);
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+		final DateBoxEx a05 = new DateBoxEx();
+		a05.addStyleName(AON.AON_CSS.aonMarginLeft());
+		a05Panel.add(a05);
+		a05.setEnabled(mod303.isNotFinished());
+		if (AonStringUtils.isNotEmpty( mod303.ensureDetail(Mod303Key.CT_A05).getDescription() ) ) {
+			a05.setValue( a05.parse(mod303.ensureDetail(Mod303Key.CT_A05).getDescription() , false) );
+		}
+		a05.addValueChangeHandler( new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				mod303.ensureDetail(Mod303Key.CT_A05).setDescription(a05.format());
+				markAsDirty();
+			}
+		});
+		table.setWidget(row, 0, a05Panel );
+		paintCheck(mod303,Mod303Key.CT_A05,table);	// Auto de declaración de concurso dictado en el períDodo
+		
+
+		paintEmptyRow(table);
+		paintCheck(mod303,Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
+		paintCheck(mod303,Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
+		
+		declarationScrollPanel.setWidget(table);
+		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
+	}
+	
+	private void paintCheck(Mod303 mod303,Mod303Key key, FlexTable table) {
+		int row = table.getRowCount();
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+		final CheckBox a02 = new CheckBox(key.getDescription());
+		a02.setEnabled(mod303.isNotFinished());
+		a02.setValue(mod303.ensureDetail(key).getAmount() == 1);
+		a02.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod303.ensureDetail(key).setAmount(a02.getValue()?1.0:0.0);
+				markAsDirty();
+			}
+		});
+		table.setWidget(row, 0, a02);
+	}
+	
+
+	
 }
