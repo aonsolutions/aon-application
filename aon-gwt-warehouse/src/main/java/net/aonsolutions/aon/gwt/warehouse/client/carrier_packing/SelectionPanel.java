@@ -618,7 +618,8 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	    pi.add(ironIcon);
 	    String title = (order.getIssueDate() != null 
 	    		? AonDateUtils.formatDate(AonDateUtils.parseDateTime(order.getIssueDate())) + " - "
-	    		: "") + (isReception(panel) ? order.getReferenceCode() : order.getSeriesNumber()) + " - " + order.getRegistry().getName(); // + WORKPLACE!
+	    		: "") + (isReception(panel) ? order.getReferenceCode() : order.getSeriesNumber()) + " - " + order.getRegistry().getName()
+	    		+ (order.getPurchaseReference() != null && !" ".equals(order.getPurchaseReference()) ? " - Ref.Compra : " + order.getPurchaseReference() : "");
 	   
 	    Label ot = new Label(title.length() > 70 ? title.substring(0,70) + "..." : title);
 	    ot.setTitle(title);

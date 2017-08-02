@@ -354,7 +354,8 @@ public class ToJSON {
 			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? AonDateUtils.dateTimeFormat(purchase.getIssueDate()) : "")
 			.put("order_type", "purchase")
 			.put("address", purchase.getAddress())
-			.put("reference", purchase.getPurchaseReference() != null ? purchase.getPurchaseReference() : " ");
+			.put("reference", purchase.getPurchaseReference() != null ? purchase.getPurchaseReference() : " ")
+			.put("purchase_reference", purchase.getPurchaseReference() != null ? purchase.getPurchaseReference() : " ");
 	}
 	
 	public static JSONObject deliveryToJSON(Delivery delivery) {		
