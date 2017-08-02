@@ -102,7 +102,7 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 			if (data == null || data.getId() == null) {
 				data = new ContractData();
 				data.setContract(irpf.getContract());
-				data.setName(ContextVariable.IRPF_PERCENT.name());
+				data.setName(ContextVariable.IRPF_PERCENT.getName());
 			}
 			data.setStartDate(irpf.getStartDate());
 			data.setEndDate(irpf.getEndDate());
