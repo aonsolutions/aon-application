@@ -265,12 +265,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		newButton.setVisible(!mod303.isNew());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(true);
-		
-		saveButton.setEnabled(!mod303.isFinished());
+		saveButton.setEnabled(!isSnapshot() && !mod303.isFinished());
 		deleteButton.setEnabled(!mod303.isFinished());
 		
-		reopenButton.setVisible(!mod303.isNew() && mod303.getStatus() == FiscalStatus.FINISHED);
-		finalizeButton.setVisible(!mod303.isNew() && mod303.getStatus() == FiscalStatus.PENDING );
+		reopenButton.setVisible(!isSnapshot() && !mod303.isNew() && mod303.isFinished());
+		finalizeButton.setVisible(!isSnapshot() && !mod303.isNew() && !mod303.isFinished());
 	}
 
 	protected void paintDeclarationHeaderTable(SimplePanel panel) {
@@ -914,4 +913,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 
 	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
+	
+	// *********** [BORRAR]
+	public boolean isSnapshot() {
+		return true;
+	}
 }
