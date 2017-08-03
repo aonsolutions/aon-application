@@ -751,8 +751,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 //		draft("NOMINA, OFICINAS Y DESPACHOS");
 	}
 	
-//	@Test
-	public void TestIncidencias() throws Exception {
+	@Test
+	public void TestIncidenciasCompleto() throws Exception {
 
 		open("incidencias");
 		wait4Id("complemento_i,_incidencia");
@@ -797,6 +797,49 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		redo.click();
 		wait4Id("complemento_i");
 		assertText("complemento_i_8","7");
+		
+	}
+	
+	@Test
+	public void TestIncidenciasParcial() throws Exception {
+
+		open("incidencias");
+		wait4Id("complemento_i,_tiempo_parcial");
+		events("COMPLEMENTO_I, TIEMPO PARCIAL");
+
+		//Verificamos unos valores iniciales
+		assertText("complemento_i_6","-");
+		assertText("complemento_i_9","3");
+		
+//		//Click al complemento de agosto
+//		HtmlDivision complementoAgosto = getElementById("complemento_i_8");
+//		complementoAgosto.click();
+//		
+//		//Click a new value
+//		HtmlButton newValue = getElementById("new_value_complemento_i");
+//		newValue.click();
+//		
+//		//Poner nuevo valor DoubleBox
+//		wait4Id("value_box");
+//		setValue("value_box", "7");
+//		HtmlButton accept = getElementById("input_accept");
+//		accept.click();
+//		
+//		//Comparar nuevo valor
+//		wait4Id("complemento_i");
+//		assertText("complemento_i_8","7");
+//		
+//		//Comparar nuevo valor al hacer undo
+//		HtmlButton undo = getElementById("undo_complemento_i");
+//		undo.click();
+//		wait4Id("complemento_i");
+//		assertText("complemento_i_8","4");
+//		
+//		//Comparar nuevo valor al hacer redo
+//		HtmlButton redo = getElementById("redo_complemento_i");
+//		redo.click();
+//		wait4Id("complemento_i");
+//		assertText("complemento_i_8","7");
 		
 	}
 	
