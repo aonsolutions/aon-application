@@ -4,15 +4,20 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
@@ -20,10 +25,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -33,24 +38,22 @@ public class Model3032017AEAT extends Model303Base {
 	
 	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
-		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
-		paintIdentificationTab(callback,tabPanel);
-		paintDeclarationTab(mod303,callback,tabPanel);
-		paintGeneralRegimenTab(callback,tabPanel);
-		paintSimplifiedRegimenTab(callback,tabPanel);
-		paintResultTab(callback,tabPanel);
-		paintAdditionalDataTab(callback,tabPanel);
-		paintInformationTab(callback,tabPanel);
-		
-		
+		paintIdentificationTab(getCallback(),tabPanel);
+		paintDeclarationTab(mod303,getCallback(),tabPanel);
+		paintGeneralRegimenTab(getCallback(),tabPanel);
+		paintSimplifiedRegimenTab(getCallback(),tabPanel);
+		paintResultTab(getCallback(),tabPanel);
+		paintAdditionalDataTab(getCallback(),tabPanel);
+		paintInformationTab(getCallback(),tabPanel);
 	}
-
+	
+	
 	private void paintIdentificationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
 		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
 		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
@@ -173,6 +176,7 @@ public class Model3032017AEAT extends Model303Base {
 		table.addStyleName(AON.AON_CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
+		table.getColumnFormatter().setWidth(1, "150px");
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 		
@@ -183,21 +187,81 @@ public class Model3032017AEAT extends Model303Base {
 		paintCheck(mod303,Mod303Key.CT_A07,table);	// ¿Ha optado por el régimen especial del criterio de Caja (art. 163 undecies LIVA)?
 		paintCheck(mod303,Mod303Key.CT_A08,table);	// ¿Es destinatario de operaciones a las que se aplique el régimen especial del criterio de caja?
 		paintCheck(mod303,Mod303Key.CT_A11,table);	// Exonerados de la declaraci\u00F3n-resumen anual del IVA, modelo 390: ¿Existe volumen de operaciones (art. 121 LIVA)?
-		paintCheck(mod303,Mod303Key.CT_A04,table);	// Ha sido declarado en concurso de acreedores en el presente período de liquidación?
 		
 		paintEmptyRow(table);
 		paintCheck(mod303,Mod303Key.CT_A04,table);	// Ha sido declarado en concurso de acreedores en el presente período de liquidación?
+		paintDate( mod303,Mod303Key.CT_A05,table );	// Fecha en que se dictó el auto de declaración de concurso
+		paintCheck(mod303,Mod303Key.CT_A06,table);	// Auto de declaración de concurso dictado en el períDodo
+
+		paintEmptyRow(table);
+		paintCheck(mod303,Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
+		paintCheck(mod303,Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
+		paintProrate(mod303,callback,table);					// Porcentaje de prorrata
 		
-		
+		declarationScrollPanel.setWidget(table);
+		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
+	}
+	
+	private void paintProrate(Mod303 mod303, Model303Callback callback, FlexTable table) {
 		int row = table.getRowCount();
-		FlowPanel a05Panel = new FlowPanel();
-		InlineLabel a05Label = new InlineLabel(Mod303Key.CT_A05.getDescription());
-		a05Panel.add(a05Label);
+		paintLabel(table, row, AON.MSG.prorrataPercent());
+		Mod303Key key = mod303.getProrateKey();
+		final FiscalModelDetail det1 = mod303.ensureDetail(key);
+		final DoubleBox input = new DoubleBox(8);
+		getFieldsMap().put(key, input);
+		input.setEnabled(mod303.isNotFinished()); 
+		input.setValue(det1.getAmount());
+		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				double result = mod303.getResultAmount(key);
+				double adjust = mod303.getAdjustAmount(key);
+				double amount = input.getValue();
+				if (AonMathUtils.isNotZero(result - adjust - amount)) {
+					mod303.ensureDetail(key).setAdjustAmount( result - amount);	
+				}
+				mod303.ensureDetail(key).setAmount(input.getValue());
+				if (input.isEnabled()) {
+					ConfirmDialog cd = new ConfirmDialog();
+					cd.confirm(AON.MSG.prorateChanged(), new ConfirmDialogCallback() {
+
+						@Override
+						public void onAccept() {
+							Model303.mod303Service.initializeMod303(Model303.getCurrentDomainName(),Model303.getCurrentDomain(),mod303, 
+									new AsyncCallback<Mod303>() {
+								@Override
+								public void onSuccess(Mod303 result) {
+									markAsDirty();
+									selectAndPopulate(result);
+								}
+
+								@Override
+								public void onFailure(Throwable caught) {
+									markAsDirty();
+									callback.showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+								}
+							});
+						}
+
+						@Override
+						public void onCancel() {
+							deleteButton.setEnabled(true);
+						}
+					});
+				}
+			}
+		});
+		table.setWidget(row, 1, input);
+	}
+
+	private void paintDate(Mod303 mod303, Mod303Key key, FlexTable table) {
+		int row = table.getRowCount();
+		paintLabel(table, row, key.getDescription());
+		
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		final DateBoxEx a05 = new DateBoxEx();
 		a05.addStyleName(AON.AON_CSS.aonMarginLeft());
-		a05Panel.add(a05);
 		a05.setEnabled(mod303.isNotFinished());
 		if (AonStringUtils.isNotEmpty( mod303.ensureDetail(Mod303Key.CT_A05).getDescription() ) ) {
 			a05.setValue( a05.parse(mod303.ensureDetail(Mod303Key.CT_A05).getDescription() , false) );
@@ -209,23 +273,13 @@ public class Model3032017AEAT extends Model303Base {
 				markAsDirty();
 			}
 		});
-		table.setWidget(row, 0, a05Panel );
-		paintCheck(mod303,Mod303Key.CT_A05,table);	// Auto de declaración de concurso dictado en el períDodo
-		
-
-		paintEmptyRow(table);
-		paintCheck(mod303,Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
-		paintCheck(mod303,Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
-		
-		declarationScrollPanel.setWidget(table);
-		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
+		table.setWidget(row, 1, a05);
 	}
-	
+
 	private void paintCheck(Mod303 mod303,Mod303Key key, FlexTable table) {
 		int row = table.getRowCount();
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		final CheckBox a02 = new CheckBox(key.getDescription());
+		paintLabel(table, row, key.getDescription());
+		final CheckBox a02 = new CheckBox();
 		a02.setEnabled(mod303.isNotFinished());
 		a02.setValue(mod303.ensureDetail(key).getAmount() == 1);
 		a02.addClickHandler(new ClickHandler() {
@@ -236,7 +290,7 @@ public class Model3032017AEAT extends Model303Base {
 				markAsDirty();
 			}
 		});
-		table.setWidget(row, 0, a02);
+		table.setWidget(row, 1, a02);
 	}
 	
 

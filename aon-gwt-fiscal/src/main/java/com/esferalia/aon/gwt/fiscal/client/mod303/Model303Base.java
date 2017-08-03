@@ -94,9 +94,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	public Model303Base(Mod303 mod303,Model303Callback cbk) {
 		super(Unit.PX);
 		select( mod303 );
-		this.callback = cbk;
 		
-		setStyleName(AON.AON_CSS.aonSelector());
 		addNorth(getToolbarPanel(), 25);
 		
 		SimplePanel headerPanel = new SimplePanel();
@@ -108,6 +106,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		addNorth(declarationHeaderPanel , 40);
 
 		fieldsMap = new EnumMap<>(Mod303Key.class);
+		this.callback = cbk;
+		
+		setStyleName(AON.AON_CSS.aonSelector());
+	}
+	
+	public Model303Callback getCallback() {
+		return callback;
 	}
 	protected Mod303 getMod303() {
 		return mod303;
@@ -254,9 +259,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
 	}
-	private void select( Mod303 mod303) {
+	
+	protected void select( Mod303 mod303) {
 		this.mod303 = mod303;
-		refreshToolbarState();	
+		refreshToolbarState();
+	}
+	protected void selectAndPopulate( Mod303 mod303) {
+		select(mod303);
+		populate(mod303);
 	}
 	
 	private void refreshToolbarState() {
@@ -440,9 +450,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void paintParticularyRow(FlexTable table, IModelScript<Mod303Key> script) {
 		
 	}
-	
 	protected void paintLabel(FlexTable table,int row,IModelScript<Mod303Key> script) {
-		String labelText = script.getLabel();
+		paintLabel(table, row, script.getLabel(), script.isTitle());
+	}
+	protected void paintLabel(FlexTable table,int row,String labelText) {
+		paintLabel(table, row, labelText, false);
+	}
+	protected void paintLabel(FlexTable table,int row,String labelText,boolean title) {
 		Label label = new Label();
 		if (AonStringUtils.length(labelText) > MAX_LABEL_LENGTH) {
 			label.setTitle(labelText);	
@@ -452,7 +466,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.setWidget(row, 0, label);
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		if (script.isTitle() ) {
+		if (title) {
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBold() );
 		} else {
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft20() );
@@ -467,13 +481,16 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		}
 		return ++col;
 	}
-
-	private int paintField(FlexTable table, int row, int col, IModelScript<Mod303Key> script, final Mod303Key key) {
+	
+	protected int paintField(FlexTable table, int row, int col, IModelScript<Mod303Key> script, final Mod303Key key) {
+		return paintField(table, row, col, key, script.getFieldSize(key), script.isEnabled( key ));
+	}
+	protected int paintField(FlexTable table, int row, int col, final Mod303Key key, int fieldSize, boolean enabled) {
 		final FiscalModelDetail det1 = this.mod303.ensureDetail(key);
-		final DoubleBox input = new DoubleBox( script.getFieldSize(key));
+		final DoubleBox input = new DoubleBox(fieldSize);
 		input.setResolver(resolver);
 		fieldsMap.put(key, input);
-		input.setEnabled(this.mod303.isNotFinished() && (script.isEnabled( key ) )); 
+		input.setEnabled(this.mod303.isNotFinished() && enabled); 
 		input.setValue(det1.getAmount());
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
@@ -535,6 +552,17 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			table.setWidget(row, col, buttonContainer);
 		}
 	}
+	
+	protected void populate(Mod303 mod303) {
+		
+		for (Mod303Key key : fieldsMap.keySet()) {
+			double d1 = mod303.getAmount(key);
+			double d2 = fieldsMap.get(key).getValue();
+			if (!AonNumberUtils.equals(d1, d2)) {
+				fieldsMap.get(key).setValue(d1,true,true);
+			}
+		}
+	}
 
 	public void calculateAndRefresh() {
 		Model303.mod303Service.calculateMod303(Model303.getCurrentDomainName(),this.mod303,
@@ -547,14 +575,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 					@Override
 					public void onSuccess(Mod303 result) {
-						for (Mod303Key key : fieldsMap.keySet()) {
-							double d1 = result.getAmount(key);
-							double d2 = fieldsMap.get(key).getValue();
-							if (!AonNumberUtils.equals(d1, d2)) {
-								fieldsMap.get(key).setValue(d1,true,true);
-
-							}
-						}
+						populate(result);
 					}
 			
 				}
@@ -597,7 +618,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		Model303.mod303Service.saveMod303(Model303.getCurrentDomainName(), this.mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						select( result );
+						selectAndPopulate(result);
 						popup.hide();
 						saveButton.setEnabled(true);
 					}
@@ -646,8 +667,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		Model303.mod303Service.initializeForFinishMod303(Model303.getCurrentDomainName(),mod303,
 				new AsyncCallback<Mod303>() {
 					@Override
-					public void onSuccess(Mod303 m303) {
-						select( m303 );
+					public void onSuccess(Mod303 result) {
+						selectAndPopulate(result);
 						showFinalizePopup();
 						finalizeButton.setEnabled(true);
 					}
@@ -727,7 +748,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		Model303.mod303Service.finishMod303(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						select( result );
+						selectAndPopulate(result);
 						popup.hide();
 						finalizeButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);
@@ -754,7 +775,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		Model303.mod303Service.reopenMod303(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						select( result );
+						selectAndPopulate(result);
 						popup.hide();
 						reopenButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);

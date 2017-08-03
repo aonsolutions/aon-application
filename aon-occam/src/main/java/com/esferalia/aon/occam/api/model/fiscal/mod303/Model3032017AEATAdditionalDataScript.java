@@ -19,13 +19,13 @@ public enum Model3032017AEATAdditionalDataScript implements IModelScript<Mod303K
 		,new Mod303Key[]{null					,Mod303Key.CT_C60},INVOICE,DIFF_INVOICE)
 	,ADC03 ("Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n"
 		,new Mod303Key[]{null					,Mod303Key.CT_C61},INVOICE,DIFF_INVOICE)
-	,ADC04 ("Exclusivamente para aquellos sujetos pasivos acogidos al régimen especial del criterio de caja y"+ 
-		 " para aquéllos que sean destinatarios de operaciones afectadas por el mismo",null,TITLE)
-	,ADC05 ("Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles sido aplicado el régimen especial "+
+	,ADC04 ("Exclusivamente para aquellos sujetos pasivos acogidos al r\u00E9gimen especial del criterio de caja y"+ 
+		 " para aqu\u00E9llos que sean destinatarios de operaciones afectadas por el mismo",null,TITLE)
+	,ADC05 ("Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el r\u00E9gimen especial "+
 			"del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA"
 		,new Mod303Key[]{Mod303Key.CT_C62		,Mod303Key.CT_C63},INVOICE,DIFF_INVOICE)	
-	,ADC06 ("Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el" + 
-			" régimen especial del criterio de caja"
+	,ADC06 ("Importes de las adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el" + 
+			" r\u00E9gimen especial del criterio de caja"
 		,new Mod303Key[]{Mod303Key.CT_C74		,Mod303Key.CT_C75},INVOICE,DIFF_INVOICE)
 	;
 	

@@ -298,6 +298,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se pudo borrar la declaraci\u00F3n. Causa: \n {0}")
 	String unableToDeleteDeclaration(String message);
 
+	@DefaultMessage("No se pudo inicializar la declaraci\u00F3n. Causa: \n {0}")
+	String unableToInitializeDeclaration(String message);
+
 	@DefaultMessage("No se pudo encontrar la declaraci\u00F3n seleccionada.")
 	String unableToFindDeclaration();
 
@@ -1302,6 +1305,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Porcentaje de prorrata")
 	String prorrataPercent();
+	
+	@DefaultMessage("Ha modificado el porcentaje de prorata. El modelo se inicializar\u00E1 a partir de los datos de facturas. \u00BFDesea continuar?.")
+	String prorateChanged();
 
 	@DefaultMessage("Actividades con reg\u00EDmenes de deducci\u00F3n diferenciados")
 	String difActivitiesRegime();
@@ -3536,5 +3542,6 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Pendiente de materializar")
 	String canCol4();
+
 }
 

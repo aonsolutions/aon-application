@@ -59,11 +59,17 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return null;
 	}
 	
+	public Mod303Key getProrateKey() {
+		if (isAEAT()) return Mod303Key.CT_X01;
+		else if (isBizkaia()) return Mod303Key.BZ_C101;
+		else if (isAraba()) return Mod303Key.AR_X001;
+		return null;
+	}
+	
 	public double getProratePercent() {
 		double proratePercent = 100.0;
-		if (isAEAT()) proratePercent = getAmount(Mod303Key.CT_X01);
-		else if (isBizkaia()) proratePercent = getAmount(Mod303Key.BZ_C101);
-		else if (isAraba()) proratePercent = getAmount(Mod303Key.AR_X001);
+		Mod303Key key = getProrateKey();
+		proratePercent = getAmount(key); 
 		if (AonMathUtils.isZero(proratePercent)) proratePercent = 100.0;  
 		return proratePercent;
 	}
