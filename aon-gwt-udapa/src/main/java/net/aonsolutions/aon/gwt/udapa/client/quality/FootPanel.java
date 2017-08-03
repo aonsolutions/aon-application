@@ -1,26 +1,38 @@
 package net.aonsolutions.aon.gwt.udapa.client.quality;
 
+import java.util.HashMap;
+
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
+
+import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
+import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
 public class FootPanel extends Composite {
 
@@ -47,6 +59,9 @@ public class FootPanel extends Composite {
 				Integer value  = event.getSelectedItem();
 				if(value == 0){
 					imgPanel();
+					openFootPanel();
+				} else  if(value == 1) {
+					calculatePanel();
 					openFootPanel();
 				}
 			}
@@ -79,9 +94,330 @@ public class FootPanel extends Composite {
 		});
 	}
 
+	public void calculatePanel() {
+		Double dest = Double.parseDouble(parent.getMap().get(QualitySheetCode.UFQDP1.getName())) - 1;
+		
+		Destiny destiny = parent.getMap().containsKey(QualitySheetCode.UFQDP1.getName()) && dest >= 0 ? Destiny.values()[dest.intValue()]: Destiny.CALIDAD;
+		if(Destiny.BASERRI.equals(destiny) || Destiny.EUSKOLABEL.equals(destiny)) {
+			
+			String product_quantity = parent.getMap().containsKey("product_quantity") ? parent.getMap().get("product_quantity") : "0.0";
+			Double productQuantity = Double.parseDouble(product_quantity);
+		
+			String transport_quantity = parent.getMap().containsKey(QualitySheetCode.UFQDT2.getName()) ? parent.getMap().get(QualitySheetCode.UFQDT2.getName()) : "0.0";
+			Double transportQuantity = Double.parseDouble(transport_quantity);
+		
+			Double quantity = transportQuantity > 0.0 ? transportQuantity : productQuantity;
+		
+			String tempStr = parent.getMap().containsKey(QualitySheetCode.UFQAC1.getName()) ?  parent.getMap().get(QualitySheetCode.UFQAC1.getName()) : "17.0";
+			Double temp = Double.parseDouble(tempStr);
+			
+			FlexTable tInfo = new FlexTable();
+			
+			tInfo.setWidget(0, 0, new Label("Precio Contrato: "));
+			String product_price = parent.getMap().containsKey(QualitySheetCode.UFQC1.getName()) ?  parent.getMap().get(QualitySheetCode.UFQC1.getName())
+					: (parent.getMap().containsKey("product_price") ?  parent.getMap().get("product_price") : "0.0");
+			TextBox dbPrice = new TextBox();
+			dbPrice.setStyleName(AON.AON_CSS.aonTextBox());
+			dbPrice.setValue(product_price);
+			dbPrice.setWidth("35px");
+			tInfo.setWidget(0, 1, dbPrice);
+				
+			tInfo.setWidget(0, 2, new Label("P Fondo: "));
+			String p_fondo = parent.getMap().containsKey(QualitySheetCode.UFQC2.getName()) ?  parent.getMap().get(QualitySheetCode.UFQC2.getName()) : "0.0";
+			TextBox dbPFondo = new TextBox();
+			dbPFondo.setStyleName(AON.AON_CSS.aonTextBox());
+			dbPFondo.setValue(p_fondo);
+			dbPFondo.setWidth("35px");
+			tInfo.setWidget(0, 3, dbPFondo);
+
+			tInfo.setWidget(0, 4, new Label("Color: "));
+			String col = parent.getMap().containsKey(QualitySheetCode.UFQC3.getName()) ?  parent.getMap().get(QualitySheetCode.UFQC3.getName()) : "0.0";
+			TextBox dbColor = new TextBox();
+			dbColor.setStyleName(AON.AON_CSS.aonTextBox());
+			dbColor.setValue(col);
+			dbColor.setWidth("35px");
+			tInfo.setWidget(0, 5, dbColor);
+
+			Double color = Double.parseDouble(dbColor.getValue());
+			Double contractPrice = Double.parseDouble(dbPrice.getValue());
+			Double pFondo = Double.parseDouble(dbPFondo.getValue());
+			Double z = (pFondo - contractPrice) * 0.55;
+			Double price = contractPrice + z;
+			if(Destiny.BASERRI.equals(destiny)) {
+				price = price * 0.88;
+			}
+
+			FlexTable table = new FlexTable();
+			table.setWidth("100%");
+			table.setWidget(0, 0, new Label(""));
+		
+			Label percentage = new Label("%");
+			percentage.setTitle("Porcentaje");
+			percentage.setStyleName(AON.AON_CSS.aonBold());
+			table.setWidget(0, 1, percentage);
+		
+			Label kg = new Label("KG");
+			kg.setTitle("Kilos");
+			kg.setStyleName(AON.AON_CSS.aonBold());
+			table.setWidget(0, 2, kg);
+		
+			Label prima = new Label("Prima");
+			prima.setTitle("Prima");
+			prima.setStyleName(AON.AON_CSS.aonBold());
+			table.setWidget(0, 3, prima);
+			
+			Label euro = new Label("Euros");
+			euro.setTitle("Euros");
+			euro.setStyleName(AON.AON_CSS.aonBold());
+			table.setWidget(0, 4, euro);
+
+			// -------------------- PEQUEÑAS
+			
+			Label peq = new Label("Peque\u00f1as");
+			peq.setTitle("Peque\u00f1as");
+			peq.setStyleName(AON.AON_CSS.aonBold());
+			table.setWidget(1, 0, peq);
+		
+			String perPeq = parent.getMap().containsKey(QualitySheetCode.UFQCC021.getName()) ? parent.getMap().get(QualitySheetCode.UFQCC021.getName()) : "0.0";
+			table.setWidget(1, 1, new Label(perPeq));
+			Double kgPeq = (quantity * Double.parseDouble(perPeq))/100;
+			table.setWidget(1, 2, new Label(Double.toString(AonMathUtils.round(kgPeq))));
+			Double primaPeq = Destiny.BASERRI.equals(destiny) ? 0.06 : 0.08;
+			table.setWidget(1, 3, new Label(Double.toString(AonMathUtils.round(primaPeq))));
+			Double eurosPeq = kgPeq * primaPeq;
+			table.setWidget(1, 4, new Label(Double.toString(AonMathUtils.round(eurosPeq))));
+		
+			// -------------------- GORDAS
+		
+			Label gor = new Label("Gordas");
+			gor.setTitle("Gordas");
+			gor.setStyleName(AON.AON_CSS.aonBold());
+			table.setWidget(2, 0, gor);
+			
+			String perGor = parent.getMap().containsKey(QualitySheetCode.UFQCC061.getName()) ? parent.getMap().get(QualitySheetCode.UFQCC061.getName()) : "0.0";
+			table.setWidget(2, 1, new Label(perGor));
+			Double perGord = Double.parseDouble(perGor);
+			Double kgGor = perGord > 5 ? (quantity * (perGord-5))/100 : 0.0;
+			table.setWidget(2, 2, new Label(Double.toString(AonMathUtils.round(kgGor))));
+			Double primaGor = temp < 17.0 ? price * 1.03 : price;
+			table.setWidget(2, 3, new Label(Double.toString(AonMathUtils.round(primaGor, 3))));
+			Double eurosGor = 0.7 * kgGor * primaGor;
+			table.setWidget(2, 4, new Label(Double.toString(AonMathUtils.round(eurosGor))));
+		
+			// -------------------- TIERRA
+		
+			Label ter = new Label("Tierra");
+			ter.setTitle("Tierra");
+			ter.setStyleName(AON.AON_CSS.aonBold());
+			table.setWidget(3, 0, ter);
+		
+			String perTer = parent.getMap().containsKey(QualitySheetCode.UFQCC101.getName()) ? parent.getMap().get(QualitySheetCode.UFQCC101.getName()) : "0.0";
+			table.setWidget(3, 1, new Label(perTer));
+			Double kgTer = (quantity * Double.parseDouble(perTer))/100;
+			table.setWidget(3, 2, new Label(Double.toString(AonMathUtils.round(kgTer))));
+			table.setWidget(3, 3, new Label("-"));
+			table.setWidget(3, 4, new Label("-"));
+		
+			// -------------------- DEFECTOS
+			
+			Label def = new Label("Defectos");
+			def.setTitle("Defectos");
+			def.setStyleName(AON.AON_CSS.aonBold());
+			table.setWidget(4, 0, def);
+
+			String perDef = parent.getMap().containsKey(QualitySheetCode.UFQCD111.getName()) ? parent.getMap().get(QualitySheetCode.UFQCD111.getName()) : "0.0";
+			table.setWidget(4, 1, new Label(perDef));
+			Double perDefec = Double.parseDouble(perDef);
+			Double perDefectos = perDefec < 7 ? (perDefec < 4 ? 0.0 : perDefec -4) : perDefec;
+			Double kgDef = ((quantity - kgPeq - kgGor - kgTer) * perDefectos)/100;
+			table.setWidget(4, 2, new Label(Double.toString(AonMathUtils.round(kgDef))));
+			table.setWidget(4, 3, new Label("-"));
+			table.setWidget(4, 4, new Label("-"));
+		
+			// -------------------- NETO
+		
+			Label neto = new Label("Neto");
+			neto.setTitle("Neto");
+			neto.setStyleName(AON.AON_CSS.aonBold());	
+			table.setWidget(5, 0, neto);
+		
+			table.setWidget(5, 1, new Label("-"));
+			Double kgNet = quantity - kgPeq - kgGor - kgTer - kgDef;
+			table.setWidget(5, 2, new Label(Double.toString(AonMathUtils.round(kgNet))));
+			Double primaNet = temp < 17.0 ?  price * 1.03 : price;
+			table.setWidget(5, 3, new Label(Double.toString(AonMathUtils.round(primaNet, 3))));
+			Double eurosNet = kgNet * (primaNet + color);
+			table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));
+		
+			// -------------------- RESULTADOS
+		
+			FlexTable table1 = new FlexTable();
+		
+			// -------------------- TOTAL EUROS
+			Label total = new Label("Total Euros");
+			total.setTitle("Total Euros");
+			total.setStyleName(AON.AON_CSS.aonBold());
+			table1.setWidget(0, 0, total);
+			
+			Double totalEuros = eurosPeq + eurosGor + eurosNet;
+			table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(totalEuros))));
+
+			Label eurosKgBruto = new Label("Euros/Kg Bruto");
+			eurosKgBruto.setTitle("Euros/Kg Bruto");
+			eurosKgBruto.setStyleName(AON.AON_CSS.aonBold());
+			table1.setWidget(1, 0, eurosKgBruto);
+			
+			Double eurosKgBruto2 = totalEuros / quantity;
+			table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 3))));
+
+			Label eurosKgNeto = new Label("Euros/Kg Neto");
+			eurosKgNeto.setTitle("Euros/Kg Neto");
+			eurosKgNeto.setStyleName(AON.AON_CSS.aonBold());
+			table1.setWidget(2, 0, eurosKgNeto);
+			
+			Double eurosKgNeto2 = totalEuros / kgNet;
+			table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
+			
+			Label sinBon80 = new Label(">80 Sin Bonificacion");
+			sinBon80.setTitle(">80 Sin Bonificacion");
+			sinBon80.setStyleName(AON.AON_CSS.aonBold());
+			table1.setWidget(3, 0, sinBon80);
+			
+			Double sinBon802 = ((quantity - kgPeq - kgGor - kgTer) * Double.parseDouble(perGor)) /100;
+			table1.setWidget(3, 1, new Label(Double.toString(AonMathUtils.round(sinBon802))));
+			
+			Label dtoSinBon = new Label("DTO Sin Bonificacion");
+			dtoSinBon.setTitle("DTO Sin Bonificacion");
+			dtoSinBon.setStyleName(AON.AON_CSS.aonBold());
+			table1.setWidget(4, 0, dtoSinBon);
+			
+			Double dtoSinBon2 = ((quantity - kgPeq - kgGor - kgTer) * perDefec) /100;
+			table1.setWidget(4, 1, new Label(Double.toString(AonMathUtils.round(dtoSinBon2))));
+			
+			VerticalPanel vp = new VerticalPanel();
+			vp.setWidth("100%");
+			vp.add(tInfo);
+			vp.add(table);
+			vp.add(table1);
+			
+			dbColor.addValueChangeHandler(new ValueChangeHandler<String>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<String> arg0) {
+					String id = parent.dataResponse.getId() + "";
+					String domainName = parent.getAonData().getDomain().getName();
+					Integer domainId = parent.getAonData().getDomain().getId();
+					parent.impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQC3, dbColor.getValue(), parent.getMap(), new AsyncCallback<HashMap<String, String>>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(HashMap<String, String> result) {}
+					});
+					
+					Double color = Double.parseDouble(dbColor.getValue());
+					
+					Double eurosNet = kgNet * (primaNet + color);
+					table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));
+					
+					Double totalEuros = eurosPeq + eurosGor + eurosNet;
+					table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(totalEuros))));
+					
+					Double eurosKgBruto2 = totalEuros / quantity;
+					table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 3))));
+					
+					Double eurosKgNeto2 = totalEuros / kgNet;
+					table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
+				}
+			});
+			
+			dbPrice.addValueChangeHandler(new ValueChangeHandler<String>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<String> arg0) {
+					String id = parent.dataResponse.getId() + "";
+					String domainName = parent.getAonData().getDomain().getName();
+					Integer domainId = parent.getAonData().getDomain().getId();
+					parent.impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQC1, dbPrice.getValue().toString(), parent.getMap(), new AsyncCallback<HashMap<String, String>>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(HashMap<String, String> result) {}
+					});
+					
+					Double contractPrice = Double.parseDouble(dbPrice.getValue());
+					Double pFondo = Double.parseDouble(dbPFondo.getValue());
+					Double z = (pFondo - contractPrice) * 0.55;
+					Double price = contractPrice + z;
+					if(Destiny.BASERRI.equals(destiny)) {
+						price = price * 0.88;
+					}
+					
+					Double primaGor = temp < 17.0 ? price * 1.03 : price;
+					table.setWidget(2, 3, new Label(Double.toString(AonMathUtils.round(primaGor, 3))));
+					Double eurosGor = 0.7 * kgGor * primaGor;
+					table.setWidget(2, 4, new Label(Double.toString(AonMathUtils.round(eurosGor))));	
+					
+					Double primaNet = temp < 17.0 ?  price * 1.03 : price;
+					table.setWidget(5, 3, new Label(Double.toString(AonMathUtils.round(primaNet, 3))));
+					Double eurosNet = kgNet * (primaNet + color);
+					table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));
+					
+					Double totalEuros = eurosPeq + eurosGor + eurosNet;
+					table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(totalEuros))));
+					
+					Double eurosKgBruto2 = totalEuros / quantity;
+					table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 3))));
+					
+					Double eurosKgNeto2 = totalEuros / kgNet;
+					table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
+				}
+			});
+			
+			dbPFondo.addValueChangeHandler(new ValueChangeHandler<String>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<String> arg0) {
+					String id = parent.dataResponse.getId() + "";
+					String domainName = parent.getAonData().getDomain().getName();
+					Integer domainId = parent.getAonData().getDomain().getId();
+					parent.impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQC2, dbPFondo.getValue().toString(), parent.getMap(), new AsyncCallback<HashMap<String, String>>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(HashMap<String, String> result) {}
+					});
+					
+					Double contractPrice = Double.parseDouble(dbPrice.getValue());
+					Double pFondo = Double.parseDouble(dbPFondo.getValue());
+					Double z = (pFondo - contractPrice) * 0.55;
+					Double price = contractPrice + z;
+					if(Destiny.BASERRI.equals(destiny)) {
+						price = price * 0.88;
+					}
+					
+					Double primaGor = temp < 17.0 ? price * 1.03 : price;
+					table.setWidget(2, 3, new Label(Double.toString(AonMathUtils.round(primaGor, 3))));
+					Double eurosGor = 0.7 * kgGor * primaGor;
+					table.setWidget(2, 4, new Label(Double.toString(AonMathUtils.round(eurosGor))));		
+					
+					
+					Double primaNet = temp < 17.0 ?  price * 1.03 : price;
+					table.setWidget(5, 3, new Label(Double.toString(AonMathUtils.round(primaNet, 3))));
+					Double eurosNet = kgNet * (primaNet + color);
+					table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));
+					
+					Double totalEuros = eurosPeq + eurosGor + eurosNet;
+					table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(totalEuros))));
+					
+					Double eurosKgBruto2 = totalEuros / quantity;
+					table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 3))));
+					
+					Double eurosKgNeto2 = totalEuros / kgNet;
+					table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
+				}
+			});
+			calculatePanel.setWidget(vp);
+		}
+	}
+
 	@UiField MinimizePanel footPanel;
 	@UiField TabLayoutPanel tabPanel;
 	@UiField ScrollPanel imgPanel;
+	@UiField ScrollPanel calculatePanel;
 	
 	public TabLayoutPanel getTabPanel() {
 		return tabPanel;

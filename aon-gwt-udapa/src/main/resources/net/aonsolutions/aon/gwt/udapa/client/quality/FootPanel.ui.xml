@@ -20,6 +20,15 @@
 				</g:customHeader>
 				<g:ScrollPanel ui:field="imgPanel" styleName="{aonResources.css.aonTextCenter}"/>
 			</g:tab>
+			<g:tab >
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="editor:functions" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Calculos" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:ScrollPanel ui:field="calculatePanel" styleName="{aonResources.css.aonTextCenter}"/>
+			</g:tab>
 		</g:TabLayoutPanel>
 	</aon:MinimizePanel>
 

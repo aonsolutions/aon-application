@@ -214,17 +214,31 @@ public enum QualitySheetCode implements IsSerializable{
 	/** CONTROL DEFECTOS - % VERDES */
 	UFQCD101("ufqcd101"),
 	
-	/** CONTROL CALIBRES - PESO TOTAL CALIBRE SIEMBRA */
+	/** CONTROL CALIBRES - PESO TOTAL DEFECTOS */
 	UFQCD11("ufqcd11"), 
 
-	/** CONTROL CALIBRES - % TOTAL CALIBRE SIEMBRA*/
+	/** CONTROL CALIBRES - % TOTAL DEFECTOS*/
 	UFQCD111("ufqcd111"),
 	
 	// OBSERVACIONES
 	
 	/** OBSERVACIONES */
 	UFQO("ufqo"),
+
+	// CALCULOS
+	
+	/** PRECIO CONTRATO */
+	UFQC1("ufqc1"),
+
+	/** P FONDO */
+	UFQC2("ufqc2"),
+
+	/** COLOR */
+	UFQC3("ufqc3"),
+
 	;
+	
+	
 	
 	String name;
 	

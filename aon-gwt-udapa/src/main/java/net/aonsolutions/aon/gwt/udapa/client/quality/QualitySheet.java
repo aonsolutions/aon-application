@@ -53,7 +53,7 @@ public class QualitySheet extends Composite{
 	interface Binder extends UiBinder<Widget, QualitySheet> {}
 	private static final Binder binder = GWT.create(Binder.class);
 	private UdapaQuality parent;
-	private JsDataResponse dataResponse;
+	public JsDataResponse dataResponse;
 	final IUdapaAsync impl = GWT.create(IUdapa.class);
 	// hashMap || jsonobject
 	HashMap<String, String> map = new HashMap<>();
@@ -91,6 +91,11 @@ public class QualitySheet extends Composite{
 		return dataResponse;
 	}
 	
+	
+	public HashMap<String, String> getMap() {
+		return map;
+	}
+
 	public QualitySheet(UdapaQuality parent, JsDataResponse dataResponse) {
 		this.parent = parent;
 		this.dataResponse = dataResponse;

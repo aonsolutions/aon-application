@@ -62,7 +62,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			map.put("product_description", id.getDescription());
 			map.put("product_supplier", i.getSupplierName());
 			map.put("product_quantity", id.getQuantity() + "");
-
+			map.put("product_price", id.getPrice() + "");
 			if(i.getCarrierPacking() != null){
 				CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));
 				map.put("transport_carrier", cp.getCarrierName());

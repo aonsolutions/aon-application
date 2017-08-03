@@ -79,6 +79,7 @@ public class UdapaQuality extends AonTemplate2{
 		Polymer.importHref(Arrays.asList(
 			IronIconsElement.SRC,
 			"iron-icons/image-icons.html",
+			"iron-icons/editor-icons.html",
 			AonComboBoxElement.SRC,
 			PaperButtonElement.SRC,
 			PaperRadioButtonElement.SRC,
