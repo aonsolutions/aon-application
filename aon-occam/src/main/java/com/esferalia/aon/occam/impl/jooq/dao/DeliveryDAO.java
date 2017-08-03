@@ -235,6 +235,7 @@ public class DeliveryDAO {
 				,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY
 				,REGISTRY.NAME
+				,REGISTRY.ID
 				,SCOPE.DESCRIPTION
 				,PROJECT.NAME
 				,DELIVERY_DETAIL.LINE
@@ -285,7 +286,7 @@ public class DeliveryDAO {
 			customer.setDocumentCountry(Country.safeValueOf(record
 									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
 			customer.setName(record.getValue(REGISTRY.NAME));
-			
+			customer.setId(record.getValue(REGISTRY.ID));
 			return new DeliveryDetail()
 				.setDelivery(new Delivery()
 					.setId(record.getValue(DELIVERY.ID))

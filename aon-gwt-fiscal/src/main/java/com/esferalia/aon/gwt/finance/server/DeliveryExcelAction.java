@@ -10,9 +10,8 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
-import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
-import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.type.SalesType;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -21,7 +20,7 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
     
     private List<String> tags; 
     private Map<Integer,String[]> productTags;
-    
+    private String domainName;
 	public List<String> getTags() {
 		return tags;
 	}
@@ -35,6 +34,12 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		this.productTags = productTags;
 	}
 
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
 	@Override
 	protected void headerRow() {
 		this.tags = tags!=null&&tags.size()>0?tags:null;  
@@ -84,6 +89,9 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 	    
 	    CellUtil.createCell(row, cellCount, "Nombre o Razón Social", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 40*256);		    
+	    
+	    CellUtil.createCell(row, cellCount, "Dirección", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 40*256);
 	    
 /*	    CellUtil.createCell(row, cellCount, "Localidad", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 30*256);		    
@@ -151,6 +159,12 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		addCell( detail.getDelivery().getCustomer2().getDocument());
 		addCell( detail.getDelivery().getCustomer2().getName());
 		
+		// TODO
+		RAddress ra  = AON.getRAddres(getDomainName(), detail.getDomain(), "", detail.getDelivery().getCustomer2().getId());
+		addCell(ra.getFullAddress() + " " 
+				+ (ra.getZip() != null ? ra.getZip() + " " : "") 	
+				+ (ra.getCity() != null ? ra.getCity() + " " : "") 
+				+ (ra.getGeozoneName() != null ? ra.getGeozoneName() :""));
 /*
 		addCell( detail.getOffer().getRegistryTown() );
 		addCell( detail.getOffer().getRegistryZIP() );

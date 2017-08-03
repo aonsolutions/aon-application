@@ -271,6 +271,7 @@ public class IncomeDAO {
 				,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY
 				,REGISTRY.NAME
+				,REGISTRY.ID
 				,SCOPE.DESCRIPTION
 				,PROJECT.NAME
 				,INCOME_DETAIL.LINE
@@ -320,6 +321,7 @@ public class IncomeDAO {
 			supplier.setDocumentCountry(Country.safeValueOf(record
 									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
 			supplier.setName(record.getValue(REGISTRY.NAME));
+			supplier.setId(record.getValue(REGISTRY.ID));
 			
 			return new IncomeDetail()
 				.setIncome(new Income()

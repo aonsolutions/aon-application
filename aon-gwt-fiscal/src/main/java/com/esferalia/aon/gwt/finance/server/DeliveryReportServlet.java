@@ -19,9 +19,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
-import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -58,6 +56,7 @@ public class DeliveryReportServlet extends HttpServlet {
 				productTags = AON.getProductTagMap(domainName, domainId, login);	
 			}
 			action.setTags(tags);
+			action.setDomainName(domainName);
 			action.setProductTags(productTags);
 			action.initialize("ALBARANES DE VENTA");
 
