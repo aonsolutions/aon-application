@@ -40,8 +40,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_A04(Mod303Key.CT_A04)
 		,CT_A05(Mod303Key.CT_A05)
 		,CT_A06(Mod303Key.CT_A06)
-		,CT_A07(Mod303Key.CT_A07)
-		,CT_A08(Mod303Key.CT_A08)
+		,CT_A07(Mod303Key.CT_A07)	// Ventas  Criterio de caja. Se incializa en la casilla 063.
+		,CT_A08(Mod303Key.CT_A08)	// Compras Criterio de caja. Se incializa en la casilla 075.
 		,CT_A09(Mod303Key.CT_A09)
 		,CT_A10(Mod303Key.CT_A10)
 		,CT_A11(Mod303Key.CT_A11)
@@ -237,13 +237,21 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,CT_C62(Mod303Key.CT_C62, (ctx,mod) -> Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod))
-		,CT_C63(Mod303Key.CT_C63, (ctx,mod) -> Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod))
+		,CT_C62(Mod303Key.CT_C62, (ctx,mod) -> add( Mod303Key.CT_C62, mod, Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)))
+		,CT_C63(Mod303Key.CT_C63, (ctx,mod) -> {
+			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
+			add( Mod303Key.CT_C63, mod, quota );
+			add( Mod303Key.CT_A07, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
+		})
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,CT_C74(Mod303Key.CT_C74, (ctx,mod) -> Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod))
-		,CT_C75(Mod303Key.CT_C75, (ctx,mod) -> Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod))
+		,CT_C74(Mod303Key.CT_C74, (ctx,mod) -> add( Mod303Key.CT_C74, mod, Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)))
+		,CT_C75(Mod303Key.CT_C75, (ctx,mod) -> {
+			double quota = Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
+			add( Mod303Key.CT_C75, mod, quota);
+			add( Mod303Key.CT_A08, mod, AonMathUtils.isZero(quota)?(0.0):(1.0));
+		})
 
 		// Regularización cuotas art. 80.Cinco.5a LIVA
 		,CT_C76(Mod303Key.CT_C76)

@@ -12,16 +12,13 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -350,8 +347,7 @@ public class VATDAO  {
 	}
 	
 	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Date fromDate,Date toDate) {
-		Field<BigDecimal> sumField = DSL.sum(INVOICE_TAX.BASE);
-		Record1<BigDecimal> rec = ctx.getDslContext().select( sumField )
+		return ctx.getDslContext().select( INVOICE_TAX.BASE )
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -360,14 +356,10 @@ public class VATDAO  {
 				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
-				.fetchOne()
-				;
-		if (rec != null) {
-			BigDecimal bg = rec.getValue(sumField);
-			if (bg != null) return bg.doubleValue();
-		}
-		return 0.0;
+				.fetch()
+				.stream()
+				.mapToDouble( rec -> rec.getValue(INVOICE_TAX.BASE ) )
+				.sum();
 	}
 
 	public static double getVatAccrualPaymentOutputQuota(AONContext ctx, Date fromDate,Date toDate) {
@@ -396,8 +388,7 @@ public class VATDAO  {
 	}
 
 	public static double getVatAccrualPaymentInputBase(AONContext ctx, Date fromDate,Date toDate) {
-		Field<BigDecimal> sumField = DSL.sum(INVOICE_TAX.BASE);
-		Record1<BigDecimal> rec = ctx.getDslContext().select( sumField )
+		return ctx.getDslContext().select( INVOICE_TAX.BASE )
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -406,14 +397,10 @@ public class VATDAO  {
 				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
-				.fetchOne()
-				;
-		if (rec != null) {
-			BigDecimal bg = rec.getValue(sumField);
-			if (bg != null) return bg.doubleValue();
-		}
-		return 0.0;
+				.fetch()
+				.stream()
+				.mapToDouble( rec -> rec.getValue(INVOICE_TAX.BASE ) )
+				.sum();
 	}
 
 	public static double getVatAccrualPaymentInputQuota(AONContext ctx, Date fromDate,Date toDate) {
