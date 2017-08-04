@@ -39,6 +39,7 @@ public class Up2DateDB {
 			manager.uptodateDatabase(connection);
 			
 		} catch ( IllegalArgumentsException e ){
+			System.err.printf( "%s:%s\r\n" ,e.getClass().getName(), e.getMessage());
 			printUsage(args);
 			System.exit(1);
 		}  catch ( AonSQLException e ){
@@ -46,7 +47,7 @@ public class Up2DateDB {
 			try {
 				schemas = manager.getSchemas(connection);
 			} catch ( Throwable th ){
-				//System.err.printf( "%s:%s\r\n" ,th.getClass().getName(), th.getMessage());
+				System.err.printf( "%s:%s\r\n" ,th.getClass().getName(), th.getMessage());
 				System.exit(-1);
 			}
 			int exit = 0; // OK
@@ -73,7 +74,7 @@ public class Up2DateDB {
 			System.exit(exit);
 		}
 		catch ( Throwable th ) {
-			//System.err.printf( "%s:%s\r\n" ,th.getClass().getName(), th.getMessage());
+			System.err.printf( "%s:%s\r\n" ,th.getClass().getName(), th.getMessage());
 			System.exit(-1);
 		} finally {
 			if (connection != null) {
