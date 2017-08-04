@@ -113,14 +113,6 @@ public class FootPanel extends Composite {
 			
 			FlexTable tInfo = new FlexTable();
 			
-			tInfo.setWidget(0, 0, new Label("Precio Contrato: "));
-			String product_price = parent.getMap().containsKey(QualitySheetCode.UFQC1.getName()) ?  parent.getMap().get(QualitySheetCode.UFQC1.getName())
-					: (parent.getMap().containsKey("product_price") ?  parent.getMap().get("product_price") : "0.0");
-			TextBox dbPrice = new TextBox();
-			dbPrice.setStyleName(AON.AON_CSS.aonTextBox());
-			dbPrice.setValue(product_price);
-			dbPrice.setWidth("35px");
-			tInfo.setWidget(0, 1, dbPrice);
 				
 			tInfo.setWidget(0, 2, new Label("P Fondo: "));
 			String p_fondo = parent.getMap().containsKey(QualitySheetCode.UFQC2.getName()) ?  parent.getMap().get(QualitySheetCode.UFQC2.getName()) : "0.0";
@@ -130,16 +122,12 @@ public class FootPanel extends Composite {
 			dbPFondo.setWidth("35px");
 			tInfo.setWidget(0, 3, dbPFondo);
 
-			tInfo.setWidget(0, 4, new Label("Color: "));
-			String col = parent.getMap().containsKey(QualitySheetCode.UFQC3.getName()) ?  parent.getMap().get(QualitySheetCode.UFQC3.getName()) : "0.0";
-			TextBox dbColor = new TextBox();
-			dbColor.setStyleName(AON.AON_CSS.aonTextBox());
-			dbColor.setValue(col);
-			dbColor.setWidth("35px");
-			tInfo.setWidget(0, 5, dbColor);
+			String col = parent.getMap().containsKey(QualitySheetCode.UFQAC8.getName()) ?  parent.getMap().get(QualitySheetCode.UFQAC8.getName()) : "0.0";
+			Double color = "1".equals(col) || "1.0".equals(col) ? 0.003 : 0.0; 
+		
+			String product_price =  parent.getMap().containsKey("product_price") ?  parent.getMap().get("product_price") : "0.0";
 
-			Double color = Double.parseDouble(dbColor.getValue());
-			Double contractPrice = Double.parseDouble(dbPrice.getValue());
+			Double contractPrice = Double.parseDouble(product_price);
 			Double pFondo = Double.parseDouble(dbPFondo.getValue());
 			Double z = (pFondo - contractPrice) * 0.55;
 			Double price = contractPrice + z;
@@ -300,75 +288,6 @@ public class FootPanel extends Composite {
 			vp.add(table);
 			vp.add(table1);
 			
-			dbColor.addValueChangeHandler(new ValueChangeHandler<String>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<String> arg0) {
-					String id = parent.dataResponse.getId() + "";
-					String domainName = parent.getAonData().getDomain().getName();
-					Integer domainId = parent.getAonData().getDomain().getId();
-					parent.impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQC3, dbColor.getValue(), parent.getMap(), new AsyncCallback<HashMap<String, String>>() {
-						@Override public void onFailure(Throwable caught) {}
-						@Override public void onSuccess(HashMap<String, String> result) {}
-					});
-					
-					Double color = Double.parseDouble(dbColor.getValue());
-					
-					Double eurosNet = kgNet * (primaNet + color);
-					table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));
-					
-					Double totalEuros = eurosPeq + eurosGor + eurosNet;
-					table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(totalEuros))));
-					
-					Double eurosKgBruto2 = totalEuros / quantity;
-					table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 3))));
-					
-					Double eurosKgNeto2 = totalEuros / kgNet;
-					table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
-				}
-			});
-			
-			dbPrice.addValueChangeHandler(new ValueChangeHandler<String>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<String> arg0) {
-					String id = parent.dataResponse.getId() + "";
-					String domainName = parent.getAonData().getDomain().getName();
-					Integer domainId = parent.getAonData().getDomain().getId();
-					parent.impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQC1, dbPrice.getValue().toString(), parent.getMap(), new AsyncCallback<HashMap<String, String>>() {
-						@Override public void onFailure(Throwable caught) {}
-						@Override public void onSuccess(HashMap<String, String> result) {}
-					});
-					
-					Double contractPrice = Double.parseDouble(dbPrice.getValue());
-					Double pFondo = Double.parseDouble(dbPFondo.getValue());
-					Double z = (pFondo - contractPrice) * 0.55;
-					Double price = contractPrice + z;
-					if(Destiny.BASERRI.equals(destiny)) {
-						price = price * 0.88;
-					}
-					
-					Double primaGor = temp < 17.0 ? price * 1.03 : price;
-					table.setWidget(2, 3, new Label(Double.toString(AonMathUtils.round(primaGor, 3))));
-					Double eurosGor = 0.7 * kgGor * primaGor;
-					table.setWidget(2, 4, new Label(Double.toString(AonMathUtils.round(eurosGor))));	
-					
-					Double primaNet = temp < 17.0 ?  price * 1.03 : price;
-					table.setWidget(5, 3, new Label(Double.toString(AonMathUtils.round(primaNet, 3))));
-					Double eurosNet = kgNet * (primaNet + color);
-					table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));
-					
-					Double totalEuros = eurosPeq + eurosGor + eurosNet;
-					table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(totalEuros))));
-					
-					Double eurosKgBruto2 = totalEuros / quantity;
-					table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 3))));
-					
-					Double eurosKgNeto2 = totalEuros / kgNet;
-					table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
-				}
-			});
-			
 			dbPFondo.addValueChangeHandler(new ValueChangeHandler<String>() {
 				
 				@Override
@@ -381,7 +300,6 @@ public class FootPanel extends Composite {
 						@Override public void onSuccess(HashMap<String, String> result) {}
 					});
 					
-					Double contractPrice = Double.parseDouble(dbPrice.getValue());
 					Double pFondo = Double.parseDouble(dbPFondo.getValue());
 					Double z = (pFondo - contractPrice) * 0.55;
 					Double price = contractPrice + z;

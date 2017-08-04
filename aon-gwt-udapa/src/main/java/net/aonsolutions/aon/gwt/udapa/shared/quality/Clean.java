@@ -3,8 +3,8 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality;
 import java.util.LinkedList;
 
 public enum Clean {
-	LIBRE("Libre"),
-	CONTAMINADA("Contaminada")
+	APTA("Apta"),
+	NO_APTA("No Apta")
 	;
 	
 	String name;

@@ -13,6 +13,7 @@ public enum Destiny {
 	GRANEL_NATUR("Granel Natur"),
 	MERCADOS("Mercados"),
 	MIRALOBUENO("Miralobueno"),
+	MIRALOBUENO_5KG("Miralobueno 5 Kg."),
 	SIEMBRA("Siembra")
 	;
 	

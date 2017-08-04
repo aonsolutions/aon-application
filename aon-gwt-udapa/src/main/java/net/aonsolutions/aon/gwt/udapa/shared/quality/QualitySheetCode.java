@@ -48,6 +48,9 @@ public enum QualitySheetCode implements IsSerializable{
 	/** ANALISIS CALIDAD - MATERIA SECA */
 	UFQAC7("ufqac7"),
 	
+	/** ANALISIS CALIDAD - COLOR - SOLO PARA BASERRI Y EUSKOLABEL */
+	UFQAC8("ufqac8"),
+	
 	// CONTROL CALIBRES
 	
 	/** CONTROL CALIBRES - PESO MUESTRA */
@@ -226,16 +229,9 @@ public enum QualitySheetCode implements IsSerializable{
 	UFQO("ufqo"),
 
 	// CALCULOS
-	
-	/** PRECIO CONTRATO */
-	UFQC1("ufqc1"),
 
 	/** P FONDO */
 	UFQC2("ufqc2"),
-
-	/** COLOR */
-	UFQC3("ufqc3"),
-
 	;
 	
 	

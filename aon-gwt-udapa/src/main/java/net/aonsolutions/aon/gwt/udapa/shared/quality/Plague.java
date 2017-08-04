@@ -3,8 +3,8 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality;
 import java.util.LinkedList;
 
 public enum Plague {
-	APTA("Apta"),
-	NO_APTA("No Apta")
+	LIBRE("Libre"),
+	CONTAMINADA("Contaminada")
 	;
 	
 	String name;

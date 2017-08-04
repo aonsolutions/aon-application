@@ -204,7 +204,7 @@ public class QualitySheet extends Composite{
 		transportData.setWidget(2, 1, new Label(map.get("transport_driver_document"))); setWidth(transportData, 2, 1);
 		transportData.setWidget(2, 2, new Label("Matricula"));setWidth(transportData, 2, 2);
 		transportData.setWidget(2, 3, new Label(map.get("transport_number_plate")));setWidth(transportData, 2, 3);
-		transportData.setWidget(2, 4, new Label("Tara Adiconal"));
+		transportData.setWidget(2, 4, new Label("Tara Adicional"));
 		transportData.setWidget(2, 5, doubleBox(QualitySheetCode.UFQDT1));
 		
 		transportData.setWidget(3, 0, new Label(""));
@@ -267,7 +267,17 @@ public class QualitySheet extends Composite{
 		
 		qualityTest.setWidget(3, 0, new Label("Materia Seca"));
 		qualityTest.setWidget(3, 1, doubleBox(QualitySheetCode.UFQAC7));
-		qualityTest.getFlexCellFormatter().setColSpan(3, 1, 3);
+		
+		Boolean propaco = map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
+				(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
+				|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+		if(propaco) {
+			qualityTest.setWidget(3, 2, new Label("Color"));
+			qualityTest.setWidget(3, 3, checkBox(QualitySheetCode.UFQAC8));
+		} else {
+			qualityTest.setWidget(3, 2, new Label(""));
+			qualityTest.setWidget(3, 3, new Label(""));
+		}
 	}
 	
 	private void caliberControl() {
@@ -539,9 +549,20 @@ public class QualitySheet extends Composite{
 				undo.push(ws);
 				if(QualitySheetCode.UFQDP1.equals(code)){
 					Boolean siembra = listBox.getSelectedItemText().equals("Siembra");
+					Boolean propaco = listBox.getSelectedItemText().equals("Baserri") || listBox.getSelectedItemText().equals("Euskolabel");
 					if(siembra){
+						qualityTest.setWidget(3, 2, new Label(""));
+						qualityTest.setWidget(3, 3, new Label(""));
 						calibresSiembra();
-					} else calibresConsumo();	
+					} else if(propaco){
+						qualityTest.setWidget(3, 2, new Label("Color"));
+						qualityTest.setWidget(3, 3, checkBox(QualitySheetCode.UFQAC8));
+						calibresConsumo();
+					} else {
+						qualityTest.setWidget(3, 2, new Label(""));
+						qualityTest.setWidget(3, 3, new Label(""));
+						calibresConsumo();
+					}
 				}
 				
 				String id = dataResponse.getId() + "";
