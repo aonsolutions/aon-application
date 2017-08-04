@@ -2,11 +2,8 @@
 <!DOCTYPE html [
     <!ENTITY nbsp "&#160;"> 
 ]>
-<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
-	
-
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
     	

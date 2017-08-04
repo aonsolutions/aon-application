@@ -173,7 +173,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	private void receptionPanel(){
 		receptionVerticalPanel = new VerticalPanel();
 		receptionVerticalPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		Label label = new Label("Recepcion");
+		Label label = new Label("Recepci\u00f3n");
 		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		label.getElement().getStyle().setPadding(3, Unit.PX);
 		HorizontalPanel hp = new HorizontalPanel();
@@ -185,18 +185,17 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			truck.getElement().getStyle().setPadding(0, Unit.PX);
 			truck.getElement().getStyle().setHeight(20, Unit.PX);
 			truck.setNoink(true);
+			truck.getElement().getStyle().setColor("orangered");
 			if(getCarrierPacking().getReceptionStartDate() != null){
 				truck.getElement().getStyle().setColor(
 						getCarrierPacking().getReceptionEndDate() != null
-						? "red" : "green");
+						? "darkslategray" : "green");
 			}
 			truck.addClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					if(getCarrierPacking().getReceptionEndDate() == null){
-						truckHandler(truck);
-					}
+					truckHandler(truck);
 				}
 			});
 			hp.add(truck);
@@ -1066,7 +1065,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		PaperToggleButton ptb = new PaperToggleButton();
 		ptb.getElement().getStyle().setMarginLeft(10, Unit.PX);
 		ptb.getElement().getStyle().setMarginTop(40, Unit.PX);	
-		ptb.setChecked(false);
+		ptb.setChecked(true);
 		hp.add(ptb);
 		panel.add(hp);
 
@@ -1351,36 +1350,56 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		VerticalPanel panel = new VerticalPanel();
 		panel.setStyleName(AON.AON_CSS.aonWidthAll());
 		
-		if(b1){
-			PaperInput pesoBruto = new PaperInput();
-			pesoBruto.setLabel("Peso Bruto");
-			pesoBruto.setValue(getCarrierPacking().getGross().toString());
-			pesoBruto.setDisabled(true);
-			panel.add(pesoBruto);
-		}
-		
 		PaperInput quantity = new PaperInput();
 		quantity.setLabel(b1 ? "Tara" : "Peso Bruto");
-		panel.add(quantity);
-    	
+		
+		PaperInput pesoBruto = new PaperInput();
+		pesoBruto.setVisible(false);
+
 		if(b1){
+			pesoBruto.setVisible(true);
+			pesoBruto.setLabel("Peso Bruto");
+			pesoBruto.setValue(getCarrierPacking().getGross().toString());
+			panel.add(pesoBruto);
+			
+			panel.add(quantity);
+			
 			PaperInput pesoNeto = new PaperInput();
 			pesoNeto.setLabel("Peso Neto");
 			pesoNeto.setDisabled(true);
-			panel.add(pesoNeto);		
+			panel.add(pesoNeto);	
 			
+			if(getCarrierPacking().getReceptionEndDate() != null) {
+				quantity.setValue(getCarrierPacking().getTare().toString());
+				pesoNeto.setValue(getCarrierPacking().getNet().toString());
+			}
 			quantity.addChangeHandler(new ChangeEventHandler() {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
 					Double d = Double.parseDouble(quantity.getValue());
-					Double net = getCarrierPacking().getGross() - d;
+					Double g = Double.parseDouble(pesoBruto.getValue());
+					Double net = g - d;
 					pesoNeto.setValue(net.toString());
 				}
 			});
+			
+			pesoBruto.addChangeHandler(new ChangeEventHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					Double d = Double.parseDouble(quantity.getValue());
+					Double g = Double.parseDouble(pesoBruto.getValue());
+					Double net = g- d;
+					pesoNeto.setValue(net.toString());
+				}
+			});
+		} else {
+			panel.add(quantity);
+		
 		}
 		
-      	AonDialog dialog = new AonDialog("Recepcion", panel) {
+      	AonDialog dialog = new AonDialog("Recepci\u00f3n", panel) {
 			
 			@Override protected void onCancel() {hide();}
 			
@@ -1388,10 +1407,12 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			protected void onAccept() {
 				JSONObject json = new JSONObject();	
 				String requestData = json.toString();
-				if(getCarrierPacking().getReceptionStartDate() != null){
+				if(getCarrierPacking().getReceptionStartDate() != null || getCarrierPacking().getReceptionEndDate() != null){
+					Double gross = Double.parseDouble(pesoBruto.getValue()); 
 					Double tare = Double.parseDouble(quantity.getValue());
+					json.put("gross", new JSONNumber(gross));
 					json.put("tare", new JSONNumber(tare));
-					json.put("net", new JSONNumber(getCarrierPacking().getGross() - tare));	
+					json.put("net", new JSONNumber(gross - tare));	
 					json.put("reception_end_date", new JSONString(AonDateUtils.formatDateTime(new Date())));
 					requestData = JsonUtils.stringify(json.getJavaScriptObject());
 				} else {
@@ -1410,7 +1431,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 						if(getCarrierPacking().getReceptionEndDate() != null){
 							parent.content();
 						}
-						truck.getElement().getStyle().setColor(result.getReceptionEndDate() != null ? "red" : "green");
+						truck.getElement().getStyle().setColor(result.getReceptionEndDate() != null ? "darkslategray" : "green");
 						hide();
 			
 		}

@@ -15,7 +15,7 @@
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Parametros" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel text="Parámetros" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:SimpleLayoutPanel ui:field="parameterPanel" styleName="{aonResources.css.aonTextCenter}"/>

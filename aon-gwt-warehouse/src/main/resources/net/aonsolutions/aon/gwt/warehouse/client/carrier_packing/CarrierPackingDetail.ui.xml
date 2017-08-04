@@ -70,7 +70,7 @@
 				<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonMarginTop5} {aonResources.css.aonWidthAll}">
 					<tr>
 						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-							<g:InlineLabel text="Matricula"/>
+							<g:InlineLabel text="Matrícula"/>
 						</td>
 						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
 							<g:TextBox ui:field="numberPlate" styleName="{aonResources.css.aonTextBox}"/>
