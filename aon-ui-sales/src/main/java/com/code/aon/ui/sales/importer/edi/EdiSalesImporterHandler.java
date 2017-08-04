@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -274,12 +276,13 @@ public class EdiSalesImporterHandler implements Serializable {
 					
 					getLogPanel().info("Pedido creado: " + sales.getReferenceCode());
 					
-					SalesDetailController detailController = (SalesDetailController) FormUtil.getController(ISalesConstants.SALES_DETAIL_CONTROLLER_NAME);
-					for(ERE1L ere1l: rectl.ere1lList){
+					List<SalesDetail> detailList = new LinkedList<>();
+					for(ERE1L ere1l: rectl.ere1lList) {
 						RegistryItem rItem = searchRegistryItem(ere1l, customer);
 						if(rItem==null) {
 							getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
-									+ " omitida: La referencia de producto: " + ere1l.getDescripcion1Articulo().trim()
+									+ " omitida (" + ere1l.getCantidadPedida_21_() +" uds):"
+									+ " La referencia de producto: " + ere1l.getDescripcion1Articulo().trim()
 									+ " no existe para el cliente " + customer.getRegistry().getFullName()
 									+ " (NumeroArticuloComprador: " + StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_())
 									+ ", CodigoEANDelArticuloAdicional: " + StringUtils.trimToNull(ere1l.getCodigoEANDelArticuloAdicional_1__EN_())
@@ -293,27 +296,26 @@ public class EdiSalesImporterHandler implements Serializable {
 							Tag customerPackingTag = searchPackingTag(customerRegistryNote);
 							Double quantity = obtainQuantity(ediLineQuantity, customerPackingTag, rItem);
 							Double price = rItem.getPrice();
-							if (!testing) {
-								detailController.onReset(event);
-								SalesDetail detail = (SalesDetail) detailController.getTo();
-								detail.setSales(sales);
-								detail.setItem(rItem.getItem());
-								detail.setLine(line);
-								detail.setDescription(description);
-								detail.setQuantity(quantity);
-								detail.setPrice(price);
-								detail.setTaxes(0.0);
-								detail.setStatus(SalesDetailStatus.PENDING);
-								detail.setOfferDetail(null);
-								detail.setDelivered(0.0);
-								detailController.onAccept(event);
-							}
+							
+							SalesDetail detail = new SalesDetail();
+							detail.setSales(sales);
+							detail.setItem(rItem.getItem());
+							detail.setLine(line);
+							detail.setDescription(description);
+							detail.setQuantity(quantity);
+							detail.setPrice(price);
+							detail.setTaxes(0.0);
+							detail.setStatus(SalesDetailStatus.PENDING);
+							detail.setOfferDetail(null);
+							detail.setDelivered(0.0);
+							detailList.add(detail);
+							
 							Tag itemPackMeasurementTag = rItem.getItem().getPackMeasurementTag();
 							Tag itemPackingTag = rItem.getItem().getPackUnitsTag();
 							Tag itemPackFormatTag = rItem.getItem().getPackFormatTag();
 							double itemPackMeasurement = rItem.getItem().getPackMeasurement();
 							int itemPackUnits = rItem.getItem().getPackUnits();
-							getLogPanel().info(String.format("Linea de pedido %1$d creada: %2$.2f unidades ", line, quantity)
+							getLogPanel().info(String.format("Linea %1$d reconocida: %2$.2f unidades ", line, quantity)
 									+ (quantity.equals(ediLineQuantity)
 											?String.format("(%1$.2f %2$s)", ediLineQuantity, itemPackMeasurementTag.getName()):"")
 									+ (quantity.equals(ediLineQuantity * itemPackMeasurement)
@@ -323,6 +325,39 @@ public class EdiSalesImporterHandler implements Serializable {
 									+ " de " + description);
 						}
 					}
+					if (!testing) {
+						Map<Integer, SalesDetail> detailGroupMap = new HashMap<>();
+						detailList.stream()
+							.forEach(d -> {
+								if(detailGroupMap.containsKey(d.getItem().getId())){
+									SalesDetail detail = detailGroupMap.get(d.getItem().getId());
+									detail.setQuantity(detail.getQuantity() + d.getQuantity());
+								} else {									
+									detailGroupMap.put(d.getItem().getId(), d);
+								}
+							});
+						
+						SalesDetailController detailController = (SalesDetailController) FormUtil.getController(ISalesConstants.SALES_DETAIL_CONTROLLER_NAME);
+						int line = 0;
+						for(SalesDetail detail: detailGroupMap.values()){
+							detailController.onReset(event);
+							SalesDetail newDetail = (SalesDetail) detailController.getTo();
+							newDetail.setSales(detail.getSales());
+							newDetail.setItem(detail.getItem());
+							newDetail.setLine(++line);
+							newDetail.setDescription(detail.getDescription());
+							newDetail.setQuantity(detail.getQuantity());
+							newDetail.setPrice(detail.getPrice());
+							newDetail.setTaxes(detail.getTaxes());
+							newDetail.setStatus(detail.getStatus());
+							newDetail.setDelivered(detail.getDelivered());
+							detailController.onAccept(event);
+							
+							getLogPanel().info(String.format("Linea de pedido %1$d creada: %2$.2f unidades ", newDetail.getLine(), newDetail.getQuantity())
+									+ " de " + newDetail.getDescription());
+						}
+					}
+					
 				}
 					
 			} catch (ManagerBeanException e) {
@@ -429,33 +464,43 @@ public class EdiSalesImporterHandler implements Serializable {
 	}
 	
 	private RegistryItem searchRegistryItem(ERE1L ere1l, Customer customer) {
-		try {			
+		RegistryItem rItem = null;
+		try {
 			String itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo());
-			if(itemCustomerCode==null){
+			rItem = obtainRegistryItem(customer, itemCustomerCode);
+			if(rItem==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_());
+				rItem = obtainRegistryItem(customer, itemCustomerCode);
 			}
-			if(itemCustomerCode==null){
+			if(rItem==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoEANDelArticuloAdicional_1__EN_());
+				rItem = obtainRegistryItem(customer, itemCustomerCode);
 			}
-			if(itemCustomerCode==null){
+			if(rItem==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoClienteFinal());
+				rItem = obtainRegistryItem(customer, itemCustomerCode);
 			}
-			if(itemCustomerCode==null){
+			if(rItem==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoGrupoArticuloComprador_GB_());
-			}
-			if(itemCustomerCode!=null){
-				IManagerBean itemBean = BeanManager.getManagerBean(RegistryItem.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_CODE), itemCustomerCode);
-				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), customer.getRegistry().getId());
-				List<ITransferObject> list = itemBean.getList(criteria);
-				if(list!=null && !list.isEmpty()){
-					return (RegistryItem) list.get(0);
-				}
+				rItem = obtainRegistryItem(customer, itemCustomerCode);
 			}
 		} catch (ManagerBeanException ex) {
 			getLogPanel().error(ex.getMessage());
 			LOGGER.error(ex.getMessage());
+		}
+		return rItem;
+	}
+	
+	private RegistryItem obtainRegistryItem(Customer customer, String itemCustomerCode) throws ManagerBeanException{
+		if(itemCustomerCode!=null && !"".equals(itemCustomerCode)){
+			IManagerBean itemBean = BeanManager.getManagerBean(RegistryItem.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_CODE), itemCustomerCode);
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), customer.getRegistry().getId());
+			List<ITransferObject> list = itemBean.getList(criteria);
+			if(list!=null && !list.isEmpty()){
+				return (RegistryItem) list.get(0);
+			}
 		}
 		return null;
 	}
