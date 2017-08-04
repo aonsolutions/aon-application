@@ -20,7 +20,7 @@
 				<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
 					<tr>
 						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-							<g:InlineLabel text="Almacen"/>
+							<g:InlineLabel text="Almacén"/>
 						</td>
 						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
 							<g:Label ui:field="warehouse"></g:Label>
@@ -86,7 +86,7 @@
 						<td>
 							<div class="{aonResources.css.aonGroup}">
 								<div class="{aonResources.css.aonGroupTitle}">
-									<g:InlineLabel text="Analisis Calidad" />
+									<g:InlineLabel text="Análisis Calidad" />
 								</div>
 								<div class="{aonResources.css.aonGroupBody}">
 									<g:FlexTable ui:field="qualityTest" styleName="{aonResources.css.aonWidthAll}"></g:FlexTable>

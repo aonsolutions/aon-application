@@ -140,6 +140,8 @@ public class QualitySheet extends Composite{
 								public void onSuccess(HashMap<String, String> result) {
 									map = result;
 									calculated();
+									FootPanel fp = (FootPanel) southContent.getWidget();	
+									fp.calculatePanel();
 								}
 							});
 						}
@@ -184,7 +186,6 @@ public class QualitySheet extends Composite{
 		});
 		initWidget(binder.createAndBindUi(this));
 		southContent.setWidget(new FootPanel(this));
-
 	}
 	
 	private void transportData() {
@@ -202,7 +203,7 @@ public class QualitySheet extends Composite{
 	
 		transportData.setWidget(2, 0, new Label("DNI")); setWidth(transportData, 2, 0);
 		transportData.setWidget(2, 1, new Label(map.get("transport_driver_document"))); setWidth(transportData, 2, 1);
-		transportData.setWidget(2, 2, new Label("Matricula"));setWidth(transportData, 2, 2);
+		transportData.setWidget(2, 2, new Label("Matr\u00edcula"));setWidth(transportData, 2, 2);
 		transportData.setWidget(2, 3, new Label(map.get("transport_number_plate")));setWidth(transportData, 2, 3);
 		transportData.setWidget(2, 4, new Label("Tara Adicional"));
 		transportData.setWidget(2, 5, doubleBox(QualitySheetCode.UFQDT1));
@@ -486,7 +487,9 @@ public class QualitySheet extends Composite{
 				
 				impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQO,ta.getValue(), map, new AsyncCallback<HashMap<String, String>>() {
 					@Override public void onFailure(Throwable caught) {}
-					@Override public void onSuccess(HashMap<String, String> result) {}
+					@Override public void onSuccess(HashMap<String, String> result) {
+						map = result;
+					}
 				});
 			}
 		});
@@ -522,7 +525,11 @@ public class QualitySheet extends Composite{
 				
 				impl.updateValue(domainName, domainId, Integer.parseInt(id), code, cb.getValue() ? "1" : "0", map, new AsyncCallback<HashMap<String, String>>() {
 					@Override public void onFailure(Throwable caught) {}
-					@Override public void onSuccess(HashMap<String, String> result) {}
+					@Override public void onSuccess(HashMap<String, String> result) {
+						map = result;
+						FootPanel fp = (FootPanel) southContent.getWidget();	
+						fp.calculatePanel();
+					}
 				});
 			}
 		});
@@ -574,7 +581,9 @@ public class QualitySheet extends Composite{
 
 					@Override
 					public void onSuccess(HashMap<String, String> result) {
-						
+						map = result;
+						FootPanel fp = (FootPanel) southContent.getWidget();	
+						fp.calculatePanel();
 					}
 				});
 			}
@@ -608,6 +617,8 @@ public class QualitySheet extends Composite{
 					public void onSuccess(HashMap<String, String> result) {
 						map = result;
 						calculated();
+						FootPanel fp = (FootPanel) southContent.getWidget();	
+						fp.calculatePanel();
 					}
 				});
 			}
@@ -645,6 +656,8 @@ public class QualitySheet extends Composite{
 					public void onSuccess(HashMap<String, String> result) {
 						map = result;
 						calculated();
+						FootPanel fp = (FootPanel) southContent.getWidget();	
+						fp.calculatePanel();
 					}
 				});
 			}

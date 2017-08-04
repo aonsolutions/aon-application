@@ -266,7 +266,7 @@ public class FootPanel extends Composite {
 			Double eurosKgNeto2 = totalEuros / kgNet;
 			table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
 			
-			Label sinBon80 = new Label(">80 Sin Bonificacion");
+			Label sinBon80 = new Label(">80 Sin Bonificaci\u00f3n");
 			sinBon80.setTitle(">80 Sin Bonificacion");
 			sinBon80.setStyleName(AON.AON_CSS.aonBold());
 			table1.setWidget(3, 0, sinBon80);
@@ -274,7 +274,7 @@ public class FootPanel extends Composite {
 			Double sinBon802 = ((quantity - kgPeq - kgGor - kgTer) * Double.parseDouble(perGor)) /100;
 			table1.setWidget(3, 1, new Label(Double.toString(AonMathUtils.round(sinBon802))));
 			
-			Label dtoSinBon = new Label("DTO Sin Bonificacion");
+			Label dtoSinBon = new Label("DTO Sin Bonificaci\u00f3n");
 			dtoSinBon.setTitle("DTO Sin Bonificacion");
 			dtoSinBon.setStyleName(AON.AON_CSS.aonBold());
 			table1.setWidget(4, 0, dtoSinBon);

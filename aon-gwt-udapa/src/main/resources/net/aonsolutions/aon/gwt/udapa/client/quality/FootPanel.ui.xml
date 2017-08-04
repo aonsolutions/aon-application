@@ -15,7 +15,7 @@
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="image:image" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Imagenes" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel text="Imágenes" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:ScrollPanel ui:field="imgPanel" styleName="{aonResources.css.aonTextCenter}"/>
@@ -24,7 +24,7 @@
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="editor:functions" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Calculos" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel text="Cálculos" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:ScrollPanel ui:field="calculatePanel" styleName="{aonResources.css.aonTextCenter}"/>
