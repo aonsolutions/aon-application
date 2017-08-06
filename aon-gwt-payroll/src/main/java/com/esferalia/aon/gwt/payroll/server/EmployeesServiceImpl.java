@@ -1046,6 +1046,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 			
+			
+			for(String key : contextResult.getVariables()){
+				if(contextResult.getList(key).isEmpty()){
+					System.out.println("RESULT :"+key+", value : null, type :null, startDate :null, endDate :null");
+					continue;
+				}
+				for(VariableDescriptor var : contextResult.getList(key))
+					System.out.println("RESULT :"+key+", value :"+var.getValue()+", type :"+var.getType()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+			}
+			
 			return contextResult;
 			
 		} catch (SQLException | ExpressionException e) {
@@ -3500,19 +3510,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Date endDate) {
 		try {
 			
-//			ExpressionContext test = calculatorCtx.getExpressionContext();
-//			for (String varName : test.variablesSet()){
-//				Object value = null;
-//				if(varName.equals("KMS")){
-//					List<ITimedVariable<?>> itVarList = test.getTimedVariables(varName);
-//					for(ITimedVariable<?> itVar : itVarList){
-//						try {
-//							value = itVar.getValue(itVar.getPeriod());
-//						} catch (Throwable e) {}
-//						System.out.println("EXPRESION_CONTEXT_KMS, Value :"+value+", StartDate :"+itVar.getPeriod().getStart()+", EndDate :"+itVar.getPeriod().getEnd());
-//					}
-//				}
-//			}
 			
 			ExpressionContext expressionContext = notNull(
 					calculatorCtx.getExpressionContext(),
@@ -3537,7 +3534,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					try {
 							value = var.getValue(var.getPeriod());
 					} catch (Throwable e) {
-							value = null;
+	
 					}
 					
 					if (value == null)
@@ -3559,7 +3556,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					}
 					if (description == null)
 						description = descriptions.get(varName);
-					
+	
 					if (Function.class == value.getClass()) {
 						Class<?> type = ctxVar != null ? ctxVar.getType()
 								.getJavaType() : Object.class;
