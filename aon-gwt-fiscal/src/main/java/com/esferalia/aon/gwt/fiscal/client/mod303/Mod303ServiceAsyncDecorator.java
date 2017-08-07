@@ -101,6 +101,12 @@ public class Mod303ServiceAsyncDecorator implements Mod303ServiceAsync {
 	}
 
 	@Override
+	public void declarationChanged(String domainName, int domain, Mod303 mod303, AsyncCallback<Mod303> callback) {
+		AON.start();
+		fsa.declarationChanged(domainName, domain, mod303,new AsyncCallbackWrapper<Mod303>(callback));
+	}
+
+	@Override
 	public void deleteMod303(String domainName, Mod303 mod303,
 			AsyncCallback<Void> callback) {
 		AON.start();

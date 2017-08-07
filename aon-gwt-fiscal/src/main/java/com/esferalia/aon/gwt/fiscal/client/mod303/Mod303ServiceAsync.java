@@ -22,5 +22,6 @@ public interface Mod303ServiceAsync {
 	void initializeMod303(String domainName, int domain, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void createMod303(String domainName, int domain, Mod303 mod303, AsyncCallback<Mod303> callback);
 	void getInfo(String domainName, int domain, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
+	void declarationChanged(String domainName, int domain, Mod303 mod303, AsyncCallback<Mod303> callback);
 
 }

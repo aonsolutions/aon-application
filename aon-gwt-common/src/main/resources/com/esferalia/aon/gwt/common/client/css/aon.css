@@ -88,6 +88,10 @@ input[type="checkbox"]:focus + label {
 	width: 90%;
 }
 
+.aon-width-98-percent {
+	width: 98%;
+}
+
 .aon-width-auto {
 	width: auto;
 }

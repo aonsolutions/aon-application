@@ -112,6 +112,7 @@ public interface IFiscal {
 	public Mod303 reopenMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 initializeMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 createMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303);
 	public void deleteMod303(AONContext ctx, Mod303 mod303);
 	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
 

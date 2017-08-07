@@ -67,6 +67,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected FlowPanel paymentInfo = new FlowPanel();
 	protected InlineLabel dirtyLabel = new InlineLabel();
 	protected InlineLabel statusLabel = new InlineLabel();
+	protected InlineLabel replacedLabel = new InlineLabel();
+	protected InlineLabel prorataLabel = new InlineLabel();
 	protected Button commentsButton = new Button();
 	
 	final Button newButton = new Button();
@@ -285,13 +287,16 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void paintDeclarationHeaderTable(SimplePanel panel) {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
-		table.addStyleName(AON.AON_CSS.aonWidth90Percent());
+		table.addStyleName(AON.AON_CSS.aonWidthAll());
 		table.addStyleName(AON.AON_CSS.aonBlockCenter());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
+		
 		table.getColumnFormatter().setWidth(1, "150px");
 		table.getColumnFormatter().setWidth(2, "150px");
-		table.getColumnFormatter().setWidth(3, "110px");
+		table.getColumnFormatter().setWidth(3, "100px");
+		table.getColumnFormatter().setWidth(4, "150px");
+		table.getColumnFormatter().setWidth(5, "110px");
 		
 		FlowPanel cell1 = new FlowPanel();
 		FlowPanel cell01 = new FlowPanel();
@@ -315,16 +320,38 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
 		table.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
 
+		if (mod303.isReplacement()) {
+			replacedLabel.setText("Sustit.");
+			replacedLabel.setStyleName(AON.AON_CSS.aonIconChecked());
+			replacedLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		}
+		if (mod303.isComplementary()) {
+			replacedLabel.setText("Complem.");
+			replacedLabel.setStyleName(AON.AON_CSS.aonIconChecked());
+			replacedLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		}
+		table.setWidget(0, 1, replacedLabel);
+		table.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+		table.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextCenter());
+		
+		if (AonMathUtils.isNotZero(mod303.getProratePercent()) &&  !AonMathUtils.equals(mod303.getProratePercent(), 100.0)) {
+			prorataLabel.setText(AON.MSG.prorrata() + ": " + mod303.getProratePercent() + "%");
+			prorataLabel.setStyleName(AON.AON_CSS.aonBold());
+		}
+		table.setWidget(0, 2, prorataLabel);
+		table.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridEven());
+		table.getCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonTextCenter());
+		
 		styleDirtyLabel();
 		dirtyLabel.setStyleName(AON.AON_CSS.aonColorRed());
-		table.setWidget(0, 1, dirtyLabel);
-		table.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+		table.setWidget(0, 3, dirtyLabel);
+		table.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonPanelGridEven());
 		
 		styleStatusLabel(this.mod303);
-		table.setWidget(0, 2, statusLabel);
-		table.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridEven());
-		table.getCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonNowrap());
-		table.getCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonTextCenter());
+		table.setWidget(0, 4, statusLabel);
+		table.getCellFormatter().setStyleName(0, 4, AON.AON_CSS.aonPanelGridEven());
+		table.getCellFormatter().addStyleName(0, 4, AON.AON_CSS.aonNowrap());
+		table.getCellFormatter().addStyleName(0, 4, AON.AON_CSS.aonTextCenter());
 		
 		FlowPanel commentsPanel = new FlowPanel();
 		commentsButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
@@ -369,10 +396,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		});
 		commentsPanel.add(commentsButton);
 		commentsPanel.add(new InlineLabel(AON.MSG.comments()));
-		table.setWidget(0, 3, commentsPanel);
+		table.setWidget(0, 5, commentsPanel);
 		styleCommentsButton();
-		table.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonPanelGridEven());
-		table.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonTextCenter());
+		table.getCellFormatter().setStyleName(0, 5, AON.AON_CSS.aonPanelGridEven());
+		table.getCellFormatter().addStyleName(0, 5, AON.AON_CSS.aonTextCenter());
 
 		panel.setWidget(table);
 	}

@@ -1300,7 +1300,7 @@ public interface CommonMessages extends Messages {
 			+ "conforme a la regla general de devengo contenida en el art. 75 LIVA")
 	String accrualRegimeInputMsg();
 	
-	@DefaultMessage("Prorratas")
+	@DefaultMessage("Prorrata")
 	String prorrata();
 	
 	@DefaultMessage("Porcentaje de prorrata")

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
@@ -15,6 +16,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -25,6 +27,12 @@ import com.google.gwt.user.client.ui.Label;
 public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	
 	protected int row = 0;
+	private AdministrationListBox admonList = new AdministrationListBox();
+	private IntegerBox yearBox = new IntegerBox();
+	private CheckBox replacement = new CheckBox();
+	private CheckBox complementary = new CheckBox();
+	private DoubleBox prorate = new DoubleBox(7);
+	private PeriodListBox periodList;
 
 	public NewDeclarationPopup(final Mod303 mod303 ,final Model303Callback callback) {
 		setCaption(AON.MSG.newDeclaration());
@@ -32,10 +40,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		setAnimationEnabled(true);
 		
 		FlexTable tab = new FlexTable();
-		AdministrationListBox admonList = new AdministrationListBox();
-		IntegerBox yearBox = new IntegerBox();	
-		CheckBox replacement = new CheckBox();
-		CheckBox complementary = new CheckBox();
+		populate(mod303);
 
 		FlowPanel rootPanel = new FlowPanel(); 
 		tab.setCellPadding(0);
@@ -55,13 +60,25 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		admonList.setSelectedIndex( mod303.getAdministration().ordinal());
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
 				mod303.setAdministration( admonList.getValue() );
-				replacement.setVisible(mod303.isReplacementDeclarationAvailable());
-				complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
+				Model303.mod303Service.declarationChanged(Model303.getCurrentDomainName(),Model303.getCurrentDomain(),mod303,
+						new AsyncCallback<Mod303>() {
+							@Override
+							public void onSuccess(Mod303 result) {
+								replacement.setVisible(mod303.isReplacementDeclarationAvailable());
+								complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
+								populate(result);
+							}
+			
+							@Override
+							public void onFailure(Throwable caught) {
+								callback.showError(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+							}
+						});
+				
 			}
 		});
 		tab.setWidget(row, 1, admonList);
@@ -71,7 +88,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.year()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		yearBox.setValue(mod303.getYear());
+		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
 		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
@@ -87,17 +104,6 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.period()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		boolean months = mod303.getModel().isMonthly(mod303.getAdministration());
-		final PeriodListBox periodList = new PeriodListBox(months);
-		if (mod303.getPeriod() != null) {
-			for (int i = 0; i < periodList.getItemCount(); i++) {
-				Integer value = AonNumberUtils.toInteger(periodList.getValue(i));
-				if (value != null && mod303.getPeriod().ordinal() == value) {
-					periodList.setSelectedIndex(i);
-					break;
-				}
-			}
-		}
 		periodList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -147,6 +153,18 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.setWidget(row, 1, replacement);
 		row++;
 		
+		// PORCENTAJE DE PRORRATA
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label(AON.MSG.prorrataPercent()));
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		prorate.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				mod303.ensureDetail(mod303.getProrateKey()).setAmount(prorate.getValue());
+			}
+		});
+		tab.setWidget(row, 1, prorate);
+		
 		rootPanel.add(tab);
 		
 		FlowPanel buttonsPanel = new FlowPanel();
@@ -182,5 +200,22 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		buttonsPanel.add(cancelButton);
 		rootPanel.add(buttonsPanel);
 		add(rootPanel);
+	}
+
+	private void populate(Mod303 mod303) {
+		admonList.setSelectedIndex( mod303.getAdministration().ordinal());
+		yearBox.setValue(mod303.getYear());
+		boolean months = mod303.getModel().isMonthly(mod303.getAdministration());
+		periodList = new PeriodListBox(months);
+		if (mod303.getPeriod() != null) {
+			for (int i = 0; i < periodList.getItemCount(); i++) {
+				Integer value = AonNumberUtils.toInteger(periodList.getValue(i));
+				if (value != null && mod303.getPeriod().ordinal() == value) {
+					periodList.setSelectedIndex(i);
+					break;
+				}
+			}
+		}
+		prorate.setValue(mod303.ensureDetail(mod303.getProrateKey()).getAmount());
 	}
 }

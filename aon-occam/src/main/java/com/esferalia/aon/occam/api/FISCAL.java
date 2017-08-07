@@ -215,6 +215,17 @@ public class FISCAL {
 		}
 	}
 
+	public static Mod303 declarationChanged(String domainName, int domain, String user,Mod303 mod303) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().declarationChanged(ctx, mod303);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static String getMod303Info(String domainName, int domain, String user, Mod303 mod303
 			,IModelScript<Mod303Key> script,FiscalModelKeyInfo infoKey) {
 		AONContext ctx = null;

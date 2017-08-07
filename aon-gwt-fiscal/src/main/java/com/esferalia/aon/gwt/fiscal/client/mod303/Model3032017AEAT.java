@@ -4,20 +4,15 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
@@ -27,7 +22,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -195,65 +189,12 @@ public class Model3032017AEAT extends Model303Base {
 		paintEmptyRow(table);
 		paintCheck(mod303,Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
 		paintCheck(mod303,Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
-		paintProrate(mod303,callback,table);		// Porcentaje de prorrata
 		container.add(addGroupPanel("", table));
 		
 		declarationScrollPanel.setWidget(container);
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private void paintProrate(Mod303 mod303, Model303Callback callback, FlexTable table) {
-		int row = table.getRowCount();
-		paintLabel(table, row, AON.MSG.prorrataPercent());
-		Mod303Key key = mod303.getProrateKey();
-		final FiscalModelDetail det1 = mod303.ensureDetail(key);
-		final DoubleBox input = new DoubleBox(8);
-		getFieldsMap().put(key, input);
-		input.setEnabled(mod303.isNotFinished()); 
-		input.setValue(det1.getAmount());
-		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				double result = mod303.getResultAmount(key);
-				double adjust = mod303.getAdjustAmount(key);
-				double amount = input.getValue();
-				if (AonMathUtils.isNotZero(result - adjust - amount)) {
-					mod303.ensureDetail(key).setAdjustAmount( result - amount);	
-				}
-				mod303.ensureDetail(key).setAmount(input.getValue());
-				if (input.isEnabled()) {
-					ConfirmDialog cd = new ConfirmDialog();
-					cd.confirm(AON.MSG.prorateChanged(), new ConfirmDialogCallback() {
-
-						@Override
-						public void onAccept() {
-							Model303.mod303Service.initializeMod303(Model303.getCurrentDomainName(),Model303.getCurrentDomain(),mod303, 
-									new AsyncCallback<Mod303>() {
-								@Override
-								public void onSuccess(Mod303 result) {
-									markAsDirty();
-									selectAndPopulate(result);
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									markAsDirty();
-									callback.showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
-								}
-							});
-						}
-
-						@Override
-						public void onCancel() {
-							deleteButton.setEnabled(true);
-						}
-					});
-				}
-			}
-		});
-		table.setWidget(row, 1, input);
-	}
-
 	private void paintA02(Mod303 mod303, Mod303Key key, FlexTable table) {
 		int row = table.getRowCount();
 		paintLabel(table, row, key.getDescription());

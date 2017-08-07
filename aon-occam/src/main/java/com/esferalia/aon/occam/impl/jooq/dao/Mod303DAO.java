@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
+
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -7,6 +10,7 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Record1;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -93,6 +97,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			mod303 = new Mod303();
 		}
 		initializeFiscalModel(ctx, mod303);
+		declarationChanged(ctx, mod303);
 		
 		// Registro de devolucion.
 		// Cálculo por diferencia.
@@ -101,6 +106,36 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303;
 	}
 	
+	public static Mod303 declarationChanged(AONContext ctx, Mod303 mod303) {
+		initializeProrrate(ctx, mod303);
+		return mod303;
+	}
+
+	
+	private static void initializeProrrate(AONContext ctx, Mod303 mod303) {
+		if (mod303.getProrateKey() != null) {
+			ctx.checkRead();
+			Record1<Double> percent = ctx.getDslContext()
+					.select(FS_MODEL_DETAIL.AMOUNT)
+					.from(FS_MODEL)
+					.innerJoin(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
+					.where(FS_MODEL.DOMAIN.eq(ctx.getDomainId()))
+					.and(FS_MODEL.MODEL.eq(FiscalModelType.M303.getValue()))
+					.and(FS_MODEL_DETAIL.TYPE.eq( mod303.getProrateKey().getValue()))
+					.orderBy(FS_MODEL.YEAR.desc(), FS_MODEL.PERIOD.desc())
+					.fetch()
+					.stream()
+					.findFirst()
+					.orElse(null);
+			double perc = 100;
+			if (percent != null) {
+				perc = percent.getValue(FS_MODEL_DETAIL.AMOUNT);
+			}
+			mod303.ensureDetail(mod303.getProrateKey()).setAmount(perc);
+		}
+	}
+
+
 	public static Mod303 createMod303(AONContext ctx,Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		dec.firstInitializeMod303(ctx, mod303);

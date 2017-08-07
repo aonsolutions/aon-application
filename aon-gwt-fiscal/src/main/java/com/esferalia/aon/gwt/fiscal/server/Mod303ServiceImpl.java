@@ -69,7 +69,10 @@ public class Mod303ServiceImpl extends AonRemoteServiceServlet implements Mod303
 	public Mod303 createMod303(String domainName, int domain, Mod303 mod303) {
 		return FISCAL.createMod303(domainName, domain, this.getUserLogin(), mod303);
 	}
-
+	@Override
+	public Mod303 declarationChanged(String domainName, int domain, Mod303 mod303) throws AonCoreException {
+		return FISCAL.declarationChanged(domainName, domain, this.getUserLogin(), mod303);
+	}
 	@Override
 	public void deleteMod303(String domainName, Mod303 mod303) {
 		FISCAL.deleteMod303(domainName, this.getUserLogin(), mod303);

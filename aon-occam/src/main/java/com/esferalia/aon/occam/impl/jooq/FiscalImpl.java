@@ -363,6 +363,11 @@ public class FiscalImpl implements IFiscal {
 		return Mod303DAO.createMod303(ctx,mod303);
 	}
 	@Override
+	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303) {
+		return Mod303DAO.declarationChanged(ctx,mod303);
+	}
+
+	@Override
 	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod303DAO.getMod303Info(ctx,mod303,script,infoKey);
 	}
