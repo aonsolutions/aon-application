@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialogBar;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -19,21 +18,16 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
-import com.vaadin.polymer.iron.widget.IronLabel;
 import com.vaadin.polymer.paper.widget.PaperButton;
-import com.vaadin.polymer.paper.widget.PaperCheckbox;
-import com.vaadin.polymer.paper.widget.PaperDialog;
 
 public class EmployeeEventsDraft extends Composite implements ContextMenuHandler {
 
@@ -67,9 +61,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiField
 	HTMLPanel showVariablesContent;
 	
-//	@UiField
-//	PaperDialogScrollable showVariablesContent;
-	
 	@UiField
 	PaperButton showVariablesDialogOk;
 	
@@ -95,12 +86,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	Label yearLabel;
 	
 	@UiField
-	PaperDialog showVariablesDialog;
-	
-	@UiField
-	CustomDialogBar customDialogBarShowVariables;
-
-	@UiField
 	Button lastYearButton;
 
 	@UiField
@@ -113,7 +98,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
 	private EmployeeEventsDraftObject employeeEventsDraft;
 	private ArrayList<String> blockVariableList;
-	private HashMap<String,PaperCheckbox> showVariablesMap = new HashMap<String,PaperCheckbox>();
+	private HashMap<String,CheckBox> showVariablesMap = new HashMap<String,CheckBox>();
 	private HashMap<String,Integer> variablesRow = new HashMap<String,Integer>();
 	
 	public EmployeeEventsDraft() {
@@ -141,43 +126,46 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		showVariablesMenuItem.setScheduledCommand(new Command() {
 			@Override
 			public void execute() {
-				createShowVariablesDialog();
-				showVariablesDialog.open();
-				showVariablesDialog.center();
+				EmployeeCheckBoxDialog checkBoxDialog = new EmployeeCheckBoxDialog(employeeEventsDraft.getEmployeeContractVariables().size()){
+					@Override
+					protected void onAccept() {
+						ArrayList<String> variablesLocalStore = new ArrayList<String>();
+						
+						for(String var : employeeEventsDraft.getEmployeeContractVariables()){
+							 CheckBox check = showVariablesMap.get(var);
+							 Integer row = calculateRowByVariableName(var);
+							 if(check.isChecked())
+								 eventsGrid.getRowFormatter().removeStyleName(row, style.ocultarFila());
+							 else{
+								 eventsGrid.getRowFormatter().addStyleName(row, style.ocultarFila());
+								 variablesLocalStore.add(var);
+							 }
+						}
+						
+						setVariablesLocalStorage(variablesLocalStore);	
+					}
+				};
+				createShowVariablesDialog(checkBoxDialog);
+				checkBoxDialog.show();
+				checkBoxDialog.center();
 			}
 
-			private void createShowVariablesDialog() {
-				showVariablesContent.clear();
+			private void createShowVariablesDialog(EmployeeCheckBoxDialog checkBoxDialog) {
 				ArrayList<String> list = getVariablesLocalStorage();
-				ScrollPanel scroll = new ScrollPanel();
-				scroll.setHeight("300px");
-				VerticalPanel verticalPanel = new VerticalPanel();
-				scroll.add(verticalPanel);
-				showVariablesContent.add(scroll);
-					
+				
 				for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-					FlowPanel panel = new FlowPanel();
-					PaperCheckbox checkBox = new PaperCheckbox();
-					IronLabel label = new IronLabel();
-					label.getElement().setInnerText(var);
+					CheckBox checkBox = new CheckBox();
 					
 					if(list.contains(var))
 						checkBox.setChecked(false);
 					else
 						checkBox.setChecked(true);
 					
-					panel.add(checkBox);
-					panel.add(label);
-					panel.addStyleName(style.showVariablesStyle());
-					verticalPanel.add(panel);
-					
 					showVariablesMap.put(var, checkBox);
+					checkBoxDialog.addNewCheckBox(var, checkBox);
 				}
 			}
-
 		});
-		
-		customDialogBarShowVariables.addCloseHandler(()->{showVariablesDialog.close();});
 		
 		//#ifndef env.SNAPSHOT
 		saveButton.setVisible(false);
@@ -205,24 +193,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	 * UIHANDLERS
 	 */
 	
-	@UiHandler("showVariablesDialogOk")
-	public void onShowVariableDialogOkClick(ClickEvent event) {
-		ArrayList<String> variablesLocalStore = new ArrayList<String>();
-		
-		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-			 PaperCheckbox check = showVariablesMap.get(var);
-			 Integer row = calculateRowByVariableName(var);
-			 if(check.getChecked())
-				 eventsGrid.getRowFormatter().removeStyleName(row, style.ocultarFila());
-			 else{
-				 eventsGrid.getRowFormatter().addStyleName(row, style.ocultarFila());
-				 variablesLocalStore.add(var);
-			 }
-		}
-		
-		setVariablesLocalStorage(variablesLocalStore);
-	}
-
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
 		//Window.alert("***********newValueButton**************");
