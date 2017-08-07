@@ -804,12 +804,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	public void TestIncidenciasParcial() throws Exception {
 
 		open("incidencias");
-		wait4Id("complemento_i,_tiempo_parcial");
-		events("COMPLEMENTO_I, TIEMPO PARCIAL");
+		wait4Id("complemento,_tiempo_parcial");
+		events("COMPLEMENTO, TIEMPO_PARCIAL");
 
 		//Verificamos unos valores iniciales
-		assertText("complemento_i_6","-");
-		assertText("complemento_i_9","3");
+		assertText("kms_9","30");
+		assertText("kms_6","-");
+		
 		
 //		//Click al complemento de agosto
 //		HtmlDivision complementoAgosto = getElementById("complemento_i_8");
