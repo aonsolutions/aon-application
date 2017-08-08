@@ -14,6 +14,14 @@ public class Mod303 extends FiscalModel implements Serializable {
 		setModel(FiscalModelType.M303);
 	}
 	
+	public boolean isDiffCalculationDisabled() {
+		return getAmount(Mod303Key.CM_001) == 1;
+	}
+
+	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		ensureDetail(Mod303Key.CM_001).setAmount(diffCalculationDisabled?1:0);
+	}
+
 	public boolean isComplementaryDeclarationAvailable() {
 		if (getAdministration() == null) return false;
 		else if (isAEAT()) return true;

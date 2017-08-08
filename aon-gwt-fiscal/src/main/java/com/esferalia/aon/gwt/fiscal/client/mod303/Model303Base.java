@@ -65,7 +65,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected InlineLabel nameLabel = new InlineLabel();
 	protected InlineLabel surnameLabel = new InlineLabel();
 	protected FlowPanel paymentInfo = new FlowPanel();
-	protected InlineLabel dirtyLabel = new InlineLabel();
+	protected FlowPanel  dirtyPanel = new FlowPanel ();
 	protected InlineLabel statusLabel = new InlineLabel();
 	protected InlineLabel replacedLabel = new InlineLabel();
 	protected InlineLabel prorataLabel = new InlineLabel();
@@ -294,7 +294,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 		table.getColumnFormatter().setWidth(1, "150px");
 		table.getColumnFormatter().setWidth(2, "150px");
-		table.getColumnFormatter().setWidth(3, "100px");
+		table.getColumnFormatter().setWidth(3, "120px");
 		table.getColumnFormatter().setWidth(4, "150px");
 		table.getColumnFormatter().setWidth(5, "110px");
 		
@@ -343,9 +343,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.getCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonTextCenter());
 		
 		styleDirtyLabel();
-		dirtyLabel.setStyleName(AON.AON_CSS.aonColorRed());
-		table.setWidget(0, 3, dirtyLabel);
+		table.setWidget(0, 3, dirtyPanel);
 		table.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonPanelGridEven());
+		table.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonTextCenter());
 		
 		styleStatusLabel(this.mod303);
 		table.setWidget(0, 4, statusLabel);
@@ -541,43 +541,45 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	private void paintInfoCol(FlexTable table, int row, int col, final IModelScript<Mod303Key> script) {
 		FlowPanel buttonContainer = new FlowPanel();
+		buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
-			buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
-			if 	(infoKey != FiscalModelKeyInfo.NONE) {
-				final Button button = new Button("");
-				button.setTitle(infoKey.getLabel());
-				button.setStyleName(AON.AON_CSS.aonIconCommandButton());
+			
+			if 	(infoKey == FiscalModelKeyInfo.NONE) continue;
+			if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE && this.mod303.isDiffCalculationDisabled() ) continue;
+			
+			final Button button = new Button("");
+			button.setTitle(infoKey.getLabel());
+			button.setStyleName(AON.AON_CSS.aonIconCommandButton());
+			
+			if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.AON_CSS.aonIconInvoice());
+			if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.AON_CSS.aonIconDiff());
+			if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
+			if 	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.AON_CSS.aonIconCompanyData());
+			
+			button.addClickHandler(new ClickHandler() {
 				
-				if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.AON_CSS.aonIconInvoice());
-				if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.AON_CSS.aonIconDiff());
-				if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
-				if 	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.AON_CSS.aonIconCompanyData());
-				
-				button.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						Model303.mod303Service.getInfo(Model303.getCurrentDomainName(),Model303.getCurrentDomain(),
-								mod303,script, infoKey,new AsyncCallback<String>() {
+				@Override
+				public void onClick(ClickEvent event) {
+					Model303.mod303Service.getInfo(Model303.getCurrentDomainName(),Model303.getCurrentDomain(),
+							mod303,script, infoKey,new AsyncCallback<String>() {
 
-									@Override
-									public void onFailure(Throwable caught) {
-										callback.showError(AON.MSG.errorMessage());
-									}
-
-									@Override
-									public void onSuccess(String result) {
-										callback.showBreakdownPanel(result);
-									}
-							
+								@Override
+								public void onFailure(Throwable caught) {
+									callback.showError(AON.MSG.errorMessage());
 								}
-							);	
-					}
-				});
-				buttonContainer.add(button);
-			}
-			table.setWidget(row, col, buttonContainer);
+
+								@Override
+								public void onSuccess(String result) {
+									callback.showBreakdownPanel(result);
+								}
+						
+							}
+						);	
+				}
+			});
+			buttonContainer.add(button);
 		}
+		table.setWidget(row, col, buttonContainer);
 	}
 	
 	protected void populate(Mod303 mod303) {
@@ -629,7 +631,20 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 
 	protected void styleDirtyLabel() {
-		dirtyLabel.setText(isDirty()?"[CAMBIOS]":"");
+		dirtyPanel.clear();
+		if ( isDirty()) {
+			InlineLabel dirtyLabel = new InlineLabel("[CAMBIOS]");
+			dirtyLabel.setStyleName(AON.AON_CSS.aonColorRed());
+			dirtyPanel.add(dirtyLabel);
+		}
+		if ( !this.mod303.isDiffCalculationDisabled()) {
+			InlineLabel diffLabel = new InlineLabel("[DIF.]");
+			diffLabel.setStyleName(AON.AON_CSS.aonMarginLeft5());
+			diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
+			dirtyPanel.add(diffLabel);
+		}
+		
+		
 	}
 
 	private void save() {

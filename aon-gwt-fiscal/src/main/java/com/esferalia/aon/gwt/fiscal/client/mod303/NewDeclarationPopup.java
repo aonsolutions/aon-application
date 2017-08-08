@@ -31,6 +31,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private IntegerBox yearBox = new IntegerBox();
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
+	private CheckBox diffCalculation = new CheckBox();
 	private DoubleBox prorate = new DoubleBox(7);
 	private PeriodListBox periodList;
 
@@ -113,9 +114,20 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.setWidget(row, 1, periodList);
 		row++;
 		
-		// COMPLEMENTARIA
+		// PORCENTAJE DE PRORRATA
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label(""));
+		tab.setWidget(row, 0, new Label(AON.MSG.prorrataPercent()));
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		prorate.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				mod303.ensureDetail(mod303.getProrateKey()).setAmount(prorate.getValue());
+			}
+		});
+		tab.setWidget(row, 1, prorate);
+		row++;
+
+		// COMPLEMENTARIA
 		complementary.setText(AON.MSG.complementary());
 		complementary.addClickHandler(new ClickHandler() {
 			
@@ -129,13 +141,12 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			}
 		});
 		complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(row, 1, complementary);
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, complementary);
 		row++;
 		
 		// SUSTITUTIVA
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label(""));
 		replacement.setText(AON.MSG.replacement());
 		replacement.addClickHandler(new ClickHandler() {
 			
@@ -149,22 +160,27 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			}
 		});
 		replacement.setVisible(mod303.isReplacementDeclarationAvailable());
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(row, 1, replacement);
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, replacement);
 		row++;
 		
-		// PORCENTAJE DE PRORRATA
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label(AON.MSG.prorrataPercent()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		prorate.addValueChangeHandler(new ValueChangeHandler<Double>() {
+		// CALCULO POR DIFERENCIA
+		diffCalculation.setText(AON.MSG.diffCalculation());
+		diffCalculation.setValue(!mod303.isDiffCalculationDisabled());
+		diffCalculation.addClickHandler(new ClickHandler() {
+			
 			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				mod303.ensureDetail(mod303.getProrateKey()).setAmount(prorate.getValue());
+			public void onClick(ClickEvent event) {
+				mod303.setDiffCalculationDisabled(!diffCalculation.getValue());
 			}
 		});
-		tab.setWidget(row, 1, prorate);
-		
+		diffCalculation.setVisible(mod303.isComplementaryDeclarationAvailable());
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, diffCalculation);
+		row++;
+
 		rootPanel.add(tab);
 		
 		FlowPanel buttonsPanel = new FlowPanel();

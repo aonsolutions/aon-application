@@ -14,10 +14,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
 
+	 CM_001("303-CM001", 0,"C\u00E1lculo por diferencia.")
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  AEAT -------
 	// 	----------------------------------------------------------------------------------
-	 CT_X01("303-CTX01", 0,"Porcentaje de prorrata.")
+	,CT_X01("303-CTX01", 0,"Porcentaje de prorrata.")
 	,CT_X02("303-CTX02", 0,"Tipo de declaraci\u00F3n")
 	 
 	,CT_A01("303-CTA01", 0,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual (Art. 30 RIVA)?")

@@ -568,6 +568,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Decl. complementaria")
 	String complementary();
 
+	@DefaultMessage("C\u00E1lculo por diferencia")
+	String diffCalculation();
+
 	@DefaultMessage("N. justificante anterior")
 	String complementaryReceipt();
 

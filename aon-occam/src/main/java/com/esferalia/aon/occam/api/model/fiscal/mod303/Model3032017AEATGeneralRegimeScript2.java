@@ -4,6 +4,7 @@ import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -30,9 +31,9 @@ public enum Model3032017AEATGeneralRegimeScript2 implements IModelScript<Mod303K
 	,DED09 ("Compensaciones R\u00E9gimen Especial A.G. y P."
 		,new Mod303Key[]{null				,Mod303Key.CT_C42},INVOICE,DIFF_INVOICE)
 	,DED10 ("Regularizaci\u00F3n inversiones"
-		,new Mod303Key[]{null				,Mod303Key.CT_C43},INVOICE,DIFF_INVOICE)
+		,new Mod303Key[]{null				,Mod303Key.CT_C43},NONE)
 	,DED11 ("Regularizaci\u00F3n por aplicaci\u00F3n del porcentaje definitivo de prorrata"
-		,new Mod303Key[]{null				,Mod303Key.CT_C44},INVOICE,DIFF_INVOICE)
+		,new Mod303Key[]{null				,Mod303Key.CT_C44},NONE)
 	,DED12 ("Total a deducir"
 		,new Mod303Key[]{null				,Mod303Key.CT_C45},COMPUTE)
 	,R01   ("Resultado r\u00E9gimen general"
