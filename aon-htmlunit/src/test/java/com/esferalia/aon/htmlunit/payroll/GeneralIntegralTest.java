@@ -18,6 +18,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlSpan;
+import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
@@ -811,40 +814,30 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("kms_9","30");
 		assertText("kms_6","-");
 		
-		
-//		//Click al complemento de agosto
-//		HtmlDivision complementoAgosto = getElementById("complemento_i_8");
-//		complementoAgosto.click();
-//		
-//		//Click a new value
-//		HtmlButton newValue = getElementById("new_value_complemento_i");
-//		newValue.click();
-//		
-//		//Poner nuevo valor DoubleBox
-//		wait4Id("value_box");
-//		setValue("value_box", "7");
-//		HtmlButton accept = getElementById("input_accept");
-//		accept.click();
-//		
-//		//Comparar nuevo valor
-//		wait4Id("complemento_i");
-//		assertText("complemento_i_8","7");
-//		
-//		//Comparar nuevo valor al hacer undo
-//		HtmlButton undo = getElementById("undo_complemento_i");
-//		undo.click();
-//		wait4Id("complemento_i");
-//		assertText("complemento_i_8","4");
-//		
-//		//Comparar nuevo valor al hacer redo
-//		HtmlButton redo = getElementById("redo_complemento_i");
-//		redo.click();
-//		wait4Id("complemento_i");
-//		assertText("complemento_i_8","7");
+		changeDisplayedHolidays(false);
+		HtmlTableRow holidaysRow = getElementById("row_1");
+		Assert.assertFalse(holidaysRow.isDisplayed());
+		changeDisplayedHolidays(true);
+		Assert.assertTrue(holidaysRow.isDisplayed());
 		
 	}
-	
+
 	// -------------------------------------------------------------------------
+	
+	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
+		HtmlTableDataCell viewMore = getElementById("view_menu_item");
+		viewMore.click();
+		
+		HtmlTableDataCell showVariables = getElementById("show_variables_menu_item");
+		showVariables.click();
+		
+		wait4Id("checkbox_0");
+		HtmlInput holidaysCheckBox = getElementById("checkbox_0-input");
+		holidaysCheckBox.click();
+		HtmlButton accept = getElementById("input_accept");
+		accept.click();
+		
+	}
 	
 	private void expand(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
 		HtmlButton button = getElementById(id);

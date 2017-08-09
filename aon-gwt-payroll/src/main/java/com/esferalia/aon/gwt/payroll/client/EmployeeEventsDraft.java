@@ -7,6 +7,7 @@ import java.util.HashMap;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -25,6 +26,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 import com.vaadin.polymer.paper.widget.PaperButton;
@@ -54,6 +56,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	@UiField
 	MenuItem addNewValueMenuItem;
+	
+	@UiField
+	MenuItem viewMenuItem;
 	
 	@UiField
 	MenuItem showVariablesMenuItem;
@@ -134,6 +139,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 						for(String var : employeeEventsDraft.getEmployeeContractVariables()){
 							 CheckBox check = showVariablesMap.get(var);
 							 Integer row = calculateRowByVariableName(var);
+							 UIObject.ensureDebugId(eventsGrid.getRowFormatter().getElement(row), "row_"+row);
+							 
 							 if(check.isChecked())
 								 eventsGrid.getRowFormatter().removeStyleName(row, style.ocultarFila());
 							 else{
@@ -195,9 +202,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
-		//Window.alert("***********newValueButton**************");
 		openNewValueDialog();
-		//Window.alert("***********newValueButton22**************");
 	}
 	
 	@UiHandler("saveButton")
@@ -318,6 +323,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		newValueButton.ensureDebugId("new_value_complemento_i");
 		undoButton.ensureDebugId("undo_complemento_i");
 		redoButton.ensureDebugId("redo_complemento_i");
+		viewMenuItem.ensureDebugId("view_menu_item");
+		showVariablesMenuItem.ensureDebugId("show_variables_menu_item");
 		
 		//Descargar Variables actualizadas
 		Integer actualYear = new Date().getYear();

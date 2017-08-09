@@ -92,7 +92,6 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 		
 		//EnsureDebugID para TEST
 		this.acceptButton.ensureDebugId("input_accept");
-		//this.valueCheckBox.ensureDebugId("value_checkbox_1");
 	}
 
 	protected abstract void onAccept();
@@ -118,7 +117,7 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 		int newRow = checkBoxTable.insertRow(checkBoxTable.getRowCount());
 		
 		CheckBoxLabelWidget widget = new CheckBoxLabelWidget(name, checkBox);
-		widget.setCheckBoxEnsureDebudId("value_checkbox_"+newRow);
+		widget.setCheckBoxEnsureDebudId("checkbox_"+newRow);
 		
 		checkBoxTable.insertCell(newRow, 0);
 		checkBoxTable.setWidget(newRow, 0, widget);
