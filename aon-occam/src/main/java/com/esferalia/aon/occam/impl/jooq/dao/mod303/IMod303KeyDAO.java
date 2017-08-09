@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 public interface IMod303KeyDAO {
 	
 	Mod303Key getKey();
+	boolean hasAccepter();
 	boolean acceptValue(Mod303 mod,VatContext vctx);
 	void initialize(AONContext ctx,Mod303 mod,VatContext vctx);
 	void firstInitialize(AONContext ctx,Mod303 mod);

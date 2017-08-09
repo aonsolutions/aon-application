@@ -89,7 +89,23 @@ public class Mod303DAO extends FiscalModelDAO {
 
 	public static Mod303 calculateMod303(AONContext ctx, Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		return dec.calculate(ctx, mod303);
+		LinkedHashMap<String, Object> mvelCtx = new LinkedHashMap<String, Object>();
+		for (String key : mod303.getMap().keySet()) {
+			Mod303Key mod303Key = Mod303Key.getKey(key);
+			if (mod303Key != null) {
+				FiscalModelDetail detail = mod303.getMap().get(key);
+				mvelCtx.put(mod303Key.toString(), detail==null?0.0:detail.getAmount());
+			}
+		}
+		for (IMod303KeyDAO key : dec.getKeys()) {
+			if (AonStringUtils.isNotEmpty( key.getExpression()) ) {
+				Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
+				Double amount = (Double) ret;
+				mvelCtx.put(key.getKey().toString(), amount);
+				mod303.ensureDetail(key.getKey()).setAmount(AonMathUtils.round( amount) );
+			}
+		}
+		return mod303; 
 	}
 	
 	public static Mod303 initializeMod303(AONContext ctx,Mod303 mod303) {
@@ -135,10 +151,33 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 	}
 
-
 	public static Mod303 createMod303(AONContext ctx,Mod303 mod303) {
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		dec.firstInitializeMod303(ctx, mod303);
+		final Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		dec.firstInitialize(ctx, mod303);
+		Mod303DAO.getVatBreakdown(ctx,mod303)
+			.forEach( vat -> dec.initialize(ctx, mod303, vat) );
+		
+		if (!mod303.isDiffCalculationDisabled()) {
+			getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
+			.map( rec -> map303(new Mod303(),rec) )
+			.filter(mod -> mod.getAdministration() == mod303.getAdministration())
+			.filter(mod -> mod.getYear() == mod303.getYear())
+			.filter(mod -> mod.getPeriod().ordinal() <= mod303.getPeriod().ordinal())
+			.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
+			.forEach(mod -> {
+				for (FiscalModelDetail source : mod.getMap().values() ) {
+					Mod303Key key = Mod303Key.getKey(source.getType());
+					if (key != null ) {
+						IMod303KeyDAO keyDAO = dec.getKey(key);
+						if (keyDAO != null && keyDAO.hasAccepter()) {
+							FiscalModelDetail target = mod303.ensureDetail(key);
+							target.setDeclaredAmount(AonMathUtils.round(target.getDeclaredAmount() + source.getAmount()));
+						}
+					}
+				}
+			});
+		}
+
 		for (FiscalModelDetail detail : mod303.getMap().values()) {
 			IMod303KeyDAO key = dec.safeValueOf(mod303, detail.getType());
 			if (key != null) {
@@ -148,10 +187,17 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		return calculateMod303(ctx, mod303);
 	}
-	
+
 	public static String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		return dec.getInfo(ctx, mod303,script,infoKey);
+		Mod303KeyInfoDAO k = Mod303KeyInfoDAO.valueOf(infoKey.toString());
+		for (Mod303Key key :script.getKeys()) {
+			IMod303KeyDAO keyDAO = dec.getKey(key);
+			if (keyDAO != null) {
+				return k.getInfo(ctx, mod303, script, keyDAO);
+			}
+		}
+		return null;
 	}
 
 	private static String getExpression(Mod303 mod303
@@ -276,7 +322,9 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 
 	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod303 mod303) {
-		Date fromDate = AonDateUtils.getYearFirstDay(mod303.getYear());
+		Date fromDate = mod303.isDiffCalculationDisabled()
+			?FiscalUtils.getPeriodStart(mod303)		
+			:AonDateUtils.getYearFirstDay(mod303.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod303);
 		return VATDAO.getVatBreakdown(ctx,fromDate,toDate);
 	}

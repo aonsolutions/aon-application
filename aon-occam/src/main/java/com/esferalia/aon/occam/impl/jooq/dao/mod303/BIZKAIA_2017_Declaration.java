@@ -1,18 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 
-import java.util.LinkedHashMap;
-
-import org.mvel2.MVEL;
-
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO.Mod303KeyInfoDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -446,6 +438,10 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 			return  acceptValue != null && acceptValue.accept(mod,vctx);
 		}
 		@Override
+		public boolean hasAccepter() {
+			return acceptValue != null;
+		}
+		@Override
 		public void initialize(AONContext ctx,Mod303 mod,VatContext vctx) {
 			if (initializer != null) {
 				initializer.initialize(ctx, mod, vctx);
@@ -468,56 +464,9 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		}
 	}
 	@Override
-	public Mod303 initializeMod303(AONContext ctx, Mod303 mod303) {
-		return null;
+	public IMod303KeyDAO[] getKeys() {
+		return Mod303KeyDAO.values();
 	}
-	@Override
-	public void firstInitializeMod303(AONContext ctx, Mod303 mod303) {
-		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
-			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
-			detail.setExpression(key.getExpression());
-			key.firstInitialize(ctx, mod303);
-		}
-		Mod303DAO.getVatBreakdown(ctx,mod303)
-		.forEach( vat -> {
-			for (Mod303KeyDAO key : Mod303KeyDAO.values()) 
-				if (key.acceptValue(mod303,vat)) key.initialize(ctx, mod303, vat);
-						}
-				);
-	}
-	
-	@Override
-	public Mod303 calculate(AONContext ctx, Mod303 mod303) {
-		LinkedHashMap<String, Object> mvelCtx = new LinkedHashMap<String, Object>();
-		for (String key : mod303.getMap().keySet()) {
-			Mod303Key mod303Key = Mod303Key.getKey(key);
-			if (mod303Key != null) {
-				FiscalModelDetail detail = mod303.getMap().get(key);
-				mvelCtx.put(mod303Key.toString(), detail==null?0.0:detail.getAmount());
-			}
-		}
-		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
-			if (AonStringUtils.isNotEmpty( key.getExpression()) ) {
-				Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
-				Double amount = (Double) ret;
-				mvelCtx.put(key.getKey().toString(), amount);
-				mod303.ensureDetail(key.getKey()).setAmount(AonMathUtils.round( amount) );
-			}
-		}
-		return mod303; 
-	}
-	
-	@Override
-	public String getInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
-		Mod303KeyInfoDAO k = Mod303KeyInfoDAO.valueOf(infoKey.toString());
-		for (Mod303KeyDAO keyDAO : Mod303KeyDAO.values()) {
-			if (keyDAO.getKey() == script.getKeys()[0]) {
-				return k.getInfo(ctx, mod303, script, keyDAO);
-			}
-		}
-		return null; 
-	}
-	
 	@Override
 	public IMod303KeyDAO safeValueOf(Mod303 mod, String key) {
 		return Mod303KeyDAO.safeValueOf(mod, key);
@@ -590,5 +539,4 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
-	
 }

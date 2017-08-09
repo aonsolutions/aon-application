@@ -1,9 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -27,13 +27,31 @@ public abstract class Mod303Declaration {
 		amount = AonMathUtils.round( amount * mod.getProratePercent() / 100 );
 		mod.ensureDetail(key).addAccumulatedAmount(amount);	
 	}
+	public IMod303KeyDAO getKey(Mod303Key key) {
+		for (IMod303KeyDAO keyDAO : getKeys()) {
+			if (keyDAO.getKey() == key) {
+				return keyDAO;
+			}
+		}
+		return null;
+	}
+	public void initialize(AONContext ctx, Mod303 mod303, VatContext vat) {
+		for (IMod303KeyDAO key : getKeys()) {
+			if (key.acceptValue(mod303,vat)) {
+				key.initialize(ctx, mod303, vat);
+			}
+		}
+	}
+	public void firstInitialize(AONContext ctx, Mod303 mod303) {
+		for (IMod303KeyDAO key : getKeys()) {
+			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
+			detail.setExpression(key.getExpression());
+			key.firstInitialize(ctx, mod303);
+		}
+	}
 
-	public abstract Mod303 initializeMod303(AONContext ctx, Mod303 mod303);
-	public abstract void firstInitializeMod303(AONContext ctx, Mod303 mod303);
-	public abstract Mod303 calculate(AONContext ctx, Mod303 mod303);
-	public abstract String getInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
+	public abstract IMod303KeyDAO[] getKeys();
 
-	
 }

@@ -394,6 +394,8 @@ public class FiscalModelDAO {
 			return map130(new Mod130(), record);
 		} else if (type == FiscalModelType.M131) {
 			return map131(new Mod131(), record);
+		} else if (type == FiscalModelType.M303) {
+			return map303(new Mod303(), record);
 		} else {
 			return mapGeneric(new FiscalModel(), record);
 		}

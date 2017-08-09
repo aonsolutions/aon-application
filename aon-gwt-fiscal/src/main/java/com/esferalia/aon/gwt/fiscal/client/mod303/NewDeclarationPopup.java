@@ -71,6 +71,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 							public void onSuccess(Mod303 result) {
 								replacement.setVisible(mod303.isReplacementDeclarationAvailable());
 								complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
+								mod303.setPeriod(result.getPeriod());
 								populate(result);
 							}
 			
