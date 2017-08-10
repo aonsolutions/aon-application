@@ -211,7 +211,106 @@ public class VATFormatter {
 			,IFiscalModelKey[] keys
 			, LinkedList<FiscalModel> models
 			, LinkedList<VatContext> list) {
-		return null;
+		StringBuilder buf = new StringBuilder();
+		int headerLength = 100; 
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(title, headerLength)));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center("(" + subtitle + ")", headerLength)));		
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
+		
+		double sumBase = 0;
+		double sumQuota = 0;
+		double sumBeforePeriodBase = 0;
+		double sumBeforePeriodQuota = 0;
+		double sumPeriodBase = 0;
+		double sumPeriodQuota = 0;
+
+		for (VatContext br : list) {
+			sumBase += br.getBase(); 
+			sumQuota += br.getQuota();
+			sumBeforePeriodBase += br.isInsidePeriod()?0.0:br.getBase(); 
+			sumBeforePeriodQuota += br.isInsidePeriod()?0.0:br.getQuota();
+			sumPeriodBase += br.isInsidePeriod()?br.getBase():0.0; 
+			sumPeriodQuota += br.isInsidePeriod()?br.getQuota():0.0;
+		}
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.leftPad("ACUMULADO HASTA INICIO DEL PER\u00CDODO :",40)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.leftPad(DEC.format(sumBeforePeriodBase),15)		
+				+ AonStringUtils.rightPad(" ",8)
+				+ AonStringUtils.leftPad(DEC.format(sumBeforePeriodQuota),15)
+				+ AonStringUtils.repeat(" ", 2)
+				));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.leftPad("ACUMULADO PER\u00CDODO :",40)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.leftPad(DEC.format(sumPeriodBase),15)		
+				+ AonStringUtils.rightPad(" ",8)
+				+ AonStringUtils.leftPad(DEC.format(sumPeriodQuota),15)
+				+ AonStringUtils.repeat(" ", 2)
+				));
+
+		buf.append(MessageFormat.format(DIV_MSG_BOLD_BLUE,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.leftPad("ACUMULADO DESDE 1 DE ENERO (A):",40)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.leftPad(DEC.format(sumBase),15)		
+				+ AonStringUtils.rightPad(" ",8)
+				+ AonStringUtils.leftPad(DEC.format(sumQuota),15)
+				+ AonStringUtils.repeat(" ", 2)
+				));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
+		buf.append(MessageFormat.format(DIV_MSG,"Declaraciones anteriores "));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat("-", headerLength)));
+		double sumDeclaredBase = 0;
+		double sumDeclaredQuota = 0;
+		IFiscalModelKey baseKey = null;
+		IFiscalModelKey quotaKey = null;
+		if (keys.length > 1) {
+			baseKey = keys[1];
+			quotaKey = keys[2];
+		} else {
+			quotaKey = keys[0];
+		}
+		for (FiscalModel fm : models) {
+			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
+					+ AonStringUtils.leftPad( fm.getPeriod().getDescription(),40)
+					+ AonStringUtils.rightPad(fm.isComplementary()?" [Comp.]":fm.isReplacement()?" [Sust.]":" ",16)
+					+ AonStringUtils.leftPad(DEC.format(baseKey!=null?fm.getAmount(baseKey):0.0),15)		
+					+ AonStringUtils.rightPad(" ",8)
+					+ AonStringUtils.leftPad(DEC.format(fm.getAmount(quotaKey)),15)
+					+ AonStringUtils.repeat(" ", 2)
+					));
+			sumDeclaredBase += baseKey!=null?fm.getAmount(baseKey):0.0;
+			sumDeclaredQuota += fm.getAmount(quotaKey);
+		}
+
+		double sumToDeclareBase = sumBase - sumDeclaredBase;
+		double sumToDeclareQuota = sumQuota - sumDeclaredQuota;
+		
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat("-", headerLength)));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD_BLUE,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.leftPad("TOTAL DECLARADO (B):",40)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.leftPad(" ",15)
+				+ AonStringUtils.leftPad(DEC.format(sumDeclaredBase),15)		
+				+ AonStringUtils.rightPad(" ",8)
+				+ AonStringUtils.leftPad(DEC.format(sumDeclaredQuota),15)
+				+ AonStringUtils.repeat(" ", 2)
+				));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.leftPad("TOTAL A DECLARAR (A-B):",40)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.leftPad(" ",15)
+				+ AonStringUtils.leftPad(DEC.format(sumToDeclareBase),15)		
+				+ AonStringUtils.rightPad(" ",8)
+				+ AonStringUtils.leftPad(DEC.format(sumToDeclareQuota),15)
+				+ AonStringUtils.repeat(" ", 2)
+				));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
+
+		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 	}
 	
 }

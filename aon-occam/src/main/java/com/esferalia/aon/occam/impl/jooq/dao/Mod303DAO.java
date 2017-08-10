@@ -285,21 +285,19 @@ public class Mod303DAO extends FiscalModelDAO {
 	
 	private static String getDiffInvoicesInfo(AONContext ctx, final Mod303 mod303
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
-//		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-//			+ mod303.getModelName() 
-//			+ " DEL " + mod303.getPeriod().getDescription()
-//			+ " DE " + mod303.getYear();
-//		return IRPFFormatter.formatDiffInvoices(title
-//			,script.getLabel()
-//			,script.getKeys()
-//			,getEffectivePreviousModels(ctx, mod303)
-////			,getPreviousModels(ctx,mod303)
-//			 	.collect(Collectors.toCollection(LinkedList::new))	
-//			,IRPFDAO.getInvoiceDiffIrpfBreakdown(ctx, mod303)
-//				.filter( br ->  keyDAO.acceptValue(mod303, br) )	
-//				.collect(Collectors.toCollection(LinkedList::new))
-//		);
-		return null;
+		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
+			+ mod303.getModelName() 
+			+ " DEL " + mod303.getPeriod().getDescription()
+			+ " DE " + mod303.getYear();
+		return VATFormatter.formatDiffInvoices(title
+			,script.getLabel()
+			,script.getKeys()
+			,getPreviousModels(ctx,mod303)
+			 	.collect(Collectors.toCollection(LinkedList::new))
+			,getVatBreakdown(ctx, mod303)
+				.filter( br ->  keyDAO.acceptValue(mod303, br) )	
+				.collect(Collectors.toCollection(LinkedList::new))
+		);
 	}
 
 
