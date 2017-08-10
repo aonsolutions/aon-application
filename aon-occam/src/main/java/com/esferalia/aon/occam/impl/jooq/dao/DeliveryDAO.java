@@ -231,6 +231,7 @@ public class DeliveryDAO {
 				,DELIVERY.SERIES
 				,DELIVERY.NUMBER
 				,DELIVERY.ISSUE_TIME
+				,DELIVERY.ADDRESS
 				,REGISTRY.DOCUMENT
 				,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY
@@ -290,6 +291,7 @@ public class DeliveryDAO {
 			return new DeliveryDetail()
 				.setDelivery(new Delivery()
 					.setId(record.getValue(DELIVERY.ID))
+					.setAddress(record.getValue(DELIVERY.ADDRESS))
 					.setDomain(record.getValue(DELIVERY.DOMAIN))
 					.setStatus(AonEnumUtils.enumValue(DeliveryStatus.class,
 									record.getValue(DELIVERY.STATUS)))

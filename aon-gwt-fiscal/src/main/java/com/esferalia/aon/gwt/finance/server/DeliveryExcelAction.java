@@ -159,8 +159,7 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		addCell( detail.getDelivery().getCustomer2().getDocument());
 		addCell( detail.getDelivery().getCustomer2().getName());
 		
-		// TODO
-		RAddress ra  = AON.getRAddres(getDomainName(), detail.getDomain(), "", detail.getDelivery().getCustomer2().getId());
+		RAddress ra = AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getDelivery().getAddress()));
 		addCell(ra.getFullAddress() + " " 
 				+ (ra.getZip() != null ? ra.getZip() + " " : "") 	
 				+ (ra.getCity() != null ? ra.getCity() + " " : "") 

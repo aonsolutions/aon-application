@@ -158,8 +158,7 @@ public class IncomeExcelAction extends AbsExcelAction implements Consumer<Income
 		addCell( detail.getIncome().getSupplier2().getDocument());
 		addCell( detail.getIncome().getSupplier2().getName());
 
-		// TODO
-		RAddress ra  = AON.getRAddres(getDomainName(), detail.getDomain(), "", detail.getIncome().getSupplier2().getId());
+		RAddress ra = AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getIncome().getAddress()));
 		addCell(ra.getFullAddress() + " " 
 				+ (ra.getZip() != null ? ra.getZip() + " " : "") 	
 				+ (ra.getCity() != null ? ra.getCity() + " " : "") 
