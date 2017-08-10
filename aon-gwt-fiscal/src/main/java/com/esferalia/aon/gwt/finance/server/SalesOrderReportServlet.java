@@ -56,6 +56,7 @@ public class SalesOrderReportServlet extends HttpServlet {
 				productTags = AON.getProductTagMap(domainName, domainId, login);	
 			}
 			action.setTags(tags);
+			action.setDomainName(domainName);
 			action.setProductTags(productTags);
 			action.initialize("PEDIDOS DE VENTA");
 

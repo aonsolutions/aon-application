@@ -11,6 +11,7 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -73,7 +74,10 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		sheet.setColumnWidth(cellCount++, 11*256);
 
 		CellUtil.createCell(row, cellCount, "Serie/Número", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 20*256);		    
+	    sheet.setColumnWidth(cellCount++, 20*256);	
+	    
+		CellUtil.createCell(row, cellCount, "Ref. Compra", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 20*256);	
 	    
 	    CellUtil.createCell(row, cellCount, "Ln", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 4*256);		    
@@ -152,6 +156,11 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		addCell(detail.getDelivery().getIssueTime());
 		addCell((detail.getDelivery().getSeries() != null  ?  detail.getDelivery().getSeries() + "/" : "")
 				+ detail.getDelivery().getNumber());
+		
+		SalesDetail pd = AON.getSalesDetailStream(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getSalesDetail()))
+				.findFirst().orElse(new SalesDetail());
+		addCell(pd.getSales() != null && pd.getSales().getPurchaseReference() != null ? pd.getSales().getPurchaseReference() : "");
+
 		addCell(Short.toString(detail.getLine()));
 		alignCenter(addCell(detail.getDelivery().getCustomer2().getDocumentType() == null ? null : 
 			detail.getDelivery().getCustomer2().getDocumentType().getDescription()));

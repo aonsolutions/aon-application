@@ -10,8 +10,9 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
-import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.SalesType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -20,6 +21,7 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
     
     private List<String> tags; 
     private Map<Integer,String[]> productTags;
+    private String domainName;
     
 	public List<String> getTags() {
 		return tags;
@@ -33,6 +35,13 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 	public void setProductTags(Map<Integer, String[]> productTags) {
 		this.productTags = productTags;
 	}
+	public String getDomainName() {
+		return domainName;
+	}
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
+
 
 	@Override
 	protected void headerRow() {
@@ -67,7 +76,10 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 		sheet.setColumnWidth(cellCount++, 11*256);
 
 		CellUtil.createCell(row, cellCount, "Serie/Número", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 20*256);		    
+	    sheet.setColumnWidth(cellCount++, 20*256);	
+	    
+		CellUtil.createCell(row, cellCount, "Ref. Compra", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 20*256);	
 	    
 	    CellUtil.createCell(row, cellCount, "Ln", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 4*256);		    
@@ -82,7 +94,10 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 	    sheet.setColumnWidth(cellCount++, 15*256);		    
 	    
 	    CellUtil.createCell(row, cellCount, "Nombre o Razón Social", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 40*256);		    
+	    sheet.setColumnWidth(cellCount++, 40*256);
+	    
+	    CellUtil.createCell(row, cellCount, "Dirección", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 40*256);
 	    
 /*	    CellUtil.createCell(row, cellCount, "Localidad", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 30*256);		    
@@ -143,6 +158,9 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 		addCell(detail.getSales().getIssueDate());
 		addCell((detail.getSales().getSeries() != null  ?  detail.getSales().getSeries() + "/" : "")
 				+ detail.getSales().getNumber());
+
+		addCell(detail.getSales() != null && detail.getSales().getPurchaseReference() != null ? detail.getSales().getPurchaseReference() : "");
+		
 		addCell(Short.toString(detail.getLine()));
 		alignCenter(addCell(detail.getSales().getCustomer().getDocumentType() == null ? null : 
 			detail.getSales().getCustomer().getDocumentType().getDescription()));
@@ -150,6 +168,11 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 		addCell( detail.getSales().getCustomer().getDocument());
 		addCell( detail.getSales().getCustomer().getName());
 		
+		RAddress ra = AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getSales().getShippingAddress()));
+		addCell(ra.getFullAddress() + " " 
+				+ (ra.getZip() != null ? ra.getZip() + " " : "") 	
+				+ (ra.getCity() != null ? ra.getCity() + " " : "") 
+				+ (ra.getGeozoneName() != null ? ra.getGeozoneName() :""));
 /*
 		addCell( detail.getOffer().getRegistryTown() );
 		addCell( detail.getOffer().getRegistryZIP() );
