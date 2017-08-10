@@ -94,7 +94,8 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		drd.setDataVariable(code.getName());
 		drd.setDataValue(value);
 		Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domainName, domainId, login, f ->
-			f.getDomainProperty().eq(domainId).and(f.getDataVariableProperty().eq(code.getName())));
+			f.getDomainProperty().eq(domainId).and(f.getDataVariableProperty().eq(code.getName()))
+			.and(f.getDataResponseProperty().eq(drId)));
 		if(opt.isPresent()){			
 			AON.updateDataResponseDetail(domainName, domainId, login, drd, f -> f.getIdProperty().eq(opt.get().getId()));
 		} else AON.insertDataResponseDetail(domainName, domainId, login, drd);
