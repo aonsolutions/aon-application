@@ -16,6 +16,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -33,8 +34,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private CheckBox complementary = new CheckBox();
 	private CheckBox diffCalculation = new CheckBox();
 	private DoubleBox prorate = new DoubleBox(7);
-	private PeriodListBox periodList;
-
+	private PeriodListBox periodList = new PeriodListBox(true);
+	
 	public NewDeclarationPopup(final Mod303 mod303 ,final Model303Callback callback) {
 		setCaption(AON.MSG.newDeclaration());
 		setGlassEnabled(true);
@@ -222,17 +223,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private void populate(Mod303 mod303) {
 		admonList.setSelectedIndex( mod303.getAdministration().ordinal());
 		yearBox.setValue(mod303.getYear());
-		boolean months = mod303.getModel().isMonthly(mod303.getAdministration());
-		periodList = new PeriodListBox(months);
-		if (mod303.getPeriod() != null) {
-			for (int i = 0; i < periodList.getItemCount(); i++) {
-				Integer value = AonNumberUtils.toInteger(periodList.getValue(i));
-				if (value != null && mod303.getPeriod().ordinal() == value) {
-					periodList.setSelectedIndex(i);
-					break;
-				}
-			}
-		}
+		periodList.setValue(mod303.getPeriod());
 		prorate.setValue(mod303.ensureDetail(mod303.getProrateKey()).getAmount());
 	}
 }
