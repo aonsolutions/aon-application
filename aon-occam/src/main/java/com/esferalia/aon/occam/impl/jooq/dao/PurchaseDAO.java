@@ -70,6 +70,8 @@ public class PurchaseDAO {
 				,PURCHASE.NUMBER
 				,PURCHASE.DOCUMENT_TYPE
 				,PURCHASE.ISSUE_DATE
+				,PURCHASE.ADDRESS
+				,PURCHASE.PURCHASE_REFERENCE
 				,REGISTRY.DOCUMENT
 				,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY
@@ -127,6 +129,7 @@ public class PurchaseDAO {
 			return new PurchaseDetail()
 				.setPurchase(new Purchase()
 					.setId(record.getValue(PURCHASE.ID))
+					.setAddress(record.getValue(PURCHASE.ADDRESS))
 					.setDomain(record.getValue(PURCHASE.DOMAIN))
 					.setDocumentType(AonEnumUtils.enumValue(PurchaseType.class,
 									record.getValue(PURCHASE.DOCUMENT_TYPE)))
@@ -138,7 +141,7 @@ public class PurchaseDAO {
 					.setSupplier(supplier)
 					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
 					.setWorkplaceName(record.getValue(WORKPLACE.DESCRIPTION))
-					
+					.setPurchaseReference(record.getValue(PURCHASE.PURCHASE_REFERENCE))
 					)
 				.setProjectName(record.getValue( PROJECT.NAME ))
 				.setLine((int) record.getValue(PURCHASE_DETAIL.LINE))

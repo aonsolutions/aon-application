@@ -289,6 +289,7 @@ public class IncomeDAO {
 				,INCOME_DETAIL.QUANTITY
 				,INCOME_DETAIL.PRICE
 				,INCOME_DETAIL.DISCOUNT_EXPR
+				,INCOME_DETAIL.PURCHASE_DETAIL
 				,WORKPLACE.DESCRIPTION
 			)
 			.from(INCOME)
@@ -355,7 +356,8 @@ public class IncomeDAO {
 						.setDetail(record.getValue( ITEM.DETAIL ))
 						.setDetail2(record.getValue( ITEM.DETAIL2 ))
 						.setDetail3(record.getValue( ITEM.DETAIL3 ))
-						.setDescription(record.getValue( ITEM.DESCRIPTION )));
+						.setDescription(record.getValue( ITEM.DESCRIPTION )))
+				.setPurchaseDetail(record.getValue(INCOME_DETAIL.PURCHASE_DETAIL));
 		}
 	}
 }

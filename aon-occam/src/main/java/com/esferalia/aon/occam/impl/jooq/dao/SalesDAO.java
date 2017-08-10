@@ -420,6 +420,7 @@ public class SalesDAO {
 				,SALES.NUMBER
 				,SALES.DOCUMENT_TYPE
 				,SALES.ISSUE_DATE
+				,SALES.PURCHASE_REFERENCE
 				,REGISTRY.DOCUMENT
 				,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY
@@ -486,7 +487,7 @@ public class SalesDAO {
 					.setIssueDate(record.getValue(SALES.ISSUE_DATE))
 					.setCustomer(customer)
 					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
-					
+					.setPurchaseReference(record.getValue(SALES.PURCHASE_REFERENCE))
 					.setProjectName(record.getValue(PROJECT.NAME))
 					)
 				
@@ -565,7 +566,8 @@ public class SalesDAO {
 			SalesDetail detail = new SalesDetail();
 			detail.setId(r.getValue(SALES_DETAIL.ID));
 			detail.setDomain(r.getValue(SALES_DETAIL.DOMAIN));
-			detail.setSales(new Sales().setId(r.getValue(SALES_DETAIL.SALES)));
+			detail.setSales(new Sales().setId(r.getValue(SALES_DETAIL.SALES))
+					.setPurchaseReference(r.getValue(SALES.PURCHASE_REFERENCE)));
 			detail.setItem(new Item().setId(r.getValue(SALES_DETAIL.ITEM)));
 			detail.setLine(r.getValue(SALES_DETAIL.LINE));
 			detail.setDescription(r.getValue(SALES_DETAIL.DESCRIPTION));

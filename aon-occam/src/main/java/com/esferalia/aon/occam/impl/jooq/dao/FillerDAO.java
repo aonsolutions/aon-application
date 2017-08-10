@@ -17,6 +17,7 @@ import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
@@ -326,6 +328,10 @@ public class FillerDAO {
 			detail.setId(r.getValue(PURCHASE_DETAIL.ID));
 			detail.setDomain(r.getValue(PURCHASE_DETAIL.DOMAIN));
 			detail.setPurchaseId(r.getValue(PURCHASE_DETAIL.PURCHASE));
+			detail.setPurchase(new Purchase()
+					.setId(r.getValue(PURCHASE.ID))
+					.setPurchaseReference(r.getValue(PURCHASE.PURCHASE_REFERENCE))
+					);
 			detail.setItem(r.getValue(PURCHASE_DETAIL.ITEM));
 			detail.setLine(r.getValue(PURCHASE_DETAIL.LINE).intValue());
 			detail.setDescription(r.getValue(PURCHASE_DETAIL.DESCRIPTION));

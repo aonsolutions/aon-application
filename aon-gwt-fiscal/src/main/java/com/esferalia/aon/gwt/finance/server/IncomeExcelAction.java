@@ -11,6 +11,7 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -74,6 +75,9 @@ public class IncomeExcelAction extends AbsExcelAction implements Consumer<Income
 
 		CellUtil.createCell(row, cellCount, "Serie/Número", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 20*256);		    
+	    
+		CellUtil.createCell(row, cellCount, "Ref. Compra", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 20*256);	
 	    
 	    CellUtil.createCell(row, cellCount, "Ln", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 4*256);		    
@@ -151,13 +155,17 @@ public class IncomeExcelAction extends AbsExcelAction implements Consumer<Income
 		alignCenter(addCell(detail.getIncome().getStatus().getName()));
 		addCell(detail.getIncome().getIssueDate());
 		addCell(detail.getIncome().getReferenceCode());
+		
+		PurchaseDetail pd = AON.getPurchaseDetail(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getPurchaseDetail()));
+		addCell(pd.getPurchase() != null && pd.getPurchase().getPurchaseReference() != null ? pd.getPurchase().getPurchaseReference():"");
+		
 		addCell(Short.toString(detail.getLine()));
 		alignCenter(addCell(detail.getIncome().getSupplier2().getDocumentType() == null ? null : 
 			detail.getIncome().getSupplier2().getDocumentType().getDescription()));
 		alignCenter(addCell(detail.getIncome().getSupplier2().getDocumentCountry()));
 		addCell( detail.getIncome().getSupplier2().getDocument());
 		addCell( detail.getIncome().getSupplier2().getName());
-
+		
 		RAddress ra = AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getIncome().getAddress()));
 		addCell(ra.getFullAddress() + " " 
 				+ (ra.getZip() != null ? ra.getZip() + " " : "") 	
