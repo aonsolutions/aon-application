@@ -88,6 +88,8 @@ public class PmsUtils implements IPmsConstants {
 	public static List<SelectItem> getRoomServiceItems(Item roomItem) throws ManagerBeanException {
 		List<SelectItem> serviceItems = new LinkedList<SelectItem>();
 		if (roomItem != null && roomItem.getId() != null) {
+			SelectItem roomSelectItem = new SelectItem(roomItem, roomItem.getProduct().getCode() + " - " + roomItem.getProduct().getName());
+			serviceItems.add(roomSelectItem);
 			int serviceCategory = NumberUtils.toInt(AppParamUtil.getValue(AppParam.PMS_SERVICE_CATEGORY));
 			List<Integer> items = new LinkedList<Integer>();
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);

@@ -292,7 +292,8 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public boolean isConexFlowSaleOk() {
 		String lastCfOperation = (isConexFlow()) ? getLastConexFlowOperation().getDescription() : "";
 		return lastCfOperation.matches(CONEXFLOW_CONFIRM_OK_PATTERN.replace("%", "(.*)")) || 
-				lastCfOperation.matches(CONEXFLOW_SALE_OK_PATTERN.replace("%", "(.*)"));
+				lastCfOperation.matches(CONEXFLOW_SALE_OK_PATTERN.replace("%", "(.*)")) ||
+				lastCfOperation.matches(REDSYS_SALE_OK_PATTERN.replace("%", "(.*)"));
 	}
 
 	@Transient
