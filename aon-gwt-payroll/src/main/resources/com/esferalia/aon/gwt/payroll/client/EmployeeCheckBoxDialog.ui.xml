@@ -4,7 +4,11 @@
 	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
-	<ui:Style>
+    <ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCheckBoxDialog.MyStyle">
 
 		.form {
 			padding: 10px;
@@ -32,7 +36,7 @@
 		}
 
 		.buttons {
-			padding-top: 10px;
+			padding-top: 20px;
 			text-align: right;
 		}
 
@@ -54,7 +58,12 @@
 			resize: none;
 		}
 
-	</ui:Style>
+		.paddingLabelStyle{
+			padding-left: 10px;
+   			padding-top: 2px;
+		}
+
+	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
 

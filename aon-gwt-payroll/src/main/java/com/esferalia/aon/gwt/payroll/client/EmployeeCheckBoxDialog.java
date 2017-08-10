@@ -4,9 +4,9 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -24,6 +24,7 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 			checkBox = newCheckBox;
 			label = new Label(name);
 			this.add(checkBox);
+			this.label.setStyleName(EmployeeCheckBoxDialog.this.style.paddingLabelStyle());
 			this.add(label);
 		}
 
@@ -56,7 +57,14 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	@UiField
+	MyStyle style;
 
+	interface MyStyle extends CssResource {
+		String paddingLabelStyle();
+	}
+	
 	@UiField
 	Label filterLabel;
 	
@@ -118,6 +126,7 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 		
 		CheckBoxLabelWidget widget = new CheckBoxLabelWidget(name, checkBox);
 		widget.setCheckBoxEnsureDebudId("checkbox_"+newRow);
+		
 		
 		checkBoxTable.insertCell(newRow, 0);
 		checkBoxTable.setWidget(newRow, 0, widget);

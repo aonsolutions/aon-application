@@ -7,7 +7,6 @@ import java.util.HashMap;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -132,6 +131,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			@Override
 			public void execute() {
 				EmployeeCheckBoxDialog checkBoxDialog = new EmployeeCheckBoxDialog(employeeEventsDraft.getEmployeeContractVariables().size()){
+					@SuppressWarnings("deprecation")
 					@Override
 					protected void onAccept() {
 						ArrayList<String> variablesLocalStore = new ArrayList<String>();
@@ -142,9 +142,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 							 UIObject.ensureDebugId(eventsGrid.getRowFormatter().getElement(row), "row_"+row);
 							 
 							 if(check.isChecked())
-								 eventsGrid.getRowFormatter().removeStyleName(row, style.ocultarFila());
+								 eventsGrid.getRowFormatter().removeStyleName(row, EmployeeEventsDraft.this.style.ocultarFila());
 							 else{
-								 eventsGrid.getRowFormatter().addStyleName(row, style.ocultarFila());
+								 eventsGrid.getRowFormatter().addStyleName(row, EmployeeEventsDraft.this.style.ocultarFila());
 								 variablesLocalStore.add(var);
 							 }
 						}
