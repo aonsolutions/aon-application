@@ -15,13 +15,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// ¿ --> \u00BF
 
 	 CM_001("303-CM001", 0,"C\u00E1lculo por diferencia.")
+	,CM_002("303-CM002", 0,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual?")
+	,CM_003("303-CM003", 0,"Porcentaje de prorrata.")
+	,CM_004("303-CM004", 0,"Tipo de declaraci\u00F3n")
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  AEAT -------
 	// 	----------------------------------------------------------------------------------
-	,CT_X01("303-CTX01", 0,"Porcentaje de prorrata.")
-	,CT_X02("303-CTX02", 0,"Tipo de declaraci\u00F3n")
-	 
-	,CT_A01("303-CTA01", 0,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual (Art. 30 RIVA)?")
 	,CT_A02("303-CTA02", 0,"\u00BFTributa exclusivamente en r\u00E9gimen simplificado?")
 	,CT_A03("303-CTA03", 0,"\u00BFEs autoliquidaci\u00F3n conjunta?")
 	,CT_A04("303-CTA04", 0,"\u00BFHa sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?")
@@ -252,14 +251,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  ARABA ------
 	// 	----------------------------------------------------------------------------------
-	,AR_X001("303-ARX01", 0,"Porcentaje de prorrata.")
 	,AR_C907("303-AR907", 907,"\u00BFHa sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?")
-	,AR_C092("303-AR092", 92,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual?")
 	,AR_C910("303-AR910", 910,"\u00BFHa optado por el r\u00E9gimen especial del criterio de Caja?")
 	,AR_C911("303-AR911", 911,"\u00BFEs destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
 	,AR_C908("303-AR908", 908,"Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")
 	,AR_C909("303-AR909", 909,"Si se ha dictado auto de declaraci\u00F3n de concurso en este periodo, indique el tipo de autoliquidaci\u00F3n")
-	,AR_X002("303-ARX02", 0,"Tipo de declaraci\u00F3n")
 	 
 	,AR_C001("303-AR001", 1,"R\u00E9gimen general - Base imponible")
 	,AR_C002("303-AR002", 2,"R\u00E9gimen general - Tipo %")
@@ -347,8 +343,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,BZ_C185_2("303-BZ1852", 185,"Fraccionamiento de per\u00EDodo en concursal. Hasta.")
 	,BZ_C186  ("303-BZ186" , 186,"Sujeto pasivo acogido al r\u00E9gimen especial del criterio de caja.")
 	,BZ_C187  ("303-BZ187" , 187,"Destinatario/a de operaciones a las que se aplica el r\u00E9gimen especial del criterio de caja")
-	,BZ_C002  ("303-BZ002" , 2  ,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual?")
-	,BZ_X001  ("303-BZX01" , 0,"Tipo de declaraci\u00F3n")
+
 	,BZ_C003("303-BZ003",  3,"R\u00E9gimen general - Base imponible")
 	,BZ_X003("303-BZX03",  0,"R\u00E9gimen general - Tipo %")
 	,BZ_C004("303-BZ004",  4,"R\u00E9gimen general - Cuota")
@@ -464,7 +459,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,BZ_C099("303-BZ099", 99,"Total - Cuota")
 	,BZ_C100("303-BZ100",100,"Total - Cuota deducible")
 	
-	,BZ_C101("303-BZ101",101,"Prorrata general")
+//	,BZ_C101("303-BZ101",101,"Prorrata general")
 	,BZ_C102("303-BZ102",102,"Prorrata especial")
 	,BZ_C103("303-BZ103",103,"Porcentaje prorrata aplicado.")
 	

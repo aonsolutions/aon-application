@@ -26,9 +26,9 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 	}
 	
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
-		 AR_X001	(Mod303Key.AR_X001)
-		,AR_C907	(Mod303Key.AR_C907)
-		,AR_C092	(Mod303Key.AR_C092)
+		 AR_C907	(Mod303Key.AR_C907)
+		,CM_002		(Mod303Key.CM_002)
+		,CM_003		(Mod303Key.CM_003)
 		,AR_C910	(Mod303Key.AR_C910)
 		,AR_C911	(Mod303Key.AR_C911)
 		,AR_C908	(Mod303Key.AR_C908)

@@ -172,7 +172,7 @@ public class Model3032017AEAT extends Model303Base {
 		FlowPanel container = new FlowPanel();
 		
 		FlexTable table = createTable();
-		paintCheck(mod303,Mod303Key.CT_A01,table);	// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
+		paintCheck(mod303,Mod303Key.CM_002,table);	// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
 		
 		paintA02(mod303,Mod303Key.CT_A02,table);	// ¿Tributa exclusivamente en régimen simplificado?
 		
@@ -242,18 +242,18 @@ public class Model3032017AEAT extends Model303Base {
 	private void paintCheck(Mod303 mod303,Mod303Key key, FlexTable table) {
 		int row = table.getRowCount();
 		paintLabel(table, row, key.getDescription());
-		final CheckBox a02 = new CheckBox();
-		a02.setEnabled(mod303.isNotFinished());
-		a02.setValue(mod303.ensureDetail(key).getAmount() == 1);
-		a02.addClickHandler(new ClickHandler() {
+		final CheckBox check = new CheckBox();
+		check.setEnabled(mod303.isNotFinished());
+		check.setValue(mod303.ensureDetail(key).getAmount() == 1);
+		check.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				mod303.ensureDetail(key).setAmount(a02.getValue()?1.0:0.0);
+				mod303.ensureDetail(key).setAmount(check.getValue()?1.0:0.0);
 				markAsDirty();
 			}
 		});
-		table.setWidget(row, 1, a02);
+		table.setWidget(row, 1, check);
 	}
 	
 	private FlexTable createTable() {

@@ -12,10 +12,9 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.mod303.FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303IdentificationData.IModel303IdentificationDataCallback;
-import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
-import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -105,7 +104,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 		SimplePanel declarationHeaderPanel = new SimplePanel();
 		paintDeclarationHeaderTable(declarationHeaderPanel);
-		addNorth(declarationHeaderPanel , 40);
+		addNorth(declarationHeaderPanel , 45);
 
 		fieldsMap = new EnumMap<>(Mod303Key.class);
 		this.callback = cbk;
@@ -724,53 +723,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	private void showFinalizePopup() {
-		FinishDeclarationPopup<Mod303> finalizeDialog = new FinishDeclarationPopup<Mod303>( 
-				new IFiscalModelCallback<Mod303>() {
+		FinishDeclarationPopup finalizeDialog = new FinishDeclarationPopup(this.mod303, getCallback(), new FinishDeclarationPopupCallback() {
+			@Override
+			public void onCancel() {}
+			
 			@Override
 			public void onAccept() {
 				finish();
-			}
-			@Override
-			public void onCancel() {
-				
-			}
-			@Override
-			public String getDomainName() {
-				return Model303.getCurrentDomainName();
-			}
-			@Override
-			public int getDomain() {
-				return Model303.getCurrentDomain();
-			}
-			@Override
-			public Mod303 getFiscalModel() {
-				return mod303;
-			}
-			@Override
-			public boolean isFinished() {
-				return mod303.isFinished();
-			}
-			@Override
-			public boolean isDirty() {
-				return isDirty();
-			}
-			@Override
-			public void markAsDirty() {
-				Model303Base.this.markAsDirty();
-				
-			}
-			@Override
-			public void identificationLabelChanged() {
-				Model303Base.this.identificationLabelChanged();
-			}
-			
-			@Override
-			public void showErrorMsg(String msg) {
-				callback.showError(msg);
-			}
-			@Override
-			public void showInfoPanel(String text) {
-				callback.showBreakdownPanel(text);
 			}
 		});
 		finalizeDialog.center();

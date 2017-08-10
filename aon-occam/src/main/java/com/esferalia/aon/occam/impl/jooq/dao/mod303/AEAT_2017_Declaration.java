@@ -26,7 +26,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	}
 	
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
-		 CT_A01(Mod303Key.CT_A01)
+		 CM_002(Mod303Key.CM_002)
+		,CM_003(Mod303Key.CM_003)
 		,CT_A02(Mod303Key.CT_A02)
 		,CT_A03(Mod303Key.CT_A03)
 		,CT_A04(Mod303Key.CT_A04)

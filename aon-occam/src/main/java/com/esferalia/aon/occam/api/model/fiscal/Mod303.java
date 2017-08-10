@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -14,6 +15,10 @@ public class Mod303 extends FiscalModel implements Serializable {
 		setModel(FiscalModelType.M303);
 	}
 	
+	public boolean isEnrolledInDevolutionRegistry() {
+		return getAmount(Mod303Key.CM_002) == 1;
+	}
+	
 	public boolean isDiffCalculationDisabled() {
 		return getAmount(Mod303Key.CM_001) == 1;
 	}
@@ -21,7 +26,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
 		ensureDetail(Mod303Key.CM_001).setAmount(diffCalculationDisabled?1:0);
 	}
-
+	@Override
 	public boolean isComplementaryDeclarationAvailable() {
 		if (getAdministration() == null) return false;
 		else if (isAEAT()) return true;
@@ -32,6 +37,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return false;
 	}
 
+	@Override
 	public boolean isReplacementDeclarationAvailable() {
 		if (getAdministration() == null) return false;
 		else if (isAraba()) return true;
@@ -42,11 +48,13 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return false;
 	}
 	
+	@Override
 	public boolean isReplacedNumberAvailable() {
 		if (getAdministration() == null) return false;
 		return (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
 	}
 	
+	@Override
 	public double getResult() {
 		if (getAdministration() == null) return 0;
 		else if (isAraba()) return getAmount(Mod303Key.AR_C060);
@@ -57,21 +65,14 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return 0;
 	}
 	
+	@Override
 	public Mod303Key getDeclarationTypeKey() {
 		if (getAdministration() == null) return null;
-		else if (isAraba()) return Mod303Key.AR_X002;
-		else if (isAEAT()) return Mod303Key.CT_X02;
-		else if (isBizkaia()) return Mod303Key.BZ_X001;
-		else if (isGipuzkoa()) return null;
-		else if (isNavarra()) return null;
-		return null;
+		return Mod303Key.CM_004;
 	}
 	
 	public Mod303Key getProrateKey() {
-		if (isAEAT()) return Mod303Key.CT_X01;
-		else if (isBizkaia()) return Mod303Key.BZ_C101;
-		else if (isAraba()) return Mod303Key.AR_X001;
-		return null;
+		return Mod303Key.CM_003;
 	}
 	
 	public double getProratePercent() {
@@ -82,4 +83,14 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return proratePercent;
 	}
 	
+	@Override
+	public void setDefaultDeclarationType(){
+		if (AonMathUtils.isGreatherThanZero(getResult() )) {
+			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
+		} else {
+			setDeclarationType(isEnrolledInDevolutionRegistry()
+				?FiscalModelDeclarationType.PAYBACK
+				:FiscalModelDeclarationType.COMPENSATE);
+		}
+	}
 }

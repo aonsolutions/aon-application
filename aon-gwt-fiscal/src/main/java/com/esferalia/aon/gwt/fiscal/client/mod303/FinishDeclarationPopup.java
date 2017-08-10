@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.model;
+package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -11,14 +11,17 @@ import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -30,54 +33,36 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
-public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog {
+public class FinishDeclarationPopup extends CustomDialog {
 	
 	static CommonServiceAsync commonService;
 	static {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 	}
+	
+	public static interface FinishDeclarationPopupCallback {
+		public void onAccept();
+		public void onCancel();
+	}
 
 	final protected FlexTable tab = new FlexTable();
-	protected IFiscalModelCallback<T> callback;
 	protected int row = 0;
 	
-	public FinishDeclarationPopup(final IFiscalModelCallback<T> callback) {
-		this.callback = callback;
+	public FinishDeclarationPopup(final Mod303 mod303 ,final Model303Callback callback,FinishDeclarationPopupCallback popupCallback) {
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		initializeTable();
-		paintResul();
-		paintDeclarationType();
-		paintButtons();
-		add(tab);
-	}
 
-	private void initializeTable() {
-		tab.setCellPadding(0);
-		tab.setCellSpacing(0);
-		tab.setStyleName(AON.AON_CSS.aonMarginTop());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		ColumnFormatter cf = tab.getColumnFormatter();
-		cf.setWidth(0, "130px");
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
-		cf.setWidth(1, "450px");
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
-	}
-
-	private void paintResul() {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.fiscalDebt()));
 		tab.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
@@ -85,37 +70,43 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonFontBig());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPaddingRight());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-		tab.setWidget(row, 1, new Label( AON.FMT.format(callback.getFiscalModel().getResult())));
+		tab.setWidget(row, 1, new Label( AON.FMT.format(mod303.getResult())));
 		row++;
-	}
 
-	private void paintDeclarationType() {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.declarationType()));
 		tab.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
-		if (callback.getFiscalModel().getDeclarationType() == FiscalModelDeclarationType.NEGATIVE
-		 || callback.getFiscalModel().getDeclarationType() == FiscalModelDeclarationType.TO_DEDUCE) {
+		// SIN ACTIVIDAD!!!
+		if (mod303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE) {
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-			tab.setWidget(row, 1, new Label( callback.getFiscalModel().getDeclarationType().getDescription() ));	
+			tab.setWidget(row, 1, new Label( mod303.getDeclarationType().getDescription() ));	
 			row++;
 		} else {
-			final CreditorBox creditorBox = new CreditorBox(callback.getDomainName(),callback.getDomain() );
-			final IbanTextBox iban = new IbanTextBox( new EnterpriseSuggestOracle<T>(callback) );
+			final CreditorBox creditorBox = new CreditorBox(Model303.getCurrentDomainName(),Model303.getCurrentDomain() );
+			final IbanTextBox iban = new IbanTextBox( new EnterpriseSuggestOracle<Mod303>(callback) );
 			
 			final ListBox listBox = new ListBox();
 			listBox.setSelectedIndex(0);
-			listBox.addItem(FiscalModelDeclarationType.DEPOSIT.getDescription(), FiscalModelDeclarationType.DEPOSIT.getValue());
-			listBox.addItem(FiscalModelDeclarationType.BANK.getDescription(), FiscalModelDeclarationType.BANK.getValue());
-			if (callback.getFiscalModel().isAEAT()) {
-				listBox.addItem(FiscalModelDeclarationType.DEPOSIT_CCT.getDescription(), FiscalModelDeclarationType.DEPOSIT_CCT.getValue());
+			if (AonMathUtils.isLessThanZero(mod303.getResult()) ) {
+				listBox.addItem(FiscalModelDeclarationType.PAYBACK.getDescription(), FiscalModelDeclarationType.PAYBACK.getValue());
+				if (mod303.isAEAT()) {
+					listBox.addItem(FiscalModelDeclarationType.PAYBACK_CCT.getDescription(), FiscalModelDeclarationType.PAYBACK_CCT.getValue());
+				}
+				listBox.addItem(FiscalModelDeclarationType.COMPENSATE.getDescription(), FiscalModelDeclarationType.COMPENSATE.getValue());
+			} else {
+				listBox.addItem(FiscalModelDeclarationType.DEPOSIT.getDescription(), FiscalModelDeclarationType.DEPOSIT.getValue());
+				listBox.addItem(FiscalModelDeclarationType.BANK.getDescription(), FiscalModelDeclarationType.BANK.getValue());
+				if (mod303.isAEAT()) {
+					listBox.addItem(FiscalModelDeclarationType.DEPOSIT_CCT.getDescription(), FiscalModelDeclarationType.DEPOSIT_CCT.getValue());
+				}
 			}
 			listBox.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
 					FiscalModelDeclarationType type = FiscalModelDeclarationType.safeValueOf(listBox.getSelectedValue());
-					callback.getFiscalModel().setDeclarationType( type );
+					mod303.setDeclarationType( type );
 					iban.setEnabled( type.isBankRequired() );
 					creditorBox.setEnabled(type.mustCreateFinance());
 				}
@@ -126,7 +117,7 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 			tab.setWidget(row, 0, new Label(AON.MSG.creditor()));
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-			Finance finance = callback.getFiscalModel().getFinance();
+			Finance finance = mod303.getFinance();
 			creditorBox.setValue(
 				new Creditor()
 					.setRegistry(finance.getRegistry())
@@ -137,11 +128,11 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 				@Override
 				public void onSelection(SelectionEvent<Creditor> event) {
 					Registry registry = event.getSelectedItem().getRegistry();
-					callback.getFiscalModel().getFinance().setRegistry(registry);
-					callback.getFiscalModel().getFinance().setRegistryDocument(registry.getDocument());
-					callback.getFiscalModel().getFinance().setRegistryDocumentCountry(registry.getDocumentCountry());
-					callback.getFiscalModel().getFinance().setRegistryDocumentType(registry.getDocumentType());
-					callback.getFiscalModel().getFinance().setRegistryName(registry.getName());
+					mod303.getFinance().setRegistry(registry);
+					mod303.getFinance().setRegistryDocument(registry.getDocument());
+					mod303.getFinance().setRegistryDocumentCountry(registry.getDocumentCountry());
+					mod303.getFinance().setRegistryDocumentType(registry.getDocumentType());
+					mod303.getFinance().setRegistryName(registry.getName());
 				}
 			});
 			
@@ -169,18 +160,15 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 					IIbanContainer cont = suggestion.getIbanContainer();
 					iban.setValue(cont.getIBan());
 					BankAccount bankAccount = new BankAccount(cont.getIBan());
-					callback.getFiscalModel().getFinance().setBankAccount(bankAccount);
-					callback.getFiscalModel().getFinance().setBankAlias(cont.getAlias());
-					callback.getFiscalModel().getFinance().setBic(cont.getBic());
+					mod303.getFinance().setBankAccount(bankAccount);
+					mod303.getFinance().setBankAlias(cont.getAlias());
+					mod303.getFinance().setBic(cont.getBic());
 				}
 			});
 		}
 		
 		row++;
 		
-	}
-	
-	private void paintButtons() {
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel flowPanel = new FlowPanel();
@@ -195,7 +183,7 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				callback.onAccept();
+				popupCallback.onAccept();
 			}
 		});
 		
@@ -209,18 +197,35 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				callback.onCancel();
+				popupCallback.onCancel();
 			}
 			
 		});
 		flowPanel.add(cancelButton);
 		tab.setWidget(row, 0, flowPanel);
+
+		add(tab);
+	}
+
+	private void initializeTable() {
+		tab.setCellPadding(0);
+		tab.setCellSpacing(0);
+		tab.setStyleName(AON.AON_CSS.aonMarginTop());
+		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		ColumnFormatter cf = tab.getColumnFormatter();
+		cf.setWidth(0, "130px");
+		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
+		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		cf.setWidth(1, "450px");
+		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
+		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 	}
 
 	private static class EnterpriseSuggestOracle<T extends FiscalModel> extends MultiWordSuggestOracle {
-		private IFiscalModelCallback<T> modelCallback;
+		private Model303Callback modelCallback;
 
-		private EnterpriseSuggestOracle(final IFiscalModelCallback<T> modelCallback) {
+		private EnterpriseSuggestOracle(final Model303Callback modelCallback) {
 			super();
 			this.modelCallback = modelCallback;
 		}
@@ -228,11 +233,11 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 		@Override
 		public void requestSuggestions(final Request request,
 				final Callback callback) {
-			commonService.getCompanyBanks (modelCallback.getDomainName(),modelCallback.getDomain(), 
+			commonService.getCompanyBanks (Model303.getCurrentDomainName(),Model303.getCurrentDomain(), 
 					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {
-							modelCallback.showErrorMsg(AON.MSG.unableToShowCompanyBanks(caught.getMessage()) );
+							modelCallback.showError(AON.MSG.unableToShowCompanyBanks(caught.getMessage()) );
 						}
 
 						public void onSuccess(LinkedList<CompanyBank> result) {

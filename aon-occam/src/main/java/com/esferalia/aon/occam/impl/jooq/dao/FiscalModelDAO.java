@@ -43,7 +43,6 @@ import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -450,7 +449,8 @@ public class FiscalModelDAO {
 	}
 	
 	public static <T extends FiscalModel> T initializeForFinish(AONContext ctx,T fiscalModel) {
-		if (AonMathUtils.isGreatherThanZero(fiscalModel.getResult() )) {
+		fiscalModel.setDefaultDeclarationType();
+		if (fiscalModel.getDeclarationType().mustCreateFinance()) {
 			FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
 			Integer creditorId = params.getAdmonCreditor();
 			Creditor creditor = null;
@@ -480,7 +480,6 @@ public class FiscalModelDAO {
 					;
 			fiscalModel.setFinance(finance);
 		}
-		fiscalModel.setDefaultDeclarationType();
 		return fiscalModel;
 	}
 	

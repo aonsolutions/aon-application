@@ -31,7 +31,7 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_C185_2	(Mod303Key.BZ_C185_2)
 		,BZ_C186	(Mod303Key.BZ_C186)
 		,BZ_C187	(Mod303Key.BZ_C187)
-		,BZ_C002	(Mod303Key.BZ_C002)
+		,CM_002		(Mod303Key.CM_002)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEVENGADO
