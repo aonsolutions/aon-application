@@ -80,22 +80,6 @@ node {
        
    }
           
-   // Mark the AWS deploy 'stage'....
-   stage 'AWS CodeDeploy'
-
-   env.VERSION=pom.version
-
-   // RPMs 2 AWS
-   sh "/bin/sh rpms2aws.sh AON-RELEASE-APP AON-RELEASE-GROUP"
-      
-   sh "aws s3api list-objects --bucket aon-solutions --prefix aon-release-app > aon-release-apps.json"
-   def aon_release_apps_json = readFile 'aon-release-apps.json'    
-   def keys = getKeys(aon_release_apps_json)
-   for (int i = 0; i < keys.size() - 20; i++){
-      def key = keys[i]
-      sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
-   }
-
    // Docker
    stage 'Docker Build'
 
