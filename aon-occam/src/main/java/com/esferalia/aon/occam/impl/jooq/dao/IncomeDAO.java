@@ -267,6 +267,7 @@ public class IncomeDAO {
 				,INCOME.STATUS
 				,INCOME.REFERENCE_CODE
 				,INCOME.ISSUE_TIME
+				,INCOME.ADDRESS
 				,REGISTRY.DOCUMENT
 				,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY
@@ -326,6 +327,7 @@ public class IncomeDAO {
 			return new IncomeDetail()
 				.setIncome(new Income()
 					.setId(record.getValue(INCOME.ID))
+					.setAddress(record.getValue(INCOME.ADDRESS))
 					.setDomain(record.getValue(INCOME.DOMAIN))
 					.setStatus(AonEnumUtils.enumValue(IncomeStatus.class,
 									record.getValue(INCOME.STATUS)))
