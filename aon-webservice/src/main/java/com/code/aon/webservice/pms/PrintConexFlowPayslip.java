@@ -53,7 +53,8 @@ public class PrintConexFlowPayslip extends HttpServlet{
 		LinkedList<Attach>  attachList = AON.getAttachList(domainName, domainId, login, f -> 
 			f.getTypeProperty().eq(ProjectAttachmentType.PAYSLIP.value())
 			.and(f.getAttachModuleProperty().eq(projectId))
-			.and(f.getDescriptionProperty().like("CONEXFLOW%PAYSLIP#%"))
+			.and(f.getDescriptionProperty().like("CONEXFLOW%PAYSLIP#%")
+					.or(f.getDescriptionProperty().like("REDSYS%PAYSLIP#%")))
 		, AttachType.PROJECT);
 		
 		

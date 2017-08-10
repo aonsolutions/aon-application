@@ -331,12 +331,27 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), getId());
 			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.PAYSLIP);
-			Expression exp = 
-					ExpressionUtilities.getLikeExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_DESCRIPTION), CONEXFLOW_PAYSLIP_PATTERN);
+			Expression exp = ExpressionUtilities.getLikeExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_DESCRIPTION), CONEXFLOW_PAYSLIP_PATTERN);
 			criteria.addExpression(exp);
 			return pAttachBean.getList(criteria).size() > 0;
 		} catch(ManagerBeanException ex) {
 			LOGGER.error("Error obtaining conexFlow payslip", ex);
+		}
+		return false;
+	}
+	
+	@Transient
+	public boolean isRedsysPayslip() {
+		try {
+			IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), getId());
+			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.PAYSLIP);
+			Expression exp = ExpressionUtilities.getLikeExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_DESCRIPTION), REDSYS_PAYSLIP_PATTERN);
+			criteria.addExpression(exp);
+			return pAttachBean.getList(criteria).size() > 0;
+		} catch(ManagerBeanException ex) {
+			LOGGER.error("Error obtaining Redsys payslip", ex);
 		}
 		return false;
 	}
