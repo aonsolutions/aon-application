@@ -953,6 +953,9 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		LinkedList<String> l2 = new LinkedList<>();
 		l2.add(order.getRegistry().getId() + "");
 		map.put("supplier", l2);
+		LinkedList<String> l3 = new LinkedList<>();
+		l3.add("detail_count");
+		map.put("detail_count", l3);
 		getAPI().getWarehouse().getOrders("income", map, new AsyncCallback<JSON<JsOrder>>() {
 			
 			@Override

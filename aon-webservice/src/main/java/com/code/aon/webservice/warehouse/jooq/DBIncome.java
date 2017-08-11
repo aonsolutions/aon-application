@@ -32,13 +32,15 @@ public class DBIncome {
 	    	.sorted((e1, e2) -> e2.getIssueDate().compareTo(e1.getIssueDate()))
 	    .forEach(income -> {
 	    	JSONObject json = incomeToJSON(income);
-	    	Long l = AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId())).count();
-	    	json.put("detail_count", l.intValue() + 1);
+	    	if(map.containsKey("detail_count")) {
+	    		Long l = AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId())).count();
+	    		json.put("detail_count", l.intValue() + 1);
+	    	}
 	    	array.put(json);	
 	    });
 	    return array;
 	}
-	
+
     public static JSONObject getIncome(Domain domain,String login, Integer id){
     	Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
     	return incomeToJSON(income);

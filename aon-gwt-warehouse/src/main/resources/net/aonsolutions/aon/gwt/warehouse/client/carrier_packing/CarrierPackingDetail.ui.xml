@@ -26,6 +26,7 @@
 							<g:HorizontalPanel>
 								<g:ListBox ui:field="type" styleName="{aonResources.css.aonListBox}" />
 								<g:ListBox ui:field="status" styleName="{aonResources.css.aonListBox}"/>
+								<g:SimplePanel ui:field="simple"></g:SimplePanel>
 							</g:HorizontalPanel>
 						</td>
 						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">

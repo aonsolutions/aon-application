@@ -230,7 +230,7 @@ public class UdapaQuality extends AonTemplate2{
 		VerticalPanel panel = new VerticalPanel();
 		panel.setStyleName(AON.AON_CSS.aonWidthAll());
 		AonComboBox incomeBox = new AonComboBox();
-		incomeBox.setLabel("Albaran");
+		incomeBox.setLabel("Albar\u00e1n");
 		incomeBox.setItemLabelPath("reference_code");
 		incomeBox.setItemValuePath("reference_code");
 		

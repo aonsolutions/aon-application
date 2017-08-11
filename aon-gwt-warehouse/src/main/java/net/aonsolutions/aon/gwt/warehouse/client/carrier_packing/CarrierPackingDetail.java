@@ -25,10 +25,12 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 
 public class CarrierPackingDetail extends Composite{
 	
@@ -46,6 +48,7 @@ public class CarrierPackingDetail extends Composite{
 	@UiField TextBox number;
 	@UiField ListBox type;
 	@UiField ListBox status;
+	@UiField SimplePanel simple;
 	@UiField DateBoxEx issueDate;
 	@UiField DateBoxEx deliveryDate;
 	@UiField ListBox carrier;
@@ -132,18 +135,49 @@ public class CarrierPackingDetail extends Composite{
 			}
 		});
 		
+		PaperIconButton truck = new PaperIconButton();
+		truck.setIcon("maps:local-shipping");
+		truck.getElement().getStyle().setMargin(0, Unit.PX);
+		truck.getElement().getStyle().setPadding(0, Unit.PX);
+		truck.getElement().getStyle().setHeight(20, Unit.PX);
+		truck.setNoink(true);
+		truck.getElement().getStyle().setColor("orangered");
+
+		truck.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				String color = truck.getElement().getStyle().getColor();
+				if("orangered".equals(color)) {
+					status.setSelectedIndex(2);
+					truck.getElement().getStyle().setColor("green");
+				} else if("green".equals(color)) {
+					status.setSelectedIndex(1);
+					truck.getElement().getStyle().setColor("darkslategray");
+				}
+				updateCarrierPacking();
+			}
+		});
+		simple.setWidget(truck);
 
 		parent.getAPI().getWarehouse().getCarrierPackingStatuses(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
 				result.getData().stream().forEach(s -> 
-					status.addItem(s.getName(), s.getId()+""));
+				status.addItem(s.getName(), s.getId()+""));
 				
 				if(jsCarrierPacking != null &&  jsCarrierPacking.getStatus() != null){
 					for(Integer i = 0; i < status.getItemCount(); i++){
 						if(jsCarrierPacking.getStatus() != null & jsCarrierPacking.getStatus().getName().equals(status.getItemText(i))){
 							status.setSelectedIndex(i);
+							if("Finalizado".equals(jsCarrierPacking.getStatus().getName())) {
+								truck.getElement().getStyle().setColor("darkslategray");
+							} else if("En ruta".equals(jsCarrierPacking.getStatus().getName())) {
+								truck.getElement().getStyle().setColor("green");
+							} else if("Pendiente".equals(jsCarrierPacking.getStatus().getName())) {
+								truck.getElement().getStyle().setColor("orangered");
+							}
 						}
 					}
 				}
@@ -156,6 +190,13 @@ public class CarrierPackingDetail extends Composite{
 			
 			@Override
 			public void onChange(ChangeEvent event) {
+				if("1".equals(status.getSelectedValue())) {
+					truck.getElement().getStyle().setColor("darkslategray");
+				} else if("2".equals(status.getSelectedValue())) {
+					truck.getElement().getStyle().setColor("green");
+				} else if("0".equals(status.getSelectedValue())) {
+					truck.getElement().getStyle().setColor("orangered");
+				}
 				updateCarrierPacking();
 			}
 		});
