@@ -201,7 +201,7 @@ public class printQualityList extends HttpServlet{
 						Double b = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
 						Double c = map.containsKey(QualitySheetCode.UFQCC061.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC061.getName())) : 0.0;
 						Double d = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
-						Double e = map.containsKey(QualitySheetCode.UFQCC101.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
+						Double e = (map.containsKey(QualitySheetCode.UFQCC101.getName()) && isPropaco(map)) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
 						Double f = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
 						
 						Double merma = a + b + c + d + e + f; 
@@ -223,7 +223,7 @@ public class printQualityList extends HttpServlet{
 						cell(libro, row, 8, b.toString());
 						cell(libro, row, 9, c.toString());
 						cell(libro, row, 10, d.toString());
-						cell(libro, row, 11, e.toString());
+						cell(libro, row, 11, isPropaco(map) ? e.toString() : "(+)->");
 						cell(libro, row, 12, f.toString());
 						cell(libro, row, 13, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
 								? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "");
@@ -282,10 +282,9 @@ public class printQualityList extends HttpServlet{
 						Double g = map.containsKey(QualitySheetCode.UFQCC091.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC091.getName())) : 0.0;
 						Double h = map.containsKey(QualitySheetCode.UFQCC111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC111.getName())) : 0.0;
 						Double i = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
-						Double j = map.containsKey(QualitySheetCode.UFQCC101.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
 						Double k = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
 
-						Double merma = a + b + c + d + e + f + g + h + i + j + k; 
+						Double merma = a + b + c + d + e + f + g + h + i + k; 
 					
 						if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
 							merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
@@ -309,7 +308,7 @@ public class printQualityList extends HttpServlet{
 						cell(libro, row, 13, g);
 						cell(libro, row, 14, h);
 						cell(libro, row, 15, i);
-						cell(libro, row, 16, j);
+						cell(libro, row, 16, "(+)->");
 						cell(libro, row, 17, k);
 						cell(libro, row, 18, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
 								? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "");
@@ -393,7 +392,7 @@ public class printQualityList extends HttpServlet{
 					Double b = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
 					Double c = map.containsKey(QualitySheetCode.UFQCC061.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC061.getName())) : 0.0;
 					Double d = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
-					Double e = map.containsKey(QualitySheetCode.UFQCC101.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
+					Double e = (map.containsKey(QualitySheetCode.UFQCC101.getName()) && isPropaco(map)) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
 					Double f = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
 					
 					Double merma = a + b + c + d + e + f; 
@@ -422,7 +421,7 @@ public class printQualityList extends HttpServlet{
 					ta.addCell(cell(b.toString()));
 					ta.addCell(cell(c.toString()));  
 					ta.addCell(cell(d.toString()));
-					ta.addCell(cell(e.toString()));
+					ta.addCell(cell(isPropaco(map) ? e.toString() : "(+)->"));
 					ta.addCell(cell(f.toString()));
 					ta.addCell(cell(map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
 							? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "")); 
@@ -491,10 +490,9 @@ public class printQualityList extends HttpServlet{
 					Double g = map.containsKey(QualitySheetCode.UFQCC091.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC091.getName())) : 0.0;
 					Double h = map.containsKey(QualitySheetCode.UFQCC111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC111.getName())) : 0.0;
 					Double i = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
-					Double j = map.containsKey(QualitySheetCode.UFQCC101.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
 					Double k = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
 
-					Double merma = a + b + c + d + e + f + g + h + i + j + k; 
+					Double merma = a + b + c + d + e + f + g + h + i + k; 
 					
 					if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
 						merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
@@ -525,7 +523,7 @@ public class printQualityList extends HttpServlet{
 					tb.addCell(cell(g.toString()));
 					tb.addCell(cell(h.toString()));
 					tb.addCell(cell(i.toString()));
-					tb.addCell(cell(j.toString()));
+					tb.addCell(cell("(+)->"));
 					tb.addCell(cell(k.toString()));
 					tb.addCell(cell(map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
 							? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): ""));
@@ -641,5 +639,12 @@ public class printQualityList extends HttpServlet{
 		return font2;
 	}
 
+	
+	
+	private static Boolean isPropaco(Map<String, String> map) {
+		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
+			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
+			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+	}
 
 }

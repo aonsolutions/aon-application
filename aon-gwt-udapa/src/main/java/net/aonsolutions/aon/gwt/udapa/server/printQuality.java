@@ -11,12 +11,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -111,7 +111,6 @@ public class printQuality {
       
         header.addCell(getHeaderLogo(image));
         
-        RAddress raddress = new RAddress();
 		header.addCell(getHeaderCompany(map));
 		header.addCell(getHeaderRmedia(map));
 		return header;
@@ -570,11 +569,12 @@ public class printQuality {
 		c2222.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c2222);
 		
-		PdfPCell c3333 = new PdfPCell(new Phrase("",getFont2()));
+		PdfPCell c3333 = new PdfPCell(new Phrase(isPropaco(map) ? "Color" : "",getFont2()));
 		c3333.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c3333);
 
-		PdfPCell c4444 = new PdfPCell(new Phrase("",getFont2()));
+		String color = "0".equals(map.get(QualitySheetCode.UFQAC8.getName())) ? "No" : "Si";
+		PdfPCell c4444 = new PdfPCell(new Phrase(isPropaco(map) ? color : "",getFont2()));
 		c4444.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c4444);
 		
@@ -721,18 +721,19 @@ public class printQuality {
 		c33.setBorder(PdfPCell.NO_BORDER);
 		table.addCell(c33);
 		
-		for(Integer i = 0 ; i < QualitySheetConstants.CALIBER.length ; i = i + 2){
+		QualitySheetCode[] qsc = isPropaco(map) ? QualitySheetConstants.CALIBER_PROPACO : QualitySheetConstants.CALIBER;
+		for(Integer i = 0 ; i < qsc.length ; i = i + 2){
 			Integer c = i/2;
 			
 			PdfPCell ci = new PdfPCell(new Phrase(calibresConsumo[c],getFont2()));
 			ci.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(ci);
 			
-			PdfPCell cii = new PdfPCell(new Phrase(map.get(QualitySheetConstants.CALIBER[i].getName()),getFont2()));
+			PdfPCell cii = new PdfPCell(new Phrase(map.get(qsc[i].getName()),getFont2()));
 			cii.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cii);
 			
-			PdfPCell ciii = new PdfPCell(new Phrase(map.get(QualitySheetConstants.CALIBER[i + 1].getName()),getFont2()));
+			PdfPCell ciii = new PdfPCell(new Phrase(map.get(qsc[i + 1].getName()),getFont2()));
 			ciii.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(ciii);
 		}
@@ -779,18 +780,19 @@ public class printQuality {
 		c33.setBorder(PdfPCell.NO_BORDER);
 		table.addCell(c33);
 		
-		for(Integer i = 0; i < QualitySheetConstants.DEFECTS.length; i = i + 2){
+		QualitySheetCode[] qsc = isPropaco(map) ? QualitySheetConstants.DEFECTS_PROPACO : QualitySheetConstants.DEFECTS;
+		for(Integer i = 0; i < qsc.length; i = i + 2){
 			Integer c = i/2;
 			
 			PdfPCell ci = new PdfPCell(new Phrase(Defects.values()[c].getName(),getFont2()));
 			ci.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(ci);
 			
-			PdfPCell cii = new PdfPCell(new Phrase(map.get(QualitySheetConstants.DEFECTS[i].getName()),getFont2()));
+			PdfPCell cii = new PdfPCell(new Phrase(map.get(qsc[i].getName()),getFont2()));
 			cii.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cii);
 			
-			PdfPCell ciii = new PdfPCell(new Phrase(map.get(QualitySheetConstants.DEFECTS[i+1].getName()),getFont2()));
+			PdfPCell ciii = new PdfPCell(new Phrase(map.get(qsc[i+1].getName()),getFont2()));
 			ciii.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(ciii);
 		}
@@ -846,6 +848,7 @@ public class printQuality {
     	
     	return content;
     }
+    
 	private static Paragraph getSeparator(){
 		Paragraph separator = new Paragraph();
 		LineSeparator line = new LineSeparator();
@@ -896,4 +899,12 @@ public class printQuality {
 		font1.setStyle(Font.BOLD);
 		return font1;
 	}
+	
+	
+	private static Boolean isPropaco(Map<String, String> map) {
+		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
+			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
+			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+	}
+
 }
