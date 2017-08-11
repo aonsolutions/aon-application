@@ -7,11 +7,13 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record1;
 import org.mvel2.MVEL;
+import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -46,6 +48,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		,INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod, script,keyDAO))))
 		,DIFF_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO))))
 		,COMPUTE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getExpression(mod, script,keyDAO))))
+		,COMPUTE_KEY ( (ctx, mod, script,keyDAO) -> getComputeKey(ctx,mod, script,keyDAO))
 		;
 		private IModelInfoProvider provider;
 		
@@ -87,8 +90,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303;
 	}
 
-	public static Mod303 calculateMod303(AONContext ctx, Mod303 mod303) {
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+	private static Map<String, Object> getMvelContext( Mod303 mod303 ) {
 		LinkedHashMap<String, Object> mvelCtx = new LinkedHashMap<String, Object>();
 		for (String key : mod303.getMap().keySet()) {
 			Mod303Key mod303Key = Mod303Key.getKey(key);
@@ -97,6 +99,12 @@ public class Mod303DAO extends FiscalModelDAO {
 				mvelCtx.put(mod303Key.toString(), detail==null?0.0:detail.getAmount());
 			}
 		}
+		return mvelCtx; 
+	}
+	
+	public static Mod303 calculateMod303(AONContext ctx, Mod303 mod303) {
+		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		Map<String, Object> mvelCtx = getMvelContext( mod303 );
 		for (IMod303KeyDAO key : dec.getKeys()) {
 			if (AonStringUtils.isNotEmpty( key.getExpression()) ) {
 				Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
@@ -162,7 +170,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			.map( rec -> map303(new Mod303(),rec) )
 			.filter(mod -> mod.getAdministration() == mod303.getAdministration())
 			.filter(mod -> mod.getYear() == mod303.getYear())
-			.filter(mod -> mod.getPeriod().ordinal() <= mod303.getPeriod().ordinal())
+			.filter(mod -> mod.getPeriod().ordinal() < mod303.getPeriod().ordinal())
 			.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
 			.forEach(mod -> {
 				for (FiscalModelDetail source : mod.getMap().values() ) {
@@ -268,6 +276,40 @@ public class Mod303DAO extends FiscalModelDAO {
 		return buf.toString();
 	}
 	
+	private static String getComputeKey(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
+		Map<String, Object> mvelCtx = getMvelContext( mod303 );
+		mvelCtx.put("periodModels", getSamePeriodModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
+		return getCompute(ctx, mod303, script,mvelCtx);
+	}
+	
+	private static String getCompute(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,Map<String, Object> mvelCtx) {
+		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		StringBuilder buf = new StringBuilder();
+		buf.append("<pre style=\"font-family: Fixed, monospace;font-size: 0.9em; margin-bottom: 1em; padding: 1em;text-align: left;\">");
+		for (Mod303Key key : script.getKeys() ) {
+			IMod303KeyDAO keyDAO = dec.safeValueOf(mod303, key.getValue());
+			if (keyDAO != null) {
+				String box = " [" + AonStringUtils.leftPad(Integer.toString(keyDAO.getKey().getBox()), 3, '0')+"] ";
+				buf.append(AonStringUtils.CR_LF);
+				buf.append("<b>DETALLE DEL C\u00C1LCULO DE LA CASILLA: " + box + " - " + script.getLabel() + "</b>");
+				buf.append(AonStringUtils.CR_LF);
+				buf.append(AonStringUtils.CR_LF);
+				buf.append("<ul style=\"padding-left: 20px;\">");
+				if (AonStringUtils.isNotBlank( keyDAO.getExpression())) {
+					buf.append("<li><b>F\u00F3rmula:</b> " + keyDAO.getExpression() + "</li>" );
+				}
+				String template = keyDAO.getTemplate();
+				if (AonStringUtils.isNotBlank( template )) {
+					Object result = TemplateRuntime.eval(template, mvelCtx);
+					buf.append(result != null ? result.toString() : null);
+				}
+				buf.append("</ul>");
+			}
+		}
+		buf.append("</pre>");
+		return buf.toString();
+	}
+
 	// -------------------------------------------------------------------- INVOICES
 	
 	private static String getInvoicesInfo(AONContext ctx, final Mod303 mod303

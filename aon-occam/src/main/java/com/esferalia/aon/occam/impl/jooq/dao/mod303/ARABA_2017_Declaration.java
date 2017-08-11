@@ -234,7 +234,13 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 		,AR_C062	(Mod303Key.AR_C062)
 		
 		// A deducir (exclusivamente en el caso de autoliquidación sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y período)
-		,AR_C063	(Mod303Key.AR_C063)
+		,AR_C063	(Mod303Key.AR_C063,
+			(ctx,mod) -> {
+				if (mod.isComplementary()) {
+					add( Mod303Key.AR_C063, mod, Mod303DAO.getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C080)).sum());						
+				}
+			} 
+		)
 		
 		// TOTAL DEUDA TRIBUTARIA	
 		,AR_C080	(Mod303Key.AR_C080,null,null,null,"AR_C060+AR_C061+AR_C062-AR_C063")
@@ -274,6 +280,7 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 		private IValueIntializer initializer;
 		private IValueFirstIntializer firstInitializer;
 		private String expression;
+		private String template;
 
 		private Mod303KeyDAO(Mod303Key key) {
 			this(key,null,null,null,null);			
@@ -305,6 +312,10 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 		@Override
 		public String getExpression() {
 			return expression;
+		}
+		@Override
+		public String getTemplate() {
+			return template;
 		}
 		@Override
 		public boolean acceptValue(Mod303 mod,VatContext vctx) {

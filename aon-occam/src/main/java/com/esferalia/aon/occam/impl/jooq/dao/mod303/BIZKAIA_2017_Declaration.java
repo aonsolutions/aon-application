@@ -190,9 +190,29 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_C040	(Mod303Key.BZ_C040)
 		
 		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente
-		,BZ_C041	(Mod303Key.BZ_C041)
+		,BZ_C041	(Mod303Key.BZ_C041,
+			(ctx,mod) -> {
+				if (mod.isComplementary()) {
+					add( Mod303Key.BZ_C041, mod, 
+						Mod303DAO.getSamePeriodModels(ctx, mod)
+							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C036))
+							.filter(result -> AonMathUtils.isGreatherThanZero(result))
+							.sum());						
+				}
+			} 
+		)
 		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente
-		,BZ_C042	(Mod303Key.BZ_C042)
+		,BZ_C042	(Mod303Key.BZ_C042,
+			(ctx,mod) -> {
+				if (mod.isComplementary()) {
+					add( Mod303Key.BZ_C042, mod, 
+						Mod303DAO.getSamePeriodModels(ctx, mod)
+							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C036))
+							.filter(result -> AonMathUtils.isLessThanZero(result))
+							.sum());						
+				}
+			} 
+		)
 		// Total deuda tributaria
 		,BZ_C043	(Mod303Key.BZ_C043,null,null,null,"BZ_C036-BZ_C041+BZ_C042")
 		
@@ -401,6 +421,7 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		private IValueIntializer initializer;
 		private IValueFirstIntializer firstInitializer;
 		private String expression;
+		private String template;
 
 		private Mod303KeyDAO(Mod303Key key) {
 			this(key, null, null, null, null);
@@ -432,6 +453,10 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		@Override
 		public String getExpression() {
 			return expression;
+		}
+		@Override
+		public String getTemplate() {
+			return template;
 		}
 		@Override
 		public boolean acceptValue(Mod303 mod,VatContext vctx) {

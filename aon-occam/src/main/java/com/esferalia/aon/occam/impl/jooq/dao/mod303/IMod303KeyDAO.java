@@ -13,5 +13,6 @@ public interface IMod303KeyDAO {
 	void initialize(AONContext ctx,Mod303 mod,VatContext vctx);
 	void firstInitialize(AONContext ctx,Mod303 mod);
 	String getExpression();
+	String getTemplate();
 	
 }

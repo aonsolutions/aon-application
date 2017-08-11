@@ -46,93 +46,113 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// Base imponible, porcentaje y cuota al primer tipo.
 		,CT_C01(Mod303Key.CT_C01
 			 ,(mod,vat) -> (isCommonNationalSales(vat) && hasPercent1(vat))
-			 ,(ctx,mod,vat) -> add(Mod303Key.CT_C01,mod,vat.getBase()))
-		,CT_C02(Mod303Key.CT_C02,(ctx,mod) -> add(Mod303Key.CT_C02,mod,PERCENT1))
+			 ,(ctx,mod,vat) -> add(Mod303Key.CT_C01,mod,vat.getBase())
+			 ,null,null,null)
+		,CT_C02(Mod303Key.CT_C02,null,null,(ctx,mod) -> add(Mod303Key.CT_C02,mod,PERCENT1),null,null)
 		,CT_C03(Mod303Key.CT_C03
 			,(mod,vat) -> (isCommonNationalSales(vat) && hasPercent1(vat))
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C03,mod,vat.getQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C03,mod,vat.getQuota())
+			,null,null,null)
 
 		// Base imponible, porcentaje y cuota al segundo tipo.
 		,CT_C04(Mod303Key.CT_C04
 			,(mod,vat) -> (isCommonNationalSales(vat) && hasPercent2(vat))
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C04,mod,vat.getBase()))
-		,CT_C05(Mod303Key.CT_C05,(ctx,mod) -> add(Mod303Key.CT_C05,mod,PERCENT2))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C04,mod,vat.getBase())
+			,null,null,null)
+		,CT_C05(Mod303Key.CT_C05,null,null,(ctx,mod) -> add(Mod303Key.CT_C05,mod,PERCENT2),null,null)
 		,CT_C06(Mod303Key.CT_C06
 			,(mod,vat) -> (isCommonNationalSales(vat) && hasPercent2(vat))
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C06,mod,vat.getQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C06,mod,vat.getQuota())
+			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al tercer tipo.
 		,CT_C07(Mod303Key.CT_C07
 			,(mod,vat) -> (isCommonNationalSales(vat) && hasPercent3(vat))
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C07,mod,vat.getBase()))
-		,CT_C08(Mod303Key.CT_C08,(ctx,mod) -> add(Mod303Key.CT_C08,mod,PERCENT3))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C07,mod,vat.getBase())
+			,null,null,null)
+		,CT_C08(Mod303Key.CT_C08,null,null,(ctx,mod) -> add(Mod303Key.CT_C08,mod,PERCENT3),null,null)
 		,CT_C09(Mod303Key.CT_C09
 			,(mod,vat) -> (isCommonNationalSales(vat) && hasPercent3(vat))
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C09,mod,vat.getQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C09,mod,vat.getQuota())
+			,null,null,null)
 		
 		// Adquisiciones intracomunitarias de bienes y servicios. base y cuota.
 		,CT_C10(Mod303Key.CT_C10
 			,(mod,vat) -> adqIntracomunitariasFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C10,mod,vat.getBase()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C10,mod,vat.getBase())
+			,null,null,null)
 		,CT_C11(Mod303Key.CT_C11
 				,(mod,vat) -> adqIntracomunitariasFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C11,mod,vat.getQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C11,mod,vat.getQuota())
+			,null,null,null)
 		
 		// Otras operaciones con inversión del sujeto pasivo (excepto. adq. intracom). Base y cuota
 		,CT_C12(Mod303Key.CT_C12
 			,(mod,vat) -> operacionesISPFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C12,mod,vat.getBase()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C12,mod,vat.getBase())
+			,null,null,null)
 		,CT_C13(Mod303Key.CT_C13
 				,(mod,vat) -> operacionesISPFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C13,mod,vat.getQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C13,mod,vat.getQuota())
+			,null,null,null)
 		
 		// Modificación bases y cuotas
 		,CT_C14(Mod303Key.CT_C14
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat) 
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C14,mod,vat.getBase()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C14,mod,vat.getBase())
+			,null,null,null)
 		,CT_C15(Mod303Key.CT_C15
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C15,mod,vat.getQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C15,mod,vat.getQuota())
+			,null,null,null)
 		
 		// Recargo equivalencia al primer tipo.
 		,CT_C16(Mod303Key.CT_C16 
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C16,mod,vat.getBase()))
-		,CT_C17(Mod303Key.CT_C17,(ctx,mod) -> add(Mod303Key.CT_C17,mod,SURCHARGE_PERCENT1))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C16,mod,vat.getBase())
+			,null,null,null)
+		,CT_C17(Mod303Key.CT_C17,null,null,(ctx,mod) -> add(Mod303Key.CT_C17,mod,SURCHARGE_PERCENT1),null,null)
 		,CT_C18(Mod303Key.CT_C18
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C18,mod,vat.getSurchargeQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C18,mod,vat.getSurchargeQuota())
+			,null,null,null)
 		
 		// Recargo equivalencia al segundo tipo.
 		,CT_C19(Mod303Key.CT_C19
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C19,mod,vat.getBase()))
-		,CT_C20(Mod303Key.CT_C20,(ctx,mod) -> add(Mod303Key.CT_C20,mod,SURCHARGE_PERCENT2))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C19,mod,vat.getBase())
+			,null,null,null)
+		,CT_C20(Mod303Key.CT_C20,null,null,(ctx,mod) -> add(Mod303Key.CT_C20,mod,SURCHARGE_PERCENT2),null,null)
 		,CT_C21(Mod303Key.CT_C21
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C21,mod,vat.getSurchargeQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C21,mod,vat.getSurchargeQuota())
+			,null,null,null)
 		
 		// Recargo equivalencia al tercer tipo.
 		,CT_C22(Mod303Key.CT_C22
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent3(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C22,mod,vat.getBase()))
-		,CT_C23(Mod303Key.CT_C23,(ctx,mod) -> add(Mod303Key.CT_C23,mod,SURCHARGE_PERCENT3))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C22,mod,vat.getBase())
+			,null,null,null)
+		,CT_C23(Mod303Key.CT_C23,null,null,(ctx,mod) -> add(Mod303Key.CT_C23,mod,SURCHARGE_PERCENT3),null,null)
 		,CT_C24(Mod303Key.CT_C24
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C24,mod,vat.getSurchargeQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C24,mod,vat.getSurchargeQuota())
+			,null,null,null)
 		
 		// Modificaciones bases y cuotas del recargo de equivalencia
 		,CT_C25(Mod303Key.CT_C25
 			,(mod,vat) -> (vat.isNationalSales() && vat.isSurcharge() && vat.isRectification())
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C25,mod,vat.getBase()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C25,mod,vat.getBase())
+			,null,null,null)
 		,CT_C26(Mod303Key.CT_C26
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
 						&& vat.isNational() && vat.isSales() 
 						&& vat.isSurcharge() && vat.isRectification()
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C26,mod,vat.getSurchargeQuota()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C26,mod,vat.getSurchargeQuota())
+			,null,null,null)
 		
 		// Total cuota devengada
-		,CT_C27(Mod303Key.CT_C27,null,null,null,"CT_C03+CT_C06+CT_C09+CT_C11+CT_C13+CT_C15+CT_C18+CT_C21+CT_C24+CT_C26")
+		,CT_C27(Mod303Key.CT_C27,null,null,null,"CT_C03+CT_C06+CT_C09+CT_C11+CT_C13+CT_C15+CT_C18+CT_C21+CT_C24+CT_C26",null)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEDUCIBLE
@@ -141,63 +161,78 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// Por cuotas soportadas en operaciones interiores corrientes
 		,CT_C28(Mod303Key.CT_C28
 			,(mod,vat) -> operacionesInterioresCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C28,mod,vat.getBase()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C28,mod,vat.getBase())
+			,null,null,null)
 		,CT_C29(Mod303Key.CT_C29
 			,(mod,vat) -> operacionesInterioresCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C29,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C29,mod,vat.getDeductibleQuota())
+			,null,null,null)
 
 		// Por cuotas soportadas en operaciones interiores con bienes de inversión
 		,CT_C30(Mod303Key.CT_C30
 			,(mod,vat) -> operacionesInterioresInversionFilter ( vat )
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C30,mod,vat.getBase()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C30,mod,vat.getBase())
+			,null,null,null)
 		,CT_C31(Mod303Key.CT_C31
 			,(mod,vat) -> operacionesInterioresInversionFilter ( vat )
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C31,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C31,mod,vat.getDeductibleQuota())
+			,null,null,null)
 		
 		// Por cuotas soportadas en las importaciones de bienes corrientes		
 		,CT_C32(Mod303Key.CT_C32
 			,(mod,vat) -> importacionesCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C32,mod,vat.getBase()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C32,mod,vat.getBase())
+			,null,null,null)
 		,CT_C33(Mod303Key.CT_C33
 			,(mod,vat) -> importacionesCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C33,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C33,mod,vat.getDeductibleQuota())
+			,null,null,null)
 		
 		// Por cuotas soportadas en las importaciones de bienes de inversión
 		,CT_C34(Mod303Key.CT_C34
 			,(mod,vat) -> importacionesInversionFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C34,mod,vat.getBase()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C34,mod,vat.getBase())
+			,null,null,null)
 		,CT_C35(Mod303Key.CT_C35
 			,(mod,vat) -> importacionesInversionFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C35,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C35,mod,vat.getDeductibleQuota())
+			,null,null,null)
 		
 		// Por cuotas soportadas en adquisiciones intracomunitarias de bienes y servicios corrientes
 		,CT_C36(Mod303Key.CT_C36
 			,(mod,vat) -> adqIntracomunitariasCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C36,mod,vat.getBase()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C36,mod,vat.getBase())
+			,null,null,null)
 		,CT_C37(Mod303Key.CT_C37
 			,(mod,vat) -> adqIntracomunitariasCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C37,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C37,mod,vat.getDeductibleQuota())
+			,null,null,null)
 		
 		// Por cuotas soportadas en adquisiciones intracomunitarias de bienes de inversión
 		,CT_C38(Mod303Key.CT_C38
 			,(mod,vat) -> adqIntracomunitariasInversionFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C38,mod,vat.getBase()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C38,mod,vat.getBase())
+			,null,null,null)
 		,CT_C39(Mod303Key.CT_C39
 			,(mod,vat) -> adqIntracomunitariasInversionFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C39,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C39,mod,vat.getDeductibleQuota())
+			,null,null,null)
 		
 		// Rectificación de deducciones
 		,CT_C40(Mod303Key.CT_C40
 			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C40,mod,vat.getBase()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C40,mod,vat.getBase())
+			,null,null,null)
 		,CT_C41(Mod303Key.CT_C41
 			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C41,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C41,mod,vat.getDeductibleQuota())
+			,null,null,null)
 
 		// Compensaciones Régimen Especial A.G. y P.
 		,CT_C42(Mod303Key.CT_C42
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C41,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C41,mod,vat.getDeductibleQuota())
+			,null,null,null)
 		
 		// Regularización inversiones 		
 		,CT_C43(Mod303Key.CT_C43)
@@ -206,10 +241,10 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_C44(Mod303Key.CT_C44)
 		
 		// Total a deducir
-		,CT_C45(Mod303Key.CT_C45,null,null,null,"CT_C29+CT_C31+CT_C33+CT_C35+CT_C37+CT_C39+CT_C41+CT_C42+CT_C43+CT_C44")
+		,CT_C45(Mod303Key.CT_C45,null,null,null,"CT_C29+CT_C31+CT_C33+CT_C35+CT_C37+CT_C39+CT_C41+CT_C42+CT_C43+CT_C44",null)
 		
 		// Resultado Régimen general
-		,CT_C46(Mod303Key.CT_C46,null,null,null,"CT_C27-CT_C45")
+		,CT_C46(Mod303Key.CT_C46,null,null,null,"CT_C27-CT_C45",null)
 		
 
 		// ---------------------------------------------------------------
@@ -218,45 +253,50 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		
 		// Entregas intracomunitarias de bienes y servicios
 		,CT_C59(Mod303Key.CT_C59,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() 
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C59,mod,vat.getBase()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C59,mod,vat.getBase())
+			,null,null,null)
 
 		// Exportaciones y operaciones asimiladas
 		,CT_C60(Mod303Key.CT_C60,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C60,mod,vat.getBase()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C60,mod,vat.getBase())
+			,null,null,null)
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
 		,CT_C61(Mod303Key.CT_C61,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C60,mod,vat.getBase()))
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C60,mod,vat.getBase())
+			,null,null,null)
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,CT_C62(Mod303Key.CT_C62, (ctx,mod) -> add( Mod303Key.CT_C62, mod, Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)))
-		,CT_C63(Mod303Key.CT_C63, (ctx,mod) -> {
+		,CT_C62(Mod303Key.CT_C62,null,null, (ctx,mod) -> add( Mod303Key.CT_C62, mod, Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
+		,CT_C63(Mod303Key.CT_C63,null,null, (ctx,mod) -> {
 			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
 			add( Mod303Key.CT_C63, mod, quota );
 			add( Mod303Key.CT_A07, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
-		})
+			}
+		,null,null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,CT_C74(Mod303Key.CT_C74, (ctx,mod) -> add( Mod303Key.CT_C74, mod, Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)))
-		,CT_C75(Mod303Key.CT_C75, (ctx,mod) -> {
+		,CT_C74(Mod303Key.CT_C74,null,null, (ctx,mod) -> add( Mod303Key.CT_C74, mod, Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
+		,CT_C75(Mod303Key.CT_C75,null,null, (ctx,mod) -> {
 			double quota = Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
 			add( Mod303Key.CT_C75, mod, quota);
 			add( Mod303Key.CT_A08, mod, AonMathUtils.isZero(quota)?(0.0):(1.0));
-		})
+			}
+		,null,null)
 
 		// Regularización cuotas art. 80.Cinco.5a LIVA
 		,CT_C76(Mod303Key.CT_C76)
 		
 		// Suma de resultados
-		,CT_C64(Mod303Key.CT_C64,null,null,null,"CT_C46+CT_C76") // TODO Sumar el resultado del regimen simplificado, si procede.
+		,CT_C64(Mod303Key.CT_C64,null,null,null,"CT_C46+CT_C76",null) // TODO Sumar el resultado del regimen simplificado, si procede.
 		
 		// % Atribuible a la Administración del Estado
-		,CT_C65(Mod303Key.CT_C65, (ctx,mod) -> add(Mod303Key.CT_C65,mod,100.0))
+		,CT_C65(Mod303Key.CT_C65,null,null, (ctx,mod) -> add(Mod303Key.CT_C65,mod,100.0),null,null)
 		
 		// Cuota atribuible a la Administración del Estado
-		,CT_C66(Mod303Key.CT_C66,null,null,null,"CT_C64*CT_C65/100")
+		,CT_C66(Mod303Key.CT_C66,null,null,null,"CT_C64*CT_C65/100",null)
 				
 		// IVA a la importación liquidado por la Aduana pendiente de ingreso
 		,CT_C77(Mod303Key.CT_C77)
@@ -269,12 +309,25 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_C68(Mod303Key.CT_C68)
 		
 		// Resultado
-		,CT_C69(Mod303Key.CT_C69,null,null,null,"CT_C66+CT_C77-CT_C67+CT_C68") 
+		,CT_C69(Mod303Key.CT_C69,null,null,null,"CT_C66+CT_C77-CT_C67+CT_C68",null) 
 		
 		// A deducir (exclusivamente en caso de autoliquidación complementaria)
-		,CT_C70(Mod303Key.CT_C70)
-		// Resultado de la liquidación
-		,CT_C71(Mod303Key.CT_C71,null,null,null,"CT_C69-CT_C70")
+		,CT_C70(Mod303Key.CT_C70,null,null,
+				(ctx,mod) -> {
+					if (mod.isComplementary()) {
+						add( Mod303Key.CT_C70, mod, Mod303DAO.getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71)).sum());						
+					}
+				}
+				,null
+				,"<li>Declarciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
+				+"@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
+				+"@foreach{fm : periodModels}" 
+					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
+				+"@end{}"
+				+"</ul></li>"
+				+"<li>Resultado: <b>@{CT_C70}</b></li>"
+		)
+		,CT_C71(Mod303Key.CT_C71,null,null,null,"CT_C69-CT_C70",null)
 		
 		,CT_C80(Mod303Key.CT_C80)
 		,CT_C81(Mod303Key.CT_C81)
@@ -294,27 +347,24 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		private IValueIntializer initializer;
 		private IValueFirstIntializer firstInitializer;
 		private String expression;
+		private String template;
 		
 		private Mod303KeyDAO(Mod303Key key) {
-			this(key,null,null,null,null);			
-		}
-		private Mod303KeyDAO(Mod303Key key, IValueFirstIntializer firstInitializer) {
-			this(key,null,null,firstInitializer,null);			
-		}
-		private Mod303KeyDAO(Mod303Key key, IValueAccepter acceptValue, IValueIntializer initializer) {
-			this(key,acceptValue,initializer,null,null);			
+			this(key,null,null,null,null,null);			
 		}
 		
 		private Mod303KeyDAO(Mod303Key key
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueFirstIntializer firstInitializer
-				, String expression) {
+				, String expression
+				, String template) {
 			this.key = key;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.firstInitializer = firstInitializer;
 			this.expression =  expression;
+			this.template =  template;
 		}
 		
 		
@@ -325,6 +375,10 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		@Override
 		public String getExpression() {
 			return expression;
+		}
+		@Override
+		public String getTemplate() {
+			return template;
 		}
 		@Override
 		public boolean acceptValue(Mod303 mod,VatContext vctx) {

@@ -313,6 +313,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 		paymentInfo.setStyleName(AON.AON_CSS.aonFontSmall());
 		paymentInfo.addStyleName(AON.AON_CSS.aonTextRight());
+		FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);
 		cell1.add(paymentInfo);
 		
 		table.setWidget(0, 0, cell1);
