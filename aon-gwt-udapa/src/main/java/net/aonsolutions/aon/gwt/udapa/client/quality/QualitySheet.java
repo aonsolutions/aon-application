@@ -95,6 +95,12 @@ public class QualitySheet extends Composite{
 	public HashMap<String, String> getMap() {
 		return map;
 	}
+	
+	private Boolean isPropaco() {
+		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
+			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
+			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+	}
 
 	public QualitySheet(UdapaQuality parent, JsDataResponse dataResponse) {
 		this.parent = parent;
@@ -269,10 +275,7 @@ public class QualitySheet extends Composite{
 		qualityTest.setWidget(3, 0, new Label("Materia Seca"));
 		qualityTest.setWidget(3, 1, doubleBox(QualitySheetCode.UFQAC7));
 		
-		Boolean propaco = map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
-				(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
-				|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
-		if(propaco) {
+		if(isPropaco()) {
 			qualityTest.setWidget(3, 2, new Label("Color"));
 			qualityTest.setWidget(3, 3, checkBox(QualitySheetCode.UFQAC8));
 		} else {
@@ -325,22 +328,24 @@ public class QualitySheet extends Composite{
 				"Tierras Piedra"
 		};
 		
-		for(Integer i = 0 ; i < QualitySheetConstants.CALIBER.length ; i = i + 2){
+		QualitySheetCode[] qsc =  isPropaco() ? QualitySheetConstants.CALIBER_PROPACO : QualitySheetConstants.CALIBER;
+	
+		for(Integer i = 0 ; i < qsc.length; i = i + 2){
 			Integer c = i/2;
 			caliberControl.setWidget(2+c, 0, new Label(calibresConsumo[c]));
 			HorizontalPanel hp = new HorizontalPanel();
-			DoubleBox db = doubleBox(QualitySheetConstants.CALIBER[i]);
-			Label label = new Label(map.containsKey(QualitySheetConstants.CALIBER[i + 1].getName())
-					? map.get(QualitySheetConstants.CALIBER[i + 1].getName()) : "0.0");
+			DoubleBox db = doubleBox(qsc[i]);
+			Label label = new Label(map.containsKey(qsc[i + 1].getName())
+				? map.get(qsc[i + 1].getName()) : "0.0");
 			label.getElement().getStyle().setPaddingLeft(25, Unit.PX);
-			WidgetStack ws = new WidgetStack(label, QualitySheetConstants.CALIBER[i + 1]);
+			WidgetStack ws = new WidgetStack(label, qsc[i + 1]);
 			calculated.add(ws);
 			hp.add(db);
 			hp.add(label);
 			caliberControl.setWidget(2+c, 1, hp);
 		}
-		
-		caliberControl.setWidget(7, 0, boldLabel("Total"));
+		Integer index = qsc.length/2 + 2;
+		caliberControl.setWidget(index, 0, boldLabel("Total"));
 		Label label = boldLabel( map.containsKey(QualitySheetCode.UFQCC14.getName()) 
 				? map.get(QualitySheetCode.UFQCC14.getName()) : "0.0");
 		label.setWidth("52px");
@@ -355,19 +360,12 @@ public class QualitySheet extends Composite{
 		HorizontalPanel hp2 = new HorizontalPanel();
 		hp2.add(label);
 		hp2.add(label2);
-		caliberControl.setWidget(7, 1, hp2);
+		caliberControl.setWidget(index, 1, hp2);
 		
-		caliberControl.setWidget(8, 0, new Label());
-		caliberControl.setWidget(8, 1, new Label());
-		
-		caliberControl.setWidget(9, 0, new Label());
-		caliberControl.setWidget(9, 1, new Label());		
-		caliberControl.setWidget(10, 0, new Label());	
-		caliberControl.setWidget(10, 1, new Label());	
-		caliberControl.setWidget(11, 0, new Label());	
-		caliberControl.setWidget(11, 1, new Label());	
-		caliberControl.setWidget(12, 0, new Label());	
-		caliberControl.setWidget(12, 1, new Label());		
+		for(Integer j = index + 1; j < 13; j++) {
+			caliberControl.setWidget(j, 0, new Label());
+			caliberControl.setWidget(j, 1, new Label());	
+		}
 	}
 	
 	private void calibresSiembra(){
@@ -400,7 +398,7 @@ public class QualitySheet extends Composite{
 			caliberControl.setWidget(2+c, 1, hp);
 		}
 		
-		caliberControl.setWidget(12, 0, boldLabel("Total"));
+		caliberControl.setWidget(11, 0, boldLabel("Total"));
 		Label label3 = boldLabel( map.containsKey(QualitySheetCode.UFQCC15.getName()) 
 				? map.get(QualitySheetCode.UFQCC15.getName()) : "0.0");
 		label3.setWidth("52px");
@@ -417,26 +415,28 @@ public class QualitySheet extends Composite{
 		HorizontalPanel hp2 = new HorizontalPanel();
 		hp2.add(label3);
 		hp2.add(label4);
-		caliberControl.setWidget(12, 1, hp2);
+		caliberControl.setWidget(11, 1, hp2);
 	}
 	
 	private void defectControl() {
-		for(Integer i = 0; i < QualitySheetConstants.DEFECTS.length; i = i + 2){
+		QualitySheetCode[] qsc = isPropaco() ? QualitySheetConstants.DEFECTS_PROPACO : QualitySheetConstants.DEFECTS;
+		
+		for(Integer i = 0; i < qsc.length; i = i + 2){
 			Integer c = i/2;
 			caliberControl.setWidget(2+c, 2, new Label(Defects.values()[c].getName()));
 			
-			Label label = new Label(map.containsKey(QualitySheetConstants.DEFECTS[i+1].getName())
-					 ? map.get(QualitySheetConstants.DEFECTS[i+1].getName()) :  "0.0");
+			Label label = new Label(map.containsKey(qsc[i+1].getName())
+					 ? map.get(qsc[i+1].getName()) :  "0.0");
 			label.getElement().getStyle().setPaddingLeft(25, Unit.PX);
-			WidgetStack ws =new WidgetStack(label, QualitySheetConstants.DEFECTS[i + 1]);
+			WidgetStack ws =new WidgetStack(label, qsc[i + 1]);
 			calculated.add(ws);
 			
 			HorizontalPanel hp = new HorizontalPanel();
-			hp.add(doubleBox(QualitySheetConstants.DEFECTS[i]));
+			hp.add(doubleBox(qsc[i]));
 			hp.add(label);
 			caliberControl.setWidget(2+c, 3, hp);
 		}
-		Integer tIndex = 2 + Defects.values().length;
+		Integer tIndex = 2 + qsc.length / 2;
 		caliberControl.setWidget(tIndex, 2, boldLabel("Total")); 
 		
 		Label label = boldLabel(map.containsKey(QualitySheetCode.UFQCD11.getName()) 
@@ -455,6 +455,12 @@ public class QualitySheet extends Composite{
 		hp2.add(label);
 		hp2.add(label2);
 		caliberControl.setWidget(tIndex, 3, hp2);
+		
+		for(Integer j = tIndex + 1; j < 13; j++) {
+			caliberControl.setWidget(j, 2, new Label());
+			caliberControl.setWidget(j, 3, new Label());	
+		}
+		
 	}
 	
 	private void setWidth(FlexTable tab, Integer row, Integer col){
@@ -554,24 +560,7 @@ public class QualitySheet extends Composite{
 				ws.setPrevValue(prevIndex);
 				ws.setValue(listBox.getSelectedIndex());
 				undo.push(ws);
-				if(QualitySheetCode.UFQDP1.equals(code)){
-					Boolean siembra = listBox.getSelectedItemText().equals("Siembra");
-					Boolean propaco = listBox.getSelectedItemText().equals("Baserri") || listBox.getSelectedItemText().equals("Euskolabel");
-					if(siembra){
-						qualityTest.setWidget(3, 2, new Label(""));
-						qualityTest.setWidget(3, 3, new Label(""));
-						calibresSiembra();
-					} else if(propaco){
-						qualityTest.setWidget(3, 2, new Label("Color"));
-						qualityTest.setWidget(3, 3, checkBox(QualitySheetCode.UFQAC8));
-						calibresConsumo();
-					} else {
-						qualityTest.setWidget(3, 2, new Label(""));
-						qualityTest.setWidget(3, 3, new Label(""));
-						calibresConsumo();
-					}
-				}
-				
+
 				String id = dataResponse.getId() + "";
 				String domainName = parent.getAonData().getDomain().getName();
 				Integer domainId = parent.getAonData().getDomain().getId();
@@ -582,6 +571,26 @@ public class QualitySheet extends Composite{
 					@Override
 					public void onSuccess(HashMap<String, String> result) {
 						map = result;
+						
+						if(QualitySheetCode.UFQDP1.equals(code)){
+							Boolean siembra = listBox.getSelectedItemText().equals("Siembra");
+							Boolean propaco = listBox.getSelectedItemText().equals("Baserri") || listBox.getSelectedItemText().equals("Euskolabel");
+							if(siembra){
+								qualityTest.setWidget(3, 2, new Label(""));
+								qualityTest.setWidget(3, 3, new Label(""));
+								calibresSiembra();
+							} else if(propaco){
+								qualityTest.setWidget(3, 2, new Label("Color"));
+								qualityTest.setWidget(3, 3, checkBox(QualitySheetCode.UFQAC8));
+								calibresConsumo();
+							} else {
+								qualityTest.setWidget(3, 2, new Label(""));
+								qualityTest.setWidget(3, 3, new Label(""));
+								calibresConsumo();
+							}
+							defectControl();
+						}
+						
 						FootPanel fp = (FootPanel) southContent.getWidget();	
 						fp.calculatePanel();
 					}

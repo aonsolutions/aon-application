@@ -3,19 +3,26 @@ package net.aonsolutions.aon.gwt.udapa.client.quality;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -59,6 +66,29 @@ public class FilterPanel extends Composite {
     	
 		panel.add(datePanel());
 
+		// ------------------ FILTER BUTTONS
+		FlowPanel fpanel = new FlowPanel(); 
+		
+		// ------------------ SUPPLIERS
+		PaperButton supplierButton = filterButton("Proveedor");
+		supplierButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				parent.getAPI().getRegistry().getSuppliers(new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(supplierButton, result, "Proveedor");
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		});
+		fpanel.add(supplierButton);
+		
+		panel.add(fpanel);
     }
     
     private HorizontalPanel datePanel() {
@@ -131,4 +161,37 @@ public class FilterPanel extends Composite {
     	periodLabel.setText("");
     	onClean();
 	}
+    
+
+    private String key;
+    private void ButtonClick(PaperButton pb, JSON<JsObject> result, String label){
+    	if("Proveedor".equals(label)){
+    		key = "supplier"; 
+    	} 
+    	LinkedList<String> filterList = parent.getFilterMap().containsKey(key) ? 
+    			parent.getFilterMap().get(key) : new LinkedList<>();
+    	AonFilterDialog sw = new AonFilterDialog(pb, label, "",
+    			filterList, result.getData().cast()){
+
+			@Override
+			protected void onSelect(JavaScriptObject o, Boolean apply) {
+				JsObject js = o.cast();
+				if(apply){
+					if(parent.getFilterMap().containsKey(key)){
+						parent.getFilterMap().get(key).add(js.getId()+"");
+					} else {
+						LinkedList<String> list = new LinkedList<>();
+						list.add(js.getId()+"");
+						parent.getFilterMap().put(key, list);
+					}
+				} else {
+					if(parent.getFilterMap().containsKey(key)){
+						parent.getFilterMap().get(key).remove(js.getId()+"");
+					}
+				}
+				parent.gridContent();
+			}
+    	};
+    	sw.show();
+    }
 }

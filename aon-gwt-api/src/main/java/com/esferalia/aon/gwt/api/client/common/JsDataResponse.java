@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.common;
 
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -48,6 +49,10 @@ public class JsDataResponse extends JavaScriptObject {
 
 	public final native String getProduct() /*-{
 		return this.product;
+	}-*/;
+	
+	public final native JsObject getSupplier() /*-{
+		return this.supplier;
 	}-*/;
 
 }

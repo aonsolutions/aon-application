@@ -20,6 +20,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
+import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
 @WebServlet(name = "UdapaGwtServlet", urlPatterns = { "/aon_gwt_aio/gwt_udapa" })
@@ -121,7 +122,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			}
 		});
 		ctx.setExpressionMap(QualitySheetCompute.COMPUTE_MAP);
-		
+		ctx.put("PROPACO", isPropaco(map));
 		for(String key : map.keySet()){
 			try {
 				if (AonStringUtils.isNotEmpty( map.get(key) )) {
@@ -153,5 +154,11 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		//AON.deleteAttach(domainName, domainId, "", f -> f.getAttachModuleProperty().eq(drId), AttachType.DATA);
 		AON.deleteDataResponseDetail(domainName, domainId, "", f -> f.getDataResponseProperty().eq(drId));
 		AON.deleteDataResponse(domainName, domainId, "", f -> f.getIdProperty().eq(drId));
+	}
+	
+	private static Boolean isPropaco(HashMap<String, String> map) {
+		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
+			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
+			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
 	}
 }

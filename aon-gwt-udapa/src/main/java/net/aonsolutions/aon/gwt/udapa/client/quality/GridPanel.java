@@ -191,7 +191,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		});
 		dataGrid.getColumnSortList().push(issueDateColumn);
 		dataGrid.addColumn(issueDateColumn, AON.MSG.issueDate());
-		dataGrid.setColumnWidth(issueDateColumn, 5, Unit.PCT);
+		dataGrid.setColumnWidth(issueDateColumn,10, Unit.PCT);
 
 		
 		/** Number Column **/
@@ -216,9 +216,31 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		});
 		dataGrid.getColumnSortList().push(nameColumn);
 		dataGrid.addColumn(nameColumn, AON.MSG.number());
-		dataGrid.setColumnWidth(nameColumn, 15, Unit.PCT);
+		dataGrid.setColumnWidth(nameColumn, 10, Unit.PCT);
 		
-		/** Number Column **/
+		/** Supplier Column - Columna Proveedores **/
+		Column<JsDataResponse, String> supplierColumn = new Column<JsDataResponse, String>(new TextCell()) {
+
+			@Override
+			public String getValue(JsDataResponse object) {
+				return object.getSupplier().getName();
+			}
+		
+		};
+		supplierColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		supplierColumn.setSortable(true); 
+		sortHandler.setComparator(supplierColumn,new Comparator<JsDataResponse>() {
+			
+			@Override
+			public int compare(JsDataResponse o1, JsDataResponse o2) {
+				return o1.getSupplier().getName().compareTo(o2.getSupplier().getName());
+			}
+		});
+		dataGrid.getColumnSortList().push(supplierColumn);
+		dataGrid.addColumn(supplierColumn, "Proveedor");
+		dataGrid.setColumnWidth(supplierColumn, 15, Unit.PCT);
+		
+		/** Product Column **/
 		Column<JsDataResponse, String> productColumn = new Column<JsDataResponse, String>(new TextCell()) {
 
 			@Override

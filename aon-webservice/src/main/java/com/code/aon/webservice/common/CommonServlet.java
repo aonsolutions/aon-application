@@ -3,8 +3,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -27,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -136,13 +139,22 @@ public class CommonServlet extends HttpServlet{
 				Integer id =Integer.parseInt(s[1]);
 				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f2 -> f2.getIdProperty().eq(id));	
 				if(incomeDetail.isPresent()){
-					JSONObject o = ToJSON.dataResponseToJSON(dr);
-					o.put("product", incomeDetail.get().getDescription());
-					array.put(o);
+					Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getIncome().getId()));
+					if(income.isPresent() && (!map.containsKey("supplier") || hasSupplier(map.get("supplier"), income.get().getSupplier().toString()))) {
+						JSONObject o = ToJSON.dataResponseToJSON(dr);
+						o.put("product", incomeDetail.get().getDescription());
+						o.put("supplier", ToJSON.objectToJSON(income.get().getSupplier(),income.get().getSupplierName()));
+						array.put(o);	
+					}
 				}
 			}
 		});
 	    return array;
+	}
+	
+	private Boolean hasSupplier(String[] suppliers, String supplier) {
+		LinkedList<String> list = new LinkedList<>(Arrays.asList(suppliers));
+		return list.contains(supplier);
 	}
 	
 	public static Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {

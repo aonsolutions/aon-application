@@ -11,7 +11,8 @@ public enum Defects {
 	MANCHAS_HIERRO("Manchas Hierro"),
 	RIZOCTONIA("Rizoctonia"),
 	SARNA("Sarna"),
-	VERDES("Verdes");
+	VERDES("Verdes"),
+	TIERRAS_PIEDRA("Tierras Piedra");
 	
 	String name;
 	
