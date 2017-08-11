@@ -566,8 +566,7 @@ public class SalesDAO {
 			SalesDetail detail = new SalesDetail();
 			detail.setId(r.getValue(SALES_DETAIL.ID));
 			detail.setDomain(r.getValue(SALES_DETAIL.DOMAIN));
-			detail.setSales(new Sales().setId(r.getValue(SALES_DETAIL.SALES))
-					.setPurchaseReference(r.getValue(SALES.PURCHASE_REFERENCE)));
+			detail.setSales(new Sales().setId(r.getValue(SALES_DETAIL.SALES)));
 			detail.setItem(new Item().setId(r.getValue(SALES_DETAIL.ITEM)));
 			detail.setLine(r.getValue(SALES_DETAIL.LINE));
 			detail.setDescription(r.getValue(SALES_DETAIL.DESCRIPTION));
