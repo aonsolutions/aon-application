@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.00</version>
+    <version>9.00.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.esferalia.aon</groupId>
@@ -109,7 +109,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>tgss</artifactId>
-      <version>8.115</version>
+      <version>9.00</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -165,7 +165,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>aeat</artifactId>
-      <version>8.115</version>
+      <version>9.00</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -177,7 +177,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>8.115</version>
+      <version>9.00</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

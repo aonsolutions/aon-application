@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.00</version>
+    <version>9.00.1</version>
   </parent>
   <groupId>net.aonsolutions</groupId>
   <artifactId>aon.gwt.warehouse</artifactId>
@@ -46,7 +46,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>8.115</version>
+      <version>9.00</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.00</version>
+    <version>9.00.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>aon.ui.warehouse</artifactId>
@@ -13,7 +13,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>8.115</version>
+      <version>9.00</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -180,7 +180,7 @@
         <dependency>
           <groupId>net.aonsolutions.core</groupId>
           <artifactId>pool</artifactId>
-          <version>8.115</version>
+          <version>9.00</version>
         </dependency>
         <dependency>
           <groupId>com.mchange</groupId>
