@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.00-SNAPSHOT</version>
+    <version>9.01-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>aon.conexflow</artifactId>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.00-SNAPSHOT</version>
+      <version>9.01-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.esferalia.aon</groupId>
@@ -78,7 +78,7 @@
         <dependency>
           <groupId>net.aonsolutions.core</groupId>
           <artifactId>pool</artifactId>
-          <version>9.00-SNAPSHOT</version>
+          <version>9.01-SNAPSHOT</version>
         </dependency>
         <dependency>
           <groupId>org.jooq</groupId>

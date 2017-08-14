@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.00-SNAPSHOT</version>
+    <version>9.01-SNAPSHOT</version>
   </parent>
   <groupId>com.esferalia.aon</groupId>
   <artifactId>aon-ws-dex</artifactId>
@@ -71,7 +71,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.00-SNAPSHOT</version>
+      <version>9.01-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
