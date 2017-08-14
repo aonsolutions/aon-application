@@ -49,27 +49,13 @@ node {
       sh "git commit -a -m 'Replaces any -SNAPSHOT versions ( non child ) with a release version'"
       sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git"
 
-      sh "echo yes | ${mvnHome}/bin/mvn  -DdevelopmentVersion=${mavenRelease['developmentVersion']} -DreleaseVersion=${mavenRelease['releaseVersion']} -Dusername=${mavenRelease['username']} -Dpassword=${mavenRelease['password']} -Dtag=${mavenRelease['tag']} -Dresume=false -DdryRun=${mavenRelease['dryRun']} -DscmCommentPrefix=${mavenRelease['scmCommentPrefix']} -Darguments='-Drpm.release=true -DskipTests=true -Dgwt.localWorkers=4' release:prepare"
-      
-      // Mark the RPMs deploy 'stage'....
-      stage 'Deploy RPMs'
-    
-      // Upload RPMs 
-      sh "scp `find -name *.noarch.rpm` dev.esferalia.net:/var/www/rpms/aon-solutions/noarch"
-   
-      // Remove oldest RPMs. Keep 2 newest RPMs
-      sh "ssh dev.esferalia.net 'repomanage --keep=2 --old /var/www/rpms/aon-solutions/noarch | xargs rm -rf'"
-   
-      // Create RPMs repository
-      sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-solutions'"
-
+      sh "echo yes | ${mvnHome}/bin/mvn  -DdevelopmentVersion=${mavenRelease['developmentVersion']} -DreleaseVersion=${mavenRelease['releaseVersion']} -Dusername=${mavenRelease['username']} -Dpassword=${mavenRelease['password']} -Dtag=${mavenRelease['tag']} -Dresume=false -DdryRun=${mavenRelease['dryRun']} -DscmCommentPrefix=${mavenRelease['scmCommentPrefix']} -Darguments='-Drpm.release=false -DskipTests=true -Dgwt.localWorkers=4' release:prepare"
       
       // Create release branch for future HotFixes
       // Checking out to release tag
       sh "git checkout ${mavenRelease['tag']}"
       // Create release branch
       sh "git checkout -b ${mavenRelease['branch']}"
-      sh "mv rpms2aws.sh.hotfix rpms2aws.sh"
       sh "mv Jenkinsfile.hotfix Jenkinsfile"
       sh "git commit -a -m 'For build hotfixes'"
       sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git ${mavenRelease['branch']}"

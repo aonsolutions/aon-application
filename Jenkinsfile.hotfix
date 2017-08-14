@@ -53,24 +53,11 @@ node {
    // Mark the build 'stage'....
    stage "Build HotFix ${pom.version}"
    
-   sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=true -DskipTests clean deploy"
+   sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -DskipTests clean deploy"
    
-   // Mark the RPMs deploy 'stage'....
-   stage 'Deploy RPMs'
-   
-   // Upload RPMs 
-   sh "scp `find -name *${pom.version}*.noarch.rpm` dev.esferalia.net:/var/www/rpms/aon-solutions/noarch"
-   
-   // Remove oldest RPMs. Keep 2 newest RPMs
-   sh "ssh dev.esferalia.net 'repomanage --keep=2 --old /var/www/rpms/aon-solutions/noarch | xargs rm -rf'"
-   
-   // Create RPMs repository
-   sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-solutions'"
-
    if ( commits ) {
 
-      // Mark the RPMs deploy 'stage'....
-      stage "Publish HotFix ${pom.version}"
+      //stage "Publish HotFix ${pom.version}"
 
       //sh "${mvnHome}/bin/mvn  -B clean"
 
