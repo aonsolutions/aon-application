@@ -3,8 +3,10 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
+import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -302,7 +304,24 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_C77(Mod303Key.CT_C77)
 		
 		// Cuotas a compensar de periodos anteriores
-		,CT_C67(Mod303Key.CT_C67)
+		,CT_C67(Mod303Key.CT_C67,null,null,
+			(ctx,mod) -> {
+				add( Mod303Key.CT_C67, mod, 
+					Mod303DAO.getLastPeriodModels(ctx, mod)
+					.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
+					.mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71))
+					.findFirst()
+					.orElse(0.0));						
+			}
+			,null
+			,"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
+			+"@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
+			+"@foreach{fm : lastPeriodModels}" 
+				+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
+			+"@end{}"
+			+"</ul></li>"
+			+"<li>Resultado: <b>@{CT_C70}</b></li>"
+		)
 		
 		// Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administración del Estado 
 		// y a las Diputaciones Forales. Resultado de la regularización anual.
@@ -319,7 +338,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 					}
 				}
 				,null
-				,"<li>Declarciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
+				,"<li>Declaraciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
 				+"@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
 				+"@foreach{fm : periodModels}" 
 					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"

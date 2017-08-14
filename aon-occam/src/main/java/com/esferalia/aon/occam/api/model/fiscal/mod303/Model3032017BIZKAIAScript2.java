@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
@@ -31,16 +32,16 @@ public enum Model3032017BIZKAIAScript2 implements IModelScript<Mod303Key> {
 	,LQ002("Regularizaci\u00F3n cuotas art. 80.cinco.5\u00AA LIVA"	,new Mod303Key[]{Mod303Key.BZ_C045},NONE)
 	,LQ003("Porcentaje de tributaci\u00F3n en Bizkaia"				,new Mod303Key[]{Mod303Key.BZ_C032},NONE)
 	,LQ004("Cuota atribuible a Bizkaia"								,new Mod303Key[]{Mod303Key.BZ_C033},COMPUTE)
-	,LQ005("Cuota a compensar de periodos anteriores"				,new Mod303Key[]{Mod303Key.BZ_C034},NONE)
+	,LQ005("Cuota a compensar de periodos anteriores"				,new Mod303Key[]{Mod303Key.BZ_C034},COMPUTE_KEY)
 	,LQ006("Resultado de la regularizaci\u00F3n anual"				,new Mod303Key[]{Mod303Key.BZ_C035},NONE)
 	,LQ007("Resultado"												,new Mod303Key[]{Mod303Key.BZ_C036},COMPUTE)
 //	,LQ008("A compensar"											,new Mod303Key[]{Mod303Key.BZ_C038},COMPUTE)
 //	,LQ009("A devolver"												,new Mod303Key[]{Mod303Key.BZ_C039},COMPUTE)
 //	,LQ010("A ingresar"												,new Mod303Key[]{Mod303Key.BZ_C040},COMPUTE)
 	,LQ011("Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente"
-																	,new Mod303Key[]{Mod303Key.BZ_C041},NONE)
+																	,new Mod303Key[]{Mod303Key.BZ_C041},COMPUTE_KEY)
 	,LQ012("Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente"
-																	,new Mod303Key[]{Mod303Key.BZ_C042},NONE)
+																	,new Mod303Key[]{Mod303Key.BZ_C042},COMPUTE_KEY)
 	,LQ013("Total deuda tributaria"									,new Mod303Key[]{Mod303Key.BZ_C043},COMPUTE)
 	;
 	
