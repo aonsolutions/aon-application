@@ -84,7 +84,11 @@ public class Model3032017BIZKAIA extends Model303Base {
 		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		
-		table.getColumnFormatter().setWidth(3, "50px");
+		table.getColumnFormatter().setWidth(3, "40px");
+		table.getColumnFormatter().setStyleName(3, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setWidth(4, "140px");
+
+		table.getColumnFormatter().setWidth(5, "50px");
 		specificOpDataScrollPanel.setWidget(table);
 		tabPanel.add(specificOpDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.specificOperations(), AON.AON_CSS.aonIconCompanyData()));
 		paintDeclaration(table,Model3032017BIZKAIASpecificOperationsScript.values(),4);

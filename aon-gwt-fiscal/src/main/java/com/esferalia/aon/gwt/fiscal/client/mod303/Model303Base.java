@@ -551,7 +551,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			button.setTitle(infoKey.getLabel());
 			button.setStyleName(AON.AON_CSS.aonIconCommandButton());
 			
-			if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.AON_CSS.aonIconInvoice());
+			if 	(infoKey == FiscalModelKeyInfo.INVOICE || infoKey == FiscalModelKeyInfo.OUT_ACCRUAL_INVOICE 
+			  || infoKey == FiscalModelKeyInfo.IN_ACCRUAL_INVOICE) {
+				button.addStyleName(AON.AON_CSS.aonIconInvoice());
+			}
 			if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.AON_CSS.aonIconDiff());
 			if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
 			if 	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.AON_CSS.aonIconCompanyData());

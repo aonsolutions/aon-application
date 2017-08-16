@@ -141,10 +141,16 @@ public class Model3032017AEAT extends Model303Base {
 		table.getColumnFormatter().setWidth(0, "auto");
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+
 		table.getColumnFormatter().setWidth(1, "40px");
 		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
-		table.getColumnFormatter().setWidth(3, "50px");
+		
+		table.getColumnFormatter().setWidth(3, "40px");
+		table.getColumnFormatter().setStyleName(3, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setWidth(4, "140px");
+		
+		table.getColumnFormatter().setWidth(5, "50px");
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.AON_CSS.aonIconCompanyData()));
 		paintDeclaration(table,Model3032017AEATAdditionalDataScript.values(),3);

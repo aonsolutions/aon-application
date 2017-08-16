@@ -46,6 +46,8 @@ public class Mod303DAO extends FiscalModelDAO {
 	public static enum Mod303KeyInfoDAO {
 		 NONE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, NONE_INFO)) )
 		,INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod, script,keyDAO))))
+		,IN_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualInputInvoicesInfo(ctx, mod, script,keyDAO))))
+		,OUT_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualOutputInvoicesInfo(ctx, mod, script,keyDAO))))
 		,DIFF_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO))))
 		,COMPUTE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getExpression(mod, script,keyDAO))))
 		,COMPUTE_KEY ( (ctx, mod, script,keyDAO) -> getComputeKey(ctx,mod, script,keyDAO))
@@ -320,12 +322,37 @@ public class Mod303DAO extends FiscalModelDAO {
 				+ " DEL " + mod303.getPeriod().getDescription()
 				+ " DE " + mod303.getYear();
 		return VATFormatter.formatInvoices(title,script.getLabel()
-			,getVatBreakdown(ctx, mod303)
+			,getVatBreakdown(ctx, mod303, true)
 					.filter( br ->  keyDAO.acceptValue(mod303, br) )	
 					.collect(Collectors.toCollection(LinkedList::new))
 		);
 	}
 	
+	private static String getAccrualOutputInvoicesInfo(AONContext ctx, final Mod303 mod303
+			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
+		String title = "FACTURAS CRITERIO CAJA QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+				+ mod303.getModelName() 
+				+ " DEL " + mod303.getPeriod().getDescription()
+				+ " DE " + mod303.getYear();
+		return VATFormatter.formatInvoices(title,script.getLabel()
+			,getAccrualBreakdown(ctx, mod303)
+					.filter( br ->  br.isSales()  )	
+					.collect(Collectors.toCollection(LinkedList::new))
+		);
+	}
+	private static String getAccrualInputInvoicesInfo(AONContext ctx, final Mod303 mod303
+			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
+		String title = "FACTURAS CRITERIO CAJA QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+				+ mod303.getModelName() 
+				+ " DEL " + mod303.getPeriod().getDescription()
+				+ " DE " + mod303.getYear();
+		return VATFormatter.formatInvoices(title,script.getLabel()
+			,getAccrualBreakdown(ctx, mod303)
+					.filter( br ->  !br.isSales()  )	
+					.collect(Collectors.toCollection(LinkedList::new))
+		);
+	}
+
 	private static String getDiffInvoicesInfo(AONContext ctx, final Mod303 mod303
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
 		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
@@ -362,8 +389,18 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303;
 	}
 
+	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, final Mod303 mod303) {
+		Date fromDate = FiscalUtils.getPeriodStart(mod303);
+		Date toDate = FiscalUtils.getPeriodEnd(mod303);
+		return VATDAO.getAccrualBreakdown(ctx, fromDate, toDate);
+	}
+	
 	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod303 mod303) {
-		Date fromDate = mod303.isDiffCalculationDisabled()
+		return getVatBreakdown(ctx,mod303,mod303.isDiffCalculationDisabled());
+	}
+	
+	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod303 mod303, boolean diffDisabled) {
+		Date fromDate = diffDisabled
 			?FiscalUtils.getPeriodStart(mod303)		
 			:AonDateUtils.getYearFirstDay(mod303.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod303);

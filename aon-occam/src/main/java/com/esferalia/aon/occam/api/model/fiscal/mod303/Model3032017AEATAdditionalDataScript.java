@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.fiscal.mod303;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.OUT_ACCRUAL_INVOICE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.IN_ACCRUAL_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -23,10 +25,10 @@ public enum Model3032017AEATAdditionalDataScript implements IModelScript<Mod303K
 		 " para aqu\u00E9llos que sean destinatarios de operaciones afectadas por el mismo",null,TITLE)
 	,ADC05 ("Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el r\u00E9gimen especial "+
 			"del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA"
-		,new Mod303Key[]{Mod303Key.CT_C62		,Mod303Key.CT_C63},INVOICE,DIFF_INVOICE)	
+		,new Mod303Key[]{Mod303Key.CT_C62		,Mod303Key.CT_C63},OUT_ACCRUAL_INVOICE,DIFF_INVOICE)	
 	,ADC06 ("Importes de las adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el" + 
 			" r\u00E9gimen especial del criterio de caja"
-		,new Mod303Key[]{Mod303Key.CT_C74		,Mod303Key.CT_C75},INVOICE,DIFF_INVOICE)
+		,new Mod303Key[]{Mod303Key.CT_C74		,Mod303Key.CT_C75},IN_ACCRUAL_INVOICE,DIFF_INVOICE)
 	;
 	
 	private String label;
