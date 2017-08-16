@@ -757,7 +757,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	@Test
 	public void TestIncidenciasCompleto() throws Exception {
 
-		open("incidencias");
+		if (!isDisplayed("complemento_i,_incidencia"))
+			open("incidencias");
+		
 		wait4Id("complemento_i,_incidencia");
 		events("COMPLEMENTO_I, INCIDENCIA");
 
@@ -806,7 +808,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	@Test
 	public void TestIncidenciasParcial() throws Exception {
 
-		open("incidencias");
+		if (!isDisplayed("complemento,_tiempo_parcial"))
+			open("incidencias");
+
 		wait4Id("complemento,_tiempo_parcial");
 		events("COMPLEMENTO, TIEMPO_PARCIAL");
 
