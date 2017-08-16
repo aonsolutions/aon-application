@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
@@ -8,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
@@ -27,6 +29,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -36,11 +40,13 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -539,6 +545,79 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return ++col;
 	}
 	
+	protected void paintCheck(Mod303Key key, FlexTable table) {
+		int row = table.getRowCount();
+		paintLabel(table, row, key.getDescription());
+		final CheckBox check = new CheckBox();
+		check.setEnabled(this.mod303.isNotFinished());
+		check.setValue(this.mod303.ensureDetail(key).getAmount() == 1);
+		check.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod303.ensureDetail(key).setAmount(check.getValue()?1.0:0.0);
+				markAsDirty();
+			}
+		});
+		table.setWidget(row, 1, check);
+	}
+	
+	protected void paintDate(Mod303Key key, FlexTable table) {
+		int row = table.getRowCount();
+		paintLabel(table, row, key.getDescription());
+		
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+		final DateBoxEx dateBox = new DateBoxEx();
+		dateBox.setEnabled(mod303.isNotFinished());
+		if (AonStringUtils.isNotEmpty( mod303.ensureDetail(key).getDescription() ) ) {
+			dateBox.setValue( dateBox.parse(mod303.ensureDetail(key).getDescription() , false) );
+		}
+		dateBox.addValueChangeHandler( new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				mod303.ensureDetail(key).setDescription(dateBox.format());
+				markAsDirty();
+			}
+		});
+		table.setWidget(row, 1, dateBox);
+	}
+
+	protected void paintListBox(ListBox listBox, Mod303Key key, FlexTable table) {
+		int row = table.getRowCount();
+		paintLabel(table, row, key.getDescription());
+		
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+		listBox.setEnabled(mod303.isNotFinished());
+		listBox.setSelectedIndex( (int) mod303.ensureDetail(key).getAmount() );
+		listBox.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				mod303.ensureDetail(key).setAmount(listBox.getSelectedIndex());
+				markAsDirty();
+			}
+		});
+		table.setWidget(row, 1, listBox);
+	}
+
+	protected FlowPanel addGroupPanel(String label, Widget w) {
+		FlowPanel groupPanel = new FlowPanel();
+		groupPanel.setStyleName(AON.AON_CSS.aonGroup());
+		
+			FlowPanel groupHeaderPanel = new FlowPanel();
+			groupHeaderPanel.setStyleName(AON.AON_CSS.aonGroupTitle());
+			groupHeaderPanel.add (new InlineLabel(label)); 
+			groupPanel.add(groupHeaderPanel);
+			
+			FlowPanel groupBodyPanel = new FlowPanel();
+			groupBodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
+			groupBodyPanel.add(w);
+			groupPanel.add(groupBodyPanel);
+		return groupPanel;
+	}
+
 	private void paintInfoCol(FlexTable table, int row, int col, final IModelScript<Mod303Key> script) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());

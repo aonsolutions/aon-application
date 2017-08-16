@@ -31,8 +31,9 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
 		 BZ_C185_1	(Mod303Key.BZ_C185_1)
 		,BZ_C185_2	(Mod303Key.BZ_C185_2)
-		,BZ_C186	(Mod303Key.BZ_C186)
-		,BZ_C187	(Mod303Key.BZ_C187)
+		,BZ_C186	(Mod303Key.BZ_C186)		// Ventas  Criterio de caja. Se incializa en la casilla 201.
+		,BZ_C187	(Mod303Key.BZ_C187)		// Compras Criterio de caja. Se incializa en la casilla 202.
+		
 		,CM_002		(Mod303Key.CM_002)
 		
 		// ---------------------------------------------------------------
@@ -297,12 +298,23 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		// sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas
 		// conforme a la regla general de devengo contenida en el artículo 75 NFIVA
 		,BZ_C200	(Mod303Key.BZ_C200,null,null,(ctx,mod) -> add(Mod303Key.BZ_C200,mod,Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		,BZ_C201	(Mod303Key.BZ_C201,null,null,(ctx,mod) -> add(Mod303Key.BZ_C201,mod,Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod)),null,null)
+		,BZ_C201	(Mod303Key.BZ_C201,null,null,(ctx,mod) -> {
+			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
+			add( Mod303Key.BZ_C201, mod, quota );
+			add( Mod303Key.BZ_C186, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
+			}
+		,null,null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea aplicable o afecte el
 		// régimen especial del criterio de caja
 		,BZ_C202	(Mod303Key.BZ_C202,null,null,(ctx,mod) -> add(Mod303Key.BZ_C202,mod,Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,BZ_C203	(Mod303Key.BZ_C203,null,null,(ctx,mod) -> add(Mod303Key.BZ_C203,mod,Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod)),null,null)
+		,BZ_C203	(Mod303Key.BZ_C203,null,null,(ctx,mod) -> {
+			double quota = Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
+			add(Mod303Key.BZ_C203,mod, quota );
+			add( Mod303Key.BZ_C187, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
+			}
+		,null,null)
+
 
 		// ---------------------------------------------------------------
 		// ----------------------------------------- INFORMACION ADICIONAL

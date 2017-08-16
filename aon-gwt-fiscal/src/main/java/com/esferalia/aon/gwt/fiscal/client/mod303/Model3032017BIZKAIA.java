@@ -10,11 +10,11 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIAAdditi
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIAScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIAScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIASpecificOperationsScript;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -140,14 +140,25 @@ public class Model3032017BIZKAIA extends Model303Base {
 
 	private void paintDeclarationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
-		// ---
-		declarationScrollPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		Label notYet = new Label("NO IMPLEMENTADO");
-		notYet.setStyleName(AON.AON_CSS.aonColorRed());
-		notYet.addStyleName(AON.AON_CSS.aonFontBig());
-		// ---
+		FlowPanel container = new FlowPanel();
 		
-		declarationScrollPanel.setWidget(notYet);
+		FlexTable table = new FlexTable();
+		table.setWidth("100%");
+		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		
+		table.getColumnFormatter().setWidth(0, "auto");
+		table.getColumnFormatter().setWidth(1, "300px");
+		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+
+		paintCheck(Mod303Key.CM_002,table);		// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
+		paintCheck(Mod303Key.BZ_C186 ,table);	// Sujeto pasivo acogido al régimen especial del criterio de caja.
+		paintCheck(Mod303Key.BZ_C187,table);		// Destinatario/a de operaciones a las que se aplica el r\u00E9gimen especial del criterio de caja
+		
+		paintDate( Mod303Key.BZ_C185_1,table);	// Fraccionamiento de per\u00EDodo en concursal. Desde.
+		paintDate( Mod303Key.BZ_C185_2,table);	// Fraccionamiento de per\u00EDodo en concursal. Hasta.
+		container.add(addGroupPanel("", table));
+		declarationScrollPanel.setWidget(container);
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 
