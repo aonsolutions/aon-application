@@ -12,9 +12,15 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRe
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.Pair;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -22,7 +28,14 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model3032017AEAT extends Model303Base {
+	private static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/Model303File";
+	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/Model303PrintAEAT";
 	
+	private FormPanel diskForm = new FormPanel("_blank");
+	private Hidden mod303Hidden = new Hidden("mod303");
+	private Hidden domainIdHidden = new Hidden("domainId");
+	private Hidden domainNameHidden = new Hidden("domainName");
+
 	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -145,8 +158,105 @@ public class Model3032017AEAT extends Model303Base {
 	}
 
 	private void paintInformationTab(Model303Callback callback,TabLayoutPanel tabPanel) {
-		FlowPanel panel = getInformationPanel(callback);
-		tabPanel.add(panel,TAB_TEMPLATE.render(AON.MSG.information(), FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
+		FlowPanel panel = new FlowPanel();
+		
+		FlowPanel formContainer = new FlowPanel();
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		formFlowPanel.add(mod303Hidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formContainer.add(diskForm);
+		panel.add(formContainer);
+		
+		FlowPanel administrationPanel = getAdministrationPanel(callback); 
+		panel.add(administrationPanel);
+		FlowPanel informationPanel = getInformationPanel(callback);
+		panel.add(informationPanel);
+		tabPanel.add(panel,TAB_TEMPLATE.render(AON.MSG.administration(), FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
+	}
+	
+	protected FlowPanel getAdministrationPanel(Model303Callback callback) {
+		FlowPanel panel = new FlowPanel();
+		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.addStyleName(AON.AON_CSS.aonWidthAll());
+		panel.addStyleName(AON.AON_CSS.aonMarginTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		 
+		FlexTable tab = new FlexTable();
+		tab.getColumnFormatter().setWidth(0, "30px");
+		tab.getColumnFormatter().setWidth(1
+				, "auto");
+		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
+		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		Label title = new Label("Presentaci\u00F3n del modelo");
+		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod303().getAdministration()));
+		tab.setWidget(0, 0, title);
+		
+		int row = 1;
+
+		Label icon1 = new Label();
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod303().getAdministration()));
+		tab.setWidget(row, 0, icon1 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel p1 = new FlowPanel();
+		p1.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
+		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button1.addStyleName(AON.AON_CSS.aonBorderNone());
+		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button1.addStyleName(AON.AON_CSS.aonClickable());
+		button1.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (getMod303().isFinished()) {
+					submitForm(DOWNLOAD_FILE_ACTION);
+				} else {
+					callback.showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+				}
+			}
+		});
+		p1.add(button1);
+		tab.setWidget(row, 1, p1 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+		
+		Label icon2 = new Label();
+		icon2.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod303().getAdministration()));
+		tab.setWidget(row, 0, icon2 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel p2 = new FlowPanel();
+		p2.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button2 = new Button("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
+		button2.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button2.addStyleName(AON.AON_CSS.aonBorderNone());
+		button2.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button2.addStyleName(AON.AON_CSS.aonClickable());
+		button2.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (getMod303().isFinished()) {
+					submitForm(VALIDATE_PRINT_ACTION);
+				} else {
+					callback.showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+				}
+			}
+		});
+		p2.add(button2);
+		tab.setWidget(row, 1, p2 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+
+
+		panel.add(tab);
+		return panel;
 	}
 
 	@Override
@@ -210,4 +320,11 @@ public class Model3032017AEAT extends Model303Base {
 		return table;
 	}
 	
+	private void submitForm(String action) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
+		domainIdHidden.setValue(String.valueOf(Model303.getCurrentDomain()));
+		domainNameHidden.setValue(Model303.getCurrentDomainName());
+		diskForm.submit();
+	}
 }

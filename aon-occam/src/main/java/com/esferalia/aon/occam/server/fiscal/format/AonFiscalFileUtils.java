@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.server.fiscal.format;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,8 +18,11 @@ public class AonFiscalFileUtils {
 	private static char[] SEEK= new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
 	private static char[] ALTER = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
 
+	private static final SimpleDateFormat DATE_MAIN_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	private static final SimpleDateFormat DATE_FORMAT_ES = new SimpleDateFormat("ddMMyyyy");
+	private static final String EMPTY_BLANK_DATE = AonStringUtils.repeat(' ', 8);
+	private static final String EMPTY_ZERO_DATE = AonStringUtils.repeat('0', 8);
 	
 	private static final String AEAT_MARK = "X";
 
@@ -48,19 +52,28 @@ public class AonFiscalFileUtils {
 		String text = number==null?null:number.toString();
 		return text(text,size);
 	}
+	
+	public static String convertDate(String date) {
+		try {
+			return date == null ? EMPTY_BLANK_DATE
+					: DATE_FORMAT.format(DATE_MAIN_FORMAT.parse(date));
+		} catch (ParseException e) {
+			return EMPTY_BLANK_DATE;
+		}
+	}
 
 	public static String date(Date date) {
-		return date == null ? AonStringUtils.repeat(' ', 8) : DATE_FORMAT.format(date);
+		return date == null ? EMPTY_BLANK_DATE : DATE_FORMAT.format(date);
 	}
 	public static String dateES(Date date) {
-		return date == null ? AonStringUtils.repeat(' ', 8) : DATE_FORMAT_ES.format(date);
+		return date == null ? EMPTY_BLANK_DATE : DATE_FORMAT_ES.format(date);
 	}
 	
 	public static String dateZero(Date date) {
-		return date == null ? AonStringUtils.repeat('0', 8) : DATE_FORMAT.format(date);
+		return date == null ? EMPTY_ZERO_DATE : DATE_FORMAT.format(date);
 	}
 	public static String dateZeroES(Date date) {
-		return date == null ? AonStringUtils.repeat('0', 8) : DATE_FORMAT_ES.format(date);
+		return date == null ? EMPTY_ZERO_DATE : DATE_FORMAT_ES.format(date);
 	}
 	
 	public static String signedZero(Double value, int size) {
