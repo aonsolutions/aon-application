@@ -530,11 +530,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 											number + "' de a la linea " + linea.getLINEA());
 								}
 							}
-							if(customerRItem!=null){
+							if(detail.getPrice()==null && customerRItem!=null){
 								detail.setPrice(customerRItem.getPrice());
 								detail.setDiscountExpression(customerRItem.getDiscountExpr());
 							}
-							if(detail.getPrice()==null || detail.getPrice().equals(0.0)){
+							if(detail.getPrice()==null){
 								detail.setPrice(item.getPrice());
 								detail.setDiscountExpression("0");
 							}
