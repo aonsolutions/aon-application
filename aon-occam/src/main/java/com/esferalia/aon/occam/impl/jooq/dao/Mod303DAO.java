@@ -405,7 +405,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			?FiscalUtils.getPeriodStart(mod303)		
 			:AonDateUtils.getYearFirstDay(mod303.getYear());
 		Date toDate = FiscalUtils.getPeriodEnd(mod303);
-		return VATDAO.getVatBreakdown(ctx,fromDate,toDate);
+		return VATDAO.getVatBreakdown(ctx,fromDate,toDate,mod303);
 	}
 	
 	public static double getPercent1( FiscalModel model ) {

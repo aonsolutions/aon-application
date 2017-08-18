@@ -43,7 +43,7 @@ public class VatReportTest {
 		
 		final Date fromDate = AonDateUtils.getYearFirstDay(2017);
 		final Date toDate = FiscalUtils.getPeriodEnd(2017, Period.T1);
-		LinkedList<VatContext> list = VATDAO.getVatBreakdown(ctx, fromDate, toDate, null)
+		LinkedList<VatContext> list = VATDAO.getVatBreakdown(ctx, fromDate, toDate)
 				.collect(Collectors.toCollection(LinkedList::new));
 		FileWriter writer =  new FileWriter("/home/ecastellano/vatBreakdown.html");
 		writer.write("<pre>");
