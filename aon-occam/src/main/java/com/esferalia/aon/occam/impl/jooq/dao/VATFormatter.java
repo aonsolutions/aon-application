@@ -54,6 +54,8 @@ public class VATFormatter {
 				+ AonStringUtils.leftPad("CUOTA RE",15)
 				+ AonStringUtils.leftPad("% DED.",8)
 				+ AonStringUtils.leftPad("CUOTA DED.",15)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.rightPad("N. REFERENCIA.",25)
 				+ AonStringUtils.repeat(" ", 2)
 				;
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
@@ -113,6 +115,8 @@ public class VATFormatter {
 				+ AonStringUtils.leftPad(DEC.format(vat.getSurchargeQuota()),15)
 				+ AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(vat.getDeductiblePercent()) + AonStringUtils.PERCENT,8)
 				+ AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(vat.getDeductibleQuota()),15)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getReferenceCode(),25),25) 
 				+ AonStringUtils.repeat(" ", 2)
 			));
 			sumBase = AonMathUtils.round(sumBase + vat.getBase()); 
