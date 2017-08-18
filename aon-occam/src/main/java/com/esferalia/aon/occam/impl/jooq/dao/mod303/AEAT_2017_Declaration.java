@@ -233,7 +233,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// Compensaciones Régimen Especial A.G. y P.
 		,CT_C42(Mod303Key.CT_C42
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C41,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C42,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Regularización inversiones 		
