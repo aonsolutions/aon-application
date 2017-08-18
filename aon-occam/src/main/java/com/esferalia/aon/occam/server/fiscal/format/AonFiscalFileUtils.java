@@ -1,9 +1,12 @@
 package com.esferalia.aon.occam.server.fiscal.format;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -21,6 +24,12 @@ public class AonFiscalFileUtils {
 	private static final SimpleDateFormat DATE_MAIN_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	private static final SimpleDateFormat DATE_FORMAT_ES = new SimpleDateFormat("ddMMyyyy");
+	private static final DecimalFormat P3_FORMAT = new DecimalFormat("000.000");
+	static {
+		P3_FORMAT.setDecimalFormatSymbols( new DecimalFormatSymbols(Locale.ENGLISH) );
+	}
+	
+
 	private static final String EMPTY_BLANK_DATE = AonStringUtils.repeat(' ', 8);
 	private static final String EMPTY_ZERO_DATE = AonStringUtils.repeat('0', 8);
 	
@@ -146,6 +155,11 @@ public class AonFiscalFileUtils {
 	public static String unsigned(Integer value, int size) {
 		if (value == null) return zeros(size);
 		return text( AonStringUtils.leftPad(Integer.toString(value), size, '0'), size);
+	}
+
+	public static String p3(Double value) {
+		if (value == null) value = 0.0;
+		return P3_FORMAT.format(value);
 	}
 
 	public static String document(String document) {

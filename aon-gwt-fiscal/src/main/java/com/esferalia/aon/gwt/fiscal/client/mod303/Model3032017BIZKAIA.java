@@ -13,8 +13,13 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIASpecif
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -36,7 +41,7 @@ public class Model3032017BIZKAIA extends Model303Base {
 		paintLiquidationTab(callback,tabPanel);
 		paintAdditionalDataTab(callback,tabPanel);
 		paintSpecificOperationsTab(callback,tabPanel);
-		paintInformationTab(callback,tabPanel);
+		paintAdministrationTab(callback,tabPanel);
 		
 	}
 	
@@ -167,9 +172,79 @@ public class Model3032017BIZKAIA extends Model303Base {
 		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
 	}
 
-	private void paintInformationTab(Model303Callback callback,TabLayoutPanel tabPanel) {
-		FlowPanel panel = getInformationPanel(callback);
-		tabPanel.add(panel,TAB_TEMPLATE.render(AON.MSG.information(), FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
+	private void paintAdministrationTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+		FlowPanel panel = new FlowPanel();
+		
+		FlowPanel formContainer = new FlowPanel();
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		formFlowPanel.add(mod303Hidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formContainer.add(diskForm);
+		panel.add(formContainer);
+		
+		FlowPanel administrationPanel = getAdministrationPanel(callback); 
+		panel.add(administrationPanel);
+		FlowPanel informationPanel = getInformationPanel(callback);
+		panel.add(informationPanel);
+		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
+	}
+
+	protected FlowPanel getAdministrationPanel(Model303Callback callback) {
+		FlowPanel panel = new FlowPanel();
+		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.addStyleName(AON.AON_CSS.aonWidthAll());
+		panel.addStyleName(AON.AON_CSS.aonMarginTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		 
+		FlexTable tab = new FlexTable();
+		tab.getColumnFormatter().setWidth(0, "30px");
+		tab.getColumnFormatter().setWidth(1
+				, "auto");
+		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
+		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		Label title = new Label("Presentaci\u00F3n del modelo");
+		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod303().getAdministration()));
+		tab.setWidget(0, 0, title);
+		
+		int row = 1;
+
+		Label icon1 = new Label();
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod303().getAdministration()));
+		tab.setWidget(row, 0, icon1 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel p1 = new FlowPanel();
+		p1.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button1 = new Button("Descargar fichero para m\u00F3dulo de impresi\u00F3n.");
+		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button1.addStyleName(AON.AON_CSS.aonBorderNone());
+		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button1.addStyleName(AON.AON_CSS.aonClickable());
+		button1.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (getMod303().isFinished()) {
+					submitForm(DOWNLOAD_FILE_ACTION);
+				} else {
+					callback.showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+				}
+			}
+		});
+		p1.add(button1);
+		tab.setWidget(row, 1, p1 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+		
+		panel.add(tab);
+		return panel;
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRe
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.Pair;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -20,7 +19,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -28,14 +26,8 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model3032017AEAT extends Model303Base {
-	private static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/Model303File";
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/Model303PrintAEAT";
 	
-	private FormPanel diskForm = new FormPanel("_blank");
-	private Hidden mod303Hidden = new Hidden("mod303");
-	private Hidden domainIdHidden = new Hidden("domainId");
-	private Hidden domainNameHidden = new Hidden("domainName");
-
 	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -50,7 +42,7 @@ public class Model3032017AEAT extends Model303Base {
 		paintSimplifiedRegimenTab(getCallback(),tabPanel);
 		paintResultTab(getCallback(),tabPanel);
 		paintAdditionalDataTab(getCallback(),tabPanel);
-		paintInformationTab(getCallback(),tabPanel);
+		paintAdministrationTab(getCallback(),tabPanel);
 	}
 	
 	
@@ -157,7 +149,7 @@ public class Model3032017AEAT extends Model303Base {
 		paintDeclaration(table,Model3032017AEATAdditionalDataScript.values(),3);
 	}
 
-	private void paintInformationTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model303Callback callback,TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
 		
 		FlowPanel formContainer = new FlowPanel();
@@ -174,7 +166,7 @@ public class Model3032017AEAT extends Model303Base {
 		panel.add(administrationPanel);
 		FlowPanel informationPanel = getInformationPanel(callback);
 		panel.add(informationPanel);
-		tabPanel.add(panel,TAB_TEMPLATE.render(AON.MSG.administration(), FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
+		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
 	}
 	
 	protected FlowPanel getAdministrationPanel(Model303Callback callback) {
@@ -320,11 +312,4 @@ public class Model3032017AEAT extends Model303Base {
 		return table;
 	}
 	
-	private void submitForm(String action) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
-		domainIdHidden.setValue(String.valueOf(Model303.getCurrentDomain()));
-		domainNameHidden.setValue(Model303.getCurrentDomainName());
-		diskForm.submit();
-	}
 }

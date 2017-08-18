@@ -9,8 +9,8 @@ import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -44,6 +44,8 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -53,6 +55,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Model303Base extends DockLayoutPanel  {
+	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/Model303File";
 
 	protected static final boolean ENABLED = true;
 	protected static final boolean DISABLED = false;
@@ -76,14 +79,19 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected InlineLabel prorataLabel = new InlineLabel();
 	protected Button commentsButton = new Button();
 	
-	final Button newButton = new Button();
-	final Button saveButton = new Button();
-	final Button cancelButton = new Button();		
-	final Button deleteButton = new Button();		
-	final Button reopenButton = new Button();
-	final Button finalizeButton = new Button();
-	final Button auditButton = new Button();
+	protected final Button newButton = new Button();
+	protected final Button saveButton = new Button();
+	protected final Button cancelButton = new Button();		
+	protected final Button deleteButton = new Button();		
+	protected final Button reopenButton = new Button();
+	protected final Button finalizeButton = new Button();
+	protected final Button auditButton = new Button();
 	
+	protected FormPanel diskForm = new FormPanel("_blank");
+	protected Hidden mod303Hidden = new Hidden("mod303");
+	protected Hidden domainIdHidden = new Hidden("domainId");
+	protected Hidden domainNameHidden = new Hidden("domainName");
+
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
@@ -1017,8 +1025,17 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return panel;
 	}
 
+	protected void submitForm(String action) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
+		domainIdHidden.setValue(String.valueOf(Model303.getCurrentDomain()));
+		domainNameHidden.setValue(Model303.getCurrentDomainName());
+		diskForm.submit();
+	}
+
 	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
 	
+
 	// *********** [BORRAR]
 	public boolean isSnapshot() {
 		return false;
