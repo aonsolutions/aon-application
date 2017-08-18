@@ -335,7 +335,7 @@ public class VATDAO  {
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
-			.map(new VatContextFiller())
+			.map(new VatContextAccrualRegimeFiller())
 		;
 	}
 	
