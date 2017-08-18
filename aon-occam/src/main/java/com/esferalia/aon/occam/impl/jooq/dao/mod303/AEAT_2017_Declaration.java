@@ -137,7 +137,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,CT_C23(Mod303Key.CT_C23,null,null,(ctx,mod) -> add(Mod303Key.CT_C23,mod,SURCHARGE_PERCENT3),null,null)
 		,CT_C24(Mod303Key.CT_C24
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent3(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C24,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
