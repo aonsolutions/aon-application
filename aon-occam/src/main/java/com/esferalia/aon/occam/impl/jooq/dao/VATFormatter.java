@@ -267,7 +267,7 @@ public class VATFormatter {
 		IFiscalModelKey baseKey = null;
 		IFiscalModelKey quotaKey = null;
 		if (keys.length > 1) {
-			baseKey = keys[1];
+			baseKey = keys[0];
 			quotaKey = keys[2];
 		} else {
 			quotaKey = keys[0];
