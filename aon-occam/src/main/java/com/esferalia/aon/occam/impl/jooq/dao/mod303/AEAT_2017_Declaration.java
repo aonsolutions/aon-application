@@ -265,7 +265,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
 		,CT_C61(Mod303Key.CT_C61,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
-			,(ctx,mod,vat) -> add(Mod303Key.CT_C60,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C61,mod,vat.getBase())
 			,null,null,null)
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
