@@ -27,6 +27,13 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		return  mod.isAEAT() && mod.getYear() >= 2017;
 	}
 	
+	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
+		 Mod303Key.CT_C28,Mod303Key.CT_C29,Mod303Key.CT_C30,Mod303Key.CT_C31
+		,Mod303Key.CT_C32,Mod303Key.CT_C33,Mod303Key.CT_C34,Mod303Key.CT_C35
+		,Mod303Key.CT_C36,Mod303Key.CT_C37,Mod303Key.CT_C38,Mod303Key.CT_C39
+		,Mod303Key.CT_C40,Mod303Key.CT_C41,Mod303Key.CT_C42
+	};
+
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
 		 CM_002(Mod303Key.CM_002)
 		,CM_003(Mod303Key.CM_003)
@@ -163,77 +170,77 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// Por cuotas soportadas en operaciones interiores corrientes
 		,CT_C28(Mod303Key.CT_C28
 			,(mod,vat) -> operacionesInterioresCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C28,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C28,mod,vat.getBase())
 			,null,null,null)
 		,CT_C29(Mod303Key.CT_C29
 			,(mod,vat) -> operacionesInterioresCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C29,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C29,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
 		// Por cuotas soportadas en operaciones interiores con bienes de inversión
 		,CT_C30(Mod303Key.CT_C30
 			,(mod,vat) -> operacionesInterioresInversionFilter ( vat )
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C30,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C30,mod,vat.getBase())
 			,null,null,null)
 		,CT_C31(Mod303Key.CT_C31
 			,(mod,vat) -> operacionesInterioresInversionFilter ( vat )
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C31,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C31,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Por cuotas soportadas en las importaciones de bienes corrientes		
 		,CT_C32(Mod303Key.CT_C32
 			,(mod,vat) -> importacionesCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C32,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C32,mod,vat.getBase())
 			,null,null,null)
 		,CT_C33(Mod303Key.CT_C33
 			,(mod,vat) -> importacionesCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C33,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C33,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Por cuotas soportadas en las importaciones de bienes de inversión
 		,CT_C34(Mod303Key.CT_C34
 			,(mod,vat) -> importacionesInversionFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C34,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C34,mod,vat.getBase())
 			,null,null,null)
 		,CT_C35(Mod303Key.CT_C35
 			,(mod,vat) -> importacionesInversionFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C35,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C35,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Por cuotas soportadas en adquisiciones intracomunitarias de bienes y servicios corrientes
 		,CT_C36(Mod303Key.CT_C36
 			,(mod,vat) -> adqIntracomunitariasCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C36,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C36,mod,vat.getBase())
 			,null,null,null)
 		,CT_C37(Mod303Key.CT_C37
 			,(mod,vat) -> adqIntracomunitariasCorrientesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C37,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C37,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Por cuotas soportadas en adquisiciones intracomunitarias de bienes de inversión
 		,CT_C38(Mod303Key.CT_C38
 			,(mod,vat) -> adqIntracomunitariasInversionFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C38,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C38,mod,vat.getBase())
 			,null,null,null)
 		,CT_C39(Mod303Key.CT_C39
 			,(mod,vat) -> adqIntracomunitariasInversionFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C39,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C39,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Rectificación de deducciones
 		,CT_C40(Mod303Key.CT_C40
 			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C40,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C40,mod,vat.getBase())
 			,null,null,null)
 		,CT_C41(Mod303Key.CT_C41
 			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C41,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C41,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
 		// Compensaciones Régimen Especial A.G. y P.
 		,CT_C42(Mod303Key.CT_C42
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.CT_C42,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.CT_C42,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Regularización inversiones 		
@@ -444,6 +451,10 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		return Mod303KeyDAO.valueOf(keyValue);
 	}
 
+	@Override
+	public Mod303Key[] getProrateKeys() {
+		return PRORATE_KEYS;
+	}
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------

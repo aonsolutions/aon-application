@@ -61,7 +61,7 @@ public class Model303 extends MainEntryPoint {
 	Model303Table model303Table;
 
 	protected class Model303Callback {
-		public void onAccept() {
+		public void onAccept(Mod303 mod303) {
 			// REDEFINE
 		}
 		public void onCancel() {
@@ -190,8 +190,8 @@ public class Model303 extends MainEntryPoint {
 			new Model303Callback() {
 
 					@Override
-					public void onAccept() {
-						mod303Service.createMod303(getCurrentDomainName(),getCurrentDomain(),m303,
+					public void onAccept(Mod303 mod303) {
+						mod303Service.createMod303(getCurrentDomainName(),getCurrentDomain(),mod303,
 								new AsyncCallback<Mod303>() {
 									@Override
 									public void onSuccess(Mod303 m303) {

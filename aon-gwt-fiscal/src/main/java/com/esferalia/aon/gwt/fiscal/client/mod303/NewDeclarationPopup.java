@@ -71,6 +71,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 								replacement.setVisible(mod303.isReplacementDeclarationAvailable());
 								complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
 								mod303.setPeriod(result.getPeriod());
+								mod303.ensureDetail(result.getProrateKey()).setAmount(result.getProratePercent());
 								populate(result);
 							}
 			
@@ -196,7 +197,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				callback.onAccept();
+				callback.onAccept(mod303);
 			}
 		});
 		buttonsPanel.add(acceptButton);

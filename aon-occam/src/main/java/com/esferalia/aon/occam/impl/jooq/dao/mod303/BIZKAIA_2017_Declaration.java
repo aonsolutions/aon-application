@@ -13,7 +13,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	
 	protected BIZKAIA_2017_Declaration() {
-		
+				
 	}
 	
 	private static final double PERCENT1 = 4.0;
@@ -27,6 +27,17 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	public static boolean accept(Mod303 mod) {
 		return  mod.isBizkaia() && mod.getYear() >= 2017;
 	}
+	
+	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
+		 Mod303Key.BZ_C024,Mod303Key.BZ_C025,Mod303Key.BZ_C026,Mod303Key.BZ_C027
+		,Mod303Key.BZ_C051,Mod303Key.BZ_C052,Mod303Key.BZ_C054,Mod303Key.BZ_C055
+		,Mod303Key.BZ_C057,Mod303Key.BZ_C058,Mod303Key.BZ_C060,Mod303Key.BZ_C061
+		,Mod303Key.BZ_C063,Mod303Key.BZ_C064,Mod303Key.BZ_C069,Mod303Key.BZ_C070
+		,Mod303Key.BZ_C072,Mod303Key.BZ_C073,Mod303Key.BZ_C075,Mod303Key.BZ_C076
+		,Mod303Key.BZ_C078,Mod303Key.BZ_C079,Mod303Key.BZ_C084,Mod303Key.BZ_C085
+		,Mod303Key.BZ_C087,Mod303Key.BZ_C088,Mod303Key.BZ_C090,Mod303Key.BZ_C091
+		,Mod303Key.BZ_C093,Mod303Key.BZ_C094
+	};
 	
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
 		 BZ_C185_1	(Mod303Key.BZ_C185_1)
@@ -162,25 +173,25 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		// IVA deducible en operaciones interiores
 		,BZ_C024	(Mod303Key.BZ_C024
 			,(mod,vat) -> operacionesInterioresFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C024,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C024,mod,vat.getDeductibleQuota())
 			,null,null,null)
-
+		
 		// IVA deducible en importaciones
 		,BZ_C025	(Mod303Key.BZ_C025
 			,(mod,vat) -> importacionesFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C025,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C025,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// IVA deducible en adquisiciones intracomunitarias
 		,BZ_C026	(Mod303Key.BZ_C026
 			,(mod,vat) -> adqIntracomunitariasFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C026,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C026,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Compensaciones Régimen Especial A.G. y P .
 		,BZ_C027	(Mod303Key.BZ_C027
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C027,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C027,mod,vat.getDeductibleQuota())
 			,null,null,null)
 				
 		// Regularización Inversiones
@@ -328,11 +339,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X050	(Mod303Key.BZ_X050,null,null,(ctx,mod) -> add(Mod303Key.BZ_X050,mod,PERCENT1),null,null)
 		,BZ_C051	(Mod303Key.BZ_C051
 			,(mod,vat) -> vat.isPurchase()  && hasPercent1(vat) && vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C051,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C051,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C052	(Mod303Key.BZ_C052
 			,(mod,vat) -> vat.isPurchase()  && hasPercent1(vat) && vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C052,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C052,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C053	(Mod303Key.BZ_C053
@@ -342,11 +353,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X053	(Mod303Key.BZ_X053,null,null,(ctx,mod) -> add(Mod303Key.BZ_X053,mod,PERCENT2),null,null)
 		,BZ_C054	(Mod303Key.BZ_C054
 			,(mod,vat) -> vat.isPurchase()  && hasPercent2(vat) && vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C054,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C054,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C055	(Mod303Key.BZ_C055
 			,(mod,vat) -> vat.isPurchase()  && hasPercent2(vat) && vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C055,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C055,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C056	(Mod303Key.BZ_C056
@@ -356,11 +367,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X056	(Mod303Key.BZ_X056,null,null,(ctx,mod) -> add(Mod303Key.BZ_X056,mod,PERCENT3),null,null)
 		,BZ_C057	(Mod303Key.BZ_C057
 			,(mod,vat) -> vat.isPurchase()  && hasPercent3(vat) && vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C057,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C057,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C058	(Mod303Key.BZ_C058
 			,(mod,vat) -> vat.isPurchase()  && hasPercent3(vat) && vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C058,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C058,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C059	(Mod303Key.BZ_C059
@@ -369,11 +380,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,BZ_C060	(Mod303Key.BZ_C060
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isPurchase() && !vat.isInvestment() && vat.isFarmerRegime()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C060,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C060,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C061	(Mod303Key.BZ_C061
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isPurchase() && !vat.isInvestment() && vat.isFarmerRegime()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C061,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C061,mod,vat.getBase())
 			,null,null,null)
 		
 		,BZ_C062	(Mod303Key.BZ_C062
@@ -382,11 +393,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,BZ_C063	(Mod303Key.BZ_C063
 			,(mod,vat) -> vat.isPurchase()  && hasNoPercent(vat) && vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C063,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C063,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C064	(Mod303Key.BZ_C064
 			,(mod,vat) -> vat.isPurchase()  && hasNoPercent(vat) && vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C064,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C064,mod,vat.getBase())
 			,null,null,null)
 		
 		,BZ_C065	(Mod303Key.BZ_C065,null,null,null,"BZ_C050+BZ_C053+BZ_C056+BZ_C059+BZ_C062",null)
@@ -401,11 +412,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X068	(Mod303Key.BZ_X068,null,null,(ctx,mod) -> add(Mod303Key.BZ_X068,mod,PERCENT1),null,null)
 		,BZ_C069	(Mod303Key.BZ_C069
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C069,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C069,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C070	(Mod303Key.BZ_C070
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C070,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C070,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C071	(Mod303Key.BZ_C071
@@ -415,13 +426,13 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X071	(Mod303Key.BZ_X071,null,null,(ctx,mod) -> add(Mod303Key.BZ_X071,mod,PERCENT2),null,null)
 		,BZ_C072	(Mod303Key.BZ_C072
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C072,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C072,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C073	(Mod303Key.BZ_C073
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C073,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C073,mod,vat.getDeductibleQuota())
 			,null,null,null)
-		
+
 		,BZ_C074	(Mod303Key.BZ_C074
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C074,mod,vat.getBase())
@@ -429,11 +440,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X074	(Mod303Key.BZ_X074,null,null,(ctx,mod) -> add(Mod303Key.BZ_X074,mod,PERCENT3),null,null)
 		,BZ_C075	(Mod303Key.BZ_C075
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C075,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C075,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C076	(Mod303Key.BZ_C076
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C076,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C076,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C077	(Mod303Key.BZ_C077
@@ -442,11 +453,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,BZ_C078	(Mod303Key.BZ_C078
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C078,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C078,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C079	(Mod303Key.BZ_C079
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C079,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C079,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C080	(Mod303Key.BZ_C080,null,null,null,"BZ_C068+BZ_C071+BZ_C074+BZ_C077",null)
@@ -461,11 +472,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X083	(Mod303Key.BZ_X083,null,null,(ctx,mod) -> add(Mod303Key.BZ_X083,mod,PERCENT1),null,null)
 		,BZ_C084	(Mod303Key.BZ_C084
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent1(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C084,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C084,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C085	(Mod303Key.BZ_C085
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent1(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C085,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C085,mod,vat.getDeductibleQuota())
 			,null,null,null)
 				
 		,BZ_C086	(Mod303Key.BZ_C086
@@ -475,11 +486,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X086	(Mod303Key.BZ_X086,null,null,(ctx,mod) -> add(Mod303Key.BZ_X086,mod,PERCENT2),null,null)
 		,BZ_C087	(Mod303Key.BZ_C087
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent2(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C087,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C087,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C088	(Mod303Key.BZ_C088
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent2(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C088,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C088,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C089	(Mod303Key.BZ_C089
@@ -489,11 +500,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_X089	(Mod303Key.BZ_X089,null,null,(ctx,mod) -> add(Mod303Key.BZ_X089,mod,PERCENT3),null,null)
 		,BZ_C090	(Mod303Key.BZ_C090
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent3(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C090,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C090,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C091	(Mod303Key.BZ_C091
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent3(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C091,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C091,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C092	(Mod303Key.BZ_C092
@@ -502,11 +513,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,BZ_C093	(Mod303Key.BZ_C093
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasNoPercent(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C093,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C093,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C094	(Mod303Key.BZ_C094
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasNoPercent(vat)
-			,(ctx,mod,vat) -> prorate(Mod303Key.BZ_C093,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C093,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C095	(Mod303Key.BZ_C095,null,null,null,"BZ_C083+BZ_C086+BZ_C089+BZ_C092",null)
@@ -621,7 +632,10 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	public IMod303KeyDAO valueOf(String keyValue) {
 		return Mod303KeyDAO.valueOf(keyValue);
 	}
-
+	@Override
+	public Mod303Key[] getProrateKeys() {
+		return PRORATE_KEYS;
+	}
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------

@@ -6,7 +6,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonMathUtils;
 
 public abstract class Mod303Declaration {
 	
@@ -23,10 +22,10 @@ public abstract class Mod303Declaration {
 		mod.ensureDetail(key).addAccumulatedAmount(amount);	
 	}
 	
-	protected static void prorate(Mod303Key key,Mod303 mod,double amount) {
-		amount = AonMathUtils.round( amount * mod.getProratePercent() / 100 );
-		mod.ensureDetail(key).addAccumulatedAmount(amount);	
-	}
+//	protected static void prorate(Mod303Key key,Mod303 mod,double amount) {
+//		mod.ensureDetail(key).addAccumulatedAmount(amount * mod.getProratePercent() / 100);	
+//	}
+	
 	public IMod303KeyDAO getKey(Mod303Key key) {
 		for (IMod303KeyDAO keyDAO : getKeys()) {
 			if (keyDAO.getKey() == key) {
@@ -53,5 +52,6 @@ public abstract class Mod303Declaration {
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
+	public abstract Mod303Key[] getProrateKeys();
 
 }
