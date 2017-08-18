@@ -156,6 +156,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			double perc = 100;
 			if (percent != null) {
 				perc = percent.getValue(FS_MODEL_DETAIL.AMOUNT);
+				if (AonMathUtils.isZero(perc)) perc = 100;
 			}
 			mod303.ensureDetail(mod303.getProrateKey()).setAmount(perc);
 		}
