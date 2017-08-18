@@ -3353,6 +3353,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Vto.")
 	String financeAbbr();
 
+	@DefaultMessage("Rectificativas")
+	String rectified();
+	
 	@DefaultMessage("Crear factura rectificativa")
 	String rectifyInvoice();
 	
@@ -3545,6 +3548,8 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Pendiente de materializar")
 	String canCol4();
+
+	
 
 }
 

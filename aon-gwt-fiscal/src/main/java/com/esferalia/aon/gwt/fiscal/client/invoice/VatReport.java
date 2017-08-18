@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -95,6 +96,7 @@ public class VatReport extends MainEntryPoint {
 	private ListBox farmerRegime;
 	private ListBox service;
 	private ListBox surcharge;
+	private ListBox rectificationType;
 
 	private VatParams params;	
 	
@@ -193,6 +195,7 @@ public class VatReport extends MainEntryPoint {
 		farmerRegime.setSelectedIndex(0);
 		service.setSelectedIndex(0);
 		surcharge.setSelectedIndex(0);
+		rectificationType.setSelectedIndex(0);
 		
 		onSearch();
 	}
@@ -438,6 +441,20 @@ public class VatReport extends MainEntryPoint {
 				onSearch();
 			}
 		});
+		
+		rectificationType = new ListBox();
+		rectificationType.addItem("-- Todas --");
+		rectificationType.addItem("Ni rectificativa ni rectificada");
+		rectificationType.addItem(RectificationType.NORMAL_RECTIFIER.getDescription());
+		rectificationType.addItem(RectificationType.SPECIAL_RECTIFIER.getDescription());
+		rectificationType.addItem(RectificationType.RECTIFIED.getDescription());
+		rectificationType.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				onSearch();
+			}
+		});
 
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
@@ -542,8 +559,15 @@ public class VatReport extends MainEntryPoint {
 		Label surchargeLabel = new InlineLabel(AON.MSG.surcharge());
 		surchargeLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
 		fourthRowPanel.add(surchargeLabel);
-		service.addStyleName(AON.AON_CSS.aonMarginRight());
+		surcharge.addStyleName(AON.AON_CSS.aonMarginRight());
 		fourthRowPanel.add(surcharge);
+		
+		Label rectifiedLabel = new InlineLabel(AON.MSG.rectified());
+		rectifiedLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		fourthRowPanel.add(rectifiedLabel);
+		rectificationType.addStyleName(AON.AON_CSS.aonMarginRight());
+		fourthRowPanel.add(rectificationType);
+		
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -605,6 +629,10 @@ public class VatReport extends MainEntryPoint {
 		if (surcharge.getSelectedIndex() == 1) params.setSurcharge(false);
 		if (surcharge.getSelectedIndex() == 2) params.setSurcharge(true);
 
+		if (rectificationType.getSelectedIndex() > 0) {
+			params.setRectificationType(RectificationType.values()[rectificationType.getSelectedIndex() - 1]);	
+		}
+		
 		if (investment.getSelectedIndex() == 1) params.setInvestment(false);
 		if (investment.getSelectedIndex() == 2) params.setInvestment(true);
 		

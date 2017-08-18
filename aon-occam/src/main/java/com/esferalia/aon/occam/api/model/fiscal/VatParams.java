@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.RectificationType;
+
 public class VatParams implements Serializable {
 	
 	private static final long serialVersionUID = 2683060057390169937L;
@@ -16,6 +18,7 @@ public class VatParams implements Serializable {
 	private Boolean output;
 	private VatSummaryType type;
 	private Double percent;
+	private RectificationType rectified;
 	private Boolean surcharge;
 	private Boolean farmerRegime;
 	private Boolean accrualRegime;
@@ -84,6 +87,13 @@ public class VatParams implements Serializable {
 	}
 	public VatParams setPercent(Double percent) {
 		this.percent = percent;
+		return this;
+	}
+	public RectificationType getRectificationType() {
+		return rectified;
+	}
+	public VatParams setRectificationType(RectificationType rectified) {
+		this.rectified = rectified;
 		return this;
 	}
 	public Boolean getSurcharge() {

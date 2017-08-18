@@ -70,6 +70,7 @@ public class VATDAO  {
 		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.ACTIVITY);}
 		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.INVESTMENT);}
 		@Override public Property<Byte> getServiceProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SERVICE);}
+		@Override public Property<Byte> getRectifiedProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.RECTIFICATION_TYPE);}
 		@Override public Property<Byte> getAccrualRegimeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<Byte> getFarmerRegimeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.WITHHOLDING_FARMER);}
 		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SURCHARGE);}

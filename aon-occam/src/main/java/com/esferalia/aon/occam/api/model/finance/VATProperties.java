@@ -10,6 +10,7 @@ public interface VATProperties  {
 	Property<Byte> getInvoiceTransactionProperty();
 	Property<Integer> getActivityProperty();
 	Property<Byte> getInvestmentProperty();
+	Property<Byte> getRectifiedProperty();
 	Property<Byte> getServiceProperty();
 	Property<Byte> getAccrualRegimeProperty();
 	Property<Byte> getFarmerRegimeProperty();

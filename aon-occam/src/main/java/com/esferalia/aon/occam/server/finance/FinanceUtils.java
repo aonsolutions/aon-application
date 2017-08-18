@@ -88,6 +88,9 @@ public class FinanceUtils {
 		if (params.getInvestment() != null) {
 			prop = prop.and(p.getInvestmentProperty().eq( AonEnumUtils.getByte(params.getInvestment())));
 		}
+		if (params.getRectificationType() != null) {
+			prop = prop.and(p.getRectifiedProperty().eq( AonEnumUtils.getByte(params.getRectificationType())));
+		}
 		if (params.getService() != null) {
 			if ( params.getService() ) {
 				prop = prop.and(
