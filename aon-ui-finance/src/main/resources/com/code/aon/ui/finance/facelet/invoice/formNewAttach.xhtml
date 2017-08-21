@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<style type="text/css">
+		.filedrag div {
+			width: auto !important;
+			height: auto !important;
+		}
+		.rich-fileupload-hidden {
+			font-weight: bold;
+			text-align: center;
+			padding: 1em 0;
+			margin: 1em 0;
+			color: #555;
+			border: 2px dashed #555;
+			border-radius: 7px;
+			cursor: default;
+			opacity: 1 !important;
+			font-size: 1em !important;
+			position: relative !important;
+			padding: 10px !important;
+			width: 630px;
+		}
+		.rich-fileupload-hidden.hover {
+			color: #f00;
+			border-color: #f00;
+			border-style: solid;
+			box-shadow: inset 0 3px 4px #888;
+		}
+		.rich-fileupload-ico-add, .rich-fileupload-button, .rich-fileupload-button-light {
+			background: none;
+			background-image: none;
+			background-color: transparent;
+		} 
+		.rich-fileupload-font{
+			color: transparent !important;
+		}
+		.rich-fileupload-anc, .rich-fileupload-ico-stop {
+			display: none !important;
+		}
+	</style>
+	
+	<a4j:loadScript src="https://rawgithub.com/mozilla/pdf.js/gh-pages/build/pdf.js"/>
+ 	<script type="text/javascript">
+ 	PDFJS.disableWorker = true;
+ 	function drawThumbnail(source, target) {
+ 	  var sourceId = source.id + ':file';
+ 	  var targetId = target.id;
+ 	  var pdf = document.getElementById( sourceId );
+ 	  if (file = pdf.files[0]) {
+ 	    fileReader = new FileReader();
+ 	    fileReader.onload = function(ev) {
+ 	      console.log(ev);
+ 	      PDFJS.getDocument(fileReader.result).then(function getPdfHelloWorld(pdf) {
+ 	        // Fetch the first page
+ 	        pdf.getPage(1).then(function getPageHelloWorld(page) {
+ 	          var scale = 1.0;
+ 	          var viewport = page.getViewport(scale);
+
+ 	          // Prepare canvas using PDF page dimensions
+ 	          var canvasContainer = document.getElementById( targetId );
+ 		      var canvas = document.createElement('canvas');
+ 	          var context = canvas.getContext('2d');
+ 	          canvas.height = viewport.height;
+ 	          canvas.width = viewport.width;
+
+ 	          // Render PDF page into canvas context
+ 	          canvasContainer.appendChild(canvas);
+ 	          var task = page.render({canvasContext: context, viewport: viewport})
+ 	          task.promise.then(function(){
+ 	            console.log(canvas.toDataURL('image/jpeg'));
+ 	          });
+ 	        });
+ 	      }, function(error){
+ 	        console.log(error);
+ 	      });
+ 	    };
+ 	    fileReader.readAsArrayBuffer(file);
+ 	  }
+ 	}
+ 	</script>
+	
+	<aon:div id="filedrag" styleClass="filedrag">
+		<aon:fileUpload id="invoiceAttach-upload" ajaxSingle="true"
+			listWidth="100"
+			fileUploadListener="#{invoiceController.invoiceAttachFileUploaded}"
+			immediateUpload="#{true}"
+			acceptedTypes="pdf" allowFlash="#{false}"
+			onadd="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
+			onchange="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
+			>
+			<!--  
+			onupload="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
+			onadd="drawThumbnail(#{rich:clientId('invoiceAttach-upload')});"
+			onchange="drawThumbnail(#{rich:clientId('invoiceAttach-upload')});"
+			<a4j:support event="onuploadcomplete" immediate="true"
+				reRender="invoiceAttach-panel, invoiceAttachPreview-panel" />
+			<a4j:support event="onadd" immediate="true"
+				reRender="invoiceAttachPreview-panel" />
+			-->
+			<a4j:support event="onuploadcomplete" immediate="true"
+				reRender="invoiceAttach-panel" />
+		</aon:fileUpload>
+           <br/><br/><br/>
+	</aon:div>
+	
+
+</ui:composition>
