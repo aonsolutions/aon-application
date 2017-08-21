@@ -47,9 +47,7 @@ public interface IDocument extends RemoteService{
 	public Boolean isGconnection();
 	
 	public Vector<TreeDriveInfo> myDrive(String id);
-	
-	public Vector<FileInfo> insertFile(Domain domain, String dialogCode, FileInfo fi);
-	
+		
 	public Vector<FileInfo> insertFileBD(Domain domain, String dialogCode, FileInfo fi);
 	
 	public void share(Domain domain, String email,Vector<FileInfo> fvector); 
@@ -97,7 +95,6 @@ public interface IDocument extends RemoteService{
 	
 	public void downloadMultiple(Vector<FileInfo> fvector);
 	
-	public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, FileInfo fi);
 	
 	public String copyLink(FileInfo doc,String l);
 	

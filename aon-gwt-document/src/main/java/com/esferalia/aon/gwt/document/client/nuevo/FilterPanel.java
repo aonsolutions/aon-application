@@ -28,6 +28,8 @@ public class FilterPanel extends Composite {
     
     
     public FilterPanel() {
+    	searchBox.setWidth("95%");
+    	enterpriseSearchBox.setWidth("95%");
     	initWidget(binder.createAndBindUi(this));       
     	
     }

@@ -1106,6 +1106,8 @@ public class DBConsults {
 			
 			ctx.getDslContext().update(RATTACH).set(RATTACH.CATEGORY,fi.getCategory())
 									.set(RATTACH.MIMETYPE,fi.getMimetype())
+									.set(RATTACH.DOMAIN, fi.getDomainId())
+									.set(RATTACH.REGISTRY, getRegistry(domain, user.getLogin()))
 									.set(RATTACH.DESCRIPTION,fi.getTitle())
 									.set(RATTACH.SCOPE,fi.getScopeId())
 									.set(RATTACH.SECURITY_LEVEL,fi.getSecurityLevel())
