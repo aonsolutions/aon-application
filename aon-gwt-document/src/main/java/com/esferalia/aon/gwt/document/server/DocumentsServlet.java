@@ -316,6 +316,15 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		}
 	}
 	
+	public static Vector<Integer> getIdOuts(String dialogCode, HttpServletRequest request){
+		Vector<Integer> outs = (Vector<Integer>) request.getSession().getAttribute("documentalIdOuts"+dialogCode);
+		if(outs == null){
+			outs = new Vector<Integer>();
+			request.getSession().setAttribute("documentalIdOuts"+dialogCode, new Vector<Integer>());
+		}
+		return outs;
+	}
+	
 	public static Vector<FileInfo> getOuts(String dialogCode, HttpServletRequest request){
 		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts"+dialogCode);
 		if(outs == null){
@@ -336,13 +345,14 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
 	}
 	
-	public static void addOuts(String dialogCode, FileInfo fi, HttpServletRequest request){
-		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts"+dialogCode);
+	public static void addOuts(String dialogCode, Attach attach, HttpServletRequest request){
+		Integer id = AON.insertAttach(AonUtil.getDomainName(), 0, "", attach);
+		Vector<Integer> outs = (Vector<Integer>) request.getSession().getAttribute("documentalIdOuts"+dialogCode);
 		if(outs == null){
-			outs = new Vector<FileInfo>();
+			outs = new Vector<Integer>();
 		}
-		outs.add(fi);
-		request.getSession().setAttribute("documentalDataOuts"+dialogCode, outs);
+		outs.add(id);
+		request.getSession().setAttribute("documentalIdOuts"+dialogCode, outs);
 	}
 	
 	public static byte[] getOut() {
@@ -354,7 +364,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	}
 
 	public Boolean newFile(String dialogCode, FileInfo fi) {
-		Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
+		Vector<Integer> files = getIdOuts(dialogCode, getThreadLocalRequest());
 		if(files.size()>1 && !fi.getDomain().equals("false"))
 			return true;
 		if (files.size()>0
@@ -365,96 +375,17 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		return false;
 	}
 	
-	public Vector<FileInfo> insertFile(Domain domain, String dialogCode, FileInfo fi) {
-		long start = System.currentTimeMillis();
 
-		Domain domainAux = DBConsults.getDomain(domain, getUser());
-		Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
-		Vector<FileInfo> vector = new Vector<FileInfo>();
-
-		for (FileInfo f : files) {
-			Date date = null;
-			if (fi.getDate() != null){
-				date = new Date(fi.getDate().getTime());
-				f.setDate(fi.getDate());
-			}
-			com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
-			fileInfo.setAonType("registry");
-			if (fi.getCategory() != -1){
-				fileInfo.setCategory(fi.getCategory());
-			}
-			else
-				fileInfo.setCategory(null);
-			fileInfo.setDateSql(date);
-			fileInfo.setMimetype((byte) MimeType.get(f.getMimeString()).ordinal());
-			if(files.size()<=1 && fi.getTitle()!=null){ 
-				fileInfo.setTitle(fi.getTitle());
-			}
-			else fileInfo.setTitle(f.getTitle());
-			fileInfo.setType((short) RegistryAttachmentType.CORPORATE_IDENTITY
-					.ordinal());
-			if (fi.getScope().getId() != -1){
-				fileInfo.setScopeId(fi.getScope().getId());
-			}
-			else
-				fileInfo.setScopeId(null);
-			Byte conf;
-			if (fi.getConfidential())
-				conf = 1;
-			else conf = 0;
-			fileInfo.setSecurityLevel(conf);
-			if(!fi.getDomain().equals("")){
-				Integer domainId = DBConsults.getDomainId(domainAux, getUser(), fi.getDomain());
-				domainAux = DBConsults.getDomain(new Domain().setName(fi.getDomain()).setId(domainId), getUser());
-			}
-			try {
-				fileInfo.setDomainId(domain.getId());
-				fileInfo.setSize((Integer) f.getSize());
-				Integer id = DBConsults.insertFile(domainAux, getUser(),fileInfo);
-				DBConsults.insertTagsFile(domainAux, getUser(), id, fi.getTags());
-				byte[] b = f.getData();
-				fileInfo.setFileId(id);
-				fileInfo.setData(b);
-				DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domainAux, getUser());
-				if (g.getClientId() != null) {
-					Drive d = DriveUtils.serviceInitialize(g);
-					String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
-							.toString() };// TODO
-					DriveUtils.types = types;
-					fileInfo.setDomainId(domainAux.getId());
-					fileInfo.setDomain(domainAux.getName());
-					DriveUtils.sync2(d, domainAux, getUser(), fileInfo);
-				} else
-					DBConsults.insertFileData(domain, getUser(), id, b);
-							
-				FileInfo fil = DBConsults.getFile(domainAux, getUser(), id);
-				if (fil.getDomain() == null)
-					fil.setDomain(domainAux.getName());
-				if(fil.getDomainId() == null)
-					fil.setDomainId(domainAux.getId());
-				vector.add(fil);
-				
-			} catch (KeyStoreException e) {
-				LOGGER.error(e.getMessage());
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage());
-			} catch (GeneralSecurityException e) {
-			}
-		}
-		clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
-		long time = System.currentTimeMillis() - start;
-		System.out.println("time: " + (time/1000d));
-		return vector;
-	}
 	
 	public Vector<FileInfo> insertFileBD(Domain domain, String dialogCode, FileInfo fi) {
 		long start = System.currentTimeMillis();
 
 		Domain domainAux = DBConsults.getDomain(domain, getUser());
-		Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
+		Vector<Integer> files = getIdOuts(dialogCode, getThreadLocalRequest());
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 
-		for (FileInfo f : files) {
+		for (Integer id : files) {
+			FileInfo f = DBConsults.getFile(domain, getUser(), id);
 			Date date = null;
 			if (fi.getDate() != null){
 				date = new Date(fi.getDate().getTime());
@@ -465,10 +396,9 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			if (fi.getCategory() != -1){
 				fileInfo.setCategory(fi.getCategory());
 			}
-			else
-				fileInfo.setCategory(null);
+			else fileInfo.setCategory(null);
 			fileInfo.setDateSql(date);
-			fileInfo.setMimetype((byte) MimeType.get(f.getMimeString()).ordinal());
+			fileInfo.setMimetype(f.getMimetype());
 			if(files.size()<=1 && fi.getTitle()!=null){ 
 				fileInfo.setTitle(fi.getTitle());
 			}
@@ -478,8 +408,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			if (fi.getScope().getId() != -1){
 				fileInfo.setScopeId(fi.getScope().getId());
 			}
-			else
-				fileInfo.setScopeId(null);
+			else fileInfo.setScopeId(null);
 			Byte conf;
 			if (fi.getConfidential())
 				conf = 1;
@@ -491,7 +420,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			}
 			fileInfo.setDomainId(domainAux.getId());
 			fileInfo.setSize((Integer) f.getSize());
-			Integer id = DBConsults.insertFile(domainAux, getUser(),fileInfo);
+			DBConsults.updateFile(domain, getUser(), fileInfo, new Vector<>());
 			DBConsults.insertTagsFile(domainAux, getUser(), id, fi.getTags());
 			byte[] b = f.getData();
 			fileInfo.setFileId(id);
@@ -1262,91 +1191,7 @@ public static void setDown(Vector<FileInfo> down) {
 	DocumentsServlet.down = down;
 }
 
-public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, FileInfo fi) {
-	Domain domainAux = DBConsults.getDomain(domain, getUser());
-	
-	Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
-	for(FileInfo f : files){
-		Date date = null;
-		if (fi.getDate() != null)
-			date = new Date(fi.getDate().getTime());
-	
-		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
-		fileInfo.setAonType("registry");
-		if (fi.getCategory() != -1){
-			fileInfo.setCategory(fi.getCategory());
-			f.setCategory(fi.getCategory());
-			f.setCategoryStr(fi.getCategoryStr());
-		}
-		else fileInfo.setCategory(null);
-	
-		fileInfo.setDateSql(date);
-		f.setDateSql(date);
-		f.setDate(fi.getDate());
-		f.setDateStr(fi.getDateStr());
-	
-		fileInfo.setMimetype(f.getMimetype());
-		f.setIcon(Utils.icon(MimeType.values()[f.getMimetype()].getName()));
-		fileInfo.setTitle(f.getTitle());
-	
-		fileInfo.setType((short)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());// TODO tipo correcto!!
-		f.setType((short)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());
-		if (fi.getScope().getId() != -1){
-			fileInfo.setScopeId(fi.getScope().getId());
-			f.setScope(fi.getScope());
-		}
-		else fileInfo.setScopeId(null);
-	
-		Byte conf;
-		if (fi.getConfidential()) conf = 1;
-		else conf = 0;
-		fileInfo.setSecurityLevel(conf);
-		f.setConfidential(fi.getConfidential());
-		if(fi.getDomainId() != domainAux.getId()){
-			domainAux = DBConsults.getDomain(new Domain().setName(domain.getName()).setId(fi.getDomainId()), getUser());
-		}
-		f.setDomain(domainAux.getName());
-		f.setDomainId(domainAux.getId());
-		f.setDomainDescription(domainAux.getDescription());
-	
-		try {
-			fileInfo.setDomainId(domain.getId());
-			fileInfo.setSize(f.getSize());
-			Integer id = DBConsults.insertFile(domain, getUser(), fileInfo);
-			f.setFileId(id);
-		
-			DBConsults.insertTagsFile(domainAux, getUser(),id, fi.getTags());
-			byte[] b = f.getData();//.toByteArray();
-			fileInfo.setFileId(id);
-			fileInfo.setData(b);
-			DomainGserviceaccount g = com.code.aon.google.apis.jooq.DBConsults.getServiceAccount(domain,getUser());
-			if (g.getClientId()!=null){
-				Drive d = DriveUtils.serviceInitialize(g);
-				String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY.toString() };// TODO
-				DriveUtils.types = types;
-				fileInfo.setDomainId(domainAux.getId());
-				fileInfo.setDomain(domainAux.getName());
-				DriveUtils.sync2(d, domainAux, getUser(), fileInfo);
-			}
-			else DBConsults.insertFileData(domain, getUser(), id, b );
-			fi = DBConsults.getFile(domainAux, getUser(), id);
-			if(fi.getDomain()==null) {
-				fi.setDomainId(domainAux.getId());
-				fi.setDomainDescription(domainAux.getDescription());
-				fi.setDomain(domainAux.getName());
-			}
 
-		} catch (KeyStoreException e) {
-			LOGGER.error(e.getMessage());
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
-		} catch (GeneralSecurityException e) {
-			LOGGER.error(e.getMessage());
-		}
-	}
-	clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
-	return files;
-}
 // ----------------------------------------------------------------------------
 	/**
 	 * <p>

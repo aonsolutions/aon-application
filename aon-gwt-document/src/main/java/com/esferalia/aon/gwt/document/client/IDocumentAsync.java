@@ -46,7 +46,6 @@ public interface IDocumentAsync {
 
 	void myDrive(String id, AsyncCallback<Vector<TreeDriveInfo>> callback);
 
-	void insertFile(Domain domain, String dialogCode, FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
 
 	void share(Domain domain, String email, Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
@@ -98,7 +97,6 @@ public interface IDocumentAsync {
 
 	void downloadMultiple(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
-	void insertFileMultiple(Domain domain, String dialogCode, FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
 
 	void copyLink(FileInfo doc, String l, AsyncCallback<String> callback);
 

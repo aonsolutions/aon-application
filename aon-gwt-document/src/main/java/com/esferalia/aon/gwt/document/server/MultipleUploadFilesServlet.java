@@ -1,12 +1,19 @@
 package com.esferalia.aon.gwt.document.server;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 
-import com.esferalia.aon.gwt.document.shared.FileInfo;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;
@@ -37,13 +44,20 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 	    		  Integer pos = name.lastIndexOf(".");
 	    		  name = name.substring(0,pos);
 	    	  }
-	    	  FileInfo fi = new FileInfo();
-	    	  fi.setTitle(name);
+	    	  Attach attach = new Attach();
+	    	  attach.setDescription(name);
 	    	  Long size = item.getSize();
-	          fi.setSize(size.intValue());
-	    	  fi.setData(item.get());
-	    	  fi.setMimeString(item.getContentType());
-	    	  DocumentsServlet.addOuts(dialogCode, fi, request);
+	    	  attach.setDparentId(Integer.toString(size.intValue()));
+	    	  attach.setData(item.get());
+	    	  attach.setMimeType(MimeType.get(item.getContentType()));
+	    	  attach.setDomain(new Domain().setName(AonUtil.getServerName()).setId(0));
+	    	  attach.setAttachType(AttachType.REGISTRY);
+	    	  attach.setDate(new Date());
+	    	  attach.setConfidential(false);
+	    	  attach.setType((byte) 3);
+	    	  Company c = AON.getCompany(AonUtil.getDomainName(), 0, "", f -> f.getDomainProperty().eq(0));
+	    	  attach.setAttachModule(c.getId());
+	    	  DocumentsServlet.addOuts(dialogCode, attach, request);
 	      }
 	    }
 	    
