@@ -492,7 +492,11 @@ public class TrabajadoresTramos {
 						});
 						
 						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd()));
-						tramoBuilder.setGrupoCotizacion(getContextData(QUOTE_GROUP.getName(), salary, p.getStart(), p.getEnd()));
+						try {
+							tramoBuilder.setGrupoCotizacion(getContextData(QUOTE_GROUP.getName(), salary, p.getStart(), p.getEnd()));
+						} catch (Exception e ) {
+							//TODO: Log this please
+						}
 						
 						
 
