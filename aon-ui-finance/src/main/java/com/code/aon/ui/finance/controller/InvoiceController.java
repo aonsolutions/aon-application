@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +52,13 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.InvestAsset;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.facturae.FACeUtil;
 import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Finance;
@@ -166,6 +169,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private Double listRetentionQuota;
 	private Double listTotal;
 	private FinanceEmailUtil emailController;
+	private AonFile invoiceAttachFile;
+	
 	
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
@@ -204,6 +209,26 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			priceStrategy = new InvoicePriceStrategy();
 		}
 		return priceStrategy;
+	}
+	
+	public AonFile getInvoiceAttachFile() {
+		return invoiceAttachFile;
+	}
+	public void setInvoiceAttachFile(AonFile invoiceAttachFile) {
+		if ( this.invoiceAttachFile != null ) {
+			this.invoiceAttachFile.clean();	
+		}
+		this.invoiceAttachFile = invoiceAttachFile;
+	}
+	public void invoiceAttachFileUploaded(UploadEvent event) {
+		AonFile aonFile = AttachmentUtil.fileUploaded(event);
+		setInvoiceAttachFile(aonFile);
+	}
+	public String clearInvoiceAttachUploadData() {
+		if ( getInvoiceAttachFile() != null ) {
+			getInvoiceAttachFile().clean();	
+		}
+		return null;
 	}
 
 	public int getFinanceGenerationMode() {

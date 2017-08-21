@@ -2,11 +2,16 @@ package com.code.aon.ui.finance.event;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_ALREADY_RECORDED_ERROR;
 
+import java.util.Date;
+
 import com.code.aon.AonVersion;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -50,6 +55,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.setSavedSeller(null);
 			invoiceController.setSavedInvestAsset(null);
 			invoiceController.setFinanceGenerationMode(0);
+			invoiceController.setInvoiceAttachFile(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -69,6 +75,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.setSavedSeller(invoice.getSeller());
 			invoiceController.setSavedInvestAsset(invoice.getInvestAsset());
 			invoiceController.setFinanceGenerationMode(0);
+			invoiceController.setInvoiceAttachFile(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -83,6 +90,25 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		invoiceController.setShowProjectLookup(true);
 		invoiceController.setSavedSeller(invoice.getSeller());
 		invoiceController.setSavedInvestAsset(invoice.getInvestAsset());
+		saveAttach();
+	}
+
+	private void saveAttach() throws ControllerListenerException {
+		InvoiceController invoiceController = (InvoiceController)this.getController();
+		Invoice invoice = (Invoice)invoiceController.getTo();
+		AonFile aonFile = invoiceController.getInvoiceAttachFile();
+		if(aonFile!=null && aonFile.getSize()>0){
+			IManagerBean attachBean = invoiceController.getAttachmentBean();
+			InvoiceAttachment attach = (InvoiceAttachment) invoiceController.newAttachment(invoice, aonFile.getMimeType());
+			attach.setData(aonFile.getData());
+			attach.setDescription(aonFile.getFileName());
+			attach.setAttachDate(new Date());
+			try {
+				attachBean.insert(attach);
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e);
+			}
+		}
 	}
 
 	@Override
