@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Test;
 
@@ -61,6 +63,8 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.tgss.creta.Bases;
+import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -1957,6 +1961,39 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	
 	
 	@Test
+	public void testCretaBasesFromSalariesMaternidad()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.PATERNITY, 
+				startDate, 
+				null, 
+				null);
+		//@formatter:on
+
+		getBases(connection, contract, startDate, endDate, ccc);
+		
+
+	}
+
+	@Test
 	public void testCretaContratosFormacion()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
@@ -2046,7 +2083,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				},
 				new String[] {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
-				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+//				"TRACE('GRUPO_COTIZACION=%s\r\n', GRUPO_COTIZACION); 0.00;"
 				}, 
 				new String[] {						
 				"BASE_CGC * 0.10", 
@@ -2169,6 +2207,70 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	// -------------------------------------------------------------------------
+	private List<Tramo> getBases ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		Assert.assertEquals(1, salaries);
+
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		String mes = Integer.toString(calendar.get(MONTH)+1);
+		String anho = Integer.toString(calendar.get(YEAR));
+		
+		
+		
+		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
+		
+		new Thread( () ->  {
+								try { 
+									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
+									TrabajadoresTramos.generate(connection, 
+											"0000", 	//autorizado, 
+											mes, 		//desdeAnhoMes, 
+											anho , 		//desdeAnho, 
+											mes, 		//hastaMes, 
+											anho , 		//hastaAnho, 
+											mes, 		//ctrlMes, 
+											anho , 		//ctrlAnho, 
+											"L00",		//tipo, 
+											new String[]
+											{
+											"0111" + "" + ccc
+											}, 			//cccs
+											trabajadoresTramosOs);
+									trabajadoresTramosOs.close();
+								} catch ( JAXBException | IOException e ){
+									throw new AssertException(e.getMessage());
+								} finally {
+									
+								}
+							}
+		).start();
+		
+		
+		
+		
+		Bases.generate(connection, 
+				true, 							//comments, 
+				false,							//skipExisting, 
+				false,							//acceptPrevBases, 
+				null,							//nafs, 
+				new String [] {},				//defaultsValues, 
+				trabajadoresTramosIs, 
+				null, 							//respuestaIs, 
+				System.out,						//os, 
+				new Bases.BasesCallback [] {}	//cbs
+				);
+
+		return null;
+	}
 	// -------------------------------------------------------------------------
 	
 	private static void assertTramoIT15PrimerosDias(Tramo tramo) {
