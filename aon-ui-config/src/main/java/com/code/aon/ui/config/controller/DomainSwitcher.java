@@ -448,6 +448,21 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return isSnapshotVersion() || isBetaUser();
 	}
 	
+	public boolean isAlphaEnabled() {
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.AON_ALPHA_ENABLED);
+		return (appParam!=null && new Boolean(appParam.getValue()));
+	}
+	
+	public boolean isAlphaUser() {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.AON_ALPHA_ENABLED, principal.getUserDomainId());
+		return (appParam!=null && new Boolean(appParam.getValue()));
+	}
+	
+	public boolean isAlphaDomain() {
+		return isSnapshotVersion() || isAlphaUser();
+	}
+	
 	public boolean isUdapa() {
 	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParamenter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
 		return ud != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("udapa");

@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.controller;
 
+import static com.code.aon.common.enumeration.AppParam.AON_ALPHA_ENABLED;
 import static com.code.aon.common.enumeration.AppParam.AON_BETA_ENABLED;
 import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_ITEM_TAG_BARCODE_PARAM;
@@ -987,6 +988,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		if(address!=null && address.getZip()!=null) {
 			address.loadGeoZoneByZip();
 		}
+	}
+	
+	public void onEnableAlphaDomain(ActionEvent event) {
+		AppParamUtil.insertParameter(AON_ALPHA_ENABLED, Boolean.TRUE);
+	}
+	
+	public void onDisableAlphaDomain(ActionEvent event) {
+		AppParamUtil.insertParameter(AON_ALPHA_ENABLED, Boolean.FALSE);
 	}
 	
 	public void onEnableBetaDomain(ActionEvent event) {
