@@ -135,6 +135,11 @@ public abstract class DocumentsDialog extends CustomDialogB {
 		});
 	}
 	
+	@Override
+	public void onClose() {
+		onCancel();
+	}
+	
 	protected abstract void onAccept();
 	
 	protected abstract void onCancel();
@@ -250,7 +255,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 				num ++;
 				if(num == 1){
 					String s = uploader.getFileInput().getFilenames().get(0);
-					Integer pos = s.lastIndexOf(".");
+					Integer pos = s.contains(".") ? s.lastIndexOf(".") : s.length();
 					TextBox tb = (TextBox) grid.getWidget(1, 1);
 					if(tb.getText().equals("")){
 						tb.setText(s.substring(0, pos));

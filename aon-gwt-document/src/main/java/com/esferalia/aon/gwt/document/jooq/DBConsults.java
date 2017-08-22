@@ -1114,7 +1114,6 @@ public class DBConsults {
 									.set(RATTACH.ATTACH_DATE,fi.getDateSql())
 									.set(RATTACH.MODIFICATION_USER, user.getLogin())
 									.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
-									.set(RATTACH.DPARENT_ID, fi.getSize().toString())
 							.where(RATTACH.ID.eq(fi.getFileId())).execute();
 		} finally {
 			if (ctx != null)

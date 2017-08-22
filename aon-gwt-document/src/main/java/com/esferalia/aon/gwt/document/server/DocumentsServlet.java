@@ -334,15 +334,17 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		return outs;
 	}
 	
-	public static void clearOuts(String dialogCode, Vector<FileInfo> outs, HttpServletRequest request){
-		if(outs == null)
-			request.getSession().setAttribute("documentalDataOuts"+dialogCode, new Vector<FileInfo>());
-		else
-			request.getSession().setAttribute("documentalDataOuts"+dialogCode, outs);
+	public static void clearOuts(String dialogCode, HttpServletRequest request){
+		request.getSession().setAttribute("documentalDataOuts"+dialogCode, new Vector<FileInfo>());
+		request.getSession().setAttribute("documentalIdOuts"+dialogCode, new Vector<Integer>());
 	}
 	
 	public void clearOuts(String dialogCode){
-		clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
+		Vector<Integer> ids = (Vector<Integer>) getThreadLocalRequest().getSession().getAttribute("documentalIdOuts"+dialogCode);
+		if(ids != null && !ids.isEmpty()) {
+			AON.deleteAttach(AonUtil.getDomainName(), 0, "", f-> f.getIdProperty().in(ids.toArray(new Integer[ids.size()])), AttachType.REGISTRY);
+		}
+		clearOuts(dialogCode, getThreadLocalRequest());
 	}
 	
 	public static void addOuts(String dialogCode, Attach attach, HttpServletRequest request){
@@ -374,12 +376,8 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		}
 		return false;
 	}
-	
 
-	
 	public Vector<FileInfo> insertFileBD(Domain domain, String dialogCode, FileInfo fi) {
-		long start = System.currentTimeMillis();
-
 		Domain domainAux = DBConsults.getDomain(domain, getUser());
 		Vector<Integer> files = getIdOuts(dialogCode, getThreadLocalRequest());
 		Vector<FileInfo> vector = new Vector<FileInfo>();
@@ -420,6 +418,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			}
 			fileInfo.setDomainId(domainAux.getId());
 			fileInfo.setSize((Integer) f.getSize());
+			fileInfo.setFileId(id);
 			DBConsults.updateFile(domain, getUser(), fileInfo, new Vector<>());
 			DBConsults.insertTagsFile(domainAux, getUser(), id, fi.getTags());
 			byte[] b = f.getData();
@@ -434,9 +433,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 				fil.setDomainId(domainAux.getId());
 			vector.add(fil);
 		}
-		clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
-		long time = System.currentTimeMillis() - start;
-		System.out.println("time: " + (time/1000d));
+		clearOuts(dialogCode, getThreadLocalRequest());
 		return vector;
 	}
 	
@@ -996,7 +993,6 @@ public MailAccountList getMailAccounts(Domain domain) {
 						ima2 = iMailAccount;
 					}
 				}
-				System.out.println(ima2.getDisplayName());
 				AonServer server = new AonServer(ima2);
 
 				MessageController mc = new MessageController();
@@ -1083,7 +1079,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 			} finally {
 				releaseFacesContext();
 			}
-			clearOuts(dialogCode,new Vector<FileInfo>(), getThreadLocalRequest());
+			clearOuts(dialogCode, getThreadLocalRequest());
 
 	}
 	
@@ -1168,7 +1164,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
-		clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
+		clearOuts(dialogCode, getThreadLocalRequest());
 
 	}
 
