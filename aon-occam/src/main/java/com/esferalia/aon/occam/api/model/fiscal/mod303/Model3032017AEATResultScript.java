@@ -29,7 +29,7 @@ public enum Model3032017AEATResultScript implements IModelScript<Mod303Key> {
 		,new Mod303Key[]{Mod303Key.CT_C68},NONE)
 	,RES008("Resultado" 
 		,new Mod303Key[]{Mod303Key.CT_C69},COMPUTE)
-	,RES009("A deducir"
+	,RES009("A deducir (exclusivamente en caso de autoliquidaci\u00F3n complementaria): Resultado de la anterior o anteriores declaraciones del mismo concepto, ejercicio y periodo"
 		,new Mod303Key[]{Mod303Key.CT_C70},COMPUTE_KEY)
 	,RES010("Resultado de la liquidaci\u00F3n" 
 		,new Mod303Key[]{Mod303Key.CT_C71},COMPUTE)
