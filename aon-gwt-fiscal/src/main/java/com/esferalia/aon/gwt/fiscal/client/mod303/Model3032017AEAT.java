@@ -15,6 +15,8 @@ import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -24,6 +26,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class Model3032017AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/Model303PrintAEAT";
@@ -282,9 +285,35 @@ public class Model3032017AEAT extends Model303Base {
 		paintDate (Mod303Key.CT_A05,table);	// Fecha en que se dictó el auto de declaración de concurso
 		paintCheck(Mod303Key.CT_A06,table);	// Auto de declaración de concurso dictado en el períDodo
 
+		if (mod303.isComplementary()) {
+			int row = table.getRowCount();
+			paintLabel(table, row, AON.MSG.previousReceipt());
+			
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			final TextBox receiptBox = new TextBox();
+			receiptBox.setVisibleLength(15);
+			receiptBox.setMaxLength(13);
+			receiptBox.setStyleName(AON.AON_CSS.aonInputText());
+			receiptBox.setEnabled(mod303.isNotFinished());
+			receiptBox.setValue( mod303.getReplacedNumber() );
+			receiptBox.addValueChangeHandler( new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					mod303.setReplacedNumber(receiptBox.getValue());
+					markAsDirty();
+				}
+			});
+			table.setWidget(row, 1, receiptBox);
+		}
+		
+		
 		paintEmptyRow(table);
 		paintCheck(Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
 		paintCheck(Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
+		
+		
+		
 		container.add(addGroupPanel("", table));
 		
 		declarationScrollPanel.setWidget(container);

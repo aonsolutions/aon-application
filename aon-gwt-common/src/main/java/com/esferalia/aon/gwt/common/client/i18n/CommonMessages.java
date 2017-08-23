@@ -573,6 +573,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("N. justificante anterior")
 	String complementaryReceipt();
+	
+	@DefaultMessage("N\u00FAmero de justificante identificativo de la autoliquidaci\u00F3n anterior.")
+	String previousReceipt();
 
 	@DefaultMessage("Confidencial")
 	String confidential();
