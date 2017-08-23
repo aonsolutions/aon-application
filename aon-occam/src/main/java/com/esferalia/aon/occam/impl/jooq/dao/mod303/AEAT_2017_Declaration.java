@@ -37,7 +37,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
 		 CM_002(Mod303Key.CM_002)
 		,CM_003(Mod303Key.CM_003)
-		,CT_A02(Mod303Key.CT_A02)
+		,CT_A02(Mod303Key.CT_A02,null,null,(ctx,mod) -> add(Mod303Key.CT_A02,mod,2),null,null)
 		,CT_A03(Mod303Key.CT_A03)
 		,CT_A04(Mod303Key.CT_A04)
 		,CT_A05(Mod303Key.CT_A05)
