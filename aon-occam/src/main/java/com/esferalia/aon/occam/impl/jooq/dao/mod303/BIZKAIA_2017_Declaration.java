@@ -30,13 +30,19 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.BZ_C024,Mod303Key.BZ_C025,Mod303Key.BZ_C026,Mod303Key.BZ_C027
-		,Mod303Key.BZ_C051,Mod303Key.BZ_C052,Mod303Key.BZ_C054,Mod303Key.BZ_C055
-		,Mod303Key.BZ_C057,Mod303Key.BZ_C058,Mod303Key.BZ_C060,Mod303Key.BZ_C061
-		,Mod303Key.BZ_C063,Mod303Key.BZ_C064,Mod303Key.BZ_C069,Mod303Key.BZ_C070
-		,Mod303Key.BZ_C072,Mod303Key.BZ_C073,Mod303Key.BZ_C075,Mod303Key.BZ_C076
-		,Mod303Key.BZ_C078,Mod303Key.BZ_C079,Mod303Key.BZ_C084,Mod303Key.BZ_C085
-		,Mod303Key.BZ_C087,Mod303Key.BZ_C088,Mod303Key.BZ_C090,Mod303Key.BZ_C091
-		,Mod303Key.BZ_C093,Mod303Key.BZ_C094
+		,Mod303Key.BZ_C052
+		,Mod303Key.BZ_C055
+		,Mod303Key.BZ_C058
+		,Mod303Key.BZ_C061
+		,Mod303Key.BZ_C064
+		,Mod303Key.BZ_C070
+		,Mod303Key.BZ_C073
+		,Mod303Key.BZ_C076
+		,Mod303Key.BZ_C079
+		,Mod303Key.BZ_C085
+		,Mod303Key.BZ_C088
+		,Mod303Key.BZ_C091
+		,Mod303Key.BZ_C094
 	};
 	
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
@@ -534,17 +540,20 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		// ---------------------------------------------------------------
 		
 		,BZ_C104	(Mod303Key.BZ_C104
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
+			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C104,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C105	(Mod303Key.BZ_C105
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && !vat.isService()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C105,mod,vat.getBase())
 			,null,null,null)
-		,BZ_C106	(Mod303Key.BZ_C106)
+		,BZ_C106	(Mod303Key.BZ_C106
+			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C106,mod,vat.getBase())
+			,null,null,null)
 		,BZ_C107	(Mod303Key.BZ_C107
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C105,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C107,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C108	(Mod303Key.BZ_C108
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && vat.isService()
