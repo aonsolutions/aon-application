@@ -84,7 +84,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			" AND PRG.person IS NOT NULL" +
 			" AND PR.domain = ?" +
 			" AND PR.start_date <= ?" +
-			" AND PR.end_date > ?" +
+			" AND PR.end_date >= ?" +
 			" AND PR.status <> " + ReservationStatus.CANCELLED.ordinal() +
 			" AND PR.status <> " + ReservationStatus.BLOCKED.ordinal() +
 			" AND PR.project = PRR.project_reservation" +
