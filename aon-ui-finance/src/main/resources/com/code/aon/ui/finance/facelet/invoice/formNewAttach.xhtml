@@ -46,56 +46,72 @@
 		}
 	</style>
 	
-	<a4j:loadScript src="https://rawgithub.com/mozilla/pdf.js/gh-pages/build/pdf.js"/>
- 	<script type="text/javascript">
- 	PDFJS.disableWorker = true;
- 	function drawThumbnail(source, target) {
- 	  var sourceId = source.id + ':file';
- 	  var targetId = target.id;
- 	  var pdf = document.getElementById( sourceId );
- 	  if (file = pdf.files[0]) {
- 	    fileReader = new FileReader();
- 	    fileReader.onload = function(ev) {
- 	      console.log(ev);
- 	      PDFJS.getDocument(fileReader.result).then(function getPdfHelloWorld(pdf) {
- 	        // Fetch the first page
- 	        pdf.getPage(1).then(function getPageHelloWorld(page) {
- 	          var scale = 1.0;
- 	          var viewport = page.getViewport(scale);
-
- 	          // Prepare canvas using PDF page dimensions
- 	          var canvasContainer = document.getElementById( targetId );
- 		      var canvas = document.createElement('canvas');
- 	          var context = canvas.getContext('2d');
- 	          canvas.height = viewport.height;
- 	          canvas.width = viewport.width;
-
- 	          // Render PDF page into canvas context
- 	          canvasContainer.appendChild(canvas);
- 	          var task = page.render({canvasContext: context, viewport: viewport})
- 	          task.promise.then(function(){
- 	            console.log(canvas.toDataURL('image/jpeg'));
- 	          });
- 	        });
- 	      }, function(error){
- 	        console.log(error);
- 	      });
- 	    };
- 	    fileReader.readAsArrayBuffer(file);
- 	  }
- 	}
+	<a4j:loadScript src="https://mozilla.github.io/pdf.js/build/pdf.js"/>
+	<script type="text/javascript">
+	//<![CDATA[
+		var sourceId = 'invoiceAttach-upload';
+		var targetId = 'invoiceAttachPreview-content';
+		
+		drawThumbnail(1, 1.0);
+		
+	 	PDFJS.disableWorker = true;
+	 	function drawThumbnail(_pageNumber = 1, _zoomRatio = 1.0) {
+	 	    var pdf = document.getElementById( search(sourceId) + ':file' );
+	 	    // REMOVE
+	 	 	//alert(pdf.files.length);
+	 	 	if (file = pdf.files[0]) {
+	 	 	  fileReader = new FileReader();
+	 	 	  fileReader.onload = function(ev) {
+	 	 	    console.log(ev);
+	 		    PDFJS.getDocument(fileReader.result).then(function(pdf){ 
+	 		        pdf.getPage(_pageNumber).then(function (page) {
+	 		            drawPage(page, _zoomRatio, search(targetId));
+	 		        });
+	 		    });
+	 	 	  };
+	 	 	  fileReader.readAsArrayBuffer(file);
+	 	 	}
+	 	}
+		function drawPage(page, _zoomRatio, _containerId) {
+			var scale = _zoomRatio;
+		    var viewport = page.getViewport(scale);
+		    var container = document.getElementById( _containerId );
+		    while (container.lastChild) {
+		    	container.removeChild(container.lastChild);
+		    }
+		    container.style.width = viewport.width + 'px';
+		    container.style.height = viewport.height + 'px';
+		    page.getOperatorList().then(function (opList) {
+		        var svgGfx = new PDFJS.SVGGraphics(page.commonObjs, page.objs);
+		        return svgGfx.getSVG(opList, viewport);
+		      }).then(function (svg) {
+		        container.appendChild(svg);
+		      });
+	 	}
+	 	function search(_elementId) {
+	 		var elements = document.getElementsByTagName("div");
+	 		for(i=0;i<elements.length;i++){
+	 			if (elements[i].id.endsWith( _elementId )) {
+	 				return elements[i].id;
+	 			}
+	 		}
+	 	}
+	//]]>
  	</script>
 	
 	<aon:div id="filedrag" styleClass="filedrag">
 		<aon:fileUpload id="invoiceAttach-upload" ajaxSingle="true"
 			listWidth="100"
 			fileUploadListener="#{invoiceController.invoiceAttachFileUploaded}"
-			immediateUpload="#{true}"
+			immediateUpload="#{true}" autoClear="#{false}"
 			acceptedTypes="pdf" allowFlash="#{false}"
+			onadd="drawThumbnail();"
+			onchange="drawThumbnail();"
+			>
+			<!--
 			onadd="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
 			onchange="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
-			>
-			<!--  
+			  
 			onupload="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
 			onadd="drawThumbnail(#{rich:clientId('invoiceAttach-upload')});"
 			onchange="drawThumbnail(#{rich:clientId('invoiceAttach-upload')});"
