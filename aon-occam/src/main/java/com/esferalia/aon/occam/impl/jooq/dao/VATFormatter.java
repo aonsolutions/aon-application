@@ -268,9 +268,13 @@ public class VATFormatter {
 		double sumDeclaredQuota = 0;
 		IFiscalModelKey baseKey = null;
 		IFiscalModelKey quotaKey = null;
-		if (keys.length > 1) {
+		System.out.println("length ..: " + keys.length);
+		if (keys.length == 3) {
 			baseKey = keys[0];
 			quotaKey = keys[2];
+		} else if (keys.length == 2) {
+			baseKey = keys[0];
+			quotaKey = keys[1];
 		} else {
 			quotaKey = keys[0];
 		}
