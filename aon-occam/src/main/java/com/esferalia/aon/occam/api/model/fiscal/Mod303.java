@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod303 extends FiscalModel implements Serializable {
@@ -88,9 +89,11 @@ public class Mod303 extends FiscalModel implements Serializable {
 		if (AonMathUtils.isGreatherThanZero(getResult() )) {
 			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
 		} else {
-			setDeclarationType(isEnrolledInDevolutionRegistry()
-				?FiscalModelDeclarationType.PAYBACK
-				:FiscalModelDeclarationType.COMPENSATE);
+			setDeclarationType(
+				(isEnrolledInDevolutionRegistry() || getPeriod() == Period.T4 || getPeriod() == Period.M12) 
+					?FiscalModelDeclarationType.PAYBACK
+					:FiscalModelDeclarationType.COMPENSATE
+							);
 		}
 	}
 }
