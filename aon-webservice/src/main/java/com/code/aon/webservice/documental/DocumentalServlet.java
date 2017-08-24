@@ -110,7 +110,10 @@ public class DocumentalServlet extends HttpServlet{
 				.page(1)
 				.perPage(30)
 			, AttachType.DATA, false).forEach(a -> {
-				array.put(ToJSON.attachToJSON(a));
+				JSONObject json = ToJSON.attachToJSON(a);
+				String url = "/aon_gwt_aio/image_servlet?type=data&id="+ a.getId() +"&domain="+ domain.getName() +"&login="+ login;
+				json.put("url", url);
+				array.put(json);
 			});
 		return array;
 	}

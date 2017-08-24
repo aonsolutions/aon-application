@@ -3,7 +3,8 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality;
 import java.util.LinkedList;
 
 public enum Defects {
-	ALFILERILLO("Alfilerillo"),
+	AGUSANADO("Agusanado"),
+	CORTADAS("Cortadas"),
 	GOLPES_EXTERNOS("Golpes Externos"),
 	GOLPES_INTERNOS("Golpes Internos"),
 	HUECAS("Huecas"),
@@ -11,8 +12,10 @@ public enum Defects {
 	MANCHAS_HIERRO("Manchas Hierro"),
 	RIZOCTONIA("Rizoctonia"),
 	SARNA("Sarna"),
+	TALLOS("Tallos"),
 	VERDES("Verdes"),
-	TIERRAS_PIEDRA("Tierras Piedra");
+	TIERRAS_PIEDRA("Tierras Piedra")
+;
 	
 	String name;
 	

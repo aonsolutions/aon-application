@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
-import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -16,13 +15,12 @@ import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -107,6 +105,12 @@ public class UdapaQuality extends AonTemplate2{
 		principalContent();
 	}
 	
+	private void backApplication() {
+		toolbar();
+		westContent();
+		principalContent();
+	}
+	
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar("Ficha de calidad") {
@@ -127,18 +131,66 @@ public class UdapaQuality extends AonTemplate2{
 			}
 			
 			@Override
-			protected void next() {}
+			protected void next() {
+				Integer page = Integer.parseInt(filterMap.get("page").get(0));
+				page = page + 1;
+				LinkedList<String> list = new LinkedList<>();
+				list.add(page.toString());
+				filterMap.put("page", list);
+				list = new LinkedList<>();
+				list.add("1");
+				filterMap.put("per_page", list);
+				Window.alert(filterMap.get("page").get(0) + "");
+				getAPI().getCommon().getDataResponse(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsDataResponse> result) {
+						if(result.getData().length() == 0){
+							Integer page = Integer.parseInt(filterMap.get("page").get(0));
+							page = page < 2 ? 1 : page - 1;
+							LinkedList<String> list = new LinkedList<>();
+							list.add(page.toString());
+							filterMap.put("page", list);
+						}
+						setContent(new QualitySheet(me, result.getData().get(0)));						
+				}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
 			
 			@Override
 			protected void email() {}
 			
 			@Override
 			protected void back() {
-				startApplication();
+				backApplication();
 			}
 			
 			@Override
-			protected void ant() {}
+			protected void ant() {
+				Integer page = Integer.parseInt(filterMap.get("page").get(0));
+				
+				if(page > 1 ){
+					page = page - 1;
+					LinkedList<String> list = new LinkedList<>();
+					list.add(page.toString());
+					filterMap.put("page", list);
+					list = new LinkedList<>();
+					list.add("1");
+					filterMap.put("per_page", list);
+					Window.alert(filterMap.get("page").get(0) + "");
+					getAPI().getCommon().getDataResponse(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsDataResponse> result) {
+							setContent(new QualitySheet(me, result.getData().get(0)));
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				}
+			}
 
 			@Override
 			protected void excelDownload() {
@@ -172,6 +224,8 @@ public class UdapaQuality extends AonTemplate2{
 		toolbar.setBackVisible(true);
 		toolbar.setPrintVisible(true);
 		toolbar.setRemoveVisible(true);
+		toolbar.setAntVisible(true);
+		toolbar.setNextVisible(true);
 		toolbar.setExcelVisible(false);
 		toolbar.setPdfVisible(false);
 		setContent(new QualitySheet(this, js));
@@ -267,6 +321,7 @@ public class UdapaQuality extends AonTemplate2{
 				LinkedList<String>list = new LinkedList<>();
 				list.add(order.getId() + "");
 				map.put("income", list);
+				map.put("quality", list);
 				getAPI().getWarehouse().getDetails("income", map, new AsyncCallback<JSON<JsOrderDetail>>() {
 					
 					@Override
@@ -320,21 +375,6 @@ public class UdapaQuality extends AonTemplate2{
 	}
 	
 	
-	private String getOrderType(JsCarrierPacking carrierPacking){
-		String order = "";
-		String type = carrierPacking.getType().getId() + "";
-		String waybill = CarrierPackingType.WAYBILL.ordinal() + "";
-		String status = carrierPacking.getStatus().getId() + "";
-		String pending = CarrierPackingStatus.PENDING.ordinal() + "";
-					
-		if(type.equals(waybill)){
-			order = "delivery";
-		} else if(status.equals(pending)){
-			order = "purchase";
-		} else {
-			order = "income";
-		}
-		return order;
-	}
+	
 
 }

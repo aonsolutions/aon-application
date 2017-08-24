@@ -366,6 +366,7 @@ public class QualitySheet extends Composite{
 			caliberControl.setWidget(j, 0, new Label());
 			caliberControl.setWidget(j, 1, new Label());	
 		}
+		evaluationControl(index + 1);
 	}
 	
 	private void calibresSiembra(){
@@ -416,6 +417,25 @@ public class QualitySheet extends Composite{
 		hp2.add(label3);
 		hp2.add(label4);
 		caliberControl.setWidget(11, 1, hp2);
+		
+		evaluationControl(12);
+	}
+	
+	private void evaluationControl(Integer row){
+		caliberControl.setWidget(row, 0, boldLabel("Evaluaci\u00f3n (+ 7 d\u00edas)"));
+		caliberControl.setWidget(row, 1, new Label());
+		
+		HorizontalPanel hp1 = new HorizontalPanel();
+		hp1.add(new Label("20\u00BAC"));
+		hp1.add(checkBox(QualitySheetCode.UFQCE01));
+		caliberControl.setWidget(row + 1, 0, hp1);
+		caliberControl.setWidget(row + 1, 1, textBox(QualitySheetCode.UFQCE011));
+		
+		HorizontalPanel hp2 = new HorizontalPanel();
+		hp2.add(new Label("30\u00BAC"));
+		hp2.add(checkBox(QualitySheetCode.UFQCE02));
+		caliberControl.setWidget(row + 2, 0, hp2);
+		caliberControl.setWidget(row + 2, 1, textBox(QualitySheetCode.UFQCE021));
 	}
 	
 	private void defectControl() {
@@ -456,7 +476,7 @@ public class QualitySheet extends Composite{
 		hp2.add(label2);
 		caliberControl.setWidget(tIndex, 3, hp2);
 		
-		for(Integer j = tIndex + 1; j < 13; j++) {
+		for(Integer j = tIndex + 1; j < 15; j++) {
 			caliberControl.setWidget(j, 2, new Label());
 			caliberControl.setWidget(j, 3, new Label());	
 		}

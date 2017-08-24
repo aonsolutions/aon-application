@@ -128,7 +128,7 @@ public class CommonServlet extends HttpServlet{
 
 	private JSONArray getDataResponseList(Domain domain, String login, Map<String,String[]> map){
 		JSONArray array = new JSONArray();
-		AON.getDataResponseStream(domain.getName(), domain.getId(), login,  
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY,
 				f -> dataResponseFilter(domain, map, f))
 		.forEach(dr -> {
 			String source = AON.getDataResponseDetail(domain.getName(), domain.getId(), login,
@@ -197,7 +197,16 @@ public class CommonServlet extends HttpServlet{
 			}
 			filter = filter.and(ftypeValue);
 		}
-		
+		if(filterMap.containsKey("per_page")){
+			String per_page = filterMap.get("per_page")[0];
+			Integer perPage = Integer.parseInt(per_page);
+			filter.perPage(perPage);
+		}
+		if(filterMap.containsKey("page")){
+			String page_str = filterMap.get("page")[0];
+			Integer page = Integer.parseInt(page_str);
+			filter.page(page);
+		}
 		return filter;
 	}
 	

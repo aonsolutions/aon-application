@@ -4,17 +4,26 @@ import java.util.LinkedList;
 
 public enum Destiny {
 	BASERRI("Baserri"),
+	BUTI("Buti"),
+	CAJA_BLANCA("Caja Blanca"),
 	CALIDAD("Calidad"),
 	COMUN("Com\u00fan"),
+	ECI_COMUN("ECI Com\u00fan"),
 	ECI_FREIR("ECI Freir"),
 	ECI_GUISAR("ECI Guisar"),
-	EUSKOLABEL("Euskolabel"),	
-	GRANEL_EROSKI("Granel Eroski"),
-	GRANEL_NATUR("Granel Natur"),
+	EUROPOOL("Europool"),
+	EUSKOLABEL("Euskolabel"),
+	GUARNICION("Guarnici\u00f3n"),
 	MERCADOS("Mercados"),
-	MIRALOBUENO("Miralobueno"),
+	MICROONDAS("Microondas"),
+	MIRALOBUENO_3KG("Miralobueno 3 Kg."),
 	MIRALOBUENO_5KG("Miralobueno 5 Kg."),
-	SIEMBRA("Siembra")
+	MIRALOBUENO_GRANEL("Miralobueno Granel"),
+	NATUR_FREIR("Natur Freir"),
+	NATUR_GUISAR("Natur Guisar"),
+	ROJA("Roja"),
+	SIEMBRA("Siembra"),
+	VERDIFRESH("Verdifresh")
 	;
 	
 	String name;

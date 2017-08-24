@@ -7,9 +7,11 @@ import java.util.Optional;
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -38,6 +40,8 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		QualitySheetCode.valueLinkedList().stream()
 		.forEach(key -> map.put(key, "0.0"));
 		map.put(QualitySheetCode.UFQO.getName(), "");
+		map.put(QualitySheetCode.UFQCE011.getName(), "");
+		map.put(QualitySheetCode.UFQCE021.getName(), "");
 		
 		AON.getDataResponseDetailStream(domainName, domainId, login, 
 				f -> f.getDataResponseProperty().eq(drId))
@@ -83,7 +87,12 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "0.0");
 				map.put(QualitySheetCode.UFQDT2.getName(), net != null ? net.toString() : "0.0");
 			}
-		}
+			
+			if("0.0".equals(map.get(QualitySheetCode.UFQC2.getName()))){
+				ApplicationParameter app = AON.getApplicationParamenter(domainName, domainId, login, AppParam.QUALITY_PFONDO);
+				map.put(QualitySheetCode.UFQC2.getName(), app != null ? app.getValue(): "0.0");
+			}
+ 		}
 		return compute(map);
 	}
 	
@@ -110,6 +119,9 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				net = AonMathUtils.round(net - dbl);
 			}
 			map.put(QualitySheetCode.UFQDT2.getName(), net != null ? net.toString() : "0.0");
+		}
+		if(QualitySheetCode.UFQC2.equals(code)) {
+			AON.insertApplicationParameter(domainName, domainId, login, AppParam.QUALITY_PFONDO, value);
 		}
 		return compute(map);
 	}

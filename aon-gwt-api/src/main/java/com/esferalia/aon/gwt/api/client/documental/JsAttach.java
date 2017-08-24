@@ -27,5 +27,9 @@ public class JsAttach extends JavaScriptObject{
 	public final native String getTitle() /*-{
 		return this.title;
 	}-*/;
+	
+	public final native String getUrl() /*-{
+		return this.url;
+	}-*/;
 
 }

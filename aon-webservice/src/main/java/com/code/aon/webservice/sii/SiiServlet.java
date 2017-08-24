@@ -62,7 +62,7 @@ public class SiiServlet extends HttpServlet{
     private JSONArray getSiiHistory(Domain domain, String login){
     	JSONArray array = new JSONArray();
     	
-    	AON.getDataResponseStream(domain.getName(), domain.getId(), login, f -> 
+    	AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.SII, f -> 
     		f.getDomainProperty().eq(domain.getId())
     		.and(f.getSourceProperty().eq(DataResponseSource.SII.value())))
     	.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
@@ -74,7 +74,7 @@ public class SiiServlet extends HttpServlet{
 
     private JSONArray getSiiHistoryDetail(Domain domain, String login, Integer id){
     	JSONArray array = new JSONArray();
-    	Integer[] ids = AON.getDataResponseStream(domain.getName(), domain.getId(), login, f -> 
+    	Integer[] ids = AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE, f -> 
     		f.getDomainProperty().eq(domain.getId())
     		.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     		.and(f.getDetailVariableProperty().eq("send"))

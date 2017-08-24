@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
 public interface ICommon {
 
@@ -85,7 +86,6 @@ public interface ICommon {
 	
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages);
-	
 
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx);
 	public DomainGserviceaccount getGeneralDomainGserviceaccount(AONContext ctx);
@@ -109,7 +109,7 @@ public interface ICommon {
 	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter);
 	
 	// DATA RESPONSE
-	public Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseFilter filter);
+	public Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseSource source, DataResponseFilter filter);
 	public DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse);
 	public DataResponse updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter);
 	public DataResponse deleteDataResponse(AONContext ctx, DataResponseFilter filter);

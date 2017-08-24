@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.gwt.udapa.client.quality;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -12,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -23,12 +25,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.polymer.iron.widget.IronImage;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
@@ -85,32 +89,51 @@ public class FootPanel extends Composite {
 				upload.setAccept("image/*");
 
 				vp.add(upload);
-				
-				//vp.add(new ImagePanel(result.getData()));
+				vp.add(imagePanel(result.getData().toLinkedList()));
+				// vp.add(new ImagePanel(result.getData()));
 				imgPanel.setWidget(vp);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
+	
+	
+	public VerticalPanel imagePanel(LinkedList<JsAttach> imgList) {
+		Integer x = Window.getClientWidth() / 170;
+		VerticalPanel vp = new VerticalPanel();
+		Integer indez = imgList.size() / x;
+		for(Integer i = 0 ; i <= indez ; i++) {
+			HorizontalPanel hp = new HorizontalPanel();
+			for(Integer j = 0;j < x; j++) {
+				if(imgList.size() > i * x + j) {
+					IronImage ii = new IronImage();
+					//ii.setSrc("https://ep01.epimg.net/elcomidista/imagenes/2017/02/22/articulo/1487804099_363696_1487804800_sumario_normal.jpg");
+					ii.setSrc(imgList.get(i * x + j).getUrl());
+					ii.getElement().getStyle().setWidth(150, Unit.PX);
+					ii.getElement().getStyle().setHeight(150, Unit.PX);
+					ii.getElement().getStyle().setPadding(10, Unit.PX);
+					ii.setSizing("150px");
+					hp.add(ii);
+				}
+			}
+			vp.add(hp);
+		}
+		return vp;
+	}
 
 	public void calculatePanel() {
 		Double dest = Double.parseDouble(parent.getMap().get(QualitySheetCode.UFQDP1.getName())) - 1;
-		
 		Destiny destiny = parent.getMap().containsKey(QualitySheetCode.UFQDP1.getName()) && dest >= 0 ? Destiny.values()[dest.intValue()]: Destiny.CALIDAD;
 		if(Destiny.BASERRI.equals(destiny) || Destiny.EUSKOLABEL.equals(destiny)) {
-			
 			String product_quantity = parent.getMap().containsKey("product_quantity") ? parent.getMap().get("product_quantity") : "0.0";
 			Double productQuantity = Double.parseDouble(product_quantity);
-		
 			String transport_quantity = parent.getMap().containsKey(QualitySheetCode.UFQDT2.getName()) ? parent.getMap().get(QualitySheetCode.UFQDT2.getName()) : "0.0";
 			Double transportQuantity = Double.parseDouble(transport_quantity);
-		
 			Double quantity = transportQuantity > 0.0 ? transportQuantity : productQuantity;
 		
 			String tempStr = parent.getMap().containsKey(QualitySheetCode.UFQAC1.getName()) ?  parent.getMap().get(QualitySheetCode.UFQAC1.getName()) : "17.0";
 			Double temp = Double.parseDouble(tempStr);
-			
 			FlexTable tInfo = new FlexTable();
 			
 				
@@ -126,34 +149,34 @@ public class FootPanel extends Composite {
 			Double color = "1".equals(col) || "1.0".equals(col) ? 0.003 : 0.0; 
 		
 			String product_price =  parent.getMap().containsKey("product_price") ?  parent.getMap().get("product_price") : "0.0";
-
+			
 			Double contractPrice = Double.parseDouble(product_price);
-			Double pFondo = Double.parseDouble(dbPFondo.getValue());
+
+			Double pFondo = dbPFondo.getValue() != null && !dbPFondo.getValue().equals("") ? Double.parseDouble(dbPFondo.getValue()) : 0.0;
 			Double z = (pFondo - contractPrice) * 0.55;
 			Double price = contractPrice + z;
 			if(Destiny.BASERRI.equals(destiny)) {
 				price = price * 0.88;
 			}
-
 			FlexTable table = new FlexTable();
 			table.setWidth("100%");
 			table.setWidget(0, 0, new Label(""));
-		
+
 			Label percentage = new Label("%");
 			percentage.setTitle("Porcentaje");
 			percentage.setStyleName(AON.AON_CSS.aonBold());
 			table.setWidget(0, 1, percentage);
-		
+
 			Label kg = new Label("KG");
 			kg.setTitle("Kilos");
 			kg.setStyleName(AON.AON_CSS.aonBold());
 			table.setWidget(0, 2, kg);
-		
+
 			Label prima = new Label("Prima");
 			prima.setTitle("Prima");
 			prima.setStyleName(AON.AON_CSS.aonBold());
 			table.setWidget(0, 3, prima);
-			
+
 			Label euro = new Label("Euros");
 			euro.setTitle("Euros");
 			euro.setStyleName(AON.AON_CSS.aonBold());
@@ -165,7 +188,7 @@ public class FootPanel extends Composite {
 			peq.setTitle("Peque\u00f1as");
 			peq.setStyleName(AON.AON_CSS.aonBold());
 			table.setWidget(1, 0, peq);
-		
+
 			String perPeq = parent.getMap().containsKey(QualitySheetCode.UFQCC021.getName()) ? parent.getMap().get(QualitySheetCode.UFQCC021.getName()) : "0.0";
 			table.setWidget(1, 1, new Label(perPeq));
 			Double kgPeq = (quantity * Double.parseDouble(perPeq))/100;
@@ -174,14 +197,14 @@ public class FootPanel extends Composite {
 			table.setWidget(1, 3, new Label(Double.toString(AonMathUtils.round(primaPeq))));
 			Double eurosPeq = kgPeq * primaPeq;
 			table.setWidget(1, 4, new Label(Double.toString(AonMathUtils.round(eurosPeq))));
-		
+
 			// -------------------- GORDAS
 		
 			Label gor = new Label("Gordas");
 			gor.setTitle("Gordas");
 			gor.setStyleName(AON.AON_CSS.aonBold());
 			table.setWidget(2, 0, gor);
-			
+
 			String perGor = parent.getMap().containsKey(QualitySheetCode.UFQCC061.getName()) ? parent.getMap().get(QualitySheetCode.UFQCC061.getName()) : "0.0";
 			table.setWidget(2, 1, new Label(perGor));
 			Double perGord = Double.parseDouble(perGor);
@@ -191,21 +214,21 @@ public class FootPanel extends Composite {
 			table.setWidget(2, 3, new Label(Double.toString(AonMathUtils.round(primaGor, 3))));
 			Double eurosGor = 0.7 * kgGor * primaGor;
 			table.setWidget(2, 4, new Label(Double.toString(AonMathUtils.round(eurosGor))));
-		
+
 			// -------------------- TIERRA
 		
 			Label ter = new Label("Tierra");
 			ter.setTitle("Tierra");
 			ter.setStyleName(AON.AON_CSS.aonBold());
 			table.setWidget(3, 0, ter);
-		
+
 			String perTer = parent.getMap().containsKey(QualitySheetCode.UFQCC101.getName()) ? parent.getMap().get(QualitySheetCode.UFQCC101.getName()) : "0.0";
 			table.setWidget(3, 1, new Label(perTer));
 			Double kgTer = (quantity * Double.parseDouble(perTer))/100;
 			table.setWidget(3, 2, new Label(Double.toString(AonMathUtils.round(kgTer))));
 			table.setWidget(3, 3, new Label("-"));
 			table.setWidget(3, 4, new Label("-"));
-		
+
 			// -------------------- DEFECTOS
 			
 			Label def = new Label("Defectos");
@@ -223,7 +246,7 @@ public class FootPanel extends Composite {
 			table.setWidget(4, 4, new Label("-"));
 		
 			// -------------------- NETO
-		
+
 			Label neto = new Label("Neto");
 			neto.setTitle("Neto");
 			neto.setStyleName(AON.AON_CSS.aonBold());	
@@ -287,7 +310,6 @@ public class FootPanel extends Composite {
 			vp.add(tInfo);
 			vp.add(table);
 			vp.add(table1);
-			
 			dbPFondo.addValueChangeHandler(new ValueChangeHandler<String>() {
 				
 				@Override

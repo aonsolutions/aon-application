@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+
 
 import java.util.Date;
 import java.util.stream.Stream;
@@ -11,6 +13,7 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DataResponseDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DataResponseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DataResponseDetailPropertiesDAO;
@@ -22,9 +25,17 @@ public class DataResponseDAO {
 	private static final DataResponsePropertiesDAO DATA_RESPONSE_PROPERTIES = new DataResponsePropertiesDAO();
 	private static final DataResponseDetailPropertiesDAO DATA_RESPONSE_DETAIL_PROPERTIES = new DataResponseDetailPropertiesDAO();
 	
-	public static Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseFilter filter){	
+	public static Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseSource source, DataResponseFilter filter){	
+		if(DataResponseSource.QUALITY.equals(source)) {
+			return DATA_RESPONSE_PROPERTIES.build( ctx.getDslContext()
+					.selectDistinct(DATA_RESPONSE.fields()).from(DATA_RESPONSE)
+					.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(DATA_RESPONSE.SOURCE_ID))
+					.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE)), filter)
+				.fetchInto(DATA_RESPONSE).stream().map(new DataResponseFiller());
+		}
 		return DATA_RESPONSE_PROPERTIES.build( ctx.getDslContext()
-				.selectDistinct(DATA_RESPONSE.fields()).from(DATA_RESPONSE).leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE)), filter)
+				.selectDistinct(DATA_RESPONSE.fields()).from(DATA_RESPONSE)
+				.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE)), filter)
 			.fetchInto(DATA_RESPONSE).stream().map(new DataResponseFiller());		
 	}
 	

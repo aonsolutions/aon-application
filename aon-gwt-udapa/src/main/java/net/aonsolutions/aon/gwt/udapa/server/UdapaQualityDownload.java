@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -58,7 +59,7 @@ public class UdapaQualityDownload extends HttpServlet{
 		
 			UdapaImpl udp = new UdapaImpl();
 			HashMap<String, String> map = udp.getValues(domain.getName(), domain.getId(), dataResponseId);
-			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(dataResponseId));
+			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY, f -> f.getIdProperty().eq(dataResponseId));
 			map.put("number", dr.getCode());
 		
 		

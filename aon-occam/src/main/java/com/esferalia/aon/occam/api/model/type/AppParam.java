@@ -176,6 +176,8 @@ public enum AppParam {
 	,CALL_CENTER_GITHUB_TOKEN
 	
 	,AON_ADHOC_EXTENSION
+	
+	,QUALITY_PFONDO
 	;
 	
 	public String getValue() {

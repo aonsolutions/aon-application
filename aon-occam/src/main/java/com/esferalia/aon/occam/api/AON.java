@@ -152,6 +152,7 @@ import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -4408,21 +4409,21 @@ public class AON {
 		}
 	}
 	
-	public static Stream<DataResponse> getDataResponseStream(String domainName, Integer domainId, String login, DataResponseFilter filter){
+	public static Stream<DataResponse> getDataResponseStream(String domainName, Integer domainId, String login, DataResponseSource source, DataResponseFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getDataResponseStream(ctx, filter);
+			return getCommon().getDataResponseStream(ctx, source, filter);
 		} finally {
 			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public static DataResponse getDataResponse(String domainName, Integer domainId, String login, DataResponseFilter filter){
+	public static DataResponse getDataResponse(String domainName, Integer domainId, String login, DataResponseSource source, DataResponseFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getDataResponseStream(ctx, filter).findFirst().orElse(null);
+			return getCommon().getDataResponseStream(ctx, source, filter).findFirst().orElse(null);
 		} finally {
 			if (ctx != null) ctx.close();
 		}

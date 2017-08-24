@@ -863,7 +863,7 @@ public class AttachmentDAO {
 		
 		@Override
 		public Attach apply(Record r) {
-			return new Attach().setAttachType(AttachType.SEPE)
+			return new Attach().setAttachType(AttachType.DATA)
 							.setData(r.getValue(DATA_ATTACH.DATA))
 							.setDomain(new Domain().setId(r.getValue(DATA_ATTACH.DOMAIN)))
 							.setDriveId(r.getValue(DATA_ATTACH.DRIVE_ID))

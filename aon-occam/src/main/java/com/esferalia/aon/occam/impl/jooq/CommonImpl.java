@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -268,9 +269,9 @@ public class CommonImpl implements ICommon {
 	// ------------------ DATA RESPONSE
 
 	@Override
-	public Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseFilter filter) {
+	public Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseSource source, DataResponseFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> DataResponseDAO.getDataResponseStream(ctx, filter));
+				configuration -> DataResponseDAO.getDataResponseStream(ctx, source, filter));
 	}
 	
 	@Override

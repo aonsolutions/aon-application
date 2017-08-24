@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
@@ -17,6 +18,7 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
@@ -46,8 +48,16 @@ public class DBIncome {
 
 	public static JSONArray getIncomeDetails(Domain domain,String login, Map<String, String[]> map){
 		JSONArray array = new JSONArray();
+		
+		
 		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> incomeDetailFilter(domain, map, f))
-			.forEach(detail -> array.put(incomeDetailToJSON(detail)));
+			.forEach(detail -> {
+				if(map.containsKey("quality")) {
+					DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY,
+							f -> f.getSourceIdProperty().eq(detail.getId()).and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value())));
+					if(dr == null) array.put(incomeDetailToJSON(detail));
+				} else array.put(incomeDetailToJSON(detail));
+			});
 		return array;
 	}
     

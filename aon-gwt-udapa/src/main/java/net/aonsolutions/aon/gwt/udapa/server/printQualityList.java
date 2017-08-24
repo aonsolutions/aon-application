@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -35,6 +37,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -63,6 +67,8 @@ public class printQualityList extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(printQualityList.class.getName());
 
+	Map<String, String[]> filterMap;
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.log(Level.INFO, "Print Quality List - GET METHOD");
@@ -76,9 +82,9 @@ public class printQualityList extends HttpServlet{
 
 		File file = null;
 		if(isList){
-			//HashMap<String, String[]> map = SecurityUtils.getInstance().getParametersMap(req.getPathInfo().substring(1));
-			LinkedList<DataResponse> drList = AON.getDataResponseStream(domain.getName(), domain.getId(), login,  
-					f -> f.getDomainProperty().eq(domain.getId()).and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value()))) 
+			filterMap = SecurityUtils.getInstance().getParametersMap(req.getPathInfo().substring(1));
+			LinkedList<DataResponse> drList = AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY,
+					f -> dataResponseFilter(domain, filterMap, f)) 
 				.collect(Collectors.toCollection(LinkedList::new));
 
 			String type = parameters.get("type");
@@ -101,6 +107,43 @@ public class printQualityList extends HttpServlet{
 			}
 		}
 	}
+	
+	public static Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value()));
+		
+		if(filterMap.containsKey("from")){
+			String from = filterMap.get("from")[0];
+			Date d = new Date(Long.parseLong(from));
+			Filter fDate = f.getIssueDateProperty().ge(AonDateUtils.toSql(d));
+			filter = filter.and(fDate);
+		}
+		
+		if(filterMap.containsKey("to")){
+			String to = filterMap.get("to")[0];
+			Date d = new Date(Long.parseLong(to));
+			Filter fDate = f.getIssueDateProperty().le(AonDateUtils.toSql(d));
+			filter = filter.and(fDate);
+		}
+		
+		if(filterMap.containsKey("number")){
+			Filter fnumber = f.getNumberProperty().eq(filterMap.get("number")[0]);
+			for(Integer i = 1; i < filterMap.get("number").length ; i++){
+				fnumber = fnumber.or(f.getNumberProperty().eq(filterMap.get("number")[i]));
+			}
+			filter = filter.and(fnumber);
+		} 
+		
+		if(filterMap.containsKey("source")){
+			Filter fsourceValue = f.getDetailVariableProperty().eq("source").and(f.getDetailValueProperty().like(filterMap.get("source")[0] + "@%"));				
+			for(Integer i = 1; i < filterMap.get("source").length ; i++){
+				fsourceValue = fsourceValue.or(f.getDetailVariableProperty().eq("source").and(f.getDetailValueProperty().like(filterMap.get("source")[i] + "@%")));
+			}
+			filter = filter.and(fsourceValue);
+		}
+
+		return filter;
+	}
+	
 	
 	public static void giveBackData(HttpServletResponse resp, byte[] data, String name) throws ServletException, IOException{
 		Integer length = data.length;
@@ -131,7 +174,7 @@ public class printQualityList extends HttpServlet{
 		super.doPost(req, resp);
 	}
 	
-	public static File createPdf(Domain domain, String login, LinkedList<DataResponse> drList) {
+	public File createPdf(Domain domain, String login, LinkedList<DataResponse> drList) {
 		File archivoPDF = null;
 		try {
 			archivoPDF = File.createTempFile("quality", "pdf");
@@ -155,6 +198,11 @@ public class printQualityList extends HttpServlet{
 		return archivoPDF;
 	}
 	
+	private Boolean hasSupplier(String[] suppliers, String supplier) {
+		LinkedList<String> list = new LinkedList<>(Arrays.asList(suppliers));
+		return list.contains(supplier);
+	}
+	
 	private Integer cont;
 	public byte[] createExcel(Domain domain, String login, LinkedList<DataResponse> drList) {
 		byte[] data = null; 
@@ -165,7 +213,7 @@ public class printQualityList extends HttpServlet{
 			HSSFSheet hoja = libro.createSheet("Calidad");
 			
 			Row fila = hoja.createRow(0);
-		    
+			
 			boldCell(libro, fila, 0, "Codigo");
 			boldCell(libro, fila, 1, "Fecha");
 			boldCell(libro, fila, 2, "Proveedor");
@@ -180,7 +228,8 @@ public class printQualityList extends HttpServlet{
 			boldCell(libro, fila, 11, "Tierra");
 			boldCell(libro, fila, 12, "Defectos");
 			boldCell(libro, fila, 13, "Lavado");
-			boldCell(libro, fila, 14, "Merma");
+			boldCell(libro, fila, 14, "Total Defectos");
+			boldCell(libro, fila, 15, "Merma");
 			
 			cont = 1;
 			
@@ -193,50 +242,59 @@ public class printQualityList extends HttpServlet{
 					Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 					if(incomeDetail.isPresent()){
 						Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getIncome().getId()));
-						CarrierPacking carrierPacking = null; 
-						if(income.get().getCarrierPacking() != null){
-							carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, income.get().getCarrierPacking());
-						}
-						Double a = map.containsKey(QualitySheetCode.UFQCC021.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC021.getName())) : 0.0;
-						Double b = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
-						Double c = map.containsKey(QualitySheetCode.UFQCC061.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC061.getName())) : 0.0;
-						Double d = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
-						Double e = (map.containsKey(QualitySheetCode.UFQCC101.getName()) && isPropaco(map)) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
-						Double f = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
+						if(income.isPresent() && (!filterMap.containsKey("supplier") || hasSupplier(filterMap.get("supplier"), income.get().getSupplier().toString()))) {
+							CarrierPacking carrierPacking = null; 
+							if(income.get().getCarrierPacking() != null){
+								carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, income.get().getCarrierPacking());
+							}
+							Double a = map.containsKey(QualitySheetCode.UFQCC021.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC021.getName())) : 0.0;
+							Double b = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
+							Double c = map.containsKey(QualitySheetCode.UFQCC061.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC061.getName())) : 0.0;
+							Double d = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
+							Double e = (map.containsKey(QualitySheetCode.UFQCC101.getName()) && isPropaco(map)) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
+							Double f = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
 						
-						Double merma = a + b + c + d + e + f; 
-						
-						if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
-							merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
-						}
+							Double merma = a + b + c + d + e + f; 
+							
+							if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
+								merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+							}
 					
-						Row row = hoja.createRow(cont++);
-						
-						cell(libro, row, 0, r.getCode());
-						cell(libro, row, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
-						cell(libro, row, 2, income.isPresent() ? income.get().getSupplierName() : "-");
-						cell(libro, row, 3, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
-						cell(libro, row, 4, incomeDetail.isPresent() ? Double.toString(incomeDetail.get().getQuantity()) : "0.0");
-						cell(libro, row, 5, incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-");
-						cell(libro, row, 6, incomeDetail.isPresent() ? incomeDetail.get().getPrice().toString() : "0.0");
-						cell(libro, row, 7, a.toString());
-						cell(libro, row, 8, b.toString());
-						cell(libro, row, 9, c.toString());
-						cell(libro, row, 10, d.toString());
-						cell(libro, row, 11, isPropaco(map) ? e.toString() : "(+)->");
-						cell(libro, row, 12, f.toString());
-						cell(libro, row, 13, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
+							Row row = hoja.createRow(cont++);
+							
+							cell(libro, row, 0, r.getCode());
+							cell(libro, row, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
+							cell(libro, row, 2, income.isPresent() ? income.get().getSupplierName() : "-");
+							cell(libro, row, 3, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
+							cell(libro, row, 4, incomeDetail.isPresent() ? incomeDetail.get().getQuantity() : 0.0);
+							cell(libro, row, 5, incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-");
+							cell(libro, row, 6, incomeDetail.isPresent() ? incomeDetail.get().getPrice() : 0.0);
+							cell(libro, row, 7, a);
+							cell(libro, row, 8, b);
+							cell(libro, row, 9, c);
+							cell(libro, row, 10, d);
+							if(isPropaco(map)){
+								cell(libro, row, 11, e);
+							} else cell(libro, row, 11,"(" + e + ")->");
+							cell(libro, row, 12, f);
+							cell(libro, row, 13, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
 								? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "");
-						cell(libro, row, 14, merma.toString());
+
+							Integer rowIndex = row.getRowNum() + 1;
+							String formula = "SUM(H" + rowIndex + ",J" + rowIndex + ",L" + rowIndex + ",M" + rowIndex + ")"; 
+							cellFormula(libro, row, 14, formula);
+
+							cell(libro, row, 15, merma);
+						}
 					}
 				}	
 			});
 			
 			HSSFSheet hoja2 = libro.createSheet("Calidad Siembra");
-			
+		
 			Row fila2 = hoja2.createRow(0);
-		    
-			boldCell(libro, fila2, 0, "Codigo");
+			
+		    boldCell(libro, fila2, 0, "Codigo");
 			boldCell(libro, fila2, 1, "Fecha");
 			boldCell(libro, fila2, 2, "Proveedor");
 			boldCell(libro, fila2, 3, "Transporte");
@@ -269,54 +327,62 @@ public class printQualityList extends HttpServlet{
 					Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 					if(incomeDetail.isPresent()){
 						Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getIncome().getId()));
-						CarrierPacking carrierPacking = null; 
-						if(income.get().getCarrierPacking() != null){
-							carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, income.get().getCarrierPacking());
-						}
-						Double a = map.containsKey(QualitySheetCode.UFQCC161.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC161.getName())) : 0.0;
-						Double b = map.containsKey(QualitySheetCode.UFQCC031.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC031.getName())) : 0.0;
-						Double c = map.containsKey(QualitySheetCode.UFQCC051.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC051.getName())) : 0.0;
-						Double d = map.containsKey(QualitySheetCode.UFQCC171.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC171.getName())) : 0.0;
-						Double e = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
-						Double f = map.containsKey(QualitySheetCode.UFQCC181.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC181.getName())) : 0.0;
-						Double g = map.containsKey(QualitySheetCode.UFQCC091.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC091.getName())) : 0.0;
-						Double h = map.containsKey(QualitySheetCode.UFQCC111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC111.getName())) : 0.0;
-						Double i = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
-						Double k = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
+						if(income.isPresent() && (!filterMap.containsKey("supplier") || hasSupplier(filterMap.get("supplier"), income.get().getSupplier().toString()))) {
+							CarrierPacking carrierPacking = null; 
+							if(income.get().getCarrierPacking() != null){
+								carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, income.get().getCarrierPacking());
+							}
+							Double a = map.containsKey(QualitySheetCode.UFQCC161.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC161.getName())) : 0.0;
+							Double b = map.containsKey(QualitySheetCode.UFQCC031.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC031.getName())) : 0.0;
+							Double c = map.containsKey(QualitySheetCode.UFQCC051.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC051.getName())) : 0.0;
+							Double d = map.containsKey(QualitySheetCode.UFQCC171.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC171.getName())) : 0.0;
+							Double e = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
+							Double f = map.containsKey(QualitySheetCode.UFQCC181.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC181.getName())) : 0.0;
+							Double g = map.containsKey(QualitySheetCode.UFQCC091.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC091.getName())) : 0.0;
+							Double h = map.containsKey(QualitySheetCode.UFQCC111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC111.getName())) : 0.0;
+							Double i = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
+							Double j = map.containsKey(QualitySheetCode.UFQCC101.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
+							Double k = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
 
-						Double merma = a + b + c + d + e + f + g + h + i + k; 
+							Double merma = a + b + c + d + e + f + g + h + i + k; 
 					
-						if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
-							merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+							if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
+								merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+							}
+							
+							Row row = hoja2.createRow(cont++);
+						
+							cell(libro, row, 0, r.getCode());
+							cell(libro, row, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
+							cell(libro, row, 2, income.isPresent() ? income.get().getSupplierName() : "-");
+							cell(libro, row, 3, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
+							cell(libro, row, 4, incomeDetail.isPresent() ? incomeDetail.get().getQuantity() : 0.0);
+							cell(libro, row, 5, incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-");
+							cell(libro, row, 6, incomeDetail.isPresent() ? incomeDetail.get().getPrice() : 0.0);
+							cell(libro, row, 7, a);
+							cell(libro, row, 8, b);
+							cell(libro, row, 9, c);
+							cell(libro, row, 10, d);
+							cell(libro, row, 11, e);
+							cell(libro, row, 12, f);
+							cell(libro, row, 13, g);
+							cell(libro, row, 14, h);
+							cell(libro, row, 15, i);
+							cell(libro, row, 16, "(" + j +")->");
+							cell(libro, row, 17, k);
+							cell(libro, row, 18, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
+									? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "");
+							cell(libro, row, 19, merma);
 						}
-						
-						Row row = hoja2.createRow(cont++);
-						
-						cell(libro, row, 0, r.getCode());
-						cell(libro, row, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
-						cell(libro, row, 2, income.isPresent() ? income.get().getSupplierName() : "-");
-						cell(libro, row, 3, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
-						cell(libro, row, 4, incomeDetail.isPresent() ? Double.toString(incomeDetail.get().getQuantity()) : "0.0");
-						cell(libro, row, 5, incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-");
-						cell(libro, row, 6, incomeDetail.isPresent() ? incomeDetail.get().getPrice().toString() : "0.0");
-						cell(libro, row, 7, a);
-						cell(libro, row, 8, b);
-						cell(libro, row, 9, c);
-						cell(libro, row, 10, d);
-						cell(libro, row, 11, e);
-						cell(libro, row, 12, f);
-						cell(libro, row, 13, g);
-						cell(libro, row, 14, h);
-						cell(libro, row, 15, i);
-						cell(libro, row, 16, "(+)->");
-						cell(libro, row, 17, k);
-						cell(libro, row, 18, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
-								? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "");
-						cell(libro, row, 19, merma);
 					}
 				}	
 			});
-		    
+			
+	        for(int i = 0; i < 20; i++) {
+	            hoja.autoSizeColumn(i);
+	            
+	            hoja2.autoSizeColumn(i);
+	        }
 		
 			libro.write(archivo);
 
@@ -330,7 +396,7 @@ public class printQualityList extends HttpServlet{
 	}
 	
 	
-	private static void writeDocument(Domain domain, String login, Document document, LinkedList<DataResponse> drList) throws DocumentException, JSONException, ParseException {
+	private void writeDocument(Domain domain, String login, Document document, LinkedList<DataResponse> drList) throws DocumentException, JSONException, ParseException {
 		PdfPTable p = new PdfPTable(1);
 		p.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		p.setWidthPercentage(100);
@@ -344,8 +410,8 @@ public class printQualityList extends HttpServlet{
 		
 		p.addCell(getSeparator());
 		
-		PdfPTable tA = new PdfPTable(15);
-		float[] medidaCeldas = {0.75f, 0.75f, 1.25f, 1f, 0.75f, 1f, 0.75f, 0.5f, 0.5f, 0.5f, 1f, 0.5f, 0.75f, 0.75f, 0.75f};
+		PdfPTable tA = new PdfPTable(16);
+		float[] medidaCeldas = {0.75f, 0.75f, 1.25f, 1f, 0.75f, 1f, 0.75f, 0.5f, 0.5f, 0.5f, 1f, 0.5f, 0.75f, 0.75f, 0.75f, 0.75f};
 		try {
 			tA.setWidths(medidaCeldas);
 		} catch (DocumentException e) {
@@ -368,6 +434,7 @@ public class printQualityList extends HttpServlet{
 		tA.addCell(boldCell("Tierra"));
 		tA.addCell(boldCell("Defectos"));
 		tA.addCell(boldCell("Lavado"));
+		tA.addCell(boldCell("Total"));
 		tA.addCell(boldCell("Merma"));
 		
 		p.addCell(tA);
@@ -383,51 +450,56 @@ public class printQualityList extends HttpServlet{
 				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 				if(incomeDetail.isPresent()){
 					Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getIncome().getId()));
-					CarrierPacking carrierPacking = null; 
-					if(income.get().getCarrierPacking() != null){
-						carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, income.get().getCarrierPacking());
-					}
+					if(income.isPresent() && (!filterMap.containsKey("supplier") || hasSupplier(filterMap.get("supplier"), income.get().getSupplier().toString()))) {
+						CarrierPacking carrierPacking = null; 
+						if(income.get().getCarrierPacking() != null){
+							carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, income.get().getCarrierPacking());
+						}
 		
-					Double a = map.containsKey(QualitySheetCode.UFQCC021.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC021.getName())) : 0.0;
-					Double b = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
-					Double c = map.containsKey(QualitySheetCode.UFQCC061.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC061.getName())) : 0.0;
-					Double d = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
-					Double e = (map.containsKey(QualitySheetCode.UFQCC101.getName()) && isPropaco(map)) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
-					Double f = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
+						Double a = map.containsKey(QualitySheetCode.UFQCC021.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC021.getName())) : 0.0;
+						Double b = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
+						Double c = map.containsKey(QualitySheetCode.UFQCC061.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC061.getName())) : 0.0;
+						Double d = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
+						Double e = (map.containsKey(QualitySheetCode.UFQCC101.getName()) && isPropaco(map)) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
+						Double f = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
 					
-					Double merma = a + b + c + d + e + f; 
+						Double total = a + c +(isPropaco(map) ? e : 0.0) + f;
+						Double merma = a + b + c + d + e + f; 
 				
-					if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
-						merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
-					}
+						if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
+							merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+						}
 					
-					PdfPTable ta = new PdfPTable(15);
-					try {
-						ta.setWidths(medidaCeldas);
-					} catch (DocumentException e1) {
-						LOGGER.log(Level.SEVERE, e1.getMessage());
-					}
-					ta.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-					ta.setWidthPercentage(100);	
-			
-					ta.addCell(cell(r.getCode()));
-					ta.addCell(cell(AonDateUtils.simpleFormat(r.getResponseDate())));
-					ta.addCell(cell(income.isPresent() ? income.get().getSupplierName() : "-"));
-					ta.addCell(cell(carrierPacking != null ? carrierPacking.getNumberPlate() : "-"));
-					ta.addCell(cell(incomeDetail.isPresent() ? Double.toString(incomeDetail.get().getQuantity()) : "0.0"));
-					ta.addCell(cell(incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-"));
-					ta.addCell(cell(incomeDetail.isPresent() ? incomeDetail.get().getPrice().toString() : "0.0"));
-					ta.addCell(cell(a.toString()));
-					ta.addCell(cell(b.toString()));
-					ta.addCell(cell(c.toString()));  
-					ta.addCell(cell(d.toString()));
-					ta.addCell(cell(isPropaco(map) ? e.toString() : "(+)->"));
-					ta.addCell(cell(f.toString()));
-					ta.addCell(cell(map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
-							? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "")); 
-					ta.addCell(cell(merma.toString()));
+						PdfPTable ta = new PdfPTable(16);
+						try {
+							ta.setWidths(medidaCeldas);
+						} catch (DocumentException e1) {
+							LOGGER.log(Level.SEVERE, e1.getMessage());
+						}
+						ta.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+						ta.setWidthPercentage(100);	
 					
-					p.addCell(ta);
+						ta.addCell(cell(r.getCode()));
+						ta.addCell(cell(AonDateUtils.simpleFormat(r.getResponseDate())));
+						ta.addCell(cell(income.isPresent() ? income.get().getSupplierName() : "-"));
+						ta.addCell(cell(carrierPacking != null ? carrierPacking.getNumberPlate() : "-"));
+						ta.addCell(cell(incomeDetail.isPresent() ? Double.toString(incomeDetail.get().getQuantity()) : "0.0"));
+						ta.addCell(cell(incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-"));
+						ta.addCell(cell(incomeDetail.isPresent() ? incomeDetail.get().getPrice().toString() : "0.0"));
+						ta.addCell(cell(a.toString()));
+						ta.addCell(cell(b.toString()));
+						ta.addCell(cell(c.toString()));  
+						ta.addCell(cell(d.toString()));
+						ta.addCell(cell(isPropaco(map) ? e.toString() : "(" + e + ")->"));
+						ta.addCell(cell(f.toString()));
+						ta.addCell(cell(map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
+								? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "")); 
+						
+						ta.addCell(cell(total.toString()));
+						ta.addCell(cell(merma.toString()));
+						
+						p.addCell(ta);
+					}
 				}
 			}	
 		});
@@ -476,61 +548,64 @@ public class printQualityList extends HttpServlet{
 				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 				if(incomeDetail.isPresent()){
 					Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getIncome().getId()));
-					CarrierPacking carrierPacking = null; 
-					if(income.get().getCarrierPacking() != null){
-						carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, income.get().getCarrierPacking());
-					}
+					if(income.isPresent() && (!filterMap.containsKey("supplier") || hasSupplier(filterMap.get("supplier"), income.get().getSupplier().toString()))) {
+						CarrierPacking carrierPacking = null; 
+						if(income.get().getCarrierPacking() != null){
+							carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, income.get().getCarrierPacking());
+						}	
 				
-					Double a = map.containsKey(QualitySheetCode.UFQCC161.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC161.getName())) : 0.0;
-					Double b = map.containsKey(QualitySheetCode.UFQCC031.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC031.getName())) : 0.0;
-					Double c = map.containsKey(QualitySheetCode.UFQCC051.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC051.getName())) : 0.0;
-					Double d = map.containsKey(QualitySheetCode.UFQCC171.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC171.getName())) : 0.0;
-					Double e = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
-					Double f = map.containsKey(QualitySheetCode.UFQCC181.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC181.getName())) : 0.0;
-					Double g = map.containsKey(QualitySheetCode.UFQCC091.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC091.getName())) : 0.0;
-					Double h = map.containsKey(QualitySheetCode.UFQCC111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC111.getName())) : 0.0;
-					Double i = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
-					Double k = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
-
-					Double merma = a + b + c + d + e + f + g + h + i + k; 
+						Double a = map.containsKey(QualitySheetCode.UFQCC161.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC161.getName())) : 0.0;
+						Double b = map.containsKey(QualitySheetCode.UFQCC031.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC031.getName())) : 0.0;
+						Double c = map.containsKey(QualitySheetCode.UFQCC051.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC051.getName())) : 0.0;
+						Double d = map.containsKey(QualitySheetCode.UFQCC171.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC171.getName())) : 0.0;
+						Double e = map.containsKey(QualitySheetCode.UFQCC041.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC041.getName())) : 0.0;
+						Double f = map.containsKey(QualitySheetCode.UFQCC181.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC181.getName())) : 0.0;
+						Double g = map.containsKey(QualitySheetCode.UFQCC091.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC091.getName())) : 0.0;
+						Double h = map.containsKey(QualitySheetCode.UFQCC111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC111.getName())) : 0.0;
+						Double i = map.containsKey(QualitySheetCode.UFQCC081.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC081.getName())) : 0.0;
+						Double j = map.containsKey(QualitySheetCode.UFQCC101.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCC101.getName())) : 0.0;
+						Double k = map.containsKey(QualitySheetCode.UFQCD111.getName()) ? Double.parseDouble(map.get(QualitySheetCode.UFQCD111.getName())) : 0.0;
+						
+						Double merma = a + b + c + d + e + f + g + h + i + k; 
+						
+						if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
+							merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+						}	
+						
+						PdfPTable tb = new PdfPTable(20);
+						try {
+							tb.setWidths(medidaCeldasB);
+						} catch (DocumentException e1) {
+							LOGGER.log(Level.SEVERE, e1.getMessage());
+						}
+						tb.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+						tb.setWidthPercentage(100);	
+						
+						tb.addCell(cell(r.getCode()));
+						tb.addCell(cell(AonDateUtils.simpleFormat(r.getResponseDate())));
+						tb.addCell(cell(income.isPresent() ? income.get().getSupplierName() : "-"));
+						tb.addCell(cell(carrierPacking != null ? carrierPacking.getNumberPlate() : "-"));
+						tb.addCell(cell(incomeDetail.isPresent() ? Double.toString(incomeDetail.get().getQuantity()) : "0.0"));
+						tb.addCell(cell(incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-"));
+						tb.addCell(cell(incomeDetail.isPresent() ? incomeDetail.get().getPrice().toString() : "0.0"));
+						tb.addCell(cell(a.toString()));
+						tb.addCell(cell(b.toString()));
+						tb.addCell(cell(c.toString()));
+						tb.addCell(cell(d.toString()));
+						tb.addCell(cell(e.toString()));
+						tb.addCell(cell(f.toString()));
+						tb.addCell(cell(g.toString()));
+						tb.addCell(cell(h.toString()));
+						tb.addCell(cell(i.toString()));
+						tb.addCell(cell("(" + j + ")->"));
+						tb.addCell(cell(k.toString()));
+						tb.addCell(cell(map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
+								? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): ""));
+						tb.addCell(cell(merma.toString()));
 					
-					if(Double.parseDouble(incomeDetail.get().getDiscountExpression()) > 0.0){
-						merma = Double.parseDouble(incomeDetail.get().getDiscountExpression());
+						p.addCell(tb);
 					}
-
-					PdfPTable tb = new PdfPTable(20);
-					try {
-						tb.setWidths(medidaCeldasB);
-					} catch (DocumentException e1) {
-						LOGGER.log(Level.SEVERE, e1.getMessage());
-					}
-					tb.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-					tb.setWidthPercentage(100);	
-			
-					tb.addCell(cell(r.getCode()));
-					tb.addCell(cell(AonDateUtils.simpleFormat(r.getResponseDate())));
-					tb.addCell(cell(income.isPresent() ? income.get().getSupplierName() : "-"));
-					tb.addCell(cell(carrierPacking != null ? carrierPacking.getNumberPlate() : "-"));
-					tb.addCell(cell(incomeDetail.isPresent() ? Double.toString(incomeDetail.get().getQuantity()) : "0.0"));
-					tb.addCell(cell(incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-"));
-					tb.addCell(cell(incomeDetail.isPresent() ? incomeDetail.get().getPrice().toString() : "0.0"));
-					tb.addCell(cell(a.toString()));
-					tb.addCell(cell(b.toString()));
-					tb.addCell(cell(c.toString()));
-					tb.addCell(cell(d.toString()));
-					tb.addCell(cell(e.toString()));
-					tb.addCell(cell(f.toString()));
-					tb.addCell(cell(g.toString()));
-					tb.addCell(cell(h.toString()));
-					tb.addCell(cell(i.toString()));
-					tb.addCell(cell("(+)->"));
-					tb.addCell(cell(k.toString()));
-					tb.addCell(cell(map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
-							? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): ""));
-					tb.addCell(cell(merma.toString()));
-					
-					p.addCell(tb);
-				}
+				}	
 			}
 		});
 		
@@ -567,6 +642,12 @@ public class printQualityList extends HttpServlet{
 		cell.setCellStyle(getStyle2(libro, row));	
 		return cell;
 	}
+	private Cell cellFormula(HSSFWorkbook libro, Row row, Integer index, String formula) {
+		Cell cell = row.createCell(index);
+		cell.setCellFormula(formula);
+		cell.setCellStyle(getStyle2(libro, row));	
+		return cell;
+	}
 	
 	private CellStyle getStyle(HSSFWorkbook libro, Row row){		
 		row.setHeightInPoints(16);
@@ -581,9 +662,10 @@ public class printQualityList extends HttpServlet{
 	}
 	
 	private CellStyle getStyle2(HSSFWorkbook libro, Row row){	
-	 CellStyle style2 = libro.createCellStyle();
-     HSSFFont font2 = libro.createFont();
-     font2.setFontHeightInPoints((short)12);
+		row.setHeightInPoints(16);
+		CellStyle style2 = libro.createCellStyle();
+		HSSFFont font2 = libro.createFont();
+		font2.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
 		style2.setAlignment(CellStyle.ALIGN_RIGHT);
 		style2.setBorderBottom(CellStyle.BORDER_THIN);
@@ -593,6 +675,7 @@ public class printQualityList extends HttpServlet{
 	}
 	
 	private CellStyle getStyle3(HSSFWorkbook libro, Row row){	
+		row.setHeightInPoints(16);
 		CellStyle style3 = libro.createCellStyle();
      	HSSFFont font2 = libro.createFont();
      	font2.setFontHeightInPoints((short)12);
