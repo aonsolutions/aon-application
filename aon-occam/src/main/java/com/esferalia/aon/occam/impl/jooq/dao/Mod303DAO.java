@@ -16,6 +16,7 @@ import org.mvel2.MVEL;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
@@ -125,10 +127,9 @@ public class Mod303DAO extends FiscalModelDAO {
 		initializeFiscalModel(ctx, mod303);
 		declarationChanged(ctx, mod303);
 		
-		// Registro de devolucion.
 		// Cálculo por diferencia.
-		
-		
+		String diff = AppParamDAO.fetchValue(ctx, AppParam.FS_MOD303_BY_DIFFERENCE_DISABLED);
+		mod303.setDiffCalculationDisabled(AonStringUtils.equals(diff, AonStringUtils.ONE));
 		return mod303;
 	}
 	

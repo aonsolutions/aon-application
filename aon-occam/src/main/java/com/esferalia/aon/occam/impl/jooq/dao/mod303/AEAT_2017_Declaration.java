@@ -3,8 +3,11 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -16,6 +19,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		
 	}
 	
+	/*
+		// Criterio de caja.
+		AonConfiguration conf = ;
+		;
+
+		// Registro de devolucion.
+		String taxRefund = AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY);
+	 */
 	private static final double PERCENT1 = 4.0;
 	private static final double PERCENT2 = 10.0;
 	private static final double PERCENT3 = 21.0;
@@ -39,14 +50,15 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	};
 
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
-		 CM_002(Mod303Key.CM_002)
+		 CM_002(Mod303Key.CM_002,null,null,(ctx,mod) -> add(Mod303Key.CM_002,mod,(
+				 AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE))?1:0),null,null)
 		,CM_003(Mod303Key.CM_003)
 		,CT_A02(Mod303Key.CT_A02,null,null,(ctx,mod) -> add(Mod303Key.CT_A02,mod,2),null,null)
 		,CT_A03(Mod303Key.CT_A03)
 		,CT_A04(Mod303Key.CT_A04)
 		,CT_A05(Mod303Key.CT_A05)
 		,CT_A06(Mod303Key.CT_A06)
-		,CT_A07(Mod303Key.CT_A07)	// Ventas  Criterio de caja. Se incializa en la casilla 063.
+		,CT_A07(Mod303Key.CT_A07,null,null,(ctx,mod) -> add(Mod303Key.CT_A07,mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment()?1:0),null,null)
 		,CT_A08(Mod303Key.CT_A08)	// Compras Criterio de caja. Se incializa en la casilla 075.
 		,CT_A09(Mod303Key.CT_A09)
 		,CT_A10(Mod303Key.CT_A10)
@@ -285,7 +297,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_C63(Mod303Key.CT_C63,null,null, (ctx,mod) -> {
 			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
 			add( Mod303Key.CT_C63, mod, quota );
-			add( Mod303Key.CT_A07, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
+			add( Mod303Key.CT_A07, mod, AonMathUtils.isZero(quota)? mod.getAmount(Mod303Key.CT_A07):(1.0)); 
 			}
 		,null,null)
 		
