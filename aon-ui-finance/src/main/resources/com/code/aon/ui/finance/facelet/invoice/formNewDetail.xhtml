@@ -20,7 +20,7 @@
 				<ui:param name="skipLabel" value="#{true}" />
 				<ui:param name="skipSuggestText" value="#{detailController.to.item != null and detailController.to.item.id != null}" />
 				<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
-				<ui:param name="lookupReRender"	value="#{formName}" />
+				<ui:param name="lookupReRender"	value="#{formName}#{invoiceController.nevv?'-New':''}" />
 				<aon:methodParam name="lookupChangeListener"
 					value="#{detailController.onItemChanged}" type="lookupChangeListener" />
 			</ui:include>
@@ -32,7 +32,7 @@
 				<ui:param name="skipLabel" value="#{true}" />
 				<ui:param name="skipSuggestText" value="#{detailController.to.item != null and detailController.to.item.id != null}" />
 				<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
-				<ui:param name="lookupReRender"	value="#{formName}" />
+				<ui:param name="lookupReRender"	value="#{formName}#{invoiceController.nevv?'-New':''}" />
 				<aon:methodParam name="lookupChangeListener"
 					value="#{detailController.onItemChanged}" type="lookupChangeListener" />
 			</ui:include>

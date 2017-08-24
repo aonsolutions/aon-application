@@ -10,7 +10,7 @@
 	<aon:panelGrid columns="2" 
 		columnClasses="aon-vertical-align-top, aon-vertical-align-top">
 	
-		<aon:div styleClass="aon-width-700">
+		<aon:div id="#{formName}-New" styleClass="aon-width-700">
 			<aon:div styleClass="aon-group">
 				<aon:div styleClass="aon-group-title">
 					<aon:outputText value="#{bundle.finance_invoice_data}"/>
@@ -83,45 +83,39 @@
 				</aon:panelGrid>
 	
 			</aon:panelCollapsible>
-			<aon:if test="#{domainSwitcher.alphaDomain}">
-				<aon:if test="#{showAttachPanel}">
-					<aon:panelCollapsible id="invoiceAttach-panel"
-						expanded="true" immediate="true" label="#{bundle.webmail_attach_files}">
-						<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewAttach.xhtml" />
-						<aon:div rendered="#{invoiceController.invoiceAttachFile.size > 0}">
-							<aon:outputText value="#{invoiceController.invoiceAttachFile.fileName}"/>
-							<aon:div style="margin-left: 0.4em;"
-								styleClass="rich-fileupload-button rich-fileupload-button-content">
-								<a4j:commandButton ajaxSingle="true"
-									action="#{invoiceController.clearInvoiceAttachUploadData}"
-									reRender="invoiceAttach-panel, invoiceAttachPreview-panel"
-									value="#{bundle.aon_clear}" title="#{bundle.aon_remove}"
-									styleClass="aon-icon-commandButton aon-icon-close" />
-							</aon:div>
-						</aon:div>
-					</aon:panelCollapsible>
-				</aon:if>
+			<aon:if test="#{domainSwitcher.alphaDomain and showAttachPanel}">
+				<aon:panelCollapsible id="invoiceAttach-panel"
+					expanded="true" immediate="true" label="#{bundle.webmail_attach_files}">
+					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewAttach.xhtml" />
+					<aon:div rendered="#{invoiceController.invoiceAttachFile.size > 0}">
+						<aon:outputText value="#{invoiceController.invoiceAttachFile.fileName}"/>
+						<a4j:commandButton ajaxSingle="true"
+							action="#{invoiceController.clearInvoiceAttachUploadData}"
+							title="#{bundle.aon_remove}"
+							reRender="invoiceAttach-panel, invoiceAttachPreview-panel"
+							style="margin-left: 0.4em;"
+							styleClass="aon-editDataTable-button aon-icon-delete" />
+					</aon:div>
+				</aon:panelCollapsible>
 			</aon:if>
 	
 		</aon:div>
 		
-		<aon:if test="#{domainSwitcher.alphaDomain}">
-			<aon:if test="#{showAttachPanel}">
-				<aon:div id="invoiceAttachPreview-panel">
-					<aon:div id="invoiceAttachPreview-group"
-						styleClass="aon-group">
-						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{bundle.aon_preview}"/>
-						</aon:div>
-						<aon:div styleClass="aon-group-body"> 
-							<aon:div styleClass="aon-group-body-internal">
-								<aon:div id="invoiceAttachPreview-content">
-								</aon:div>
+		<aon:if test="#{domainSwitcher.alphaDomain and showAttachPanel}">
+			<aon:div id="invoiceAttachPreview-panel" style="display: none;">
+				<aon:div id="invoiceAttachPreview-group"
+					styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{bundle.aon_preview}"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+							<aon:div id="invoiceAttachPreview-content">
 							</aon:div>
 						</aon:div>
 					</aon:div>
 				</aon:div>
-			</aon:if>
+			</aon:div>
 		</aon:if>
 			
 	</aon:panelGrid>

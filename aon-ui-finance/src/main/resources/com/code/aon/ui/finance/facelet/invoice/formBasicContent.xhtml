@@ -120,7 +120,7 @@
 			<ui:param name="lookupInputNameValue" value="#{invoiceController.to.registryName}" />
 			<ui:param name="lookupDisabled" value="#{invoiceController.registryReadOnly or !financeController.allPending}" />
 			<ui:param name="lookupInputNameDisabled" value="#{invoiceController.readOnly or !financeController.allPending}" />
-			<ui:param name="lookupReRender" value="#{formName}" />
+			<ui:param name="lookupReRender" value="#{formName}#{invoiceController.nevv?'-New':''}" />
 			<ui:param name="idRequired" value="#{true}" />						
 			<ui:param name="skipSuggestText" 
 				value="#{invoiceController.to.registry != null and invoiceController.to.registry.id != null}" />
@@ -135,7 +135,7 @@
 			<ui:param name="lookupInputNameValue" value="#{invoiceController.to.registryName}" />
 			<ui:param name="lookupDisabled" value="#{invoiceController.registryReadOnly or !financeController.allPending}" />
 			<ui:param name="lookupInputNameDisabled" value="#{invoiceController.readOnly or !financeController.allPending}" />
-			<ui:param name="lookupReRender" value="#{formName}" />
+			<ui:param name="lookupReRender" value="#{formName}#{invoiceController.nevv?'-New':''}" />
 			<ui:param name="idRequired" value="#{true}" />						
 			<ui:param name="skipSuggestText" 
 				value="#{invoiceController.to.registry != null and invoiceController.to.registry.id != null}" />

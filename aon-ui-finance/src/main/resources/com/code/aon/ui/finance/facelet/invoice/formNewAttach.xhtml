@@ -38,7 +38,7 @@
 			background-image: none;
 			background-color: transparent;
 		} 
-		.rich-fileupload-font{
+		.rich-fileupload-font {
 			color: transparent !important;
 		}
 		.rich-fileupload-anc, .rich-fileupload-ico-stop {
@@ -50,32 +50,30 @@
 	<script type="text/javascript">
 	//<![CDATA[
 		var sourceId = 'invoiceAttach-upload';
-		var targetId = 'invoiceAttachPreview-content';
-		
+		var previewPanelId = 'invoiceAttachPreview-panel';
+		var previewContentId = 'invoiceAttachPreview-content';		
 		drawThumbnail(1, 1.0);
-		
-	 	PDFJS.disableWorker = true;
 	 	function drawThumbnail(_pageNumber = 1, _zoomRatio = 1.0) {
-	 	    var pdf = document.getElementById( search(sourceId) + ':file' );
-	 	    // REMOVE
-	 	 	//alert(pdf.files.length);
-	 	 	if (file = pdf.files[0]) {
+	 	    var inputFile = document.getElementById( search(sourceId) + ':file' );
+	 	 	if (file = inputFile.files[0]) {
 	 	 	  fileReader = new FileReader();
 	 	 	  fileReader.onload = function(ev) {
 	 	 	    console.log(ev);
 	 		    PDFJS.getDocument(fileReader.result).then(function(pdf){ 
 	 		        pdf.getPage(_pageNumber).then(function (page) {
-	 		            drawPage(page, _zoomRatio, search(targetId));
+	 		            drawPage(page, _zoomRatio);
 	 		        });
 	 		    });
 	 	 	  };
 	 	 	  fileReader.readAsArrayBuffer(file);
 	 	 	}
 	 	}
-		function drawPage(page, _zoomRatio, _containerId) {
+		function drawPage(page, _zoomRatio) {
+			var panel = document.getElementById( search(previewPanelId) );
+			panel.style.display = "block";
 			var scale = _zoomRatio;
 		    var viewport = page.getViewport(scale);
-		    var container = document.getElementById( _containerId );
+		    var container = document.getElementById( search(previewContentId) );
 		    while (container.lastChild) {
 		    	container.removeChild(container.lastChild);
 		    }
@@ -101,30 +99,14 @@
 	
 	<aon:div id="filedrag" styleClass="filedrag">
 		<aon:fileUpload id="invoiceAttach-upload" ajaxSingle="true"
-			listWidth="100"
+			listWidth="100" acceptedTypes="pdf" 
+			immediateUpload="#{true}" allowFlash="#{false}"
 			fileUploadListener="#{invoiceController.invoiceAttachFileUploaded}"
-			immediateUpload="#{true}" autoClear="#{false}"
-			acceptedTypes="pdf" allowFlash="#{false}"
-			onadd="drawThumbnail();"
-			onchange="drawThumbnail();"
-			>
-			<!--
-			onadd="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
-			onchange="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
-			  
-			onupload="drawThumbnail(#{rich:element('invoiceAttach-upload')}, #{rich:element('invoiceAttachPreview-image')});"
-			onadd="drawThumbnail(#{rich:clientId('invoiceAttach-upload')});"
-			onchange="drawThumbnail(#{rich:clientId('invoiceAttach-upload')});"
-			<a4j:support event="onuploadcomplete" immediate="true"
-				reRender="invoiceAttach-panel, invoiceAttachPreview-panel" />
-			<a4j:support event="onadd" immediate="true"
-				reRender="invoiceAttachPreview-panel" />
-			-->
+			onadd="drawThumbnail();" onchange="drawThumbnail();">
 			<a4j:support event="onuploadcomplete" immediate="true"
 				reRender="invoiceAttach-panel" />
 		</aon:fileUpload>
-           <br/><br/><br/>
+		<br/><br/><br/>
 	</aon:div>
 	
-
 </ui:composition>
