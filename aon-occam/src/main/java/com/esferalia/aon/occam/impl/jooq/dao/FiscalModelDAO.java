@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.conf.ParamType;
 import org.jooq.exception.DataAccessException;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -176,8 +178,7 @@ public class FiscalModelDAO {
 				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
 				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
 				.and(FS_MODEL.PERIOD.eq(fiscalModel.getPeriod().getValue()))
-				.and(FS_MODEL.ID.notEqual(fiscalModel.getId()))
-				.orderBy(FS_MODEL.PERIOD)
+				.and(fiscalModel.getId()==null?DSL.trueCondition():FS_MODEL.ID.notEqual(fiscalModel.getId()))
 				.fetch()
 				.stream()
 				.map( record -> map(record))
