@@ -607,6 +607,10 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 			return acceptValue != null;
 		}
 		@Override
+		public boolean isDiffEnabled() {
+			return hasAccepter();
+		}
+		@Override
 		public void initialize(AONContext ctx,Mod303 mod,VatContext vctx) {
 			if (initializer != null) {
 				initializer.initialize(ctx, mod, vctx);

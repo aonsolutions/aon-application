@@ -16,7 +16,6 @@ import org.mvel2.MVEL;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -51,6 +50,8 @@ public class Mod303DAO extends FiscalModelDAO {
 		,IN_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualInputInvoicesInfo(ctx, mod, script,keyDAO))))
 		,OUT_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualOutputInvoicesInfo(ctx, mod, script,keyDAO))))
 		,DIFF_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO))))
+		,DIFF_IN_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInAccrualInvoicesInfo(ctx, mod, script,keyDAO))))
+		,DIFF_OUT_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffOutAccrualInvoicesInfo(ctx, mod, script,keyDAO))))
 		,COMPUTE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getExpression(mod, script,keyDAO))))
 		,COMPUTE_KEY ( (ctx, mod, script,keyDAO) -> getComputeKey(ctx,mod, script,keyDAO))
 		;
@@ -183,7 +184,7 @@ public class Mod303DAO extends FiscalModelDAO {
 					Mod303Key key = Mod303Key.getKey(source.getType());
 					if (key != null ) {
 						IMod303KeyDAO keyDAO = dec.getKey(key);
-						if (keyDAO != null && keyDAO.hasAccepter()) {
+						if (keyDAO != null && keyDAO.isDiffEnabled()) {
 							FiscalModelDetail target = mod303.ensureDetail(key);
 							target.setDeclaredAmount(AonMathUtils.round(target.getDeclaredAmount() + source.getAmount()));
 						}
@@ -363,14 +364,35 @@ public class Mod303DAO extends FiscalModelDAO {
 					.collect(Collectors.toCollection(LinkedList::new))
 		);
 	}
-
+	private static String getDiffInAccrualInvoicesInfo(AONContext ctx, final Mod303 mod303
+			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
+		return VATFormatter.formatDiffInvoices(getDiffTitle(mod303)
+				,script.getLabel()
+				,script.getKeys()
+				,getPreviousModels(ctx,mod303)
+				 	.collect(Collectors.toCollection(LinkedList::new))
+				,getAccrualBreakdown(ctx, mod303)
+					.filter( br ->  !br.isSales()  )	
+					.collect(Collectors.toCollection(LinkedList::new))
+					);
+	}
+	private static String getDiffOutAccrualInvoicesInfo(AONContext ctx, final Mod303 mod303
+			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
+		return VATFormatter.formatDiffInvoices(getDiffTitle(mod303)
+				,script.getLabel()
+				,script.getKeys()
+				,getPreviousModels(ctx,mod303)
+				 	.collect(Collectors.toCollection(LinkedList::new))
+				,getAccrualBreakdown(ctx, mod303)
+					.filter( br ->  br.isSales()  )	
+					.collect( Collectors.toCollection(LinkedList::new) )
+					);
+	}
+	
+		
 	private static String getDiffInvoicesInfo(AONContext ctx, final Mod303 mod303
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
-		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-			+ mod303.getModelName() 
-			+ " DEL " + mod303.getPeriod().getDescription()
-			+ " DE " + mod303.getYear();
-		return VATFormatter.formatDiffInvoices(title
+		return VATFormatter.formatDiffInvoices(getDiffTitle(mod303)
 			,script.getLabel()
 			,script.getKeys()
 			,getPreviousModels(ctx,mod303)
@@ -379,6 +401,14 @@ public class Mod303DAO extends FiscalModelDAO {
 				.filter( br ->  keyDAO.acceptValue(mod303, br) )	
 				.collect(Collectors.toCollection(LinkedList::new))
 		);
+	}
+
+
+	private static String getDiffTitle(final Mod303 mod303) {
+		return "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
+				+ mod303.getModelName() 
+				+ " DEL " + mod303.getPeriod().getDescription()
+				+ " DE " + mod303.getYear();
 	}
 
 
@@ -399,15 +429,20 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		return mod303;
 	}
+	public static Stream<VatContext> getAccrualBreakdown(final AONContext ctx, final Mod303 mod303, boolean diffDisabled) {
+		Date fromDate = diffDisabled
+			?FiscalUtils.getPeriodStart(mod303)		
+			:AonDateUtils.getYearFirstDay(mod303.getYear());
+		Date toDate = FiscalUtils.getPeriodEnd(mod303);
+		return VATDAO.getAccrualBreakdown(ctx, fromDate, toDate,mod303);
+	}
 
 	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, final Mod303 mod303) {
-		Date fromDate = FiscalUtils.getPeriodStart(mod303);
-		Date toDate = FiscalUtils.getPeriodEnd(mod303);
-		return VATDAO.getAccrualBreakdown(ctx, fromDate, toDate);
+		return getAccrualBreakdown(ctx, mod303, mod303.isDiffCalculationDisabled());
 	}
 	
 	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod303 mod303) {
-		return getVatBreakdown(ctx,mod303,mod303.isDiffCalculationDisabled());
+		return getVatBreakdown(ctx,mod303, mod303.isDiffCalculationDisabled());
 	}
 	
 	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod303 mod303, boolean diffDisabled) {

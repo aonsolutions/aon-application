@@ -60,6 +60,7 @@ public class VATFormatter {
 				;
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(title, header.length())));
+		subtitle = AonStringUtils.abbreviate(subtitle, 200);
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(subtitle, header.length())));
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.leftPad(
 				"S (Servicio); I (Inversi\u00F3n); A (R\u00E9gimen agrario); R (Rectificativa); C (Criterio de caja)"
@@ -217,6 +218,7 @@ public class VATFormatter {
 		int headerLength = 100; 
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(title, headerLength)));
+		subtitle = AonStringUtils.abbreviate(subtitle, 200);
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center("(" + subtitle + ")", headerLength)));		
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
@@ -268,7 +270,6 @@ public class VATFormatter {
 		double sumDeclaredQuota = 0;
 		IFiscalModelKey baseKey = null;
 		IFiscalModelKey quotaKey = null;
-		System.out.println("length ..: " + keys.length);
 		if (keys.length == 3) {
 			baseKey = keys[0];
 			quotaKey = keys[2];

@@ -213,10 +213,10 @@ public class VATDAO  {
 				.map(new VatContextFiller())
 				;
 	}
-	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate) {
-		return getAccrualBreakdown(ctx, fromDate, toDate, null); 
+	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod303 mod303) {
+		return getAccrualBreakdown(ctx, fromDate, toDate, null, mod303); 
 	}
-	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
+	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter , Mod303 mod303) {
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
 		return ctx.getDslContext().select(
@@ -270,6 +270,7 @@ public class VATDAO  {
 				.fetch()
 				.stream()
 				.map(new VatContextFiller())
+				.peek( vat -> vat.setInsidePeriod(mod303==null ? false :FiscalUtils.isInPeriodRange(mod303, vat.getTaxDate() ) ))
 				;
 	}
 	

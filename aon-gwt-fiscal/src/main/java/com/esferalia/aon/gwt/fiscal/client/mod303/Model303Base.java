@@ -643,7 +643,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			  || infoKey == FiscalModelKeyInfo.IN_ACCRUAL_INVOICE) {
 				button.addStyleName(AON.AON_CSS.aonIconInvoice());
 			}
-			if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.AON_CSS.aonIconDiff());
+			if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE || infoKey == FiscalModelKeyInfo.DIFF_IN_ACCRUAL_INVOICE 
+			  || infoKey == FiscalModelKeyInfo.DIFF_OUT_ACCRUAL_INVOICE) {
+				button.addStyleName(AON.AON_CSS.aonIconDiff());
+			}
 			if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
 			if 	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.AON_CSS.aonIconCompanyData());
 			
