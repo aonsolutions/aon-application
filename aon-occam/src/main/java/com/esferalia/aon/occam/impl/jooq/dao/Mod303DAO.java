@@ -169,12 +169,6 @@ public class Mod303DAO extends FiscalModelDAO {
 		dec.firstInitialize(ctx, mod303);
 		Mod303DAO.getVatBreakdown(ctx,mod303)
 			.forEach( vat -> dec.initialize(ctx, mod303, vat) );
-		if (mod303.getProratePercent() != 0 && mod303.getProratePercent() != 100) {
-			for (Mod303Key key : dec.getProrateKeys()) {
-				FiscalModelDetail det = mod303.ensureDetail(key);
-				det.setAccumulatedAmount(AonMathUtils.round(det.getAccumulatedAmount() * mod303.getProratePercent() / 100));
-			}
-		}
 		
 		if (!mod303.isDiffCalculationDisabled()) {
 			getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
@@ -195,6 +189,13 @@ public class Mod303DAO extends FiscalModelDAO {
 					}
 				}
 			});
+		}
+
+		if (mod303.getProratePercent() != 0 && mod303.getProratePercent() != 100) {
+			for (Mod303Key key : dec.getProrateKeys()) {
+				FiscalModelDetail det = mod303.ensureDetail(key);
+				det.setAccumulatedAmount(AonMathUtils.round(det.getAccumulatedAmount() * mod303.getProratePercent() / 100));
+			}
 		}
 
 		for (FiscalModelDetail detail : mod303.getMap().values()) {

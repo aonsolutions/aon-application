@@ -28,10 +28,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
-		 Mod303Key.CT_C28,Mod303Key.CT_C29,Mod303Key.CT_C30,Mod303Key.CT_C31
-		,Mod303Key.CT_C32,Mod303Key.CT_C33,Mod303Key.CT_C34,Mod303Key.CT_C35
-		,Mod303Key.CT_C36,Mod303Key.CT_C37,Mod303Key.CT_C38,Mod303Key.CT_C39
-		,Mod303Key.CT_C40,Mod303Key.CT_C41,Mod303Key.CT_C42
+		 Mod303Key.CT_C29
+		,Mod303Key.CT_C31
+		,Mod303Key.CT_C33
+		,Mod303Key.CT_C35
+		,Mod303Key.CT_C37
+		,Mod303Key.CT_C39
+		,Mod303Key.CT_C41
+		,Mod303Key.CT_C42
 	};
 
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
