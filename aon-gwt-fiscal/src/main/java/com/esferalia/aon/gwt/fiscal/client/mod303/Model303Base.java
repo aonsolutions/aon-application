@@ -531,7 +531,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		final DoubleBox input = new DoubleBox(fieldSize);
 		input.setResolver(resolver);
 		fieldsMap.put(key, input);
-		input.setEnabled(this.mod303.isNotFinished() && enabled); 
+//		input.setEnabled(this.mod303.isNotFinished() && enabled); 
+		input.setEnabled(enabled); 
 		input.setValue(det1.getAmount());
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
@@ -557,7 +558,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		int row = table.getRowCount();
 		paintLabel(table, row, key.getDescription());
 		final CheckBox check = new CheckBox();
-		check.setEnabled(this.mod303.isNotFinished());
+//		check.setEnabled(this.mod303.isNotFinished());
 		check.setValue(this.mod303.ensureDetail(key).getAmount() == 1);
 		check.addClickHandler(new ClickHandler() {
 			
@@ -577,7 +578,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		final DateBoxEx dateBox = new DateBoxEx();
-		dateBox.setEnabled(mod303.isNotFinished());
+//		dateBox.setEnabled(mod303.isNotFinished());
 		if (AonStringUtils.isNotEmpty( mod303.ensureDetail(key).getDescription() ) ) {
 			dateBox.setValue( dateBox.parse(mod303.ensureDetail(key).getDescription() , false) );
 		}
@@ -597,7 +598,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		listBox.setEnabled(mod303.isNotFinished());
+//		listBox.setEnabled(mod303.isNotFinished());
 		listBox.setSelectedIndex( (int) mod303.ensureDetail(key).getAmount() );
 		listBox.addChangeHandler( new ChangeHandler() {
 			

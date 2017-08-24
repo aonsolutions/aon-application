@@ -295,7 +295,7 @@ public class Model3032017AEAT extends Model303Base {
 			receiptBox.setVisibleLength(15);
 			receiptBox.setMaxLength(13);
 			receiptBox.setStyleName(AON.AON_CSS.aonInputText());
-			receiptBox.setEnabled(mod303.isNotFinished());
+//			receiptBox.setEnabled(mod303.isNotFinished());
 			receiptBox.setValue( mod303.getReplacedNumber() );
 			receiptBox.addValueChangeHandler( new ValueChangeHandler<String>() {
 				@Override
