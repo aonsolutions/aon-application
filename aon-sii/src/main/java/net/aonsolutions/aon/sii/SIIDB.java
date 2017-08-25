@@ -54,7 +54,7 @@ public class SIIDB {
     	
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
     		Integer invoice = invoiceList.get(i);
-    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
+    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
     				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
     				.and(f.getSourceIdProperty().eq(invoice)));
     		if(di == null){
@@ -213,7 +213,7 @@ public class SIIDB {
 		
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
     		Integer invoice = invoiceList.get(i);
-    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
+    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
     				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
     				.and(f.getSourceIdProperty().eq(invoice)));
     		if(di != null && (status.get(invoice).equals("Correcto") || status.get(invoice).equals("Correcto"))){
@@ -287,7 +287,7 @@ public class SIIDB {
     	}
     	
     	for(Integer i : invoiceList){
-    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
+    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
     				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
     				.and(f.getSourceIdProperty().eq(i)));
     		
