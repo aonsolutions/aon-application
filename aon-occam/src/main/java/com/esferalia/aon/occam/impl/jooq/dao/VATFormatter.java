@@ -373,8 +373,6 @@ public class VATFormatter {
 					+ AonStringUtils.rightPad(" ",45)
 					));
 		}
-		
-		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat("-", headerLength)));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD_LIGHT_BLUE,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.leftPad("TOTAL DECLARADO (B):",40)
 				+ AonStringUtils.SPACE

@@ -77,8 +77,9 @@ public enum Model3032017ARABARScript1 implements IModelScript<Mod303Key> {
 	
 	@Override
 	public int getFieldSize(Mod303Key key) {
-		if (key == Mod303Key.CT_C02 || key == Mod303Key.CT_C05|| key == Mod303Key.CT_C08
-		 || key == Mod303Key.CT_C17 || key == Mod303Key.CT_C20|| key == Mod303Key.CT_C23) {
+		if (key == Mod303Key.AR_C002 || key == Mod303Key.AR_C205 || key == Mod303Key.AR_C208
+		 || key == Mod303Key.AR_C011 || key == Mod303Key.AR_C214 || key == Mod303Key.AR_C217
+		 || key == Mod303Key.AR_C020 || key == Mod303Key.AR_C223 || key == Mod303Key.AR_C226) {
 			return PERCENT_FIELD_LENGTH;	
 		}
 		return IModelScript.super.getFieldSize(key);
@@ -86,8 +87,9 @@ public enum Model3032017ARABARScript1 implements IModelScript<Mod303Key> {
 	
 	@Override
 	public boolean isEnabled(Mod303Key key) {
-		if (key == Mod303Key.CT_C02 || key == Mod303Key.CT_C05|| key == Mod303Key.CT_C08
-		 || key == Mod303Key.CT_C17 || key == Mod303Key.CT_C20|| key == Mod303Key.CT_C23) {
+		if (key == Mod303Key.AR_C002 || key == Mod303Key.AR_C205 || key == Mod303Key.AR_C208
+		 || key == Mod303Key.AR_C011 || key == Mod303Key.AR_C214 || key == Mod303Key.AR_C217
+		 || key == Mod303Key.AR_C020 || key == Mod303Key.AR_C223 || key == Mod303Key.AR_C226) {
 			return false;	
 		}
 		return IModelScript.super.isEnabled(key);

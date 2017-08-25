@@ -3,8 +3,11 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -48,10 +51,11 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
 		 BZ_C185_1	(Mod303Key.BZ_C185_1)
 		,BZ_C185_2	(Mod303Key.BZ_C185_2)
-		,BZ_C186	(Mod303Key.BZ_C186)		// Ventas  Criterio de caja. Se incializa en la casilla 201.
+		,BZ_C186	(Mod303Key.BZ_C186,false,null,null,(ctx,mod) -> add(Mod303Key.BZ_C186,mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment()?1:0),null,null)
 		,BZ_C187	(Mod303Key.BZ_C187)		// Compras Criterio de caja. Se incializa en la casilla 202.
 		
-		,CM_002		(Mod303Key.CM_002)
+		,CM_002(Mod303Key.CM_002,false,null,null,(ctx,mod) -> add(Mod303Key.CM_002,mod,(
+				 AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE))?1:0),null,null)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEVENGADO
@@ -314,7 +318,6 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		,BZ_C201	(Mod303Key.BZ_C201,true,null,null,(ctx,mod) -> {
 			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
 			add( Mod303Key.BZ_C201, mod, quota );
-			add( Mod303Key.BZ_C186, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
 			}
 		,null,null)
 		
