@@ -23,4 +23,7 @@ public interface IModelScript<T extends IFiscalModelKey> {
 	default boolean isEnabled(T key) {
 		return (getInfoKeys()[0] != COMPUTE && getInfoKeys()[0] != TITLE);
 	}
+	default KeyTypes[] getKeyTypes() {
+		return null;
+	}
 }

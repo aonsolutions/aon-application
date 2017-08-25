@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
+import com.esferalia.aon.occam.api.model.fiscal.KeyTypes;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -29,8 +30,10 @@ public class VATFormatter {
 	static final String DIV_MSG_BLUE_BORDER_BOTTOM = "<div style=\"color: blue; border-bottom:solid blue 1px;\">{0}</div>";
 	static final String DIV_MSG_BOLD= "<div><b>{0}</b></div>";
 	static final String DIV_MSG_BOLD_BORDER_BOTTOM = "<div style=\"border-bottom:solid black 1px;\"><b>{0}</b></div>";
+	static final String DIV_MSG_BOLD_LIGHT_BLUE= "<div style=\"color: RoyalBlue;\"><b>{0}</b></div>";
 	static final String DIV_MSG_BOLD_BLUE= "<div style=\"color: blue;\"><b>{0}</b></div>";
 	private static final String SPAN_MSG_ORANGE= "<span style=\"color: orange;\">{0}</span>";
+	private static final String SPAN_MSG_GRAY= "<span style=\"color: gray;\">{0}</span>";
 	private static final String SPAN_MSG_RED= "<span style=\"color: red;\">{0}</span>";
 	
 	public static String formatInvoices(String title, String subtitle, Collection<VatContext> list) {
@@ -60,8 +63,10 @@ public class VATFormatter {
 				;
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(title, header.length())));
-		subtitle = AonStringUtils.abbreviate(subtitle, 200);
-		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(subtitle, header.length())));
+		if (AonStringUtils.isNotBlank(subtitle)) {
+			subtitle = AonStringUtils.abbreviate(subtitle, 200);
+			buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(subtitle, header.length())));
+		}
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.leftPad(
 				"S (Servicio); I (Inversi\u00F3n); A (R\u00E9gimen agrario); R (Rectificativa); C (Criterio de caja)"
 				, header.length())));
@@ -212,107 +217,199 @@ public class VATFormatter {
 	public static String formatDiffInvoices(String title
 			,String subtitle
 			,IFiscalModelKey[] keys
-			, LinkedList<FiscalModel> models
-			, LinkedList<VatContext> list) {
+			,KeyTypes[] keyTypes
+			,LinkedList<FiscalModel> models
+			,LinkedList<VatContext> list) {
+
+		IFiscalModelKey baseKey = null;
+		IFiscalModelKey quotaKey = null;
+		IFiscalModelKey quotaDedKey = null;
+		if (keyTypes == null) {
+			if (keys.length == 4) {
+				baseKey = keys[0];
+				quotaKey = keys[2];
+				quotaDedKey = keys[3];
+			} else if (keys.length == 3) {
+				baseKey = keys[0];
+				quotaKey = keys[2];
+			} else if (keys.length == 2) {
+				baseKey = keys[0];
+				quotaKey = keys[1];
+			} else {
+				quotaKey = keys[0];
+			}
+		} else {
+			for (int i = 0; i < keyTypes.length; i++) {
+				if (keyTypes[i] == KeyTypes.BASE) {
+					baseKey = keys[i];
+				} else if (keyTypes[i] == KeyTypes.QUOTA) {
+					quotaKey = keys[i];	
+				} else if (keyTypes[i] == KeyTypes.DEDUCTIBLE_QUOTA) {
+					quotaDedKey = keys[i];	
+				}
+			}
+		}
+		boolean hasBase = baseKey != null;
+		boolean hasQuota = quotaKey != null;
+		boolean hasQuotaDed = quotaDedKey != null;		
+		
 		StringBuilder buf = new StringBuilder();
-		int headerLength = 100; 
+		int headerLength = 105; 
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(title, headerLength)));
-		subtitle = AonStringUtils.abbreviate(subtitle, 200);
-		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center("(" + subtitle + ")", headerLength)));		
+		if (AonStringUtils.isNotBlank(subtitle)) {
+			subtitle = AonStringUtils.abbreviate(subtitle, 200);
+			buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center("(" + subtitle + ")", headerLength)));		
+		}
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
 		
 		double sumBase = 0;
 		double sumQuota = 0;
+		double sumQuotaDed = 0;
 		double sumBeforePeriodBase = 0;
 		double sumBeforePeriodQuota = 0;
+		double sumBeforePeriodQuotaDed = 0;
 		double sumPeriodBase = 0;
 		double sumPeriodQuota = 0;
+		double sumPeriodQuotaDed = 0;
 
 		for (VatContext br : list) {
 			sumBase += br.getBase(); 
 			sumQuota += br.getQuota();
+			sumQuotaDed += br.getDeductibleQuota();
+			
 			sumBeforePeriodBase += br.isInsidePeriod()?0.0:br.getBase(); 
 			sumBeforePeriodQuota += br.isInsidePeriod()?0.0:br.getQuota();
+			sumBeforePeriodQuotaDed += br.isInsidePeriod()?0.0:br.getDeductibleQuota();
+			
 			sumPeriodBase += br.isInsidePeriod()?br.getBase():0.0; 
 			sumPeriodQuota += br.isInsidePeriod()?br.getQuota():0.0;
+			sumPeriodQuotaDed += br.isInsidePeriod()?br.getDeductibleQuota():0.0;
 		}
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.rightPad("<b>RESUMEN ACUMULADOS</b>",47)
+				+ AonStringUtils.SPACE
+				+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Base impon."),49))		
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Cuota"),49))		
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Cuota deduc."),49))		
+				+ AonStringUtils.repeat(" ", 2)
+				));
+		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
+
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.leftPad("ACUMULADO HASTA INICIO DEL PER\u00CDODO :",40)
 				+ AonStringUtils.SPACE
-				+ AonStringUtils.leftPad(DEC.format(sumBeforePeriodBase),15)		
-				+ AonStringUtils.rightPad(" ",8)
-				+ AonStringUtils.leftPad(DEC.format(sumBeforePeriodQuota),15)
+				+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumBeforePeriodBase),15))		
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumBeforePeriodQuota),15))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumBeforePeriodQuotaDed),15))
 				+ AonStringUtils.repeat(" ", 2)
 				));
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.leftPad("ACUMULADO PER\u00CDODO :",40)
 				+ AonStringUtils.SPACE
-				+ AonStringUtils.leftPad(DEC.format(sumPeriodBase),15)		
-				+ AonStringUtils.rightPad(" ",8)
-				+ AonStringUtils.leftPad(DEC.format(sumPeriodQuota),15)
+				+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumPeriodBase),15))		
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumPeriodQuota),15))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumPeriodQuotaDed),15))
 				+ AonStringUtils.repeat(" ", 2)
 				));
 
-		buf.append(MessageFormat.format(DIV_MSG_BOLD_BLUE,AonStringUtils.repeat(" ", 2)
+		buf.append(MessageFormat.format(DIV_MSG_BOLD_LIGHT_BLUE,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.leftPad("ACUMULADO DESDE 1 DE ENERO (A):",40)
 				+ AonStringUtils.SPACE
-				+ AonStringUtils.leftPad(DEC.format(sumBase),15)		
-				+ AonStringUtils.rightPad(" ",8)
-				+ AonStringUtils.leftPad(DEC.format(sumQuota),15)
+				+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumBase),15))		
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumQuota),15))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumQuotaDed),15))
 				+ AonStringUtils.repeat(" ", 2)
 				));
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
-		buf.append(MessageFormat.format(DIV_MSG,"Declaraciones anteriores "));
-		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat("-", headerLength)));
+
 		double sumDeclaredBase = 0;
 		double sumDeclaredQuota = 0;
-		IFiscalModelKey baseKey = null;
-		IFiscalModelKey quotaKey = null;
-		if (keys.length == 3) {
-			baseKey = keys[0];
-			quotaKey = keys[2];
-		} else if (keys.length == 2) {
-			baseKey = keys[0];
-			quotaKey = keys[1];
-		} else {
-			quotaKey = keys[0];
-		}
-		for (FiscalModel fm : models) {
+		double sumDeclaredQuotaDed = 0;
+
+		if (models.size() > 0) {
 			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
-					+ AonStringUtils.leftPad( fm.getPeriod().getDescription(),40)
-					+ AonStringUtils.rightPad(fm.isComplementary()?" [Comp.]":fm.isReplacement()?" [Sust.]":" ",16)
-					+ AonStringUtils.leftPad(DEC.format(baseKey!=null?fm.getAmount(baseKey):0.0),15)		
-					+ AonStringUtils.rightPad(" ",8)
-					+ AonStringUtils.leftPad(DEC.format(fm.getAmount(quotaKey)),15)
+					+ AonStringUtils.rightPad("<b>DECLARACIONES ANTERIORES</b>",47)
+					+ AonStringUtils.SPACE
+					+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Base impon."),49))		
+					+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+					+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Cuota"),49))		
+					+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+					+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Cuota deduc."),49))		
 					+ AonStringUtils.repeat(" ", 2)
 					));
-			sumDeclaredBase += baseKey!=null?fm.getAmount(baseKey):0.0;
-			sumDeclaredQuota += fm.getAmount(quotaKey);
+			buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
+			for (FiscalModel fm : models) {
+				buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
+						+ AonStringUtils.leftPad( 
+								AonStringUtils.trim(fm.getPeriod().getDescription()) + (fm.isComplementary()?" [Comp.]:":fm.isReplacement()?" [Sust.]:":":")
+								,40)
+						+ AonStringUtils.SPACE
+						+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(fm.getAmount(baseKey)),15))		
+						+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+						+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(fm.getAmount(quotaKey)),15))
+						+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+						+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(fm.getAmount(quotaDedKey)),15))
+						+ AonStringUtils.repeat(" ", 2)
+						));
+				sumDeclaredBase += hasBase?fm.getAmount(baseKey):0.0;
+				sumDeclaredQuota += hasQuota?fm.getAmount(quotaKey):0.0;
+				sumDeclaredQuotaDed += hasQuotaDed?fm.getAmount(quotaDedKey):0.0;
+			}
+	
+		} else {
+			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
+					+ AonStringUtils.leftPad("<b>NO HAY DECLARACIONES ANTERIORES</b>",25)
+					+ AonStringUtils.SPACE
+					+ AonStringUtils.rightPad(" ",45)
+					));
 		}
-
-		double sumToDeclareBase = sumBase - sumDeclaredBase;
-		double sumToDeclareQuota = sumQuota - sumDeclaredQuota;
 		
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat("-", headerLength)));
-		buf.append(MessageFormat.format(DIV_MSG_BOLD_BLUE,AonStringUtils.repeat(" ", 2)
+		buf.append(MessageFormat.format(DIV_MSG_BOLD_LIGHT_BLUE,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.leftPad("TOTAL DECLARADO (B):",40)
 				+ AonStringUtils.SPACE
-				+ AonStringUtils.leftPad(" ",15)
-				+ AonStringUtils.leftPad(DEC.format(sumDeclaredBase),15)		
-				+ AonStringUtils.rightPad(" ",8)
-				+ AonStringUtils.leftPad(DEC.format(sumDeclaredQuota),15)
+				+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumDeclaredBase),15))		
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumDeclaredQuota),15))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumDeclaredQuotaDed),15))
+				+ AonStringUtils.repeat(" ", 2)
+				));
+		
+		double sumToDeclareBase = sumBase - sumDeclaredBase;
+		double sumToDeclareQuota = sumQuota - sumDeclaredQuota;
+		double sumToDeclareQuotaDed = sumQuotaDed - sumDeclaredQuotaDed;
+
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.rightPad("<b>RESULTADO</b>",47)
+				+ AonStringUtils.SPACE
+				+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Base impon."),49))		
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Cuota"),49))		
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(MessageFormat.format(SPAN_MSG_GRAY,"Cuota deduc."),49))		
 				+ AonStringUtils.repeat(" ", 2)
 				));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
-		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat(" ", 2)
+		buf.append(MessageFormat.format(DIV_MSG_BOLD_BLUE,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.leftPad("TOTAL A DECLARAR (A-B):",40)
 				+ AonStringUtils.SPACE
-				+ AonStringUtils.leftPad(" ",15)
-				+ AonStringUtils.leftPad(DEC.format(sumToDeclareBase),15)		
-				+ AonStringUtils.rightPad(" ",8)
-				+ AonStringUtils.leftPad(DEC.format(sumToDeclareQuota),15)
+				+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumToDeclareBase),15))		
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumToDeclareQuota),15))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
+				+ (!hasQuotaDed?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumToDeclareQuotaDed),15))
 				+ AonStringUtils.repeat(" ", 2)
 				));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
