@@ -1217,12 +1217,26 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 						getAPI().getWarehouse().deleteDetail("income", requestData, new AsyncCallback<JsOrder>() {
 							@Override
 							public void onSuccess(JsOrder result) {
-								updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity, saldar);
+								if("1".equals(income.getDetailCount() + "")) {
+									String requestData = "{"
+											+ "\"id\":\""+ income.getId() +"\""
+											+ "}";
+									getAPI().getWarehouse().deleteOrder("income", requestData, new AsyncCallback<JsOrder>() {
+										@Override
+										public void onSuccess(JsOrder result) {
+											updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity, saldar);
+										}
+											
+										@Override
+										public void onFailure(Throwable caught) {}
+									});
+								} else updatePurchaseDetailDelivered(incomeDetail.getPurchaseDetail(), -quantity, saldar);
 							}
 							
 							@Override
 							public void onFailure(Throwable caught) {}
 						});
+						
 					} else {
 						String requestData = "{\"quantity\":\""+ (incomeDetail.getQuantity() - quantity) +"\","
 								+ "\"id\":\""+ incomeDetail.getId() +"\""

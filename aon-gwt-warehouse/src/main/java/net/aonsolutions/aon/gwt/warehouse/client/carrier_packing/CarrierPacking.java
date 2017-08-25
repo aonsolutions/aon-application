@@ -246,9 +246,16 @@ public class CarrierPacking extends AonTemplate2{
 			@Override 
 			protected void onAccept() {	
 				CarrierPackingDetail w = (CarrierPackingDetail) getContent().getWidget();
-				API.getWarehouse().deleteCarrierPacking(w.getJsCarrierPacking().getId());
-				hide();
-				startApplication();								
+				API.getWarehouse().deleteCarrierPacking(w.getJsCarrierPacking().getId(), new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						hide();
+						startApplication();	
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});			
 			}
 		};
 		dialog.setAutoHideEnabled(true);

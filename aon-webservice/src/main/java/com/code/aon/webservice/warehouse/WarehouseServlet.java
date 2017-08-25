@@ -154,6 +154,7 @@ public class WarehouseServlet extends HttpServlet{
 						object = updateCarrierPacking(domain, userName, Integer.parseInt(pathInfo[5]), json);
 					} else if(MSG.DELETE.equals(pathInfo[4])){
 						AON.deleteCarrierPacking(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[5]));
+						object = ToJSON.objectToJSON(Integer.parseInt(pathInfo[5]), "delete");
 					} 
 				} else {
 					object = insertCarrierPacking(domain, userName, json);
@@ -224,6 +225,8 @@ public class WarehouseServlet extends HttpServlet{
 								object = DBIncome.deleteIncomeDetail(domain, userName, json);
 							}
 						} else object = DBIncome.insertIncomeDetail(domain, userName, json);
+					} else if(MSG.DELETE.equalsIgnoreCase(pathInfo[4])) {
+						object = DBIncome.deleteIncome(domain, userName, json);
 					}
 				} else object = DBIncome.insertIncome(domain, userName, json);
 			}

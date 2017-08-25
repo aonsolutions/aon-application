@@ -116,6 +116,12 @@ public class IncomeDAO {
 		return incomeDetail;
 	}
 	
+	public static Optional<Income> deleteIncome(AONContext ctx, Integer id){
+		Optional<Income> income = getIncomeStream(ctx, f -> f.getIdProperty().eq(id)).findFirst();
+		ctx.getDslContext().delete(INCOME).where(INCOME.ID.eq(id)).execute();
+		return income;
+	}
+	
 	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter){
 		return INCOME_DETAIL_PROPERTIES.build(ctx.getDslContext().select().from(INCOME_DETAIL), filter)
 				.fetch().stream().map(new IncomeDetailFiller());

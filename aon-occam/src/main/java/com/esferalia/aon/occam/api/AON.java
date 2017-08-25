@@ -2274,6 +2274,16 @@ public class AON {
 		}
 	}
 	
+	public static Optional<Income> deleteIncome(String domainName, Integer domainId, String login, Integer id){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().deleteIncome(ctx, id);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static Optional<IncomeDetail> insertIncomeDetail(String domainName, Integer domainId, String login, IncomeDetail incomeDetail){
 		AONContext ctx = null;
 		try{

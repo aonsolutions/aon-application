@@ -7,8 +7,16 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
+import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.ActionCell.Delegate;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -17,6 +25,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -27,6 +36,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -110,17 +120,19 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsCarrierPacking> event) {
 				if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
-					Integer relRow = event.getIndex() - dataGrid.getPageStart();
-				    Integer subrow = event.getContext().getSubIndex();
-				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
-				    JsCarrierPacking object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());				    
-				    LinkedList<String> list = new LinkedList<>();
-				    list.add((dataGrid.getKeyboardSelectedRow()+1) + "");
-				    HashMap<String, LinkedList<String>> map = parent.getFilterMap();
-				    map.put("page", list);
-				    parent.setFilterMap(map);
-				    parent.selectCarrierPacking(object);
-				}		
+					if(event.getColumn() != 7) {
+						Integer relRow = event.getIndex() - dataGrid.getPageStart();
+						Integer subrow = event.getContext().getSubIndex();
+						dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
+						JsCarrierPacking object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());				    
+						LinkedList<String> list = new LinkedList<>();
+						list.add((dataGrid.getKeyboardSelectedRow()+1) + "");
+						HashMap<String, LinkedList<String>> map = parent.getFilterMap();
+						map.put("page", list);
+						parent.setFilterMap(map);
+						parent.selectCarrierPacking(object);
+					}
+				}
 			}
 		};
 		
@@ -265,8 +277,8 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			}
 		});
 		dataGrid.getColumnSortList().push(issueDateColumn);
-		dataGrid.addColumn(issueDateColumn, AON.MSG.issueDate());
-		dataGrid.setColumnWidth(issueDateColumn, 15, Unit.PCT);
+		dataGrid.addColumn(issueDateColumn, "F. Emisi\u00f3n");
+		dataGrid.setColumnWidth(issueDateColumn, 12.5, Unit.PCT);
 
 		
 		/** delivery DATE Column **/
@@ -288,8 +300,8 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			}
 		});
 		dataGrid.getColumnSortList().push(deliveryDateColumn);
-		dataGrid.addColumn(deliveryDateColumn, AON.MSG.deliveryDate());
-		dataGrid.setColumnWidth(deliveryDateColumn, 15, Unit.PCT);
+		dataGrid.addColumn(deliveryDateColumn, "F. Entrega");
+		dataGrid.setColumnWidth(deliveryDateColumn, 12.5, Unit.PCT);
 		
 		/** CARRIER Column **/
 		Column<JsCarrierPacking,String> carrierColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
@@ -333,52 +345,171 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			}
 		});
 		dataGrid.getColumnSortList().push(plateColumn);
-		dataGrid.addColumn(plateColumn, "Matricula");
-		dataGrid.setColumnWidth(plateColumn, 10, Unit.PCT);
+		dataGrid.addColumn(plateColumn, "Matr\u00edcula");
+		dataGrid.setColumnWidth(plateColumn, 15, Unit.PCT);
 		
-		/** Line number Column **/
-		Column<JsCarrierPacking,String> lineColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
-			
+		/** Status Column **/		
+		List<HasCell<JsCarrierPacking, ?>> cells = new LinkedList<HasCell<JsCarrierPacking, ?>>();
+	    
+		cells.add(new ActionHasCell("status", new Delegate<JsCarrierPacking>() {
+	        @Override public void execute(JsCarrierPacking object) {}
+	    }));
+	    
+	    cells.add(new ActionHasCell("info", new Delegate<JsCarrierPacking>() {
+	    	
+	        @Override
+	        public void execute(JsCarrierPacking object) {
+	        	info(object);
+	        }
+	    }));
+		
+		CompositeCell<JsCarrierPacking> cell = new CompositeCell<JsCarrierPacking>(cells);
+		
+		Column<JsCarrierPacking,JsCarrierPacking> statusColumn = 	new Column<JsCarrierPacking, JsCarrierPacking>(cell){
+
 			@Override
-			public String getValue(JsCarrierPacking object) {
-				return "-"; //object.getLines() +"";
+			public JsCarrierPacking getValue(JsCarrierPacking object) {
+				return object;
 			}
 		};
-		
-		lineColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		lineColumn.setSortable(true); 
-		sortHandler.setComparator(lineColumn,new Comparator<JsCarrierPacking>() {
-			
-			@Override
-			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
-				return o1.getStatus().getName().compareTo(o2.getStatus().getName());
-			}
-		});
-		dataGrid.getColumnSortList().push(lineColumn);
-		dataGrid.addColumn(lineColumn, "Lineas");
-		dataGrid.setColumnWidth(lineColumn, 10, Unit.PCT);
-		
-		/** Status Column **/
-		Column<JsCarrierPacking,String> statusColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
-			
-			@Override
-			public String getValue(JsCarrierPacking object) {
-				return object.getStatus() != null ? object.getStatus().getName() : "";
-			}
-		};
-		
-		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		statusColumn.setSortable(true); 
-		sortHandler.setComparator(statusColumn,new Comparator<JsCarrierPacking>() {
-			
-			@Override
-			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
-				return o1.getStatus().getName().compareTo(o2.getStatus().getName());
-			}
-		});
-		dataGrid.getColumnSortList().push(statusColumn);
-		dataGrid.addColumn(statusColumn, AON.MSG.status());
-		dataGrid.setColumnWidth(statusColumn, 15, Unit.PCT);
+		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+		dataGrid.addColumn(statusColumn, "Estado");
+		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
 	}
 	
+	private void info(JsCarrierPacking js){
+		HashMap<String, LinkedList<String>> selectedFilter = new HashMap<>();
+		
+		LinkedList<String> list = new LinkedList<>();
+		list.add(js.getId() + "");
+		selectedFilter.put("carrier_packing", list);
+		
+		// -------------------- per page
+		list = new LinkedList<>();
+		list.add("30");
+		selectedFilter.put("per_page", list);
+		
+		// -------------------- page
+		list = new LinkedList<>();
+		list.add("1");
+		selectedFilter.put("page", list);
+		Boolean isSc = (js.getType().getId() +"") == "0";
+		parent.getAPI().getWarehouse().getOrders(isSc ? "purchase" : "delivery",
+				selectedFilter, new AsyncCallback<JSON<JsOrder>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsOrder> result) {
+
+				
+				parent.getAPI().getWarehouse().getOrders("income", selectedFilter, new AsyncCallback<JSON<JsOrder>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsOrder> result2) {
+						FlexTable grid = new FlexTable();
+						grid.setStyleName("aon-panelGrid");
+						grid.setWidget(0, 0, new Label(isSc ? "Proveedores" : "Clientes"));
+
+						String registry = result.getData().toLinkedList().size() > 0 ? result.getData().toLinkedList().get(0).getRegistry().getName() : "-";						
+						for(Integer i = 1 ; i < result.getData().toLinkedList().size(); i++) {
+							registry = registry + "; " + result.getData().toLinkedList().get(i).getRegistry().getName();
+						}
+						grid.setWidget(0, 1, new Label(registry));
+						
+						grid.setWidget(1, 0, new Label("Lote"));
+						
+						if(result2.getData().toLinkedList().size() <= 0 ) {
+							grid.setWidget(1, 1, new Label("-"));
+						} else {
+							String desc = "";
+							for(Integer i = 0 ; i < result2.getData().toLinkedList().size(); i++) {
+								for(Integer j = 0; j < result2.getData().toLinkedList().get(i).getDetails().toLinkedList().size(); j++) {
+									if(i == 0 && j == 0) {
+										desc = result2.getData().toLinkedList().get(i).getDetails().get(j).getDescription();
+									} else {
+										desc = desc + "; " + result2.getData().toLinkedList().get(i).getDetails().get(j).getDescription();
+									}
+								}
+							}
+							grid.setWidget(1, 1, new Label(desc));
+						}
+						for (int i = 0; i < grid.getRowCount(); i++) {
+							for (int j = 0; j < grid.getCellCount(i); j++) {
+								if ((j % 2) == 0) {
+									grid.getCellFormatter().setStyleName(i, j,
+											"aon-panelGrid-odd");
+								} else {
+									grid.getCellFormatter().setStyleName(i, j,
+											"aon-panelGrid-even");
+								}   
+							}
+						}	
+						
+						AonDialog dialog = new AonDialog("Informaci\u00f3n Adicional", grid) {
+							
+							@Override 
+							protected void onCancel() {
+								hide();
+							}
+							
+							@Override 
+							protected void onAccept() {
+								hide();
+							}
+						};
+						dialog.getCancel().setVisible(false);
+						dialog.setAutoHideEnabled(true);
+						dialog.getElement().getStyle().setWidth(310, Unit.PX);
+						dialog.center();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});	
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	private class ActionHasCell implements HasCell<JsCarrierPacking, JsCarrierPacking> {
+	    private ActionCell<JsCarrierPacking> cell;
+	    String s;
+	    
+	    public ActionHasCell(String text, Delegate<JsCarrierPacking> delegate) {
+	    	s = text;
+	        cell = new ActionCell<JsCarrierPacking>(text, delegate){
+	        	String text = s;
+	        	@Override
+	        	public void render(com.google.gwt.cell.client.Cell.Context context,
+	        			JsCarrierPacking value, SafeHtmlBuilder sb) {
+	        		if(text.equals("status")){	
+	        			String icon = "aon-icon-point-red";	
+	        			if("En ruta".equals(value.getStatus().getName())) icon = "aon-icon-point-green";
+	        			if("Finalizada".equals(value.getStatus().getName())) icon = "aon-icon-point-gray";
+	        			sb.appendHtmlConstant("<button  alt=\""+ value.getStatus().getName() +"\" type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");		
+	        		}
+	        		if(text.equals("info")){
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\">");
+	        			sb.appendHtmlConstant("</button>");
+	        		}
+	        	}
+	        };
+	        
+	    }
+
+		@Override
+		public JsCarrierPacking getValue(JsCarrierPacking object) {
+			return object;
+		}
+
+
+		@Override
+		public Cell<JsCarrierPacking> getCell() {
+			return cell;
+		}
+
+		@Override
+		public FieldUpdater<JsCarrierPacking, JsCarrierPacking> getFieldUpdater() {
+			return null;
+		}
+	}
 }

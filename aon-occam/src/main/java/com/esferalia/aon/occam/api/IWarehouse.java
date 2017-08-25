@@ -47,6 +47,7 @@ public interface IWarehouse {
 
 	Optional<Income> insertIncome(AONContext ctx, Income income);
 	Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter);
+	Optional<Income> deleteIncome(AONContext ctx, Integer id);
 	
 	// 	***********************************************
 	// 	****************************** INCOME DETAIL***

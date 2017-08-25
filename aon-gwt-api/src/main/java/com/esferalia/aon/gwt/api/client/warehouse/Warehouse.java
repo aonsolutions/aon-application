@@ -52,9 +52,17 @@ public class Warehouse extends Methods{
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}");
 	}
 	
+	public void deleteCarrierPacking(Integer id,AsyncCallback<JSON<JsObject>> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}", callback);
+	}
+	
 	public void getOrders(String order, HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/" + order + filter, callback);
+	}
+	
+	public void deleteOrder(String orderType, String requestData, AsyncCallback<JsOrder> callback){
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/delete", requestData, callback);
 	}
 	
 	public void getPurchases(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){

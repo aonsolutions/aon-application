@@ -3,6 +3,7 @@ package com.code.aon.webservice.warehouse.jooq;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,8 +35,15 @@ public class DBIncome {
 	    	.sorted((e1, e2) -> e2.getIssueDate().compareTo(e1.getIssueDate()))
 	    .forEach(income -> {
 	    	JSONObject json = incomeToJSON(income);
-    		Long l = AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId())).count();
-    		json.put("detail_count", l.intValue() + 1);
+	    	Stream<IncomeDetail> s = AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()));
+	    	JSONArray array2 = new JSONArray();
+	    	Integer[] cont = new Integer[] {0};
+	    	s.forEach(id ->{
+	    		array2.put(incomeDetailToJSON(id));
+	    		cont[0] = cont[0] + 1;
+	    	});
+	    	json.put("details", array2);
+    		json.put("detail_count", cont[0]);
 	    	array.put(json);	
 	    });
 	    return array;
@@ -207,6 +215,12 @@ public class DBIncome {
 			}
 		}
 		return incomeDetailToJSON(incomeDetail);
+	}
+	
+	public static JSONObject deleteIncome(Domain domain,String login, JSONObject json){
+		Integer id = json.getInt("id");
+		Optional<Income> income = AON.deleteIncome(domain.getName(), domain.getId(), login, id);
+		return incomeToJSON(income);
 	}
 	
 	public static JSONObject incomeToJSON(Optional<Income> income){

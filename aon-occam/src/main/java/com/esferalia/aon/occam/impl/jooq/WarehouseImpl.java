@@ -394,5 +394,11 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		WarehouseDAO.deleteStock(ctx, stockId));
 	}
+
+	@Override
+	public Optional<Income> deleteIncome(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		IncomeDAO.deleteIncome(ctx, id));
+	}
 	
 }
