@@ -2795,6 +2795,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-globe{
 	background:transparent url(images/aon-icon/aon-icon-globe.png) no-repeat scroll center left;
 }
+.aon-icon-map-point{
+	background:transparent url(images/aon-icon/aon-icon-map-point.png) no-repeat scroll center left;
+}
 .aon-icon-home{
 	background:transparent url(images/aon-main-menu/aon-icon-home.png) no-repeat scroll center left;
 }

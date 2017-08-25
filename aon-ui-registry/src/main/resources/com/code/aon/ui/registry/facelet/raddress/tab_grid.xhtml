@@ -79,6 +79,17 @@
 			</aon:column>
 
 		</ui:define>
+		
+		<ui:define name="endFormListContent">
+			<aon:div rendered="#{not empty to.fullAddress}" 
+				onmouseover="disableRowSelector();"
+				onmouseup="disableRowSelector();"
+				onmouseout="enableRowSelector();">
+				<h:outputLink target="_blank" 
+					value="#{controller.currentURL}"
+					styleClass="aon-icon aon-icon-map-point" />
+			</aon:div>
+		</ui:define>
 	</ui:decorate>
 
 </ui:composition>
