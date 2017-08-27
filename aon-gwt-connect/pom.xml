@@ -140,13 +140,13 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>dbutils</artifactId>
-      <version>9.02-SNAPSHOT</version>
+      <version>9.02</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.02-SNAPSHOT</version>
+      <version>9.02</version>
       <scope>compile</scope>
     </dependency>
           <dependency>
