@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>aon.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>9.02</version>
+		<version>9.03-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon.db.manager</artifactId>
