@@ -1,6 +1,7 @@
 package com.code.aon.webservice.documental;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -32,13 +33,11 @@ public class DocumentalServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Documental Servlet - GET METHOD");
 	
-		String scheme = req.getParameter("scheme");
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[2];
 		String domainName = pathInfo[1]; 
 		String md5 = Utils.getMd5(userName+domainName);
-		String url = Utils.getUrl(scheme, domainName, req.getRequestURL().toString().contains("aon-aio"));
 		if(accessToken.equals(md5)){
 			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 
@@ -73,6 +72,38 @@ public class DocumentalServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Documental Servlet - POST METHOD");
+		
+		JSONObject json = Utils.getRequestJSON(req);
+		
+		String[] pathInfo = req.getPathInfo().split("/");
+		String userName = pathInfo[2];
+		String domainName = pathInfo[1]; 
+		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		
+		if(pathInfo.length > 3){				
+			Object object = new Object();
+			switch (pathInfo[3]) {
+			case "remove": case "delete":
+				object = removeAttach(domain, userName, json);
+				break;
+			default:
+				break;
+			}
+			
+			resp.setContentType("application/json;charset=UTF-8");
+			Utils.addCorsHeader(resp);
+			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+			os.println(object.toString());
+			os.flush();
+			os.close();
+		}
+	}
+	
+	private JSONObject removeAttach(Domain domain, String login, JSONObject json) {
+		Integer id = json.getInt("id");
+		AttachType attachType = AttachType.getAttachType(json.getString("attach_type"));
+		AON.deleteAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), attachType);
+		return json;
 	}
 	
 	private JSONArray getAttachJSON(Domain domain, String login) {
@@ -111,7 +142,8 @@ public class DocumentalServlet extends HttpServlet{
 				.perPage(30)
 			, AttachType.DATA, false).forEach(a -> {
 				JSONObject json = ToJSON.attachToJSON(a);
-				String url = "/aon_gwt_aio/image_servlet?type=data&id="+ a.getId() +"&domain="+ domain.getName() +"&login="+ login;
+				String url = "/aon-aio/aon_gwt_aio/image_servlet?type=data&id="+ a.getId() +"&domain="+ domain.getName() +"&login="+ login;
+				json.put("attach_type", "data");
 				json.put("url", url);
 				array.put(json);
 			});

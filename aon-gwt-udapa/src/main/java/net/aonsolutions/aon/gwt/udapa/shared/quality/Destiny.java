@@ -10,7 +10,7 @@ public enum Destiny {
 	COMUN("Com\u00fan"),
 	ECI_COMUN("ECI Com\u00fan"),
 	ECI_FREIR("ECI Freir"),
-	ECI_GUISAR("ECI Guisar"),
+	ECI_HERVIR("ECI Hervir"),
 	EUROPOOL("Europool"),
 	EUSKOLABEL("Euskolabel"),
 	GUARNICION("Guarnici\u00f3n"),

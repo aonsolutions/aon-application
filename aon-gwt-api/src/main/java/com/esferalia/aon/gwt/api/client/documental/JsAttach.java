@@ -31,5 +31,9 @@ public class JsAttach extends JavaScriptObject{
 	public final native String getUrl() /*-{
 		return this.url;
 	}-*/;
+	
+	public final native String getAttachType() /*-{
+		return this.attach_type;
+	}-*/;
 
 }

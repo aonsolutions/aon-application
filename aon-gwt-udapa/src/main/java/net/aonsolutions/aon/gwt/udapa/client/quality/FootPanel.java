@@ -14,6 +14,12 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -33,7 +39,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronImage;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
+import com.vaadin.polymer.vaadin.widget.event.UploadSuccessEvent;
+import com.vaadin.polymer.vaadin.widget.event.UploadSuccessEventHandler;
 
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
@@ -87,6 +96,21 @@ public class FootPanel extends Composite {
 						+ "&attach_type=" + AttachType.DATA.getName();
 				upload.setTarget(GWT.getModuleBaseURL() + "uploadImages"+ dataRequest);
 				upload.setAccept("image/*");
+				upload.addUploadSuccessHandler(new UploadSuccessEventHandler() {
+					
+					@Override
+					public void onUploadSuccess(UploadSuccessEvent event) {
+						getAPI().getAttachment().getQualityImages(parent.getDataResponse().getId(), new AsyncCallback<JSON<JsAttach>>() {
+							@Override
+							public void onSuccess(JSON<JsAttach> result) {
+								vp.remove(1);
+								vp.add(imagePanel(result.getData().toLinkedList()));
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				});
 
 				vp.add(upload);
 				vp.add(imagePanel(result.getData().toLinkedList()));
@@ -107,6 +131,44 @@ public class FootPanel extends Composite {
 			HorizontalPanel hp = new HorizontalPanel();
 			for(Integer j = 0;j < x; j++) {
 				if(imgList.size() > i * x + j) {
+					JsAttach js = imgList.get(i * x + j);
+					VerticalPanel ivp = new VerticalPanel();
+					PaperIconButton pib = new PaperIconButton();
+					pib.setIcon("clear");
+					pib.setVisible(false);
+					pib.setHeight("30px");
+					pib.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {							
+							String requestData = "{\"id\":\"" + js.getId() +"\","
+									+ "\"attach_type\":\""+ js.getAttachType() + "\""
+									+ "}";
+							getAPI().getAttachment().removeAttach(requestData, new AsyncCallback<JSON<JsAttach>>() {
+								
+								@Override
+								public void onSuccess(JSON<JsAttach> result) {
+									getAPI().getAttachment().getQualityImages(parent.getDataResponse().getId(), new AsyncCallback<JSON<JsAttach>>() {
+										@Override
+										public void onSuccess(JSON<JsAttach> result) {
+											VerticalPanel a = (VerticalPanel) imgPanel.getWidget();
+											a.remove(1);
+											a.add(imagePanel(result.getData().toLinkedList()));
+										}
+										
+										@Override public void onFailure(Throwable caught) {}
+									});
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									
+								}
+							});
+						}
+					});
+					ivp.add(pib);
+
 					IronImage ii = new IronImage();
 					//ii.setSrc("https://ep01.epimg.net/elcomidista/imagenes/2017/02/22/articulo/1487804099_363696_1487804800_sumario_normal.jpg");
 					ii.setSrc(imgList.get(i * x + j).getUrl());
@@ -114,7 +176,28 @@ public class FootPanel extends Composite {
 					ii.getElement().getStyle().setHeight(150, Unit.PX);
 					ii.getElement().getStyle().setPadding(10, Unit.PX);
 					ii.setSizing("150px");
-					hp.add(ii);
+					ivp.add(ii);
+					
+					ivp.addDomHandler( new MouseOverHandler() {
+						
+						@Override
+						public void onMouseOver(MouseOverEvent event) {
+							ii.getElement().getStyle().setOpacity(50);
+							pib.setVisible(true);
+						}
+					}, MouseOverEvent.getType());
+					
+					ivp.addDomHandler( new MouseOutHandler() {
+						
+						@Override
+						public void onMouseOut(MouseOutEvent event) {
+							ii.getElement().getStyle().setOpacity(100);
+							pib.setVisible(false);
+						}
+					}, MouseOutEvent.getType());
+					
+
+					hp.add(ivp);
 				}
 			}
 			vp.add(hp);

@@ -20,7 +20,6 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -140,7 +139,6 @@ public class UdapaQuality extends AonTemplate2{
 				list = new LinkedList<>();
 				list.add("1");
 				filterMap.put("per_page", list);
-				Window.alert(filterMap.get("page").get(0) + "");
 				getAPI().getCommon().getDataResponse(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 					
 					@Override
@@ -179,7 +177,6 @@ public class UdapaQuality extends AonTemplate2{
 					list = new LinkedList<>();
 					list.add("1");
 					filterMap.put("per_page", list);
-					Window.alert(filterMap.get("page").get(0) + "");
 					getAPI().getCommon().getDataResponse(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 						
 						@Override

@@ -26,6 +26,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -65,7 +67,8 @@ public class FilterPanel extends Composite {
     	initWidget(binder.createAndBindUi(this));       
     	
 		panel.add(datePanel());
-
+		
+		
 		// ------------------ FILTER BUTTONS
 		FlowPanel fpanel = new FlowPanel(); 
 		
@@ -133,6 +136,24 @@ public class FilterPanel extends Composite {
 			}
 		});
 		datePanel.add(to);
+		
+		datePanel.add(new Label("N\u00BA Pedido"));
+		TextBox np = new TextBox();
+		np.setStyleName(AON.AON_CSS.aonInputText());
+		np.getElement().getStyle().setBorderColor("#dedede");
+		np.getElement().getStyle().setHeight(17, Unit.PX);
+		np.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(np.getValue());
+				onChange("code", list);				
+			}
+		});
+		
+		datePanel.add(np);
+		
 		return datePanel;
 	}
     
