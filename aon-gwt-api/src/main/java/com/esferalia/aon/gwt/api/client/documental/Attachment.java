@@ -44,6 +44,11 @@ public class Attachment extends Methods{
 	public void getQualityImages(Integer id,AsyncCallback<JSON<JsAttach>> callback){
 		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/quality?id="+id, callback);
 	}
+	
+	public void removeAttach(String requestData,AsyncCallback<JSON<JsAttach>> callback){
+		post(url + "attachment/" + getDomainName() + "/" + getUserName() + "/remove", requestData, callback);
+	}
+	
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

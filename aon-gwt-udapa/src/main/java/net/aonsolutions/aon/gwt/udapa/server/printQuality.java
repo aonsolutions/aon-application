@@ -473,8 +473,8 @@ public class printQuality {
 		c555.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c555);
 			
-		PdfPCell c666 = new PdfPCell(new Phrase( "0".equals(map.get(QualitySheetCode.UFQDP2.getName()))
-				|| "0".equals(map.get(QualitySheetCode.UFQDP2.getName())) ? "No" : "Si", getFont2()));
+		PdfPCell c666 = new PdfPCell(new Phrase("0".equals(map.get(QualitySheetCode.UFQDP2.getName()))
+				|| "0.0".equals(map.get(QualitySheetCode.UFQDP2.getName())) ? "No" : "Si", getFont2()));
 		c666.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c666);
 		

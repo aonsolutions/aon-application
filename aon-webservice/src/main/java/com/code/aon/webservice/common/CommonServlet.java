@@ -130,6 +130,7 @@ public class CommonServlet extends HttpServlet{
 		JSONArray array = new JSONArray();
 		AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY,
 				f -> dataResponseFilter(domain, map, f))
+		.sorted((dr1, dr2) -> dr2.getResponseDate().compareTo(dr1.getResponseDate()))
 		.forEach(dr -> {
 			String source = AON.getDataResponseDetail(domain.getName(), domain.getId(), login,
 					f -> f.getDataResponseProperty().eq(dr.getId())
@@ -180,6 +181,11 @@ public class CommonServlet extends HttpServlet{
 				fnumber = fnumber.or(f.getNumberProperty().eq(filterMap.get(MSG.NUMBER)[i]));
 			}
 			filter = filter.and(fnumber);
+		} 
+		
+		if(filterMap.containsKey("code")){
+			Filter fcode = f.getNumberProperty().like("%" + filterMap.get("code")[0] + "%");
+			filter = filter.and(fcode);
 		} 
 		
 		if(filterMap.containsKey("source")){
