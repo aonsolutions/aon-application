@@ -162,6 +162,8 @@ public class Model303 extends MainEntryPoint {
 			declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));
 		} else if (selected.getAdministration() == Administration.ALAVA) {
 			declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));
+		} else if (selected.getAdministration() == Administration.GIPUZKOA) {
+			declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}

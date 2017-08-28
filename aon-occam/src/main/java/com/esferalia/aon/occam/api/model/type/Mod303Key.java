@@ -469,6 +469,67 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,BZ_C106("303-BZ106",106,"Otras operaciones no sujetas o exentas con derecho a deducci\u00F3n")
 	,BZ_C107("303-BZ107",107,"Operaciones por inversi\u00F3n del sujeto pasivo no incluidas en liquidaci\u00F3n")
 	,BZ_C108("303-BZ108",108,"Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicaci\u00F3n del impuesto")
+	
+	// 	----------------------------------------------------------------------------------  
+	// 	--------------------------------------------------------------------  BIZKAIA ----
+	// 	----------------------------------------------------------------------------------
+	,GP_A001("303-GPA01",  0,"Autoliquidaci\u00F3n concursal. PRE")
+	,GP_A002("303-GPA02",  0,"Autoliquidaci\u00F3n concursal. POST")
+	
+	,GP_C002("303-GP002",  2,"R\u00E9gimen general - Base imponible")
+	,GP_X002("303-GPX02",  0,"R\u00E9gimen general - Tipo %")
+	,GP_C003("303-GP003",  3,"R\u00E9gimen general - Cuota")
+	,GP_C004("303-GP004",  4,"R\u00E9gimen general - Base imponible")
+	,GP_X004("303-GPX04",  0,"R\u00E9gimen general - Tipo %")
+	,GP_C005("303-GP005",  5,"R\u00E9gimen general - Cuota")
+	,GP_C006("303-GP006",  6,"R\u00E9gimen general - Base imponible")
+	,GP_X006("303-GPX06",  0,"R\u00E9gimen general - Tipo %")
+	,GP_C007("303-GP007",  7,"R\u00E9gimen general - Cuota")
+	,GP_C039("303-GP039", 39,"Modificaci\u00F3n de bases y cuotas, general - Base imponible")
+	,GP_C040("303-GP040", 40,"Modificaci\u00F3n de bases y cuotas, general - Cuota")
+	,GP_C008("303-GP008",  8,"Recargo equivalencia - Base imponible")
+	,GP_X008("303-GPX08",  0,"Recargo equivalencia - Tipo %")
+	,GP_C009("303-GP009",  9,"Recargo equivalencia - Cuota")
+	,GP_C010("303-GP010", 10,"Recargo equivalencia - Base imponible")
+	,GP_X010("303-GPX10",  0,"Recargo equivalencia - Tipo %")
+	,GP_C011("303-GP011", 11,"Recargo equivalencia - Cuota")
+	,GP_C012("303-GP012", 12,"Recargo equivalencia - Base imponible")
+	,GP_X012("303-GPX12",  0,"Recargo equivalencia - Tipo %")
+	,GP_C013("303-GP013", 13,"Recargo equivalencia - Cuota")
+	,GP_C041("303-GP041", 41,"Modificaci\u00F3n de bases y cuotas, R.E. - Base imponible")
+	,GP_C042("303-GP042", 42,"Modificaci\u00F3n de bases y cuotas, R.E. - Cuota")
+	,GP_C014("303-GP014", 14,"Adquisiciones intracomunitarias de bienes y servicios - Base imponible")
+	,GP_C015("303-GP015", 15,"Adquisiciones intracomunitarias de bienes y servicios - Cuota")
+	,GP_C043("303-GP043", 43,"Otras operaciones con inversi\u00F3n de sujeto pasivo - Base imponible")
+	,GP_C044("303-GP044", 44,"Otras operaciones con inversi\u00F3n de sujeto pasivo - Cuota")
+	,GP_C016("303-GP016", 16,"Total cuota devengada")
+	
+	,GP_C017("303-GP017", 17,"IVA deducible en operaciones interiores - Base imponible")
+	,GP_C018("303-GP018", 18,"IVA deducible en operaciones interiores - Cuota")
+	,GP_C019("303-GP019", 19,"IVA deducible en importaciones - Base imponible")
+	,GP_C020("303-GP020", 20,"IVA deducible en importaciones - Cuota")
+	,GP_C021("303-GP021", 21,"IVA deducible en adquisiciones intracomunitarias de bienes y servicios - Base imponible")
+	,GP_C022("303-GP022", 22,"IVA deducible en adquisiciones intracomunitarias de bienes y servicios - Cuota")
+	,GP_C045("303-GP045", 45,"Rectificaci\u00F3n de deducciones - Base")
+	,GP_C046("303-GP046", 46,"Rectificaci\u00F3n de deducciones - Cuota")
+	,GP_C023("303-GP023", 23,"Compensaciones R\u00E9gimen Especial A.G. y P.")
+	,GP_C024("303-GP024", 24,"Regularizaci\u00F3n inversiones")
+	,GP_C025("303-GP025", 25,"Total a deducir")
+	,GP_C026("303-GP026", 26,"Diferencia")
+	,GP_C027("303-GP027", 27,"Porcentaje de tributaci\u00F3n en Gipuzkoa")
+	,GP_C028("303-GP028", 28,"Cuota atribuible a Gipuzkoa")
+	,GP_C029("303-GP029", 29,"Cuota a compensar de periodos anteriores")
+	
+	,GP_C030("303-GP030", 30,"Entregas intracomunitarias de bienes y servicios")
+	,GP_C031("303-GP031", 31,"Exportaciones y operaciones asimiladas")
+	,GP_C032("303-GP032", 32,"Otras operaciones no sujetas o con inversi\u00F3n de sujeto pasivo")
+	,GP_C047("303-GP047", 47,"Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Base Imponible")
+	,GP_C048("303-GP048", 48,"Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Cuota")
+	,GP_C049("303-GP049", 49,"Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja - Base Imponible")
+	,GP_C050("303-GP050", 50,"Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja - Cuota")
+	
+	,GP_C035("303-GP035", 35,"Resultado")
+	
 	;
 	private String value;
 	private int box;
