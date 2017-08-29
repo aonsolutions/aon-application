@@ -264,6 +264,7 @@ public class PrintParametersController implements Serializable {
 		private ReportPrintOption printInternetData;
 		private boolean printDiscountPriceApplied;
 		private boolean printReferenceCode;
+		private boolean printProductPackage;
 		
 		public SaleInvoiceTemplate getSaleInvoiceTemplate(){
 			return saleInvoiceTemplate;
@@ -373,7 +374,14 @@ public class PrintParametersController implements Serializable {
 			this.printReferenceCode = printReferenceCode;
 		}
 		
-		
+		public boolean isPrintProductPackage() {
+			return printProductPackage;
+		}
+
+		public void setPrintProductPackage(boolean printProductPackage) {
+			this.printProductPackage = printProductPackage;
+		}
+
 		public void init() {
 			setSaleInvoiceTemplate(obtainSaleInvoiceTemplate());
 			searchCustomReportTemplate();
@@ -385,6 +393,7 @@ public class PrintParametersController implements Serializable {
 			
 			setPrintReferenceCode(AppParamUtil.getValueAsBoolean(APP_PRINT_REFERENCE_CODE_PARAM));
 			setPrintDiscountPriceApplied(AppParamUtil.getValueAsBoolean(APP_PRINT_DISCOUNT_PRICE_APPLIED));
+			setPrintProductPackage(AppParamUtil.getValueAsBoolean(AppParam.APP_PRINT_PRODUCT_PACKAGE_PARAM));
 		}
 		
 		public void accept() {
@@ -415,6 +424,7 @@ public class PrintParametersController implements Serializable {
 			
 			AppParamUtil.insertParameter(AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED, isPrintDiscountPriceApplied());
 			AppParamUtil.insertParameter(APP_PRINT_REFERENCE_CODE_PARAM, isPrintReferenceCode());
+			AppParamUtil.insertParameter(AppParam.APP_PRINT_PRODUCT_PACKAGE_PARAM, isPrintProductPackage());
 			
 		}
 		

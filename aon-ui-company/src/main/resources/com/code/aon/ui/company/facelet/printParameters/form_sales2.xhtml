@@ -18,6 +18,11 @@
 			value="#{bundle.company_invoice_discountInPrice}" />
 		<aon:selectBooleanCheckbox id="Sale_invoice_discountInPrice"
 			value="#{printParams.saleInvoiceParams.printDiscountPriceApplied}" />
+			
+		<aon:outputLabel for="Sale_invoice_productPackage"
+			value="#{bundle.company_invoice_productPackage}" />
+		<aon:selectBooleanCheckbox id="Sale_invoice_productPackage"
+			value="#{printParams.saleInvoiceParams.printProductPackage}" />
 	</aon:if>
 	
 </ui:composition>
