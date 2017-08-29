@@ -105,11 +105,11 @@ public class ReportProductLinesScriptlet extends JRDefaultScriptlet implements S
 		Item item = (Item) super.getFieldValue(FIELD_ITEM);
 
 		StringBuilder builder = new StringBuilder();
-		if(isPrintProductCode() && item.getProduct()!=null){
+		if(isPrintProductCode() && item!=null && item.getProduct()!=null){
 			builder.append(getMessage(ICommonMessages.ID)).append(": ");
 			builder.append(item.getProduct().getCode());
 		}
-		if(isPrintProductVatPercent() && item.getProduct()!=null 
+		if(isPrintProductVatPercent() && item!=null && item.getProduct()!=null 
 				&& item.getProduct().getVat()!=null && item.getProduct().getVat().getType()!=null){
 			builder.append(builder.length()>0?" - con ":"");
 			builder.append(item.getProduct().getVat().getType().getName(getReportLocale()));

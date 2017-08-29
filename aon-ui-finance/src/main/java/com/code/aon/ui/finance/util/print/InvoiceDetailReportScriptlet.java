@@ -11,6 +11,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.sales.Sales;
@@ -31,7 +32,8 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 		try {
 			String description = getFieldDescription();
 			StringBuilder newDescription = new StringBuilder (buildLineDescription());
-			fillLineReferenceCode(newDescription);
+			InvoiceDetail detail = obtainInvoiceDetail();
+			fillLineReferenceCode(newDescription, detail);
 			if(newDescription.length()>0){
 				newDescription.append("\n  ");
 				newDescription.append(description.replace("\n", "\n  "));
@@ -39,6 +41,7 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 				newDescription.delete(0, newDescription.length());
 				newDescription.append(description);
 			}
+			fillProductPackage(newDescription, detail);
 			setVariableDescription(newDescription.toString());
 		} catch (Exception e) {
 			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
@@ -46,27 +49,49 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 			throw new JRScriptletException(msg, e);
 		}
 	}
-	
-	private void fillLineReferenceCode(StringBuilder newDescription) throws JRScriptletException{
-		try {
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			InvoiceDetail invoiceDetail = (InvoiceDetail) invoiceDetailBean.get((Integer)super.getFieldValue(FIELD_ID));
-			
-			boolean isPrintReferenceCode = AppParamUtil.getValueAsBoolean(APP_PRINT_REFERENCE_CODE_PARAM);
-			
-			String referenceCode = obtainReferenceCode(invoiceDetail);
-			if(isPrintReferenceCode && StringUtils.isNotBlank(referenceCode)){
-				newDescription.append(newDescription.length()>0?" - ":"");
-				newDescription.append(referenceCode);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
-			LOGGER.error(msg);
-			throw new JRScriptletException(msg, e);
+
+
+	private void fillLineReferenceCode(StringBuilder newDescription, InvoiceDetail invoiceDetail) throws JRScriptletException{
+		boolean isPrintReferenceCode = AppParamUtil.getValueAsBoolean(APP_PRINT_REFERENCE_CODE_PARAM);
+		String referenceCode = obtainReferenceCode(invoiceDetail);
+		if(isPrintReferenceCode && StringUtils.isNotBlank(referenceCode)){
+			newDescription.append(newDescription.length()>0?" - ":"");
+			newDescription.append(referenceCode);
 		}
-		
 	}
-	
+
+	private void fillProductPackage(StringBuilder newDescription, InvoiceDetail invoiceDetail) throws JRScriptletException{
+		boolean isPrintProductPackage = AppParamUtil.getValueAsBoolean(AppParam.APP_PRINT_PRODUCT_PACKAGE_PARAM);
+		if(  isPrintProductPackage && invoiceDetail.getItem()!=null
+				&& invoiceDetail.getItem().getProduct().isPackaged() ){
+			StringBuilder builder = new StringBuilder("  ");
+			if( invoiceDetail.getItem().getPackMeasurementTag()!=null ){
+				builder.append( String.format("%.2f", invoiceDetail.getQuantity()) )
+					.append( " " )
+					.append( invoiceDetail.getItem().getPackMeasurementTag().getName() )
+					.append( ": " );
+			}
+			if( invoiceDetail.getItem().getPackUnitsTag()!=null ){
+				builder.append( String.format("%.2f",invoiceDetail.getQuantity()
+						/ invoiceDetail.getItem().getPackMeasurement()) )
+					.append( " " )
+					.append( invoiceDetail.getItem().getPackUnitsTag().getName() );
+			}
+			if( invoiceDetail.getItem().getPackUnitsTag()!=null
+					&& invoiceDetail.getItem().getPackFormatTag()!=null ){
+				builder.append( ", " );
+			}
+			if( invoiceDetail.getItem().getPackFormatTag()!=null ){
+				builder.append( String.format("%.2f",(invoiceDetail.getQuantity()
+						/ invoiceDetail.getItem().getPackMeasurement())
+						/ invoiceDetail.getItem().getPackUnits()) )
+					.append( " " )
+					.append( invoiceDetail.getItem().getPackFormatTag().getName() );
+			}
+			newDescription.append( newDescription.length()>0?"\n":"" );
+			newDescription.append( builder.toString() );
+		}		
+	}
 
 	private String obtainReferenceCode(InvoiceDetail invoiceDetail) throws JRScriptletException{
 		StringBuilder builder = new StringBuilder();
@@ -97,6 +122,17 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 		}
 		return builder.toString();
 	}
-	
+
+	private InvoiceDetail obtainInvoiceDetail() throws JRScriptletException{
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			InvoiceDetail invoiceDetail = (InvoiceDetail) invoiceDetailBean.get((Integer)super.getFieldValue(FIELD_ID));
+			return invoiceDetail;
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
+			LOGGER.error(msg);
+			throw new JRScriptletException(msg, e);
+		}
+	}
 	
 }
