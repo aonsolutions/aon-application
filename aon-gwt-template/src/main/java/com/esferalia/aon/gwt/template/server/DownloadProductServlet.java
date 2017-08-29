@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.server;
 
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -98,6 +99,9 @@ public class DownloadProductServlet extends HttpServlet {
     	String modificationDate2 = p_request.getParameter("modificationDate2");
 
         String login = p_request.getParameter("username");
+        
+        String tags = p_request.getParameter("tags");
+        
         
         Integer domainId = Integer.parseInt(domain_id);
         String domainName = AonServletUtils.getRequestDomainName(p_request);
@@ -197,16 +201,21 @@ public class DownloadProductServlet extends HttpServlet {
         	c = c.and(PRODUCT.CODE.like("%"+code+"%"));
         if(!description.equals("null") && !description.equals("") && !description.equals("undefined"))
         	c = c.and(PRODUCT.NAME.like("%"+description+"%"));
+      
         
-        Condition roleCondition = PRODUCT.KIND.eq((byte) 0);
+        Boolean purchaseRole = false;
+        Boolean saleRole = false;
         for (AonRole role : user.getUserRoles()) {
-			if(role.equals(AonRole.PURCHASE))
-				roleCondition = roleCondition.or(PRODUCT.KIND.eq((byte) 1));
-			if(role.equals(AonRole.SALE))
-				roleCondition = roleCondition.or(PRODUCT.KIND.eq((byte) 2));
+			if(role.equals(AonRole.PURCHASE)) purchaseRole = true;
+			if(role.equals(AonRole.SALE)) saleRole = true;
 		}
-        c = c.and(roleCondition);
         
+        if(purchaseRole && !saleRole) {
+        	 c = c.and(PRODUCT.KIND.eq((byte) 0).or(PRODUCT.KIND.eq((byte) 1)));
+        } else if(saleRole && !purchaseRole) {
+        	 c = c.and(PRODUCT.KIND.eq((byte) 0).or(PRODUCT.KIND.eq((byte) 2)));
+        }
+          
         if(!types.equals("null") && !types.equals("") && !types.equals("undefined")){
         	String s= types.substring(1) ;
         	while(s !=""){
@@ -235,20 +244,20 @@ public class DownloadProductServlet extends HttpServlet {
         		}
         	}
         }
-       /* if(!tags.equals("null") && !tags.equals("") && !tags.equals("undefined")){
+        if(!tags.equals("null") && !tags.equals("") && !tags.equals("undefined")){
         	String s= tags.substring(1) ;
         	while(s !=""){
         		Integer index = s.indexOf("$");
         		if(index == -1){
-        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        			c = c.and(PRODUCT_TAG.TAG.eq(Integer.parseInt(s)));
         			s="";
         		}
         		else{ 
-        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
+        			c = c.and(PRODUCT_TAG.TAG.eq(Integer.parseInt(s.substring(0, index))));
         			s = s.substring(index+1);
         		}
         	}
-        }*/
+        }
         if(!vat.equals("null") && !vat.equals("") && !vat.equals("undefined")){
         	c = c.and(PRODUCT.VAT.eq(Integer.parseInt(vat)));
         }
@@ -411,9 +420,9 @@ public class DownloadProductServlet extends HttpServlet {
         		Cell celda = row.createCell(k);
         		String type = aux.getColumns().get(k);
         		ProductInfo pi = v.get(j);
-        		String tags="";
+        		String tags2="";
         		for(ProductTag pt :pi.getTags()){
-        			tags = tags + ", "+pt.getTag().getName();
+        			tags2 = tags2 + ", "+pt.getTag().getName();
         		}
         		switch (type) {
         		case "Nombre": celda.setCellValue(pi.getDownloadItem().getName());celda.setCellStyle(style3);break;
@@ -422,7 +431,7 @@ public class DownloadProductServlet extends HttpServlet {
         		case "Precio Venta Base": celda.setCellValue(round(pi.getDownloadItem().getPrice(),2));celda.setCellStyle(style2);break;
         		case "Categor\u00eda": celda.setCellValue(pi.getDownloadItem().getCategory());celda.setCellStyle(style2);break;
         		case "Marca": celda.setCellValue(pi.getDownloadItem().getBrand());celda.setCellStyle(style2);break;
-        		case "Etiqueta":  celda.setCellValue(tags);celda.setCellStyle(style2);break;
+        		case "Etiqueta":  celda.setCellValue(tags2);celda.setCellStyle(style2);break;
         		case "Tipo": celda.setCellValue(com.code.aon.product.enumeration.ProductType.values()[pi.getDownloadItem().getType().ordinal()].getName(new Locale("es_ES")));celda.setCellStyle(style2);break;
         		case "IVA": celda.setCellValue(pi.getDownloadItem().getVat().getName());celda.setCellStyle(style2);break;
         		case "IRPF": celda.setCellValue(pi.getDownloadItem().getRetention().getName());celda.setCellStyle(style2);break;
