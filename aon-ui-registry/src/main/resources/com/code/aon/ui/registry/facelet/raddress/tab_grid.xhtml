@@ -81,12 +81,13 @@
 		</ui:define>
 		
 		<ui:define name="endFormListContent">
-			<aon:div rendered="#{not empty to.fullAddress}" 
+			<aon:div rendered="#{not empty to.fullAddress}"
+				title="#{bundle.aon_google_maps}" 
 				onmouseover="disableRowSelector();"
 				onmouseup="disableRowSelector();"
 				onmouseout="enableRowSelector();">
 				<h:outputLink target="_blank" 
-					value="#{controller.currentURL}"
+					value="#{controller.googleMapsURL}"
 					styleClass="aon-icon aon-icon-map-point" />
 			</aon:div>
 		</ui:define>
