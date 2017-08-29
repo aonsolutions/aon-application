@@ -420,11 +420,12 @@ public class DBProduct {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
 			Result<Record22<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte>>
-				data =	ctx.getDslContext().select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.CATEGORY
+				data =	ctx.getDslContext().selectDistinct(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.CATEGORY
 						,PRODUCT.BRAND,PRODUCT.TYPE,PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.INVENTORIABLE,PRODUCT.COMPOSITION
 						,PRODUCT.COMPOSITION_PRICE,PRODUCT.STATUS,ITEM.PURCHASE_PRICE,ITEM.PRICE,ITEM.BARCODE,ITEM.DESCRIPTION
 						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID, ITEM.SERIAL_NUMBER, PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE)
 						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+						.leftOuterJoin(PRODUCT_TAG).on(PRODUCT.ID.eq(PRODUCT_TAG.PRODUCT))
 						.where(condition)
 						.orderBy(PRODUCT.NAME)
 						.fetch();
