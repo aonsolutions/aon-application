@@ -11,6 +11,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -34,6 +35,9 @@ public class DeliveryDetailController extends LinesController implements IWareho
 	private boolean stockWarning;
 	private boolean longDescription;
 	private boolean showItemPackageWindow;
+	private boolean showQuantityAdjustWindow;
+	private double quantityAdjust;
+	private DeliveryDetail deliveryDetail;
 	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -58,14 +62,6 @@ public class DeliveryDetailController extends LinesController implements IWareho
 		this.longDescription = longDescription;
 	}
 
-	public boolean isShowItemPackageWindow() {
-		return showItemPackageWindow;
-	}
-
-	public void setShowItemPackageWindow(boolean value) {
-		this.showItemPackageWindow = value;
-	}
-
 	public void onLongDescription(ActionEvent event) {
 		setLongDescription(true);
 
@@ -80,6 +76,38 @@ public class DeliveryDetailController extends LinesController implements IWareho
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public boolean isShowItemPackageWindow() {
+		return showItemPackageWindow;
+	}
+
+	public void setShowItemPackageWindow(boolean value) {
+		this.showItemPackageWindow = value;
+	}
+
+	public boolean isShowQuantityAdjustWindow() {
+		return showQuantityAdjustWindow;
+	}
+
+	public void setShowQuantityAdjustWindow(boolean value) {
+		this.showQuantityAdjustWindow = value;
+	}
+
+	public double getQuantityAdjust() {
+		return quantityAdjust;
+	}
+
+	public void setQuantityAdjust(double quantityAdjust) {
+		this.quantityAdjust = quantityAdjust;
+	}
+
+	public DeliveryDetail getDeliveryDetail() {
+		return deliveryDetail;
+	}
+
+	public void setDeliveryDetail(DeliveryDetail deliveryDetail) {
+		this.deliveryDetail = deliveryDetail;
 	}
 
 	public boolean isEditable() throws ManagerBeanException {
@@ -181,6 +209,26 @@ public class DeliveryDetailController extends LinesController implements IWareho
 	public void onAssignItemPackage(ActionEvent event) {
 		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
 		deliveryDetail.setQuantity(deliveryDetail.getItem().getPackStockQuantity());
+	}
+
+	public void onSalesQuantityAdjustShow(ActionEvent event) throws ManagerBeanException {
+		setDeliveryDetail((DeliveryDetail)this.getModel().getRowData());
+		setQuantityAdjust(getDeliveryDetail().getQuantity());
+	}
+
+	public void onSalesQuantityAdjust(ActionEvent event) throws ManagerBeanException {
+		getDeliveryDetail().setId(null);
+		getDeliveryDetail().setLine(deliveryDetail.getLine()+1);
+		getDeliveryDetail().setDescription(getDeliveryDetail().getDescription() + " [AJUSTE]");
+		getDeliveryDetail().setQuantity(CommonUtil.round(getDeliveryDetail().getQuantity() - getQuantityAdjust(), 3));
+		getDeliveryDetail().setSalesDetail(null); 
+		getDeliveryDetail().setCreationUser(null);
+		getDeliveryDetail().setCreationDate(null);
+		getDeliveryDetail().setModificationUser(null);
+		getDeliveryDetail().setModificationDate(null);
+		getManagerBean().insert(getDeliveryDetail());
+
+		onSearch(event);
 	}
 
 	public double getAmount() {
