@@ -156,7 +156,7 @@
 				<aon:commandLink id="IncomeDetail_quantity-adjust"
 					styleClass="aon-finding-toolbar-item aon-noborder aon-icon-edit-blue"
 					value="&#160;" title="#{bundle.aon_quantity_adjust}"
-					rendered="#{formList and to.purchaseDetail != null and to.purchaseDetail.id != null}" 
+					rendered="#{income.pending and formList and !controller.modelEditable}" 
 					actionListener="#{controller.onPurchaseQuantityAdjustShow}"
 					reRender="showQuantityAdjustWindow">
 					<f:setPropertyActionListener target="#{incomeDetail.showQuantityAdjustWindow}"
