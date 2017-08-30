@@ -49,51 +49,98 @@
 	<a4j:loadScript src="https://mozilla.github.io/pdf.js/build/pdf.js"/>
 	<script type="text/javascript">
 	//<![CDATA[
-		var sourceId = 'invoiceAttach-upload';
-		var previewPanelId = 'invoiceAttachPreview-panel';
-		var previewContentId = 'invoiceAttachPreview-content';		
-		drawThumbnail(1, 1.0);
+		var sourceId = 'invoiceAttach-upload',
+			previewPanelId = 'invoiceAttachPreview-panel',
+			previewContentId = 'invoiceAttachPreview-content',
+			pageCountId = 'page_count',
+			currectPageId = 'page_num';
+		var pdfDoc;
+		var pageNum = 1;
+		
 	 	function drawThumbnail(_pageNumber = 1, _zoomRatio = 1.0) {
-	 	    var inputFile = document.getElementById( search(sourceId) + ':file' );
+	 	    var inputFile = document.getElementById( searchDiv(sourceId) + ':file' );
 	 	 	if (file = inputFile.files[0]) {
 	 	 	  fileReader = new FileReader();
 	 	 	  fileReader.onload = function(ev) {
 	 	 	    console.log(ev);
 	 		    PDFJS.getDocument(fileReader.result).then(function(pdf){ 
-	 		        pdf.getPage(_pageNumber).then(function (page) {
-	 		            drawPage(page, _zoomRatio);
-	 		        });
+	 		    	pdfDoc = pdf;
+	 		    	__TOTAL_PAGES = pdfDoc.numPages;
+	 		    	pageNum = _pageNumber;
+	 		    	document.getElementById( searchDiv(pageCountId) ).textContent = pdfDoc.numPages;
+	 		    	
+	 		    	renderPage(_pageNumber, _zoomRatio);
 	 		    });
 	 	 	  };
 	 	 	  fileReader.readAsArrayBuffer(file);
 	 	 	}
 	 	}
-		function drawPage(page, _zoomRatio) {
-			var panel = document.getElementById( search(previewPanelId) );
-			panel.style.display = "block";
-			var scale = _zoomRatio;
-		    var viewport = page.getViewport(scale);
-		    var container = document.getElementById( search(previewContentId) );
-		    while (container.lastChild) {
-		    	container.removeChild(container.lastChild);
-		    }
-		    container.style.width = viewport.width + 'px';
-		    container.style.height = viewport.height + 'px';
-		    page.getOperatorList().then(function (opList) {
-		        var svgGfx = new PDFJS.SVGGraphics(page.commonObjs, page.objs);
-		        return svgGfx.getSVG(opList, viewport);
-		      }).then(function (svg) {
-		        container.appendChild(svg);
-		      });
+		function renderPage(_pageNumber = 1, _zoomRatio = 1.0) {
+			pdfDoc.getPage(_pageNumber).then(function (page) {
+				var panel = document.getElementById( searchDiv(previewPanelId) );
+				panel.style.display = "block";
+				var scale = _zoomRatio;
+			    var viewport = page.getViewport(scale);
+			    var container = document.getElementById( searchDiv(previewContentId) );
+			    while (container.lastChild) {
+			    	container.removeChild(container.lastChild);
+			    }
+			
+				var width = window.innerWidth
+				  || document.documentElement.clientWidth
+				  || document.body.clientWidth;
+				var height = window.innerHeight
+				  || document.documentElement.clientHeight
+				  || document.body.clientHeight;
+			    container.style.width = (width-750)+"px";
+			    container.style.height = (height-250) + 'px';
+			    //container.style.width = viewport.width + 'px';
+			    //container.style.height = viewport.height + 'px';
+			    page.getOperatorList().then(function (opList) {
+			        var svgGfx = new PDFJS.SVGGraphics(page.commonObjs, page.objs);
+			        return svgGfx.getSVG(opList, viewport);
+			      }).then(function (svg) {
+			        container.appendChild(svg);
+			      });
+			});
+			document.getElementById( searchInput(currectPageId) ).value = pageNum;
 	 	}
-	 	function search(_elementId) {
-	 		var elements = document.getElementsByTagName("div");
+		function searchDiv(_elementId) {
+	 		return search(_elementId, "div");
+	 	}
+		function searchInput(_elementId) {
+	 		return search(_elementId, "input");
+	 	}
+		function search(_elementId, _tagName) {
+	 		var elements = document.getElementsByTagName(_tagName);
 	 		for(i=0;i<elements.length;i++){
 	 			if (elements[i].id.endsWith( _elementId )) {
 	 				return elements[i].id;
 	 			}
 	 		}
 	 	}
+	 	
+	 	function onPrevPage() {
+	 	  if (pageNum <= 1) {
+	 	    return;
+	 	  }
+	 	  renderPage(--pageNum);
+	 	}
+	 	function onNextPage() {
+	 	  if (pageNum >= pdfDoc.numPages) {
+	 	    return;
+	 	  }
+	 	  renderPage(++pageNum);
+	 	}
+	 	function onFirstPage() {
+	 	  pageNum = 1;
+	 	  renderPage(pageNum);
+	 	}
+	 	function onLastPage() {
+	 	  pageNum = pdfDoc.numPages;
+	 	  renderPage(pageNum);
+	 	}
+	 	
 	//]]>
  	</script>
 	

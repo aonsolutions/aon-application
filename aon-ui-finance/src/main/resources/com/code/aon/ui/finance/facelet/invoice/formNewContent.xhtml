@@ -94,7 +94,7 @@
 							title="#{bundle.aon_remove}"
 							reRender="invoiceAttach-panel, invoiceAttachPreview-panel"
 							style="margin-left: 0.4em;"
-							styleClass="aon-editDataTable-button aon-icon-delete" />
+							styleClass="aon-editDataTable-button aon-icon-cancel2" />
 					</aon:div>
 				</aon:panelCollapsible>
 			</aon:if>
@@ -110,8 +110,21 @@
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
-							<aon:div id="invoiceAttachPreview-content">
+							<aon:div styleClass="aon-toolbar">
+								<a4j:commandButton id="first" value="" ajaxSingle="true" onclick="onFirstPage();" 
+									styleClass="aon-editDataTable-button aon-dataScroller-button-first" />
+								<a4j:commandButton id="prev" value="" ajaxSingle="true" onclick="onPrevPage();"
+									styleClass="aon-editDataTable-button aon-dataScroller-button-previous" />
+								<a4j:commandButton id="next" value="" ajaxSingle="true" onclick="onNextPage();" 
+									styleClass="aon-editDataTable-button aon-dataScroller-button-next" />
+								<a4j:commandButton id="last" value="" ajaxSingle="true" onclick="onLastPage();"
+									styleClass="aon-editDataTable-button aon-dataScroller-button-last" />
+								<aon:outputText value="#{bundle.aon_page}: "/>
+								<aon:inputText size="3" id="page_num" disabled="#{true}"/>
+								<aon:outputText value=" / "/>
+								<aon:div id="page_count" style="display: inline;"/>
 							</aon:div>
+							<aon:div id="invoiceAttachPreview-content" style="overflow: auto;"/>
 						</aon:div>
 					</aon:div>
 				</aon:div>
