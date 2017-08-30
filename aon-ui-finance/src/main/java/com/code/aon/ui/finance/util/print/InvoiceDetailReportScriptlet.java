@@ -14,6 +14,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.product.Item;
 import com.code.aon.sales.Sales;
 import com.code.aon.ui.company.util.ReportProductLinesScriptlet;
 import com.code.aon.warehouse.Delivery;
@@ -60,33 +61,39 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 		}
 	}
 
-	private void fillProductPackage(StringBuilder newDescription, InvoiceDetail invoiceDetail) throws JRScriptletException{
+	private void fillProductPackage(StringBuilder newDescription, InvoiceDetail invoiceDetail) throws JRScriptletException, ManagerBeanException{
 		boolean isPrintProductPackage = AppParamUtil.getValueAsBoolean(AppParam.APP_PRINT_PRODUCT_PACKAGE_PARAM);
-		if(  isPrintProductPackage && invoiceDetail.getItem()!=null
-				&& invoiceDetail.getItem().getProduct().isPackaged() ){
+		Item item = invoiceDetail.getItem();
+		if( isPrintProductPackage && item!=null && item.getProduct().isPackaged() ){
+			if( item.getPackMeasurementTag()==null
+					|| item.getPackUnitsTag()==null
+					|| item.getPackFormatTag()==null ){
+				item = item.getProduct().getBaseItem();
+			}
+			
 			StringBuilder builder = new StringBuilder("  ");
-			if( invoiceDetail.getItem().getPackMeasurementTag()!=null ){
+			if( item.getPackMeasurementTag()!=null ){
 				builder.append( String.format("%.2f", invoiceDetail.getQuantity()) )
 					.append( " " )
-					.append( invoiceDetail.getItem().getPackMeasurementTag().getName() )
+					.append( item.getPackMeasurementTag().getName() )
 					.append( ": " );
 			}
-			if( invoiceDetail.getItem().getPackUnitsTag()!=null ){
+			if( item.getPackUnitsTag()!=null ){
 				builder.append( String.format("%.2f",invoiceDetail.getQuantity()
-						/ invoiceDetail.getItem().getPackMeasurement()) )
+						/ item.getPackMeasurement()) )
 					.append( " " )
-					.append( invoiceDetail.getItem().getPackUnitsTag().getName() );
+					.append( item.getPackUnitsTag().getName() );
 			}
-			if( invoiceDetail.getItem().getPackUnitsTag()!=null
-					&& invoiceDetail.getItem().getPackFormatTag()!=null ){
+			if( item.getPackUnitsTag()!=null
+					&& item.getPackFormatTag()!=null ){
 				builder.append( ", " );
 			}
-			if( invoiceDetail.getItem().getPackFormatTag()!=null ){
+			if( item.getPackFormatTag()!=null ){
 				builder.append( String.format("%.2f",(invoiceDetail.getQuantity()
-						/ invoiceDetail.getItem().getPackMeasurement())
-						/ invoiceDetail.getItem().getPackUnits()) )
+						/ item.getPackMeasurement())
+						/ item.getPackUnits()) )
 					.append( " " )
-					.append( invoiceDetail.getItem().getPackFormatTag().getName() );
+					.append( item.getPackFormatTag().getName() );
 			}
 			newDescription.append( newDescription.length()>0?"\n":"" );
 			newDescription.append( builder.toString() );
