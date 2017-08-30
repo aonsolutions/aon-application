@@ -325,6 +325,20 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	
 	@Transient
+	public boolean isPayslip() {
+		try {
+			IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), getId());
+			criteria.addEqualExpression(pAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_ATTACH_TYPE), ProjectAttachmentType.PAYSLIP);
+			return pAttachBean.getList(criteria).size() > 0;
+		} catch(ManagerBeanException ex) {
+			LOGGER.error("Error obtaining payslip", ex);
+		}
+		return false;
+	}
+	
+	@Transient
 	public boolean isConexFlowPayslip() {
 		try {
 			IManagerBean pAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);

@@ -121,7 +121,7 @@
 						</aon:htmlCommandLink>
  					</aon:if>
  					
- 					<aon:if test="#{reservation.to.conexFlowPayslip || reservation.to.redsysPayslip}">
+ 					<aon:if test="#{reservation.to.payslip}">
  						<h:outputLink title="#{bundle.aon_external_print_conexFlowPayslip}" 
 							value="#{reservation.reservationConexFlow.printConexFlowPayslip}" target="_blank">
 							<aon:outputText value="#{bundle.aon_external_print_conexFlowPayslip}" styleClass="aon-finding-toolbar-item aon-icon-pdf"/>
