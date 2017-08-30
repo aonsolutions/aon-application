@@ -182,9 +182,9 @@ public class Mod303DAO extends FiscalModelDAO {
 			.forEach(mod -> {
 				for (FiscalModelDetail source : mod.getMap().values() ) {
 					Mod303Key key = Mod303Key.getKey(source.getType());
-					if (key != null ) {
+					if (key != null && key.isDiffEnabled()) {
 						IMod303KeyDAO keyDAO = dec.getKey(key);
-						if (keyDAO != null && keyDAO.isDiffEnabled()) {
+						if (keyDAO != null) {
 							FiscalModelDetail target = mod303.ensureDetail(key);
 							target.setDeclaredAmount(AonMathUtils.round(target.getDeclaredAmount() + source.getAmount()));
 						}
@@ -202,8 +202,8 @@ public class Mod303DAO extends FiscalModelDAO {
 
 		for (FiscalModelDetail detail : mod303.getMap().values()) {
 			IMod303KeyDAO key = dec.safeValueOf(mod303, detail.getType());
-			if (key != null && key.getKey() != mod303.getProrateKey()) {
-				detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
+			if (key != null && key.getKey().isDiffEnabled()) {
+				detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));
 				detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 			}
 		}
@@ -347,7 +347,7 @@ public class Mod303DAO extends FiscalModelDAO {
 				+ " DEL " + mod303.getPeriod().getDescription()
 				+ " DE " + mod303.getYear();
 		return VATFormatter.formatInvoices(title,script.getLabel()
-			,getAccrualBreakdown(ctx, mod303)
+			,getAccrualBreakdown(ctx, mod303,true)
 					.filter( br ->  br.isSales()  )	
 					.collect(Collectors.toCollection(LinkedList::new))
 		);
@@ -359,7 +359,7 @@ public class Mod303DAO extends FiscalModelDAO {
 				+ " DEL " + mod303.getPeriod().getDescription()
 				+ " DE " + mod303.getYear();
 		return VATFormatter.formatInvoices(title,script.getLabel()
-			,getAccrualBreakdown(ctx, mod303)
+			,getAccrualBreakdown(ctx, mod303,true)
 					.filter( br ->  !br.isSales()  )	
 					.collect(Collectors.toCollection(LinkedList::new))
 		);

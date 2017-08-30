@@ -306,8 +306,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.getColumnFormatter().setWidth(0, "auto");
 		
 		table.getColumnFormatter().setWidth(1, "150px");
-		table.getColumnFormatter().setWidth(2, "150px");
-		table.getColumnFormatter().setWidth(3, "120px");
+		table.getColumnFormatter().setWidth(2, "100px");
+		table.getColumnFormatter().setWidth(3, "150px");
 		table.getColumnFormatter().setWidth(4, "150px");
 		table.getColumnFormatter().setWidth(5, "110px");
 		
@@ -531,19 +531,39 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		final DoubleBox input = new DoubleBox(fieldSize);
 		input.setResolver(resolver);
 		fieldsMap.put(key, input);
-//		input.setEnabled(this.mod303.isNotFinished() && enabled); 
 		input.setEnabled(enabled); 
+		input.addStyleName(AON.AON_CSS.aonPaddingLeft10Important());
 		input.setValue(det1.getAmount());
+		if (key.isDiffEnabled()) {
+			if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
+				input.addStyleName(AON.AON_CSS.aonChanged());
+				input.setTitle("Valor calculado ..: " + det1.getResultAmount() 
+					+ ". Se ha realizado un ajuste por valor de " + AonMathUtils.round( det1.getAdjustAmount() * -1));
+			}
+		}
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				double result = mod303.getResultAmount(key);
-				double adjust = mod303.getAdjustAmount(key);
-				double amount = input.getValue();
-				if (AonMathUtils.isNotZero(result - adjust - amount)) {
-					mod303.ensureDetail(key).setAdjustAmount( result - amount);	
+				if (key.isDiffEnabled()) {
+					double result = mod303.getResultAmount(key);
+					double adjust = mod303.getAdjustAmount(key);
+					double amount = input.getValue();
+					if (AonMathUtils.isNotZero(result - adjust - amount)) {
+						mod303.ensureDetail(key).setAdjustAmount( result - amount);	
+					}
 				}
 				mod303.ensureDetail(key).setAmount(input.getValue());
+
+				if (key.isDiffEnabled()) {
+					if (AonMathUtils.isNotZero(mod303.ensureDetail(key).getAdjustAmount())) {
+						input.addStyleName(AON.AON_CSS.aonChanged());
+						input.setTitle("Valor calculado ..: " + mod303.ensureDetail(key).getResultAmount() 
+							+ ". Se ha realizado un ajuste por valor de " + AonMathUtils.round( mod303.ensureDetail(key).getAdjustAmount() * -1));
+					} else {
+						input.removeStyleName(AON.AON_CSS.aonChanged());
+					}
+				}
+				
 				if (input.isEnabled()) {
 					calculateAndRefresh();
 				}
@@ -712,9 +732,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 
 	protected void markAsDirty() {
-		if (!isDirty()) {
-			setDirty(true);
-		}
+		setDirty(true);
 	}
 	private boolean isDirty() {
 		return this.dirty;
@@ -727,7 +745,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void styleDirtyLabel() {
 		dirtyPanel.clear();
 		if ( isDirty()) {
-			InlineLabel dirtyLabel = new InlineLabel("[CAMBIOS]");
+			InlineLabel dirtyLabel = new InlineLabel("[*]");
 			dirtyLabel.setStyleName(AON.AON_CSS.aonColorRed());
 			dirtyPanel.add(dirtyLabel);
 		}
@@ -738,7 +756,20 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			dirtyPanel.add(diffLabel);
 		}
 		
-		
+		boolean adjusted = false;
+		for (FiscalModelDetail det : this.mod303.getMap().values()) {
+			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
+				adjusted = true;
+				break;
+			}
+		}
+		if (adjusted) {
+			InlineLabel adjLabel = new InlineLabel("[AJUSTES]");
+			adjLabel.setStyleName(AON.AON_CSS.aonMarginLeft5());
+			adjLabel.addStyleName(AON.AON_CSS.aonColoRoyalblue());
+			adjLabel.setTitle("Ajustes realizados");
+			dirtyPanel.add(adjLabel);
+		}
 	}
 
 	private void save() {

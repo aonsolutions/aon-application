@@ -44,159 +44,159 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		// ---------------------------------------------------------------
 		
 		// Base imponible, porcentaje y cuota al primer tipo.
-		,GP_C002(Mod303Key.GP_C002,true
+		,GP_C002(Mod303Key.GP_C002
 			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent1(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C002,mod,vat.getBase())
 			,null,null,null)
-		,GP_X002(Mod303Key.GP_X002,false,null,null,(ctx,mod) -> add(Mod303Key.GP_X002,mod,PERCENT1),null,null)
-		,GP_C003(Mod303Key.GP_C003,true
+		,GP_X002(Mod303Key.GP_X002,null,null,(ctx,mod) -> add(Mod303Key.GP_X002,mod,PERCENT1),null,null)
+		,GP_C003(Mod303Key.GP_C003
 			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent1(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C003,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al segundo tipo.
-		,GP_C004(Mod303Key.GP_C004,true
+		,GP_C004(Mod303Key.GP_C004
 			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
 			 ,(ctx,mod,vat) -> add(Mod303Key.GP_C004,mod,vat.getBase())
 				,null,null,null)
-		,GP_X004(Mod303Key.GP_X004,false,null,null,(ctx,mod) -> add(Mod303Key.GP_X004,mod,PERCENT2),null,null)
-		,GP_C005(Mod303Key.GP_C005,true
+		,GP_X004(Mod303Key.GP_X004,null,null,(ctx,mod) -> add(Mod303Key.GP_X004,mod,PERCENT2),null,null)
+		,GP_C005(Mod303Key.GP_C005
 			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C005,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al tercer tipo.
-		,GP_C006(Mod303Key.GP_C006,true
+		,GP_C006(Mod303Key.GP_C006
 			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent3(vat)
 			 ,(ctx,mod,vat) -> add(Mod303Key.GP_C006,mod,vat.getBase())
 			,null,null,null)
-		,GP_X006(Mod303Key.GP_X006,false,null,null,(ctx,mod) -> add(Mod303Key.GP_X006,mod,PERCENT3),null,null)
-		,GP_C007(Mod303Key.GP_C007,true
+		,GP_X006(Mod303Key.GP_X006,null,null,(ctx,mod) -> add(Mod303Key.GP_X006,mod,PERCENT3),null,null)
+		,GP_C007(Mod303Key.GP_C007
 			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent3(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C007,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Modificación bases y cuotas
-		,GP_C039(Mod303Key.GP_C039,true
+		,GP_C039(Mod303Key.GP_C039
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat) 
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C039,mod,vat.getBase())
 			,null,null,null)
-		,GP_C040(Mod303Key.GP_C040,true
+		,GP_C040(Mod303Key.GP_C040
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C040,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Recargo equivalencia al primer tipo.
-		,GP_C008(Mod303Key.GP_C008,true
+		,GP_C008(Mod303Key.GP_C008
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C008,mod,vat.getBase())
 			,null,null,null)
-		,GP_X008(Mod303Key.GP_X008,false,null,null,(ctx,mod) -> add(Mod303Key.GP_X008,mod,SURCHARGE_PERCENT1),null,null)
-		,GP_C009(Mod303Key.GP_C009,true
+		,GP_X008(Mod303Key.GP_X008,null,null,(ctx,mod) -> add(Mod303Key.GP_X008,mod,SURCHARGE_PERCENT1),null,null)
+		,GP_C009(Mod303Key.GP_C009
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C009,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
 		// Recargo equivalencia al segundo tipo.
-		,GP_C010(Mod303Key.GP_C010,true
+		,GP_C010(Mod303Key.GP_C010
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C010,mod,vat.getBase())
 			,null,null,null)
-		,GP_X010(Mod303Key.GP_X010,false,null,null,(ctx,mod) -> add(Mod303Key.GP_X010,mod,SURCHARGE_PERCENT2),null,null)
-		,GP_C011(Mod303Key.GP_C011,true
+		,GP_X010(Mod303Key.GP_X010,null,null,(ctx,mod) -> add(Mod303Key.GP_X010,mod,SURCHARGE_PERCENT2),null,null)
+		,GP_C011(Mod303Key.GP_C011
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C011,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
 		// Recargo equivalencia al tercer tipo.
-		,GP_C012(Mod303Key.GP_C012,true
+		,GP_C012(Mod303Key.GP_C012
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent3(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C012,mod,vat.getBase())
 			,null,null,null)
-		,GP_X012(Mod303Key.GP_X012,false,null,null,(ctx,mod) -> add(Mod303Key.GP_X012,mod,SURCHARGE_PERCENT3),null,null)
-		,GP_C013(Mod303Key.GP_C013,true
+		,GP_X012(Mod303Key.GP_X012,null,null,(ctx,mod) -> add(Mod303Key.GP_X012,mod,SURCHARGE_PERCENT3),null,null)
+		,GP_C013(Mod303Key.GP_C013
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent3(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C013,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
 		// Modificaciones bases y cuotas del recargo de equivalencia
-		,GP_C041(Mod303Key.GP_C041,true
+		,GP_C041(Mod303Key.GP_C041
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C041,mod,vat.getBase())
 			,null,null,null)
-		,GP_C042(Mod303Key.GP_C042,true
+		,GP_C042(Mod303Key.GP_C042
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C042,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
 		// Adquisiciones intracomunitarias al primer tipo.		
-		,GP_C014(Mod303Key.GP_C014,true
+		,GP_C014(Mod303Key.GP_C014
 			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C014,mod,vat.getBase())
 			,null,null,null)
-		,GP_C015(Mod303Key.GP_C015,true
+		,GP_C015(Mod303Key.GP_C015
 			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C015,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Otras operaciones con inversión del sujeto pasivo (excepto. adq. intracom). Base y cuota
-		,GP_C043(Mod303Key.GP_C043,true
+		,GP_C043(Mod303Key.GP_C043
 			,(mod,vat) -> operacionesISPFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C043,mod,vat.getBase())
 			,null,null,null)
-		,GP_C044(Mod303Key.GP_C044,true
+		,GP_C044(Mod303Key.GP_C044
 			,(mod,vat) -> operacionesISPFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C044,mod,vat.getQuota())
 			,null,null,null)
 		
 		// TOTAL CUOTA DEVENGADA
-		,GP_C016(Mod303Key.GP_C016,false,null,null,null,"GP_C003+GP_C005+GP_C007+GP_C040+GP_C009+GP_C011+GP_C013+GP_C042+GP_C015+GP_C044",null)
+		,GP_C016(Mod303Key.GP_C016,null,null,null,"GP_C003+GP_C005+GP_C007+GP_C040+GP_C009+GP_C011+GP_C013+GP_C042+GP_C015+GP_C044",null)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEDUCIBLE
 		// ---------------------------------------------------------------
 
 		// IVA deducible en operaciones interiores 
-		,GP_C017(Mod303Key.GP_C017,true
+		,GP_C017(Mod303Key.GP_C017
 			,(mod,vat) -> operacionesInterioresFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C017,mod,vat.getBase())
 			,null,null,null)
-		,GP_C018(Mod303Key.GP_C018,true
+		,GP_C018(Mod303Key.GP_C018
 			,(mod,vat) -> operacionesInterioresFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C018,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// IVA deducible en importaciones
-		,GP_C019(Mod303Key.GP_C019,true
+		,GP_C019(Mod303Key.GP_C019
 			,(mod,vat) -> importacionesFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C019,mod,vat.getBase())
 			,null,null,null)
-		,GP_C020(Mod303Key.GP_C020,true
+		,GP_C020(Mod303Key.GP_C020
 			,(mod,vat) -> importacionesFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C020,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes
-		,GP_C021(Mod303Key.GP_C021,true
+		,GP_C021(Mod303Key.GP_C021
 			,(mod,vat) -> adqIntracomunitariasFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C021,mod,vat.getBase())
 			,null,null,null)
-		,GP_C022(Mod303Key.GP_C022,true
+		,GP_C022(Mod303Key.GP_C022
 			,(mod,vat) -> adqIntracomunitariasFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C022,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		// Rectificación de deducciones
-		,GP_C045(Mod303Key.GP_C045,true
+		,GP_C045(Mod303Key.GP_C045
 			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C045,mod,vat.getBase())
 			,null,null,null)
-		,GP_C046(Mod303Key.GP_C046,true
+		,GP_C046(Mod303Key.GP_C046
 			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C046,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		// Compensaciones Régimen Especial A.G. y P .
-		,GP_C023(Mod303Key.GP_C023,true
+		,GP_C023(Mod303Key.GP_C023
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C023,mod,vat.getDeductibleQuota())
 			,null,null,null)
@@ -205,23 +205,23 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		,GP_C024(Mod303Key.GP_C024)
 		
 		// TOTAL A DEDUCIR
-		,GP_C025(Mod303Key.GP_C025,false,null,null,null,"GP_C018+GP_C020+GP_C022+GP_C046+GP_C023+GP_C024",null)
+		,GP_C025(Mod303Key.GP_C025,null,null,null,"GP_C018+GP_C020+GP_C022+GP_C046+GP_C023+GP_C024",null)
 		
 		// -----------------------------------------------------------
 		// ------------------------------------------------- RESULTADO
 		// -----------------------------------------------------------
 		
 		// DIFERENCIA
-		,GP_C026(Mod303Key.GP_C026,false,null,null,null,"GP_C016-GP_C025",null)
+		,GP_C026(Mod303Key.GP_C026,null,null,null,"GP_C016-GP_C025",null)
 		
 		// Volumen operaciones. % GIPUZKOA
-		,GP_C027(Mod303Key.GP_C027,false,null,null,(ctx,mod) -> add(Mod303Key.GP_C027,mod,100.0),null,null)
+		,GP_C027(Mod303Key.GP_C027,null,null,(ctx,mod) -> add(Mod303Key.GP_C027,mod,100.0),null,null)
 	
 		// Cuota atribuible al Territorio Histórico de Gipuzkoa	
-		,GP_C028(Mod303Key.GP_C028,false,null,null,null,"GP_C026*GP_C027/100",null)
+		,GP_C028(Mod303Key.GP_C028,null,null,null,"GP_C026*GP_C027/100",null)
 
 		// Cuotas a compensar de períodos anteriores en el Territorio Histórico de Álava	
-		,GP_C029(Mod303Key.GP_C029,false,null,null,
+		,GP_C029(Mod303Key.GP_C029,null,null,
 				(ctx,mod) -> {
 					add( Mod303Key.GP_C029, mod, 
 						Mod303DAO.getLastPeriodModels(ctx, mod)
@@ -245,43 +245,42 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 			)
 
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
-		,GP_C035(Mod303Key.GP_C035,false,null,null,null,"GP_C028-GP_C029",null)
+		,GP_C035(Mod303Key.GP_C035,null,null,null,"GP_C028-GP_C029",null)
 		
 		// -----------------------------------------------------------
 		// ------------------------------------- INFORMACION ADICIONAL
 		// -----------------------------------------------------------
 		
 		// Total entregas de bienes y prestaciones de servicios intracomunitarias
-		,GP_C030(Mod303Key.GP_C030,true
+		,GP_C030(Mod303Key.GP_C030
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C030,mod,vat.getBase())
 			,null,null,null)
 		
 		// Total exportaciones y operaciones asimiladas
-		,GP_C031(Mod303Key.GP_C031,true
+		,GP_C031(Mod303Key.GP_C031
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C031,mod,vat.getBase())
 			,null,null,null)
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
-		,GP_C032(Mod303Key.GP_C032,true
+		,GP_C032(Mod303Key.GP_C032
 			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C032,mod,vat.getBase())
 			,null,null,null)
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,GP_C047(Mod303Key.GP_C047,true,null,null,(ctx,mod) -> add(Mod303Key.GP_C047,mod,Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		,GP_C048(Mod303Key.GP_C048,true,null,null,(ctx,mod) -> add( Mod303Key.GP_C048, mod, Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod) ),null,null)
+		,GP_C047(Mod303Key.GP_C047,null,null,(ctx,mod) -> add(Mod303Key.GP_C047,mod,Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
+		,GP_C048(Mod303Key.GP_C048,null,null,(ctx,mod) -> add( Mod303Key.GP_C048, mod, Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod) ),null,null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,GP_C049(Mod303Key.GP_C049,true,null,null,(ctx,mod) -> add(Mod303Key.GP_C049,mod,Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,GP_C050(Mod303Key.GP_C050,true,null,null,(ctx,mod) -> add(Mod303Key.GP_C050,mod, Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod) ),null,null)
+		,GP_C049(Mod303Key.GP_C049,null,null,(ctx,mod) -> add(Mod303Key.GP_C049,mod,Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
+		,GP_C050(Mod303Key.GP_C050,null,null,(ctx,mod) -> add(Mod303Key.GP_C050,mod, Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod) ),null,null)
 		;
 		
 		private Mod303Key key;
-		private boolean diffEnabled;
 		private IValueAccepter acceptValue;
 		private IValueIntializer initializer;
 		private IValueFirstIntializer firstInitializer;
@@ -289,17 +288,15 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		private String template;
 
 		private Mod303KeyDAO(Mod303Key key) {
-			this(key,false,null,null,null,null,null);			
+			this(key,null,null,null,null,null);			
 		}
 		private Mod303KeyDAO(Mod303Key key
-				, boolean diffEnabled
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueFirstIntializer firstInitializer
 				, String expression
 				, String template) {
 			this.key = key;
-			this.diffEnabled = diffEnabled;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.firstInitializer = firstInitializer;
@@ -327,10 +324,6 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		@Override
 		public boolean hasAccepter() {
 			return acceptValue != null;
-		}
-		@Override
-		public boolean isDiffEnabled() {
-			return this.diffEnabled;
 		}
 		@Override
 		public void initialize(AONContext ctx,Mod303 mod,VatContext vctx) {

@@ -87,9 +87,8 @@ public enum Model3032017GIPUZKOARScript1 implements IModelScript<Mod303Key> {
 	
 	@Override
 	public int getFieldSize(Mod303Key key) {
-		if (key == Mod303Key.AR_C002 || key == Mod303Key.AR_C205 || key == Mod303Key.AR_C208
-		 || key == Mod303Key.AR_C011 || key == Mod303Key.AR_C214 || key == Mod303Key.AR_C217
-		 || key == Mod303Key.AR_C020 || key == Mod303Key.AR_C223 || key == Mod303Key.AR_C226) {
+		if (key == Mod303Key.GP_X002 || key == Mod303Key.GP_X004 || key == Mod303Key.GP_X006
+		 || key == Mod303Key.GP_X008 || key == Mod303Key.GP_X010 || key == Mod303Key.GP_X012) {
 			return PERCENT_FIELD_LENGTH;	
 		}
 		return IModelScript.super.getFieldSize(key);
@@ -97,9 +96,8 @@ public enum Model3032017GIPUZKOARScript1 implements IModelScript<Mod303Key> {
 	
 	@Override
 	public boolean isEnabled(Mod303Key key) {
-		if (key == Mod303Key.AR_C002 || key == Mod303Key.AR_C205 || key == Mod303Key.AR_C208
-		 || key == Mod303Key.AR_C011 || key == Mod303Key.AR_C214 || key == Mod303Key.AR_C217
-		 || key == Mod303Key.AR_C020 || key == Mod303Key.AR_C223 || key == Mod303Key.AR_C226) {
+		if (key == Mod303Key.GP_X002 || key == Mod303Key.GP_X004 || key == Mod303Key.GP_X006
+		 || key == Mod303Key.GP_X008 || key == Mod303Key.GP_X010 || key == Mod303Key.GP_X012) {
 			return false;	
 		}
 		return IModelScript.super.isEnabled(key);

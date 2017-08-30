@@ -431,6 +431,10 @@ input[type="checkbox"]:focus + label {
 	color: green;
 }
 
+.aon-color-royalblue {
+	color: RoyalBlue;
+}
+
 .aon-color-red {
 	color: red;
 }

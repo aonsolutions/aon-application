@@ -20,12 +20,12 @@ public abstract class Mod303Declaration {
 	}
 
 	protected static void add(Mod303Key key,Mod303 mod,double amount) {
-		mod.ensureDetail(key).addAccumulatedAmount(amount);	
+		if (key.isDiffEnabled()) {
+			mod.ensureDetail(key).addAccumulatedAmount(amount);	
+		} else {
+			mod.ensureDetail(key).addAmount(amount);
+		}
 	}
-	
-//	protected static void prorate(Mod303Key key,Mod303 mod,double amount) {
-//		mod.ensureDetail(key).addAccumulatedAmount(amount * mod.getProratePercent() / 100);	
-//	}
 	
 	public IMod303KeyDAO getKey(Mod303Key key) {
 		for (IMod303KeyDAO keyDAO : getKeys()) {
