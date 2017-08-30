@@ -246,17 +246,21 @@ public class DownloadProductServlet extends HttpServlet {
         }
         if(!tags.equals("null") && !tags.equals("") && !tags.equals("undefined")){
         	String s= tags.substring(1) ;
+        	Condition  c2 = null;
+        	Boolean first = true;
         	while(s !=""){
         		Integer index = s.indexOf("$");
         		if(index == -1){
-        			c = c.and(PRODUCT_TAG.TAG.eq(Integer.parseInt(s)));
+        			c2 = first ? PRODUCT_TAG.TAG.eq(Integer.parseInt(s)) : c2.or(PRODUCT_TAG.TAG.eq(Integer.parseInt(s)));
         			s="";
         		}
         		else{ 
-        			c = c.and(PRODUCT_TAG.TAG.eq(Integer.parseInt(s.substring(0, index))));
+        			c2 = first ? PRODUCT_TAG.TAG.eq(Integer.parseInt(s.substring(0, index))) : c2.or(PRODUCT_TAG.TAG.eq(Integer.parseInt(s.substring(0, index))));
         			s = s.substring(index+1);
         		}
+        		first = false;
         	}
+        	if(c2 != null) c = c.and(c2);
         }
         if(!vat.equals("null") && !vat.equals("") && !vat.equals("undefined")){
         	c = c.and(PRODUCT.VAT.eq(Integer.parseInt(vat)));

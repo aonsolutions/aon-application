@@ -384,9 +384,7 @@ public class Templates extends Composite implements EntryPoint {
 		Dialog d = new Dialog("Exportar Productos","Descargar",true,"Cancelar",true,"exportProduct");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(template_list);
-		eiAux = ei;
 		TemplatesDialog popup = new TemplatesDialog(d) {
-			ExportInfo ei = eiAux;
 			@Override
 			protected void onCancel() {
 				hide();

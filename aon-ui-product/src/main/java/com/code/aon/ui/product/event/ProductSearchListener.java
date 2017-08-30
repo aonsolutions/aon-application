@@ -128,6 +128,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		if (ArrayUtils.isEmpty(tags)) {
 			tags = new Tag[]{getEmptyTag()};
 		}
+		ProductExportGwtController.setTags(tags);
 		return tags;
 	}
 	public void setTags(Tag[] tags) {
