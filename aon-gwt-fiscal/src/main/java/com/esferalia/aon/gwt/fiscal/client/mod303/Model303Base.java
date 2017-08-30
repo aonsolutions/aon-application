@@ -649,7 +649,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			}
 			if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
 			if 	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.AON_CSS.aonIconCompanyData());
-			
+			button.setTabIndex(-2); // NO FOCUS
 			button.addClickHandler(new ClickHandler() {
 				
 				@Override
