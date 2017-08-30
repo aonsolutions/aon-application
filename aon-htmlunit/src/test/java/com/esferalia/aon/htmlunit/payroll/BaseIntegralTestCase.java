@@ -134,6 +134,17 @@ public abstract class BaseIntegralTestCase {
 		select(employeeId + "-events");
 		wait4Id("dias_vacaciones");
 	}
+	
+	protected static void calendar(String employeeName) throws IndexOutOfBoundsException, IOException, InterruptedException {
+		String employeeId = normalize(employeeName);
+		
+		DomElement draft = getElementById(employeeId + "-employeecalendar");
+		if ( draft == null || !draft.isDisplayed() )
+			open(employeeId);
+		
+		select(employeeId + "-employeecalendar");
+		wait4Id("31_11");
+	}
 
 	protected static boolean hasElementById(String id) {
 		LOGGER.warning(GWT_DEBUG_ID_PREFIX +id + ": " +htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id));

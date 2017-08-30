@@ -852,7 +852,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		//#endif
 		
 		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
-		//saveButton.setVisible(true);
+		saveButton.setVisible(true);
 	}
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
@@ -1386,11 +1386,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 			if (i < firstDayOfMonth) {
 				labelDay.setText("");
+				labelDay.ensureDebugId("0_"+month);
 				calendarGrid.setWidget(row, i, labelDay);
 				cells[row + 1][i] = new NoneCell();
 			} else {
 				@SuppressWarnings("deprecation")
 				Date actualDay = new Date(year, month, contDays);
+				labelDay.ensureDebugId(actualDay.getDate()+"_"+month);
 				
 				DateUtils.resetTime(actualDay);
 				DayType dayType = calendarEmployeeInfo.getTypeByDay(actualDay);
@@ -1402,6 +1404,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}else{
 					doubleHour.setEnabled(false);
 					double hourByDay = calendarEmployeeInfo.getHourByDay(actualDay);
+					doubleHour.ensureDebugId(actualDay.getDate()+"_"+month+"_"+hourByDay+"_hour");
 					doubleHour.setValue(hourByDay);
 					monthHours += hourByDay;
 					doubleHour.setEnabled(false);
@@ -1467,6 +1470,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			// Label insetar
 			Label labelDay = new Label(contDays + "");
+			labelDay.ensureDebugId(actualDay.getDate()+"_"+month);
 			labelDay.setStyleName(style.cellStyle());
 			labelDay.addStyleName(style.pointer());
 			
@@ -1480,6 +1484,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}else{
 				doubleHour.setEnabled(false);
 				double hourByDay = calendarEmployeeInfo.getHourByDay(actualDay);
+				doubleHour.ensureDebugId(actualDay.getDate()+"_"+month+"_"+hourByDay+"_hour");
 				doubleHour.setValue(hourByDay);
 				monthHours += hourByDay;
 				doubleHour.setEnabled(false);
@@ -1536,6 +1541,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		if ((actualDayOfWeek) < 30) {
 			for (int i = 7 + actualDayOfWeek; i < 38; i++) {
 				Label labelDay = new Label();
+				labelDay.ensureDebugId("0_"+month);
 				labelDay.setText("");
 				labelDay.setStyleName(style.cellStyle());
 				calendarGrid.setWidget(row, i, labelDay);

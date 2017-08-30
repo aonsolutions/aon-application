@@ -825,6 +825,20 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertTrue(holidaysRow.isDisplayed());
 		
 	}
+	
+	@Test
+	public void TestCalendar() throws Exception {
+		if (!isDisplayed("testing,_calendario"))
+			open("calendario");
+		
+		wait4Id("testing,_calendario");
+		calendar("TESTING, CALENDARIO");
+		
+		HtmlDivision cuatroSept = getElementById("4_8");
+		//cuatroSept.click();
+		assertValue("4_8_6_hour", 6);
+		
+	}
 
 	// -------------------------------------------------------------------------
 	
