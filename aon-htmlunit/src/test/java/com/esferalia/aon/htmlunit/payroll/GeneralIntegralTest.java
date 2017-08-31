@@ -3,6 +3,7 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 
+import java.awt.MenuItem;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Calendar;
@@ -14,6 +15,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.css.StyleElement;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
@@ -834,9 +836,27 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("testing,_calendario");
 		calendar("TESTING, CALENDARIO");
 		
-		HtmlDivision cuatroSept = getElementById("4_8");
-		//cuatroSept.click();
+		HtmlDivision cuatroSept = getElementById("13_8");
+		cuatroSept.click();
+		HtmlTableDataCell archivo_mi = getElementById("archivo_mi");
+		archivo_mi.click();
+		HtmlTableDataCell holiday_mi = getElementById("holiday_mi");
+		holiday_mi.click();
+		String style = cuatroSept.getAttribute("class");
+		Assert.assertTrue(style.contains("holidayStyle"));
 		assertValue("4_8_6_hour", 6);
+		
+		HtmlButton undo = getElementById("undo_btn");
+		undo.click();
+		cuatroSept = getElementById("13_8");
+		style = cuatroSept.getAttribute("class");
+		Assert.assertFalse(style.contains("holidayStyle"));
+		
+		HtmlButton redo = getElementById("redo_btn");
+		redo.click();
+		cuatroSept = getElementById("13_8");
+		style = cuatroSept.getAttribute("class");
+		Assert.assertTrue(style.contains("holidayStyle"));
 		
 	}
 

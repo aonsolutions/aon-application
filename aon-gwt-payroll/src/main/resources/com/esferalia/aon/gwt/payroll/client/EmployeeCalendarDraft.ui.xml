@@ -352,7 +352,9 @@
 		
 		.pointer{
 			cursor:pointer;
-		}	
+		}
+
+		@external holidayStyle;	
 
 		</ui:style>
 
@@ -360,7 +362,7 @@
 		<g:north size="55">
 			<g:FlowPanel>
 				<g:MenuBar>
-					<g:MenuItem text="Archivo">
+					<g:MenuItem text="Archivo" ui:field="archivoMenuItem">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="nonWorkingDayMenuItem" text="Añadir día(s) no laborables" />
 							<!-- g:MenuItem ui:field="diaFestivo" text="Añadir día(s) festivos" / -->

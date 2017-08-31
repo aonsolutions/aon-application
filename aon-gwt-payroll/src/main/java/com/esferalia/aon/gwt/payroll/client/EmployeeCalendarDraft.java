@@ -306,6 +306,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	Grid calendarGrid;
 	
 	@UiField
+	MenuItem archivoMenuItem;
+	
+	@UiField
 	MenuItem nonWorkingDayMenuItem;
 	
 	@UiField
@@ -1235,6 +1238,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					   this.fullTimeJourney = calendarEmployeeInfo.isFullTimeJourney();
 					   initCalendar();
 					 }, t -> {});
+	
+		archivoMenuItem.ensureDebugId("archivo_mi");
+		holidayDayMenuItem.ensureDebugId("holiday_mi");
+		undoButton.ensureDebugId("undo_btn");
+		redoButton.ensureDebugId("redo_btn");
 	}
 	
 	/**
