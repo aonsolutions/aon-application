@@ -32,6 +32,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
@@ -296,6 +297,7 @@ public class EdiSalesImporterHandler implements Serializable {
 							Tag customerPackingTag = searchPackingTag(customerRegistryNote);
 							Double quantity = obtainQuantity(ediLineQuantity, customerPackingTag, rItem);
 							Double price = rItem.getPrice();
+							DiscountExpression discount = rItem.getDiscountExpression();
 							
 							SalesDetail detail = new SalesDetail();
 							detail.setSales(sales);
@@ -304,6 +306,7 @@ public class EdiSalesImporterHandler implements Serializable {
 							detail.setDescription(description);
 							detail.setQuantity(quantity);
 							detail.setPrice(price);
+							detail.setDiscountExpression(discount);
 							detail.setTaxes(0.0);
 							detail.setStatus(SalesDetailStatus.PENDING);
 							detail.setOfferDetail(null);
@@ -348,6 +351,7 @@ public class EdiSalesImporterHandler implements Serializable {
 							newDetail.setDescription(detail.getDescription());
 							newDetail.setQuantity(detail.getQuantity());
 							newDetail.setPrice(detail.getPrice());
+							newDetail.setDiscountExpression(detail.getDiscountExpression());
 							newDetail.setTaxes(detail.getTaxes());
 							newDetail.setStatus(detail.getStatus());
 							newDetail.setDelivered(detail.getDelivered());
