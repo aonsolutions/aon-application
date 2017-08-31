@@ -22,6 +22,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
@@ -32,7 +33,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryNote;
-import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.controller.SaleInvoiceDetailController;
@@ -269,7 +269,7 @@ public class UdapaEdiInvoiceImporterHandler implements Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
-					"%" + CustomerEdiSupportController.PTO_ENTREGA + "="
+					"%" + IEdiSupport.PTO_ENTREGA + "="
 							+ customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
 			registryId = list != null && !list.isEmpty() ? ((RegistryNote) list

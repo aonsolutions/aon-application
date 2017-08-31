@@ -19,6 +19,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.common.ILongProcess;
@@ -218,9 +219,9 @@ public class FtpDeliveryUploadHandler implements Serializable {
 					delivery.getCustomer().getRegistry(),
 					delivery.getRegistryAddress());
 			String customerEdiCode = ediCodes.get(
-							CustomerEdiSupportController.ALBARANES);
+							IEdiSupport.ALBARANES);
 			String deliveryPointEdiCode = ediCodes.get(
-							CustomerEdiSupportController.PTO_ENTREGA);
+							IEdiSupport.PTO_ENTREGA);
 			String customerPackage = ediSupport.obtainPackingTag(
 					delivery.getCustomer().getRegistry(),
 					delivery.getRegistryAddress()).getName();

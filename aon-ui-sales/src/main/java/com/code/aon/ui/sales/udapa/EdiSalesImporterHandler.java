@@ -25,6 +25,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.config.Tag;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ql.Criteria;
@@ -38,7 +39,6 @@ import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
-import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sales.controller.ISalesConstants;
@@ -312,7 +312,7 @@ public class EdiSalesImporterHandler implements Serializable {
 			criteria.addEqualExpression(rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
-					"%" + CustomerEdiSupportController.PTO_ENTREGA + "="
+					"%" + IEdiSupport.PTO_ENTREGA + "="
 							+ customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
 			rNote = list != null && !list.isEmpty() ? ((RegistryNote) list
@@ -327,7 +327,7 @@ public class EdiSalesImporterHandler implements Serializable {
 	private Tag searchPackingTag(RegistryNote rNote) {
 		String value = rNote.getComments();
 		Matcher m;
-		Pattern p = Pattern.compile(CustomerEdiSupportController.MEDIDA + "=([^;]*);");
+		Pattern p = Pattern.compile(IEdiSupport.MEDIDA + "=([^;]*);");
 		try {
 			if (value != null && (m = p.matcher(value)).find()) {
 				IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);

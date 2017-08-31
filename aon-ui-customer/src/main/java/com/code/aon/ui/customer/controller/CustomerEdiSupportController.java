@@ -1,5 +1,17 @@
 package com.code.aon.ui.customer.controller;
 
+import static com.code.aon.customer.IEdiSupport.ACTIVE;
+import static com.code.aon.customer.IEdiSupport.ALBARANES;
+import static com.code.aon.customer.IEdiSupport.CABECERA;
+import static com.code.aon.customer.IEdiSupport.EDI_CODES_PATTERN;
+import static com.code.aon.customer.IEdiSupport.EDI_PACKING_PATTERN;
+import static com.code.aon.customer.IEdiSupport.FACTURA;
+import static com.code.aon.customer.IEdiSupport.FINANCIERA;
+import static com.code.aon.customer.IEdiSupport.MEDIDA;
+import static com.code.aon.customer.IEdiSupport.PEDIDOS;
+import static com.code.aon.customer.IEdiSupport.PTO_ENTREGA;
+import static com.code.aon.customer.IEdiSupport.SERES_AUTO_COMMIT_DELIVERY;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,24 +52,11 @@ public class CustomerEdiSupportController implements Serializable {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(CustomerEdiSupportController.class);
 
-	public final static String ACTIVE = "EDI_ACTIVE";
-	public final static String CABECERA = "EDI_CABECERA";
-	public final static String PEDIDOS = "EDI_PEDIDOS";
-	public final static String PTO_ENTREGA = "EDI_PTO_ENTREGA";
-	public final static String FACTURA = "EDI_FACTURA";
-	public final static String FINANCIERA = "EDI_FINANCIERA";
-	public final static String ALBARANES = "EDI_ALBARANES";
-	public final static String MEDIDA = "EDI_MEDIDA";
-	
-	private final static String EDI_CODES_PATTERN = CABECERA + "=([^;]*);" + PEDIDOS
-			+ "=([^;]*);" + PTO_ENTREGA + "=([^;]*);" + FACTURA + "=([^;]*);"
-			+ FINANCIERA + "=([^;]*);" + ALBARANES + "=([^;]*);";
-
-	private final static String EDI_PACKING_PATTERN = MEDIDA + "=([^;]*);";
 
 	private Map<Integer, List<String>> addressCodes;
 	private List<RegistryAddress> customerAddresses;
 	private boolean enabled;
+	private boolean seresAutoCommitDelivery;
 
 	public boolean isEnabled() {
 		return enabled;
@@ -65,6 +64,14 @@ public class CustomerEdiSupportController implements Serializable {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+	
+	public boolean isSeresAutoCommitDelivery() {
+		return seresAutoCommitDelivery;
+	}
+
+	public void setSeresAutoCommitDelivery(boolean seresAutoCommitDelivery) {
+		this.seresAutoCommitDelivery = seresAutoCommitDelivery;
 	}
 
 	public Map<Integer, List<String>> getAddressCodes() {
@@ -97,6 +104,8 @@ public class CustomerEdiSupportController implements Serializable {
 
 		RegistryNote active = this.getRegistryNote(ACTIVE, customer.getId());
 		setEnabled(active != null && new Boolean(active.getComments()));
+		RegistryNote seresAutoCommitDelivery = this.getRegistryNote(SERES_AUTO_COMMIT_DELIVERY, customer.getId());
+		setSeresAutoCommitDelivery(seresAutoCommitDelivery != null && new Boolean(seresAutoCommitDelivery.getComments()));
 		
 		getAddresses(customer).forEach(
 				address -> {
@@ -160,6 +169,15 @@ public class CustomerEdiSupportController implements Serializable {
 		saveRegistryNote(active);
 	}
 
+	private void saveSeresAutoCommitDeliveryParam(Customer customer) throws ManagerBeanException {
+		RegistryNote autoCommitDelivery = this.getRegistryNote(SERES_AUTO_COMMIT_DELIVERY, customer.getId());
+		if (autoCommitDelivery == null) {
+			autoCommitDelivery = getEmptyNote(customer.getRegistry(), SERES_AUTO_COMMIT_DELIVERY);
+		}
+		autoCommitDelivery.setComments(String.valueOf(isSeresAutoCommitDelivery()));
+		saveRegistryNote(autoCommitDelivery);
+	}
+
 	private void save(Customer customer) throws ManagerBeanException {
 		for (Integer addressId : this.addressCodes.keySet()) {
 			RegistryNote note = this.getRegistryNote(addressId.toString(),
@@ -180,6 +198,7 @@ public class CustomerEdiSupportController implements Serializable {
 	public void onUpdate(Customer customer) throws ManagerBeanException {
 		if (isEnabled()) {
 			saveActiveParam(customer);
+			saveSeresAutoCommitDeliveryParam(customer);
 			save(customer);
 		} else {
 			onRemove(customer);
@@ -308,7 +327,7 @@ public class CustomerEdiSupportController implements Serializable {
 			value = rNote.getComments();
 		}
 		Matcher m;
-		Pattern p = Pattern.compile(CustomerEdiSupportController.MEDIDA + "=([^;]*);");
+		Pattern p = Pattern.compile(MEDIDA + "=([^;]*);");
 		try {
 			if (value != null && (m = p.matcher(value)).find()) {
 				IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);

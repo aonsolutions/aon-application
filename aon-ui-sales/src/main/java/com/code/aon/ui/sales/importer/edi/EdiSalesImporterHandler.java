@@ -29,6 +29,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.config.Tag;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ql.Criteria;
@@ -42,7 +43,6 @@ import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
-import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sales.controller.ISalesConstants;
@@ -392,8 +392,8 @@ public class EdiSalesImporterHandler implements Serializable {
 	}
 
 	protected List<RegistryNote> searchCustomerRNote(String customerCode) {
-//		return searchCustomerNote(customerCode, CustomerEdiSupportController.PEDIDOS);
-		return searchCustomerNote(customerCode, CustomerEdiSupportController.PTO_ENTREGA);
+//		return searchCustomerNote(customerCode, IEdiSupport.PEDIDOS);
+		return searchCustomerNote(customerCode, IEdiSupport.PTO_ENTREGA);
 	}
 	
 	private List<RegistryNote> searchCustomerNote(String customerCode,
@@ -423,7 +423,7 @@ public class EdiSalesImporterHandler implements Serializable {
 	private Tag searchPackingTag(RegistryNote rNote) {
 		String value = rNote.getComments();
 		Matcher m;
-		Pattern p = Pattern.compile(CustomerEdiSupportController.MEDIDA + "=([^;]*);");
+		Pattern p = Pattern.compile(IEdiSupport.MEDIDA + "=([^;]*);");
 		try {
 			if (value != null && (m = p.matcher(value)).find()) {
 				IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);

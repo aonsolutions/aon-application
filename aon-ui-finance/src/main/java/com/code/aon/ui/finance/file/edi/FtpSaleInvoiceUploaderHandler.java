@@ -22,6 +22,7 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tag;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
@@ -222,13 +223,13 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 				}
 				String customerEdiCabeceraCode = ediSupport.getEdiCodes(
 						invoice.getRegistry(), invoice.getRegistryAddress())
-						.get(CustomerEdiSupportController.CABECERA);
+						.get(IEdiSupport.CABECERA);
 				String customerEdiPtoEntregaCode = ediSupport.getEdiCodes(
 						invoice.getRegistry(), invoice.getRegistryAddress())
-						.get(CustomerEdiSupportController.PTO_ENTREGA);
+						.get(IEdiSupport.PTO_ENTREGA);
 				String customerEdiFacturaCode = ediSupport.getEdiCodes(
 						invoice.getRegistry(), invoice.getRegistryAddress())
-						.get(CustomerEdiSupportController.FACTURA);
+						.get(IEdiSupport.FACTURA);
 				
 				Tag packingTag = ediSupport.obtainPackingTag(
 						invoice.getRegistry(),

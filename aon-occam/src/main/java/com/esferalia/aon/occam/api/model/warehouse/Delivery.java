@@ -6,6 +6,7 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Delivery implements Serializable {
 	
@@ -407,6 +408,14 @@ public class Delivery implements Serializable {
 		this.customerName = customerName;
 		return this;
 	}
+	
+	public String getReferenceCode() {
+    	String referenceCode = AonStringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+		if (!AonStringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
 	
 	
 	

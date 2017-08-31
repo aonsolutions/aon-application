@@ -23,6 +23,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
@@ -35,7 +36,6 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.NoteType;
-import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.controller.SaleInvoiceDetailController;
@@ -293,7 +293,7 @@ public class EdiInvoiceImporterHandler implements Serializable {
 	}
 
 	protected RegistryNote searchCustomerRNote(String customerCode) {
-		return searchCustomerRNote(customerCode, CustomerEdiSupportController.PTO_ENTREGA);
+		return searchCustomerRNote(customerCode, IEdiSupport.PTO_ENTREGA);
 	}
 	
 	private RegistryNote searchCustomerRNote(String customerCode, String type) {

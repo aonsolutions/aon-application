@@ -37,6 +37,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.file.seres</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.occam</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
@@ -56,7 +62,7 @@
 		<dependency>
 			<groupId>net.aonsolutions.core</groupId>
 			<artifactId>pool</artifactId>
-			<version>9.03-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

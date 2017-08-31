@@ -79,7 +79,7 @@
 
 						<aon:if test="#{company.ediSupportEnabled or company.EInvoice}">
 							<aon:outputText value="#{bundle.aon_edi}" title="#{bundle.aon_edi_title}" />
-							<aon:div>
+							<aon:div id="eInvoice-panel">
 								<aon:if test="#{company.EInvoice}">
 									<aon:selectBooleanCheckbox id="Customer_eInvoice"
 										styleClass="aon-margin-left" value="#{customer.to.EInvoice}"
@@ -98,10 +98,18 @@
 										title="#{bundle.aon_activate}/#{bundle.aon_deactivate} #{bundle.aon_edi_message}"
 										valueChangeListener="#{customer.ediChange}">
 										<a4j:support event="onchange" ajaxSingle="true"
-											reRender="customerTab" />
+											reRender="eInvoice-panel, customerTab" />
 									</aon:selectBooleanCheckbox>
 									<aon:outputLabel for="Customer_edi"
 										value="#{bundle.aon_edi_message}" />
+									<aon:if test="#{customerEdiSupport.enabled}">
+										<aon:outputText	styleClass="aon-margin-left aon-bold"
+											value="| Seresnet:" />
+										<aon:selectBooleanCheckbox id="Customer_seres_autoCommitDelivery" styleClass="aon-margin-left"
+											value="#{customerEdiSupport.seresAutoCommitDelivery}" />
+										<aon:outputLabel for="Customer_seres_autoCommitDelivery" styleClass="aon-italic"
+											value="Envío auto. albaranes" />
+									</aon:if>
 								</aon:if>
 							</aon:div>
 						</aon:if>

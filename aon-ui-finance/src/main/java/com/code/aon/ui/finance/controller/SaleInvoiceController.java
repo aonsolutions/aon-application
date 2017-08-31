@@ -27,6 +27,7 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
@@ -412,8 +413,8 @@ public class SaleInvoiceController extends InvoiceController {
 			String customerEdiOperationCode = null;
 			if(invoice.getRegistryAddress()!=null && invoice.getRegistryAddress().getId()!=null){
 				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-				customerEdiMainCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(CustomerEdiSupportController.CABECERA);
-				customerEdiOperationCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(CustomerEdiSupportController.FACTURA);
+				customerEdiMainCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(IEdiSupport.CABECERA);
+				customerEdiOperationCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(IEdiSupport.FACTURA);
 			}
 			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();

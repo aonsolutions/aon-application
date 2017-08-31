@@ -35,6 +35,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.IEdiSupport;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
@@ -846,7 +847,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 			String customerEdiCode = ediSupport.getEdiCodes(
 					delivery.getCustomer().getRegistry(),
 					delivery.getRegistryAddress()).get(
-					CustomerEdiSupportController.ALBARANES);
+					IEdiSupport.ALBARANES);
 			CompanyController company = (CompanyController) AonUtil
 					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
