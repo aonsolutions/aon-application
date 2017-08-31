@@ -239,7 +239,8 @@ public class ProductValidation {
 						.fetchOne().value1();
 				throw new AonCoreException(AonError.DUPLICATE_BARCODE_DOMAIN.format(domain));
 			}
-			count = ctx.getDslContext().selectCount()
+			
+			/*count = ctx.getDslContext().selectCount()
 					.from(ITEM).join(DOMAIN).on(ITEM.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.PARENT.in(ctx.getDslContext().select(DOMAIN.PARENT)
 												.from(DOMAIN)
@@ -256,6 +257,7 @@ public class ProductValidation {
 						.fetchOne().value1();
 				throw new AonCoreException(AonError.DUPLICATE_BARCODE_DOMAIN.format(domain));
 			}
+			*/
 		}
 	};
 	
