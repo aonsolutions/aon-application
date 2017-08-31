@@ -20,9 +20,8 @@ import gwtupload.server.exceptions.UploadActionException;
 
 
 public class MultipleUploadFilesServlet extends  UploadAction{
-
-
-	  private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public void checkRequest(HttpServletRequest request) {
@@ -30,41 +29,37 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 		super.checkRequest(request);
 	}
 	
-	
-	  @Override
-	  public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
+	@Override
+	public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
 		String response = "";
-	    for (FileItem item : sessionFiles) {
-	    	
-	    	System.out.println(item.isFormField());
-	      if (false == item.isFormField()) {
-	    	  String dialogCode =  item.getFieldName().substring(0, 10);
-	    	  String name = item.getName();
-	    	  if(name.contains(".")){
-	    		  Integer pos = name.lastIndexOf(".");
-	    		  name = name.substring(0,pos);
-	    	  }
-	    	  Attach attach = new Attach();
-	    	  attach.setDescription(name);
-	    	  Long size = item.getSize();
-	    	  attach.setDparentId(Integer.toString(size.intValue()));
-	    	  attach.setData(item.get());
-	    	  attach.setMimeType(MimeType.get(item.getContentType()));
-	    	  attach.setDomain(new Domain().setName(AonUtil.getServerName()).setId(0));
-	    	  attach.setAttachType(AttachType.REGISTRY);
-	    	  attach.setDate(new Date());
-	    	  attach.setConfidential(false);
-	    	  attach.setType((byte) 3);
-	    	  Company c = AON.getCompany(AonUtil.getDomainName(), 0, "", f -> f.getDomainProperty().eq(0));
-	    	  attach.setAttachModule(c.getId());
-	    	  DocumentsServlet.addOuts(dialogCode, attach, request);
-	      }
-	    }
+		for (FileItem item : sessionFiles) {
+			if (!item.isFormField()) {
+				String dialogCode =  item.getFieldName().substring(0, 10);
+		
+				Integer pos = item.getName().contains(".") ? item.getName().lastIndexOf(".") : item.getName().length();
+				String name = item.getName().substring(0,pos);
+				
+				Attach attach = new Attach();
+				attach.setDescription(name);
+				Long size = item.getSize();
+				attach.setDparentId(Integer.toString(size.intValue()));
+				attach.setData(item.get());
+				attach.setMimeType(MimeType.get(item.getContentType()));
+				attach.setDomain(new Domain().setName(AonUtil.getServerName()).setId(0));
+				attach.setAttachType(AttachType.REGISTRY);
+				attach.setDate(new Date());
+				attach.setConfidential(false);
+				attach.setType((byte) 3);
+				Company c = AON.getCompany(AonUtil.getDomainName(), 0, "", f -> f.getDomainProperty().eq(0));
+				attach.setAttachModule(c.getId());
+				DocumentsServlet.addOuts(dialogCode, attach, request);
+			}
+		}
 	    
-	    /// Remove files from session because we have a copy of them
-	    super.removeSessionFileItems(request);
+		/// Remove files from session because we have a copy of them
+		super.removeSessionFileItems(request);
 
 	    /// Send your customized message to the client.
 	    return response;
-	  }
+	}
 }
