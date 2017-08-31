@@ -100,7 +100,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	
 	private static final long serialVersionUID = 6871016881549113129L;
 
-	private static InputStream file;
 	private static String mimetype;
 	public static byte[] out;
 	Boolean confidential;
@@ -113,14 +112,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		DocumentsServlet.mimetype = mimetype;
 	}
 
-	public InputStream getFile() {
-		return file;
-	}
-
-	public static void setFile(InputStream file2) {
-		file = file2;
-	}
-	
 	public User getUser(){
 		return new User().setId(getUserID())
 				.setLogin(getUserLogin())
@@ -421,11 +412,8 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			fileInfo.setFileId(id);
 			DBConsults.updateFile(domain, getUser(), fileInfo, new Vector<>());
 			DBConsults.insertTagsFile(domainAux, getUser(), id, fi.getTags());
-			byte[] b = f.getData();
 			fileInfo.setFileId(id);
-			fileInfo.setData(b);
-			DBConsults.insertFileData(domain, getUser(), id, b);
-							
+										
 			FileInfo fil = DBConsults.getFile(domainAux, getUser(), id);
 			if (fil.getDomain() == null)
 				fil.setDomain(domainAux.getName());
@@ -916,69 +904,67 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	public static void setSize(Integer sizea) {
 		size = sizea;
 	}
-//-------------------- Administrar tags & categories
-
-public Tag newTag(Domain domain, String name) {
-	initAux(domain);
-	Integer id = null;
-	String dom = "";
 	
-	dom = DBConsults.getDomainName(domain, getUser());
-	id = DBConsults.newTag(domain, getUser(),name);
+	//-------------------- Administrar tags & categories
 
-	Tag t = new Tag();
-	t.setId(id);
-	t.setIsParent(false);
-	t.setIsSon(false);
-	t.setDomain(dom);
-	t.setName(name);
+	public Tag newTag(Domain domain, String name) {
+		initAux(domain);
+		String dom = DBConsults.getDomainName(domain, getUser());
+		Integer id = DBConsults.newTag(domain, getUser(),name);
 	
-	return t;
-}
+		Tag t = new Tag();
+		t.setId(id);
+		t.setIsParent(false);
+		t.setIsSon(false);
+		t.setDomain(dom);
+		t.setName(name);
+		
+		return t;
+	}
 
-public void editTag(Domain domain, String name, Integer id) {
-	initAux(domain);
-	DBConsults.editTag(domain, getUser(),name,id);
-}
+	public void editTag(Domain domain, String name, Integer id) {
+		initAux(domain);
+		DBConsults.editTag(domain, getUser(),name,id);
+	}
 
-public void deleteTag(Domain domain, Integer tagId) {
-	initAux(domain);
-	DBConsults.deleteTag(domain,getUser(),tagId);
-}
+	public void deleteTag(Domain domain, Integer tagId) {
+		initAux(domain);
+		DBConsults.deleteTag(domain,getUser(),tagId);
+	}
 
-public Category newCategory(Domain domain, String name) {
-	initAux(domain);
-	Integer id = null;
-	String dom ="";
-	dom = DBConsults.getDomainName(domain, getUser());
-	id = DBConsults.newCategory(domain,getUser(),name);
-	Category c = new Category();
-	c.setDomain(dom);
-	c.setId(id);
-	c.setIsParent(false);
-	c.setIsSon(false);
-	c.setName(name);
-	return c;
-}
+	public Category newCategory(Domain domain, String name) {
+		initAux(domain);
+		Integer id = null;
+		String dom ="";
+		dom = DBConsults.getDomainName(domain, getUser());
+		id = DBConsults.newCategory(domain,getUser(),name);
+		Category c = new Category();
+		c.setDomain(dom);
+		c.setId(id);
+		c.setIsParent(false);
+		c.setIsSon(false);
+		c.setName(name);
+		return c;
+	}
 
-public void editCategory(Domain domain, String name, Integer id) {
-	initAux(domain);
-	DBConsults.editCategory(domain, getUser(),name,id);
-}
+	public void editCategory(Domain domain, String name, Integer id) {
+		initAux(domain);
+		DBConsults.editCategory(domain, getUser(),name,id);
+	}
 
-public void deleteCategory(Domain domain, Integer categoryId) {
-	initAux(domain);
-	DBConsults.deleteCategory(domain, getUser(), categoryId);
-}
+	public void deleteCategory(Domain domain, Integer categoryId) {
+		initAux(domain);
+		DBConsults.deleteCategory(domain, getUser(), categoryId);
+	}
 
-//-------------------- Enviar Email
+	//-------------------- Enviar Email
 
-public MailAccountList getMailAccounts(Domain domain) {
-	MailAccountList mal = new MailAccountList();
-	mal = SendEmailDialogJooq.getMailAccounts(domain, getUser(), getUser().getDomain());
-	mal.setContactList(getContacts(domain));
-	return mal;
-}
+	public MailAccountList getMailAccounts(Domain domain) {
+		MailAccountList mal = new MailAccountList();
+		mal = SendEmailDialogJooq.getMailAccounts(domain, getUser(), getUser().getDomain());
+		mal.setContactList(getContacts(domain));
+		return mal;
+	}
 
 	public void sendEmail(Domain domain, String dialogCode, MailAccount ma, Emessage em) {
 		try {
@@ -1165,27 +1151,25 @@ public MailAccountList getMailAccounts(Domain domain) {
 			LOGGER.error(e.getMessage());
 		}
 		clearOuts(dialogCode, getThreadLocalRequest());
-
 	}
 
-public  ContactList getContacts(Domain domain) {	
-	return DBConsults.getContacts(domain, getUser());
-}
+	public  ContactList getContacts(Domain domain) {	
+		return DBConsults.getContacts(domain, getUser());
+	}
 
-public static Vector<FileInfo> down;
+	public static Vector<FileInfo> down;
 
-public void downloadMultiple(Vector<FileInfo> fvector){
-	setDown(fvector);
+	public void downloadMultiple(Vector<FileInfo> fvector){
+		setDown(fvector);
+	}
 
-}
+	public static Vector<FileInfo> getDown() {
+		return down;
+	}	
 
-public static Vector<FileInfo> getDown() {
-	return down;
-}
-
-public static void setDown(Vector<FileInfo> down) {
-	DocumentsServlet.down = down;
-}
+	public static void setDown(Vector<FileInfo> down) {
+		DocumentsServlet.down = down;
+	}
 
 
 // ----------------------------------------------------------------------------
@@ -1231,24 +1215,6 @@ public static void setDown(Vector<FileInfo> down) {
 	    return false;
 	}
 	
-	public Boolean checkDomain(Domain domain, Vector<FileInfo> vector){
-		Integer domainID = DBConsults.getDomainId(domain, getUser(), domain.getName());
-		
-		for (FileInfo fileInfo : vector) {
-			Integer fdomainId = fileInfo.getDomainId();
-			String fdomain = fileInfo.getDomain();
-			if((fdomainId != null && fdomainId != 0 && domainID != null) && fdomainId != domain.getId() && fdomainId != domainID && !domain.equals(fdomain)){
-				if(!isParent(new Domain().setId(fdomainId).setName(domain.getName()), domain.getId()) 
-						&& !isParent(domain, fdomainId)
-						&& !isParent(new Domain().setId(fdomainId).setName(domain.getName()), domainID) 
-						&& !isParent(new Domain().setId(domainID).setName(domain.getName()), fdomainId)){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
 	public Boolean isParent(Domain domain, Integer parent){
 		Integer par = DBConsults.getDomainParent(domain, getUser());
 		return par != null && par == parent;
@@ -1280,7 +1246,7 @@ public static void setDown(Vector<FileInfo> down) {
 		System.out.println();
 		System.out.println(msg);
 		System.out.println();
-		System.out.println("++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
 	}
 	
 	public LinkedList<FileInfo> decompress(Domain domain, FileInfo fileInfo){

@@ -1103,6 +1103,9 @@ public class DBConsults {
 			
 			long currentDate = new java.util.Date().getTime();
 			
+			Result<Record1<Integer>> reg = ctx.getDslContext().select(ENTERPRISE.REGISTRY)
+					.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
+					.where(DOMAIN.NAME.eq(domain.getName())).fetch();
 			
 			ctx.getDslContext().update(RATTACH).set(RATTACH.CATEGORY,fi.getCategory())
 									.set(RATTACH.MIMETYPE,fi.getMimetype())
@@ -1112,6 +1115,7 @@ public class DBConsults {
 									.set(RATTACH.SCOPE,fi.getScopeId())
 									.set(RATTACH.SECURITY_LEVEL,fi.getSecurityLevel())
 									.set(RATTACH.ATTACH_DATE,fi.getDateSql())
+									.set(RATTACH.REGISTRY, reg.get(0).value1())
 									.set(RATTACH.MODIFICATION_USER, user.getLogin())
 									.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
 							.where(RATTACH.ID.eq(fi.getFileId())).execute();
