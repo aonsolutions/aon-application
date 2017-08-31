@@ -239,25 +239,27 @@ public class ProductValidation {
 						.fetchOne().value1();
 				throw new AonCoreException(AonError.DUPLICATE_BARCODE_DOMAIN.format(domain));
 			}
-			
-			/*count = ctx.getDslContext().selectCount()
+			Boolean heredity = ctx.getDslContext().select(DOMAIN.ENABLEHEREDITY)
+					.from(DOMAIN).where(DOMAIN.ID.eq(i.getDomain())).fetchOne().value1() == 1;
+			if(heredity) {
+				count = ctx.getDslContext().selectCount()
 					.from(ITEM).join(DOMAIN).on(ITEM.DOMAIN.eq(DOMAIN.ID))
-					.where(DOMAIN.PARENT.in(ctx.getDslContext().select(DOMAIN.PARENT)
+					.where(DOMAIN.ID.in(ctx.getDslContext().select(DOMAIN.PARENT)
 												.from(DOMAIN)
 												.where(DOMAIN.ID.eq(i.getDomain()))))
 					.and(ITEM.BARCODE.eq(i.getBarcode()))
 					.fetchOne(0,int.class);
-			if(count>0){
-				String domain = ctx.getDslContext().select(DOMAIN.NAME)
+				if(count>0){
+					String domain = ctx.getDslContext().select(DOMAIN.NAME)
 						.from(ITEM).join(DOMAIN).on(ITEM.DOMAIN.eq(DOMAIN.ID))
-						.where(DOMAIN.PARENT.in(ctx.getDslContext().select(DOMAIN.PARENT)
+						.where(DOMAIN.ID.in(ctx.getDslContext().select(DOMAIN.PARENT)
 													.from(DOMAIN)
 													.where(DOMAIN.ID.eq(i.getDomain()))))
 						.and(ITEM.BARCODE.eq(i.getBarcode()))
 						.fetchOne().value1();
-				throw new AonCoreException(AonError.DUPLICATE_BARCODE_DOMAIN.format(domain));
+					throw new AonCoreException(AonError.DUPLICATE_BARCODE_DOMAIN.format(domain));
+				}
 			}
-			*/
 		}
 	};
 	
