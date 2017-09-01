@@ -129,16 +129,17 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			}
 			if(albaranes!=null && albaranes.getDATOSALBARANES()!=null 
 					&& albaranes.getDATOSALBARANES().size()>0){
-								
-//				processData(albaranes.getDATOSALBARANES(), true);
+				
+				
 				deliveryList = new LinkedList<>();
 				processDelivery(albaranes.getDATOSALBARANES(), deliveryList, true);
+				
 				
 				test = "S".equals(albaranes.getPRUEBA());
 				if (!test && (errorList == null || errorList.size() <= 0)) {
 					errorList.clear();
 					warningList.clear();
-//					processData(albaranes.getDATOSALBARANES(), test);
+					
 					deliveryList = new LinkedList<>();
 					processDelivery(albaranes.getDATOSALBARANES(), deliveryList, test);
 					processSourceSales(albaranes.getDATOSALBARANES(), deliveryList, test);
@@ -179,34 +180,38 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			httpResponse.setStatus(HttpServletResponse.SC_OK);
 			if (!test) {
 				AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
-				
-				subject = "Recepción automática de albaranes";
-				content = fillSuccessMessage(ctx, albaranes.getDATOSALBARANES(), deliveryList);
-				log(IngenetLogLevel.INFO, subject, content, null, null, RECIPIENTS_TO_SUCCESS);
-				
-				// if autoCommit enabled, commit automatically the deliveries to SERES
-				if(deliveryList!=null && deliveryList.size()>0){
-					FtpDeliveryUploadOccamHandler handler = new FtpDeliveryUploadOccamHandler(getDomain(), getDomainId(), getUser());
-					for(Delivery d: deliveryList){
-						// commit the delivery EDI file
-						RegistryNote rNote = searchCustomerNote(ctx, d.getCustomer(), "", IEdiSupport.SERES_AUTO_COMMIT_DELIVERY);
-						boolean autoSendDelivery = rNote!=null && new Boolean(rNote.getComments());
-						if(autoSendDelivery){
-							try {
-								boolean success = handler.transferEdiFtp(d);
-								if(success){
-									// mark source sales as transfered to Seresnet
-									markEdiFileTransfered(ctx, d);
+				try {
+					if(deliveryList!=null && deliveryList.size()>0){
+						subject = "Recepción automática de albaranes";
+						content = fillSuccessMessage(ctx, albaranes.getDATOSALBARANES(), deliveryList);
+						log(IngenetLogLevel.INFO, subject, content, null, null, RECIPIENTS_TO_SUCCESS);
+						
+						// if autoCommit enabled, commit automatically the deliveries to SERES
+						FtpDeliveryUploadOccamHandler handler = new FtpDeliveryUploadOccamHandler(getDomain(), getDomainId(), getUser());
+						for(Delivery d: deliveryList){
+							// commit the delivery EDI file
+							RegistryNote rNote = searchCustomerNote(ctx, d.getCustomer(), "", IEdiSupport.SERES_AUTO_COMMIT_DELIVERY);
+							boolean autoSendDelivery = rNote!=null && new Boolean(rNote.getComments());
+							if(autoSendDelivery){
+								try {
+									boolean success = handler.transferEdiFtp(d);
+									if(success){
+										// mark source sales as transfered to Seresnet
+										markEdiFileTransfered(ctx, d);
+									}
+								} catch (Throwable th) {
+									subject = "Envío automático de albaranes";
+									content = "El albaran no se ha podido enviar automaticamente";
+									content += "<br/>MOTIVO: " + th.getMessage();
+									log(IngenetLogLevel.ERROR, subject, content, "autoSendDelivery", null, RECIPIENTS_TO_FAILURES);
 								}
-							} catch (Throwable th) {
-								subject = "Envío automático de albaranes";
-								content = "El albaran no se ha podido enviar automaticamente";
-								content += "<br/>MOTIVO: " + th.getMessage();
-								log(IngenetLogLevel.ERROR, subject, content, "autoSendDelivery", null, RECIPIENTS_TO_FAILURES);
 							}
 						}
+						deliveryList.clear();
 					}
-					deliveryList.clear();
+				} finally {
+					if (ctx != null)
+						ctx.close();
 				}
 			}
 		}
@@ -232,7 +237,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		out.flush();
 	}
 	
-	//private String fillSuccessMessage(List<ALBARANTYPE> deliveryList) {
 	private String fillSuccessMessage(AONContext ctx, List<ALBARANTYPE> albaranes, List<Delivery> deliveryList) {
 		StringBuffer bf = new StringBuffer("<h1>Recepción de albaranes.</h1>");
 		bf.append("<ul>");
@@ -241,9 +245,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			bf.append("<b>").append(alb.getSERIE()).append("/").append(alb.getNUMERO())
 					.append("</b> del ").append(alb.getFECHAEMISION());
 			try {
-				if(!"".equals(alb.getDATOSCLIENTE().getDATOSREGISTRO().getNOMBRE())) {					
-//					alb.getSERIE()).append("/").append(alb.getNUMERO()
-					Integer customerId = deliveryList.stream().filter( d -> d.getSeries().equals(alb.getSERIE()) && alb.getNUMERO().equals(d.getNumber()))
+				if(!"".equals(alb.getDATOSCLIENTE().getDATOSREGISTRO().getNOMBRE())) {
+					Integer customerId = deliveryList.stream().filter( d -> d.getSeries().startsWith(alb.getSERIE()) && (d.getNumber()==Integer.parseInt(alb.getNUMERO())))
 						.findFirst().orElse(new Delivery()) .getCustomer();
 					bf.append(", a nombre de ");
 					if(customerId!=null){
@@ -452,7 +455,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					.getDeliveryList(
 							ctx,
 							f -> f.getDomainProperty().eq(ctx.getDomainId())
-									.and(f.getSeriesProperty().eq(albaran.getSERIE()))
+									.and(f.getSeriesProperty().like(albaran.getSERIE()+"%"))
 									.and(f.getNumberProperty().eq(Integer.parseInt(albaran.getNUMERO()))))
 					.stream().count();
 		} catch (Exception e) {
@@ -460,9 +463,10 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					+ albaran.getSERIE() + "/" + albaran.getNUMERO();
 			addError(albaran, errorMsg);
 		}
+		
 		if(deliveryCount>0){
 			series = series.length()<5
-					? series+"*"
+					? (series.length()<=3?series:series.substring(0, 2))+"*"+(deliveryCount>1?deliveryCount:"")
 					: "IGN"+new SimpleDateFormat("yy").format(new Date());
 			String errorMsg = "El albaran " + albaran.getSERIE()
 					+ "/" + albaran.getNUMERO() + " ya existe: "
