@@ -194,11 +194,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							boolean autoSendDelivery = rNote!=null && new Boolean(rNote.getComments());
 							if(autoSendDelivery){
 								try {
-									boolean success = handler.transferEdiFtp(d);
-									if(success){
-										// mark source sales as transfered to Seresnet
-										markEdiFileTransfered(ctx, d);
-									}
+									handler.transferEdiFtp(d);
 								} catch (Throwable th) {
 									subject = "Envío automático de albaranes";
 									content = "El albaran no se ha podido enviar automaticamente";
@@ -301,11 +297,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		return bf.toString();
 	}
 	
-	private void processData(List<ALBARANTYPE> list, boolean test){
-		List<Delivery> deliveryList = new LinkedList<>();
-		processDelivery(list, deliveryList, test);
-		processSourceSales(list, deliveryList, test);
-	}
 	
 	private void processDelivery(List<ALBARANTYPE> list, List<Delivery> deliveryList, boolean test){
 		deliveryList.clear();
@@ -831,12 +822,6 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			}
 		}
 		
-	}
-	
-
-	private void markEdiFileTransfered(AONContext ctx, Delivery delivery) {
-		delivery.setComments(delivery.getComments()+ "\nENVIADO A SERESNET");
-		AON.updateDelivery(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), delivery);
 	}
 			
 	
