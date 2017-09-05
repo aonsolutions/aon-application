@@ -21,11 +21,14 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.customer.IEdiSupport;
+import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.file.seres.util.ftp.FtpException;
 import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
@@ -42,6 +45,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	private static final Logger LOGGER = LoggerFactory.getLogger(FtpDeliveryUploadOccamHandler.class);
 	
 	private final String PARAM_FTP_SERVER_NAME = "SERES_FTP_SERVER_NAME";
 	private final String PARAM_FTP_PORT = "SERES_FTP_SERVER_PORT";
@@ -131,24 +135,20 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	}
 		
 	
-	public boolean transferEdiFtp(Delivery delivery) throws FtpLoginException, FtpException, AonException {
+	public void transferEdiFtp(Delivery delivery) throws FtpLoginException, FtpException, AonException {
 		FileOutput output = exportEdiFile(delivery);
 		
-		if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
-			return false;
-		} else {				
-			// upload file
-			String referenceCode = delivery.getSeries()+"_"+delivery.getNumber();
+		if(output!=null && output.getErrors()!=null && output.getErrors().size()>0) {
+			for(Exception e: output.getErrors()){
+				Fd0Exception fd0 = (Fd0Exception) e;
+				LOGGER.info(fd0.getDetail());
+			}
+		} else {
+			initContext();
 			byte[] data = output.getContent();
-			
-			InputStream inputStream = new BufferedInputStream(
-					new ByteArrayInputStream(data));				
-			boolean success = storeFtpFile("alb-" + referenceCode + ".edi",
-					inputStream);
-			IOUtils.closeQuietly(inputStream);
-			
-			return success;
-			// TODO: mark this delivery as sended 
+			FtpStoreProcess sdp = new FtpStoreProcess(data, delivery);
+			LongProcessThread thread = new LongProcessThread(sdp); 
+			thread.start();
 		}
 	}
 	
@@ -235,13 +235,92 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 			.findFirst().orElse(new com.esferalia.aon.occam.api.model.registry.RegistryNote())
 			.getComments();		
 	}
-	
-	private boolean storeFtpFile(String fileName, InputStream inputStream) throws FtpLoginException, FtpException {
-		initContext();
-		return SeresFtpConnectionProvider.storeFile(remotePath, fileName,
-				inputStream, server, port, user, password);
+
+
+	public class FtpStoreProcess implements ILongProcess{
+		private boolean success = false;
+		private byte[] data;
+		private String referenceCode;
+		private Delivery delivery;
+		
+		public FtpStoreProcess(byte[] data, Delivery delivery) {
+			this.data = data;
+			this.delivery = delivery;
+			this.referenceCode = delivery.getSeries()+"_"+delivery.getNumber();
+		}
+
+		@Override
+		public void execute() {
+			InputStream inputStream = new BufferedInputStream(
+					new ByteArrayInputStream(data));				
+			success = storeFtpFile("alb-" + referenceCode + ".edi",
+					inputStream);
+			IOUtils.closeQuietly(inputStream);
+			
+			LOGGER.error("FTP STORE: " + success);
+			if (success){
+				markEdiFileTransfered();
+				LOGGER.info("Fichero EDI generado y enviado CORRECTAMENTE a Seresnet ("+referenceCode+")");
+			} else {
+				LOGGER.info("El albaran no se ha podido enviar a Seresnet ("+referenceCode+")");
+			}
+		}
+		
+		private boolean storeFtpFile(String fileName, InputStream inputStream) {
+			try {
+				return SeresFtpConnectionProvider.storeFile(remotePath, fileName,
+						inputStream, server, port, user, password);
+			} catch (FtpLoginException e) {
+				LOGGER.error(e.getMessage());
+			} catch (FtpException e) {
+				LOGGER.error(e.getMessage());
+			}
+			return false;
+		}
+		
+		private void markEdiFileTransfered() {
+			if(delivery!=null && delivery.getId()!=null){				
+				delivery.setComments(delivery.getComments()+ "\nENVIADO A SERESNET");
+				AON.updateDelivery(domainName, domainId, login, delivery);
+			}
+		}
+
 	}
+	
+	public interface ILongProcess {
+		void execute();
+	}
+	
+	public class LongProcessThread implements Runnable {
+		private ILongProcess longProcess;
+		private Thread thread;
+	    
+	    public LongProcessThread(ILongProcess longProcess) {
+	         this.longProcess = longProcess;
+	    }
 
+		public void start() {
+	         thread = new Thread(this);
+	         thread.start();
+	    }
+		
+		public void interrupt() {
+			if(thread!=null){
+				thread.interrupt();
+			}
+		}
+		
+		public boolean isTerminated(){
+			return thread.getState()==Thread.State.TERMINATED;
+		}
+			
+		@Override
+		public void run() {
+	        if (thread != null) {
+	        	longProcess.execute();
+	        }
+		}
 
+	}
 	
 }
