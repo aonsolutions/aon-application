@@ -31,6 +31,8 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.pricing.IPriceable;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.RegistryItem;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ItemDB;
@@ -265,13 +267,16 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
     	boolean wildCard = false;
     	if (getProduct().getId() != null && getProduct().isSerializable()) {
     		if (getId() != null) {
-            	String select = "SELECT MIN(id) wildCard FROM item as item WHERE item.product = " + getProduct().getId();
-            	Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-            	SQLQuery query = session.createSQLQuery(select);
-            	List<?> list = query.addScalar("wildCard", Hibernate.INTEGER).list();
-            	if (!list.isEmpty() && list.get(0) != null) {
-            		wildCard = getId().intValue() == ((Integer)list.get(0)).intValue();
-            	}
+        		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+        		Criteria criteria = new Criteria();
+        		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getProduct().getId());
+        		criteria.addNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+        		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_ID));
+        		Projection prjId = Projection.property(itemBean.getFieldName(IEntityAlias.ITEM_ID));
+            	List<?> list = itemBean.getList(new ProjectionList(prjId), criteria);
+				if (list.size() > 0 && list.get(0) != null) {
+            		wildCard = (getId().intValue() == ((Integer)list.get(0)).intValue());
+        		}
     		} else {
     			return getProduct().getItemCount() == 0;
     		}
