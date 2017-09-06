@@ -114,15 +114,14 @@ public class Product extends ProductDB implements IAuditable {
 	@Transient
 	public Item getBaseItem() throws ManagerBeanException{
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
-    	criteria.addNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
-    	List<ITransferObject> list = itemBean.getList(criteria);
-    	Item base = null;
-    	if(list!=null && list.size()>0){
-    		base = (Item) list.get(0);
-    	}
-    	return base;
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getId());
+		criteria.addNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_ID));
+		for (ITransferObject ito : itemBean.getList(criteria, 0, 1)) {
+			return (Item)ito;
+		}
+    	return null;
 	}
 
 	@Transient

@@ -25,9 +25,8 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Item item = (Item)evt.getTo();
-		checkItem(item);
-
 		try {
+			checkItem(item);
 			checkValidSerialNumber(item, null);
 			checkValidBarCode(item, null);
 			checkValidDetails(item, null);
@@ -39,9 +38,8 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Item item = (Item)evt.getTo();
-		checkItem(item);
-
 		try {
+			checkItem(item);
 			Item itemDB = (Item)BeanManager.getManagerBean(Item.class).get(item.getId());
 			checkValidSerialNumber(item, itemDB);
 			checkValidBarCode(item, itemDB);
@@ -51,7 +49,7 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 	}
 
-	private void checkItem(Item item) {
+	private void checkItem(Item item) throws ManagerBeanException {
     	if (StringUtils.isEmpty(item.getProduct().getCode())) {
     		item.getProduct().setCode(item.getProduct().getId().toString());
     	}
@@ -63,6 +61,27 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     	}
     	if (!item.getProduct().isComposition() && item.getProduct().isCompositionPrice()) {
     		item.getProduct().setCompositionPrice(false);
+    	}
+    	if (item.getProduct().isPackaged() && item.getProduct().isSerializable() && !item.isWildCard()) {
+    		Item itemBase = item.getProduct().getBaseItem();
+    		if (item.getPackFormatTag() == null || item.getPackFormatTag().getId() == null) {
+    			item.setPackFormatTag(itemBase.getPackFormatTag());
+    		}
+    		if (item.getStockUnitTag() == null || item.getStockUnitTag().getId() == null) {
+    			item.setStockUnitTag(itemBase.getStockUnitTag());
+    		}
+    		if (item.getPackUnitsTag() == null || item.getPackUnitsTag().getId() == null) {
+    			item.setPackUnitsTag(itemBase.getPackUnitsTag());
+        		if (item.getPackUnits() == 0) {
+        			item.setPackUnits(itemBase.getPackUnits());
+        		}
+    		}
+    		if (item.getPackMeasurementTag() == null || item.getPackMeasurementTag().getId() == null) {
+    			item.setPackMeasurementTag(itemBase.getPackMeasurementTag());
+        		if (item.getPackMeasurement() == 0) {
+        			item.setPackMeasurement(itemBase.getPackMeasurement());
+        		}
+    		}
     	}
 	}
 
