@@ -287,7 +287,7 @@ public class UdapaQuality extends AonTemplate2{
 		
 		// TODO
 		HashMap<String,LinkedList<String>> map = new HashMap<>();
-		API.getWarehouse().getOrders("income", map ,new AsyncCallback<JSON<JsOrder>>() {
+		API.getWarehouse().getOrders("incomeQ", map ,new AsyncCallback<JSON<JsOrder>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsOrder> result) {
