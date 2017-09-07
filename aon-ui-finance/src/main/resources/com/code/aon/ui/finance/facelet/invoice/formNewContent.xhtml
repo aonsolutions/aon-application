@@ -87,14 +87,16 @@
 				<aon:panelCollapsible id="invoiceAttach-panel"
 					expanded="true" immediate="true" label="#{bundle.webmail_attach_files}">
 					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewAttach.xhtml" />
-					<aon:div rendered="#{invoiceController.invoiceAttachFile.size > 0}">
-						<aon:outputText value="#{invoiceController.invoiceAttachFile.fileName}"/>
-						<a4j:commandButton ajaxSingle="true"
-							action="#{invoiceController.clearInvoiceAttachUploadData}"
-							title="#{bundle.aon_remove}"
-							reRender="invoiceAttach-panel, invoiceAttachPreview-panel"
-							style="margin-left: 0.4em;"
-							styleClass="aon-editDataTable-button aon-icon-cancel2" />
+					<aon:div id="invoiceAttachFile-panel">
+						<aon:div rendered="#{invoiceController.invoiceAttachFile.size > 0}">
+							<aon:outputText value="#{invoiceController.invoiceAttachFile.fileName}"/>
+							<a4j:commandButton ajaxSingle="true"
+								action="#{invoiceController.clearInvoiceAttachUploadData}"
+								title="#{bundle.aon_remove}"
+								reRender="invoiceAttach-panel, invoiceAttachPreview-panel"
+								style="margin-left: 0.4em;"
+								styleClass="aon-editDataTable-button aon-icon-cancel2" />
+						</aon:div>
 					</aon:div>
 				</aon:panelCollapsible>
 			</aon:if>
@@ -110,21 +112,13 @@
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
-							<aon:div styleClass="aon-toolbar">
-								<a4j:commandButton id="first" value="" ajaxSingle="true" onclick="onFirstPage();" 
-									styleClass="aon-editDataTable-button aon-dataScroller-button-first" />
-								<a4j:commandButton id="prev" value="" ajaxSingle="true" onclick="onPrevPage();"
-									styleClass="aon-editDataTable-button aon-dataScroller-button-previous" />
-								<a4j:commandButton id="next" value="" ajaxSingle="true" onclick="onNextPage();" 
-									styleClass="aon-editDataTable-button aon-dataScroller-button-next" />
-								<a4j:commandButton id="last" value="" ajaxSingle="true" onclick="onLastPage();"
-									styleClass="aon-editDataTable-button aon-dataScroller-button-last" />
-								<aon:outputText value="#{bundle.aon_page}: "/>
-								<aon:inputText size="3" id="page_num" disabled="#{true}"/>
-								<aon:outputText value=" / "/>
-								<aon:div id="page_count" style="display: inline;"/>
+							<aon:div id="invoiceAttachPreview-content" style="overflow: auto;">
+								<c:set var="PDF_VIEWER_URL"
+									value="#{aonResource.resolveLocal['/com/code/aon/ui/finance/pdfjs/web/viewer.html']}"/>
+								<iframe id="invoiceAttachPreview-iframe"
+									frameborder="0" width="100%" height="100%"
+									src="#{PDF_VIEWER_URL}" />
 							</aon:div>
-							<aon:div id="invoiceAttachPreview-content" style="overflow: auto;"/>
 						</aon:div>
 					</aon:div>
 				</aon:div>

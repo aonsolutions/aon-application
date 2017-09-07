@@ -8,6 +8,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<style type="text/css">
+		#filedrag {
+			display: none;
+		}
 		.filedrag div {
 			width: auto !important;
 			height: auto !important;
@@ -46,99 +49,75 @@
 		}
 	</style>
 	
-	<a4j:loadScript src="https://mozilla.github.io/pdf.js/build/pdf.js"/>
 	<script type="text/javascript">
 	//<![CDATA[
-		var sourceId = 'invoiceAttach-upload',
-			previewPanelId = 'invoiceAttachPreview-panel',
-			previewContentId = 'invoiceAttachPreview-content',
-			pageCountId = 'page_count',
-			currectPageId = 'page_num';
-		var pdfDoc;
-		var pageNum = 1;
+		var filedrag = document.getElementById( obtainAbsoluteId( 'filedrag', "div" ) );
+		var inputFile = document.getElementById( obtainAbsoluteId( 'invoiceAttach-upload', "div") + ':file' );
+		var panel = document.getElementById( obtainAbsoluteId( 'invoiceAttachPreview-panel', "div" ) );
+		var container = document.getElementById( obtainAbsoluteId( 'invoiceAttachPreview-content', "div" ) );
 		
-	 	function drawThumbnail(_pageNumber = 1, _zoomRatio = 1.0) {
-	 	    var inputFile = document.getElementById( searchDiv(sourceId) + ':file' );
+		window.addEventListener("resize", autoWidthContainer);
+		
+		if (window.File && window.FileList && window.FileReader) {
+			var xhr = new XMLHttpRequest();
+			if (xhr.upload)
+				filedrag.style.display = "block";
+		}
+		
+		function loadPdfPlugin(_pageNumber = 1, _zoomRatio = 1.0) {
+			panel.style.display = "block";
+ 	 		filedrag.style.display = "none";
+			autoWidthContainer();
+		 	renderFile();
+		}
+		
+		function renderFile() {
 	 	 	if (file = inputFile.files[0]) {
-	 	 	  fileReader = new FileReader();
-	 	 	  fileReader.onload = function(ev) {
-	 	 	    console.log(ev);
-	 		    PDFJS.getDocument(fileReader.result).then(function(pdf){ 
-	 		    	pdfDoc = pdf;
-	 		    	__TOTAL_PAGES = pdfDoc.numPages;
-	 		    	pageNum = _pageNumber;
-	 		    	document.getElementById( searchDiv(pageCountId) ).textContent = pdfDoc.numPages;
-	 		    	
-	 		    	renderPage(_pageNumber, _zoomRatio);
-	 		    });
-	 	 	  };
-	 	 	  fileReader.readAsArrayBuffer(file);
+		 		var pdfjsframe = document.getElementById( obtainAbsoluteId( 'invoiceAttachPreview-iframe', "iframe" ) );
+	 	 		var PDFViewerApplication = pdfjsframe.contentWindow.PDFViewerApplication;
+	 	 		var PDFJS = pdfjsframe.contentWindow.PDFJS;
+	 	 		
+	 	 	    var fileReader = new FileReader();
+	 	 	    fileReader.onload = function webViewerChangeFileReaderOnload(evt) {
+	 	 	      var buffer = evt.target.result;
+	 	 	      PDFViewerApplication.open(new Uint8Array(buffer));
+	 	 	    };
+	 	 	    fileReader.readAsArrayBuffer(file);
+	 	 	    PDFViewerApplication.setTitleUsingUrl(file.name);
+	 	 	    var appConfig = PDFViewerApplication.appConfig;
+	 	 	    disableButtons(appConfig);
 	 	 	}
-	 	}
-		function renderPage(_pageNumber = 1, _zoomRatio = 1.0) {
-			pdfDoc.getPage(_pageNumber).then(function (page) {
-				var panel = document.getElementById( searchDiv(previewPanelId) );
-				panel.style.display = "block";
-				var scale = _zoomRatio;
-			    var viewport = page.getViewport(scale);
-			    var container = document.getElementById( searchDiv(previewContentId) );
-			    while (container.lastChild) {
-			    	container.removeChild(container.lastChild);
-			    }
-			
-				var width = window.innerWidth
-				  || document.documentElement.clientWidth
-				  || document.body.clientWidth;
-				var height = window.innerHeight
-				  || document.documentElement.clientHeight
-				  || document.body.clientHeight;
-			    container.style.width = (width-750)+"px";
-			    container.style.height = (height-250) + 'px';
-			    //container.style.width = viewport.width + 'px';
-			    //container.style.height = viewport.height + 'px';
-			    page.getOperatorList().then(function (opList) {
-			        var svgGfx = new PDFJS.SVGGraphics(page.commonObjs, page.objs);
-			        return svgGfx.getSVG(opList, viewport);
-			      }).then(function (svg) {
-			        container.appendChild(svg);
-			      });
-			});
-			document.getElementById( searchInput(currectPageId) ).value = pageNum;
-	 	}
-		function searchDiv(_elementId) {
-	 		return search(_elementId, "div");
-	 	}
-		function searchInput(_elementId) {
-	 		return search(_elementId, "input");
-	 	}
-		function search(_elementId, _tagName) {
+		}
+		
+		function disableButtons(appConfig) {
+ 	        appConfig.toolbar.presentationModeButton.classList.add('hidden');
+ 	        appConfig.toolbar.print.classList.add('hidden');
+ 	 	    appConfig.toolbar.download.setAttribute('hidden', 'true');
+			appConfig.toolbar.viewBookmark.setAttribute('hidden', 'true');
+ 	 	    appConfig.toolbar.openFile.setAttribute('hidden', 'true'); 	        
+ 	        appConfig.secondaryToolbar.presentationModeButton.classList.add('hidden');
+ 	        appConfig.secondaryToolbar.printButton.classList.add('hidden');
+ 	 	    appConfig.secondaryToolbar.downloadButton.setAttribute('hidden', 'true');
+ 	 	    appConfig.secondaryToolbar.viewBookmarkButton.setAttribute('hidden', 'true');
+ 	        appConfig.secondaryToolbar.openFileButton.setAttribute('hidden', 'true');
+		}
+		
+		function autoWidthContainer() {
+			var width = window.innerWidth
+			  || document.documentElement.clientWidth
+			  || document.body.clientWidth;
+			var height = window.innerHeight
+			  || document.documentElement.clientHeight
+			  || document.body.clientHeight;
+		    container.style.width = (width-750) + "px";
+		    container.style.height = (height-200) + 'px';
+		}
+		
+		function obtainAbsoluteId(_elementId, _tagName) {
 	 		var elements = document.getElementsByTagName(_tagName);
-	 		for(i=0;i<elements.length;i++){
-	 			if (elements[i].id.endsWith( _elementId )) {
+	 		for(i=0;i<elements.length;i++)
+	 			if (elements[i].id.endsWith( _elementId ))
 	 				return elements[i].id;
-	 			}
-	 		}
-	 	}
-	 	
-	 	function onPrevPage() {
-	 	  if (pageNum <= 1) {
-	 	    return;
-	 	  }
-	 	  renderPage(--pageNum);
-	 	}
-	 	function onNextPage() {
-	 	  if (pageNum >= pdfDoc.numPages) {
-	 	    return;
-	 	  }
-	 	  renderPage(++pageNum);
-	 	}
-	 	function onFirstPage() {
-	 	  pageNum = 1;
-	 	  renderPage(pageNum);
-	 	}
-	 	function onLastPage() {
-	 	  pageNum = pdfDoc.numPages;
-	 	  renderPage(pageNum);
 	 	}
 	 	
 	//]]>
@@ -149,9 +128,9 @@
 			listWidth="100" acceptedTypes="pdf" 
 			immediateUpload="#{true}" allowFlash="#{false}"
 			fileUploadListener="#{invoiceController.invoiceAttachFileUploaded}"
-			onadd="drawThumbnail();" onchange="drawThumbnail();">
+			onadd="loadPdfPlugin();" onchange="loadPdfPlugin();">
 			<a4j:support event="onuploadcomplete" immediate="true"
-				reRender="invoiceAttach-panel" />
+				reRender="invoiceAttachFile-panel" />
 		</aon:fileUpload>
 		<br/><br/><br/>
 	</aon:div>
