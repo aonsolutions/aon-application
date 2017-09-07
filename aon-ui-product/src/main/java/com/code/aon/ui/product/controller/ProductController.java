@@ -148,7 +148,7 @@ public class ProductController extends BasicController implements IAuditableCont
 		itemController.onReset(event);
 		Item item = (Item)itemController.getTo();
 		updateItem(item);
-		updateItemPrices(item);
+		updateItemData(item);
 	}
 
 	public void onSelectItem(ActionEvent event) {
@@ -185,7 +185,7 @@ public class ProductController extends BasicController implements IAuditableCont
 		}
 	}
 
-	public void updateItemPrices(Item item) throws ManagerBeanException {
+	public void updateItemData(Item item) throws ManagerBeanException {
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
@@ -196,9 +196,18 @@ public class ProductController extends BasicController implements IAuditableCont
 			item.setPurchasePrice(lastItem.getPurchasePrice());
 			item.setProfitPercent(lastItem.getProfitPercent());
 			item.setPrice(lastItem.getPrice());
+
+			if (item.getProduct().isPackaged()) {
+    			item.setPackFormatTag(lastItem.getPackFormatTag());
+    			item.setStockUnitTag(lastItem.getStockUnitTag());
+    			item.setPackUnitsTag(lastItem.getPackUnitsTag());
+    			item.setPackUnits(lastItem.getPackUnits());
+    			item.setPackMeasurementTag(lastItem.getPackMeasurementTag());
+    			item.setPackMeasurement(lastItem.getPackMeasurement());
+			}
 		}
 	}
-	
+
 	public void onSearchAllItem(ActionEvent event) throws ManagerBeanException {
 		ItemController itemController = (ItemController)AonUtil.getRegisteredBean(ITEM);
 		itemController.onEditSearch(event);

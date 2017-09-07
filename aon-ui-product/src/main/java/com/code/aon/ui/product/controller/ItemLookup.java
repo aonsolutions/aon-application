@@ -43,7 +43,7 @@ public class ItemLookup extends RichLookupBean implements IItemConstants {
 
 	public void onResetItem(ActionEvent event) throws ManagerBeanException {
 		Item item = (Item)getTo();
-		getProductController().updateItemPrices(item);
+		getProductController().updateItemData(item);
 	}
 
 	public void onSerializableChanged(ValueChangeEvent event) {
