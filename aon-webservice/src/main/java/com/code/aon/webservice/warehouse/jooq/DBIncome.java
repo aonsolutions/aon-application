@@ -48,6 +48,14 @@ public class DBIncome {
 	    });
 	    return array;
 	}
+	
+	public static JSONArray getIncomesQ(Domain domain,String login, Map<String, String[]> map){
+	    JSONArray array = new JSONArray();
+	    AON.getIncomeStream(domain.getName(), domain.getId(), login, f ->  incomeFilter(domain, map, f))
+	    	.sorted((e1, e2) -> e2.getIssueDate().compareTo(e1.getIssueDate()))
+	    .forEach(income -> array.put(incomeToJSON(income)));
+	    return array;
+	}
 
     public static JSONObject getIncome(Domain domain,String login, Integer id){
     	Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
