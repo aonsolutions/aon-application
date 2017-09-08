@@ -32,7 +32,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="Item_id_Alternative" value="#{bundle.aon_product}" />
 				</f:facet>
-				<aon:outputText value="#{to.alternativeItem.product.code} - #{to.alternativeItem.product.name}"
+				<aon:outputText value="#{to.alternativeItem.product.code} - #{to.alternativeItem.fullName}"
 					rendered="#{formList}" />
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 					<ui:param name="lookupBean" value="#{(product.to.sale) ? saleItemLookup : (product.to.purchase) ? purchaseItemLookup : allItemLookup}" />
