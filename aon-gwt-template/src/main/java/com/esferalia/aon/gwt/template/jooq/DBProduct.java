@@ -196,7 +196,7 @@ public class DBProduct {
 										error.setTextError(verror);
 									}
 									if(!esta(item,uitems)){
-										uitems.add(item);	
+										uitems.add(compare(i, item));
 									}
 									else{
 										error.setError(false);
@@ -749,5 +749,24 @@ public class DBProduct {
 			return AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domain.getParentId())
 				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getNameProperty().eq(name)));
 		return tax;
+	}
+	
+	public static Item compare(Item i,Item item){
+		item.setBarcode(i.getBarcode() != null ? i.getBarcode() : item.getBarcode());
+		item.setDescription(i.getDescription() != null ? i.getDescription() : item.getDescription());
+		item.setCategory(i.getCategory() != null ? i.getCategory() : item.getCategory());
+		//item.setPrice(i.getPrice() != null ? i.getPrice() : item.getPrice());
+		item.setStatus(i.getStatus() != null ? i.getStatus() : item.getStatus());
+		//item.setExpensesPercent(i.getExpensesPercent() != null ? i.getExpensesPercent() : item.getExpensesPercent());
+		//item.setExpensesFixed(i.getExpensesFixed() != null ? i.getExpensesFixed() : item.getExpensesFixed());
+		//item.setProfitPercent(i.getProfitPercent() != null ? i.getProfitPercent() : item.getProfitPercent());
+		//item.setPurchasePrice(i.getPurchasePrice() != null ? i.getPurchasePrice() : item.getPurchasePrice());
+		item.setPackFormatTag(i.getPackFormatTag() != null ? i.getPackFormatTag() : item.getPackFormatTag());
+		item.setPackUnits(i.getPackUnits() != null ? i.getPackUnits() : item.getPackUnits());
+		item.setPackUnitsTag(i.getPackUnitsTag() !=  null ? i.getPackUnitsTag() : item.getPackUnitsTag());
+		item.setPackMeasurement(i.getPackMeasurement() != null ? i.getPackMeasurement() : item.getPackMeasurement());
+		item.setPackMeasurementTag(i.getPackMeasurementTag() != null ? i.getPackMeasurementTag() : item.getPackMeasurementTag());
+		item.setStockUnitTag(i.getStockUnitTag() != null ? i.getStockUnitTag() : item.getStockUnitTag());
+		return item;
 	}
 }
