@@ -12,7 +12,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ui.finance.controller.ExpenseInvoiceController;
 import com.code.aon.ui.finance.controller.ExpenseInvoiceDetailController;
@@ -46,17 +45,19 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 
 		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
 		controller.setTotalChanged(0);
+
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		invoiceDetail.setTaxDataInDetail(true);
 		try {
-			Item item = ((ExpenseInvoiceController)controller.getMasterController()).obtainCreditorLastExpense(((InvoiceDetail)controller.getTo()).getLine());
-			if (item != null) {
-				controller.itemChanged(item);
+			InvoiceDetail lastDetail = ((ExpenseInvoiceController)controller.getMasterController()).obtainCreditorLastExpense(((InvoiceDetail)controller.getTo()).getLine());
+			if (lastDetail != null) {
+				controller.itemChanged(lastDetail.getItem());
+				invoiceDetail.setTaxableBase(lastDetail.getTaxableBase());
+				controller.taxableBaseChanged(invoiceDetail);
 			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
-
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		invoiceDetail.setTaxDataInDetail(true);
 	}
 
 	@Override

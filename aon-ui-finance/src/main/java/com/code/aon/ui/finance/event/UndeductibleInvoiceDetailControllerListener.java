@@ -3,7 +3,6 @@ package com.code.aon.ui.finance.event;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ui.finance.controller.UndeductibleInvoiceController;
 import com.code.aon.ui.finance.controller.UndeductibleInvoiceDetailController;
@@ -19,10 +18,12 @@ public class UndeductibleInvoiceDetailControllerListener extends InvoiceDetailCo
 		super.afterBeanCreated(event);
 
 		UndeductibleInvoiceDetailController controller = (UndeductibleInvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
-			Item item = ((UndeductibleInvoiceController)controller.getMasterController()).obtainCreditorLastExpense(((InvoiceDetail)controller.getTo()).getLine());
-			if (item != null) {
-				controller.itemChanged(item);
+			InvoiceDetail lastDetail = ((UndeductibleInvoiceController)controller.getMasterController()).obtainCreditorLastExpense(((InvoiceDetail)controller.getTo()).getLine());
+			if (lastDetail != null) {
+				controller.itemChanged(lastDetail.getItem());
+				invoiceDetail.setTaxableBase(lastDetail.getTaxableBase());
 			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

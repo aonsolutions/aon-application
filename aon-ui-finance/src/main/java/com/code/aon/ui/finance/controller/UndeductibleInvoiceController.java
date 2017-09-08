@@ -19,7 +19,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -80,9 +79,10 @@ public class UndeductibleInvoiceController extends InvoiceController {
 			UndeductibleInvoiceDetailController detailController = (UndeductibleInvoiceDetailController)FormUtil.getController(getInvoiceDetailControllerName());
 			InvoiceDetail invoiceDetail = (InvoiceDetail)detailController.getTo();
 			if (invoiceDetail.getItem() == null || invoiceDetail.getItem().getId() == null) {
-				Item item = obtainCreditorLastExpense(1);
-				if (item != null) {
-					detailController.itemChanged(item);
+				InvoiceDetail lastDetail = obtainCreditorLastExpense(1);
+				if (lastDetail != null) {
+					detailController.itemChanged(lastDetail.getItem());
+					invoiceDetail.setTaxableBase(lastDetail.getTaxableBase());
 				}
 			}
 
@@ -104,7 +104,7 @@ public class UndeductibleInvoiceController extends InvoiceController {
 		return getRegistryValidationManager().isBlocked(creditor);
 	}
 
-	public Item obtainCreditorLastExpense(int line) throws ManagerBeanException {
+	public InvoiceDetail obtainCreditorLastExpense(int line) throws ManagerBeanException {
 		Invoice invoice = getInvoice();
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
@@ -114,7 +114,7 @@ public class UndeductibleInvoiceController extends InvoiceController {
 		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ISSUE_DATE), false);
 		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), false);
 		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
-			return ((InvoiceDetail)ito).getItem();
+			return (InvoiceDetail)ito;
 		}
 		return null;
 	}
