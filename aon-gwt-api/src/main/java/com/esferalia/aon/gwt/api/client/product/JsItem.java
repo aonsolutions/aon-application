@@ -38,5 +38,17 @@ public class JsItem extends JavaScriptObject {
 	public final native String getSerialNumber() /*-{
 											return this.serial_number;
 											}-*/;
+	
+	public final native String getDetail() /*-{
+										return this.detail;
+										}-*/;
+	
+	public final native String getDetail2() /*-{
+										return this.detail2;
+										}-*/;
+	
+	public final native String getDetail3() /*-{
+										return this.detail3;
+										}-*/;
 
 }
