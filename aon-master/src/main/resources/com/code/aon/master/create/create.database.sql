@@ -2451,6 +2451,7 @@ CREATE TABLE `carrier_packing` (
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Observaciones carrier packing',
   `gross` double DEFAULT NULL COMMENT 'Bruto',
   `tare` double DEFAULT NULL COMMENT 'Tara',
+  `additional_tare` double DEFAULT NULL COMMENT 'Tara Adicional',
   `net` double DEFAULT NULL COMMENT 'Neto',
   `reception_start_date` datetime DEFAULT NULL COMMENT 'Fecha entrada transporte, recepcion',
   `reception_end_date` datetime DEFAULT NULL COMMENT 'Fecha salida transporte, recepcion',
@@ -8439,7 +8440,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('9.02.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('9.04.0');
 
 COMMIT;
 

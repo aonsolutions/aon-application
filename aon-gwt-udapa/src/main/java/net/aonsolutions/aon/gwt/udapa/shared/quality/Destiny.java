@@ -21,6 +21,7 @@ public enum Destiny {
 	MIRALOBUENO_GRANEL("Miralobueno Granel"),
 	NATUR_FREIR("Natur Freir"),
 	NATUR_GUISAR("Natur Guisar"),
+	PATURPAT("Paturpat"),
 	ROJA("Roja"),
 	SIEMBRA("Siembra"),
 	VERDIFRESH("Verdifresh")
