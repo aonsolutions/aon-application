@@ -235,6 +235,9 @@ public class ToJSON {
 		json.put(MSG.NAME, item.getProduct() != null ? item.getProduct().getName(): "");
 		json.put("product_id", item.getProductId());
 		json.put("serial_number", item.getSerialNumber());
+		json.put("detail", item.getDetail());
+		json.put("detail2", item.getDetail2());
+		json.put("detail3", item.getDetail3());
 		return json;
 	}
 	

@@ -454,7 +454,17 @@ public class ElaborationDownload extends HttpServlet {
 				PdfPCell item = new PdfPCell(new Phrase("Producto",getFont1()));
 				item.setBorder(PdfPCell.NO_BORDER);
 				detail.addCell(item);
-				detail.addCell(new Phrase(String.valueOf(compositionItem.getProduct()!=null?compositionItem.getProduct().getName():""),getFont2()));
+				// TODO
+				String detailText = compositionItem.getDetail()!=null && !"".equals(compositionItem.getDetail().trim()) ? compositionItem.getDetail() : "";
+				detailText += detailText!=null && !"".equals(detailText) 
+						&& compositionItem.getDetail2()!=null && !"".equals(compositionItem.getDetail2().trim()) ? " / " : "";
+				detailText += compositionItem.getDetail2()!=null && !"".equals(compositionItem.getDetail2().trim()) ? compositionItem.getDetail2() : "";
+				detailText += detailText!=null && !"".equals(detailText) 
+						&& compositionItem.getDetail3()!=null && !"".equals(compositionItem.getDetail3().trim()) ? " / " : "";
+				detailText += compositionItem.getDetail3()!=null && !"".equals(compositionItem.getDetail3().trim()) ? compositionItem.getDetail3() : "";
+				detailText = detailText!=null && !"".equals(detailText) ? " [" +detailText + "]" : "";
+				String itemDescription = compositionItem.getProduct().getName() + detailText + " (" + compositionItem.getProduct().getCode() + ")";
+				detail.addCell(new Phrase(String.valueOf(compositionItem.getProduct()!=null?itemDescription:""),getFont2()));
 				
 				PdfPCell warehouse = new PdfPCell(new Phrase("",getFont1()));
 				warehouse.setBorder(PdfPCell.NO_BORDER);

@@ -371,8 +371,16 @@ public class ItemBox extends ResizeComposite implements HasValue<String>,
 	}
 	
 	private static String decorate(JsItem item, String query) {
-		String text = item.getCode() + " - " + item.getName()
-				+ (item.getSerialNumber()!=null?" #("+item.getSerialNumber()+")":"");
+		String detailText = item.getDetail()!=null && !"".equals(item.getDetail().trim()) ? item.getDetail() : "";
+		detailText += detailText!=null && !"".equals(detailText) 
+				&& item.getDetail2()!=null && !"".equals(item.getDetail2().trim()) ? " / " : "";
+		detailText += item.getDetail2()!=null && !"".equals(item.getDetail2().trim()) ? item.getDetail2() : "";
+		detailText += detailText!=null && !"".equals(detailText) 
+				&& item.getDetail3()!=null && !"".equals(item.getDetail3().trim()) ? " / " : "";
+		detailText += item.getDetail3()!=null && !"".equals(item.getDetail3().trim()) ? item.getDetail3() : "";
+		detailText = detailText!=null && !"".equals(detailText) ? " [" +detailText + "]" : "";
+		String serialNumberText = (item.getSerialNumber()!=null?" #("+item.getSerialNumber()+")":"");
+		String text = item.getName() + detailText + serialNumberText + " (" + item.getCode() + ")";
 
 		int i = AonStringUtils.indexOfIgnoreCase(text, query);
 		SafeHtmlBuilder bld = new SafeHtmlBuilder();
