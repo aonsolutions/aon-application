@@ -90,7 +90,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			" AND PR.project = PRR.project_reservation" +
 			" AND PRR.id = PRRD.project_reservation_room" +
 			" AND PRRD.asset_activity = AA.id" +
-			" AND AA.date = ?" +
+			" AND (AA.date = ? OR AA.date = ?)" +
 			" AND AA.asset = R.asset" +
 			" AND R.active = 1";
 	private static String SELECT_SURVEY_DATA =
@@ -381,6 +381,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			SQLUtils.setDate(stmt, 3, today);
 			SQLUtils.setDate(stmt, 4, today);
 			SQLUtils.setDate(stmt, 5, today);
+			SQLUtils.setDate(stmt, 6, DateUtils.addDays(today, -1));
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				int person = rs.getInt(PERSON);
