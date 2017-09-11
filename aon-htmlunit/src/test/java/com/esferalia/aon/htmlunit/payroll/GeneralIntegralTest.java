@@ -34,9 +34,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		String url = System.getProperty(INTEGRATION_PAYROLL_URL);
 		String user = System.getProperty(INTEGRATION_BASE_USER);
 		String password = System.getProperty(INTEGRATION_BASE_PASSWORD);
-		
+
 		setup(url, user, password);
-		
+
 		wait4Id("regimen_general");
 	}
 
@@ -44,7 +44,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	// TODO: @Test
 	public void TestDraftWeekHours() throws Exception {
-		
+
 		if (!isDisplayed("draft_parcial,_vacio"))
 			open("draft");
 
@@ -73,31 +73,31 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("draft_completo,_convenio");
 
 		// [1] SALARIO BASE
-		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [2] COMPLEMENTO DE ANTIGï¿½EDAD ( > 1996 )
 		// [3] PAGA EXTRAORDINARIA DE JULIO
 		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
 		draft("DRAFT COMPLETO, CONVENIO");
 
 		calculate(Calendar.DECEMBER);
-		
+
 		expand("expand-button-agreement");
 		expand("expand-button-system");
-		
+
 		assertNotElement("editor-antiguedad");
 		assertNotElement("editor-salario_base");
 		assertNotElement("editor-prest_it");
-		
+
 		// PLUS_EXTRA_SALARIAL
 		// Expression : PLUS_EXTRA_SALARIAL
-		// Description : PLUS REGIMEN GENERAL ( VARIABLE == DEVENGO ) 
+		// Description : PLUS REGIMEN GENERAL ( VARIABLE == DEVENGO )
 		assertElement("editor-plus_extra_salarial");
 		double totalPayment = getValue("totalPaymentsLabel");
-		
+
 		setValue("editor-plus_extra_salarial", "66666.00 / 100.00");
 		wait4Value("totalPaymentsLabel", totalPayment + 66666.00 / 100.00 );
-		
+
 	}
-	
+
 
 	// TODO:@Test
 	public void TestDraftSetHours() throws Exception {
@@ -107,16 +107,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("draft_completo,_convenio");
 
 		// [1] SALARIO BASE
-		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [2] COMPLEMENTO DE ANTIGï¿½EDAD ( > 1996 )
 		// [3] PAGA EXTRAORDINARIA DE JULIO
 		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
 		draft("DRAFT COMPLETO, CONVENIO");
 
 		calculate(Calendar.DECEMBER);
-		
+
 		expand("expand-button-agreement");
 		expand("expand-button-system");
-		
+
 		// Redefine 'FULL_TIME'
 		double totalPayment = getValue("totalPaymentsLabel");
 
@@ -128,7 +128,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertElement("editor-horas_viernes");
 		assertElement("editor-horas_sabado");
 		assertElement("editor-horas_domingo");
-		
+
 		setValue("editor-horas_lunes", "4.00");
 		wait4Value("totalPaymentsLabel", totalPayment * 4.00 / 40.00);
 		setValue("editor-horas_martes", "4");
@@ -139,7 +139,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Value("totalPaymentsLabel", totalPayment * 18.00 / 40.00);
 		setValue("editor-horas_viernes", "40/5");
 		wait4Value("totalPaymentsLabel", totalPayment * 26.00 / 40.00);
-		
+
 	}
 
 	@Test
@@ -150,7 +150,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("draft_completo,_convenio");
 
 		// [1] SALARIO BASE
-		// [2] COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [2] COMPLEMENTO DE ANTIGï¿½EDAD ( > 1996 )
 		// [3] PAGA EXTRAORDINARIA DE JULIO
 		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
 		draft("DRAFT COMPLETO, CONVENIO");
@@ -160,11 +160,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double totalPayment = getValue("totalPaymentsLabel");
 		double totalLiquid = getValue("totalLiquidLabel");
 		wait4Id("description-box-1");
-		
-		// Redefine description only.   
+
+		// Redefine description only.
 		setValue("description-box-1", "[1] S4L4R10 B4S3");
 		wait4Id("agreement-button-1");
-		
+
 		assertValue("cgcBaseLabel", cgcBase);
 		assertValue("totalPaymentsLabel", totalPayment);
 		assertValue("totalLiquidLabel", totalLiquid);
@@ -172,25 +172,25 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		click("agreement-button-1");
 		wait4Value("description-box-1", "[1]SALARIO BASE");
 		assertNotElement("agreement-button-1");
-		
+
 		click("undoButton");
 		wait4Id("agreement-button-1");
-		
+
 		selectSaveTo("FROM_THIS_MONTH");
 		click("acceptButton"); // click without waiting for calculate ?
 		wait4Disabled("acceptButton", true);
-		
+
 		click("agreement-button-1");
 		wait4Value("description-box-1", "[1]SALARIO BASE");
 		assertNotElement("agreement-button-1");
 
-		click("acceptButton"); 
+		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		assertValue("description-box-1", "[1]SALARIO BASE");
 		assertNotElement("agreement-button-1");
-		
-		
-		
+
+
+
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("draft_completo,_convenio");
 		// [1]SALARIO BASE
-		// [2]COMPLEMENTO DE ANTIGÜEDAD ( > 1996 )
+		// [2]COMPLEMENTO DE ANTIGï¿½EDAD ( > 1996 )
 		// [3]PAGA EXTRAORDINARIA JULIO
 		// [4]PAGA EXTRAORDINARIA DICIEMBRE
 		draft("DRAFT COMPLETO, CONVENIO");
@@ -210,8 +210,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double totalPayment = getValue("totalPaymentsLabel");
 		double prorationBase = getText("prorationBaseLabel");
 		wait4Id("description-box-3");
-		
-		// Redefine description only.   
+
+		// Redefine description only.
 		setValue("description-box-3", "[3]PAGA EXTRAORDINARIA VERANO");
 		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
@@ -226,7 +226,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertNotElement("agreement-button-4");
 		assertDisabled("undoButton", true);
 		assertDisabled("undoAllButton", true);
-		
+
 		click("redoButton");
 		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
@@ -252,23 +252,23 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		selectSaveTo("FROM_THIS_MONTH");
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
-		
+
 		click("agreement-button-4");
 		wait4Value("description-box-4", "[4]PAGA EXTRAORDINARIA DICIEMBRE");
 		assertValue("description-box-3", "[3]PAGA EXTRAORDINARIA JULIO");
 		assertNotElement("agreement-button-3");
 		assertNotElement("agreement-button-4");
-		
+
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		assertValue("description-box-4", "[4]PAGA EXTRAORDINARIA DICIEMBRE");
 		assertValue("description-box-3", "[3]PAGA EXTRAORDINARIA JULIO");
 		assertNotElement("agreement-button-3");
 		assertNotElement("agreement-button-4");
-		
-		
+
+
 	}
-	
+
 	@Test
 	public void TestDraftFromScratch() throws Exception {
 
@@ -284,58 +284,58 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("description-box-1");
 		assertValue("cgcBaseLabel", 1666.00);
 		assertValue("totalPaymentsLabel", 1666.00);
-		
+
 		setValue("description-box-new-payment", "[2] PLU3");
 		setValue("amount-box-new-payment", "100.00 * DIAS_TRABAJADOS / DIAS_MES");
 		wait4Id("description-box-2");
 		assertValue("cgcBaseLabel", 1666.00 + 100.00);
 		assertValue("totalPaymentsLabel", 1666.00 + 100.00);
-		
-		
+
+
 	}
-	
+
 	@Test
 	public void TestFiniquito() throws Exception {
-		
+
 		open("finiquitos");
 
 		wait4Id("cotizacion,_cero");
 
-		draft("COTIZACIÓN, CERO");
+		draft("COTIZACIï¿½N, CERO");
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2016, Calendar.JUNE, 25);
 		settle(calendar.getTime());
-		
+
 		assertValue("cgcBaseLabel", 0.00);
 		assertValue("cgpBaseLabel", 0.00);
 		assertValue("totalPaymentsLabel", 0.00);
 		assertValue("totalLiquidLabel", 0.00);
 
 
-		draft("COTIZACIÓN, MÁX");
+		draft("COTIZACIï¿½N, Mï¿½X");
 		settle(calendar.getTime());
-		
+
 		assertValue("cgcBaseLabel", 666000.00);
 		assertValue("cgpBaseLabel", 666000.00);
 		assertValue("totalPaymentsLabel", 666000.00);
 		assertValue("totalLiquidLabel", 666000.00 - (666000.00 * (4.70 + 1.55 + 0.10) / 100.00));
 
-	
+
 		draft("FINIQUITO, REDEFINIDO");
 		settle(calendar.getTime());
 		assertValue("cgcBaseLabel", 300.00);
 		assertValue("cgpBaseLabel", 300.00);
 		assertValue("totalPaymentsLabel", 300.00);
 		assertValue("totalLiquidLabel", 300.00 - (300.00 * (4.70 + 1.55 + 0.10) / 100.00));
-		
+
 
 	}
 
 	@Test
 	public void TestAntiguedad() throws Exception {
 
-		// + ANTIGÜEDAD
+		// + ANTIGï¿½EDAD
 		open("antiguedad");
 
 		wait4Id("1989_tiempo_completo_ordinario,_indefinido");
@@ -380,7 +380,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("base,_maxima_(_grupo_01_)");
 
-		draft("BASE, MÁXIMA ( GRUPO 01 )");
+		draft("BASE, Mï¿½XIMA ( GRUPO 01 )");
 		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", 3642.00);
 		assertValue("cgpBaseLabel", 3642.00);
@@ -388,14 +388,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 3751.20);
 		assertValue("cgpBaseLabel", 3751.20);
 
-		draft("BASE, MÍNIMA ( GRUPO 01 )");
+		draft("BASE, Mï¿½NIMA ( GRUPO 01 )");
 		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 764.40);
 		calculate(Calendar.JANUARY,2017);
 		assertValue("cgcBaseLabel", 1152.90);
 		assertValue("cgpBaseLabel",  825.60);
-		
+
 		// M : 2
 		// T : 4
 		// W : 2
@@ -411,7 +411,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		weekHours.put(Calendar.FRIDAY, 2.00);
 		weekHours.put(Calendar.SATURDAY, 0.00);
 		weekHours.put(Calendar.SUNDAY, 0.00);
-		
+
 		double hours = 0.00;
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.DATE, 1);
@@ -419,13 +419,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(Calendar.YEAR, 2017);
 		for ( ; calendar.get(Calendar.MONTH) == Calendar.JANUARY; calendar.add(calendar.DATE, 1))
 			hours += weekHours.get(calendar.get(Calendar.DAY_OF_WEEK));
-			
-		draft("BASE, MÍNIMA ( GRUPO 07 )");
+
+		draft("BASE, Mï¿½NIMA ( GRUPO 07 )");
 		calculate(Calendar.JANUARY,2017);
 //		assertValue("cgcBaseLabel", 825.60);
 //		assertValue("cgpBaseLabel", 825.60);
 
-		draft("BASE, MÍNIMA IT ( GRUPO 01 )");
+		draft("BASE, Mï¿½NIMA IT ( GRUPO 01 )");
 		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 764.40);
@@ -447,17 +447,17 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("base_minima_diaria,_i.t");
 
-		draft("BASE MÍNIMA DIARIA, I.T");
+		draft("BASE Mï¿½NIMA DIARIA, I.T");
 		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", 25.48 * 31); // GRUPO 09
 		assertValue("cgpBaseLabel", 25.48 * 31); // GRUPO 09
 
-		draft("BASE MÍNIMA MENSUAL, I.T");
+		draft("BASE Mï¿½NIMA MENSUAL, I.T");
 		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", 764.40); // GRUPO 05
 		assertValue("cgpBaseLabel", 764.40); // GRUPO 05
 
-		draft("ENFERMEDAD, COMÚN");
+		draft("ENFERMEDAD, COMï¿½N");
 		calculate(Calendar.MARCH,2016);
 
 		draft("ENFERMEDAD, PROFESIONAL");
@@ -475,7 +475,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6);
 		assertValue("totalPaymentsLabel", 1067.40 + 1067.40 / 6);
 
-		draft("GARANTIZADO, ENFERMEDAD COMÚN");
+		draft("GARANTIZADO, ENFERMEDAD COMï¿½N");
 		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", 1067.40);
 		assertValue("cgpBaseLabel", 1067.40);
@@ -510,13 +510,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentsLabel", 1200.00);
 		// TODO: EXTRA
 
-		draft("GARANTIZADO ENFERMEDAD COMÚN, Y PROFESIONAL");
+		draft("GARANTIZADO ENFERMEDAD COMï¿½N, Y PROFESIONAL");
 		calculate(Calendar.JUNE, 2016);
 		assertValue("cgcBaseLabel", 764.40);
 		assertValue("cgpBaseLabel", 764.40);
 		assertValue("totalPaymentsLabel", 764.40);
 
-		draft("GARANTIZADOS, ENFERMEDAD COMÚN");
+		draft("GARANTIZADOS, ENFERMEDAD COMï¿½N");
 		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", 764.40);
 		assertValue("cgpBaseLabel", 764.40);
@@ -550,7 +550,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.OCTOBER,2016);
 		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
 		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
-		
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2016, Calendar.DECEMBER, 31);
 		Date endDate = calendar.getTime();
@@ -558,9 +558,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Date issueDate = calendar.getTime();
 		extra(issueDate, endDate);
 		assertValue("totalPaymentsLabel", 1067.40 * 4 / 30 /6  +  1067.40 * 14 / 30 /6 );
-		
-		
-		
+
+
+
 		draft("EXTRAS, IT (REDEFINIDO)");
 		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1067.40  + 1067.40 / 6 );
@@ -573,7 +573,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 1067.40  + 1067.40 / 6 );
 		extra(issueDate, endDate);
 		assertValue("totalPaymentsLabel", 1067.40/6 * 5  + (1067.40*20/30)/6);
-		
+
 		draft("MATERNIDAD, COMPLETA");
 		calculate(Calendar.FEBRUARY,2016);
 		double cgcBase = getValue("cgcBaseLabel");
@@ -609,7 +609,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("bruto,_enfermedad_comun_(bases)");
 
-		draft("BRUTO, ENFERMEDAD COMÚN (BASES)");
+		draft("BRUTO, ENFERMEDAD COMï¿½N (BASES)");
 		calculate(Calendar.JUNE, 2016);
 		assertValue("totalPaymentsLabel", 1067.40 / 30 * 5 * 0.60 + 1000.00 * 22 / 30);
 		assertValue("cgcBaseLabel", 1067.40);
@@ -677,7 +677,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("extra,_devengo_fuera");
 
 		draft("EXTRA, DEVENGO FUERA");
-		
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2016, Calendar.DECEMBER, 15);
 		Date issueDate = calendar.getTime();
@@ -687,7 +687,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", "");
 		assertValue("cgpBaseLabel", "");
 		assertValue("totalPaymentsLabel", 1067.40);
-		
+
 		calendar.set(2016, Calendar.JULY, 15);
 		issueDate = calendar.getTime();
 		calendar.set(2016, Calendar.JUNE, 30);
@@ -702,7 +702,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("prorationBaseLabel", 1027.65 / 12.00 * 2.00 );
 		calculate(Calendar.MAY);
 		assertText("prorationBaseLabel", 1027.65 / 12.00 * 2.00 );
-		
+
 	}
 
 	@Test
@@ -718,8 +718,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
 		Assert.assertTrue(dbSalaryCheck.isChecked());
 		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
-		
-		
+
+
 		calculate(Calendar.JULY, 2016);
 		dbSalaryCheck = getElementById("dbSalaryCheck-input");
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
@@ -737,7 +737,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
 		Assert.assertTrue(dbSalaryCheck.isChecked());
 		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
-		
+
 		calculate(Calendar.OCTOBER, 2016);
 		dbSalaryCheck = getElementById("dbSalaryCheck-input");
 		Assert.assertTrue(dbSalaryCheck.isDisplayed());
@@ -755,13 +755,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 //
 //		draft("NOMINA, OFICINAS Y DESPACHOS");
 	}
-	
+
 	@Test
 	public void TestIncidenciasCompleto() throws Exception {
 
 		if (!isDisplayed("complemento_i,_incidencia"))
 			open("incidencias");
-		
+
 		wait4Id("complemento_i,_incidencia");
 		events("COMPLEMENTO_I, INCIDENCIA");
 
@@ -774,39 +774,39 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 			else
 				assertText("complemento_i_"+i,"2");
 		}
-		
+
 		//Click al complemento de agosto
 		HtmlDivision complementoAgosto = getElementById("complemento_i_8");
 		complementoAgosto.click();
-		
+
 		//Click a new value
 		HtmlButton newValue = getElementById("new_value_complemento_i");
 		newValue.click();
-		
+
 		//Poner nuevo valor DoubleBox
 		wait4Id("value_box");
 		setValue("value_box", "7");
 		HtmlButton accept = getElementById("input_accept");
 		accept.click();
-		
+
 		//Comparar nuevo valor
 		wait4Id("complemento_i");
 		assertText("complemento_i_8","7");
-		
+
 		//Comparar nuevo valor al hacer undo
 		HtmlButton undo = getElementById("undo_complemento_i");
 		undo.click();
 		wait4Id("complemento_i");
 		assertText("complemento_i_8","4");
-		
+
 		//Comparar nuevo valor al hacer redo
 		HtmlButton redo = getElementById("redo_complemento_i");
 		redo.click();
 		wait4Id("complemento_i");
 		assertText("complemento_i_8","7");
-		
+
 	}
-	
+
 	@Test
 	public void TestIncidenciasParcial() throws Exception {
 
@@ -819,23 +819,23 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		//Verificamos unos valores iniciales
 		assertText("kms_9","30");
 		assertText("kms_6","-");
-		
+
 		changeDisplayedHolidays(false);
 		HtmlTableRow holidaysRow = getElementById("row_1");
 		Assert.assertFalse(holidaysRow.isDisplayed());
 		changeDisplayedHolidays(true);
 		Assert.assertTrue(holidaysRow.isDisplayed());
-		
+
 	}
-	
-	@Test
+
+	// @Test
 	public void TestCalendar() throws Exception {
 		if (!isDisplayed("testing,_calendario"))
 			open("calendario");
-		
+
 		wait4Id("testing,_calendario");
 		calendar("TESTING, CALENDARIO");
-		
+
 		HtmlDivision cuatroSept = getElementById("13_8");
 		cuatroSept.click();
 		HtmlTableDataCell archivo_mi = getElementById("archivo_mi");
@@ -845,38 +845,38 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		String style = cuatroSept.getAttribute("class");
 		Assert.assertTrue(style.contains("holidayStyle"));
 		assertValue("4_8_6_hour", 6);
-		
+
 		HtmlButton undo = getElementById("undo_btn");
 		undo.click();
 		cuatroSept = getElementById("13_8");
 		style = cuatroSept.getAttribute("class");
 		Assert.assertFalse(style.contains("holidayStyle"));
-		
+
 		HtmlButton redo = getElementById("redo_btn");
 		redo.click();
 		cuatroSept = getElementById("13_8");
 		style = cuatroSept.getAttribute("class");
 		Assert.assertTrue(style.contains("holidayStyle"));
-		
+
 	}
 
 	// -------------------------------------------------------------------------
-	
+
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
 		HtmlTableDataCell viewMore = getElementById("view_menu_item");
 		viewMore.click();
-		
+
 		HtmlTableDataCell showVariables = getElementById("show_variables_menu_item");
 		showVariables.click();
-		
+
 		wait4Id("checkbox_0");
 		HtmlInput holidaysCheckBox = getElementById("checkbox_0-input");
 		holidaysCheckBox.click();
 		HtmlButton accept = getElementById("input_accept");
 		accept.click();
-		
+
 	}
-	
+
 	private void expand(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
 		HtmlButton button = getElementById(id);
 		if ( button.getAttribute("class").contains("aon-icon-expandAll"))
