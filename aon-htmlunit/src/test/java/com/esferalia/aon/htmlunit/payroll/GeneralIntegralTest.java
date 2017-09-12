@@ -828,7 +828,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 	
-	@Test
+	//@Test
 	public void TestCalendar() throws Exception {
 		if (!isDisplayed("testing,_calendario"))
 			open("calendario");
