@@ -30,7 +30,7 @@
 							</g:HorizontalPanel>
 						</td>
 						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
-							<g:InlineLabel text="{msg.issueDate}"/>
+							<g:InlineLabel text="Fecha de Carga"/>
 						</td>
 						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
 							<aon:DateBoxEx ui:field="issueDate" styleName="{aonResources.css.aonTextBox}"/>

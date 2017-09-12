@@ -211,7 +211,7 @@ public class FootPanel extends Composite {
 		if(Destiny.BASERRI.equals(destiny) || Destiny.EUSKOLABEL.equals(destiny)) {
 			String product_quantity = parent.getMap().containsKey("product_quantity") ? parent.getMap().get("product_quantity") : "0.0";
 			Double productQuantity = Double.parseDouble(product_quantity);
-			String transport_quantity = parent.getMap().containsKey(QualitySheetCode.UFQDT2.getName()) ? parent.getMap().get(QualitySheetCode.UFQDT2.getName()) : "0.0";
+			String transport_quantity = parent.getMap().containsKey("neto") ? parent.getMap().get("neto") : "0.0";
 			Double transportQuantity = Double.parseDouble(transport_quantity);
 			Double quantity = transportQuantity > 0.0 ? transportQuantity : productQuantity;
 		

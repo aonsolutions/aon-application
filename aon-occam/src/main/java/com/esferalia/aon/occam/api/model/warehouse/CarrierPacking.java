@@ -27,6 +27,7 @@ public class CarrierPacking implements Serializable{
 	
 	private Double gross; // PESO BRUTO
 	private Double tare; // TARA
+	private Double additionalTare; // TARA
 	private Double net; // PESO NETO
 	private Date receptionStartDate; // FECHA ENTRADA TRANSPORTE (RECEPCIÓN)
 	private Date receptionEndDate; // FECHA SALIDA TRANSPORTE (RECEPCIÓN)
@@ -200,6 +201,14 @@ public class CarrierPacking implements Serializable{
 		this.tare = tare;
 		return this;
 	}
+	public Double getAdditionalTare() {
+		return additionalTare;
+	}
+	public CarrierPacking setAdditionalTare(Double additionalTare) {
+		this.additionalTare = additionalTare;
+		return this;
+	}
+	
 	public Double getNet() {
 		return net;
 	}

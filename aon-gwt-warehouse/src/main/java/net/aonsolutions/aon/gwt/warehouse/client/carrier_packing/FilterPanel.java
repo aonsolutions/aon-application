@@ -69,7 +69,7 @@ public class FilterPanel extends Composite {
     	// -------------------- DATE - FROM _____ TO ______
     	HorizontalPanel datePanel = new HorizontalPanel(); 
     	datePanel.addStyleName(AON.AON_CSS.aonMarginTop());  
-    	InlineLabel issueLabel = new InlineLabel( AON.MSG.issueDate());
+    	InlineLabel issueLabel = new InlineLabel("Fecha de Carga");
     	issueLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
     	issueLabel.setWidth("20px");
 		datePanel.add(issueLabel);

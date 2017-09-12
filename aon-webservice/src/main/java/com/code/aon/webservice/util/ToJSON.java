@@ -270,6 +270,7 @@ public class ToJSON {
 			
 			.put(MSG.GROSS, carrierPacking.getGross())
 			.put(MSG.TARE, carrierPacking.getTare())
+			.put(MSG.ADDITIONAL_TARE, carrierPacking.getAdditionalTare())
 			.put(MSG.NET, carrierPacking.getNet())
 			.put(MSG.RECEPTION_START_DATE, carrierPacking.getReceptionStartDate() != null ? AonDateUtils.dateTimeFormat(carrierPacking.getReceptionStartDate()) : null)
 			.put(MSG.RECEPTION_END_DATE, carrierPacking.getReceptionEndDate() != null ? AonDateUtils.dateTimeFormat(carrierPacking.getReceptionEndDate()) : null)

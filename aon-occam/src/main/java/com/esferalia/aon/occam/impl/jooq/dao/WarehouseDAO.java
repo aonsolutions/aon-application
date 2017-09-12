@@ -616,7 +616,7 @@ public class WarehouseDAO {
 				CARRIER_PACKING.MODIFICATION_DATE, CARRIER_PACKING.MODIFICATION_USER,
 				CARRIER_PACKING.NUMBER, CARRIER_PACKING.NUMBER_PLATE,
 				CARRIER_PACKING.SERIES,	CARRIER_PACKING.STATUS, CARRIER_PACKING.TYPE,
-				CARRIER_PACKING.GROSS, CARRIER_PACKING.TARE, CARRIER_PACKING.NET, 
+				CARRIER_PACKING.GROSS, CARRIER_PACKING.TARE, CARRIER_PACKING.ADDITIONAL_TARE, CARRIER_PACKING.NET, 
 				CARRIER_PACKING.RECEPTION_START_DATE, CARRIER_PACKING.RECEPTION_END_DATE)
 				.values(carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0,
 						carrierPacking.getCarrierReference(), carrierPacking.getComments(), carrierPacking.getCreationDate() != null ? new Timestamp(new Date().getTime()) : null,
@@ -626,7 +626,7 @@ public class WarehouseDAO {
 						carrierPacking.getModificationDate() != null ? new Timestamp(carrierPacking.getModificationDate().getTime()) : null, carrierPacking.getModificationUser(),
 						carrierPacking.getNumber() != null ? carrierPacking.getNumber() : 1, carrierPacking.getNumberPlate(), 
 						carrierPacking.getSeries(), carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : 0, carrierPacking.getStatus() != null ? carrierPacking.getType().value() : 0,
-						carrierPacking.getGross(), carrierPacking.getTare(), carrierPacking.getNet(),
+						carrierPacking.getGross(), carrierPacking.getTare(), carrierPacking.getAdditionalTare(), carrierPacking.getNet(),
 						AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()), AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))
 				.returning(CARRIER_PACKING.ID).fetchOne().getId();
 	}
@@ -650,6 +650,7 @@ public class WarehouseDAO {
 				.set(CARRIER_PACKING.TYPE, carrierPacking.getType().value())
 				.set(CARRIER_PACKING.GROSS, carrierPacking.getGross())
 				.set(CARRIER_PACKING.TARE, carrierPacking.getTare())
+				.set(CARRIER_PACKING.ADDITIONAL_TARE, carrierPacking.getAdditionalTare())
 				.set(CARRIER_PACKING.NET, carrierPacking.getNet())
 				.set(CARRIER_PACKING.RECEPTION_START_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()))
 				.set(CARRIER_PACKING.RECEPTION_END_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))

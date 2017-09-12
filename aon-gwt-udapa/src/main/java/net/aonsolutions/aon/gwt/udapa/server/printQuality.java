@@ -390,7 +390,7 @@ public class printQuality {
 		c555.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c555);
 			
-		PdfPCell c666 = new PdfPCell(new Phrase(map.get(QualitySheetCode.UFQDT1.getName()),getFont2()));
+		PdfPCell c666 = new PdfPCell(new Phrase(map.get("tara_adicional"),getFont2()));
 		c666.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c666);
 
@@ -406,7 +406,7 @@ public class printQuality {
 	   	c5555.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c5555);
 			
-		PdfPCell c6666 = new PdfPCell(new Phrase(map.get(QualitySheetCode.UFQDT2.getName()),getFont1()));
+		PdfPCell c6666 = new PdfPCell(new Phrase(map.get("neto"),getFont1()));
 		c6666.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c6666);
 		

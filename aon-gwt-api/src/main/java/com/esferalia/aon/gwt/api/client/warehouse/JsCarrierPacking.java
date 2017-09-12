@@ -109,6 +109,10 @@ public class JsCarrierPacking extends JavaScriptObject {
 		return this.tare;
 	}-*/;
 	
+	public final native Double getAdditionalTare() /*-{
+		return this.additional_tare;
+	}-*/;
+	
 	public final native Double getNet() /*-{
 		return this.net;
 	}-*/;

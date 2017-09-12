@@ -117,6 +117,7 @@ public class FillerDAO {
 					
 					.setGross(r.getValue(CARRIER_PACKING.GROSS))
 					.setTare(r.getValue(CARRIER_PACKING.TARE))
+					.setAdditionalTare(r.getValue(CARRIER_PACKING.ADDITIONAL_TARE))
 					.setNet(r.getValue(CARRIER_PACKING.NET))						
 					.setReceptionStartDate(r.getValue(CARRIER_PACKING.RECEPTION_START_DATE))
 					.setReceptionEndDate(r.getValue(CARRIER_PACKING.RECEPTION_END_DATE))

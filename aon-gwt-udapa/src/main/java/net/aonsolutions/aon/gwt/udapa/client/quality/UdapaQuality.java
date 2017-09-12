@@ -31,7 +31,6 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
-import com.vaadin.polymer.vaadin.widget.VaadinDatePicker;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
@@ -303,10 +302,6 @@ public class UdapaQuality extends AonTemplate2{
 		detailBox.setItemLabelPath("description");
 		detailBox.setItemValuePath("description");
 		panel.add(detailBox);
-	
-		VaadinDatePicker dateBox = new VaadinDatePicker();
-		dateBox.setLabel("Fecha");
-		panel.add(dateBox);
 		
 		incomeBox.addSelectedItemChangedHandler(new SelectedItemChangedEventHandler() {
 			
@@ -342,8 +337,8 @@ public class UdapaQuality extends AonTemplate2{
 
 				JSONObject dataResponse = new JSONObject();
 				dataResponse.put("number", new JSONString(order.getReferenceCode()));	
-
-				Date date = Utils.parse("yyyy-MM-dd", dateBox.getValue());
+		
+				Date date = Utils.parseDateTime(order.getIssueDate());
 				String dateTime = Utils.formatDateTime(date);
 				dataResponse.put("issue_date", new JSONString(dateTime));
 				dataResponse.put("source", new JSONString("income_detail@" + orderDetail.getId()));

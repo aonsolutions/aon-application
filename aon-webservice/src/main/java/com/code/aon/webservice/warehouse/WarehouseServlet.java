@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -37,7 +38,9 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "WarehouseServlet", urlPatterns = { "/warehouse/*",
@@ -231,6 +234,8 @@ public class WarehouseServlet extends HttpServlet{
 						object = DBIncome.deleteIncome(domain, userName, json);
 					}
 				} else object = DBIncome.insertIncome(domain, userName, json);
+			} else if("update_reception_quantity".equals(pathInfo[3])) {
+				object = updateReceptionQuantity(domain, userName, json);
 			}
 				
 			resp.setContentType("application/json;charset=UTF-8");
@@ -422,6 +427,9 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		if(json.opt(MSG.TARE) != null){
 			carrierPacking.setTare(json.getDouble(MSG.TARE));
+		}
+		if(json.opt(MSG.ADDITIONAL_TARE) != null){
+			carrierPacking.setAdditionalTare(json.getDouble(MSG.ADDITIONAL_TARE));
 		}
 		if(json.opt(MSG.NET) != null){
 			carrierPacking.setNet(json.getDouble(MSG.NET));
@@ -731,6 +739,30 @@ public class WarehouseServlet extends HttpServlet{
 		}
 
 		return filter;
+    }
+    
+    private Double total = 0.0;
+
+    private JSONObject updateReceptionQuantity(Domain domain, String login, JSONObject json) {
+    	Integer neto = json.getInt("net");
+		Integer cpId = Integer.parseInt(json.getString("carrier_packing"));
+		
+		total = 0.0;
+		HashMap<Integer, IncomeDetail> map = new HashMap<>();
+		AON.getIncomeStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(cpId))
+		.forEach(income -> {
+			AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
+			.forEach(detail -> {
+				total = total + detail.getQuantity();
+				map.put(detail.getId(), detail);
+			});
+		});
+		for (Integer key : map.keySet()) {
+			IncomeDetail id = map.get(key);
+			id.setQuantity(AonMathUtils.round((id.getQuantity()/total) * neto));
+			AON.updateIncomeDetail(domain.getName(), domain.getId(), login, id);
+		}
+		return new JSONObject();
     }
 }
 

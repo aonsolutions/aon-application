@@ -17,14 +17,6 @@ public enum QualitySheetCode implements IsSerializable{
 	/** DATOS PRODUCTO - TIPO */
 	UFQDP3("ufqdp3"),
 	
-	// DATOS TRANSPORTE
-	
-	/** DATOS TRANSPORTE - TARA ADICIONAL */
-	UFQDT1("ufqdt1"),
-	
-	/** DATOS TRANSPORTE - PESO NETO */
-	UFQDT2("ufqdt2"),
-	
 	// ANALISIS CALIDAD
 	
 	/** ANALISIS CALIDAD - TEMPERATURA */

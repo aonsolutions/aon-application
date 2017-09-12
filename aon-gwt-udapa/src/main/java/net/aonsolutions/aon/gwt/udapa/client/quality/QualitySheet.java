@@ -212,16 +212,15 @@ public class QualitySheet extends Composite{
 		transportData.setWidget(2, 2, new Label("Matr\u00edcula"));setWidth(transportData, 2, 2);
 		transportData.setWidget(2, 3, new Label(map.get("transport_number_plate")));setWidth(transportData, 2, 3);
 		transportData.setWidget(2, 4, new Label("Tara Adicional"));
-		transportData.setWidget(2, 5, doubleBox(QualitySheetCode.UFQDT1));
+		transportData.setWidget(2, 5, new Label(map.get("tara_adicional")));
 		
 		transportData.setWidget(3, 0, new Label(""));
 		transportData.setWidget(3, 1, new Label(""));
 		transportData.setWidget(3, 2, new Label(""));
 		transportData.setWidget(3, 3, new Label(""));
 		transportData.setWidget(3, 4, boldLabel("Peso Neto"));setWidth(transportData, 3, 4);
-		Label label = boldLabel(map.get(QualitySheetCode.UFQDT2.getName()));
-		calculated.add(new WidgetStack(label, QualitySheetCode.UFQDT2));
-		transportData.setWidget(3, 5, label); setWidth(transportData, 3, 5);
+		transportData.setWidget(3, 5, boldLabel(map.get("neto")));
+		setWidth(transportData, 3, 5);
 	}
 	
 	private void productData() {

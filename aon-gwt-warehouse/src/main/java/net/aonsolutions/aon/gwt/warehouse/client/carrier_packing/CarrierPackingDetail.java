@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -141,19 +142,24 @@ public class CarrierPackingDetail extends Composite{
 		truck.getElement().getStyle().setPadding(0, Unit.PX);
 		truck.getElement().getStyle().setHeight(20, Unit.PX);
 		truck.setNoink(true);
-		truck.getElement().getStyle().setColor("orangered");
+		truck.getElement().getStyle().setColor(CarrierPackingStatus.PENDING.getColor());
 
 		truck.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				String color = truck.getElement().getStyle().getColor();
-				if("orangered".equals(color)) {
-					status.setSelectedIndex(2);
-					truck.getElement().getStyle().setColor("green");
-				} else if("green".equals(color)) {
-					status.setSelectedIndex(1);
-					truck.getElement().getStyle().setColor("darkslategray");
+				if(CarrierPackingStatus.PENDING.getColor().equals(color)) {
+					status.setSelectedIndex(CarrierPackingStatus.ON_ROUTE.ordinal());
+					truck.getElement().getStyle().setColor(CarrierPackingStatus.ON_ROUTE.getColor());
+					issueDate.setValue(new Date());
+				} else if(CarrierPackingStatus.ON_ROUTE.getColor().equals(color)) {
+					status.setSelectedIndex(CarrierPackingStatus.ON_BASCULA.ordinal());
+					truck.getElement().getStyle().setColor(CarrierPackingStatus.ON_BASCULA.getColor());
+					deliveryDate.setValue(new Date());
+				} else if(CarrierPackingStatus.ON_BASCULA.getColor().equals(color)) {
+					status.setSelectedIndex(CarrierPackingStatus.FINISHED.ordinal());
+					truck.getElement().getStyle().setColor(CarrierPackingStatus.FINISHED.getColor());
 				}
 				updateCarrierPacking();
 			}
@@ -171,12 +177,14 @@ public class CarrierPackingDetail extends Composite{
 					for(Integer i = 0; i < status.getItemCount(); i++){
 						if(jsCarrierPacking.getStatus() != null & jsCarrierPacking.getStatus().getName().equals(status.getItemText(i))){
 							status.setSelectedIndex(i);
-							if("Finalizado".equals(jsCarrierPacking.getStatus().getName())) {
-								truck.getElement().getStyle().setColor("darkslategray");
-							} else if("En ruta".equals(jsCarrierPacking.getStatus().getName())) {
-								truck.getElement().getStyle().setColor("green");
-							} else if("Pendiente".equals(jsCarrierPacking.getStatus().getName())) {
-								truck.getElement().getStyle().setColor("orangered");
+							if(CarrierPackingStatus.FINISHED.getName().equals(jsCarrierPacking.getStatus().getName())) {
+								truck.getElement().getStyle().setColor(CarrierPackingStatus.FINISHED.getColor());
+							} else if(CarrierPackingStatus.ON_ROUTE.getName().equals(jsCarrierPacking.getStatus().getName())) {
+								truck.getElement().getStyle().setColor(CarrierPackingStatus.ON_ROUTE.getColor());
+							} else if(CarrierPackingStatus.PENDING.getName().equals(jsCarrierPacking.getStatus().getName())) {
+								truck.getElement().getStyle().setColor(CarrierPackingStatus.PENDING.getColor());
+							} else if(CarrierPackingStatus.ON_BASCULA.getName().equals(jsCarrierPacking.getStatus().getName())) {
+								truck.getElement().getStyle().setColor(CarrierPackingStatus.ON_BASCULA.getColor());
 							}
 						}
 					}
@@ -190,12 +198,17 @@ public class CarrierPackingDetail extends Composite{
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				if("1".equals(status.getSelectedValue())) {
-					truck.getElement().getStyle().setColor("darkslategray");
-				} else if("2".equals(status.getSelectedValue())) {
-					truck.getElement().getStyle().setColor("green");
-				} else if("0".equals(status.getSelectedValue())) {
-					truck.getElement().getStyle().setColor("orangered");
+				
+				if(Integer.toString(CarrierPackingStatus.FINISHED.ordinal()).equals(status.getSelectedValue())) {
+					truck.getElement().getStyle().setColor(CarrierPackingStatus.FINISHED.getColor());
+				} else if(Integer.toString(CarrierPackingStatus.ON_BASCULA.ordinal()).equals(status.getSelectedValue())) {
+					truck.getElement().getStyle().setColor(CarrierPackingStatus.ON_BASCULA.getColor());
+					deliveryDate.setValue(new Date());
+				} else if(Integer.toString(CarrierPackingStatus.ON_ROUTE.ordinal()).equals(status.getSelectedValue())) {
+					truck.getElement().getStyle().setColor(CarrierPackingStatus.ON_ROUTE.getColor());
+					issueDate.setValue(new Date());
+				} else if(Integer.toString(CarrierPackingStatus.PENDING.ordinal()).equals(status.getSelectedValue())) {
+					truck.getElement().getStyle().setColor(CarrierPackingStatus.PENDING.getColor());
 				}
 				updateCarrierPacking();
 			}

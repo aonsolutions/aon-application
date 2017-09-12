@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -277,7 +278,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			}
 		});
 		dataGrid.getColumnSortList().push(issueDateColumn);
-		dataGrid.addColumn(issueDateColumn, "F. Emisi\u00f3n");
+		dataGrid.addColumn(issueDateColumn, "F. Carga");
 		dataGrid.setColumnWidth(issueDateColumn, 12.5, Unit.PCT);
 
 		
@@ -482,8 +483,9 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 	        			JsCarrierPacking value, SafeHtmlBuilder sb) {
 	        		if(text.equals("status")){	
 	        			String icon = "aon-icon-point-red";	
-	        			if("En ruta".equals(value.getStatus().getName())) icon = "aon-icon-point-green";
-	        			if("Finalizada".equals(value.getStatus().getName())) icon = "aon-icon-point-gray";
+	        			if(CarrierPackingStatus.ON_ROUTE.getName().equals(value.getStatus().getName())) icon = "aon-icon-point-green";
+	        			if(CarrierPackingStatus.FINISHED.getName().equals(value.getStatus().getName())) icon = "aon-icon-point-gray";
+	        			if(CarrierPackingStatus.ON_BASCULA.getName().equals(value.getStatus().getName())) icon = "aon-icon-point-light-green";
 	        			sb.appendHtmlConstant("<button  alt=\""+ value.getStatus().getName() +"\" type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
 						sb.appendHtmlConstant("</button>");		
 	        		}

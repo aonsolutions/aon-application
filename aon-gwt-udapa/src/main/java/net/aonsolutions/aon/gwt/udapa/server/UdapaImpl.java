@@ -78,14 +78,8 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				map.put("transport_number_plate", cp.getNumberPlate() != null ? cp.getNumberPlate() : "-");
 				map.put("bruto", cp.getGross() != null ? cp.getGross().toString() : "-");
 				map.put("tara", cp.getTare() != null ? cp.getTare().toString() : "-");
-				Double net = cp.getNet();
-				if(map.containsKey(QualitySheetCode.UFQDT1.getName())){
-					String str = map.get(QualitySheetCode.UFQDT1.getName());
-					Double dbl = Double.parseDouble(str);
-					net = net != null && dbl!= null ? AonMathUtils.round(net - dbl) : 0.0;
-				}
+				map.put("tara_adicional", cp.getAdditionalTare() != null ? cp.getAdditionalTare().toString() : "-");
 				map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "0.0");
-				map.put(QualitySheetCode.UFQDT2.getName(), net != null ? net.toString() : "0.0");
 			}
 			
 			if("0.0".equals(map.get(QualitySheetCode.UFQC2.getName()))){
@@ -110,16 +104,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			AON.updateDataResponseDetail(domainName, domainId, login, drd, f -> f.getIdProperty().eq(opt.get().getId()));
 		} else AON.insertDataResponseDetail(domainName, domainId, login, drd);
 		map.put(code.getName(), value);
-		
-		if(QualitySheetCode.UFQDT1.equals(code)){
-			Double net = Double.parseDouble(map.get("neto"));
-			if(map.containsKey(QualitySheetCode.UFQDT1.getName())){
-				String str = map.get(QualitySheetCode.UFQDT1.getName());
-				Double dbl = Double.parseDouble(str);
-				net = AonMathUtils.round(net - dbl);
-			}
-			map.put(QualitySheetCode.UFQDT2.getName(), net != null ? net.toString() : "0.0");
-		}
+
 		if(QualitySheetCode.UFQC2.equals(code)) {
 			AON.insertApplicationParameter(domainName, domainId, login, AppParam.QUALITY_PFONDO, value);
 		}

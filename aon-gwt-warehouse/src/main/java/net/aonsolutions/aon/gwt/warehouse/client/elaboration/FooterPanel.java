@@ -200,7 +200,7 @@ public class FooterPanel extends Composite {
 				headerPanel.addStyleName(AON.AON_CSS.aonFontMedium());
 				Label header = new Label(" SERIE/NUMERO     " //17
 						+ "CLIENTE                          " //33
-						+ "FECHA EMISION    "  //17
+						+ "FECHA CARGA    "  //17
 						+ "FECHA ENTREGA    "  //17
 						+ "REF. COMPRA      "  //17
 						+ "      ");  //10

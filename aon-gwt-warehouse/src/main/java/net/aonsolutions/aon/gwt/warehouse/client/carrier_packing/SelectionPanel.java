@@ -178,7 +178,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		label.getElement().getStyle().setPadding(3, Unit.PX);
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.add(label);
-		if(isShipment() && isOnRoute()){
+		if(isShipment() && (isOnRoute() || isOnBascula())){
 			PaperIconButton truck = new PaperIconButton();
 			truck.setIcon("maps:local-shipping");
 			truck.getElement().getStyle().setMargin(0, Unit.PX);
@@ -684,7 +684,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			}
 		} else sp.setVisible(!sp.isVisible());
 	}
-	
+
 	private VerticalPanel buildDetail(JsOrder order, JSON<JsOrderDetail> details, String panl) {
 		VerticalPanel vp = new VerticalPanel();
 		if(!isShipment() && isSelected(panl)){
@@ -692,7 +692,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		}
 		Double totalQuantity = details.getData().stream().mapToDouble(r -> r.getQuantity()).sum();
 
-		details.getData().stream().forEach(detail ->{
+		details.getData().stream().forEach(detail ->{			
 			HorizontalPanel panel = new HorizontalPanel();
 			if(isSelected(panl) & isPending()){
 				panel.getElement().getStyle().setPaddingLeft(80, Unit.PX);
@@ -908,6 +908,10 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 	
 	private Boolean isOnRoute(){
 		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.ON_ROUTE.getName());
+	}
+	
+	private Boolean isOnBascula(){
+		return getCarrierPacking().getStatus().getName().equals(CarrierPackingStatus.ON_BASCULA.getName());
 	}
 	
 	private Boolean isFinished(){
@@ -1373,49 +1377,71 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		PaperInput pesoBruto = new PaperInput();
 		pesoBruto.setVisible(false);
 
+		PaperInput additionalTare = new PaperInput();
+		additionalTare.setVisible(false);
+
 		if(b1){
 			pesoBruto.setVisible(true);
 			pesoBruto.setLabel("Peso Bruto");
 			pesoBruto.setValue(getCarrierPacking().getGross().toString());
 			panel.add(pesoBruto);
-			
+
 			panel.add(quantity);
-			
+
+			additionalTare.setVisible(true);
+			additionalTare.setLabel("Tara Adicional");
+			panel.add(additionalTare);
+
 			PaperInput pesoNeto = new PaperInput();
 			pesoNeto.setLabel("Peso Neto");
 			pesoNeto.setDisabled(true);
 			panel.add(pesoNeto);	
 			
 			if(getCarrierPacking().getReceptionEndDate() != null) {
-				quantity.setValue(getCarrierPacking().getTare().toString());
-				pesoNeto.setValue(getCarrierPacking().getNet().toString());
+				quantity.setValue(getCarrierPacking().getTare() != null ? getCarrierPacking().getTare().toString() : "0");
+				pesoNeto.setValue(getCarrierPacking().getNet() != null ? getCarrierPacking().getNet().toString() : "0");
+				additionalTare.setValue(getCarrierPacking().getAdditionalTare() != null ? getCarrierPacking().getAdditionalTare().toString() : "0");
 			}
+			
 			quantity.addChangeHandler(new ChangeEventHandler() {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					Double d = Double.parseDouble(quantity.getValue());
-					Double g = Double.parseDouble(pesoBruto.getValue());
-					Double net = g - d;
+					Double d = quantity.getValue().isEmpty() ? 0.0 : Double.parseDouble(quantity.getValue());
+					Double g = pesoBruto.getValue().isEmpty() ? 0.0 : Double.parseDouble(pesoBruto.getValue());
+					Double at = additionalTare.getValue().isEmpty() ? 0.0 : Double.parseDouble(additionalTare.getValue());
+					Double net = g - d - at;
 					pesoNeto.setValue(net.toString());
 				}
 			});
-			
+
 			pesoBruto.addChangeHandler(new ChangeEventHandler() {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					Double d = Double.parseDouble(quantity.getValue());
-					Double g = Double.parseDouble(pesoBruto.getValue());
-					Double net = g- d;
+					Double d = quantity.getValue().isEmpty() ? 0.0 : Double.parseDouble(quantity.getValue());
+					Double g = pesoBruto.getValue().isEmpty() ? 0.0 : Double.parseDouble(pesoBruto.getValue());
+					Double at = additionalTare.getValue().isEmpty() ? 0.0 : Double.parseDouble(additionalTare.getValue());
+					Double net = g - d - at;
+					pesoNeto.setValue(net.toString());
+				}
+			});
+
+			additionalTare.addChangeHandler(new ChangeEventHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					Double d = quantity.getValue().isEmpty() ? 0.0 : Double.parseDouble(quantity.getValue());
+					Double g = pesoBruto.getValue().isEmpty() ? 0.0 : Double.parseDouble(pesoBruto.getValue());
+					Double at = additionalTare.getValue().isEmpty() ? 0.0 : Double.parseDouble(additionalTare.getValue());
+					Double net = g - d - at;
 					pesoNeto.setValue(net.toString());
 				}
 			});
 		} else {
 			panel.add(quantity);
-		
 		}
-		
+
       	AonDialog dialog = new AonDialog("Recepci\u00f3n", panel) {
 			
 			@Override protected void onCancel() {hide();}
@@ -1424,20 +1450,32 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			protected void onAccept() {
 				JSONObject json = new JSONObject();	
 				String requestData = json.toString();
+				Double neto = 0.0;
 				if(getCarrierPacking().getReceptionStartDate() != null || getCarrierPacking().getReceptionEndDate() != null){
-					Double gross = Double.parseDouble(pesoBruto.getValue()); 
-					Double tare = Double.parseDouble(quantity.getValue());
+					Double gross = pesoBruto.getValue().isEmpty() ? 0.0 : Double.parseDouble(pesoBruto.getValue()); 
+					Double tare = quantity.getValue().isEmpty() ? 0.0 : Double.parseDouble(quantity.getValue());
+					Double at = additionalTare.getValue().isEmpty() ? 0.0 : Double.parseDouble(additionalTare.getValue());
+
+					neto = gross - tare - at;
 					json.put("gross", new JSONNumber(gross));
 					json.put("tare", new JSONNumber(tare));
-					json.put("net", new JSONNumber(gross - tare));	
+					json.put("additional_tare", new JSONNumber(at));
+					json.put("net", new JSONNumber(gross - tare - at));	
 					json.put("reception_end_date", new JSONString(AonDateUtils.formatDateTime(new Date())));
 					requestData = JsonUtils.stringify(json.getJavaScriptObject());
 				} else {
 					Double gross = Double.parseDouble(quantity.getValue()); 
+					neto = gross;
 					json.put("gross", new JSONNumber(gross));
+					json.put("net", new JSONNumber(gross));	
 					json.put("reception_start_date", new JSONString(AonDateUtils.formatDateTime(new Date())));
+					json.put("delivery_date", new JSONNumber(new Date().getTime()));
+					json.put("status", new JSONNumber(CarrierPackingStatus.ON_BASCULA.ordinal()));
+					parent.status.setSelectedIndex(CarrierPackingStatus.ON_BASCULA.ordinal());
+					parent.deliveryDate.setValue(new Date());
 					requestData = JsonUtils.stringify(json.getJavaScriptObject());
 				}
+				Double net = neto;
 				getAPI().getWarehouse().updateCarrierPacking(getCarrierPacking().getId(), requestData, new AsyncCallback<JsCarrierPacking>() {
 
 					@Override public void onFailure(Throwable caught) {}
@@ -1450,8 +1488,21 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 						}
 						truck.getElement().getStyle().setColor(result.getReceptionEndDate() != null ? "darkslategray" : "green");
 						hide();
-			
-		}
+						
+						JSONObject rJson = new JSONObject();
+
+						rJson.put("net", new JSONNumber(net));
+						rJson.put("carrier_packing", new JSONString(getCarrierPacking().getId() + ""));
+						String rd = JsonUtils.stringify(rJson.getJavaScriptObject());
+						getAPI().getWarehouse().updateReceptionQuantity(rd, new AsyncCallback<JsObject>() {
+							@Override public void onFailure(Throwable caught) {}
+
+							@Override
+							public void onSuccess(JsObject result) {
+								receptionPanel();
+							}
+						});
+					}
 				});
 			}
 		};
