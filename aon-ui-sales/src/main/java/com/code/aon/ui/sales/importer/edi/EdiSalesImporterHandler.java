@@ -212,14 +212,17 @@ public class EdiSalesImporterHandler implements Serializable {
 				});
 				
 				if(!undefinedItems.isEmpty()){
+					getLogPanel().info("Productos no localizados: " + undefinedItems.size());
 					undefinedItems.forEach(ere1l -> {
 						getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
 								+ " : La referencia de producto: " + StringUtils.trimToEmpty(ere1l.getDescripcion1Articulo())
-								+ " (NumeroArticuloComprador: " + StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_())
+								+ "(Cod. EAN: " + StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo())
+								+ ", NumeroArticuloProveedor: " + StringUtils.trimToNull(ere1l.getNumeroArticuloProveedor_SA_())
+								+ ", NumeroArticuloComprador: " + StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_())
 								+ ", CodigoEANDelArticuloAdicional: " + StringUtils.trimToNull(ere1l.getCodigoEANDelArticuloAdicional_1__EN_())
-								+ ", Cod. cliente final: " + StringUtils.trimToNull(ere1l.getCodigoClienteFinal())
-								+ ", Cod. EAN: " + StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo()) + ")"
-								+ " no existe para el cliente " + customer.getRegistry().getFullName());
+								+ ", CodigoClienteFinal: " + StringUtils.trimToNull(ere1l.getCodigoClienteFinal())
+								+ ", CodigoGrupoArticuloComprador: " + StringUtils.trimToNull(ere1l.getCodigoGrupoArticuloComprador_GB_())
+								+ ") no existe para el cliente " + customer.getRegistry().getFullName());
 					});
 					success = false;
 					getLogPanel().info("PROCESO ABORTADO");
@@ -472,6 +475,10 @@ public class EdiSalesImporterHandler implements Serializable {
 		try {
 			String itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoEAN_13_DUN_14DelArticulo());
 			rItem = obtainRegistryItem(customer, itemCustomerCode);
+			if(rItem==null){
+				itemCustomerCode = StringUtils.trimToNull(ere1l.getNumeroArticuloProveedor_SA_());
+				rItem = obtainRegistryItem(customer, itemCustomerCode);
+			}
 			if(rItem==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getNumeroArticuloComprador_IN_BP_());
 				rItem = obtainRegistryItem(customer, itemCustomerCode);
