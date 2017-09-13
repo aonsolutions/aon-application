@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -222,9 +223,10 @@ public class FootPanel extends Composite {
 				
 			tInfo.setWidget(0, 2, new Label("P Fondo: "));
 			String p_fondo = parent.getMap().containsKey(QualitySheetCode.UFQC2.getName()) ?  parent.getMap().get(QualitySheetCode.UFQC2.getName()) : "0.0";
-			TextBox dbPFondo = new TextBox();
+			Double pfondo = Double.parseDouble(p_fondo.replace(",", "."));
+			DoubleBox dbPFondo = new DoubleBox();
 			dbPFondo.setStyleName(AON.AON_CSS.aonTextBox());
-			dbPFondo.setValue(p_fondo);
+			dbPFondo.setValue(pfondo);
 			dbPFondo.setWidth("35px");
 			tInfo.setWidget(0, 3, dbPFondo);
 
@@ -235,7 +237,7 @@ public class FootPanel extends Composite {
 			
 			Double contractPrice = Double.parseDouble(product_price);
 
-			Double pFondo = dbPFondo.getValue() != null && !dbPFondo.getValue().equals("") ? Double.parseDouble(dbPFondo.getValue()) : 0.0;
+			Double pFondo = dbPFondo.getValue() != null && !dbPFondo.getValue().equals("") ? dbPFondo.getValue() : 0.0;
 			Double z = (pFondo - contractPrice) * 0.55;
 			Double price = contractPrice + z;
 			if(Destiny.BASERRI.equals(destiny)) {
@@ -393,10 +395,11 @@ public class FootPanel extends Composite {
 			vp.add(tInfo);
 			vp.add(table);
 			vp.add(table1);
-			dbPFondo.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			dbPFondo.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
-				public void onValueChange(ValueChangeEvent<String> arg0) {
+				public void onValueChange(ValueChangeEvent<Double> arg0) {
 					String id = parent.dataResponse.getId() + "";
 					String domainName = parent.getAonData().getDomain().getName();
 					Integer domainId = parent.getAonData().getDomain().getId();
@@ -405,7 +408,7 @@ public class FootPanel extends Composite {
 						@Override public void onSuccess(HashMap<String, String> result) {}
 					});
 					
-					Double pFondo = Double.parseDouble(dbPFondo.getValue());
+					Double pFondo =dbPFondo.getValue();
 					Double z = (pFondo - contractPrice) * 0.55;
 					Double price = contractPrice + z;
 					if(Destiny.BASERRI.equals(destiny)) {
