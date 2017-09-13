@@ -26,7 +26,7 @@ public class CreditorSearchListener extends RegistryPayMethodSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		CreditorStatus[] defaultCreditorStatus = {CreditorStatus.ACTIVE};
+		CreditorStatus[] defaultCreditorStatus = {CreditorStatus.ACTIVE, CreditorStatus.BLOCKED};
 		setCreditorStatuses(defaultCreditorStatus);
 		super.init();
 	}

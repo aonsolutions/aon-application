@@ -46,7 +46,7 @@ public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		CustomerStatus[] defaultCustomerStatus = {CustomerStatus.ACTIVE};
+		CustomerStatus[] defaultCustomerStatus = {CustomerStatus.ACTIVE, CustomerStatus.BLOCKED};
 		setCustomerStatuses(defaultCustomerStatus);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setShowComments(false);

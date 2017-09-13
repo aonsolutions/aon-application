@@ -37,7 +37,7 @@ public class SupplierSearchListener extends RegistryPayMethodSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		SupplierStatus[] defaultSupplierStatus = {SupplierStatus.ACTIVE};
+		SupplierStatus[] defaultSupplierStatus = {SupplierStatus.ACTIVE, SupplierStatus.BLOCKED};
 		setSupplierStatuses(defaultSupplierStatus);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());		
 		super.init();
