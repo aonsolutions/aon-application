@@ -18,6 +18,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
@@ -55,6 +56,15 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 public class ReservationInvoicing implements IReservationConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReservationInvoicing.class.getName());
+
+	private ReservationUtils reservationUtils;
+
+	public ReservationUtils getReservationUtils() {
+		if (reservationUtils == null) {
+			reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		}
+		return reservationUtils;
+	}
 	
 	public Invoice invoice(ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -289,18 +299,17 @@ public class ReservationInvoicing implements IReservationConstants {
 		int line = 0;
 		double taxableBase = 0;
 
-		ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 		boolean isVatWrong = false;
 		double vatAmount = 0;
 		boolean allAdvanced = false;
 		double advancedAmount = 0;
 		if (!reservationInvoiceTo.isEarlyCheckOut() && !reservation.isEarlyCheckOut()) {
 			advancedAmount = reservation.getAdvancedAmount();
-			if (advancedAmount > 0 && advancedAmount == reservationUtils.getReservationCalculatedTotal(reservation)) {
-				vatAmount = reservationUtils.getReservationAdvancedVatAmount(reservation.getId());
+			if (advancedAmount > 0 && advancedAmount == getReservationUtils().getReservationCalculatedTotal(reservation)) {
+				vatAmount = getReservationUtils().getReservationAdvancedVatAmount(reservation.getId());
 				allAdvanced = true;
 			} else {
-				vatAmount = reservationUtils.getReservationCalculatedVatQuota(reservation);
+				vatAmount = getReservationUtils().getReservationCalculatedVatQuota(reservation);
 			}
 			isVatWrong = (reservation.getVatQuota() != vatAmount || advancedAmount > 0);
 		}
@@ -427,7 +436,6 @@ public class ReservationInvoicing implements IReservationConstants {
 	private void createServiceDetails(Invoice invoice, ProjectReservation reservation, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
 		int line = 0;
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
-		ReservationUtils reservationUtils = new ReservationUtils();
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
@@ -438,7 +446,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				reservationService.setProjectReservation(reservation);
 				reservationService.setItem(service.getItem());
 				reservationService.setDescription(service.getItem().getProduct().getName());
-				reservationService.setMealPlan(reservationUtils.obtainMealPlan(service.getItem().getDetail()));
+				reservationService.setMealPlan(getReservationUtils().obtainMealPlan(service.getItem().getDetail()));
 				reservationService.setProjectReservationRoom(reservationInvoiceTo.getRoom().getProjectReservationRoom().getId());
 				reservationService.setExtra(true);
 				reservationService = (ProjectReservationService)reservationServiceBean.insert(reservationService);
@@ -554,8 +562,9 @@ public class ReservationInvoicing implements IReservationConstants {
 	private void updateInvoiceDate(Invoice invoice) throws ManagerBeanException {
 		//La Factura se graba inicialmente con la fecha de inicio de la Reserva, para que los impuestos se apliquen a esa fecha, y la fecha de iva igual. Pero 
 		//posteriormente se modifica esa fecha si no coincide con la fecha actual, para mantener la correlatividad fecha - serie/numero.
-		if (!DateUtils.isSameDay(invoice.getIssueDate(), new Date())) {
-			invoice.setIssueDate(new Date());
+		Date closingDate = getReservationUtils().obtainProductionDate(new Date());
+		if (!DateUtils.isSameDay(invoice.getIssueDate(), closingDate)) {
+			invoice.setIssueDate(closingDate);
 		}
 	}
 
