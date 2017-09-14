@@ -261,7 +261,9 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param backAction the new back action
 	 */
 	public void setBackAction(String backAction) {
-		this.backAction = StringUtils.trimToNull(backAction);
+		if (backAction == null || !backAction.equals(formAction())) {
+			this.backAction = StringUtils.trimToNull(backAction);
+		}
 	}
 
 	/**
