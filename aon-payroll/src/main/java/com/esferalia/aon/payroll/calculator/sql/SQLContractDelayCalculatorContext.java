@@ -434,8 +434,8 @@ public class SQLContractDelayCalculatorContext extends
 			Map<String, Double> diffValues = new HashMap<String, Double>();
 
 			for (String field : fields) {
-				Double value = values.get(field);
-				Double paidValue = paidValues.get(field);
+				Double value = values.getOrDefault(field, 0.00);
+				Double paidValue = paidValues.getOrDefault(field, 0.00);
 				Double diffValue = value - paidValue;
 				diffValues.put(field, diffValue);
 				/*
