@@ -37,6 +37,7 @@ import com.esferalia.aon.dex.shared.PosShiftDex.PosShift.PosShiftCount.PosShiftC
 import com.esferalia.aon.dex.shared.PosShiftDex.PosShift.PosShiftDeclared;
 import com.esferalia.aon.dex.shared.PosShiftDex.PosShift.PosShiftDeclared.PosShiftDeclaredDetail;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadConstants {
 
@@ -53,8 +54,11 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 
 			HibernateUtil.startSession(sessionName);
 
+			ReservationUtils reservationUtils = new ReservationUtils(domain);
+			Date issueDate = reservationUtils.obtainProductionDate(new Date());
+
 			for (PosShift ps: posShiftDex.getPosShift()) {
-				List<InvoiceDetail> details = obtainDetailList(ps.getItems());
+				List<InvoiceDetail> details = obtainDetailList(ps.getItems(), issueDate);
 				List<Finance> finances = obtainFinanceList(ps.getPosShiftCount());
 				if (validatePosShift(ps, details, finances)) {
 					posShiftDB = obtainPosShift(ps, domain);
@@ -73,7 +77,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 						HibernateUtil.commitTransaction(sessionName);
 
 			            if (posShiftDB.getPos().isInvoiceable() && details.size() > 0) {
-			            	Invoice invoice = generateInvoice(ps, details, finances, domain);
+			            	Invoice invoice = generateInvoice(ps, details, finances, domain, issueDate);
 			            	if (invoice != null) {
 								HibernateUtil.beginTransaction(sessionName);
 	
@@ -102,7 +106,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			            if (posShiftDB.getPos().isInvoiceable() && details.size() > 0) {
 			            	Invoice invoice = obtainInvoice();
 			            	if (invoice == null) {
-				            	invoice = generateInvoice(ps, details, finances, domain);
+				            	invoice = generateInvoice(ps, details, finances, domain, issueDate);
 				            	if (invoice != null) {
 									HibernateUtil.beginTransaction(sessionName);
 		
@@ -260,9 +264,9 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		}
 	}
 
-	private Invoice generateInvoice(PosShift ps, List<InvoiceDetail> details, List<Finance> finances, int domain) throws Exception {
+	private Invoice generateInvoice(PosShift ps, List<InvoiceDetail> details, List<Finance> finances, int domain, Date issueDate) throws Exception {
 		WsPosInvoicing posInvoicing = new WsPosInvoicing();
-		return posInvoicing.createInvoice(posShiftDB, new Date(), getComments(ps), details, finances, WS_USER);
+		return posInvoicing.createInvoice(posShiftDB, issueDate, getComments(ps), details, finances, WS_USER);
 	}
 
 	private String getComments(PosShift ps) throws Exception {
@@ -271,7 +275,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		return dexInfo + "\n" + ticketInfo;
 	}
 
-	private List<InvoiceDetail> obtainDetailList(Items items) throws Exception {
+	private List<InvoiceDetail> obtainDetailList(Items items, Date issueDate) throws Exception {
 		List<InvoiceDetail> details = new LinkedList<InvoiceDetail>();
 		if (items != null) {
 			for (Item item : items.getItem()) {
@@ -290,7 +294,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 						invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 					}
 					invoiceDetail.setTaxableBase(item.getTaxableBase());
-					invoiceDetail.setVatPercent(invoiceDetail.getItem().getVat().getDatedPercentage(new Date()));
+					invoiceDetail.setVatPercent(invoiceDetail.getItem().getVat().getDatedPercentage(issueDate));
 					invoiceDetail.setVatQuota(item.getTaxes());
 
 					double vatQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100);

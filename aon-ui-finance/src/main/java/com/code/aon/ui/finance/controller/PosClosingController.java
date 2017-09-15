@@ -219,7 +219,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 		RegistryBank rBank = obtainAutoRegistryBank();
 		if (rBank != null) {
 			PosFinanceController posFinanceController = (PosFinanceController)AonUtil.getRegisteredBean(IFinanceConstants.POS_FINANCE_CONTROLLER_NAME);
-			ReservationUtils reservationUtils = new ReservationUtils();
+			ReservationUtils reservationUtils = new ReservationUtils(getPosShift().getDomain());
 			Date issueDate = reservationUtils.obtainProductionDate(getPosShift().getEndTime());
 
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);

@@ -1666,7 +1666,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	public Date obtainProductionDate(Date referenceDate) {
-		ApplicationParameter closeHourParam = AppParamUtil.getParameter(AppParam.PMS_PRODUCTION_REPORT_CLOSE_HOUR);
+		ApplicationParameter closeHourParam = AppParamUtil.getParameter(AppParam.PMS_PRODUCTION_REPORT_CLOSE_HOUR, domain);
 		String closeHour = (closeHourParam!=null && StringUtils.isNotBlank(closeHourParam.getValue())) ? closeHourParam.getValue() : "00:00:00";
 		Date closingDate = DateUtils.truncate(referenceDate, Calendar.DATE);
 		closingDate = DateUtils.addHours(closingDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[0]));
