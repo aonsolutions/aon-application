@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,8 +99,6 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				customerEdiCode, deliveryPointEdiCode);
 		rectl.seh1pList = createSEH1PList(delivery, packageData, companyEdiCode,
 				customerEdiCode, customerPackage);
-//		rectl.seh1lList = createSEH1LList(delivery, companyEdiCode,
-//				customerEdiCode);
 		rectl.seh1gList = createSEH1GList(delivery);
 		rectl.seh1bList = createSEH1BList(delivery);
 		
@@ -229,8 +228,15 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 							List<Integer> level3LineList = new LinkedList<>(level3Map.get((int)level2Detail.getLine()));
 							for(int level3LineId: level3LineList){
 								DeliveryDetail level3Detail = (DeliveryDetail) detailList.get(level3LineId-1);
-								subPackage.seh1lList.add(createSEH1LRecord(delivery, level3Detail, level2Detail.getQuantity(),
-										companyEdiCode, customerEdiCode, customerPackage));
+								SEH1P p = existingSerialNumberPackage(list, level3Detail);
+								if(p==null && subPackage==null){
+									subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
+									subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+									subPackage.seh1lList = new ArrayList<>();
+									list.add(subPackage);
+								}
+								addLine(list, (p!=null?p:subPackage), delivery, level3Detail, level2Detail.getQuantity(),
+										companyEdiCode, customerEdiCode, customerPackage);
 							}
 						}
 					}
@@ -242,6 +248,48 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return list;
 	}
 	
+	private void addLine(List<SEH1P> list, SEH1P targetPackage, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
+			String companyEdiCode, String customerEdiCode, String customerPackage) {
+		String seralNumber = detail.getItem().getSerialNumber();
+		boolean success = false;
+		for(SEH1P p: list){
+			for(SEH1L l: p.seh1lList){
+				if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
+						&& l.getNumeroDeLote_NB_().equals(seralNumber)){
+					SEH1L newLine = createSEH1LRecord(delivery, detail, packageQuantity,
+							companyEdiCode, customerEdiCode, customerPackage);
+					l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
+					if(packageQuantity!=null){
+						p.setNumeroDePaquetes(p.getNumeroDePaquetes()+packageQuantity.intValue());
+					}
+					success = true;
+				}
+			}
+		}
+		if(!success){
+			targetPackage.seh1lList.add(createSEH1LRecord(delivery, detail, packageQuantity,
+					companyEdiCode, customerEdiCode, customerPackage));
+		}
+	}
+	
+	private SEH1P existingSerialNumberPackage(List<SEH1P> list, DeliveryDetail detail) {
+		String seralNumber = detail.getItem().getSerialNumber();
+		boolean success = false;
+		SEH1P p = null;
+		Iterator<SEH1P> packageIt = list.iterator();
+		while(packageIt.hasNext() && !success){
+			p = packageIt.next();
+			Iterator<SEH1L> lineIt = p.seh1lList.iterator();
+			while(lineIt.hasNext() && !success){
+				SEH1L l = lineIt.next();
+				if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
+						&& l.getNumeroDeLote_NB_().equals(seralNumber)){
+					success = true;
+				}
+			}
+		}
+		return success?p:null;
+	}
 
 	private List<SEH1G> createSEH1GList(Delivery delivery) {
 		List<SEH1G> list = new ArrayList<>();
