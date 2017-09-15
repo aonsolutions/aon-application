@@ -168,7 +168,10 @@ public class SalesOrderExcelAction extends AbsExcelAction implements Consumer<Sa
 		addCell( detail.getSales().getCustomer().getDocument());
 		addCell( detail.getSales().getCustomer().getName());
 		
-		RAddress ra = AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getSales().getShippingAddress()));
+		RAddress ra = detail.getSales().getShippingAddress() != null ?
+				AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getSales().getShippingAddress())) :
+				AON.getRAddres(getDomainName(), detail.getDomain(), "", detail.getSales().getCustomer().getId());
+		
 		addCell(ra.getFullAddress() + " " 
 				+ (ra.getZip() != null ? ra.getZip() + " " : "") 	
 				+ (ra.getCity() != null ? ra.getCity() + " " : "") 

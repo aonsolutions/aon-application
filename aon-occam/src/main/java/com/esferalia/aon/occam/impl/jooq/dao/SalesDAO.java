@@ -421,6 +421,7 @@ public class SalesDAO {
 				,SALES.DOCUMENT_TYPE
 				,SALES.ISSUE_DATE
 				,SALES.PURCHASE_REFERENCE
+				,REGISTRY.ID
 				,REGISTRY.DOCUMENT
 				,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY
@@ -468,6 +469,7 @@ public class SalesDAO {
 		@Override
 		public SalesDetail apply(Record record) {
 			Customer customer = new Customer();
+			customer.setId(record.getValue(REGISTRY.ID));
 			customer.setDocument(record.getValue(REGISTRY.DOCUMENT));
 			customer.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
 									record.getValue(REGISTRY.DOCUMENT_TYPE)));

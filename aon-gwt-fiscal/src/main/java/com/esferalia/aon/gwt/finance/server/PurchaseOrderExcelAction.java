@@ -167,7 +167,10 @@ public class PurchaseOrderExcelAction extends AbsExcelAction implements Consumer
 		addCell( detail.getPurchase().getSupplier2().getDocument());
 		addCell( detail.getPurchase().getSupplier2().getName());
 		
-		RAddress ra = AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getPurchase().getAddress()));
+		
+		RAddress ra = detail.getPurchase().getAddress() != null ?
+				AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getPurchase().getAddress())) :
+				AON.getRAddres(getDomainName(), detail.getDomain(), "", detail.getPurchase().getSupplier());
 		addCell(ra.getFullAddress() + " " 
 				+ (ra.getZip() != null ? ra.getZip() + " " : "") 	
 				+ (ra.getCity() != null ? ra.getCity() + " " : "") 
