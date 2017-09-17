@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.05-SNAPSHOT</version>
+    <version>9.05</version>
   </parent>
   <groupId>com.esferalia.aon</groupId>
   <artifactId>aon.gwt.stat</artifactId>
