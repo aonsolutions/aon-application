@@ -111,8 +111,8 @@ public interface CommonMessages extends Messages {
 		,"M123"		,"Mod. 123"
 		,"M130"		,"Mod. 130"
 		,"M131"		,"Mod. 131"
-		,"M303_RG"	,"Mod. 303 R\u00E9g. Gen."
-		,"M303_RS"	,"Mod. 303 R\u00E9g. Sim."
+//		,"M303_RG"	,"Mod. 303 R\u00E9g. Gen."
+//		,"M303_RS"	,"Mod. 303 R\u00E9g. Sim."
 		,"M340"		,"Mod. 340"
 		,"M347"		,"Mod. 347"
 		,"M349"		,"Mod. 349"
@@ -137,8 +137,8 @@ public interface CommonMessages extends Messages {
 		,"M123"		,"Retenciones e ingresos a cuenta. Determinados rendimientos del capital mobiliario o determinadas rentas."
 		,"M130"		,"IRPF. Empresarios y profesionales. Pago fraccionado."
 		,"M131"		,"IRPF. Empresarios y profesionales en Estimaci\u00F3n Objetiva. Pago fraccionado."
-		,"M303_RG"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen General"
-		,"M303_RS"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"
+//		,"M303_RG"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen General"
+//		,"M303_RS"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"
 		,"M340"		,"Mod. 340"
 		,"M347"		,"Mod. 347"
 		,"M349"		,"Mod. 349"
@@ -379,6 +379,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Si continua se borrar\u00E1n los todos los datos de la actividad.\n \u00BFContinuar con el borrado?")
 	String newEpigrapSelected();
+
+	@DefaultMessage("La actividad seleccionada es diferente. Si continua se borrar\u00E1n los datos de la actividad introducidos.\n \u00BFContinuar?")
+	String epigrapChanged();
 
 	@DefaultMessage("Confirme si desea cancelar la confecci\u00F3n de la declaraci\u00F3n.")
 	String confirmDeclarationCancelAction();
@@ -1093,6 +1096,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("\u00CDndice corrector")
 	String page6E();
 
+	@DefaultMessage("\u00CDndice corrector de actividades de temporada")
+	String tempIndex();
+
+	@DefaultMessage("Porcentaje de ingreso a cuenta")
+	String incomePercent();
+	
+	@DefaultMessage("Ingreso a cuenta")
+	String income();
+
 	@DefaultMessage("RESULTADO")
 	String page6F();
 
@@ -1110,6 +1122,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Actividades agr\u00EDcolas, ganaderas y forestales")
 	String farmerActivity();
+
+	@DefaultMessage("Actividades en r\u00E9gimen simplificado")
+	String simplifieedActivities();
 
 	@DefaultMessage("Premios")
 	String prizes();
@@ -1218,6 +1233,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Vol\u00FAmen de operaciones")
 	String operationsVolume();
+
+	@DefaultMessage("Vol\u00FAmen ingresos")
+	String incomeVolume();
 
 	@DefaultMessage("Exclusivamente para aquellos sujetos pasivos acogidos al r\u00E9gimen "
 			+ "especial del criterio de caja y para aquellos que sean destinatarios de "
@@ -3323,7 +3341,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Rendimiento a efectos de pagos fraccionados despu\u00E9s de la reducci\u00F3n")
 	String irpfActivityRdr();
 
-	@DefaultMessage("D\u00EDas de ejercicio")
+	@DefaultMessage("D\u00EDas de ejercicio de la actividad")
 	String irpfActivityDia();
 
 	@DefaultMessage("Rendimiento neto de la actividad a efectos del pago fraccionado")

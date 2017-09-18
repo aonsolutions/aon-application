@@ -31,16 +31,16 @@ public class Model3032017ARABA extends Model303Base {
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
-		paintIdentificationTab(callback,tabPanel);
-		paintDeclarationTab(callback,tabPanel);
-		paintGeneralRegimenTab(callback,tabPanel);
-		paintResultTab(callback,tabPanel);
-		paintAdditionalDataTab(callback,tabPanel);
-		paintAdministrationTab(callback,tabPanel);
+		paintIdentificationTab(tabPanel);
+		paintDeclarationTab(tabPanel);
+		paintGeneralRegimenTab(tabPanel);
+		paintResultTab(tabPanel);
+		paintAdditionalDataTab(tabPanel);
+		paintAdministrationTab(tabPanel);
 		
 	}
 
-	private void paintDeclarationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		
@@ -75,12 +75,12 @@ public class Model3032017ARABA extends Model303Base {
 		paintListBox(c909, key, table);
 	}
 
-	private void paintIdentificationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
 		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
 		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
 	}
 	
-	private void paintGeneralRegimenTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		FlexTable table = new FlexTable();
@@ -123,7 +123,7 @@ public class Model3032017ARABA extends Model303Base {
 		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private void paintResultTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintResultTab(TabLayoutPanel tabPanel) {
 		ScrollPanel resultScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -141,7 +141,7 @@ public class Model3032017ARABA extends Model303Base {
 		paintDeclaration(table,Model3032017ARABAResultScript.values(),3);
 	}
 
-	private void paintAdditionalDataTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -165,8 +165,8 @@ public class Model3032017ARABA extends Model303Base {
 		paintDeclaration(table,Model3032017ARABAAdditionalDataScript.values(),3);
 	}
 	
-	private void paintAdministrationTab(Model303Callback callback,TabLayoutPanel tabPanel) {
-		FlowPanel panel = getInformationPanel(callback);
+	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
+		FlowPanel panel = getInformationPanel();
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
 	}
 

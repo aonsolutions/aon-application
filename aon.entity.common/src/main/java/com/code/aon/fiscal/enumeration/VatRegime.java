@@ -7,8 +7,9 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum VatRegime implements IResourceable {
 
-	GENERAL,
-	SIMPLIFIED;
+	GENERAL
+	,SIMPLIFIED
+	,EXEMPT;
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_vat_regime_";

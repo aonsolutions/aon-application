@@ -101,11 +101,14 @@ public class VatContext implements Serializable {
 		this.vatRegime = vatRegime;
 		return this;
 	}
-	public boolean isVatGeneralRegime() {
-		return getVatRegime() == null || getVatRegime() == VATRegime.GENERAL;
+	public boolean isVatGeneralRegime(VATRegime defaultRegime) {
+		return (defaultRegime == VATRegime.GENERAL && getVatRegime() == null) || getVatRegime() == VATRegime.GENERAL;
 	}
-	public boolean isVatSimplifiedRegime() {
-		return getVatRegime() == null || getVatRegime() == VATRegime.SIMPLIFIED;
+	public boolean isVatSimplifiedRegime(VATRegime defaultRegime) {
+		return (defaultRegime == VATRegime.SIMPLIFIED && getVatRegime() == null) || getVatRegime() == VATRegime.SIMPLIFIED;
+	}
+	public boolean isVatSimplifiedExempt(VATRegime defaultRegime) {
+		return getVatRegime() == null || getVatRegime() == VATRegime.EXEMPT;
 	}
 	public boolean isActivityVatExempt() {
 		return getVatRegime() == null || getVatRegime() == VATRegime.EXEMPT;

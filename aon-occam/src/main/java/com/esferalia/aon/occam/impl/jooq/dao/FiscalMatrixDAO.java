@@ -121,7 +121,7 @@ public class FiscalMatrixDAO {
 						.setStatus(rec.getValue(FS_VAT_DECLARATION.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 						.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_VAT_DECLARATION.ADMINISTRATION)))
 						;
-					FiscalModelType model = FiscalModelType.M303_RG;
+					FiscalModelType model = FiscalModelType.M303;
 					if (item.getPeriod() == Period.YEAR ) {
 						model = FiscalModelType.M390_HF;
 					}
@@ -163,7 +163,7 @@ public class FiscalMatrixDAO {
 							:(rec.getValue(FS_MODEL.NAME) + AonStringUtils.SPACE + rec.getValue(FS_MODEL.SURNAME))
 						))
 				.setPeriod(Period.values()[rec.getValue(FS_MODEL.PERIOD)])
-				.setModel( "303".equals(rec.getValue(FS_MODEL.MODEL))?FiscalModelType.M303_RS:FiscalModelType.valueOf("M" + rec.getValue(FS_MODEL.MODEL) ) )
+				.setModel( "303".equals(rec.getValue(FS_MODEL.MODEL))?FiscalModelType.M303:FiscalModelType.valueOf("M" + rec.getValue(FS_MODEL.MODEL) ) )
 				.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getValue(FS_MODEL.ADMINISTRATION)))
 				.setStatus(rec.getValue(FS_MODEL.STATUS)==1?FiscalStatus.FINISHED:FiscalStatus.PENDING)
 					)

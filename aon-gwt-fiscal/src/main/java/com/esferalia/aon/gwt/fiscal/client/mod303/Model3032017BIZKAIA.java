@@ -36,16 +36,16 @@ public class Model3032017BIZKAIA extends Model303Base {
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
-		paintIdentificationTab(callback,tabPanel);
-		paintDeclarationTab(callback,tabPanel);
-		paintLiquidationTab(callback,tabPanel);
-		paintAdditionalDataTab(callback,tabPanel);
-		paintSpecificOperationsTab(callback,tabPanel);
-		paintAdministrationTab(callback,tabPanel);
+		paintIdentificationTab(tabPanel);
+		paintDeclarationTab(tabPanel);
+		paintLiquidationTab(tabPanel);
+		paintAdditionalDataTab(tabPanel);
+		paintSpecificOperationsTab(tabPanel);
+		paintAdministrationTab(tabPanel);
 		
 	}
 	
-	private void paintAdditionalDataTab(Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -76,7 +76,7 @@ public class Model3032017BIZKAIA extends Model303Base {
 		paintDeclaration(table,Model3032017BIZKAIAAdditionalDataScript.values(),10);
 	}
 
-	private void paintSpecificOperationsTab(Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintSpecificOperationsTab(TabLayoutPanel tabPanel) {
 		ScrollPanel specificOpDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -99,7 +99,7 @@ public class Model3032017BIZKAIA extends Model303Base {
 		paintDeclaration(table,Model3032017BIZKAIASpecificOperationsScript.values(),4);
 	}
 
-	private void paintLiquidationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintLiquidationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		FlexTable table = new FlexTable();
@@ -143,7 +143,7 @@ public class Model3032017BIZKAIA extends Model303Base {
 		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.liquidacion(), AON.AON_CSS.aonIconModel()));
 	}
 
-	private void paintDeclarationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		
@@ -167,12 +167,12 @@ public class Model3032017BIZKAIA extends Model303Base {
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 
-	private void paintIdentificationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
 		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
 		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
 	}
 
-	private void paintAdministrationTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
 		
 		FlowPanel formContainer = new FlowPanel();
@@ -185,14 +185,14 @@ public class Model3032017BIZKAIA extends Model303Base {
 		formContainer.add(diskForm);
 		panel.add(formContainer);
 		
-		FlowPanel administrationPanel = getAdministrationPanel(callback); 
+		FlowPanel administrationPanel = getAdministrationPanel(); 
 		panel.add(administrationPanel);
-		FlowPanel informationPanel = getInformationPanel(callback);
+		FlowPanel informationPanel = getInformationPanel();
 		panel.add(informationPanel);
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
 	}
 
-	protected FlowPanel getAdministrationPanel(Model303Callback callback) {
+	protected FlowPanel getAdministrationPanel() {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -234,7 +234,7 @@ public class Model3032017BIZKAIA extends Model303Base {
 				if (getMod303().isFinished()) {
 					submitForm(DOWNLOAD_FILE_ACTION);
 				} else {
-					callback.showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
 			}
 		});

@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.IModel303Callback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -58,7 +58,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 	final protected FlexTable tab = new FlexTable();
 	protected int row = 0;
 	
-	public FinishDeclarationPopup(final Mod303 mod303 ,final Model303Callback callback,FinishDeclarationPopupCallback popupCallback) {
+	public FinishDeclarationPopup(final Mod303 mod303 ,final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
@@ -224,9 +224,9 @@ public class FinishDeclarationPopup extends CustomDialog {
 	}
 
 	private static class EnterpriseSuggestOracle<T extends FiscalModel> extends MultiWordSuggestOracle {
-		private Model303Callback modelCallback;
+		private IModel303Callback modelCallback;
 
-		private EnterpriseSuggestOracle(final Model303Callback modelCallback) {
+		private EnterpriseSuggestOracle(final IModel303Callback modelCallback) {
 			super();
 			this.modelCallback = modelCallback;
 		}

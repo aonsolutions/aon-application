@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
@@ -136,11 +137,11 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 		
 		// Modificaciones bases y cuotas del recargo de equivalencia
 		,AR_C374	(Mod303Key.AR_C374
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C374,mod,vat.getBase())
 			,null,null,null)
 		,AR_C375	(Mod303Key.AR_C375
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C375,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
@@ -323,19 +324,19 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 		
 		// Total entregas de bienes y prestaciones de servicios intracomunitarias
 		,AR_C050	(Mod303Key.AR_C050
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C050,mod,vat.getBase())
 			,null,null,null)
 		
 		// Total exportaciones y operaciones asimiladas
 		,AR_C051	(Mod303Key.AR_C051
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C051,mod,vat.getBase())
 			,null,null,null)
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
 		,AR_C052	(Mod303Key.AR_C052
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C052,mod,vat.getBase())
 			,null,null,null)
 		
@@ -444,12 +445,16 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 	public Mod303Key[] getProrateKeys() {
 		return PRORATE_KEYS;
 	}
+	@Override
+	public boolean hasSimplifiedRegime() {
+		return false;
+	}
 	
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------
 	private static boolean isCommonNationalSales(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isNational() && vat.isSales() && !vat.isRectification();
 	}
 	private static boolean hasPercent1(VatContext vat) {
@@ -472,35 +477,35 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 	}
 	
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isNationalSales() || operacionesISPFilter(vat));		
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses() || vat.isCanCeuMelExpenses());
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& (vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses());
 	}
 	private static boolean operacionesInterioresCorrientesFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& !vat.isInvestment() && !vat.isFarmerRegime()
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
 	private static boolean operacionesInterioresInversionFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isInvestment() && !vat.isFarmerRegime()
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
 	private static boolean importacionesCorrientesFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& !vat.isInvestment()  && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean importacionesInversionFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isInvestment() && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat) {
@@ -511,7 +516,7 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 	}
 	
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
 }

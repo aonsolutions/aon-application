@@ -26,9 +26,9 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class VatReportTest {
 
 	private static AONContext ctx;
-	private static String DOMAIN_NAME = "sig.aonsolutions.es";
-	private static Integer DOMAIN_ID = 5;
-	private static String LOGIN = "jgarcia";
+	private static String DOMAIN_NAME = "udapa.ecastellano.dev";
+	private static Integer DOMAIN_ID = 3049;
+	private static String LOGIN = "montse";
 	
 	
 
@@ -42,7 +42,7 @@ public class VatReportTest {
 	public void testBreakdown() throws IOException {
 		
 		final Date fromDate = AonDateUtils.getYearFirstDay(2017);
-		final Date toDate = FiscalUtils.getPeriodEnd(2017, Period.T1);
+		final Date toDate = FiscalUtils.getPeriodEnd(2017, Period.M01);
 		LinkedList<VatContext> list = VATDAO.getVatBreakdown(ctx, fromDate, toDate)
 				.collect(Collectors.toCollection(LinkedList::new));
 		FileWriter writer =  new FileWriter("/home/ecastellano/vatBreakdown.html");

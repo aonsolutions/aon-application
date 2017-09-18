@@ -22,6 +22,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -60,7 +61,20 @@ public class Model303 extends MainEntryPoint {
 	
 	Model303Table model303Table;
 
-	protected class Model303Callback {
+	protected interface IModel303Callback {
+
+		public void onAccept(Mod303 mod303);
+		public void onCancel();
+		public void onNew();
+		public void showBreakdownPanel(String htmlText);
+		public void cleanBreakdownPanel();
+		public void cleanErrorPanel();
+		public void showError(String msg);
+
+	};
+
+	protected class Model303Callback implements IModel303Callback{
+
 		public void onAccept(Mod303 mod303) {
 			// REDEFINE
 		}
@@ -193,15 +207,25 @@ public class Model303 extends MainEntryPoint {
 
 					@Override
 					public void onAccept(Mod303 mod303) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+
 						mod303Service.createMod303(getCurrentDomainName(),getCurrentDomain(),mod303,
 								new AsyncCallback<Mod303>() {
 									@Override
 									public void onSuccess(Mod303 m303) {
+										popup.hide();
 										select(m303);
 									}
 
 									@Override
 									public void onFailure(Throwable caught) {
+										popup.hide();
 										showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 									}
 								});

@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -121,11 +122,11 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		
 		// Modificaciones bases y cuotas del recargo de equivalencia
 		,GP_C041(Mod303Key.GP_C041
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C041,mod,vat.getBase())
 			,null,null,null)
 		,GP_C042(Mod303Key.GP_C042
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isNationalSales() && vat.isSurcharge() && vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C042,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
@@ -253,19 +254,19 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		
 		// Total entregas de bienes y prestaciones de servicios intracomunitarias
 		,GP_C030(Mod303Key.GP_C030
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C030,mod,vat.getBase())
 			,null,null,null)
 		
 		// Total exportaciones y operaciones asimiladas
 		,GP_C031(Mod303Key.GP_C031
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C031,mod,vat.getBase())
 			,null,null,null)
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
 		,GP_C032(Mod303Key.GP_C032
-			,(mod,vat) -> vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C032,mod,vat.getBase())
 			,null,null,null)
 		
@@ -365,12 +366,15 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 	public Mod303Key[] getProrateKeys() {
 		return PRORATE_KEYS;
 	}
-	
+	@Override
+	public boolean hasSimplifiedRegime() {
+		return false;
+	}
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------
 	private static boolean isCommonNationalSales(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isNational() && vat.isSales() && !vat.isRectification();
 	}
 	private static boolean hasPercent1(VatContext vat) {
@@ -393,33 +397,33 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 	}
 	
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isNationalSales() || operacionesISPFilter(vat));		
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses() || vat.isCanCeuMelExpenses());
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& (vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses());
 	}
 	private static boolean operacionesInterioresFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& !vat.isFarmerRegime()
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
 	private static boolean importacionesFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
 	private static boolean rectificaciónDeduccionesFilter(VatContext vat) {
-		return vat.isVatGeneralRegime() && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
 	}
 	

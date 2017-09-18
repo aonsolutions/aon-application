@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -42,17 +41,19 @@ public abstract class Mod303Declaration {
 			}
 		}
 	}
-	public void firstInitialize(AONContext ctx, Mod303 mod303) {
-		for (IMod303KeyDAO key : getKeys()) {
-			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
-			detail.setExpression(key.getExpression());
-			key.firstInitialize(ctx, mod303);
-		}
+
+	public void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303){
 	}
+	public void fillSimplifiedRegime(Mod303 mod303){
+		
+	}
+	public void populateSimplifiedRegime(Mod303 mod303){
+	};
 
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
 	public abstract Mod303Key[] getProrateKeys();
+	public abstract boolean hasSimplifiedRegime();
 
 }

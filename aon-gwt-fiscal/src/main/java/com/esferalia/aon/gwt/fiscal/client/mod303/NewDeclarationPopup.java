@@ -9,6 +9,8 @@ import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,6 +24,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 
 public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	
@@ -31,6 +34,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
 	private CheckBox diffCalculation = new CheckBox();
+	private Label defaultVatRegimeLabel = new Label();
+	private ListBox defaultVatRegime = new ListBox();
 	private DoubleBox prorate = new DoubleBox(7);
 	private PeriodListBox periodList = new PeriodListBox(true);
 	
@@ -70,6 +75,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 							public void onSuccess(Mod303 result) {
 								replacement.setVisible(mod303.isReplacementDeclarationAvailable());
 								complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
+								defaultVatRegimeLabel.setVisible(admonList.getValue() == Administration.COMMON_TERRITORY);
+								defaultVatRegime.setVisible(admonList.getValue() == Administration.COMMON_TERRITORY);
 								mod303.setPeriod(result.getPeriod());
 								mod303.ensureDetail(result.getProrateKey()).setAmount(result.getProratePercent());
 								populate(result);
@@ -126,6 +133,27 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			}
 		});
 		tab.setWidget(row, 1, prorate);
+		row++;
+
+		// REGIMEN IVA POR DEFECTO
+		defaultVatRegimeLabel.setText("Destinar Fras. sin actividad a");
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, defaultVatRegimeLabel);
+		defaultVatRegimeLabel.setVisible(mod303.isAEAT());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		
+		defaultVatRegime.addItem(VATRegime.GENERAL.getName());
+		defaultVatRegime.addItem(VATRegime.SIMPLIFIED.getName());
+		defaultVatRegime.setSelectedIndex(0);
+		defaultVatRegime.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				mod303.setDefaultVatRegime(defaultVatRegime.getSelectedIndex() == 1? VATRegime.SIMPLIFIED: VATRegime.GENERAL);
+			}
+		});
+		defaultVatRegime.setVisible(mod303.isAEAT());
+		tab.setWidget(row, 1, defaultVatRegime);
 		row++;
 
 		// COMPLEMENTARIA

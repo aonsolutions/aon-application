@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.FinishDeclarationPopup.FinishDeclarationPopupCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.IModel303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303IdentificationData.IModel303IdentificationDataCallback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -55,6 +56,42 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Model303Base extends DockLayoutPanel  {
+	
+	protected class Model303BaseCallback implements IModel303Callback{
+		
+		private IModel303Callback callback;
+		
+		public Mod303 getMod303() {
+			return Model303Base.this.mod303;
+		}
+		
+		public Model303BaseCallback(IModel303Callback callback) {
+			this.callback = callback;
+		} 
+
+		public void onAccept(Mod303 mod303) {
+			this.callback.onAccept(mod303);
+		}
+		public void onCancel() {
+			this.callback.onCancel();
+		}
+		public void onNew() {
+			this.callback.onNew();
+		}
+		public void showBreakdownPanel(String htmlText) {
+			this.callback.showBreakdownPanel(htmlText);
+		}
+		public void cleanBreakdownPanel() {
+			this.callback.cleanBreakdownPanel();
+		}
+		public void cleanErrorPanel() {
+			this.callback.cleanErrorPanel();
+		}
+		public void showError(String msg) {
+			this.callback.showError(msg);
+		}
+	};
+
 	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/Model303File";
 
 	protected static final boolean ENABLED = true;
@@ -65,7 +102,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private static final int MAX_LABEL_LENGTH = 100;
 	
 	private Mod303 mod303;
-	private Model303Callback callback;
+	private Model303BaseCallback callback;
 	private EnumMap<Mod303Key,DoubleBox> fieldsMap;
 	private boolean dirty;
 	
@@ -121,16 +158,19 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		addNorth(declarationHeaderPanel , 45);
 
 		fieldsMap = new EnumMap<>(Mod303Key.class);
-		this.callback = cbk;
+		this.callback = new Model303BaseCallback(cbk);
 		
 		setStyleName(AON.AON_CSS.aonSelector());
 	}
 	
-	public Model303Callback getCallback() {
+	public Model303BaseCallback getCallback() {
 		return callback;
 	}
 	protected Mod303 getMod303() {
 		return mod303;
+	}
+	public void setMod303(Mod303 mod303) {
+		this.mod303 = mod303;
 	}
 	
 	private Widget getToolbarPanel() {
@@ -276,7 +316,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	protected void select( Mod303 mod303) {
-		this.mod303 = mod303;
+		setMod303(mod303);
 		refreshToolbarState();
 	}
 	protected void selectAndPopulate( Mod303 mod303) {
@@ -515,8 +555,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	private int paintBox(FlexTable table, int row, int col, Mod303Key key) {
-		if (key.getBox() > 0.0 ) {
-			table.setWidget(row, col, new BoxLabel(key.getBox()));
+		if (AonStringUtils.isNumeric(key.getBoxCode())) {
+			table.setWidget(row, col, new BoxLabel(key.getBoxCode()));
 		} else {
 			table.setWidget(row, col, new Label());
 		}
@@ -697,7 +737,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	protected void populate(Mod303 mod303) {
-		
 		for (Mod303Key key : fieldsMap.keySet()) {
 			double d1 = mod303.getAmount(key);
 			double d2 = fieldsMap.get(key).getValue();
@@ -706,8 +745,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			}
 		}
 	}
-
-	public void calculateAndRefresh() {
+	
+	public void calculateAndRefresh(AsyncCallback<Mod303> cbk) {
 		Model303.mod303Service.calculateMod303(Model303.getCurrentDomainName(),this.mod303,
 				new AsyncCallback<Mod303>() {
 
@@ -719,10 +758,15 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					@Override
 					public void onSuccess(Mod303 result) {
 						populate(result);
+						if (cbk != null) cbk.onSuccess(result);
 					}
 			
 				}
 			);	
+	}
+
+	public void calculateAndRefresh() {
+		calculateAndRefresh(null);
 	}
 	
 	private void identificationLabelChanged() {
@@ -1017,7 +1061,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		}
 	}
 	
-	protected FlowPanel getInformationPanel(Model303Callback callback) {
+	protected FlowPanel getInformationPanel() {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());

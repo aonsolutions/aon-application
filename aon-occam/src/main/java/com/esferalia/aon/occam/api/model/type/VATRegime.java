@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public enum VATRegime implements Serializable {
 
-	 GENERAL	("Régimen General"		,"Rég. Genr.")
-	,SIMPLIFIED ("Régimen Simplificado"	,"Rég. Simpl.")
-	,EXEMPT 	("Exento"				,"Exento")
+	 GENERAL	("R\u00E9gimen General"		,"R\u00E9g. Genr.")
+	,SIMPLIFIED ("R\u00E9gimen Simplificado","R\u00E9g. Simpl.")
+	,EXEMPT 	("Exento"					,"Exento")
 	;
 	
 	private String name;

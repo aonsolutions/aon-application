@@ -536,7 +536,7 @@ public class VATDAO  {
 				.setActivityDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
 				.setEpigraph(rec.getValue(IAE.EPIGRAPH))
 				.setVatRegime( VATRegime.safeValueOf( rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) ))
-				.setVatSurchargeRegime( AonEnumUtils.getBoolean(rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) ) )		
+				.setVatSurchargeRegime( AonEnumUtils.getBoolean(rec.getValue(ENTERPRISE_ACTIVITY.SURCHARGE) ) )		
 				.setDocumentNumber(FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE))
 						, rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 
 				.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))

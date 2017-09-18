@@ -3,20 +3,33 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity.IMod303ActivityCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegimeScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -27,10 +40,27 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.RangeChangeEvent.Handler;
 
 public class Model3032017AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/Model303PrintAEAT";
 	
+	private static class Mod303ActivityProvidesKey implements ProvidesKey<Mod303Activity> {
+		@Override
+		public Object getKey(Mod303Activity model) {
+			return AonStringUtils.isBlank(model.getEpigraph()) ? null : model.getEpigraph();
+		}
+	}
+	private static class Mod303ActivityFarmerProvidesKey implements ProvidesKey<Mod303ActivityFarmer> {
+		@Override
+		public Object getKey(Mod303ActivityFarmer model) {
+			return AonStringUtils.isBlank(model.getCode()) ? null : model.getCode();
+		}
+	}
+
 	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -39,22 +69,22 @@ public class Model3032017AEAT extends Model303Base {
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
-		paintIdentificationTab(getCallback(),tabPanel);
-		paintDeclarationTab(mod303,getCallback(),tabPanel);
-		paintGeneralRegimenTab(getCallback(),tabPanel);
-		paintSimplifiedRegimenTab(getCallback(),tabPanel);
-		paintResultTab(getCallback(),tabPanel);
-		paintAdditionalDataTab(getCallback(),tabPanel);
-		paintAdministrationTab(getCallback(),tabPanel);
+		paintIdentificationTab(tabPanel);
+		paintDeclarationTab(tabPanel);
+		paintGeneralRegimenTab(tabPanel);
+		paintSimplifiedRegimenTab(tabPanel);
+		paintResultTab(tabPanel);
+		paintAdditionalDataTab(tabPanel);
+		paintAdministrationTab(tabPanel);
 	}
 	
 	
-	private void paintIdentificationTab(Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
 		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
 		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
 	}
 	
-	private void paintGeneralRegimenTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		FlexTable table = new FlexTable();
@@ -97,20 +127,13 @@ public class Model3032017AEAT extends Model303Base {
 		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private void paintSimplifiedRegimenTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintSimplifiedRegimenTab(TabLayoutPanel tabPanel) {
 		ScrollPanel simplifiedRegimeScrollPanel = new ScrollPanel();
-		// ---
-		simplifiedRegimeScrollPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		Label notYet = new Label("NO IMPLEMENTADO");
-		notYet.setStyleName(AON.AON_CSS.aonColorRed());
-		notYet.addStyleName(AON.AON_CSS.aonFontBig());
-		// ---
-		
-		simplifiedRegimeScrollPanel.setWidget(notYet);
+		simplifiedRegimeScrollPanel.setWidget(getSimplifiedRegimePanel());
 		tabPanel.add(simplifiedRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.simplifiedRegime(), AON.AON_CSS.aonIconModel()));
 	}
 
-	private void paintResultTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintResultTab(TabLayoutPanel tabPanel) {
 		ScrollPanel resultScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -128,7 +151,7 @@ public class Model3032017AEAT extends Model303Base {
 		paintDeclaration(table,Model3032017AEATResultScript.values(),3);
 	}
 
-	private void paintAdditionalDataTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -152,7 +175,7 @@ public class Model3032017AEAT extends Model303Base {
 		paintDeclaration(table,Model3032017AEATAdditionalDataScript.values(),3);
 	}
 
-	private void paintAdministrationTab(Model303Callback callback,TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
 		
 		FlowPanel formContainer = new FlowPanel();
@@ -165,14 +188,14 @@ public class Model3032017AEAT extends Model303Base {
 		formContainer.add(diskForm);
 		panel.add(formContainer);
 		
-		FlowPanel administrationPanel = getAdministrationPanel(callback); 
+		FlowPanel administrationPanel = getAdministrationPanel(); 
 		panel.add(administrationPanel);
-		FlowPanel informationPanel = getInformationPanel(callback);
+		FlowPanel informationPanel = getInformationPanel();
 		panel.add(informationPanel);
 		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
 	}
 	
-	protected FlowPanel getAdministrationPanel(Model303Callback callback) {
+	protected FlowPanel getAdministrationPanel() {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -214,7 +237,7 @@ public class Model3032017AEAT extends Model303Base {
 				if (getMod303().isFinished()) {
 					submitForm(DOWNLOAD_FILE_ACTION);
 				} else {
-					callback.showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
 			}
 		});
@@ -240,7 +263,7 @@ public class Model3032017AEAT extends Model303Base {
 				if (getMod303().isFinished()) {
 					submitForm(VALIDATE_PRINT_ACTION);
 				} else {
-					callback.showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
 			}
 		});
@@ -266,14 +289,14 @@ public class Model3032017AEAT extends Model303Base {
 		return list;
 	}
 	
-	private void paintDeclarationTab(Mod303 mod303,Model303Callback callback, TabLayoutPanel tabPanel) {
+	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		
 		FlexTable table = createTable();
 		paintCheck(Mod303Key.CM_002,table);	// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
 		
-		paintA02(Mod303Key.CT_A02,table);	// ¿Tributa exclusivamente en régimen simplificado?
+		paintA02(Mod303Key.CT_A02,table,tabPanel);	// ¿Tributa exclusivamente en régimen simplificado?
 		
 		paintCheck(Mod303Key.CT_A03,table);	// ¿Es autoliquidación conjunta?
 		
@@ -285,7 +308,7 @@ public class Model3032017AEAT extends Model303Base {
 		paintDate (Mod303Key.CT_A05,table);	// Fecha en que se dictó el auto de declaración de concurso
 		paintCheck(Mod303Key.CT_A06,table);	// Auto de declaración de concurso dictado en el períDodo
 
-		if (mod303.isComplementary()) {
+		if (getCallback().getMod303().isComplementary()) {
 			int row = table.getRowCount();
 			paintLabel(table, row, AON.MSG.previousReceipt());
 			
@@ -296,11 +319,11 @@ public class Model3032017AEAT extends Model303Base {
 			receiptBox.setMaxLength(13);
 			receiptBox.setStyleName(AON.AON_CSS.aonInputText());
 //			receiptBox.setEnabled(mod303.isNotFinished());
-			receiptBox.setValue( mod303.getReplacedNumber() );
+			receiptBox.setValue( getCallback().getMod303().getReplacedNumber() );
 			receiptBox.addValueChangeHandler( new ValueChangeHandler<String>() {
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
-					mod303.setReplacedNumber(receiptBox.getValue());
+					getCallback().getMod303().setReplacedNumber(receiptBox.getValue());
 					markAsDirty();
 				}
 			});
@@ -320,14 +343,26 @@ public class Model3032017AEAT extends Model303Base {
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private void paintA02(Mod303Key key, FlexTable table) {
+	private void paintA02(Mod303Key key, FlexTable table,final TabLayoutPanel tabPanel) {
 		final ListBox a02 = new ListBox();
 		a02.addItem("S\u00F3lo Reg. Simplificado");
 		a02.addItem("Reg. General y Reg. Simpl.");
 		a02.addItem("S\u00F3lo Reg. General");
 		paintListBox(a02, key, table);
+		tabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+			  @Override
+			  public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+			    if (event.getItem() == 2 && a02.getSelectedIndex() == 0) {
+			    	event.cancel();
+			    	MessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
+			    }
+			    if (event.getItem() == 3 && a02.getSelectedIndex() == 2) {
+			    	event.cancel();
+			    	MessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
+			    }
+			  }
+			});		
 	}
-
 
 	private FlexTable createTable() {
 		FlexTable table = new FlexTable();
@@ -341,4 +376,220 @@ public class Model3032017AEAT extends Model303Base {
 		return table;
 	}
 	
+	private Widget getSimplifiedRegimePanel() {
+		FlowPanel tableContainer = new FlowPanel();
+		tableContainer.add( addGroupPanel(AON.MSG.farmerActivity(), getActivityFarmerTable()) );
+		tableContainer.add( addGroupPanel(AON.MSG.simplifieedActivities(), getActivityTable()) );
+		
+		tableContainer.add( getSimplifiedTable()); 
+		
+		return tableContainer;
+	}
+
+	private Model303AEATActivityFarmerTable getActivityFarmerTable() {
+		final Mod303ActivityFarmerProvidesKey providesFarmerKey = new Mod303ActivityFarmerProvidesKey();
+		final Model303AEATActivityFarmerTable tableFarmer = new Model303AEATActivityFarmerTable( providesFarmerKey );
+		tableFarmer.addRangeChangeHandler(new Handler() {
+			
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				tableFarmer.setRowData(getCallback().getMod303().getActivityFarmerList());
+			}
+		});
+		
+		tableFarmer.addSelectionHandler(new SelectionHandler<Mod303ActivityFarmer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Mod303ActivityFarmer> event) {
+				final Mod303ActivityFarmer original = Mod303ActivityFarmer.clone(event.getSelectedItem()); 
+				int idx = 0;
+				for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
+					if (getCallback().getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
+						idx = i;
+					}
+				}
+				final int currentIndex = idx;
+				
+				final CustomDialog dialog = new CustomDialog();
+				IMod303ActivityFarmerCallback activityCallback = new IMod303ActivityFarmerCallback() {
+					
+					@Override
+					public void onCancel() {
+						dialog.hide();
+						getCallback().getMod303().getActivityFarmerList().set(currentIndex, original);
+						calculateAndRefresh();
+						tableFarmer.setRowData(getCallback().getMod303().getActivityFarmerList());
+						tableFarmer.redraw();
+					}
+					
+					@Override
+					public void onAccept(Mod303ActivityFarmer act) {
+						getCallback().getMod303().getActivityFarmerList().set(currentIndex, act);
+						dialog.hide();
+						tableFarmer.setRowData(getCallback().getMod303().getActivityFarmerList());
+						tableFarmer.redraw();
+					}
+					
+					@Override
+					public void onRemove() {
+						dialog.hide();
+						for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
+							if (getCallback().getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
+								getCallback().getMod303().getActivityFarmerList().get(i).initialize();
+							}
+						}
+						calculateAndRefresh();
+						tableFarmer.redraw();
+					}
+
+					@Override
+					public Mod303ActivityFarmer getActivity() {
+						return event.getSelectedItem();
+					}
+				};
+				Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback);
+				actPanel.addValueChangeHandler(new ValueChangeHandler<Mod303ActivityFarmer>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<Mod303ActivityFarmer> event) {
+						calculateAndRefresh( new AsyncCallback<Mod303>() {
+
+							@Override public void onFailure(Throwable caught) {}
+
+							@Override
+							public void onSuccess(Mod303 result) {
+								
+								actPanel.populateActivity(result.getActivityFarmerList().get(currentIndex));
+							}
+						});
+						
+					}
+				});
+				dialog.setCaption(AON.MSG.farmerActivity());
+				dialog.setGlassEnabled(true);
+				dialog.setAnimationEnabled(true);
+				dialog.add(actPanel);
+				dialog.setWidth("700px");
+				dialog.setHeight("280px");
+				dialog.show();
+				dialog.center();
+			}
+		});
+		tableFarmer.setVisibleRangeAndClearData(tableFarmer.getVisibleRange(), true);
+		return tableFarmer;
+	}
+	
+	private Model303AEATActivityTable getActivityTable() {
+		final Mod303ActivityProvidesKey providesKey = new Mod303ActivityProvidesKey();
+		final Model303AEATActivityTable table = new Model303AEATActivityTable( providesKey );
+		table.addRangeChangeHandler(new Handler() {
+			
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				table.setRowData(getCallback().getMod303().getActivityList());
+			}
+		});
+		
+		table.addSelectionHandler(new SelectionHandler<Mod303Activity>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Mod303Activity> event) {
+				final Mod303Activity original = Mod303Activity.clone(event.getSelectedItem()); 
+				int idx = 0;
+				for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
+					if (getCallback().getMod303().getActivityList().get(i) == event.getSelectedItem()) {
+						idx = i;
+					}
+				}
+				final int currentIndex = idx;
+				
+				final CustomDialog dialog = new CustomDialog();
+				IMod303ActivityCallback activityCallback = new IMod303ActivityCallback() {
+					
+					@Override
+					public void onCancel() {
+						dialog.hide();
+						getCallback().getMod303().getActivityList().set(currentIndex, original);
+						calculateAndRefresh();
+						table.setRowData(getCallback().getMod303().getActivityList());
+						table.redraw();
+					}
+					
+					@Override
+					public void onAccept(Mod303Activity act) {
+						dialog.hide();
+						getCallback().getMod303().getActivityList().set(currentIndex, act);
+						calculateAndRefresh();
+						table.setRowData(getCallback().getMod303().getActivityList());
+						table.redraw();
+					}
+					
+					@Override
+					public void onRemove() {
+						dialog.hide();
+						for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
+							if (getCallback().getMod303().getActivityList().get(i) == event.getSelectedItem()) {
+								getCallback().getMod303().getActivityList().get(i).initialize();
+							}
+						}
+						calculateAndRefresh();
+						table.redraw();
+					}
+
+					@Override
+					public Mod303Activity getActivity() {
+						return event.getSelectedItem();
+					}
+				};
+				Model303AEATActivity actPanel = new Model303AEATActivity(activityCallback);
+				actPanel.addValueChangeHandler(new ValueChangeHandler<Mod303Activity>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<Mod303Activity> event) {
+						calculateAndRefresh( new AsyncCallback<Mod303>() {
+
+							@Override public void onFailure(Throwable caught) {}
+
+							@Override
+							public void onSuccess(Mod303 result) {
+								actPanel.populateActivity(result.getActivityList().get(currentIndex));
+							}
+						});
+						
+					}
+				});
+				dialog.setCaption(AON.MSG.simplifieedActivities());
+				dialog.setGlassEnabled(true);
+				dialog.setAnimationEnabled(true);
+				dialog.add(actPanel);
+				dialog.setWidth("700px");
+				dialog.setHeight("580px");
+				dialog.show();
+				dialog.center();
+			}
+		});
+		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+		return table;
+	}
+
+	private FlexTable getSimplifiedTable() {
+		FlexTable table = new FlexTable();
+		table.setWidth("100%");
+		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		
+		table.getColumnFormatter().setWidth(0, "auto");
+		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().setWidth(1, "40px");
+		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setWidth(2, "140px");
+		table.getColumnFormatter().setWidth(3, "50px");
+		paintDeclaration(table,Model3032017AEATSimplifiedRegimeScript.values(),3);
+		return table;
+	}
+	
+	@Override
+	protected void populate(Mod303 mod303) {
+		super.populate(mod303);
+	}
 }

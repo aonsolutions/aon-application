@@ -272,6 +272,7 @@ public class AonFiscalFileUtils {
 			System.out.println(signedSpace( d, length) + " -S--> " + d );	
 			System.out.println(signedSpace( db,length) + " -S--> " + db );
 		}
+		
 		System.out.println( AonStringUtils.repeat("*",length) );
 		
 		System.out.println(unsigned( 1.0, 1, 0) + " ----> " + 1 );

@@ -1,19 +1,43 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod303 extends FiscalModel implements Serializable {
 	
 	private static final long serialVersionUID = -6579562925389189514L;
-
+	
+	private LinkedList<Mod303ActivityFarmer> activityFarmerList;
+	private LinkedList<Mod303Activity> activityList;
+	
 	public Mod303() {
 		super();
 		setModel(FiscalModelType.M303);
+	}
+	public VATRegime getDefaultVATRegime() {
+		return  VATRegime.safeValueOf( (byte) getAmount(Mod303Key.CM_005) );
+	}
+	public void setDefaultVatRegime(VATRegime defaultVatRegime) {
+		ensureDetail(Mod303Key.CM_005).setAmount(defaultVatRegime == null?0:defaultVatRegime.ordinal());
+	}
+	public LinkedList<Mod303Activity> getActivityList() {
+		return activityList;
+	}
+	public void setActivityList(LinkedList<Mod303Activity> activityList) {
+		this.activityList = activityList;
+	}
+	
+	public LinkedList<Mod303ActivityFarmer> getActivityFarmerList() {
+		return activityFarmerList;
+	}
+	public void setActivityFarmerList(LinkedList<Mod303ActivityFarmer> activityFarmerList) {
+		this.activityFarmerList = activityFarmerList;
 	}
 	
 	public boolean isEnrolledInDevolutionRegistry() {
@@ -95,5 +119,9 @@ public class Mod303 extends FiscalModel implements Serializable {
 					:FiscalModelDeclarationType.COMPENSATE
 							);
 		}
+	}
+	
+	public boolean isOldMod303() {
+		return (getMap() != null && (getMap().containsKey("303-AG1") || getMap().containsKey("303-AC1")));
 	}
 }
