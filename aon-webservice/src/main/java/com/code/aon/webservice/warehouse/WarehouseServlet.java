@@ -759,8 +759,13 @@ public class WarehouseServlet extends HttpServlet{
 		});
 		for (Integer key : map.keySet()) {
 			IncomeDetail id = map.get(key);
-			id.setQuantity(AonMathUtils.round((id.getQuantity()/total) * neto));
+			Double q = AonMathUtils.round((id.getQuantity()/total) * neto);
+			id.setQuantity(q);
 			AON.updateIncomeDetail(domain.getName(), domain.getId(), login, id);
+			PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
+			pd.setQuantity(q);
+			pd.setDelivered(q);
+			AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, pd);
 		}
 		return new JSONObject();
     }
