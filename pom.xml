@@ -161,6 +161,7 @@
 		<module>aon-gwt-udapa</module>
 		<module>aon-gwt-dump</module>
 		<module>aon-gwt-sii</module>
+		<module>aon-gwt-invoice</module>
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>

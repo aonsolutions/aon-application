@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.common;
 
+import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
@@ -23,12 +24,24 @@ public class JsDataResponse extends JavaScriptObject {
 		return this.domain;
 	}-*/;
 	
-	public final native String getNumber() /*-{
-		return this.number;
+	public final native String getCode() /*-{
+		return this.code;
 	}-*/;
 	
-	public final native String getIssueDate() /*-{
-		return this.issue_date;
+	public final native String getDate() /*-{
+		return this.date;
+	}-*/;
+	
+	public final native JsObject getSource() /*-{
+		return this.source;
+	}-*/;
+	
+	public final native Integer getSourceId() /*-{
+		return this.source_id;	
+	}-*/;
+	
+	public final native AonJsArray<JsDataResponseDetail> getDetail() /*-{
+		return this.detail;
 	}-*/;
 	
 	public final native String getCreationUser() /*-{
@@ -46,11 +59,24 @@ public class JsDataResponse extends JavaScriptObject {
 	public final native String getModificationDate() /*-{
 		return this.modification_date;
 	}-*/;
+	
+	
+	@Deprecated
+	public final native String getNumber() /*-{
+		return this.number;
+	}-*/;
 
+	@Deprecated
+	public final native String getIssueDate() /*-{
+		return this.issue_date;
+	}-*/;
+
+	@Deprecated
 	public final native String getProduct() /*-{
 		return this.product;
 	}-*/;
 	
+	@Deprecated
 	public final native JsObject getSupplier() /*-{
 		return this.supplier;
 	}-*/;

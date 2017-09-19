@@ -84,7 +84,7 @@ public enum MimeType implements IResourceable {
     /**
      * MP3 file MIME Type.
      */
-    MIME_MP3 ("audio/mpeg", "mp3"),
+    MIME_MP3 ("audio/mp3", "mp3"),
 
     /**
      * WAV file MIME Type.

@@ -29,11 +29,10 @@ public class Warehouse implements EntryPoint {
 
 	}
 	
-	public void onModuleLoad(String entryPoint){
-		
-		if(entryPoint.equalsIgnoreCase(CARRIER_PACKING_ENTRY_POINT)){
+	public void onModuleLoad(String entryPoint){	
+		if(CARRIER_PACKING_ENTRY_POINT.equalsIgnoreCase(entryPoint)){
 			new CarrierPacking(aonData).onModuleLoad();
-		} else if ( entryPoint.equalsIgnoreCase(ELABORATION_ENTRY_POINT)) {
+		} else if (ELABORATION_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
 			new Elaboration(aonData).onModuleLoad();
 		}
 	}

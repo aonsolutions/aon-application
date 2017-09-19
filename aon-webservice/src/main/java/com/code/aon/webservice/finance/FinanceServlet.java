@@ -98,7 +98,7 @@ public class FinanceServlet extends HttpServlet{
 	}
 
     private JSONArray getInvoiceList(Domain domain, String login, HttpServletRequest req){
-    	if(req.getParameterMap().containsKey("sii")){
+    	if(req.getParameterMap().containsKey(MSG.SII)){
     		Integer page =  req.getParameterMap().containsKey("page") ? Integer.parseInt(req.getParameter("page")) : 1;
     		Integer perPage = req.getParameterMap().containsKey("per_page") ? Integer.parseInt(req.getParameter("per_page")) : 40;
     		Date from =  req.getParameterMap().containsKey("from") ? new Date(Long.parseLong(req.getParameter("from"))) : AonDateUtils.getDate(2017, 07, 01);  
@@ -110,33 +110,33 @@ public class FinanceServlet extends HttpServlet{
     		Boolean partial = req.getParameterMap().containsKey("partial") ? req.getParameter("partial").equalsIgnoreCase("true") : false;
     		Boolean paid = req.getParameterMap().containsKey("paid") ? req.getParameter("paid").equalsIgnoreCase("true") : false;
     		
-    		if("fe_emitidas".equals(req.getParameter("sii"))
-    			|| "fe_generales".equals(req.getParameter("sii"))
-    			|| "fe_simplificadas".equals(req.getParameter("sii"))
-    			|| "fe_rectificativas".equals(req.getParameter("sii"))
-    			|| "fe_intracomunitarias".equals(req.getParameter("sii"))){
+    		if("fe_emitidas".equals(req.getParameter(MSG.SII))
+    			|| "fe_generales".equals(req.getParameter(MSG.SII))
+    			|| "fe_simplificadas".equals(req.getParameter(MSG.SII))
+    			|| "fe_rectificativas".equals(req.getParameter(MSG.SII))
+    			|| "fe_intracomunitarias".equals(req.getParameter(MSG.SII))){
     	    	if(from.compareTo(AonDateUtils.getDate(2017, 0, 1)) < 0){
     	    		from = AonDateUtils.getDate(2017, 0, 1);    				
     	    	}
     			return getInvoiceEmitidasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii") );
-    		} else if("fr_recibidas".equals(req.getParameter("sii"))
-    			|| "fr_compras".equals(req.getParameter("sii"))
-    			|| "fr_gastos".equals(req.getParameter("sii"))
-    			|| "fr_rectificativas".equals(req.getParameter("sii"))
-    			|| "fr_intracomunitarias".equals(req.getParameter("sii"))){
+    		} else if("fr_recibidas".equals(req.getParameter(MSG.SII))
+    			|| "fr_compras".equals(req.getParameter(MSG.SII))
+    			|| "fr_gastos".equals(req.getParameter(MSG.SII))
+    			|| "fr_rectificativas".equals(req.getParameter(MSG.SII))
+    			|| "fr_intracomunitarias".equals(req.getParameter(MSG.SII))){
     			if(from.compareTo(AonDateUtils.getDate(2017, 0, 1)) < 0){
     	    		from = AonDateUtils.getDate(2017, 0, 1);    				
     	    	}
-    			return getInvoiceRecibidasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii"));
-    		} else if("bienes".equals(req.getParameter("sii"))){
-    			return getInvoiceBienesList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii"));
-    		} else if("intracomunitarias".equals(req.getParameter("sii"))){
-    			return getInvoiceIntracomunitariasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii"));
-    		} else if("cp_cobros_pagos".equals(req.getParameter("sii"))
-    					|| "cp_cobros".equals(req.getParameter("sii"))
-    					|| "cp_pagos".equals(req.getParameter("sii"))
+    			return getInvoiceRecibidasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter(MSG.SII));
+    		} else if("bienes".equals(req.getParameter(MSG.SII))){
+    			return getInvoiceBienesList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter(MSG.SII));
+    		} else if("intracomunitarias".equals(req.getParameter(MSG.SII))){
+    			return getInvoiceIntracomunitariasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter(MSG.SII));
+    		} else if("cp_cobros_pagos".equals(req.getParameter(MSG.SII))
+    					|| "cp_cobros".equals(req.getParameter(MSG.SII))
+    					|| "cp_pagos".equals(req.getParameter(MSG.SII))
     				){
-    			return getInvoiceCobrosPagosList(domain, login, page, perPage, from, pending, error, partial, paid, req.getParameter("sii"));
+    			return getInvoiceCobrosPagosList(domain, login, page, perPage, from, pending, error, partial, paid, req.getParameter(MSG.SII));
     		}
     	}
     	JSONArray array = new JSONArray();
@@ -155,8 +155,8 @@ public class FinanceServlet extends HttpServlet{
     			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm -> {
     			JSONObject json = ToJSON.invoiceToJSON(rm);
-    			json.put("sii_sent", true);
-    			json.put("sii", "emitida");
+    			json.put(MSG.SII_SENT, true);
+    			json.put(MSG.SII, "emitida");
     			array.put(json);
     		});
     	return array;
@@ -216,8 +216,8 @@ public class FinanceServlet extends HttpServlet{
     			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
-    			json.put("sii_sent", true);
-    			json.put("sii", "recibida");
+    			json.put(MSG.SII_SENT, true);
+    			json.put(MSG.SII, "recibida");
     			array.put(json);
     		});
     	return array;
@@ -235,8 +235,8 @@ public class FinanceServlet extends HttpServlet{
     			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm -> {
     			JSONObject json = ToJSON.invoiceToJSON(rm);
-    			json.put("sii_sent", true);
-    			json.put("sii", "bienes");
+    			json.put(MSG.SII_SENT, true);
+    			json.put(MSG.SII, "bienes");
     			array.put(json);
     		});
     	return array;
@@ -253,8 +253,8 @@ public class FinanceServlet extends HttpServlet{
     			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
-    			json.put("sii_sent", true);
-    			json.put("sii", "intracomunitaria");
+    			json.put(MSG.SII_SENT, true);
+    			json.put(MSG.SII, "intracomunitaria");
     			array.put(json);
     		});
     	return array;
@@ -283,8 +283,8 @@ public class FinanceServlet extends HttpServlet{
     			,pending, partial, paid, error, false, sii)
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
-    			json.put("sii_sent", true);
-    			json.put("sii", sii);
+    			json.put(MSG.SII_SENT, true);
+    			json.put(MSG.SII, sii);
     			array.put(json);
     		});
     	return array;

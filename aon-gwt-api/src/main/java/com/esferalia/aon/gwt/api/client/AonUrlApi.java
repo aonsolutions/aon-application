@@ -3,8 +3,7 @@ package com.esferalia.aon.gwt.api.client;
 public enum AonUrlApi {
 	
 	GITHUB("https://api.github.com/"),
-	AON("http://api.aonsolutions.net/"),
-	AONTEST("http://api.aonsolutions.net/aon-aio/");
+	AON("https://api.aonsolutions.es/");
 	
 	String url;
 	

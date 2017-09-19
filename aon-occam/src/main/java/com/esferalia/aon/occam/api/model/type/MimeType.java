@@ -21,7 +21,7 @@ public enum MimeType implements Serializable {
     AVI ("video/x-msvideo", "avi"),
     MPEG ("video/mpeg", "mpg"),
     QUICKTIME ("video/quicktime", "mov"),
-    MP3 ("audio/mpeg", "mp3"),
+    MP3 ("audio/mp3", "mp3"),
     WAV ("audio/x-wav", "wav"),
     MID ("audio/mid", "mid"),
     RTF ("text/rtf", "rtf"),
@@ -73,7 +73,7 @@ public enum MimeType implements Serializable {
     			}
     		}
     	}
-    	return null;
+    	return OCTECT_STREAM;
 	}
 	
     /**

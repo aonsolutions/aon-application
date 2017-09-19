@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.api.client.common;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -59,6 +60,11 @@ public class Common extends Methods{
 	}
 	
 	// ------------------- DATA RESPONSE (data_response)
+	
+	public void getDataResponseJS(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDataResponse>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(AonUrlApi.AON.getUrl() + "domains/" + getDomainName() + "/dataResponse" + filter, callback);
+	}
 	
 	public void getDataResponse(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDataResponse>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";

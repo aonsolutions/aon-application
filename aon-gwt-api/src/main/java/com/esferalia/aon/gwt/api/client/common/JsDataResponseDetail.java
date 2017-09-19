@@ -10,6 +10,14 @@ public class JsDataResponseDetail extends JavaScriptObject {
 		return this.id;
 	}-*/;
 	
+	public final native String getVariable() /*-{
+		return this.variable;
+	}-*/;
+
+	public final native String getValue() /*-{
+		return this.value;
+	}-*/;
+
 	public final native Integer getDomain() /*-{
 		return this.domain;
 	}-*/;
@@ -21,11 +29,7 @@ public class JsDataResponseDetail extends JavaScriptObject {
 	public final native String getDataVariable() /*-{
 		return this.data_variable;
 	}-*/;
-	
-	public final native String getValue() /*-{
-		return this.value;
-	}-*/;
-	
+
 	public final native String getCreationUser() /*-{
 		return this.creation_user;
 	}-*/;
