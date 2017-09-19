@@ -217,18 +217,7 @@ public class SIIBuilt {
 							.setSurchargePercent(f.getSurchargePercent())
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
-			
-			HashMap<Double, VatData> noExentaMap = new HashMap<>();
-			noExenta.stream().forEach(r -> {
-				if(noExentaMap.containsKey(r.getPercentage())){
-					VatData vd = noExentaMap.get(r.getPercentage());
-					noExentaMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
-					noExentaMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
-					noExentaMap.get(r.getPercentage()).setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());					
-				} else noExentaMap.put(r.getPercentage(), r);
-			});
-			
-			
+				
 			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
@@ -370,6 +359,16 @@ public class SIIBuilt {
 			// TIPO DESGLOSE
 			TipoDesglose tipoDesglose = new TipoDesglose(); 
 
+			HashMap<Double, VatData> noExentaMap = new HashMap<>();
+			noExenta.stream().forEach(r -> {
+				if(noExentaMap.containsKey(r.getPercentage())){
+					VatData vd = noExentaMap.get(r.getPercentage());
+					noExentaMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
+					noExentaMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
+					noExentaMap.get(r.getPercentage()).setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());					
+				} else noExentaMap.put(r.getPercentage(), r);
+			});
+			
 			if(!fet.getTipoFactura().equals(ClaveTipoFacturaType.F_2) && !fet.getTipoFactura().equals(ClaveTipoFacturaType.F_4) 
 				&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity())){
 				TipoConDesgloseType tcdt = new TipoConDesgloseType();
@@ -663,11 +662,12 @@ public class SIIBuilt {
 			LinkedList<VatData> pasivoList = new LinkedList<>();
 			if(!vat.isIntracommunity()){
 				noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && !f.isOtherISP())
-					.map(f -> new VatData().setBase(f.getBase())
-							.setPercentage(f.getPercentage())
-							.setQuota(f.getQuota())
-							.setSurchargePercent(f.getSurchargePercent())
-							.setSurchargeQuota(f.getSurchargeQuota()))
+					.map(h -> new VatData()
+							.setBase(h.getBase())
+							.setPercentage(h.getPercentage())
+							.setQuota(h.getQuota())
+							.setSurchargePercent(h.getSurchargePercent())
+							.setSurchargeQuota(h.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 			
 				pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.isOtherISP())
@@ -686,26 +686,6 @@ public class SIIBuilt {
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 			}
-			
-			HashMap<Double, VatData> noExentaMap = new HashMap<>();
-			noExenta.stream().forEach(r -> {
-				if(noExentaMap.containsKey(r.getPercentage())){
-					VatData vd = noExentaMap.get(r.getPercentage());
-					noExentaMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
-					noExentaMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
-					noExentaMap.get(r.getPercentage()).setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());					
-				} else noExentaMap.put(r.getPercentage(), r);
-			});
-			
-			HashMap<Double, VatData> pasivoMap = new HashMap<>();
-			pasivoList.stream().forEach(r -> {
-				if(pasivoMap.containsKey(r.getPercentage())){
-					VatData vd = pasivoMap.get(r.getPercentage());
-					pasivoMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
-					pasivoMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
-					pasivoMap.get(r.getPercentage()).setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());					
-				} else pasivoMap.put(r.getPercentage(), r);
-			});
 			
 			LRFacturasRecibidasType factura = new LRFacturasRecibidasType();
 
@@ -833,6 +813,17 @@ public class SIIBuilt {
 
 			DesgloseFacturaRecibidasType dfrt = new DesgloseFacturaRecibidasType();
 			if(!noExenta.isEmpty()){
+				HashMap<Double, VatData> noExentaMap = new HashMap<>();
+				LinkedList<VatData> noExentaAux = noExenta;
+				noExentaAux.stream().forEach(r -> {
+					if(noExentaMap.containsKey(r.getPercentage())){
+						VatData vd = noExentaMap.get(r.getPercentage());
+						noExentaMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
+						noExentaMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
+						noExentaMap.get(r.getPercentage()).setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());					
+					} else noExentaMap.put(r.getPercentage(), r);
+				});
+				
 				net.aonsolutions.core.aeat.sii.DesgloseFacturaRecibidasType.DesgloseIVA diva = new net.aonsolutions.core.aeat.sii.DesgloseFacturaRecibidasType.DesgloseIVA();
 				noExentaMap.keySet().stream().forEach(key -> {
 					DetalleIVARecibidaType diet = new DetalleIVARecibidaType();
@@ -849,6 +840,16 @@ public class SIIBuilt {
 			}
 			
 			if(!pasivoList.isEmpty()){
+				HashMap<Double, VatData> pasivoMap = new HashMap<>();
+				pasivoList.stream().forEach(r -> {
+					if(pasivoMap.containsKey(r.getPercentage())){
+						VatData vd = pasivoMap.get(r.getPercentage());
+						pasivoMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
+						pasivoMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
+						pasivoMap.get(r.getPercentage()).setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());					
+					} else pasivoMap.put(r.getPercentage(), r);
+				});
+				
 				InversionSujetoPasivo isp = new InversionSujetoPasivo();
 				pasivoMap.keySet().stream().forEach(key -> {
 					DetalleIVARecibida2Type diet = new DetalleIVARecibida2Type();
