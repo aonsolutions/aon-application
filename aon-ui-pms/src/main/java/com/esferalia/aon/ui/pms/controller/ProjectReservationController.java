@@ -1078,11 +1078,9 @@ public class ProjectReservationController extends BasicController implements IPm
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getAdvanceInvoiceTo().setReservationInvoiceTo(getReservationInvoiceTo());
 			getAdvanceInvoiceTo().setGuestReservation(reservation.isGuestHolder());
-			getAdvanceInvoiceTo().setIssueDate(new Date());
 			getAdvanceInvoiceTo().setItem(advanceItem);
 			getAdvanceInvoiceTo().setAmount(reservation.getAdvance());
 			getAdvanceInvoiceTo().setConexFlowPayMethod(getReservationUtils().obtainConexFlowPayMethod());
-			getAdvanceInvoiceTo().setFinanceDate(getAdvanceInvoiceTo().getIssueDate());
 			getAdvanceInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 			fillInvoiceData(reservation);
 		} catch (ManagerBeanException ex) {
@@ -1093,6 +1091,8 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onAdvanceInvoice(ActionEvent event) {
 		setInvoiceModel(null);
+		getAdvanceInvoiceTo().setIssueDate(getReservationUtils().obtainProductionDate(new Date()));
+		getAdvanceInvoiceTo().setFinanceDate(getAdvanceInvoiceTo().getIssueDate());
 		try {
 			if (validateAdvanceInvoice()) {
 				ProjectReservation reservation = (ProjectReservation)this.getTo();
