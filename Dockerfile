@@ -1,10 +1,5 @@
 FROM tomcat:9.0-jre8
 
-RUN apt-get update && apt-get install -y \
-	procps \
-	libreoffice-calc \
-	libreoffice-writer
-
 ARG AON_VERSION=9.00-SNAPSHOT
 ARG POOL_VERSION=9.00-SNAPSHOT
 
