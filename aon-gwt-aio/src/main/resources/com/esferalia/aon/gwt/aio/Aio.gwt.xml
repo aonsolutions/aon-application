@@ -4,7 +4,6 @@
 	<inherits name="com.google.gwt.i18n.I18N" />
 	<inherits name='com.google.gwt.visualization.Visualization'/>
 	<inherits name="com.google.gwt.logging.Logging"/>
-	<inherits name='com.esferalia.aon.gwt.viewer.Viewer' />
 	<inherits name='com.esferalia.aon.gwt.common.Common'/>
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 	<inherits name="com.esferalia.aon.gwt.api.Api" />
@@ -18,6 +17,7 @@
 	<inherits name='net.aonsolutions.aon.gwt.warehouse.WarehouseAio' />
 	<inherits name='net.aonsolutions.aon.gwt.udapa.UdapaAio' />
 	<inherits name='net.aonsolutions.aon.gwt.sii.SiiAio' />
+<!-- <inherits name='net.aonsolutions.aon.gwt.invoice.InvoiceAio' /> -->
 	<inherits name="net.aonsolutions.polymer.Elements"/>
 	
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />

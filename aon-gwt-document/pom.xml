@@ -108,19 +108,6 @@
       <classifier>sources</classifier>
     </dependency>
     <dependency>
-      <groupId>com.esferalia.aon</groupId>
-      <artifactId>aon.gwt.viewer</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.esferalia.aon</groupId>
-      <artifactId>aon.gwt.viewer</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.common</artifactId>
       <version>${project.version}</version>

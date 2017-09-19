@@ -28,10 +28,7 @@ import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TagList;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
-import com.esferalia.aon.gwt.viewer.client.Viewer;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -665,8 +662,7 @@ public class Documents implements EntryPoint {
 
 							@Override
 							public void onFailure(Throwable caught) {
-								String head = "com.esferalia.aon.gwt.document.client.Documents"
-										+ " - init() - getLists";
+								String head = "com.esferalia.aon.gwt.document.client.Documents - init() - getLists";
 								print(head, caught.getMessage());
 							}
 
@@ -685,8 +681,7 @@ public class Documents implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - init() - getAllFiles";
+						String head = "com.esferalia.aon.gwt.document.client.Documents - init() - getAllFiles";
 						print(head, caught.getMessage());
 					}
 				});
@@ -695,8 +690,7 @@ public class Documents implements EntryPoint {
 			}
 			@Override
 			public void onFailure(Throwable caught) {
-				String head = "com.esferalia.aon.gwt.document.client.Documents"
-						+ " - init() - initAux";
+				String head = "com.esferalia.aon.gwt.document.client.Documents - init() - initAux";
 				print(head, caught.getMessage());
 			}
 		});
@@ -713,8 +707,7 @@ public class Documents implements EntryPoint {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				String head = "com.esferalia.aon.gwt.document.client.Documents"
-						+ " - init() - isGconnection";
+				String head = "com.esferalia.aon.gwt.document.client.Documents - init() - isGconnection";
 				print(head, caught.getMessage());
 			}
 		});
@@ -1246,8 +1239,7 @@ public class Documents implements EntryPoint {
 						@Override
 						public void onFailure(Throwable caught) {
 							cargando.hide();
-							String head = "com.esferalia.aon.gwt.document.client.Documents"
-									+ " - editFile(SingleUploader up,Boolean multiple) - editFile";
+							String head = "com.esferalia.aon.gwt.document.client.Documents - editFile(SingleUploader up,Boolean multiple) - editFile";
 							print(head, caught.getMessage());
 						}
 					});
@@ -1266,8 +1258,7 @@ public class Documents implements EntryPoint {
 						
 						@Override
 						public void onFailure(Throwable caught) {
-							String head = "com.esferalia.aon.gwt.document.client.Documents"
-									+ " - editFile(SingleUploader up,Boolean multiple) - clearOuts";
+							String head = "com.esferalia.aon.gwt.document.client.Documents - editFile(SingleUploader up,Boolean multiple) - clearOuts";
 							print(head, caught.getMessage());
 						}
 					});
@@ -1385,8 +1376,7 @@ public class Documents implements EntryPoint {
 						}
 						@Override
 						public void onFailure(Throwable caught) {
-							String head = "com.esferalia.aon.gwt.document.client.Documents"
-									+ " - removeFile(Boolean multiple) - deleteMydrive";
+							String head = "com.esferalia.aon.gwt.document.client.Documents - removeFile(Boolean multiple) - deleteMydrive";
 							print(head, caught.getMessage());
 						}
 					});
@@ -1400,8 +1390,7 @@ public class Documents implements EntryPoint {
 						Boolean multiple = mult;
 						@Override
 						public void onFailure(Throwable caught) {
-							String head = "com.esferalia.aon.gwt.document.client.Documents"
-									+ " - removeFile(Boolean multiple) - removeFile";
+							String head = "com.esferalia.aon.gwt.document.client.Documents - removeFile(Boolean multiple) - removeFile";
 							print(head, caught.getMessage());
 						}
 						@Override
@@ -1507,8 +1496,7 @@ public class Documents implements EntryPoint {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				String head = "com.esferalia.aon.gwt.document.client.Documents"
-						+ " - getSons() - getSons";
+				String head = "com.esferalia.aon.gwt.document.client.Documents - getSons() - getSons";
 				print(head, caught.getMessage());
 			}
 		});
@@ -1681,8 +1669,7 @@ public class Documents implements EntryPoint {
 
 								@Override
 								public void onFailure(Throwable caught) {
-									String head = "com.esferalia.aon.gwt.document.client.Documents"
-											+ " - newFile(SingleUploader up) - insertFile";
+									String head = "com.esferalia.aon.gwt.document.client.Documents - newFile(SingleUploader up) - insertFile";
 									print(head, caught.getMessage());
 								}
 										
@@ -1803,8 +1790,7 @@ public class Documents implements EntryPoint {
 								
 								@Override
 								public void onFailure(Throwable caught) {
-									String head = "com.esferalia.aon.gwt.document.client.Documents"
-											+ " - newFile(SingleUploader up) - check";
+									String head = "com.esferalia.aon.gwt.document.client.Documents - newFile(SingleUploader up) - check";
 									print(head, caught.getMessage());
 								}
 							});
@@ -1814,8 +1800,7 @@ public class Documents implements EntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						cargando.hide();
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - newFile(SingleUploader up) - newFile";
+						String head = "com.esferalia.aon.gwt.document.client.Documents - newFile(SingleUploader up) - newFile";
 						print(head, caught.getMessage());
 					}
 				});
@@ -1834,8 +1819,7 @@ public class Documents implements EntryPoint {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - newFile(SingleUploader up) - oncancel - clearOuts";
+						String head = "com.esferalia.aon.gwt.document.client.Documents - newFile(SingleUploader up) - oncancel - clearOuts";
 						print(head, caught.getMessage());
 					}
 				});
@@ -3139,6 +3123,7 @@ public class Documents implements EntryPoint {
 		});
 	}
 	
+	/* VISOR
 	private void getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList){
 		Viewer.getViewer(attach, index, attachList);
 	}
@@ -3155,7 +3140,7 @@ public class Documents implements EntryPoint {
 		
 		Viewer.getViewer(attach);
 	}
-	
+	*/
 	private void getViewer(final FileInfo fileInfo, final Integer index, Vector<FileInfo> viewList) {
 		idoc.getLink(getDomain(), fileInfo, GWT.getModuleBaseURL(), new AsyncCallback<String>() {
 				
@@ -3656,8 +3641,7 @@ public class Documents implements EntryPoint {
 							
 					@Override
 					public void onFailure(Throwable caught) {
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - editTag(Tag tag) - editTag";
+						String head = "com.esferalia.aon.gwt.document.client.Documents - editTag(Tag tag) - editTag";
 						print(head, caught.getMessage());
 					}
 				});
@@ -3761,8 +3745,7 @@ public class Documents implements EntryPoint {
 						
 						@Override
 						public void onFailure(Throwable caught) {
-							String head = "com.esferalia.aon.gwt.document.client.Documents"
-									+ " - removeTag(Tag tag) - deleteTag";
+							String head = "com.esferalia.aon.gwt.document.client.Documents - removeTag(Tag tag) - deleteTag";
 							print(head, caught.getMessage());
 						}
 				});
@@ -3823,8 +3806,7 @@ public class Documents implements EntryPoint {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - editCategory(Category category) - editCategory";
+						String head = "com.esferalia.aon.gwt.document.client.Documents - editCategory(Category category) - editCategory";
 						print(head, caught.getMessage());
 					}
 				});			
@@ -3896,8 +3878,7 @@ public class Documents implements EntryPoint {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - removeCategory(Category category) - deleteCategory";
+						String head = "com.esferalia.aon.gwt.document.client.Documents - removeCategory(Category category) - deleteCategory";
 						print(head, caught.getMessage());
 					}
 				});			
@@ -4054,8 +4035,7 @@ public class Documents implements EntryPoint {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				String head = "com.esferalia.aon.gwt.document.client.Documents"
-						+ " - sendLote(ClickEvent event) - getMailAccounts";
+				String head = "com.esferalia.aon.gwt.document.client.Documents - sendLote(ClickEvent event) - getMailAccounts";
 				print(head, caught.getMessage());
 			}
 		});
@@ -4225,8 +4205,7 @@ public class Documents implements EntryPoint {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - Load() - searchFile2";
+						String head = "com.esferalia.aon.gwt.document.client.Documents - Load() - searchFile2";
 						print(head, caught.getMessage());
 					}
 				});

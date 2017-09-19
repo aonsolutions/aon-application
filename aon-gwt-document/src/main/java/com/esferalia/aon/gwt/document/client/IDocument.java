@@ -54,8 +54,7 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<FileInfo> eSearchFile(Vector<FileInfo> v,String s);
 
-	public Vector<FileInfo> searchFile(SearchInfo si, Vector<FileInfo> files,
-			Vector<FileInfo> allFiles);
+	public Vector<FileInfo> searchFile(SearchInfo si, Vector<FileInfo> files, Vector<FileInfo> allFiles);
 		
 	public TreeMap<String, List<FileInfo>> drive(TreeMap<String, List<FileInfo>> folders,String id);
 	
@@ -94,7 +93,6 @@ public interface IDocument extends RemoteService{
 	public  ContactList getContacts(Domain domain);
 	
 	public void downloadMultiple(Vector<FileInfo> fvector);
-	
 	
 	public String copyLink(FileInfo doc,String l);
 	

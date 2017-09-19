@@ -26,8 +26,7 @@ public interface IDocumentAsync {
 
 	void getAllFiles(Domain domain, AsyncCallback<Document> callback);
 
-	void searchFile(String searchStr, Vector<FileInfo> files,
-			AsyncCallback<Vector<FileInfo>> callback);
+	void searchFile(String searchStr, Vector<FileInfo> files, AsyncCallback<Vector<FileInfo>> callback);
 
 	void getLists(Domain domain, AsyncCallback<Lists> callback);
 
@@ -37,8 +36,7 @@ public interface IDocumentAsync {
 
 	void newFile(String dialogCode, FileInfo fi, AsyncCallback<Boolean> callback);
 
-	void editFile(Domain domain, String dialogCode, FileInfo fi, Vector<FileInfo> fvector,
-			AsyncCallback<Vector<FileInfo>> callback);
+	void editFile(Domain domain, String dialogCode, FileInfo fi, Vector<FileInfo> fvector, AsyncCallback<Vector<FileInfo>> callback);
 
 	void check(AsyncCallback<Boolean> callback);
 
@@ -46,17 +44,13 @@ public interface IDocumentAsync {
 
 	void myDrive(String id, AsyncCallback<Vector<TreeDriveInfo>> callback);
 
-
 	void share(Domain domain, String email, Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
-	void eSearchFile(Vector<FileInfo> v, String s,
-			AsyncCallback<Vector<FileInfo>> callback);
+	void eSearchFile(Vector<FileInfo> v, String s, AsyncCallback<Vector<FileInfo>> callback);
 
-	void searchFile2(SearchInfo si, Vector<FileInfo> files,
-			AsyncCallback<FilterUtil> callback);
+	void searchFile2(SearchInfo si, Vector<FileInfo> files, AsyncCallback<FilterUtil> callback);
 
-	void searchFile(SearchInfo si, Vector<FileInfo> files,
-			Vector<FileInfo> allFiles, AsyncCallback<Vector<FileInfo>> callback);
+	void searchFile(SearchInfo si, Vector<FileInfo> files, Vector<FileInfo> allFiles, AsyncCallback<Vector<FileInfo>> callback);
 
 	void drive(TreeMap<String, List<FileInfo>> folders,String id,AsyncCallback<TreeMap<String, List<FileInfo>>> callback);
 
@@ -70,8 +64,7 @@ public interface IDocumentAsync {
 
 	void deleteMydrive(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
-	void shareMydrive(String email, Vector<FileInfo> fvector,
-			AsyncCallback<Void> callback);
+	void shareMydrive(String email, Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
 	void initAux(Domain domain, AsyncCallback<Init> callback);
 
@@ -96,7 +89,6 @@ public interface IDocumentAsync {
 	void sendGmail(Domain domain, String dialogCode, MailAccount ma, Emessage em, AsyncCallback<Void> callback);
 
 	void downloadMultiple(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
-
 
 	void copyLink(FileInfo doc, String l, AsyncCallback<String> callback);
 
