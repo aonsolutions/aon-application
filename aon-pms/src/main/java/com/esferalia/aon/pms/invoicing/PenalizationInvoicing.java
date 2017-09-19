@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
@@ -30,10 +30,20 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class PenalizationInvoicing implements IReservationConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PenalizationInvoicing.class.getName());
+	
+	private ReservationUtils reservationUtils;
+
+	public ReservationUtils getReservationUtils() {
+		if (reservationUtils == null) {
+			reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		}
+		return reservationUtils;
+	}
 	
 	public Invoice agencyCheckOutInvoice(ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -149,9 +159,9 @@ public class PenalizationInvoicing implements IReservationConstants {
 	}
 
 	private void updateInvoiceDate(Invoice invoice) throws ManagerBeanException {
-		if (!DateUtils.isSameDay(invoice.getIssueDate(), new Date())) {
-			invoice.setIssueDate(new Date());
-		}
+		//La Factura se graba inicialmente con la fecha de inicio de la Reserva, para que los impuestos se apliquen a esa fecha, y la fecha de iva igual. Pero 
+		//posteriormente se modifica esa fecha si no coincide con la fecha actual, para mantener la correlatividad fecha - serie/numero.
+		invoice.setIssueDate(getReservationUtils().obtainProductionDate(new Date()));
 	}
 
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException {
