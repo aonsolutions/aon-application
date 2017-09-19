@@ -1,6 +1,6 @@
 # Determines how many connections at a time c3p0 will try to acquire 
 # when the pool is exhausted.
-acquireIncrement=1
+acquireIncrement=10
 
 # Maximum number of Connections a pool will maintain at any given time.
 maxPoolSize=100
@@ -18,7 +18,7 @@ maxIdleTime=600
 
 # If this is a number greater than 0, c3p0 will test all idle, pooled but 
 # unchecked-out connections, every this number of seconds.
-idleConnectionTestPeriod=20
+idleConnectionTestPeriod=120
 
 # Defines the query that will be executed for all connection tests
 preferredTestQuery=select 1;

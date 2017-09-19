@@ -1,12 +1,12 @@
 # Determines how many connections at a time c3p0 will try to acquire 
 # when the pool is exhausted.
-acquireIncrement=1
+acquireIncrement=5
 
 # Maximum number of Connections a pool will maintain at any given time.
-maxPoolSize=50
+maxPoolSize=100
 
 # Minimum number of Connections a pool will maintain at any given time.
-minPoolSize=2
+minPoolSize=20
 
 #
 #	ESTE PARAMETRO HABRÁ QUE AJUSTARLO (SUBIRLO) CUANDO TENGAMOS CLARO LA MEDIA DE 
@@ -18,7 +18,7 @@ maxIdleTime=600
 
 # If this is a number greater than 0, c3p0 will test all idle, pooled but 
 # unchecked-out connections, every this number of seconds.
-idleConnectionTestPeriod=20
+idleConnectionTestPeriod=120
 
 # Defines the query that will be executed for all connection tests
 preferredTestQuery=select 1;
@@ -54,4 +54,8 @@ unreturnedConnectionTimeout=1000
 # slow down every Connection check-out.
 debugUnreturnedConnectionStackTraces=true
 
-
+# c3p0 is very asynchronous. Slow JDBC operations are generally performed by
+# helper threads that don't hold contended locks. Spreading these operations
+# over multiple threads can significantly improve performance by allowing
+# multiple operations to be performed simultaneously.
+numHelperThreads=6
