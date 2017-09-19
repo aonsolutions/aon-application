@@ -432,7 +432,9 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		record.setCantidadEnviada_12_(quantity);
 		
-		record.setUnidadDeMedidaCantidadEnviada(null);
+		if(item.getPackUnitsTag()!=null && item.getPackUnitsTag().getName()!=null){
+			record.setUnidadDeMedidaCantidadEnviada(item.getPackUnitsTag().getName().toUpperCase());
+		}
 		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		record.setFechaDeCaducidad_36__102_203_(null);
 		record.setCalificadorReferencia1(null);
@@ -457,9 +459,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		record.setNumeroDeLineaReferencia3(null);
 		record.setDiferenciaEnCantidadPedida_21_(null);
 		record.setCodigoDiscrepancia(null);
-		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(null);
+		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(detail.getQuantity());
 		record.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
-		record.setUnidadDeMedidaPeso(null);
+		if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null){
+			record.setUnidadDeMedidaPeso(item.getPackMeasurementTag().getName().toUpperCase());
+		}
 		record.setDimensionDeTemperatura1_TC_(null);
 		record.setDimensionDeTemperatura2(null);
 		record.setUnidadDeMedidaParaLaTemperatura(null);
@@ -650,7 +654,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	private Double obtainPackageQuantity(DeliveryDetail detail,
 			String customerPackingTag) {
 		if(detail!=null && customerPackingTag!=null){
-			Item item = detail.getItem();
+			Item item = getItem(detail.getItem().getId());
 			Double quantity = detail.getQuantity();
 			Tag itemPackFormatTag = item.getPackFormatTag();
 			Tag itemPackMeasurementTag = item.getPackMeasurementTag();
