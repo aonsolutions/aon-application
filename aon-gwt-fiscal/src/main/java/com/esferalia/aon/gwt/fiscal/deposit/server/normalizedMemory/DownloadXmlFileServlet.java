@@ -21,16 +21,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.viewer.server.DriveUtils;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_deposit/gwt_download_deposit/*" })
 public class DownloadXmlFileServlet extends HttpServlet {
@@ -257,8 +258,9 @@ public class DownloadXmlFileServlet extends HttpServlet {
 				if(xml.getData() != null)
 					data = xml.getData();
 				else if(xml.getDriveId() != null) {
-					Domain dom = AON.getDomain(domain, domainId, "");
-					data = DriveUtils.getByteFile(dom , new User().setLogin(""), xml.getDriveId(), xml.getId(), AttachType.REGISTRY);
+					DomainGserviceaccount g = AON.getDomainGserviceaccount(domain, domainId, "");
+					Drive drive = AonDrive.getInstace().serviceInitialize(g);
+					data = AonDrive.getInstace().downloadFileByteArray(drive, xml.getDriveId());
 				} else data = null;
 				
 				if(data != null)
@@ -294,8 +296,9 @@ public class DownloadXmlFileServlet extends HttpServlet {
 				if(attach.getData() != null )
 					data = attach.getData();
 				else if(attach.getDriveId() != null){
-					Domain dom = AON.getDomain(domain, domainId, "");
-					data = DriveUtils.getByteFile(dom, new User().setLogin(""), attach.getDriveId(), attach.getId(), AttachType.REGISTRY);
+					DomainGserviceaccount g = AON.getDomainGserviceaccount(domain, domainId, "");
+					Drive drive = AonDrive.getInstace().serviceInitialize(g);
+					data = AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId());
 				} else data = null;
 				if(data != null)		
 					AonFileUtils.writeByteArrayToFile(tempFile, data);				
