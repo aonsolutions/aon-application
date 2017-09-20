@@ -10,7 +10,9 @@ public enum DataResponseSource implements Serializable{
 	SII,
 	SII_INVOICE,
 	SII_FINANCE,
-	INVOICE_SABBATIC;
+	INVOICE_SABBATIC,
+	SERES_DELIVERY,
+	SERES_INVOICE;
 
 	public byte value() {
 		return (byte) this.ordinal();

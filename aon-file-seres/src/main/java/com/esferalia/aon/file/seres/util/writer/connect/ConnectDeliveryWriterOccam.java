@@ -219,10 +219,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 							mainPackage.seh1lList.add(createSEH1LRecord(delivery, level2Detail, null,
 									companyEdiCode, customerEdiCode, customerPackage));
 						} else {
-							SEH1P subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
-							subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
-							subPackage.seh1lList = new ArrayList<>();
-							list.add(subPackage);
+							SEH1P subPackage = null;
 							
 							// PRODUCT OVER SUB-PACKAGE, IF EXIST
 							List<Integer> level3LineList = new LinkedList<>(level3Map.get((int)level2Detail.getLine()));
@@ -250,7 +247,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	
 	private void addLine(List<SEH1P> list, SEH1P targetPackage, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
 			String companyEdiCode, String customerEdiCode, String customerPackage) {
-		String seralNumber = detail.getItem().getSerialNumber();
+		String seralNumber = getItem(detail.getItem().getId()).getSerialNumber();
 		boolean success = false;
 		for(SEH1P p: list){
 			for(SEH1L l: p.seh1lList){
@@ -273,7 +270,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 	
 	private SEH1P existingSerialNumberPackage(List<SEH1P> list, DeliveryDetail detail) {
-		String seralNumber = detail.getItem().getSerialNumber();
+		String seralNumber = getItem(detail.getItem().getId()).getSerialNumber();
 		boolean success = false;
 		SEH1P p = null;
 		Iterator<SEH1P> packageIt = list.iterator();
@@ -312,18 +309,18 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		record.setCalificadorDelInterlocutor(type.getValue());
 		record.setCodigoInterlocutor(ediCode);
 		record.setAgenciaResponsableDeLaListaDeCodigos(SEH1D.SEH1D_4.EAN_9.getValue());
-		record.setNombre1(registry.getName());
+		record.setNombre1(registry.getName().replaceAll("[^\\w\\.,\\s/-]", "?"));
 		record.setNombre2(null);
 		record.setNombre3(null);
 		record.setNombre4(null);
 		record.setNombre5(null);
 		try {
 			RAddress defaultAddress = getDefaultAddress(registryId);
-			record.setCalleYNumero1(defaultAddress.getAddress());
-			record.setCalleYNumero2(defaultAddress.getAddress2());
-			record.setCalleYNumero3(defaultAddress.getAddress3());
+			record.setCalleYNumero1(defaultAddress.getAddress().replaceAll("[^\\w\\.,\\s/-]", "?"));
+			record.setCalleYNumero2(defaultAddress.getAddress2().replaceAll("[^\\w\\.,\\s/-]", "?"));
+			record.setCalleYNumero3(defaultAddress.getAddress3().replaceAll("[^\\w\\.,\\s/-]", "?"));
 			record.setCalleYNumero4(defaultAddress.getNumber());
-			record.setPoblacion(defaultAddress.getCity());
+			record.setPoblacion(defaultAddress.getCity().replaceAll("[^\\w\\.,\\s/-]", "?"));
 			record.setCodigoPostal(defaultAddress.getZip());
 			GeoZone geozone = getGeozone(defaultAddress.getGeozone());
 			if(geozone!=null && geozone.getId()!=null){
