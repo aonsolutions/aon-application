@@ -34,10 +34,8 @@
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
 								<g:Button ui:field="deleteButton" text="{msg.deleteAction}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-								<g:Button ui:field="printButton" text="&nbsp;" 
+								<g:Button ui:field="printButton" text="{msg.draft}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" />
-								<g:Button ui:field="printPDFButton" text="{msg.draft}"
-									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
 
 								<g:Button ui:field="reopenButton" text="{msg.reopen}"
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconUnlock}" />

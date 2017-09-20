@@ -80,7 +80,6 @@ public class Model130 extends MainEntryPoint {
 			.create(Model130Binder.class);
 
 	private static final String MODEL130_PRINT = "/aon_gwt_fiscal/Model130Print";
-	private static final String MODEL130_PRINT_PDF ="/aon_gwt_fiscal/Model130PrintPDF";
 	private static final String MODEL130_FILE = "/aon_gwt_fiscal/Model130File";
 	private static final String MODEL130_PRINT_AEAT = "/aon_gwt_fiscal/Model130PrintAEAT";
 	
@@ -130,8 +129,6 @@ public class Model130 extends MainEntryPoint {
 	Button cancelButton;
 	@UiField
 	Button printButton;
-	@UiField
-	Button printPDFButton;
 	@UiField
 	Button reopenButton;
 	@UiField
@@ -347,7 +344,6 @@ public class Model130 extends MainEntryPoint {
 		deleteButton.setEnabled(!currentMod130.isFinished());
 		
 		printButton.setVisible(!currentMod130.isNew());
-		printPDFButton.setVisible(!currentMod130.isNew());
 		
 		reopenButton.setVisible(!currentMod130.isNew() && currentMod130.getStatus() == FiscalStatus.FINISHED);
 		finalizeButton.setVisible(!currentMod130.isNew() && currentMod130.getStatus() == FiscalStatus.PENDING );
@@ -375,7 +371,6 @@ public class Model130 extends MainEntryPoint {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(false);
 		printButton.setVisible(false);
-		printPDFButton.setVisible(false);
 		reopenButton.setVisible(false);
 		finalizeButton.setVisible(false);
 		generateFileButton.setVisible(false);
@@ -793,27 +788,6 @@ public class Model130 extends MainEntryPoint {
 			
 	}
 
-	@UiHandler("printPDFButton")
-	void onPrintPDFButtonClick(ClickEvent event) {
-		if (isDirty()) {
-			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
-				, new ConfirmDialogCallback() {
-				
-				@Override
-				public void onAccept() {
-					submitForm(MODEL130_PRINT_PDF);
-				}
-	
-				@Override
-				public void onCancel() {
-					// Nothing
-				}
-			});
-		} else {
-			submitForm(MODEL130_PRINT_PDF);
-		}
-	}
-	
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
 		if (isDirty()) {

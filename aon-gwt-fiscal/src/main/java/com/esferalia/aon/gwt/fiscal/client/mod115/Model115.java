@@ -79,7 +79,6 @@ public class Model115 extends MainEntryPoint {
 			.create(Model115Binder.class);
 	
 	private static final String MODEL115_PRINT = "/aon_gwt_fiscal/Model115Print";
-	private static final String MODEL115_PRINT_PDF ="/aon_gwt_fiscal/Model115PrintPDF";
 	private static final String MODEL115_FILE = "/aon_gwt_fiscal/Model115File";
 	private static final String MODEL115_PRINT_AEAT = "/aon_gwt_fiscal/Model115PrintAEAT";
 
@@ -129,8 +128,6 @@ public class Model115 extends MainEntryPoint {
 	Button cancelButton;
 	@UiField
 	Button printButton;
-	@UiField
-	Button printPDFButton;
 	@UiField
 	Button reopenButton;
 	@UiField
@@ -334,7 +331,6 @@ public class Model115 extends MainEntryPoint {
 		deleteButton.setEnabled(!currentMod115.isFinished());
 		
 		printButton.setVisible(!currentMod115.isNew());
-		printPDFButton.setVisible(!currentMod115.isNew());
 		
 		reopenButton.setVisible(!currentMod115.isNew() && currentMod115.getStatus() == FiscalStatus.FINISHED);
 		finalizeButton.setVisible(!currentMod115.isNew() && currentMod115.getStatus() == FiscalStatus.PENDING );
@@ -362,7 +358,6 @@ public class Model115 extends MainEntryPoint {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(false);
 		printButton.setVisible(false);
-		printPDFButton.setVisible(false);
 		reopenButton.setVisible(false);
 		finalizeButton.setVisible(false);
 		generateFileButton.setVisible(false);
@@ -794,28 +789,6 @@ public class Model115 extends MainEntryPoint {
 		}	
 	}
 
-	@UiHandler("printPDFButton")
-	void onPrintPDFButtonClick(ClickEvent event) {
-		if (isDirty()) {
-			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
-				, new ConfirmDialogCallback() {
-				
-				@Override
-				public void onAccept() {
-					submitForm(MODEL115_PRINT_PDF);
-				}
-	
-				@Override
-				public void onCancel() {
-					// Nothing
-				}
-			});
-		} else {
-			submitForm(MODEL115_PRINT_PDF);
-		}
-			
-	}
-	
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
 		if (isDirty()) {

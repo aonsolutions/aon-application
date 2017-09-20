@@ -23,7 +23,6 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelProvidesKey;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelTable;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -80,7 +79,6 @@ public class Model123 extends MainEntryPoint {
 			.create(Model123Binder.class);
 
 	private static final String MODEL123_PRINT = "/aon_gwt_fiscal/Model123Print";
-	private static final String MODEL123_PRINT_PDF ="/aon_gwt_fiscal/Model123PrintPDF";
 	private static final String MODEL123_FILE = "/aon_gwt_fiscal/Model123File";
 	private static final String MODEL123_PRINT_AEAT = "/aon_gwt_fiscal/Model123PrintAEAT";
 	
@@ -130,8 +128,6 @@ public class Model123 extends MainEntryPoint {
 	Button cancelButton;
 	@UiField
 	Button printButton;
-	@UiField
-	Button printPDFButton;
 	@UiField
 	Button reopenButton;
 	@UiField
@@ -335,7 +331,6 @@ public class Model123 extends MainEntryPoint {
 		deleteButton.setEnabled(!currentMod123.isFinished());
 		
 		printButton.setVisible(!currentMod123.isNew());
-		printPDFButton.setVisible(!currentMod123.isNew());
 		
 		reopenButton.setVisible(!currentMod123.isNew() && currentMod123.getStatus() == FiscalStatus.FINISHED);
 		finalizeButton.setVisible(!currentMod123.isNew() && currentMod123.getStatus() == FiscalStatus.PENDING );
@@ -363,7 +358,6 @@ public class Model123 extends MainEntryPoint {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(false);
 		printButton.setVisible(false);
-		printPDFButton.setVisible(false);
 		reopenButton.setVisible(false);
 		finalizeButton.setVisible(false);
 		generateFileButton.setVisible(false);
@@ -792,27 +786,6 @@ public class Model123 extends MainEntryPoint {
 		}
 	}
 
-	@UiHandler("printPDFButton")
-	void onPrintPDFButtonClick(ClickEvent event) {
-		if (isDirty()) {
-			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
-				, new ConfirmDialogCallback() {
-				
-				@Override
-				public void onAccept() {
-					submitForm(MODEL123_PRINT_PDF);
-				}
-	
-				@Override
-				public void onCancel() {
-					// Nothing
-				}
-			});
-		} else {
-			submitForm(MODEL123_PRINT_PDF);
-		}
-	}
-	
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
 		if (isDirty()) {

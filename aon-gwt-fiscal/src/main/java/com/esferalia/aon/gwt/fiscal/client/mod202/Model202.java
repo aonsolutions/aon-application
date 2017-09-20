@@ -79,7 +79,6 @@ public class Model202 extends MainEntryPoint {
 			.create(Model202Binder.class);
 	
 	private static final String MODEL202_PRINT = "/aon_gwt_fiscal/Model202Print";
-	private static final String MODEL202_PRINT_PDF ="/aon_gwt_fiscal/Model202PrintPDF";
 	private static final String MODEL202_FILE = "/aon_gwt_fiscal/Model202File";
 	private static final String MODEL202_PRINT_AEAT = "/aon_gwt_fiscal/Model202PrintAEAT";
 
@@ -129,8 +128,6 @@ public class Model202 extends MainEntryPoint {
 	Button cancelButton;
 	@UiField
 	Button printButton;
-	@UiField
-	Button printPDFButton;
 	@UiField
 	Button reopenButton;
 	@UiField
@@ -337,7 +334,6 @@ public class Model202 extends MainEntryPoint {
 		deleteButton.setEnabled(!currentMod202.isFinished());
 		
 		printButton.setVisible(!currentMod202.isNew());
-		printPDFButton.setVisible(!currentMod202.isNew());
 		
 		reopenButton.setVisible(updatable && !currentMod202.isNew() && currentMod202.getStatus() == FiscalStatus.FINISHED);
 		finalizeButton.setVisible(updatable && !currentMod202.isNew() && currentMod202.getStatus() == FiscalStatus.PENDING );
@@ -366,7 +362,6 @@ public class Model202 extends MainEntryPoint {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(false);
 		printButton.setVisible(false);
-		printPDFButton.setVisible(false);
 		reopenButton.setVisible(false);
 		finalizeButton.setVisible(false);
 		generateFileButton.setVisible(false);
@@ -818,27 +813,6 @@ public class Model202 extends MainEntryPoint {
 		}
 	}
 
-	@UiHandler("printPDFButton")
-	void onPrintPDFButtonClick(ClickEvent event) {
-		if (isDirty()) {
-			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
-				, new ConfirmDialogCallback() {
-				
-				@Override
-				public void onAccept() {
-					submitForm(MODEL202_PRINT_PDF);
-				}
-	
-				@Override
-				public void onCancel() {
-					// Nothing
-				}
-			});
-		} else {
-			submitForm(MODEL202_PRINT_PDF);
-		}
-	}
-	
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
 		if (isDirty()) {
