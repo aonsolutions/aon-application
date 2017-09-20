@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryItem;
-import com.esferalia.aon.gwt.fiscal.server.JODConverterUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
@@ -98,7 +97,6 @@ public class CCAAPrint extends HttpServlet {
 					inputFileOs.close();
 					
 					outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
-					JODConverterUtils.process(inputFile, outputFile);
 
 					resp.setContentType(MimeType.PDF.getName());
 					if(doget) resp.setHeader("Content-disposition", "inline; filename=\"" + fileName + ".pdf\";");

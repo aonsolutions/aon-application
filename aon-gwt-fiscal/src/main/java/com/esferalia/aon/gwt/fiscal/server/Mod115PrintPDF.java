@@ -64,7 +64,7 @@ public class Mod115PrintPDF extends HttpServlet {
 			inputFileOs.close();
 			
 			outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
-			JODConverterUtils.process(inputFile, outputFile);
+
 			resp.setContentType(MimeType.PDF.getName());
 			if(doget) resp.setHeader("Content-disposition", "inline; filename=\"" + fileName + ".pdf\";");
 			else resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");

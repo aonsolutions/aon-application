@@ -107,7 +107,7 @@
 								styleName='aon-finding-toolbar-item aon-icon-file-upload' text="Importar" visible="true"/>
 							
 							<g:Button ui:field='downloadButton'
-								styleName='{style.excelButton} aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-excel' text="" visible="true"/>
+								styleName='{style.excelButton} aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-excel' text="DESCARGAR" visible="true"/>
 							<g:Button ui:field='downloadButtonPdf'
 								styleName='aon-finding-toolbar-item aon-icon-pdf' text="DESCARGAR" visible="true"/>
 									

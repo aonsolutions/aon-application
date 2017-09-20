@@ -57,7 +57,7 @@ public class Mod130PrintPDF extends HttpServlet {
 			inputFileOs.close();
 			
 			outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
-			JODConverterUtils.process(inputFile, outputFile);
+
 			resp.setContentType(MimeType.PDF.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 			AonIOUtils.copy(new FileInputStream(outputFile), resp.getOutputStream());

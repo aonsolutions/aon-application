@@ -115,7 +115,7 @@ public class NormalizedMemory extends ResizeComposite {
 		deleteButton.setVisible(true);
 		importAllButton.setVisible(true);
 		downloadButton.setVisible(true);
-		downloadButtonPdf.setVisible(true);
+		downloadButtonPdf.setVisible(false);
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		d2Deposit = ddtn.getD2Deposit();
@@ -366,7 +366,7 @@ public class NormalizedMemory extends ResizeComposite {
 									generateFileButton.setVisible(true);		
 									importAllButton.setVisible(true);
 									downloadButton.setVisible(true);
-									downloadButtonPdf.setVisible(true);
+									downloadButtonPdf.setVisible(false);
 								}
 					});
 					
