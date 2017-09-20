@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -169,6 +170,7 @@ public class ConnectDeliveryWriter {
 		List<DeliveryDetail> detailList = delivery.getDetailList().stream()
 				.map(to -> (DeliveryDetail)to)
 				.sorted((d1, d2)->d1.getLine().compareTo(d2.getLine()))
+				// TODO group lines where has same serial-code
 				.collect(Collectors.toList());
 		
 		Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
@@ -235,17 +237,25 @@ public class ConnectDeliveryWriter {
 							mainPackage.seh1lList.add(createSEH1LRecord(level2Detail, null,
 									companyEdiCode, customerEdiCode, customerPackage));
 						} else {
-							SEH1P subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
-							subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
-							subPackage.seh1lList = new ArrayList<>();
-							list.add(subPackage);
+							SEH1P subPackage = null; 
+//							subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
+//							subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+//							subPackage.seh1lList = new ArrayList<>();
+//							list.add(subPackage);
 							
 							// PRODUCT OVER SUB-PACKAGE, IF EXIST
 							List<Integer> level3LineList = new LinkedList<>(level3Map.get(level2Detail.getLine()));
 							for(int level3LineId: level3LineList){
 								DeliveryDetail level3Detail = (DeliveryDetail) detailList.get(level3LineId-1);
-								subPackage.seh1lList.add(createSEH1LRecord(level3Detail, level2Detail.getQuantity(),
-										companyEdiCode, customerEdiCode, customerPackage));
+								SEH1P p = existingSerialNumberPackage(list, level3Detail);
+								if(p==null && subPackage==null){
+									subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
+									subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
+									subPackage.seh1lList = new ArrayList<>();
+									list.add(subPackage);
+								}
+								addLine(list, (p!=null?p:subPackage), level3Detail, level2Detail.getQuantity(),
+										companyEdiCode, customerEdiCode, customerPackage);
 							}
 						}
 					}
@@ -253,10 +263,52 @@ public class ConnectDeliveryWriter {
 			}
 			
 		}
-		
+
 		return list;
 	}
 	
+	private void addLine(List<SEH1P> list, SEH1P targetPackage, DeliveryDetail detail, Double packageQuantity,
+			String companyEdiCode, String customerEdiCode, String customerPackage) {
+		String seralNumber = detail.getItem().getSerialNumber();
+		boolean success = false;
+		for(SEH1P p: list){
+			for(SEH1L l: p.seh1lList){
+				if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
+						&& l.getNumeroDeLote_NB_().equals(seralNumber)){
+					SEH1L newLine = createSEH1LRecord(detail, packageQuantity,
+							companyEdiCode, customerEdiCode, customerPackage);
+					l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
+					if(packageQuantity!=null){
+						p.setNumeroDePaquetes(p.getNumeroDePaquetes()+packageQuantity.intValue());
+					}
+					success = true;
+				}
+			}
+		}
+		if(!success){
+			targetPackage.seh1lList.add(createSEH1LRecord(detail, packageQuantity,
+					companyEdiCode, customerEdiCode, customerPackage));
+		}
+	}
+	
+	private SEH1P existingSerialNumberPackage(List<SEH1P> list, DeliveryDetail detail) {
+		String seralNumber = detail.getItem().getSerialNumber();
+		boolean success = false;
+		SEH1P p = null;
+		Iterator<SEH1P> packageIt = list.iterator();
+		while(packageIt.hasNext() && !success){
+			p = packageIt.next();
+			Iterator<SEH1L> lineIt = p.seh1lList.iterator();
+			while(lineIt.hasNext() && !success){
+				SEH1L l = lineIt.next();
+				if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
+						&& l.getNumeroDeLote_NB_().equals(seralNumber)){
+					success = true;
+				}
+			}
+		}
+		return success?p:null;
+	}
 
 	private List<SEH1G> createSEH1GList(Delivery delivery) {
 		List<SEH1G> list = new ArrayList<>();

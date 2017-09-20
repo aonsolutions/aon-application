@@ -36,6 +36,7 @@ import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
@@ -62,6 +63,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
@@ -195,11 +197,12 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							if(autoSendDelivery){
 								try {
 									handler.transferEdiFtp(d);
+									createDeliveryResponse(d);
 								} catch (Throwable th) {
-									subject = "Envío automático de albaranes";
+									subject = "Envio de albaranes a Seresnet";
 									content = "El albaran no se ha podido enviar automaticamente";
 									content += "<br/>MOTIVO: " + th.getMessage();
-									log(IngenetLogLevel.ERROR, subject, content, "autoSendDelivery", null, RECIPIENTS_TO_FAILURES);
+									log(IngenetLogLevel.ERROR, subject, content, null, null, RECIPIENTS_TO_FAILURES);
 								}
 							}
 						}
@@ -247,7 +250,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 					bf.append(", a nombre de ");
 					if(customerId!=null){
 						Registry registry = AON.getRegistry(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), customerId);
-						bf.append(registry.getName());
+						bf.append("<b>").append(registry.getName()).append("</b>");
 					}
 					bf.append(" (")
 						.append(alb.getDATOSCLIENTE().getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO())
@@ -1196,6 +1199,18 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						.and(f.getDescriptionProperty().eq(key))
 						);
 		return rNotes!=null && rNotes.size()>0?rNotes.get(0):null;
+	}
+	
+	private void createDeliveryResponse(Delivery delivery) {
+		if(delivery!=null && delivery.getId()!=null){
+			DataResponse response = new DataResponse();
+			response.setDomain(getDomainId());
+			response.setCode(delivery.getReferenceCode());
+			response.setResponseDate(new Date());
+			response.setSource(DataResponseSource.SERES_DELIVERY);
+			response.setSourceId(delivery.getId());
+			AON.insertDataResponse(getDomain(), getDomainId(), getUser(), response);
+		}
 	}
 		
 }
