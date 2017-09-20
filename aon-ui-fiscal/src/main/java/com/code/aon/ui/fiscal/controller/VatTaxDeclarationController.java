@@ -47,7 +47,6 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.fiscal.aeat.AeatUtils;
 import com.code.aon.ui.fiscal.aeat.AeatUtils.Mod303Type;
 import com.code.aon.ui.fiscal.controller.mod303.Mod303AIController;
-import com.code.aon.ui.fiscal.controller.model.Mipf;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -61,16 +60,8 @@ public class VatTaxDeclarationController extends LinesController {
 	public static final String BEAN_NAME = "vatTaxDeclaration";
 
 	private FileOutput fileOutput;
-	private Mipf mipf;
 	
 	private boolean additionalDataPanelVisible;
-
-	private Mipf getMipf() {
-		if (this.mipf == null) {
-			this.mipf = new Mipf();
-		}
-		return mipf;
-	}
 
 	public FileOutput getFileOutput() {
 		return fileOutput;
@@ -261,9 +252,6 @@ public class VatTaxDeclarationController extends LinesController {
     			AonUtil.addErrorMessage(++i + ") " + ex.getLocalizedMessage());
     		}
         }
-	    if (isAeatValidable()) {
-	    	validateAeatFile();	
-	    }
 	}
 	
 	public boolean isAeatDraftReportEnabled() {
@@ -272,13 +260,7 @@ public class VatTaxDeclarationController extends LinesController {
 	}
 	
 	public boolean isAeatValidable() {
-		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
-		return ( !isNevv() && to.isFromCommonTerritory() && isScriptPresent() && to.getVatTax().getYear() < 2014);
-	}
-	private String validateAeatFile() {
-		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
-		getMipf().validateAeatFile(to.getVatTax().getYear(),fileOutput);
-		return null;
+		return false;
 	}
 	
 	private MOD303Format getFormat(VatTaxDeclaration vatTaxDeclaration) {
@@ -340,8 +322,7 @@ public class VatTaxDeclarationController extends LinesController {
 	}
 	
 	public boolean isScriptPresent() {
-		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
-		return to != null && to.getVatTax() != null && getMipf().isScriptPresent(to.getVatTax().getYear());
+		return false;
 	}
 	
 	public String onAEATPrint() {

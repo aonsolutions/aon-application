@@ -78,7 +78,6 @@ public abstract class FiscalModelController extends BasicController implements I
 	private String previousDeclarationDocument;
 	
 	private RegistryBank registryBank;
-	private Mipf mipf;
 	
 	public String getDataTabName() {
 		return DATA_TAB;  
@@ -602,13 +601,6 @@ public abstract class FiscalModelController extends BasicController implements I
 		}
 	}
 	
-	private Mipf getMipf() {
-		if (this.mipf == null) {
-			this.mipf = new Mipf();
-		}
-		return mipf;
-	}
-	
 	public boolean isAeatValidable() {
 		FiscalModel to = (FiscalModel) getTo();
 		return ( !isNevv() 
@@ -655,32 +647,22 @@ public abstract class FiscalModelController extends BasicController implements I
 	}
 	
 	public boolean isScriptPresent() {
-		FiscalModel fiscalModel = (FiscalModel) getTo();
-		return fiscalModel != null && getMipf().isScriptPresent(fiscalModel.getYear());
+		return false;
 	}
 
 	public String getAeatWebPage() {
 		FiscalModel fs = (FiscalModel) getTo();
-		if (fs.isFromCommonTerritory()) {
-			return  getMipf().getAeatWebPage(fs.getModel());		
-		}
 		return null; 
 	}
 
 	public String aeatReport() {
-		FiscalModel fiscalModel = (FiscalModel) getTo();
-		if (fileOutput == null) {
-			onCreateDisk(null);
-		}
-		getMipf().aeatReport(fiscalModel, fileOutput);
 		return null;
 	}
 
 	protected String validateAeatFile() {
-		FiscalModel fiscalModel = (FiscalModel) getTo();
-		getMipf().validateAeatFile(fiscalModel.getYear(),fileOutput);
 		return null;
 	}
+	
 	public boolean isParticipationPercentEnabled() {
 		return (getModelType() == FiscalModelType.M130);
 	}
