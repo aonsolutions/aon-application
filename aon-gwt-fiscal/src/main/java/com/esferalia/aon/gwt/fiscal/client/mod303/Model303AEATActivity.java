@@ -392,7 +392,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				act.setTem(dia.getValue());
+				act.setDia(dia.getValue());
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 			}
 		});
