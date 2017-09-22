@@ -474,7 +474,7 @@ public class ConnectDeliveryWriter {
 		record.setNumeroDeLineaReferencia3(null);
 		record.setDiferenciaEnCantidadPedida_21_(null);
 		record.setCodigoDiscrepancia(null);
-		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(null);
+		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(detail.getQuantity());
 		record.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
 		record.setUnidadDeMedidaPeso(null);
 		record.setDimensionDeTemperatura1_TC_(null);

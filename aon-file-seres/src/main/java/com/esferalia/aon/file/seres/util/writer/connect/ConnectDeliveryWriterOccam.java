@@ -432,7 +432,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		record.setUnidadDeMedidaCantidadEnviada(null);
 //		if(item.getPackUnitsTag()!=null && item.getPackUnitsTag().getName()!=null){
 //			record.setUnidadDeMedidaCantidadEnviada(
-//					StringUtils.substring(item.getPackUnitsTag().getName(), 0, 6).toUpperCase());
+//					item.getPackUnitsTag().getName().toUpperCase());
 //		}
 		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		record.setFechaDeCaducidad_36__102_203_(null);
@@ -461,8 +461,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(detail.getQuantity());
 		record.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
 		if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null){
-			record.setUnidadDeMedidaPeso(
-					StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			record.setUnidadDeMedidaPeso(item.getPackMeasurementTag().getName().toUpperCase());
 		}
 		record.setDimensionDeTemperatura1_TC_(null);
 		record.setDimensionDeTemperatura2(null);
