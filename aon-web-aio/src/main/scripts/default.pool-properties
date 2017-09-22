@@ -6,7 +6,7 @@ acquireIncrement=5
 maxPoolSize=100
 
 # Minimum number of Connections a pool will maintain at any given time.
-minPoolSize=20
+minPoolSize=5
 
 #
 #	ESTE PARAMETRO HABRÁ QUE AJUSTARLO (SUBIRLO) CUANDO TENGAMOS CLARO LA MEDIA DE 
