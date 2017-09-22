@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.util;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -15,6 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class PosUtils {
 
@@ -38,7 +40,7 @@ public class PosUtils {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_USERNAME), UserUtils.getInstance().getLoggedUser().getLogin());
 			criteria.addNullExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
-			List<ITransferObject> posShiftList = posShiftBean.getList(criteria);
+			List<ITransferObject> posShiftList = posShiftBean.getList(criteria, 0, 1);
 			if (posShiftList.size() > 0) {
 				result = (PosShift)posShiftList.get(0);
 			}
@@ -61,6 +63,12 @@ public class PosUtils {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage());
 		}
+	}
+
+	public static boolean isHotelPosShiftDateValid(PosShift posShift, Date referenceDate) {
+		ReservationUtils reservationUtils = new ReservationUtils(posShift.getDomain());
+		Date openingDate = reservationUtils.obtainOpeningDate(referenceDate);
+		return !(!referenceDate.before(openingDate) && posShift.getStartTime().before(openingDate));
 	}
 
 }

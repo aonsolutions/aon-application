@@ -1666,13 +1666,26 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	public Date obtainProductionDate(Date referenceDate) {
-		ApplicationParameter closeHourParam = AppParamUtil.getParameter(AppParam.PMS_PRODUCTION_REPORT_CLOSE_HOUR, domain);
-		String closeHour = (closeHourParam!=null && StringUtils.isNotBlank(closeHourParam.getValue())) ? closeHourParam.getValue() : "00:00:00";
-		Date closingDate = DateUtils.truncate(referenceDate, Calendar.DATE);
-		closingDate = DateUtils.addHours(closingDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[0]));
-		closingDate = DateUtils.addMinutes(closingDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[1]));
-		closingDate = DateUtils.addSeconds(closingDate, Integer.parseInt(StringUtils.split(closeHour, ":", 3)[2]));
+		Date closingDate = obtainClosingDate(referenceDate);
 		return (referenceDate.after(closingDate)) ? DateUtils.truncate(referenceDate, Calendar.DATE) : DateUtils.addDays(DateUtils.truncate(referenceDate, Calendar.DATE), -1); 
+	}
+
+	public Date obtainOpeningDate(Date referenceDate) {
+		return obtainAppParamDate(AppParam.PMS_PRODUCTION_REPORT_OPEN_HOUR, referenceDate);
+	}
+
+	public Date obtainClosingDate(Date referenceDate) {
+		return obtainAppParamDate(AppParam.PMS_PRODUCTION_REPORT_CLOSE_HOUR, referenceDate);
+	}
+
+	private Date obtainAppParamDate(AppParam appParam, Date referenceDate) {
+		ApplicationParameter hourParam = AppParamUtil.getParameter(appParam, domain);
+		String closeHour = (hourParam!=null && StringUtils.isNotBlank(hourParam.getValue())) ? hourParam.getValue() : "00:00:00";
+		Date date = DateUtils.truncate(referenceDate, Calendar.DATE);
+		date = DateUtils.addHours(date, NumberUtils.toInt(StringUtils.split(closeHour, ":", 3)[0]));
+		date = DateUtils.addMinutes(date, (StringUtils.countMatches(closeHour, ":") > 0) ? NumberUtils.toInt(StringUtils.split(closeHour, ":", 3)[1]) : 0);
+		date = DateUtils.addSeconds(date, (StringUtils.countMatches(closeHour, ":") > 1) ? NumberUtils.toInt(StringUtils.split(closeHour, ":", 3)[2]) : 0);
+		return date; 
 	}
 
 }

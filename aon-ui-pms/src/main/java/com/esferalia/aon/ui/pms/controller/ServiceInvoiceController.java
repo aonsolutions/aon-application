@@ -40,6 +40,7 @@ import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.CatalogueItem;
@@ -156,11 +157,18 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	@Override
 	public void onReset(ActionEvent event) {
 		try {
-			if (!PosUtils.isUserPosShiftOpened()) {
+			PosShift posShift = PosUtils.getUserPosShift();
+			if (posShift == null) {
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
+			if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+				String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+
 			setNevv(true);
 			setProjectReservation((ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).createNewTo());
 			setReservationInvoiceTo(new ReservationInvoiceTo(true));
@@ -539,6 +547,17 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	}
 
 	private boolean validateInvoice() throws ManagerBeanException {
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
+			String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		if (!isFinancesAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el importe de la Reserva.";
 			AonUtil.addErrorMessage(msg);
@@ -613,9 +632,15 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			if (!PosUtils.isUserPosShiftOpened()) {
+			PosShift posShift = PosUtils.getUserPosShift();
+			if (posShift == null) {
 				setShowRectificationWindow(false);
 				String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+				String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a abonar la Factura.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
@@ -624,14 +649,28 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
 				throw new AbortProcessingException(message);
 			}
+			if (isTouristTaxInvoice(invoice)) {
+				setShowRectificationWindow(false);
+				String msg = "No se puede Abonar la Factura de Tasas.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 
 			setInvoiceToRectify(invoice);
 			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setHotel(obtainRectificationHotel());
-			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+			getReservationInvoiceTo().setPosShift(posShift);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
+	private boolean isTouristTaxInvoice(Invoice invoice) {
+		try {
+			return getReservationUtils().isTouristTaxInvoice(invoice);
+		} catch (ManagerBeanException ex) {
+			throw new AbortProcessingException(ex.getMessage());
 		}
 	}
 
@@ -650,21 +689,39 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	public void onRectify(ActionEvent event) {
 		try {
-			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
-			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+			if (validateRectificationInvoice()) {
+				getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
+				getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
-			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-			Invoice rectifier = reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
+				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
+				Invoice rectifier = reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
 
-			onEditSearch(event);
-			getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());
-			onSearch(event);
-			getModel().setRowIndex(0);
-			onSelect(event);
+				onEditSearch(event);
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());
+				onSearch(event);
+				getModel().setRowIndex(0);
+				onSelect(event);
+			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+
+	private boolean validateRectificationInvoice() throws ManagerBeanException {
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
+			setShowRectificationWindow(false);
+			String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a abonar la Factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		return true;
 	}
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {

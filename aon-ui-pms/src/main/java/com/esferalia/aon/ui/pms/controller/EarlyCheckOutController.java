@@ -32,12 +32,12 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
-import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
@@ -269,9 +269,16 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	}
 
 	private boolean validateEarlyCheckOutShow() throws ManagerBeanException {
-		if (!PosUtils.isUserPosShiftOpened()) {
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
 			setShowEarlyCheckOutWindow(false);
 			String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			setShowEarlyCheckOutWindow(false);
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -682,32 +689,34 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	}
 
 	private boolean validateEarlyCheckOut() throws ManagerBeanException {
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
+			String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		if (getReservation().getStartDate().after(getEarlyCheckOutDate()) || getReservation().getEndDate().before(getEarlyCheckOutDate())) {
 			String msg = "Fecha de Salida Anticipada incorrecta.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
 		if (isPayCheckOut() && !getReservation().isAgencyHolder() && getPenaltyDays() == null) {
 			String msg = "Indique los Días de Penalización.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
 		if (isPayCheckOut() && !isPaymentsAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el Total a Pagar.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
 		if (isPayCheckOut() && !isPayMethodOk()) {
 			String msg = "La Forma de Pago es obligatoria.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-
-		if (isPayCheckOut() && isCashOrCardPayment() && !PosUtils.isUserPosShiftOpened()) {
-			String msg = "No se puede Facturar en Metálico/Tarjetas. El Usuario no ha abierto la Caja.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -733,26 +742,6 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 			}
 		}
 		return true;
-	}
-
-	private boolean isCashOrCardPayment() {
-		for (PaymentSummaryTo paymentSummaryTo : getReservationPaymentSummary()) {
-			if (paymentSummaryTo.getPaymentAmount() != 0) {
-				PayMethodType type = paymentSummaryTo.getPayMethod().getType();
-				if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
-					return true;
-				}
-			}
-		}
-		for (PaymentSummaryTo paymentSummaryTo : getServicesPaymentSummary()) {
-			if (paymentSummaryTo.getPaymentAmount() != 0) {
-				PayMethodType type = paymentSummaryTo.getPayMethod().getType();
-				if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
     private void sendInventoryData(ProjectReservation reservation, List<Item> inventoryItems, Date startDate, Date endDate) throws ManagerBeanException {

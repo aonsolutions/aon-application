@@ -69,6 +69,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
@@ -1051,9 +1052,16 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onAdvanceInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
-			if (!PosUtils.isUserPosShiftOpened()) {
+			PosShift posShift = PosUtils.getUserPosShift();
+			if (posShift == null) {
 				setShowAdvanceInvoiceWindow(false);
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+				setShowAdvanceInvoiceWindow(false);
+				String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
@@ -1081,7 +1089,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			getAdvanceInvoiceTo().setItem(advanceItem);
 			getAdvanceInvoiceTo().setAmount(reservation.getAdvance());
 			getAdvanceInvoiceTo().setConexFlowPayMethod(getReservationUtils().obtainConexFlowPayMethod());
-			getAdvanceInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+			getAdvanceInvoiceTo().setPosShift(posShift);
 			fillInvoiceData(reservation);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -1114,6 +1122,17 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	private boolean validateAdvanceInvoice() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
+			String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		if (getReservationInvoiceTo().getRegistry().isDocumentValidable() && !getReservationInvoiceTo().getRegistry().isValidDocument()) {
 			String msg = AonUtil.getMessage(REGISTRY_DOCUMENT_INCORRECT_ERROR);
 			AonUtil.addErrorMessage(msg);
@@ -1162,9 +1181,16 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onTouristTaxInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
-			if (!PosUtils.isUserPosShiftOpened()) {
-				setShowAdvanceInvoiceWindow(false);
+			PosShift posShift = PosUtils.getUserPosShift();
+			if (posShift == null) {
+				setShowTouristTaxInvoiceWindow(false);
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+				setShowTouristTaxInvoiceWindow(false);
+				String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
@@ -1173,7 +1199,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				accept(event);
 				setSelectedTab(INVOICE);
 
-				setShowAdvanceInvoiceWindow(false);
+				setShowTouristTaxInvoiceWindow(false);
 				String msg = "La Reserva ya estaba Facturada.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -1187,7 +1213,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			}
 			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setIssueDate(reservation.getStartDate());
-			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+			getReservationInvoiceTo().setPosShift(posShift);
 			fillTouristTaxInvoiceData(reservation, touristTaxItem);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -1276,6 +1302,17 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	private boolean validateTouristTaxInvoice() throws ManagerBeanException {
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
+			String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		if (getReservationInvoiceTo().getRegistry().isDocumentValidable() && !getReservationInvoiceTo().getRegistry().isValidDocument()) {
 			String msg = AonUtil.getMessage(REGISTRY_DOCUMENT_INCORRECT_ERROR);
 			AonUtil.addErrorMessage(msg);
@@ -1305,9 +1342,16 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
-			if (!PosUtils.isUserPosShiftOpened()) {
+			PosShift posShift = PosUtils.getUserPosShift();
+			if (posShift == null) {
 				setShowInvoiceWindow(false);
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+				setShowInvoiceWindow(false);
+				String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
@@ -1329,7 +1373,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			}
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setIssueDate(reservation.getStartDate());
-			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+			getReservationInvoiceTo().setPosShift(posShift);
 			fillInvoiceData(reservation);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -1546,6 +1590,17 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	private boolean validateInvoice() throws ManagerBeanException {
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
+			String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a emitir la Factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		if (getReservationInvoiceTo().isDirectCustomer()) {
 			if (getReservationInvoiceTo().getRegistry().isDocumentValidable() && !getReservationInvoiceTo().getRegistry().isValidDocument()) {
 				String msg = AonUtil.getMessage(REGISTRY_DOCUMENT_INCORRECT_ERROR);
@@ -1658,9 +1713,16 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-		if (!PosUtils.isUserPosShiftOpened()) {
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
 			setShowRectificationWindow(false);
 			String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			setShowRectificationWindow(false);
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a abonar la Factura.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -1681,7 +1743,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 		setInvoiceToRectify(invoice);
 		setReservationInvoiceTo(new ReservationInvoiceTo(false));
-		getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+		getReservationInvoiceTo().setPosShift(posShift);
 	}
 
 	private boolean isTouristTaxInvoice(Invoice invoice) {
@@ -1696,28 +1758,45 @@ public class ProjectReservationController extends BasicController implements IPm
 		setInvoiceModel(null);
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
-			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
-			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
-			getReservationInvoiceTo().setEarlyCheckOut(reservation.isEarlyCheckOut());
+			if (validateRectificationInvoice()) {
+				getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
+				getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+				getReservationInvoiceTo().setEarlyCheckOut(reservation.isEarlyCheckOut());
 
-			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-			reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
+				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
+				reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
 
-			if (reservation.getSavedStatus() != reservation.getStatus() || reservation.getSavedCheckStatus() != reservation.getCheckStatus()) {
-				refreshEntireReservation(event);
-			}
+				if (reservation.getSavedStatus() != reservation.getStatus() || reservation.getSavedCheckStatus() != reservation.getCheckStatus()) {
+					refreshEntireReservation(event);
+				}
 
-			if (getInvoiceToRectify().isAdvance()) {
-				reservation.setAdvancedAmount(null);
-			}
-			if (getInvoiceToRectify().isService()) {
-				refreshServices(event);
-				reservation.setTouristTaxPayed(null);
+				if (getInvoiceToRectify().isAdvance()) {
+					reservation.setAdvancedAmount(null);
+				}
+				if (getInvoiceToRectify().isService()) {
+					refreshServices(event);
+					reservation.setTouristTaxPayed(null);
+				}
 			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+
+	private boolean validateRectificationInvoice() throws ManagerBeanException {
+		PosShift posShift = PosUtils.getUserPosShift();
+		if (posShift == null) {
+			String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+			String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a abonar la Factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		return true;
 	}
 
 	public void onModifyInvoiceShow(ActionEvent event) {
@@ -1728,9 +1807,16 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			if (!PosUtils.isUserPosShiftOpened()) {
+			PosShift posShift = PosUtils.getUserPosShift();
+			if (posShift == null) {
 				setShowModificationWindow(false);
 				String msg = "No se puede Modificar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (!PosUtils.isHotelPosShiftDateValid(posShift, new Date())) {
+				setShowModificationWindow(false);
+				String msg = "Debe cerrar el Turno actual y abrir nuevo Turno previamente a modificar la Factura.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
@@ -1742,7 +1828,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 			setInvoiceToModify(invoice);
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
-			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+			getReservationInvoiceTo().setPosShift(posShift);
 			fillInvoiceModificationData(invoice);
 			fillInvoiceFinanceModificationData(invoice);
 		} catch (ManagerBeanException ex) {
@@ -1797,7 +1883,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			Invoice invoice = getInvoiceToModify();
 			if (validateModificationInvoice(invoice)) {
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-				if (DateUtils.isSameDay(invoice.getIssueDate(), new Date()) && isInvoiceInUserPosShift(invoice) && invoice.isAllFinancePending()) {
+				if (DateUtils.isSameDay(invoice.getIssueDate(), getReservationUtils().obtainProductionDate(new Date())) && isInvoiceInUserPosShift(invoice) && invoice.isAllFinancePending()) {
 					reservationInvoicing.modify(invoice, getReservationInvoiceTo());
 				} else {
 					setInvoiceToRectify(invoice);
