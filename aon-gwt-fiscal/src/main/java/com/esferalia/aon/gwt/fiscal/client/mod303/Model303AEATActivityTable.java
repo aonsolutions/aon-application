@@ -79,7 +79,7 @@ public class Model303AEATActivityTable extends CellTable<Mod303Activity> impleme
 				return AON.FMT.format(model.getDev());
 			}
 		};
-		this.addColumn(netYieldColumn, AON.MSG.quota());
+		this.addColumn(netYieldColumn, AON.MSG.quota() + " [C]");
 		netYieldColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
 		this.setColumnWidth(netYieldColumn, 125, Unit.PX);
 	}	
@@ -91,7 +91,7 @@ public class Model303AEATActivityTable extends CellTable<Mod303Activity> impleme
 				return AON.FMT.format(model.getPor());
 			}
 		};
-		this.addColumn(percentColumn, AON.MSG.percent());
+		this.addColumn(percentColumn, AON.MSG.percentAbbr() + " [E]");
 		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
 		this.setColumnWidth(percentColumn, 100, Unit.PX);
 	}	
@@ -103,7 +103,7 @@ public class Model303AEATActivityTable extends CellTable<Mod303Activity> impleme
 				return AON.FMT.format(model.getIng());
 			}
 		};
-		this.addColumn(amountColumn, AON.MSG.result());
+		this.addColumn(amountColumn, AON.MSG.result() + " [F]");
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
 		this.setColumnWidth(amountColumn, 120, Unit.PX);
 	}	

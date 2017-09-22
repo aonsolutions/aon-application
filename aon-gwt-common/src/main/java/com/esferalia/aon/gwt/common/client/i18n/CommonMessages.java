@@ -752,6 +752,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Porcentaje")
 	String percent();
 
+	@DefaultMessage("Porc.")
+	String percentAbbr();
+
 	@DefaultMessage("Cantidad")
 	String quantity();
 

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,7 +56,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		,DIFF_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO))))
 		,DIFF_IN_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInAccrualInvoicesInfo(ctx, mod, script,keyDAO))))
 		,DIFF_OUT_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffOutAccrualInvoicesInfo(ctx, mod, script,keyDAO))))
-		,COMPUTE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getExpression(mod, script,keyDAO))))
+		,COMPUTE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getCompute(ctx,mod, script) )))
 		,COMPUTE_KEY ( (ctx, mod, script,keyDAO) -> getComputeKey(ctx,mod, script,keyDAO))
 		;
 		private IModelInfoProvider provider;
@@ -253,74 +252,33 @@ public class Mod303DAO extends FiscalModelDAO {
 		return null;
 	}
 
-	private static String getExpression(Mod303 mod303
-			, IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO0) {
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		StringBuilder buf = new StringBuilder();
-		int headerLength = 100;
-		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
-		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.center("DETALLE DEL C\u00C1LCULO", headerLength)));
-		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
-
-		final StringBuilder expr = new StringBuilder();
-		final StringBuilder resu = new StringBuilder();
-
+	private static String defaultTemplate(IMod303KeyDAO keyDAO,Mod303Declaration dec) {
+		final String EXP_KEY = "_EXP_";
 		LinkedHashMap<String, Object> mvelCtx = new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -4910560506222174407L;
 			@Override
 			public Object get(Object key) {
+				if (EXP_KEY.equals(key)) {
+					return getExpression();
+				}
 				IMod303KeyDAO keyDAO = dec.valueOf(key.toString());
-				String box = " [" + AonStringUtils.leftPad(Integer.toString(keyDAO.getKey().getBox()), 3, '0')+"] ";
-				String exprCopy = expr.toString();
-				expr.delete(0, expr.length());
-				expr.append(AonStringUtils.replace(exprCopy
-						, key.toString()
-						, box));
-				Object value = super.get(key);
-				exprCopy = resu.toString();
-				resu.delete(0, resu.length());
-				resu.append(AonStringUtils.replace(exprCopy
-						, key.toString()
-						," " + value.toString() + " "
-						));
-				return value;
+				String box = " @{" + keyDAO.toString()+"} ";
+				put(EXP_KEY, AonStringUtils.replace(getExpression(), key.toString(), box));
+				return null;
+			}
+			public String getExpression () {
+				return (String) super.get(EXP_KEY); 
 			}
 		};
-
-		for (String keyValue : mod303.getMap().keySet()) {
-			Mod303Key mod303Key = Mod303Key.getKey(keyValue);
-			if (mod303Key != null) {
-				FiscalModelDetail detail = mod303.getMap().get(keyValue);
-				mvelCtx.put(mod303Key.toString(), detail==null?0.0:detail.getAmount());
-			}
+		mvelCtx.put(EXP_KEY, keyDAO.getExpression());
+		for (IMod303KeyDAO keyValue : dec.getKeys()) {
+			Mod303Key mod303Key = keyValue.getKey();
+			mvelCtx.put(mod303Key.toString(), 0.0);
 		}
-
-
-		for (Mod303Key key : script.getKeys() ) {
-			if (key != null) {
-				IMod303KeyDAO keyDAO = dec.safeValueOf(mod303, key.getValue());
-				if (keyDAO != null) {
-					resu.delete(0, resu.length());
-					resu.append(keyDAO.getExpression());
-					expr.delete(0, expr.length());
-					expr.append(keyDAO.getExpression());
-					
-					String box = " [" + AonStringUtils.leftPad(Integer.toString(keyDAO.getKey().getBox()), 3, '0')+"] ";
-					buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
-					buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.center("Casilla: " + box + " - " + script.getLabel(), headerLength)));
-					Object ret = MVEL.eval(keyDAO.getExpression(), mvelCtx, mvelCtx);
-					resu.append(" = ");
-					resu.append(AonMathUtils.round((Double) ret));
-					expr.append(" = ");
-					expr.append(box);
-					buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG,"<b>F\u00F3rmula:</b> " + expr.toString()));		
-					buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BLUE_BORDER_BOTTOM,"<b>Resultado:</b> " + resu.toString()));
-				}
-			}
-		}
-		return buf.toString();
+		MVEL.eval(keyDAO.getExpression(), mvelCtx, mvelCtx);
+		return "<li><b>Resultado:</b> " + ((String) mvelCtx.get(EXP_KEY)) + "= <b>@{"+keyDAO.toString()+"}" + "</b></li>";
 	}
-	
+
 	private static String getComputeKey(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		Mod303MVELContext mvelCtx = getMvelContext( dec, mod303 );
@@ -329,28 +287,38 @@ public class Mod303DAO extends FiscalModelDAO {
 		return getCompute(ctx, mod303, script,mvelCtx);
 	}
 	
-	private static String getCompute(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,Map<String, Object> mvelCtx) {
+	private static String getCompute(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script) {
+		return getCompute(ctx, mod303, script, getMvelContext(Mod303Declaration.getInstance(mod303), mod303));
+	}
+	private static String getCompute(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,Mod303MVELContext mvelCtx) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		StringBuilder buf = new StringBuilder();
 		buf.append("<pre style=\"font-family: Fixed, monospace;font-size: 0.9em; margin-bottom: 1em; padding: 1em;text-align: left;\">");
 		for (Mod303Key key : script.getKeys() ) {
-			IMod303KeyDAO keyDAO = dec.safeValueOf(mod303, key.getValue());
-			if (keyDAO != null) {
-				String box = " [" + AonStringUtils.leftPad(Integer.toString(keyDAO.getKey().getBox()), 3, '0')+"] ";
-				buf.append(AonStringUtils.CR_LF);
-				buf.append("<b>DETALLE DEL C\u00C1LCULO DE LA CASILLA: " + box + " - " + script.getLabel() + "</b>");
-				buf.append(AonStringUtils.CR_LF);
-				buf.append(AonStringUtils.CR_LF);
-				buf.append("<ul style=\"padding-left: 20px;\">");
-				if (AonStringUtils.isNotBlank( keyDAO.getExpression())) {
-					buf.append("<li><b>F\u00F3rmula:</b> " + keyDAO.getExpression() + "</li>" );
+			if (key != null) {
+				IMod303KeyDAO keyDAO = dec.safeValueOf(mod303, key.getValue());
+				if (keyDAO != null) {
+					String box = " [" + keyDAO.getKey().getBoxCode()+ "] ";
+					buf.append(AonStringUtils.CR_LF);
+					buf.append("<b>DETALLE DEL C\u00C1LCULO DE LA CASILLA: " + box + " - " + script.getLabel() + "</b>");
+					buf.append(AonStringUtils.CR_LF);
+					buf.append(AonStringUtils.CR_LF);
+					buf.append("<ul style=\"padding-left: 20px;\">");
+					if (AonStringUtils.isNotBlank( keyDAO.getExpression())) {
+						buf.append("<li><b>F\u00F3rmula:</b> " + keyDAO.getExpression() + "</li>" );
+					}
+					String template = keyDAO.getTemplate();
+					if (AonStringUtils.isBlank( template )) {
+						template = defaultTemplate(keyDAO, dec);	
+					}
+					if (AonStringUtils.isNotBlank( template )) {
+						Object result = TemplateRuntime.eval(template, mvelCtx);
+						buf.append(result != null ? result.toString() : null);
+					} else {
+						
+					}
+					buf.append("</ul>");
 				}
-				String template = keyDAO.getTemplate();
-				if (AonStringUtils.isNotBlank( template )) {
-					Object result = TemplateRuntime.eval(template, mvelCtx);
-					buf.append(result != null ? result.toString() : null);
-				}
-				buf.append("</ul>");
 			}
 		}
 		buf.append("</pre>");

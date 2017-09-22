@@ -1542,7 +1542,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_C65(Mod303Key.CT_C65,null,null, (ctx,mod) -> add(Mod303Key.CT_C65,mod,100.0),null,null)
 		
 		// Cuota atribuible a la Administración del Estado
-		,CT_C66(Mod303Key.CT_C66,null,null,null,"round(CT_C64*CT_C65/100)",null)
+		,CT_C66(Mod303Key.CT_C66,null,null,null,"round(CT_C64*CT_C65/100)"
+			,"<li><b>Resultado:</b> @{CT_C65} % de @{CT_C64} igual <b>@{CT_C66}</b></li>")
 				
 		// IVA a la importación liquidado por la Aduana pendiente de ingreso
 		,CT_C77(Mod303Key.CT_C77)

@@ -118,7 +118,7 @@ public class Model303AEATActivityFarmerTable extends CellTable<Mod303ActivityFar
 				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getPor());
 			}
 		};
-		this.addColumn(percentColumn, AON.MSG.percent());
+		this.addColumn(percentColumn, AON.MSG.percentAbbr());
 		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
 		this.setColumnWidth(percentColumn, 100, Unit.PX);
 	}	
@@ -130,7 +130,7 @@ public class Model303AEATActivityFarmerTable extends CellTable<Mod303ActivityFar
 				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getIng());
 			}
 		};
-		this.addColumn(amountColumn, AON.MSG.result());
+		this.addColumn(amountColumn, AON.MSG.result() + " [A]");
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
 		this.setColumnWidth(amountColumn, 120, Unit.PX);
 	}
