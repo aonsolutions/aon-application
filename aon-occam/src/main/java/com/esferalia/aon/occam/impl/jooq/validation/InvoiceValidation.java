@@ -104,7 +104,7 @@ public class InvoiceValidation {
 				ctx.getContext().getDslContext().selectOne()
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
-					.and(INVOICE.SERIES.eq(inv.getSeries()))
+					.and(inv.getSeries() == null ? DSL.trueCondition() : INVOICE.SERIES.eq(inv.getSeries()))
 					.and(INVOICE.NUMBER.eq(inv.getNumber()))
 					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
 					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
