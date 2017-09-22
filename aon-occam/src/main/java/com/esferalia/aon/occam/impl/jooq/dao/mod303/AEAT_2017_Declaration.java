@@ -1777,7 +1777,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	}
 
 	private static boolean operacionesISPFilterSimp(VatContext vat, Mod303 mod) {
-		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
+		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) 
 			&& operacionesISPFilter(vat,mod);
 	}
 
