@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
@@ -20,7 +21,7 @@ public enum Model3032017AEATSimplifiedRegimeScript implements IModelScript<Mod30
 	 
 	 ,DCG01 ("IVA deducible",null,TITLE)
 	 ,DC002 (Mod303Key.CT_S55.getDescription(),new Mod303Key[]{Mod303Key.CT_S55},INVOICE,DIFF_INVOICE)
-	 ,DC003 (Mod303Key.CT_S56.getDescription(),new Mod303Key[]{Mod303Key.CT_S56},INVOICE,DIFF_INVOICE)
+	 ,DC003 (Mod303Key.CT_S56.getDescription(),new Mod303Key[]{Mod303Key.CT_S56},NONE)
 	 ,DC004 (Mod303Key.CT_S57.getDescription(),new Mod303Key[]{Mod303Key.CT_S57},COMPUTE)
 	 
 	 ,TTG00 ("Resultado",null,TITLE)
