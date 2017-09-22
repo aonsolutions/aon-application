@@ -18,7 +18,7 @@ public enum Model3032017AEATSimplifiedRegimeScript implements IModelScript<Mod30
 	 ,DV005 (Mod303Key.CT_S53.getDescription(),new Mod303Key[]{Mod303Key.CT_S53},INVOICE,DIFF_INVOICE)
 	 ,DV006 (Mod303Key.CT_S54.getDescription(),new Mod303Key[]{Mod303Key.CT_S54},COMPUTE)
 	 
-	 ,DCG01 ("Cuotas devengadas",null,TITLE)
+	 ,DCG01 ("IVA deducible",null,TITLE)
 	 ,DC002 (Mod303Key.CT_S55.getDescription(),new Mod303Key[]{Mod303Key.CT_S55},INVOICE,DIFF_INVOICE)
 	 ,DC003 (Mod303Key.CT_S56.getDescription(),new Mod303Key[]{Mod303Key.CT_S56},INVOICE,DIFF_INVOICE)
 	 ,DC004 (Mod303Key.CT_S57.getDescription(),new Mod303Key[]{Mod303Key.CT_S57},COMPUTE)
