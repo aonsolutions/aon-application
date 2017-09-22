@@ -135,19 +135,24 @@ public class VATFormatter {
 				 ,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.repeat(" ", 6)
 				+ AonStringUtils.repeat(" ", 6)
+				+ AonStringUtils.repeat(" ", 10)
 				+ AonStringUtils.repeat(" ", 8)
 				+ AonStringUtils.repeat(" ", 15)
+				+ AonStringUtils.repeat(" ", 15)
 				+ AonStringUtils.leftPad(" ",30)
-				+ AonStringUtils.leftPad(" ",12)
-				+ AonStringUtils.leftPad(" ",12)
-				+ AonStringUtils.rightPad("TOTAL:",9)				
-				+ AonStringUtils.leftPad(DEC.format(sumBase),15)
+				+ AonStringUtils.leftPad(" ",10)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.leftPad(" ",10)
+				+ AonStringUtils.rightPad("TOTAL:",10)				
+				+ AonStringUtils.leftPad(DEC.format(sumBase),17)
 				+ AonStringUtils.leftPad(" ",8)
 				+ AonStringUtils.leftPad(DEC.format(sumQuota),15)
 				+ AonStringUtils.leftPad(" ",8)
 				+ AonStringUtils.leftPad(DEC.format(sumReQuota),15)
 				+ AonStringUtils.leftPad(" ",8)
 				+ AonStringUtils.leftPad(AonMathUtils.isZero(sumDedQuota)? " " : DEC.format(sumDedQuota),15)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.rightPad(" ",25)
 				+ AonStringUtils.repeat(" ", 2)
 				));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", header.length())));

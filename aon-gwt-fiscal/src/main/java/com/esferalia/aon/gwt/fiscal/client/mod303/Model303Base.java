@@ -333,8 +333,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		saveButton.setEnabled(!isSnapshot() && !mod303.isFinished());
 		deleteButton.setEnabled(!mod303.isFinished());
 		
-		reopenButton.setVisible(!isSnapshot() && !mod303.isNew() && mod303.isFinished());
-		finalizeButton.setVisible(!isSnapshot() && !mod303.isNew() && !mod303.isFinished());
+		reopenButton.setVisible(!isSnapshot() && !mod303.isNew() &&
+				(mod303.getStatus() == FiscalStatus.FINISHED 
+				|| mod303.getStatus() == FiscalStatus.BATCHED
+				|| mod303.getStatus() == FiscalStatus.BLOCKED));
+		finalizeButton.setVisible(!isSnapshot() && !mod303.isNew() &&
+				(mod303.getStatus() == FiscalStatus.PENDING 
+				|| mod303.getStatus() == FiscalStatus.MISSING));
 	}
 
 	protected void paintDeclarationHeaderTable(SimplePanel panel) {
@@ -459,10 +464,15 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	private void styleStatusLabel(Mod303 mod) {
 		statusLabel.setText(mod.getStatus().getName());
-		statusLabel.setStyleName(mod.getStatus() == FiscalStatus.FINISHED
-			?AON.AON_CSS.aonIconLock()
-			:AON.AON_CSS.aonIconUnlock()
-		);
+		if (mod.getStatus() == FiscalStatus.FINISHED || mod.getStatus() == FiscalStatus.BATCHED) {
+			statusLabel.setStyleName(AON.AON_CSS.aonIconLock());
+		}
+		if (mod.getStatus() == FiscalStatus.BLOCKED ) {
+			statusLabel.setStyleName(AON.AON_CSS.aonIconBlocked());
+		}
+		if (mod.getStatus() == FiscalStatus.PENDING || mod.getStatus() == FiscalStatus.MISSING) {
+			statusLabel.setStyleName(AON.AON_CSS.aonIconUnlock());
+		}
 		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
 	}
 	private void styleCommentsButton() {

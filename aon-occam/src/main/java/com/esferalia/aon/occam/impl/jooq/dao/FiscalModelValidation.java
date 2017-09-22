@@ -8,6 +8,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -49,7 +50,7 @@ public class FiscalModelValidation {
 	};
 
 	public static BiConsumer<FiscalModel,AONContext> SAME_PERIOD_EXISTS_CHECK = (fm,ctx) -> {
-		if (!fm.isReplacement() && !fm.isComplementary()
+		if (fm.getStatus() != FiscalStatus.BLOCKED && !fm.isReplacement() && !fm.isComplementary()
 			&& ctx.getDslContext()
 				.select()
 				.from(FS_MODEL)
@@ -73,6 +74,46 @@ public class FiscalModelValidation {
 	};
 
 	/**
+	 * El Nombre debe tener 45 caracters como maximo.
+	 */
+	public static BiConsumer<FiscalModel,AONContext> NAME_LENGTH = (fm,ctx) -> {
+		if (AonStringUtils.length( fm.getName()) > 45  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Nombre o raz\u00F3n social", "45" ));
+	};
+	
+	/**
+	 * El Documento debe tener 9 caracters como maximo.
+	 */
+	public static BiConsumer<FiscalModel,AONContext> DOCUMENT_LENGTH = (fm,ctx) -> {
+		if (AonStringUtils.length( fm.getDocument()) > 45  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Documento", "9" ));
+	};
+
+	/**
+	 * El apellido debe tener 30 caracters como maximo.
+	 */
+	public static BiConsumer<FiscalModel,AONContext> SURNAME_LENGTH = (fm,ctx) -> {
+		if (AonStringUtils.length( fm.getSurname()) > 45  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Apellidos", "30" ));
+	};
+
+	/**
+	 * El Numero de calle debe tener 4 caracters como maximo.
+	 */
+	public static BiConsumer<FiscalModel,AONContext> STREET_NUMBER_LENGTH = (fm,ctx) -> {
+		if (AonStringUtils.length( fm.getStreetNumber()) > 4  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Direcci\u00F3n. N\u00FAmero", "4" ));
+	};
+
+	/**
+	 * El codigo postal debe tener 5 caracters como maximo.
+	 */
+	public static BiConsumer<FiscalModel,AONContext> ZIP_LENGTH = (fm,ctx) -> {
+		if (AonStringUtils.length( fm.getZip()) > 5  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( "C\u00F3digo postal", "5" ));
+	};
+
+	/**
 	 * El telefono debe tener nueve caracters como maximo.
 	 */
 	public static BiConsumer<FiscalModel,AONContext> CONTACT_CELLULAR = (fm,ctx) -> {
@@ -93,6 +134,11 @@ public class FiscalModelValidation {
 		.andThen(EMPTY_YEAR)
 		.andThen(INVALID_YEAR)
 		.andThen(EMPTY_PERIOD)
+		.andThen(DOCUMENT_LENGTH)
+		.andThen(NAME_LENGTH)
+		.andThen(SURNAME_LENGTH)
+		.andThen(STREET_NUMBER_LENGTH)
+		.andThen(ZIP_LENGTH)
 		.andThen(CONTACT_CELLULAR)
 		.andThen(CONTACT_PHONE)
 		.andThen(SAME_PERIOD_EXISTS_CHECK)

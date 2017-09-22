@@ -230,6 +230,9 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-model.png")
 	ImageResource aonIconModel();
 	
+	@Source("images/aon-icon-blocked.png")
+	ImageResource aonIconBlocked();
+
 	@Source("images/aon-icon-lock.png")
 	ImageResource aonIconLock();
 

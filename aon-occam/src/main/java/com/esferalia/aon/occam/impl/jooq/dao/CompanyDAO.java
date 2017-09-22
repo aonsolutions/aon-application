@@ -168,8 +168,6 @@ public class CompanyDAO {
 			.where(ENTERPRISE.REGISTRY.equal(id))
 			.fetch()
 			.stream()
-			.findFirst()
-			.get()
 			.map( record -> new Enterprise().setId(record.getValue(ENTERPRISE.REGISTRY))
 				.setDomain(record.getValue(ENTERPRISE.DOMAIN))
 				.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(REGISTRY.DOCUMENT_TYPE)))
@@ -190,7 +188,9 @@ public class CompanyDAO {
 				.setFax(record.getValue(FAX.VALUE))
 				.setEmail(record.getValue(EMAIL.VALUE))
 				.setWeb(record.getValue(WEB.VALUE))
-				);
+				)
+		.findFirst()
+		.orElse(null);
 	}
 	
 	public static Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter){

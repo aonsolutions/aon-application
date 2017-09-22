@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod303;
+package net.aonsolutions.vat.change;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -10,6 +10,11 @@ import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.IValueAccepter;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.IValueFirstIntializer;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.IValueIntializer;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.Mod303Declaration;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -29,7 +34,7 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	private static final double SURCHARGE_PERCENT4 = 1.75;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isBizkaia() && mod.getYear() >= 2010;
+		return  mod.isBizkaia() && mod.getYear() >= 2017;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{

@@ -144,6 +144,9 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public boolean isNotFinished() {
 		return getStatus() != FiscalStatus.FINISHED;
 	}
+	public boolean isBlocked() {
+		return getStatus() == FiscalStatus.BLOCKED;
+	}
 	public FiscalModel setStatus(FiscalStatus status) {
 		this.status = status;
 		return this;

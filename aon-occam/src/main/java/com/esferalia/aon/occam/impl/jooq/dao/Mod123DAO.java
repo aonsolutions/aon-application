@@ -282,6 +282,7 @@ public class Mod123DAO extends FiscalModelDAO {
 	public static Mod123 initializeMod123(AONContext ctx,Mod123 mod123) {
 		if (mod123 == null) {
 			mod123 = new Mod123();
+			mod123.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod123);
 		return mod123;

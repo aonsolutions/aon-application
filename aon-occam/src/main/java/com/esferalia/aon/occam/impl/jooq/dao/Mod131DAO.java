@@ -1823,6 +1823,7 @@ public class Mod131DAO extends FiscalModelDAO {
 	public static Mod131 initializeMod131(AONContext ctx,Mod131 mod) {
 		if (mod == null) {
 			mod = new Mod131();
+			mod.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod);
 		mod.putAmount(Mod131Key.P2, (AppParamDAO.isPermAddressChanges(ctx)?1:0) );

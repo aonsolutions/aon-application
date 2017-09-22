@@ -407,6 +407,7 @@ public class Mod130DAO extends FiscalModelDAO {
 	public static Mod130 initializeMod130(AONContext ctx,Mod130 mod130) {
 		if (mod130 == null) {
 			mod130 = new Mod130();
+			mod130.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod130);
 		if (mod130.isAEAT()) {

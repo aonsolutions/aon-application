@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod303;
+package net.aonsolutions.vat.change;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -7,6 +7,11 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.IValueAccepter;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.IValueFirstIntializer;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.IValueIntializer;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.Mod303Declaration;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -17,15 +22,15 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		
 	}
 	
-	private static final double PERCENT1 = 21.0;
-	private static final double PERCENT2 = 10.0;
-	private static final double PERCENT3 = 4.0;
-	private static final double SURCHARGE_PERCENT1 = 5.2;
-	private static final double SURCHARGE_PERCENT2 = 1.4;
-	private static final double SURCHARGE_PERCENT3 = 0.5;
+	protected static final double PERCENT1 = 21.0;
+	protected static final double PERCENT2 = 10.0;
+	protected static final double PERCENT3 = 4.0;
+	protected static final double SURCHARGE_PERCENT1 = 5.2;
+	protected static final double SURCHARGE_PERCENT2 = 1.4;
+	protected static final double SURCHARGE_PERCENT3 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isGipuzkoa() && mod.getYear() >= 2010;
+		return  mod.isGipuzkoa() && mod.getYear() >= 2017;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		  Mod303Key.GP_C018

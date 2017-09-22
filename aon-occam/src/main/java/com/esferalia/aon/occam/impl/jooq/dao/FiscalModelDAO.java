@@ -358,7 +358,7 @@ public class FiscalModelDAO {
 	
 	static void initializeFiscalModel(AONContext ctx, FiscalModel fm) {
 		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-		fm.setDomain(ctx.getDomainId());
+		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
 		fm.setDocument(params.getDocument());
 		fm.setName(params.getName());
 		if (fm.getAdministration() == null) {
@@ -379,11 +379,12 @@ public class FiscalModelDAO {
 		fm.setStatus(FiscalStatus.PENDING);
 		
 		// ---------------------------
-		Company company = CompanyDAO.getCompany(ctx,ctx.getDomainId());
+		Company company = CompanyDAO.getCompany(ctx,fm.getDomain());
 		Enterprise enterprise = CompanyDAO.getEnterprise(ctx, company.getId() );
-		fm.setDocument(enterprise.getDocument());
-		String name = enterprise.getName();
-		if (enterprise.getDocumentType() != DocumentType.CIF) {
+		fm.setDocument(enterprise==null?company.getDocument():enterprise.getDocument());
+		String name = enterprise==null?company.getName():enterprise.getName();
+		DocumentType docType = enterprise==null?company.getDocumentType():enterprise.getDocumentType();
+		if (docType != DocumentType.CIF) {
 			if (AonStringUtils.contains(name, ',')) {
 				fm.setName(AonStringUtils.trim(AonStringUtils.substringAfter(name, ",")));
 				fm.setSurname(AonStringUtils.trim(AonStringUtils.substringBefore(name, ",")));
@@ -395,16 +396,18 @@ public class FiscalModelDAO {
 			fm.setName(name);	
 			fm.setSurname(null);
 		}
-		fm.setStreetInitial( enterprise.getStreetType().getAeatCode() );
-		fm.setStreetName( AonStringUtils.left(enterprise.getAddress(),17) );
-		fm.setStreetNumber( enterprise.getNumber() ); 
-		fm.setTown( AonStringUtils.left(enterprise.getCity(),20));
-		fm.setProvince(enterprise.getProvince()==null?"":enterprise.getProvince().toString());
-		fm.setZip("00000");
-		if (enterprise.getZip() != null){
-			fm.setZip(enterprise.getZip());
+		if (enterprise != null) {
+			fm.setStreetInitial( enterprise.getStreetType() == null?null:enterprise.getStreetType().getAeatCode() );
+			fm.setStreetName( AonStringUtils.left(enterprise.getAddress(),17) );
+			fm.setStreetNumber( enterprise.getNumber() ); 
+			fm.setTown( AonStringUtils.left(enterprise.getCity(),20));
+			fm.setProvince(enterprise.getProvince()==null?"":enterprise.getProvince().toString());
+			fm.setZip("00000");
+			if (enterprise.getZip() != null){
+				fm.setZip(enterprise.getZip());
+			}
+			fm.setPhone(enterprise.getPhone() );
 		}
-		fm.setPhone(enterprise.getPhone() );
 		fm.setContactPerson( params.getContactPerson() );
 		fm.setContactPhone(params.getContactPhone() );
 		fm.setContactCellular( params.getContactCellular() );

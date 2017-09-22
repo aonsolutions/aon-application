@@ -883,6 +883,12 @@ input[type="checkbox"]:focus + label {
 	height: auto;
 }
 
+@sprite .aon-icon-blocked {
+	gwt-image: "aonIconBlocked";
+	width: auto;
+	height: auto;
+}
+
 @sprite .aon-icon-unlock {
 	gwt-image: "aonIconUnlock";
 	width: auto;

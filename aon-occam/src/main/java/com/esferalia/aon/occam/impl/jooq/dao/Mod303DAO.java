@@ -117,13 +117,12 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		return mvelCtx; 
 	}
-	
-	public static Mod303 calculateMod303(AONContext ctx, Mod303 mod303) {
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+	public static Mod303 calculateMod303(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
 		Mod303MVELContext mvelCtx = getMvelContext( dec, mod303 );
 		for (IMod303KeyDAO key : dec.getKeys()) {
 			if (AonStringUtils.isNotEmpty( key.getExpression()) ) {
-				Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
+				Object ret =  mvelCtx.evaluateExpression(key.toString(), key.getExpression());
+				// Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
 				Double amount = (Double) ret;
 				mvelCtx.put(key.getKey().toString(), amount);
 				mod303.ensureDetail(key.getKey()).setAmount(AonMathUtils.round( amount) );
@@ -133,9 +132,15 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303; 
 	}
 	
+	public static Mod303 calculateMod303(AONContext ctx, Mod303 mod303) {
+		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		return calculateMod303(ctx, mod303, dec);
+	}
+	
 	public static Mod303 initializeMod303(AONContext ctx,Mod303 mod303) {
 		if (mod303 == null) {
 			mod303 = new Mod303();
+			mod303.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod303);
 		declarationChanged(ctx, mod303);
