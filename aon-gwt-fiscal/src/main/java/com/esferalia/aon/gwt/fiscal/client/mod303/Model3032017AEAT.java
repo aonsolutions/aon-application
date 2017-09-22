@@ -29,7 +29,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -504,7 +503,6 @@ public class Model3032017AEAT extends Model303Base {
 					}
 				}
 				final int currentIndex = idx;
-				Window.alert("currentIndex ..: " + currentIndex + " " + original.getEpigraph() );
 				final CustomDialog dialog = new CustomDialog();
 				IMod303ActivityCallback activityCallback = new IMod303ActivityCallback() {
 					
