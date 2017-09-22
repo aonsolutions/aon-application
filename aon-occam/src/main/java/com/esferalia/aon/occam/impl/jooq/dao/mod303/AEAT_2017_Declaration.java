@@ -1756,11 +1756,12 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	}
 	
 	private static boolean adqIntracomunitariasFilterGene(VatContext vat, Mod303 mod) {
-		System.out.print( "  " + vat.isVatGeneralRegime(mod.getDefaultVATRegime()) + "/" + adqIntracomunitariasFilter(vat,mod));
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && adqIntracomunitariasFilter(vat,mod);
 	}
 	private static boolean adqIntracomunitariasFilterSimp(VatContext vat, Mod303 mod) {
-		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && adqIntracomunitariasFilter(vat,mod);
+		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) 
+				&& vat.isIntracommunityPurchase()
+				&& !vat.isService();
 	}
 	
 	private static boolean entregasActivosFijosFilterSimp(VatContext vat, Mod303 mod) {
@@ -1778,7 +1779,9 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 
 	private static boolean operacionesISPFilterSimp(VatContext vat, Mod303 mod) {
 		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) 
-			&& operacionesISPFilter(vat,mod);
+			&& (operacionesISPFilter(vat,mod)
+			|| vat.isIntracommunityExpenses()
+			|| (vat.isService() && vat.isIntracommunityPurchase()));
 	}
 
 	private static boolean operacionesISPFilterGene(VatContext vat, Mod303 mod) {
