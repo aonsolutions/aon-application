@@ -825,8 +825,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			dirtyPanel.add(adjLabel);
 		}
 	}
-
-	private void save() {
+	protected void save() {
+		save(null);
+	}
+	protected void save(AsyncCallback<Mod303> cbk) {
 		saveButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -842,6 +844,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 						selectAndPopulate(result);
 						popup.hide();
 						saveButton.setEnabled(true);
+						if (cbk != null) cbk.onSuccess(result);
 					}
 
 					@Override

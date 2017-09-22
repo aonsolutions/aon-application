@@ -29,6 +29,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -60,7 +61,12 @@ public class Model3032017AEAT extends Model303Base {
 			return AonStringUtils.isBlank(model.getCode()) ? null : model.getCode();
 		}
 	}
-
+	private final Mod303ActivityFarmerProvidesKey providesFarmerKey = new Mod303ActivityFarmerProvidesKey();
+	private final Model303AEATActivityFarmerTable farmerTable = new Model303AEATActivityFarmerTable( providesFarmerKey );
+	
+	private final Mod303ActivityProvidesKey providesKey = new Mod303ActivityProvidesKey();
+	private final Model303AEATActivityTable activityTable = new Model303AEATActivityTable( providesKey );
+	
 	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -387,17 +393,15 @@ public class Model3032017AEAT extends Model303Base {
 	}
 
 	private Model303AEATActivityFarmerTable getActivityFarmerTable() {
-		final Mod303ActivityFarmerProvidesKey providesFarmerKey = new Mod303ActivityFarmerProvidesKey();
-		final Model303AEATActivityFarmerTable tableFarmer = new Model303AEATActivityFarmerTable( providesFarmerKey );
-		tableFarmer.addRangeChangeHandler(new Handler() {
+		farmerTable.addRangeChangeHandler(new Handler() {
 			
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				tableFarmer.setRowData(getCallback().getMod303().getActivityFarmerList());
+				farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
 			}
 		});
 		
-		tableFarmer.addSelectionHandler(new SelectionHandler<Mod303ActivityFarmer>() {
+		farmerTable.addSelectionHandler(new SelectionHandler<Mod303ActivityFarmer>() {
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod303ActivityFarmer> event) {
@@ -418,16 +422,16 @@ public class Model3032017AEAT extends Model303Base {
 						dialog.hide();
 						getCallback().getMod303().getActivityFarmerList().set(currentIndex, original);
 						calculateAndRefresh();
-						tableFarmer.setRowData(getCallback().getMod303().getActivityFarmerList());
-						tableFarmer.redraw();
+						farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
+						farmerTable.redraw();
 					}
 					
 					@Override
 					public void onAccept(Mod303ActivityFarmer act) {
 						getCallback().getMod303().getActivityFarmerList().set(currentIndex, act);
 						dialog.hide();
-						tableFarmer.setRowData(getCallback().getMod303().getActivityFarmerList());
-						tableFarmer.redraw();
+						farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
+						farmerTable.redraw();
 					}
 					
 					@Override
@@ -439,7 +443,7 @@ public class Model3032017AEAT extends Model303Base {
 							}
 						}
 						calculateAndRefresh();
-						tableFarmer.redraw();
+						farmerTable.redraw();
 					}
 
 					@Override
@@ -475,22 +479,20 @@ public class Model3032017AEAT extends Model303Base {
 				dialog.center();
 			}
 		});
-		tableFarmer.setVisibleRangeAndClearData(tableFarmer.getVisibleRange(), true);
-		return tableFarmer;
+		farmerTable.setVisibleRangeAndClearData(farmerTable.getVisibleRange(), true);
+		return farmerTable;
 	}
 	
 	private Model303AEATActivityTable getActivityTable() {
-		final Mod303ActivityProvidesKey providesKey = new Mod303ActivityProvidesKey();
-		final Model303AEATActivityTable table = new Model303AEATActivityTable( providesKey );
-		table.addRangeChangeHandler(new Handler() {
+		activityTable.addRangeChangeHandler(new Handler() {
 			
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				table.setRowData(getCallback().getMod303().getActivityList());
+				activityTable.setRowData(getCallback().getMod303().getActivityList());
 			}
 		});
 		
-		table.addSelectionHandler(new SelectionHandler<Mod303Activity>() {
+		activityTable.addSelectionHandler(new SelectionHandler<Mod303Activity>() {
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod303Activity> event) {
@@ -502,7 +504,7 @@ public class Model3032017AEAT extends Model303Base {
 					}
 				}
 				final int currentIndex = idx;
-				
+				Window.alert("currentIndex ..: " + currentIndex + " " + original.getEpigraph() );
 				final CustomDialog dialog = new CustomDialog();
 				IMod303ActivityCallback activityCallback = new IMod303ActivityCallback() {
 					
@@ -511,8 +513,8 @@ public class Model3032017AEAT extends Model303Base {
 						dialog.hide();
 						getCallback().getMod303().getActivityList().set(currentIndex, original);
 						calculateAndRefresh();
-						table.setRowData(getCallback().getMod303().getActivityList());
-						table.redraw();
+						activityTable.setRowData(getCallback().getMod303().getActivityList());
+						activityTable.redraw();
 					}
 					
 					@Override
@@ -520,8 +522,8 @@ public class Model3032017AEAT extends Model303Base {
 						dialog.hide();
 						getCallback().getMod303().getActivityList().set(currentIndex, act);
 						calculateAndRefresh();
-						table.setRowData(getCallback().getMod303().getActivityList());
-						table.redraw();
+						activityTable.setRowData(getCallback().getMod303().getActivityList());
+						activityTable.redraw();
 					}
 					
 					@Override
@@ -533,7 +535,7 @@ public class Model3032017AEAT extends Model303Base {
 							}
 						}
 						calculateAndRefresh();
-						table.redraw();
+						activityTable.redraw();
 					}
 
 					@Override
@@ -568,8 +570,8 @@ public class Model3032017AEAT extends Model303Base {
 				dialog.center();
 			}
 		});
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-		return table;
+		activityTable.setVisibleRangeAndClearData(activityTable.getVisibleRange(), true);
+		return activityTable;
 	}
 
 	private FlexTable getSimplifiedTable() {
@@ -592,4 +594,16 @@ public class Model3032017AEAT extends Model303Base {
 	protected void populate(Mod303 mod303) {
 		super.populate(mod303);
 	}
+	
+	protected void save() {
+		save(new AsyncCallback<Mod303>() {
+			@Override public void onFailure(Throwable caught) {}
+			@Override
+			public void onSuccess(Mod303 result) {
+				farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
+				activityTable.setRowData(getCallback().getMod303().getActivityList());
+			}
+		});
+	}
+
 }
