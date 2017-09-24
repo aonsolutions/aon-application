@@ -14,7 +14,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.06-SNAPSHOT</version>
+      <version>9.06</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
