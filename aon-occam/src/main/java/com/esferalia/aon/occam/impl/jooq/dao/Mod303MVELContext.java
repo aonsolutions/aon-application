@@ -5,6 +5,9 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod303MVELContext extends ModelMVELContext implements Map<String, Object> {
@@ -50,4 +53,18 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		}
 		return 0;
 	}
+
+	public double calculateIngresoCuenta( double days, double quota, double reductions, double tempIndex, double percent) {
+		long trimDays = (AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod303),FiscalUtils.getPeriodEnd(mod303)) + 1);
+		if (AonMathUtils.isZero(days) || days > trimDays) {
+			days = trimDays; 
+		}
+		double q = 0;
+		if (AonMathUtils.isZero(tempIndex)) {
+			q = AonMathUtils.round((quota - reductions) * percent / 100); 
+		} else {
+			q = AonMathUtils.round((quota - reductions) * tempIndex * percent / 100);
+		}
+		return AonMathUtils.round( q * days / trimDays);
+	}	
 }

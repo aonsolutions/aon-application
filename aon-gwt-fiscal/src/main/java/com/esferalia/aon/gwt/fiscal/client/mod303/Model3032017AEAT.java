@@ -591,6 +591,10 @@ public class Model3032017AEAT extends Model303Base {
 	@Override
 	protected void populate(Mod303 mod303) {
 		super.populate(mod303);
+//		farmerTable.setRowData(mod303.getActivityFarmerList());
+//		activityTable.setRowData(mod303.getActivityList());
+		farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
+		activityTable.setRowData(getCallback().getMod303().getActivityList());
 	}
 	
 	protected void save() {

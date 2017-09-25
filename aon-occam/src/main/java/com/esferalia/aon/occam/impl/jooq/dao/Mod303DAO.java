@@ -186,6 +186,11 @@ public class Mod303DAO extends FiscalModelDAO {
 	public static Mod303 createMod303(AONContext ctx,final Mod303 mod303) {
 		final Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 
+		// Inicialización del régimen simplificado.
+		if (dec.hasSimplifiedRegime()) {
+			dec.initializeSimplifiedRegime(ctx, mod303);
+		}
+
 		// Primera inicialización.		
 		for (IMod303KeyDAO key : dec.getKeys()) {
 			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
@@ -196,11 +201,6 @@ public class Mod303DAO extends FiscalModelDAO {
 		// INTIALIZATION VIA BREAKDOWN		
 		Mod303DAO.getVatBreakdown(ctx,mod303)
 			.forEach( vat -> dec.initialize(ctx, mod303, vat) );
-		
-		// Inicialización del régimen simplificado.
-		if (dec.hasSimplifiedRegime()) {
-			dec.initializeSimplifiedRegime(ctx, mod303);
-		}
 		
 		if (!mod303.isDiffCalculationDisabled()) {
 			getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
@@ -237,7 +237,9 @@ public class Mod303DAO extends FiscalModelDAO {
 				detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 			}
 		}
-		return calculateMod303(ctx, mod303); 
+		calculateMod303(ctx, mod303);		
+		dec.specificInitialization(mod303);
+		return mod303; 
 	}
 
 	public static String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {

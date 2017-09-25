@@ -1,22 +1,36 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 
 import java.util.LinkedList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.FarmerIVA;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AEAT_2017_Declaration extends Mod303Declaration {
@@ -300,7 +314,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_SA12(Mod303Key.CT_SA12,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA12,ensureFarmerActivity(mod,0).getVol())
 			,mod -> ensureFarmerActivity(mod,0).setVol(mod.getAmount(Mod303Key.CT_SA12))
-			,true)
+			,false)
 		// (1) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA13(Mod303Key.CT_SA13,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA13,ensureFarmerActivity(mod,0).getInd())
@@ -345,7 +359,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_SA22(Mod303Key.CT_SA22,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA22,ensureFarmerActivity(mod,1).getVol())
 			,mod -> ensureFarmerActivity(mod,1).setVol(mod.getAmount(Mod303Key.CT_SA22))
-			,true)
+			,false)
 		// (2) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA23(Mod303Key.CT_SA23,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA23,ensureFarmerActivity(mod,1).getInd())
@@ -391,7 +405,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_SA32(Mod303Key.CT_SA32,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA32,ensureFarmerActivity(mod,2).getVol())
 			,mod -> ensureFarmerActivity(mod,2).setVol(mod.getAmount(Mod303Key.CT_SA32))
-			,true)
+			,false)
 		// (3) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA33(Mod303Key.CT_SA33,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA33,ensureFarmerActivity(mod,2).getInd())
@@ -437,7 +451,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_SA42(Mod303Key.CT_SA42,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA42,ensureFarmerActivity(mod,3).getVol())
 			,mod -> ensureFarmerActivity(mod,3).setVol(mod.getAmount(Mod303Key.CT_SA42))
-			,true)
+			,false)
 		// (4) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA43(Mod303Key.CT_SA43,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA43,ensureFarmerActivity(mod,3).getInd())
@@ -667,9 +681,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setPor(mod.getAmount(Mod303Key.CT_S120))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
-		,CT_S121(Mod303Key.CT_S121,null,null,null,"CT_S119 == 0.0"
-				+"? round((CT_S117 - CT_S118) * CT_S120 / 100) "
-				+": round((CT_S117 - CT_S118) * CT_S119 * CT_S120 / 100)"
+		,CT_S121(Mod303Key.CT_S121,null,null,null, "calculateIngresoCuenta( CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S121,ensureActivity(mod,0).getIng())
 			,mod -> ensureActivity(mod,0).setIng(mod.getAmount(Mod303Key.CT_S121))
@@ -914,9 +926,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setPor(mod.getAmount(Mod303Key.CT_S220))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
-		,CT_S221(Mod303Key.CT_S221,null,null,null,"CT_S219 == 0.0"
-				+"? (round(CT_S217 - CT_S218) * CT_S220 / 100) "
-				+": round((CT_S217 - CT_S218) * CT_S219 * CT_S220 / 100)",null
+		,CT_S221(Mod303Key.CT_S221,null,null,null,"calculateIngresoCuenta( CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S221,ensureActivity(mod,1).getIng())
 			,mod -> ensureActivity(mod,1).setIng(mod.getAmount(Mod303Key.CT_S221))
 			,true)
@@ -1160,9 +1170,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setPor(mod.getAmount(Mod303Key.CT_S320))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
-		,CT_S321(Mod303Key.CT_S321,null,null,null,"CT_S319 == 0.0"
-				+"? round((CT_S317 - CT_S318) * CT_S320 / 100) "
-				+": round((CT_S317 - CT_S318) * CT_S319 * CT_S320 / 100)",null
+		,CT_S321(Mod303Key.CT_S321,null,null,null,"calculateIngresoCuenta( CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S321,ensureActivity(mod,2).getIng())
 			,mod -> ensureActivity(mod,2).setIng(mod.getAmount(Mod303Key.CT_S321))
 			,true)
@@ -1406,9 +1414,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setPor(mod.getAmount(Mod303Key.CT_S420))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
-		,CT_S421(Mod303Key.CT_S421,null,null,null,"CT_S419 == 0.0"
-				+"? round((CT_S417 - CT_S418) * CT_S420 / 100) "
-				+": round((CT_S417 - CT_S418) * CT_S419 * CT_S420 / 100)",null
+		,CT_S421(Mod303Key.CT_S421,null,null,null,"calculateIngresoCuenta( CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S421,ensureActivity(mod,3).getIng())
 			,mod -> ensureActivity(mod,3).setIng(mod.getAmount(Mod303Key.CT_S421))
 			,true)
@@ -1893,9 +1899,60 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 				}
 			}
 			fillSimplifiedRegime(mod303);
+		} else {
+			fillFarmerActivities(ctx,mod303);
+			fillActivities(ctx,mod303);
+		}
+	}
+	private void fillFarmerActivities(AONContext ctx, Mod303 mod303) {
+		mod303.setActivityFarmerList(
+				FiscalActivityDAO.getActivities(ctx, mod303.getDomain())
+				.filter( fa -> fa.getYear() == mod303.getYear() )
+				.map( new Mod303ActivityFarmerFiller() )
+				.filter( act -> act != null )
+				.collect(Collectors.toCollection(LinkedList::new))
+			);
+		if (mod303.getActivityFarmerList() == null) {
+			mod303.setActivityFarmerList(new LinkedList<Mod303ActivityFarmer>() ); 	
+		}
+		for (int i = 0 ; i < 3 ; i++) {
+			if (i >= mod303.getActivityFarmerList().size()) {
+			} else {
+				mod303.getActivityFarmerList().add(new Mod303ActivityFarmer());
+			}
 		}
 	}
 	
+	private void fillActivities(AONContext ctx, Mod303 mod303) {
+		mod303.setActivityList(
+				FiscalActivityDAO.getActivities(ctx, mod303.getDomain())
+				.filter( fa -> fa.getYear() == mod303.getYear() )
+				.map( new Mod303ActivityFiller() )
+				.filter( act -> act != null )
+				.peek( act -> act
+						.setDia((int) (AonDateUtils.getDaysBetweenDates(
+								 FiscalUtils.getPeriodStart(mod303)
+								,FiscalUtils.getPeriodEnd(mod303)) + 1))
+					)
+				.collect(Collectors.toCollection(LinkedList::new))
+			);
+		if (mod303.getActivityList() == null) {
+			mod303.setActivityList(new LinkedList<Mod303Activity>() ); 	
+		}
+		for (int i = 0 ; i < 3 ; i++) {
+			if (i >= mod303.getActivityList().size()) {
+				mod303.getActivityList().add(new Mod303Activity()
+						.setDia((int) (AonDateUtils.getDaysBetweenDates(
+								 FiscalUtils.getPeriodStart(mod303)
+								,FiscalUtils.getPeriodEnd(mod303)) + 1))
+						.setModules( new LinkedList<Mod303ActivityModule>()));
+						
+			} else {
+				mod303.getActivityList().add(new Mod303Activity());
+			}
+		}
+	}
+
 	@Override
 	public void fillSimplifiedRegime(Mod303 mod303) {
 		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
@@ -1909,4 +1966,94 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			key.populate(mod303);
 		}
 	}
+	
+	@Override
+	public void specificInitialization(Mod303 mod303) {
+		super.specificInitialization(mod303);
+		if (mod303.getDefaultVATRegime() == VATRegime.SIMPLIFIED) {
+			if (AonMathUtils.isZero( mod303.getAmount(Mod303Key.CT_C46))) {
+				mod303.putAmount(Mod303Key.CT_A02,0);	// Sólo Reg. Simplificado.
+			} else {
+				mod303.putAmount(Mod303Key.CT_A02,1);	// Reg. Simplificado. y General
+			}
+		} else {
+			if (AonMathUtils.isNotZero( mod303.getAmount(Mod303Key.CT_S58))) {
+				mod303.putAmount(Mod303Key.CT_A02,1);	// Reg. Simplificado. y General
+			} else {
+				mod303.putAmount(Mod303Key.CT_A02,2);	// Sólo Reg. Simplificado. y General
+			}
+		}
+	}
+
+	private static class Mod303ActivityFiller implements Function<FiscalActivity, Mod303Activity> {
+		@Override
+		public Mod303Activity apply(FiscalActivity fa) {
+			if (!fa.hasVATModules()) return null;
+			String epi1 = AonStringUtils.trim(AonStringUtils.substringBefore(
+					 fa.getEpigraph(),AonStringUtils.HYPHEN));
+			Epigraph epigraph = Epigraph.getEpigraph(epi1);
+			Mod303Activity act = new Mod303Activity()
+					.setEpigraph( epigraph == null?fa.getEpigraph():epigraph.getEpigraph())
+					.setDescription(epigraph == null?fa.getDescription():epigraph.getDescription())
+					.setMaxImport(epigraph == null?Double.MAX_VALUE:epigraph.getLimExceso())
+					.setTem( (int) fa.getDoubleValue(FiscalActivityInfoKey.A03))
+					.setEmp( (int) (int) fa.getDoubleValue(FiscalActivityInfoKey.A10))
+					.setLor( (int) fa.getDoubleValue(FiscalActivityInfoKey.A11))
+					.setPor( fa.getDoubleValue(FiscalActivityInfoKey.V05))
+					.setIng( fa.getDoubleValue(FiscalActivityInfoKey.V06))
+			;
+			act.setModules(new LinkedList<Mod303ActivityModule>());
+			for (FiscalActivityInfo info : fa.getMap().get(FiscalActivityInfoKeyType.VAT_MODULE.ordinal()).values()) {
+				Mod303ActivityModule module = new Mod303ActivityModule()
+						.setDescription(info.getInfoKey().getDescription())
+						.setValue( AonNumberUtils.todouble( info.getValue()) )
+						.setUnit( info.getUnit() ) 
+						.setFactor( info.getFactor() )
+						.setResult( info.getBase() )
+						.setSalariedStaff(false)
+						.setNoSalariedStaff(false);
+				// PERSONAL Asalariado.
+				if (info.getInfoKey() == FiscalActivityInfoKey.M01) {
+					module.setSalariedStaff(true);
+					module.setMay19Hours(fa.getDoubleValue(FiscalActivityInfoKey.M011));
+					module.setMen19Hours(fa.getDoubleValue(FiscalActivityInfoKey.M012)); 	
+					module.setDisHours(fa.getDoubleValue(FiscalActivityInfoKey.M013)); 		
+					module.setYearHours(fa.getDoubleValue(FiscalActivityInfoKey.M014));
+				} else if (info.getInfoKey() == FiscalActivityInfoKey.M02) {
+					module.setNoSalariedStaff(true);
+					module.setOwnerHours(fa.getDoubleValue(FiscalActivityInfoKey.M021)); 		
+					module.setSpouseHours(fa.getDoubleValue(FiscalActivityInfoKey.M022));
+					module.setSpouseDis(AonMathUtils.isNotZero(fa.getDoubleValue(FiscalActivityInfoKey.M023)));
+					module.setChildMen18Hours(fa.getDoubleValue(FiscalActivityInfoKey.M024)); 
+					module.setChildDisHours(fa.getDoubleValue(FiscalActivityInfoKey.M025)); 	
+				} else if (info.getInfoKey() == FiscalActivityInfoKey.M15) {
+					module.setSalariedStaff(true);
+				} else if (info.getInfoKey() == FiscalActivityInfoKey.M16) {
+					module.setSalariedStaff(true);
+				}
+				act.getModules().add( module );
+			}
+			return act;
+		}
+	}
+	
+	private static class Mod303ActivityFarmerFiller implements Function<FiscalActivity, Mod303ActivityFarmer> {
+		@Override
+		public Mod303ActivityFarmer apply(FiscalActivity fa) {
+			if (!fa.isFarmer()) return null;
+			String code = AonStringUtils.trim(AonStringUtils.substringBefore(
+					 fa.getEpigraph(),AonStringUtils.HYPHEN));
+			FarmerIVA farmerIVA = Modules2016.FarmerIVA.safeValueOf(code);
+			Mod303ActivityFarmer act = new Mod303ActivityFarmer();
+			if (farmerIVA != null) { act
+						.setCode( farmerIVA.getCode())
+						.setDescription(farmerIVA.getDescription())
+						.setInd(farmerIVA.getIndiceRendimientoNeto())
+						.setPor(farmerIVA.getPorcentaje());
+				;
+			}
+			return act;
+		}
+	}
+	
 }

@@ -80,6 +80,17 @@ public class Modules2016 {
 		public String getDescription() {
 			return description;
 		}
+		public static FarmerIVA safeValueOf( String code ) {
+			if (AonStringUtils.isBlank(code)) {
+				return null;
+			}
+			for (FarmerIVA farmerIVA : FarmerIVA.values()) {
+				if (AonStringUtils.equals(farmerIVA.getCode(), code)) {
+					return farmerIVA;
+				}
+			}
+			return null;
+		}
 	}
 	
 	public enum Epigraph implements Serializable {

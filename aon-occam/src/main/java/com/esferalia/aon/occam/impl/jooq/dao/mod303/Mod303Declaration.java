@@ -48,12 +48,15 @@ public abstract class Mod303Declaration {
 		
 	}
 	public void populateSimplifiedRegime(Mod303 mod303){
-	};
+	}
+	public void specificInitialization(Mod303 mod303) {
+	}
 
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
 	public abstract Mod303Key[] getProrateKeys();
 	public abstract boolean hasSimplifiedRegime();
+
 
 }
