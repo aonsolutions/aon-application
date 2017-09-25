@@ -1464,7 +1464,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_S50(Mod303Key.CT_S50)
 		// 51 Cuotas devengadas - Adquisiciones intracomunitarias de bienes
 		,CT_S51(Mod303Key.CT_S51
-			 ,(mod,vat) -> adqIntracomunitariasFilterSimp(vat,mod)
+			 ,(mod,vat) -> adqIntracomunitariasFilterSimp(vat,mod) && AonMathUtils.isNotZero(vat.getPercentage()) 
 			 ,(ctx,mod,vat) -> add(Mod303Key.CT_S51,mod,vat.getQuota())
 			 ,null,null,null)
 		// 52 Cuotas devengadas - Entregas de activos fijos
