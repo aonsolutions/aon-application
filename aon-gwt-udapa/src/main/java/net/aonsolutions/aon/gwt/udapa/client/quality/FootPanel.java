@@ -238,7 +238,7 @@ public class FootPanel extends Composite {
 			Double contractPrice = Double.parseDouble(product_price);
 
 			Double pFondo = dbPFondo.getValue() != null && !dbPFondo.getValue().equals("") ? dbPFondo.getValue() : 0.0;
-			Double z = (pFondo - contractPrice) * 0.55;
+			Double z = pFondo > contractPrice ? (pFondo - contractPrice) * 0.55 : 0.0;
 			Double price = contractPrice + z;
 			if(Destiny.BASERRI.equals(destiny)) {
 				price = price * 0.88;
