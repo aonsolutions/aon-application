@@ -8,6 +8,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
+import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.YEAR;
 
 import java.sql.Connection;
@@ -489,5 +490,132 @@ public class SQLSeniorityTestCase extends
 		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		Assert.assertEquals( 1500.00 + ((int)((get(getToday(), YEAR)-1996)/4) * 66.66) + 19.96, salary.getTotalPayment() );
 	}
-	
+	@Test
+	public void testSeniorityV() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		// @formatter:off
+
+		Date startAgreement = add(getFirstDayOfYear(getToday()), Calendar.YEAR, -50);
+		
+		AgreementRecord agreement = newAgreement(aonContext);
+		
+		AgreementLevelCategoryRecord category = newAgreementCategory(aonContext, agreement);
+		
+		addPayment(aonContext, agreement, startAgreement, new Payment(){
+			{
+				expression = "["
+				+ "1 : 7.36" 
+				+ ",2 : 14.65" 
+				+ ",3 : 22.02" 
+				+ ",4 : 29.3" 
+				+ ",5 : 36.61" 
+				+ ",5 : 36.61" 
+				+ ",6 : 43.63" 
+				+ ",7 : 50.32" 
+				+ ",8 : 56.66" 
+				+ ",9 : 62.73" 
+				+ ",10 : 68.44" 
+				+ ",11 : 73.86" 
+				+ ",12 : 79" 
+				+ ",13 : 83.75" 
+				+ ",14 : 88.25" 
+				+ ",15 : 92.62" 
+				+ ",16 : 97.05" 
+				+ ",17 : 101.48" 
+				+ ",18 : 105.95" 
+				+ ",19 : 110.4" 
+				+ ",20 : 114.8" 
+				+ ",21 : 119.28" 
+				+ ",22 : 123.7" 
+				+ ",23 : 128.15" 
+				+ ",24 : 132.57" 
+				+ ",25 : 137" 
+				+ ",26 : 141.42" 
+				+ ",27 : 145.89" 
+				+ ",28 : 150.33" 
+				+ ",29 : 154.74" 
+				+ ",30 : 159.19" 
+				+"][AÑOS_ANTIGUEDAD >= 30 ? 30 : AÑOS_ANTIGUEDAD]"
+				+"* DIAS_TRABAJADOS / DIAS_MES";
+			}
+		});
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		Date yesterday = add(startDate, DAY_OF_MONTH, -1);
+		
+		double payments[] = {
+				7.36,
+				14.65,
+				22.02,
+				29.3,
+				36.61,
+				43.63,
+				50.32,
+				56.66,
+				62.73,
+				68.44,
+				73.86,
+				79,
+				83.75,
+				88.25,
+				92.62,
+				97.05,
+				101.48,
+				105.95,
+				110.4,
+				114.8,
+				119.28,
+				123.7,
+				128.15,
+				132.57,
+				137,
+				141.42,
+				145.89,
+				150.33,
+				154.74,
+				159.19,
+				159.19,
+				159.19,
+				159.19,
+				159.19,
+				159.19,
+				159.19,
+		};
+
+		for ( int i = 1 ; i <= payments.length ; i++ )  {
+			//@formatter:off
+			ContractRecord contract = newContract(
+					aonContext,
+					add(yesterday, YEAR, -1 * i),
+					Collections.emptyMap(),
+					new String[] {
+							"TRACE('AÑOS_ANTIGUEDAD=%f\r\n', MIN(AÑOS_ANTIGUEDAD,30.00)); 0.00"
+					}, 
+					new String[] {
+					}, 
+					category);
+			//@formatter:on
+			
+			//@formatter:off
+			ISQLContractSalaryCalculatorContext ctx = 
+					getContractSalaryCalculatorContext(connection, 
+					startDate, 
+					endDate, 
+					endDate, 
+					contract);
+			//@formatter:on
+			Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+			
+			Assert.assertEquals( payments[i-1], salary.getTotalPayment(), DELTA );
+		}
+
+		
+		
+	}
 }
