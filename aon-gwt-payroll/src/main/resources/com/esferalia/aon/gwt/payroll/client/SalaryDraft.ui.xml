@@ -140,6 +140,54 @@
 			background: transparent !important;
 		}
 		
+		button[disabled],
+		.aon-ReadOnly .aon-icon-reset,
+		.aon-ReadOnly .aon-icon-delete,
+		.aon-ReadOnly .aon-icon-rowSelector,
+		.aon-ReadOnly .aon-icon-rowSelector-C,
+		.aon-ReadOnly .aon-icon-rowSelector-S,
+		.aon-ReadOnly .aon-icon-rowSelector-Parent,
+		.aon-ReadOnly .aon-icon-rowSelector-Changed
+		{
+			display:none;
+			visibility:hidden;
+		}
+		
+		.gwt-TextBox[readonly],
+		.gwt-SuggestBox[readonly],
+		.aon-ReadOnly .gwt-TextBox,
+		.aon-ReadOnly .gwt-SuggestBox
+		{
+    		pointer-events: none;
+			border-color:transparent;
+    		color: inherit !important;
+    		background-color: transparent;
+		}
+
+		.aon-ReadOnly .gwt-ListBox {
+    		pointer-events: none;
+    		color: inherit !important;
+    		background-color: transparent;
+		}
+		
+		.gwt-TextBox[readonly]:focus,
+		.aon-ReadOnly .gwt-TextBox:focus
+		{
+			background-color: inherit;
+		}
+		
+		@external gwt-ListBox;
+		@external gwt-TextBox;
+		@external aon-ReadOnly;
+		@external gwt-SuggestBox;
+		@external aon-icon-reset;
+		@external aon-icon-delete;
+		@external aon-icon-rowSelector;
+		@external aon-icon-rowSelector-C;
+		@external aon-icon-rowSelector-S;
+		@external aon-icon-rowSelector-Parent;
+		@external aon-icon-rowSelector-Changed;
+		
 	</ui:style>
 
 

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -27,6 +26,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.client.AgreementDraft.IFocusableEditor;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.Calculate;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -47,6 +47,7 @@ import com.esferalia.aon.gwt.payroll.shared.NoHolidaysVariable;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
@@ -61,9 +62,12 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.gargoylesoftware.htmlunit.javascript.host.dom.NodeList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -148,7 +152,6 @@ import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.events.OnMouseOverHandler;
-import com.vaadin.polymer.iron.widget.IronLabel;
 
 public class SalaryDraft extends ResizeComposite
 		implements CalculateCallback, SalarySelect.Listener, UndoManager.Listener{
@@ -957,7 +960,7 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	class VariableChangeHandler<T extends HasValue<String> & HasAllFocusHandlers & Focusable>
+	class VariableChangeHandler<T extends HasValue<String> & HasAllFocusHandlers & Focusable > 
 			implements FocusHandler, BlurHandler, ValueChangeHandler<String> {
 
 		protected T editor;
@@ -1071,7 +1074,7 @@ public class SalaryDraft extends ResizeComposite
 					.setEndDate(variable.getEndDate()).setStartDate(variable.getStartDate()).create();
 			// @formatter:on
 		}
-
+		
 	}
 
 	abstract class ItemChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable, I extends Item> {
@@ -2300,6 +2303,9 @@ public class SalaryDraft extends ResizeComposite
 		salarySelect.setSalaryPreview(salaryDraftObject.asSalaryPreview());
 
 		loadContentAssistManager();
+		
+		setReadOnly(  Arrays.asList(Type.EXTRA, Type.DELAY).contains(salaryDraftObject.getType()));
+		
 
 	}
 
@@ -5093,6 +5099,28 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}-*/;
 
+	public void setReadOnly(boolean readOnly) {
+
+		fxButton.setEnabled(!readOnly);
+		undoButton.setEnabled(!readOnly);
+		redoButton.setEnabled(!readOnly);
+		undoAllButton.setEnabled(!readOnly);
+		acceptButton.setEnabled(!readOnly);
+		moreButton.setEnabled(!readOnly);
+		
+		datesListBox.setEnabled(!readOnly);
+		datesListBox.setVisible(!readOnly);
+		
+		totalPaymentsLabel.setReadOnly(readOnly);
+		totalLiquidLabel.setReadOnly(readOnly);
+		
+		
+		contextTable.setStyleName("aon-ReadOnly", readOnly);
+		paymentsTable.setStyleName("aon-ReadOnly", readOnly);
+		
+		
+	}
+	
 	// ------------------------------------------------------- Static 'Library'
 	static boolean skipVariable(String name) {
 		for (String skip : SKIP_VARIABLES)
