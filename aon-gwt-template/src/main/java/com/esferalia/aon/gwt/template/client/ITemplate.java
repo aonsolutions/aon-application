@@ -43,6 +43,8 @@ public interface ITemplate extends RemoteService{
 	
 	public List<Hotel> getHotelsToConsumption(Domain domain);
 	
+	public List<Hotel> getWorkplacesToConsumption(Domain domain);
+	
 	public Vector<Series> getSeries(Domain domain, String warehouse);
 	
 	public Vector<Series> getSeries(Domain domain);
@@ -73,7 +75,7 @@ public interface ITemplate extends RemoteService{
 			Tag tag);
 	
 	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-			Integer size, Boolean packaged);
+			Integer size, Boolean packaged, Boolean withoutInv);
 	
 	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
 			Integer size, Date startDate, Date endDate, Boolean packaged);

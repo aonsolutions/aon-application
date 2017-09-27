@@ -68,7 +68,7 @@
 							<tr>
 								<td>
 									<span class="aon-panelGrid-search-info-internal2-template">
-										<g:InlineLabel styleName="aon-outputLabel" text="{msg.hotelTemplates}" />
+										<g:InlineLabel styleName="aon-outputLabel" text="{msg.workplace}" />
 									</span>
 								</td>
 								<td>
@@ -133,6 +133,8 @@
 									<g:HorizontalPanel>
 										<g:CheckBox ui:field="twoLastCheckBox"></g:CheckBox>
 										<g:InlineLabel text="Últimos inventarios"></g:InlineLabel>
+										<g:CheckBox ui:field="withoutInvCheckBox"></g:CheckBox>
+										<g:InlineLabel text="Sin inventarios"></g:InlineLabel>
 									</g:HorizontalPanel>
 								</td>
 								</tr>

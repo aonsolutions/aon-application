@@ -68,14 +68,16 @@ public interface ITemplateAsync {
 
 	void getHotelsToConsumption(Domain domain, AsyncCallback<List<Hotel>> callback);
 
+	void getWorkplacesToConsumption(Domain domain, AsyncCallback<List<Hotel>> callback);
+
 	void getWarehousesToConsumption(Domain domain, Integer workplaceId,
 			AsyncCallback<Vector<Warehouse>> callback);
 
 	void getProductCategories(Domain domain, AsyncCallback<List<ProductCategory>> callback);
 
 	void generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative,
-			Boolean detail, Integer size, Boolean packaged, AsyncCallback<String> callback);
-
+			Boolean detail, Integer size, Boolean packaged, Boolean withoutInv, AsyncCallback<String> callback);
+	
 	void excelRowNumber(AsyncCallback<Integer> callback);
 
 	void executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, Tag tag,

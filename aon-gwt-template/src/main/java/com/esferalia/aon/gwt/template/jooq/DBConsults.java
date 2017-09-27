@@ -381,6 +381,35 @@ public class DBConsults {
 			if (ctx != null) ctx.close();
 		}
 	}
+
+	public static Vector<Hotel> getWorkplaces(Domain domain, User user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			
+			Result<Record2<Integer, String>> result = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION )
+				.from(WORKPLACE).join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
+				.where(WORKPLACE.DOMAIN.eq(domain.getId()))
+				.and(USER_SCOPE.USER_ID.eq(user.getId()))
+				.and(WORKPLACE.ACTIVE.eq((byte)1))
+				.orderBy(WORKPLACE.DESCRIPTION)
+				.fetch();
+			
+			Vector<Hotel> hs = new Vector<Hotel>();
+			
+			result.stream().forEach(r ->{
+				Hotel h = new Hotel();
+				h.setDomain(domain.getId());
+				h.setId(r.value1());
+				h.setWorkplaceId(r.value1());
+				h.setName(r.value2());
+				hs.add(h);
+			});
+			return hs;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 	
 	public static List<AmazonDelivery> getDeliveries(Domain domain, String login){
 		AONContext ctx = null;

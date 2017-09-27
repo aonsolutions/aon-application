@@ -65,6 +65,7 @@ public class ConsumptionPage extends Composite{
 	@UiField CheckBox packagedCheckBox;
 	@UiField CheckBox errorCheckBox;
 	@UiField CheckBox twoLastCheckBox;
+	@UiField CheckBox withoutInvCheckBox;
 	
 	
 	ListBox hotelBox;
@@ -137,10 +138,23 @@ public class ConsumptionPage extends Composite{
 				startDate.setEnabled(!twoLastCheckBox.getValue());
 				endDate.setValue(null);
 				endDate.setEnabled(!twoLastCheckBox.getValue());
+				withoutInvCheckBox.setValue(false);
 			}
 		});
 		
-		item.getHotelsToConsumption(getDomain(), new AsyncCallback<List<Hotel>>() {
+		withoutInvCheckBox.setValue(false);
+		withoutInvCheckBox.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				startDate.setValue(null);
+				startDate.setEnabled(!withoutInvCheckBox.getValue());
+				endDate.setValue(null);
+				endDate.setEnabled(!withoutInvCheckBox.getValue());
+				twoLastCheckBox.setValue(false);
+			}
+		});
+
+		item.getWorkplacesToConsumption(getDomain(), new AsyncCallback<List<Hotel>>() {
 			
 			@Override
 			public void onSuccess(List<Hotel> result) {
@@ -329,7 +343,7 @@ public class ConsumptionPage extends Composite{
 		pbd.setGlassEnabled(true);
 		pbd.show();
 		
-		if(!twoLastCheckBox.getValue()){
+		if(!twoLastCheckBox.getValue() && !withoutInvCheckBox.getValue()){
 			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(),
 					startDate.getValue(), endDate.getValue(), packagedCheckBox.getValue(),new AsyncCallback<String>() {
 	
@@ -349,7 +363,7 @@ public class ConsumptionPage extends Composite{
 				public void onFailure(Throwable caught) {}
 			});
 		} else {
-			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(), packagedCheckBox.getValue(),new AsyncCallback<String>() {
+			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(), packagedCheckBox.getValue(), withoutInvCheckBox.getValue(),new AsyncCallback<String>() {
 				
 				@Override
 				public void onSuccess(String result) {
@@ -366,9 +380,7 @@ public class ConsumptionPage extends Composite{
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
-
 		}
-		
 	}
 	
 	private void clean(){

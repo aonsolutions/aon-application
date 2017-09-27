@@ -48,7 +48,7 @@ public class ConsumptionUtil {
 	private static final String PDF = "pdf";
 	
     public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
-    		Boolean detail, Integer size, String login, Boolean packaged) throws ServletException, IOException{
+    		Boolean detail, Integer size, String login, Boolean packaged, Boolean withoutInv) throws ServletException, IOException{
     
     	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
        
@@ -70,7 +70,7 @@ public class ConsumptionUtil {
         for(Warehouse w : warehouses){
         	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, w.getId(), login);
         	Integer initialId = consumptionItem.getInitialId(), finalId = consumptionItem.getFinalId();
-            Date initialDate = AonDateUtils.addDays(consumptionItem.getInitialDate(), 1), finalDate = consumptionItem.getFinalDate();
+            Date initialDate = consumptionItem.getInitialDate() != null ? AonDateUtils.addDays(consumptionItem.getInitialDate(), 1) : null, finalDate = consumptionItem.getFinalDate();
             String initialInventoryName = DBConsumption.getInventoryName(domain, initialId, login);
             String finalInventoryName = DBConsumption.getInventoryName(domain, finalId, login);
             consumptionItem.setWarehouseId(w.getId());
@@ -78,7 +78,9 @@ public class ConsumptionUtil {
             consumptionItem.setInitialInventoryName(initialInventoryName);
             consumptionItem.setFinalInventoryName(finalInventoryName);
         	cisMap.put(w.getId(), consumptionItem);
-        	Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
+        	Map<Integer, ConsumptionItem> map = withoutInv 
+        			? DBConsumption.getConsumptionWithoutInventory(domain, login, initialId, finalId, w.getId(), consumptionItem.getWarehouseName())
+        			: DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
 
         	Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
         	
@@ -885,7 +887,7 @@ public class ConsumptionUtil {
      
         				switch (type) {
         				case "Hotel": celda.setCellValue(ci.getHotel());celda.setCellStyle(style30);break;
-        				case "Desde": celda.setCellValue(format.format( sumarRestarDiasFecha(ci.getInitialDate(), -1)));celda.setCellStyle(style30);break;
+        				case "Desde": celda.setCellValue(ci.getInitialDate() != null ? format.format(sumarRestarDiasFecha(ci.getInitialDate(), -1)) : "-");celda.setCellStyle(style30);break;
            				case "Hasta": celda.setCellValue(format.format(ci.getFinalDate()));celda.setCellStyle(style30);break;
         				case "Almac\u00e9n": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style30);break;
@@ -1012,7 +1014,7 @@ public class ConsumptionUtil {
         	Date endDate = new Date();
         	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         	for(ConsumptionItem ci : v2){
-        		startDate = sumarRestarDiasFecha(ci.getInitialDate(), -1);
+        		startDate = ci.getInitialDate() != null ? sumarRestarDiasFecha(ci.getInitialDate(), -1) : null;
         		endDate = ci.getFinalDate();
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
         		Double consumValue = ci.getConsumption() == 0 ? 0 : ci.getConsumValue();
@@ -1044,7 +1046,7 @@ public class ConsumptionUtil {
         	   	String type = special1.getColumns().get(k); 
            		switch (type) {
         				case "Hotel": celda.setCellValue(hotel);celda.setCellStyle(style30);break;
-           				case "Desde": celda.setCellValue(format.format(startDate));celda.setCellStyle(style30);break;
+           				case "Desde": celda.setCellValue(startDate != null ? format.format(startDate) : "-");celda.setCellStyle(style30);break;
            				case "Hasta": celda.setCellValue(format.format(endDate));celda.setCellStyle(style30);break;
         				case "Almac\u00e9n": celda.setCellValue(w.getName());celda.setCellStyle(style30);break;
         				case "Inicial \u20AC": celda.setCellValue(round(inicial,2));celda.setCellStyle(style20);break;

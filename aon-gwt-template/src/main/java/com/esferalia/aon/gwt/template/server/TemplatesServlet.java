@@ -152,7 +152,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return DBConsults.getHotels(domain, getUser());
 	}
 	
+	public List<Hotel> getWorkplacesToConsumption(Domain domain){
+		return DBConsults.getWorkplaces(domain, getUser());
+	}
+	
 	public Vector<Warehouse> getWarehousesToConsumption(Domain domain, Integer workplaceId){
+		return DBStock.getWarehouse(domain, getUser(), workplaceId);
+		/* TODO
 		Vector<Warehouse> v = DBStock.getWarehouse(domain, getUser(), workplaceId);
 		Vector<Warehouse> v2 = new Vector<Warehouse>();
 		for (Warehouse w : v) {
@@ -161,6 +167,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				v2.add(w);
 		}
 		return v2;
+		*/
 	}
 	
 	public Vector<Warehouse> getWarehousesToConsumption(Domain domain){
@@ -2477,10 +2484,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-								 Integer size, Boolean packaged) {
+								 Integer size, Boolean packaged, Boolean withoutInv) {
 		File file = null;
 		try {
-			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin(), packaged);
+			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin(), packaged, withoutInv);
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}
