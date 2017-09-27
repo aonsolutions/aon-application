@@ -47,12 +47,12 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	protected AEAT_2017_Declaration() {
 		
 	}
-	private static final double PERCENT1 = 4.0;
-	private static final double PERCENT2 = 10.0;
-	private static final double PERCENT3 = 21.0;
-	private static final double SURCHARGE_PERCENT1 = 0.5;
-	private static final double SURCHARGE_PERCENT2 = 1.4;
-	private static final double SURCHARGE_PERCENT3 = 5.2;
+	public static final double PERCENT1 = 4.0;
+	public static final double PERCENT2 = 10.0;
+	public static final double PERCENT3 = 21.0;
+	public static final double SURCHARGE_PERCENT1 = 0.5;
+	public static final double SURCHARGE_PERCENT2 = 1.4;
+	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
 		return  mod.isAEAT() && mod.getYear() >= 2010;
@@ -317,11 +317,11 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,false)
 		// (1) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA13(Mod303Key.CT_SA13,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_SA13,ensureFarmerActivity(mod,0).getInd())
-			,mod -> ensureFarmerActivity(mod,0).setInd(mod.getAmount(Mod303Key.CT_SA13))
+			,mod -> mod.putAmount(Mod303Key.CT_SA13,( ensureFarmerActivity(mod,0).getInd() * 10000) )
+			,mod -> ensureFarmerActivity(mod,0).setInd(mod.getAmount(Mod303Key.CT_SA13) / 10000 )
 			,true)
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,CT_SA14(Mod303Key.CT_SA14,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA12*CT_SA13):(0.0)",null
+		,CT_SA14(Mod303Key.CT_SA14,null,null,null,"(hasFarmerActivity(0))?round(CT_SA12*CT_SA13/10000):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA14,ensureFarmerActivity(mod,0).getCuo())
 			,mod -> ensureFarmerActivity(mod,0).setCuo(mod.getAmount(Mod303Key.CT_SA14))
 			,true)
@@ -341,7 +341,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,0).setSop(mod.getAmount(Mod303Key.CT_SA17))
 			,true)
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
-		,CT_SA18(Mod303Key.CT_SA18,null,null,null,null,null
+		,CT_SA18(Mod303Key.CT_SA18,null,null,null,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA17):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA18,ensureFarmerActivity(mod,0).getCad())
 			,mod -> ensureFarmerActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_SA18))
 			,true)
@@ -362,11 +362,11 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,false)
 		// (2) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA23(Mod303Key.CT_SA23,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_SA23,ensureFarmerActivity(mod,1).getInd())
-			,mod -> ensureFarmerActivity(mod,1).setInd(mod.getAmount(Mod303Key.CT_SA23))
+			,mod -> mod.putAmount(Mod303Key.CT_SA23,ensureFarmerActivity(mod,1).getInd() * 10000)
+			,mod -> ensureFarmerActivity(mod,1).setInd(mod.getAmount(Mod303Key.CT_SA23) / 10000)
 			,true)
 		// (2) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,CT_SA24(Mod303Key.CT_SA24,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA22*CT_SA23):(0.0)",null
+		,CT_SA24(Mod303Key.CT_SA24,null,null,null,"(hasFarmerActivity(1))?round(CT_SA22*CT_SA23/10000):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA24,ensureFarmerActivity(mod,1).getCuo())
 			,mod -> ensureFarmerActivity(mod,1).setCuo(mod.getAmount(Mod303Key.CT_SA24))
 			,true)
@@ -376,7 +376,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,1).setPor(mod.getAmount(Mod303Key.CT_SA25))
 			,true)
 		// (2) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
-		,CT_SA26(Mod303Key.CT_SA26,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA24*CT_SA25/100):(0.0)",null
+		,CT_SA26(Mod303Key.CT_SA26,null,null,null,"(hasFarmerActivity(1) && !isLastPeriod())?round(CT_SA24*CT_SA25/100):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA26,ensureFarmerActivity(mod,1).getIng())
 			,mod -> ensureFarmerActivity(mod,1).setIng(mod.getAmount(Mod303Key.CT_SA26))
 			,true)
@@ -386,7 +386,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,1).setSop(mod.getAmount(Mod303Key.CT_SA27))
 			,true)
 		// (2) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
-		,CT_SA28(Mod303Key.CT_SA28,null,null,null,null,null
+		,CT_SA28(Mod303Key.CT_SA28,null,null,null,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24-CT_SA27):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA28,ensureFarmerActivity(mod,1).getCad())
 			,mod -> ensureFarmerActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_SA28))
 			,true)
@@ -408,11 +408,11 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,false)
 		// (3) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA33(Mod303Key.CT_SA33,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_SA33,ensureFarmerActivity(mod,2).getInd())
-			,mod -> ensureFarmerActivity(mod,2).setInd(mod.getAmount(Mod303Key.CT_SA33))
+			,mod -> mod.putAmount(Mod303Key.CT_SA33,ensureFarmerActivity(mod,2).getInd() * 10000)
+			,mod -> ensureFarmerActivity(mod,2).setInd(mod.getAmount(Mod303Key.CT_SA33) / 10000)
 			,true)
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,CT_SA34(Mod303Key.CT_SA34,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA32*CT_SA33):(0.0)",null
+		,CT_SA34(Mod303Key.CT_SA34,null,null,null,"(hasFarmerActivity(0))?round(CT_SA32*CT_SA33/10000):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA34,ensureFarmerActivity(mod,2).getCuo())
 			,mod -> ensureFarmerActivity(mod,2).setCuo(mod.getAmount(Mod303Key.CT_SA34))
 			,true)
@@ -432,7 +432,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,2).setSop(mod.getAmount(Mod303Key.CT_SA37))
 			,true)
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
-		,CT_SA38(Mod303Key.CT_SA38,null,null,null,null,null
+		,CT_SA38(Mod303Key.CT_SA38,null,null,null,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34-CT_SA37):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA38,ensureFarmerActivity(mod,2).getCad())
 			,mod -> ensureFarmerActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_SA38))
 			,true)
@@ -454,11 +454,11 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,false)
 		// (4) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA43(Mod303Key.CT_SA43,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_SA43,ensureFarmerActivity(mod,3).getInd())
-			,mod -> ensureFarmerActivity(mod,3).setInd(mod.getAmount(Mod303Key.CT_SA43))
+			,mod -> mod.putAmount(Mod303Key.CT_SA43,ensureFarmerActivity(mod,3).getInd() * 10000)
+			,mod -> ensureFarmerActivity(mod,3).setInd(mod.getAmount(Mod303Key.CT_SA43) / 10000)
 			,true)
 		// (4) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,CT_SA44(Mod303Key.CT_SA44,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA42*CT_SA43):(0.0)",null
+		,CT_SA44(Mod303Key.CT_SA44,null,null,null,"(hasFarmerActivity(3))?round(CT_SA42*CT_SA43/10000):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA44,ensureFarmerActivity(mod,3).getCuo())
 			,mod -> ensureFarmerActivity(mod,3).setCuo(mod.getAmount(Mod303Key.CT_SA44))
 			,true)
@@ -468,7 +468,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,3).setPor(mod.getAmount(Mod303Key.CT_SA45))
 			,true)
 		// (4) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
-		,CT_SA46(Mod303Key.CT_SA46,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA44*CT_SA45/100):(0.0)",null
+		,CT_SA46(Mod303Key.CT_SA46,null,null,null,"(hasFarmerActivity(3) && !isLastPeriod())?round(CT_SA44*CT_SA45/100):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA46,ensureFarmerActivity(mod,3).getIng())
 			,mod -> ensureFarmerActivity(mod,3).setIng(mod.getAmount(Mod303Key.CT_SA46))
 			,true)
@@ -478,7 +478,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,3).setSop(mod.getAmount(Mod303Key.CT_SA47))
 			,true)
 		// (4) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
-		,CT_SA48(Mod303Key.CT_SA48,null,null,null,null,null
+		,CT_SA48(Mod303Key.CT_SA48,null,null,null,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44-CT_SA47):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA48,ensureFarmerActivity(mod,3).getCad())
 			,mod -> ensureFarmerActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_SA48))
 			,true)
@@ -681,7 +681,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setPor(mod.getAmount(Mod303Key.CT_S120))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
-		,CT_S121(Mod303Key.CT_S121,null,null,null, "calculateIngresoCuenta( CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120)"
+		,CT_S121(Mod303Key.CT_S121,null,null,null, "calculateIngresoCuenta(1, CT_S1X1, CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S121,ensureActivity(mod,0).getIng())
 			,mod -> ensureActivity(mod,0).setIng(mod.getAmount(Mod303Key.CT_S121))
@@ -697,7 +697,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setIct(mod.getAmount(Mod303Key.CT_S123))
 			,true)
 		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
-		,CT_S124(Mod303Key.CT_S124,null,null,null,null,null
+		,CT_S124(Mod303Key.CT_S124,null,null,null,"calculateResultadoAnual( CT_S117, CT_S118, CT_S122, CT_S123)"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S124,ensureActivity(mod,0).getRes())
 			,mod -> ensureActivity(mod,0).setRes(mod.getAmount(Mod303Key.CT_S124))
 			,true)
@@ -712,12 +713,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setDvc(mod.getAmount(Mod303Key.CT_S126))
 			,true)
 		// (1) Actividades en régimen simplificado. L Cuota mínima
-		,CT_S127(Mod303Key.CT_S127,null,null,null,null,null
+		,CT_S127(Mod303Key.CT_S127,null,null,null,"calculateCuotaMinima(CT_S117, CT_S118, CT_S125, CT_S126,CT_S123)"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S127,ensureActivity(mod,0).getCmn())
 			,mod -> ensureActivity(mod,0).setCmn(mod.getAmount(Mod303Key.CT_S127))
 			,true)
 		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
-		,CT_S128(Mod303Key.CT_S128,null,null,null,null,null
+		,CT_S128(Mod303Key.CT_S128,null,null,null,"isLastPeriod()?((CT_S127)>CT_S124?CT_S127:CT_S124):0.0"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S128,ensureActivity(mod,0).getCad())
 			,mod -> ensureActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_S128))
 			,true)
@@ -926,7 +929,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setPor(mod.getAmount(Mod303Key.CT_S220))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
-		,CT_S221(Mod303Key.CT_S221,null,null,null,"calculateIngresoCuenta( CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220)", null
+		,CT_S221(Mod303Key.CT_S221,null,null,null,"calculateIngresoCuenta(2, CT_S2X1, CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S221,ensureActivity(mod,1).getIng())
 			,mod -> ensureActivity(mod,1).setIng(mod.getAmount(Mod303Key.CT_S221))
 			,true)
@@ -941,7 +944,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setIct(mod.getAmount(Mod303Key.CT_S223))
 			,true)
 		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
-		,CT_S224(Mod303Key.CT_S224,null,null,null,null,null
+		,CT_S224(Mod303Key.CT_S224,null,null,null,"calculateResultadoAnual( CT_S217, CT_S218, CT_S222, CT_S223)"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S224,ensureActivity(mod,1).getRes())
 			,mod -> ensureActivity(mod,1).setRes(mod.getAmount(Mod303Key.CT_S224))
 			,true)
@@ -956,12 +960,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setDvc(mod.getAmount(Mod303Key.CT_S226))
 			,true)
 		// (1) Actividades en régimen simplificado. L Cuota mínima
-		,CT_S227(Mod303Key.CT_S227,null,null,null,null,null
+		,CT_S227(Mod303Key.CT_S227,null,null,null,"calculateCuotaMinima(CT_S217, CT_S218, CT_S225, CT_S226,CT_S223)"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S227,ensureActivity(mod,1).getCmn())
 			,mod -> ensureActivity(mod,1).setCmn(mod.getAmount(Mod303Key.CT_S227))
 			,true)
 		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
-		,CT_S228(Mod303Key.CT_S228,null,null,null,null,null
+		,CT_S228(Mod303Key.CT_S228,null,null,null,"isLastPeriod()?((CT_S227)>CT_S224?CT_S227:CT_S224):0.0"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S228,ensureActivity(mod,1).getCad())
 			,mod -> ensureActivity(mod,1).setCad(mod.getAmount(Mod303Key.CT_S228))
 			,true)
@@ -1170,7 +1176,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setPor(mod.getAmount(Mod303Key.CT_S320))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
-		,CT_S321(Mod303Key.CT_S321,null,null,null,"calculateIngresoCuenta( CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320)", null
+		,CT_S321(Mod303Key.CT_S321,null,null,null,"calculateIngresoCuenta(3, CT_S3X1, CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S321,ensureActivity(mod,2).getIng())
 			,mod -> ensureActivity(mod,2).setIng(mod.getAmount(Mod303Key.CT_S321))
 			,true)
@@ -1185,7 +1191,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setIct(mod.getAmount(Mod303Key.CT_S323))
 			,true)
 		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
-		,CT_S324(Mod303Key.CT_S324,null,null,null,null,null
+		,CT_S324(Mod303Key.CT_S324,null,null,null,"calculateResultadoAnual( CT_S317, CT_S318, CT_S322, CT_S323)"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S324,ensureActivity(mod,2).getRes())
 			,mod -> ensureActivity(mod,2).setRes(mod.getAmount(Mod303Key.CT_S324))
 			,true)
@@ -1200,12 +1207,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setDvc(mod.getAmount(Mod303Key.CT_S326))
 			,true)
 		// (1) Actividades en régimen simplificado. L Cuota mínima
-		,CT_S327(Mod303Key.CT_S327,null,null,null,null,null
+		,CT_S327(Mod303Key.CT_S327,null,null,null,"calculateCuotaMinima(CT_S317, CT_S318, CT_S325, CT_S326,CT_S323)"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S327,ensureActivity(mod,2).getCmn())
 			,mod -> ensureActivity(mod,2).setCmn(mod.getAmount(Mod303Key.CT_S327))
 			,true)
 		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
-		,CT_S328(Mod303Key.CT_S328,null,null,null,null,null
+		,CT_S328(Mod303Key.CT_S328,null,null,null,"isLastPeriod()?((CT_S327)>CT_S324?CT_S327:CT_S324):0.0"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S328,ensureActivity(mod,2).getCad())
 			,mod -> ensureActivity(mod,2).setCad(mod.getAmount(Mod303Key.CT_S328))
 			,true)
@@ -1414,7 +1423,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setPor(mod.getAmount(Mod303Key.CT_S420))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
-		,CT_S421(Mod303Key.CT_S421,null,null,null,"calculateIngresoCuenta( CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420)", null
+		,CT_S421(Mod303Key.CT_S421,null,null,null,"calculateIngresoCuenta(4, CT_S4X1, CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S421,ensureActivity(mod,3).getIng())
 			,mod -> ensureActivity(mod,3).setIng(mod.getAmount(Mod303Key.CT_S421))
 			,true)
@@ -1429,7 +1438,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setIct(mod.getAmount(Mod303Key.CT_S423))
 			,true)
 		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
-		,CT_S424(Mod303Key.CT_S424,null,null,null,null,null
+		,CT_S424(Mod303Key.CT_S424,null,null,null,"calculateResultadoAnual( CT_S417, CT_S418, CT_S422, CT_S423)"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S424,ensureActivity(mod,3).getRes())
 			,mod -> ensureActivity(mod,3).setRes(mod.getAmount(Mod303Key.CT_S424))
 			,true)
@@ -1444,12 +1454,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setDvc(mod.getAmount(Mod303Key.CT_S426))
 			,true)
 		// (1) Actividades en régimen simplificado. L Cuota mínima
-		,CT_S427(Mod303Key.CT_S427,null,null,null,null,null
+		,CT_S427(Mod303Key.CT_S427,null,null,null,"calculateCuotaMinima(CT_S417, CT_S418, CT_S425, CT_S426,CT_S423)"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S427,ensureActivity(mod,3).getCmn())
 			,mod -> ensureActivity(mod,3).setCmn(mod.getAmount(Mod303Key.CT_S427))
 			,true)
 		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
-		,CT_S428(Mod303Key.CT_S428,null,null,null,null,null
+		,CT_S428(Mod303Key.CT_S428,null,null,null,"isLastPeriod()?((CT_S427)>CT_S424?CT_S427:CT_S424):0.0"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S428,ensureActivity(mod,3).getCad())
 			,mod -> ensureActivity(mod,3).setCad(mod.getAmount(Mod303Key.CT_S428))
 			,true)
@@ -1457,11 +1469,11 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// 47 Suma de ingresos a cuenta del conjunto de actividades
 		,CT_S47(Mod303Key.CT_S47,null,null,null,"CT_SA16+CT_SA26+CT_SA36+CT_SA46+CT_S121+CT_S221+CT_S321+CT_S421",null)
 		// 48 Suma de cuotas derivadas RS del conjunto de actividades
-		,CT_S48(Mod303Key.CT_S48)
+		,CT_S48(Mod303Key.CT_S48,null,null,null,"isLastPeriod()?(CT_SA18+CT_SA28+CT_SA38+CT_SA48+CT_S128+CT_S228+CT_S328+CT_S428):0.0",null)
 		// 49 (A+B) Suma de ingresos a cuenta realizados en el ejercicio
 		,CT_S49(Mod303Key.CT_S49)
 		// 50 (A+B) Resultado
-		,CT_S50(Mod303Key.CT_S50)
+		,CT_S50(Mod303Key.CT_S50,null,null,null,"isLastPeriod()?(CT_S48-CT_S49):0.0",null)
 		// 51 Cuotas devengadas - Adquisiciones intracomunitarias de bienes
 		,CT_S51(Mod303Key.CT_S51
 			 ,(mod,vat) -> adqIntracomunitariasFilterSimp(vat,mod) && AonMathUtils.isNotZero(vat.getPercentage()) 
@@ -1478,7 +1490,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,(ctx,mod,vat) -> add(Mod303Key.CT_S53,mod,vat.getQuota())
 			,null,null,null)
 		// 54 Cuotas devengadas - Total cuota resultante
-		,CT_S54(Mod303Key.CT_S54,null,null,null,"CT_S47+CT_S51+CT_S52+CT_S53",null)
+		,CT_S54(Mod303Key.CT_S54,null,null,null,"isLastPeriod()?(CT_S50+CT_S51+CT_S52+CT_S53):(CT_S47+CT_S51+CT_S52+CT_S53)",null)
 		// 55 IVA deducible - Adquisici\u00F3n o importaci\u00F3n de activos fijos
 		,CT_S55(Mod303Key.CT_S55
 			 ,(mod,vat) -> vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) && !vat.isSales() && vat.isInvestment()

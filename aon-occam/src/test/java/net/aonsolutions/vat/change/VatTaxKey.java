@@ -7,6 +7,10 @@ import java.util.function.BiConsumer;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.AEAT_2017_Declaration;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.ARABA_2017_Declaration;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.BIZKAIA_2017_Declaration;
+import com.esferalia.aon.occam.impl.jooq.dao.mod303.GIPUZKOA_2017_Declaration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class VatTaxKey  {
@@ -178,117 +182,6 @@ public class VatTaxKey  {
 			addBase( mod, Mod303Key.CT_C74, det);
 			addQuota( mod, Mod303Key.CT_C75, det);
 		});
-	}
-
-	public static final Map<String,BiConsumer<Mod303,VatTaxDetail>> BIZKAIA_KEY_MAP = new HashMap<String,BiConsumer<Mod303,VatTaxDetail>>();
-	static {
-		BIZKAIA_KEY_MAP.put("A1", (mod,det) -> {	// A1=REGIMEN GENERAL
-		});	
-		BIZKAIA_KEY_MAP.put("A3", (mod,det) -> {	// A3=ADQUISIONES INTRACOMUNITARIAS DE BIENES
-			
-		});
-		BIZKAIA_KEY_MAP.put("A31", (mod,det) -> {	// A31=ADQUISIONES INTRACOMUNITARIAS DE SERVICIOS
-			
-		});
-		BIZKAIA_KEY_MAP.put("A4", (mod,det) -> {	// A4=INVERSION DE SUJETO PASIVO
-			
-		});
-		BIZKAIA_KEY_MAP.put("A5", (mod,det) -> {	// A5=MODIFICACION BASES Y CUOTAS
-			
-		});
-		BIZKAIA_KEY_MAP.put("A2", (mod,det) -> {	// A2=RECARGO EQUIVALENCIA
-			
-		});
-		BIZKAIA_KEY_MAP.put("A21", (mod,det) -> {	// A21=MODIFICACION BASES Y CUOTAS RECARGO EQUIVALENCIA
-			
-		});
-		BIZKAIA_KEY_MAP.put("AT", (mod,det) -> {	// AT=TOTAL DEVENGADO
-			
-		});
-		BIZKAIA_KEY_MAP.put("B1", (mod,det) -> {	// B1=OP. INTERIORES DE BIENES CORRIENTES
-			
-		});
-		BIZKAIA_KEY_MAP.put("B2", (mod,det) -> {	// B2=OP. INTERIORES DE BIENES DE INVERSION
-			
-		});
-		BIZKAIA_KEY_MAP.put("B3", (mod,det) -> {	// B3=OP. INTERIORES DE GASTOS
-			
-		});
-		BIZKAIA_KEY_MAP.put("BT", (mod,det) -> {	// BT=TOTAL OP. INTERIORES
-			
-		});
-		BIZKAIA_KEY_MAP.put("C1", (mod,det) -> {	// C1=IMPORTACIONES DE BIENES CORRIENTES
-			
-		});
-		BIZKAIA_KEY_MAP.put("C2", (mod,det) -> {	// C2=IMPORTACIONES DE BIENES DE INVERSION
-			
-		});
-		BIZKAIA_KEY_MAP.put("CT", (mod,det) -> {	// CT=TOTAL IMPORTACIONES
-			
-		});
-		BIZKAIA_KEY_MAP.put("D1", (mod,det) -> {	// D1=ADQ. INTRACOM. DE BIENES CORRIENTES
-			
-		});
-		BIZKAIA_KEY_MAP.put("D2", (mod,det) -> {	// D2=ADQ. INTRACOM. DE BIENES DE INVERSION
-			
-		});
-		BIZKAIA_KEY_MAP.put("D3", (mod,det) -> {	// D3=TOTAL ADQ. INTRACOM. DE GASTOS
-			
-		});
-		BIZKAIA_KEY_MAP.put("DT", (mod,det) -> {	// DT=TOTAL ADQ. INTRACOM.
-			
-		});
-		BIZKAIA_KEY_MAP.put("RD", (mod,det) -> {	// RD=RECTIFICACION DE DEDUCCIONES
-			
-		});
-		BIZKAIA_KEY_MAP.put("ET", (mod,det) -> {	// ET=COMPENSACION REGIMEN ESPECIAL A,G Y P.
-			
-		});
-		BIZKAIA_KEY_MAP.put("RI", (mod,det) -> {	// RI=REGULARIZACION DE INVERSIONES
-			
-		});
-		BIZKAIA_KEY_MAP.put("RP", (mod,det) -> {	// RP=REGULARIZACION POR APLICACIÓN DEL PORCENTAJE DEFINITIVO DE PRORRATA
-			
-		});
-		BIZKAIA_KEY_MAP.put("FT", (mod,det) -> {	// FT=TOTAL A DEDUCIR
-			
-		});
-		BIZKAIA_KEY_MAP.put("DF", (mod,det) -> {	// DF=DIFERENCIA
-			
-		});
-		BIZKAIA_KEY_MAP.put("SP", (mod,det) -> {	// SP=LINEA EN BLANCO
-		});
-		BIZKAIA_KEY_MAP.put("CP", (mod,det) -> {	// CP=COMPRAS DE BIENES CORRIENTES
-		});
-		BIZKAIA_KEY_MAP.put("GT", (mod,det) -> {	// GT=GASTOS
-		});
-		BIZKAIA_KEY_MAP.put("BI", (mod,det) -> {	// BI=BIENES DE INVERSION
-		});
-		BIZKAIA_KEY_MAP.put("TD", (mod,det) -> {	// TD=TOTAL CUOTA DEDUCIBLE
-		});
-		BIZKAIA_KEY_MAP.put("SP2", (mod,det) -> {	// SP2=LINEA EN BLANCO
-		});
-		BIZKAIA_KEY_MAP.put("EI", (mod,det) -> {	// EI=Entregas Intracomunitarias
-		});
-		BIZKAIA_KEY_MAP.put("EX1", (mod,det) -> {	// EX1=Exportaciones Definitivas
-		});
-		BIZKAIA_KEY_MAP.put("EX2", (mod,det) -> {	// EX2=Exportaciones Envios Definitivos a Canarias,Ceuta y Melilla
-		});
-		BIZKAIA_KEY_MAP.put("OO", (mod,det) -> {	// OO=Otras Operaciones no sujetas con derecho a deducción
-		});
-		BIZKAIA_KEY_MAP.put("OS", (mod,det) -> {	// OS=Otras Op. no sujetas sin drcho. a deducción
-		});
-		BIZKAIA_KEY_MAP.put("OI", (mod,det) -> {	// OI=Operaciones por inversión de sujet pasivo no incluídas.
-		});
-		BIZKAIA_KEY_MAP.put("PS", (mod,det) -> {	// PS=Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicación del impuesto
-		});
-		BIZKAIA_KEY_MAP.put("EBI", (mod,det) -> {	// EBI=Importe de entregas de bienes de inversion.
-		});
-		BIZKAIA_KEY_MAP.put("XO", (mod,det) -> {	// XO=Importe de entregas de bienes y servicios Rég. Caja
-		});
-		BIZKAIA_KEY_MAP.put("XI", (mod,det) -> {	// XI=Importe de adquisiciones de bienes y servicios Rég. Caja
-		});
-		
 	}
 
 	public static final Map<String,BiConsumer<Mod303,VatTaxDetail>> GIPUZKOA_KEY_MAP = new HashMap<String,BiConsumer<Mod303,VatTaxDetail>>();
@@ -663,48 +556,236 @@ public class VatTaxKey  {
 		det.addAmount(tax.getQuota());
 	}
 
+	public static final Map<String,BiConsumer<Mod303,VatTaxDetail>> BIZKAIA_KEY_MAP = new HashMap<String,BiConsumer<Mod303,VatTaxDetail>>();
+	static {
+		BIZKAIA_KEY_MAP.put("A1", (mod,det) -> {	// A1=REGIMEN GENERAL
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT1 )) {
+				addBase ( mod, Mod303Key.BZ_C003, det);
+				mod.ensureDetail(Mod303Key.BZ_X003).setAmount(BIZKAIA_2017_Declaration.PERCENT1);
+				addQuota( mod, Mod303Key.BZ_C004, det);
+			}
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT2 )) {
+				addBase ( mod, Mod303Key.BZ_C005, det);
+				mod.ensureDetail(Mod303Key.BZ_X005).setAmount(BIZKAIA_2017_Declaration.PERCENT2);
+				addQuota( mod, Mod303Key.BZ_C006, det);
+			}
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT3 )) {
+				addBase ( mod, Mod303Key.BZ_C007, det);
+				mod.ensureDetail(Mod303Key.BZ_X007).setAmount(BIZKAIA_2017_Declaration.PERCENT3);
+				addQuota( mod, Mod303Key.BZ_C008, det);
+			}
+		});	
+		BIZKAIA_KEY_MAP.put("A3", (mod,det) -> {	// A3=ADQUISIONES INTRACOMUNITARIAS DE BIENES
+			addBase ( mod, Mod303Key.BZ_C017, det);
+			addQuota( mod, Mod303Key.BZ_C018, det);
+		});
+		BIZKAIA_KEY_MAP.put("A31", (mod,det) -> {	// A31=ADQUISIONES INTRACOMUNITARIAS DE SERVICIOS
+			addBase ( mod, Mod303Key.BZ_C017, det);
+			addQuota( mod, Mod303Key.BZ_C018, det);
+		});
+		BIZKAIA_KEY_MAP.put("A4", (mod,det) -> {	// A4=INVERSION DE SUJETO PASIVO
+			addBase ( mod, Mod303Key.BZ_C019, det);
+			addQuota( mod, Mod303Key.BZ_C020, det);
+		});
+		BIZKAIA_KEY_MAP.put("A5", (mod,det) -> {	// A5=MODIFICACION BASES Y CUOTAS
+			addBase ( mod, Mod303Key.BZ_C021, det);
+			addQuota( mod, Mod303Key.BZ_C022, det);
+		});
+		BIZKAIA_KEY_MAP.put("A2", (mod,det) -> {	// A2=RECARGO EQUIVALENCIA
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1 )) {
+				addBase ( mod, Mod303Key.BZ_C009, det);
+				mod.ensureDetail(Mod303Key.BZ_X009).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1);
+				addQuota( mod, Mod303Key.BZ_C010, det);
+			}
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2 )) {
+				addBase ( mod, Mod303Key.BZ_C011, det);
+				mod.ensureDetail(Mod303Key.BZ_X011).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2);
+				addQuota( mod, Mod303Key.BZ_C012, det);
+			}
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3 )) {
+				addBase ( mod, Mod303Key.BZ_C013, det);
+				mod.ensureDetail(Mod303Key.BZ_X013).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3);
+				addQuota( mod, Mod303Key.BZ_C014, det);
+			}
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT4 )) {
+				addBase ( mod, Mod303Key.BZ_C015, det);
+				mod.ensureDetail(Mod303Key.BZ_X015).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT4);
+				addQuota( mod, Mod303Key.BZ_C016, det);
+			}
+		});
+		BIZKAIA_KEY_MAP.put("A21", (mod,det) -> {	// A21=MODIFICACION BASES Y CUOTAS RECARGO EQUIVALENCIA
+			
+		});
+		BIZKAIA_KEY_MAP.put("AT", (mod,det) -> {	// AT=TOTAL DEVENGADO
+			addQuota( mod, Mod303Key.BZ_C023, det);
+		});
+		BIZKAIA_KEY_MAP.put("B1", (mod,det) -> {	// B1=OP. INTERIORES DE BIENES CORRIENTES
+			addQuota( mod, Mod303Key.BZ_C024, det);
+		});
+		BIZKAIA_KEY_MAP.put("B2", (mod,det) -> {	// B2=OP. INTERIORES DE BIENES DE INVERSION
+			addQuota( mod, Mod303Key.BZ_C024, det);
+		});
+		BIZKAIA_KEY_MAP.put("B3", (mod,det) -> {	// B3=OP. INTERIORES DE GASTOS
+			addQuota( mod, Mod303Key.BZ_C024, det);
+		});
+		BIZKAIA_KEY_MAP.put("BT", (mod,det) -> {	// BT=TOTAL OP. INTERIORES
+			
+		});
+		BIZKAIA_KEY_MAP.put("C1", (mod,det) -> {	// C1=IMPORTACIONES DE BIENES CORRIENTES
+			addQuota( mod, Mod303Key.BZ_C025, det);
+		});
+		BIZKAIA_KEY_MAP.put("C2", (mod,det) -> {	// C2=IMPORTACIONES DE BIENES DE INVERSION
+			addQuota( mod, Mod303Key.BZ_C025, det);
+		});
+		BIZKAIA_KEY_MAP.put("CT", (mod,det) -> {	// CT=TOTAL IMPORTACIONES
+			
+		});
+		BIZKAIA_KEY_MAP.put("D1", (mod,det) -> {	// D1=ADQ. INTRACOM. DE BIENES CORRIENTES
+			addQuota( mod, Mod303Key.BZ_C026, det);
+		});
+		BIZKAIA_KEY_MAP.put("D2", (mod,det) -> {	// D2=ADQ. INTRACOM. DE BIENES DE INVERSION
+			addQuota( mod, Mod303Key.BZ_C026, det);
+		});
+		BIZKAIA_KEY_MAP.put("D3", (mod,det) -> {	// D3=TOTAL ADQ. INTRACOM. DE GASTOS
+			addQuota( mod, Mod303Key.BZ_C026, det);
+		});
+		BIZKAIA_KEY_MAP.put("DT", (mod,det) -> {	// DT=TOTAL ADQ. INTRACOM.
+			
+		});
+		BIZKAIA_KEY_MAP.put("RD", (mod,det) -> {	// RD=RECTIFICACION DE DEDUCCIONES
+			
+		});
+		BIZKAIA_KEY_MAP.put("ET", (mod,det) -> {	// ET=COMPENSACION REGIMEN ESPECIAL A,G Y P.
+			addQuota( mod, Mod303Key.BZ_C027, det);
+		});
+		BIZKAIA_KEY_MAP.put("RI", (mod,det) -> {	// RI=REGULARIZACION DE INVERSIONES
+			addQuota( mod, Mod303Key.BZ_C028, det);
+		});
+		BIZKAIA_KEY_MAP.put("RP", (mod,det) -> {	// RP=REGULARIZACION POR APLICACIÓN DEL PORCENTAJE DEFINITIVO DE PRORRATA
+			
+		});
+		BIZKAIA_KEY_MAP.put("FT", (mod,det) -> {	// FT=TOTAL A DEDUCIR
+			addQuota( mod, Mod303Key.BZ_C030, det);
+		});
+		BIZKAIA_KEY_MAP.put("DF", (mod,det) -> {	// DF=DIFERENCIA
+			addQuota( mod, Mod303Key.BZ_C031, det);
+		});
+		BIZKAIA_KEY_MAP.put("SP", (mod,det) -> {	// SP=LINEA EN BLANCO
+		});
+		BIZKAIA_KEY_MAP.put("CP", (mod,det) -> {	// CP=COMPRAS DE BIENES CORRIENTES
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1 )) {
+				addBase ( mod, Mod303Key.BZ_C050, det);
+				mod.ensureDetail(Mod303Key.BZ_X050).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1);
+				addQuota( mod, Mod303Key.BZ_C051, det);
+				addQuota( mod, Mod303Key.BZ_C052, det);
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2 )) {
+				addBase ( mod, Mod303Key.BZ_C053, det);
+				mod.ensureDetail(Mod303Key.BZ_X053).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2);
+				addQuota( mod, Mod303Key.BZ_C054, det);
+				addQuota( mod, Mod303Key.BZ_C055, det);
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3 )) {
+				addBase ( mod, Mod303Key.BZ_C056, det);
+				mod.ensureDetail(Mod303Key.BZ_X056).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3);
+				addQuota( mod, Mod303Key.BZ_C057, det);
+				addQuota( mod, Mod303Key.BZ_C058, det);
+			} else {
+				addBase ( mod, Mod303Key.BZ_C062, det);
+				addQuota( mod, Mod303Key.BZ_C063, det);
+				addQuota( mod, Mod303Key.BZ_C064, det);
+			}
+//			,BZ_C065("303-BZ065",false,"65","Compras de bienes corrientes - Base imponible")
+//			,BZ_C066("303-BZ066",false,"66","Compras de bienes corrientes - Cuota")
+//			,BZ_C067("303-BZ067",false,"67","Compras de bienes corrientes - Cuota deducible")
+		});
+		BIZKAIA_KEY_MAP.put("GT", (mod,det) -> {	// GT=GASTOS
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1 )) {
+				addBase ( mod, Mod303Key.BZ_C068, det);
+				mod.ensureDetail(Mod303Key.BZ_X068).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1);
+				addQuota( mod, Mod303Key.BZ_C069, det);
+				addQuota( mod, Mod303Key.BZ_C070, det);
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2 )) {
+				addBase ( mod, Mod303Key.BZ_C071, det);
+				mod.ensureDetail(Mod303Key.BZ_X071).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2);
+				addQuota( mod, Mod303Key.BZ_C072, det);
+				addQuota( mod, Mod303Key.BZ_C073, det);
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3 )) {
+				addBase ( mod, Mod303Key.BZ_C074, det);
+				mod.ensureDetail(Mod303Key.BZ_X074).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3);
+				addQuota( mod, Mod303Key.BZ_C075, det);
+				addQuota( mod, Mod303Key.BZ_C076, det);
+			} else {
+				addBase ( mod, Mod303Key.BZ_C077, det);
+				addQuota( mod, Mod303Key.BZ_C078, det);
+				addQuota( mod, Mod303Key.BZ_C079, det);
+			}
+//			,BZ_C080("303-BZ080",false,"80","Gastos - Base imponible")
+//			,BZ_C081("303-BZ081",false,"81","Gastos - Cuota")
+//			,BZ_C082("303-BZ082",false,"82","Gastos - Cuota deducible")
+		});
+		BIZKAIA_KEY_MAP.put("BI", (mod,det) -> {	// BI=BIENES DE INVERSION
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1 )) {
+				addBase ( mod, Mod303Key.BZ_C083, det);
+				mod.ensureDetail(Mod303Key.BZ_X083).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1);
+				addQuota( mod, Mod303Key.BZ_C084, det);
+				addQuota( mod, Mod303Key.BZ_C085, det);
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2 )) {
+				addBase ( mod, Mod303Key.BZ_C086, det);
+				mod.ensureDetail(Mod303Key.BZ_X086).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2);
+				addQuota( mod, Mod303Key.BZ_C087, det);
+				addQuota( mod, Mod303Key.BZ_C088, det);
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3 )) {
+				addBase ( mod, Mod303Key.BZ_C089, det);
+				mod.ensureDetail(Mod303Key.BZ_X089).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3);
+				addQuota( mod, Mod303Key.BZ_C090, det);
+				addQuota( mod, Mod303Key.BZ_C091, det);
+			} else {
+				addBase ( mod, Mod303Key.BZ_C092, det);
+				addQuota( mod, Mod303Key.BZ_C093, det);
+				addQuota( mod, Mod303Key.BZ_C094, det);
+			}
+//			,BZ_C095("303-BZ095",false,"95","Bienes de inversi\u00F3n - Base imponible")
+//			,BZ_C096("303-BZ096",false,"96","Bienes de inversi\u00F3n - Cuota")
+//			,BZ_C097("303-BZ097",false,"97","Bienes de inversi\u00F3n - Cuota deducible")
+		});
+		BIZKAIA_KEY_MAP.put("TD", (mod,det) -> {	// TD=TOTAL CUOTA DEDUCIBLE
+			addBase ( mod, Mod303Key.BZ_C098, det);
+			addQuota( mod, Mod303Key.BZ_C099, det);
+			addQuota( mod, Mod303Key.BZ_C100, det);
+		});
+		BIZKAIA_KEY_MAP.put("SP2", (mod,det) -> {	// SP2=LINEA EN BLANCO
+		});
+		BIZKAIA_KEY_MAP.put("EI", (mod,det) -> {	// EI=Entregas Intracomunitarias
+			addBase ( mod, Mod303Key.BZ_C105, det);
+		});
+		BIZKAIA_KEY_MAP.put("EX1", (mod,det) -> {	// EX1=Exportaciones Definitivas
+			addBase ( mod, Mod303Key.BZ_C104, det);
+		});
+		BIZKAIA_KEY_MAP.put("EX2", (mod,det) -> {	// EX2=Exportaciones Envios Definitivos a Canarias,Ceuta y Melilla
+			addBase ( mod, Mod303Key.BZ_C104, det);
+		});
+		BIZKAIA_KEY_MAP.put("OO", (mod,det) -> {	// OO=Otras Operaciones no sujetas con derecho a deducción
+			addBase ( mod, Mod303Key.BZ_C106, det);
+		});
+		BIZKAIA_KEY_MAP.put("OS", (mod,det) -> {	// OS=Otras Op. no sujetas sin drcho. a deducción
+			addBase ( mod, Mod303Key.BZ_C106, det);
+		});
+		BIZKAIA_KEY_MAP.put("OI", (mod,det) -> {	// OI=Operaciones por inversión de sujet pasivo no incluídas.
+			addBase ( mod, Mod303Key.BZ_C107, det);
+		});
+		BIZKAIA_KEY_MAP.put("PS", (mod,det) -> {	// PS=Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicación del impuesto
+			addBase ( mod, Mod303Key.BZ_C108, det);
+		});
+		BIZKAIA_KEY_MAP.put("EBI", (mod,det) -> {	// EBI=Importe de entregas de bienes de inversion.
+		});
+		BIZKAIA_KEY_MAP.put("XO", (mod,det) -> {	// XO=Importe de entregas de bienes y servicios Rég. Caja
+			addBase ( mod, Mod303Key.BZ_C200, det);
+			addQuota( mod, Mod303Key.BZ_C201, det);
+		});
+		BIZKAIA_KEY_MAP.put("XI", (mod,det) -> {	// XI=Importe de adquisiciones de bienes y servicios Rég. Caja
+			addBase ( mod, Mod303Key.BZ_C202, det);
+			addQuota( mod, Mod303Key.BZ_C203, det);
+		});
+		
+	}
+
 }
-
-
-
-// A1=REGIMEN GENERAL
-// A3=ADQUISIONES INTRACOMUNITARIAS DE BIENES
-// A31=ADQUISIONES INTRACOMUNITARIAS DE SERVICIOS
-// A4=INVERSION DE SUJETO PASIVO
-// A5=MODIFICACION BASES Y CUOTAS
-// A2=RECARGO EQUIVALENCIA
-// A21=MODIFICACION BASES Y CUOTAS RECARGO EQUIVALENCIA
-// AT=TOTAL DEVENGADO
-// B1=OP. INTERIORES DE BIENES CORRIENTES
-// B2=OP. INTERIORES DE BIENES DE INVERSION
-// B3=OP. INTERIORES DE GASTOS
-// BT=TOTAL OP. INTERIORES
-// C1=IMPORTACIONES DE BIENES CORRIENTES
-// C2=IMPORTACIONES DE BIENES DE INVERSION
-// CT=TOTAL IMPORTACIONES
-// D1=ADQ. INTRACOM. DE BIENES CORRIENTES
-// D2=ADQ. INTRACOM. DE BIENES DE INVERSION
-// D3=TOTAL ADQ. INTRACOM. DE GASTOS
-// DT=TOTAL ADQ. INTRACOM.
-// RD=RECTIFICACION DE DEDUCCIONES
-// ET=COMPENSACION REGIMEN ESPECIAL A,G Y P.
-// RI=REGULARIZACION DE INVERSIONES
-// RP=REGULARIZACION POR APLICACIÓN DEL PORCENTAJE DEFINITIVO DE PRORRATA
-// FT=TOTAL A DEDUCIR
-// DF=DIFERENCIA
-// SP=LINEA EN BLANCO
-// CP=COMPRAS DE BIENES CORRIENTES
-// GT=GASTOS
-// BI=BIENES DE INVERSION
-// TD=TOTAL CUOTA DEDUCIBLE
-// SP2=LINEA EN BLANCO
-// EI=Entregas Intracomunitarias
-// EX1=Exportaciones Definitivas
-// EX2=Exportaciones Envios Definitivos a Canarias,Ceuta y Melilla
-// OO=Otras Operaciones no sujetas con derecho a deducción
-// OS=Otras Op. no sujetas sin drcho. a deducción
-// OI=Operaciones por inversión de sujet pasivo no incluídas.
-// PS=Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicación del impuesto
-// EBI=Importe de entregas de bienes de inversion.
-// XO=Importe de entregas de bienes y servicios Rég. Caja
-// XI=Importe de adquisiciones de bienes y servicios Rég. Caja

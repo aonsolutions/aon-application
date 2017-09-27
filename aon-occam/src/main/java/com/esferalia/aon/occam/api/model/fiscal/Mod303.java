@@ -120,8 +120,4 @@ public class Mod303 extends FiscalModel implements Serializable {
 							);
 		}
 	}
-	
-	public boolean isOldMod303() {
-		return (getMap() != null && (getMap().containsKey("303-AG1") || getMap().containsKey("303-AC1")));
-	}
 }

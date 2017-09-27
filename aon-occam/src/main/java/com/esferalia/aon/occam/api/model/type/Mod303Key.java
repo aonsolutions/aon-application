@@ -620,8 +620,6 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,BZ_C100("303-BZ100",false,"100","Total - Cuota deducible")
 	
 	,BZ_C102("303-BZ102",false,"102","Prorrata especial")
-	,BZ_C103("303-BZ103",false,"103","Porcentaje prorrata aplicado.")
-	
 	
 	,BZ_C104("303-BZ104",true ,"104","Exportaciones y operaciones asimiladas")
 	,BZ_C105("303-BZ105",true ,"105","Entregas intracomunitarias")

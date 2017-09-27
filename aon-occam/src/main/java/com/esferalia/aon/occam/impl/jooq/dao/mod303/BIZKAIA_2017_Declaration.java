@@ -20,13 +20,13 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 				
 	}
 	
-	private static final double PERCENT1 = 4.0;
-	private static final double PERCENT2 = 10.0;
-	private static final double PERCENT3 = 21.0;
-	private static final double SURCHARGE_PERCENT1 = 0.5;
-	private static final double SURCHARGE_PERCENT2 = 1.4;
-	private static final double SURCHARGE_PERCENT3 = 5.2;
-	private static final double SURCHARGE_PERCENT4 = 1.75;
+	public static final double PERCENT1 = 4.0;
+	public static final double PERCENT2 = 10.0;
+	public static final double PERCENT3 = 21.0;
+	public static final double SURCHARGE_PERCENT1 = 0.5;
+	public static final double SURCHARGE_PERCENT2 = 1.4;
+	public static final double SURCHARGE_PERCENT3 = 5.2;
+	public static final double SURCHARGE_PERCENT4 = 1.75;
 	
 	public static boolean accept(Mod303 mod) {
 		return  mod.isBizkaia() && mod.getYear() >= 2010;

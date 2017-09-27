@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRe
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegimeScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
@@ -61,7 +62,7 @@ public class Model3032017AEAT extends Model303Base {
 		}
 	}
 	private final Mod303ActivityFarmerProvidesKey providesFarmerKey = new Mod303ActivityFarmerProvidesKey();
-	private final Model303AEATActivityFarmerTable farmerTable = new Model303AEATActivityFarmerTable( providesFarmerKey );
+	private final Model303AEATActivityFarmerTable farmerTable;
 	
 	private final Mod303ActivityProvidesKey providesKey = new Mod303ActivityProvidesKey();
 	private final Model303AEATActivityTable activityTable = new Model303AEATActivityTable( providesKey );
@@ -73,6 +74,8 @@ public class Model3032017AEAT extends Model303Base {
 		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
+		
+		farmerTable = new Model303AEATActivityFarmerTable( providesFarmerKey, (mod303.getPeriod() == Period.T4 || mod303.getPeriod() == Period.M12) );
 		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);

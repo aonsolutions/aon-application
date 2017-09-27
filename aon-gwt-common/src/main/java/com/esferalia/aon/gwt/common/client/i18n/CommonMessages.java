@@ -1095,6 +1095,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Cuotas soportadas operaciones corrientes")
 	String page6D();
+	
+	@DefaultMessage("Cuo. Sop. op. corr.")
+	String page6DAbbr();
 
 	@DefaultMessage("\u00CDndice corrector")
 	String page6E();
@@ -1122,6 +1125,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Cuota derivada r\u00E9gimen simplificado")
 	String page6J();
+
+	@DefaultMessage("Cuota derivada")
+	String derQuota();
 
 	@DefaultMessage("Actividades agr\u00EDcolas, ganaderas y forestales")
 	String farmerActivity();
@@ -3346,6 +3352,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("D\u00EDas de ejercicio de la actividad")
 	String irpfActivityDia();
+
+	@DefaultMessage("D\u00EDas de ejercicio de la actividad en el trimestre")
+	String irpfActivityDiaTrim();
 
 	@DefaultMessage("Rendimiento neto de la actividad a efectos del pago fraccionado")
 	String irpfActivityNet();

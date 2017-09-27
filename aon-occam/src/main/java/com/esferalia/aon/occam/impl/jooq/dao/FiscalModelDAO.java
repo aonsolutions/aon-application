@@ -75,7 +75,7 @@ public class FiscalModelDAO {
 		return fm;
 	}
 
-	static Stream<FiscalModelDetail> getModelDetails(AONContext ctx,FiscalModel fm) {
+	public static Stream<FiscalModelDetail> getModelDetails(AONContext ctx,FiscalModel fm) {
 		ctx.checkRead();
 		return ctx.getDslContext().selectFrom( FS_MODEL_DETAIL)
 			.where(FS_MODEL_DETAIL.FS_MODEL.eq(fm.getId()))

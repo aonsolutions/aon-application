@@ -396,7 +396,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 			}
 		});
-		table.setWidget(row, 0, new Label(AON.MSG.irpfActivityDia()));
+		table.setWidget(row, 0, new Label(AON.MSG.irpfActivityDiaTrim()));
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
 		table.setWidget(row, 1, dia);

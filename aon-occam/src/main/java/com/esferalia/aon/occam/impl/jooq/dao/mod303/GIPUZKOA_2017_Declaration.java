@@ -17,12 +17,12 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		
 	}
 	
-	private static final double PERCENT1 = 21.0;
-	private static final double PERCENT2 = 10.0;
-	private static final double PERCENT3 = 4.0;
-	private static final double SURCHARGE_PERCENT1 = 5.2;
-	private static final double SURCHARGE_PERCENT2 = 1.4;
-	private static final double SURCHARGE_PERCENT3 = 0.5;
+	public static final double PERCENT1 = 21.0;
+	public static final double PERCENT2 = 10.0;
+	public static final double PERCENT3 = 4.0;
+	public static final double SURCHARGE_PERCENT1 = 5.2;
+	public static final double SURCHARGE_PERCENT2 = 1.4;
+	public static final double SURCHARGE_PERCENT3 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
 		return  mod.isGipuzkoa() && mod.getYear() >= 2010;

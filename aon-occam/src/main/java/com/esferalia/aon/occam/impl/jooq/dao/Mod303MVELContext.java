@@ -54,17 +54,64 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		return 0;
 	}
 
-	public double calculateIngresoCuenta( double days, double quota, double reductions, double tempIndex, double percent) {
-		long trimDays = (AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod303),FiscalUtils.getPeriodEnd(mod303)) + 1);
-		if (AonMathUtils.isZero(days) || days > trimDays) {
-			days = trimDays; 
-		}
-		double q = 0;
-		if (AonMathUtils.isZero(tempIndex)) {
-			q = AonMathUtils.round((quota - reductions) * percent / 100); 
+	public double calculateIngresoCuenta(int actNum, double daysAct, double daysTrim, double quota, double reductions, double tempIndex, double percent) {
+		
+		if (isLastPeriod()) return 0.0; 
+		double diasActividad = 0;
+		if (tempIndex == 0) {
+			tempIndex = 1;
+			
+// ** DESCOMENTAR DESPUES TRASPASO [START]
+// 		diasActividad = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod303),FiscalUtils.getPeriodEnd(mod303)) + 1;
+// ** DESCOMENTAR DESPUES TRASPASO [END]
+
+// ** BORRAR DESPUES TRASPASO [START]
+			if (mod303.getYear() < 2017 || (mod303.getYear() == 2017 && mod303.getPeriod().ordinal() < Period.T2.ordinal()) || actNum > 1) {
+				diasActividad = 90;
+			} else {
+				diasActividad = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod303),FiscalUtils.getPeriodEnd(mod303)) + 1;
+			}
+// ** BORRAR DESPUES TRASPASO [END]
+
+			if (daysTrim == 0) {
+				daysTrim = diasActividad;
+			}
 		} else {
-			q = AonMathUtils.round((quota - reductions) * tempIndex * percent / 100);
+			diasActividad = daysAct;
 		}
-		return AonMathUtils.round( q * days / trimDays);
-	}	
+		
+// ** BORRAR DESPUES TRASPASO [START]
+		double f1 = AonMathUtils.round( (quota - reductions) * percent / 100 );
+		f1 = AonMathUtils.round(f1 * tempIndex );
+// ** BORRAR DESPUES TRASPASO [END]
+		
+// ** DESCOMENTAR DESPUES TRASPASO [START]
+//		double f1 =(quota - reductions) * percent / 100;
+//		f1 = f1 * tempIndex;
+// ** DESCOMENTAR DESPUES TRASPASO [END]
+		f1 = AonMathUtils.round( f1 * daysTrim / diasActividad );
+		return f1;
+	}
+	
+	public double calculateResultadoAnual(double quota, double reductions, double supportedQuotas, double tempIndex) {
+		
+		if (!isLastPeriod()) return 0.0;
+		double expenses = AonMathUtils.round(quota * 1 / 100);  
+		double q = AonMathUtils.round((quota - reductions - supportedQuotas - expenses));
+		if (AonMathUtils.isNotZero(tempIndex)) {
+			q = AonMathUtils.round( q * tempIndex);   
+		}
+		return q;
+	}
+	
+	public double calculateCuotaMinima(double quota, double reductions, double porQuotaMin, double devQuota,double tempIndex) {
+		
+		if (!isLastPeriod()) return 0.0;
+		
+		double q = AonMathUtils.round( ( (quota - reductions ) * porQuotaMin / 100) + devQuota );
+		if (AonMathUtils.isNotZero(tempIndex)) {
+			q = AonMathUtils.round( q * tempIndex);   
+		}
+		return q;
+	}
 }

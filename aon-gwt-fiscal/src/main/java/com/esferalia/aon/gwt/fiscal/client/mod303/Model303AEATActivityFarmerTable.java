@@ -24,7 +24,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 public class Model303AEATActivityFarmerTable extends CellTable<Mod303ActivityFarmer> implements HasSelectionHandlers<Mod303ActivityFarmer> {
 	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 	
-	public Model303AEATActivityFarmerTable(ProvidesKey<Mod303ActivityFarmer> providesKey) {
+	public Model303AEATActivityFarmerTable(ProvidesKey<Mod303ActivityFarmer> providesKey, boolean lastPeriod) {
 		super(1,TABLE_STYLE, providesKey);
 		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
@@ -45,8 +45,13 @@ public class Model303AEATActivityFarmerTable extends CellTable<Mod303ActivityFar
 		addVolColumn();
 		addIndColumn();
 		addCuoColumn();
-		addPorColumn();
-		addResColumn();
+		if ( lastPeriod ) {
+			addSopColumn();
+			addCadColumn();
+		} else {
+			addPorColumn();
+			addResColumn();
+		}
 		
 		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 	}
@@ -135,6 +140,29 @@ public class Model303AEATActivityFarmerTable extends CellTable<Mod303ActivityFar
 		this.setColumnWidth(amountColumn, 120, Unit.PX);
 	}
 
+	private void addSopColumn() {
+		final TextColumn<Mod303ActivityFarmer> amountColumn = new TextColumn<Mod303ActivityFarmer>() {
+			@Override
+			public String getValue(Mod303ActivityFarmer act) {
+				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getSop());
+			}
+		};
+		this.addColumn(amountColumn, AON.MSG.page6DAbbr());
+		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
+		this.setColumnWidth(amountColumn, 120, Unit.PX);
+	}
+
+	private void addCadColumn() {
+		final TextColumn<Mod303ActivityFarmer> amountColumn = new TextColumn<Mod303ActivityFarmer>() {
+			@Override
+			public String getValue(Mod303ActivityFarmer act) {
+				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getCad());
+			}
+		};
+		this.addColumn(amountColumn, AON.MSG.derQuota() + " [B]");
+		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
+		this.setColumnWidth(amountColumn, 120, Unit.PX);
+	}
 
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Mod303ActivityFarmer> handler) {
