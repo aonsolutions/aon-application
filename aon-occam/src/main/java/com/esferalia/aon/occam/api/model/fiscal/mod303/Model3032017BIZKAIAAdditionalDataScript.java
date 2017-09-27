@@ -34,7 +34,7 @@ public enum Model3032017BIZKAIAAdditionalDataScript implements IModelScript<Mod3
 	,DVG17 (null					,new Mod303Key[]{Mod303Key.BZ_C086,Mod303Key.BZ_X086,Mod303Key.BZ_C087,Mod303Key.BZ_C088},INVOICE,DIFF_INVOICE)
 	,DVG18 (null					,new Mod303Key[]{Mod303Key.BZ_C089,Mod303Key.BZ_X089,Mod303Key.BZ_C090,Mod303Key.BZ_C091},INVOICE,DIFF_INVOICE)
 	,DVG19 (null					,new Mod303Key[]{Mod303Key.BZ_C092,null				,Mod303Key.BZ_C093,Mod303Key.BZ_C094},INVOICE,DIFF_INVOICE)
-	,DVG20 (null					,new Mod303Key[]{Mod303Key.BZ_C085,null				,Mod303Key.BZ_C096,Mod303Key.BZ_C097},COMPUTE)
+	,DVG20 (null					,new Mod303Key[]{Mod303Key.BZ_C095,null				,Mod303Key.BZ_C096,Mod303Key.BZ_C097},COMPUTE)
 	
 	,DVG21 ("Totales"				,new Mod303Key[]{Mod303Key.BZ_C098,null				,Mod303Key.BZ_C099,Mod303Key.BZ_C100},COMPUTE)
 	
