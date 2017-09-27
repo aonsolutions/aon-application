@@ -719,7 +719,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setCmn(mod.getAmount(Mod303Key.CT_S127))
 			,true)
 		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
-		,CT_S128(Mod303Key.CT_S128,null,null,null,"isLastPeriod()?((CT_S127)>CT_S124?CT_S127:CT_S124):0.0"
+		,CT_S128(Mod303Key.CT_S128,null,null,null,"isLastPeriod()?((CT_S127>CT_S124)?CT_S127:CT_S124):0.0"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S128,ensureActivity(mod,0).getCad())
 			,mod -> ensureActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_S128))
@@ -966,7 +966,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setCmn(mod.getAmount(Mod303Key.CT_S227))
 			,true)
 		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
-		,CT_S228(Mod303Key.CT_S228,null,null,null,"isLastPeriod()?((CT_S227)>CT_S224?CT_S227:CT_S224):0.0"
+		,CT_S228(Mod303Key.CT_S228,null,null,null,"isLastPeriod()?((CT_S227>CT_S224)?CT_S227:CT_S224):0.0"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S228,ensureActivity(mod,1).getCad())
 			,mod -> ensureActivity(mod,1).setCad(mod.getAmount(Mod303Key.CT_S228))
@@ -1213,7 +1213,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setCmn(mod.getAmount(Mod303Key.CT_S327))
 			,true)
 		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
-		,CT_S328(Mod303Key.CT_S328,null,null,null,"isLastPeriod()?((CT_S327)>CT_S324?CT_S327:CT_S324):0.0"
+		,CT_S328(Mod303Key.CT_S328,null,null,null,"isLastPeriod()?((CT_S327>CT_S324)?CT_S327:CT_S324):0.0"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S328,ensureActivity(mod,2).getCad())
 			,mod -> ensureActivity(mod,2).setCad(mod.getAmount(Mod303Key.CT_S328))
@@ -1460,7 +1460,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setCmn(mod.getAmount(Mod303Key.CT_S427))
 			,true)
 		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
-		,CT_S428(Mod303Key.CT_S428,null,null,null,"isLastPeriod()?((CT_S427)>CT_S424?CT_S427:CT_S424):0.0"
+		,CT_S428(Mod303Key.CT_S428,null,null,null,"isLastPeriod()?((CT_S427>CT_S424)?CT_S427:CT_S424):0.0"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S428,ensureActivity(mod,3).getCad())
 			,mod -> ensureActivity(mod,3).setCad(mod.getAmount(Mod303Key.CT_S428))

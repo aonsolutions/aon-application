@@ -32,6 +32,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model303AEATActivity extends DockLayoutPanel implements HasValueChangeHandlers<Mod303Activity> {
+
+	private boolean lastPeriod;
 	
 	final TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(26, Unit.PX);
 	final ScrollPanel resultPanel = new ScrollPanel();
@@ -87,9 +89,19 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 
 	private DoubleBox dev = new DoubleBox();
 	private DoubleBox red = new DoubleBox();
+	
 	private DoubleBox ind = new DoubleBox();
 	private DoubleBox por = new DoubleBox();
+	private DoubleBox ing = new DoubleBox();
+	
+	private DoubleBox sop = new DoubleBox();
+	private DoubleBox ict = new DoubleBox();
 	private DoubleBox res = new DoubleBox();
+	private DoubleBox pcm = new DoubleBox();
+	private DoubleBox dvc = new DoubleBox();
+	private DoubleBox cmn = new DoubleBox();
+	private DoubleBox cad = new DoubleBox();
+
 
 	public static interface IMod303ActivityCallback {
 		Mod303Activity getActivity();
@@ -98,8 +110,9 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 		void onRemove();
 	}
 	
-	public Model303AEATActivity(final IMod303ActivityCallback callback) {
+	public Model303AEATActivity(final IMod303ActivityCallback callback, boolean lastPeriod) {
 		super(Unit.PX);
+		this.lastPeriod = lastPeriod;
 		setStyleName(AON.AON_CSS.aonSelector());
 		setWidth("700px");
 		setHeight("580px");
@@ -156,7 +169,14 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 						.setRed(red.getValue())
 						.setInd(ind.getValue())
 						.setPor(por.getValue())
-						.setIng(res.getValue())
+						.setIng(ing.getValue())
+						.setSop(sop.getValue())
+						.setIct(ict.getValue())
+						.setRes(res.getValue())
+						.setPcm(pcm.getValue())
+						.setDvc(dvc.getValue())
+						.setCmn(cmn.getValue())
+						.setCad(cad.getValue())
 						.setModules(modules)						
 						);
 			}
@@ -319,7 +339,16 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 		red.setValue(act.getRed());
 		ind.setValue(act.getInd());
 		por.setValue(act.getPor());
-		res.setValue(act.getIng());
+		ing.setValue(act.getIng());
+		
+		sop.setValue(act.getSop());
+		ict.setValue(act.getIct());
+		res.setValue(act.getRes());
+		pcm.setValue(act.getPcm());
+		dvc.setValue(act.getDvc());
+		cmn.setValue(act.getCmn());
+		cad.setValue(act.getCad());
+		
 	}
 	
 	private void populateModule(Mod303Activity act, int i, Label description, DoubleBox value, Label unit,
@@ -503,27 +532,90 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 		table.setWidget(row, 1, red);
 		++row;
 		
-		ind.setEnabled(false);
-		table.setWidget(row, 0, new Label(AON.MSG.tempIndex()));
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.setWidget(row, 1, ind);
-		++row;
+		if (!lastPeriod) {
+			ind.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.tempIndex()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, ind);
+			++row;
 
-		por.setEnabled(false);
-		table.setWidget(row, 0, new Label(AON.MSG.incomePercent()));
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.setWidget(row, 1, por);
-		++row;
+			por.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.incomePercent()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, por);
+			++row;
 
-		res.setEnabled(false);
-		table.setWidget(row, 0, new Label(AON.MSG.income()));
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.setWidget(row, 1, res);
-		++row;
+			ing.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.income()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, ing);
+			++row;
+		} else {
+			
+			sop.addValueChangeHandler(new ValueChangeHandler<Double>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Double> event) {
+					act.setSop(sop.getValue());
+					ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+				}
+			});
+			table.setWidget(row, 0, new Label(AON.MSG.page6D()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, sop);
+			
+			ict.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.tempIndex()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, ict);
+			++row;
 
+			res.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.result()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, res);
+			++row;
+			
+			pcm.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.page6G()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, pcm);
+			++row;
+
+			dvc.addValueChangeHandler(new ValueChangeHandler<Double>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Double> event) {
+					act.setSop(dvc.getValue());
+					ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+				}
+			});
+			table.setWidget(row, 0, new Label(AON.MSG.page6H()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, dvc);
+
+			cmn.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.page6I()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, cmn);
+			++row;
+
+			cad.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.page6J()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, cad);
+			++row;
+		}
 		return table;
 	}
 

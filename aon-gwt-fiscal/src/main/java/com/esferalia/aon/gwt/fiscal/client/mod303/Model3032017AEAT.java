@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATAdditiona
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegime4TScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegimeScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -65,7 +66,7 @@ public class Model3032017AEAT extends Model303Base {
 	private final Model303AEATActivityFarmerTable farmerTable;
 	
 	private final Mod303ActivityProvidesKey providesKey = new Mod303ActivityProvidesKey();
-	private final Model303AEATActivityTable activityTable = new Model303AEATActivityTable( providesKey );
+	private final Model303AEATActivityTable activityTable;
 	
 	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
@@ -76,6 +77,7 @@ public class Model3032017AEAT extends Model303Base {
 		add(centerPanel);
 		
 		farmerTable = new Model303AEATActivityFarmerTable( providesFarmerKey, (mod303.getPeriod() == Period.T4 || mod303.getPeriod() == Period.M12) );
+		activityTable = new Model303AEATActivityTable( providesKey, (mod303.getPeriod() == Period.T4 || mod303.getPeriod() == Period.M12) );
 		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
@@ -556,7 +558,8 @@ public class Model3032017AEAT extends Model303Base {
 						return event.getSelectedItem();
 					}
 				};
-				Model303AEATActivity actPanel = new Model303AEATActivity(activityCallback);
+				Model303AEATActivity actPanel = new Model303AEATActivity(activityCallback
+						, (getCallback().getMod303().getPeriod() == Period.T4 || getCallback().getMod303().getPeriod() == Period.M12));
 				actPanel.addValueChangeHandler(new ValueChangeHandler<Mod303Activity>() {
 					
 					@Override
@@ -599,7 +602,11 @@ public class Model3032017AEAT extends Model303Base {
 		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "50px");
-		paintDeclaration(table,Model3032017AEATSimplifiedRegimeScript.values(),3);
+		if (getCallback().getMod303().getPeriod() == Period.T4 || getCallback().getMod303().getPeriod() == Period.M12) {
+			paintDeclaration(table,Model3032017AEATSimplifiedRegime4TScript.values(),3);
+		} else {
+			paintDeclaration(table,Model3032017AEATSimplifiedRegimeScript.values(),3);
+		}
 		return table;
 	}
 	

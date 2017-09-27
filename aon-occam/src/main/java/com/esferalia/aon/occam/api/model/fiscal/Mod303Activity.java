@@ -258,6 +258,13 @@ public class Mod303Activity implements Serializable {
 		this.setDia(0);
 		this.setPor(0);
 		this.setIng(0);
+		this.setSop(0);
+		this.setIct(0);
+		this.setRes(0);
+		this.setPcm(0);
+		this.setDvc(0);
+		this.setCmn(0);
+		this.setCad(0);
 		this.setMaxImport(Double.MAX_VALUE);
 		this.setModules(new LinkedList<Mod303ActivityModule>());
 	}
@@ -275,6 +282,13 @@ public class Mod303Activity implements Serializable {
 				.setInd(toClone.getInd())
 				.setPor(toClone.getPor())
 				.setIng(toClone.getIng())
+				.setSop(toClone.getSop())
+				.setIct(toClone.getIct())
+				.setRes(toClone.getRes())
+				.setPcm(toClone.getPcm())
+				.setDvc(toClone.getDvc())
+				.setCmn(toClone.getCmn())
+				.setCad(toClone.getCad())
 				.setMaxImport(toClone.getMaxImport())
 				;
 		if (toClone.getModules() != null) {

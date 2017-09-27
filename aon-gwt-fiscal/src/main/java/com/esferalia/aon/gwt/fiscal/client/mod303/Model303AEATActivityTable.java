@@ -23,7 +23,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 public class Model303AEATActivityTable extends CellTable<Mod303Activity> implements HasSelectionHandlers<Mod303Activity> {
 	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 
-	public Model303AEATActivityTable(ProvidesKey<Mod303Activity> providesKey) {
+	public Model303AEATActivityTable(ProvidesKey<Mod303Activity> providesKey, boolean lastPeriod) {
 		super(1,TABLE_STYLE, providesKey);
 		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
@@ -43,8 +43,14 @@ public class Model303AEATActivityTable extends CellTable<Mod303Activity> impleme
 		addEpigraphColumn();
 		
 		addDevColumn();
-		addPorColumn();
-		addResColumn();
+		if (!lastPeriod) {
+			addPorColumn();
+			addIngColumn();
+		} else {
+			addResColumn();
+			addCmnColumn();
+			addCadColumn();
+		}
 		
 		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 	}
@@ -96,16 +102,50 @@ public class Model303AEATActivityTable extends CellTable<Mod303Activity> impleme
 		this.setColumnWidth(percentColumn, 100, Unit.PX);
 	}	
 
-	private void addResColumn() {
+	private void addIngColumn() {
 		final TextColumn<Mod303Activity> amountColumn = new TextColumn<Mod303Activity>() {
 			@Override
 			public String getValue(Mod303Activity model) {
 				return AON.FMT.format(model.getIng());
 			}
 		};
-		this.addColumn(amountColumn, AON.MSG.result() + " [F]");
+		this.addColumn(amountColumn, AON.MSG.income() + " [F]");
+		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
+		this.setColumnWidth(amountColumn, 140, Unit.PX);
+	}	
+
+	private void addResColumn() {
+		final TextColumn<Mod303Activity> amountColumn = new TextColumn<Mod303Activity>() {
+			@Override
+			public String getValue(Mod303Activity model) {
+				return AON.FMT.format(model.getRes());
+			}
+		};
+		this.addColumn(amountColumn, AON.MSG.result() + " [I]");
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
 		this.setColumnWidth(amountColumn, 120, Unit.PX);
+	}	
+	private void addCmnColumn() {
+		final TextColumn<Mod303Activity> amountColumn = new TextColumn<Mod303Activity>() {
+			@Override
+			public String getValue(Mod303Activity model) {
+				return AON.FMT.format(model.getCmn());
+			}
+		};
+		this.addColumn(amountColumn, AON.MSG.page6I() + " [L]");
+		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
+		this.setColumnWidth(amountColumn, 140, Unit.PX);
+	}	
+	private void addCadColumn() {
+		final TextColumn<Mod303Activity> amountColumn = new TextColumn<Mod303Activity>() {
+			@Override
+			public String getValue(Mod303Activity model) {
+				return AON.FMT.format(model.getCad());
+			}
+		};
+		this.addColumn(amountColumn, AON.MSG.derQuota() + " [M]");
+		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
+		this.setColumnWidth(amountColumn, 140, Unit.PX);
 	}	
 
 	@Override
