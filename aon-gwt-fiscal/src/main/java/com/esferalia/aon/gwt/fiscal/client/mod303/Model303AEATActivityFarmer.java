@@ -26,6 +26,7 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 	private final Label epigraph = new Label();
 	private final Label epigraphLabel = new Label();
 	
+	private boolean lastPeriod;
 	private DoubleBox vol = new DoubleBox();
 	private DoubleBox ind = new DoubleBox(DoubleBox.VISIBLE_LENGTH,5);
 	private DoubleBox cuo = new DoubleBox();
@@ -42,8 +43,9 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 		void onRemove();
 	}
 	
-	public Model303AEATActivityFarmer(final IMod303ActivityFarmerCallback cbk) {
+	public Model303AEATActivityFarmer(final IMod303ActivityFarmerCallback cbk, boolean lastPeriod) {
 		super(Unit.PX);
+		this.lastPeriod = lastPeriod;
 		setStyleName(AON.AON_CSS.aonSelector());
 		setWidth("700px");
 		setHeight("280px");
@@ -223,7 +225,7 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 		table.setWidget(row, 0, new Label(AON.MSG.operationsVolume()));
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.setWidget(0, 1, vol);
+		table.setWidget(row, 1, vol);
 		++row;
 		
 		ind.setEnabled(false);
@@ -240,19 +242,43 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 		table.setWidget(row, 1, cuo);
 		++row;
 		
-		por.setEnabled(false);
-		table.setWidget(row, 0, new Label(AON.MSG.incomePercent()));
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.setWidget(row, 1, por);
-		++row;
+		if (!this.lastPeriod) {
+			por.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.incomePercent()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, por);
+			++row;
+			
+			ing.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.income()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, ing);
+			++row;
+		} else {
+			sop.addValueChangeHandler(new ValueChangeHandler<Double>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Double> event) {
+					cbk.getActivity().setSop(sop.getValue());
+					ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmer.this, cbk.getActivity());
+				}
+			});
+			table.setWidget(row, 0, new Label(AON.MSG.page6D()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, sop);
+			++row;
+			
+			cad.setEnabled(false);
+			table.setWidget(row, 0, new Label(AON.MSG.page6J()));
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.setWidget(row, 1, cad);
+			++row;
+		}
 		
-		ing.setEnabled(false);
-		table.setWidget(row, 0, new Label(AON.MSG.income()));
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.setWidget(row, 1, ing);
-		++row;
 		container.add(table);
 		
 		add(container);

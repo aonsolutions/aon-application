@@ -149,7 +149,7 @@ public class Model303AEATActivityFarmerTable extends CellTable<Mod303ActivityFar
 		};
 		this.addColumn(amountColumn, AON.MSG.page6DAbbr());
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PX);
+		this.setColumnWidth(amountColumn, 140, Unit.PX);
 	}
 
 	private void addCadColumn() {
@@ -161,7 +161,7 @@ public class Model303AEATActivityFarmerTable extends CellTable<Mod303ActivityFar
 		};
 		this.addColumn(amountColumn, AON.MSG.derQuota() + " [B]");
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PX);
+		this.setColumnWidth(amountColumn, 140, Unit.PX);
 	}
 
 	@Override

@@ -388,7 +388,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// (2) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
 		,CT_SA28(Mod303Key.CT_SA28,null,null,null,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24-CT_SA27):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA28,ensureFarmerActivity(mod,1).getCad())
-			,mod -> ensureFarmerActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_SA28))
+			,mod -> ensureFarmerActivity(mod,1).setCad(mod.getAmount(Mod303Key.CT_SA28))
 			,true)
 		
 		// (3) Actividades agrícolas, ganaderas y forestales. Código
@@ -434,7 +434,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
 		,CT_SA38(Mod303Key.CT_SA38,null,null,null,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34-CT_SA37):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA38,ensureFarmerActivity(mod,2).getCad())
-			,mod -> ensureFarmerActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_SA38))
+			,mod -> ensureFarmerActivity(mod,2).setCad(mod.getAmount(Mod303Key.CT_SA38))
 			,true)
 		
 		// (4) Actividades agrícolas, ganaderas y forestales. Código
@@ -480,7 +480,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// (4) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
 		,CT_SA48(Mod303Key.CT_SA48,null,null,null,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44-CT_SA47):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA48,ensureFarmerActivity(mod,3).getCad())
-			,mod -> ensureFarmerActivity(mod,0).setCad(mod.getAmount(Mod303Key.CT_SA48))
+			,mod -> ensureFarmerActivity(mod,3).setCad(mod.getAmount(Mod303Key.CT_SA48))
 			,true)
 
 		// (1) Actividades en régimen simplificado. Epigrafe IAE

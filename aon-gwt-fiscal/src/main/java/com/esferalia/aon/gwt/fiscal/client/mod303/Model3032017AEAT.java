@@ -84,6 +84,17 @@ public class Model3032017AEAT extends Model303Base {
 		paintResultTab(tabPanel);
 		paintAdditionalDataTab(tabPanel);
 		paintAdministrationTab(tabPanel);
+		
+		if (mod303.isFinished()) {
+			tabPanel.selectTab(4);
+		} else {
+			if (mod303.getAmount(Mod303Key.CT_A02) == 0) {
+				tabPanel.selectTab(3);	
+			} else {
+				tabPanel.selectTab(2);
+			}
+		}
+		
 	}
 	
 	
@@ -453,7 +464,8 @@ public class Model3032017AEAT extends Model303Base {
 						return event.getSelectedItem();
 					}
 				};
-				Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback);
+				Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback
+						, (getCallback().getMod303().getPeriod() == Period.T4 || getCallback().getMod303().getPeriod() == Period.M12));
 				actPanel.addValueChangeHandler(new ValueChangeHandler<Mod303ActivityFarmer>() {
 					
 					@Override
