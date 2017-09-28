@@ -103,7 +103,11 @@ public class InvoiceAutoComplete {
 	 * Aseguramos la Actividad.
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_ACTIVITY = (inv,ctx) -> {
-		if ((inv.getActivity() == null) && ctx.getConfiguration() != null) {
+		if (inv.getActivity() == null
+			&& ctx.getConfiguration() != null 
+			&& ctx.getConfiguration().getActivities() != null 
+			&& ctx.getConfiguration().getActivities().size() == 1) {
+			
 			EnterpriseActivity act = ctx.getConfiguration().getMainActivity(); 
 			inv.setActivity( act == null ? null : act.getId() );
 		}

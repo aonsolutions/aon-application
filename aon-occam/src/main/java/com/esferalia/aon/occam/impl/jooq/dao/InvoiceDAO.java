@@ -833,7 +833,7 @@ public class InvoiceDAO {
 			.returning(INVOICE.ID)
 			.fetchOne();
 		invoice.setId(record.getValue(INVOICE.ID));
-		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId());
+		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId() + " Act: " + invoice.getActivity());
 		insertDetails(ctx, config, invoice);
 		return invoice; 
 	}

@@ -154,12 +154,6 @@ public class VATDAO  {
 		
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
-		
-//		Condition[] a = VAT_PROPERTIES.getConditions(filter);
-//		for (Condition c : a ) {
-//			System.out.println(ctx.getDslContext().render(c));
-//		}
-		
 		return ctx.getDslContext().select(
 				 INVOICE.ID
 				,INVOICE.SERIES
