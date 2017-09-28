@@ -2484,10 +2484,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-								 Integer size, Boolean packaged, Boolean withoutInv) {
+								 Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif) {
 		File file = null;
 		try {
-			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin(), packaged, withoutInv);
+			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin(), packaged, withoutInv, category, dif);
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}
@@ -2498,11 +2498,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-			 Integer size, Date startDate, Date endDate, Boolean packaged) {
+			 Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif) {
 		File file = null;
 		try {
 			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin()
-					, startDate, endDate, packaged);
+					, startDate, endDate, packaged, category, dif);
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}

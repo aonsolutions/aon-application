@@ -8,6 +8,7 @@ import java.util.Vector;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.template.shared.Hotel;
+import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -52,6 +53,8 @@ public class ConsumptionPage extends Composite{
 	@UiField VerticalPanel warehouseBoxPanel;
 	@UiField VerticalPanel selectedBoxPanel;
 	
+	@UiField ListBox categoryListBox;
+	
 	@UiField CheckBox warehouseCheckBox;
 	@UiField CheckBox detailCheckBox;
 	// @UiField Button pdfButton;
@@ -64,6 +67,7 @@ public class ConsumptionPage extends Composite{
 	@UiField DateBox endDate;
 	@UiField CheckBox packagedCheckBox;
 	@UiField CheckBox errorCheckBox;
+	@UiField CheckBox difCheckBox;
 	@UiField CheckBox twoLastCheckBox;
 	@UiField CheckBox withoutInvCheckBox;
 	
@@ -90,7 +94,7 @@ public class ConsumptionPage extends Composite{
 		// pdfButton = new Button();
 		excelButton = new Button();
 		cleanButton = new Button();
-		
+		categoryListBox = new ListBox();
 		this.templateList = templateList;
 		
 		Widget ui = pageBinder.createAndBindUi(this);
@@ -100,6 +104,19 @@ public class ConsumptionPage extends Composite{
 	}
 
 	private void init() {
+		
+	item.getProductCategories(getDomain(), new AsyncCallback<List<ProductCategory>>() {
+		
+		@Override
+		public void onSuccess(List<ProductCategory> result) {
+			categoryListBox.addItem("-", "0");
+			result.stream().forEach(c -> {				
+				categoryListBox.addItem(c.getName(), c.getId().toString());
+			});
+		}
+		
+		@Override public void onFailure(Throwable caught) {}
+	});
 	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
 
 		startDate.setStyleName("aon-inputText");
@@ -343,9 +360,11 @@ public class ConsumptionPage extends Composite{
 		pbd.setGlassEnabled(true);
 		pbd.show();
 		
+		Integer category = "0".equals(categoryListBox.getSelectedValue()) ? null : Integer.parseInt(categoryListBox.getSelectedValue());
+	
 		if(!twoLastCheckBox.getValue() && !withoutInvCheckBox.getValue()){
 			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(),
-					startDate.getValue(), endDate.getValue(), packagedCheckBox.getValue(),new AsyncCallback<String>() {
+					startDate.getValue(), endDate.getValue(), packagedCheckBox.getValue(), category, difCheckBox.getValue(), new AsyncCallback<String>() {
 	
 				@Override
 				public void onSuccess(String result) {
@@ -363,7 +382,7 @@ public class ConsumptionPage extends Composite{
 				public void onFailure(Throwable caught) {}
 			});
 		} else {
-			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(), packagedCheckBox.getValue(), withoutInvCheckBox.getValue(),new AsyncCallback<String>() {
+			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(), packagedCheckBox.getValue(), withoutInvCheckBox.getValue(), category, difCheckBox.getValue(), new AsyncCallback<String>() {
 				
 				@Override
 				public void onSuccess(String result) {

@@ -48,7 +48,7 @@ public class ConsumptionUtil {
 	private static final String PDF = "pdf";
 	
     public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
-    		Boolean detail, Integer size, String login, Boolean packaged, Boolean withoutInv) throws ServletException, IOException{
+    		Boolean detail, Integer size, String login, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif) throws ServletException, IOException{
     
     	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
        
@@ -78,17 +78,18 @@ public class ConsumptionUtil {
             consumptionItem.setInitialInventoryName(initialInventoryName);
             consumptionItem.setFinalInventoryName(finalInventoryName);
         	cisMap.put(w.getId(), consumptionItem);
+        	
         	Map<Integer, ConsumptionItem> map = withoutInv 
-        			? DBConsumption.getConsumptionWithoutInventory(domain, login, initialId, finalId, w.getId(), consumptionItem.getWarehouseName())
-        			: DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
+        			? DBConsumption.getConsumptionWithoutInventory(domain, login, initialId, finalId, w.getId(), consumptionItem.getWarehouseName(), category)
+        			: DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName(), category);
 
         	Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
         	
         	allMap.put(w.getName(), v);
         }
-        libro2(domain.getName(), domain.getId(),login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(),0);
+        libro2(domain.getName(), domain.getId(),login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(),0, dif);
         //libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
-        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged);
+        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged, dif);
         
         for (int index = 0; index < size; index++) {
        
@@ -170,7 +171,8 @@ public class ConsumptionUtil {
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
         			ci.getConsumption() == 0) && 
-        			(!onlyNegative || ci.getConsumption() < 0 )){
+        			(!onlyNegative || ci.getConsumption() < 0 ) &&
+        			(!dif || ci.getConsumption() != 0 ) ){
         			Row row = hoja.createRow((j-num)+2);
         			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
         			for(Integer k = 0; k< columns; k++){
@@ -372,7 +374,7 @@ public class ConsumptionUtil {
     
     
     public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
-    		Boolean detail, Integer size, String login, Date startDate, Date endDate, Boolean packaged) throws ServletException, IOException{
+    		Boolean detail, Integer size, String login, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif) throws ServletException, IOException{
     	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
         
         TemplateInfo aux = getTemplateInfo(detail);
@@ -413,7 +415,8 @@ public class ConsumptionUtil {
             	consumptionItem.setInitialInventoryName(initialInventoryName);
             	consumptionItem.setFinalInventoryName(finalInventoryName);
         		cisMap.put(w.getId(), consumptionItem);
-        		Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
+
+        		Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName(), category);
 
         		Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
         	
@@ -423,9 +426,9 @@ public class ConsumptionUtil {
         		allMap.put(w.getName(), new Vector<ConsumptionItem>());
         	}
         }
-        libro2(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(), 0);
+        libro2(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(), 0, dif);
         //libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
-        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged);
+        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged, dif);
         
         for (int index = 0; index < size; index++) {
        
@@ -511,7 +514,8 @@ public class ConsumptionUtil {
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
         			ci.getConsumption() == 0) && 
-        			(!onlyNegative || ci.getConsumption() < 0 )){
+        			(!onlyNegative || ci.getConsumption() < 0 ) &&
+        			(!dif || ci.getConsumption() != 0 )){
         			Row row = hoja.createRow((j-num)+2);
         			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
 
@@ -795,7 +799,7 @@ public class ConsumptionUtil {
 		return new TemplateInfo().setColumns(v);
 	}
 	
-	private static  void libro(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean packaged){
+	private static  void libro(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean packaged, Boolean dif){
 		
 		Integer columns = special1.getColumns().size(); 
 	
@@ -878,7 +882,8 @@ public class ConsumptionUtil {
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
         			ci.getConsumption() == 0) && 
-        			(!onlyNegative || ci.getConsumption() < 0 )){
+        			(!onlyNegative || ci.getConsumption() < 0 ) &&
+        			(!dif || ci.getConsumption() != 0 )){
         			Row row = hoja0.createRow((l-num0)+2);
         			Item item = AON.getItem(domain, domainId, login, ci.getItemId());
         			for(Integer k = 0; k< columns; k++){
@@ -949,7 +954,7 @@ public class ConsumptionUtil {
     	}
 	}
 	
-	private static  void libro2(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja){
+	private static  void libro2(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean dif){
 		
 		Integer columns = special1.getColumns().size(); 
 	
@@ -1019,7 +1024,7 @@ public class ConsumptionUtil {
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
         		Double consumValue = ci.getConsumption() == 0 ? 0 : ci.getConsumValue();
             	
-        		if((onlyNegative && consumValue < 0) || !onlyNegative){
+        		if(((dif && consumValue != 0) || !dif) && ((onlyNegative && consumValue < 0) || !onlyNegative)){
         		
         			if(consumValue != null) consumo = consumo + consumValue;
         		

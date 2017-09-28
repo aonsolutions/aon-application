@@ -115,6 +115,17 @@
 								<tr>
 									<td>
 										<span class="aon-panelGrid-search-info-internal2-template">
+											<g:InlineLabel styleName="aon-outputLabel" text="{msg.category}" />
+										</span>
+									</td>
+									<td>
+										<g:ListBox ui:field="categoryListBox"></g:ListBox>
+									</td>
+								
+								</tr>
+								<tr>
+									<td>
+										<span class="aon-panelGrid-search-info-internal2-template">
 											<g:InlineLabel styleName="aon-outputLabel" text="Fecha Inicio" />
 										</span>
 									</td>
@@ -130,13 +141,13 @@
 										<d:DateBox ui:field="endDate" styleName="aon-inputText"></d:DateBox>
 									</td>
 									<td>
-									<g:HorizontalPanel>
-										<g:CheckBox ui:field="twoLastCheckBox"></g:CheckBox>
-										<g:InlineLabel text="Últimos inventarios"></g:InlineLabel>
-										<g:CheckBox ui:field="withoutInvCheckBox"></g:CheckBox>
-										<g:InlineLabel text="Sin inventarios"></g:InlineLabel>
-									</g:HorizontalPanel>
-								</td>
+										<g:HorizontalPanel>
+											<g:CheckBox ui:field="twoLastCheckBox"></g:CheckBox>
+											<g:InlineLabel text="Últimos inventarios"></g:InlineLabel>
+											<g:CheckBox ui:field="withoutInvCheckBox"></g:CheckBox>
+											<g:InlineLabel text="Sin inventarios"></g:InlineLabel>
+										</g:HorizontalPanel>
+									</td>
 								</tr>
 							</table>
 						</g:HTMLPanel>
@@ -165,6 +176,15 @@
 								</td>
 								<td>
 									<g:CheckBox ui:field="errorCheckBox"></g:CheckBox> 
+								</td>
+								
+								<td>
+									<span class="aon-panelGrid-search-info-internal2-template">
+										<g:InlineLabel styleName="aon-outputLabel" text="Consumo con diferencias" />
+									</span>
+								</td>
+								<td>
+									<g:CheckBox ui:field="difCheckBox"></g:CheckBox> 
 								</td>
 							</tr>
 						</table>

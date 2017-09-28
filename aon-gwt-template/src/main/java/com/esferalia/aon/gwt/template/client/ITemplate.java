@@ -75,10 +75,10 @@ public interface ITemplate extends RemoteService{
 			Tag tag);
 	
 	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-			Integer size, Boolean packaged, Boolean withoutInv);
+			Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif);
 	
 	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-			Integer size, Date startDate, Date endDate, Boolean packaged);
+			Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif);
 	
 	public Integer excelRowNumber();
 	
