@@ -2,6 +2,7 @@ package com.esferalia.aon.htmlunit.payroll;
 
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
+import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 
 import java.awt.MenuItem;
 import java.awt.event.KeyEvent;
@@ -20,6 +21,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
@@ -860,6 +862,91 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
+	@Test
+	public void TestAtrasos() throws Exception {
+		
+		if (!isDisplayed("atrasos_tiempo_completo_ordinario,_indefinido"))
+			open("atrasos");
+
+		wait4Id("atrasos_tiempo_completo_ordinario,_indefinido");
+
+		draft("ATRASOS TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
+		
+		Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(Calendar.YEAR);
+		for ( int month = 0; month < 12; month++ ) {
+			calculate(month, year); 
+			click("salaryButton");
+			wait4Id("dbSalaryCheck");
+		}
+		
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		Date endDate = calendar.getTime();
+		
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.set(Calendar.MONTH,Calendar.JANUARY);
+		Date startDate = calendar.getTime();
+		
+		delay(startDate, endDate);
+		assertValue("totalPaymentsLabel", 0.00);
+		assertValue("totalLiquidLabel", 00.00);
+		
+		//visual asserts
+		HtmlButton fxButton = getElementById("fxButton");
+		Assert.assertFalse(fxButton.isDisplayed());
+		HtmlButton undoAllButton = getElementById("undoAllButton");
+		Assert.assertFalse(undoAllButton.isDisplayed());
+		HtmlButton undoButton = getElementById("undoButton");
+		Assert.assertFalse(undoButton.isDisplayed());
+		HtmlButton redoButton = getElementById("redoButton");
+		Assert.assertFalse(redoButton.isDisplayed());
+		HtmlButton moreButton = getElementById("moreButton");
+		Assert.assertFalse(moreButton.isDisplayed());
+		
+		HtmlSelect dateListBox = getElementById("dateListBox");
+		Assert.assertFalse(dateListBox.isDisplayed());
+		
+		
+		calculate(Calendar.JANUARY);
+		setValue("description-box-new-payment", "[3]ATRASOS");
+		setValue("amount-box-new-payment", "100");
+		wait4Id("description-box-3");
+		assertValue("description-box-3", "[3]ATRASOS");
+
+		selectSaveTo("FROM_THIS_MONTH");
+		click("acceptButton"); // click without waiting for calculate ?
+		wait4Disabled("acceptButton", true);
+		
+		
+		delay(startDate, endDate);
+		calendar.setTime(endDate);
+		int endMonth = calendar.get(Calendar.MONTH);
+		assertValue("totalPaymentsLabel", 100.00 * (endMonth + 1));
+
+		calculate(Calendar.JANUARY);
+		click("delete-button-3");
+		selectSaveTo("FROM_THIS_MONTH");
+		click("acceptButton"); // click without waiting for calculate ?
+		wait4Disabled("acceptButton", true);
+		
+		calculate(Calendar.JANUARY);
+		setValue("description-box-new-payment", "[3]ATRASOS");
+		setValue("amount-box-new-payment", "100");
+		wait4Id("description-box-3");
+		assertValue("description-box-3", "[3]ATRASOS");
+		
+		delay(startDate, endDate);
+		Assert.assertFalse(getElementById("description-box-2").isDisplayed());
+		assertValue("cgcBaseLabel", 0.00);
+		assertValue("totalPaymentsLabel", 0.00);
+		assertValue("totalLiquidLabel", 0.00);
+		
+	}
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{

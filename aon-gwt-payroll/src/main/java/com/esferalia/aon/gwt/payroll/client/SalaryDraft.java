@@ -5097,14 +5097,19 @@ public class SalaryDraft extends ResizeComposite
 
 	public void setReadOnly(boolean readOnly) {
 
-		fxButton.setEnabled(!readOnly);
-		undoButton.setEnabled(!readOnly);
-		redoButton.setEnabled(!readOnly);
-		undoAllButton.setEnabled(!readOnly);
-		acceptButton.setEnabled(!readOnly);
-		moreButton.setEnabled(!readOnly);
-		
-		datesListBox.setEnabled(!readOnly);
+//		fxButton.setEnabled(!readOnly);
+		fxButton.setVisible(!readOnly);
+//		undoButton.setEnabled(!readOnly);
+		undoButton.setVisible(!readOnly);
+//		redoButton.setEnabled(!readOnly);
+		redoButton.setVisible(!readOnly);
+//		undoAllButton.setEnabled(!readOnly);
+		undoAllButton.setVisible(!readOnly);
+//		acceptButton.setEnabled(!readOnly);
+		acceptButton.setVisible(!readOnly);
+//		moreButton.setEnabled(!readOnly);
+		moreButton.setVisible(!readOnly);
+//		datesListBox.setEnabled(!readOnly);
 		datesListBox.setVisible(!readOnly);
 		
 		totalPaymentsLabel.setReadOnly(readOnly);

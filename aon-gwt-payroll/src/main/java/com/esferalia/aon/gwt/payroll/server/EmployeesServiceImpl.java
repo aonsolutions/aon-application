@@ -148,6 +148,7 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
@@ -4064,7 +4065,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		ctx.next();
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
-				draft, ctx);
+				draft, ctx) {
+			@Override
+			protected Collection<IContractPayment> getDraftPayments() {
+				return Collections.emptyList();
+			}
+		};
 		draftCtx.setListener(listener);
 		return draftCtx;
 	}

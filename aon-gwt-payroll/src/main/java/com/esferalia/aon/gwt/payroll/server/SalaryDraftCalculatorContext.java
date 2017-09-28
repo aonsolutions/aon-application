@@ -534,7 +534,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	}
 
-	private Collection<IContractPayment> getDraftPayments() {
+	protected Collection<IContractPayment> getDraftPayments() {
 		Collection<IContractPayment> draftPayments = new HashSet<IContractPayment>();
 		List<IContractPayment> agreemenPayments = new ArrayList<IContractPayment>(getAgreementPayments());
 		for (Payment payment : draft.getDraftPayments()) {
@@ -542,6 +542,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		}
 		return draftPayments;
 	}
+	
+	// ---------------------------------------------------------------- Private
 
 	private Collection<IContractDeduction> getDraftDeductions() {
 		Collection<IContractDeduction> deductions = new LinkedList<IContractDeduction>();

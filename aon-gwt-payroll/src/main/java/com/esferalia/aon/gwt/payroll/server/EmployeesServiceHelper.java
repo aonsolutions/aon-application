@@ -892,7 +892,13 @@ public class EmployeesServiceHelper {
 
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
-				draft, ctx);
+				draft, ctx) {
+			@Override
+			protected Collection<IContractPayment> getDraftPayments() {
+				return Collections.emptyList();
+			}
+			
+		};
 		
 
 		draftCtx.setListener(listener);

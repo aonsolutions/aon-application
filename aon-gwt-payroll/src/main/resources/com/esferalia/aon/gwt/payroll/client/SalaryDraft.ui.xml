@@ -140,7 +140,6 @@
 			background: transparent !important;
 		}
 		
-		button[disabled],
 		.aon-ReadOnly .aon-icon-reset,
 		.aon-ReadOnly .aon-icon-delete,
 		.aon-ReadOnly .aon-icon-rowSelector,

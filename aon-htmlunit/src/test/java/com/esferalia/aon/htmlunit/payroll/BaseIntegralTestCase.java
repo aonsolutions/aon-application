@@ -159,14 +159,27 @@ public abstract class BaseIntegralTestCase {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.MONTH, month);
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		
 		calculate(calendar.getTime());
 	}
 
 	protected static void calculate(int month, int year) throws IOException, InterruptedException, ParseException {
 		Calendar calendar = Calendar.getInstance();
+		
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		
 		calculate(calendar.getTime());
 	}
 
@@ -185,6 +198,11 @@ public abstract class BaseIntegralTestCase {
 
 
 	protected static void calculate(Date date) throws IOException, InterruptedException, ParseException {
+		HtmlSelect typeSelect = getElementById("typeListBox");
+		typeSelect.click();
+		HtmlOption salaryOption = typeSelect.getOptionByValue("SALARY");
+		salaryOption.click();
+
 		getElementById("monthListBox").click();
 		
 		scroll2MonthListBox(date);
@@ -250,6 +268,36 @@ public abstract class BaseIntegralTestCase {
 		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/[0-9]+/[0-9]+ - %3$d/%2$d/%1$d", year, month, end));
 	}
 	
+	protected static void delay(Date startDate, Date endDate) throws IOException, InterruptedException, ParseException {
+		
+		HtmlSelect typeSelect = getElementById("typeListBox");
+		typeSelect.click();
+		HtmlOption settleOption = typeSelect.getOptionByValue("DELAY");
+		settleOption.click();
+		
+		wait4Id("fromMonthListBox");
+		getElementById("fromMonthListBox").click();
+		scroll2FromMonthListBox(startDate);
+		((HtmlSpan)((HtmlDivision)getElementById("fromMonthListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$tB de %1$tY", startDate)+"']")).click();
+
+		wait4Id("monthListBox");
+		getElementById("monthListBox").click();
+		scroll2MonthListBox(endDate);
+
+		((HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$tB de %1$tY", endDate)+"']")).click();
+		
+		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
+		calendar.setTime(startDate);
+		int startYear = calendar.get(Calendar.YEAR);
+		int startMonth = calendar.get(Calendar.MONTH)+1;
+		calendar.setTime(endDate);
+		int endYear = calendar.get(Calendar.YEAR);
+		int endMonth = calendar.get(Calendar.MONTH)+1;
+	
+		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%4$d/%3$d", startYear, startMonth, endYear, endMonth));
+	}
+	
+
 	protected static void scroll2DateListBox(Date date) throws ParseException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d 'de' MMMMM 'de' yyyy", new Locale("es","ES"));
 
@@ -308,6 +356,35 @@ public abstract class BaseIntegralTestCase {
 		
 	}
 	
+	protected static void scroll2FromMonthListBox(Date date) throws ParseException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMMM 'de' yyyy", new Locale("es","ES"));
+		
+		HtmlSpan firstSpan = (HtmlSpan)((HtmlDivision)getElementById("fromMonthListBox-celllist")).getFirstByXPath("div/div/span");
+		Date firstDate = dateFormat.parse(firstSpan.getTextContent());
+		LOGGER.warning("First visible month is : " + dateFormat.format(firstDate) );
+		while ( firstDate.after(date) )  {
+			LOGGER.warning("Opps we need to scroll up to : " + dateFormat.format(date) );
+			htmlPage.setFocusedElement(firstSpan);
+			firstSpan.type(KeyboardEvent.DOM_VK_PAGE_UP);
+			firstSpan = (HtmlSpan)((HtmlDivision)getElementById("fromMonthListBox-celllist")).getFirstByXPath("div/div/span");
+			firstDate = dateFormat.parse(firstSpan.getTextContent());
+			LOGGER.warning("First visible date is : " + dateFormat.format(firstDate) );
+		}
+
+		HtmlSpan lastSpan = (HtmlSpan)((HtmlDivision)getElementById("fromMonthListBox-celllist")).getFirstByXPath("div/div[last()]/span");
+		Date lastDate = dateFormat.parse(lastSpan.getTextContent());
+		LOGGER.warning("Last visible month is : " + dateFormat.format(lastDate) );
+		while ( lastDate.before(date) )  {
+			LOGGER.warning("Opps we need to scroll down to : " + dateFormat.format(date) );
+			htmlPage.setFocusedElement(firstSpan);
+			lastSpan.type(KeyboardEvent.DOM_VK_PAGE_DOWN);
+			lastSpan = (HtmlSpan)((HtmlDivision)getElementById("fromMonthListBox-celllist")).getFirstByXPath("div/div[last()]/span");
+			lastDate = dateFormat.parse(firstSpan.getTextContent());
+			LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
+		}
+		
+	}
+
 	protected boolean isDisplayed(String id) {
 		DomElement el = getElementById(id);
 		return  el != null && el.isDisplayed();
