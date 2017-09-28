@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,7 +23,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
@@ -81,6 +81,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 
 
@@ -2491,9 +2492,25 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}
-		String key = PasswordGenerator.getPassword(10);
-		HttpServletRequest request = getThreadLocalRequest();
-		request.getSession().setAttribute(key, file);
+		return saveFile(domain, file);
+	}
+	
+	public String saveFile(Domain domain, File file) {
+		String key = null;
+		try {
+			InputStream fis = new FileInputStream(file);
+			Attach attach = new Attach().setDescription("consumo")
+					.setMimeType(MimeType.MS_EXCEL)
+					.setDomain(domain)
+					.setType((byte) 0)
+					.setSourceType((byte) 0)
+					.setData(AonIOUtils.toByteArray(fis))
+					.setAttachType(AttachType.DATA);
+			Integer id = AON.insertAttach(domain.getName(), domain.getId(), "", attach);
+			key = id.toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return key;
 	}
 	
@@ -2506,10 +2523,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}
-		String key = PasswordGenerator.getPassword(10);
-		HttpServletRequest request = getThreadLocalRequest();
-		request.getSession().setAttribute(key, file);
-		return key;
+		return saveFile(domain, file);
 	}
 	
 	public Integer excelRowNumber(){

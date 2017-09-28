@@ -370,7 +370,9 @@ public class ConsumptionPage extends Composite{
 				public void onSuccess(String result) {
 					final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
 								+ "?tmpkey="+result
-								+ "&username="+ templateList.getLogin();
+								+ "&username="+ templateList.getLogin()
+								+ "&dname=" + getDomain().getName()
+								+ "&did=" + getDomain().getId();
 				
 					pbd.completed();
 					pbd.hide();
@@ -388,7 +390,9 @@ public class ConsumptionPage extends Composite{
 				public void onSuccess(String result) {
 					final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
 								+ "?tmpkey="+result
-								+ "&username="+ templateList.getLogin();
+								+ "&username="+ templateList.getLogin()
+								+ "&dname=" + getDomain().getName()
+								+ "&did=" + getDomain().getId();
 				
 					pbd.completed();
 					pbd.hide();
