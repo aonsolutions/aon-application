@@ -1792,6 +1792,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			  || vat.isOtherISPExpenses() 
 			  || vat.isExtracommunityExpenses() 
 			  || vat.isCanCeuMelExpenses()
+			  || (vat.isExtracommunityPurchase() && vat.isService()) 
+			  || (vat.isCanCeuMelPurchase() && vat.isService())
 			);
 	}
 
@@ -1829,12 +1831,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	}
 	private static boolean importacionesCorrientesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
-			&& !vat.isInvestment() && !vat.isRectification()  
+			&& !vat.isInvestment() && !vat.isRectification()
+			&& !vat.isService()
 			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean importacionesInversionFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
 			&& vat.isInvestment() && !vat.isRectification()  
+			&& !vat.isService()
 			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat, Mod303 mod) {

@@ -402,7 +402,12 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses() || vat.isCanCeuMelExpenses());
+			&& (vat.isOtherISPPurchase() 
+				|| vat.isOtherISPExpenses() 
+				|| vat.isExtracommunityExpenses() 
+				|| vat.isCanCeuMelExpenses()
+				|| (vat.isExtracommunityPurchase() && vat.isService()) 
+				|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
@@ -415,7 +420,9 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
 	private static boolean importacionesFilter(VatContext vat) {
-		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime()
+			&& !vat.isService()
 			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {

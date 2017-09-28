@@ -138,7 +138,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA28),17,2))
 
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text( AonStringUtils.remove(mod.getDescription(Mod303Key.CT_S101), '.')  ,4))
-		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_S102)==1?"1":mod.getAmount(Mod303Key.CT_S102)==2?"2":" ")
+		   ,(wr, mod) -> wr.append(appendMark(mod, Mod303Key.CT_S101, Mod303Key.CT_S102, Mod303Key.CT_S12F, 181.58, 13.23))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S11I)  ,10,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S11R)  ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S12I)  ,10,2))
@@ -167,7 +167,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S128)  ,17,2))
 		   
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text( AonStringUtils.remove(mod.getDescription(Mod303Key.CT_S201), '.')  ,4))
-		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_S202)==1?"1":mod.getAmount(Mod303Key.CT_S202)==2?"2":" ")
+		   ,(wr, mod) -> wr.append(appendMark(mod, Mod303Key.CT_S201, Mod303Key.CT_S202, Mod303Key.CT_S22F, 181.58, 13.23))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S21I)  ,10,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S21R)  ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S22I)  ,10,2))
@@ -586,6 +586,21 @@ public class Mod303Writer {
 			for (IPropertyFiller propertyFiller : this.propertyFillers) {
 				propertyFiller.propertyFill(wr, mod303);
 			}
+		}
+		private static String appendMark(Mod303 mod, Mod303Key epigrphKey, Mod303Key markKey, Mod303Key modulFactorKey , double factor1, double factor2) {
+			   if ("722".equals(mod.getDescription(epigrphKey))) {
+				   if (AonNumberUtils.equals( mod.getAmount(markKey) , 1)) return "1";
+				   if (AonNumberUtils.equals( mod.getAmount(markKey) , 2)) return "2";
+				   if (AonNumberUtils.equals( mod.getAmount(modulFactorKey), factor1)) return "2";
+				   return "1";
+			   }
+			   if ("691.9".equals(mod.getDescription(epigrphKey))) {
+				   if (AonNumberUtils.equals( mod.getAmount(markKey) , 1)) return "1";
+				   if (AonNumberUtils.equals( mod.getAmount(markKey) , 2)) return "2";
+				   if (AonNumberUtils.equals( mod.getAmount(modulFactorKey), factor2)) return "2";
+				   return "1";
+			   } 
+			   return " ";   
 		}
 	}
 

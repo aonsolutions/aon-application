@@ -493,6 +493,12 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isIntracommunity() {
 		return getTransaction() == InvoiceTransactionType.INTRACOMMUNITY;
 	}
+	public boolean isExtracommunity() {
+		return getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY;
+	}
+	public boolean isCanCeuMel() {
+		return getTransaction() == InvoiceTransactionType.CAN_CEU_MEL;
+	}
 	public boolean isIsp() {
 		return getTransaction() == InvoiceTransactionType.OTHER_ISP;
 	}
@@ -509,14 +515,25 @@ public class Invoice implements Serializable, HasAudit {
 		return getType() == InvoiceType.UNDEDUCTIBLE;
 	}
 	
+	private boolean mustApplyISP() {
+		return (isPurchase() && isIntracommunity())					// Compra intracomunitaria
+			|| (isPurchase() && isIsp())							// Compra Inversion Sujeto Pasivo
+			|| (isPurchase() && isExtracommunity() && isService())	// Compra extracomunitaria de servicio
+			|| (isPurchase() && isCanCeuMel() && isService())		// Compra Canarias de servicio
+			|| (isExpenses() && isIntracommunity())					// Gasto intracomunitario
+			|| (isExpenses() && isIsp())							// Gasto Inversion Sujeto Pasivo
+			|| (isExpenses() && isExtracommunity())					// Gasto extracomunitario
+			|| (isExpenses() && isCanCeuMel());						// Gasto Canarias
+	}
+	
 	public boolean isOutputVatEnabled() {
-		return (isSales() && isNational())
-			|| ((isPurchase() || isExpenses()) && (isIntracommunity() || isIsp()));
+		return (isSales() && isNational())		// Venta Nacional
+			|| mustApplyISP();					// Aplicar la inversión de sujeto pasivo.	
 	}
 	public boolean isInputVatEnabled() {
-		return ((isPurchase() || isExpenses()) 
-				&& (isNational() || isIntracommunity() || isIsp())) 
-		;
+		return (isPurchase() && isNational())	// Compra nacional 
+			|| (isExpenses() && isNational())	// Gasto nacional
+			|| mustApplyISP();					// Aplicar la inversión de sujeto pasivo.	
 	}
 	public String getSiiStatus() {
 		return siiStatus;

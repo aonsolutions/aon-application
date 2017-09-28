@@ -339,44 +339,44 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 
 		// Compras de bienes corrientes
 		,BZ_C050	(Mod303Key.BZ_C050
-			,(mod,vat) -> vat.isPurchase()  && hasPercent1(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent1(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C050,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X050	(Mod303Key.BZ_X050,null,null,(ctx,mod) -> add(Mod303Key.BZ_X050,mod,PERCENT1),null,null)
 		,BZ_C051	(Mod303Key.BZ_C051
-			,(mod,vat) -> vat.isPurchase()  && hasPercent1(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent1(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C051,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C052	(Mod303Key.BZ_C052
-			,(mod,vat) -> vat.isPurchase()  && hasPercent1(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent1(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C052,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C053	(Mod303Key.BZ_C053
-			,(mod,vat) -> vat.isPurchase()  && hasPercent2(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent2(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C053,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X053	(Mod303Key.BZ_X053,null,null,(ctx,mod) -> add(Mod303Key.BZ_X053,mod,PERCENT2),null,null)
 		,BZ_C054	(Mod303Key.BZ_C054
-			,(mod,vat) -> vat.isPurchase()  && hasPercent2(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent2(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C054,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C055	(Mod303Key.BZ_C055
-			,(mod,vat) -> vat.isPurchase()  && hasPercent2(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent2(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C055,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C056	(Mod303Key.BZ_C056
-			,(mod,vat) -> vat.isPurchase()  && hasPercent3(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent3(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C056,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X056	(Mod303Key.BZ_X056,null,null,(ctx,mod) -> add(Mod303Key.BZ_X056,mod,PERCENT3),null,null)
 		,BZ_C057	(Mod303Key.BZ_C057
-			,(mod,vat) -> vat.isPurchase()  && hasPercent3(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent3(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C057,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C058	(Mod303Key.BZ_C058
-			,(mod,vat) -> vat.isPurchase()  && hasPercent3(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent3(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C058,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -394,15 +394,15 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		
 		,BZ_C062	(Mod303Key.BZ_C062
-			,(mod,vat) -> vat.isPurchase()  && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C062,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C063	(Mod303Key.BZ_C063
-			,(mod,vat) -> vat.isPurchase()  && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C063,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C064	(Mod303Key.BZ_C064
-			,(mod,vat) -> vat.isPurchase()  && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C064,mod,vat.getBase())
 			,null,null,null)
 		
@@ -412,57 +412,57 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		
 		// Gastos		
 		,BZ_C068	(Mod303Key.BZ_C068
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService())) && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C068,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X068	(Mod303Key.BZ_X068,null,null,(ctx,mod) -> add(Mod303Key.BZ_X068,mod,PERCENT1),null,null)
 		,BZ_C069	(Mod303Key.BZ_C069
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C069,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C070	(Mod303Key.BZ_C070
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C070,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C071	(Mod303Key.BZ_C071
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C071,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X071	(Mod303Key.BZ_X071,null,null,(ctx,mod) -> add(Mod303Key.BZ_X071,mod,PERCENT2),null,null)
 		,BZ_C072	(Mod303Key.BZ_C072
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C072,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C073	(Mod303Key.BZ_C073
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C073,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
 		,BZ_C074	(Mod303Key.BZ_C074
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C074,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X074	(Mod303Key.BZ_X074,null,null,(ctx,mod) -> add(Mod303Key.BZ_X074,mod,PERCENT3),null,null)
 		,BZ_C075	(Mod303Key.BZ_C075
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C075,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C076	(Mod303Key.BZ_C076
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C076,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C077	(Mod303Key.BZ_C077
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C077,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C078	(Mod303Key.BZ_C078
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C078,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C079	(Mod303Key.BZ_C079
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isExpenses()  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C079,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -682,7 +682,9 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT4; 
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
-		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime()
+			&& !vat.isService()
 			&& vat.isIntracommunityPurchase();
 	}
 	private static boolean adqIntracomunitariasDevFilter(VatContext vat) {
@@ -690,8 +692,14 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-				&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses() || 
-					vat.isCanCeuMelExpenses() || vat.isIntracommunityExpenses());
+				&& (vat.isOtherISPPurchase() 
+					|| vat.isOtherISPExpenses() 
+					|| vat.isExtracommunityExpenses() 
+					|| vat.isCanCeuMelExpenses() 
+					|| vat.isIntracommunityExpenses()
+					|| (vat.isIntracommunityPurchase() && vat.isService())
+					|| (vat.isExtracommunityPurchase() && vat.isService()) 
+					|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
 	private static boolean operacionesISPDevFilter(VatContext vat) {
 		return !vat.isRectification() && operacionesISPFilter(vat);
@@ -707,6 +715,7 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	}
 	private static boolean importacionesFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
+			&& !vat.isService() 
 			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {

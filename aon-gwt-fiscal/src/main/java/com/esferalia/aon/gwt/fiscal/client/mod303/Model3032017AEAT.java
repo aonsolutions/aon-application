@@ -293,7 +293,6 @@ public class Model3032017AEAT extends Model303Base {
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 
-
 		panel.add(tab);
 		return panel;
 	}
@@ -307,6 +306,8 @@ public class Model3032017AEAT extends Model303Base {
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/G414.shtml"));
 		list.add(new Pair<String, String>("Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G414.shtml"));
+		list.add(new Pair<String, String>("Predeclaraci\u00F3n via AEAT (Papel)"
+				,"https://www2.agenciatributaria.gob.es/wlpl/A303-PW17/index.zul?EDFI"));
 		return list;
 	}
 	

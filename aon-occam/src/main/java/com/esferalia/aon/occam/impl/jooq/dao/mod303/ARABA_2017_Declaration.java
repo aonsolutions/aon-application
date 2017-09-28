@@ -482,7 +482,12 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses() || vat.isCanCeuMelExpenses());
+			&& (vat.isOtherISPPurchase() 
+			|| vat.isOtherISPExpenses() 
+			|| vat.isExtracommunityExpenses() 
+			|| vat.isCanCeuMelExpenses()
+			|| (vat.isExtracommunityPurchase() && vat.isService()) 
+			|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
@@ -502,11 +507,15 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 	}
 	private static boolean importacionesCorrientesFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& !vat.isInvestment()  && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
+			&& !vat.isInvestment()  
+			&& !vat.isService()
+			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean importacionesInversionFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& vat.isInvestment() && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
+			&& vat.isInvestment() 
+			&& !vat.isService()
+			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
 	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat) {
 		return !vat.isInvestment() && adqIntracomunitariasFilter(vat);

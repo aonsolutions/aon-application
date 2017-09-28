@@ -382,11 +382,14 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		service.setTabIndex(++tabindex);
 		service.setStyleName(AON.AON_CSS.aonInline());
 		service.addStyleName(AON.AON_CSS.aonWidth150());
+		service.setEnabled(!callback.getInvoice().isExpenses()); // Si es un gasto, true.
 		service.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				callback.getInvoice().getInvoice().setService(service.getValue());
+				InvoiceCalculator.calculate(callback.getInvoice());
+				ValueChangeEvent.fire(InvoiceExtraPanel.this, null );
 			}
 		});
 		service.addKeyUpHandler(new KeyUpHandler() {
