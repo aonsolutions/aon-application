@@ -12,6 +12,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -29,9 +30,7 @@ public class SeresMain extends AonTemplate2{
 	final String OUTCOME_INVOICE = "outcome_invoice";
 	final String INCOME_SALES = "income_sales";
 	final String INCOME_INVOICE = "income_invoice";
-	final String INGENET_DELIVERY = "ign_delivery";
-	final String[] AVAILABLE_COMMANDS = { OUTCOME_DELIVERY, OUTCOME_INVOICE, INCOME_SALES, INCOME_INVOICE,
-			INGENET_DELIVERY };
+	final String INGENET_DELIVERY = "ingenet_delivery";
 
 	
 	public SeresMain(AonData aonData) {
@@ -108,11 +107,12 @@ public class SeresMain extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
-				
-				SimpleLayoutPanel slp = p.getContent();
-				ContentGrid ig = (ContentGrid) slp.getWidget();
-				ig.send(getFilterMap().get("seres").get(0)); // TODO
+				// TODO sendAll
+//				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
+//				SimpleLayoutPanel slp = p.getContent();
+//				ContentGrid grid = (ContentGrid) slp.getWidget();
+//				grid.send(getFilterMap().get("seres").get(0)); 
+				Window.alert("En desarrollo.");
 			}
 		});
 	
@@ -125,18 +125,18 @@ public class SeresMain extends AonTemplate2{
 		VerticalPanel menuPanel = new VerticalPanel();
 		menuPanel.addStyleName(AON.AON_CSS.aonWidthAll());
 		
-		menuPanel.add(createMenuPanelButton("Vision global", "Vision global", null, false));
+		menuPanel.add(createMenuPanelButton("Vision global", "Vision global", null, false, false));
 		
 		menuPanel.add(createMenuPanelLabel("Ficheros Enviados"));
 		menuPanel.add(createMenuPanelButton("Albaranes", "Albaranes enviados", OUTCOME_DELIVERY));
 		menuPanel.add(createMenuPanelButton("Facturas", "Facturas enviadas", OUTCOME_INVOICE));
 		
 		menuPanel.add(createMenuPanelLabel("Ficheros Recibidos"));
-		menuPanel.add(createMenuPanelButton("Pedidos", "Pedidos recibidos", INCOME_SALES));
-		menuPanel.add(createMenuPanelButton("Facturas", "Facturas recibidas", INCOME_INVOICE));
+		menuPanel.add(createMenuPanelButton("Pedidos", "Pedidos recibidos", INCOME_SALES, true, true));
+		menuPanel.add(createMenuPanelButton("Facturas", "Facturas recibidas", INCOME_INVOICE, true, true));
 		
 		menuPanel.add(createMenuPanelLabel("Ingenet"));
-		menuPanel.add(createMenuPanelButton("Albaranes Ingenet", "Albaranes Ingenet", INGENET_DELIVERY));
+		menuPanel.add(createMenuPanelButton("Albaranes Ingenet", "Albaranes Ingenet", INGENET_DELIVERY, true, true));
 		
 		setWestContent(menuPanel);
 	}
@@ -151,17 +151,18 @@ public class SeresMain extends AonTemplate2{
 	}
 	
 	private Button createMenuPanelButton(String buttonName, String title, String action){
-		return createMenuPanelButton(buttonName, title, action, true);
+		return createMenuPanelButton(buttonName, title, action, true, false);
 	}
 	
-	private Button createMenuPanelButton(String buttonName, String title, String action, boolean padding){
-		Button pagosButton = new Button(buttonName);
-		pagosButton.setStyleName("aon-editDataTable-button");
-		pagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		if(padding){
-			pagosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
-		}
-		pagosButton.addClickHandler(new ClickHandler() {
+	private Button createMenuPanelButton(String buttonName, String title, String action, boolean padding, boolean disabled){
+		Button button = new Button(buttonName);
+		button.setStyleName("aon-editDataTable-button");
+		button.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		if(disabled)
+			button.addStyleName(AON.AON_CSS.aonTextLineThrough());
+		if(padding)
+			button.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		button.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
@@ -174,7 +175,7 @@ public class SeresMain extends AonTemplate2{
 				p.gridContent(action);
 			}
 		});
-		return pagosButton;
+		return button;
 	}
 	
 	private void content() {

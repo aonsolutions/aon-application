@@ -9,8 +9,9 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
-import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
+//import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.seres.JsSeresFile;
 import com.esferalia.aon.gwt.api.client.warehouse.JsDelivery;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
@@ -74,7 +75,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		Style dataGridStyle();
 	}
 	
-	@UiField(provided = true) CustomDataGrid<JsInvoice> dataGrid; 
+	@UiField(provided = true) CustomDataGrid<JsSeresFile> dataGrid; 
 	
 	private SeresPrincipal parent;
 	private Integer cont = 0;
@@ -83,38 +84,39 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		return parent.getAPI();
 	}
 	
-//	public ContentGrid(SeresPrincipal parent, LinkedList<JsDelivery> list) {
-//		
-//	}
+	public ContentGrid(SeresPrincipal parent) {
+		
+	}
 
-	public ContentGrid(SeresPrincipal parent, LinkedList<JsInvoice> list) {
+	public ContentGrid(SeresPrincipal parent, LinkedList<JsSeresFile> list) {
 		this.parent = parent;		
-		dataGrid = new CustomDataGrid<JsInvoice>(Integer.MAX_VALUE, resources,
-				JsInvoice.PROVIDES_KEY);
+		dataGrid = new CustomDataGrid<JsSeresFile>(Integer.MAX_VALUE, resources,
+				JsSeresFile.PROVIDES_KEY);
 		ScrollPanel scrollPanel = dataGrid.getScrollPanel();
 		scrollPanel.addScrollHandler(new ScrollHandler() {
 			
 			@Override
 			public void onScroll(ScrollEvent event) {
-				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
-					Integer page = 2;
-					if(parent.getFilterMap().containsKey("page")){
-						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
-					}
-					LinkedList<String> list = new LinkedList<>();
-					list.add(page +"");
-					parent.getFilterMap().put("page", list);
-					parent.getAPI().getFinance().getInvoices(parent.getFilterMap(), new AsyncCallback<JSON<JsInvoice>>() {
-						
-						@Override
-						public void onSuccess(JSON<JsInvoice> result) {
-							dataProvider.getList().addAll(result.getData().toLinkedList());
-							dataGrid.redraw();
-						}
-						
-						@Override public void onFailure(Throwable caught) {}
-					});	
-				}
+				// TODO
+//				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
+//					Integer page = 2;
+//					if(parent.getFilterMap().containsKey("page")){
+//						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
+//					}
+//					LinkedList<String> list = new LinkedList<>();
+//					list.add(page +"");
+//					parent.getFilterMap().put("page", list);
+//					parent.getAPI().getFinance().getInvoices(parent.getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
+//						
+//						@Override
+//						public void onSuccess(JSON<JsSeresFile> result) {
+//							dataProvider.getList().addAll(result.getData().toLinkedList());
+//							dataGrid.redraw();
+//						}
+//						
+//						@Override public void onFailure(Throwable caught) {}
+//					});	
+//				}
 			}
 		});
 		dataGrid.addHandler(new MouseOverHandler() {
@@ -131,26 +133,26 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		initWidget(binder.createAndBindUi(this));
 	}	
 	
-	LinkedList<JsInvoice> selFiles = new LinkedList<>();
-	private void load(LinkedList<JsInvoice> list) {
-		DefaultKeyboardSelectionHandler<JsInvoice> selHandler = new DefaultKeyboardSelectionHandler<JsInvoice>(dataGrid){
+	LinkedList<JsSeresFile> selFiles = new LinkedList<>();
+	private void load(LinkedList<JsSeresFile> list) {
+		DefaultKeyboardSelectionHandler<JsSeresFile> selHandler = new DefaultKeyboardSelectionHandler<JsSeresFile>(dataGrid){
 			@Override
-			public void onCellPreview(CellPreviewEvent<JsInvoice> event) {
+			public void onCellPreview(CellPreviewEvent<JsSeresFile> event) {
 				 if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
-					 JsInvoice object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+					 JsSeresFile object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 					 if(event.getColumn() == 0){
 						 if(dataGrid.getSelectionModel().isSelected(object))
 							 dataGrid.getSelectionModel().setSelected(object, false);
 						 else dataGrid.getSelectionModel().setSelected(object, true);
 					 } else {
-						 for(JsInvoice f :dataProvider.getList()){
+						 for(JsSeresFile f :dataProvider.getList()){
 							 dataGrid.getSelectionModel().setSelected(f, false);
 						 }
 						 dataGrid.getSelectionModel().setSelected(object, true);
 					 }
 					 
 					selFiles = new LinkedList<>();
-					for(JsInvoice f :dataProvider.getList()){
+					for(JsSeresFile f :dataProvider.getList()){
 						if(dataGrid.getSelectionModel().isSelected(f)){
 							selFiles.add(f);
 						}
@@ -165,14 +167,14 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("NO HAY DATOS DISPONIBLES"));
 		addDataDisplay(dataGrid, list);
-		ListHandler<JsInvoice> sortHandler = getSortHandler();
+		ListHandler<JsSeresFile> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);
-	//	final SingleSelectionModel<JsInvoice> selectionModel = new SingleSelectionModel<JsInvoice>(
-	//			JsInvoice.PROVIDES_KEY);
-		final MultiSelectionModel<JsInvoice> selectionModel = new MultiSelectionModel<JsInvoice>(JsInvoice.PROVIDES_KEY);
+	//	final SingleSelectionModel<JsSeresFile> selectionModel = new SingleSelectionModel<JsSeresFile>(
+	//			JsSeresFile.PROVIDES_KEY);
+		final MultiSelectionModel<JsSeresFile> selectionModel = new MultiSelectionModel<JsSeresFile>(JsSeresFile.PROVIDES_KEY);
 		
 		dataGrid.setSelectionModel(selectionModel,
-				DefaultSelectionEventManager.<JsInvoice> createCheckboxManager());
+				DefaultSelectionEventManager.<JsSeresFile> createCheckboxManager());
 	//	dataGrid.setSelectionModel(selectionModel);
 		initTableColumns(selectionModel, sortHandler);
 		
@@ -180,21 +182,21 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	
 	//------------------------------ DataGrid Utils
 	
-	private ListDataProvider<JsInvoice> dataProvider = new ListDataProvider<JsInvoice>();
+	private ListDataProvider<JsSeresFile> dataProvider = new ListDataProvider<JsSeresFile>();
 
-	public void addDataDisplay(HasData<JsInvoice> display, LinkedList<JsInvoice> list) {
-		dataProvider = new ListDataProvider<JsInvoice>(list);
+	public void addDataDisplay(HasData<JsSeresFile> display, LinkedList<JsSeresFile> list) {
+		dataProvider = new ListDataProvider<JsSeresFile>(list);
 		dataProvider.addDataDisplay(display);
 	}
 		
-	private ListHandler<JsInvoice> getSortHandler() {
-		return new ListHandler<JsInvoice>(dataProvider.getList()){
+	private ListHandler<JsSeresFile> getSortHandler() {
+		return new ListHandler<JsSeresFile>(dataProvider.getList()){
 			@Override
 			public void onColumnSort(ColumnSortEvent event) {
 				super.setList(dataProvider.getList());
 				super.onColumnSort(event);
-				List<JsInvoice> aux  = super.getList();
-				List<JsInvoice> aux2 = new LinkedList<JsInvoice>();
+				List<JsSeresFile> aux  = super.getList();
+				List<JsSeresFile> aux2 = new LinkedList<JsSeresFile>();
 				for(Integer i = 0 ; i< aux.size()-1;i++){
 					aux2.set(i, aux.get(aux.size()-1-i ));
 				} 				
@@ -203,10 +205,10 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		};
 	}
 	
-	private void initTableColumns(final MultiSelectionModel<JsInvoice> selectionModel, ListHandler<JsInvoice> sortHandler) {
+	private void initTableColumns(final MultiSelectionModel<JsSeresFile> selectionModel, ListHandler<JsSeresFile> sortHandler) {
 		
 		/** Check Column **/
-		Column<JsInvoice, Boolean> checkColumn = new Column<JsInvoice, Boolean>(new CheckboxCell(true, true) {
+		Column<JsSeresFile, Boolean> checkColumn = new Column<JsSeresFile, Boolean>(new CheckboxCell(true, true) {
 			@Override
 			public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent, Boolean value,
 					NativeEvent event, com.google.gwt.cell.client.ValueUpdater<Boolean> valueUpdater) {
@@ -214,7 +216,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		}) {
 			
 			@Override
-			public Boolean getValue(JsInvoice object) {
+			public Boolean getValue(JsSeresFile object) {
 				return selectionModel.isSelected(object);
 			}
 		};
@@ -223,20 +225,20 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(checkColumn, 40, Unit.PX);
 		
 		/** Code Column **/
-		Column<JsInvoice, String> codeColumn = new Column<JsInvoice, String>(new TextCell()) {
+		Column<JsSeresFile, String> codeColumn = new Column<JsSeresFile, String>(new TextCell()) {
 
 			@Override
-			public String getValue(JsInvoice object) {
+			public String getValue(JsSeresFile object) {
 				return object.getReferenceCode();
 			}
 		
 		};
 		codeColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		codeColumn.setSortable(true); 
-		sortHandler.setComparator(codeColumn,new Comparator<JsInvoice>() {
+		sortHandler.setComparator(codeColumn,new Comparator<JsSeresFile>() {
 			
 			@Override
-			public int compare(JsInvoice o1, JsInvoice o2) {
+			public int compare(JsSeresFile o1, JsSeresFile o2) {
 				return o1.getReferenceCode().compareTo(o2.getReferenceCode());
 			}
 		});
@@ -245,20 +247,20 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(codeColumn, 10, Unit.PCT);
 
 		/** Date Column **/
-		Column<JsInvoice, String> taxDateColumn = new Column<JsInvoice, String>(new TextCell()) {
+		Column<JsSeresFile, String> taxDateColumn = new Column<JsSeresFile, String>(new TextCell()) {
 
 			@Override
-			public String getValue(JsInvoice object) {
-				return object.getTaxDate();
+			public String getValue(JsSeresFile object) {
+				return object.getDate();
 			}
 		};
 		taxDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		taxDateColumn.setSortable(true); 
-		sortHandler.setComparator(taxDateColumn,new Comparator<JsInvoice>() {
+		sortHandler.setComparator(taxDateColumn,new Comparator<JsSeresFile>() {
 			
 			@Override
-			public int compare(JsInvoice o1, JsInvoice o2) {
-				return o1.getTaxDate().compareTo(o2.getTaxDate());
+			public int compare(JsSeresFile o1, JsSeresFile o2) {
+				return o1.getDate().compareTo(o2.getDate());
 			}
 		});
 		dataGrid.getColumnSortList().push(taxDateColumn);
@@ -266,20 +268,20 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(taxDateColumn, 10, Unit.PCT);
 		
 		/** Name Column **/
-		Column<JsInvoice, String> contraparteColumn = new Column<JsInvoice, String>(new TextCell()) {
+		Column<JsSeresFile, String> contraparteColumn = new Column<JsSeresFile, String>(new TextCell()) {
 
 			@Override
-			public String getValue(JsInvoice object) {
+			public String getValue(JsSeresFile object) {
 				return object.getRegistryName();
 			}
 		
 		};
 		contraparteColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		contraparteColumn.setSortable(true); 
-		sortHandler.setComparator(contraparteColumn,new Comparator<JsInvoice>() {
+		sortHandler.setComparator(contraparteColumn,new Comparator<JsSeresFile>() {
 			
 			@Override
-			public int compare(JsInvoice o1, JsInvoice o2) {
+			public int compare(JsSeresFile o1, JsSeresFile o2) {
 				return o1.getRegistryName().compareTo(o2.getRegistryName());
 			}
 		});
@@ -288,71 +290,46 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(contraparteColumn, 30, Unit.PCT);
 	
 		/** Status Column **/
-		Column<JsInvoice, String> statusColumn = new Column<JsInvoice, String>(new TextCell()) {
+		Column<JsSeresFile, String> statusColumn = new Column<JsSeresFile, String>(new TextCell()) {
 			@Override	
-			public void render(Context context, JsInvoice object, SafeHtmlBuilder sb) {
-				String icon = AON.AON_CSS.aonIconPointLightGreen();
-				if(object.getSiiStatus().equals("Correcto") || object.getSiiStatus().equals("Pagado")) icon = AON.AON_CSS.aonIconPointGreen();
-				else if(object.getSiiStatus().equals("AceptadoConErrores") || object.getSiiStatus().equals("Parcial")) icon = AON.AON_CSS.aonIconPointOrange();
-				else if(object.getSiiStatus().equals("Incorrecto")) icon= AON.AON_CSS.aonIconPointRed();
-				else if(object.getSiiStatus().equals("Anulada")) icon = AON.AON_CSS.aonIconPointYellow();
-				sb.appendHtmlConstant("<g:Label class=\""+ icon + "\" style=\"padding-left: 16px;\" >"+ "&nbsp;&nbsp;" + object.getSiiStatus());
+			public void render(Context context, JsSeresFile object, SafeHtmlBuilder sb) {
+//				String icon = AON.AON_CSS.aonIconPointLightGreen();
+//				if(object.getSiiStatus().equals("Correcto") || object.getSiiStatus().equals("Pagado")) icon = AON.AON_CSS.aonIconPointGreen();
+//				else if(object.getSiiStatus().equals("AceptadoConErrores") || object.getSiiStatus().equals("Parcial")) icon = AON.AON_CSS.aonIconPointOrange();
+//				else if(object.getSiiStatus().equals("Incorrecto")) icon= AON.AON_CSS.aonIconPointRed();
+//				else if(object.getSiiStatus().equals("Anulada")) icon = AON.AON_CSS.aonIconPointYellow();
+//				sb.appendHtmlConstant("<g:Label class=\""+ icon + "\" style=\"padding-left: 16px;\" >"+ "&nbsp;&nbsp;" + object.getSiiStatus());
 			}
 			
 			@Override
-			public String getValue(JsInvoice object) {
-				return object.getSiiStatus();
+			public String getValue(JsSeresFile object) {
+//				return object.getSiiStatus();
+				return "";
 			}
 		
 		};
 		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		statusColumn.setSortable(true); 
-		sortHandler.setComparator(statusColumn,new Comparator<JsInvoice>() {
+		sortHandler.setComparator(statusColumn,new Comparator<JsSeresFile>() {
 			
 			@Override
-			public int compare(JsInvoice o1, JsInvoice o2) {
-				return o1.getSiiStatus().compareTo(o2.getSiiStatus());
+			public int compare(JsSeresFile o1, JsSeresFile o2) {
+				return o1.getStatus().compareTo(o2.getStatus());
 			}
 		});
 		dataGrid.getColumnSortList().push(statusColumn);
 		dataGrid.addColumn(statusColumn, "Estado");
 		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
 		
-//		/** Action Column **/
-//		Column<JsInvoice, String> actionColumn = new Column<JsInvoice, String>(new TextCell()) {
-//			@Override	
-//			public void render(Context context, JsInvoice object, SafeHtmlBuilder sb) {
-//				
-//			}
-//			
-//			@Override
-//			public String getValue(JsInvoice object) {
-////				return object.getSiiStatus();
-//				return ">";
-//			}
-//		
-//		};
-//		actionColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-//		actionColumn.setSortable(true); 
-//		sortHandler.setComparator(actionColumn,new Comparator<JsInvoice>() {
-//			
-//			@Override
-//			public int compare(JsInvoice o1, JsInvoice o2) {
-//				return o1.getSiiStatus().compareTo(o2.getSiiStatus());
-//			}
-//		});
-//		dataGrid.getColumnSortList().push(actionColumn);
-//		dataGrid.addColumn(actionColumn, "");
-//		dataGrid.setColumnWidth(actionColumn, 5, Unit.PCT);
 	}
 	
 	public final class CheckboxHeader extends Header {
 
-	    private final MultiSelectionModel<JsInvoice> selectionModel;
-	    private final ListDataProvider<JsInvoice> provider;
+	    private final MultiSelectionModel<JsSeresFile> selectionModel;
+	    private final ListDataProvider<JsSeresFile> provider;
 
-	    public CheckboxHeader(MultiSelectionModel<JsInvoice> selectionModel,
-	    		ListDataProvider<JsInvoice> provider) {
+	    public CheckboxHeader(MultiSelectionModel<JsSeresFile> selectionModel,
+	    		ListDataProvider<JsSeresFile> provider) {
 	        super(new CheckboxCell());
 	        this.selectionModel = selectionModel;
 	        this.provider = provider;
@@ -370,7 +347,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	        InputElement input = elem.getFirstChild().cast();
 	        Boolean isChecked = input.isChecked();
 	        parent.getSendAll().setVisible(isChecked);
-	        for (JsInvoice element : provider.getList()) {
+	        for (JsSeresFile element : provider.getList()) {
 	            selectionModel.setSelected(element, isChecked);
 	            if(isChecked){
 					selFiles.add(element);

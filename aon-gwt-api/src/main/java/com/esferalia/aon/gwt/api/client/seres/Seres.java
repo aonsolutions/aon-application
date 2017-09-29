@@ -33,27 +33,27 @@ public class Seres extends Methods{
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/summary"+filter, callback);
 	}
 
-	public void getOutcomeDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDelivery>> callback){
+	public void getOutcomeDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/outcome_delivery"+filter, callback);
 	}
 
-	public void getOutcomeInvoice(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsInvoice>> callback){
+	public void getOutcomeInvoice(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/outcome_invoice"+filter, callback);
 	}
 
-	public void getIncomeSalesDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSales>> callback){
+	public void getIncomeSalesDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/income_sales"+filter, callback);
 	}
 
-	public void getIncomeInvoice(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsInvoice>> callback){
+	public void getIncomeInvoice(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/income_invoice"+filter, callback);
 	}
 	
-	public void getIngenetDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDelivery>> callback){
+	public void getIngenetDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/ingenet_delivery"+filter, callback);
 	}
