@@ -84,4 +84,9 @@ public class Mod303ServiceImpl extends AonRemoteServiceServlet implements Mod303
 		
 	}
 
+	@Override
+	public void importMod303(String domainName, int domain) throws AonCoreException {
+		FISCAL.importMod303(domainName, domain, this.getUserLogin());
+	}
+
 }

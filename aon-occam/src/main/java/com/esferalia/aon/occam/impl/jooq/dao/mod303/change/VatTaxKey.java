@@ -1,4 +1,4 @@
-package net.aonsolutions.vat.change;
+package com.esferalia.aon.occam.impl.jooq.dao.mod303.change;
 
 import java.util.HashMap;
 import java.util.Map;

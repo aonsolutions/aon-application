@@ -21,7 +21,8 @@ public enum Model {
 	M200("200",2013,null),
 	M202("202",null,null),
 	M184("184",null,null),
-	M193("193",null,null)
+	M193("193",null,null),
+	MIVA("IVA New",null,null)
 	;
 
 	private String name;

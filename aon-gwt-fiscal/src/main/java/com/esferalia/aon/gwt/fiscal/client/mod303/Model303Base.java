@@ -303,7 +303,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			}
 		});
 		buttonContainer.add(auditButton);
-		
 /*
 		<g:Button ui:field="printButton" text="&nbsp;" 
 			styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" />

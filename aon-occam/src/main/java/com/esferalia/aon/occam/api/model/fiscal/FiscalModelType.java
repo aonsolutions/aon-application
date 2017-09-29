@@ -13,8 +13,8 @@ public enum FiscalModelType implements Serializable{
 	M123	("123","123"), 
 	M130	("130","130"),
 	M131	("131","131"),
-//	M303_RG	("303","303 R.G."),
-//	M303_RS	("303","303 R.S."),
+	M303_RG	("303","303 R.G."),
+	M303_RS	("303","303 R.S."),
 	M340	("340","340"),
 	M347	("347","347"),
 	M349	("349","349"),
@@ -28,7 +28,7 @@ public enum FiscalModelType implements Serializable{
 	M311	("311","311"),
 	M200	("200","200"),
 	M202	("202","202"),
-	M303    ("303","303")
+	M303    ("IVA","IVA")
 	;
 
 	private String value;
@@ -60,6 +60,12 @@ public enum FiscalModelType implements Serializable{
 				return "110";
 			} else if (admon == Administration.NAVARRA) {
 				return (period.isMonthPeriod()?"745":"715");	
+			}
+		} else if (this == M303) {
+			if (admon == Administration.GIPUZKOA) {
+				return "300";
+			} else {
+				return "303";
 			}
 		} else if (this == M115) {
 			if (admon == Administration.ALAVA) {

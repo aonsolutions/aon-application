@@ -125,10 +125,10 @@ public class VATFormatter {
 				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getReferenceCode(),25),25) 
 				+ AonStringUtils.repeat(" ", 2)
 			));
-			sumBase = AonMathUtils.round(sumBase + vat.getBase()); 
-			sumQuota = AonMathUtils.round(sumQuota + vat.getQuota());
-			sumReQuota = AonMathUtils.round(sumReQuota + vat.getSurchargeQuota());
-			sumDedQuota = AonMathUtils.round(sumDedQuota + (vat.isSales()?0:vat.getDeductibleQuota()));
+			sumBase = sumBase + vat.getBase();
+			sumQuota = sumQuota + vat.getQuota();
+			sumReQuota = sumReQuota + vat.getSurchargeQuota();
+			sumDedQuota = sumDedQuota + (vat.isSales()?0:vat.getDeductibleQuota());
 		}
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", header.length())));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD

@@ -120,5 +120,11 @@ public class Mod303ServiceAsyncDecorator implements Mod303ServiceAsync {
 		fsa.getInfo(domainName, domain, mod303, script, infoKey,new AsyncCallbackWrapper<String>(callback));
 		
 	}
+
+	@Override
+	public void importMod303(String domainName, int domain, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.importMod303(domainName, domain, new AsyncCallbackWrapper<Void>(callback));
+	}
 	
 }

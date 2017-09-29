@@ -28,5 +28,6 @@ public interface Mod303Service extends RemoteService {
 	Mod303 reopenMod303(String domainName, Mod303 mod303) throws AonCoreException;
 	Mod303 calculateMod303(String domainName, Mod303 mod303) throws AonCoreException;
 	String getInfo(String domainName, int domain, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	void importMod303(String currentDomainName, int currentDomain) throws AonCoreException;
 
 }

@@ -151,7 +151,14 @@ public class ModelManager {
 								.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
 								)));
 		if (params.getModel() != null) {
-			String modelLit = params.getModel()==Model.M303_RS?"303":params.getModel().getName();
+			String modelLit = null;
+			if (params.getModel()==Model.M303_RS) {
+				modelLit = "303"; 
+			} else if (params.getModel()==Model.MIVA) {
+				modelLit =  "IVA";
+			} else {
+				modelLit = params.getModel().getName();
+			}
 			select = select.and(FS_MODEL.MODEL.equal(modelLit));
 		}
 		Result<Record9<Byte,String,String,String,Byte,String,Byte,Integer,String>> models = 

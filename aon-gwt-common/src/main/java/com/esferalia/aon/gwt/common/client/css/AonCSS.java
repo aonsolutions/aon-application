@@ -201,6 +201,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-cursor-pointer")
 	String aonCursorPointer();
 
+	@ClassName("aon-blink")
+	String aonBlink();
+	
 	@ClassName("aon-group")
 	String aonGroup();
 
@@ -263,6 +266,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-icon-audit")
 	String aonIconAudit();
+
+	@ClassName("aon-icon-import")
+	String aonIconImport();
 
 	@ClassName("aon-icon-info")
 	String aonIconInfo();

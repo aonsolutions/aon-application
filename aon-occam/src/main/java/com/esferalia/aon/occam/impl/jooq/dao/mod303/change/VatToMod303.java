@@ -1,4 +1,4 @@
-package net.aonsolutions.vat.change;
+package com.esferalia.aon.occam.impl.jooq.dao.mod303.change;
 
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
@@ -9,17 +9,9 @@ import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.Iterator;
 
 import org.jooq.Record;
-import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -38,7 +30,6 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.Mod303Declaration;
-import com.esferalia.aon.watson.server.AonDatabaseUtil;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -46,62 +37,23 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class VatToMod303 {
 
-	private static PrintWriter LOG;
-	private static String password = "password";
-	private static String user = "root";
-	private static String url = "jdbc:mysql://127.0.0.1:3306/pro-aonsolutions-net";
-	
 	private static int count;
 
-	private static String getPassword() {
-		return password;
-	}
-	private static String getUser() {
-		return user;
-	}
-	private static String getUrl() {
-		return url;
-	}
-	
-
-	public static void main(String[] args) throws ClassNotFoundException, SQLException  {
-		Date start = new Date();
-		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
-		Connection c = DriverManager.getConnection(getUrl(),getUser(),getPassword());
-		AONContext ctx = new AONContext(c);
-		try {
-			LOG = new PrintWriter( new FileWriter(  File.createTempFile("AON_VAT_", ".log") ), true);
-			ctx.getDslContext().settings().setRenderSchema(false);
-			ctx.getDslContext().settings().setParamType( ParamType.INLINED );
-			log("Connected!");
-			ctx.getDslContext().transaction( configuration -> passToFiscalModel(ctx) );
-		} catch (Throwable e) {
-			e.printStackTrace();
-		} finally {
-			LOG.flush();
-			LOG.close();
-			AonDatabaseUtil.closeQuietly(c);
-			ctx.close();
-			System.out.println( ((new Date()).getTime() - start.getTime() ) + " ms.");
-		}
+	private static void log(AONContext ctx,String msg) {
+		ctx.log().info( msg );
 	}
 
-	private static void log(String msg) {
-		LOG.println( msg );
+	public static void importModels(AONContext ctx, int domain) {
+		log(ctx,  "[START] Régimen Simplificado " );
+		transforrmOldSimplified(ctx,domain);
+		log(ctx,  "[END] Régimen Simplificado " );
 		
+		log(ctx,  "[START] Régimen General" );
+		passVatTax(ctx,domain);	
+		log(ctx,  "[END] Régimen General" );
 	}
 	
-	private static void passToFiscalModel(AONContext ctx) {
-		log(  "[START] Régimen Simplificado " );
-		transforrmOldSimplified(ctx);
-		log(  "[END] Régimen Simplificado " );
-		
-		log(  "[START] Régimen General" );
-		passVatTax(ctx);	
-		log(  "[END] Régimen General" );
-	}
-	
-	private static void transforrmOldSimplified(AONContext ctx) {
+	private static void transforrmOldSimplified(AONContext ctx, int domain) {
 		ctx.getDslContext()
 			.select()
 			.from(FS_MODEL)
@@ -109,7 +61,8 @@ public class VatToMod303 {
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
 			.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
 			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-			.where(FS_MODEL.MODEL.eq(FiscalModelType.M303.getName()))
+			.where(FS_MODEL.MODEL.eq(FiscalModelType.M303_RS.getValue()))
+			.and(FS_MODEL.DOMAIN.eq(domain))
 			.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc())
 			.fetch()
 			.stream()		
@@ -450,14 +403,6 @@ public class VatToMod303 {
 		mod303.putAmount(Mod303Key.CT_A02, 0); // Solo regimen simplificado.
 		System.out.print(".");
 		if (count % 100 == 0) System.out.println( " ----> " + count);
-		
-		
-		ctx.getDslContext()
-		.update(FS_MODEL)
-			.set(FS_MODEL.MODEL, FiscalModelType.M310.getValue() )
-		.where(FS_MODEL.ID.equal(mod303.getId()))
-		.execute();
-		
 		if (mod303.isFinished()) {
 			if (mod303.getResult() == 0  ) { 
 				mod303.setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
@@ -481,6 +426,9 @@ public class VatToMod303 {
 			}
 			
 		}
+		mod303.setModel(FiscalModelType.M303);
+		mod303.setFinance(null);
+		mod303.setStatus(FiscalStatus.BLOCKED);
 		mod303.setId(null);
 		save(ctx, mod303);
 	}
@@ -502,14 +450,13 @@ public class VatToMod303 {
 	}
 	
 
-	private static void passVatTax(AONContext ctx) {
+	private static void passVatTax(AONContext ctx, int domain) {
 		ctx.getDslContext().select()
 			.from(FS_VAT)
 			.leftOuterJoin(FS_VAT_DECLARATION).on(FS_VAT_DECLARATION.FS_VAT.eq(FS_VAT.ID))
 			.where( FS_VAT.YEAR.gt(2013))
 			.and( FS_VAT.PERIOD.notEqual( Period.YEAR.getValue() ))
-//			.and( FS_VAT.DOMAIN.eq(216))
-//			.limit(1000)
+			.and( FS_VAT.DOMAIN.eq(domain))
 			.orderBy(FS_VAT.DOMAIN.asc(),FS_VAT.YEAR.desc(),FS_VAT.PERIOD.desc())
 			.fetch()
 			.stream()
@@ -555,21 +502,7 @@ public class VatToMod303 {
 		;
 	}
 	private static void save(AONContext ctx,Mod303 mod303) {
-//		double result0 = mod303.getResult(); 
-//		Mod303 calculated = Mod303DAO.calculateMod303(ctx, mod303,Mod303Declaration.getInstance(mod303));
-//		double result1 = calculated.getResult();
-//		if ( result0 != result1 && AonMathUtils.absRounded(result0 - result1) > 0.5 ) {
-//			log( AonStringUtils.rightPad(count,6) 
-//					+ AonStringUtils.rightPad(mod303.getDomain(),9) 
-//					+ mod303.getYear() 
-//					+ " " + AonStringUtils.rightPad(mod303.getPeriod().getName(),6) 
-//					+  AonStringUtils.rightPad(AonStringUtils.substring( mod303.getAdministration().getDescription(), 0, 6),7)						
-//					+  AonStringUtils.rightPad(AonStringUtils.abbreviate(mod303.getDocument(),9),10)
-//					+  AonStringUtils.rightPad(AonStringUtils.abbreviate(mod303.getFullName(), 40),41)
-//					+ " DIFERENTE ..: " + result0 +  " <> " + result1
-//					+ " GAP ..: " + (result0 - result1)
-//					);
-//		}
+		log(ctx, "TRANSFER ..: " + mod303.getId() + " - " + mod303.getDomain() + " - " + mod303.getYear() + " - " + mod303.getPeriod() );
 		Mod303DAO.saveOnlyMod303(ctx, mod303);
 	}
 	private static double ensure(Double value) {

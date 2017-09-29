@@ -115,6 +115,7 @@ public interface IFiscal {
 	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303);
 	public void deleteMod303(AONContext ctx, Mod303 mod303);
 	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
+	public void importMod303(AONContext ctx, int domain);
 
 	// 				   		  MOD111
 	public Mod111 getMod111(AONContext ctx, int id);

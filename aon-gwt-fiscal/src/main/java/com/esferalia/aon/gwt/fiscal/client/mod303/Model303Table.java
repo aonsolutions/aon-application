@@ -309,6 +309,24 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 			}
 		});
 		buttonContainer.add(newButton);
+		
+		
+		final Button transferButton = new Button();		
+		transferButton.setText(AON.MSG.transferModels());
+		transferButton.setTitle(transferButton.getText());
+		transferButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		transferButton.addStyleName(AON.AON_CSS.aonIconImport());
+		transferButton.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		transferButton.addStyleName(AON.AON_CSS.aonBlink());
+		transferButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				cbk.onTransfer();
+			}
+		});
+		buttonContainer.add(transferButton);
+		
 
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;

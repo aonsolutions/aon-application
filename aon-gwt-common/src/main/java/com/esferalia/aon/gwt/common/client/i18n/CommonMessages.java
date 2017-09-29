@@ -3582,6 +3582,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pendiente de materializar")
 	String canCol4();
 
+	@DefaultMessage("Importar declaraciones antiguas")
+	String transferModels();
 	
 
 }
