@@ -212,22 +212,11 @@
 								value="3 #{bundle.aon_report}"
 								title="Alt+{Mayús}+3"
 								disabled="#{posInvoice.nevv or !posInvoice.ticketFinished}"
-								rendered="#{posInvoiceParams.printPDF}"
 								actionListener="#{posInvoiceParams.onInit}" 
 								action="#{report.onExecute}" 
 								accesskey="3">
 								<f:param name="reportKey" value="posInvoice" /> 
 							</aon:htmlCommandLink>
-							<aon:commandButton id="printTicketRAW" immediate="true"
-								styleClass="aon-big-commandButton aon-width-110"
-								value="3 #{bundle.aon_report}"
-								title="Alt+{Mayús}+3"
-								disabled="#{posInvoice.nevv or !posInvoice.ticketFinished}"
-								rendered="#{!posInvoiceParams.printPDF}"
-								actionListener="#{posInvoice.onShowPrintTicket}"
-								reRender="showPrintTicketWindow" ajaxSingle="true"
-								accesskey="3">
-							</aon:commandButton>											
 							<aon:commandButton id="parkTicket" immediate="true"
 								styleClass="aon-big-commandButton aon-width-105"
 								value="4 #{bundle.finance_pos_suspend}"
@@ -252,22 +241,11 @@
 								value="6 #{bundle.finance_pos_gift_receipt}"
 								title="Alt+{Mayús}+6"
 								disabled="#{posInvoice.nevv or !posInvoice.ticketFinished}"
-								rendered="#{posInvoiceParams.printPDF}"
 								actionListener="#{posInvoiceParams.onInit}" 
 								action="#{report.onExecute}" 
 								accesskey="6">
 								<f:param name="reportKey" value="giftReceipt" /> 
 							</aon:htmlCommandLink>  	
-							<aon:commandButton id="printGiftTicketRAW" immediate="true"
-								styleClass="aon-big-commandButton aon-width-110"
-								value="6 #{bundle.finance_pos_gift_receipt}"
-								title="Alt+{Mayús}+6"
-								disabled="#{posInvoice.nevv or !posInvoice.ticketFinished}"
-								rendered="#{!posInvoiceParams.printPDF}"
-								actionListener="#{posInvoice.onShowPrintGiftTicket}"
-								reRender="showPrintTicketWindow" ajaxSingle="true"
-								accesskey="6">
-							</aon:commandButton>											
 							<aon:confirmButton id="cancelTicket" immediate="true"
 								styleClass="aon-big-commandButton aon-width-105"
 								value="7 #{bundle.aon_cancel}"
@@ -352,8 +330,5 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalRecoverTicket.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
 		</ui:include>			
-		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalPrintTicket.xhtml">
-			<ui:param name="invoiceController" value="#{posInvoice}" />
-		</ui:include>
 	</ui:define>
 </ui:composition>

@@ -2,13 +2,11 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_FOOTER_TEXT;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_DIR_STAFF;
-import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_DOMAIN;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_DISCOUNT;
+import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_DOMAIN;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_LOGO;
-import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_OUTPUT;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_SELLER_NAME;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_TRADENAME;
-import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_WIDTH;
 import static com.code.aon.ui.common.ICommonMessages.FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX;
 
 import java.io.Serializable;
@@ -20,7 +18,6 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,16 +50,6 @@ public class PosInvoiceParamsController implements Serializable {
 	
 	private RegistryAttachment footerText;
 
-	public boolean isPrintPDF() {
-		return StringUtils.equals(AppParamUtil.getValue(POS_INVOICE_PRINT_OUTPUT), "1");
-	}
-
-	public void setPrintPDF(boolean printPDF) throws ManagerBeanException {
-		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_PRINT_OUTPUT);
-		param.setValue(printPDF?"1":"0");
-		params.put(POS_INVOICE_PRINT_OUTPUT, param );
-	}
-	
 	public boolean isPrintLogo() {
 		return Boolean.valueOf(params.get(POS_INVOICE_PRINT_LOGO).getValue()).booleanValue();
 	}
@@ -155,7 +142,7 @@ public class PosInvoiceParamsController implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		bean.insertOrUpdate(this.footerText);
 	}
-	
+
 	public String getFooterText() {
 		byte[] data = this.footerText.getData();
 		if (! ArrayUtils.isEmpty(data) ) {
@@ -169,31 +156,15 @@ public class PosInvoiceParamsController implements Serializable {
 		this.footerText.setData(data);
 	}
 
-	public Integer getWidth() {
-		String value = params.get(POS_INVOICE_WIDTH).getValue();
-		if ( NumberUtils.isDigits(value) ) {
-			return NumberUtils.toInt(value);
-		}
-		return null;
-	}
-
-	public void setWidth(Integer width) throws ManagerBeanException {
-		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_WIDTH);
-		param.setValue(String.valueOf(width));
-		params.put(POS_INVOICE_WIDTH, param );
-	}
-	
 	public void load() {
 		params = new HashMap<AppParam, ApplicationParameter>();
 		try {
-			params.put(POS_INVOICE_PRINT_OUTPUT, obtainApplicationParameter(POS_INVOICE_PRINT_OUTPUT) );
-			params.put(POS_INVOICE_PRINT_LOGO, obtainApplicationParameter(POS_INVOICE_PRINT_LOGO) );
-			params.put(POS_INVOICE_PRINT_TRADENAME, obtainApplicationParameter(POS_INVOICE_PRINT_TRADENAME) );
-			params.put(POS_INVOICE_PRINT_DIR_STAFF, obtainApplicationParameter(POS_INVOICE_PRINT_DIR_STAFF) );
-			params.put(POS_INVOICE_PRINT_SELLER_NAME, obtainApplicationParameter(POS_INVOICE_PRINT_SELLER_NAME) );
-			params.put(POS_INVOICE_PRINT_DOMAIN, obtainApplicationParameter(POS_INVOICE_PRINT_DOMAIN) );
-			params.put(POS_INVOICE_PRINT_DISCOUNT, obtainApplicationParameter(POS_INVOICE_PRINT_DISCOUNT) );
-			params.put(POS_INVOICE_WIDTH, obtainApplicationParameter(POS_INVOICE_WIDTH) );
+			params.put(POS_INVOICE_PRINT_LOGO, obtainApplicationParameter(POS_INVOICE_PRINT_LOGO));
+			params.put(POS_INVOICE_PRINT_TRADENAME, obtainApplicationParameter(POS_INVOICE_PRINT_TRADENAME));
+			params.put(POS_INVOICE_PRINT_DIR_STAFF, obtainApplicationParameter(POS_INVOICE_PRINT_DIR_STAFF));
+			params.put(POS_INVOICE_PRINT_SELLER_NAME, obtainApplicationParameter(POS_INVOICE_PRINT_SELLER_NAME));
+			params.put(POS_INVOICE_PRINT_DOMAIN, obtainApplicationParameter(POS_INVOICE_PRINT_DOMAIN));
+			params.put(POS_INVOICE_PRINT_DISCOUNT, obtainApplicationParameter(POS_INVOICE_PRINT_DISCOUNT));
 			initFooterText();
 		} catch (ManagerBeanException e) {
 			String msg = "No se han podido iniciar correctamente lo parámetros.";

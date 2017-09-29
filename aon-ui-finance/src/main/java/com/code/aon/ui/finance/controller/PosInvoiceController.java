@@ -2,7 +2,6 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.DECIMAL_2_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_CHARGED;
-import static com.code.aon.ui.common.ICommonMessages.POS_ERROR_PRINT_TICKET;
 import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_PATTERN;
 
 import java.text.DateFormat;
@@ -53,13 +52,11 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.report.ReportException;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.finance.util.PosUtils;
-import com.code.aon.ui.finance.util.print.TicketPrinter;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -82,8 +79,6 @@ public class PosInvoiceController extends SaleInvoiceController {
 	private List<Invoice> suspendedInvoiceList;
 	private boolean showFinishTicketWindow;
 	private boolean showRecoverTicketWindow;
-	private boolean showPrintTicketWindow;
-	private boolean giftTicket;
 	private String recoverReferenceCode;
 
 	public PosInvoiceController() {
@@ -711,34 +706,6 @@ public class PosInvoiceController extends SaleInvoiceController {
 		} catch (ManagerBeanException ex) {
 			String msg = "Error al efectuar la Devolución.";
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public boolean isShowPrintTicketWindow() {
-		return showPrintTicketWindow;
-	}
-
-	public void setShowPrintTicketWindow(boolean showPrintTicketWindow) {
-		this.showPrintTicketWindow = showPrintTicketWindow;
-	}
-
-	public void onShowPrintTicket(ActionEvent event) {
-		setShowPrintTicketWindow(true);
-		this.giftTicket = false;
-	}
-
-	public void onShowPrintGiftTicket(ActionEvent event) {
-		setShowPrintTicketWindow(true);
-		this.giftTicket = true;
-	}
-	
-	public String getTicketText() {
-		try {
-			TicketPrinter tp = new TicketPrinter();
-			return tp.execute( getInvoice(), giftTicket );			
-		} catch (ReportException ex) {
-			String msg = AonUtil.addErrorMessageFromBundle(POS_ERROR_PRINT_TICKET);
 			throw new AbortProcessingException(msg);
 		}
 	}
