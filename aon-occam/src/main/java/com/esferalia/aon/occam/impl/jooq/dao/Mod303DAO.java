@@ -85,8 +85,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		
 	}
 	
-	public static Mod303 saveMod303(AONContext ctx, Mod303 mod303) {
-		calculateMod303(ctx, mod303);
+	public static FiscalModel saveOnlyMod303(AONContext ctx, Mod303 mod303) {
 		LinkedHashMap<String, FiscalModelDetail> newMap = new LinkedHashMap<String, FiscalModelDetail>();
 		for (FiscalModelDetail det :  mod303.getMap().values() ) {
 			if (AonStringUtils.isBlank( det.getDescription() )
@@ -101,7 +100,12 @@ public class Mod303DAO extends FiscalModelDAO {
 			}
 		}
 		mod303.setMap(newMap);
-		FiscalModel fm = save(ctx, mod303);
+		return save(ctx, mod303);
+	}
+	
+	public static Mod303 saveMod303(AONContext ctx, Mod303 mod303) {
+		calculateMod303(ctx, mod303);
+		FiscalModel fm = saveOnlyMod303(ctx, mod303);
 		return getMod303(ctx, fm.getId());
 	}
 	

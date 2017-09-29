@@ -70,7 +70,7 @@ public class VatToMod303 {
 		Connection c = DriverManager.getConnection(getUrl(),getUser(),getPassword());
 		AONContext ctx = new AONContext(c);
 		try {
-			LOG = new PrintWriter( new FileWriter(  File.createTempFile("AON_VAT_", ".log") ));
+			LOG = new PrintWriter( new FileWriter(  File.createTempFile("AON_VAT_", ".log") ), true);
 			ctx.getDslContext().settings().setRenderSchema(false);
 			ctx.getDslContext().settings().setParamType( ParamType.INLINED );
 			log("Connected!");
@@ -87,12 +87,18 @@ public class VatToMod303 {
 	}
 
 	private static void log(String msg) {
-		LOG.println( msg );		
+		LOG.println( msg );
+		
 	}
 	
 	private static void passToFiscalModel(AONContext ctx) {
+		log(  "[START] Régimen Simplificado " );
 		transforrmOldSimplified(ctx);
-		//passVatTax(ctx);	
+		log(  "[END] Régimen Simplificado " );
+		
+		log(  "[START] Régimen General" );
+		passVatTax(ctx);	
+		log(  "[END] Régimen General" );
 	}
 	
 	private static void transforrmOldSimplified(AONContext ctx) {
@@ -104,12 +110,9 @@ public class VatToMod303 {
 			.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
 			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 			.where(FS_MODEL.MODEL.eq(FiscalModelType.M303.getName()))
-//			.and(FS_MODEL.DOMAIN.eq(16741))
-//			.and(FS_MODEL.YEAR.gt(2016))
 			.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc())
 			.fetch()
 			.stream()		
-//			.limit(100)
 			.map( record -> Mod303DAO.map303(new Mod303(),record))
 			.peek(fm -> Mod303DAO.getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
 			.filter(mod -> mod.getMap() != null && (mod.getMap().containsKey("303-AG1") || mod.getMap().containsKey("303-AC1")))
@@ -504,8 +507,10 @@ public class VatToMod303 {
 			.from(FS_VAT)
 			.leftOuterJoin(FS_VAT_DECLARATION).on(FS_VAT_DECLARATION.FS_VAT.eq(FS_VAT.ID))
 			.where( FS_VAT.YEAR.gt(2013))
-//			.where( FS_VAT.DOMAIN.eq(802))
+			.and( FS_VAT.PERIOD.notEqual( Period.YEAR.getValue() ))
+//			.and( FS_VAT.DOMAIN.eq(216))
 //			.limit(1000)
+			.orderBy(FS_VAT.DOMAIN.asc(),FS_VAT.YEAR.desc(),FS_VAT.PERIOD.desc())
 			.fetch()
 			.stream()
 			
@@ -516,9 +521,7 @@ public class VatToMod303 {
 				mod.setDomain(rec.getValue(FS_VAT.DOMAIN) )
 					.setYear(rec.getValue(FS_VAT.YEAR) )
 					.setPeriod( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Period.class, rec.getValue(FS_VAT.PERIOD) ))
-					.setAdministration( (Administration.safeValueOf(rec.getValue(FS_VAT_DECLARATION.ADMINISTRATION)) != null)
-							? Administration.safeValueOf(rec.getValue(FS_VAT_DECLARATION.ADMINISTRATION)) 
-									: Administration.COMMON_TERRITORY )
+					.setAdministration( Administration.safeValueOf(rec.getValue(FS_VAT_DECLARATION.ADMINISTRATION)) )
 					.setComplementary(AonEnumUtils.getBoolean(rec.getValue(FS_VAT.COMPLEMENTARY)))
 					.setReplacement(AonEnumUtils.getBoolean(rec.getValue(FS_VAT.REPLACEMENT)))
 					.setReplacedNumber(rec.getValue(FS_VAT.REPLACED_NUMBER) )
@@ -552,26 +555,10 @@ public class VatToMod303 {
 		;
 	}
 	private static void save(AONContext ctx,Mod303 mod303) {
-		double result0 = mod303.getResult(); 
-		Mod303 calculated = Mod303DAO.calculateMod303(ctx, mod303,Mod303Declaration.getInstance(mod303));
-		double result1 = calculated.getResult();
-		if ( result0 != result1 && AonMathUtils.absRounded(result0 - result1) > 0.5 ) {
-			log( AonStringUtils.rightPad(count,6) 
-					+ AonStringUtils.rightPad(mod303.getDomain(),9) 
-					+ mod303.getYear() 
-					+ " " + AonStringUtils.rightPad(mod303.getPeriod().getName(),6) 
-					+  AonStringUtils.rightPad(AonStringUtils.substring( mod303.getAdministration().getDescription(), 0, 6),7)						
-					+  AonStringUtils.rightPad(AonStringUtils.abbreviate(mod303.getDocument(),9),10)
-					+  AonStringUtils.rightPad(AonStringUtils.abbreviate(mod303.getFullName(), 40),41)
-					+ " DIFERENTE ..: " + result0 +  " <> " + result1
-					+ " GAP ..: " + (result0 - result1)
-					+ " (" +  mod303.getActivityList().get(0).getEpigraph()
-					+ ", " + mod303.getActivityList().get(1).getEpigraph()
-					+ ", " + mod303.getActivityList().get(2).getEpigraph()
-					+ ", " + mod303.getActivityList().get(3).getEpigraph()
-					+ ")" 
-					);
-//		} else {
+//		double result0 = mod303.getResult(); 
+//		Mod303 calculated = Mod303DAO.calculateMod303(ctx, mod303,Mod303Declaration.getInstance(mod303));
+//		double result1 = calculated.getResult();
+//		if ( result0 != result1 && AonMathUtils.absRounded(result0 - result1) > 0.5 ) {
 //			log( AonStringUtils.rightPad(count,6) 
 //					+ AonStringUtils.rightPad(mod303.getDomain(),9) 
 //					+ mod303.getYear() 
@@ -579,10 +566,11 @@ public class VatToMod303 {
 //					+  AonStringUtils.rightPad(AonStringUtils.substring( mod303.getAdministration().getDescription(), 0, 6),7)						
 //					+  AonStringUtils.rightPad(AonStringUtils.abbreviate(mod303.getDocument(),9),10)
 //					+  AonStringUtils.rightPad(AonStringUtils.abbreviate(mod303.getFullName(), 40),41)
-//					+ " OK!"
+//					+ " DIFERENTE ..: " + result0 +  " <> " + result1
+//					+ " GAP ..: " + (result0 - result1)
 //					);
-		}
-		Mod303DAO.save(ctx, mod303);
+//		}
+		Mod303DAO.saveOnlyMod303(ctx, mod303);
 	}
 	private static double ensure(Double value) {
 		return value==null?0.0:value.doubleValue();

@@ -64,6 +64,7 @@ public class FiscalModelValidation {
 					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
 					.and(FS_MODEL.REPLACEMENT.equal( ZERO ))
 					.and(FS_MODEL.COMPLEMENTARY.equal( ZERO ))
+					.and(FS_MODEL.STATUS.notEqual( (byte) FiscalStatus.BLOCKED.ordinal() ))
 					.and((fm.isNew())?DSL.trueCondition():FS_MODEL.ID.ne(fm.getId()))
 				.fetch()
 				.stream()

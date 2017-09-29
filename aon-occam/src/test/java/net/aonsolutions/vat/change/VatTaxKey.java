@@ -673,19 +673,19 @@ public class VatTaxKey  {
 		BIZKAIA_KEY_MAP.put("SP", (mod,det) -> {	// SP=LINEA EN BLANCO
 		});
 		BIZKAIA_KEY_MAP.put("CP", (mod,det) -> {	// CP=COMPRAS DE BIENES CORRIENTES
-			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1 )) {
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT1 )) {
 				addBase ( mod, Mod303Key.BZ_C050, det);
-				mod.ensureDetail(Mod303Key.BZ_X050).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1);
+				mod.ensureDetail(Mod303Key.BZ_X050).setAmount(BIZKAIA_2017_Declaration.PERCENT1);
 				addQuota( mod, Mod303Key.BZ_C051, det);
 				addQuota( mod, Mod303Key.BZ_C052, det);
-			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2 )) {
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT2 )) {
 				addBase ( mod, Mod303Key.BZ_C053, det);
-				mod.ensureDetail(Mod303Key.BZ_X053).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2);
+				mod.ensureDetail(Mod303Key.BZ_X053).setAmount(BIZKAIA_2017_Declaration.PERCENT2);
 				addQuota( mod, Mod303Key.BZ_C054, det);
 				addQuota( mod, Mod303Key.BZ_C055, det);
-			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3 )) {
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT3 )) {
 				addBase ( mod, Mod303Key.BZ_C056, det);
-				mod.ensureDetail(Mod303Key.BZ_X056).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3);
+				mod.ensureDetail(Mod303Key.BZ_X056).setAmount(BIZKAIA_2017_Declaration.PERCENT3);
 				addQuota( mod, Mod303Key.BZ_C057, det);
 				addQuota( mod, Mod303Key.BZ_C058, det);
 			} else {
@@ -698,19 +698,19 @@ public class VatTaxKey  {
 //			,BZ_C067("303-BZ067",false,"67","Compras de bienes corrientes - Cuota deducible")
 		});
 		BIZKAIA_KEY_MAP.put("GT", (mod,det) -> {	// GT=GASTOS
-			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1 )) {
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT1 )) {
 				addBase ( mod, Mod303Key.BZ_C068, det);
-				mod.ensureDetail(Mod303Key.BZ_X068).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1);
+				mod.ensureDetail(Mod303Key.BZ_X068).setAmount(BIZKAIA_2017_Declaration.PERCENT1);
 				addQuota( mod, Mod303Key.BZ_C069, det);
 				addQuota( mod, Mod303Key.BZ_C070, det);
-			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2 )) {
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT2 )) {
 				addBase ( mod, Mod303Key.BZ_C071, det);
-				mod.ensureDetail(Mod303Key.BZ_X071).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2);
+				mod.ensureDetail(Mod303Key.BZ_X071).setAmount(BIZKAIA_2017_Declaration.PERCENT2);
 				addQuota( mod, Mod303Key.BZ_C072, det);
 				addQuota( mod, Mod303Key.BZ_C073, det);
-			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3 )) {
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT3 )) {
 				addBase ( mod, Mod303Key.BZ_C074, det);
-				mod.ensureDetail(Mod303Key.BZ_X074).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3);
+				mod.ensureDetail(Mod303Key.BZ_X074).setAmount(BIZKAIA_2017_Declaration.PERCENT3);
 				addQuota( mod, Mod303Key.BZ_C075, det);
 				addQuota( mod, Mod303Key.BZ_C076, det);
 			} else {
@@ -723,19 +723,19 @@ public class VatTaxKey  {
 //			,BZ_C082("303-BZ082",false,"82","Gastos - Cuota deducible")
 		});
 		BIZKAIA_KEY_MAP.put("BI", (mod,det) -> {	// BI=BIENES DE INVERSION
-			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1 )) {
+			if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT1 )) {
 				addBase ( mod, Mod303Key.BZ_C083, det);
-				mod.ensureDetail(Mod303Key.BZ_X083).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT1);
+				mod.ensureDetail(Mod303Key.BZ_X083).setAmount(BIZKAIA_2017_Declaration.PERCENT1);
 				addQuota( mod, Mod303Key.BZ_C084, det);
 				addQuota( mod, Mod303Key.BZ_C085, det);
-			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2 )) {
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT2 )) {
 				addBase ( mod, Mod303Key.BZ_C086, det);
-				mod.ensureDetail(Mod303Key.BZ_X086).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT2);
+				mod.ensureDetail(Mod303Key.BZ_X086).setAmount(BIZKAIA_2017_Declaration.PERCENT2);
 				addQuota( mod, Mod303Key.BZ_C087, det);
 				addQuota( mod, Mod303Key.BZ_C088, det);
-			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3 )) {
+			} else if ( AonNumberUtils.equals(det.getPercent(), BIZKAIA_2017_Declaration.PERCENT3 )) {
 				addBase ( mod, Mod303Key.BZ_C089, det);
-				mod.ensureDetail(Mod303Key.BZ_X089).setAmount(BIZKAIA_2017_Declaration.SURCHARGE_PERCENT3);
+				mod.ensureDetail(Mod303Key.BZ_X089).setAmount(BIZKAIA_2017_Declaration.PERCENT3);
 				addQuota( mod, Mod303Key.BZ_C090, det);
 				addQuota( mod, Mod303Key.BZ_C091, det);
 			} else {
