@@ -1,0 +1,297 @@
+package com.code.aon.webservice.seres;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.code.aon.webservice.common.MSG;
+import com.code.aon.webservice.common.Utils;
+import com.code.aon.webservice.util.ToJSON;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
+import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.watson.server.AonDateUtils;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "SeresServlet", urlPatterns = { "/seres/*", "/aon_gwt_aio/seres/*" })
+public class SeresServlet extends HttpServlet {
+
+	private static final Logger LOGGER = Logger.getLogger(SeresServlet.class.getName());
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("Seres Servlet - GET METHOD");
+		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
+		String[] pathInfo = req.getPathInfo().split("/");
+		String userName = pathInfo[2];
+		String domainName = pathInfo[1];
+		String md5 = Utils.getMd5(userName + domainName);
+
+		if (accessToken.equals(md5)) {
+			Domain domain = AON.getDomain(domainName, 1, userName, f -> f.getNameProperty().eq(domainName));
+			if (pathInfo.length > 3) {
+				Object object = new Object();
+				JSONObject meta = new JSONObject();
+				switch (pathInfo[3]) {
+				case "summary":
+					object = getSummary(domain, userName, req);
+					break;
+				case "outcome_delivery":
+					object = getOutcomeDelivery(domain, userName, req);
+					break;
+				case "outcome_invoice":
+					object = getOutcomeInvoice(domain, userName, req);
+					break;
+				case "income_sales":
+					// TODO
+					break;
+				case "income_invoice":
+					// TODO
+					break;
+				case "ingenet_delivery":
+					// TODO
+					break;
+				case "history":
+					object = getHistory(domain, userName);
+					break;
+				case "history_detail":
+					object = getHistoryDetail(domain, userName, Integer.parseInt(req.getParameter("id")));
+					break;
+				default:
+					break;
+				}
+				Utils.giveBack(req, resp, object, meta);
+			}
+		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		LOGGER.info("Seres Servlet - POST METHOD");
+	}
+
+	private JSONArray getSummary(Domain domain, String login, HttpServletRequest req) {
+		Map<String, String[]> filterMap = req.getParameterMap();
+		JSONArray array = new JSONArray();
+
+		List<Integer> deliveryIds = AON.getDeliveryStream(domain.getName(), domain.getId(), login,
+				f -> deliveryFilter(domain, filterMap, f)).map(Delivery::getId).collect(Collectors.toList());
+		List<Integer> invoiceIds = AON.getInvoiceStream(domain.getName(), domain.getId(), login,
+				f -> saleInvoiceFilter(domain, filterMap, f)).map(Invoice::getId).collect(Collectors.toList());
+		List<Integer> responseDeliveryIds = AON
+				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
+						f -> f.getDomainProperty().eq(domain.getId())
+								.and(f.getSourceProperty().eq(DataResponseSource.SERES_DELIVERY.value())))
+				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
+				.map(DataResponse::getSourceId).collect(Collectors.toList());
+		List<Integer> responseInvoiceIds = AON
+				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
+						f -> f.getDomainProperty().eq(domain.getId())
+								.and(f.getSourceProperty().eq(DataResponseSource.SERES_INVOICE.value())))
+				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
+				.map(DataResponse::getSourceId).collect(Collectors.toList());
+		
+		array.put(new JSONObject()
+				.put("label", MSG.DELIVERY)
+				.put("quantity", deliveryIds.size())
+				.put("pending", deliveryIds.size() - responseDeliveryIds.size())
+				.put("error", 0)
+		);
+		array.put(new JSONObject()
+				.put("label", MSG.INVOICE)
+				.put("quantity", invoiceIds.size())
+				.put("pending", invoiceIds.size() - responseInvoiceIds.size())
+				.put("error", 0)
+		);
+
+		return array;
+	}
+	
+	private JSONArray getOutcomeDelivery(Domain domain, String login, HttpServletRequest req){
+		Map<String, String[]> filterMap = req.getParameterMap();
+		JSONArray array = new JSONArray();
+    	if(req.getParameterMap().containsKey("seres")){
+    		AON.getDeliveryStream(domain.getName(), domain.getId(), login,
+    				f -> deliveryFilter(domain, filterMap, f))
+    		.forEach(o -> array.put(ToJSON.deliveryToJSON((o))));
+    	}
+    	return array;
+	}
+	
+	private JSONArray getOutcomeInvoice(Domain domain, String login, HttpServletRequest req){
+		Map<String, String[]> filterMap = req.getParameterMap();
+		JSONArray array = new JSONArray();
+    	if(req.getParameterMap().containsKey("seres")){
+    		AON.getInvoiceList(domain.getName(), domain.getId(), login, 	
+        			f -> saleInvoiceFilter(domain, filterMap, f))
+	    		.forEach(o -> {
+	    			JSONObject json = ToJSON.invoiceToJSON(o);
+//	    			json.put(MSG.SII_SENT, true);
+//	    			json.put(MSG.SII, "emitida");
+	    			array.put(json);
+	    		});
+    	}
+    	return array;
+    }
+	
+	private JSONArray getHistory(Domain domain, String login) {
+		JSONArray array = new JSONArray();
+
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login, null,
+				f -> f.getDomainProperty().eq(domain.getId())
+						.and(f.getSourceProperty().eq(DataResponseSource.SERES_DELIVERY.value())))
+				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate())).forEach(r -> {
+					array.put(ToJSON.dataResponseToJSON(r));
+				});
+		return array;
+	}
+
+	private JSONArray getHistoryDetail(Domain domain, String login, Integer id) {
+		JSONArray array = new JSONArray();
+		Integer[] ids = AON
+				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
+						f -> f.getDomainProperty().eq(domain.getId())
+								.and(f.getSourceProperty().eq(DataResponseSource.SERES_INVOICE.value()))
+								.and(f.getDetailVariableProperty().eq("send"))
+								.and(f.getDetailValueProperty().eq(id.toString())))
+				.map(m -> m.getSourceId()).toArray(Integer[]::new);
+
+		AON.getInvoiceStream(domain.getName(), domain.getId(), login, f -> f.getIdProperty().in(ids)).forEach(r -> {
+			array.put(ToJSON.invoiceToJSON(r));
+		});
+		return array;
+	}
+
+	private void fillPaginationFilter(Filter filter, Map<String, String[]> filterMap) {
+		if (filterMap.containsKey("page") && filterMap.containsKey("per_page")) {
+			Integer page =  filterMap.containsKey("page") ? Integer.parseInt(filterMap.get("page")[0]) : 1;
+			Integer perPage = filterMap.containsKey("per_page") ? Integer.parseInt(filterMap.get("per_page")[0]) : 40;
+			filter = filter.page(page).perPage(perPage);
+		} else {
+			filter = filter.page(1).perPage(40);
+		}
+	}
+	
+	private Filter deliveryFilter(Domain domain, Map<String, String[]> filterMap, DeliveryProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		fillPaginationFilter(filter, filterMap);
+		
+		if (filterMap.containsKey(MSG.FROM)) {
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(date)));
+		}
+		return filter;
+	}
+
+	private Filter saleInvoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		filter = filter.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
+		fillPaginationFilter(filter, filterMap);
+		
+		if (filterMap.containsKey(MSG.FROM)) {
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			filter = filter.and(f.getTaxDateProperty().ge(AonDateUtils.toTimestamp(date)));
+		}
+		return filter;
+	}
+
+	private Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+
+		if (filterMap.containsKey(MSG.FROM)) {
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(date)));
+		}
+
+		// if(filterMap.containsKey(MSG.DELIVERY_DATE)){
+		// filter = filter.and(f.getDeliveryDateProperty().ge(new
+		// Timestamp(Long.parseLong(filterMap.get(MSG.DELIVERY_DATE)[0])))
+		// .or(f.getDeliveryDateProperty().isNull()));
+		// }
+		//
+		// if(filterMap.containsKey(MSG.SERIES)){
+		// Filter fseries =
+		// f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[0]);
+		// for(Integer i = 1; i < filterMap.get(MSG.SERIES).length ; i++){
+		// fseries =
+		// fseries.or(f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[i]));
+		// }
+		// filter = filter.and(fseries);
+		// }
+		//
+		// if(filterMap.containsKey(MSG.CARRIER)){
+		// Filter fcarrier =
+		// f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER)[0]));
+		// for(Integer i = 1; i < filterMap.get(MSG.CARRIER).length ; i++){
+		// fcarrier =
+		// fcarrier.or(f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER)[i])));
+		// }
+		// filter = filter.and(fcarrier);
+		// }
+		//
+		// if(filterMap.containsKey(MSG.TYPE)){
+		// Filter ftype = f.getTypeProperty().eq((byte)
+		// Integer.parseInt(filterMap.get(MSG.TYPE)[0]));
+		// for(Integer i = 1; i < filterMap.get(MSG.TYPE).length ; i++){
+		// ftype = ftype.or(f.getTypeProperty().eq((byte)
+		// Integer.parseInt(filterMap.get(MSG.TYPE)[i])));
+		// }
+		// filter = filter.and(ftype);
+		// }
+		//
+		// if(filterMap.containsKey(MSG.STATUS)){
+		// Filter fstatus = f.getStatusProperty().eq((byte)
+		// Integer.parseInt(filterMap.get(MSG.STATUS)[0]));
+		// for(Integer i = 1; i < filterMap.get(MSG.STATUS).length ; i++){
+		// fstatus = fstatus.or(f.getStatusProperty().eq((byte)
+		// Integer.parseInt(filterMap.get(MSG.STATUS)[i])));
+		// }
+		// filter = filter.and(fstatus);
+		// }
+		//
+		// if(filterMap.containsKey("text") &&
+		// !"".equals(filterMap.get("text")[0])){
+		// Filter ftext = f.getNumberPlateProperty().like("%" +
+		// filterMap.get("text")[0] + "%");
+		// ftext = ftext.or(f.getDriverNameProperty().like("%" +
+		// filterMap.get("text")[0] + "%"));
+		// ftext = ftext.or(f.getDriverDocumentProperty().like("%" +
+		// filterMap.get("text")[0] + "%"));
+		// ftext = ftext.or(f.getCarrierReferenceProperty().like("%" +
+		// filterMap.get("text")[0] + "%"));
+		// ftext = filter = filter.and(ftext);
+		// }
+		// if(filterMap.containsKey("per_page")){
+		// String per_page = filterMap.get("per_page")[0];
+		// Integer perPage = Integer.parseInt(per_page);
+		// filter.perPage(perPage);
+		// }
+		// if(filterMap.containsKey("page")){
+		// String page_str = filterMap.get("page")[0];
+		// Integer page = Integer.parseInt(page_str);
+		// filter.page(page);
+		// }
+		return filter;
+	}
+
+}

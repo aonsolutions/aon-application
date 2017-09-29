@@ -162,6 +162,7 @@
 		<module>aon-gwt-dump</module>
 		<module>aon-gwt-sii</module>
 		<module>aon-gwt-invoice</module>
+		<module>aon-gwt-seres</module>
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>

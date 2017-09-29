@@ -1,0 +1,78 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.07-SNAPSHOT</version>
+	</parent>
+	<groupId>net.aonsolutions</groupId>
+	<artifactId>aon.gwt.seres</artifactId>
+	<name>AON GWT SERES</name>
+	<description>AON GWT SERES</description>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/client/**</include>
+					<include>**/shared/**</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/client/**</include>
+					<include>**/facelet/**</include>
+					<include>**/*.gwt.xml</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+	
+	<dependencies>
+	
+		<dependency>
+ 			<groupId>com.esferalia.aon</groupId>
+ 			<artifactId>aon.gwt.api</artifactId>
+ 			<version>${project.version}</version>
+ 			<scope>compile</scope>
+ 		</dependency>
+ 		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>2.8.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+  		  	<groupId>com.vaadin.polymer</groupId>
+    		<artifactId>vaadin-gwt-polymer-elements</artifactId>
+    		<version>1.7.0.0</version>
+    	 	<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

@@ -410,7 +410,7 @@ public class FillerDAO {
 					.setCustomer(r.getValue(DELIVERY.CUSTOMER)).setAddress(r.getValue(DELIVERY.ADDRESS))
 					.setIssueTime(r.getValue(DELIVERY.ISSUE_TIME)).setPayMethod(r.getValue(DELIVERY.PAY_METHOD))
 					.setSecurityLevel(r.getValue(DELIVERY.SECURITY_LEVEL))
-					.setStatus(DeliveryStatus.values()[r.getValue(DELIVERY.STATUS)])
+					.setStatus(r.getValue(DELIVERY.STATUS)!=null?DeliveryStatus.values()[r.getValue(DELIVERY.STATUS)]:null)
 					.setComments(r.getValue(DELIVERY.COMMENTS)).setRemarks(r.getValue(DELIVERY.REMARKS))
 					.setWorkplace(r.getValue(DELIVERY.WORKPLACE)).setScope(r.getValue(DELIVERY.SCOPE))
 					.setNumberOfPymnts(r.getValue(DELIVERY.NUMBER_OF_PYMNTS))

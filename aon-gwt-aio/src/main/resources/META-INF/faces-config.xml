@@ -87,6 +87,15 @@
 			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/invoice/sabbatic.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- AON GWT SERES -->
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_seres</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/seres.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 	<!-- AON GWT TEMPLATE -->
 
