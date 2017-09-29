@@ -765,6 +765,7 @@
 			<param id="printSellerName" value="#{posInvoiceParams.getPrintSellerName}" />
 			<param id="printDomain" value="#{posInvoiceParams.isPrintDomain}" />
 			<param id="printDiscount" value="#{posInvoiceParams.isPrintDiscount}" />
+			<param id="giftTicket" value="#{posInvoiceParams.isGiftTicket}" />
 			<param id="footerText" value="#{posInvoiceParams.getFooterText}" />
 		</params>
 	</report>	

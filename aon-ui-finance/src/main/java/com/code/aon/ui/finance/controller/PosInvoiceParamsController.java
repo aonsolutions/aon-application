@@ -45,15 +45,34 @@ public class PosInvoiceParamsController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PosInvoiceParamsController.class.getName());
-	
+
 	private Map<AppParam, ApplicationParameter> params;
-	
+
+	private boolean giftTicket;
 	private RegistryAttachment footerText;
+
+	public boolean isGiftTicket() {
+		return giftTicket;
+	}
+	public void setGiftTicket(boolean giftTicket) {
+		this.giftTicket = giftTicket;
+	}
+
+	public String getFooterText() {
+		byte[] data = this.footerText.getData();
+		if (! ArrayUtils.isEmpty(data) ) {
+			return new String(data);
+		}
+		return "";
+	}
+	public void setFooterText(String footerText) throws ManagerBeanException {
+		byte[] data = StringUtils.isEmpty(footerText) ? null : footerText.getBytes();
+		this.footerText.setData(data);
+	}
 
 	public boolean isPrintLogo() {
 		return Boolean.valueOf(params.get(POS_INVOICE_PRINT_LOGO).getValue()).booleanValue();
 	}
-
 	public void setPrintLogo(boolean printLogo) throws ManagerBeanException {
 		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_PRINT_LOGO);
 		param.setValue(String.valueOf(printLogo));
@@ -63,7 +82,6 @@ public class PosInvoiceParamsController implements Serializable {
 	public boolean isPrintTradename() {
 		return Boolean.valueOf(params.get(POS_INVOICE_PRINT_TRADENAME).getValue()).booleanValue();
 	}
-
 	public void setPrintTradename(boolean printTradename) throws ManagerBeanException {
 		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_PRINT_TRADENAME);
 		param.setValue(String.valueOf(printTradename));
@@ -73,7 +91,6 @@ public class PosInvoiceParamsController implements Serializable {
 	public ReportPrintOption getPrintDirStaff() {
 		return obtainReportPrintOption(params.get(POS_INVOICE_PRINT_DIR_STAFF).getValue());
 	}
-
 	public void setPrintDirStaff(ReportPrintOption printDirStaff) throws ManagerBeanException {
 		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_PRINT_DIR_STAFF);
 		param.setValue(String.valueOf(printDirStaff.ordinal()));
@@ -83,7 +100,6 @@ public class PosInvoiceParamsController implements Serializable {
 	public ReportPrintOption getPrintSellerName() {
 		return obtainReportPrintOption(params.get(POS_INVOICE_PRINT_SELLER_NAME).getValue());
 	}
-
 	public void setPrintSellerName(ReportPrintOption printSellerName) throws ManagerBeanException {
 		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_PRINT_SELLER_NAME);
 		param.setValue(String.valueOf(printSellerName.ordinal()));
@@ -93,7 +109,6 @@ public class PosInvoiceParamsController implements Serializable {
 	public boolean isPrintDomain() {
 		return Boolean.valueOf(params.get(POS_INVOICE_PRINT_DOMAIN).getValue()).booleanValue();
 	}
-
 	public void setPrintDomain(boolean printDomain) throws ManagerBeanException {
 		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_PRINT_DOMAIN);
 		param.setValue(String.valueOf(printDomain));
@@ -108,6 +123,33 @@ public class PosInvoiceParamsController implements Serializable {
 		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_PRINT_DISCOUNT);
 		param.setValue(String.valueOf(printDiscount));
 		params.put(POS_INVOICE_PRINT_DISCOUNT, param );
+	}
+	
+	public void onInit(ActionEvent event) {
+		setGiftTicket(false);
+		load();
+	}
+
+	public void onInitGiftTicket(ActionEvent event) {
+		setGiftTicket(true);
+		load();
+	}
+
+	public void load() {
+		params = new HashMap<AppParam, ApplicationParameter>();
+		try {
+			params.put(POS_INVOICE_PRINT_LOGO, obtainApplicationParameter(POS_INVOICE_PRINT_LOGO));
+			params.put(POS_INVOICE_PRINT_TRADENAME, obtainApplicationParameter(POS_INVOICE_PRINT_TRADENAME));
+			params.put(POS_INVOICE_PRINT_DIR_STAFF, obtainApplicationParameter(POS_INVOICE_PRINT_DIR_STAFF));
+			params.put(POS_INVOICE_PRINT_SELLER_NAME, obtainApplicationParameter(POS_INVOICE_PRINT_SELLER_NAME));
+			params.put(POS_INVOICE_PRINT_DOMAIN, obtainApplicationParameter(POS_INVOICE_PRINT_DOMAIN));
+			params.put(POS_INVOICE_PRINT_DISCOUNT, obtainApplicationParameter(POS_INVOICE_PRINT_DISCOUNT));
+			initFooterText();
+		} catch (ManagerBeanException e) {
+			String msg = "No se han podido iniciar correctamente lo parámetros.";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+		}		
 	}
 	
 	private void initFooterText() throws ManagerBeanException {
@@ -143,47 +185,13 @@ public class PosInvoiceParamsController implements Serializable {
 		bean.insertOrUpdate(this.footerText);
 	}
 
-	public String getFooterText() {
-		byte[] data = this.footerText.getData();
-		if (! ArrayUtils.isEmpty(data) ) {
-			return new String(data);
-		}
-		return "";
-	}
-
-	public void setFooterText(String footerText) throws ManagerBeanException {
-		byte[] data = StringUtils.isEmpty(footerText) ? null : footerText.getBytes();
-		this.footerText.setData(data);
-	}
-
-	public void load() {
-		params = new HashMap<AppParam, ApplicationParameter>();
-		try {
-			params.put(POS_INVOICE_PRINT_LOGO, obtainApplicationParameter(POS_INVOICE_PRINT_LOGO));
-			params.put(POS_INVOICE_PRINT_TRADENAME, obtainApplicationParameter(POS_INVOICE_PRINT_TRADENAME));
-			params.put(POS_INVOICE_PRINT_DIR_STAFF, obtainApplicationParameter(POS_INVOICE_PRINT_DIR_STAFF));
-			params.put(POS_INVOICE_PRINT_SELLER_NAME, obtainApplicationParameter(POS_INVOICE_PRINT_SELLER_NAME));
-			params.put(POS_INVOICE_PRINT_DOMAIN, obtainApplicationParameter(POS_INVOICE_PRINT_DOMAIN));
-			params.put(POS_INVOICE_PRINT_DISCOUNT, obtainApplicationParameter(POS_INVOICE_PRINT_DISCOUNT));
-			initFooterText();
-		} catch (ManagerBeanException e) {
-			String msg = "No se han podido iniciar correctamente lo parámetros.";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-		}		
-	}
-	
-	public void onInit(ActionEvent event){
-		load();
-	}
-	
 	public void onAccept(ActionEvent event) throws ManagerBeanException{
 		for(ApplicationParameter param: params.values()) {
 			AppParamUtil.insertParameter(param);
 		}
 		updateFooterText();
 	}
-	
+
 	public ApplicationParameter obtainApplicationParameter(AppParam appParam) throws ManagerBeanException{
 		ApplicationParameter param = AppParamUtil.getParameter(appParam);
 		if ( param == null ) {
@@ -193,7 +201,7 @@ public class PosInvoiceParamsController implements Serializable {
 		}
 		return param;
 	}
-	
+
 	private ReportPrintOption obtainReportPrintOption(String value) {
 		for(ReportPrintOption o: ReportPrintOption.values()){
 			if(StringUtils.isNotBlank(value) && o.ordinal() == Integer.parseInt(value)){
@@ -202,5 +210,5 @@ public class PosInvoiceParamsController implements Serializable {
 		}
 		return null;
 	}
-	
+
 }
