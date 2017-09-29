@@ -16,6 +16,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -46,6 +48,10 @@ public class FileEditor extends ResizeComposite {
 
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
+	
+	@UiField
+	HorizontalPanel toolBarPanel;
+	
 
 	private String filename;
 
@@ -90,6 +96,9 @@ public class FileEditor extends ResizeComposite {
 	}
 	
 	
+	public void add(IsWidget widget) {
+		toolBarPanel.add(widget);
+	}
 	
 	
 	// -----------------------------------------------------------------------

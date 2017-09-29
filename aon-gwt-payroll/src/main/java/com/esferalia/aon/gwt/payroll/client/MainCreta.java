@@ -556,6 +556,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					basesEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
 					detailPanel.setWidget(basesEditor);
 					basesEditor.autoRefresh();
+
+					CheckBox reftification = new CheckBox("Reftificativa");
+					reftification.setStyleName("aon-finding-toolbar-item");
+					reftification.addClickHandler(e->MainCreta.this.reftification());
+					basesEditor.add(reftification);
 				}
 			}	
 
@@ -578,7 +583,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				showResultsPanel();
 
 			CheckBox reftification = new CheckBox("Reftificativa");
-			reftification.setValue(isReftification());
+			//reftification.setValue(isReftification());
 			reftification.setStyleName("aon-finding-toolbar-item");
 			reftification.addClickHandler(e->MainCreta.this.reftification());
 			mergeEditor.add(reftification);
