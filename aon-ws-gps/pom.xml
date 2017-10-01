@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.07</version>
+    <version>9.08-SNAPSHOT</version>
   </parent>
   <groupId>com.esferalia.aon</groupId>
   <artifactId>aon-ws-gps</artifactId>
