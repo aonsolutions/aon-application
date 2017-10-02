@@ -3,8 +3,8 @@ package com.esferalia.aon.occam.api.model.warehouse;
 public enum CarrierPackingStatus {
 
 	PENDING("Pendiente", "orangered"),
-	ON_ROUTE("En ruta", "green"),
-	ON_BASCULA("En bascula", "lightgreen"),
+	ON_ROUTE("En ruta", "orange"),
+	ON_BASCULA("En bascula", "green"),
 	FINISHED("Finalizada", "darkslategray");
 	
 	private String name;

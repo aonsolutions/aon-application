@@ -483,9 +483,9 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 	        			JsCarrierPacking value, SafeHtmlBuilder sb) {
 	        		if(text.equals("status")){	
 	        			String icon = "aon-icon-point-red";	
-	        			if(CarrierPackingStatus.ON_ROUTE.getName().equals(value.getStatus().getName())) icon = "aon-icon-point-green";
+	        			if(CarrierPackingStatus.ON_ROUTE.getName().equals(value.getStatus().getName())) icon = "aon-icon-point-orange";
 	        			if(CarrierPackingStatus.FINISHED.getName().equals(value.getStatus().getName())) icon = "aon-icon-point-gray";
-	        			if(CarrierPackingStatus.ON_BASCULA.getName().equals(value.getStatus().getName())) icon = "aon-icon-point-light-green";
+	        			if(CarrierPackingStatus.ON_BASCULA.getName().equals(value.getStatus().getName())) icon = "aon-icon-point-green";
 	        			sb.appendHtmlConstant("<button  alt=\""+ value.getStatus().getName() +"\" type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
 						sb.appendHtmlConstant("</button>");		
 	        		}
