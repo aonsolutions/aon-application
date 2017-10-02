@@ -25,14 +25,6 @@
 								<aon:outputText value="#{bundle.infoweb_module}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:if test="#{aonRole.admin}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="company-marketing" 
-											action="company-marketing"
-											actionListener="#{company.onLoad}"
-											value="#{bundle.company_data_module}" />
-									</aon:div>
-								</aon:if>
 								<aon:if test="#{aonRole.config}">								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="companyWebInfo" 
