@@ -1259,10 +1259,6 @@
 	<!-- =================== Company ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>company</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/company/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>companyImages_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/companyImages/form.xhtml</to-view-id>
 		</navigation-case>
