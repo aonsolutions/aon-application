@@ -152,17 +152,47 @@ public class SeresPrincipal extends Composite{
 				}
 			});
 		} else if(parent.INCOME_SALES.equals(command)){
-			// TODO
-			content.setWidget(new Label("En desarrollo."));
-			Window.alert("En desarrollo.");
+			getAPI().getSeres().getIncomeSales(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsSeresFile> result) {
+					content.setWidget(new ContentGrid(me, result.getData().toLinkedList()));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
 		} else if(parent.INCOME_INVOICE.equals(command)){
-			// TODO
-			content.setWidget(new Label("En desarrollo."));
-			Window.alert("En desarrollo.");
+			getAPI().getSeres().getIncomeInvoice(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsSeresFile> result) {
+					content.setWidget(new ContentGrid(me, result.getData().toLinkedList()));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
 		} else if(parent.INGENET_DELIVERY.equals(command)){
 			// TODO
-			content.setWidget(new Label("En desarrollo."));
-			Window.alert("En desarrollo.");
+//			content.setWidget(new Label("En desarrollo."));
+//			Window.alert("En desarrollo.");
+			getAPI().getSeres().getIngenetDelivery(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsSeresFile> result) {
+					content.setWidget(new ContentGrid(me, result.getData().toLinkedList()));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
 		} else {
 			getAPI().getSeres().getSummary(getFilterMap(), new AsyncCallback<JSON<JsSummary>>() {
 				

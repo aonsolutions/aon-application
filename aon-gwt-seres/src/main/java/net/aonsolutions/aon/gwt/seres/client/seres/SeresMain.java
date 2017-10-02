@@ -132,11 +132,11 @@ public class SeresMain extends AonTemplate2{
 		menuPanel.add(createMenuPanelButton("Facturas", "Facturas enviadas", OUTCOME_INVOICE));
 		
 		menuPanel.add(createMenuPanelLabel("Ficheros Recibidos"));
-		menuPanel.add(createMenuPanelButton("Pedidos", "Pedidos recibidos", INCOME_SALES, true, true));
-		menuPanel.add(createMenuPanelButton("Facturas", "Facturas recibidas", INCOME_INVOICE, true, true));
+		menuPanel.add(createMenuPanelButton("Pedidos", "Pedidos recibidos", INCOME_SALES));
+		menuPanel.add(createMenuPanelButton("Facturas", "Facturas recibidas", INCOME_INVOICE));
 		
 		menuPanel.add(createMenuPanelLabel("Ingenet"));
-		menuPanel.add(createMenuPanelButton("Albaranes Ingenet", "Albaranes Ingenet", INGENET_DELIVERY, true, true));
+		menuPanel.add(createMenuPanelButton("Albaranes Ingenet", "Albaranes Ingenet", INGENET_DELIVERY));
 		
 		setWestContent(menuPanel);
 	}
@@ -170,7 +170,8 @@ public class SeresMain extends AonTemplate2{
 				getFilterMap().put("seres",list);
 				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
-				fp.setCheckVisible(true);
+				// TODO fp.setCheckVisible(true); 
+				fp.setCheckVisible(false);
 				fp.setTitle(title);
 				p.gridContent(action);
 			}

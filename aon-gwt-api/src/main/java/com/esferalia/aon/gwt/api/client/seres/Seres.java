@@ -43,7 +43,7 @@ public class Seres extends Methods{
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/outcome_invoice"+filter, callback);
 	}
 
-	public void getIncomeSalesDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
+	public void getIncomeSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/income_sales"+filter, callback);
 	}
