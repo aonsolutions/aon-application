@@ -409,7 +409,7 @@ public class FootPanel extends Composite {
 					});
 					
 					Double pFondo =dbPFondo.getValue();
-					Double z = (pFondo - contractPrice) * 0.55;
+					Double z = pFondo > contractPrice ? (pFondo - contractPrice) * 0.55 : 0.0;
 					Double price = contractPrice + z;
 					if(Destiny.BASERRI.equals(destiny)) {
 						price = price * 0.88;
