@@ -351,7 +351,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S52("303-CTS52",true ,"52","Entregas de activos fijos")
 	,CT_S53("303-CTS53",true ,"53","IVA devengado por inversi\u00F3n del sujeto pasivo")
 	,CT_S54("303-CTS54",false,"54","Total cuota resultante")
-	,CT_S55("303-CTS55",false,"55","Adquisici\u00F3n o importaci\u00F3n de activos fijos")
+	,CT_S55("303-CTS55",true,"55","Adquisici\u00F3n o importaci\u00F3n de activos fijos")
 	,CT_S56("303-CTS56",false,"56","Regularizaci\u00F3n bienes de inversi\u00F3n")
 	,CT_S57("303-CTS57",false,"57","Total IVA deducible")
 	,CT_S58("303-CTS58",false,"58","Resultado R\u00E9gimen Simplificado")
