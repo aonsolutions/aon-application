@@ -49,6 +49,7 @@ public class CarrierPackingPrincipal extends Composite{
 			LinkedList<String> status = new LinkedList<>();
 			status.add(CarrierPackingStatus.PENDING.ordinal() + "");
 			status.add(CarrierPackingStatus.ON_ROUTE.ordinal() + "");
+			status.add(CarrierPackingStatus.ON_BASCULA.ordinal() + "");
 			this.filterMap.put("status", status);
 		} else this.filterMap = filterMap;
 		filterContent();
@@ -65,6 +66,7 @@ public class CarrierPackingPrincipal extends Composite{
 		LinkedList<String> status = new LinkedList<>();
 		status.add(CarrierPackingStatus.PENDING.ordinal() + "");
 		status.add(CarrierPackingStatus.ON_ROUTE.ordinal() + "");
+		status.add(CarrierPackingStatus.ON_BASCULA.ordinal() + "");
 		filterMap.put("status", status);
 		
 		filterContent();
