@@ -253,12 +253,14 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		// Resultado
 		,BZ_C036	(Mod303Key.BZ_C036,null,null,null,"BZ_C033-BZ_C034+BZ_C035",null)   
 		
+		
 		// A compensar
-		,BZ_C038	(Mod303Key.BZ_C038)
+		,BZ_C038	(Mod303Key.BZ_C038,null,null,null,"isToCompensate()?round(BZ_C036*-1):0.0",null)
+		
 		// A devolver
-		,BZ_C039	(Mod303Key.BZ_C039)
+		,BZ_C039	(Mod303Key.BZ_C039,null,null,null,"isToPayback()?round(BZ_C036*-1):0.0",null)
 		// A ingresar
-		,BZ_C040	(Mod303Key.BZ_C040)
+		,BZ_C040	(Mod303Key.BZ_C040,null,null,null,"isToDeposit()?BZ_C036:0.0",null)
 		
 		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente
 		,BZ_C041	(Mod303Key.BZ_C041,null,null,
