@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod111 extends FiscalModel implements Serializable {
 	
@@ -58,4 +60,11 @@ public class Mod111 extends FiscalModel implements Serializable {
 		return null;
 	}
 	
+	public void setDefaultDeclarationType(){
+		if (AonMathUtils.isGreatherThanZero(getResult() )) {
+			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
+		} else {
+			setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
+		}
+	}
 }

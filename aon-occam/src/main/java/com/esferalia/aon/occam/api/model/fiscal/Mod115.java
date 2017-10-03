@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod115 extends FiscalModel implements Serializable {
 	
@@ -56,6 +58,14 @@ public class Mod115 extends FiscalModel implements Serializable {
 		else if (isGipuzkoa()) return Mod115Key.GP_TIP;
 		else if (isNavarra()) return Mod115Key.NF_TIP;
 		return null;
+	}
+	
+	public void setDefaultDeclarationType(){
+		if (AonMathUtils.isGreatherThanZero(getResult() )) {
+			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
+		} else {
+			setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
+		}
 	}
 
 }
