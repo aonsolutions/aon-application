@@ -441,7 +441,7 @@ public class ConnectDeliveryWriter {
 		record.setNumeroDeArticuloDelComprador_IN_(null);
 		
 		double quantity = 0.0;
-		double packUnits = detail.getItem().getPackUnits();
+		double packUnits = item.getPackUnits();
 		if(packageQuantity==null){
 			quantity = obtainPackageQuantity(detail, customerPackage);
 		} else {
@@ -450,7 +450,11 @@ public class ConnectDeliveryWriter {
 		record.setCantidadEnviada_12_(quantity);
 		
 		record.setUnidadDeMedidaCantidadEnviada(null);
-		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
+		if(item.getPackFormatTag().getName().equals(item.getPackUnitsTag().getName())){
+			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackMeasurement());
+		} else {
+			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
+		}
 		record.setFechaDeCaducidad_36__102_203_(null);
 		record.setCalificadorReferencia1(null);
 		record.setNumeroReferencia1(null);

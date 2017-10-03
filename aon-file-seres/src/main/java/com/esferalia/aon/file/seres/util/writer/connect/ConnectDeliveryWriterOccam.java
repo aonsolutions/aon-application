@@ -434,7 +434,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 //			record.setUnidadDeMedidaCantidadEnviada(
 //					item.getPackUnitsTag().getName().toUpperCase());
 //		}
-		record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
+		if(item.getPackFormatTag().getName().equals(item.getPackUnitsTag().getName())){
+			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackMeasurement());
+		} else {
+			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
+		}
 		record.setFechaDeCaducidad_36__102_203_(null);
 		record.setCalificadorReferencia1(null);
 		record.setNumeroReferencia1(null);
