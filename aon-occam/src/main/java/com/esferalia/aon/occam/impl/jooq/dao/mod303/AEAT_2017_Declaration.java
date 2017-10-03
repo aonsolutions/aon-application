@@ -1572,7 +1572,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 				add( Mod303Key.CT_C67, mod, 
 					Mod303DAO.getLastPeriodModels(ctx, mod)
 					.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
-					.mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71))
+					.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
 					.findFirst()
 					.orElse(0.0));						
 			}
