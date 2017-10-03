@@ -210,26 +210,31 @@ public class printQualityList extends HttpServlet{
 			ByteArrayOutputStream archivo = new ByteArrayOutputStream();
 			HSSFWorkbook libro = new HSSFWorkbook();		
 			
+			CellStyle style = getStyle(libro);
+			CellStyle style2 = getStyle2(libro);
+			CellStyle style3 = getStyle3(libro);
+			
 			HSSFSheet hoja = libro.createSheet("Calidad");
 			
 			Row fila = hoja.createRow(0);
 			
-			boldCell(libro, fila, 0, "Codigo");
-			boldCell(libro, fila, 1, "Fecha");
-			boldCell(libro, fila, 2, "Proveedor");
-			boldCell(libro, fila, 3, "Transporte");
-			boldCell(libro, fila, 4, "Cantidad");
-			boldCell(libro, fila, 5, "Product");
-			boldCell(libro, fila, 6, "Precio");	
-			boldCell(libro, fila, 7, "<45");
-			boldCell(libro, fila, 8, "45-50");
-			boldCell(libro, fila, 9, ">80");
-			boldCell(libro, fila, 10, "Sin Calibrar");
-			boldCell(libro, fila, 11, "Tierra");
-			boldCell(libro, fila, 12, "Defectos");
-			boldCell(libro, fila, 13, "Lavado");
-			boldCell(libro, fila, 14, "Total Defectos");
-			boldCell(libro, fila, 15, "Merma");
+			boldCell(libro, fila, style, 0, "Codigo");
+			boldCell(libro, fila, style, 1, "Fecha");
+			boldCell(libro, fila, style, 2, "Proveedor");
+			boldCell(libro, fila, style, 3, "Destino");
+			boldCell(libro, fila, style, 4, "Transporte");
+			boldCell(libro, fila, style, 5, "Cantidad");
+			boldCell(libro, fila, style, 6, "Product");
+			boldCell(libro, fila, style, 7, "Precio");	
+			boldCell(libro, fila, style, 8, "<45");
+			boldCell(libro, fila, style, 9, "45-50");
+			boldCell(libro, fila, style, 10, ">80");
+			boldCell(libro, fila, style, 11, "Sin Calibrar");
+			boldCell(libro, fila, style, 12, "Tierra");
+			boldCell(libro, fila, style, 13, "Defectos");
+			boldCell(libro, fila, style, 14, "Lavado");
+			boldCell(libro, fila, style, 15, "Total Defectos");
+			boldCell(libro, fila, style, 16, "Merma");
 			
 			cont = 1;
 			
@@ -262,29 +267,32 @@ public class printQualityList extends HttpServlet{
 					
 							Row row = hoja.createRow(cont++);
 							
-							cell(libro, row, 0, r.getCode());
-							cell(libro, row, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
-							cell(libro, row, 2, income.isPresent() ? income.get().getSupplierName() : "-");
-							cell(libro, row, 3, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
-							cell(libro, row, 4, incomeDetail.isPresent() ? incomeDetail.get().getQuantity() : 0.0);
-							cell(libro, row, 5, incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-");
-							cell(libro, row, 6, incomeDetail.isPresent() ? incomeDetail.get().getPrice() : 0.0);
-							cell(libro, row, 7, a);
-							cell(libro, row, 8, b);
-							cell(libro, row, 9, c);
-							cell(libro, row, 10, d);
+						
+							
+							cell(libro, row, style3, 0, r.getCode());
+							cell(libro, row, style3, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
+							cell(libro, row, style3, 2, income.isPresent() ? income.get().getSupplierName() : "-");
+							cell(libro, row, style3, 3, map.containsKey(QualitySheetCode.UFQDP1.getName()) && !"0".equals(map.get(QualitySheetCode.UFQDP1.getName()))? Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) - 1].getName() : "-");
+							cell(libro, row, style3, 4, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
+							cell(libro, row, style2, 5, incomeDetail.isPresent() ? incomeDetail.get().getQuantity() : 0.0);
+							cell(libro, row, style3, 6, incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-");
+							cell(libro, row, style2, 7, incomeDetail.isPresent() ? incomeDetail.get().getPrice() : 0.0);
+							cell(libro, row, style2, 8, a);
+							cell(libro, row, style2, 9, b);
+							cell(libro, row, style2, 10, c);
+							cell(libro, row, style2, 11, d);
 							if(isPropaco(map)){
-								cell(libro, row, 11, e);
-							} else cell(libro, row, 11,"(" + e + ")->");
-							cell(libro, row, 12, f);
-							cell(libro, row, 13, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
+								cell(libro, row, style2, 12, e);
+							} else cell(libro, row, style2, 12,"(" + e + ")->");
+							cell(libro, row, style2, 13, f);
+							cell(libro, row, style2, 14, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
 								? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "");
 
 							Integer rowIndex = row.getRowNum() + 1;
 							String formula = "SUM(H" + rowIndex + ",J" + rowIndex + ",L" + rowIndex + ",M" + rowIndex + ")"; 
-							cellFormula(libro, row, 14, formula);
+							cellFormula(libro, row, style2, 15, formula);
 
-							cell(libro, row, 15, merma);
+							cell(libro, row, style2, 16, merma);
 						}
 					}
 				}	
@@ -294,28 +302,28 @@ public class printQualityList extends HttpServlet{
 		
 			Row fila2 = hoja2.createRow(0);
 			
-		    boldCell(libro, fila2, 0, "Codigo");
-			boldCell(libro, fila2, 1, "Fecha");
-			boldCell(libro, fila2, 2, "Proveedor");
-			boldCell(libro, fila2, 3, "Transporte");
-			boldCell(libro, fila2, 4, "Cantidad");
-			boldCell(libro, fila2, 5, "Product");
-			boldCell(libro, fila2, 6, "Precio");	
-			boldCell(libro, fila2, 7, "25-40");
-			boldCell(libro, fila2, 8, "28-35");
-			boldCell(libro, fila2, 9, "35-45");
-			boldCell(libro, fila2, 10, "40-50");
-			boldCell(libro, fila2, 11, "45-50");
-			boldCell(libro, fila2, 12, "45-55");
-			boldCell(libro, fila2, 13, "50-55");
-			boldCell(libro, fila2, 14, ">55");
+		    boldCell(libro, fila2, style, 0, "Codigo");
+			boldCell(libro, fila2, style, 1, "Fecha");
+			boldCell(libro, fila2, style, 2, "Proveedor");
+			boldCell(libro, fila2, style, 3, "Transporte");
+			boldCell(libro, fila2, style, 4, "Cantidad");
+			boldCell(libro, fila2, style, 5, "Product");
+			boldCell(libro, fila2, style, 6, "Precio");	
+			boldCell(libro, fila2, style, 7, "25-40");
+			boldCell(libro, fila2, style, 8, "28-35");
+			boldCell(libro, fila2, style, 9, "35-45");
+			boldCell(libro, fila2, style, 10, "40-50");
+			boldCell(libro, fila2, style, 11, "45-50");
+			boldCell(libro, fila2, style, 12, "45-55");
+			boldCell(libro, fila2, style, 13, "50-55");
+			boldCell(libro, fila2, style, 14, ">55");
 
 			
-			boldCell(libro, fila2, 15, "Sin Calibrar");
-			boldCell(libro, fila2, 16, "Tierra");
-			boldCell(libro, fila2, 17, "Defectos");
-			boldCell(libro, fila2, 18, "Lavado");
-			boldCell(libro, fila2, 19, "Merma");
+			boldCell(libro, fila2, style, 15, "Sin Calibrar");
+			boldCell(libro, fila2, style, 16, "Tierra");
+			boldCell(libro, fila2, style, 17, "Defectos");
+			boldCell(libro, fila2, style, 18, "Lavado");
+			boldCell(libro, fila2, style, 19, "Merma");
 			
 			cont = 1;
 			
@@ -352,27 +360,27 @@ public class printQualityList extends HttpServlet{
 							
 							Row row = hoja2.createRow(cont++);
 						
-							cell(libro, row, 0, r.getCode());
-							cell(libro, row, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
-							cell(libro, row, 2, income.isPresent() ? income.get().getSupplierName() : "-");
-							cell(libro, row, 3, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
-							cell(libro, row, 4, incomeDetail.isPresent() ? incomeDetail.get().getQuantity() : 0.0);
-							cell(libro, row, 5, incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-");
-							cell(libro, row, 6, incomeDetail.isPresent() ? incomeDetail.get().getPrice() : 0.0);
-							cell(libro, row, 7, a);
-							cell(libro, row, 8, b);
-							cell(libro, row, 9, c);
-							cell(libro, row, 10, d);
-							cell(libro, row, 11, e);
-							cell(libro, row, 12, f);
-							cell(libro, row, 13, g);
-							cell(libro, row, 14, h);
-							cell(libro, row, 15, i);
-							cell(libro, row, 16, "(" + j +")->");
-							cell(libro, row, 17, k);
-							cell(libro, row, 18, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
+							cell(libro, row, style3, 0, r.getCode());
+							cell(libro, row, style3, 1, AonDateUtils.simpleFormat(r.getResponseDate()));
+							cell(libro, row, style3, 2, income.isPresent() ? income.get().getSupplierName() : "-");
+							cell(libro, row, style3, 3, carrierPacking != null ? carrierPacking.getNumberPlate() : "-");
+							cell(libro, row, style2, 4, incomeDetail.isPresent() ? incomeDetail.get().getQuantity() : 0.0);
+							cell(libro, row, style3, 5, incomeDetail.isPresent() ? incomeDetail.get().getDescription() : "-");
+							cell(libro, row, style2, 6, incomeDetail.isPresent() ? incomeDetail.get().getPrice() : 0.0);
+							cell(libro, row, style2, 7, a);
+							cell(libro, row, style2, 8, b);
+							cell(libro, row, style2, 9, c);
+							cell(libro, row, style2, 10, d);
+							cell(libro, row, style2, 11, e);
+							cell(libro, row, style2, 12, f);
+							cell(libro, row, style2, 13, g);
+							cell(libro, row, style2, 14, h);
+							cell(libro, row, style2, 15, i);
+							cell(libro, row, style2, 16, "(" + j +")->");
+							cell(libro, row, style2, 17, k);
+							cell(libro, row, style3, 18, map.containsKey(QualitySheetCode.UFQAC6.getName()) && !map.get(QualitySheetCode.UFQAC6.getName()).equals("0")
 									? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "");
-							cell(libro, row, 19, merma);
+							cell(libro, row, style2, 19, merma);
 						}
 					}
 				}	
@@ -622,35 +630,39 @@ public class printQualityList extends HttpServlet{
 
 	// -------------------- EXCEL UTILS
 	
-	private Cell boldCell(HSSFWorkbook libro, Row row, Integer index, String str) {
+	private Cell boldCell(HSSFWorkbook libro, Row row, CellStyle style, Integer index, String str) {
 		Cell cell = row.createCell(index);
 		cell.setCellValue(str);
-		cell.setCellStyle(getStyle(libro, row));	
+		row.setHeightInPoints(16);
+		cell.setCellStyle(style);	
 		return cell;
 	}
 	
-	private Cell cell(HSSFWorkbook libro, Row row, Integer index, String str) {
+	private Cell cell(HSSFWorkbook libro, Row row, CellStyle style, Integer index, String str) {
 		Cell cell = row.createCell(index);
 		cell.setCellValue(str);
-		cell.setCellStyle(getStyle3(libro, row));	
+		row.setHeightInPoints(16);
+		cell.setCellStyle(style);	
 		return cell;
 	}
 	
-	private Cell cell(HSSFWorkbook libro, Row row, Integer index, Double dbl) {
+	private Cell cell(HSSFWorkbook libro, Row row, CellStyle style, Integer index, Double dbl) {
 		Cell cell = row.createCell(index);
 		cell.setCellValue(dbl);
-		cell.setCellStyle(getStyle2(libro, row));	
-		return cell;
-	}
-	private Cell cellFormula(HSSFWorkbook libro, Row row, Integer index, String formula) {
-		Cell cell = row.createCell(index);
-		cell.setCellFormula(formula);
-		cell.setCellStyle(getStyle2(libro, row));	
+		row.setHeightInPoints(16);
+		cell.setCellStyle(style);	
 		return cell;
 	}
 	
-	private CellStyle getStyle(HSSFWorkbook libro, Row row){		
+	private Cell cellFormula(HSSFWorkbook libro, Row row, CellStyle style, Integer index, String formula) {
+		Cell cell = row.createCell(index);
+		cell.setCellFormula(formula);
 		row.setHeightInPoints(16);
+		cell.setCellStyle(style);	
+		return cell;
+	}
+	
+	private CellStyle getStyle(HSSFWorkbook libro){		
 		CellStyle style = libro.createCellStyle();
 		HSSFFont font = libro.createFont();
 		font.setFontHeightInPoints((short)12);
@@ -661,8 +673,7 @@ public class printQualityList extends HttpServlet{
 		return style;
 	}
 	
-	private CellStyle getStyle2(HSSFWorkbook libro, Row row){	
-		row.setHeightInPoints(16);
+	private CellStyle getStyle2(HSSFWorkbook libro){	
 		CellStyle style2 = libro.createCellStyle();
 		HSSFFont font2 = libro.createFont();
 		font2.setFontHeightInPoints((short)12);
@@ -674,8 +685,7 @@ public class printQualityList extends HttpServlet{
 		return style2;
 	}
 	
-	private CellStyle getStyle3(HSSFWorkbook libro, Row row){	
-		row.setHeightInPoints(16);
+	private CellStyle getStyle3(HSSFWorkbook libro){	
 		CellStyle style3 = libro.createCellStyle();
      	HSSFFont font2 = libro.createFont();
      	font2.setFontHeightInPoints((short)12);

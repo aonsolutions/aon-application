@@ -3,7 +3,7 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality;
 import java.util.LinkedList;
 
 public enum Defects {
-	AGUSANADO("Agusanado"),
+	AGUSANADO("Alfilerillo"),
 	CORTADAS("Cortadas"),
 	GOLPES_EXTERNOS("Golpes Externos"),
 	GOLPES_INTERNOS("Golpes Internos"),

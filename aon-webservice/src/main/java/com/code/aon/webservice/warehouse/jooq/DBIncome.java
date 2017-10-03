@@ -239,11 +239,16 @@ public class DBIncome {
 		return incomeDetail.isPresent() ? incomeDetailToJSON(incomeDetail.get()) : new JSONObject();
 	}
 	
+	private static Integer number;
 	public static JSONObject getIncomeLastLote(Domain domain, String login, String referenceCode) {
-		Long l = AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().like(referenceCode + "%"))
-				.count();
+		number = 0;
+		AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().like(referenceCode + "%")).forEach(r->{
+			Integer n = Integer.parseInt(r.getReferenceCode().substring(6));
+			number = n >= number ? n + 1 : number;
+		});
+		
 		JSONObject json = new JSONObject();
-		json.put(MSG.NAME, referenceCode + (l.toString().length() == 1 ? "0" + l : l));
+		json.put(MSG.NAME, referenceCode + (number.toString().length() == 1 ? "0" + number : number));
 		return json;
 	}
 	
@@ -318,5 +323,4 @@ public class DBIncome {
 		}
 		return json;
 	}
-
 }

@@ -11,7 +11,7 @@
 
 	<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
 		<g:TabLayoutPanel ui:field="tabPanel" barHeight="26" barUnit="PX" width="100%">
- 			<g:tab >
+ 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="image:image" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
@@ -20,7 +20,7 @@
 				</g:customHeader>
 				<g:ScrollPanel ui:field="imgPanel" styleName="{aonResources.css.aonTextCenter}"/>
 			</g:tab>
-			<g:tab >
+			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="editor:functions" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
