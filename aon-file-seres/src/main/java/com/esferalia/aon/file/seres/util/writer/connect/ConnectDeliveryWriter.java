@@ -419,18 +419,19 @@ public class ConnectDeliveryWriter {
 		Customer customer = detail.getDelivery().getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customer);
 
-		String barcode = item.getBarcode();
-		if(StringUtils.isBlank(barcode)){
-			try {
-				barcode = item.getProduct().getBaseItem().getBarcode();
-			} catch (ManagerBeanException e) {
-				LOGGER.error(e.getMessage());
-			}
-		}
+//		String barcode = item.getBarcode();
+//		if(StringUtils.isBlank(barcode)){
+//			try {
+//				barcode = item.getProduct().getBaseItem().getBarcode();
+//			} catch (ManagerBeanException e) {
+//				LOGGER.error(e.getMessage());
+//			}
+//		}
 		
 		SEH1L record = new SEH1L();
 		record.setNumeroDeLineaDelArticulo(detail.getLine());
-		record.setCodigoEANDelArticulo(barcode);
+//		record.setCodigoEANDelArticulo(barcode);
+		record.setCodigoEANDelArticulo(productCustomerCode);
 		record.setDescripcionDelArticulo(item.getProduct().getName());
 		record.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
 		record.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);

@@ -402,15 +402,16 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		Integer customerId = delivery.getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customerId);
 
-		String barcode = item.getBarcode();
-		if(StringUtils.isBlank(barcode)){
-			Integer baseItemId = getBaseItemId(item.getProduct());
-			barcode = getItemBarcode(baseItemId);
-		}
+//		String barcode = item.getBarcode();
+//		if(StringUtils.isBlank(barcode)){
+//			Integer baseItemId = getBaseItemId(item.getProduct());
+//			barcode = getItemBarcode(baseItemId);
+//		}
 		
 		SEH1L record = new SEH1L();
 		record.setNumeroDeLineaDelArticulo((int)detail.getLine());
-		record.setCodigoEANDelArticulo(barcode);
+//		record.setCodigoEANDelArticulo(barcode);
+		record.setCodigoEANDelArticulo(productCustomerCode);
 		record.setDescripcionDelArticulo(item.getProduct().getName());
 		record.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
 		record.setNumeroDeArticuloDelProveedor_SA_(productCustomerCode);
