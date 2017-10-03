@@ -218,6 +218,7 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
+				if (vol.getValue() == null) vol.setValue(0.0,false);
 				cbk.getActivity().setVol(vol.getValue());
 				ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmer.this, cbk.getActivity());
 			}
@@ -261,6 +262,7 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
+					if (sop.getValue() == null) sop.setValue(0.0,false);
 					cbk.getActivity().setSop(sop.getValue());
 					ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmer.this, cbk.getActivity());
 				}
