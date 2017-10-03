@@ -593,6 +593,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
+				if (input.getValue() == null) input.setValue(0.0,false);
 				if (key.isDiffEnabled()) {
 					double result = mod303.getResultAmount(key);
 					double adjust = mod303.getAdjustAmount(key);

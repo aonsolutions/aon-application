@@ -379,6 +379,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
+				if (tem.getValue() == null) tem.setValue(0,false);
 				act.setTem(tem.getValue());
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 			}
@@ -393,7 +394,8 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				act.setTem(emp.getValue());
+				if (emp.getValue() == null) emp.setValue(0,false);
+				act.setEmp(emp.getValue());
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 			}
 		});
@@ -421,6 +423,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
+				if (dia.getValue() == null) dia.setValue(0,false);
 				act.setDia(dia.getValue());
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 			}
@@ -486,6 +489,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
+				if (value.getValue() == null) value.setValue(0.0,false);
 				act.getModules().get(index).setValue(value.getValue());
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 			}
@@ -522,6 +526,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
+				if (red.getValue() == null) red.setValue(0.0,false);
 				act.setRed(red.getValue());
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 			}
@@ -559,6 +564,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
+					if (sop.getValue() == null) sop.setValue(0.0,false);
 					act.setSop(sop.getValue());
 					ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 				}
@@ -593,7 +599,8 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
-					act.setSop(dvc.getValue());
+					if (dvc.getValue() == null) dvc.setValue(0.0,false);
+					act.setDvc(dvc.getValue());
 					ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 				}
 			});
