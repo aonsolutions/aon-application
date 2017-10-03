@@ -99,6 +99,18 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public Mod303Key getProrateKey() {
 		return Mod303Key.CM_003;
 	}
+	public boolean isToCompensate() {
+		return isFinished() && getDeclarationType() == FiscalModelDeclarationType.COMPENSATE;
+	}
+	public boolean isToDeposit() {
+		return isFinished() && (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
+				|| getDeclarationType() == FiscalModelDeclarationType.BANK
+				|| getDeclarationType() == FiscalModelDeclarationType.DEPOSIT_CCT);
+	}
+	public boolean isToPayback() {
+		return isFinished() && (getDeclarationType() == FiscalModelDeclarationType.PAYBACK
+				|| getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT);
+	}
 	
 	public double getProratePercent() {
 		double proratePercent = 100.0;

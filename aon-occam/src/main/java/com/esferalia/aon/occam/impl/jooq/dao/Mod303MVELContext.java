@@ -21,6 +21,15 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 	public boolean isLastPeriod() {
 		return this.mod303.getPeriod() == Period.T4 || this.mod303.getPeriod() == Period.M12;
 	}
+	public boolean isToCompensate() {
+		return this.mod303.isToCompensate();
+	}
+	public boolean isToDeposit() {
+		return this.mod303.isToDeposit();
+	}
+	public boolean isToPayback() {
+		return this.mod303.isToPayback();
+	}
 
 	public boolean hasSimplifiedRegime() {
 		Double a02 = (Double) get(Mod303Key.CT_A02.toString());
