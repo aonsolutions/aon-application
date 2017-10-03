@@ -24,6 +24,10 @@ public class JsOrderDetail extends JavaScriptObject {
 	public final native Integer getPurchase() /*-{
 		return this.purchase;
 	}-*/;
+	
+	public final native Integer getIncome() /*-{
+		return this.income;
+	}-*/;
 
 	public final native Integer getProject() /*-{
 		return this.project;

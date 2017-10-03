@@ -128,7 +128,8 @@ public class CommonServlet extends HttpServlet{
 
 	private JSONArray getDataResponseList(Domain domain, String login, Map<String,String[]> map){
 		JSONArray array = new JSONArray();
-		AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY,
+		DataResponseSource source1 = DataResponseSource.QUALITY;
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login, source1,
 				f -> dataResponseFilter(domain, map, f))
 		.sorted((dr1, dr2) -> dr2.getResponseDate().compareTo(dr1.getResponseDate()))
 		.forEach(dr -> {
@@ -256,22 +257,36 @@ public class CommonServlet extends HttpServlet{
 	}
 	
 	private JSONObject insertDataResponse(Domain domain, String login, JSONObject json) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		Date date = new Date();
-		try {
-			date = dateFormat.parse(json.getString("issue_date"));
-		} catch (JSONException | ParseException e) {
-			e.printStackTrace();
+		DataResponse dataResponse = null;
+		if(json.opt("order") != null) {
+			Integer incomeId = json.optInt("order");
+			Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeId));
+
+			dataResponse = new DataResponse()
+					.setSource(DataResponseSource.QUALITY)// TODO 
+					.setSourceId(json.optInt("order_detail"))
+					.setCode(income.get().getReferenceCode())
+					.setDomain(domain.getId())
+					.setResponseDate(income.get().getIssueDate());
+		} else {
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+			Date date = new Date();
+			try {
+				date = dateFormat.parse(json.getString("issue_date"));
+			} catch (JSONException | ParseException e) {
+				e.printStackTrace();
+			}
+			String idStr = json.getString("source").split("@")[1];
+			
+			dataResponse = new DataResponse()
+					.setSource(DataResponseSource.QUALITY)// TODO 
+					.setSourceId(Integer.parseInt(idStr))
+					.setCode(json.getString("number"))
+					.setDomain(domain.getId())
+					.setResponseDate(date);
 		}
-		String idStr = json.getString("source").split("@")[1];
-		
-		DataResponse dataResponse = new DataResponse()
-				.setSource(DataResponseSource.QUALITY)// TODO 
-				.setSourceId(Integer.parseInt(idStr))
-				.setCode(json.getString("number"))
-				.setDomain(domain.getId())
-				.setResponseDate(date);
-		
+				
 		DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dataResponse);
 		return ToJSON.dataResponseToJSON(dr);
 	}

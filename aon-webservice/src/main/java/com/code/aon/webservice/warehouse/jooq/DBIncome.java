@@ -64,8 +64,7 @@ public class DBIncome {
 
 	public static JSONArray getIncomeDetails(Domain domain,String login, Map<String, String[]> map){
 		JSONArray array = new JSONArray();
-		
-		
+	
 		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> incomeDetailFilter(domain, map, f))
 			.forEach(detail -> {
 				if(map.containsKey("quality")) {
@@ -141,6 +140,14 @@ public class DBIncome {
 		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
 			Integer[] array = AON.getIncomeStream(domain.getName(), domain.getId(), "", h -> 
 				h.getCarrierPackingProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0])))
+			.map(i -> i.getId()).toArray(Integer[]::new);
+			Filter fcarrierPacking = f.getIncomeProperty().in(array); 
+			filter = filter.and(fcarrierPacking);
+		}
+		
+		if(filterMap.containsKey("cpnotnull")){
+			Integer[] array = AON.getIncomeStream(domain.getName(), domain.getId(), "", h -> 
+				h.getCarrierPackingProperty().isNotNull())
 			.map(i -> i.getId()).toArray(Integer[]::new);
 			Filter fcarrierPacking = f.getIncomeProperty().in(array); 
 			filter = filter.and(fcarrierPacking);
