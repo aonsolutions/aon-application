@@ -26,6 +26,7 @@ public class QualityPrincipal extends Composite{
 	@UiField DockLayoutPanel contentDockLayoutPanel;
 	@UiField SimpleLayoutPanel northContent;
 	@UiField SimpleLayoutPanel content;
+	@UiField SimpleLayoutPanel southContent;
 	
 	private UdapaQuality parent;
 	private QualityPrincipal me;
@@ -42,18 +43,26 @@ public class QualityPrincipal extends Composite{
 		parent.setFilterMap(filterMap);
 	}
 	
+	public void sheetContent(JsDataResponse js, HashMap<String, LinkedList<String>> map) {
+		parent.sheetContent(js, map);
+	}
+	
 	public QualityPrincipal(UdapaQuality parent) {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = parent;
 		this.me = this;
 		filterContent();
 		gridContent();
+		southContent();
 	}
 	
 	public void filterContent(){			
 		northContent.setWidget(new FilterPanel(this));
 	}
 	
+	public void southContent(){
+		southContent.setWidget(new PrincipalFootPanel(this));
+	}
 	public void gridContent(){
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
@@ -84,4 +93,7 @@ public class QualityPrincipal extends Composite{
     	setFilterMap(parent.initializeFilterMap());
 	}
 	
+	public void southContentSize(Double value) {
+		contentDockLayoutPanel.setWidgetSize(southContent, value);	
+	}
 }
