@@ -79,7 +79,8 @@ public class FinishDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
 		// SIN ACTIVIDAD!!!
-		if (mod303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE && mod303.getPeriod() != Period.T4 && mod303.getPeriod() != Period.M12) {
+		if (mod303.getDeclarationType() == FiscalModelDeclarationType.NEGATIVE
+		 || (mod303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE && mod303.getPeriod() != Period.T4 && mod303.getPeriod() != Period.M12)) {
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
 			tab.setWidget(row, 1, new Label( mod303.getDeclarationType().getDescription() ));	
