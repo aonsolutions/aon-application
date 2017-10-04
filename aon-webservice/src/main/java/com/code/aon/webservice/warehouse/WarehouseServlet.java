@@ -4,7 +4,9 @@ import java.io.PrintStream;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -154,7 +156,7 @@ public class WarehouseServlet extends HttpServlet{
 		if(pathInfo.length > 3){				
 			Object object = new Object();
 			if(MSG.CARRIER_PACKING.equals(pathInfo[3])){
-				if(pathInfo.length > 4){ 
+				if(pathInfo.length > 4){
 					if(MSG.UPDATE.equals(pathInfo[4])){
 						object = updateCarrierPacking(domain, userName, Integer.parseInt(pathInfo[5]), json);
 					} else if(MSG.DELETE.equals(pathInfo[4])){
@@ -453,23 +455,35 @@ public class WarehouseServlet extends HttpServlet{
 	
     private JSONArray getCarrierPackingList(Domain domain, String login, Map<String, String[]> filterMap){
     	JSONArray array = new JSONArray();
+    	HashMap<Integer, JSONObject> map = new HashMap<>();
     	AON.getCarrierPackingStream(domain.getName(), domain.getId(), login,
     		f -> carrierPackingFilter(domain, filterMap, f))
-    	.forEach(cp -> {	
-    		JSONObject json = ToJSON.carrierPackingToJSON(cp);
-    		Long lines = (long) 0;
-    		if(cp.getType().equals(CarrierPackingType.SHIPMENT_REQUEST)){
-    			//lines = AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, f -> 
-    			//		f.getCarrierPackingProperty().eq(cp.getId())).count();
-    		}else {
-    			
-    			
-    			//lines = AON.getDeliveryStream(domain.getName(), domain.getId(), login, f -> 
-				//	f.getCarrierPackingProperty().eq(cp.getId())).count();
+    	.forEach(cp -> map.put(cp.getId(), ToJSON.carrierPackingToJSON(cp)));
+    	
+    	Set<Integer> keys = map.keySet();
+    	LinkedList<Integer> list = new LinkedList<>();
+    	AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
+    		f -> f.getCarrierPackingProperty().in(keys.toArray(new Integer[keys.size()])))
+    	.forEach(pd -> {
+    		if(!list.contains(pd.getPurchase().getSupplier())) {
+    			list.add(pd.getPurchase().getSupplier());
+    			map.get(pd.getCarrierPacking()).put("supplier", map.get(pd.getCarrierPacking()).get("supplier").equals("-") ?
+    				pd.getPurchase().getSupplierName() : map.get(pd.getCarrierPacking()).get("supplier") + "; " + pd.getPurchase().getSupplierName());	
     		}
-    		json.put("lines", lines.intValue());
-    		array.put(json);	
-    	});
+   		});  
+    	
+    	LinkedList<Integer> list2 = new LinkedList<>();
+    	AON.getDeliveryStream(domain.getName(), domain.getId(), login, 
+        	f -> f.getCarrierPackingProperty().in(keys.toArray(new Integer[keys.size()])))
+        .forEach(d -> {
+        	if(!list2.contains(d.getCustomer())) {
+    			list2.add(d.getCustomer());
+    			map.get(d.getCarrierPacking()).put("customer", map.get(d.getCarrierPacking()).get("customer") + "; " + d.getCustomerName());
+        	}
+       	}); 
+ 
+    	map.keySet().stream().forEach(cp -> array.put(map.get(cp)));
+    	
     	return array;
     }
     

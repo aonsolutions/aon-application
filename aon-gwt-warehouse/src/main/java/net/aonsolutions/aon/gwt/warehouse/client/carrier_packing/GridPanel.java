@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -183,7 +184,9 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			public String getValue(JsCarrierPacking object) {
-				return object.getType() != null ? object.getType().getName() : "";
+				String type = object.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName()) ? "SC" : "HR";
+				String ref = object.getSeries() + "/" + object.getNumber();
+				return type + "-" + ref;
 			}
 		};
 		
@@ -193,38 +196,34 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
-				return o1.getType().getName().compareTo(o2.getType().getName());
+				String type1 = o1.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName()) ? "SC" : "HR";
+				String ref1 = o1.getSeries() + "/" + o1.getNumber();
+				String r1 = type1 + "-" + ref1;
+				String type2 = o2.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName()) ? "SC" : "HR";
+				String ref2 = o2.getSeries() + "/" + o2.getNumber();
+				String r2 = type2 + "-" + ref2;
+				return r1.compareTo(r2);
 			}
 		});
 		dataGrid.getColumnSortList().push(typeColumn);
 		dataGrid.addColumn(typeColumn, AON.MSG.type());
-		dataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
+		dataGrid.setColumnWidth(typeColumn, 15, Unit.PCT);
 		
-		
-		/** Serie/Number Column **/
-		Column<JsCarrierPacking, String> nameColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
+		/** CUSTOMER/SUPPLIER **/
+		Column<JsCarrierPacking, String> regColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
 
 			@Override
 			public String getValue(JsCarrierPacking object) {
-				return object.getSeries() + "/" + object.getNumber();
+				return object.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName()) ? object.getSupplier() : object.getCustomer();
 			}
 		
 		};
-		nameColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		nameColumn.setSortable(true); 
-		sortHandler.setComparator(nameColumn,new Comparator<JsCarrierPacking>() {
-			
-			@Override
-			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
-				String a = o1.getSeries() + "/" + o1.getNumber(); 
-				String b = o2.getSeries() + "/" + o2.getNumber(); 
-				return a.compareTo(b);
-			}
-		});
-		dataGrid.getColumnSortList().push(nameColumn);
-		dataGrid.addColumn(nameColumn, AON.MSG.series() + "/" + AON.MSG.number());
-		dataGrid.setColumnWidth(nameColumn, 15, Unit.PCT);
-		
+		regColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		regColumn.setSortable(true); 
+
+		dataGrid.getColumnSortList().push(regColumn);
+		dataGrid.addColumn(regColumn, "Cliente" + "/" + "Proveedor");
+		dataGrid.setColumnWidth(regColumn, 30, Unit.PCT);
 		
 		/** S/RefColumn **/
 		Column<JsCarrierPacking, String> referenceColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
@@ -489,10 +488,11 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 	        			sb.appendHtmlConstant("<button  alt=\""+ value.getStatus().getName() +"\" type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
 						sb.appendHtmlConstant("</button>");		
 	        		}
-	        		if(text.equals("info")){
+	        	/*	if(text.equals("info")){
 	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\">");
 	        			sb.appendHtmlConstant("</button>");
 	        		}
+	        	*/
 	        	}
 	        };
 	        
