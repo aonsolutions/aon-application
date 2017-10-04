@@ -5,15 +5,18 @@ import java.util.LinkedList;
 public enum Defects {
 	AGUSANADO("Alfilerillo"),
 	CORTADAS("Cortadas"),
+	CULEADAS("Culeadas"),
 	GOLPES_EXTERNOS("Golpes Externos"),
 	GOLPES_INTERNOS("Golpes Internos"),
 	HUECAS("Huecas"),
 	LIMACO("Limaco"),
 	MANCHAS_HIERRO("Manchas Hierro"),
 	RIZOCTONIA("Rizoctonia"),
+	ROZADAS("Rozadas"),
 	SARNA("Sarna"),
 	TALLOS("Tallos"),
 	VERDES("Verdes"),
+	VIROSIS("Virosis"),
 	TIERRAS_PIEDRA("Tierras Piedra")
 ;
 	

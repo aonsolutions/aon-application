@@ -5,31 +5,38 @@ public class QualitySheetConstants {
 	
 	public static QualitySheetCode[] DEFECTS = new QualitySheetCode[]{
 		QualitySheetCode.UFQCD02, QualitySheetCode.UFQCD021,
-		QualitySheetCode.UFQCD13, QualitySheetCode.UFQCD131,		
+		QualitySheetCode.UFQCD13, QualitySheetCode.UFQCD131,	
+		QualitySheetCode.UFQCD14, QualitySheetCode.UFQCD141,	
 		QualitySheetCode.UFQCD03, QualitySheetCode.UFQCD031,
 		QualitySheetCode.UFQCD04, QualitySheetCode.UFQCD041,
 		QualitySheetCode.UFQCD05, QualitySheetCode.UFQCD051,
 		QualitySheetCode.UFQCD06, QualitySheetCode.UFQCD061,
 		QualitySheetCode.UFQCD07, QualitySheetCode.UFQCD071,
 		QualitySheetCode.UFQCD08, QualitySheetCode.UFQCD081,
+		QualitySheetCode.UFQCD15, QualitySheetCode.UFQCD151,
 		QualitySheetCode.UFQCD09, QualitySheetCode.UFQCD091,
 		QualitySheetCode.UFQCD12, QualitySheetCode.UFQCD121,
 		QualitySheetCode.UFQCD10, QualitySheetCode.UFQCD101,
+		QualitySheetCode.UFQCD16, QualitySheetCode.UFQCD161,
 		QualitySheetCode.UFQCC10, QualitySheetCode.UFQCC101
 	};
 	
 	public static QualitySheetCode[] DEFECTS_PROPACO = new QualitySheetCode[]{
 		QualitySheetCode.UFQCD02, QualitySheetCode.UFQCD021,
 		QualitySheetCode.UFQCD13, QualitySheetCode.UFQCD131,
+		QualitySheetCode.UFQCD14, QualitySheetCode.UFQCD141,	
 		QualitySheetCode.UFQCD03, QualitySheetCode.UFQCD031,
 		QualitySheetCode.UFQCD04, QualitySheetCode.UFQCD041,
 		QualitySheetCode.UFQCD05, QualitySheetCode.UFQCD051,
 		QualitySheetCode.UFQCD06, QualitySheetCode.UFQCD061,
 		QualitySheetCode.UFQCD07, QualitySheetCode.UFQCD071,
 		QualitySheetCode.UFQCD08, QualitySheetCode.UFQCD081,
+		QualitySheetCode.UFQCD15, QualitySheetCode.UFQCD151,	
 		QualitySheetCode.UFQCD09, QualitySheetCode.UFQCD091,
 		QualitySheetCode.UFQCD12, QualitySheetCode.UFQCD121,
-		QualitySheetCode.UFQCD10, QualitySheetCode.UFQCD101
+		QualitySheetCode.UFQCD10, QualitySheetCode.UFQCD101,
+		QualitySheetCode.UFQCD16, QualitySheetCode.UFQCD161	
+
 	};
 	
 	public static QualitySheetCode[] CALIBER = new QualitySheetCode[]{

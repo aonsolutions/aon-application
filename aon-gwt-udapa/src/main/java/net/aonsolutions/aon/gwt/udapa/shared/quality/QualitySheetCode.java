@@ -242,6 +242,24 @@ public enum QualitySheetCode implements IsSerializable{
 	/** CONTROL DEFECTOS - % CORTADAS */
 	UFQCD131("ufqcd131"),
 	
+	/** CONTROL DEFECTOS - PESO CULEADAS */
+	UFQCD14("ufqcd14"), 
+
+	/** CONTROL DEFECTOS - % CULEADAS */
+	UFQCD141("ufqcd141"),
+	
+	/** CONTROL DEFECTOS - PESO ROZADAS */
+	UFQCD15("ufqcd15"), 
+
+	/** CONTROL DEFECTOS - % ROZADAS */
+	UFQCD151("ufqcd151"),
+	
+	/** CONTROL DEFECTOS - PESO VIROSIS */
+	UFQCD16("ufqcd16"), 
+
+	/** CONTROL DEFECTOS - % VIROSIS */
+	UFQCD161("ufqcd161"),
+
 	// OBSERVACIONES
 	
 	/** OBSERVACIONES */
