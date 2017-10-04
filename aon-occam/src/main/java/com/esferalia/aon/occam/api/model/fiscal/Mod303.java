@@ -122,7 +122,9 @@ public class Mod303 extends FiscalModel implements Serializable {
 	
 	@Override
 	public void setDefaultDeclarationType(){
-		if (AonMathUtils.isGreatherThanZero(getResult() )) {
+		if (AonMathUtils.isZero(getResult() )) {
+			setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
+		} else if (AonMathUtils.isGreatherThanZero(getResult() )) {
 			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
 		} else {
 			setDeclarationType(
