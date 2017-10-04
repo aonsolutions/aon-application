@@ -36,7 +36,6 @@ import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
@@ -45,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -63,7 +63,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
@@ -109,6 +108,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		String subject = "Recepcion automatica de albaranes";
 		String content = "Se ha detectado una nueva comunicación para albaranes";
 		log("delivery", IngenetLogLevel.DEBUG, subject, content, "delivery", _xml, RECIPIENTS_TO_LOG);
+		
+		Attach attach = new Attach();
+		createDataAttach(attach, _xml);
 		
 		
 		List<Delivery> deliveryList = null;
@@ -195,15 +197,18 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							RegistryNote rNote = searchCustomerNote(ctx, d.getCustomer(), "", IEdiSupport.SERES_AUTO_COMMIT_DELIVERY);
 							boolean autoSendDelivery = rNote!=null && new Boolean(rNote.getComments());
 							if(autoSendDelivery){
+								boolean success = false;
 								try {
 									handler.transferEdiFtp(d);
-									createDeliveryResponse(d);
+									success = true;
 								} catch (Throwable th) {
+									success = false;
 									subject = "Envio de albaranes a Seresnet";
 									content = "El albaran no se ha podido enviar automaticamente";
 									content += "<br/>MOTIVO: " + th.getMessage();
 									log(IngenetLogLevel.ERROR, subject, content, null, null, RECIPIENTS_TO_FAILURES);
 								}
+								updateDataAttach(attach, d, success);
 							}
 						}
 						deliveryList.clear();
@@ -1201,16 +1206,21 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		return rNotes!=null && rNotes.size()>0?rNotes.get(0):null;
 	}
 	
-	private void createDeliveryResponse(Delivery delivery) {
-		if(delivery!=null && delivery.getId()!=null){
-			DataResponse response = new DataResponse();
-			response.setDomain(getDomainId());
-			response.setCode(delivery.getReferenceCode());
-			response.setResponseDate(new Date());
-			response.setSource(DataResponseSource.SERES_DELIVERY);
-			response.setSourceId(delivery.getId());
-			AON.insertDataResponse(getDomain(), getDomainId(), getUser(), response);
-		}
+	private void createDataAttach(Attach attach, String data) {
+		attach.setDomain(new Domain().setId(getDomainId()));
+		attach.setSourceType(DataAttachSource.INGENET.value());
+		attach.setAttachType(AttachType.DATA);
+		attach.setType(DataAttachType.REQUEST.value());
+		attach.setData(data.getBytes());
+		attach.setMimeType(MimeType.TXT);
+		int id = AON.insertAttach(getDomain(), getDomainId(), getUser(), attach);
+		attach.setId(id);
+	}
+	
+	private void updateDataAttach(Attach attach, Delivery delivery, boolean success) {
+		attach.setSourceBatch(delivery.getId());
+		attach.setType((success ? DataAttachType.RESPONSE_OK : DataAttachType.RESPONSE_ERROR).value());
+		AON.updateAttach(getDomain(), getDomainId(), getUser(), attach);
 	}
 		
 }
