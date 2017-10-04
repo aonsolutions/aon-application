@@ -8,10 +8,12 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -35,6 +37,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 	
 	public HashMap<String, String> getValues(String domainName, Integer domainId, Integer drId){
 		String login = "";
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.QUALITY, f -> f.getIdProperty().eq(drId));
 		
 		HashMap<String, String> map = new HashMap<>();
 		QualitySheetCode.valueLinkedList().stream()
@@ -48,11 +51,17 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		.forEach(drd -> {
 			map.put(drd.getDataVariable(), drd.getDataValue());
 		});
-		String source = map.get("source");
-		System.out.println(source);
-		String[] arr = source.split("@");
-		System.out.println(arr);
-		Optional<IncomeDetail> idOptional = AON.getIncomeDetail(domainName, domainId, login, f-> f.getIdProperty().eq(Integer.parseInt(arr[1])));
+		Integer idIdAux = dr.getSourceId();
+					
+		if(idIdAux == null && map.containsKey("source")) {
+			String source = map.get("source");
+			System.out.println(source);
+			String[] arr = source.split("@");
+			System.out.println(arr);
+			idIdAux = Integer.parseInt(arr[1]);
+		}
+		Integer idId = idIdAux;
+		Optional<IncomeDetail> idOptional = AON.getIncomeDetail(domainName, domainId, login, f-> f.getIdProperty().eq(idId));
 	
 		if(idOptional.isPresent()){
 			IncomeDetail id = idOptional.get();

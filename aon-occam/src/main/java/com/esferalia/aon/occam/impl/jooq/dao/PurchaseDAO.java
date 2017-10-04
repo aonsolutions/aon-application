@@ -343,6 +343,7 @@ public class PurchaseDAO {
 				.join(ITEM).on(PURCHASE_DETAIL.ITEM.eq(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.join(PURCHASE).on(PURCHASE_DETAIL.PURCHASE.eq(PURCHASE.ID))
+				.join(REGISTRY).on(PURCHASE.SUPPLIER.eq(REGISTRY.ID))
 			.where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new PurchaseDetailItemFiller());
 	}

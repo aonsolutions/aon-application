@@ -279,7 +279,10 @@ public class ToJSON {
 			.put(MSG.CREATION_DATE, carrierPacking.getCreationDate() != null ? AonDateUtils.simpleFormat(carrierPacking.getCreationDate()): "")
 			.put(MSG.CREATION_USER, carrierPacking.getCreationUser())
 			.put(MSG.MODIFICATION_DATE, carrierPacking.getModificationDate() != null ? AonDateUtils.simpleFormat(carrierPacking.getModificationDate()) : "")
-			.put(MSG.MODIFICATION_USER, carrierPacking.getModificationUser());
+			.put(MSG.MODIFICATION_USER, carrierPacking.getModificationUser())
+			.put("supplier", "-")
+			.put("customer", "-");
+		
 	}
 	
 	public static JSONObject elaborationToJSON(Elaboration elaboration) {

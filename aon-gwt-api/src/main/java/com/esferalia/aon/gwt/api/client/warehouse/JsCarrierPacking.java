@@ -124,4 +124,12 @@ public class JsCarrierPacking extends JavaScriptObject {
 	public final native String getReceptionEndDate() /*-{
 		return this.reception_end_date;
 	}-*/;
+
+	public final native String getSupplier() /*-{
+		return this.supplier;
+	}-*/;
+	
+	public final native String getCustomer() /*-{
+		return this.customer;
+	}-*/;
 }
