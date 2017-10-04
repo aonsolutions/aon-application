@@ -1256,150 +1256,150 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,true)
 			
 		,CT_S41D(Mod303Key.CT_S41D,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S41D,ensureModule(mod,2,0).getDescription())
-			,mod -> ensureModule(mod,2,0).setDescription(mod.getDescription(Mod303Key.CT_S41D))
+			,mod -> mod.putDescription(Mod303Key.CT_S41D,ensureModule(mod,3,0).getDescription())
+			,mod -> ensureModule(mod,3,0).setDescription(mod.getDescription(Mod303Key.CT_S41D))
 			,true)
 		,CT_S41I(Mod303Key.CT_S41I,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S41I,ensureModule(mod,2,0).getValue()) 
-			,mod -> ensureModule(mod,2,0).setValue(mod.getAmount(Mod303Key.CT_S41I))
+			,mod -> mod.putAmount(Mod303Key.CT_S41I,ensureModule(mod,3,0).getValue()) 
+			,mod -> ensureModule(mod,3,0).setValue(mod.getAmount(Mod303Key.CT_S41I))
 			,true)
 		,CT_S41U(Mod303Key.CT_S41U,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S41U,ensureModule(mod,2,0).getUnit())
-			,mod -> ensureModule(mod,2,0).setUnit(mod.getDescription(Mod303Key.CT_S41U))
+			,mod -> mod.putDescription(Mod303Key.CT_S41U,ensureModule(mod,3,0).getUnit())
+			,mod -> ensureModule(mod,3,0).setUnit(mod.getDescription(Mod303Key.CT_S41U))
 			,true)
 		,CT_S41F(Mod303Key.CT_S41F,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S41F,ensureModule(mod,2,0).getFactor())
-			,mod -> ensureModule(mod,2,0).setFactor(mod.getAmount(Mod303Key.CT_S41F))
+			,mod -> mod.putAmount(Mod303Key.CT_S41F,ensureModule(mod,3,0).getFactor())
+			,mod -> ensureModule(mod,3,0).setFactor(mod.getAmount(Mod303Key.CT_S41F))
 			,true)
-		,CT_S41R(Mod303Key.CT_S41R,null,null,null,"hasActivity(2)?round(CT_S41I*CT_S41F):0.0",null
-			,mod -> mod.putAmount(Mod303Key.CT_S41R,ensureModule(mod,2,0).getResult())
-			,mod -> ensureModule(mod,2,0).setResult(mod.getAmount(Mod303Key.CT_S41R))
+		,CT_S41R(Mod303Key.CT_S41R,null,null,null,"hasActivity(3)?round(CT_S41I*CT_S41F):0.0",null
+			,mod -> mod.putAmount(Mod303Key.CT_S41R,ensureModule(mod,3,0).getResult())
+			,mod -> ensureModule(mod,3,0).setResult(mod.getAmount(Mod303Key.CT_S41R))
 			,true)
 		
 		,CT_S42D(Mod303Key.CT_S42D,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S42D,ensureModule(mod,2,1).getDescription())
-			,mod -> ensureModule(mod,2,1).setDescription(mod.getDescription(Mod303Key.CT_S42D))
+			,mod -> mod.putDescription(Mod303Key.CT_S42D,ensureModule(mod,3,1).getDescription())
+			,mod -> ensureModule(mod,3,1).setDescription(mod.getDescription(Mod303Key.CT_S42D))
 			,true)
 		,CT_S42I(Mod303Key.CT_S42I,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S42I,ensureModule(mod,2,1).getValue()) 
-			,mod -> ensureModule(mod,2,1).setValue(mod.getAmount(Mod303Key.CT_S42I))
+			,mod -> mod.putAmount(Mod303Key.CT_S42I,ensureModule(mod,3,1).getValue()) 
+			,mod -> ensureModule(mod,3,1).setValue(mod.getAmount(Mod303Key.CT_S42I))
 			,true)
 		,CT_S42U(Mod303Key.CT_S42U,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S42U,ensureModule(mod,2,1).getUnit())
-			,mod -> ensureModule(mod,2,1).setUnit(mod.getDescription(Mod303Key.CT_S42U))
+			,mod -> mod.putDescription(Mod303Key.CT_S42U,ensureModule(mod,3,1).getUnit())
+			,mod -> ensureModule(mod,3,1).setUnit(mod.getDescription(Mod303Key.CT_S42U))
 			,true)
 		,CT_S42F(Mod303Key.CT_S42F,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S42F,ensureModule(mod,2,1).getFactor())
-			,mod -> ensureModule(mod,2,1).setFactor(mod.getAmount(Mod303Key.CT_S42F))
+			,mod -> mod.putAmount(Mod303Key.CT_S42F,ensureModule(mod,3,1).getFactor())
+			,mod -> ensureModule(mod,3,1).setFactor(mod.getAmount(Mod303Key.CT_S42F))
 			,true)
-		,CT_S42R(Mod303Key.CT_S42R,null,null,null,"hasActivity(2)?round(CT_S42I*CT_S42F):0.0",null
-			,mod -> mod.putAmount(Mod303Key.CT_S42R,ensureModule(mod,2,1).getResult())
-			,mod -> ensureModule(mod,2,1).setResult(mod.getAmount(Mod303Key.CT_S42R))
+		,CT_S42R(Mod303Key.CT_S42R,null,null,null,"hasActivity(3)?round(CT_S42I*CT_S42F):0.0",null
+			,mod -> mod.putAmount(Mod303Key.CT_S42R,ensureModule(mod,3,1).getResult())
+			,mod -> ensureModule(mod,3,1).setResult(mod.getAmount(Mod303Key.CT_S42R))
 			,true)
 		
 		,CT_S43D(Mod303Key.CT_S43D,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S43D,ensureModule(mod,2,2).getDescription())
-			,mod -> ensureModule(mod,2,2).setDescription(mod.getDescription(Mod303Key.CT_S43D))
+			,mod -> mod.putDescription(Mod303Key.CT_S43D,ensureModule(mod,3,2).getDescription())
+			,mod -> ensureModule(mod,3,2).setDescription(mod.getDescription(Mod303Key.CT_S43D))
 			,true)
 		,CT_S43I(Mod303Key.CT_S43I,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S43I,ensureModule(mod,2,2).getValue()) 
-			,mod -> ensureModule(mod,2,2).setValue(mod.getAmount(Mod303Key.CT_S43I))
+			,mod -> mod.putAmount(Mod303Key.CT_S43I,ensureModule(mod,3,2).getValue()) 
+			,mod -> ensureModule(mod,3,2).setValue(mod.getAmount(Mod303Key.CT_S43I))
 			,true)
 		,CT_S43U(Mod303Key.CT_S43U,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S43U,ensureModule(mod,2,2).getUnit())
-			,mod -> ensureModule(mod,2,2).setUnit(mod.getDescription(Mod303Key.CT_S43U))
+			,mod -> mod.putDescription(Mod303Key.CT_S43U,ensureModule(mod,3,2).getUnit())
+			,mod -> ensureModule(mod,3,2).setUnit(mod.getDescription(Mod303Key.CT_S43U))
 			,true)
 		,CT_S43F(Mod303Key.CT_S43F,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S43F,ensureModule(mod,2,2).getFactor())
-			,mod -> ensureModule(mod,2,2).setFactor(mod.getAmount(Mod303Key.CT_S43F))
+			,mod -> mod.putAmount(Mod303Key.CT_S43F,ensureModule(mod,3,2).getFactor())
+			,mod -> ensureModule(mod,3,2).setFactor(mod.getAmount(Mod303Key.CT_S43F))
 			,true)
-		,CT_S43R(Mod303Key.CT_S43R,null,null,null,"hasActivity(2)?round(CT_S43I*CT_S43F):0.0",null
-			,mod -> mod.putAmount(Mod303Key.CT_S43R,ensureModule(mod,2,2).getResult())
-			,mod -> ensureModule(mod,2,2).setResult(mod.getAmount(Mod303Key.CT_S43R))
+		,CT_S43R(Mod303Key.CT_S43R,null,null,null,"hasActivity(3)?round(CT_S43I*CT_S43F):0.0",null
+			,mod -> mod.putAmount(Mod303Key.CT_S43R,ensureModule(mod,3,2).getResult())
+			,mod -> ensureModule(mod,3,2).setResult(mod.getAmount(Mod303Key.CT_S43R))
 			,true)
 
 		,CT_S44D(Mod303Key.CT_S44D,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S44D,ensureModule(mod,2,3).getDescription())
-			,mod -> ensureModule(mod,2,3).setDescription(mod.getDescription(Mod303Key.CT_S44D))
+			,mod -> mod.putDescription(Mod303Key.CT_S44D,ensureModule(mod,3,3).getDescription())
+			,mod -> ensureModule(mod,3,3).setDescription(mod.getDescription(Mod303Key.CT_S44D))
 			,true)
 		,CT_S44I(Mod303Key.CT_S44I,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S44I,ensureModule(mod,2,3).getValue()) 
-			,mod -> ensureModule(mod,2,3).setValue(mod.getAmount(Mod303Key.CT_S44I))
+			,mod -> mod.putAmount(Mod303Key.CT_S44I,ensureModule(mod,3,3).getValue()) 
+			,mod -> ensureModule(mod,3,3).setValue(mod.getAmount(Mod303Key.CT_S44I))
 			,true)
 		,CT_S44U(Mod303Key.CT_S44U,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S44U,ensureModule(mod,2,3).getUnit())
-			,mod -> ensureModule(mod,2,3).setUnit(mod.getDescription(Mod303Key.CT_S44U))
+			,mod -> mod.putDescription(Mod303Key.CT_S44U,ensureModule(mod,3,3).getUnit())
+			,mod -> ensureModule(mod,3,3).setUnit(mod.getDescription(Mod303Key.CT_S44U))
 			,true)
 		,CT_S44F(Mod303Key.CT_S44F,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S44F,ensureModule(mod,2,3).getFactor())
-			,mod -> ensureModule(mod,2,3).setFactor(mod.getAmount(Mod303Key.CT_S44F))
+			,mod -> mod.putAmount(Mod303Key.CT_S44F,ensureModule(mod,3,3).getFactor())
+			,mod -> ensureModule(mod,3,3).setFactor(mod.getAmount(Mod303Key.CT_S44F))
 			,true)
-		,CT_S44R(Mod303Key.CT_S44R,null,null,null,"hasActivity(2)?round(CT_S44I*CT_S44F):0.0",null
-			,mod -> mod.putAmount(Mod303Key.CT_S44R,ensureModule(mod,2,3).getResult())
-			,mod -> ensureModule(mod,2,3).setResult(mod.getAmount(Mod303Key.CT_S44R))
+		,CT_S44R(Mod303Key.CT_S44R,null,null,null,"hasActivity(3)?round(CT_S44I*CT_S44F):0.0",null
+			,mod -> mod.putAmount(Mod303Key.CT_S44R,ensureModule(mod,3,3).getResult())
+			,mod -> ensureModule(mod,3,3).setResult(mod.getAmount(Mod303Key.CT_S44R))
 			,true)
 
 		,CT_S45D(Mod303Key.CT_S45D,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S45D,ensureModule(mod,2,4).getDescription())
-			,mod -> ensureModule(mod,2,4).setDescription(mod.getDescription(Mod303Key.CT_S45D))
+			,mod -> mod.putDescription(Mod303Key.CT_S45D,ensureModule(mod,3,4).getDescription())
+			,mod -> ensureModule(mod,3,4).setDescription(mod.getDescription(Mod303Key.CT_S45D))
 			,true)
 		,CT_S45I(Mod303Key.CT_S45I,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S45I,ensureModule(mod,2,4).getValue()) 
-			,mod -> ensureModule(mod,2,4).setValue(mod.getAmount(Mod303Key.CT_S45I))
+			,mod -> mod.putAmount(Mod303Key.CT_S45I,ensureModule(mod,3,4).getValue()) 
+			,mod -> ensureModule(mod,3,4).setValue(mod.getAmount(Mod303Key.CT_S45I))
 			,true)
 		,CT_S45U(Mod303Key.CT_S45U,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S45U,ensureModule(mod,2,4).getUnit())
-			,mod -> ensureModule(mod,2,4).setUnit(mod.getDescription(Mod303Key.CT_S45U))
+			,mod -> mod.putDescription(Mod303Key.CT_S45U,ensureModule(mod,3,4).getUnit())
+			,mod -> ensureModule(mod,3,4).setUnit(mod.getDescription(Mod303Key.CT_S45U))
 			,true)
 		,CT_S45F(Mod303Key.CT_S45F,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S45F,ensureModule(mod,2,4).getFactor())
-			,mod -> ensureModule(mod,2,4).setFactor(mod.getAmount(Mod303Key.CT_S45F))
+			,mod -> mod.putAmount(Mod303Key.CT_S45F,ensureModule(mod,3,4).getFactor())
+			,mod -> ensureModule(mod,3,4).setFactor(mod.getAmount(Mod303Key.CT_S45F))
 			,true)
-		,CT_S45R(Mod303Key.CT_S45R,null,null,null,"hasActivity(2)?round(CT_S45I*CT_S45F):0.0",null
-			,mod -> mod.putAmount(Mod303Key.CT_S45R,ensureModule(mod,2,4).getResult())
-			,mod -> ensureModule(mod,2,4).setResult(mod.getAmount(Mod303Key.CT_S45R))
+		,CT_S45R(Mod303Key.CT_S45R,null,null,null,"hasActivity(3)?round(CT_S45I*CT_S45F):0.0",null
+			,mod -> mod.putAmount(Mod303Key.CT_S45R,ensureModule(mod,3,4).getResult())
+			,mod -> ensureModule(mod,3,4).setResult(mod.getAmount(Mod303Key.CT_S45R))
 			,true)
 
 		,CT_S46D(Mod303Key.CT_S46D,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S46D,ensureModule(mod,2,5).getDescription())
-			,mod -> ensureModule(mod,2,5).setDescription(mod.getDescription(Mod303Key.CT_S46D))
+			,mod -> mod.putDescription(Mod303Key.CT_S46D,ensureModule(mod,3,5).getDescription())
+			,mod -> ensureModule(mod,3,5).setDescription(mod.getDescription(Mod303Key.CT_S46D))
 			,true)
 		,CT_S46I(Mod303Key.CT_S46I,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S46I,ensureModule(mod,2,5).getValue()) 
-			,mod -> ensureModule(mod,2,5).setValue(mod.getAmount(Mod303Key.CT_S46I))
+			,mod -> mod.putAmount(Mod303Key.CT_S46I,ensureModule(mod,3,5).getValue()) 
+			,mod -> ensureModule(mod,3,5).setValue(mod.getAmount(Mod303Key.CT_S46I))
 			,true)
 		,CT_S46U(Mod303Key.CT_S46U,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S46U,ensureModule(mod,2,5).getUnit())
-			,mod -> ensureModule(mod,2,5).setUnit(mod.getDescription(Mod303Key.CT_S46U))
+			,mod -> mod.putDescription(Mod303Key.CT_S46U,ensureModule(mod,3,5).getUnit())
+			,mod -> ensureModule(mod,3,5).setUnit(mod.getDescription(Mod303Key.CT_S46U))
 			,true)
 		,CT_S46F(Mod303Key.CT_S46F,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S46F,ensureModule(mod,2,5).getFactor())
-			,mod -> ensureModule(mod,2,5).setFactor(mod.getAmount(Mod303Key.CT_S46F))
+			,mod -> mod.putAmount(Mod303Key.CT_S46F,ensureModule(mod,3,5).getFactor())
+			,mod -> ensureModule(mod,3,5).setFactor(mod.getAmount(Mod303Key.CT_S46F))
 			,true)
-		,CT_S46R(Mod303Key.CT_S46R,null,null,null,"hasActivity(2)?round(CT_S46I*CT_S46F):0.0",null
-			,mod -> mod.putAmount(Mod303Key.CT_S46R,ensureModule(mod,2,5).getResult())
-			,mod -> ensureModule(mod,2,5).setResult(mod.getAmount(Mod303Key.CT_S46R))
+		,CT_S46R(Mod303Key.CT_S46R,null,null,null,"hasActivity(3)?round(CT_S46I*CT_S46F):0.0",null
+			,mod -> mod.putAmount(Mod303Key.CT_S46R,ensureModule(mod,3,5).getResult())
+			,mod -> ensureModule(mod,3,5).setResult(mod.getAmount(Mod303Key.CT_S46R))
 			,true)
 		
 		,CT_S47D(Mod303Key.CT_S47D,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S47D,ensureModule(mod,2,6).getDescription())
-			,mod -> ensureModule(mod,2,6).setDescription(mod.getDescription(Mod303Key.CT_S47D))
+			,mod -> mod.putDescription(Mod303Key.CT_S47D,ensureModule(mod,3,6).getDescription())
+			,mod -> ensureModule(mod,3,6).setDescription(mod.getDescription(Mod303Key.CT_S47D))
 			,true)
 		,CT_S47I(Mod303Key.CT_S47I,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S47I,ensureModule(mod,2,6).getValue()) 
-			,mod -> ensureModule(mod,2,6).setValue(mod.getAmount(Mod303Key.CT_S47I))
+			,mod -> mod.putAmount(Mod303Key.CT_S47I,ensureModule(mod,3,6).getValue()) 
+			,mod -> ensureModule(mod,3,6).setValue(mod.getAmount(Mod303Key.CT_S47I))
 			,true)
 		,CT_S47U(Mod303Key.CT_S47U,null,null,null,null,null
-			,mod -> mod.putDescription(Mod303Key.CT_S47U,ensureModule(mod,2,6).getUnit())
-			,mod -> ensureModule(mod,2,6).setUnit(mod.getDescription(Mod303Key.CT_S47U))
+			,mod -> mod.putDescription(Mod303Key.CT_S47U,ensureModule(mod,3,6).getUnit())
+			,mod -> ensureModule(mod,3,6).setUnit(mod.getDescription(Mod303Key.CT_S47U))
 			,true)
 		,CT_S47F(Mod303Key.CT_S47F,null,null,null,null,null
-			,mod -> mod.putAmount(Mod303Key.CT_S47F,ensureModule(mod,2,6).getFactor())
-			,mod -> ensureModule(mod,2,6).setFactor(mod.getAmount(Mod303Key.CT_S47F))
+			,mod -> mod.putAmount(Mod303Key.CT_S47F,ensureModule(mod,3,6).getFactor())
+			,mod -> ensureModule(mod,3,6).setFactor(mod.getAmount(Mod303Key.CT_S47F))
 			,true)
-		,CT_S47R(Mod303Key.CT_S47R,null,null,null,"hasActivity(2)?round(CT_S47I*CT_S47F):0.0",null
-			,mod -> mod.putAmount(Mod303Key.CT_S47R,ensureModule(mod,2,6).getResult())
-			,mod -> ensureModule(mod,2,6).setResult(mod.getAmount(Mod303Key.CT_S47R))
+		,CT_S47R(Mod303Key.CT_S47R,null,null,null,"hasActivity(3)?round(CT_S47I*CT_S47F):0.0",null
+			,mod -> mod.putAmount(Mod303Key.CT_S47R,ensureModule(mod,3,6).getResult())
+			,mod -> ensureModule(mod,3,6).setResult(mod.getAmount(Mod303Key.CT_S47R))
 			,true)
  
 		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
