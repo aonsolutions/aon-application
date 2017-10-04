@@ -507,7 +507,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_S1X2(Mod303Key.CT_S1X2,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S1X2,ensureActivity(mod,0).getDia())
 			,mod -> ensureActivity(mod,0).setDia((int) mod.getAmount(Mod303Key.CT_S1X2))
-			,true)
+			,false)
 		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
 		,CT_S1X3(Mod303Key.CT_S1X3,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S1X3,ensureActivity(mod,0).getEmp())
@@ -750,7 +750,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_S2X2(Mod303Key.CT_S2X2,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S2X2,ensureActivity(mod,1).getDia())
 			,mod -> ensureActivity(mod,1).setDia((int) mod.getAmount(Mod303Key.CT_S2X2))
-			,true)
+			,false)
 		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
 		,CT_S2X3(Mod303Key.CT_S2X3,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S2X3,ensureActivity(mod,1).getEmp())
@@ -996,7 +996,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_S3X2(Mod303Key.CT_S3X2,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S3X2,ensureActivity(mod,2).getDia())
 			,mod -> ensureActivity(mod,2).setDia((int) mod.getAmount(Mod303Key.CT_S3X2))
-			,true)
+			,false)
 		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
 		,CT_S3X3(Mod303Key.CT_S3X3,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S3X3,ensureActivity(mod,2).getEmp())
@@ -1243,7 +1243,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_S4X2(Mod303Key.CT_S4X2,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S4X2,ensureActivity(mod,3).getDia())
 			,mod -> ensureActivity(mod,3).setDia((int) mod.getAmount(Mod303Key.CT_S4X2))
-			,true)
+			,false)
 		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
 		,CT_S4X3(Mod303Key.CT_S4X3,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S4X3,ensureActivity(mod,3).getEmp())
@@ -1901,7 +1901,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	//	-----------------------------------------------------------------------
 	@Override
 	public void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303) {
-		Mod303 previous = (Mod303) Mod303DAO.getPreviousModels(ctx, mod303).findFirst().orElse(null);
+		Mod303 previous = (Mod303) Mod303DAO.getPreviousModels(ctx, mod303, true).findFirst().orElse(null);
 		if (previous != null) {
 			previous = Mod303DAO.getMod303(ctx, previous.getId());
 			if (previous.getAmount(Mod303Key.CT_A02)  == 0 || previous.getAmount(Mod303Key.CT_A02)  == 1) {

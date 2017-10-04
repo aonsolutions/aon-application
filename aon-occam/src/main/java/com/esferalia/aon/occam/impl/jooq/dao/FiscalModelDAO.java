@@ -88,8 +88,8 @@ public class FiscalModelDAO {
 		ctx.checkRead();
 		return getModelRecords(ctx, domain, model).map( record -> map(record) );
 	}
-
-	public static Stream<FiscalModel> getPreviousModels(AONContext ctx,FiscalModel fiscalModel) {
+	
+	public static Stream<FiscalModel> getPreviousModels(AONContext ctx,FiscalModel fiscalModel, boolean desc) {
 		ctx.checkRead();
 		return ctx.getDslContext()
 				.select(FS_MODEL.fields())
@@ -105,13 +105,17 @@ public class FiscalModelDAO {
 				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
 				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
 				.and(FS_MODEL.PERIOD.lessThan(fiscalModel.getPeriod().getValue()))
-				.orderBy(FS_MODEL.PERIOD)
+				.orderBy(desc?FS_MODEL.PERIOD.desc():FS_MODEL.PERIOD.asc())
 				.fetch()
 				.stream()
 				.map( record -> map(record))
 				.peek( model -> getModelDetails(ctx,model)
 								.forEach( detail -> model.put( detail) )
 					 );
+	}
+
+	public static Stream<FiscalModel> getPreviousModels(AONContext ctx,FiscalModel fiscalModel) {
+		return getPreviousModels(ctx,fiscalModel,false);
 	}
 	
 	public static Stream<FiscalModel> getEffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel) {
