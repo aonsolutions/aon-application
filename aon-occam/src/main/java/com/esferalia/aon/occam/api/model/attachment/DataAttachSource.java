@@ -10,7 +10,9 @@ public enum DataAttachSource implements Serializable {
 	FBATCH,
 	PRODUCTION,
 	DELIVERY,
-	SII;
+	SII,
+	SERES,
+	INGENET;
 
 	public byte value() {
 		return (byte) this.ordinal();

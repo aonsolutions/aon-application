@@ -12,7 +12,9 @@ public enum DataAttachmentSource implements IResourceable {
 	FBATCH,
 	PRODUCTION,
 	DELIVERY,
-	SII	;
+	SII,
+	SERES,
+	INGENET;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_attachment_source_";
