@@ -156,6 +156,7 @@ public class Model3032017BIZKAIA extends Model303Base {
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 
+		paintWithoutActivityCheck(table);	// Sin actividad
 		paintCheck(Mod303Key.CM_002,table);		// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
 		paintCheck(Mod303Key.BZ_C186 ,table);	// Sujeto pasivo acogido al régimen especial del criterio de caja.
 		paintCheck(Mod303Key.BZ_C187,table);		// Destinatario/a de operaciones a las que se aplica el r\u00E9gimen especial del criterio de caja

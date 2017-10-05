@@ -61,6 +61,8 @@ public class Model3032017ARABA extends Model303Base {
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 
+		paintWithoutActivityCheck(table);	// Sin actividad
+
 		paintCheck(Mod303Key.CM_002,table);		// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
 		
 		paintCheck(Mod303Key.AR_C910,table);	// ¿Ha optado por el régimen especial del criterio de Caja?

@@ -624,6 +624,22 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return ++col;
 	}
 	
+	protected void paintWithoutActivityCheck(FlexTable table) {
+		int row = table.getRowCount();
+		paintLabel(table, row, AON.MSG.withoutActivity());
+		final CheckBox check = new CheckBox();
+		check.setValue(this.mod303.isWithoutActivity());
+		check.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod303.setWithoutActivity(check.getValue());
+				markAsDirty();
+			}
+		});
+		table.setWidget(row, 1, check);
+	}
+
 	protected void paintCheck(Mod303Key key, FlexTable table) {
 		int row = table.getRowCount();
 		paintLabel(table, row, key.getDescription());

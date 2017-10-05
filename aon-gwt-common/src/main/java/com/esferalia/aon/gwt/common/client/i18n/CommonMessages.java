@@ -574,6 +574,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("C\u00E1lculo por diferencia")
 	String diffCalculation();
 
+	@DefaultMessage("Sin actividad")
+	String withoutActivity();
+
 	@DefaultMessage("N. justificante anterior")
 	String complementaryReceipt();
 	

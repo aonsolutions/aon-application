@@ -316,6 +316,8 @@ public class Model3032017AEAT extends Model303Base {
 		FlowPanel container = new FlowPanel();
 		
 		FlexTable table = createTable();
+		paintWithoutActivityCheck(table);	// Sin actividad
+		
 		paintCheck(Mod303Key.CM_002,table);	// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
 		
 		paintA02(Mod303Key.CT_A02,table,tabPanel);	// ¿Tributa exclusivamente en régimen simplificado?

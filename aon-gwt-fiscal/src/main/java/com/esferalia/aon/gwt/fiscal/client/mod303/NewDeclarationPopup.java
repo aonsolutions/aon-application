@@ -33,6 +33,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private IntegerBox yearBox = new IntegerBox();
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
+	private CheckBox withoutActivity = new CheckBox();
 	private CheckBox diffCalculation = new CheckBox();
 	private Label defaultVatRegimeLabel = new Label();
 	private ListBox defaultVatRegime = new ListBox();
@@ -192,6 +193,21 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, replacement);
+		row++;
+		
+		// SIN ACTIVIDAD
+		withoutActivity.setText(AON.MSG.withoutActivity());
+		withoutActivity.setValue(mod303.isWithoutActivity());
+		withoutActivity.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod303.setWithoutActivity(withoutActivity.getValue());
+			}
+		});
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, withoutActivity);
 		row++;
 		
 		// CALCULO POR DIFERENCIA
