@@ -12,10 +12,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.FiscalModel;
-import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.ql.Criteria;
@@ -30,31 +28,6 @@ public class FiscalModelBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		FiscalModel fiscalModel = (FiscalModel) evt.getTo();
 		checkFiscalModel(fiscalModel);
-		if (fiscalModel.getModel() == FiscalModelType.M111) {
-			if (fiscalModel.isReadRetentionFromAccount()) {
-				saveReceiversParam(fiscalModel);	
-			}
-		}
-	}
-
-	private void saveReceiversParam(FiscalModel fiscalModel) throws ManagerBeanVetoListenerException{
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), IFiscalConstants.FS_MOD111_RECEIVER_COUNT);
-			List<ITransferObject> list = bean.getList(criteria);
-			ApplicationParameter appParam = null;
-			if (list != null && list.size() > 0 ) {
-				appParam = (ApplicationParameter) list.get(0);
-			} else {
-				appParam = new ApplicationParameter(); 
-				appParam.setName(IFiscalConstants.FS_MOD111_RECEIVER_COUNT);
-			}
-			appParam.setValue(Integer.toString(fiscalModel.getReceiverCount() ));
-			bean.insertOrUpdate(appParam);
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
-		}
 	}
 
 	@Override

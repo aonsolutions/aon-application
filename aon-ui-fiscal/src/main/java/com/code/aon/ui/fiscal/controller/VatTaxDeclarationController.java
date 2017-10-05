@@ -45,7 +45,6 @@ import com.code.aon.fiscal.mod303.Mod303;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.fiscal.aeat.AeatUtils;
-import com.code.aon.ui.fiscal.aeat.AeatUtils.Mod303Type;
 import com.code.aon.ui.fiscal.controller.mod303.Mod303AIController;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.form.LinesController;
@@ -341,50 +340,6 @@ public class VatTaxDeclarationController extends LinesController {
             response.setHeader("Content-disposition", "attachment; filename=\""+fileName+"\";");
 			AeatUtils.printMod303(dec.getVatTax().getYear(),
 					dec.getVatTax().getPeriod(),
-					input,response.getOutputStream());					
-	        response.flushBuffer();
-	        faces.responseComplete();
-		} catch (FileNotFoundException e) {
-			AonUtil.addErrorMessage(e.getMessage()); 
-			throw new AbortProcessingException(e.getMessage(),e);
-		} catch (UnsupportedEncodingException e) {
-			AonUtil.addErrorMessage(e.getMessage()); 
-			throw new AbortProcessingException(e.getMessage(),e);
-		} catch (IOException e) {
-			AonUtil.addErrorMessage(e.getMessage()); 
-			throw new AbortProcessingException(e.getMessage(),e);
-		} catch (AonException e) {
-			AonUtil.addErrorMessage(e.getMessage()); 
-			throw new AbortProcessingException(e.getMessage(),e);
-		}
-		return null;
-	}
-	
-	public String onAEATSend() {
-		try {
-			if (getFileOutput() == null) {
-				onCreateDisk(null);
-			}
-			InputStream input = getFileOutput().getFile() != null
-					?new FileInputStream(getFileOutput().getFile())
-					:new ByteArrayInputStream(getFileOutput().getContent());
-
-			FacesContext faces = FacesContext.getCurrentInstance();
-            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-            VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
-            AeatUtils.Mod303Type type = null;
-            if (dec.isPayBackEnabled()) {
-            	type = Mod303Type.D;
-            } else if (dec.isCompensateEnabled() ) {
-            	type = Mod303Type.C;
-            } else if (dec.getDeposit() == 0) {
-           		type = Mod303Type.N;	
-           	} else {
-           		type = Mod303Type.I;	
-            }
-            String document = ""; 
-			AeatUtils.sendMod303(dec.getVatTax().getYear(),
-					dec.getVatTax().getPeriod(),type,document,
 					input,response.getOutputStream());					
 	        response.flushBuffer();
 	        faces.responseComplete();

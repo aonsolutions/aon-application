@@ -14,6 +14,7 @@ import javax.faces.model.SelectItem;
 
 import org.jooq.tools.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -21,10 +22,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.IAE;
-import com.code.aon.AonVersion;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
-import com.code.aon.fiscal.activity.Aeat2012ModuleCalculator;
 import com.code.aon.fiscal.activity.Aeat2015ModuleCalculator;
 import com.code.aon.fiscal.activity.Epigrafe;
 import com.code.aon.fiscal.activity.IFiscalActivityContainer;
@@ -77,9 +76,6 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	private List<FiscalActivityInfo> irpfInfoList;
 	private DataModel irpfInfo;
 	
-	private List<FiscalActivityInfo> m311List;
-	private DataModel m311Model;
-
 	private IModuleCalculator calculator;
 
 	private Modules getModules() {
@@ -144,28 +140,6 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		this.vatModules = vatModules;
 	}
 	
-	@Override
-	public List<FiscalActivityInfo> getM311List() {
-		if (m311List == null) {
-			setM311List( new LinkedList<FiscalActivityInfo>() );
-		}
-		return m311List;
-	}
-
-	public void setM311List(List<FiscalActivityInfo> m311List) {
-		this.m311List = m311List;
-	}
-
-	public DataModel getM311Model() {
-		if (m311Model == null) {
-			setM311Model( new SerializableListDataModel( getM311List()) );
-		}
-		return m311Model;
-	}
-	public void setM311Model(DataModel m311Model) {
-		this.m311Model = m311Model;
-	}
-
 	@Override
 	public List<FiscalActivityInfo> getIrpfModulesList() {
 		if (irpfModulesList == null) {
@@ -378,9 +352,6 @@ public class FiscalActivityController extends BasicController implements IFiscal
 			fillIrpfModules(fa, epigrafe );
 			fillInfoChoices();
 		}
-		if (fa.getYear() < 2014) {
-			fillM311( fa );
-		}
 		if (fa.getActivity() == null || fa.getActivity().getId() == null) {
 			try {
 				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
@@ -466,34 +437,6 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		}
 	}
 
-	public void fillM311(FiscalActivity fa) {
-		setM311List(null);
-		setM311Model(null);
-		if (!fa.isFarmer()) {
-			for ( FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ) {
-				if (key.getType() == FiscalActivityInfoType.M311_DETAIL) {
-					FiscalActivityInfo info = new FiscalActivityInfo();
-					info.setFiscalActivity(fa);
-					info.setInfoKey(key);
-					info.setValue(key.getDefaultValue());
-					info.setType(FiscalActivityInfoType.M311_DETAIL);
-					getM311List().add(info);
-				}
-			}
-		} else {
-			for ( FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ) {
-				if (key.getType() == FiscalActivityInfoType.M311_FARMER_DETAIL) {
-					FiscalActivityInfo info = new FiscalActivityInfo();
-					info.setFiscalActivity(fa);
-					info.setInfoKey(key);
-					info.setValue(key.getDefaultValue());
-					info.setType(FiscalActivityInfoType.M311_FARMER_DETAIL);
-					getM311List().add(info);
-				}
-			}
-		}
-	}
-
 	public void fillIrpfModules(FiscalActivity fa,Epigrafe epigrafe) {
 		try {
 			setIrpfModulesList(null);
@@ -547,7 +490,6 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		fillInfoChoices( getIrpfModulesList() );
 		fillInfoChoices( getVatInfoList() );
 		fillInfoChoices( getVatModulesList() );
-		fillInfoChoices( getM311List() );
 	}
 
 	private void fillInfoChoices(List<FiscalActivityInfo> infos) {
@@ -611,15 +553,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 			throw new AbortProcessingException(msg,e);
 		}
 	}
-	public void onChangeM311(ActionEvent event) {
-		try {
-			calculateM311();
-		} catch (AonException e) {
-			String msg = "Error en el cálculo";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-	}
+
 	public void onChangeIrpfInfo(ActionEvent event) {
 		try {
 			getCalculator().calculate();
@@ -653,8 +587,6 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		setIrpfModules(null);
 		setVatInfoList(null);
 		setVatInfo(null);
-		setM311List(null);
-		setM311Model(null);
 		setIrpfInfoList(null);
 		setIrpfInfo(null);
 		setModulesDetailMap(null);
@@ -666,18 +598,6 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	private void calculate() throws AonException {
 		calculateVat();
 		calculateIrpf();
-		calculateM311();
-	}
-
-	public void calculateM311() throws AonException {
-		FiscalActivity fa =  getFiscalActivity();
-		if (fa.getYear() < 2014) {
-			if (fa.isFarmer()) {
-				getCalculator().calculateFarmerM311();
-			} else {
-				getCalculator().calculateM311();
-			}
-		}
 	}
 
 	private void calculateIrpf() {
@@ -691,9 +611,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	public IModuleCalculator getCalculator() {
 		if (calculator == null) {
 			FiscalActivity fa =  getFiscalActivity();
-			if (fa.getYear() < 2015) {
-				setCalculator( new Aeat2012ModuleCalculator(this));
-			} else {
+			if (fa.getYear() >= 2015) {
 				setCalculator( new Aeat2015ModuleCalculator(this));
 			}
 		}

@@ -100,11 +100,6 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 				info.setType( FiscalActivityInfoType.VAT_INFO);
 				bean.insert(info);
 			}
-			for (FiscalActivityInfo info : c.getM311List()) {
-				info.setFiscalActivity(fa);
-				info.setType( info.getInfoKey().getType());
-				bean.insert(info);
-			}
 			for (List<FiscalActivityInfo> list : c.getModulesDetailMap().values()) {
 				for (FiscalActivityInfo info : list) {
 					info.setFiscalActivity(fa);
@@ -137,13 +132,6 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 			for (FiscalActivityInfo info : c.getVatInfoList()) {
 				bean.update(info);
 			}
-			for (FiscalActivityInfo info : c.getM311List()) {
-				if (info.getId() == null) {
-					bean.insert(info);	
-				} else {
-					bean.update(info);	
-				}
-			}
 			for (List<FiscalActivityInfo> list : c.getModulesDetailMap().values()) {
 				for (FiscalActivityInfo info : list) {
 					bean.update(info);
@@ -173,11 +161,6 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 			}
 			for (FiscalActivityInfo info : c.getIrpfInfoList()) {
 				bean.remove(info);
-			}
-			for (FiscalActivityInfo info : c.getM311List()) {
-				if (info.getId() != null) {
-					bean.remove(info);
-				}
 			}
 			for (List<FiscalActivityInfo> list : c.getModulesDetailMap().values()) {
 				for (FiscalActivityInfo info : list) {
@@ -221,8 +204,6 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 					c.getIrpfModulesList().add(info);
 				} else if (info.getType() == FiscalActivityInfoType.IRPF_INFO) {
 					c.getIrpfInfoList().add(info);
-				} else if (info.getType() == FiscalActivityInfoType.M311_DETAIL) {
-					c.getM311List().add(info);
 				} else if (info.getType() == FiscalActivityInfoType.MODULE_DETAIL) {
 					FiscalActivityInfoKey parentKey = info.getInfoKey().getParentKey();
 					List<FiscalActivityInfo> detailList = c.getModulesDetailMap().get(parentKey);
@@ -233,10 +214,6 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 					detailList.add(info);
 				}
 			}
-			if (fa.getYear() < 2014 && (c.getM311List() == null || c.getM311List().size() == 0) ) {
-				c.fillM311(fa);
-				c.calculateM311();
-			}
 			c.fillInfoChoices();
 		} catch (AonException e) {
 			throw new ManagerBeanException(e.getMessage(),e);
@@ -245,17 +222,6 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 
 	private void validate(FiscalActivityInfoKey infoKey, Object v, FiscalActivityController c) throws AonException {
 		FiscalActivity fa = (FiscalActivity) c.getTo();
-//		IManagerBean bean = BeanManager.getManagerBean(FiscalActivity.class);
-//		Criteria criteria = new Criteria();
-//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_YEAR), fa.getYear() );
-//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_EPIGRAPH), fa.getEpigraph() );
-//		if ( fa.getId() != null) {
-//			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_ID), fa.getId() );
-//		}
-//		List<ITransferObject> list = bean.getList(criteria);
-//		if (list != null && list.size()>0) {
-//			throw new AonException("Ya existe la definición del epígrafe "+ fa.getEpigraph() +" para el ejercicio " + fa.getYear()); 
-//		}
 		
 		if (infoKey == FiscalActivityInfoKey.A02) {
 			Double d = (Double) v;

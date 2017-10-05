@@ -64,14 +64,12 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.WithholdingType;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.config.Model;
 import com.code.aon.fiscal.config.ModelConfig;
 import com.code.aon.fiscal.config.ModelManager;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckParams;
@@ -94,6 +92,9 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class DashboardController implements Serializable {
 	
@@ -326,6 +327,8 @@ public class DashboardController implements Serializable {
 			return "gwt_mod130";
 		} else if ( mod == Model.M131) {
 			return "gwt_mod131";
+		} else if ( mod == Model.MIVA) {
+			return "gwt_mod303";
 		} else if ( mod == Model.M303_RG) {
 			beanName = "vatTax";
 		} else if ( mod == Model.M303_RS) {
@@ -336,10 +339,6 @@ public class DashboardController implements Serializable {
 			beanName = "mod349";
 		} else if ( mod == Model.M390_HF) {
 			beanName = "vatTax";
-		} else if ( mod == Model.M311) {
-			beanName = "mod311";
-		} else if ( mod == Model.M310) {
-			beanName = "mod310";
 		} else if ( mod == Model.M390) {
 			return "gwt_mod390";
 		} else if ( mod == Model.M180) {
@@ -352,7 +351,12 @@ public class DashboardController implements Serializable {
 			return "gwt_mod200";
 		} else if ( mod == Model.M202) {
 			return "gwt_mod202";
+		} else {
+			String message = "Imposible realizar la navegación al modelo solicitado.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
 		}
+		
 		IFiscalModelController controller = (IFiscalModelController) FormUtil.getController(beanName);
 		try {
 			String navKey = "";
@@ -365,60 +369,6 @@ public class DashboardController implements Serializable {
 			return navKey;
 		} catch (ManagerBeanException e) {
 			String message = "Imposible realizar la navegación al modelo solicitado.";
-			AonUtil.addErrorMessage(message);
-			throw new AbortProcessingException(message,e);
-		}
-	}
-
-	public void onPrintModel(ActionEvent event) {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		Map<String, String> params = ec.getRequestParameterMap();
-		String ad = params.get("adm");
-		Administration administration = null;
-		if (StringUtils.isNotBlank(ad)) {
-			administration = Administration.valueOf(ad);
-		}
-		Model mod = Model.valueOf(params.get("model"));
-		Period period = Period.valueOf(params.get("period"));
-		String beanName = null;
-		if ( mod == Model.M111) {
-			beanName = "mod111";
-		} else if ( mod == Model.M115) {
-			beanName = "mod115";
-		} else if ( mod == Model.M123) {
-			beanName = "mod123";
-		} else if ( mod == Model.M130) {
-			beanName = "mod130";
-		} else if ( mod == Model.M131) {
-			beanName = "mod131";
-		} else if ( mod == Model.M303_RG) {
-			beanName = "vatTax";
-		} else if ( mod == Model.M303_RS) {
-			beanName = "mod303";
-		} else if ( mod == Model.M347) {
-			beanName = "mod347";
-		} else if ( mod == Model.M349) {
-			beanName = "mod349";
-		} else if ( mod == Model.M390_HF) {
-			beanName = "vatTax";
-		} else if ( mod == Model.M311) {
-			beanName = "mod311";
-		} else if ( mod == Model.M310) {
-			beanName = "mod310";
-//		} else if ( mod == Model.M390) {
-//			return "gwt_mod390";
-//		} else if ( mod == Model.M180) {
-//			return "gwt_mod180";
-//		} else if ( mod == Model.M190) {
-//			return "gwt_mod190";
-//		} else if ( mod == Model.M200) {
-//			return "gwt_mod200";
-		}
-		IFiscalModelController controller = (IFiscalModelController) FormUtil.getController(beanName);
-		try {
-			controller.printModel(administration, getFiscalYear(), period);
-		} catch (ManagerBeanException e) {
-			String message = "Imposible realizar la impresión del modelo solicitado.";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message,e);
 		}

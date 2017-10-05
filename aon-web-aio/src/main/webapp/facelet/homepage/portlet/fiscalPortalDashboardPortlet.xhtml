@@ -280,20 +280,10 @@
 											<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"
 												title="Modelo #{modelConfig.model.name}/#{status.period} - #{status.message}"
 												colspan="#{12 / modelConfig.numberOfStatuses}">
-												<aon:htmlCommandLink
-													actionListener="#{dashboard.onPrintModel}" 
-													action="#{report.onExecute}"
-													target="_blank"
-													rendered="#{!status.missing and modelConfig.model.reportKey != null}">
-													<aon:outputText value=""
-														style="padding-left: 16px;"
-														styleClass="#{status.styleClass} aon-nowrap"
-														/>
-													<f:param name="model" value="#{modelConfig.model}"/>
-													<f:param name="period" value="#{status.period}"/>
-													<f:param name="adm" value="#{modelConfig.administration}"/>
-													<f:param name="reportKey" value="#{modelConfig.model.reportKey}" />												
-												</aon:htmlCommandLink>
+												<aon:outputText value=""
+													style="padding-left: 16px;"
+													styleClass="#{status.styleClass} aon-nowrap"
+													/>
 											</td>
 										</ui:repeat>
 									</tr>

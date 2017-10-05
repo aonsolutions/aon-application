@@ -76,16 +76,6 @@ public class FiscalModel extends FiscalModelDB implements IAuditable {
 	}
 
 	@Transient
-	public boolean isModel111() {
-		return (getModel() == FiscalModelType.M111);
-	}
-
-	@Transient
-	public boolean isModel311() {
-		return (getModel() == FiscalModelType.M311);
-	}
-
-	@Transient
 	public boolean isModel303() {
 		return (getModel() == FiscalModelType.M303);
 	}

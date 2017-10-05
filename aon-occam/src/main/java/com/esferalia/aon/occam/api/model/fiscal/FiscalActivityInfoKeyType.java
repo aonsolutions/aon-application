@@ -9,8 +9,6 @@ public enum FiscalActivityInfoKeyType implements Serializable {
 	VAT_INFO,
 	IRPF_INFO,
 	MODULE_DETAIL,
-	M311_DETAIL,
-	M311_FARMER_DETAIL,
 	MODULE;
 
 	public Byte getValue() {

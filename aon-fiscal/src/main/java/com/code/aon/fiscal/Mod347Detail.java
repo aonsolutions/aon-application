@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.enumeration.Mod347Type;
 import com.code.aon.registry.RegistryDocument;
 import com.esferalia.aon.entity.master.Mod347DetailDB;

@@ -35,7 +35,6 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
-import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.Period;
@@ -65,7 +64,7 @@ public abstract class FiscalModelController extends BasicController implements I
 
 	private final static String DATA_TAB = "headerData";
 	private final static String LIQUIDATION_TAB = "liquidationTab";
-	
+	private final static String FINANCE_CONTROLLER_NAME = "finance";	
 	
 	private IFiscalDeclaration declaration;
 	private IFiscalModelManager manager;
@@ -578,7 +577,7 @@ public abstract class FiscalModelController extends BasicController implements I
 	}
 
 	public boolean isActivityButtonEnabled() {
-		return (getModelType() == FiscalModelType.M303 || getModelType() == FiscalModelType.M311); 
+		return (getModelType() == FiscalModelType.M303); 
 	}
 	protected abstract FiscalModelType getModelType();
 	protected abstract String getFormPage();
@@ -595,7 +594,7 @@ public abstract class FiscalModelController extends BasicController implements I
 		Finance finance = ( (FiscalModel) getTo()).getFinance();
 		if (finance.getId() != null) {
 			String backAction = getBeanName() + "_form";
-			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(IFiscalConstants.FINANCE_CONTROLLER_NAME);
+			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 			financeController.setPayment(true);
 			financeController.onLoad(event, finance.getId(), backAction, null);
 		}
@@ -607,24 +606,14 @@ public abstract class FiscalModelController extends BasicController implements I
 			&& to.isFinished() 
 			&& to.getAdministration() == Administration.COMMON_TERRITORY
 			&& to.getYear() < 2015
-			&& (to.getModel() == FiscalModelType.M111 
-				|| to.getModel() == FiscalModelType.M115  
-				|| to.getModel() == FiscalModelType.M123
-				|| to.getModel() == FiscalModelType.M130
-				|| to.getModel() == FiscalModelType.M131
-				|| to.getModel() == FiscalModelType.M303)
+			&& (to.getModel() == FiscalModelType.M303)
 			&& isScriptPresent());
 	}
 
 	public boolean isAeatReportEnabled() {
 		FiscalModel to = (FiscalModel) getTo();
 		return (!isNevv() && to.isFinished() && isScriptPresent()
-			 && (to.getModel() == FiscalModelType.M111
-			  || to.getModel() == FiscalModelType.M115  
-			  || to.getModel() == FiscalModelType.M123
-			  || to.getModel() == FiscalModelType.M130
-			  || to.getModel() == FiscalModelType.M131
-			  || to.getModel() == FiscalModelType.M303)
+			 && (to.getModel() == FiscalModelType.M303)
 				);
 	}
 	public boolean isAeatOfficialReportEnabled() {
@@ -651,7 +640,6 @@ public abstract class FiscalModelController extends BasicController implements I
 	}
 
 	public String getAeatWebPage() {
-		FiscalModel fs = (FiscalModel) getTo();
 		return null; 
 	}
 

@@ -96,19 +96,7 @@
 												value="IVA. Autoliquidaci&#243;n." />
 										</aon:commandLink>
 									</aon:div>
-									<!-- *********************** [MODELO 310] 
-									<aon:div>
-										<aon:commandLink id="gwt_mod310-new" action="gwt_mod310-new" 
-											title="#{bundle.fiscal_model_310_module}" styleClass="aon-menu-fiscal">
-											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="&#160;"/>
-											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="310"/>
-											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="310"/>
-											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="310"/>
-											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="&#160;"/>
-											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_310_module}" />
-										</aon:commandLink>
-									</aon:div> -->
-
+									
 									<!-- *********************** [MODELO 140] -->
 									<aon:div rendered="#{fiscalParams.bizkaia}">
 										<aon:commandLink id="gwt_mod140-new" action="gwt_mod140-new" 
@@ -121,19 +109,6 @@
 											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_140_module}" />
 										</aon:commandLink>
 									</aon:div>
-
-									<!-- *********************** [MODELO 340] 
-									<aon:div>
-										<aon:commandLink id="gwt_mod340-new" action="gwt_mod340-new" 
-											title="#{bundle.fiscal_model_340_module}" styleClass="aon-menu-fiscal">
-											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="340"/>
-											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="340"/>
-											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="340"/>
-											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="340"/>
-											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="340"/>
-											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_340_module}" />
-										</aon:commandLink>
-									</aon:div> -->
 
 									<!-- *********************** [MODELO 347] 
 									<aon:div>
@@ -373,7 +348,7 @@
 											<aon:outputText styleClass="aon-fiscal-link-box" value="303"/>
 											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module}" />
 										</aon:commandLink>
-
+<!-- 
 										<aon:commandLink id="mod_340_report" 
 											action="mod340_search"
 											actionListener="#{mod340.onReset}"
@@ -381,7 +356,7 @@
 											<aon:outputText styleClass="aon-fiscal-link-box" value="340" />
 											<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_340_module}" />
 										</aon:commandLink>
-										
+ -->
 
 										<aon:commandLink id="mod347_report" 
 											action="mod347_list"

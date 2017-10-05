@@ -39,7 +39,7 @@
 							</aon:div>
 						</aon:div>
 						<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-							<aon:if test="#{controller.declaration.result &gt; 0 or (!controller.to.model311 and !controller.to.model303)}">
+							<aon:if test="#{controller.declaration.result &gt; 0 or (!controller.to.model303)}">
 								<aon:panelGrid id="finalizeGrid" columns="2" style="width: 100%;"
 										columnClasses="aon-panelGrid-odd aon-width-140
 													,aon-panelGrid-even aon-width-auto">
@@ -78,12 +78,12 @@
 									</aon:selectOneMenu>
 								</aon:panelGrid>
 							</aon:if>
-							<aon:if test="#{(controller.to.model311 or controller.to.model303) and controller.declaration.result &lt; 0}">
+							<aon:if test="#{(controller.to.model303) and controller.declaration.result &lt; 0}">
 								<aon:div>
-									<aon:selectBooleanCheckbox id="m311_payback"
+									<aon:selectBooleanCheckbox id="mod_payback"
 										value="#{controller.payBack}" ajaxSingle="true"
 										reRender="finalizeForm"/>
-									<aon:outputLabel for="m311_payback"
+									<aon:outputLabel for="mod_payback"
 										style="margin-left: 1em;" 
 										value="Marque si desea devoluci&#243;n, en caso contrario la declaraci&#243;n ser&#225; a compensar."/>
 								</aon:div>

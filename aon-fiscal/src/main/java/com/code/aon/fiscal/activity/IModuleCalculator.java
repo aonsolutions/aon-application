@@ -12,8 +12,6 @@ public interface IModuleCalculator {
 	public void calculate() throws AonException;
 	public void calculateIrpf();
 	public void calculateVat();
-	public void calculateM311() throws AonException;
-	public void calculateFarmerM311() throws AonException;
 	public FiscalActivityInfoKey[] getActivityKeys(int year, String epigraph);
 	public FiscalActivityInfoKey[] getDetailedKeys(FiscalActivityInfoKey key);
 

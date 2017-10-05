@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
-import com.esferalia.aon.payroll.calculator.Main;
 
 public class Modules implements Serializable {
 	

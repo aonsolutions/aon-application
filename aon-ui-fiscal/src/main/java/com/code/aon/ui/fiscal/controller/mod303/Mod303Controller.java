@@ -23,7 +23,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.tax.model.MOD303.MOD303Format;
-import com.code.aon.file.tax.model.MOD310.MOD310Format;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
@@ -530,7 +529,7 @@ public class Mod303Controller extends FiscalModelController {
 	@Override
 	public MimeType getMimeType() {
 		FiscalModel fm = (FiscalModel) getTo();
-		MOD310Format format = MOD310Format.getFormat(fm.getAdministration(), fm.getYear());
+		MOD303Format format = MOD303Format.getFormat(fm.getAdministration(), fm.getYear());
 		return format.getMimeType();
 	}
 	

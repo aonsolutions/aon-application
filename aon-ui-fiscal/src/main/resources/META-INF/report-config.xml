@@ -89,57 +89,6 @@
 		<template path="/com/code/aon/ui/fiscal/report/vatTax_declaration_year.jasper"/>
 	</report>
 	
-	
-	<!--  *********  Declaracion del modelo 111  ********* -->
-	<report id="mod111Report" description="Declaracion del modelo 111">
-		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
-		<collection provider="#{mod111.declaration.details}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="declaration" value="#{mod111.getDeclaration}" />
-		</params>
-	</report>
-	<!--  *********  Declaracion del modelo 115  ********* -->
-	<report id="mod115Report" description="Declaracion del modelo 115">
-		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
-		<collection provider="#{mod115.declaration.details}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="declaration" value="#{mod115.getDeclaration}" />
-		</params>
-	</report>
-	<!--  *********  Declaracion del modelo 123  ********* -->
-	<report id="mod123Report" description="Declaracion del modelo 123">
-		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
-		<collection provider="#{mod123.declaration.details}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="declaration" value="#{mod123.getDeclaration}" />
-		</params>
-	</report>
-	<!--  *********  Declaracion del modelo 130  ********* -->
-	<report id="mod130Report" description="Declaracion del modelo 130">
-		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
-		<collection provider="#{mod130.declaration.details}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="declaration" value="#{mod130.getDeclaration}" />
-		</params>
-	</report>
-	<!--  *********  Declaracion del modelo 131  ********* -->
-	<report id="mod131Report" description="Declaracion del modelo 131">
-		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
-		<collection provider="#{mod131.declaration.details}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="declaration" value="#{mod131.getDeclaration}" />
-		</params>
-	</report>
 	<!--  *********  Declaracion del modelo 303  ********* -->
 	<report id="mod303Report" description="Declaracion del modelo 303">
 		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
@@ -148,28 +97,6 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="declaration" value="#{mod303.getDeclaration}" />
-		</params>
-	</report>
-
-	<!--  *********  Declaracion del modelo 310  ********* -->
-	<report id="mod310Report" description="Declaracion del modelo 310">
-		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
-		<collection provider="#{mod310.declaration.details}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="declaration" value="#{mod310.getDeclaration}" />
-		</params>
-	</report>
-	
-	<!--  *********  Declaracion del modelo 311  ********* -->
-	<report id="mod311Report" description="Declaracion del modelo 311">
-		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
-		<collection provider="#{mod311.declaration.details}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="declaration" value="#{mod311.getDeclaration}" />
 		</params>
 	</report>
 </report-config>

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<register name="DP200000_END">
-	<field name="CTE1"  value="&lt;/T200020130A0000>" format="AlphaNumeric" pattern="X(18)" />
-</register>

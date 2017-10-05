@@ -20,7 +20,6 @@ import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.finance.Creditor;
-import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryMedia;
@@ -32,9 +31,40 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
-public class FiscalParametersController implements IFiscalConstants, Serializable {
+public class FiscalParametersController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
+	private static final String FS_DEFAULT_YEAR = "FS_DEFAULT_YEAR";
+	private static final String FS_DEFAULT_ADMINISTRATION = "FS_DEFAULT_ADMINISTRATION";
+	private static final String FS_ADMINISTRATION_CODE = "FS_ADMINISTRATION_CODE";
+	private static final String FS_TAX_REFUND_REGISTRY = "FS_TAX_REFUND_REGISTRY";
+	private static final String FS_TAX_REGIME = "FS_TAX_REGIME";
+	private static final String FS_ADMON_CREDITOR = "FS_ADMON_CREDITOR";
+	private static final String FS_PERM_ADDRESS_CHANGES = "FS_PERM_ADDRESS_CHANGES";
+	private static final String FS_CONCTACT_PERSON = "FS_CONCTACT_PERSON";
+	private static final String FS_CONCTACT_PHONE = "FS_CONCTACT_PHONE";
+	private static final String FS_CONCTACT_CELLULAR = "FS_CONCTACT_CELLULAR";
+	private static final String FS_CONCTACT_MAIL = "FS_CONCTACT_MAIL";
+	private static final String FS_MOD303_BY_DIFFERENCE_DISABLED = "FS_MOD303_BY_DIFFERENCE_DISABLED";
+	
+	private static final String FS_MODEL_CFG_M111 = "FS_MODEL_CFG_M111";
+	private static final String FS_MODEL_CFG_M115 = "FS_MODEL_CFG_M115";
+	private static final String FS_MODEL_CFG_M123 = "FS_MODEL_CFG_M123";
+	private static final String FS_MODEL_CFG_M130 = "FS_MODEL_CFG_M130";
+	private static final String FS_MODEL_CFG_M131 = "FS_MODEL_CFG_M131";
+	private static final String FS_MODEL_CFG_M303_RS = "FS_MODEL_CFG_M303_RS";
+	private static final String FS_MODEL_CFG_M303_RG = "FS_MODEL_CFG_M303_RG";
+	private static final String FS_MODEL_CFG_M347 = "FS_MODEL_CFG_M347";
+	private static final String FS_MODEL_CFG_M349 = "FS_MODEL_CFG_M349";
+	private static final String FS_MODEL_CFG_M390_HF = "FS_MODEL_CFG_M390_HF";
+	private static final String FS_MODEL_CFG_M390 = "FS_MODEL_CFG_M390";
+	private static final String FS_MODEL_CFG_M180 = "FS_MODEL_CFG_M180";
+	private static final String FS_MODEL_CFG_M190 = "FS_MODEL_CFG_M190";
+	private static final String FS_MODEL_CFG_M200 = "FS_MODEL_CFG_M200";
+	private static final String FS_MODEL_CFG_M202 = "FS_MODEL_CFG_M202";
+	private static final String FS_MODEL_CFG_M184 = "FS_MODEL_CFG_M184";
+	private static final String FS_MODEL_CFG_M193 = "FS_MODEL_CFG_M193";
 	
 	public static final String FISCAL_PARAMS_BEAN_NAME = "fiscalParams";
 	
