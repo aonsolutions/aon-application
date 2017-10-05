@@ -40,6 +40,23 @@
 							<f:setPropertyActionListener target="#{posInvoice.showRegistryDataWindow}"
 								value="#{true}" />
 						</aon:commandButton>
+						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+							<aon:commandButton id="posInvoiceEmail" immediate="true" value="&#160;"
+								actionListener="#{posInvoice.onSendInvoiceByEmail}"
+								rendered="#{!posInvoice.nevv and posInvoice.ticketFinished}"
+								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+								style="width: 14px;" reRender="showNewMessageWindow">
+							</aon:commandButton>
+						</aon:if>
+						<aon:htmlCommandLink id="posInvoiceReport" immediate="true"
+							value="#{bundle.finance_invoice}" target="_new" 
+							rendered="#{!posInvoice.nevv and posInvoice.ticketFinished}"
+							action="#{posInvoiceSigner.onReport}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf"
+							actionListener="#{printParams.onInit}">
+							<f:param name="reportKey" value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
+						</aon:htmlCommandLink>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
@@ -330,5 +347,8 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/posInvoice/modalRecoverTicket.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
 		</ui:include>			
+		<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		</aon:if>
 	</ui:define>
 </ui:composition>
