@@ -285,7 +285,8 @@ public class Model303IdentificationData extends ScrollPanel {
 				callback.townChanged(town.getValue());
 			}
 		});
-		tab.setWidget(4, 1, phone);
+		//tab.setWidget(4, 1, phone);
+		tab.setWidget(4, 1, town);
 		
 		ProvinceListBox province = new ProvinceListBox();
 		province.addChangeHandler(new ChangeHandler() {
@@ -321,7 +322,8 @@ public class Model303IdentificationData extends ScrollPanel {
 		});
 		contactPerson.setVisibleLength(40);
 		contactPerson.setMaxLength(40);
-		tab.setWidget(7, 1, zip);
+		//tab.setWidget(7, 1, zip);
+		tab.setWidget(7, 1, contactPerson);
 
 		TextBox contactPhone  = new TextBox();
 		contactPhone.setStyleName(AON.AON_CSS.aonInputText());
@@ -362,8 +364,7 @@ public class Model303IdentificationData extends ScrollPanel {
 		contactMail.setMaxLength(40);
 		tab.setWidget(10, 1, contactMail);
 
-		setWidget(tab);
-		
+		setWidget(tab);		
 		
 		document.setValue(callback.getDocument());
 //		document.setEnabled(!callback.isFinished());

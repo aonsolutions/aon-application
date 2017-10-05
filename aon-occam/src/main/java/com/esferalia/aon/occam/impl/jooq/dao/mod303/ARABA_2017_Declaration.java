@@ -318,6 +318,12 @@ public class ARABA_2017_Declaration extends Mod303Declaration {
 		// TOTAL DEUDA TRIBUTARIA	
 		,AR_C080	(Mod303Key.AR_C080,null,null,null,"AR_C060+AR_C061+AR_C062-AR_C063",null)
 		
+		// TOTAL A DEVOLVER
+		,AR_C081	(Mod303Key.AR_C081,null,null,null,"isToPayback()?round(AR_C080*-1):0.0",null)
+				
+		// TOTAL A COMPENSAR
+		,AR_C082	(Mod303Key.AR_C082,null,null,null,"isToCompensate()?round(AR_C080*-1):0.0",null)				
+		
 		// -----------------------------------------------------------
 		// ------------------------------------- INFORMACION ADICIONAL
 		// -----------------------------------------------------------

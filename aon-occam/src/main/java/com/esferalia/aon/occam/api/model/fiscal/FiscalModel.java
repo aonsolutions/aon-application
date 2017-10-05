@@ -239,7 +239,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return (isEntity())
 			?name
 			:AonStringUtils.prependIfMissing(getName(),AonStringUtils.appendIfMissing(
-					AonStringUtils.trimToNull(getSurname()), " ," ) ); 
+					AonStringUtils.trimToNull(getSurname()), ", " ) ); 
 	}
 	
 	public String getStreetInitial() {

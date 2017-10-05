@@ -47,7 +47,8 @@ public class Mod303File extends HttpServlet {
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
 		    String fileName = AonFiscalFileUtils.getFileName(mod303);
-		    MimeType mime = mod303.isAraba()?MimeType.XML:MimeType.TXT;
+		    // MimeType mime = mod303.isAraba()?MimeType.XML:MimeType.TXT;
+		    MimeType mime = MimeType.TXT;
 		    resp.setCharacterEncoding("ISO-8859-1");
 			resp.setContentType(mime.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "." + mime.getExtension()+ "\";");

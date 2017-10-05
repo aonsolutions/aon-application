@@ -70,6 +70,15 @@ public class AonFiscalFileUtils {
 			return EMPTY_BLANK_DATE;
 		}
 	}
+	
+	public static String convertDateZero(String date) {
+		try {
+			return date == null ? EMPTY_ZERO_DATE
+					: DATE_FORMAT.format(DATE_MAIN_FORMAT.parse(date));
+		} catch (ParseException e) {
+			return EMPTY_ZERO_DATE;
+		}
+	}
 
 	public static String date(Date date) {
 		return date == null ? EMPTY_BLANK_DATE : DATE_FORMAT.format(date);
