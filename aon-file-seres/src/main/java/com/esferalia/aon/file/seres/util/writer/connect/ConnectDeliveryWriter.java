@@ -448,12 +448,13 @@ public class ConnectDeliveryWriter {
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
-		record.setCantidadEnviada_12_(quantity);
 		
 		record.setUnidadDeMedidaCantidadEnviada(null);
 		if(item.getPackFormatTag().getName().equals(item.getPackUnitsTag().getName())){
-			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackMeasurement());
+			record.setCantidadEnviada_12_(quantity * item.getPackUnits() * item.getPackMeasurement());
+			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackUnits() * item.getPackMeasurement());
 		} else {
+			record.setCantidadEnviada_12_(quantity);
 			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
 		record.setFechaDeCaducidad_36__102_203_(null);
