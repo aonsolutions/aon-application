@@ -428,16 +428,17 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
-		record.setCantidadEnviada_12_(quantity);
 		
-		record.setUnidadDeMedidaCantidadEnviada(null);
-//		if(item.getPackUnitsTag()!=null && item.getPackUnitsTag().getName()!=null){
-//			record.setUnidadDeMedidaCantidadEnviada(
-//					item.getPackUnitsTag().getName().toUpperCase());
-//		}
 		if(item.getPackFormatTag().getName().equals(item.getPackUnitsTag().getName())){
-			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackMeasurement());
+			record.setCantidadEnviada_12_(quantity * item.getPackUnits() * item.getPackMeasurement());
+			if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null){
+				record.setUnidadDeMedidaCantidadEnviada(
+						StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			}
+			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(item.getPackUnits() * item.getPackMeasurement());
 		} else {
+			record.setCantidadEnviada_12_(quantity);
+			record.setUnidadDeMedidaCantidadEnviada(null);
 			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
 		record.setFechaDeCaducidad_36__102_203_(null);
@@ -466,7 +467,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(detail.getQuantity());
 		record.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
 		if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null){
-			record.setUnidadDeMedidaPeso(item.getPackMeasurementTag().getName().toUpperCase());
+			record.setUnidadDeMedidaPeso(
+					StringUtils.substring(item.getPackMeasurementTag().getName(), 0, 3).toUpperCase());
 		}
 		record.setDimensionDeTemperatura1_TC_(null);
 		record.setDimensionDeTemperatura2(null);
