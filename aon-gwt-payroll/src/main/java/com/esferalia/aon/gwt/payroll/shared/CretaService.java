@@ -289,6 +289,10 @@ public interface CretaService {
 		public final native JsUnknownDato[] getUnknown() /*-{
 			return this.unknown;
 		}-*/;
+
+		public final native boolean isRectifying() /*-{
+			return this.rectifying;
+		}-*/;
 	}
 
 	public static class JsError extends JavaScriptObject {
@@ -312,7 +316,8 @@ public interface CretaService {
 
 	}
 
-	public static class JsEmployee extends JavaScriptObject {
+	public static class JsEmployee extends JavaScriptObject 
+	{
 		protected JsEmployee() {
 		}
 
@@ -322,6 +327,13 @@ public interface CretaService {
 			return this.naf;
 		}-*/;
 
+		public final native String getIpf() /*-{
+			return this.ipf;
+		}-*/;
+
+		public final native String getCaf() /*-{
+			return this.caf;
+		}-*/;
 	}
 
 	public static class JsFile extends JavaScriptObject
@@ -375,6 +387,9 @@ public interface CretaService {
 			return this.name ? this.name : 'TRABAJADORES_TRAMOS';
 		}-*/;
 		
+		public final native JsEmployee[] getEmployees() /*-{
+			return this.employees;
+		}-*/;
 
 	}
 
@@ -394,9 +409,6 @@ public interface CretaService {
 			return this.errors;
 		}-*/;
 
-		public final native JsEmployee[] getEmployees() /*-{
-			return this.employees;
-		}-*/;
 	}
 
 	public static class JsDCLResult extends JsEvent {

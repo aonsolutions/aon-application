@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -49,15 +48,13 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayUtils;
-import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.storage.client.Storage;
+//import com.google.gwt.storage.client.Storage;
 import com.google.gwt.typedarrays.client.Uint8ArrayNative;
 import com.google.gwt.typedarrays.shared.Uint8Array;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -558,6 +555,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					basesEditor.autoRefresh();
 
 					CheckBox reftification = new CheckBox("Reftificativa");
+					reftification.setValue(result.isRectifying());
 					reftification.setStyleName("aon-finding-toolbar-item");
 					reftification.addClickHandler(e->MainCreta.this.reftification());
 					basesEditor.add(reftification);
@@ -583,6 +581,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				showResultsPanel();
 
 			CheckBox reftification = new CheckBox("Reftificativa");
+			reftification.setValue(result.isRectifying());
 			//reftification.setValue(isReftification());
 			reftification.setStyleName("aon-finding-toolbar-item");
 			reftification.addClickHandler(e->MainCreta.this.reftification());
@@ -1503,6 +1502,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			requestBuffer.append("\r\n");
 		}
 
+
 		// Once we are done, we "close" the body's request
 		requestBuffer.append("--" + boundary + "--\r\n");
 
@@ -1867,33 +1867,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return map.values();
 	}
 
-	private static <T extends JsFile> void set(String key, T ts[]) {
-		Storage localStorage = Storage.getLocalStorageIfSupported();
-		if (localStorage == null)
-			return;
-
-		JsArray<T> jsArray = JsArrayUtils.readOnlyJsArray(ts);
-		String json = JsonUtils.stringify(jsArray);
-		localStorage.setItem(key, json);
-	}
-
-	private static <T extends JsFile> void set(String key, Collection<T> ts) {
-		Storage localStorage = Storage.getLocalStorageIfSupported();
-		if (localStorage == null)
-			return;
-
-		JsArray<T> jsArray = JsArray.createArray(ts.size()).cast();
-		for (T t : ts)
-			jsArray.push(t);
-
-		String json = JsonUtils.stringify(jsArray);
-		localStorage.setItem(key, json);
-	}
 
 	private static <T extends JsFile> Map<String, T> add(String key, T ts[]) {
-		Storage localStorage = Storage.getLocalStorageIfSupported();
-		if (localStorage == null)
-			throw new UnsupportedOperationException();
 
 		Map<String, T> map = get(key);
 		for (T t : ts) {
@@ -1901,11 +1876,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				continue;
 			
 			map.put(t.getId(), t);
-		}
-		
-		try {
-			set(key, map.values());
-		} catch ( Throwable caught){ // QuotaExceededError
 		}
 
 		return Collections.unmodifiableMap(map);
@@ -1917,11 +1887,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		try {
 			map = getFromBackup(key);
 		} catch ( Exception backupException ) {
-			try {
-				map = getFromLocalStorage(key);
-			} catch ( Exception storageException ) {
-				map = new HashMap<String,T>();
-			}
+			map = new HashMap<String,T>();
 			saveAtBackup(key, map);
 		}
 		
@@ -1938,33 +1904,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		throw new UnsupportedOperationException();
 	}
 
-	private static <T extends JsFile> Map<String, T> getFromLocalStorage(String key) {
-		
-		
-		Storage localStorage = Storage.getLocalStorageIfSupported();
-		if (localStorage == null)
-			throw new UnsupportedOperationException();
-
-		
-		String json = localStorage.getItem(key);
-
-		if (AonStringUtils.isBlank(json))
-			return new HashMap<String, T>();
-
-		try {
-			JsArray<T> jsArray = JsonUtils.safeEval(json);
-			Map<String, T> map = new HashMap<String, T>();
-			for (int i = 0; i < jsArray.length(); i++) {
-				T t = jsArray.get(i);
-				if (t != null)
-					map.put(t.getId(), t);
-			}
-			return map;
-		} catch (IllegalArgumentException e) {
-			return new HashMap<String, T>();
-		}
-	}
-	
 
 	public static class JsFileComparator<T extends JsFile> implements Comparator<T> {
 
@@ -2089,11 +2028,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		for (T t : ts)
 			map.put(t.getId(), t);
-		try {
-			set(key, map.values());
-		} catch ( Throwable caught ) {
-			
-		}
 
 		return Collections.unmodifiableMap(map);
 	}

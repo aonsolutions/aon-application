@@ -144,7 +144,7 @@ public class CretaServlet extends HttpServlet
 				.setReftificationMark(indicadorReftificacion)
 				;
 
-		EventsPickerBasesCallback pickerBasesCb = new EventsPickerBasesCallback();
+		InfoPickerBasesCallback pickerBasesCb = new InfoPickerBasesCallback();
 
 		PrintWriter os = resp.getWriter();
 
@@ -225,7 +225,9 @@ public class CretaServlet extends HttpServlet
 
 		os.printf("\"warnings\":%s,\r\n", toJSON(pickerBasesCb.warnings));
 
-		os.printf("\"messages\":[]\r\n");
+		os.printf("\"messages\":[],\r\n");
+
+		os.printf("\"rectifying\":%b\r\n", indicadorReftificacion );
 
 		os.println("}");
 
@@ -608,6 +610,24 @@ public class CretaServlet extends HttpServlet
 		return buffer.toString();
 	}
 
+	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores trabajadores) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(trabajadores.getTrabajador().stream()
+				.map(trabajador -> String.format("{\"naf\":\"%s\",\"ipf\":\"%s\",\"caf\":\"%s\"}", trabajador.getNaf(), trabajador.getIpf().getNumeroIpf() ,trabajador.getCaf()))
+				.collect(Collectors.joining(",")));
+
+		return buffer.toString();
+	}
+
+	private static String toJS0N(Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes> liquidacionesMes) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(
+				liquidacionesMes.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
+						.collect(Collectors.joining(",")));
+
+		return buffer.toString();
+	}
+
 	// ------------------------------------------------------------------------
 
 	private static interface JSON {
@@ -723,7 +743,7 @@ public class CretaServlet extends HttpServlet
 
 	}
 
-	private static class EventsPickerBasesCallback implements BasesCallback {
+	private static class InfoPickerBasesCallback implements BasesCallback {
 
 		private List<Event> errors = new ArrayList<Event>();
 		private List<Event> warnings = new ArrayList<Event>();
@@ -1074,7 +1094,7 @@ public class CretaServlet extends HttpServlet
 			String sep = "";
 			while ( tsIt.hasNext() ){
 				net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t = tsIt.next();
-				os.printf("%s\r\n{\"name\":\"%s\",%s,\"file\":\"%s\"}\r\n", sep ,CretaService.File.TRABAJADORES_TRAMOS, toJSON(t.getLiquidacion()), marshallAndEncode(t));
+				os.printf("%s\r\n{\"name\":\"%s\",%s,\"employees\":[%s],\"file\":\"%s\"}\r\n", sep ,CretaService.File.TRABAJADORES_TRAMOS, toJSON(t.getLiquidacion()),toJS0N(t.getLiquidacion().getLiquidacionMes().stream()), marshallAndEncode(t));
 				os.flush();
 				sep = ",";
 			}

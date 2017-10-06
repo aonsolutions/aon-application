@@ -4,38 +4,59 @@ import static com.esferalia.aon.gwt.payroll.client.MainCreta.hasTrabajadoresYTra
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.CRETA_URL;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.DOCUMENTO_CALCULO_LIQUIDACION;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.TRABAJADORES_TRAMOS;
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+import static com.google.gwt.dom.client.BrowserEvents.DBLCLICK;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.JsFileComparator;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsDCLResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
+import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.builder.shared.InputBuilder;
+import com.google.gwt.dom.builder.shared.TableCellBuilder;
+import com.google.gwt.dom.builder.shared.TableRowBuilder;
+import com.google.gwt.dom.client.BrowserEvents;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.AbstractCellTable.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.DefaultCellTableBuilder;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -43,6 +64,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.ImageResourceRenderer;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -53,12 +75,50 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public abstract class CretaDetail extends Composite {
+	
+	private static final Images IMAGES = GWT.create(Images.class);
+	
 
 	private static CretaDetailUiBinder uiBinder = GWT
 			.create(CretaDetailUiBinder.class);
 
 	interface CretaDetailUiBinder extends UiBinder<Widget, CretaDetail> {
 	}
+	
+	private class ExpandCollapseCell extends AbstractCell<JsFile> {
+
+		private ImageResourceRenderer renderer;
+	  
+		public ExpandCollapseCell(String... consumedEvents) {
+			super(consumedEvents);
+			renderer = new ImageResourceRenderer();
+		}
+
+		@Override
+		public void render(Context context, JsFile jsFile, SafeHtmlBuilder sb) {
+			if ( jsFile.getEmployees() == null || jsFile.getEmployees().length == 0  )
+				sb.append(renderer.render(IMAGES.blank()));
+			else 
+				sb.append(renderer.render(showingEmployees.contains(jsFile.getId()) ? IMAGES.collapse() : IMAGES.expand()));
+		}
+	  
+		@Override
+		public void onBrowserEvent(Context context, Element parent, JsFile jsFile, NativeEvent event,
+				ValueUpdater<JsFile> valueUpdater) {
+			valueUpdater.update(jsFile);
+		}
+	  
+	}
+	
+	static interface JsEmployeeTemplate extends SafeHtmlTemplates {
+
+		@Template("<div class=\"aon-nowrap\" ><span class=\"{0}\" style=\"padding-left: 16px;\"></span><span class=\"aon-bold\" style=\"padding-left: 8px;\">{3} {1}</span><span> ({2})</span></div>")
+		SafeHtml trabajador(String iconStyle, String naf, String ipf, String caf);
+	}
+	
+	private static final JsEmployeeTemplate JSEMPLOYEE_TEMPLATE = GWT
+			.create(JsEmployeeTemplate.class);
+	
 
 	@UiField
 	FormPanel formPanel;
@@ -90,7 +150,7 @@ public abstract class CretaDetail extends Composite {
 	@UiField
 	MenuItem borradorMenuItem;
 
-	@UiField
+	@UiField 
 	Button confirmacionButton;
 	@UiField
 	MenuItem confirmacionMenuItem;
@@ -100,19 +160,33 @@ public abstract class CretaDetail extends Composite {
 
 	private PopupPanel popupTooltip;
 	private Timer jsFileToolTipTimer;
-	private MultiSelectionModel<JsFile> selectionModel;
+	private HashSet<String> showingEmployees; 
+	private MultiSelectionModel<JsFile> jsFileSelectionModel;
 	private Map<String, CretaService.JsRespuesta> respuestasMap;
+	private Map<String, CretaService.JsTrabajadoresYTramos> trabajadoresYTramosMap;
+	private Map<String, MultiSelectionModel<String>> trabajadoresSelectionModel;
+	
 
 	public CretaDetail() {
 		ProvidesKey<JsFile> keyProvider = new HasIdKeyProvider<JsFile>();
-		dataGrid = new CustomDataGrid<JsFile>(keyProvider);
+		dataGrid = new CustomDataGrid<JsFile>(keyProvider) {
+			@Override
+			protected void onBrowserEvent2(Event event) {
+				// TODO Auto-generated method stub
+				super.onBrowserEvent2(event);
+			}
+		};
 
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		showingEmployees = new HashSet<String>();
 
-		selectionModel = new MultiSelectionModel<JsFile>(keyProvider);
+		jsFileSelectionModel = new MultiSelectionModel<JsFile>(keyProvider);
+		trabajadoresSelectionModel = new HashMap<String,MultiSelectionModel<String>>();
 
-		dataGrid.setSelectionModel(selectionModel,
+		dataGrid.setSelectionModel(jsFileSelectionModel,
 				DefaultSelectionEventManager.<JsFile> createCheckboxManager(0));
+		
 
 		// init MSJREC Command
 		ScheduledCommand msjRecCommand = new ScheduledCommand() {
@@ -123,14 +197,113 @@ public abstract class CretaDetail extends Composite {
 		};
 		msjRecMenuItem.setScheduledCommand(msjRecCommand);
 
-		dataGrid.addColumn(new Column<JsFile, Boolean>(new CheckboxCell()) {
+		dataGrid.addColumn(new Column<JsFile, Boolean>(new CheckboxCell() {
+			private Set<String> extendedConsumedEvents;
+			@Override
+			public Set<String> getConsumedEvents() {
+				if ( extendedConsumedEvents == null ) { 
+					extendedConsumedEvents = new HashSet<String>(super.getConsumedEvents());
+					extendedConsumedEvents.add(BrowserEvents.CLICK);
+					extendedConsumedEvents.add(BrowserEvents.KEYUP);
+				}
+				return Collections.unmodifiableSet(extendedConsumedEvents);
+			}
+			
+			@Override
+			public void onBrowserEvent(Context context, Element parent, Boolean value, NativeEvent event,
+					ValueUpdater<Boolean> valueUpdater) {
+				super.onBrowserEvent(context, parent, value, event, valueUpdater);
+				if ( event.getType().equals(BrowserEvents.CLICK) 
+					|| event.getType().equals(BrowserEvents.KEYUP) ) 
+					setSelectedAllEmployee(context.getKey().toString(), value);
+				else if ( event.getType().equals(BrowserEvents.KEYDOWN) 
+					&&  event.getKeyCode() == KeyCodes.KEY_ENTER  ) 
+					setSelectedAllEmployee(context.getKey().toString(), !value);
+				
+			}
+			
+		}) {
 			@Override
 			public Boolean getValue(JsFile jsFile) {
-				return CretaDetail.this.selectionModel.isSelected(jsFile);
+				return CretaDetail.this.jsFileSelectionModel.isSelected(jsFile);
 			}
-		}, new SelectAllHeader<JsFile>(selectionModel, dataGrid));
+		}, new SelectAllHeader<JsFile>(jsFileSelectionModel, dataGrid));
 
 		dataGrid.setColumnWidth(0, "40px");
+		
+		// --------------------------------------------------------------------
+		// 
+		Column<JsFile, JsFile> showEmployeesColumn = 
+		new Column<JsFile, JsFile>( new ExpandCollapseCell(CLICK, DBLCLICK)  )
+		{
+			@Override
+			public JsFile getValue(JsFile jsFile) {
+				return jsFile;
+			}
+			
+		};
+		showEmployeesColumn.setFieldUpdater(new FieldUpdater<JsFile, JsFile>() {
+			@Override
+			public void update(int index, JsFile jsFile, JsFile value) {
+				String id = jsFile.getId();
+				if ( showingEmployees.contains(id)) {
+					showingEmployees.remove(id);
+				}else {
+					showingEmployees.add(id);
+				}
+				dataGrid.redrawRow(index);
+				
+			}
+		});
+		
+		dataGrid.setTableBuilder(new DefaultCellTableBuilder<JsFile>(dataGrid) {
+
+		    @Override
+			public void buildRowImpl(JsFile jsFile, int absRowIndex) {
+				super.buildRowImpl(jsFile, absRowIndex);
+				
+				if ( showingEmployees.contains(jsFile.getId())) {
+					// Cache styles for faster access.
+					boolean isEven = absRowIndex % 2 == 0;
+
+					Style style = dataGrid.getResources().style();
+					String trStyle = (isEven ? style.evenRow() : style.oddRow());
+					String tdStyle = style.cell() + " " + (isEven ? style.evenRowCell() : style.oddRowCell());
+
+					for ( JsEmployee employee: jsFile.getEmployees() ) {
+						
+						TableRowBuilder tr = startRow();
+						tr.className(trStyle);
+						
+						TableCellBuilder td = tr.startTD();
+						td.className(tdStyle);
+						td.endTD();
+						
+						td = tr.startTD();
+						
+						td.className(tdStyle);
+						InputBuilder checkBox = td.startCheckboxInput();
+						checkBox.attribute("onclick", "javascript:onEmployeeChange('"+jsFile.getId()+"','"+employee.getNaf()+"',this.checked);");
+						if ( isSelectedEmployee(jsFile.getId(), employee.getNaf()) )
+							checkBox.checked();
+						checkBox.endInput();
+						td.endTD();
+						
+
+						td = tr.startTD();
+						td.className(tdStyle);
+						td.html(JSEMPLOYEE_TEMPLATE.trabajador(AON.AON_ICON_EMPLOYEE, employee.getNaf(), employee.getIpf(), employee.getCaf() ));
+						td.endTD();
+
+						tr.endTR();
+					}
+				}
+			}
+			
+		});
+		dataGrid.addColumn(showEmployeesColumn);
+		dataGrid.setColumnWidth(1, "40px");
+		// --------------------------------------------------------------------
 
 		dataGrid.addColumn(new JsFileColumn() {
 
@@ -188,10 +361,10 @@ public abstract class CretaDetail extends Composite {
 
 		});
 
-		selectionModel.addSelectionChangeHandler(new Handler() {
+		jsFileSelectionModel.addSelectionChangeHandler(new Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				boolean selected = CretaDetail.this.selectionModel
+				boolean selected = CretaDetail.this.jsFileSelectionModel
 						.getSelectedSet().size() > 0;
 				CretaDetail.this.basesButton.setEnabled(selected);
 
@@ -201,18 +374,19 @@ public abstract class CretaDetail extends Composite {
 		dataGrid.setRowData(new ArrayList<CretaService.JsFile>(0));
 
 		respuestasMap = new HashMap<String, CretaService.JsRespuesta>();
+		trabajadoresYTramosMap = new HashMap<String, CretaService.JsTrabajadoresYTramos>();
 
 		fileUpload.getElement().setPropertyString("multiple", "multiple");
 
 	}
 
 	Set<JsFile> getSelected() {
-		return selectionModel.getSelectedSet();
+		return jsFileSelectionModel.getSelectedSet();
 	}
 	
 	void setSelected( JsFile jsFile) {
-		selectionModel.clear();
-		selectionModel.setSelected(jsFile, true);
+		jsFileSelectionModel.clear();
+		jsFileSelectionModel.setSelected(jsFile, true);
 	}
 	// ------------------------------------------------------------- UIHandlers
 
@@ -268,7 +442,7 @@ public abstract class CretaDetail extends Composite {
 
 		try {
 
-			Map<String, JsTrabajadoresYTramos> trabajadoresYTramosMap = MainCreta
+			trabajadoresYTramosMap = MainCreta
 					.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
 
 			List<JsFile> filtered = new ArrayList<JsFile>();
@@ -300,7 +474,11 @@ public abstract class CretaDetail extends Composite {
 		}
 
 	}
-
+	
+	public void onEmployeeChange(String trabajadoresYTramosId, String naf, boolean checked ) {
+		setSelectedEmployee(trabajadoresYTramosId, naf, checked);
+	}
+	
 	public void onDocumentoCalculoLiquidacion(
 			CretaService.JsDCLResult success[],
 			CretaService.JsDCLResult errors[]) {
@@ -313,6 +491,7 @@ public abstract class CretaDetail extends Composite {
 	@Override
 	protected void onAttach() {
 		exportSubmitComplete();
+		exportOnEmployeeChange();
 		super.onAttach();
 	}
 
@@ -363,9 +542,15 @@ public abstract class CretaDetail extends Composite {
 	}
 
 	private void submitBases() {
+		Map<String, Collection<String>> datas = new HashMap<String, Collection<String>>();
+		try {
+			datas.put(CretaService.Parameter.NAFS.name(), getNafs());
+		}catch ( Exception e ) {
+		}
+		
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
-				getDefaults(),
-				selectionModel.getSelectedSet(),
+				datas,
+				jsFileSelectionModel.getSelectedSet(),
 				new AsyncCallback<CretaService.JsBasesResult>() {
 
 					@Override
@@ -381,11 +566,51 @@ public abstract class CretaDetail extends Composite {
 				});
 	}
 	
+	private Collection<String> getNafs() {
+		List<String> nafs = new LinkedList<String>();
+		jsFileSelectionModel.getSelectedSet()
+		.stream()
+		.map( jsFile -> jsFile.getId() )
+		.map(id -> trabajadoresSelectionModel.get(id))
+		.forEach( s -> nafs.addAll(s.getSelectedSet()));
+		return nafs;
+	}
+	
 	private Map<String,Collection<String>> getDefaults(){
 		return Collections.emptyMap();
 	}
 	
+	private boolean isSelectedEmployee(String id, String naf) {
+		MultiSelectionModel<String> selectionModel = trabajadoresSelectionModel.get(id);
+		return selectionModel != null && selectionModel.isSelected(naf);
+	}
 
+	private void setSelectedAllEmployee(String id, boolean selected) {
+		JsFile jsFile = trabajadoresYTramosMap.get(id);
+		if ( jsFile == null )
+			jsFile = respuestasMap.get(id);
+		setSelectedAllEmployee(jsFile, selected);
+				
+	}
+
+	private void setSelectedAllEmployee(JsFile jsFile, boolean selected) {
+		MultiSelectionModel<String> selectionModel = trabajadoresSelectionModel.get(jsFile.getId());
+		if ( selectionModel == null )
+			trabajadoresSelectionModel.put(jsFile.getId(), selectionModel = new MultiSelectionModel<String>() );
+		for ( JsEmployee jsEmployee: jsFile.getEmployees() )
+			selectionModel.setSelected(jsEmployee.getNaf(), selected);
+	}
+
+	private void setSelectedEmployee(String id, String naf, boolean selected) {
+		MultiSelectionModel<String> selectionModel = trabajadoresSelectionModel.get(id);
+		if ( selectionModel == null )
+			trabajadoresSelectionModel.put(id, selectionModel = new MultiSelectionModel<String>());
+		selectionModel.setSelected(naf, selected);
+		
+		jsFileSelectionModel.setSelected(trabajadoresYTramosMap.get(id), selectionModel.getSelectedSet().size() > 0);
+	}
+	
+	
 	// ------------------------------------------------------------------------
 
 	private native void exportSubmitComplete() /*-{
@@ -397,6 +622,13 @@ public abstract class CretaDetail extends Composite {
 		$wnd.__onDocumentoCalculoLiquidacion = $entry(function(success,
 				errors) {
 			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onDocumentoCalculoLiquidacion([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;)(success, errors);
+		});
+	}-*/;
+
+	private native void exportOnEmployeeChange() /*-{
+		var that = this;
+		$wnd.onEmployeeChange = $entry(function(trabajadoresYTramosId, naf,checked) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeChange(Ljava/lang/String;Ljava/lang/String;Z)(trabajadoresYTramosId, naf, checked);
 		});
 	}-*/;
 
