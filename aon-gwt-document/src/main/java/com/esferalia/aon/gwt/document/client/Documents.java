@@ -213,7 +213,6 @@ public class Documents implements EntryPoint {
 
 	}
 
-
 	class DocumentContextMenu extends ContextMenu {
 
 		ScheduledCommand viewCommand = new ScheduledCommand() {
@@ -438,7 +437,6 @@ public class Documents implements EntryPoint {
 		}
 	}
 	
-	
 	class TagContextMenu extends ContextMenu {
 		
 		ScheduledCommand editCommand = new ScheduledCommand() {
@@ -498,7 +496,6 @@ public class Documents implements EntryPoint {
 			super.show();
 		}
 	}
-	
 	
 	class CategoryContextMenu extends ContextMenu {
 		

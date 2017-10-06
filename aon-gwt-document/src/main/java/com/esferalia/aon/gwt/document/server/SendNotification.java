@@ -1,0 +1,149 @@
+package com.esferalia.aon.gwt.document.server;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.GmailUtils;
+import com.code.aon.google.apis.UrlShortenerUtils;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Permission;
+import com.google.api.services.drive.model.Property;
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.urlshortener.Urlshortener;
+
+public class SendNotification {
+
+	
+	public static void sendGmail(Domain domain, User user, Attach attach, Boolean isNew) {
+		LinkedList<String> to = new LinkedList<>();
+		
+		List<User> users = AON.getUsers(attach.getDomain().getId(), attach.getDomain().getName(), user.getLogin());
+				
+		users.stream().forEach(r -> {
+			if(!user.getId().equals(r.getId())) {
+				if(attach.getScope() != null ) {
+					Integer[] scpArr = AON.getUserScopes(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), r.getId());
+					LinkedList<Integer> l = new LinkedList<>(Arrays.asList(scpArr));
+					if(l.contains(attach.getScope())) {
+						MailAccount ma = AON.getMailAccount(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), f -> f.getUserIdProperty().eq(r.getId()));
+						if(ma.getEmail() != null) {
+							to.add(ma.getEmail());
+						}
+					}
+				} else {
+					MailAccount ma = AON.getMailAccount(domain.getName(), domain.getId(), user.getLogin(), f -> f.getUserIdProperty().eq(r.getId()));
+					if(ma.getEmail() != null) {
+						to.add(ma.getEmail());
+					}
+				}
+			}
+		});
+		
+		
+		try {
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());		
+			Gmail gmail = GmailUtils.serviceInitialize(g);
+			MimeMessage email = createEmail(to , g.getGoogleAccount(), isNew ? "Nuevo Documento" : "Documento Editado", getContent(domain, user, attach, isNew), "DOCUMENTAL | " + domain.getDescription());
+			GmailUtils.sendMessage(gmail, "me", email); 
+		} catch (MessagingException | IOException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private static String getContent(Domain domain, User user, Attach attach, Boolean isNew) {
+		String msg = "<div style='margin-left: -30px;'>"
+				+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>";
+		msg = msg + "<p> El usuario <b>"+ user.getLogin() +"</b> de la empresa <b>" + domain.getDescription() +
+			(isNew ? "</b> ha compartido el archivo <b>" : "</b> ha editado el archivo <b>") + attach.getDescription() + "." + attach.getMimeType().getExtension() + "</b></p>";
+		msg = msg + "<br>"
+				+ "<a href=\""+ getUrl(domain, user, attach) +"\" style=\"text-decoration: none;color:#fff;\">"
+					+ "<div style=\"color:#fff;background-color:#4d90fe;padding: 15px;font-weight: bold;width: 90px;\">"
+						+ "Documento"
+					+ "</div>"
+				+ "</a>";
+		msg = msg + "</div> </div>";
+		return msg;
+	}
+	
+	public static MimeMessage createEmail(LinkedList<String> to, String from, String subject,
+			  String bodyText, String fromName) throws MessagingException {
+	    Properties props = new Properties();
+	    Session session = Session.getDefaultInstance(props, null);
+
+	    MimeMessage email = new MimeMessage(session);
+	    try {
+			email.setFrom(new 	InternetAddress(from, fromName));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+	    for(String e : to) {
+	    	email.addRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(e));	
+	    }	
+	    email.setSubject(subject);
+	    email.setContent(bodyText, "text/html");
+	    return email;
+	  }
+	
+	public static String getUrl(Domain domain, User user, Attach attach){		
+		String link = "";
+		try {
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
+			Urlshortener u = UrlShortenerUtils.serviceInitialize(g);
+		
+			if(attach.getDriveId() != null){
+				Drive drive = DriveUtils.serviceInitialize(g);
+				File file = DriveUtils.getFile(drive, attach.getDriveId());
+				link = file.getAlternateLink();
+				Permission p = new Permission();
+				p.setValue(domain.getName());
+				p.setType("anyone");// user || group || domain || anyone
+				p.setRole("reader");// owner || reader || writer || commenter
+				drive.permissions().insert(file.getId(), p).execute();
+				Property property = drive.properties().get(file.getId(), "shortUrl").execute();
+				
+				return property.getValue();	
+			}
+			else{
+				String md5 = md5(domain, user, attach);
+				link = domain.getName() +"/aonDocuments/"+ attach.getId() +"-"+ md5;
+				return UrlShortenerUtils.getShortUrl(u, link);
+			}
+		} catch (IOException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		return link;
+	}
+	
+	private static String md5(Domain domain, User user, Attach attach) {
+		if(attach.getDriveId() != null) {
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
+			Drive drive = DriveUtils.serviceInitialize(g);
+			File file = DriveUtils.getFile(drive, attach.getDriveId());
+			return file.getMd5Checksum();
+		} else if(attach.getData() != null){
+			return AonFileUtils.getMD5Checksum(attach.getData());
+		}
+		return null;
+	}
+}

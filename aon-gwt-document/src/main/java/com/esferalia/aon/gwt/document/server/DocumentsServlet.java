@@ -362,7 +362,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			return true;
 		if (files.size()>0
 				&& !fi.getTitle().equals("") && !fi.getDomain().equals("false")) {
-		
 			return true;
 		}
 		return false;
@@ -420,6 +419,8 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			if(fil.getDomainId() == null)
 				fil.setDomainId(domainAux.getId());
 			vector.add(fil);
+			
+			sendNotification(domain, id, true);			
 		}
 		clearOuts(dialogCode, getThreadLocalRequest());
 		return vector;
@@ -470,6 +471,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 				f.setConfidential(fi.getConfidential());
 				fileInfo.setMimetype(f.getMimetype());
 				fileInfo.setTitle(f.getTitle());
+				fileInfo.setDomainId(fi.getDomainId());
 				Vector<Tag> tags;
 				if(fi.getTags().size()>0){
 					tags= fi.getTags();
@@ -486,7 +488,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 				
 				DBConsults.updateFile(domain, getUser(), fileInfo,tags);
 				
-				
+				sendNotification(domain, f.getFileId(), false);
 			}
 		}else{
 			fileInfo.setFileId(fi.getFileId());
@@ -520,7 +522,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			Calendar cal = Calendar.getInstance();
 			String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
 			fi.setModificationDateStr(dateStr);
-
+			fileInfo.setDomainId(fi.getDomainId());
 			try {
 				DBConsults.updateFile(domain, getUser(), fileInfo,fi.getTags());
 				
@@ -549,6 +551,8 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			}
 			fvector = new Vector<FileInfo>();
 			fvector.add(fi);
+			
+			sendNotification(domain, fileInfo.getFileId(), false);
 		}
 		return fvector;
 	}
@@ -958,6 +962,13 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	}
 
 	//-------------------- Enviar Email
+	
+	public void sendNotification(Domain domain, Integer id, Boolean isNew) {
+		Domain d = AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), getUserLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
+		attach.setDomain(AON.getDomain(attach.getDomain().getName(), attach.getDomain().getId(), getUserLogin()));
+		SendNotification.sendGmail(d, getUser(), attach, isNew);
+	}
 
 	public MailAccountList getMailAccounts(Domain domain) {
 		MailAccountList mal = new MailAccountList();
