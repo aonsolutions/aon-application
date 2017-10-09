@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -21,6 +23,7 @@ import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractLeaveController;
 
 public class ContractLeaveControllerListener extends ControllerAdapter{
@@ -112,6 +115,15 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 				detail.setContractLeave(contractLeave);
 				detail.setType(type);
 				detail.setStatus(ContractLeaveStatus.PENDING);
+				if(type==LeaveReportType.LEAVE){
+					if(contractLeave.getType()==LeaveType.OCCUPATIONAL_DISEASE){
+						detail.setDate(DateUtils.setDays(contractLeave.getStartDate(), -1));
+					} else {
+						detail.setDate(contractLeave.getStartDate());
+					}
+				} else if(type==LeaveReportType.DISCHARGE){
+					detail.setDate(contractLeave.getEndDate());
+				}
 				return detail;
 			}
 		} catch (ManagerBeanException e) {
@@ -132,12 +144,11 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 				} else if(type==LeaveReportType.DISCHARGE){
 					detailToUpdate = controller.getDischarge();
 				}
-				detailToUpdate.setDate(date);
 				IManagerBean bean = BeanManager.getManagerBean(ContractLeaveDetail.class);
-				if(type==LeaveReportType.DISCHARGE && detailToUpdate.getId()!=null && date==null){
+				if(type==LeaveReportType.DISCHARGE && detailToUpdate.getId()!=null && detailToUpdate.getDate()==null){
 					bean.remove(detailToUpdate);
 				} else {
-					if(type!=LeaveReportType.DISCHARGE || date!=null){
+					if(type!=LeaveReportType.DISCHARGE || detailToUpdate.getDate()!=null){
 						bean.insertOrUpdate(detailToUpdate);
 					}
 				}
