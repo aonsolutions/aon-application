@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 public enum Model3032017GIPUZKOARScript1 implements IModelScript<Mod303Key> {
 	
 	 DVG01 ("IVA devengado",null,TITLE)
-	,DVG02 (null					,new Mod303Key[]{Mod303Key.GP_C002	,Mod303Key.GP_X002	,Mod303Key.GP_C002},INVOICE,DIFF_INVOICE)
+	,DVG02 (null					,new Mod303Key[]{Mod303Key.GP_C002	,Mod303Key.GP_X002	,Mod303Key.GP_C003},INVOICE,DIFF_INVOICE)
 	,DVG03 ("R\u00E9gimen general"	,new Mod303Key[]{Mod303Key.GP_C004	,Mod303Key.GP_X004	,Mod303Key.GP_C005},INVOICE,DIFF_INVOICE)
 	,DVG04 (null					,new Mod303Key[]{Mod303Key.GP_C006	,Mod303Key.GP_X006	,Mod303Key.GP_C007},INVOICE,DIFF_INVOICE)
 	,DVG05 ("Modificaci\u00F3n bases y cuotas"
