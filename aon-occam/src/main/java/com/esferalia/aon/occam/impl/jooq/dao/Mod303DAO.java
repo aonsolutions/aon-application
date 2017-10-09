@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -192,6 +194,25 @@ public class Mod303DAO extends FiscalModelDAO {
 			mod303.ensureDetail(mod303.getProrateKey()).setAmount(perc);
 		}
 	}
+	
+	public static Stream<Mod303> getModelsForDiference(AONContext ctx,final Mod303 mod303) {
+		final EnumMap<Period,Mod303> declarations = new EnumMap<Period,Mod303>(Period.class);
+		
+		getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
+			.map( rec -> map303(new Mod303(),rec) )
+			.filter(mod -> mod.getAdministration() == mod303.getAdministration())
+			.filter(mod -> mod.getYear() == mod303.getYear())
+			.filter(mod -> mod.getPeriod().ordinal() < mod303.getPeriod().ordinal())
+			.forEach(mod -> {
+				if (!declarations.containsKey(mod.getPeriod())) {
+					declarations.put(mod.getPeriod(), mod);
+					getModelDetails(ctx,mod).forEach( detail -> mod.put( detail));
+				}
+			});
+		;
+		return declarations.values().stream();
+	}
+	
 
 	public static Mod303 createMod303(AONContext ctx,final Mod303 mod303) {
 		final Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
@@ -213,12 +234,13 @@ public class Mod303DAO extends FiscalModelDAO {
 			.forEach( vat -> dec.initialize(ctx, mod303, vat) );
 		
 		if (!mod303.isDiffCalculationDisabled()) {
-			getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
-			.map( rec -> map303(new Mod303(),rec) )
-			.filter(mod -> mod.getAdministration() == mod303.getAdministration())
-			.filter(mod -> mod.getYear() == mod303.getYear())
-			.filter(mod -> mod.getPeriod().ordinal() < mod303.getPeriod().ordinal())
-			.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
+			getModelsForDiference(ctx, mod303)
+//			getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
+//			.map( rec -> map303(new Mod303(),rec) )
+//			.filter(mod -> mod.getAdministration() == mod303.getAdministration())
+//			.filter(mod -> mod.getYear() == mod303.getYear())
+//			.filter(mod -> mod.getPeriod().ordinal() < mod303.getPeriod().ordinal())
+//			.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
 			.forEach(mod -> {
 				for (FiscalModelDetail source : mod.getMap().values() ) {
 					Mod303Key key = Mod303Key.getKey(source.getType());
@@ -380,9 +402,10 @@ public class Mod303DAO extends FiscalModelDAO {
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
 		return VATFormatter.formatDiffInvoices(getDiffTitle(mod303)
 				,script.getLabel()
+				,mod303.getPeriod()
 				,script.getKeys()
 				,script.getKeyTypes()
-				,getPreviousModels(ctx,mod303)
+				,getModelsForDiference(ctx, mod303)
 				 	.collect(Collectors.toCollection(LinkedList::new))
 				,getAccrualBreakdown(ctx, mod303)
 					.filter( br ->  !br.isSales()  )	
@@ -393,9 +416,10 @@ public class Mod303DAO extends FiscalModelDAO {
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
 		return VATFormatter.formatDiffInvoices(getDiffTitle(mod303)
 				,script.getLabel()
+				,mod303.getPeriod()
 				,script.getKeys()
 				,script.getKeyTypes()
-				,getPreviousModels(ctx,mod303)
+				,getModelsForDiference(ctx, mod303)
 				 	.collect(Collectors.toCollection(LinkedList::new))
 				,getAccrualBreakdown(ctx, mod303)
 					.filter( br ->  br.isSales()  )	
@@ -408,9 +432,10 @@ public class Mod303DAO extends FiscalModelDAO {
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
 		return VATFormatter.formatDiffInvoices(getDiffTitle(mod303)
 			,script.getLabel()
+			,mod303.getPeriod()
 			,script.getKeys()
 			,script.getKeyTypes()
-			,getPreviousModels(ctx,mod303)
+			,getModelsForDiference(ctx, mod303)
 			 	.collect(Collectors.toCollection(LinkedList::new))
 			,getVatBreakdown(ctx, mod303)
 				.filter( br ->  keyDAO.acceptValue(mod303, br) )	

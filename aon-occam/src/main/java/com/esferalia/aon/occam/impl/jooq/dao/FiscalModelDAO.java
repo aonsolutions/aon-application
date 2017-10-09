@@ -201,7 +201,7 @@ public class FiscalModelDAO {
 				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 				.where(FS_MODEL.DOMAIN.eq(domain))
 				.and(FS_MODEL.MODEL.eq(model.getName()))
-				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc())
+				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
 				.fetch()
 				.stream();
 	}

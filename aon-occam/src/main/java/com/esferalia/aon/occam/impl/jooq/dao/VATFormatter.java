@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.KeyTypes;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -221,6 +222,7 @@ public class VATFormatter {
 	
 	public static String formatDiffInvoices(String title
 			,String subtitle
+			,Period period
 			,IFiscalModelKey[] keys
 			,KeyTypes[] keyTypes
 			,LinkedList<FiscalModel> models
@@ -315,7 +317,7 @@ public class VATFormatter {
 				+ AonStringUtils.repeat(" ", 2)
 				));
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
-				+ AonStringUtils.leftPad("ACUMULADO PER\u00CDODO :",40)
+				+ AonStringUtils.leftPad("ACUMULADO EN " + (period.isQuarterPeriod()?"EL ":"") + period.getDescription() + " :",40)
 				+ AonStringUtils.SPACE
 				+ (!hasBase?AonStringUtils.EMPTY:AonStringUtils.leftPad(DEC.format(sumPeriodBase),15))		
 				+ (!hasQuota?AonStringUtils.EMPTY:AonStringUtils.rightPad(" ",5))
