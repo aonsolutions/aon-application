@@ -44,13 +44,15 @@ public class SendNotification {
 					Integer[] scpArr = AON.getUserScopes(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), r.getId());
 					LinkedList<Integer> l = new LinkedList<>(Arrays.asList(scpArr));
 					if(l.contains(attach.getScope())) {
-						MailAccount ma = AON.getMailAccount(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), f -> f.getUserIdProperty().eq(r.getId()));
+						MailAccount ma = AON.getMailAccount(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), f -> f.getUserIdProperty().eq(r.getId())
+								.and(f.getDomainProperty().eq(attach.getDomain().getId()).or(f.getDomainProperty().eq(attach.getDomain().getParentId()))));
 						if(ma.getEmail() != null) {
 							to.add(ma.getEmail());
 						}
 					}
 				} else {
-					MailAccount ma = AON.getMailAccount(domain.getName(), domain.getId(), user.getLogin(), f -> f.getUserIdProperty().eq(r.getId()));
+					MailAccount ma = AON.getMailAccount(domain.getName(), domain.getId(), user.getLogin(), f -> f.getUserIdProperty().eq(r.getId())
+							.and(f.getDomainProperty().eq(attach.getDomain().getId()).or(f.getDomainProperty().eq(attach.getDomain().getParentId()))));
 					if(ma.getEmail() != null) {
 						to.add(ma.getEmail());
 					}
