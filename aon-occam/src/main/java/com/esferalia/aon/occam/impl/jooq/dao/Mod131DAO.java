@@ -1513,7 +1513,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		)
 		,C11 ( Mod131Key.C11.getValue(),(mod -> mod.isAEAT()),null,null
 			,(ctx,mod) -> mod.putAmount(Mod131Key.C11, getInitialC11(ctx,mod))
-			,null
+			,"(C10<0.0)?(0.0):(C11)"
 			,"<li>Trimestres anteriores:<ul style=\"padding-left: 20px;\">" 
 			+"<li>cantidades negativas [015]:<ul style=\"padding-left: 20px;\">"
 			+"@code{c15Sum = 0.0;}"
@@ -1526,7 +1526,13 @@ public class Mod131DAO extends FiscalModelDAO {
 			+"@end{}"
 			+"</ul></li>"
 			+"<li>Sumatorio de las casillas [015] --> @{c15Sum}</li>"
-			+"<li>Resultado: <b>@{C11}</b></li>"
+			+"</ul></li>"
+			+ "@if{C10 < 0}"
+				
+				+"<li>Al ser la casilla [010] menor que cero, resultado: <b>@{C11}</b></li>"
+			+"@else{}"
+				+"<li>Resultado: <b>@{C11}</b></li>"
+			+"@end{}"
 			)
 		,C12 ( Mod131Key.C12.getValue(),(mod -> mod.isAEAT())
 			,null
