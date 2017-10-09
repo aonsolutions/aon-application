@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -12,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +36,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.ui.payroll.utils.NumberValidation;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
@@ -104,6 +105,15 @@ public class ContractLeaveController extends BasicController {
 		return new Date();
 	}
 	
+	public boolean isValidLeaveDate(){
+		ContractLeave contractLeave = (ContractLeave) this.getTo();
+		if(contractLeave.getType()==LeaveType.OCCUPATIONAL_DISEASE){
+			return DateUtils.isSameDay(DateUtils.addDays(getLeave().getDate(), 1), contractLeave.getStartDate());
+		} else {
+			return DateUtils.isSameDay(contractLeave.getStartDate(), getLeave().getDate()); 
+		}
+	}
+	
 	public Boolean getValidLeaveCollegeNumber() {
 		return checkCollegeNumber(getLeave());
 	}
@@ -168,6 +178,27 @@ public class ContractLeaveController extends BasicController {
 			this.contractFilter = new ContractFilter();
 		}
 		return this.contractFilter;
+	}
+	
+	public void onLeaveDateChange(ActionEvent event){
+		Date date = getLeave().getDate();
+		if(date!=null){
+			ContractLeave contractLeave = (ContractLeave) this.getTo();
+			if(contractLeave.getType()==LeaveType.OCCUPATIONAL_DISEASE){
+				contractLeave.setStartDate(DateUtils.addDays(date, 1));
+			} else {
+				contractLeave.setStartDate(date);
+			}
+		}
+	}
+	
+	public void onLeaveTypeChange(ActionEvent event){
+		ContractLeave contractLeave = (ContractLeave) this.getTo();
+		if(contractLeave.getType()==LeaveType.OCCUPATIONAL_DISEASE){
+			contractLeave.setStartDate(DateUtils.addDays(getLeave().getDate(), 1));
+		} else {
+			contractLeave.setStartDate(getLeave().getDate());
+		}
 	}
 	
 	@Deprecated

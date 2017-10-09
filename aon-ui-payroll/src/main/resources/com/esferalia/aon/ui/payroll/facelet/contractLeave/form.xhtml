@@ -48,13 +48,20 @@
 					</aon:div>
 					
 				</aon:panelGrid>
-				<aon:panelGrid columns="2" style="width:100%;" id="leaveDescriptionPanel"
-					columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
+				<aon:panelGrid columns="4" style="width:100%;" id="leaveDescriptionPanel"
+					columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-500,
+							aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
 					<aon:outputLabel for="ContractLeave_description"
 						value="#{bundle.aon_remark}" />
 					<aon:inputText id="ContractLeave_description"
 						size="60" maxlength="64"
 						value="#{contractLeave.to.description}" />	
+						
+					<aon:outputLabel value="#{bundle.payroll_leaveBatch_leave_date}" />
+					<aon:outputText value="#{contractLeave.to.startDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
 				</aon:panelGrid>
 				
 				<aon:panel>
@@ -65,17 +72,33 @@
 						columnClasses="aon-panelGrid-odd aon-width-130, aon-panelGrid-even aon-width-500,
 							aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
 				
-						<aon:outputLabel for="ContractLeave_startDate"
-							value="#{bundle.payroll_leaveBatch_leave_date}" />
-						<aon:selectInputDate id="ContractLeave_startDate" required="true"
-							value="#{contractLeave.to.startDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}" >
-							<a4j:support event="onchanged" reRender="ContractLeave_bases_div" ajaxSingle="#{true}"
-								actionListener="#{contractLeave.onStartDateChange}" />
-							<a4j:support event="oninputblur" reRender="ContractLeave_bases_div" ajaxSingle="#{true}"
-								actionListener="#{contractLeave.onStartDateChange}" />
-						</aon:selectInputDate>
+						<aon:outputLabel for="ContractLeave_leave_date"
+							value="#{bundle.aon_date} del parte" />
+						<aon:div id="ContractLeave_leave_date_panel">
+							<aon:selectInputDate id="ContractLeave_leave_date" required="true"
+								value="#{contractLeave.leave.date}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}" >
+								<!--  
+								<a4j:support event="onchanged" reRender="ContractLeave_bases_div" ajaxSingle="#{true}"
+									actionListener="#{contractLeave.onStartDateChange}" />
+								<a4j:support event="oninputblur" reRender="ContractLeave_bases_div" ajaxSingle="#{true}"
+									actionListener="#{contractLeave.onStartDateChange}" />
+								-->
+								<a4j:support event="onchanged" reRender="ContractLeave_leave_date_panel" ajaxSingle="#{true}"
+									actionListener="#{contractLeave.onLeaveDateChange}" />
+							</aon:selectInputDate>
+							<aon:outputText value="&#160;" 
+								rendered="#{not empty contractLeave.leave.date and !contractLeave.validLeaveDate}"
+								styleClass="aon-icon-exception"
+								style="padding-left: 15px;" />
+							<aon:outputLabel value="#{bundle.aon_start_date}: "
+								 styleClass="aon-italic aon-padding"/>
+							<aon:outputText value="#{contractLeave.to.startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>	
+						</aon:div>
 						
 						<aon:outputLabel for="ContractLeaveDetail_collegeNumber-leave"
 							value="#{bundle.payroll_contractLeave_collegeNumber}" />
@@ -98,6 +121,8 @@
 							value="#{contractLeave.to.type}">
 							<f:selectItem itemLabel=" - " itemValue="#{null}" />
 							<f:selectItems value="#{payrollCollections.leaveTypes}" />
+							<a4j:support event="onchange" reRender="ContractLeave_type, ContractLeave_leave_date_panel"
+								actionListener="#{contractLeave.onLeaveTypeChange}" />
 						</aon:selectOneMenu>
 					
 						<aon:outputLabel for="ContractLeaveDetail_cias-leave"
@@ -127,10 +152,10 @@
 						columnClasses="aon-panelGrid-odd aon-width-130, aon-panelGrid-even aon-width-500,
 							aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
 						
-						<aon:outputLabel for="ContractLeave_endDate"
-							value="#{bundle.payroll_leaveBatch_discharge_date}" />
-						<aon:selectInputDate id="ContractLeave_endDate"  
-							value="#{contractLeave.to.endDate}"
+						<aon:outputLabel for="ContractLeave_discharge_date"
+							value="#{bundle.aon_date} del parte" />
+						<aon:selectInputDate id="ContractLeave_discharge_date"  
+							value="#{contractLeave.discharge.date}"
 							reRender="dischargePanel"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" >
