@@ -17,10 +17,12 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.GmailUtils;
 import com.code.aon.google.apis.UrlShortenerUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.services.drive.Drive;
@@ -37,7 +39,17 @@ public class SendNotification {
 		LinkedList<String> to = new LinkedList<>();
 		
 		List<User> users = AON.getUsers(attach.getDomain().getId(), attach.getDomain().getName(), user.getLogin());
-				
+		
+		if(user.getDomain().equals(attach.getDomain().getParentId())) {
+			Company c = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(attach.getDomain().getId()));
+			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq((byte) 4)));
+			to.add(rm.getValue());
+		} else if(attach.getDomain().getParentId() != null) {
+			Company c = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(attach.getDomain().getParentId()));
+			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq((byte) 4)));
+			to.add(rm.getValue());
+		}
+		
 		users.stream().forEach(r -> {
 			if(!user.getId().equals(r.getId())) {
 				if(attach.getScope() != null ) {
@@ -75,12 +87,12 @@ public class SendNotification {
 	private static String getContent(Domain domain, User user, Attach attach, Boolean isNew) {
 		String msg = "<div style='margin-left: -30px;'>"
 				+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>";
-		msg = msg + "<p> El usuario <b>"+ user.getLogin() +"</b> de la empresa <b>" + domain.getDescription() +
-			(isNew ? "</b> ha compartido el archivo <b>" : "</b> ha editado el archivo <b>") + attach.getDescription() + "." + attach.getMimeType().getExtension() + "</b></p>";
+		msg = msg + "<p> El usuario <b>"+ (user.getName() != null ? user.getName() : user.getLogin()) +"</b> de la empresa <b>" + domain.getDescription() +
+			(isNew ? "</b> ha compartido el archivo: </p> <p> <b>" : "</b> ha editado el archivo: </p><p><b>") + attach.getDescription() + "." + attach.getMimeType().getExtension() + "</b></p>";
 		msg = msg + "<br>"
 				+ "<a href=\""+ getUrl(domain, user, attach) +"\" style=\"text-decoration: none;color:#fff;\">"
-					+ "<div style=\"color:#fff;background-color:#4d90fe;padding: 15px;font-weight: bold;width: 90px;\">"
-						+ "Documento"
+					+ "<div style=\"color:#fff;background-color:#4d90fe;padding: 15px;font-weight: bold;width: 120px;\">"
+						+ "Ver Documento"
 					+ "</div>"
 				+ "</a>";
 		msg = msg + "</div> </div>";
@@ -99,7 +111,7 @@ public class SendNotification {
 			e1.printStackTrace();
 		}
 	    for(String e : to) {
-	    	email.addRecipient(javax.mail.Message.RecipientType.TO,
+	    	email.addRecipient(javax.mail.Message.RecipientType.BCC,
                     new InternetAddress(e));	
 	    }	
 	    email.setSubject(subject);
