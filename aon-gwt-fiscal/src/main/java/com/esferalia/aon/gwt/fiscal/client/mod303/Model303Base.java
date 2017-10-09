@@ -640,7 +640,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.setWidget(row, 1, check);
 	}
 
-	protected void paintCheck(Mod303Key key, FlexTable table) {
+	protected CheckBox paintCheck(Mod303Key key, FlexTable table) {
 		int row = table.getRowCount();
 		paintLabel(table, row, key.getDescription());
 		final CheckBox check = new CheckBox();
@@ -655,6 +655,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			}
 		});
 		table.setWidget(row, 1, check);
+		return check;
 	}
 	
 	protected void paintDate(Mod303Key key, FlexTable table) {
