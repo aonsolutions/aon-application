@@ -351,7 +351,6 @@ public class ContractPdfController implements Serializable {
 		prepareContractDocumentShow();
 	}
 	public void onChangeContractDocument( ActionEvent event ) {
-		setReadOnly(true);
 		prepareContractDocumentShow();
 	}
 	public void onContractDocumentShow( ActionEvent event ) {

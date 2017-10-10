@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+						
+	<!--  
+	<aon:div styleClass="aon-spin-control" 
+		style="display:inline-block; border:#000 1px solid;">
+		<rich:inputNumberSlider maxValue="4" step="1"
+			styleClass="aon-margin-left" width="150" style="height:12px;"
+			value="#{contractPdf.zoomFactor}"
+			showArrows="true" 
+			showToolTip="true"  
+			showBoundaryValues="false"
+            showInput="false"  
+			enableManualInput="false" 
+            barClass=""
+            decreaseClass="aon-icon-zoom-decrease"
+            increaseClass="aon-icon-zoom-increase" >
+            <a4j:support event="onchange" reRender="#{toolbarReRender}"
+            	actionListener="#{contractPdf.onChangeZoomFactor}" />
+       </rich:inputNumberSlider>
+	</aon:div>
+	-->
+	<aon:div style="display:inline-block;">
+		<!--  
+		<aon:commandButton id="zoom-1" value="0"
+			ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+			reRender="#{toolbarReRender}"
+			style="#{(contractPdf.zoomFactor != 1)?('color:grey;'):('')}font-size:0.8em;"
+			styleClass="aon-commandButton" >
+			<f:setPropertyActionListener target="#{contractPdf.zoomFactor}" value="#{1}" />
+			<aon:actionListener method="#{contractPdf.onChangeZoomFactor}" />
+		</aon:commandButton>
+		-->
+		<aon:commandButton id="zoom-2" value="1"
+			ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+			reRender="#{toolbarReRender}"
+			style="#{(contractPdf.zoomFactor != 2)?('color:grey;'):('')}font-size:0.8em;"
+			styleClass="aon-commandButton margin-left"
+			actionListener="#{contractPdf.onChangeZoomFactor}" >
+			<f:setPropertyActionListener target="#{contractPdf.zoomFactor}" value="#{2}" />
+			<aon:actionListener method="#{contractPdf.onChangeZoomFactor}" />
+		</aon:commandButton>
+		<aon:commandButton id="zoom-3" value="2"
+			ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+			reRender="#{toolbarReRender}"
+			style="#{(contractPdf.zoomFactor != 3)?('color:grey;'):('')}font-size:0.8em;"
+			styleClass="aon-commandButton margin-left"
+			actionListener="#{contractPdf.onChangeZoomFactor}" >
+			<f:setPropertyActionListener target="#{contractPdf.zoomFactor}" value="#{3}" />
+			<aon:actionListener method="#{contractPdf.onChangeZoomFactor}" />
+		</aon:commandButton>
+		<aon:commandButton id="zoom-4" value="3"
+			ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+			reRender="#{toolbarReRender}"
+			style="#{(contractPdf.zoomFactor != 4)?('color:grey;'):('')}font-size:0.8em;"
+			styleClass="aon-commandButton margin-left"
+			actionListener="#{contractPdf.onChangeZoomFactor}" >
+			<f:setPropertyActionListener target="#{contractPdf.zoomFactor}" value="#{4}" />
+			<aon:actionListener method="#{contractPdf.onChangeZoomFactor}" />
+		</aon:commandButton>
+	</aon:div>
+
+</ui:composition>

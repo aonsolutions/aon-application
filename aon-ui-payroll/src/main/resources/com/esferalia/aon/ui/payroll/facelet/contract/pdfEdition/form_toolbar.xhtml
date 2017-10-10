@@ -51,8 +51,29 @@
 					styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 			</aon:if>
 			-->
-
+			
 			<aon:if test="#{not empty contractPdf.documentType}">
+				<aon:htmlCommandLink id="document-download" 
+					value="#{bundle.aon_draft}" target="_blank" 
+					title="#{bundle.payroll_draft_download}"
+					rendered="#{!contractPdf.nevv}"
+					actionListener="#{contractPdf.onDownloadPdf}"
+					styleClass="aon-finding-toolbar-item aon-icon-pdf" />
+					
+				<aon:div style="display:inline; width:100%;">
+					<aon:outputText value="#{bundle.aon_page}:"
+						styleClass="aon-margin-left" />
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/page_spinner.xhtml" />
+					
+					<aon:outputText value="#{bundle.aon_size}:"
+						styleClass="aon-margin-left" />
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/page_zoom.xhtml" />
+				</aon:div>
+				
+
+<!--  
 				<aon:htmlCommandLink id="document-download" 
 					value="#{bundle.aon_draft}" target="_blank" 
 					title="#{bundle.payroll_draft_download}"
@@ -102,6 +123,7 @@
 								actionListener="#{contractPdf.onLastDocumentPage}" />				
 						</aon:div>
 					</aon:div>
+-->
 		
 					<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_size}:" />
 					<!--  
@@ -123,6 +145,7 @@
 				       </rich:inputNumberSlider>
 					</aon:div>
 					-->
+<!--  
 					<aon:div style="display:inline-block;">
 						<aon:commandButton id="zoom-1" value="75%"
 							ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
@@ -161,6 +184,7 @@
 						</aon:commandButton>
 					</aon:div>
 				</aon:div>
+-->
 			</aon:if>
 			
 		</ui:define>

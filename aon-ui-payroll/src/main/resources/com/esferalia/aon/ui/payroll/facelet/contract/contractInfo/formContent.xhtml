@@ -8,6 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
 	<aon:div id="contractModelFields">
+	
 		<aon:if test="#{empty contract.params.contractModelOption}">
 			<aon:panel>
 				<f:facet name="header">
@@ -31,25 +32,101 @@
 		</aon:if>
 		
 		<aon:if test="#{not empty contract.params.contractModelOption}">
-			<a4j:repeat var="to" value="#{controller.contractFieldList}">
-				<aon:panelGrid columns="2" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-odd aon-width-350, aon-panelGrid-even aon-width-auto" >
-				
-					<aon:outputText value="#{to.name}" />
-					<aon:inputText value="#{to.expression}"
-						maxlength="128" size="64"
-						rendered="#{!to.check}" />
-					<aon:selectBooleanCheckbox value="#{to.expression}"
-						rendered="#{to.check and !to.composite}" />
-					<aon:selectOneMenu value="#{to.expression}"
-						rendered="#{to.check and to.composite}">
-						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{to.compositeList}" />
-					</aon:selectOneMenu>
+		
+			<aon:if test="#{domainSwitcher.alphaDomain or domainSwitcher.alphaUser}">
+				<aon:div styleClass="aon-toolbar">
+					<h:panelGrid columns="3" cellspacing="0" cellpadding="0" style="display:inline;">
+						<aon:div styleClass="aon-finding-title" >
+							<aon:div styleClass="aon-finding-title-internal">
+								<aon:outputText value="Mostrar como" />
+							</aon:div>
+						</aon:div>
+						<aon:div styleClass="aon-finding-subtitle" >
+							<aon:div styleClass="aon-finding-subtitle-internal">
+								<aon:outputText value="&#160;" />
+							</aon:div>
+						</aon:div>
+						<aon:div styleClass="aon-finding-toolbar" >
+							<aon:div styleClass="aon-finding-toolbar-item-group">
+								<!--  
+								<aon:selectOneMenu value="#{contract.showDocumentView}"
+									valueChangeListener="#{contract.onChangeDocumentView}"
+									reRender="contractModelFields">
+									<f:selectItem itemLabel="Formulario" itemValue="#{false}" />
+									<f:selectItem itemLabel="Documento" itemValue="#{true}" />
+								</aon:selectOneMenu>
+								-->
+								<aon:commandButton title="Mostrar valores ordenados"
+									value="Formulario"
+									rendered="#{contract.showDocumentView}"
+									reRender="contractModelFields"
+									styleClass="aon-finding-toolbar-item aon-icon-option"
+									onclick="Richfaces.showModalPanel('waitProccess')" 
+					     			oncomplete="Richfaces.hideModalPanel('waitProccess')" >
+									<f:setPropertyActionListener
+										target="#{contract.showDocumentView}" value="#{false}" />
+								</aon:commandButton>	
+								<aon:commandButton title="Mostrar valores sobre el documento"
+									value="Documento"
+									rendered="#{!contract.showDocumentView}"
+									reRender="contractModelFields"
+									styleClass="aon-finding-toolbar-item aon-icon-page"
+									onclick="Richfaces.showModalPanel('waitProccess')" 
+					     			oncomplete="Richfaces.hideModalPanel('waitProccess')" >
+									<f:setPropertyActionListener
+										target="#{contract.showDocumentView}" value="#{true}" />
+									<f:setPropertyActionListener
+										target="#{contractPdf.documentType}" value="#{contractPdf.contractPdfType}" />
+									<!--  
+									<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
+									-->
+									<aon:actionListener method="#{contractPdf.onContractDocumentPreview}" />
+								</aon:commandButton>
+							</aon:div>
+						</aon:div>
+					</h:panelGrid>
+					<aon:if test="#{contract.showDocumentView}">
+						<aon:div style="float:right;margin-right:0;" >
+							<aon:outputText value="#{bundle.aon_size}:"
+								styleClass="aon-margin-left" />
+							<ui:include
+								src="/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/page_zoom.xhtml" />
+							<aon:outputText value="&#160;" styleClass="aon-margin-left" />
+							<aon:outputText value="#{bundle.aon_page}:"
+								styleClass="aon-margin-left" />
+							<ui:include
+								src="/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/page_spinner.xhtml" />
+						</aon:div>
+					</aon:if>
+				</aon:div>
+			</aon:if>		
+			
+			<aon:if test="#{!contract.showDocumentView}">
+				<a4j:repeat var="to" value="#{controller.contractFieldList}">
+					<aon:panelGrid columns="2" styleClass="aon-width-all"
+						columnClasses="aon-panelGrid-odd aon-width-350, aon-panelGrid-even aon-width-auto" >
 					
-				</aon:panelGrid>
-			</a4j:repeat>
+						<aon:outputText value="#{to.name}" />
+						<aon:inputText value="#{to.expression}"
+							maxlength="128" size="64"
+							rendered="#{!to.check}" />
+						<aon:selectBooleanCheckbox value="#{to.expression}"
+							rendered="#{to.check and !to.composite}" />
+						<aon:selectOneMenu value="#{to.expression}"
+							rendered="#{to.check and to.composite}">
+							<f:selectItem itemLabel="-" itemValue="" />
+							<f:selectItems value="#{to.compositeList}" />
+						</aon:selectOneMenu>
+						
+					</aon:panelGrid>
+				</a4j:repeat>
+			</aon:if>
+			<aon:if test="#{contract.showDocumentView}">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/form_content.xhtml" />
+			</aon:if>
+			
 		</aon:if>
-	</aon:div>
+	</aon:div>	
+	
 	
 </ui:composition>

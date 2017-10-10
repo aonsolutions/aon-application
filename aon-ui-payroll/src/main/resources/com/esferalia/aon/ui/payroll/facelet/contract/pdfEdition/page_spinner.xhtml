@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:div styleClass="aon-spin-control" >
+		<aon:div styleClass="aon-spin-control-element"> 
+			<aon:commandButton id="contractDetail-first"  
+				ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+				disabled="#{contractPdf.firstDocumentPage}"
+				reRender="#{toolbarReRender}"
+				styleClass="aon-dataScroller-button #{contractPdf.firstDocumentPage?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}"
+				actionListener="#{contractPdf.onFirstDocumentPage}" />
+		</aon:div>
+		<aon:div styleClass="aon-spin-control-element"> 
+			<aon:commandButton id="contractDetail-prev"  
+				ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+				disabled="#{contractPdf.firstDocumentPage}"
+				reRender="#{toolbarReRender}"
+				styleClass="aon-dataScroller-button #{contractPdf.firstDocumentPage?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}"
+				actionListener="#{contractPdf.onPreviousDocumentPage}" />
+		</aon:div>
+		<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
+			<aon:outputFormat value="#{bundle.aon_spin_result}">
+				<f:param value="#{contractPdf.documentPage}" />
+				<f:param value="#{contractPdf.numberOfDocumentPages}" />
+			</aon:outputFormat>	
+		</aon:div>
+		<aon:div styleClass="aon-spin-control-element"> 
+			<aon:commandButton id="contractDetail-next" 
+				ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+				disabled="#{contractPdf.lastDocumentPage}"
+				reRender="#{toolbarReRender}"
+				styleClass="aon-dataScroller-button #{contractPdf.lastDocumentPage?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}"
+				actionListener="#{contractPdf.onNextDocumentPage}" />				
+		</aon:div>
+		<aon:div styleClass="aon-spin-control-element"> 
+			<aon:commandButton id="contractDetail-last" 
+				ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+				disabled="#{contractPdf.lastDocumentPage}"
+				reRender="#{toolbarReRender}"
+				styleClass="aon-dataScroller-button #{contractPdf.lastDocumentPage?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}"
+				actionListener="#{contractPdf.onLastDocumentPage}" />				
+		</aon:div>
+	</aon:div>
+	
+</ui:composition>

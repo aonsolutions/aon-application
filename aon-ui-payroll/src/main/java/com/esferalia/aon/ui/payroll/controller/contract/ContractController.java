@@ -146,6 +146,8 @@ public class ContractController extends BasicController {
 	
 	private boolean showCommunicationWindow;
 	
+	private boolean showDocumentView;
+	
 	private WorkdayManager workdayManager;
 	
 	public WorkdayManager getWorkdayManager() {
@@ -284,6 +286,13 @@ public class ContractController extends BasicController {
 	}
 	public void setEnterprise(Enterprise enterprise) {
 		this.enterprise = enterprise;
+	}
+
+	public boolean isShowDocumentView() {
+		return showDocumentView;
+	}
+	public void setShowDocumentView(boolean showDocumentView) {
+		this.showDocumentView = showDocumentView;
 	}
 	
 	public List<SelectItem> getWorkPlaces() {
