@@ -2,9 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -15,10 +16,94 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public class FiscalModelUtils {
 	
+	@FunctionalInterface
+	private interface IFiscalModelTypeName {
+		boolean accept(IFiscalModel mod);
+	}
+	
+	private enum FiscalModelTypeName {
+		// ********** MODELO 111 ********** 
+		 M111	("111"	,mod -> mod.getModel() == FiscalModelType.M111 && ( mod.isAEAT() || (mod.isMonthPeriod() && (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa() ) ) ) ) 
+		,M110	("110"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isQuarterPeriod() && (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa() ) )
+		,M745	("745"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isNavarra() && mod.isMonthPeriod() )
+		,M715	("715"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isNavarra() && mod.isQuarterPeriod() )
+		// ********** MODELO 115 ********** 
+		,M115 	("115"	,mod -> mod.getModel() == FiscalModelType.M115 && !mod.isAraba() && !mod.isNavarra() )
+		,M115A 	("115-A",mod -> mod.getModel() == FiscalModelType.M115 && mod.isAraba())
+		,M760 	("760"	,mod -> mod.getModel() == FiscalModelType.M115 && mod.isNavarra() && mod.isMonthPeriod() )
+		,M759 	("759"	,mod -> mod.getModel() == FiscalModelType.M115 && mod.isNavarra() && mod.isQuarterPeriod() )
+		// ********** MODELO 123 ********** 
+		,M123 	("123"	,mod -> mod.getModel() == FiscalModelType.M123 && !mod.isNavarra() )
+		,M716 	("716"	,mod -> mod.getModel() == FiscalModelType.M123 && mod.isNavarra() )
+
+		// ********** MODELO IVA **********		
+		,MF69	("F69",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isNavarra() )	
+		,M303	("303",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303 ) 
+				&& (mod.isAEAT() || ((mod.isAraba() || mod.isBizkaia()) && !mod.isLastPeriod()))
+		)
+		,M300	("300",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isMonthPeriod() && !mod.isLastPeriod() )	
+		,M320	("320",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isQuarterPeriod() && !mod.isLastPeriod() )	
+		
+		// ********** MODELO 390 **********
+		,M390	("390",mod -> mod.getModel() == FiscalModelType.M390 
+			|| mod.getModel() == FiscalModelType.M390_HF
+			|| ( (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303 )
+					&& (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa()) 
+					&& mod.isLastPeriod() )
+		)
+		
+		// ********** MODELO 130 ********** 
+		,M130	("130",mod -> mod.getModel() == FiscalModelType.M130)
+		// ********** MODELO 131 ********** 
+		,M131	("131",mod -> mod.getModel() == FiscalModelType.M131)
+		// ********** MODELO 340 ********** 
+		,M340	("340",mod -> mod.getModel() == FiscalModelType.M340)
+		// ********** MODELO 347 ********** 
+		,M347	("347",mod -> mod.getModel() == FiscalModelType.M347)
+		// ********** MODELO 349 ********** 
+		,M349	("349",mod -> mod.getModel() == FiscalModelType.M349)
+		// ********** MODELO 180 ********** 
+		,M180	("180",mod -> mod.getModel() == FiscalModelType.M180)
+		// ********** MODELO 184 ********** 
+		,M184	("184",mod -> mod.getModel() == FiscalModelType.M184)
+		// ********** MODELO 190 ********** 
+		,M190	("190",mod -> mod.getModel() == FiscalModelType.M190)
+		// ********** MODELO 193 ********** 
+		,M193	("193",mod -> mod.getModel() == FiscalModelType.M193)
+		// ********** MODELO 200 ********** 
+		,M200	("200",mod -> mod.getModel() == FiscalModelType.M200)
+		// ********** MODELO 202 ********** 
+		,M202	("202",mod -> mod.getModel() == FiscalModelType.M202)
+		;
+		
+		private String name;
+		private IFiscalModelTypeName accepter;
+		
+		private FiscalModelTypeName( String name, IFiscalModelTypeName getter) {
+			this.name = name;
+			this.accepter = getter;
+		}
+		public String getName() {
+			return name;
+		}
+		private boolean accept(IFiscalModel mod) {
+			return this.accepter.accept(mod);
+		}
+		private static String getName(IFiscalModel mod) {
+			for (FiscalModelTypeName f : FiscalModelTypeName.values()) {
+				if (f.accept(mod)) return f.getName();
+			}
+			return null;
+		}
+	}
+	
+	public static String getModelName(IFiscalModel fm) {
+		String name = FiscalModelTypeName.getName(fm);
+		return AonStringUtils.isNotBlank(name)?name:fm.getModel().getName();
+	}
+	
 	public static void paintHeaderTable(SimplePanel headerPanel, FiscalModel fm) {
 		Administration admon = (fm == null?Administration.COMMON_TERRITORY:fm.getAdministration());
-		Period period = fm.getPeriod();
-		
 		headerPanel.clear();
 		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
 		
@@ -32,7 +117,7 @@ public class FiscalModelUtils {
 		headerTable.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderImage());
 		headerTable.getFlexCellFormatter().setRowSpan(0, 0, 2);
 		
-		headerTable.setWidget(0, 1, new Label(fm.getModel().getName(admon,period))); 
+		headerTable.setWidget(0, 1, new Label( FiscalModelUtils.getModelName(fm))); 
 		headerTable.getFlexCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
 		headerTable.getFlexCellFormatter().addStyleName(0, 1, getAdministrationBG(admon));
 		headerTable.getFlexCellFormatter().setRowSpan(0, 1, 2);
@@ -118,154 +203,7 @@ public class FiscalModelUtils {
 		} 
 		return AON.AON_RESOURCES.aonAeat();
 	}
-/*
-	public static <T extends FiscalModel> CustomDialog getFinalizeDialog(final IFiscalModelCallback<T> callback) {
-		final CustomDialog finalizeDialog = new CustomDialog();
-		finalizeDialog.setCaption(AON.MSG.finish());
-		finalizeDialog.setGlassEnabled(true);
-		finalizeDialog.setAnimationEnabled(true);
-		
-		FlexTable tab = new FlexTable();
-		tab.setCellPadding(0);
-		tab.setCellSpacing(0);
-		tab.setStyleName(AON.AON_CSS.aonMarginTop());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		ColumnFormatter cf = tab.getColumnFormatter();
-		cf.setWidth(0, "130px");
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
-		cf.setWidth(1, "450px");
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
-		FlexCellFormatter fmt = tab.getFlexCellFormatter();
-		
-		int row = 0;
-		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label(AON.MSG.fiscalDebt()));
-		fmt.setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		fmt.addStyleName(row, 1, AON.AON_CSS.aonTextRight());
-		fmt.addStyleName(row, 1, AON.AON_CSS.aonFontBig());
-		fmt.addStyleName(row, 1, AON.AON_CSS.aonPaddingRight());
-		fmt.addStyleName(row, 1, AON.AON_CSS.aonBold());
-		tab.setWidget(row, 1, new Label( AON.FMT.format(callback.getFiscalModel().getResult())));
-		row++;
-		
-		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label(AON.MSG.declarationType()));
-		fmt.setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		if (callback.getFiscalModel().getDeclarationType() == FiscalModelDeclarationType.NEGATIVE) {
-			fmt.addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
-			fmt.addStyleName(row, 1, AON.AON_CSS.aonBold());
-			tab.setWidget(row, 1, new Label( FiscalModelDeclarationType.NEGATIVE.getDescription() ));
-		} else {
-			final CreditorBox creditorBox = new CreditorBox(callback.getDomainName(),callback.getDomain() );
-			final IbanTextBox iban = new IbanTextBox( new EnterpriseSuggestOracle<T>(callback) );
-			
-			final ListBox listBox = new ListBox();
-			listBox.setSelectedIndex(0);
-			listBox.addItem(FiscalModelDeclarationType.DEPOSIT.getDescription(), FiscalModelDeclarationType.DEPOSIT.getValue());
-			listBox.addItem(FiscalModelDeclarationType.BANK.getDescription(), FiscalModelDeclarationType.BANK.getValue());
-			if (callback.getFiscalModel().isAEAT()) {
-				listBox.addItem(FiscalModelDeclarationType.CCT.getDescription(), FiscalModelDeclarationType.CCT.getValue());
-			}
-				listBox.addChangeHandler(new ChangeHandler() {
-					@Override
-					public void onChange(ChangeEvent event) {
-						FiscalModelDeclarationType type = FiscalModelDeclarationType.safeValueOf(listBox.getSelectedValue());
-						callback.getFiscalModel().setDeclarationType( type );
-						iban.setEnabled( type.isBankRequired() );
-						creditorBox.setEnabled(type.mustCreateFinance());
-					}
-				});
-				tab.setWidget(row, 1, listBox );
-				row++;
-			
-			fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-			tab.setWidget(row, 0, new Label(AON.MSG.creditor()));
-			fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-			Finance finance = callback.getFiscalModel().getFinance();
-			creditorBox.setValue(
-				new Creditor()
-					.setRegistry(finance.getRegistry())
-					.setId(finance.getRegistry()==null?null:finance.getRegistry().getId())
-				);
-			creditorBox.addSelectionHandler(new SelectionHandler<Creditor>() {
-				
-				@Override
-				public void onSelection(SelectionEvent<Creditor> event) {
-					Registry registry = event.getSelectedItem().getRegistry();
-					callback.getFiscalModel().getFinance().setRegistry(registry);
-					callback.getFiscalModel().getFinance().setRegistryDocument(registry.getDocument());
-					callback.getFiscalModel().getFinance().setRegistryDocumentCountry(registry.getDocumentCountry());
-					callback.getFiscalModel().getFinance().setRegistryDocumentType(registry.getDocumentType());
-					callback.getFiscalModel().getFinance().setRegistryName(registry.getName());
-				}
-			});
-			tab.setWidget(row, 1, creditorBox);
-			row++;
-	
-			fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-			tab.setWidget(row, 0, new Label(AON.MSG.bankAccount()));
-			fmt.setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-			
-			tab.setWidget(row, 1, iban);
-			iban.setEnabled( false );
-			iban.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-				
-				@Override
-				public void onSelection(SelectionEvent<Suggestion> event) {
-					IbanSuggestion suggestion = (IbanSuggestion) event.getSelectedItem();
-					IIbanContainer cont = suggestion.getIbanContainer();
-					iban.setValue(cont.getIBan());
-					BankAccount bankAccount = new BankAccount(cont.getIBan());
-					callback.getFiscalModel().getFinance().setBankAccount(bankAccount);
-					callback.getFiscalModel().getFinance().setBankAlias(cont.getAlias());
-					callback.getFiscalModel().getFinance().setBic(cont.getBic());
-				}
-			});
-		}
-		
-		row++;
-	
-		fmt.setColSpan(row, 0, 2);
-		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.setStyleName(AON.AON_CSS.aonPadding());
-		flowPanel.addStyleName(AON.AON_CSS.aonMarginTop());
-		flowPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		Button acceptButton = new Button();
-		acceptButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
-		acceptButton.setText( AON.MSG.accept());
-		acceptButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				finalizeDialog.hide();
-				callback.doFinish();
-			}
-		});
-		
-		flowPanel.add(acceptButton);
-		Button cancelButton = new Button();
-		cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-		cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-		cancelButton.setText( AON.MSG.cancelAction());
-		cancelButton.addClickHandler(new ClickHandler() {
-	
-			@Override
-			public void onClick(ClickEvent event) {
-				finalizeDialog.hide();
-			}
-			
-		});
-		flowPanel.add(cancelButton);
-		tab.setWidget(row, 0, flowPanel);
-		finalizeDialog.add(tab);
-		return finalizeDialog;
-	}
-*/	
+
 	public static <T extends FiscalModel> void paintPaymentInfo(FlowPanel paymentInfo,T mod) {
 		paymentInfo.clear();
 		paymentInfo.setVisible(mod.isFinished());

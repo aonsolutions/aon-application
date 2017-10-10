@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -24,8 +23,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -178,14 +179,32 @@ public class Model303 extends MainEntryPoint {
 	
 	private void select(Mod303 selected) {
 		cleanErrorPanel();
-		if (selected.getAdministration() == Administration.COMMON_TERRITORY) {
+		if (selected.isAEAT()) {
 			declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback()));
-		} else if (selected.getAdministration() == Administration.BIZKAIA) {
-			declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));
-		} else if (selected.getAdministration() == Administration.ALAVA) {
-			declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));
-		} else if (selected.getAdministration() == Administration.GIPUZKOA) {
-			declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));
+		} else if (selected.isBizkaia()) {
+			if (selected.getYear() < 2017) {
+				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));	
+			} else if (!selected.isLastPeriod()) { 
+				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));
+			} else {
+				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
+			}
+		} else if (selected.isAraba()) {
+			if (selected.getYear() < 2017) {
+				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));	
+			} else if (!selected.isLastPeriod()) { 
+				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));
+			} else {
+				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
+			}
+		} else if (selected.isGipuzkoa()) {
+			if (selected.getYear() < 2017) {
+				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));	
+			} else if (!selected.isLastPeriod()) { 
+				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));
+			} else {
+				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
+			}
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
@@ -393,12 +412,28 @@ public class Model303 extends MainEntryPoint {
 	private void showErrorPanel(String msg) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		SimpleLayoutPanel panel = new SimpleLayoutPanel();
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		panel.add(label);
+		ScrollPanel panel = new ScrollPanel();
+		FlexTable tab = new FlexTable();
+		tab.setWidth("95%");
+		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.getColumnFormatter().setWidth(0, "20px");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		
+		InlineLabel icon = new InlineLabel("");
+		icon.setStyleName(AON.AON_CSS.aonIconPointRed());
+		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		tab.setWidget(0, 0, icon);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		
+		InlineLabel label = new InlineLabel(msg);
+		label.addStyleName(AON.AON_CSS.aonColorRed());
+		label.addStyleName(AON.AON_CSS.aonBold());
+		tab.setWidget(0, 1, label);
+		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+		
+		panel.add(tab);
 		resultsPanel.setWidget(panel);
 	}
 	

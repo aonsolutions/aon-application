@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
@@ -428,7 +429,7 @@ public class Mod202DAO extends FiscalModelDAO {
 	private static String getAccountInfoInfo(AONContext ctx, Mod202 mod, IModelScript<Mod202Key> script,
 			Mod202KeyDAO keyDAO) {
 		String title = "SALDOS DE CUENTAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ mod.getModelName() 
+				+ FiscalModelUtils.getModelName(mod) 
 				+ " DEL " + mod.getPeriod().getDescription()
 				+ " DE " + mod.getYear();
 		

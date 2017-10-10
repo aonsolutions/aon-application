@@ -106,4 +106,8 @@ public enum Period implements Serializable {
 		return (byte) ordinal();
 	}
 
+	public boolean isLastPeriod() {
+		return (this == Period.T4 || this == Period.M12);
+	}
+
 }

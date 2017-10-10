@@ -1,11 +1,5 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
-import static com.esferalia.aon.occam.api.model.type.Administration.ALAVA;
-import static com.esferalia.aon.occam.api.model.type.Administration.BIZKAIA;
-import static com.esferalia.aon.occam.api.model.type.Administration.COMMON_TERRITORY;
-import static com.esferalia.aon.occam.api.model.type.Administration.GIPUZKOA;
-import static com.esferalia.aon.occam.api.model.type.Administration.NAVARRA;
-
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -118,9 +112,6 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		this.model = model;
 		return this;
 	}
-	public String getModelName() {
-		return getModel().getName(administration, period);
-	}
 	
 	@Override
 	public Period getPeriod() {
@@ -137,15 +128,6 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public FiscalModel setAdministration(Administration administration) {
 		this.administration = administration;
 		return this;
-	}
-	public boolean isFinished() {
-		return getStatus() == FiscalStatus.FINISHED;
-	}
-	public boolean isNotFinished() {
-		return getStatus() != FiscalStatus.FINISHED;
-	}
-	public boolean isBlocked() {
-		return getStatus() == FiscalStatus.BLOCKED;
 	}
 	public FiscalModel setStatus(FiscalStatus status) {
 		this.status = status;
@@ -490,22 +472,6 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		to.setMap(from.getMap());
 	}
 
-	public boolean isAraba() {
-		return (administration == ALAVA);
-	}
-	public boolean isBizkaia() {
-		return (administration == BIZKAIA);
-	}
-	public boolean isGipuzkoa() {
-		return (administration == GIPUZKOA);
-	}
-	public boolean isNavarra() {
-		return (administration == NAVARRA);
-	}
-	public boolean isAEAT() {
-		return (administration == COMMON_TERRITORY);
-	}
-
 	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {
@@ -553,6 +519,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public IFiscalModelKey getDeclarationTypeKey() {
 		return null;
 	}
+	
 	public double getResult() {
 		// REDEFINE
 		return 0;

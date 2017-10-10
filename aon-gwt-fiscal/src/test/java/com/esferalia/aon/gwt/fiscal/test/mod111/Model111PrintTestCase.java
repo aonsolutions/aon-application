@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.server.Mod111ExcelAction;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -29,7 +30,7 @@ public class Model111PrintTestCase {
 
 	private static void toExcel(Mod111 mod111, IModelScript<Mod111Key>[] script) throws IOException {
 		Mod111ExcelAction action = new Mod111ExcelAction(mod111);
-		action.initialize(mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()));
+		action.initialize(FiscalModelUtils.getModelName(mod111));
 		
 		String s = mod111.getName();
 		StringBuilder sb = new StringBuilder();
@@ -43,7 +44,7 @@ public class Model111PrintTestCase {
 		}
 
 		String fileName = "/tmp/test/Mod"
-			+ mod111.getModel().getName(mod111.getAdministration(),mod111.getPeriod() )
+			+ FiscalModelUtils.getModelName(mod111)
 			+ "_" + mod111.getYear() 
 			+ "_" + mod111.getPeriod().getName()
 			+ "_" + mod111.getAdministration().toString()

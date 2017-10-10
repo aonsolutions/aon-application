@@ -52,6 +52,7 @@ public enum FiscalModelType implements Serializable{
 		}
 		return null;
 	}
+/*	
 	public String getName(Administration admon, Period period) {
 		if (this == M111) {
 			if (period.isQuarterPeriod() && (admon == Administration.ALAVA 
@@ -62,8 +63,14 @@ public enum FiscalModelType implements Serializable{
 				return (period.isMonthPeriod()?"745":"715");	
 			}
 		} else if (this == M303) {
-			if (admon == Administration.GIPUZKOA) {
+			if (admon == Administration.COMMON_TERRITORY) {
+				return "303";
+			} else if (period.isLastPeriod()) {
+				return "390";
+			}else if (admon == Administration.GIPUZKOA && period.isQuarterPeriod()) {
 				return "300";
+			}else if (admon == Administration.GIPUZKOA && !period.isQuarterPeriod()) {
+				return "320";
 			} else {
 				return "303";
 			}
@@ -80,7 +87,7 @@ public enum FiscalModelType implements Serializable{
 		}
 		return name;
 	}
-	
+*/	
 	public boolean isMonthly(Administration admon) {
 		return this != M130 && this != M131 && this != M202;
 	}

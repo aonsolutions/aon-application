@@ -17,11 +17,13 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -64,8 +66,8 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		CellUtil.createCell(row, 0,"");
 		sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 0));
 		CellUtil.createCell(row, 1, getTitle(), headerCellStyle);
-
-		CellUtil.createCell(row, 3, model.getModel().getName(model.getAdministration(), model.getPeriod()),
+		
+		CellUtil.createCell(row, 3, FiscalModelUtils.getModelName(model),
 				headerCellStyle);
 		row = sheet.createRow(rowCount++);
 		CellUtil.createCell(row, 3, AonNumberUtils.toString(model.getYear()), headerCellStyle);
@@ -100,12 +102,16 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 8 * 256);
 		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 70 * 256);
+		sheet.setColumnWidth(cellCount++, 50 * 256);
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 4 * 256);
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 10 * 256);
 
+	}
+
+	protected int getConceptLength() {
+		return 85;
 	}
 
 	@Override
@@ -117,8 +123,8 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		String concept = AonStringUtils.trimToEmpty(ms.getLabel());
 		int l = AonStringUtils.length(concept);
 		if (l != 0) {
-			int r = (int) (l / ((ms.getKeys() == null)?130:102)) + 1; 
-			int h = (r * 250);
+			int r = (int) AonMathUtils.floor( ((double) l) / getConceptLength() , 0);
+			int h = 230 + (r * 230);
 			row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
 		}
 		row.setRowStyle(rowStyle);
@@ -127,7 +133,7 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		++cellCount;
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
-		style.setFont(ms.isTitle() ? boldFont : defaulFont );
+		style.setFont(ms.isTitle() ? modBoldFont: modFont );
 		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
@@ -149,7 +155,7 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 			cell = row.createCell(cellCount++);
 			style = workbook.createCellStyle();
 			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
-			style.setFont(ms.isTitle()?boldFont:defaulFont);
+			style.setFont(ms.isTitle()?modBoldFont:modFont);
 			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);

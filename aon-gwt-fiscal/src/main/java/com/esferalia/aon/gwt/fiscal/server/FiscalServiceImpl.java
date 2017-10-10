@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,13 +21,10 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
@@ -56,9 +51,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
-import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
-import com.esferalia.aon.occam.api.model.fiscal.mod115.Model115ScriptProvider;
-import com.esferalia.aon.occam.api.model.fiscal.mod123.Model123ScriptProvider;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
@@ -68,7 +60,6 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
@@ -849,54 +840,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public Attach getMod111Attach(String domainName, Mod111 mod111){
-		Mod111ExcelAction action = new Mod111ExcelAction(mod111);
-		action.initialize(mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()));
-		ByteArrayOutputStream output = new ByteArrayOutputStream();			
-		for (IModelScript<Mod111Key> ms : Model111ScriptProvider.obtainScript(mod111)) {
-			action.accept(ms);
-		}
-		action.beforeFinalize();
-		try {
-			action.finalize(output);
-		} catch (IOException e) {e.printStackTrace();}
-		
-		return new Attach(new Domain().setId(mod111.getDomain()).setName(domainName)
-				, mod111.getId(), AttachType.MOD111, "Modelo 111", MimeType.MS_EXCEL, null, output.toByteArray());
-	}
-	
-	public Attach getMod115Attach(String domainName, Mod115 mod115){
-		Mod115ExcelAction action = new Mod115ExcelAction(mod115);
-		action.initialize(mod115.getModel().getName(mod115.getAdministration(), mod115.getPeriod()));
-		ByteArrayOutputStream output = new ByteArrayOutputStream();			
-		for (IModelScript<Mod115Key> ms : Model115ScriptProvider.obtainScript(mod115)) {
-			action.accept(ms);
-		}
-		action.beforeFinalize();
-		try {
-			action.finalize(output);
-		} catch (IOException e) {e.printStackTrace();}
-		
-		return new Attach(new Domain().setId(mod115.getDomain()).setName(domainName)
-				, mod115.getId(), AttachType.MOD115, "Modelo 115", MimeType.MS_EXCEL, null, output.toByteArray());
-	}
-	
-	public Attach getMod123Attach(String domainName, Mod123 mod123){
-		Mod123ExcelAction action = new Mod123ExcelAction(mod123);
-		action.initialize(mod123.getModel().getName(mod123.getAdministration(), mod123.getPeriod()));
-		ByteArrayOutputStream output = new ByteArrayOutputStream();			
-		for (IModelScript<Mod123Key> ms : Model123ScriptProvider.obtainScript(mod123)) {
-			action.accept(ms);
-		}
-		action.beforeFinalize();
-		try {
-			action.finalize(output);
-		} catch (IOException e) {e.printStackTrace();}
-		
-		return new Attach(new Domain().setId(mod123.getDomain()).setName(domainName)
-				, mod123.getId(), AttachType.MOD123, "Modelo 123", MimeType.MS_EXCEL, null, output.toByteArray());
-	}
-
 	public LinkedList<Finance> getAccountFinances(String domainName, int domain
 			, FinanceParams params, int offset, int limit) {
 		return ACCOUNTING.getAccountFinances(domainName, domain, this.getUserLogin(), params, offset, limit);		

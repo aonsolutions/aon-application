@@ -23,11 +23,6 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 	}
 
 	@Override
-	protected int getConceptLength() {
-		return 101;
-	}
-
-	@Override
 	protected String getTitle() {
 		return "Impuesto sobre Sociedades. Pago fraccionado. ";
 	}
@@ -39,7 +34,9 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 				:AonStringUtils.EMPTY);
 	}
 	@Override
-	protected void headerRow() {
+	protected void printModelInfo() {
+		super.printModelInfo();
+		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 
@@ -49,26 +46,39 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 
 		CellUtil.createCell(row, cellCount, "Concepto", headerCellStyle);
 		sheet.setColumnWidth(cellCount++, 8 * 256);
-		sheet.setColumnWidth(cellCount++, 40 * 256);
+		sheet.setColumnWidth(cellCount++, 30 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 		
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
 		rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 
 		CellUtil.createCell(row, cellCount, "", rightHeaderCellStyle);
-		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 3 * 256);
 		sheet.setColumnWidth(cellCount++, 10 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 2, 3));
 
 		CellUtil.createCell(row, cellCount, "", rightHeaderCellStyle);
-		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 3 * 256);
 		sheet.setColumnWidth(cellCount++, 10 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 4, 5));
 
 		CellUtil.createCell(row, cellCount, "", rightHeaderCellStyle);
-		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 3 * 256);
 		sheet.setColumnWidth(cellCount++, 10 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 6, 7));
+		
+		row = sheet.createRow(rowCount++);
+		row.createCell(0);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+		sheet.setRepeatingRows(new CellRangeAddress(0, 7, 0, 7));
+		
+		
+	}
+	
+	@Override
+	protected void headerRow() {
+		sheet.setRowBreak(rowCount - 1);
 
 	}
 	@Override

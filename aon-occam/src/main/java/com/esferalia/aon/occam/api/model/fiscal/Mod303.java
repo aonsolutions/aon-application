@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -99,6 +98,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public Mod303Key getProrateKey() {
 		return Mod303Key.CM_003;
 	}
+
 	public boolean isToCompensate() {
 		return isFinished() && getDeclarationType() == FiscalModelDeclarationType.COMPENSATE;
 	}
@@ -128,7 +128,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
 		} else {
 			setDeclarationType(
-				(isEnrolledInDevolutionRegistry() || getPeriod() == Period.T4 || getPeriod() == Period.M12) 
+				(isEnrolledInDevolutionRegistry() || isLastPeriod()) 
 					?FiscalModelDeclarationType.PAYBACK
 					:FiscalModelDeclarationType.COMPENSATE
 							);

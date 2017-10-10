@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
@@ -1164,21 +1163,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				domain,
 				params,
 				new AsyncCallbackWrapper<LinkedList<AccountStatement>>(callback));
-	}
-	
-	@Override
-	public void getMod111Attach(String domainName, Mod111 mod111, AsyncCallback<Attach> callback) {
-		fsa.getMod111Attach(domainName, mod111, callback);
-	}
-	
-	@Override
-	public void getMod115Attach(String domainName, Mod115 mod115, AsyncCallback<Attach> callback) {
-		fsa.getMod115Attach(domainName, mod115, callback);
-	}
-	
-	@Override
-	public void getMod123Attach(String domainName, Mod123 mod123, AsyncCallback<Attach> callback) {
-		fsa.getMod123Attach(domainName, mod123, callback);
 	}
 
 	@Override

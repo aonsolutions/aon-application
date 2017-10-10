@@ -27,4 +27,39 @@ public interface IFiscalModel extends Serializable {
 	String getName();
 	String getSurname();
 	String getFullName();
+	
+	public default boolean isLastPeriod() {
+		return getPeriod() != null && getPeriod().isLastPeriod();
+	}
+	public default boolean isQuarterPeriod() {
+		return getPeriod() != null && getPeriod().isQuarterPeriod();
+	}
+	public default boolean isMonthPeriod() {
+		return getPeriod() != null && getPeriod().isMonthPeriod();
+	}
+	public default boolean isAraba() {
+		return (getAdministration() == Administration.ALAVA);
+	}
+	public default boolean isBizkaia() {
+		return (getAdministration() == Administration.BIZKAIA);
+	}
+	public default boolean isGipuzkoa() {
+		return (getAdministration() == Administration.GIPUZKOA);
+	}
+	public default boolean isNavarra() {
+		return (getAdministration() == Administration.NAVARRA);
+	}
+	public default boolean isAEAT() {
+		return (getAdministration() == Administration.COMMON_TERRITORY);
+	}
+	public default boolean isFinished() {
+		return getStatus() == FiscalStatus.FINISHED;
+	}
+	public default boolean isNotFinished() {
+		return getStatus() != FiscalStatus.FINISHED;
+	}
+	public default boolean isBlocked() {
+		return getStatus() == FiscalStatus.BLOCKED;
+	}
+	
 }

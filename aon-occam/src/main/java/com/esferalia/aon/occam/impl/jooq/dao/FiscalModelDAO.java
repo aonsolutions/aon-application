@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
@@ -497,7 +498,7 @@ public class FiscalModelDAO {
 						.findFirst()
 						.orElse(null);
 			}
-			String concept = "Mod." + fiscalModel.getModelName() 
+			String concept = "Mod." + FiscalModelUtils.getModelName(fiscalModel) 
 				+ " - " + fiscalModel.getYear() 
 				+ " / " + fiscalModel.getPeriod().getName( );
 

@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -96,7 +97,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			 && AonMathUtils.isZero( det.getResultAmount())
 			 && AonMathUtils.isZero( det.getAdjustAmount())
 			 && AonMathUtils.isZero( det.getAmount()) ) {
-						
+				// Nothing
 			} else {
 				newMap.put(det.getType(), det);
 			}
@@ -132,8 +133,8 @@ public class Mod303DAO extends FiscalModelDAO {
 		Mod303MVELContext mvelCtx = getMvelContext( dec, mod303 );
 		for (IMod303KeyDAO key : dec.getKeys()) {
 			if (AonStringUtils.isNotEmpty( key.getExpression()) ) {
-				Object ret =  mvelCtx.evaluateExpression(key.toString(), key.getExpression());
-				// Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
+//				Object ret =  mvelCtx.evaluateExpression(key.toString(), key.getExpression());
+				 Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
 				Double amount = (Double) ret;
 				mvelCtx.put(key.getKey().toString(), amount);
 				mod303.ensureDetail(key.getKey()).setAmount(AonMathUtils.round( amount) );
@@ -364,7 +365,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	private static String getInvoicesInfo(AONContext ctx, final Mod303 mod303
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
 		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ mod303.getModelName() 
+				+ FiscalModelUtils.getModelName(mod303) 
 				+ " DEL " + mod303.getPeriod().getDescription()
 				+ " DE " + mod303.getYear();
 		return VATFormatter.formatInvoices(title,script.getLabel()
@@ -377,7 +378,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	private static String getAccrualOutputInvoicesInfo(AONContext ctx, final Mod303 mod303
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
 		String title = "FACTURAS CRITERIO CAJA QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ mod303.getModelName() 
+				+ FiscalModelUtils.getModelName(mod303) 
 				+ " DEL " + mod303.getPeriod().getDescription()
 				+ " DE " + mod303.getYear();
 		return VATFormatter.formatInvoices(title,script.getLabel()
@@ -389,7 +390,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	private static String getAccrualInputInvoicesInfo(AONContext ctx, final Mod303 mod303
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
 		String title = "FACTURAS CRITERIO CAJA QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ mod303.getModelName() 
+				+ FiscalModelUtils.getModelName(mod303) 
 				+ " DEL " + mod303.getPeriod().getDescription()
 				+ " DE " + mod303.getYear();
 		return VATFormatter.formatInvoices(title,script.getLabel()
@@ -446,7 +447,7 @@ public class Mod303DAO extends FiscalModelDAO {
 
 	private static String getDiffTitle(final Mod303 mod303) {
 		return "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-				+ mod303.getModelName() 
+				+ FiscalModelUtils.getModelName(mod303) 
 				+ " DEL " + mod303.getPeriod().getDescription()
 				+ " DE " + mod303.getYear();
 	}

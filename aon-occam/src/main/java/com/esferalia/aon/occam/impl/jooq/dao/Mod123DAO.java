@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
@@ -326,7 +327,7 @@ public class Mod123DAO extends FiscalModelDAO {
 			, final IModelScript<Mod123Key> script, Mod123KeyDAO keyDAO) {
 		
 		String title = "FACTURAS CON RETENCIONES QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ mod123.getModelName() 
+				+ FiscalModelUtils.getModelName(mod123)
 				+ " DEL " + mod123.getPeriod().getDescription()
 				+ " DE " + mod123.getYear();
 		return IRPFFormatter.formatInvoices(title,script.getLabel()
@@ -338,7 +339,7 @@ public class Mod123DAO extends FiscalModelDAO {
 	private static String getDiffInvoicesInfo(AONContext ctx, final Mod123 mod123
 			, final IModelScript<Mod123Key> script, Mod123KeyDAO keyDAO) {
 		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-			+ mod123.getModelName() 
+			+ FiscalModelUtils.getModelName(mod123)
 			+ " DEL " + mod123.getPeriod().getDescription()
 			+ " DE " + mod123.getYear();
 		return IRPFFormatter.formatDiffInvoices(title
