@@ -227,7 +227,7 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 					add( Mod303Key.GP_C029, mod, 
 						Mod303DAO.getLastPeriodModels(ctx, mod)
 						.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
-						.mapToDouble(fm -> fm.getAmount(Mod303Key.GP_C035))
+						.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
 						.findFirst()
 						.orElse(0.0));						
 				}
