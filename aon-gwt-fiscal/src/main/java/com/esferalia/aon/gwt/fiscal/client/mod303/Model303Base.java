@@ -93,6 +93,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	};
 
 	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/Model303File";
+	private static final String MODEL303_PRINT = "/aon_gwt_fiscal/Model303Print";
 
 	protected static final boolean ENABLED = true;
 	protected static final boolean DISABLED = false;
@@ -119,7 +120,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final Button newButton = new Button();
 	protected final Button saveButton = new Button();
 	protected final Button cancelButton = new Button();		
-	protected final Button deleteButton = new Button();		
+	protected final Button deleteButton = new Button();
+	protected final Button printButton = new Button();
 	protected final Button reopenButton = new Button();
 	protected final Button finalizeButton = new Button();
 	protected final Button auditButton = new Button();
@@ -291,6 +293,35 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		});
 		buttonContainer.add(reopenButton);
 		
+		printButton.setText(AON.MSG.draft());
+		printButton.setTitle(printButton.getText());
+		printButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		printButton.addStyleName(AON.AON_CSS.aonIconExcel());
+		printButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if (isDirty()) {
+					new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+							, new ConfirmDialogCallback() {
+							
+							@Override
+							public void onAccept() {
+								submitForm(MODEL303_PRINT);
+							}
+			
+							@Override
+							public void onCancel() {
+								// Nothing
+							}
+						});
+				} else {
+					submitForm(MODEL303_PRINT);
+				}
+			}
+		});
+		buttonContainer.add(printButton);
+		
 		auditButton.setText(AON.MSG.audit());
 		auditButton.setTitle(auditButton.getText());
 		auditButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -304,8 +335,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		});
 		buttonContainer.add(auditButton);
 /*
-		<g:Button ui:field="printButton" text="&nbsp;" 
-			styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" />
 		<g:Button ui:field="printPDFButton" text="{msg.draft}"
 			styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
  */

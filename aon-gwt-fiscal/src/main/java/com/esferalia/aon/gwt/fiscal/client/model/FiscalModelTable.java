@@ -102,7 +102,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		final TextColumn<FM> modelColumn = new TextColumn<FM>() {
 			@Override
 			public String getValue(FM model) {
-				return model.getModel().getName(model.getAdministration(), model.getPeriod());
+				return FiscalModelUtils.getModelName(model);
 			}
 		};
 		this.addColumn(modelColumn, AON.MSG.model());

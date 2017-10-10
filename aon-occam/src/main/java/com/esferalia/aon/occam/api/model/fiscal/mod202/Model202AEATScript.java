@@ -165,6 +165,6 @@ public enum Model202AEATScript implements IModelScript<Mod202Key> {
 
 	@Override
 	public boolean paintHeaderBefore() {
-		return (this == R00);
+		return (this == R37);
 	};
 }

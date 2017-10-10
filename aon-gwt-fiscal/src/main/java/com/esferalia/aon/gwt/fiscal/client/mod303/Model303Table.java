@@ -119,7 +119,7 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 			final TextColumn<Mod303> modelColumn = new TextColumn<Mod303>() {
 				@Override
 				public String getValue(Mod303 model) {
-					return model.getModel().getName(model.getAdministration(), model.getPeriod());
+					return FiscalModelUtils.getModelName(model);
 				}
 			};
 			this.addColumn(modelColumn, AON.MSG.model());

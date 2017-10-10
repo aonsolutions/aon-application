@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -230,7 +231,7 @@ public class AonFiscalFileUtils {
 						,AonStringUtils.EMPTY); 
 		name = changeInvalidCharacters(name);
 		name = name.replaceAll("[^a-zA-Z0-9.-]", "_");
-		return  "Mod" + fs.getModel().getName(fs.getAdministration(), fs.getPeriod()) 
+		return  "Mod" + FiscalModelUtils.getModelName(fs) 
 				+ "_" + fs.getYear() 
 				+ "_" + fs.getPeriod().getName() 
 				+ AonStringUtils.prependIfMissing(name , "_");

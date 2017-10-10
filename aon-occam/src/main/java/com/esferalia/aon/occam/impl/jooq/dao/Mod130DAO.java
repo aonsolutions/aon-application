@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
@@ -505,7 +506,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			, final IModelScript<Mod130Key> script, Mod130KeyDAO keyDAO, boolean farmer) {
 		
 		String title = "FACTURAS CON RETENCIONES QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ mod130.getModelName() 
+				+ FiscalModelUtils.getModelName(mod130)
 				+ " DEL " + mod130.getPeriod().getDescription()
 				+ " DE " + mod130.getYear();
 		
@@ -533,7 +534,7 @@ public class Mod130DAO extends FiscalModelDAO {
 	private static String getDiffInvoicesInfo(AONContext ctx, final Mod130 mod130
 			, final IModelScript<Mod130Key> script, Mod130KeyDAO keyDAO, boolean farmer) {
 		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-			+ mod130.getModelName() 
+			+ FiscalModelUtils.getModelName(mod130)
 			+ " DEL " + mod130.getPeriod().getDescription()
 			+ " DE " + mod130.getYear();
 		
@@ -608,7 +609,7 @@ public class Mod130DAO extends FiscalModelDAO {
 	private static String getAccountInfoInfo(AONContext ctx, Mod130 mod, IModelScript<Mod130Key> script,
 			Mod130KeyDAO keyDAO) {
 		String title = "SALDOS DE CUENTAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ mod.getModelName() 
+				+ FiscalModelUtils.getModelName(mod)
 				+ " DEL " + mod.getPeriod().getDescription()
 				+ " DE " + mod.getYear();
 		if (keyDAO == Mod130KeyDAO.C01) {

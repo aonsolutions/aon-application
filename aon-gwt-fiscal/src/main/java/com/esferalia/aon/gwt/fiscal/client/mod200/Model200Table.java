@@ -79,7 +79,7 @@ public class Model200Table extends CellTable<Mod200> {
 		final TextColumn<Mod200> modelColumn = new TextColumn<Mod200>() {
 			@Override
 			public String getValue(Mod200 model) {
-				return model.getModel().getName(model.getAdministration(), model.getPeriod());
+				return FiscalModelUtils.getModelName(model);
 			}
 		};
 		this.addColumn(modelColumn, AON.MSG.model());

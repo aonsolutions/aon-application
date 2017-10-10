@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -17,11 +18,13 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -65,8 +68,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 		sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 0));
 		CellUtil.createCell(row, 1, getTitle(), headerCellStyle);
 
-		CellUtil.createCell(row, 4, model.getModel().getName(model.getAdministration(), model.getPeriod()),
-				headerCellStyle);
+		CellUtil.createCell(row, 4, FiscalModelUtils.getModelName(model),headerCellStyle);
 		row = sheet.createRow(rowCount++);
 		CellUtil.createCell(row, 4, AonNumberUtils.toString(model.getYear()), headerCellStyle);
 		row = sheet.createRow(rowCount++);
@@ -100,7 +102,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 8 * 256);
 		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 60 * 256);
+		sheet.setColumnWidth(cellCount++, 40 * 256);
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 10 * 256);
 		CellUtil.createCell(row, cellCount, "");
@@ -116,28 +118,34 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 		}
 		row = sheet.createRow(rowCount++);
 		String concept = AonStringUtils.trimToEmpty(ms.getLabel());
-		int l = AonStringUtils.length(concept);
-		if (l != 0) {
-			int r = (int) (l / ((ms.getKeys() == null)?131:102)) + 1; 
-			int h = (r * 250);
-			row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
-		}
+		row.setHeight((short) 230);
 		row.setRowStyle(rowStyle);
 		cellCount = 0;
 		Cell cell = row.createCell(cellCount++);
 		++cellCount;
 		++cellCount;
+		CellStyle tableStyle = workbook.createCellStyle();
+		tableStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
+		tableStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		tableStyle.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+		tableStyle.setFont(modFont);
+		tableStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
+
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
-		style.setFont(ms.isTitle() ? boldFont : defaulFont );
+		style.setFont(ms.isTitle() ? modBoldFont : modFont );
 		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
 		cell.setCellType(Cell.CELL_TYPE_STRING);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));			
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+		
+		int l = AonStringUtils.length(concept);
+		int conceptLength = 90;
 		if (ms.getKeys() == null) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 4));
+			conceptLength += 24;
 		} else {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 1, 1));
 			Mod131Key key = ms.getKeys()[0];
@@ -151,7 +159,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 			cell = row.createCell(cellCount++);
 			style = workbook.createCellStyle();
 			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
-			style.setFont(ms.isTitle()?boldFont:defaulFont);
+			style.setFont(ms.isTitle()?modBoldFont:modFont);
 			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
@@ -165,19 +173,29 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			}
 		}
+		if (l != 0) {
+			int r = (int) AonMathUtils.floor( ((double) l) / conceptLength , 0);
+			int h = 230 + (r * 230);
+			row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
+		}
 		
 		if (ms.paintHeaderBefore()) {
-			CellStyle sty = workbook.createCellStyle();
-			sty.cloneStyleFrom(style);
-			sty.setFont(defaulFont);
 			cellCount = 0;
 			row = sheet.createRow(rowCount++);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
-			addCell("Concepto").setCellStyle(headerCellStyle);
+			
+			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+			Font vatHeaderFont= workbook.createFont();
+			vatHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			vatHeaderFont.setFontHeightInPoints((short) 8);
+			vatHeaderFont.setColor( IndexedColors.WHITE.index );
+			rightHeaderCellStyle.setFont(vatHeaderFont);
+
+			addCell("Concepto").setCellStyle(rightHeaderCellStyle);
 			++cellCount;
-			addCell("Rto. Neto").setCellStyle(headerCellStyle);
+			addCell("Rto. Neto").setCellStyle(rightHeaderCellStyle);
 			addCell("%").setCellStyle(headerCellStyle);
-			addCell("Resultado").setCellStyle(headerCellStyle);
+			addCell("Resultado").setCellStyle(rightHeaderCellStyle);
 			for (Mod131Activity activity : model.getActivities()) {
 				cellCount = 0;
 				boolean empty = AonStringUtils.isBlank( activity.getEpigraph() ); 
@@ -185,18 +203,16 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 				String epi = AonStringUtils.abbreviate(activity.getFullDescription(), 80);
 				row.setRowStyle(rowStyle);
-				addCell(empty?"":epi).setCellStyle(sty);
+				addCell(empty?"":epi).setCellStyle(style);
 				++cellCount;
 				if (empty) {
 					addCell("");	
 					addCell("");	
 					addCell("");	
 				} else {
-					sty.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-					addCell(activity.getNet()).setCellStyle(sty);
-					addCell(AonNumberUtils.toString(activity.getPor())).setCellStyle(sty);
-					sty.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-					addCell(activity.getRes()).setCellStyle(sty);
+					addCell(activity.getNet()).setCellStyle(tableStyle);
+					addCell(activity.getPor()).setCellStyle(tableStyle);
+					addCell(activity.getRes()).setCellStyle(tableStyle);
 				}
 			}
 			row = sheet.createRow(rowCount++);

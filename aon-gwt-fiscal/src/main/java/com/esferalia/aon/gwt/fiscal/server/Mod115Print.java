@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
@@ -36,7 +37,7 @@ public class Mod115Print extends HttpServlet {
 			Mod115 mod115 = FISCAL.getMod115(domainName, domainId, user,id);
 
 			Mod115ExcelAction action = new Mod115ExcelAction(mod115);
-			action.initialize(mod115.getModel().getName(mod115.getAdministration(), mod115.getPeriod()));
+			action.initialize(FiscalModelUtils.getModelName(mod115));
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			
 			for (IModelScript<Mod115Key> ms : Model115ScriptProvider.obtainScript(mod115)) {
