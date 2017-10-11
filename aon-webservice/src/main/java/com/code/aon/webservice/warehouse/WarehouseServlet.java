@@ -461,23 +461,27 @@ public class WarehouseServlet extends HttpServlet{
     	.forEach(cp -> map.put(cp.getId(), ToJSON.carrierPackingToJSON(cp)));
     	
     	Set<Integer> keys = map.keySet();
-    	LinkedList<Integer> list = new LinkedList<>();
+    	HashMap<Integer, LinkedList<Integer>> map2 = new HashMap<>();
     	AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login, 
     		f -> f.getCarrierPackingProperty().in(keys.toArray(new Integer[keys.size()])))
     	.forEach(pd -> {
-    		if(!list.contains(pd.getPurchase().getSupplier())) {
-    			list.add(pd.getPurchase().getSupplier());
+    		if(!map2.containsKey(pd.getCarrierPacking()))
+    			map2.put(pd.getCarrierPacking(), new LinkedList<>());
+    		if(!map2.get(pd.getCarrierPacking()).contains(pd.getPurchase().getSupplier())) {
+    			map2.get(pd.getCarrierPacking()).add(pd.getPurchase().getSupplier());
     			map.get(pd.getCarrierPacking()).put("supplier", map.get(pd.getCarrierPacking()).get("supplier").equals("-") ?
     				pd.getPurchase().getSupplierName() : map.get(pd.getCarrierPacking()).get("supplier") + "; " + pd.getPurchase().getSupplierName());	
     		}
    		});  
     	
-    	LinkedList<Integer> list2 = new LinkedList<>();
+    	HashMap<Integer, LinkedList<Integer>> map3 = new HashMap<>();
     	AON.getDeliveryStream(domain.getName(), domain.getId(), login, 
         	f -> f.getCarrierPackingProperty().in(keys.toArray(new Integer[keys.size()])))
         .forEach(d -> {
-        	if(!list2.contains(d.getCustomer())) {
-    			list2.add(d.getCustomer());
+    		if(!map3.containsKey(d.getCarrierPacking()))
+    			map3.put(d.getCarrierPacking(), new LinkedList<>());
+        	if(!map3.get(d.getCarrierPacking()).contains(d.getCustomer())) {
+        		map3.get(d.getCarrierPacking()).add(d.getCustomer());
     			map.get(d.getCarrierPacking()).put("customer", map.get(d.getCarrierPacking()).get("customer") + "; " + d.getCustomerName());
         	}
        	}); 

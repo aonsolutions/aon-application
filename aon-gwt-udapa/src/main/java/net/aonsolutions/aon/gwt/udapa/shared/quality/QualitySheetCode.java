@@ -271,8 +271,6 @@ public enum QualitySheetCode implements IsSerializable{
 	UFQC2("ufqc2"),
 	;
 	
-	
-	
 	String name;
 	
 	private QualitySheetCode(String name) {
