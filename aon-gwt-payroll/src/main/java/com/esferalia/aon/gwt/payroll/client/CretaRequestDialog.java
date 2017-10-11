@@ -8,7 +8,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
@@ -31,8 +33,65 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.LongBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CretaRequestDialog extends SelectDialog<CCC> {
+public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialog<T> {
 	
+	
+	public static class CretaCCCRequestDialog extends CretaRequestDialog<CCC> {
+
+		public CretaCCCRequestDialog(Callback callback) {
+			super(callback);
+			// Full CCC.
+			Column<CCC, String> fullNameColumn = new Column<CCC, String>(
+					new TextCell()) {
+				@Override
+				public String getValue(CCC ccc) {
+					return getDescription(ccc);
+				}
+			};
+
+			addColumn(fullNameColumn, "C\u00F3digo de Cuenta de Cotizaci\u00F3n");
+		}
+		
+		protected void checkSelected() throws Exception{
+			if ( getSelectedData().isEmpty() )
+				throw new Exception("Debe seleccionar al menos un C\u00F3digo de Cuenta de Cotizaci\u00F3n (CCC).");
+		}
+		
+		@Override
+		public String getDescription(CCC ccc) {
+			return ccc.getCode();
+		}
+
+	}
+	
+	public static class CretaEmployeeRequestDialog extends CretaRequestDialog<Employee> {
+
+		public CretaEmployeeRequestDialog(Callback callback) {
+			super(callback);
+			// Full Employee.
+			Column<Employee, String> fullNameColumn = new Column<Employee, String>(
+					new TextCell()) {
+				@Override
+				public String getValue(Employee employee) {
+					return employee.getFullname();
+				}
+			};
+
+			addColumn(fullNameColumn, "Trabajador");
+		}
+		
+		protected void checkSelected() throws Exception{
+			if ( getSelectedData().isEmpty() )
+				throw new Exception("Debe seleccionar al menos un Trabajador.");
+		}
+		
+		
+		@Override
+		public String getDescription(Employee employee) {
+			return employee.getFullname() + " " + employee.getSocialSecurity() + "(" + employee.getDocument() + ")";
+		}
+	}
+
 	private static enum Type {
 		L00 {
 			@Override
@@ -78,11 +137,11 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		T visitL91();
 	}
 
-	public static interface Callback {
-		boolean onAccept(CretaRequestDialog dialog);
+	public static interface Callback<T extends HasId<?>> {
+		boolean onAccept(CretaRequestDialog<T> dialog);
 	}
 
-	interface Binder extends UiBinder<Widget, CretaRequestDialog>{
+	interface Binder extends UiBinder<Widget, CretaRequestDialog<?>>{
 		
 	}
 	private static final Binder binder = GWT.create(Binder.class);
@@ -146,9 +205,9 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	@UiField
 	CheckBox reftificationMarkCheckBox;
 
-	private Callback callback;
+	private Callback<T> callback;
 	
-	public CretaRequestDialog(Callback callback) {
+	public CretaRequestDialog(Callback<T> callback) {
 		
 		this.callback = callback;
 		
@@ -162,18 +221,6 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		
 		setVisibleReftificationMark(false);
 
-		// Full CCC.
-		Column<CCC, String> fullNameColumn = new Column<CCC, String>(
-				new TextCell()) {
-			@Override
-			public String getValue(CCC ccc) {
-				return getDescription(ccc);
-			}
-		};
-
-		addColumn(fullNameColumn, "C\u00F3digo de Cuenta de Cotizaci\u00F3n");
-		
-		
 		Date prevMonth = DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1); 
 		monthListBox.setLastMonth(prevMonth);
 		monthListBox.setSelectedMonth(prevMonth);
@@ -258,6 +305,13 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		});
 		
 	}
+	
+	@UiHandler("monthListBox")
+	void onMonthChanged( ChangeEvent e ){
+		
+	}
+	
+	
 	// ------------------------------------------------------------------------
 	
 	public String getType(){
@@ -380,9 +434,7 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		return reftificationMarkCheckBox.getValue();
 	}
 
-	public String getDescription(CCC ccc) {
-		return ccc.getCode();
-	}
+	public abstract String getDescription(T t);
 	
 	// ------------------------------------------------------------------------
 	
@@ -431,7 +483,7 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	protected boolean enableAccept() {
 		try {
 			checkAuth();
-			checkCCCs();
+			checkSelected();
 			hide(messagesLabel, true);
 			return true;
 		} catch ( Exception e ){
@@ -442,14 +494,10 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		
 	}
 	
+	protected abstract void checkSelected() throws Exception;
 	// ------------------------------------------------------------------------
 	
 	
-
-	private void checkCCCs() throws Exception{
-		if ( getSelectedData().isEmpty() )
-			throw new Exception("Debe seleccionar al menos un C\u00F3digo de Cuenta de Cotizaci\u00F3n (CCC).");
-	}
 
 	private void checkAuth() throws Exception{
 		if ( authLongBox.getValue() == null )

@@ -61,6 +61,8 @@ public class CretaResults extends Composite implements RequiresResize{
 		@Override
 		public void onSelection(SelectionEvent<TreeItem> event) {
 			// TODO Auto-generated method stub
+			Object userObject = event.getSelectedItem().getUserObject();
+			
 		}
 	}
 
@@ -74,9 +76,8 @@ public class CretaResults extends Composite implements RequiresResize{
 			TreeItem item = CretaResults.this.eventsTree.getSelectedItem();
 			Object userObject = item.getUserObject();
 
-			// TODO : I know that's so ugly and not Object oriented. But
-			// it's much more clear than anything else. I promise
-			// to change ( even improve ) it soon.
+			// TODO : I know that's so ugly and not Object oriented. But it's 
+			// much more clear than anything else. I promise to change ( even improve ) it soon.
 			if ( AonStringUtils.isNotBlank(((JsUnknownDato)userObject).getCode()) ) {
 				onUnknownDatoContextMenu((JsUnknownDato) userObject, event);
 			}
@@ -195,6 +196,10 @@ public class CretaResults extends Composite implements RequiresResize{
 		DATA.put(parameter.name(), Collections.singleton(value));
 	}
 
+	public void setParameter( CretaService.Parameter parameter, Collection<String> values) {
+		DATA.put(parameter.name(), values);
+	}
+
 	public Optional<String> getParameter(CretaService.Parameter parameter){
 		return DATA.getOrDefault(parameter.name(), Collections.emptyList())
 		.stream()
@@ -309,7 +314,9 @@ public class CretaResults extends Composite implements RequiresResize{
 		if ( defaults == null )
 			DATA.put(CretaService.Parameter.DEFAULTS.name(), defaults = new ArrayList<String>());
 		
-		defaults.add(unknownDato.getCode()+"="+value);
+		String naf = unknownDato.getNaf() ;
+		String code = unknownDato.getCode();
+		defaults.add(code + ( naf != null ? naf : "" ) + "="+value);
 	}
 	
 	
@@ -388,6 +395,18 @@ public class CretaResults extends Composite implements RequiresResize{
 			}
 
 		}, AON.AON_ICON_ACCEPT, AON.AON_ICON_CMD_BUTTON);
+		
+		if ( unknownDato.isMandatory() ) 
+			return contextMenu;
+		if ( AonStringUtils.isBlank(unknownDato.getValue()) ) 
+			return contextMenu;
+		
+		contextMenu.addItem("Eliminar", new ScheduledCommand() {
+			@Override
+			public void execute() {
+				cretaResults.fix(unknownDato, " " );
+			}
+		}, AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
 
 		return contextMenu;
 	}

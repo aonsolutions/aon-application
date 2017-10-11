@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -593,8 +594,18 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Trabajadores trabajadores) {
+		if ( trabajadores == null )
+			return "";
+
+		return toJSON(trabajadores.getTrabajador());
+	}
+
+	private static String toJSON(Collection<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Trabajador> trabajadores) {
+		if ( trabajadores == null )
+			return "";
+		
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(trabajadores.getTrabajador().stream()
+		buffer.append(trabajadores.stream()
 				.map(trabajador -> String.format("{\"naf\":\"%s\"}", trabajador.getNaf()))
 				.collect(Collectors.joining(",")));
 
@@ -602,6 +613,9 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static String toJSON(Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.LiquidacionMes> liquidacionesMes) {
+		if ( liquidacionesMes == null )
+			return "";
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(
 				liquidacionesMes.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
@@ -657,16 +671,40 @@ public class CretaServlet extends HttpServlet
 
 	private static class UnknownDato extends Event<UnknownDato> {
 
-		private DatoSolicitado dato;
+		private Dato dato;
+		private String value;
+		private Salary salary;
+		private Trabajador<?> trabajador;
+		private DatoSolicitado datoSolicitado;
 		private Liquidacion<?, ?, ?, ?, ?> liquidacion;
-
-		public UnknownDato setDato(DatoSolicitado dato) {
+			
+		public UnknownDato setDato(Dato dato) {
 			this.dato = dato;
+			return this;
+		}
+		
+		public UnknownDato setValue(String value) {
+			this.value = value;
+			return this;
+		}
+		
+		public UnknownDato setSalary(Salary salary) {
+			this.salary = salary;
+			return this;
+		}
+		
+		public UnknownDato setDatoSolicitado(DatoSolicitado dato) {
+			this.datoSolicitado = dato;
 			return this;
 		}
 
 		public UnknownDato setLiquidacion(Liquidacion<?, ?, ?, ?, ?> liquidacion) {
 			this.liquidacion = liquidacion;
+			return this;
+		}
+		
+		public UnknownDato setTrabajador(Trabajador<?> trabajador) {
+			this.trabajador = trabajador;
 			return this;
 		}
 
@@ -675,12 +713,31 @@ public class CretaServlet extends HttpServlet
 		@Override
 		public String toJSON() {
 			return String.format(
-					"{" + "\"message\":\"%s\",\r\n" + "\"type\":\"%s\",\r\n" + "\"code\":\"%s\",\r\n"
-							+ "\"mandatory\":%s\r\n" + "}",
-					getMessage(), dato.getTipoDato(), dato.getCodigo(), "B".equals(dato.getIndicadorObligatoriedad()));
+					"{" 
+						+ "\"message\":\"%s\",\r\n" 
+						+ "\"type\":\"%s\",\r\n" 
+						+ "\"code\":\"%s\",\r\n"
+						+ "\"mandatory\":%s" 
+						+ "%s"
+						+ "%s"
+						+ "%s"
+						+ "\r\n"
+						+ "}",
+					getMessage(), 
+					datoSolicitado!= null ? datoSolicitado.getTipoDato() : dato.getTipoDato(), 
+					datoSolicitado!= null ?datoSolicitado.getCodigo() : dato.getCodigo(),
+					datoSolicitado!= null ? "B".equals(datoSolicitado.getIndicadorObligatoriedad()): false,
+					
+					(trabajador != null) ? String.format(",\"naf\":\"%s\"\r\n", trabajador.getNaf()): "",
+					(trabajador == null && salary != null) ? String.format(",\"naf\":\"%s\"\r\n", salary.getEmployeeSSNumber()): "",
+					
+					(value != null) ? String.format(",\"value\":\"%s\"\r\n", value): ""
+
+					);
 		}
 
 	}
+
 
 	private static class NoDiffs extends Event<NoDiffs> {
 		private net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion;
@@ -758,7 +815,7 @@ public class CretaServlet extends HttpServlet
 			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
 			String message = String.format(
 
-					"Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS ( Liquidaci\u00F3n %s%s%s).",
+					"Lo sentimos. %s (%s) no encontrado en AON SOLUTIONS ( Liquidaci\u00F3n %s%s%s).",
 
 					getDescription(datoSolicitado),
 
@@ -769,20 +826,90 @@ public class CretaServlet extends HttpServlet
 
 			);
 
-			UnknownDato event = new UnknownDato().setMessage(message).setDato(datoSolicitado)
+			UnknownDato event = new UnknownDato()
+					.setMessage(message)
+					.setDatoSolicitado(datoSolicitado)
 					.setLiquidacion(liquidacion);
 
 			unknown.add(event);
 		}
 
 		@Override
-		public void unknownDato(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+		public void unknownDato(Salary salary, Trabajador<?> trabajador,  Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
 
 			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
-			String message = String.format("Lo sentimos. %s (%s) no está soportado en AON SOLUTIONS",
-					getDescription(datoSolicitado), mandatory ? "Obligatorio" : "Opcional");
+			String message = String.format("Lo sentimos. %s (%s) no encontrado en AON SOLUTIONS. %s %s (%s)",
+					getDescription(datoSolicitado), 
+					mandatory ? "Obligatorio" : "Opcional",
+					salary.getEmployeeName(),
+					salary.getEmployeeSSNumber(),
+					salary.getEmployeeDocument());
 
-			UnknownDato event = new UnknownDato().setMessage(message).setDato(datoSolicitado);
+			UnknownDato event = new UnknownDato()
+					.setMessage(message)
+					.setDatoSolicitado(datoSolicitado)
+					.setTrabajador(trabajador);
+
+			unknown.add(event);
+
+		}
+
+		@Override
+		public void defaultDato(Salary salary, Tramo tramo, Dato dato, TramoBuilder tramoBuilder, String value) {
+			String message ;
+			if ( AonStringUtils.isNotBlank(value))
+				message = String.format("%s no encontrado se le ha asignado el valor '%s'. %s %s (%s)",
+						getDescription(dato), 
+						value,
+						salary.getEmployeeName(),
+						salary.getEmployeeSSNumber(),
+						salary.getEmployeeDocument());
+			else 
+				message = String.format(
+						"%s no encontrado, ha sido eliminado. %s %s (%s)" ,
+						getDescription(dato), 
+						salary.getEmployeeName(),
+						salary.getEmployeeSSNumber(),
+						salary.getEmployeeDocument());
+
+			UnknownDato event = new UnknownDato()
+					.setValue(value)
+					.setMessage(message)
+					.setDato(dato)
+					.setSalary(salary);
+
+			unknown.add(event);
+
+		}
+
+		@Override
+		public void defaultDato(Salary salary, Trabajador<?> trabajador,  Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, String value) {
+
+			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
+			String message ;
+			if ( AonStringUtils.isNotBlank(value))
+				message = String.format(
+						"%s (%s) no encontrado, se le ha asignado el valor '%s'. %s %s (%s)" ,
+						getDescription(datoSolicitado), 
+						mandatory ? "Obligatorio" : "Opcional",
+						value,
+						salary.getEmployeeName(),
+						salary.getEmployeeSSNumber(),
+						salary.getEmployeeDocument());
+			else 
+				message = String.format(
+						"%s (%s) no encontrado, ha sido eliminado. %s %s (%s)" ,
+						getDescription(datoSolicitado), 
+						mandatory ? "Obligatorio" : "Opcional",
+						salary.getEmployeeName(),
+						salary.getEmployeeSSNumber(),
+						salary.getEmployeeDocument());
+
+			UnknownDato event = new UnknownDato()
+					.setValue(value)
+					.setMessage(message)
+					.setDatoSolicitado(datoSolicitado)
+					.setTrabajador(trabajador);
 
 			unknown.add(event);
 

@@ -150,6 +150,13 @@ public class Bases {
 								tramoBuilder, true);
 				} catch (Cancel c) {
 
+				} catch ( Default d ) {
+					for (BasesCallback cb : cbs)
+						cb.defaultDato(salary, 
+								tramo, 
+								datoSolicitado, 
+								tramoBuilder, 
+								d.getValue());
 				}
 
 			}
@@ -339,6 +346,10 @@ public class Bases {
 
 		}
 		
+		default void trabajadorFound(
+				Trabajador trabajadorCreta, Salary salary) {
+		};
+
 		default void trabajadorAdded(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
 				Trabajador trabajadorCreta, Salary salary) {
@@ -396,8 +407,22 @@ public class Bases {
 				LiquidacionBuilder liquidacionBuilder) {
 		};
 
-		default void unknownDato(Salary salary, Tramo tramo,
+		default void defaultDato(Liquidacion<?, ?, ?, ?, ?> liquidacion,
+				DatoSolicitado datoSolicitado,
+				LiquidacionBuilder liquidacionBuilder,
+				String value) {
+		};
+
+		default void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo tramo,
 				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+		};
+
+		default void defaultDato(Salary salary, Tramo tramo,
+				Dato dato, TramoBuilder tramoBuilder, String value) {
+		};
+
+		default void defaultDato(Salary salary, Trabajador<?> trabajador, Tramo tramo,
+				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, String value) {
 		};
 
 		default void wrongRespuestaIs(InputStream respuestaIs, Exception e) {
@@ -417,7 +442,26 @@ public class Bases {
 	}
 
 	@SuppressWarnings("serial")
+	private static class Default extends RuntimeException {
+		private String value ;
+
+		public Default(String value) {
+			super();
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+
+	@SuppressWarnings("serial")
 	private static class Different extends RuntimeException {
+
+	}
+
+	@SuppressWarnings("serial")
+	private static class FilterOut extends RuntimeException {
 
 	}
 
@@ -459,12 +503,15 @@ public class Bases {
 		}
 
 		@Override
-		public void trabajadorAdded(
-				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+		public void trabajadorFound(
 				Trabajador trabajadorCreta, Salary salary) {
-			if (!nafs.contains(trabajadorAon.getNaf()))
-				throw new SkipExisting();
+			
+			if (!nafs.contains(trabajadorCreta.getNaf())) {
+				throw new FilterOut();
+			}
+			
 		}
+		
 	}
 
 	private static class DefaultsCallback implements BasesCallback {
@@ -493,7 +540,7 @@ public class Bases {
 		}
 
 		@Override
-		public void unknownDato(Salary salary, Tramo tramo,
+		public void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo tramo,
 				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
 			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
 		}
@@ -502,13 +549,14 @@ public class Bases {
 
 		private void addDefault(Salary salary, Tramo tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder) {
-			if (defaults.containsKey(datoSolicitado.getCodigo())) {
-				String valor = defaults.get(datoSolicitado.getCodigo());
-				DatoBuilder datoBuilder = new DatoBuilder();
-				datoBuilder.setCodigo(datoSolicitado.getCodigo());
-				datoBuilder.setTipo(datoSolicitado.getTipoDato());
-				datoBuilder.setValor(valor);
-				tramoBuilder.addDato(datoBuilder.create());
+
+			String key = datoSolicitado.getCodigo() + salary.getEmployeeSSNumber();
+			if (!defaults.containsKey(key))
+				key = datoSolicitado.getCodigo();
+			
+			if (defaults.containsKey(key)) {
+				String valor = defaults.get(key);
+
 				System.err.printf(
 						"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] is default value %s \r\n",
 						datoSolicitado.getCodigo(),
@@ -521,13 +569,23 @@ public class Bases {
 						tramo.getFechaHasta().getMes(),
 						tramo.getFechaHasta().getAnho(), valor);
 
-				throw new Cancel();
+				if ( AonStringUtils.isBlank(valor) ) 
+					throw new Default(valor);
+
+				DatoBuilder datoBuilder = new DatoBuilder();
+				datoBuilder.setCodigo(datoSolicitado.getCodigo());
+				datoBuilder.setTipo(datoSolicitado.getTipoDato());
+				datoBuilder.setValor(valor);
+				tramoBuilder.addDato(datoBuilder.create());
+
+				throw new Default(valor);
 			}
 		}
 
 		private void addDefault(Dato datoSolicitado,
 				Liquidacion<?, ?, ?, ?, ?> liquidacion,
 				LiquidacionBuilder liquidacionBuilder) {
+
 			if (defaults.containsKey(datoSolicitado.getCodigo())) {
 				String valor = defaults.get(datoSolicitado.getCodigo());
 				DatoBuilder datoBuilder = new DatoBuilder();
@@ -1389,6 +1447,15 @@ public class Bases {
 			return;
 		}
 
+		try {
+			for (BasesCallback cb : cbs)
+				cb.trabajadorFound(trabajador, salary);
+
+		} catch (FilterOut e) {
+			trabajadores.remove(salary.getEmployeeSSNumber());
+			return;
+		}
+
 		trabajadorBuilder.setNaf(trabajador.getNaf());
 		for (Tramo<D> tramo : trabajador.getTramos().getTramo()) {
 
@@ -1422,9 +1489,15 @@ public class Bases {
 				if (data == null) {
 					try {
 						for (BasesCallback cb : cbs)
-							cb.unknownDato(salary, tramo, datoSolicitado,
+							cb.unknownDato(salary, trabajador, tramo, datoSolicitado,
 									tramoBuilder);
-					} catch (Cancel e) {
+					}
+					catch (Cancel e) {
+					}
+					catch (Default e) {
+						for (BasesCallback cb : cbs)
+							cb.defaultDato(salary, trabajador, tramo, datoSolicitado,
+									tramoBuilder, e.getValue());
 					}
 					continue;
 				}

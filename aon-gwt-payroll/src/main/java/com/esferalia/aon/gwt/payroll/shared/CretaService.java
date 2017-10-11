@@ -232,6 +232,14 @@ public interface CretaService {
 			return this.code;
 		}-*/;
 
+		public final native String getNaf() /*-{
+			return this.naf;
+		}-*/;
+
+		public final native String getValue() /*-{
+			return this.value;
+		}-*/;
+
 		public final native boolean isMandatory() /*-{
 			return this.mandatory;
 		}-*/;

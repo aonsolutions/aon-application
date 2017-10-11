@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.common.shared.HasId;
 
@@ -10,6 +12,13 @@ public class CCC implements Serializable, HasId<Integer>{
 	private String code;
 	private String geozone;
 	private String regime;
+	
+	private List<Employee> employees;
+
+	
+	public CCC() {
+		this.employees = new LinkedList<Employee>();
+	}
 	
 	@Override
 	public Integer getId() {
@@ -44,4 +53,15 @@ public class CCC implements Serializable, HasId<Integer>{
 		this.regime = regime;
 	}
 	
+	public List<Employee> getEmployees() {
+		return employees;
+	}
+	
+	public void addEmployee( Employee employee) {
+		employees.add(employee);
+	}
+	
+	public void setEmployees(List<Employee> employees) {
+		this.employees = employees;
+	}
 }

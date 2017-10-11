@@ -557,7 +557,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				final int fromMonth, final int fromYear,
 				final int toMonth, final int toYear,
 				final int ctrlMonth, final int ctrlYear,
-				final String tipo, final Collection<CCC> cccs,
+				final String tipo, 
+				final Collection<CCC> cccs,
 				final boolean basesMesAnterior,
 				final boolean calcsDetailed) {
 			StringBuffer requestDataBuffer = new StringBuffer();
@@ -584,6 +585,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				requestDataBuffer.append(
 						"&" + Parameter.CALCULOS_DESGLOSADOS + "=on");
 
+			for (CCC ccc : cccs)
+				for (Employee employee : ccc.getEmployees())
+					requestDataBuffer
+						.append("&" + Parameter.NAFS + "=" + employee.getSocialSecurity());
+			
 			// Send request to server and catch any errors.
 
 			XMLHttpRequest xhr = XMLHttpRequest.create();
@@ -779,13 +785,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	public static abstract class CreateRequestCommand extends CretaCommand
-			implements CretaRequestDialog.Callback {
+			implements CretaRequestDialog.Callback<CCC> {
 
-		CretaRequestDialog dialog;
+		CretaRequestDialog<CCC> dialog;
 
 		public CreateRequestCommand(File file, DetailPanel detailPanel) {
 			super(file, detailPanel);
-			dialog = new CretaRequestDialog(this) {
+			dialog = new CretaRequestDialog.CretaCCCRequestDialog(this) {
 				@Override
 				public String getDescription(CCC ccc) {
 					return CreateRequestCommand.this.getDescription(ccc);
@@ -797,7 +803,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public CreateRequestCommand(File file, DetailPanel detailPanel,
 				FileEditor fileEditor) {
 			super(file, detailPanel, fileEditor);
-			dialog = new CretaRequestDialog(this) {
+			dialog = new CretaRequestDialog.CretaCCCRequestDialog(this) {
 				@Override
 				public String getDescription(CCC ccc) {
 					return CreateRequestCommand.this.getDescription(ccc);
@@ -814,7 +820,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		// --------------------------------------------------------------------
 		@Override
-		public boolean onAccept(CretaRequestDialog dialog) {
+		public boolean onAccept(CretaRequestDialog<CCC> dialog) {
 
 			String tipo = dialog.getType();
 			Date fromMonth = dialog.getFromMonth();

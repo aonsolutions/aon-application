@@ -4,10 +4,12 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,6 +35,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
@@ -918,6 +921,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY 
 					+ ", " + SQLConstants.ENTERPRISE_CCC
 					+ ", " + SQLConstants.GEOZONE
+					+ ", " + SQLConstants.SALARY
 					
 					+ " WHERE " + SQLConstants.ENTERPRISE +"."+ EnterpriseColumns.REGISTRY + " = " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ " AND " + SQLConstants.ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SQLConstants.DOMAIN + "." + DomainColumns.ID 
@@ -925,6 +929,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " AND " + SQLConstants.ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + SQLConstants.ENTERPRISE_ACTIVITY+ "." + EnterpriseActivityColumns.ENTERPRISE
 					+ " AND " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID + " = " + SQLConstants.ENTERPRISE_CCC+ "." + EnterpriseCccColumns.ENTERPRISE_ACTIVITY
 					+ " AND " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.GEOZONE + " = " + SQLConstants.GEOZONE+ "." + GeozoneColumns.ID
+					+ " AND " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC + " = " + SQLConstants.SALARY+ "." + SalaryColumns.CCC
 
 					+ " AND ( " + SQLConstants.DOMAIN + "." + DomainColumns.ID + " = ? " 
 						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = ? " + ")"
@@ -941,9 +946,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					
 					+ " AND " + SQLConstants.DOMAIN + "." + DomainColumns.ACTIVE + " = 1 " 
 					
+					+ " AND " + SQLConstants.SALARY + "." + SalaryColumns.END_DATE + " > ? " 
+					+ " AND " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " IN ( " + Salary.Type.SALARY.ordinal() + ")"  // TODO: Salary.Type.DELAY 
+
 					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.ID
+					+ ", " + SQLConstants.SALARY + "." + SalaryColumns.SOCIAL_SECURITY_NUMBER
+					+ ", " + SQLConstants.SALARY + "." + SalaryColumns.START_DATE
 					+ " LIMIT ?, ?"
 					);
 			// @formatter:on
@@ -951,11 +961,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, domainId);
 			stmt.setInt(3, userId);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.MONTH, -3);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.add(Calendar.DAY_OF_MONTH,-1);
+			stmt.setDate(4, new java.sql.Date(calendar.getTimeInMillis()));
 
-			stmt.setInt(4, offset);
-			stmt.setInt(5, limit);
+			stmt.setInt(5, offset);
+			stmt.setInt(6, limit);
 			
 			CCC ccc = null;
+			Employee employee = null;
 			Activity activity = null;
 			Enterprise enterprise = null;
 
@@ -1009,6 +1026,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					ccc.setRegime(getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE)).getCode());
 					
 					activity.addCcc(ccc);
+				}
+
+				String employeeSS = (String) rs.getObject(SQLConstants.SALARY +"."+SalaryColumns.SOCIAL_SECURITY_NUMBER);
+				if ( employeeSS == null )
+					continue;
+				Date startDate =  (Date) rs.getObject(SQLConstants.SALARY +"."+SalaryColumns.START_DATE);
+				Integer employeeId = (employeeSS + ""  + startDate).hashCode();
+				if ( employee == null || !employee.getId().equals(employeeId)) {
+					employee = new Employee();
+					employee.setId(employeeId.hashCode());
+					employee.setSocialSecurity(employeeSS);
+					employee.setStartDate(startDate);
+					employee.setEndDate(rs.getDate(SQLConstants.SALARY +"."+SalaryColumns.END_DATE));
+					employee.setName(rs.getString(SQLConstants.SALARY +"."+SalaryColumns.EMPLOYEE_NAME));
+					employee.setDocument(rs.getString(SQLConstants.SALARY +"."+SalaryColumns.EMPLOYEE_DOCUMENT));
+					
+					ccc.addEmployee(employee);
 				}
 			}
 

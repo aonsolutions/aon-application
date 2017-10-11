@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.payroll.client.EmployeeTree.CretaCommand;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseCretaRequestCommand;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseDBACommand;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -39,6 +41,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
 import com.esferalia.aon.gwt.payroll.shared.HttpException;
@@ -50,6 +53,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -573,6 +577,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cretaResults.addWarnings(result.getWarnings());
 			cretaResults.addUnknown(result.getUnknown());
 			cretaResults.addMessages(new JsEvent[]{});
+			cretaResults.setParameter(CretaService.Parameter.NAFS, getSelectedNafs());;
+
 			resultsPanel.setWidget(cretaResults);
 
 			if (result.getErrors().length > 0 || 
@@ -642,6 +648,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			// tabLayoutPanel.setVisible(tabLayoutPanel.getTabWidget(0), true);
 			detailPanel.setWidget(filesEditor);
 
+		}
+		
+		@Override
+		String getEmployeeFullName(JsEmployee jsEmployee) {
+			return super.getEmployeeFullName(jsEmployee);
 		}
 
 	}
@@ -822,6 +833,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cmd.execute();
 		}
 
+		@Override
+		String getEmployeeFullName(JsEmployee jsEmployee) {
+			for ( Activity activity : enterprise.getActivities() )
+				for ( CCC ccc : activity.getCccs() )
+					for ( Employee e : ccc.getEmployees() )
+						if ( jsEmployee.getNaf().equals(e.getSocialSecurity())) 
+							return e.getFullname();
+			
+			return super.getEmployeeFullName(jsEmployee);
+		}
 	}
 
 	private class ActivityContextMenu extends ContextMenu {
@@ -1016,6 +1037,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cmd.setActivity(activity);
 			cmd.execute();
 		}
+
+		@Override
+		String getEmployeeFullName(JsEmployee jsEmployee) {
+			for ( CCC ccc : activity.getCccs() )
+				for ( Employee e : ccc.getEmployees() )
+					if ( jsEmployee.getNaf().equals(e.getSocialSecurity())) 
+						return e.getFullname();
+			
+			return super.getEmployeeFullName(jsEmployee);
+		}
 	}
 
 	private class CCCContextMenu extends ContextMenu {
@@ -1041,7 +1072,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)",
-					cccCommands[5] = new MainCCCCretaRequestCommand(File.BASES){
+					cccCommands[5] = new BasesCCCCretaRequestCommand(File.BASES) { // new MainCCCCretaRequestCommand(File.BASES){
 						@Override
 						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
 								int toYear, String tipo, Collection<CCC> cccs) {
@@ -1088,6 +1119,92 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			dialog.setData(Collections.singletonList(ccc));
 			dialog.setSelectedData(Collections.singletonList(ccc));
 		}
+
+	}
+
+	private class BasesCCCCretaRequestCommand extends CretaCommand
+		implements CretaRequestDialog.Callback<Employee>, CCCCommand {
+		
+		private CCC ccc;
+		private CretaRequestDialog<Employee> dialog;
+
+		public BasesCCCCretaRequestCommand(File file) {
+			super(file, MainCreta.this.detailPanel);
+			dialog = new CretaRequestDialog.CretaEmployeeRequestDialog(this) {
+				@Override
+				void onMonthChanged( ChangeEvent e ){
+					BasesCCCCretaRequestCommand.this.onMonthChanged(monthListBox.getSelected());
+				}
+				
+			};
+		}
+
+		// ---------------------------------------------------------- CCCCommand
+		
+		@Override
+		public void setCCC(CCC ccc) {
+			this.ccc = ccc;
+			onMonthChanged(dialog.getFromMonth());
+		}
+
+		// ------------------------------- CretaRequestDialog.Callback<Employee>
+		
+		@Override
+		public void execute() {
+			dialog.center();
+			dialog.show();
+		}
+
+		@Override
+		public boolean onAccept(CretaRequestDialog<Employee> dialog) {
+			String tipo = dialog.getType();
+			Date fromMonth = dialog.getFromMonth();
+			Date toMonth = dialog.getToMonth();
+			Date ctrlMonth = dialog.getToMonth();
+			int desdeMes = fromMonth.getMonth() + 1;
+			int desdeAnyo = fromMonth.getYear() + 1900;
+			int hastaMes = toMonth.getMonth() + 1;
+			int hastaAnyo = toMonth.getYear() + 1900;
+			int ctrlMes = ctrlMonth.getMonth() + 1;
+			int ctrlAnyo = ctrlMonth.getYear() + 1900;
+			long autorizado = dialog.getAuthorized();
+			boolean basesMesAnterior = dialog.previousBases();
+			boolean calcsDetailed = dialog.calcsDetailed();
+
+			CCC cccCopy  = new CCC();
+			cccCopy.setId(ccc.getId());
+			cccCopy.setCode(ccc.getCode());
+			cccCopy.setRegime(ccc.getRegime());
+			cccCopy.setGeozone(ccc.getGeozone());
+			dialog.getSelectedData().forEach(e -> cccCopy.addEmployee(e));
+			
+			send(autorizado, 
+				desdeMes, 
+				desdeAnyo, 
+				hastaMes, 
+				hastaAnyo, 
+				ctrlMes, 
+				ctrlAnyo, 
+				tipo, 
+				Collections.singleton(cccCopy), 
+				basesMesAnterior, 
+				calcsDetailed);
+
+			return true;
+		}
+		
+		void onMonthChanged( Date month ){
+			List<Employee> employees = new LinkedList<Employee>();
+			for ( Employee e: ccc.getEmployees() ) {
+				if ( month.before(e.getStartDate()))
+					continue;
+				if ( month.after(e.getEndDate()))
+					continue;
+				employees.add(e);
+			}
+			dialog.setData(employees);
+		}
+
 
 	}
 
@@ -1195,6 +1312,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cmd.execute();
 		}
 
+		@Override
+		String getEmployeeFullName(JsEmployee jsEmployee) {
+			for ( Employee e : ccc.getEmployees() )
+				if ( jsEmployee.getNaf().equals(e.getSocialSecurity())) 
+					return e.getFullname();
+			
+			return super.getEmployeeFullName(jsEmployee);
+		}
 	}
 
 	private class EnterprisesContextMenu extends ContextMenu {
@@ -1401,6 +1526,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			EnterprisesCretaRequestCommand cmd = new EnterprisesCretaRequestCommand(file);
 			cmd.setEnterprises(enterprises);
 			cmd.execute();
+		}
+
+		@Override
+		String getEmployeeFullName(JsEmployee jsEmployee) {
+			for ( int i = 0; i < enterprises.size(); i++ )
+				for ( Activity activity : enterprises.get(i).getActivities() )
+					for ( CCC ccc : activity.getCccs() )
+						for ( Employee e : ccc.getEmployees() )
+							if ( jsEmployee.getNaf().equals(e.getSocialSecurity())) 
+								return e.getFullname();
+			
+			return super.getEmployeeFullName(jsEmployee);
 		}
 	}
 

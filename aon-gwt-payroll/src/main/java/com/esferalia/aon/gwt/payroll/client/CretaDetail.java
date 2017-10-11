@@ -289,10 +289,16 @@ public abstract class CretaDetail extends Composite {
 						checkBox.endInput();
 						td.endTD();
 						
-
+						String iconStyle = AON.AON_ICON_EMPLOYEE;
+						JsRespuesta jsRespuesta = respuestasMap.get(jsFile.getId());
+						if ( jsRespuesta != null && jsRespuesta.getEmployees() != null )
+							for ( JsEmployee e:  jsRespuesta.getEmployees() )
+								if ( employee.getNaf().equals(e.getNaf() ))
+									iconStyle = AON.AON_ICON_EXCEPTION;
+						
 						td = tr.startTD();
 						td.className(tdStyle);
-						td.html(JSEMPLOYEE_TEMPLATE.trabajador(AON.AON_ICON_EMPLOYEE, employee.getNaf(), employee.getIpf(), employee.getCaf() ));
+						td.html(JSEMPLOYEE_TEMPLATE.trabajador(iconStyle, employee.getNaf(), employee.getIpf(), CretaDetail.this.getEmployeeFullName(employee)));
 						td.endTD();
 
 						tr.endTR();
@@ -388,6 +394,10 @@ public abstract class CretaDetail extends Composite {
 		jsFileSelectionModel.clear();
 		jsFileSelectionModel.setSelected(jsFile, true);
 	}
+
+	Collection<String> getSelectedNafs() {
+		return getNafs();
+	}
 	// ------------------------------------------------------------- UIHandlers
 
 	@UiHandler("fileUpload")
@@ -430,6 +440,12 @@ public abstract class CretaDetail extends Composite {
 	void onClickTrabajadoresYTramosButton(ClickEvent e) {
 	}
 
+	// ------------------------------------------------------------------------
+	
+	String getEmployeeFullName(JsEmployee jsEmployee) {
+		return jsEmployee.getCaf();
+	}
+	
 	// ------------------------------------------------------------------------
 
 	public void onTrabajadoresYTramos() {
