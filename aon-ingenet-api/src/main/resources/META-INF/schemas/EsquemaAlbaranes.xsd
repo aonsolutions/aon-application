@@ -147,7 +147,8 @@
 			<xsd:element name="DATOS_DIRECCION" type="DATOS_DIRECCION_TYPE"
 				minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Datos de la direccion..
+					<xsd:documentation xml:lang="es">Datos de la
+						direccion..
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
@@ -357,6 +358,18 @@
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:pattern value="\d{1,3}" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="SSCC" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Número Serial o
+						número de identificación de la unidad de envío
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="35" />
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
