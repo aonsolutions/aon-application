@@ -77,11 +77,11 @@ public abstract class ModelVAExcelAction extends AbsExcelAction {
 		sheet.setZoom(14,10);	// 140%
 		
 		vatFont = workbook.createFont();
-		vatFont.setFontName("DejaVu Sans Mono");
+		vatFont.setFontName(FONT_FAMILY);
 		vatFont.setFontHeightInPoints((short) 7);
 
 		vatBoldFont = workbook.createFont();
-		vatBoldFont.setFontName("DejaVu Sans Mono");
+		vatBoldFont.setFontName(FONT_FAMILY);
 		vatBoldFont.setFontHeightInPoints((short) 7);
 		vatBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
@@ -275,17 +275,17 @@ public abstract class ModelVAExcelAction extends AbsExcelAction {
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
 		cell.setCellType(Cell.CELL_TYPE_STRING);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));			
 		if (ms.getKeys() == null) {
-			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 1, 7));
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		} else {
 			if (ms.getKeys().length == 1) {
-				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 1, 5));
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 5));
 				cellCount = 6;
 			} else if (ms.getKeys().length == 2) {
-				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 1, 3));
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 3));
 				cellCount = 4;
 			} else {
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));			
 				cellCount = 2;
 			}
 			for (Mod303Key key : ms.getKeys()) {

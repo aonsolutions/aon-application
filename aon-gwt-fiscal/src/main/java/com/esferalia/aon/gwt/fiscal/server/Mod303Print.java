@@ -48,8 +48,8 @@ public class Mod303Print extends HttpServlet {
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
 			String fileName = AonFiscalFileUtils.getFileName(mod303);
-			resp.setContentType(MimeType.MS_EXCEL.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL.getExtension()+ "\";");
+			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 
