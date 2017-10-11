@@ -186,10 +186,10 @@ public class PackingList extends PdfUtils{
 		c5.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c5);
 			
-		PdfPCell c2 = new PdfPCell(new Phrase("Fecha:",getFont1()));
+		PdfPCell c2 = new PdfPCell(new Phrase("Fecha de Carga:",getFont1()));
 		c2.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c2);
-			
+				
 		PdfPCell c3 = new PdfPCell(new Phrase(json.getString("issue_date"),getFont2()));
 		c3.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c3);

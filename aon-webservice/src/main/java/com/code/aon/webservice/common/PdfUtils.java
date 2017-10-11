@@ -35,7 +35,7 @@ public class PdfUtils {
 
 	public static Font getFont3(){
 		Font font1 = new Font();
-		font1.setSize(12);
+		font1.setSize((float) 10.5);
 		font1.setStyle(Font.BOLD);
 		return font1;
 	}

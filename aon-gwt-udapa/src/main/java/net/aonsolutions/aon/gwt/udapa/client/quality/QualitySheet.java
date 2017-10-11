@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -444,15 +445,18 @@ public class QualitySheet extends Composite{
 			Integer c = i/2;
 			caliberControl.setWidget(2+c, 2, new Label(Defects.values()[c].getName()));
 			
-			Label label = new Label(map.containsKey(qsc[i+1].getName())
-					 ? map.get(qsc[i+1].getName()) :  "0.0");
-			label.getElement().getStyle().setPaddingLeft(25, Unit.PX);
-			WidgetStack ws =new WidgetStack(label, qsc[i + 1]);
+			Label label = new Label(map.containsKey(qsc[i].getName())
+					 ? map.get(qsc[i].getName()) :  "0.0");
+			label.setWidth("40px");
+			WidgetStack ws =new WidgetStack(label, qsc[i]);
 			calculated.add(ws);
 			
 			HorizontalPanel hp = new HorizontalPanel();
-			hp.add(doubleBox(qsc[i]));
 			hp.add(label);
+			SimplePanel sp = new SimplePanel();
+			sp.getElement().getStyle().setPaddingLeft(25, Unit.PX);
+			sp.setWidget(doubleBox(qsc[i+1]));
+			hp.add(sp);
 			caliberControl.setWidget(2+c, 3, hp);
 		}
 		Integer tIndex = 2 + qsc.length / 2;
@@ -474,8 +478,8 @@ public class QualitySheet extends Composite{
 		hp2.add(label);
 		hp2.add(label2);
 		caliberControl.setWidget(tIndex, 3, hp2);
-		
-		for(Integer j = tIndex + 1; j < 15; j++) {
+
+		for(Integer j = tIndex + 1; j < 18; j++) {
 			caliberControl.setWidget(j, 2, new Label());
 			caliberControl.setWidget(j, 3, new Label());	
 		}
