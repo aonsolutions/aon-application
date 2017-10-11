@@ -20,12 +20,14 @@ import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
@@ -62,6 +64,15 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA,"totalCuotaIVA"	,1,17	,true	,null)
 		,new Column(FRA,"totalCuotaIRPF",1,17	,true	,null)
 		,new Column(FRA,"totalFactura"	,1,17	,true	,null)
+		
+		,new Column(FRA,"tipoVia"		,2,2	,false	,null)
+		,new Column(FRA,"direccion"		,2,128	,false	,null)
+		,new Column(FRA,"numeroDir"		,2,6	,false	,null)
+		,new Column(FRA,"direccion2"	,2,128	,false	,null)
+		,new Column(FRA,"cp"			,2,16	,false	,null)
+		,new Column(FRA,"ciudad"		,2,64	,false	,null)
+		,new Column(FRA,"provincia"		,2,3	,false	,null)
+		,new Column(FRA,"nombreProvincia",2,32	,false	,null)
 	};
 	
 	private ILoaderEngine engine;
@@ -168,6 +179,21 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		}
 		invoice.setUpdateEnabled(false);
 		invoice = (Invoice) bean.insert(invoice);
+		
+		if(loaded.getDireccion() != null) {
+			IManagerBean bean2 = BeanManager.getManagerBean(InvoiceAddress.class);
+			InvoiceAddress invoiceAddress = new InvoiceAddress();
+			invoiceAddress.setAddress(loaded.getDireccion());
+			invoiceAddress.setAddress2(loaded.getDireccion2());
+			invoiceAddress.setCity(loaded.getCiudad());
+			invoiceAddress.setDomain(invoice.getDomain());
+			invoiceAddress.setInvoice(invoice);
+			invoiceAddress.setNumber(loaded.getNumeroDir());
+			invoiceAddress.setProvince(loaded.getNombreProvincia());
+			invoiceAddress.setStreetType(StreetType.valueOf(loaded.getTipoVia()));
+			invoiceAddress.setZip(loaded.getCp());
+			invoiceAddress = (InvoiceAddress) bean2.insert(invoiceAddress);
+		}
 		return invoice.getId();
 	}
 

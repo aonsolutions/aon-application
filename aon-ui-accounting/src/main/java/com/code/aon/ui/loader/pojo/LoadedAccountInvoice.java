@@ -80,6 +80,16 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 	private String formaPago;
 	private String cuentaBanco;
 		
+
+	private String tipoVia;
+	private String direccion;
+	private String numeroDir;
+	private String direccion2;
+	private String cp;
+	private String ciudad;
+	private String provincia;
+	private String nombreProvincia;
+	
 	@Override
 	public String getIdentifier() {
 		return id==null?null:id.toString();
@@ -509,6 +519,70 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		return inversion != null && inversion==1;
 	}
 	
+	public String getTipoVia() {
+		return tipoVia;
+	}
+
+	public void setTipoVia(String tipoVia) {
+		this.tipoVia = tipoVia;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public String getNumeroDir() {
+		return numeroDir;
+	}
+
+	public void setNumeroDir(String numeroDir) {
+		this.numeroDir = numeroDir;
+	}
+
+	public String getDireccion2() {
+		return direccion2;
+	}
+
+	public void setDireccion2(String direccion2) {
+		this.direccion2 = direccion2;
+	}
+
+	public String getCp() {
+		return cp;
+	}
+
+	public void setCp(String cp) {
+		this.cp = cp;
+	}
+
+	public String getCiudad() {
+		return ciudad;
+	}
+
+	public void setCiudad(String ciudad) {
+		this.ciudad = ciudad;
+	}
+
+	public String getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
+	}
+
+	public String getNombreProvincia() {
+		return nombreProvincia;
+	}
+
+	public void setNombreProvincia(String nombreProvincia) {
+		this.nombreProvincia = nombreProvincia;
+	}
+
 	public InvoiceTransactionType getInvoiceTransactionType() {
 		if (getTransaccion() == null) {
 			return InvoiceTransactionType.NATIONAL;
