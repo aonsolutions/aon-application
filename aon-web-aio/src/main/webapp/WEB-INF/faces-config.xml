@@ -85,12 +85,8 @@
 			<to-view-id>/facelet/menu/enterprise.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>menu_marketing</from-outcome>
-			<to-view-id>/facelet/menu/marketing.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_commercial</from-outcome>
-			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
+			<from-outcome>menu_crm</from-outcome>
+			<to-view-id>/facelet/menu/crm.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_management</from-outcome>

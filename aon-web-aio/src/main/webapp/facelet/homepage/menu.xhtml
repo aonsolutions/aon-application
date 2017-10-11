@@ -37,13 +37,9 @@
 
 		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 			<aon:if test="#{aonRole.commercialOperator}">
-				<aon:commandLink id="menu_marketing"
-					value="#{bundle.aon_module_marketing}"
-					action="menu_marketing" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="menu_commercial"
-					value="#{bundle.aon_module_commercial}"
-					action="menu_commercial" immediate="true"
+				<aon:commandLink id="menu_crm"
+					value="#{bundle.aon_module_crm}"
+					action="menu_crm" immediate="true"
 					styleClass="aon-top-menu-item" />
 			</aon:if>
 

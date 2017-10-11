@@ -81,8 +81,7 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.add(Module.HOTEL);
 		}
 		if ( addExtraModules ) {
-			enabledModules.add(Module.MARKETING);
-			enabledModules.add(Module.COMMERCIAL);
+			enabledModules.add(Module.CRM);
 			enabledModules.add(Module.MANAGEMENT);
 			enabledModules.add(Module.TREASURY);
 			enabledModules.add(Module.WAREHOUSE);

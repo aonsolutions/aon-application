@@ -18,8 +18,8 @@ public enum Module implements IResourceable {
 	/** MARKETING. */
 	MARKETING( "marketing" ),
     
-	/** COMMERCIAL. */
-	COMMERCIAL( "commercial" ),
+	/** CRM. */
+	CRM( "crm" ),
     
     /** MANAGEMENT. */
 	MANAGEMENT( "management" ),

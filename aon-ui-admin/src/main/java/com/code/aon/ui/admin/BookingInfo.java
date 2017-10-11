@@ -307,8 +307,7 @@ public class BookingInfo implements Serializable {
 	
 	private List<DomainModuleInfo> calculateDisplayModules() throws ManagerBeanException {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
-		list.add(aioInfo.getModuleInfo(Module.MARKETING));
-		list.add(aioInfo.getModuleInfo(Module.COMMERCIAL));
+		list.add(aioInfo.getModuleInfo(Module.CRM));
 		list.add(aioInfo.getModuleInfo(Module.MANAGEMENT));
 		list.add(aioInfo.getModuleInfo(Module.TREASURY));
 		list.add(aioInfo.getModuleInfo(Module.WAREHOUSE));
