@@ -641,6 +641,10 @@ public class PosInvoiceController extends SaleInvoiceController {
 			invoiceDetail.setLine(++line);
 			invoiceDetail.setQuantity(invoiceDetail.getQuantity() * (-1));
 			invoiceDetail.setTaxableBase(invoiceDetail.getTaxableBase() * (-1));
+			invoiceDetail.setVatQuota(CommonUtil.round(invoiceDetail.getVatQuota() * (-1)));
+			invoiceDetail.setSurchargeQuota(CommonUtil.round(invoiceDetail.getSurchargeQuota() * (-1)));
+			invoiceDetail.setRetentionQuota(CommonUtil.round(invoiceDetail.getRetentionQuota() * (-1)));
+			invoiceDetail.setTaxDataInDetail(true);
 			invoiceDetailBean.insert(invoiceDetail);
 		}
 
