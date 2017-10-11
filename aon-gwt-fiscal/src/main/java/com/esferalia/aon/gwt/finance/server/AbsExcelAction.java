@@ -23,6 +23,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class AbsExcelAction  {
 	
+	protected static final String FONT_FAMILY = "DejaVu Sans Mono";
 	protected static final String DATE_PATTERN = "dd/MM/yyyy";
 	protected static final String DECIMAL_PATTERN = "#,##0.00";
 	protected static final String NUMBER_PATTERN = "#,###";

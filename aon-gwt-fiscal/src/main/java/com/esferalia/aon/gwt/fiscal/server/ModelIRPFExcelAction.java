@@ -80,16 +80,16 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		rowStyle.setWrapText(true);
 
 		modFont = workbook.createFont();
-		modFont.setFontName("DejaVu Sans Mono");
+		modFont.setFontName(FONT_FAMILY);
 		modFont.setFontHeightInPoints((short) 7);
 
 		modBoldFont = workbook.createFont();
-		modBoldFont.setFontName("DejaVu Sans Mono");
+		modBoldFont.setFontName(FONT_FAMILY);
 		modBoldFont.setFontHeightInPoints((short) 7);
 		modBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 		boxFont = workbook.createFont();
-		boxFont.setFontName("DejaVu Sans Mono");
+		boxFont.setFontName(FONT_FAMILY);
 		boxFont.setFontHeightInPoints((short) 7);
 		boxFont.setColor(IndexedColors.GREY_40_PERCENT.index);
 
@@ -261,13 +261,18 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
 		cell.setCellType(Cell.CELL_TYPE_STRING);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));			
 		if (ms.getKeys() == null) {
-			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 1, 7));
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		} else {
 			int conceptLength = getConceptLength(); 
+			int l = AonStringUtils.length(concept);
+			if (l != 0) {
+				int r = (int) AonMathUtils.floor( ((double) l) /  conceptLength , 0);
+				int h = 230 + (r * 230);
+				row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
+			}
 			if (ms.getKeys().length == 1) {
-				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 1, 5));
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 5));
 				cellCount = 6;
 				conceptLength = conceptLength + 39;
 			} else if (ms.getKeys().length == 2) {
@@ -275,14 +280,9 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 				cellCount = 4;
 				conceptLength = conceptLength + 26;
 			} else {
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 				cellCount = 2;
 				conceptLength = conceptLength + 13;
-			}
-			int l = AonStringUtils.length(concept);
-			if (l != 0) {
-				int r = (int) AonMathUtils.floor( ((double) l) /  conceptLength , 0);
-				int h = 230 + (r * 230);
-				row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
 			}
 			for (K key : ms.getKeys()) {
 				if (key == null) {
