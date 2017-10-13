@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-30T14:12:07 -->
+<!-- 2017-10-13T13:44:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="delivery" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="9da43be8-210d-4796-a6a1-120b8f919192">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -52,6 +52,10 @@
     && $F{item}.getPackUnitsTag().getName()==null)
 ?$F{item}.getProduct().getBaseItem()
 :$F{item}]]></initialValueExpression>
+		</variable>
+		<variable name="Price3DecimalFormater" class="java.text.DecimalFormat" resetType="None">
+			<variableExpression><![CDATA[new java.text.DecimalFormat("#,##0.000;-#,##0.000")]]></variableExpression>
+			<initialValueExpression><![CDATA[new java.text.DecimalFormat("#,##0.000;-#,##0.000")]]></initialValueExpression>
 		</variable>
 		<filterExpression><![CDATA[!$F{item}.getProduct().isPrepayment()
 && !($F{item}.getProduct().getType()==ProductType.AUXILIARY)]]></filterExpression>
@@ -1084,7 +1088,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 								</textField>
 							</jr:columnHeader>
 							<jr:detailCell height="18" rowSpan="1">
-								<textField isStretchWithOverflow="true" pattern="#,##0.00##" isBlankWhenNull="true">
+								<textField isStretchWithOverflow="true" pattern="#,##0.000#" isBlankWhenNull="true">
 									<reportElement key="textField-7" x="0" y="0" width="35" height="12" uuid="962ba7f2-ef00-4f74-8b13-920a97d0b7c9">
 										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0) && $P{valuated}.booleanValue())]]></printWhenExpression>
 									</reportElement>
@@ -1097,7 +1101,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$V{PriceFormater}.format($F{price} * $V{itemFormat}.getPackMeasurement())
+									<textFieldExpression><![CDATA[$V{Price3DecimalFormater}.format($F{price} * $V{itemFormat}.getPackMeasurement())
 + ($F{discountExpression}.getDiscountExpr().matches("0\\.?0?")
     ?"":"\n("+$F{discountExpression}.getDiscountExpr()+"%)")]]></textFieldExpression>
 								</textField>
@@ -1159,7 +1163,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 								</textField>
 							</jr:columnHeader>
 							<jr:detailCell height="18" rowSpan="1">
-								<textField isStretchWithOverflow="true" pattern="#,##0.00##" isBlankWhenNull="true">
+								<textField isStretchWithOverflow="true" pattern="#,##0.000#" isBlankWhenNull="true">
 									<reportElement key="textField-7" x="0" y="0" width="35" height="12" uuid="bc86e7ca-b5af-4b15-8cde-975b5b35fa12">
 										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0) && $P{valuated}.booleanValue())]]></printWhenExpression>
 									</reportElement>
@@ -1172,7 +1176,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$V{PriceFormater}.format($F{price})
+									<textFieldExpression><![CDATA[$V{Price3DecimalFormater}.format($F{price})
 + ($F{discountExpression}.getDiscountExpr().matches("0\\.?0?")
     ?"":"\n("+$F{discountExpression}.getDiscountExpr()+"%)")]]></textFieldExpression>
 								</textField>
