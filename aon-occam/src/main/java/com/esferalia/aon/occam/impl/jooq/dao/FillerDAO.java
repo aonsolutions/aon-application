@@ -334,6 +334,7 @@ public class FillerDAO {
 					.setPurchaseReference(r.getValue(PURCHASE.PURCHASE_REFERENCE))
 					.setSupplier(r.getValue(REGISTRY.ID))
 					.setSupplierName(r.getValue(REGISTRY.NAME))
+					.setAddress(r.getValue(PURCHASE.ADDRESS))
 					);
 			detail.setItem(r.getValue(PURCHASE_DETAIL.ITEM));
 			detail.setLine(r.getValue(PURCHASE_DETAIL.LINE).intValue());

@@ -421,6 +421,7 @@ public class SalesDAO {
 				,SALES.DOCUMENT_TYPE
 				,SALES.ISSUE_DATE
 				,SALES.PURCHASE_REFERENCE
+				,SALES.SHIPPING_ADDRESS
 				,REGISTRY.ID
 				,REGISTRY.DOCUMENT
 				,REGISTRY.DOCUMENT_TYPE
@@ -491,6 +492,7 @@ public class SalesDAO {
 					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
 					.setPurchaseReference(record.getValue(SALES.PURCHASE_REFERENCE))
 					.setProjectName(record.getValue(PROJECT.NAME))
+					.setShippingAddress(record.getValue(SALES.SHIPPING_ADDRESS))
 					)
 				
 				.setLine(record.getValue(SALES_DETAIL.LINE))
