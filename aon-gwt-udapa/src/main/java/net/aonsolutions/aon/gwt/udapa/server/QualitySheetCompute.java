@@ -18,7 +18,7 @@ public class QualitySheetCompute {
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC071.getName(),"(Qufqcc07/Qufqcc01)*100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC081.getName(),"(Qufqcc08/Qufqcc01)*100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC091.getName(),"(Qufqcc09/Qufqcc01)*100");
-		COMPUTE_MAP.put(QualitySheetCode.UFQCC101.getName(),"PROPACO ? (Qufqcc10/Qufqcc01)*100 : Qufqcc101");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCC101.getName(),"PROPACO || (Qufqcc101 == 0) ? (Qufqcc10/Qufqcc01)*100 : Qufqcc101");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC10.getName(),"PROPACO ? Qufqcc10 : (Qufqcc101*Qufqcc01)/100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC111.getName(),"(Qufqcc11/Qufqcc01)*100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC121.getName(),"(Qufqcc12/Qufqcc01)*100");
@@ -37,6 +37,20 @@ public class QualitySheetCompute {
 
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD01.getName(),"Qufqcc01");
 		
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD021.getName(),"(Qufqcd021 == 0 ? Qufqcd02/Qufqcd01)*100 : Qufqcd021");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD031.getName(),"(Qufqcd031 == 0 ? Qufqcd03/Qufqcd01)*100 : Qufqcd031");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD041.getName(),"(Qufqcd041 == 0 ? Qufqcd04/Qufqcd01)*100 : Qufqcd041");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD051.getName(),"(Qufqcd051 == 0 ? Qufqcd05/Qufqcd01)*100 : Qufqcd051");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD061.getName(),"(Qufqcd061 == 0 ? Qufqcd06/Qufqcd01)*100 : Qufqcd061");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD071.getName(),"(Qufqcd071 == 0 ? Qufqcd07/Qufqcd01)*100 : Qufqcd071");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD081.getName(),"(Qufqcd081 == 0 ? Qufqcd08/Qufqcd01)*100 : Qufqcd081");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD091.getName(),"(Qufqcd091 == 0 ? Qufqcd09/Qufqcd01)*100 : Qufqcd091");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD101.getName(),"(Qufqcd101 == 0 ? Qufqcd10/Qufqcd01)*100 : Qufqcd101");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD121.getName(),"(Qufqcd121 == 0 ? Qufqcd12/Qufqcd01)*100 : Qufqcd121");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD131.getName(),"(Qufqcd131 == 0 ? Qufqcd13/Qufqcd01)*100 : Qufqcd131");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD141.getName(),"(Qufqcd141 == 0 ? Qufqcd14/Qufqcd01)*100 : Qufqcd141");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD151.getName(),"(Qufqcd151 == 0 ? Qufqcd15/Qufqcd01)*100 : Qufqcd151");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD161.getName(),"(Qufqcd161 == 0 ? Qufqcd16/Qufqcd01)*100 : Qufqcd161");
 		
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD02.getName(),"(Qufqcd021*Qufqcd01)/100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD03.getName(),"(Qufqcd031*Qufqcd01)/100");
