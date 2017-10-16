@@ -18,8 +18,8 @@ public class QualitySheetCompute {
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC071.getName(),"(Qufqcc07/Qufqcc01)*100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC081.getName(),"(Qufqcc08/Qufqcc01)*100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC091.getName(),"(Qufqcc09/Qufqcc01)*100");
-		COMPUTE_MAP.put(QualitySheetCode.UFQCC101.getName(),"PROPACO || (Qufqcc101 == 0) ? (Qufqcc10/Qufqcc01)*100 : Qufqcc101");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC10.getName(),"PROPACO ? Qufqcc10 : (Qufqcc101*Qufqcc01)/100");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCC101.getName(),"(PROPACO || (Qufqcc101 == 0)) ? (Qufqcc10/Qufqcc01)*100 : Qufqcc101");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC111.getName(),"(Qufqcc11/Qufqcc01)*100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC121.getName(),"(Qufqcc12/Qufqcc01)*100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCC131.getName(),"(Qufqcc13/Qufqcc01)*100");
