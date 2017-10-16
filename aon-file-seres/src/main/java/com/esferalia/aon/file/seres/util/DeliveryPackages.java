@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.AON;
@@ -103,7 +104,7 @@ public class DeliveryPackages {
 	}
 	
 	public static Map<Integer, List<Integer>> loadContainerMap(String data) {
-		String regex = "\\[(ENV=\\d{1,3});(CONT=\\d{1,3})\\]";
+		String regex = "\\[(ENV=\\d{1,3});(CONT=\\d{1,3})(;SSCC=\\w{1,})?\\]";
 		String keyPrefix = "CONT=", valuePrefix = "ENV=";
 		int keyGroup = 2, valueGroup = 1;
 		return obtainPackagesMap(data, 
@@ -111,11 +112,28 @@ public class DeliveryPackages {
 	}
 	
 	public static Map<Integer, List<Integer>> loadLinesMap(String data) {
-		String regex = "\\[(ENV=\\d{1,3});(LIN=\\d{1,3})\\]";
+		String regex = "\\[(ENV=\\d{1,3});(LIN=\\d{1,3})(;SSCC=\\w{1,})?\\]";
 		String keyPrefix = "ENV=", valuePrefix = "LIN=";
 		int keyGroup = 1, valueGroup = 2;
 		return obtainPackagesMap(data, 
 				regex, keyPrefix, valuePrefix, keyGroup, valueGroup);
+	}
+	
+	public static Map<Integer, String> loadSSCCMap(String data) {
+		String regexCont = "\\[(ENV=\\d{1,3});(CONT=\\d{1,3})(;SSCC=\\w{1,})?\\]";
+		String keyPrefixCont = "CONT=", ssccPrefixCont = "SSCC=";
+		int keyGroupCont = 2, ssccGroupCont = 3;
+		Map<Integer, String> contMap = obtainSSCCMap(data, 
+				regexCont, keyPrefixCont, ssccPrefixCont, keyGroupCont, ssccGroupCont);
+		
+		String regexLin = "\\[(ENV=\\d{1,3});(LIN=\\d{1,3})(;SSCC=\\w{1,})?\\]";
+		String keyPrefixLin = "ENV=", ssccPrefixLin = "SSCC=";
+		int keyGroupLin = 1, ssccGroupLin = 3;		
+		Map<Integer, String> linMap = obtainSSCCMap(data, 
+				regexLin, keyPrefixLin, ssccPrefixLin, keyGroupLin, ssccGroupLin);
+		
+		contMap.putAll(linMap);
+		return contMap;
 	}
 	
 	private static Map<Integer, List<Integer>> obtainPackagesMap(String data,
@@ -126,8 +144,8 @@ public class DeliveryPackages {
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(data);
 			while (matcher.find()) {
-				String _key = matcher.group(keyGroup).replaceFirst(keyPrefix, "");
-				String _value = matcher.group(valueGroup).replaceFirst(valuePrefix, "");
+				String _key = matcher.group(keyGroup).replaceFirst(keyPrefix, "").replaceAll(";", "");
+				String _value = matcher.group(valueGroup).replaceFirst(valuePrefix, "").replaceAll(";", "");
 				Integer key = Integer.parseInt(_key);
 				Integer value = Integer.parseInt(_value);
 				List<Integer> list = new LinkedList<>();
@@ -136,6 +154,35 @@ public class DeliveryPackages {
 					map.get(key).addAll(list);
 				else
 					map.put(key, list);
+			}
+		}
+		map = map
+				.entrySet()
+				.stream()
+				.sorted(Map.Entry.comparingByKey())
+				.collect(
+						Collectors.toMap(Map.Entry::getKey,
+								Map.Entry::getValue, (x, y) -> {
+									throw new AssertionError();
+								}, LinkedHashMap::new));
+		return map;
+	}
+	
+	private static Map<Integer, String> obtainSSCCMap(String data,
+			String regex,
+			String keyPrefix, String ssccPrefix, int keyGroup, int ssccGroup) {
+		Map<Integer, String> map = new LinkedHashMap<>();
+		if (data != null && !"".equals(data)) {
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher = pattern.matcher(data);
+			while (matcher.find()) {
+				String _sscc = matcher.group(ssccGroup);
+				if(StringUtils.isNotBlank(_sscc)){
+					String _key = matcher.group(keyGroup).replaceFirst(keyPrefix, "").replaceAll(";", "");
+					_sscc = _sscc.replaceFirst(ssccPrefix, "").replaceAll(";", "");
+					Integer key = Integer.parseInt(_key);
+					map.put(key, _sscc);
+				}
 			}
 		}
 		map = map
