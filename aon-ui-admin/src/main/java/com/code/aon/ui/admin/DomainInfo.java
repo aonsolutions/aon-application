@@ -68,6 +68,8 @@ public class DomainInfo implements Serializable {
 	
 	private static final String PAYER = "payer";
 	
+	private static final String COMMERCIAL = "commercial";
+	
 	private String name;
 	
 	private DomainInfoType infoType;
@@ -149,14 +151,14 @@ public class DomainInfo implements Serializable {
 		if (! StringUtils.isEmpty(bookingModulesValue) ) {
 			this.bookinModules = new LinkedList<Module>();
 			for( String value : StringUtils.split(bookingModulesValue) ) {
-				this.bookinModules.add(Module.valueOf(value));
+				this.bookinModules.add(value.equalsIgnoreCase(COMMERCIAL) ? Module.CRM : Module.valueOf(value));
 			}
 		}
 		String displayModulesValue = properties.getProperty(DISPLAY_MODULES);
 		if (! StringUtils.isEmpty(displayModulesValue) ) {
 			this.displayModules = new LinkedList<Module>();
 			for( String value : StringUtils.split(displayModulesValue) ) {
-				this.displayModules.add(Module.valueOf(value));
+				this.displayModules.add(value.equalsIgnoreCase(COMMERCIAL) ? Module.CRM : Module.valueOf(value));
 			}
 		}
 		String tirantValue = properties.getProperty(TIRANT);
