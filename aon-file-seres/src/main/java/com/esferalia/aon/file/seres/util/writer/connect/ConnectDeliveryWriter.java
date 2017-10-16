@@ -176,6 +176,8 @@ public class ConnectDeliveryWriter {
 		Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
 		Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
 		Map<Integer, List<Integer>> level3Map = DeliveryPackages.loadLevel3Map(packageData);
+		Map<Integer, String> ssccMap = DeliveryPackages.loadSSCCMap(packageData);
+		
 //		System.out.print("L1: ");
 //		level1List.forEach(System.out::println);
 //		System.out.println("L1: "+level1Map.keySet()+" | "+level1Map);
@@ -222,7 +224,7 @@ public class ConnectDeliveryWriter {
 				.filter(detail->packageLineList.contains(detail.getLine()))
 				.mapToDouble(DeliveryDetail::getQuantity).sum();
 			mainPackageLine = ++packageLine;
-			SEH1P mainPackage = createSEH1PRecord(mainPackageLine, mainPackageSize, "201");
+			SEH1P mainPackage = createSEH1PRecord(mainPackageLine, mainPackageSize, "201", null);
 			mainPackage.seh1lList = new ArrayList<>();
 			list.add(mainPackage);
 			
@@ -237,24 +239,20 @@ public class ConnectDeliveryWriter {
 							mainPackage.seh1lList.add(createSEH1LRecord(level2Detail, null,
 									companyEdiCode, customerEdiCode, customerPackage));
 						} else {
-							SEH1P subPackage = null; 
-//							subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
-//							subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
-//							subPackage.seh1lList = new ArrayList<>();
-//							list.add(subPackage);
+							SEH1P subPackage = null;
 							
 							// PRODUCT OVER SUB-PACKAGE, IF EXIST
 							List<Integer> level3LineList = new LinkedList<>(level3Map.get(level2Detail.getLine()));
 							for(int level3LineId: level3LineList){
 								DeliveryDetail level3Detail = (DeliveryDetail) detailList.get(level3LineId-1);
-								SEH1P p = existingSerialNumberPackage(list, level3Detail);
+								SEH1P p = searchExistingPackage(list, level3Detail, ssccMap.get(level2Key));
 								if(p==null && subPackage==null){
-									subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT");
+									subPackage = createSEH1PRecord(++packageLine, (int) level2Detail.getQuantity(), "CT", ssccMap.get(level2Key));
 									subPackage.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 									subPackage.seh1lList = new ArrayList<>();
 									list.add(subPackage);
 								}
-								addLine(list, (p!=null?p:subPackage), level3Detail, level2Detail.getQuantity(),
+								addLine(list, (p!=null?p:subPackage), level3Detail, level2Detail.getQuantity(), ssccMap.get(level2Key),
 										companyEdiCode, customerEdiCode, customerPackage);
 							}
 						}
@@ -268,20 +266,23 @@ public class ConnectDeliveryWriter {
 	}
 	
 	private void addLine(List<SEH1P> list, SEH1P targetPackage, DeliveryDetail detail, Double packageQuantity,
-			String companyEdiCode, String customerEdiCode, String customerPackage) {
+			String sscc, String companyEdiCode, String customerEdiCode, String customerPackage) {
 		String seralNumber = detail.getItem().getSerialNumber();
 		boolean success = false;
 		for(SEH1P p: list){
-			for(SEH1L l: p.seh1lList){
-				if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
-						&& l.getNumeroDeLote_NB_().equals(seralNumber)){
-					SEH1L newLine = createSEH1LRecord(detail, packageQuantity,
-							companyEdiCode, customerEdiCode, customerPackage);
-					l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
-					if(packageQuantity!=null){
-						p.setNumeroDePaquetes(p.getNumeroDePaquetes()+packageQuantity.intValue());
+			if( StringUtils.isBlank(p.getNumeroSerial1ONumeroDeIdentificacionInferior())
+					|| StringUtils.equals(sscc, p.getNumeroSerial1ONumeroDeIdentificacionInferior()) ){
+				for(SEH1L l: p.seh1lList){
+					if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
+							&& l.getNumeroDeLote_NB_().equals(seralNumber)){
+						SEH1L newLine = createSEH1LRecord(detail, packageQuantity,
+								companyEdiCode, customerEdiCode, customerPackage);
+						l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
+						if(packageQuantity!=null){
+							p.setNumeroDePaquetes(p.getNumeroDePaquetes()+packageQuantity.intValue());
+						}
+						success = true;
 					}
-					success = true;
 				}
 			}
 		}
@@ -291,19 +292,19 @@ public class ConnectDeliveryWriter {
 		}
 	}
 	
-	private SEH1P existingSerialNumberPackage(List<SEH1P> list, DeliveryDetail detail) {
+	private SEH1P searchExistingPackage(List<SEH1P> list, DeliveryDetail detail, String sscc) {
 		String seralNumber = detail.getItem().getSerialNumber();
 		boolean success = false;
 		SEH1P p = null;
 		Iterator<SEH1P> packageIt = list.iterator();
 		while(packageIt.hasNext() && !success){
 			p = packageIt.next();
-			Iterator<SEH1L> lineIt = p.seh1lList.iterator();
-			while(lineIt.hasNext() && !success){
-				SEH1L l = lineIt.next();
-				if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
-						&& l.getNumeroDeLote_NB_().equals(seralNumber)){
-					success = true;
+			if( StringUtils.isBlank(p.getNumeroSerial1ONumeroDeIdentificacionInferior())
+					|| StringUtils.equals(sscc, p.getNumeroSerial1ONumeroDeIdentificacionInferior()) ){
+				Iterator<SEH1L> lineIt = p.seh1lList.iterator();
+				while(lineIt.hasNext() && !success){
+					SEH1L l = lineIt.next();
+					success = StringUtils.equals(l.getNumeroDeLote_NB_(), seralNumber);
 				}
 			}
 		}
@@ -360,7 +361,7 @@ public class ConnectDeliveryWriter {
 	/**
 	 * Secuencia de embalajes
 	 */
-	private SEH1P createSEH1PRecord(int lineNumber, int quantity, String format) {
+	private SEH1P createSEH1PRecord(int lineNumber, int quantity, String format, String sscc) {
 		SEH1P record = new SEH1P();
 		record.setNumeroDeJerarquiaDeEmbalaje(String.valueOf(lineNumber));
 		record.setNumeroDeJerarquiaPadreDeEmbalaje(null);
@@ -401,7 +402,7 @@ public class ConnectDeliveryWriter {
 		record.setMarcaDeEnvio2(null);
 		record.setMarcaDeEnvio3(null);
 		record.setMarcaDeEnvio4(null);
-		record.setNumeroSerial1ONumeroDeIdentificacionInferior(null);
+		record.setNumeroSerial1ONumeroDeIdentificacionInferior(sscc);
 		record.setNumeroSerial1ONumeroDeIdentificacionSuperior(null);
 		record.setNumeroSerial2oNumeroDeIdentificacionInferior(null);
 		record.setNumeroSerial2ONumeroDeIdentificacionSuperior(null);
@@ -419,18 +420,8 @@ public class ConnectDeliveryWriter {
 		Customer customer = detail.getDelivery().getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customer);
 
-//		String barcode = item.getBarcode();
-//		if(StringUtils.isBlank(barcode)){
-//			try {
-//				barcode = item.getProduct().getBaseItem().getBarcode();
-//			} catch (ManagerBeanException e) {
-//				LOGGER.error(e.getMessage());
-//			}
-//		}
-		
 		SEH1L record = new SEH1L();
 		record.setNumeroDeLineaDelArticulo(detail.getLine());
-//		record.setCodigoEANDelArticulo(barcode);
 		record.setCodigoEANDelArticulo(productCustomerCode);
 		record.setDescripcionDelArticulo(item.getProduct().getName());
 		record.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");

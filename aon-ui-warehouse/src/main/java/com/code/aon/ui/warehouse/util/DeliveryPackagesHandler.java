@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
 import org.slf4j.Logger;
@@ -342,6 +343,7 @@ public class DeliveryPackagesHandler implements Serializable {
 			Map<Integer, List<Integer>> level1Map = DeliveryPackages.loadLevel1Map(packageData, detailList);
 			Map<Integer, List<Integer>> level2Map = DeliveryPackages.loadLevel2Map(packageData);
 			Map<Integer, List<Integer>> level3Map = DeliveryPackages.loadLevel3Map(packageData);
+			Map<Integer, String> ssccMap = DeliveryPackages.loadSSCCMap(packageData);
 			
 			int mainPackageLine = 0;
 			int packageLine = 0;
@@ -355,7 +357,7 @@ public class DeliveryPackagesHandler implements Serializable {
 						.mapToDouble(DeliveryDetail::getQuantity).sum();
 				mainPackageLine = ++packageLine;
 				DeliveryDetail level1Detail = (DeliveryDetail) detailList.get(level1Map.get(level1Key).get(0)-1);
-				EdiStructureItem mainPackage = new EdiStructureItem(mainPackageLine, null, 0, mainPackageSize, level1Detail);
+				EdiStructureItem mainPackage = new EdiStructureItem(mainPackageLine, null, 0, mainPackageSize, null, level1Detail);
 				list.add(mainPackage);
 				
 				// SUB-PACKAGE OR PRODUCT OVER MAIN-PACKAGE
@@ -365,10 +367,10 @@ public class DeliveryPackagesHandler implements Serializable {
 						for(int level2LineId: level2LineList){
 							DeliveryDetail level2Detail = (DeliveryDetail) detailList.get(level2LineId-1);
 							if(!isPackageItem(level2Detail.getItem())) {
-								EdiStructureItem mainPackageItem = new EdiStructureItem(null, mainPackageLine, 1, (int)level2Detail.getQuantity(), level2Detail);
+								EdiStructureItem mainPackageItem = new EdiStructureItem(null, mainPackageLine, 1, (int)level2Detail.getQuantity(), null, level2Detail);
 								list.add(mainPackageItem);
 							} else {
-								EdiStructureItem subPackage = new EdiStructureItem(++packageLine, mainPackageLine, 1, (int)level2Detail.getQuantity(), level2Detail);
+								EdiStructureItem subPackage = new EdiStructureItem(++packageLine, mainPackageLine, 1, (int)level2Detail.getQuantity(), ssccMap.get(level2Key), level2Detail);
 								list.add(subPackage);
 								
 								// PRODUCT OVER SUB-PACKAGE, IF EXIST
@@ -389,7 +391,7 @@ public class DeliveryPackagesHandler implements Serializable {
 									
 									quantity *= subPackage.getQuantity();
 									
-									EdiStructureItem subPackageItem = new EdiStructureItem(null, null, 2, quantity, level3Detail);
+									EdiStructureItem subPackageItem = new EdiStructureItem(null, null, 2, quantity, null, level3Detail);
 									list.add(subPackageItem);
 								}
 							}
@@ -408,13 +410,15 @@ public class DeliveryPackagesHandler implements Serializable {
 		private Integer parent;
 		private int level;
 		private int quantity;
+		private String sscc;
 		private DeliveryDetail detail;
-		public EdiStructureItem(Integer line, Integer parent, int level, int quantity, DeliveryDetail detail) {
+		public EdiStructureItem(Integer line, Integer parent, int level, int quantity, String sscc, DeliveryDetail detail) {
 			this.line = line;
 			this.parent = parent;
 			this.level = level;
 			this.quantity = quantity;
 			this.detail = detail;
+			this.sscc = sscc;
 		}
 		public Integer getLine() {
 			return line;
@@ -435,7 +439,8 @@ public class DeliveryPackagesHandler implements Serializable {
 		public String toString() {
 			return quantity + " "
 					+ (line==null?detail.getItem().getPackUnitsTag().getName() + " / ":" x ") 
-					+ detail.getDescription();
+					+ detail.getDescription()
+					+ (StringUtils.isNotBlank(sscc)?" (SSCC: "+sscc+")":"");
 		}
 		
 	}
