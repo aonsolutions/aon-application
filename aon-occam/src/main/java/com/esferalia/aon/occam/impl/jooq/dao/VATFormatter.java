@@ -37,7 +37,7 @@ public class VATFormatter {
 	
 	static final String OP_DIV_BOLD= "<div><b>";
 	static final String OP_DIV_BOLD_LIGHT_BLUE = "<div style=\"color: RoyalBlue;\"><b>";
-	static final String OP_DIV_BOLD_BLUE = "<div style=\"color: blue;\"><b>{0}</b></div>";
+	static final String OP_DIV_BOLD_BLUE = "<div style=\"color: blue;\"><b>";
 	static final String CL_DIV_BOLD= "</b></div>";
 	
 	
