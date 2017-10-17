@@ -3,24 +3,21 @@ package com.esferalia.aon.occam.jooq.test;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.stream.Collectors;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.VATFormatter;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class VatReportTest {
@@ -37,7 +34,7 @@ public class VatReportTest {
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,LOGIN);
 	}
-	
+/*	
 	@Test
 	public void testBreakdown() throws IOException {
 		
@@ -74,5 +71,19 @@ public class VatReportTest {
 	public static void afterClass() {
 		ctx.finalize();
 	}
-	
+*/	
+	@Test
+	public void testStreaming() throws IOException {
+		final Date fromDate = AonDateUtils.getYearFirstDay(2017);
+		final Date toDate = FiscalUtils.getPeriodEnd(2017, Period.M01);
+		FileWriter fileWriter = new FileWriter("/home/ecastellano/vatReport.txt");
+		PrintWriter writer = new PrintWriter(fileWriter);
+		VATFormatter.formatInvoices(writer
+				, VATDAO.getVatBreakdown(ctx, fromDate, toDate)
+				, "LISTADO IVA", "DESGLOSE");
+		writer.flush();
+		writer.close();
+		System.out.println();
+		System.out.println( "FINISH STREAMING");
+	}
 }

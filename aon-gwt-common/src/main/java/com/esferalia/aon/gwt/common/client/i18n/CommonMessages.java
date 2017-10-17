@@ -2293,6 +2293,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("R\u00E9gimen de criterio de caja")
 	String vatAccrualPayment();
 
+	@DefaultMessage("R\u00E9g. crit. caja")
+	String vatAccrualPaymentAbbr();
+
 	@DefaultMessage("Tipo de transacci\u00F3n")
 	String transactionType();
 
@@ -3244,6 +3247,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Bienes de inversi\u00F3n")
 	String investAsset();
+
+	@DefaultMessage("Inversi\u00F3n")
+	String investment();
 
 	@DefaultMessage("Bien afecto")
 	String actInvestAsset();
