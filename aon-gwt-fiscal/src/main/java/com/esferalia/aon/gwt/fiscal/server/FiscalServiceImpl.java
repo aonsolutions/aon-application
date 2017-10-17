@@ -866,8 +866,8 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public String getVatContextReport(String domainName, int domain, VatParams params)
 			throws AonCoreException {
 		return VATFormatter.formatInvoices("LISTADO IVA", FiscalUtils.toString(params), 
-				FISCAL.getVatContext(domainName, domain, this.getUserLogin(), params)
-					.collect(Collectors.toCollection(LinkedList::new)));
+			FISCAL.getVatContext(domainName, domain, this.getUserLogin(), params)
+				.collect(Collectors.toCollection(LinkedList::new)));
 	}
 
 	@Override

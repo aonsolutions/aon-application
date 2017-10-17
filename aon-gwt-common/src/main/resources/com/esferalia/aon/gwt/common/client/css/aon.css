@@ -2635,7 +2635,15 @@ input:disabled+label {
 .aon-postit-content {
 	padding: 30px 10px 30px 10px;
 }
-
+.aon-report {
+	
+}
+.aon-report-row {
+	
+}
+.aon-report .aon-report-row:hover {
+	background-color: #EEEEEE;
+}
 .aon-toast {
 	position: absolute;
 	color: #333;

@@ -35,6 +35,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -54,12 +55,10 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -141,7 +140,7 @@ public class VatReport extends MainEntryPoint {
 					@Override
 					public void onSuccess(AonConfiguration result) {
 						configuration = result;
-						dockLayoutPanel.addNorth(getFilterPanel(), 125);
+						dockLayoutPanel.addNorth(getFilterPanel(), 135);
 						content = new SimpleLayoutPanel();
 						content.setStyleName(AON.AON_CSS.aonSelector());
 						tabLayout = new TabLayoutPanel(26, Unit.PX);
@@ -339,6 +338,7 @@ public class VatReport extends MainEntryPoint {
 		});
 		
 		transaction = new InvoiceTransactionListBox();
+		transaction.setWidth("100px");
 		transaction.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -349,12 +349,12 @@ public class VatReport extends MainEntryPoint {
 
 		if (configuration != null && configuration.hasActivities()) {
 			activity = new ListBox();
-			activity.setWidth("150px");
+			activity.setWidth("120px");
 			activity.addItem("-- Todas --", "");
 			activity.setSelectedIndex(0);
 			int i = 1;
 			for (EnterpriseActivity ea : configuration.getActivities()) {
-				activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
+				activity.addItem(ea.getDescription() + (ea.getIae() == null?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
 				}
@@ -379,6 +379,7 @@ public class VatReport extends MainEntryPoint {
 		});
 		
 		investment = new ListBox();
+		investment.setWidth("100px");
 		investment.addItem("-- Todas --");
 		investment.addItem(AON.MSG.commonAsset());
 		investment.addItem(AON.MSG.investAsset());
@@ -443,10 +444,14 @@ public class VatReport extends MainEntryPoint {
 		});
 		
 		rectificationType = new ListBox();
+		rectificationType.setWidth("100px");
 		rectificationType.addItem("-- Todas --");
 		rectificationType.addItem("Ni rectificativa ni rectificada");
 		rectificationType.addItem(RectificationType.NORMAL_RECTIFIER.getDescription());
+		
 		rectificationType.addItem(RectificationType.SPECIAL_RECTIFIER.getDescription());
+		rectificationType.getElement().<SelectElement>cast().getOptions().getItem(3).setDisabled(true);
+		
 		rectificationType.addItem(RectificationType.RECTIFIED.getDescription());
 		rectificationType.addChangeHandler(new ChangeHandler() {
 			
@@ -474,16 +479,19 @@ public class VatReport extends MainEntryPoint {
 		
 		Label yearLabel = new InlineLabel(AON.MSG.fiscalYear());
 		yearLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		yearLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		firstRowPanel.add(yearLabel);
 		firstRowPanel.add(year);
 		
 		Label periodLabel = new InlineLabel(AON.MSG.period());
 		periodLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		periodLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		firstRowPanel.add(periodLabel);
 		firstRowPanel.add(period);
 		
 		Label dateLabel = new InlineLabel(AON.MSG.date());
 		dateLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		dateLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		firstRowPanel.add(dateLabel);
 		firstRowPanel.add(fromDate);
 		InlineLabel to = new InlineLabel(AON.MSG.to());
@@ -495,12 +503,14 @@ public class VatReport extends MainEntryPoint {
 		
 		Label outputLabel = new InlineLabel(AON.MSG.invoices());
 		outputLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		outputLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		firstRowPanel.add(outputLabel);
 		service.addStyleName(AON.AON_CSS.aonMarginRight());
 		firstRowPanel.add(output);
 
 		Label transactionLabel = new InlineLabel(AON.MSG.transaction());
 		transactionLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		transactionLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		firstRowPanel.add(transactionLabel);
 		service.addStyleName(AON.AON_CSS.aonMarginRight());
 		firstRowPanel.add(transaction);
@@ -510,15 +520,10 @@ public class VatReport extends MainEntryPoint {
 		secondRowPanel.addStyleName(AON.AON_CSS.aonMarginTop5());
 		filterPanel.add(secondRowPanel);
 
-		if (configuration != null && configuration.hasActivities()) {
-			InlineLabel activityLabel = new InlineLabel(AON.MSG.activity());
-			activityLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
-			secondRowPanel.add(activityLabel);
-			secondRowPanel.add(activity);
-		}
 
 		Label titularLabel = new InlineLabel(AON.MSG.titular());
 		titularLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		titularLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		secondRowPanel.add(titularLabel);
 		secondRowPanel.add(registry);
 
@@ -527,24 +532,35 @@ public class VatReport extends MainEntryPoint {
 		thirdRowPanel.addStyleName(AON.AON_CSS.aonMarginTop5());
 		filterPanel.add(thirdRowPanel);
 		
-		Label investmentLabel = new InlineLabel(AON.MSG.investAsset());
+		Label investmentLabel = new InlineLabel(AON.MSG.investment());
 		investmentLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		investmentLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		thirdRowPanel.add(investmentLabel);
 		investment.addStyleName(AON.AON_CSS.aonMarginRight());
 		thirdRowPanel.add(investment);
 		
 		Label serviceLabel = new InlineLabel(AON.MSG.service());
 		serviceLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		serviceLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		thirdRowPanel.add(serviceLabel);
 		service.addStyleName(AON.AON_CSS.aonMarginRight());
 		thirdRowPanel.add(service);
 
-		Label accrualLabel = new InlineLabel(AON.MSG.vatAccrualPayment());
+		Label accrualLabel = new InlineLabel(AON.MSG.vatAccrualPaymentAbbr());
 		accrualLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		accrualLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		thirdRowPanel.add(accrualLabel);
 		accrualRegime.addStyleName(AON.AON_CSS.aonMarginRight());
 		thirdRowPanel.add(accrualRegime);
 
+		if (configuration != null && configuration.hasActivities()) {
+			InlineLabel activityLabel = new InlineLabel(AON.MSG.activity());
+			activityLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+			activityLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+			thirdRowPanel.add(activityLabel);
+			thirdRowPanel.add(activity);
+		}
+		
 		// ---------------------------------------------------------------- FOURTH ROW
 		FlowPanel fourthRowPanel = new FlowPanel();
 		fourthRowPanel.addStyleName(AON.AON_CSS.aonMarginTop5());
@@ -552,18 +568,21 @@ public class VatReport extends MainEntryPoint {
 
 		Label farmerLabel = new InlineLabel(AON.MSG.withholdingFarmer());
 		farmerLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		farmerLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		fourthRowPanel.add(farmerLabel);
 		farmerRegime.addStyleName(AON.AON_CSS.aonMarginRight());
 		fourthRowPanel.add(farmerRegime);
 
 		Label surchargeLabel = new InlineLabel(AON.MSG.surcharge());
 		surchargeLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		surchargeLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		fourthRowPanel.add(surchargeLabel);
 		surcharge.addStyleName(AON.AON_CSS.aonMarginRight());
 		fourthRowPanel.add(surcharge);
 		
 		Label rectifiedLabel = new InlineLabel(AON.MSG.rectified());
 		rectifiedLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		rectifiedLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		fourthRowPanel.add(rectifiedLabel);
 		rectificationType.addStyleName(AON.AON_CSS.aonMarginRight());
 		fourthRowPanel.add(rectificationType);
@@ -596,7 +615,7 @@ public class VatReport extends MainEntryPoint {
 		if (tabLayout.getSelectedIndex() == 0) {
 			refreshSummary(getWidgetParams());
 		} else {
-			refreshResults( getWidgetParams() );
+			refreshResults(getWidgetParams() );
 		}
 	}
 	
@@ -648,43 +667,14 @@ public class VatReport extends MainEntryPoint {
 	private void refreshAndSeeResults(VatParams params) {
 		if (tabLayout.getSelectedIndex() == 0) {
 			tabLayout.setAnimationDuration(300);
-			tabLayout.selectTab(1);
+			tabLayout.selectTab(1,false);
 		}
 		refreshResults(params);
 	}
 	
 	private void refreshResults(VatParams params) {
 		resultsContent.clear();
-		
-		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
-		ScrollPanel scroll = new ScrollPanel();			
-		resultsContent.setWidget(scroll);
-		fiscalService.getVatContextReport(getCurrentDomainName(), getCurrentDomain(), params
-				, new AsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String result) {
-				popup.hide();
-				HTMLPanel panel = new HTMLPanel(result);
-				scroll.setWidget(panel);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				popup.hide();
-				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));
-				error.setStyleName(AON.AON_CSS.aonMargin());
-				error.addStyleName(AON.AON_CSS.aonColorRed());
-				error.addStyleName(AON.AON_CSS.aonBold());
-				scroll.setWidget(error);
-			}
-		});		
+		resultsContent.setWidget(new VatReportPanel(getCurrentDomainName(), getCurrentDomain(), params, null, null));
 	}
 
 	private void refreshSummary(VatParams params) {
@@ -871,10 +861,10 @@ public class VatReport extends MainEntryPoint {
 				String est = "Estimaci\u00F3n: ";
 				if (estimation < 0  ) {
 					est = est + "A Compensar / Devolver: " + formatter.format( AonMathUtils.absRounded( estimation ) );
-					tab.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonColorRed());
+					tab.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonColorGreen());
 				} else if (estimation > 0  ) { 
 					est = est + "A Ingresar: " + formatter.format( estimation );
-					tab.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonColorGreen());
+					tab.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonColorRed());
 				} else {
 					est = est + "Cero / Sin Actividad ";
 				}

@@ -1014,6 +1014,12 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-postit-content")
 	String aonPostitContent();
 
+	@ClassName("aon-report")
+	String aonReport();
+	
+	@ClassName("aon-report-row")
+	String aonReportRow();
+
 	@ClassName("aon-toast")
 	String aonToast();
 
