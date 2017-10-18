@@ -31,7 +31,7 @@ import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod202 Print", urlPatterns = { "/aon_gwt_fiscal/Model202Print" })
+@WebServlet(name = "Mod202 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/Model202PrintAEAT" })
 public class Mod202PrintAEAT extends HttpServlet {
 
 	@Override
@@ -39,7 +39,7 @@ public class Mod202PrintAEAT extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("modId"));
+			int id = Integer.parseInt(req.getParameter("mod202"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			Mod202 mod202 = FISCAL.getMod202(domainName, domainId,AonServletUtils.getLoggedUser(),id);
