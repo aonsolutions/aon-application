@@ -154,6 +154,8 @@ public class AonDrive extends DriveUtils{
 					|| attach.getType() == RegistryAttachmentType.AON_TEMPLATES.value() 
 					|| attach.getType() == RegistryAttachmentType.D2_DEPOSIT.value()
 					|| attach.getType() == RegistryAttachmentType.DOMAIN_BOOK_HISTORY.value() // Historial en configuración
+					|| attach.getType() == RegistryAttachmentType.DOMAIN_INSERT_HISTORY.value()
+					|| attach.getType() == RegistryAttachmentType.DOMAIN_REMOVE_HISTORY.value()
 					|| attach.getType() == RegistryAttachmentType.CRETA_RESPUESTA.value() 
 					|| attach.getType() == RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS.value() 
 					|| attach.getType() == RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()
