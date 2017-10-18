@@ -12,7 +12,9 @@ public enum DataResponseSource implements Serializable{
 	SII_FINANCE,
 	INVOICE_SABBATIC,
 	SERES_DELIVERY,
-	SERES_INVOICE;
+	SERES_INVOICE,
+	SERES_SALES,
+	INGENET;
 
 
 	public byte value() {

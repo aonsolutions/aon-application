@@ -25,9 +25,14 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.management.Sales;
@@ -168,16 +173,30 @@ public class SeresServlet extends HttpServlet {
 		List<Integer> salesIds = AON.getSalesStream(domain.getName(), domain.getId(), login,
 				f -> salesFilter(domain, ediRegistryIds, filterMap, f)).map(Sales::getId).collect(Collectors.toList());
 		
+		List<Integer> responseSalesIds = AON
+				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
+						f -> f.getDomainProperty().eq(domain.getId())
+								.and(f.getSourceProperty().eq(DataResponseSource.SERES_SALES.value())))
+				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
+				.map(DataResponse::getSourceId).collect(Collectors.toList());
+		
+		List<Integer> responseInvoiceIds = AON
+				.getDataResponseStream(domain.getName(), domain.getId(), login, null,
+						f -> f.getDomainProperty().eq(domain.getId())
+								.and(f.getSourceProperty().eq(DataResponseSource.SERES_INVOICE.value())))
+				.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
+				.map(DataResponse::getSourceId).collect(Collectors.toList());
+		
 		array.put(new JSONObject()
 				.put("label", INCOME_SALES)
 				.put("quantity", salesIds.size())
-				.put("pending", -1)
+				.put("pending", salesIds.size() - responseSalesIds.size())
 				.put("error", -1)
 		);
 		array.put(new JSONObject()
 				.put("label", INCOME_INVOICE)
 				.put("quantity", invoiceIds.size())
-				.put("pending", -1)
+				.put("pending", invoiceIds.size() - responseInvoiceIds.size())
 				.put("error", -1)
 		);
 		
@@ -188,19 +207,23 @@ public class SeresServlet extends HttpServlet {
 		Map<String, String[]> filterMap = req.getParameterMap();
 		JSONArray array = new JSONArray();
 		
-		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
-
-		Supplier<Stream<Delivery>> deliveryStreamSupplier = () -> AON.getDeliveryStream(domain.getName(), domain.getId(), login,
-				f -> deliveryFilter(domain, ediRegistryIds, filterMap, f));
-		List<Integer> ingenetDeliveryIds = deliveryStreamSupplier.get()
-				.filter(o -> o.getCreationUser().equals("ingenet"))
-				.map(Delivery::getId).collect(Collectors.toList());
+		Supplier<Stream<Attach>> dataAttachStreamSupplier = () -> AON
+				.getAttachStream(domain.getName(), domain.getId(), login,
+						f -> dataAttachFilter(domain, filterMap, f)
+								.and(f.getSourceTypeProperty().eq(DataAttachSource.INGENET.value())),
+						AttachType.DATA, false);
+		
+		List<Integer> dataAttachIds = dataAttachStreamSupplier.get().map(Attach::getId).collect(Collectors.toList());
+		List<Integer> orphansIds = dataAttachStreamSupplier.get().filter(o -> o.getSourceBatch() == null)
+				.map(Attach::getId).collect(Collectors.toList());
+		List<Integer> errorIds = dataAttachStreamSupplier.get().filter(o -> o.getType() == DataAttachType.RESPONSE_ERROR.value())
+				.map(Attach::getId).collect(Collectors.toList());
 		
 		array.put(new JSONObject()
 				.put("label", INGENET_DELIVERY)
-				.put("quantity", ingenetDeliveryIds.size())
-				.put("pending", -1)
-				.put("error", -1)
+				.put("quantity", dataAttachIds.size())
+				.put("pending", orphansIds.size())
+				.put("error", errorIds.size())
 		);
 
 		return array;
@@ -279,19 +302,6 @@ public class SeresServlet extends HttpServlet {
     				f -> deliveryFilter(domain, ediRegistryIds, filterMap, f))
     		.filter(o -> o.getCreationUser().equals("ingenet"))
     		.forEach(o -> array.put(toSeresFileJSON((o))));
-    		
-    		
-//    		
-//    		
-//    		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
-//
-//    		Supplier<Stream<Delivery>> deliveryStreamSupplier = () -> AON.getDeliveryStream(domain.getName(), domain.getId(), login,
-//    				f -> deliveryFilter(domain, ediRegistryIds, filterMap, f));
-//    		List<Integer> ingenetDeliveryIds = deliveryStreamSupplier.get()
-//    				.filter(o -> o.getCreationUser().equals("ingenet"))
-//    				.map(Delivery::getId).collect(Collectors.toList());
-//    		
-    		
     	}
     	return array;
 	}
@@ -378,15 +388,10 @@ public class SeresServlet extends HttpServlet {
 		}
 	}
 	
-//	private void fillEdiActive(Filter filter, Property<Integer> property, Domain domain, String login) {
-//		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
-//		filter = filter.and(property.in(ediRegistryIds));
-//	}
 	
 	private Filter deliveryFilter(Domain domain, Integer[] ediRegistryIds, Map<String, String[]> filterMap, DeliveryProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		fillPaginationFilter(filter, filterMap);
-//		fillEdiActive(filter, f.getCustomerProperty(), domain, login);
 		if(ediRegistryIds!=null && ediRegistryIds.length>0)
 			filter = filter.and(f.getCustomerProperty().in(ediRegistryIds));
 		
@@ -402,7 +407,6 @@ public class SeresServlet extends HttpServlet {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter = filter.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
 		fillPaginationFilter(filter, filterMap);
-//		fillEdiActive(filter, f.getRegistryProperty(), domain, login);
 		if(ediRegistryIds!=null && ediRegistryIds.length>0)
 			filter = filter.and(f.getRegistryProperty().in(ediRegistryIds));
 		
@@ -416,13 +420,23 @@ public class SeresServlet extends HttpServlet {
 	private Filter salesFilter(Domain domain, Integer[] ediRegistryIds, Map<String, String[]> filterMap, SalesProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		fillPaginationFilter(filter, filterMap);
-//		fillEdiActive(filter, f.getCustomerProperty(), domain, login);
 		if(ediRegistryIds!=null && ediRegistryIds.length>0)
 			filter = filter.and(f.getCustomerProperty().in(ediRegistryIds));
 		
 		if (filterMap.containsKey(MSG.FROM)) {
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
 			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(date)));
+		}
+		return filter;
+	}
+	
+	private Filter dataAttachFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		fillPaginationFilter(filter, filterMap);
+		
+		if (filterMap.containsKey(MSG.FROM)) {
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			filter = filter.and(f.getCreationDateTimeStampProperty().ge(AonDateUtils.toTimestamp(date)));
 		}
 		return filter;
 	}
