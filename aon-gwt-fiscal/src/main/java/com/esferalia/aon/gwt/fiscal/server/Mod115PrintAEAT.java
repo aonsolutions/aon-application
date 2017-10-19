@@ -75,17 +75,17 @@ public class Mod115PrintAEAT extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 		
-		String urlParameters = "HID=INV5115A" 
+		String urlParameters = "HID=IE71150A" 
 				+"&IDI=ES"
 				+"&LEV=000000000000"
 				+"&FIC=" + encodedFile
 				+"&RUT="
-				+"&PRG=PTLINK6F"
+				+"&PRG="
 				+"&FIN=" 
 				+"&EJF=" + mod115.getYear() 
 				+"&MOD=115";
 		// Validacion e impresion
-		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
+		String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 				
 		URL url = new URL(request);
 
