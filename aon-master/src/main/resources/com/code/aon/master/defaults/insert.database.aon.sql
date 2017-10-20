@@ -6489,7 +6489,9 @@ INSERT INTO `profile` VALUES
   (71,'Administrador',28,null),
   (72,'Gestion',28,null),  
   (73,'Invitado',28,null),
-  (74,'Portal Laboral',28,null);
+  (74,'Portal Laboral',28,null),
+  (75,'Portal Documental',28,null),
+  (76,'Portal Gestion',28,null);
 /*
  	**TODO** 	
   	Solo se estan cargando los roles que tiene cada perfil de la aplicación
@@ -6513,8 +6515,15 @@ INSERT INTO `profile_role` VALUES
   (11,null,72,229),
   (12,null,72,230),  
   (13,null,72,232),
-  (20,null,74,218),
   (21,null,74,234),
+  (22,null,75,233),
+  (23,null,76,220),
+  (24,null,76,223),
+  (25,null,76,225),
+  (26,null,76,226),
+  (27,null,76,229),
+  (28,null,76,230),
+  (29,null,76,232),
 /*
   aon-aio (Invitado): Guest
 */
@@ -6529,7 +6538,10 @@ INSERT INTO `profile_role` VALUES
   (19,null,32,118);
   
 
-INSERT INTO `profile_module_denied` (`profile`,`module`) VALUES (74, 18); 
+INSERT INTO `profile_module_denied` (`profile`,`module`) VALUES 
+  (74, 18),
+  (75, 18), 
+  (76, 18); 
 
 
 COMMIT;
