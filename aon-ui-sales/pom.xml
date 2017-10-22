@@ -49,7 +49,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.10</version>
+      <version>9.11-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
