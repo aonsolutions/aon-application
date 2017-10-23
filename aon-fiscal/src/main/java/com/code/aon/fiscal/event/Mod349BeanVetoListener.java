@@ -27,10 +27,10 @@ public class Mod349BeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		checkMod349(mod349);
 		if (mod349.isExtraDeclaration()) {
 			int last = getLastNumber(mod349);
-			mod349.setReplacedNumber(last);
-			mod349.setNumber(++last);
+			mod349.setReplacedNumber(Integer.toString(last));
+			mod349.setNumber(Integer.toString(++last));
 		} else {
-			mod349.setNumber(1);
+			mod349.setNumber("1");
 		}
 	}
 
@@ -107,7 +107,12 @@ public class Mod349BeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				return 1;
 			}
 			Mod349 last = (Mod349) list.get(0);
-			return last.getNumber();
+			try {
+				return Integer.parseInt(last.getNumber());
+			} catch (NumberFormatException e) {
+				return 1;
+			}
+			
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}

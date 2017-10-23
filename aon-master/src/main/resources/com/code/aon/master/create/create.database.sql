@@ -4577,8 +4577,17 @@ CREATE TABLE `fs_mod349` (
   `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad',
   `complementary` tinyint(1) DEFAULT '0' COMMENT 'Declaracion complementaria',
   `replacement` tinyint(1) DEFAULT '0' COMMENT 'Declaracion sustitutiva',
-  `number` int(4) DEFAULT '0' COMMENT 'Numero de Declaracion',
-  `replaced_number` int(4) DEFAULT '0' COMMENT 'Numero de Declaracion complementada o sustituida',
+  `number` varchar(13) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de declaracion',
+  `replaced_number` varchar(13) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de declaracion anterior',
+  `document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF',
+  `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
+  `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono Persona de Contacto',  
+  `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
+  `periodicity_change` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indicador Cambio Periodicidad',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MOD349_DOMAIN` (`domain`),
   CONSTRAINT `FK_FS_MOD349_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -4603,7 +4612,7 @@ CREATE TABLE `fs_mod349_detail` (
   `amount` double(15,3) DEFAULT '0.000' COMMENT 'Importe de las operaciones',
   `rectified_year` int(4) DEFAULT NULL COMMENT 'Ejercicio de la Declaracion del importe rectificado',
   `rectified_period` tinyint(2) DEFAULT NULL COMMENT 'Periodo de la Declaracion del importe rectificado',
-  `rectified_amount` varchar(45) COLLATE latin1_spanish_ci DEFAULT '0.000' COMMENT 'Importe rectificado',
+  `rectified_amount` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe rectificado',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MOD349_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MOD349_DETAIL_FS_MOD349` (`fs_mod349`),
@@ -4684,6 +4693,10 @@ CREATE TABLE `fs_model180` (
   `receiver_count_total` int(4) NOT NULL DEFAULT '0' COMMENT 'Numero total de perceptores',
   `receipt_total` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe declarado',
   `retention_total` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe declarado',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL180_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL180_ENTERPRISE` (`enterprise`),
@@ -4764,6 +4777,10 @@ CREATE TABLE `fs_model184` (
   `net_sales_amount` double(15,3) DEFAULT '0.000' COMMENT 'Importe neto cifra de negocios',
   `lrdocument` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF Representante',
   `lrname` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre Representante',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL184_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL184_ENTERPRISE` (`enterprise`),
@@ -4851,6 +4868,10 @@ CREATE TABLE `fs_model190` (
   `receiver_count_total` int(4) NOT NULL DEFAULT '0' COMMENT 'Numero total de perceptores',
   `receipt_total` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe declarado',
   `retention_total` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Importe declarado',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL190_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL190_ENTERPRISE` (`enterprise`),
@@ -4951,6 +4972,10 @@ CREATE TABLE `fs_model193` (
   `deposit_retention_total` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Retenciones e ingresos a cuenta ingresados',
   `expenses_total` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Gastos',
   `nature` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Naturaleza del declarante',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL193_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL193_ENTERPRISE` (`enterprise`),
@@ -8440,7 +8465,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('9.10.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('9.11.0');
 
 COMMIT;
 
