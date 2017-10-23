@@ -22,120 +22,72 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Mod303 ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_mod303</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod303/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Mod140 ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_mod140</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod140/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Mod190 ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_mod190</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod190/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Mod193 ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_mod193</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod193/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	<!-- =================== Mod180 ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_mod180</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod180/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Mod184 ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_mod184</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod184/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Mod390 ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_mod390</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod390/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Mod200 ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_mod200</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod200/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Mod111 ========================== -->
+	<!-- =================== MODELOS FISCALES ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_mod111</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod111/gwt.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod111.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	
-	<!-- =================== Mod115 ========================== -->
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_mod115</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod115/gwt.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod115.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Mod123 ========================== -->
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_mod123</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod123/gwt.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod123.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Mod130 ========================== -->
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_mod130</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod130/gwt.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod130.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Mod131 ========================== -->
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_mod131</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod131/gwt.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod131.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	
-	<!-- =================== Mod202 ========================== -->
-	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_mod140</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod140.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>gwt_mod180</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod180.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_mod184</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod184.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_mod190</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod190.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_mod193</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod193.xhtml</to-view-id>
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>gwt_mod200</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod200/gwt.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod200.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Mod202 ========================== -->
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_mod202</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/mod202/gwt.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod202.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_mod303</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod303.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_mod349</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod349.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_mod390</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod390.xhtml</to-view-id>
+		</navigation-case>
+		
 	</navigation-rule>
+
 	
 	<!-- =================== Deposit ========================== -->
 	<navigation-rule>
