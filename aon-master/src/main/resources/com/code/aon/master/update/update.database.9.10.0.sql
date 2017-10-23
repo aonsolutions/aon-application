@@ -5,11 +5,6 @@
 
 BEGIN;
 
-	*****************************************
-	** ERROR ( por si se escapa) ************
-	*****************************************
-
-
 # Añadir campos nuevos en la tabla fs_model180 
 ALTER TABLE `fs_model180` ADD `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion';
 ALTER TABLE `fs_model180` ADD `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion';
@@ -53,10 +48,10 @@ ALTER TABLE `fs_mod349_detail` ADD `rectified_amount` double(15,3) NOT NULL DEFA
     
 # Actualizar los campos nuevos    
 UPDATE `fs_mod349` 
-  SET `document` = (SELECT `document` FROM `enterprise` INNER JOIN `registry` ON `registry`.`id`=`enterprise`.`registry` WHERE `enterprise`.`domain`=`fs_mod349`.`domain`),
-      `name` = (SELECT `registry`.`name` FROM `enterprise` INNER JOIN `registry` ON `registry`.`id`=`enterprise`.`registry` WHERE `enterprise`.`domain`=`fs_mod349`.`domain`),
+  SET `document` = (SELECT MIN(SUBSTR(`document`,0,9)) FROM `enterprise` INNER JOIN `registry` ON `registry`.`id`=`enterprise`.`registry` WHERE `enterprise`.`domain`=`fs_mod349`.`domain`),
+      `name` = (SELECT MIN(SUBSTR(`registry`.`name`,0,45)) FROM `enterprise` INNER JOIN `registry` ON `registry`.`id`=`enterprise`.`registry` WHERE `enterprise`.`domain`=`fs_mod349`.`domain`),
       `contact_person` = (SELECT `value` FROM `app_param` where `app_param`.`domain`=`fs_mod349`.`domain` and app_param.name='FS_CONCTACT_PERSON'),
-      `contact_phone` = (SELECT `value` FROM `app_param` where `app_param`.`domain`=`fs_mod349`.`domain` and app_param.name='FS_CONCTACT_PHONE');
+      `contact_phone` = (SELECT SUBSTR(`value`,0,9) FROM `app_param` where `app_param`.`domain`=`fs_mod349`.`domain` and app_param.name='FS_CONCTACT_PHONE');
 
 
 UPDATE `db_version` SET `version_number` = '9.11.0';
