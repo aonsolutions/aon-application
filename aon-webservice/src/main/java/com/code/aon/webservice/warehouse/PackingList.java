@@ -612,6 +612,11 @@ public class PackingList extends PdfUtils{
 		table.addCell(new Paragraph(new Phrase("Observaciones: ", getFont1())));
 		table.addCell(new Paragraph(new Phrase(observation, getFont2())));
 		
+		if(CarrierPackingType.SHIPMENT_REQUEST.equals(type)) {
+			table.addCell(new Paragraph(new Phrase("", getFont1())));
+			table.addCell(new Paragraph(new Phrase("PARA UNA CORRECTA GESTION EN LA RECEPCION DE LA MERCANCIA, NECESITAMOS QUE NOS COMUNIQUÉIS CUANDO SE HA REALIZADO LA CARGA, GRACIAS.\n", getFont2())));
+		}
+		
 		if(params.getParam().size() > 0){
 			PdfPTable parameters = new PdfPTable(2);
 			PdfPCell cp1 = new PdfPCell(new Phrase("Parámetro",getFont1()));
