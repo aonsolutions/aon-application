@@ -22,16 +22,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record4;
-import org.jooq.Record5;
-import org.jooq.Record6;
 import org.jooq.Record9;
-import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.fiscal.config.ModelStatus.Status;
 import com.code.aon.fiscal.enumeration.Period;
 
 public class ModelManager {
@@ -99,37 +96,42 @@ public class ModelManager {
 	
 	private void fillModel303(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M303_RG || params.getModel() == Model.M390_HF ) {
-			Result<Record5<Byte,Byte,Byte,Integer,String>> models = ctx
-					.select(FS_VAT.STATUS, FS_VAT.PERIOD,FS_VAT_DECLARATION.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_VAT)
-					.join(DOMAIN).on( FS_VAT.DOMAIN.equal(DOMAIN.ID))
-					.leftOuterJoin(FS_VAT_DECLARATION).on( FS_VAT.ID.equal(FS_VAT_DECLARATION.FS_VAT))
-					.where(FS_VAT.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-						.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-								ctx.select(USER_SCOPE.SCOPE)
-								.from(USER_SCOPE)
-								.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-								.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-								)))
-						.and(FS_VAT.YEAR.equal(params.getYear()))
-					.orderBy(FS_VAT.PERIOD)
-					.fetch();
-			for (Record5<Byte,Byte,Byte,Integer,String> mod : models) {
-				Byte adm = mod.getValue(FS_VAT_DECLARATION.ADMINISTRATION);
-				byte per = mod.getValue(FS_VAT.PERIOD);
-				int domainId = mod.getValue(DOMAIN.ID);
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				Period period = Period.values()[per];
-				byte st = mod.getValue(FS_VAT_DECLARATION.STATUS);
-				Model model = Model.M303_RG;
-				if (period == Period.YEAR ) {
-					model = Model.M390_HF;
-				}
-				if (params.getModel() == null || params.getModel() == model) { 
-					putModelConfig(list,model,params.getYear(),period,st,adm,domainId,domainName,null,null);
-				}
-			}
+			ctx.select(FS_VAT.STATUS, FS_VAT.PERIOD,FS_VAT_DECLARATION.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_VAT)
+				.join(DOMAIN).on( FS_VAT.DOMAIN.equal(DOMAIN.ID))
+				.leftOuterJoin(FS_VAT_DECLARATION).on( FS_VAT.ID.equal(FS_VAT_DECLARATION.FS_VAT))
+				.where(FS_VAT.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
+					.and(FS_VAT.YEAR.equal(params.getYear()))
+				.orderBy(FS_VAT.PERIOD)
+				.fetch()
+				.stream()
+				.forEach(mod -> {
+					Byte adm = mod.getValue(FS_VAT_DECLARATION.ADMINISTRATION);
+					byte per = mod.getValue(FS_VAT.PERIOD);
+					int domainId = mod.getValue(DOMAIN.ID);
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					Period period = Period.values()[per];
+					byte st = mod.getValue(FS_VAT_DECLARATION.STATUS);
+					Status status = null;
+					if (st == 0) status = Status.PENDING;
+					else if (st == 1) status = Status.FINISHED;
+					else if (st == 2) status = Status.FINISHED;
+					else status = Status.PENDING;
+					Model model = Model.M303_RG;
+					if (period == Period.YEAR ) {
+						model = Model.M390_HF;
+					}
+					if (params.getModel() == null || params.getModel() == model) { 
+						putModelConfig(list,model,params.getYear(),period,status,adm,domainId,domainName,null,null);
+					}
+				});
 		}
 	}
 	
@@ -161,256 +163,278 @@ public class ModelManager {
 			}
 			select = select.and(FS_MODEL.MODEL.equal(modelLit));
 		}
-		Result<Record9<Byte,String,String,String,Byte,String,Byte,Integer,String>> models = 
-				select.orderBy(FS_MODEL.YEAR)
-				.fetch();
-		for (Record9<Byte,String,String,String,Byte,String,Byte,Integer,String> mod : models) {
-			String document = mod.getValue(FS_MODEL.DOCUMENT);
-			String name = mod.getValue(FS_MODEL.NAME);
-			String surname = mod.getValue(FS_MODEL.SURNAME);
-			String fullName = StringUtils.isEmpty(name)?"":(name + " ") + surname;
-			fullName = StringUtils.trim(fullName);
-			String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-			int domainId = mod.getValue(DOMAIN.ID);
-			
-			byte adm = mod.getValue(FS_MODEL.ADMINISTRATION);
-			byte per = mod.getValue(FS_MODEL.PERIOD);
-			Period period = Period.values()[per];
-			byte st = mod.getValue(FS_MODEL.STATUS);
-			String m = mod.getValue(FS_MODEL.MODEL);
-			if (!"3O3".equals(m)) {
-				Model model = null;
-				if ("303".equals(m)) {
-					model = Model.M303_RS;
-				} else {
-					model = Model.valueOf("M" + m );
+		select.orderBy(FS_MODEL.YEAR)
+			.fetch()
+			.stream()
+			.forEach( mod -> {
+				String document = mod.getValue(FS_MODEL.DOCUMENT);
+				String name = mod.getValue(FS_MODEL.NAME);
+				String surname = mod.getValue(FS_MODEL.SURNAME);
+				String fullName = StringUtils.isEmpty(name)?"":(name + " ") + surname;
+				fullName = StringUtils.trim(fullName);
+				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+				int domainId = mod.getValue(DOMAIN.ID);
+				
+				byte adm = mod.getValue(FS_MODEL.ADMINISTRATION);
+				byte per = mod.getValue(FS_MODEL.PERIOD);
+				Period period = Period.values()[per];
+				byte st = mod.getValue(FS_MODEL.STATUS);
+				Status status = getStatus(st);
+				String m = mod.getValue(FS_MODEL.MODEL);
+				if (!"3O3".equals(m)) {
+					Model model = null;
+					if ("303".equals(m)) {
+						model = Model.M303_RS;
+					} else {
+						model = Model.valueOf("M" + m );
+					}
+					putModelConfig(list,model,params.getYear(),period,status,adm,domainId,domainName,document,fullName);
 				}
-				putModelConfig(list,model,params.getYear(),period,st,adm,domainId,domainName,document,fullName);
-			}
-		}
+		});
 	}
 
 
+	private Status getStatus(byte st) {
+		 if (st == 0 ) return Status.PENDING;
+		 else if (st == 1 ) return Status.FINISHED;
+		 else if (st == 2 ) return Status.FINISHED;
+		 else if (st == 3 ) return Status.BLOCKED;
+		 else if (st == 4 ) return Status.SENT;
+		 return Status.PENDING;
+	}
+
 	private void fillModel349(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M349 ) {
-			Result<Record6<Byte, Integer, Byte,Byte,Integer,String>> models = ctx
-					.select(FS_MOD349.STATUS, FS_MOD349.YEAR, FS_MOD349.PERIOD,FS_MOD349.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_MOD349)
-					.join(DOMAIN).onKey()
-					.where(FS_MOD349.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(FS_MOD349.YEAR.equal(params.getYear()))					
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)))
-					.orderBy(FS_MOD349.YEAR)
-					.fetch();
-			for (Record6<Byte,Integer,Byte,Byte,Integer,String> mod : models) {
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				int domainId = mod.getValue(DOMAIN.ID);
-				byte adm = mod.getValue(FS_MOD349.ADMINISTRATION);
-				byte per = mod.getValue(FS_MOD349.PERIOD);
-				Period period = Period.values()[per];
-				byte st = mod.getValue(FS_MOD349.STATUS);
-				putModelConfig(list,Model.M349,params.getYear(),period,st,adm,domainId,domainName,null,null);
-			}
+			ctx.select(FS_MOD349.STATUS, FS_MOD349.YEAR, FS_MOD349.PERIOD,FS_MOD349.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_MOD349)
+				.join(DOMAIN).onKey()
+				.where(FS_MOD349.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(FS_MOD349.YEAR.equal(params.getYear()))					
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.orderBy(FS_MOD349.YEAR)
+				.fetch()
+				.stream()
+				.forEach(mod -> {
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					int domainId = mod.getValue(DOMAIN.ID);
+					byte adm = mod.getValue(FS_MOD349.ADMINISTRATION);
+					byte per = mod.getValue(FS_MOD349.PERIOD);
+					Period period = Period.values()[per];
+					byte st = mod.getValue(FS_MOD349.STATUS);
+					Status status = null;
+					if (st == 0) status = Status.PENDING;
+					else if (st == 1) status = Status.FINISHED;
+					else status = Status.PENDING;
+					putModelConfig(list,Model.M349,params.getYear(),period,status,adm,domainId,domainName,null,null);
+				});
 		}
 	}
 
 	private void fillModel347(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M347 ) {
-			Result<Record5<Byte,Integer,Byte,Integer,String>> models = ctx
-					.select(FS_MOD347.STATUS, FS_MOD347.YEAR,FS_MOD347.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_MOD347)
-					.join(DOMAIN).onKey()
-					.where(FS_MOD347.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(FS_MOD347.YEAR.equal(params.getYear()))
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)))
-					.orderBy(FS_MOD347.YEAR)
-					.fetch();
-			for (Record5<Byte,Integer,Byte,Integer,String> mod : models) {
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				int domainId = mod.getValue(DOMAIN.ID);
-				byte adm = mod.getValue(FS_MOD349.ADMINISTRATION);
-				byte st = mod.getValue(FS_MODEL.STATUS);
-				putModelConfig(list,Model.M347,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
-			}
+			ctx.select(FS_MOD347.STATUS, FS_MOD347.YEAR,FS_MOD347.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_MOD347)
+				.join(DOMAIN).onKey()
+				.where(FS_MOD347.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(FS_MOD347.YEAR.equal(params.getYear()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.orderBy(FS_MOD347.YEAR)
+				.fetch()
+				.stream()
+				.forEach(mod -> {
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					int domainId = mod.getValue(DOMAIN.ID);
+					byte adm = mod.getValue(FS_MOD349.ADMINISTRATION);
+					byte st = mod.getValue(FS_MODEL.STATUS);
+					Status status = null;
+					if (st == 0) status = Status.PENDING;
+					else if (st == 1) status = Status.FINISHED;
+					else status = Status.PENDING;
+					putModelConfig(list,Model.M347,params.getYear(),Period.YEAR,status,adm,domainId,domainName,null,null);
+				});
 		}
 	}
 
 	private void fillModel180(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M180 ) {
-			Result<Record5<Byte,Integer,Byte,Integer,String>> models = ctx
-					.select(FS_MODEL180.STATUS, FS_MODEL180.YEAR,FS_MODEL180.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_MODEL180)
-					.join(DOMAIN).onKey()
-					.where(FS_MODEL180.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(FS_MODEL180.YEAR.equal(params.getYear()))
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)))
-					.orderBy(FS_MODEL180.YEAR)
-					.fetch();
-			for (Record5<Byte,Integer,Byte,Integer,String> mod : models) {
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				int domainId = mod.getValue(DOMAIN.ID);
-				byte adm = mod.getValue(FS_MODEL180.ADMINISTRATION);
-				byte st = mod.getValue(FS_MODEL180.STATUS);
-				putModelConfig(list,Model.M180,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
-			}
+			ctx.select(FS_MODEL180.STATUS, FS_MODEL180.YEAR,FS_MODEL180.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_MODEL180)
+				.join(DOMAIN).onKey()
+				.where(FS_MODEL180.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(FS_MODEL180.YEAR.equal(params.getYear()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.orderBy(FS_MODEL180.YEAR)
+				.fetch()
+				.stream()
+				.forEach(mod -> {
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					int domainId = mod.getValue(DOMAIN.ID);
+					byte adm = mod.getValue(FS_MODEL180.ADMINISTRATION);
+					byte st = mod.getValue(FS_MODEL180.STATUS);
+					Status status = getStatus(st);
+					putModelConfig(list,Model.M180,params.getYear(),Period.YEAR,status,adm,domainId,domainName,null,null);
+				});
 		}
 	}
 
 	private void fillModel184(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M184 ) {
-			Result<Record5<Byte,Integer,Byte,Integer,String>> models = ctx
-					.select(FS_MODEL184.STATUS, FS_MODEL184.YEAR,FS_MODEL184.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_MODEL184)
-					.join(DOMAIN).onKey()
-					.where(FS_MODEL184.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(FS_MODEL184.YEAR.equal(params.getYear()))
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)))
-					.orderBy(FS_MODEL184.YEAR)
-					.fetch();
-			for (Record5<Byte,Integer,Byte,Integer,String> mod : models) {
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				int domainId = mod.getValue(DOMAIN.ID);
-				byte adm = mod.getValue(FS_MODEL184.ADMINISTRATION);
-				byte st = mod.getValue(FS_MODEL184.STATUS);
-				putModelConfig(list,Model.M184,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
-			}
+			ctx.select(FS_MODEL184.STATUS, FS_MODEL184.YEAR,FS_MODEL184.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_MODEL184)
+				.join(DOMAIN).onKey()
+				.where(FS_MODEL184.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(FS_MODEL184.YEAR.equal(params.getYear()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.orderBy(FS_MODEL184.YEAR)
+				.fetch()
+				.stream()
+				.forEach(mod -> {
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					int domainId = mod.getValue(DOMAIN.ID);
+					byte adm = mod.getValue(FS_MODEL184.ADMINISTRATION);
+					byte st = mod.getValue(FS_MODEL184.STATUS);
+					Status status = getStatus(st);
+					putModelConfig(list,Model.M184,params.getYear(),Period.YEAR,status,adm,domainId,domainName,null,null);
+				});
 		}
 	}
 
 	private void fillModel190(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M190 ) {
-			Result<Record5<Byte, Integer, Byte, Integer, String>> models = ctx
-					.select(FS_MODEL190.STATUS, FS_MODEL190.YEAR,FS_MODEL190.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_MODEL190)
-					.join(DOMAIN).onKey()
-					.where(FS_MODEL190.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(FS_MODEL190.YEAR.equal(params.getYear()))
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)))
-					.orderBy(FS_MODEL190.YEAR)
-					.fetch();
-			for (Record5<Byte, Integer, Byte, Integer, String> mod : models) {
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				int domainId = mod.getValue(DOMAIN.ID);
-				byte adm = mod.getValue(FS_MODEL190.ADMINISTRATION);
-				byte st = mod.getValue(FS_MODEL190.STATUS);
-				putModelConfig(list,Model.M190,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
-			}
+			ctx.select(FS_MODEL190.STATUS, FS_MODEL190.YEAR,FS_MODEL190.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_MODEL190)
+				.join(DOMAIN).onKey()
+				.where(FS_MODEL190.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(FS_MODEL190.YEAR.equal(params.getYear()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.orderBy(FS_MODEL190.YEAR)
+				.fetch()
+				.stream()
+				.forEach(mod -> {
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					int domainId = mod.getValue(DOMAIN.ID);
+					byte adm = mod.getValue(FS_MODEL190.ADMINISTRATION);
+					byte st = mod.getValue(FS_MODEL190.STATUS);
+					Status status = getStatus(st);
+					putModelConfig(list,Model.M190,params.getYear(),Period.YEAR,status,adm,domainId,domainName,null,null);
+				});
 		}
 	}
 	
 	private void fillModel193(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M193 ) {
-			Result<Record5<Byte, Integer, Byte, Integer, String>> models = ctx
-					.select(FS_MODEL193.STATUS, FS_MODEL193.YEAR,FS_MODEL193.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_MODEL193)
-					.join(DOMAIN).onKey()
-					.where(FS_MODEL193.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(FS_MODEL193.YEAR.equal(params.getYear()))
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)))
-					.orderBy(FS_MODEL193.YEAR)
-					.fetch();
-			for (Record5<Byte, Integer, Byte, Integer, String> mod : models) {
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				int domainId = mod.getValue(DOMAIN.ID);
-				byte adm = mod.getValue(FS_MODEL193.ADMINISTRATION);
-				byte st = mod.getValue(FS_MODEL193.STATUS);
-				putModelConfig(list,Model.M193,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
-			}
+			ctx.select(FS_MODEL193.STATUS, FS_MODEL193.YEAR,FS_MODEL193.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_MODEL193)
+				.join(DOMAIN).onKey()
+				.where(FS_MODEL193.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(FS_MODEL193.YEAR.equal(params.getYear()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.orderBy(FS_MODEL193.YEAR)
+				.fetch()
+				.stream()
+				.forEach(mod -> {
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					int domainId = mod.getValue(DOMAIN.ID);
+					byte adm = mod.getValue(FS_MODEL193.ADMINISTRATION);
+					byte st = mod.getValue(FS_MODEL193.STATUS);
+					Status status = getStatus(st);
+					putModelConfig(list,Model.M193,params.getYear(),Period.YEAR,status,adm,domainId,domainName,null,null);
+				});
 		}
 	}
 
 	private void fillModel390(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M390 ) {
-			Result<Record5<Byte, Integer, Byte, Integer, String>> models = ctx
-					.select(FS_MODEL390.STATUS, FS_MODEL390.YEAR,FS_MODEL390.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_MODEL390)
-					.join(DOMAIN).onKey()
-					.where(FS_MODEL390.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(FS_MODEL390.YEAR.equal(params.getYear()))
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)))
-					.orderBy(FS_MODEL390.YEAR)
-					.fetch();
-			for (Record5<Byte, Integer, Byte, Integer, String> mod : models) {
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				int domainId = mod.getValue(DOMAIN.ID);
-				byte adm = mod.getValue(FS_MODEL390.ADMINISTRATION);
-				byte st = mod.getValue(FS_MODEL390.STATUS);
-				putModelConfig(list,Model.M390,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
-			}
+			ctx.select(FS_MODEL390.STATUS, FS_MODEL390.YEAR,FS_MODEL390.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_MODEL390)
+				.join(DOMAIN).onKey()
+				.where(FS_MODEL390.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(FS_MODEL390.YEAR.equal(params.getYear()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.orderBy(FS_MODEL390.YEAR)
+				.fetch()
+				.stream()
+				.forEach( mod -> {
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					int domainId = mod.getValue(DOMAIN.ID);
+					byte adm = mod.getValue(FS_MODEL390.ADMINISTRATION);
+					byte st = mod.getValue(FS_MODEL390.STATUS);
+					Status status = getStatus(st);
+					putModelConfig(list,Model.M390,params.getYear(),Period.YEAR,status,adm,domainId,domainName,null,null);
+				});
 		}
 	}
 
 	private void fillModel200(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M200 ) {
-			Result<Record4<Integer, Byte, Integer, String>> models = ctx
-					.select(FS_MODEL200.YEAR,FS_MODEL200.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
-					.from(FS_MODEL200)
-					.join(DOMAIN).onKey()
-					.where(FS_MODEL200.DOMAIN.equal(params.getMasterDomain()))
-						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(FS_MODEL200.YEAR.equal(params.getYear()))
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)))
-					.orderBy(FS_MODEL200.YEAR)
-					.fetch();
-			for (Record4<Integer, Byte, Integer, String> mod : models) {
-				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-				int domainId = mod.getValue(DOMAIN.ID);
-				byte adm = mod.getValue(FS_MODEL200.ADMINISTRATION);
-				byte st = 0;
-				putModelConfig(list,Model.M200,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
-			}
+			ctx.select(FS_MODEL200.YEAR,FS_MODEL200.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+				.from(FS_MODEL200)
+				.join(DOMAIN).onKey()
+				.where(FS_MODEL200.DOMAIN.equal(params.getMasterDomain()))
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(FS_MODEL200.YEAR.equal(params.getYear()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.orderBy(FS_MODEL200.YEAR)
+				.fetch()
+				.stream()
+				.forEach( mod -> {
+					String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+					int domainId = mod.getValue(DOMAIN.ID);
+					byte adm = mod.getValue(FS_MODEL200.ADMINISTRATION);
+					putModelConfig(list,Model.M200,params.getYear(),Period.YEAR,Status.PENDING,adm,domainId,domainName,null,null);
+				});
 		}
 	}
 
 	private ModelConfig putModelConfig(List<ModelConfig> list, Model model,int year, Period period
-			, byte st, Byte adm,int domainId,String domainName,String document,String fullName) {
+			,Status status, Byte adm,int domainId,String domainName,String document,String fullName) {
 		ModelConfig modelConfig = null;
 		Administration administration = adm==null?null:Administration.values()[adm];
 		for (ModelConfig mc : list) {
@@ -440,9 +464,7 @@ public class ModelManager {
 			modelConfig.setName(fullName);
 			list.add(modelConfig);
 		} 
-		if (st != -1) {
-			modelConfig.setStatuses(period,  (st == 1) );
-		}
+		modelConfig.setStatuses(period,  status);
 		return modelConfig;
 	}
 	
@@ -459,57 +481,54 @@ public class ModelManager {
 				   .where(APP_PARAM.DOMAIN.equal(params.getMasterDomain()))
 				   .and(APP_PARAM.NAME.equal(PARAM_DEFAULT_ADMINISTRATION))
 				   .fetchOne();
-		byte adm = 4;
+		byte adm0 = 4;
 		if (defAdm != null && defAdm.getValue(APP_PARAM.VALUE) != null) {
 			String da = defAdm.getValue(APP_PARAM.VALUE);
 			try {
-				adm = Byte.parseByte(da);
+				adm0 = Byte.parseByte(da);
 			} catch (NumberFormatException e) {
-				adm = 4; // AEAT.
-			}
-		} 
-
-		SelectConditionStep<Record4<String,String,Integer,String>> select = ctx
-				.select(APP_PARAM.NAME,APP_PARAM.VALUE,DOMAIN.ID,DOMAIN.DESCRIPTION)
-				.from(APP_PARAM)
-				.join(DOMAIN).onKey()
-				.where(APP_PARAM.DOMAIN.equal(params.getMasterDomain()))
-					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
-							ctx.select(USER_SCOPE.SCOPE)
-							.from(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
-							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
-							)));
-		if (params.getModel() == null) {
-			select = select.and(APP_PARAM.NAME.like(PARAM_PREFIX_LIKE));
-		} else {
-			String like = PARAM_PREFIX + params.getModel() + "%";
-			select = select.and(APP_PARAM.NAME.like(like));
-		}
-		Result<Record4<String,String,Integer,String>> models = 	select.orderBy(APP_PARAM.NAME).fetch();
-		for (Record4<String,String,Integer,String> mod : models) {
-			String name = mod.getValue(APP_PARAM.NAME);
-			int domainId = mod.getValue(DOMAIN.ID);
-			String domainName = mod.getValue(DOMAIN.DESCRIPTION);
-			try {
-				Model model = Model.valueOf(StringUtils.substringAfter(name,PARAM_PREFIX)); 
-				String value = mod.getValue(APP_PARAM.VALUE);
-				Period period = null;
-				if  (StringUtils.equals("Y",value)) {
-					period =Period.YEAR;
-				} else if  (StringUtils.equals("Q",value)) {
-					period =Period.T1;
-				} else if  (StringUtils.equals("M",value)) {
-					period =Period.M01;
-				}
-				if (period != null) {
-					putModelConfig(list,model,params.getYear(),period,(byte) -1,adm,domainId,domainName,null,null);
-				}
-			} catch (IllegalArgumentException e) {
-				// Model.valueOf --> Ignore param.
+				adm0 = 4; // AEAT.
 			}
 		}
+		final byte adm = adm0;
+		String like = (params.getModel() == null)?PARAM_PREFIX_LIKE:(PARAM_PREFIX + params.getModel() + "%");
+		ctx.select(APP_PARAM.NAME,APP_PARAM.VALUE,DOMAIN.ID,DOMAIN.DESCRIPTION)
+			.from(APP_PARAM)
+			.join(DOMAIN).onKey()
+			.where(APP_PARAM.DOMAIN.equal(params.getMasterDomain()))
+				.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+						ctx.select(USER_SCOPE.SCOPE)
+						.from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+						.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+						)))
+				.and(APP_PARAM.NAME.like(like))
+			.orderBy(APP_PARAM.NAME)
+			.fetch()
+			.stream()
+			.forEach(mod -> {
+				String name = mod.getValue(APP_PARAM.NAME);
+				int domainId = mod.getValue(DOMAIN.ID);
+				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+				try {
+					Model model = Model.valueOf(StringUtils.substringAfter(name,PARAM_PREFIX)); 
+					String value = mod.getValue(APP_PARAM.VALUE);
+					Period period = null;
+					if  (StringUtils.equals("Y",value)) {
+						period =Period.YEAR;
+					} else if  (StringUtils.equals("Q",value)) {
+						period =Period.T1;
+					} else if  (StringUtils.equals("M",value)) {
+						period =Period.M01;
+					}
+					if (period != null) {
+						putModelConfig(list,model,params.getYear(),period,Status.MISSING,adm,domainId,domainName,null,null);
+					}
+				} catch (IllegalArgumentException e) {
+					// Model.valueOf --> Ignore param.
+				}
+			});
 	}
 	
 }

@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.fiscal.config.ModelStatus.Status;
 import com.code.aon.fiscal.enumeration.Period;
 
 public class ModelConfig implements Serializable {
@@ -57,8 +58,8 @@ public class ModelConfig implements Serializable {
 	public List<ModelStatus> getStatusList() {
 		return Arrays.asList(getStatuses());
 	}
-	public void setStatuses(Period period, boolean finished) {
-		ModelStatus st = new ModelStatus(finished, period);
+	public void setStatuses(Period period, Status status) {
+		ModelStatus st = new ModelStatus(status, period);
 		if (isMonthly()) {
 			getStatuses()[period.getStartMonth()] = st;	
 		} else if (isYearly()) {

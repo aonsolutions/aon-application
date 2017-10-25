@@ -44,11 +44,11 @@
 	
 	
 		<aon:form>
-			<aon:div style="margin:15px 5px;text-align:center;padding: 5px;border: solid #CCC 1px;">
-				<h:panelGrid columns="2" styleClass="aon-width-all"
+			<aon:div style="margin:15px 5px;text-align:center;padding: 5px;border: solid #CCC 1px; white-space: nowrap;">
+				<h:panelGrid columns="2" styleClass="aon-width-all aon-nowrap"
 					columnClasses="aon-width-auto, aon-text-right"
 					>
-					<aon:div>
+					<aon:div style="white-space: nowrap;">
 						<aon:outputLabel for="fiscalMatrix_fiscalYear" value="Ejercicio"/>
 						<aon:selectOneMenu id="fiscalMatrix_fiscalYear"
 							style="margin-right: 5px;margin-left: 5px;"
@@ -79,23 +79,27 @@
 		
 						<aon:panelGroup style="margin-left: 5px;">
 							<aon:selectBooleanCheckbox id="controller_showOnlyConfiguratedModels"
-								value="#{fiscalMatrix.params.showOnlyConfiguratedModels}">
+								value="Solo configurados">
 								<a4j:support event="onchange"
 									actionListener="#{fiscalMatrix.onRefresh}" 
 									reRender="matrixContainer"
 									ajaxSingle="true" />
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="controller_showOnlyConfiguratedModels" styleClass="aon-italic"
-								value="Mostrar solo los configurados" />
+								value="Solo configurados" />
 						</aon:panelGroup>
 					</aon:div>
 					
 					<aon:panelGroup style="margin-left: 5px;">
-						<aon:outputText  style="margin-left: 5px;background-color: #E0FFE0; padding:4px;border: solid #BBB 1px;" 
+						<aon:outputText  style="margin-left: 5px;background-color: #ccffcc; padding:4px;border: solid #BBB 1px;;white-space: nowrap;"
 							value="&#8212; EN CURSO"/>
-						<aon:outputText  style="margin-left: 5px;background-color: #CCFF99; padding:4px;border: solid #BBB 1px;"
+						<aon:outputText  style="margin-left: 5px;background-color: #b8dc6f; padding:4px;border: solid #BBB 1px;;white-space: nowrap;"
 							value="&#10004; FINALIZADO"/>
-						<aon:outputText  style="margin-left: 5px;background-color: #FFC2B2; padding:4px;border: solid #BBB 1px;"
+						<aon:outputText  style="margin-left: 5px;background-color: #3EC946; padding:4px;border: solid #BBB 1px;;white-space: nowrap;"
+							value="&#10004; PRESENTADO"/>
+						<aon:outputText  style="margin-left: 5px;background-color: #ff8080; padding:4px;border: solid #BBB 1px;;white-space: nowrap;"
+							value="&#8226; BLOQUEADO"/>
+						<aon:outputText  style="margin-left: 5px;background-color: #FFC2B2; padding:4px;border: solid #BBB 1px;white-space: nowrap;"
 							value="&#8226; NO REALIZADO"/>
 					</aon:panelGroup>				
 				</h:panelGrid>
@@ -163,16 +167,22 @@
 						<aon:outputText value="#{modelConfig.model.name}"/>
 					</td>
 						<ui:repeat var="status" value="#{modelConfig.statusList}">
-							<td class="dataCell" colspan="#{12 / modelConfig.numberOfStatuses}"
-style="background-color: #{status.missing?'#FFC2B2':(status.pending?'#E0FFE0':'#CCFF99')};">						
+							<td class="dataCell" colspan="#{12 / modelConfig.numberOfStatuses}" 
+								style="background-color: #{status.missing?'#FFC2B2':(status.pending?'#ccffcc':(status.sent?'#3EC946':(status.blocked?'#ff8080':'#b8dc6f')))};">
 								<aon:div rendered="#{status.missing}">
 									<aon:outputText value="&#8226;"/>	
 								</aon:div>
 								<aon:div rendered="#{status.pending}">
-									<aon:outputText value="&#8212;"/>	
+									<aon:outputText value="-"/>	
 								</aon:div>
 								<aon:div rendered="#{status.finished}">
 									<aon:outputText value="&#10004;"/>	
+								</aon:div>
+								<aon:div rendered="#{status.sent}">
+									<aon:outputText value="&#8594;"/>	
+								</aon:div>
+								<aon:div rendered="#{status.blocked}">
+									<aon:outputText value="&#8594;"/>	
 								</aon:div>
 							</td>
 						</ui:repeat>

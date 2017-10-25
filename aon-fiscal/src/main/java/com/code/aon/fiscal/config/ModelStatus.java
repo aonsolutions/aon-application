@@ -9,11 +9,13 @@ public class ModelStatus implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static enum Status {
-		MISSING("aon-icon-minus","No realizado. Click para crear."),
-		PENDING("aon-icon-edit-add-simple","Creado - Pendiente. Click para editar."),
-		FINISHED("aon-icon-accept","Finalizado. Click para ver.");
-		//aon-icon-predetermine
+	public static enum Status {
+		MISSING("aon-icon-point-gray","No realizado."),
+		PENDING("aon-icon-point-orange","Creado y pendiente."),
+		FINISHED("aon-icon-point-light-green","Creado y finalizado."),
+		BLOCKED("aon-icon-point-red","Creado y bloqueado."),
+		SENT("aon-icon-point-green","Creado y presentado.");
+		
 		private String styleClass;
 		private String message;
 		
@@ -38,8 +40,8 @@ public class ModelStatus implements Serializable {
 		this.period = period;
 	}
 
-	public ModelStatus(boolean finished, Period period) {
-		this.status = (finished)?Status.FINISHED:Status.PENDING;
+	public ModelStatus(Status status, Period period) {
+		this.status = status;
 		this.period = period;
 	}
 
@@ -55,6 +57,12 @@ public class ModelStatus implements Serializable {
 	}
 	public boolean isFinished() {
 		return status == Status.FINISHED;
+	}
+	public boolean isSent() {
+		return status == Status.SENT;
+	}
+	public boolean isBlocked() {
+		return status == Status.BLOCKED;
 	}
 	
 	public String getStyleClass() {
