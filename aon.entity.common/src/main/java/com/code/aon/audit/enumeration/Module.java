@@ -79,8 +79,11 @@ public enum Module implements IResourceable {
 	ECOMMERCE( "eCommerce" ),
 	
     /** CALL_CENTER. */
-	CALL_CENTER( "call_center" );
+	CALL_CENTER( "call_center" ),
 	
+    /** AON_SMB. */
+	AON_SMB( "aonSmb" );
+
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_module_";
     
