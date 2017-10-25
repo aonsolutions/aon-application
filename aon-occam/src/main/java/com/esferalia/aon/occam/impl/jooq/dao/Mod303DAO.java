@@ -454,12 +454,12 @@ public class Mod303DAO extends FiscalModelDAO {
 
 
 	// -------------------------------------------------------------------- UTIL
-	public static Mod303 finish(AONContext ctx,Mod303 mod303) {
+	public static Mod303 markAsFinished(AONContext ctx,Mod303 mod303) {
 		mod303 = FiscalModelDAO.finish(ctx, mod303);
 		return saveMod303(ctx, mod303);
 	}
 	
-	public static Mod303 reopen(AONContext ctx,Mod303 mod303) {
+	public static Mod303 markAsPending(AONContext ctx,Mod303 mod303) {
 		mod303.setDeclarationType( (String) null);
 		mod303.setStatus(FiscalStatus.PENDING);
 		Finance finance = mod303.getFinance();
@@ -470,6 +470,13 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		return mod303;
 	}
+	
+	public static Mod303 markAsSent(AONContext ctx,Mod303 mod303) {
+		mod303.setStatus(FiscalStatus.SENT);
+		mod303 = saveMod303(ctx, mod303);
+		return mod303;
+	}
+	
 	public static Stream<VatContext> getAccrualBreakdown(final AONContext ctx, final Mod303 mod303, boolean diffDisabled) {
 		Date fromDate = diffDisabled
 			?FiscalUtils.getPeriodStart(mod303)		

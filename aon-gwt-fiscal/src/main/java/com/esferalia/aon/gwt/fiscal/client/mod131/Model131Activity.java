@@ -507,7 +507,7 @@ public class Model131Activity extends DockLayoutPanel {
 	}
 	
 	private void calculate() {
-		Model131.fiscalService.calculateMod131Activity(Model131.getCurrentDomainName(), Model131.getCurrentDomain()
+		Model131.SERVICE.calculateActivity(Model131.getCurrentDomainName(), Model131.getCurrentDomain()
 				, this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
 					
 					@Override

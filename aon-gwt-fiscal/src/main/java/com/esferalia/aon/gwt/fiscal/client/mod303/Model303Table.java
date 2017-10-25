@@ -56,6 +56,7 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 			addYearColumn();
 			addPeriodColumn();
 			addStatusColumn();
+			addStatusLabelColumn();
 			addComplementaryColumn();
 			addDocumentColumn();
 			addNameColumn();
@@ -132,15 +133,24 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 					new ImageResourceCell()) {
 				@Override
 				public ImageResource getValue(Mod303 model) {
-					if (model.isFinished()) return AON.AON_RESOURCES.aonIconLock(); 
-					if (model.isBlocked()) return AON.AON_RESOURCES.aonIconBlocked();
-					return AON.AON_RESOURCES.aonIconUnlock();
+					return FiscalModelUtils.getStatusImage(model.getStatus());
 				}
 			};
 			this.addColumn(iconColumn, "E" );
 			this.setColumnWidth(iconColumn, 20, Unit.PX);
 		}
 		
+		private void addStatusLabelColumn() {
+			final TextColumn<Mod303> statusLabelColumn = new TextColumn<Mod303>() {
+				@Override
+				public String getValue(Mod303 fm) {
+					return fm.getStatus().getName();
+				}
+			};
+			this.addColumn(statusLabelColumn, AON.MSG.status() );
+			this.setColumnWidth(statusLabelColumn, 80, Unit.PX);
+		}
+
 		private void addComplementaryColumn() {
 			Column<Mod303, ImageResource> complementaryColumn = new Column<Mod303, ImageResource>(
 					new ImageResourceCell()) {

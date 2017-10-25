@@ -55,6 +55,9 @@ public interface IFiscalModel extends Serializable {
 	public default boolean isFinished() {
 		return getStatus() == FiscalStatus.FINISHED;
 	}
+	public default boolean isSent() {
+		return getStatus() == FiscalStatus.SENT;
+	}
 	public default boolean isNotFinished() {
 		return getStatus() != FiscalStatus.FINISHED;
 	}

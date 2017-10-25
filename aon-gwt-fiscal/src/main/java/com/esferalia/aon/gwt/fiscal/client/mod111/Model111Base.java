@@ -9,10 +9,10 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.IMod111Declaration;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.shared.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -46,7 +46,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model111.fiscalService.mathExpression(expression,callback);
+			Model111.FISCAL_SERVICE.mathExpression(expression,callback);
 		}
 	}; 
 
@@ -246,7 +246,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						Model111.fiscalService.getInfo(Model111.getCurrentDomainName(),Model111.getCurrentDomain(),
+						Model111.SERVICE.getInfo(Model111.getCurrentDomainName(),Model111.getCurrentDomain(),
 							callback.getFiscalModel(),script, infoKey,new AsyncCallback<String>() {
 
 									@Override
@@ -271,7 +271,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 
 	@Override
 	public void calculateAndRefresh(final IFiscalModelCallback<Mod111> callback) {
-		Model111.fiscalService.calculateMod111(Model111.getCurrentDomainName(),callback.getFiscalModel(),
+		Model111.SERVICE.calculate(Model111.getCurrentDomainName(),callback.getFiscalModel(),
 				new AsyncCallback<Mod111>() {
 
 					@Override

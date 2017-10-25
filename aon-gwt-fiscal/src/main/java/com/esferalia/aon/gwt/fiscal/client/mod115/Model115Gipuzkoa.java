@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.mod115;
 
-import com.esferalia.aon.gwt.common.client.AON;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.esferalia.aon.watson.util.Pair;
 
 public class Model115Gipuzkoa extends Model115Base {
 	
@@ -13,13 +13,12 @@ public class Model115Gipuzkoa extends Model115Base {
 	}
 	
 	@Override
-	public Widget getInfoPanel(Mod115 mod115) {
-
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.add(getAnchorPanel(mod115,"Informaci\u00F3n tributaria"
-			, "https://w390w.gipuzkoa.net/WAS/CORP/LIATramitesWEB/cambiarLocale.do?"
-			+ "cambiarLocale=true&idioma=es&tipoBusq=busq_mat&ms=1423832872615&ver=1645"));
-		return panel;
+	public LinkedList<Pair<String, String>> getInformationLinks() {
+		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
+		list.add(new Pair<String, String>("Informaci\u00F3n tributaria"
+				, "https://w390w.gipuzkoa.net/WAS/CORP/LIATramitesWEB/cambiarLocale.do?"
+						+ "cambiarLocale=true&idioma=es&tipoBusq=busq_mat&ms=1423832872615&ver=1645"));
+		return list;
 	}
+
 }

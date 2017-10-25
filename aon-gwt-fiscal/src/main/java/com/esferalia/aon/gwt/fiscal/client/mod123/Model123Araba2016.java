@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod123;
 
 
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
@@ -12,6 +13,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -19,10 +21,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Model123Araba2016 extends Model123Base {
 
@@ -115,26 +115,23 @@ public class Model123Araba2016 extends Model123Base {
 	}
 
 	@Override
-	public Widget getInfoPanel(Mod123 mod123) {
-
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		
-		panel.add(getAnchorPanel(mod123,"Formulario Papel." 
+	public LinkedList<Pair<String, String>> getInformationLinks() {
+		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
+		list.add(new Pair<String, String>("Formulario Papel." 
 			,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader"
 			+ "=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2"
 			+ "=pragma&blobheadervalue1=attachment%3B+filename%3D123.pdf&blobheadervalue2"
 			+ "=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224075511587&ssbinary=true"));
-		panel.add(getAnchorPanel(mod123,"Decreto Foral 14 de 29 de febrero de 2000."
+		list.add(new Pair<String, String>("Decreto Foral 14 de 29 de febrero de 2000."
 			,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&"
 			+ "blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1="
 			+ "attachment%3B+filename%3DDecreto+Foral+14+de+29+de+febrero+de+2000.pdf&"
 			+ "blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224075511588&ssbinary=true"));
-		panel.add(getAnchorPanel(mod123,"Orden Foral 673 de 18 de octubre de 2001."
+		list.add(new Pair<String, String>("Orden Foral 673 de 18 de octubre de 2001."
 			,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&"
 			+ "blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1="
 			+ "attachment%3B+filename%3DOrden+Foral+673+de+18+de+octubre+de+2001.pdf&blobheadervalue2"
 			+ "=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224075511589&ssbinary=true"));
-		return panel;
+		return list;
 	}
 }

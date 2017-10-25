@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -102,7 +103,7 @@ public class FiscalModelUtils {
 		return AonStringUtils.isNotBlank(name)?name:fm.getModel().getName();
 	}
 	
-	public static void paintHeaderTable(SimplePanel headerPanel, FiscalModel fm) {
+	public static void paintHeaderTable(SimplePanel headerPanel, IFiscalModel fm) {
 		Administration admon = (fm == null?Administration.COMMON_TERRITORY:fm.getAdministration());
 		headerPanel.clear();
 		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
@@ -241,6 +242,24 @@ public class FiscalModelUtils {
 		p.add(a);
 		return p;
 	}
+	
+	public static ImageResource getStatusImage(FiscalStatus status) {
+		if (status == FiscalStatus.FINISHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
+		if (status == FiscalStatus.BATCHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
+		if (status == FiscalStatus.SENT) return AON.AON_RESOURCES.aonIconPointGreen();
+		if (status == FiscalStatus.BLOCKED) return AON.AON_RESOURCES.aonIconPointRed();
+		return AON.AON_RESOURCES.aonIconPointOrange();
+	}
+	
+	public static String getStatusIconStyle(FiscalStatus status) {
+		if (status == FiscalStatus.FINISHED)	return AON.AON_CSS.aonIconPointLightGreen();
+		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonIconPointLightGreen();
+		if (status  == FiscalStatus.BLOCKED )	return AON.AON_CSS.aonIconPointRed();
+		if (status  == FiscalStatus.SENT )		return AON.AON_CSS.aonIconPointGreen();
+		return AON.AON_CSS.aonIconPointOrange();
+	}
+	
+
 }
 
 

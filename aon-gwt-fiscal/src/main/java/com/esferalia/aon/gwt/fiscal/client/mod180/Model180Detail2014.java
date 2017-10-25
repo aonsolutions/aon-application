@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.client.widget.StreetTypeListBox;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180Base.Model180BaseCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.type.StreetType;
@@ -125,7 +126,9 @@ public class Model180Detail2014 extends ResizeComposite {
 	TextBox zip;
 	
 	
-	public Model180Detail2014() {
+	
+	public Model180Detail2014( Model180BaseCallback callback ) {
+		 
 		Mod180DetailCell mod180DetailCell = new Mod180DetailCell();
 		detailList = new CellList<Mod180Detail>(mod180DetailCell, MOD180_DETAIL_PROVIDES_KEY);
 		detailList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
@@ -155,6 +158,8 @@ public class Model180Detail2014 extends ResizeComposite {
 		location.addItem( AON.MSG.buildingLocationValue(1) );	
 		location.addItem( AON.MSG.buildingLocationValue(2) );
 		location.addItem( AON.MSG.buildingLocationValue(3) );
+		
+		setMod180(callback.getMod180());
 	}
 
 	public void setMod180(Mod180 mod180) {

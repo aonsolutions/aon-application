@@ -292,6 +292,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se pudo reabrir la declaraci\u00F3n. Causa: \n {0}")
 	String unableToReopenDeclaration(String message);	
 
+	@DefaultMessage("No se pudo marcar la declaraci\u00F3n como enviada . Causa: \n {0}")
+	String unableToMarkAsSentDeclaration(String message);	
+
 	@DefaultMessage("No se pudo finalizar la declaraci\u00F3n. Causa: \n {0}")
 	String unableToFinishDeclaration(String message);	
 
@@ -305,13 +308,14 @@ public interface CommonMessages extends Messages {
 	String unableToFindDeclaration();
 
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
+	String unableToFindDetail(String field);
+
+	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod190Detail(String field);
 
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod193Detail(String field);
 
-	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
-	String unableToFindMod180Detail(String field);
 
 	@DefaultMessage("No se pudo encontrar el perceptor seleccionado. Causa: \n {0}")
 	String unableToFindMod184Detail(String field);
@@ -421,7 +425,10 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Imprimir certificado")
 	String printCertificate();
-	
+
+	@DefaultMessage("Certificado")
+	String certificate();
+
 	@DefaultMessage("Borrador")
 	String draft();
 
@@ -431,6 +438,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("La impresi\u00F3n del borrador se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n.")	
 	String draftPrintNote();
 	
+	@DefaultMessage("La impresi\u00F3n se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n.")	
+	String printNote();
+
 	@DefaultMessage("Generaci\u00F3n de fichero")
 	String fileGeneration();
 	@DefaultMessage("Se va a proceder a la generaci\u00F3n de un fichero con los datos de la declaraci\u00F3n, para su "
@@ -553,6 +563,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Sustitutiva")
 	String replacement();
 	
+	@DefaultMessage("Sustit.")
+	String replacementAbbr();
+
 	@DefaultMessage("Pendiente de pago")
 	String pendingPayment();
 
@@ -565,11 +578,14 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("N. Decl. Sustituida")
 	String replacedReceipt();
 
-	@DefaultMessage("Num. Decl. Anterior")
+	@DefaultMessage("N\u00BA Decl. Anterior")
 	String previousDeclaration();
 
-	@DefaultMessage("Decl. complementaria")
+	@DefaultMessage("Complementaria")
 	String complementary();
+
+	@DefaultMessage("Complem.")
+	String complementaryAbbr();
 
 	@DefaultMessage("C\u00E1lculo por diferencia")
 	String diffCalculation();
@@ -628,6 +644,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Apellidos y Nombre, raz\u00F3n social o denominaci\u00F3n")
 	String companyName();
+
+	@DefaultMessage("Raz\u00F3n social")
+	String enterpriseName();
 
 	@DefaultMessage("Apellidos")
 	String surname();
@@ -841,6 +860,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Datos del declarante")
 	String deponentData();
+
+	@DefaultMessage("Declarante")
+	String deponent();
 
 	@DefaultMessage("Declarantes")
 	String deponents();
@@ -2427,6 +2449,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Finalizar")
 	String finish();
+	
+	@DefaultMessage("Marcar como presentado")
+	String markAsSent();
 	
 	@DefaultMessage("Cert. Retenciones")
 	String generate10T();

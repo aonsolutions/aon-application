@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -39,10 +40,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -71,7 +74,8 @@ public class Model123 extends MainEntryPoint {
 	final static int NOTIFICATIONS_TAB = 0;
 	final static int INFORMATION_TAB = 1;
 
-	static FiscalServiceAsync fiscalService;
+	static FiscalServiceAsync FISCAL_SERVICE;
+	static Mod123ServiceAsync SERVICE;
 	
 	interface Model123Binder extends UiBinder<Widget, Model123> {
 	}
@@ -83,11 +87,11 @@ public class Model123 extends MainEntryPoint {
 	private static final String MODEL123_PRINT_AEAT = "/aon_gwt_fiscal/Model123PrintAEAT";
 	
 	public static interface IMod123Declaration extends IsWidget {
-		Widget getInfoPanel(Mod123 mod123);
+		LinkedList<Pair<String, String>> getInformationLinks();
 		void calculateAndRefresh(IFiscalModelCallback<Mod123> callback);
 	}
 	
-	private Mod123 currentMod123;
+	private Mod123 currentMod;
 	private boolean dirty;
 
 	@UiField
@@ -129,16 +133,18 @@ public class Model123 extends MainEntryPoint {
 	@UiField
 	Button printButton;
 	@UiField
-	Button reopenButton;
+	Button markAsPendingButton;
 	@UiField
-	Button finalizeButton;
+	Button markAsSentButton;
+	@UiField
+	Button markAsFinishedButton;
 	@UiField
 	Button generateFileButton;
 	@UiField
 	Button printViaAeatButton;
 	@UiField
 	Button auditButton;
-
+	
 	@UiField
 	InlineLabel documentLabel;
 	@UiField
@@ -196,12 +202,12 @@ public class Model123 extends MainEntryPoint {
 		
 		@Override
 		public boolean isFinished() {
-			return (currentMod123.getStatus() == FiscalStatus.FINISHED);
+			return (currentMod.getStatus() == FiscalStatus.FINISHED);
 		}
 		
 		@Override
 		public Mod123 getFiscalModel() {
-			return currentMod123;
+			return currentMod;
 		}
 
 		@Override
@@ -217,9 +223,9 @@ public class Model123 extends MainEntryPoint {
 
 		@Override
 		public void identificationLabelChanged() {
-			documentLabel.setText(currentMod123.getDocument());
-			nameLabel.setText(currentMod123.getName());
-			surnameLabel.setText(currentMod123.getSurname());
+			documentLabel.setText(currentMod.getDocument());
+			nameLabel.setText(currentMod.getName());
+			surnameLabel.setText(currentMod.getSurname());
 		}
 		@Override
 		public String getDomainName() {
@@ -238,7 +244,10 @@ public class Model123 extends MainEntryPoint {
 		AON.ensureInjected();
 
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+
+		Mod123ServiceAsync serviceRaw = GWT.create(Mod123Service.class);
+		SERVICE = new Mod123ServiceAsyncDecorator(serviceRaw);
 
 		table = new FiscalModelTable<Mod123>(new Mod123SelectionHandler(), new FiscalModelProvidesKey<Mod123>());
 
@@ -290,7 +299,7 @@ public class Model123 extends MainEntryPoint {
 		@Override
 		public void onSelectionChange(SelectionChangeEvent event) {
 			Mod123 sel = table.getSelected();
-			fiscalService.getMod123(getCurrentDomainName(), getCurrentDomain(),
+			SERVICE.getMod123(getCurrentDomainName(), getCurrentDomain(),
 					sel.getId(), new AsyncCallback<Mod123>() {
 						@Override
 						public void onSuccess(Mod123 selected) {
@@ -321,29 +330,33 @@ public class Model123 extends MainEntryPoint {
 	}
 	
 	private void refreshToolbarState() {
-		deleteButton.setVisible(!currentMod123.isNew());
-		auditButton.setVisible(!currentMod123.isNew());
-		newButton.setVisible(!currentMod123.isNew());
+		newButton.setVisible(!currentMod.isNew());
+		saveButton.setVisible(!currentMod.isFinished() && !currentMod.isSent());
 		cancelButton.setVisible(true);
-		saveButton.setVisible(true);
-		
-		saveButton.setEnabled(!currentMod123.isFinished());
-		deleteButton.setEnabled(!currentMod123.isFinished());
-		
-		printButton.setVisible(!currentMod123.isNew());
-		
-		reopenButton.setVisible(!currentMod123.isNew() && currentMod123.getStatus() == FiscalStatus.FINISHED);
-		finalizeButton.setVisible(!currentMod123.isNew() && currentMod123.getStatus() == FiscalStatus.PENDING );
+		deleteButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
+		printButton.setVisible(!currentMod.isNew());
+		markAsPendingButton.setVisible(!currentMod.isNew() &&
+				(currentMod.getStatus() == FiscalStatus.FINISHED 
+				|| currentMod.getStatus() == FiscalStatus.BATCHED
+				|| currentMod.getStatus() == FiscalStatus.SENT
+				|| currentMod.getStatus() == FiscalStatus.BLOCKED));
+		markAsSentButton.setVisible(!currentMod.isNew() &&
+				(currentMod.getStatus() == FiscalStatus.FINISHED));
+		markAsFinishedButton.setVisible(!currentMod.isNew() &&
+				(currentMod.getStatus() == FiscalStatus.PENDING 
+				|| currentMod.getStatus() == FiscalStatus.MISSING));
+		auditButton.setVisible(!currentMod.isNew());
 		
 		generateFileButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		generateFileButton.setVisible(!currentMod123.isNew());
-		generateFileButton.setEnabled(currentMod123.isFinished() && currentMod123.getYear() > 2015);
+		generateFileButton.setVisible(!currentMod.isNew());
+		generateFileButton.setEnabled((currentMod.isFinished() || currentMod.isSent()) && currentMod.getYear() > 2015);
 		generateFileButton.addStyleName(
 				generateFileButton.isEnabled()
-					?FiscalModelUtils.getAdministrationIcon(currentMod123.getAdministration())
-					:FiscalModelUtils.getAdministrationIconBW(currentMod123.getAdministration())
+					?FiscalModelUtils.getAdministrationIcon(currentMod.getAdministration())
+					:FiscalModelUtils.getAdministrationIconBW(currentMod.getAdministration())
 							);
-		printViaAeatButton.setVisible(!currentMod123.isNew() && currentMod123.isAEAT() && currentMod123.isFinished());
+		printViaAeatButton.setVisible(!currentMod.isNew() && currentMod.isAEAT() 
+				&& (currentMod.isFinished() || currentMod.isSent()));
 	}
 	
 	private void toolbarForTable() {
@@ -358,26 +371,27 @@ public class Model123 extends MainEntryPoint {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(false);
 		printButton.setVisible(false);
-		reopenButton.setVisible(false);
-		finalizeButton.setVisible(false);
+		markAsPendingButton.setVisible(false);
+		markAsSentButton.setVisible(false);
+		markAsFinishedButton.setVisible(false);
 		generateFileButton.setVisible(false);
 		printViaAeatButton.setVisible(false);
 	}
 	
 	private void select(Mod123 selected) {
-		currentMod123 = selected;
+		currentMod = selected;
 		dirty = false;
 		
-		documentLabel.setText(currentMod123.getDocument());
-		nameLabel.setText(currentMod123.getName());
-		surnameLabel.setText(currentMod123.getSurname());
+		documentLabel.setText(currentMod.getDocument());
+		nameLabel.setText(currentMod.getName());
+		surnameLabel.setText(currentMod.getSurname());
 		
 		styleDirtyLabel();
 		styleStatusLabel();
-		if (currentMod123.isReplacementDeclarationAvailable()) {
+		if (currentMod.isReplacementDeclarationAvailable()) {
 			replacementLabel.setText(AON.MSG.replacement());
 			replacementLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			replacementLabel.addStyleName(currentMod123.isReplacement()
+			replacementLabel.addStyleName(currentMod.isReplacement()
 					?AON.AON_CSS.aonIconChecked()
 					:AON.AON_CSS.aonIconCheck()
 				);
@@ -385,10 +399,10 @@ public class Model123 extends MainEntryPoint {
 			replacementLabel.setText("");
 		}
 		
-		if (currentMod123.isComplementaryDeclarationAvailable()) {
+		if (currentMod.isComplementaryDeclarationAvailable()) {
 			complementaryLabel.setText(AON.MSG.complementary());
 			complementaryLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			complementaryLabel.addStyleName(currentMod123.isComplementary()
+			complementaryLabel.addStyleName(currentMod.isComplementary()
 					?AON.AON_CSS.aonIconChecked()
 					:AON.AON_CSS.aonIconCheck()
 				);
@@ -396,22 +410,22 @@ public class Model123 extends MainEntryPoint {
 			complementaryLabel.setText("");
 		}
 		
-		replacedNumber.setValue(currentMod123.getReplacedNumber());
-		replacedNumber.setEnabled(currentMod123.isReplacedNumberAvailable());
+		replacedNumber.setValue(currentMod.getReplacedNumber());
+		replacedNumber.setEnabled(currentMod.isReplacedNumberAvailable());
 		
-		confidential.setValue(currentMod123.isConfidential());
-		domain = currentMod123.getDomain();
+		confidential.setValue(currentMod.isConfidential());
+		domain = currentMod.getDomain();
 		
 		styleCommentsButton();
 		
 		fiscalInformationLabel.setStyleName(AON.AON_CSS.aonPaddingRight());
 		fiscalInformationLabel.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-		fiscalInformationLabel.addStyleName(FiscalModelUtils.getAdministrationIconBW(currentMod123.getAdministration()));
+		fiscalInformationLabel.addStyleName(FiscalModelUtils.getAdministrationIconBW(currentMod.getAdministration()));
 
 		refreshToolbarState();
 		
-		FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod123);
-		FiscalModelUtils.paintHeaderTable(headerPanel,currentMod123);
+		FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
+		FiscalModelUtils.paintHeaderTable(headerPanel,currentMod);
 		
 		FiscalModelCallback callback = new FiscalModelCallback(){
 			@Override
@@ -423,22 +437,22 @@ public class Model123 extends MainEntryPoint {
 		}; 
 		FiscalModelIdentificationData<Mod123> identificationData = new FiscalModelIdentificationData<Mod123>(callback);
 		identificationContainer.setWidget( identificationData);
-		if (currentMod123.getAdministration() == Administration.COMMON_TERRITORY) {
+		if (currentMod.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration = new Model123AEAT(callback);
-		} else  if (currentMod123.getAdministration() == Administration.GIPUZKOA) {
+		} else  if (currentMod.getAdministration() == Administration.GIPUZKOA) {
 			declaration = new Model123Gipuzkoa(callback);
-		} else  if (currentMod123.getAdministration() == Administration.BIZKAIA) {
+		} else  if (currentMod.getAdministration() == Administration.BIZKAIA) {
 			declaration = new Model123Bizkaia(callback);
-		} else  if (currentMod123.getAdministration() == Administration.NAVARRA) {
+		} else  if (currentMod.getAdministration() == Administration.NAVARRA) {
 			declaration = new Model716Navarra(callback);
-		} else  if (currentMod123.getAdministration() == Administration.ALAVA) {
-			declaration = (currentMod123.getYear() > 2015) 
+		} else  if (currentMod.getAdministration() == Administration.ALAVA) {
+			declaration = (currentMod.getYear() > 2015) 
 				?new Model123Araba2016(callback)
 				:new Model123Araba(callback);	
 		}
 		if (declaration != null) {
 			declarationContainer.setWidget( declaration );
-			infoContainer.setWidget(declaration.getInfoPanel(currentMod123));
+			infoContainer.setWidget( getInformationPanel(declaration.getInformationLinks()) );
 		} else {
 			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 			hideToolbarButtons();
@@ -451,18 +465,14 @@ public class Model123 extends MainEntryPoint {
 	}
 
 	private void styleStatusLabel() {
-		statusLabel.setText(currentMod123.getStatus().getName());
-		statusLabel.setStyleName(
-				currentMod123.getStatus() == FiscalStatus.FINISHED
-					?AON.AON_CSS.aonIconLock()
-					:AON.AON_CSS.aonIconUnlock()
-				);
+		statusLabel.setText(currentMod.getStatus().getName());
+		statusLabel.setStyleName( FiscalModelUtils.getStatusIconStyle(currentMod.getStatus()));
 		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
 	}
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		fiscalService.getMod123s(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod123s(getCurrentDomainName(), getCurrentDomain(),
 				new AsyncCallback<LinkedList<Mod123>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod123> result) {
@@ -483,9 +493,9 @@ public class Model123 extends MainEntryPoint {
 	void onAcceptButtonClick(ClickEvent event) {
 		save();
 	}
-	@UiHandler("reopenButton")
-	void onReopenButtonClick(ClickEvent event) {
-		reopenButton.setEnabled(false);
+	@UiHandler("markAsPendingButton")
+	void markAsPendingButtonClick(ClickEvent event) {
+		markAsPendingButton.setEnabled(false);
 		cleanErrorMessage();
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
@@ -494,40 +504,59 @@ public class Model123 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		fiscalService.reopenMod123(getCurrentDomainName(), this.currentMod123, new AsyncCallback<Mod123>() {
+		SERVICE.markAsPending(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						select(result);
 						popup.hide();
-						reopenButton.setEnabled(true);
-						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod123);
+						markAsPendingButton.setEnabled(true);
+						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
 						popup.hide();
 						showErrorMessage(AON.MSG.unableToReopenDeclaration(caught.getMessage()));
-						reopenButton.setEnabled(true);
+						markAsPendingButton.setEnabled(true);
 					}
 				});
 	}
-	@UiHandler("finalizeButton")
-	void onFinalizeButtonClick(ClickEvent event) {
-		finalizeButton.setEnabled(false);
+	@UiHandler("markAsSentButton")
+	void markAsSentButtonClick(ClickEvent event) {
+		markAsSentButton.setEnabled(false);
 		cleanErrorMessage();
-		fiscalService.initializeForFinishMod123(getCurrentDomainName(),currentMod123,
+		SERVICE.markAsSent(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod123>() {
+					@Override
+					public void onSuccess(Mod123 result) {
+						select(result);
+						markAsSentButton.setEnabled(true);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToMarkAsSentDeclaration(caught.getMessage()));
+						markAsSentButton.setEnabled(true);
+					}
+				});
+	}
+	
+	@UiHandler("markAsFinishedButton")
+	void markAsFinishedButtonClick(ClickEvent event) {
+		markAsFinishedButton.setEnabled(false);
+		cleanErrorMessage();
+		SERVICE.initializeForFinish(getCurrentDomainName(),currentMod,
 				new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 m123) {
-						currentMod123 = m123;
+						currentMod = m123;
 						showFinalizePopup();
-						finalizeButton.setEnabled(true);
+						markAsFinishedButton.setEnabled(true);
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
 						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						finalizeButton.setEnabled(true);
+						markAsFinishedButton.setEnabled(true);
 					}
 				});
 	}
@@ -542,7 +571,7 @@ public class Model123 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		fiscalService.saveMod123(getCurrentDomainName(), this.currentMod123, new AsyncCallback<Mod123>() {
+		SERVICE.save(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						select(result);
@@ -560,7 +589,7 @@ public class Model123 extends MainEntryPoint {
 	}
 	
 	private void finish() {
-		finalizeButton.setEnabled(false);
+		markAsFinishedButton.setEnabled(false);
 		cleanErrorMessage();
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
@@ -569,20 +598,20 @@ public class Model123 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		fiscalService.finishMod123(getCurrentDomainName(), this.currentMod123, new AsyncCallback<Mod123>() {
+		SERVICE.markAsFinished(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						select(result);
 						popup.hide();
-						finalizeButton.setEnabled(true);
-						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod123);
+						markAsFinishedButton.setEnabled(true);
+						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
 						popup.hide();
 						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-						finalizeButton.setEnabled(true);
+						markAsFinishedButton.setEnabled(true);
 					}
 				});
 	}
@@ -596,7 +625,7 @@ public class Model123 extends MainEntryPoint {
 
 			@Override
 			public void onAccept() {
-				fiscalService.deleteMod123(getCurrentDomainName(),currentMod123, new AsyncCallback<Void>() {
+				SERVICE.delete(getCurrentDomainName(),currentMod, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
@@ -623,11 +652,11 @@ public class Model123 extends MainEntryPoint {
 		newButton.setEnabled(false);
 		cleanErrorMessage();
 		
-		fiscalService.initializeMod123(getCurrentDomainName(),getCurrentDomain(),null,
+		SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(),null,
 				new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 m123) {
-						currentMod123 = m123;
+						currentMod = m123;
 						showNewDeclarationPopup();
 						newButton.setEnabled(true);
 					}
@@ -646,7 +675,7 @@ public class Model123 extends MainEntryPoint {
 
 				@Override
 				public void onAccept() {
-					fiscalService.createMod123(getCurrentDomainName(),getCurrentDomain(),currentMod123,
+					SERVICE.create(getCurrentDomainName(),getCurrentDomain(),currentMod,
 							new AsyncCallback<Mod123>() {
 								@Override
 								public void onSuccess(Mod123 m123) {
@@ -670,7 +699,7 @@ public class Model123 extends MainEntryPoint {
 
 				@Override
 				public Mod123 getFiscalModel() {
-					return currentMod123;
+					return currentMod;
 				}
 			}
 		); 
@@ -714,7 +743,7 @@ public class Model123 extends MainEntryPoint {
 	@UiHandler("auditButton")
 	public void onAudit(ClickEvent event) {
 		AuditDialog dialog = new AuditDialog();
-		dialog.show(currentMod123);
+		dialog.show(currentMod);
 	}
 
 	// -------------------------------------------------------------- UiHandler
@@ -722,16 +751,16 @@ public class Model123 extends MainEntryPoint {
 	public void onComments(ClickEvent event) {
 		final AonToast toast = new AonToast();
 		FlowPanel commentPanel = new FlowPanel();
-		commentPanel.setStyleName( FiscalModelUtils.getAdministrationBG(currentMod123.getAdministration()) );
+		commentPanel.setStyleName( FiscalModelUtils.getAdministrationBG(currentMod.getAdministration()) );
 		commentPanel.setStyleName(AON.AON_CSS.aonHeightAll());
 		commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
 		TextArea comment = new TextArea();
 		comment.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				currentMod123.setComments(event.getValue());
+				currentMod.setComments(event.getValue());
 				styleCommentsButton();
-				fiscalService.saveCommentsMod123(getCurrentDomainName(), currentMod123, new AsyncCallback<Mod123>() {
+				SERVICE.saveComments(getCurrentDomainName(), currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						toast.hide();
@@ -748,7 +777,7 @@ public class Model123 extends MainEntryPoint {
 				
 			}
 		});
-		comment.setText(currentMod123.getComments());
+		comment.setText(currentMod.getComments());
 		comment.setWidth("90%");
 		comment.setHeight("5em");
 		commentPanel.add(comment);
@@ -756,7 +785,7 @@ public class Model123 extends MainEntryPoint {
 	}
 	
 	private void styleCommentsButton() {
-		if (AonStringUtils.isEmpty(currentMod123.getComments())) {
+		if (AonStringUtils.isEmpty(currentMod.getComments())) {
 			commentsButton.addStyleName(AON.AON_CSS.aonIconComment());
 			commentsButton.removeStyleName(AON.AON_CSS.aonIconCommentRed());
 		} else {
@@ -809,7 +838,7 @@ public class Model123 extends MainEntryPoint {
 
 	private void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod123Hidden.setValue(String.valueOf(currentMod123.getId()));
+		mod123Hidden.setValue(String.valueOf(currentMod.getId()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
 		diskForm.submit();
@@ -839,13 +868,13 @@ public class Model123 extends MainEntryPoint {
 
 	@UiHandler("confidential")
 	void onConfidentialClick(ClickEvent event) {
-		currentMod123.setConfidential(confidential.getValue());
+		currentMod.setConfidential(confidential.getValue());
 		setDirty(true);
 	}
 	
 	@UiHandler("replacedNumber")
 	void onConfidentialChange(ChangeEvent event) {
-		currentMod123.setReplacedNumber(replacedNumber.getValue());
+		currentMod.setReplacedNumber(replacedNumber.getValue());
 		setDirty(true);
 	}
 	
@@ -924,5 +953,48 @@ public class Model123 extends MainEntryPoint {
 		});
 		finalizeDialog.center();
 		finalizeDialog.show();
+	}
+
+	protected FlowPanel getInformationPanel(LinkedList<Pair<String,String>> infoList) {
+		FlowPanel panel = new FlowPanel();
+		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.addStyleName(AON.AON_CSS.aonWidthAll());
+		panel.addStyleName(AON.AON_CSS.aonMarginTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		 
+		FlexTable tab = new FlexTable();
+		tab.getColumnFormatter().setWidth(0, "30px");
+		tab.getColumnFormatter().setWidth(1
+				, "auto");
+		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
+		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		Label title = new Label("Informaci\u00F3n \u00FAtil para la confecci\u00F3n del modelo");
+		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(currentMod.getAdministration()));
+		tab.setWidget(0, 0, title);
+		
+		int row = 1;
+		for (Pair<String, String> pair : infoList) {
+			Label icon = new Label();
+			icon.addStyleName(FiscalModelUtils.getAdministrationIcon(currentMod.getAdministration()));
+			tab.setWidget(row, 0, icon );
+			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+
+			FlowPanel p = new FlowPanel();
+			p.setStyleName(AON.AON_CSS.aonPadding2());
+			Anchor a = new Anchor(pair.getLeft(),pair.getRight(), "_blank");
+			a.setStyleName(AON.AON_CSS.aonPaddingLeft());
+			p.add(a);
+			tab.setWidget(row, 1, p );
+			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+			row++;
+		}
+		panel.add(tab);
+		return panel;
 	}
 }

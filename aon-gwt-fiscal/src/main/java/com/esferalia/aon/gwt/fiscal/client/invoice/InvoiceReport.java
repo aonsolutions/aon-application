@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -132,7 +131,7 @@ public class InvoiceReport extends MainEntryPoint {
 		entity.setSelectedIndex(0);
 		onChangeEntity(null);
 		
-		SelectElement select = entity.getElement().cast();
+		//SelectElement select = entity.getElement().cast();
 		//select.getOptions().getItem(2).setDisabled(true);
 		//select.getOptions().getItem(3).setDisabled(true);
 		//select.getOptions().getItem(4).setDisabled(true);

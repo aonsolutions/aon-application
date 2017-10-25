@@ -176,7 +176,6 @@ import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
-import com.esferalia.aon.occam.impl.jooq.PMSImpl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
@@ -266,10 +265,6 @@ public class AON {
 		return new MarketplaceImpl();
 	}
 
-	private static IPMS getPMS() {
-		return new PMSImpl();
-	}
-	
 	private static ITask getTask() {
 		return new TaskImpl();
 	}

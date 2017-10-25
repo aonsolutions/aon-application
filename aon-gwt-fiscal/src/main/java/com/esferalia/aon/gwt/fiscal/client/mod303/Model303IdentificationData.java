@@ -367,12 +367,9 @@ public class Model303IdentificationData extends ScrollPanel {
 		setWidget(tab);		
 		
 		document.setValue(callback.getDocument());
-//		document.setEnabled(!callback.isFinished());
 
 		name.setValue(callback.getName());
-//		name.setEnabled(!callback.isFinished());
 		surname.setValue(callback.getSurname());
-//		surname.setEnabled(!callback.isFinished());
 		if (AonDocumentUtil.isEntity( document.getValue() )) {
 			nameLabel.setText(AON.MSG.nameCompanyName());
 			surnameLabel.setVisible(false);
@@ -385,33 +382,19 @@ public class Model303IdentificationData extends ScrollPanel {
 		}
 		
 		phone.setValue(callback.getPhone());
-//		phone.setEnabled(!callback.isFinished());
 		contactPerson.setValue(callback.getContactPerson());
-//		contactPerson.setEnabled(!callback.isFinished());
 		contactPhone.setValue(callback.getContactPhone());
-//		contactPhone.setEnabled(!callback.isFinished());
 		contactCellular.setValue(callback.getContactCellular());
-//		contactCellular.setEnabled(!callback.isFinished());
 		contactMail.setValue(callback.getContactEmail());
-//		contactMail.setEnabled(!callback.isFinished());
 		streetInitial.setValue(callback.getStreetInitial());
-//		streetInitial.setEnabled(!callback.isFinished());
 		streetName.setValue(callback.getStreetName());
-//		streetName.setEnabled(!callback.isFinished());
 		streetNumber.setValue(callback.getStreetNumber());
-//		streetNumber.setEnabled(!callback.isFinished());
 		streetStair.setValue(callback.getStreetStair());
-//		streetStair.setEnabled(!callback.isFinished());
 		streetFloor.setValue(callback.getStreetFloor());
-//		streetFloor.setEnabled(!callback.isFinished());
 		streetDoor.setValue(callback.getStreetDoor());
-//		streetDoor.setEnabled(!callback.isFinished());
 		town.setValue(callback.getTown());
-//		town.setEnabled(!callback.isFinished());
 		province.setSelectedIndex( Province.getByName(callback.getProvince()).ordinal());
-//		province.setEnabled(!callback.isFinished());
 		zip.setValue(callback.getZip());
-//		zip.setEnabled(!callback.isFinished());
 	}
 	
 }

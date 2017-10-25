@@ -122,8 +122,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final Button cancelButton = new Button();		
 	protected final Button deleteButton = new Button();
 	protected final Button printButton = new Button();
-	protected final Button reopenButton = new Button();
-	protected final Button finalizeButton = new Button();
+	protected final Button markAsPendingButton = new Button();
+	protected final Button markAsFinishedButton = new Button();
+	protected final Button markAsSentButton = new Button();
 	protected final Button auditButton = new Button();
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
@@ -267,31 +268,44 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		});
 		buttonContainer.add(deleteButton);
 		
-		finalizeButton.setText(AON.MSG.finish());
-		finalizeButton.setTitle(finalizeButton.getText());
-		finalizeButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		finalizeButton.addStyleName(AON.AON_CSS.aonIconLock());
-		finalizeButton.addClickHandler(new ClickHandler() {
+		markAsFinishedButton.setText(AON.MSG.finish());
+		markAsFinishedButton.setTitle(markAsFinishedButton.getText());
+		markAsFinishedButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		markAsFinishedButton.addStyleName(AON.AON_CSS.aonIconPointLightGreen());
+		markAsFinishedButton.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				onFinalize();
 			}
 		});
-		buttonContainer.add(finalizeButton);
+		buttonContainer.add(markAsFinishedButton);
 
-		reopenButton.setText(AON.MSG.reopen());
-		reopenButton.setTitle(reopenButton.getText());
-		reopenButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		reopenButton.addStyleName(AON.AON_CSS.aonIconUnlock());
-		reopenButton.addClickHandler(new ClickHandler() {
+		markAsSentButton.setText(AON.MSG.markAsSent());
+		markAsSentButton.setTitle(markAsSentButton.getText());
+		markAsSentButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		markAsSentButton.addStyleName(AON.AON_CSS.aonIconPointGreen());
+		markAsSentButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				markAsSent();
+			}
+		});
+		buttonContainer.add(markAsSentButton);
+
+		markAsPendingButton.setText(AON.MSG.reopen());
+		markAsPendingButton.setTitle(markAsPendingButton.getText());
+		markAsPendingButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		markAsPendingButton.addStyleName(AON.AON_CSS.aonIconPointOrange());
+		markAsPendingButton.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				reopenDeclaration();
 			}
 		});
-		buttonContainer.add(reopenButton);
+		buttonContainer.add(markAsPendingButton);
 		
 		printButton.setText(AON.MSG.draft());
 		printButton.setTitle(printButton.getText());
@@ -346,6 +360,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void select( Mod303 mod303) {
 		setMod303(mod303);
 		refreshToolbarState();
+		styleStatusLabel(mod303);
 	}
 	protected void selectAndPopulate( Mod303 mod303) {
 		select(mod303);
@@ -357,17 +372,18 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		auditButton.setVisible(!mod303.isNew());
 		newButton.setVisible(!mod303.isNew());
 		cancelButton.setVisible(true);
-		saveButton.setVisible(true);
-		saveButton.setEnabled(!isSnapshot() && !mod303.isFinished());
-		deleteButton.setEnabled(!mod303.isFinished());
-		
-		reopenButton.setVisible(!isSnapshot() && !mod303.isNew() &&
+		saveButton.setVisible(!mod303.isFinished() && !mod303.isSent());
+		deleteButton.setVisible(!mod303.isFinished() && !mod303.isSent());
+		markAsPendingButton.setVisible(!mod303.isNew() &&
 				(mod303.getStatus() == FiscalStatus.FINISHED 
 				|| mod303.getStatus() == FiscalStatus.BATCHED
+				|| mod303.getStatus() == FiscalStatus.SENT
 				|| mod303.getStatus() == FiscalStatus.BLOCKED));
-		finalizeButton.setVisible(!isSnapshot() && !mod303.isNew() &&
+		markAsFinishedButton.setVisible(!mod303.isNew() &&
 				(mod303.getStatus() == FiscalStatus.PENDING 
 				|| mod303.getStatus() == FiscalStatus.MISSING));
+		markAsSentButton.setVisible(!mod303.isNew() &&
+				(mod303.getStatus() == FiscalStatus.FINISHED));
 	}
 
 	protected void paintDeclarationHeaderTable(SimplePanel panel) {
@@ -457,7 +473,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						mod303.setComments(event.getValue());
 						styleCommentsButton();
-						Model303.mod303Service.saveCommentsMod303(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
+						Model303.mod303Service.saveComments(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
 							@Override
 							public void onSuccess(Mod303 result) {
 								toast.hide();
@@ -492,15 +508,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	private void styleStatusLabel(Mod303 mod) {
 		statusLabel.setText(mod.getStatus().getName());
-		if (mod.getStatus() == FiscalStatus.FINISHED || mod.getStatus() == FiscalStatus.BATCHED) {
-			statusLabel.setStyleName(AON.AON_CSS.aonIconLock());
-		}
-		if (mod.getStatus() == FiscalStatus.BLOCKED ) {
-			statusLabel.setStyleName(AON.AON_CSS.aonIconBlocked());
-		}
-		if (mod.getStatus() == FiscalStatus.PENDING || mod.getStatus() == FiscalStatus.MISSING) {
-			statusLabel.setStyleName(AON.AON_CSS.aonIconUnlock());
-		}
+		statusLabel.setStyleName(FiscalModelUtils.getStatusIconStyle(mod.getStatus()));
 		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
 	}
 	private void styleCommentsButton() {
@@ -803,7 +811,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	public void calculateAndRefresh(AsyncCallback<Mod303> cbk) {
-		Model303.mod303Service.calculateMod303(Model303.getCurrentDomainName(),this.mod303,
+		Model303.mod303Service.calculate(Model303.getCurrentDomainName(),this.mod303,
 				new AsyncCallback<Mod303>() {
 
 					@Override
@@ -884,7 +892,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.mod303Service.saveMod303(Model303.getCurrentDomainName(), this.mod303, new AsyncCallback<Mod303>() {
+		Model303.mod303Service.save(Model303.getCurrentDomainName(), this.mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -909,7 +917,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 			@Override
 			public void onAccept() {
-				Model303.mod303Service.deleteMod303(Model303.getCurrentDomainName(),mod303, new AsyncCallback<Void>() {
+				Model303.mod303Service.delete(Model303.getCurrentDomainName(),mod303, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						deleteButton.setEnabled(true);
@@ -932,21 +940,21 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	private void onFinalize() {
-		finalizeButton.setEnabled(false);
+		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
-		Model303.mod303Service.initializeForFinishMod303(Model303.getCurrentDomainName(),mod303,
+		Model303.mod303Service.initializeForFinish(Model303.getCurrentDomainName(),mod303,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
 						showFinalizePopup();
-						finalizeButton.setEnabled(true);
+						markAsFinishedButton.setEnabled(true);
 					}
 	
 					@Override
 					public void onFailure(Throwable caught) {
 						callback.showError(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						finalizeButton.setEnabled(true);
+						markAsFinishedButton.setEnabled(true);
 					}
 				});
 	}
@@ -966,7 +974,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	private void finish() {
-		finalizeButton.setEnabled(false);
+		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
@@ -975,12 +983,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.mod303Service.finishMod303(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
+		Model303.mod303Service.markAsFinished(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
 						popup.hide();
-						finalizeButton.setEnabled(true);
+						markAsFinishedButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);
 					}
 
@@ -988,12 +996,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					public void onFailure(Throwable caught) {
 						popup.hide();
 						callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-						finalizeButton.setEnabled(true);
+						markAsFinishedButton.setEnabled(true);
 					}
 				});
 	}
 	private void reopenDeclaration() {
-		reopenButton.setEnabled(false);
+		markAsPendingButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
@@ -1002,12 +1010,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.mod303Service.reopenMod303(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
+		Model303.mod303Service.markAsPending(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
 						popup.hide();
-						reopenButton.setEnabled(true);
+						markAsPendingButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);
 					}
 
@@ -1015,11 +1023,29 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					public void onFailure(Throwable caught) {
 						popup.hide();
 						callback.showError(AON.MSG.unableToReopenDeclaration(caught.getMessage()));
-						reopenButton.setEnabled(true);
+						markAsPendingButton.setEnabled(true);
 					}
 				});
 	}
 	
+	private void markAsSent() {
+		markAsSentButton.setEnabled(false);
+		callback.cleanErrorPanel();
+		Model303.mod303Service.markAsSent(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 result) {
+						selectAndPopulate(result);
+						markAsSentButton.setEnabled(true);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.showError(AON.MSG.unableToMarkAsSentDeclaration(caught.getMessage()));
+						markAsSentButton.setEnabled(true);
+					}
+				});
+	}
+
 	private void audit() {
 		AuditDialog dialog = new AuditDialog();
 		dialog.show(mod303);
@@ -1027,7 +1053,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 	protected class Model303IdentificationDataCallback implements IModel303IdentificationDataCallback {
 
-		@Override public boolean isFinished() 		{ return getMod303().isFinished(); 			}
+		@Override public boolean isFinished() 		{ return getMod303().isFinished() || getMod303().isSent();}
 		
 		@Override public String getDocument() 		{return getMod303().getDocument();			}
 		@Override public String getName() 			{return getMod303().getName(); 				}
@@ -1173,9 +1199,4 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
 	
-
-	// *********** [BORRAR]
-	public boolean isSnapshot() {
-		return false;
-	}
 }

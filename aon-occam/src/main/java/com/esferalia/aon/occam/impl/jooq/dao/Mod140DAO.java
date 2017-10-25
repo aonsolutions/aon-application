@@ -30,7 +30,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.occam.server.fiscal.format.mod140.Mod140Format;
+import com.esferalia.aon.occam.server.fiscal.format.Mod140Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -228,7 +228,7 @@ public class Mod140DAO {
 
 	private static void fillInvoice(Writer writer, Mod140Context m140ctx, Mod140 inv) {
 		try {
-			Mod140Format.fill(writer, m140ctx , inv);
+			Mod140Writer.fill(writer, m140ctx , inv);
 		} catch (IOException e) {
 			throw new AonCoreException(e.getMessage(), e); 
 		}

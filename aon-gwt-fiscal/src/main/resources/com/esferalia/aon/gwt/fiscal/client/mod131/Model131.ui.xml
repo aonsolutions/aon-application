@@ -36,12 +36,12 @@
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
 								<g:Button ui:field="printButton" text="{msg.draft}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" />
-
-								<g:Button ui:field="reopenButton" text="{msg.reopen}"
-									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconUnlock}" />
-								<g:Button ui:field="finalizeButton" text="{msg.finish}"
-									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconLock}" />
-									
+								<g:Button ui:field="markAsPendingButton" text="{msg.reopen}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPointOrange}" />
+								<g:Button ui:field="markAsSentButton" text="{msg.markAsSent}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPointGreen}" />
+								<g:Button ui:field="markAsFinishedButton" text="{msg.finish}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPointLightGreen}" />
 								<g:Button ui:field="auditButton" text="{msg.audit}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAudit}" />
 								<g:FlowPanel ui:field="formContainer"/>

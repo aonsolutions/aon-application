@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
@@ -63,6 +64,8 @@ public interface IFiscal {
 	public Mod180 saveMod180(AONContext ctx,Mod180 mod180);
 	public void deleteMod180(AONContext ctx,Mod180 mod180);
 	public Mod180Detail getMod180Detail(AONContext ctx,Integer id);
+	public Mod180 saveCommentsMod180(AONContext ctx, Mod180 mod180);
+	public Mod180 changeStatusMod180(AONContext ctx, Mod180 mod180, FiscalStatus newStatus);
 	
 	// 				   		  MOD190
 	public LinkedList<Mod190> getMod190s(AONContext ctx,int domain);
@@ -108,8 +111,9 @@ public interface IFiscal {
 	public Mod303 saveMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 saveCommentsMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 initializeForFinishMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 finishMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 reopenMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 markAsFinishedMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 markAsPendingMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 markAsSentMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 initializeMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 createMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303);
@@ -120,87 +124,93 @@ public interface IFiscal {
 	// 				   		  MOD111
 	public Mod111 getMod111(AONContext ctx, int id);
 	public LinkedList<Mod111> getMod111s(AONContext ctx, int domain);
-	public Mod111 calculateMod111(AONContext ctx, Mod111 mod111);
-	public Mod111 saveMod111(AONContext ctx, Mod111 mod111);
-	public Mod111 saveCommentsMod111(AONContext ctx, Mod111 mod111);
-	public Mod111 initializeForFinishMod111(AONContext ctx, Mod111 mod111);
-	public Mod111 finishMod111(AONContext ctx, Mod111 mod111);
-	public Mod111 reopenMod111(AONContext ctx, Mod111 mod111);
-	public Mod111 initializeMod111(AONContext ctx, Mod111 mod111);
-	public Mod111 createMod111(AONContext ctx, Mod111 mod111);
-	public void deleteMod111(AONContext ctx, Mod111 mod111);
-	public String getMod111Info(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey);
+	public Mod111 calculate(AONContext ctx, Mod111 mod111);
+	public Mod111 save(AONContext ctx, Mod111 mod111);
+	public Mod111 saveComments(AONContext ctx, Mod111 mod111);
+	public Mod111 initializeForFinish(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsPending(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsSent(AONContext ctx, Mod111 mod111);
+	public Mod111 initialize(AONContext ctx, Mod111 mod111);
+	public Mod111 create(AONContext ctx, Mod111 mod111);
+	public void delete(AONContext ctx, Mod111 mod111);
+	public String getInfo(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey);
 	
 	// 				   		  MOD115
 	public Mod115 getMod115(AONContext ctx, int id);
 	public LinkedList<Mod115> getMod115s(AONContext ctx, int domain);
-	public Mod115 calculateMod115(AONContext ctx, Mod115 mod115);
-	public Mod115 saveMod115(AONContext ctx, Mod115 mod115);
-	public Mod115 saveCommentsMod115(AONContext ctx, Mod115 mod115);
-	public Mod115 initializeForFinishMod115(AONContext ctx, Mod115 mod115);
-	public Mod115 finishMod115(AONContext ctx, Mod115 mod115);
-	public Mod115 reopenMod115(AONContext ctx, Mod115 mod115);
-	public Mod115 initializeMod115(AONContext ctx, Mod115 mod115);
-	public Mod115 createMod115(AONContext ctx, Mod115 mod115);
-	public void deleteMod115(AONContext ctx, Mod115 mod115);
-	public String getMod115Info(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey);
+	public Mod115 calculate(AONContext ctx, Mod115 mod115);
+	public Mod115 save(AONContext ctx, Mod115 mod115);
+	public Mod115 saveComments(AONContext ctx, Mod115 mod115);
+	public Mod115 initializeForFinish(AONContext ctx, Mod115 mod115);
+	public Mod115 markAsFinished(AONContext ctx, Mod115 mod115);
+	public Mod115 markAsPending(AONContext ctx, Mod115 mod115);
+	public Mod115 markAsSent(AONContext ctx, Mod115 mod115);
+	public Mod115 initialize(AONContext ctx, Mod115 mod115);
+	public Mod115 create(AONContext ctx, Mod115 mod115);
+	public void delete(AONContext ctx, Mod115 mod115);
+	public String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey);
 
 	// 				   		  MOD123
 	public Mod123 getMod123(AONContext ctx, int id);
 	public LinkedList<Mod123> getMod123s(AONContext ctx, int domain);
-	public Mod123 calculateMod123(AONContext ctx, Mod123 mod123);
-	public Mod123 saveMod123(AONContext ctx, Mod123 mod123);
-	public Mod123 saveCommentsMod123(AONContext ctx, Mod123 mod123);
-	public Mod123 initializeForFinishMod123(AONContext ctx, Mod123 mod123);
-	public Mod123 finishMod123(AONContext ctx, Mod123 mod123);
-	public Mod123 reopenMod123(AONContext ctx, Mod123 mod123);
-	public Mod123 initializeMod123(AONContext ctx, Mod123 mod123);
-	public Mod123 createMod123(AONContext ctx, Mod123 mod123);
-	public void deleteMod123(AONContext ctx, Mod123 mod123);
-	public String getMod123Info(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey);
+	public Mod123 calculate(AONContext ctx, Mod123 mod123);
+	public Mod123 save(AONContext ctx, Mod123 mod123);
+	public Mod123 saveComments(AONContext ctx, Mod123 mod123);
+	public Mod123 initializeForFinish(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsFinished(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsSent(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsPending(AONContext ctx, Mod123 mod123);
+	public Mod123 initialize(AONContext ctx, Mod123 mod123);
+	public Mod123 create(AONContext ctx, Mod123 mod123);
+	public void delete(AONContext ctx, Mod123 mod123);
+	public String getInfo(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey);
 
 	// 				   		  MOD130
 	public Mod130 getMod130(AONContext ctx, int id);
 	public LinkedList<Mod130> getMod130s(AONContext ctx, int domain);
-	public Mod130 calculateMod130(AONContext ctx, Mod130 mod130);
-	public Mod130 saveMod130(AONContext ctx, Mod130 mod130);
-	public Mod130 saveCommentsMod130(AONContext ctx, Mod130 mod130);
-	public Mod130 initializeForFinishMod130(AONContext ctx, Mod130 mod130);
-	public Mod130 finishMod130(AONContext ctx, Mod130 mod130);
-	public Mod130 reopenMod130(AONContext ctx, Mod130 mod130);
-	public Mod130 initializeMod130(AONContext ctx, Mod130 mod130);
-	public Mod130 createMod130(AONContext ctx, Mod130 mod130);
-	public void deleteMod130(AONContext ctx, Mod130 mod130);
-	public String getMod130Info(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey);
+	public Mod130 calculate(AONContext ctx, Mod130 mod130);
+	public Mod130 save(AONContext ctx, Mod130 mod130);
+	public Mod130 saveComments(AONContext ctx, Mod130 mod130);
+	public Mod130 initializeForFinish(AONContext ctx, Mod130 mod130);
+	public Mod130 markAsFinished(AONContext ctx, Mod130 mod130);
+	public Mod130 markAsSent(AONContext ctx, Mod130 mod130);
+	public Mod130 markAsPending(AONContext ctx, Mod130 mod130);
+	public Mod130 initialize(AONContext ctx, Mod130 mod130);
+	public Mod130 create(AONContext ctx, Mod130 mod130);
+	public void delete(AONContext ctx, Mod130 mod130);
+	public String getInfo(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey);
 	
 	// 				   		  MOD131
 	public Mod131 getMod131(AONContext ctx, int id);
 	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
-	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131);
-	public Mod131Activity calculateMod131Activity(AONContext ctx, Mod131Activity activity);
-	public Mod131 saveMod131(AONContext ctx, Mod131 mod131);
-	public Mod131 saveCommentsMod131(AONContext ctx, Mod131 mod131);
-	public Mod131 initializeForFinishMod131(AONContext ctx, Mod131 mod131);
-	public Mod131 finishMod131(AONContext ctx, Mod131 mod131);
-	public Mod131 reopenMod131(AONContext ctx, Mod131 mod131);
-	public Mod131 initializeMod131(AONContext ctx, Mod131 mod131);
-	public Mod131 createMod131(AONContext ctx, Mod131 mod131);
-	public void deleteMod131(AONContext ctx, Mod131 mod131);
-	public String getMod131Info(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey);
+	public Mod131 calculate(AONContext ctx, Mod131 mod131);
+	public Mod131Activity calculateActivity(AONContext ctx, Mod131Activity activity);
+	public Mod131 save(AONContext ctx, Mod131 mod131);
+	public Mod131 saveComments(AONContext ctx, Mod131 mod131);
+	public Mod131 initializeForFinish(AONContext ctx, Mod131 mod131);
+	public Mod131 markAsFinished(AONContext ctx, Mod131 mod131);
+	public Mod131 markAsSent(AONContext ctx, Mod131 mod131);
+	public Mod131 markAsPending(AONContext ctx, Mod131 mod131);
+	public Mod131 initialize(AONContext ctx, Mod131 mod131);
+	public Mod131 create(AONContext ctx, Mod131 mod131);
+	public void delete(AONContext ctx, Mod131 mod131);
+	public String getInfo(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey);
 
 	// 				   		  MOD202
 	public Mod202 getMod202(AONContext ctx, int id);
 	public LinkedList<Mod202> getMod202s(AONContext ctx, int domain);
-	public Mod202 calculateMod202(AONContext ctx, Mod202 mod202);
-	public Mod202 saveMod202(AONContext ctx, Mod202 mod202);
-	public Mod202 initializeMod202(AONContext ctx, Mod202 mod202);
-	public void deleteMod202(AONContext ctx, Mod202 mod202);
-	public Mod202 saveCommentsMod202(AONContext ctx, Mod202 mod202);
-	public Mod202 initializeForFinishMod202(AONContext ctx, Mod202 mod202);
-	public Mod202 finishMod202(AONContext ctx, Mod202 mod202);
-	public Mod202 reopenMod202(AONContext ctx, Mod202 mod202);
-	public Mod202 createMod202(AONContext ctx, Mod202 mod202);
-	public String getMod202Info(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey);
+	public Mod202 calculate(AONContext ctx, Mod202 mod202);
+	public Mod202 save(AONContext ctx, Mod202 mod202);
+	public Mod202 initialize(AONContext ctx, Mod202 mod202);
+	public void delete(AONContext ctx, Mod202 mod202);
+	public Mod202 saveComments(AONContext ctx, Mod202 mod202);
+	public Mod202 initializeForFinish(AONContext ctx, Mod202 mod202);
+	public Mod202 markAsFinished(AONContext ctx, Mod202 mod202);
+	public Mod202 markAsSent(AONContext ctx, Mod202 mod202);
+	public Mod202 markAsPending(AONContext ctx, Mod202 mod202);
+	public Mod202 create(AONContext ctx, Mod202 mod202);
+	public String getInfo(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey);
 	
 	//		  					MOD200 
 	public LinkedList<Mod200> getMod200s(AONContext ctx, int domainId);

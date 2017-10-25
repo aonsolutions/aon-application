@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
-import com.esferalia.aon.occam.server.fiscal.format.mod180.Mod180Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod180Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")

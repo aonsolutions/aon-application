@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import com.esferalia.aon.gwt.fiscal.server.Mod180CertificatePrint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.type.Administration;
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -46,9 +47,8 @@ public class Model180CertificatePrintTestCase {
 
 	private static Mod180 getTestMod180() {
 		Mod180 mod180 = new Mod180();
-		mod180.setAdministration(0);
 		mod180.setYear(2015);
-		mod180.setAdministration(0);
+		mod180.setAdministration(Administration.ALAVA);
 		mod180.setConfidential(false);
 		mod180.setReplacement(false);
 		mod180.setReceipt("");

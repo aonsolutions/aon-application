@@ -1978,12 +1978,17 @@ public class Mod131DAO extends FiscalModelDAO {
 		);
 	}
 	// -------------------------------------------------------------------- UTIL
-	public static Mod131 finish(AONContext ctx,Mod131 mod) {
+	public static Mod131 markAsFinished(AONContext ctx,Mod131 mod) {
 		mod = FiscalModelDAO.finish(ctx, mod);
 		return saveMod131(ctx, mod);
 	}
+	public static Mod131 markAsSent(AONContext ctx,Mod131 mod131) {
+		mod131.setStatus(FiscalStatus.SENT);
+		mod131 = saveMod131(ctx, mod131);
+		return mod131;
+	}
 	
-	public static Mod131 reopen(AONContext ctx,Mod131 mod) {
+	public static Mod131 markAsPending(AONContext ctx,Mod131 mod) {
 		mod.setDeclarationType((String) null);
 		mod.setStatus(FiscalStatus.PENDING);
 		Finance finance = mod.getFinance();

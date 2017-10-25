@@ -29,11 +29,12 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		
 		addSelectorColumn();
-		addYearColumn();
-		addPeriodColumn();
 		addAdministrationColumn();
 		addModelColumn();
+		addYearColumn();
+		addPeriodColumn();
 		addStatusColumn();
+		addStatusLabelColumn();
 		addReplacementColumn();
 		addComplementaryColumn();
 		addDocumentColumn();
@@ -115,15 +116,24 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 				new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(FM model) {
-				return model.isFinished()
-						?AON.AON_RESOURCES.aonIconLock()
-						:AON.AON_RESOURCES.aonIconUnlock();
+				return FiscalModelUtils.getStatusImage(model.getStatus());
 			}
 		};
 		this.addColumn(iconColumn, "E" );
 		this.setColumnWidth(iconColumn, 20, Unit.PX);
 	}
 	
+	private void addStatusLabelColumn() {
+		final TextColumn<FM> statusLabelColumn = new TextColumn<FM>() {
+			@Override
+			public String getValue(FM fm) {
+				return fm.getStatus().getName();
+			}
+		};
+		this.addColumn(statusLabelColumn, AON.MSG.status() );
+		this.setColumnWidth(statusLabelColumn, 80, Unit.PX);
+	}
+
 	private void addReplacementColumn() {
 		Column<FM, ImageResource> replacementColumn = new Column<FM, ImageResource>(
 				new ImageResourceCell()) {

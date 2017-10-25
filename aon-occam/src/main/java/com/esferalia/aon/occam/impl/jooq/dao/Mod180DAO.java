@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
 import static com.esferalia.aon.jooq.tables.FsModel180Detail.FS_MODEL180_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -10,19 +11,23 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel180Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -72,6 +77,23 @@ public class Mod180DAO {
 			.orElse(null);
 	}
 	
+	public static Mod180 saveComments(AONContext ctx, Mod180 fm) {
+		try {
+			ctx.checkWrite();
+			if (fm.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL180)
+					.set(FS_MODEL180.COMMENTS,fm.getComments())
+					.where(FS_MODEL180.ID.equal(fm.getId()))
+					.execute();
+			}
+			return fm;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getMessage());
+		}
+	}
+
 	public static Mod180 save(AONContext ctx, Mod180 mod180) {
 		ctx.checkWrite();
 		if (mod180.getId() == null) {
@@ -92,7 +114,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.DOMAIN,mod180.getDomain())
 			.set(FS_MODEL180.ENTERPRISE,mod180.getEnterprise())
 			.set(FS_MODEL180.YEAR,mod180.getYear())
-			.set(FS_MODEL180.ADMINISTRATION, (byte) mod180.getAdministration())
+			.set(FS_MODEL180.ADMINISTRATION, mod180.getAdministration().getValue())
 			.set(FS_MODEL180.STATUS, ZERO_BYTE )
 			.set(FS_MODEL180.SECURITY_LEVEL,AonEnumUtils.getByte(mod180.isConfidential()) ) 
 			.set(FS_MODEL180.DOCUMENT,mod180.getDocument())
@@ -106,7 +128,9 @@ public class Mod180DAO {
 			.set(FS_MODEL180.REPLACED_RECEIPT,mod180.getReplacedReceipt())
 			.set(FS_MODEL180.RECEIVER_COUNT_TOTAL,mod180.getReceiverCountTotal())
 			.set(FS_MODEL180.RECEIPT_TOTAL,mod180.getReceiptTotal())
-			.set(FS_MODEL180.RETENTION_TOTAL,mod180.getRetentionTotal())			
+			.set(FS_MODEL180.RETENTION_TOTAL,mod180.getRetentionTotal())
+			.set(FS_MODEL180.CREATION_USER,ctx.getUser())
+			.set(FS_MODEL180.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 		.returning(FS_MODEL180.ID)
 		.fetchOne();
 		mod180.setId(record.getId());
@@ -117,8 +141,8 @@ public class Mod180DAO {
 	private static Mod180 update(AONContext ctx, Mod180 mod180) {
 		ctx.getDslContext().update(FS_MODEL180)
 			.set(FS_MODEL180.YEAR,mod180.getYear())
-			.set(FS_MODEL180.ADMINISTRATION,(byte) mod180.getAdministration())
-			.set(FS_MODEL180.STATUS,ZERO_BYTE)
+			.set(FS_MODEL180.ADMINISTRATION,mod180.getAdministration().getValue())
+			.set(FS_MODEL180.STATUS,AonEnumUtils.getByte( mod180.getStatus()  ))
 			.set(FS_MODEL180.SECURITY_LEVEL,AonEnumUtils.getByte(mod180.isConfidential()) ) 
 			.set(FS_MODEL180.DOCUMENT,mod180.getDocument())
 			.set(FS_MODEL180.NAME,mod180.getName())
@@ -132,6 +156,8 @@ public class Mod180DAO {
 			.set(FS_MODEL180.RECEIVER_COUNT_TOTAL,mod180.getReceiverCountTotal())
 			.set(FS_MODEL180.RECEIPT_TOTAL,mod180.getReceiptTotal())
 			.set(FS_MODEL180.RETENTION_TOTAL,mod180.getRetentionTotal())
+			.set(FS_MODEL180.MODIFICATION_USER,ctx.getUser())
+			.set(FS_MODEL180.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FS_MODEL180.ID.equal(mod180.getId()))
 		.execute();
 		return mod180;
@@ -151,7 +177,7 @@ public class Mod180DAO {
 			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL180)
 					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
-					.and(FS_MODEL180.ADMINISTRATION.equal((byte) mod180.getAdministration()))
+					.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().getValue()))
 					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
 					.and(FS_MODEL180.RECEIPT.equal(mod180.getReplacedReceipt())))
 					.fetch()
@@ -165,7 +191,7 @@ public class Mod180DAO {
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MODEL180)
 				.where(FS_MODEL180.YEAR.equal(mod180.getYear())
-				.and(FS_MODEL180.ADMINISTRATION.equal((byte) mod180.getAdministration()))						
+				.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().getValue()))						
 				.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
 				.and(FS_MODEL180.REPLACEMENT.equal( ONE_BYTE ))					
 				.and(FS_MODEL180.REPLACED_RECEIPT.equal(mod180.getReplacedReceipt())))
@@ -179,7 +205,7 @@ public class Mod180DAO {
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MODEL180)
 				.where(FS_MODEL180.YEAR.equal(mod180.getYear())
-				.and(FS_MODEL180.ADMINISTRATION.equal((byte) mod180.getAdministration()))
+				.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().getValue()))
 				.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
 				.and(FS_MODEL180.REPLACEMENT.equal(ZERO_BYTE)))
 				.fetch()
@@ -362,13 +388,13 @@ public class Mod180DAO {
 		mod180.setName(AonStringUtils.left(params.getName(), FS_MODEL180.NAME
 				.getDataType().length()));
 		mod180.setYear(year);
-		mod180.setAdministration(params.getAdministration() != null ? params
-				.getAdministration() : 4);
+		mod180.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
 		mod180.setContactPerson(AonStringUtils.left(params.getContactPerson(),
 				FS_MODEL180.CONTACT_PERSON.getDataType().length()));
 		mod180.setContactPhone(AonStringUtils.left(params.getContactPhone(),
 				FS_MODEL180.CONTACT_PHONE.getDataType().length()));
 		mod180.setReceipt("1800000000001");
+		mod180.setStatus(FiscalStatus.PENDING);
 		mod180.setDetails(new LinkedList<Mod180Detail>());
 		return mod180;
 	}
@@ -382,8 +408,10 @@ public class Mod180DAO {
 				.setDomain(record.getValue(FS_MODEL180.DOMAIN))
 				.setEnterprise(record.getValue(FS_MODEL180.ENTERPRISE))
 				.setYear(record.getValue(FS_MODEL180.YEAR))
-				.setAdministration( (int) record.getValue(FS_MODEL180.ADMINISTRATION))
+				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL180.ADMINISTRATION)))
 				.setReplacement( record.getValue(FS_MODEL180.REPLACEMENT)==1 )
+				.setComplementary(record.getValue(FS_MODEL180.COMPLEMENTARY)==1 )
+				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL180.STATUS)))
 				.setDocument(record.getValue(FS_MODEL180.DOCUMENT))
 				.setName(record.getValue(FS_MODEL180.NAME))
 				.setContactPerson(record.getValue(FS_MODEL180.CONTACT_PERSON))
@@ -394,6 +422,10 @@ public class Mod180DAO {
 				.setReceiptTotal(record.getValue(FS_MODEL180.RECEIPT_TOTAL))
 				.setRetentionTotal(record.getValue(FS_MODEL180.RETENTION_TOTAL))
 				.setComments(record.getValue(FS_MODEL180.COMMENTS))
+				.setCreationUser(record.getValue(FS_MODEL.CREATION_USER))
+				.setCreationDate(record.getValue(FS_MODEL.CREATION_DATE))
+				.setModificationUser(record.getValue(FS_MODEL.MODIFICATION_USER))
+				.setModificationDate(record.getValue(FS_MODEL.MODIFICATION_DATE))
 				;
 		}
 	}
@@ -447,5 +479,23 @@ public class Mod180DAO {
 			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
 			.findFirst()
 			.orElse(0);
+	}
+
+	public static Mod180 changeStatusMod180(AONContext ctx, Mod180 mod180, FiscalStatus newStatus) {
+		try {
+			ctx.checkWrite();
+			if (mod180.getId() != null) {
+				mod180.setStatus(newStatus);
+				ctx.getDslContext().update(FS_MODEL180)
+					.set(FS_MODEL180.STATUS,AonEnumUtils.getByte( mod180.getStatus()))
+					.where(FS_MODEL180.ID.equal(mod180.getId()))
+					.execute();
+			}
+			return mod180;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getMessage());
+		}
 	}
 }

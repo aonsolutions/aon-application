@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.MOD2002015;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.XMLtoMod2002015;
-import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002015Import2014;
+import com.esferalia.aon.occam.server.fiscal.format.Mod2002015Import2014;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 

@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;

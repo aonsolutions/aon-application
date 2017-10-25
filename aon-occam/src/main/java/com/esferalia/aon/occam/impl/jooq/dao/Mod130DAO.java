@@ -566,12 +566,12 @@ public class Mod130DAO extends FiscalModelDAO {
 		}
 	}
 	// -------------------------------------------------------------------- UTIL
-	public static Mod130 finish(AONContext ctx,Mod130 mod130) {
+	public static Mod130 markAsFinished(AONContext ctx,Mod130 mod130) {
 		mod130 = FiscalModelDAO.finish(ctx, mod130);
 		return saveMod130(ctx, mod130);
 	}
 	
-	public static Mod130 reopen(AONContext ctx,Mod130 mod130) {
+	public static Mod130 markAsPending(AONContext ctx,Mod130 mod130) {
 		mod130.setDeclarationType((String) null);
 		mod130.setStatus(FiscalStatus.PENDING);
 		Finance finance = mod130.getFinance();
@@ -580,6 +580,11 @@ public class Mod130DAO extends FiscalModelDAO {
 		if (finance != null) {
 			FinanceDAO.delete(ctx, finance.getId());
 		}
+		return mod130;
+	}
+	public static Mod130 markAsSent(AONContext ctx,Mod130 mod130) {
+		mod130.setStatus(FiscalStatus.SENT);
+		mod130= saveMod130(ctx, mod130);
 		return mod130;
 	}
 

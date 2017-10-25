@@ -1,11 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client.mod123;
 
 
-import com.esferalia.aon.gwt.common.client.AON;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.esferalia.aon.watson.util.Pair;
 
 public class Model716Navarra extends Model123Base {
 
@@ -15,13 +15,11 @@ public class Model716Navarra extends Model123Base {
 	}
 	
 	@Override
-	public Widget getInfoPanel(Mod123 mod123) {
-
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.add(getAnchorPanel(mod123,"Informaci\u00F3n tributaria"
+	public LinkedList<Pair<String, String>> getInformationLinks() {
+		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
+		list.add(new Pair<String, String>("Informaci\u00F3n tributaria"
 				,"http://www.navarra.es/home_es/servicios/ficha/1824/Retenciones"));
-		return panel;
+		return list;
 	}
 
 }

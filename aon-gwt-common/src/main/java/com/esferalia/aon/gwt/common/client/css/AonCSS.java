@@ -667,6 +667,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-pdfPreview")
 	String aonIconPdfPreview();
 
+	@ClassName("aon-icon-pdf")
+	String aonIconPdf();
+
 	@ClassName("aon-icon-undo")
 	String aonIconUndo();
 

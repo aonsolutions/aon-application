@@ -1,41 +1,37 @@
 package com.esferalia.aon.gwt.fiscal.client.mod111;
 
-import com.esferalia.aon.gwt.common.client.AON;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.esferalia.aon.watson.util.Pair;
 
 public class Model111Gipuzkoa extends Model110Gipuzkoa {
 
 	public Model111Gipuzkoa(IFiscalModelCallback<Mod111> callback) {
 		super(callback);
 	}
-
-	
 	@Override
-	public Widget getInfoPanel(Mod111 mod111) {
-
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.add(getAnchorPanel(mod111,
-				"Informaci\u00F3n tributaria"
-				, "http://www2.gipuzkoa.net/wps/portal/!ut/p/b1/hZDbjqpAEEW_Z"
-				+ "T6ANNCK-NjcBhBa7ki_EJCLiICMFxq_fpxkTk5ykqNVT5XsVbVrAwKS1VL"
-				+ "kBW7Fgx0gfXZv6uzaDH12-pmJkHKYV5HEIVbklCVrqN4S-W4Et4sfIHkK2"
-				+ "P8UYv_hPVN-8oEph4bEroI__AvBKx5yIAY7dpH6R_Fsz9ed9ZDvwfHhsvg"
-				+ "R8naAKFYy7oIDp4i8UEISVlkcv7n5XPrm5xiQl7Z07lfwKpZ3wZB3n2N96"
-				+ "EpgAsLD3wZRnkCsDMakGn5FBuYUw0WzLvNCYqXbVeOjg5Wp1mDerfQTmf2"
-				+ "YEMWqiJrwYm_2-sCg2im1xchZe6ZGThKSi17OsPAHyxb5uUz5S0NJDmk3T"
-				+ "MU-9ZC_UA6axNTC6l4v1VHGtd9NOV53pDiJTlNjUlt7_VH5DPzsqKKalqL"
-				+ "TnpPq-7A1rx3MKYtW6m2cEioWSqWmYX1OxfacR5RzZR5zRjiOX1ljQXQ-F"
-				+ "pvWck_BLq4FR2RaLbSaeHQ_PoBfXkDyTGv1N61PxdZYI3RsTjMEVt6wIAC"
-				+ "7IJmpPKBJQWG6yd3bVx_GvfdotPFqGErcWOWximHklvZW2U5LQVCglhUZz"
-				+ "txi344NnfgWE3kjevQrOidbLXNx2M9B165PG3tO20qd2toQy8KkKiK3Wz7"
-				+ "wV9GAIs3WrWEGmrPbS7QaDhQ9TXfkpFkz03r6BA8D-vgGuLUUYg!!/dl4/"
-				+ "d5/L2dBISEvZ0FBIS9nQSEh/pw/Z7_1N2EAB1A0GDMF0IUPM1FI60CK0/a"
-				+ "ct/id=0/315509423821/-/"));
-		return panel;
+	public LinkedList<Pair<String, String>> getInformationLinks() {
+		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
+		list.add(new Pair<String, String>("Informaci\u00F3n tributaria"
+				, "http://www2.gipuzkoa.net/wps/portal/!ut/p/b1/hZDbrqJAEEW_xQ8gTTco-"
+				+"Njc5NIgyEXoFwKCiNzk4FH068dJzmSSSUarnipZu6r2BhQkUBQFxCMerkEMaJ_d6iq71"
+				+"kOftb9nukqhg1QsQcyKUFmyhrpbYt-LuC2PXkDyAtj_FGb_0e9M-aUPTDk0JFYI_ujfA"
+				+"O_0HAR7ELN86p_Fi_24xuQp34Lz02OdZ4jsAM-OksHJCdwi2oUSlhyVdfYfbr6WfvC8B"
+				+"_TtWzr8Ad7F8ikY-sm5ow9dCUxAEffTIMoTzlEG464a_pEOTLvn-Hpd5oXESt9XDUUnk"
+				+"qlkMG8k3WCzHxOqkCNVEyT2Zq8PDK7cUuNHSA5Mhd0kpJNePrjCH4gtokeZoqmeac7N3"
+				+"XAvDukO-7xy0iSmWgm3aqmOslP53T131h0tWtGtK4dW5KA_jz7DbbpZUU2i6HMPpeo2b"
+				+"M1rx-UziwX1e7wns1goRzUNq0sqNpc8mqEnIwca4Th-ZTXh8OVcWA3x2iDeVytXZBotJ"
+				+"PV-9BYL4JcTSF5pCX_T2ii2xhqha0PNWLGyxYIAxHEyE3nClapuXUc9SUJhnlebpWd5z"
+				+"vmSVhc3XsLIPzVN6Wuegb2pLBSrU5Ujspspv-1QWydnq4XBlmw8dk7u4XTgrJIKtqUEv"
+				+"T8rKLhnbaSFXUa9rE_5r6sXbh9oqa04se_XoKOtRh5Ms9Pv3GnAi1_Jvcx0/dl4/d5/L"
+				+"0lJSklKSUpKZ0EhIS9JTmpBQUF4QUFFU29BQ0ltWWchIS80SmtHUW9RdHV5RWQtVVlRL"
+				+"1o2XzFOMkVBQjFBMDhSSkMwSUVUSkNVSUIwNzMxL1o3XzFOMkVBQjFBMEc1VEEwSVVEU"
+				+"EZOMTFKMDY1LzA!/?contenido=hweogasunaeslbr%2Fogasuna%2Fhweimpuestos-"
+				+"040sta%2Fhweimpuestos-040-020sta%2Fhweretenciones-040-020-170sta%2Fh"
+				+"wemodelos-040-020-170sta%2Fhwem111-040-020-170sta%2F25001a81-bc1a-492"
+				+"a3-b838-f5d543cbf4ca" ));
+		return list;
 	}
-	
 }

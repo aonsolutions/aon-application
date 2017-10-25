@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod131;
 
 import java.util.EnumMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
@@ -11,17 +12,18 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131.IMod131Declaration;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131Activity.IMod131ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.shared.mod131.Model131AEATScript;
+import com.esferalia.aon.gwt.fiscal.shared.mod131.Model131ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
-import com.esferalia.aon.occam.api.model.fiscal.mod131.Model131AEATScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod131.Model131ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -33,12 +35,11 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.RangeChangeEvent.Handler;
+import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 	
@@ -62,7 +63,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model131.fiscalService.mathExpression(expression,callback);
+			Model131.FISCAL_SERVICE.mathExpression(expression,callback);
 		}
 	}; 
 
@@ -223,7 +224,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						Model131.fiscalService.getInfo(Model131.getCurrentDomainName(),Model131.getCurrentDomain(),
+						Model131.SERVICE.getInfo(Model131.getCurrentDomainName(),Model131.getCurrentDomain(),
 							callback.getFiscalModel(), script, infoKey,new AsyncCallback<String>() {
 
 									@Override
@@ -248,7 +249,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 
 	@Override
 	public void calculateAndRefresh(final IFiscalModelCallback<Mod131> callback) {
-		Model131.fiscalService.calculateMod131(Model131.getCurrentDomainName(),callback.getFiscalModel(),
+		Model131.SERVICE.calculate(Model131.getCurrentDomainName(),callback.getFiscalModel(),
 				new AsyncCallback<Mod131>() {
 
 					@Override
@@ -281,20 +282,16 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 		return p;
 	}
 	
-	public Widget getInfoPanel(Mod131 mod131) {
-
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.add(getAnchorPanel( mod131
-				,"Tr\u00E1mites."
+	@Override
+	public LinkedList<Pair<String, String>> getInformationLinks() {
+		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
+		list.add(new Pair<String, String>("Tr\u00E1mites."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/G602.shtml"));
-		panel.add(getAnchorPanel( mod131
-				,"Informaci\u00F3n general." 
+		list.add(new Pair<String, String>("Informaci\u00F3n general." 
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/G602.shtml"));
-		panel.add(getAnchorPanel(mod131
-				,"Ficha."
+		list.add(new Pair<String, String>("Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G602.shtml"));
-		return panel;
+		return list;
 	}
 	
 	protected void paintParticularyRow(final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script) {

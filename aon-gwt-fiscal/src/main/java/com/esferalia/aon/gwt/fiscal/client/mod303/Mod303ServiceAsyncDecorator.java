@@ -37,66 +37,66 @@ public class Mod303ServiceAsyncDecorator implements Mod303ServiceAsync {
 	}
 
 	@Override
-	public void calculateMod303(String domainName, Mod303 mod303,
+	public void calculate(String domainName, Mod303 mod303,
 			AsyncCallback<Mod303> callback) {
 		AON.start();
-		fsa.calculateMod303(domainName, mod303,
+		fsa.calculate(domainName, mod303,
 				new AsyncCallbackWrapper<Mod303>(callback));
 	}
 
 	@Override
-	public void saveMod303(String domainName, Mod303 mod303,
+	public void save(String domainName, Mod303 mod303,
 			AsyncCallback<Mod303> callback) {
 		AON.start();
-		fsa.saveMod303(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
+		fsa.save(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
 				callback));
 	}
 	
 	@Override
-	public void saveCommentsMod303(String domainName, Mod303 mod303,
+	public void saveComments(String domainName, Mod303 mod303,
 			AsyncCallback<Mod303> callback) {
 		AON.start();
-		fsa.saveCommentsMod303(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
+		fsa.saveComments(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
 				callback));
 	}
 
 	@Override
-	public void initializeForFinishMod303(String domainName, Mod303 mod303,
+	public void initializeForFinish(String domainName, Mod303 mod303,
 			AsyncCallback<Mod303> callback) {
 		AON.start();
-		fsa.initializeForFinishMod303(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
+		fsa.initializeForFinish(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
 				callback));
 	}
 	
 	@Override
-	public void finishMod303(String domainName, Mod303 mod303,
+	public void markAsFinished(String domainName, Mod303 mod303,
 			AsyncCallback<Mod303> callback) {
 		AON.start();
-		fsa.finishMod303(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
+		fsa.markAsFinished(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
 				callback));
 	}
 	
 	@Override
-	public void reopenMod303(String domainName, Mod303 mod303,
+	public void markAsPending(String domainName, Mod303 mod303,
 			AsyncCallback<Mod303> callback) {
 		AON.start();
-		fsa.reopenMod303(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
+		fsa.markAsPending(domainName, mod303, new AsyncCallbackWrapper<Mod303>(
 				callback));
 	}
 
 	@Override
-	public void initializeMod303(String domainName, int currentDomain,
+	public void initialize(String domainName, int currentDomain,
 			Mod303 mod303, AsyncCallback<Mod303> callback) {
 		AON.start();
-		fsa.initializeMod303(domainName, currentDomain,mod303,new AsyncCallbackWrapper<Mod303>(callback));
+		fsa.initialize(domainName, currentDomain,mod303,new AsyncCallbackWrapper<Mod303>(callback));
 
 	}
 
 	@Override
-	public void createMod303(String domainName, int currentDomain,
+	public void create(String domainName, int currentDomain,
 			Mod303 mod303, AsyncCallback<Mod303> callback) {
 		AON.start();
-		fsa.createMod303(domainName, currentDomain, mod303,new AsyncCallbackWrapper<Mod303>(callback));
+		fsa.create(domainName, currentDomain, mod303,new AsyncCallbackWrapper<Mod303>(callback));
 
 	}
 
@@ -107,10 +107,10 @@ public class Mod303ServiceAsyncDecorator implements Mod303ServiceAsync {
 	}
 
 	@Override
-	public void deleteMod303(String domainName, Mod303 mod303,
+	public void delete(String domainName, Mod303 mod303,
 			AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.deleteMod303(domainName, mod303, new AsyncCallbackWrapper<Void>(
+		fsa.delete(domainName, mod303, new AsyncCallbackWrapper<Void>(
 				callback));
 	}
 	@Override
@@ -126,5 +126,10 @@ public class Mod303ServiceAsyncDecorator implements Mod303ServiceAsync {
 		AON.start();
 		fsa.importMod303(domainName, domain, new AsyncCallbackWrapper<Void>(callback));
 	}
-	
+
+	@Override
+	public void markAsSent(String domainName, Mod303 mod303, AsyncCallback<Mod303> callback) {
+		AON.start();
+		fsa.markAsSent(domainName, mod303, new AsyncCallbackWrapper<Mod303>(callback));
+	}
 }

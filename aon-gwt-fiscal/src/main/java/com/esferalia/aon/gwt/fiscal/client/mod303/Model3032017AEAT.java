@@ -9,15 +9,15 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity.IMod303ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATAdditionalDataScript;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATGeneralRegimeScript1;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATGeneralRegimeScript2;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATResultScript;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATSimplifiedRegime4TScript;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATSimplifiedRegimeScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATAdditionalDataScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript2;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATResultScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegime4TScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegimeScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -88,7 +88,7 @@ public class Model3032017AEAT extends Model303Base {
 		paintAdditionalDataTab(tabPanel);
 		paintAdministrationTab(tabPanel);
 		
-		if (mod303.isFinished()) {
+		if (mod303.isFinished() || mod303.isSent()) {
 			tabPanel.selectTab(4);
 		} else {
 			if (mod303.getAmount(Mod303Key.CT_A02) == 0) {
@@ -256,7 +256,7 @@ public class Model3032017AEAT extends Model303Base {
 		button1.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				if (getMod303().isFinished()) {
+				if (getMod303().isFinished() || getMod303().isSent()) {
 					submitForm(DOWNLOAD_FILE_ACTION);
 				} else {
 					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
@@ -282,7 +282,7 @@ public class Model3032017AEAT extends Model303Base {
 		button2.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				if (getMod303().isFinished()) {
+				if (getMod303().isFinished() || getMod303().isSent()) {
 					submitForm(VALIDATE_PRINT_ACTION);
 				} else {
 					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
@@ -344,7 +344,6 @@ public class Model3032017AEAT extends Model303Base {
 			receiptBox.setVisibleLength(15);
 			receiptBox.setMaxLength(13);
 			receiptBox.setStyleName(AON.AON_CSS.aonInputText());
-//			receiptBox.setEnabled(mod303.isNotFinished());
 			receiptBox.setValue( getCallback().getMod303().getReplacedNumber() );
 			receiptBox.addValueChangeHandler( new ValueChangeHandler<String>() {
 				@Override

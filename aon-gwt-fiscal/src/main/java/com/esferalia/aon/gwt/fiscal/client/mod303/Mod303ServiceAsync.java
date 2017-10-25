@@ -12,17 +12,18 @@ public interface Mod303ServiceAsync {
 	// ---------------------------------------------------------------MODELO 303
 	void getMod303(String domainName, int domain, int id,AsyncCallback<Mod303> callback);
 	void getMod303s(String domainName, int domain,AsyncCallback<LinkedList<Mod303>> callback);
-	void calculateMod303(String domainName, Mod303 mod303,AsyncCallback<Mod303> callback);
-	void deleteMod303(String currentDomainName, Mod303 mod303,AsyncCallback<Void> callback);
-	void saveMod303(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
-	void saveCommentsMod303(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
-	void initializeForFinishMod303(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
-	void finishMod303(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
-	void reopenMod303(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
-	void initializeMod303(String domainName, int domain, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
-	void createMod303(String domainName, int domain, Mod303 mod303, AsyncCallback<Mod303> callback);
+	void calculate(String domainName, Mod303 mod303,AsyncCallback<Mod303> callback);
+	void delete(String currentDomainName, Mod303 mod303,AsyncCallback<Void> callback);
+	void save(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
+	void saveComments(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
+	void initializeForFinish(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
+	void markAsFinished(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
+	void markAsPending(String domainName, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
+	void initialize(String domainName, int domain, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
+	void create(String domainName, int domain, Mod303 mod303, AsyncCallback<Mod303> callback);
 	void getInfo(String domainName, int domain, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void declarationChanged(String domainName, int domain, Mod303 mod303, AsyncCallback<Mod303> callback);
 	void importMod303(String currentDomainName, int currentDomain, AsyncCallback<Void> asyncCallback);
+	void markAsSent(String currentDomainName, Mod303 mod303, AsyncCallback<Mod303> asyncCallback);
 
 }

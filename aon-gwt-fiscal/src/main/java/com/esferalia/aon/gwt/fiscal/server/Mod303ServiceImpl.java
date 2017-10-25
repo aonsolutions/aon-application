@@ -31,42 +31,42 @@ public class Mod303ServiceImpl extends AonRemoteServiceServlet implements Mod303
 	}
 
 	@Override
-	public Mod303 calculateMod303(String domainName, Mod303 mod303) {
+	public Mod303 calculate(String domainName, Mod303 mod303) {
 		return FISCAL.calculate(domainName, this.getUserLogin(), mod303);
 	}
 
 	@Override
-	public Mod303 saveMod303(String domainName, Mod303 mod303) {
+	public Mod303 save(String domainName, Mod303 mod303) {
 		return FISCAL.save(domainName, this.getUserLogin(), mod303);
 	}
 
 	@Override
-	public Mod303 saveCommentsMod303(String domainName, Mod303 mod303) {
+	public Mod303 saveComments(String domainName, Mod303 mod303) {
 		return FISCAL.saveComments(domainName, this.getUserLogin(), mod303);
 	}
 
 	@Override
-	public Mod303 initializeForFinishMod303(String domainName, Mod303 mod303) {
+	public Mod303 initializeForFinish(String domainName, Mod303 mod303) {
 		return FISCAL.initializeForFinish(domainName, this.getUserLogin(), mod303);
 	}
 
 	@Override
-	public Mod303 finishMod303(String domainName, Mod303 mod303) {
+	public Mod303 markAsFinished(String domainName, Mod303 mod303) {
 		return FISCAL.finish(domainName, this.getUserLogin(), mod303);
 	}
 
 	@Override
-	public Mod303 reopenMod303(String domainName, Mod303 mod303) {
+	public Mod303 markAsPending(String domainName, Mod303 mod303) {
 		return FISCAL.reopen(domainName, this.getUserLogin(), mod303);
 	}
 
 	@Override
-	public Mod303 initializeMod303(String domainName, int domain, Mod303 mod303) {
+	public Mod303 initialize(String domainName, int domain, Mod303 mod303) {
 		return FISCAL.initializeMod303(domainName, domain, this.getUserLogin(), mod303);
 	}
 
 	@Override
-	public Mod303 createMod303(String domainName, int domain, Mod303 mod303) {
+	public Mod303 create(String domainName, int domain, Mod303 mod303) {
 		return FISCAL.createMod303(domainName, domain, this.getUserLogin(), mod303);
 	}
 	@Override
@@ -74,7 +74,7 @@ public class Mod303ServiceImpl extends AonRemoteServiceServlet implements Mod303
 		return FISCAL.declarationChanged(domainName, domain, this.getUserLogin(), mod303);
 	}
 	@Override
-	public void deleteMod303(String domainName, Mod303 mod303) {
+	public void delete(String domainName, Mod303 mod303) {
 		FISCAL.deleteMod303(domainName, this.getUserLogin(), mod303);
 	}
 	@Override
@@ -87,6 +87,11 @@ public class Mod303ServiceImpl extends AonRemoteServiceServlet implements Mod303
 	@Override
 	public void importMod303(String domainName, int domain) throws AonCoreException {
 		FISCAL.importMod303(domainName, domain, this.getUserLogin());
+	}
+
+	@Override
+	public Mod303 markAsSent(String domainName, Mod303 mod303) throws AonCoreException {
+		return FISCAL.markAsSent(domainName, mod303, this.getUserLogin());
 	}
 
 }

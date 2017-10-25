@@ -13,28 +13,20 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class EnterpriseSuggestBox extends ResizeComposite implements
 		HasValue<String>, HasSelectionHandlers<Suggestion> {
-
-	interface EnterpriseSuggestBoxBinder extends
-			UiBinder<Widget, EnterpriseSuggestBox> {
-	}
-
-	private static final EnterpriseSuggestBoxBinder enterpriseBinder = GWT
-			.create(EnterpriseSuggestBoxBinder.class);
 
 	private CommonServiceAsync commonService;
 	
@@ -43,10 +35,7 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 	Integer domainId;
 	String domainName;
 	
-	@UiField(provided = true)
 	SuggestBox document;
-	
-	@UiField
 	TextBox name;
 	
 	public Integer getEnterpriseId() {
@@ -65,15 +54,48 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 	public EnterpriseSuggestBox() {
 		AON.ensureInjected();
 
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		EnterpriseSuggestOracle oracle = new EnterpriseSuggestOracle();
+		
+		
+		FlowPanel panel = new FlowPanel();
+		panel.setStyleName(AON.AON_CSS.aonNowrap());
+		
+		InlineLabel docLabel = new InlineLabel( AON.MSG.document());
+		docLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		panel.add(docLabel);
+		
 		document = new SuggestBox(oracle);
 		document.setLimit(20);
-		Widget ui = enterpriseBinder.createAndBindUi(this);
-		initWidget(ui);
+		document.setWidth("100px");
+		document.setStyleName(AON.AON_CSS.aonInputText());
+		document.addSelectionHandler( new SelectionHandler<SuggestOracle.Suggestion>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				Suggestion suggestion = event.getSelectedItem();
+				if (suggestion instanceof EnterpriseSuggestion) {
+					EnterpriseSuggestion es = ((EnterpriseSuggestion) suggestion);
+					enterpriseId = es.getEnterprise().getId();
+					domainId = es.getEnterprise().getDomain();
+				}
+				name.setValue(event.getSelectedItem().getDisplayString());
+			}
+		});
+		panel.add(document);
+
+		InlineLabel nameLabel = new InlineLabel( AON.MSG.enterpriseName());
+		nameLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		panel.add(nameLabel);
+		
+		name = new TextBox();
+		name.setStyleName(AON.AON_CSS.aonInputText());
+		name.setVisibleLength(42);
+		name.setMaxLength(40);
+		panel.add(name);
+
+		initWidget(panel);
 	}
 
 	public static native int getCurrentDomain()
@@ -171,14 +193,4 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 		this.setValue(document,name,true);
 	}
 
-	@UiHandler("document")
-	void onSelectEnterprise(SelectionEvent<Suggestion> event) {
-		Suggestion suggestion = event.getSelectedItem();
-		if (suggestion instanceof EnterpriseSuggestion) {
-			EnterpriseSuggestion es = ((EnterpriseSuggestion) suggestion);
-			enterpriseId = es.getEnterprise().getId();
-			domainId = es.getEnterprise().getDomain();
-		}
-		name.setValue(event.getSelectedItem().getDisplayString());
-	}
 }

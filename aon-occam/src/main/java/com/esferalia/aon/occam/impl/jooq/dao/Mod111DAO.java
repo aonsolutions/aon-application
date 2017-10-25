@@ -881,12 +881,12 @@ public class Mod111DAO extends FiscalModelDAO {
 
 
 	// -------------------------------------------------------------------- UTIL
-	public static Mod111 finish(AONContext ctx,Mod111 mod111) {
+	public static Mod111 markAsFinished(AONContext ctx,Mod111 mod111) {
 		mod111 = FiscalModelDAO.finish(ctx, mod111);
 		return saveMod111(ctx, mod111);
 	}
 	
-	public static Mod111 reopen(AONContext ctx,Mod111 mod111) {
+	public static Mod111 markAsPending(AONContext ctx,Mod111 mod111) {
 		mod111.setDeclarationType( (String) null);
 		mod111.setStatus(FiscalStatus.PENDING);
 		Finance finance = mod111.getFinance();
@@ -897,5 +897,12 @@ public class Mod111DAO extends FiscalModelDAO {
 		}
 		return mod111;
 	}
+	
+	public static Mod111 markAsSent(AONContext ctx,Mod111 mod111) {
+		mod111.setStatus(FiscalStatus.SENT);
+		mod111 = saveMod111(ctx, mod111);
+		return mod111;
+	}
+	
 }
 

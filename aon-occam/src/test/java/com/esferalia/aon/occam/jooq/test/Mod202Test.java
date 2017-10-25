@@ -15,7 +15,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
 
 public class Mod202Test {
 

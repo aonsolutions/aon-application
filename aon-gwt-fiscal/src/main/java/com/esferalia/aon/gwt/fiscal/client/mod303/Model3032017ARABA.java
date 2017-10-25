@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017ARABAAdditionalDataScript;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017ARABARScript1;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017ARABAResultScript;
+import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017ARABAScript2;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017ARABAAdditionalDataScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017ARABARScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017ARABAResultScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017ARABAScript2;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
@@ -262,7 +262,7 @@ public class Model3032017ARABA extends Model303Base {
 		button1.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				if (getMod303().isFinished()) {
+				if (getMod303().isFinished() || getMod303().isSent()) {
 					submitForm(DOWNLOAD_FILE_ACTION);
 				} else {
 					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");

@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum FiscalModelType implements Serializable{

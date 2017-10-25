@@ -1086,6 +1086,15 @@ input[type="checkbox"]:focus + label {
 	background-position: left center;
 }
 
+@sprite .aon-icon-pdf {
+	gwt-image: 'pdfPreview';
+	width: auto;
+	background-color: transparent;
+	background-attachment: scroll;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
 @sprite .aon-icon-card {
 	width: auto;
 	height: auto;

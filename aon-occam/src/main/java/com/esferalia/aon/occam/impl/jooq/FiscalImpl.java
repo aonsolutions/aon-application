@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFiscal;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
@@ -130,6 +131,17 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public Mod180Detail getMod180Detail(AONContext ctx, Integer id) {
 		return Mod180DAO.getDetail(ctx, id);
+	}
+	
+	@Override
+	public Mod180 saveCommentsMod180(AONContext ctx, Mod180 mod180) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod180DAO.saveComments(ctx, mod180));		
+	}
+	@Override
+	public Mod180 changeStatusMod180(AONContext ctx, Mod180 mod180, FiscalStatus newStatus) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod180DAO.changeStatusMod180(ctx, mod180, newStatus));		
 	}
 
 
@@ -338,14 +350,19 @@ public class FiscalImpl implements IFiscal {
 		return Mod303DAO.initializeForFinish(ctx, mod303);
 	}
 	@Override
-	public Mod303 finishMod303(AONContext ctx, Mod303 mod303){
+	public Mod303 markAsFinishedMod303(AONContext ctx, Mod303 mod303){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod303DAO.finish(ctx, mod303));		
+				configuration -> Mod303DAO.markAsFinished(ctx, mod303));		
 	}
 	@Override
-	public Mod303 reopenMod303(AONContext ctx, Mod303 mod303){
+	public Mod303 markAsPendingMod303(AONContext ctx, Mod303 mod303){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod303DAO.reopen(ctx, mod303));		
+				configuration -> Mod303DAO.markAsPending(ctx, mod303));		
+	}
+	@Override
+	public Mod303 markAsSentMod303(AONContext ctx, Mod303 mod303){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod303DAO.markAsSent(ctx, mod303));		
 	}
 	
 	@Override
@@ -391,51 +408,57 @@ public class FiscalImpl implements IFiscal {
 		return list;
 	}
 	@Override
-	public Mod111 calculateMod111(AONContext ctx, Mod111 mod111) {
+	public Mod111 calculate(AONContext ctx, Mod111 mod111) {
 		return Mod111DAO.calculateMod111(ctx, mod111);
 	}
 	@Override
-	public Mod111 saveMod111(AONContext ctx, Mod111 mod111) {
+	public Mod111 save(AONContext ctx, Mod111 mod111) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod111DAO.saveMod111(ctx, mod111));		
 	}
 	@Override
-	public Mod111 saveCommentsMod111(AONContext ctx, Mod111 mod111) {
+	public Mod111 saveComments(AONContext ctx, Mod111 mod111) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod111DAO.saveCommentsMod111(ctx, mod111));		
 	}
 	@Override
-	public Mod111 initializeForFinishMod111(AONContext ctx, Mod111 mod111){
+	public Mod111 initializeForFinish(AONContext ctx, Mod111 mod111){
 		return Mod111DAO.initializeForFinish(ctx, mod111);
 	}
 	@Override
-	public Mod111 finishMod111(AONContext ctx, Mod111 mod111){
+	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod111DAO.finish(ctx, mod111));		
+				configuration -> Mod111DAO.markAsFinished(ctx, mod111));		
 	}
 	@Override
-	public Mod111 reopenMod111(AONContext ctx, Mod111 mod111){
+	public Mod111 markAsPending(AONContext ctx, Mod111 mod111){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod111DAO.reopen(ctx, mod111));		
+				configuration -> Mod111DAO.markAsPending(ctx, mod111));		
 	}
 	
 	@Override
-	public void deleteMod111(AONContext ctx, Mod111 mod111) {
+	public Mod111 markAsSent(AONContext ctx, Mod111 mod111){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.markAsSent(ctx, mod111));		
+	}
+
+	@Override
+	public void delete(AONContext ctx, Mod111 mod111) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod111DAO.delete(ctx, mod111));
 	}
 
 	@Override
-	public Mod111 initializeMod111(AONContext ctx, Mod111 mod111) {
+	public Mod111 initialize(AONContext ctx, Mod111 mod111) {
 		return Mod111DAO.initializeMod111(ctx,mod111);
 	}
 
 	@Override
-	public Mod111 createMod111(AONContext ctx, Mod111 mod111) {
+	public Mod111 create(AONContext ctx, Mod111 mod111) {
 		return Mod111DAO.createMod111(ctx,mod111);
 	}
 	@Override
-	public String getMod111Info(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) {
+	public String getInfo(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod111DAO.getMod111Info(ctx,mod111,script,infoKey);
 	}
 
@@ -452,51 +475,56 @@ public class FiscalImpl implements IFiscal {
 		return list;
 	}
 	@Override
-	public Mod115 calculateMod115(AONContext ctx, Mod115 mod115) {
+	public Mod115 calculate(AONContext ctx, Mod115 mod115) {
 		return Mod115DAO.calculateMod115(ctx, mod115);
 	}
 	@Override
-	public Mod115 saveMod115(AONContext ctx, Mod115 mod115) {
+	public Mod115 save(AONContext ctx, Mod115 mod115) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod115DAO.saveMod115(ctx, mod115));		
 	}
 	@Override
-	public Mod115 saveCommentsMod115(AONContext ctx, Mod115 mod115) {
+	public Mod115 saveComments(AONContext ctx, Mod115 mod115) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod115DAO.saveCommentsMod115(ctx, mod115));		
 	}
 	@Override
-	public Mod115 initializeForFinishMod115(AONContext ctx, Mod115 mod115){
+	public Mod115 initializeForFinish(AONContext ctx, Mod115 mod115){
 		return Mod115DAO.initializeForFinish(ctx, mod115);
 	}
 	@Override
-	public Mod115 finishMod115(AONContext ctx, Mod115 mod115){
+	public Mod115 markAsFinished(AONContext ctx, Mod115 mod115){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod115DAO.finish(ctx, mod115));		
+				configuration -> Mod115DAO.markAsFinished(ctx, mod115));		
 	}
 	@Override
-	public Mod115 reopenMod115(AONContext ctx, Mod115 mod115){
+	public Mod115 markAsSent(AONContext ctx, Mod115 mod115){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod115DAO.reopen(ctx, mod115));		
+				configuration -> Mod115DAO.markAsSent(ctx, mod115));		
+	}
+	@Override
+	public Mod115 markAsPending(AONContext ctx, Mod115 mod115){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.markAsPending(ctx, mod115));		
 	}
 	
 	@Override
-	public void deleteMod115(AONContext ctx, Mod115 mod115) {
+	public void delete(AONContext ctx, Mod115 mod115) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod115DAO.delete(ctx, mod115));
 	}
 
 	@Override
-	public Mod115 initializeMod115(AONContext ctx, Mod115 mod115) {
+	public Mod115 initialize(AONContext ctx, Mod115 mod115) {
 		return Mod115DAO.initializeMod115(ctx,mod115);
 	}
 
 	@Override
-	public Mod115 createMod115(AONContext ctx, Mod115 mod115) {
+	public Mod115 create(AONContext ctx, Mod115 mod115) {
 		return Mod115DAO.createMod115(ctx,mod115);
 	}
 	@Override
-	public String getMod115Info(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
+	public String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod115DAO.getMod115Info(ctx,mod115,script,infoKey);
 	}
 
@@ -513,51 +541,56 @@ public class FiscalImpl implements IFiscal {
 		return list;
 	}
 	@Override
-	public Mod123 calculateMod123(AONContext ctx, Mod123 mod123) {
+	public Mod123 calculate(AONContext ctx, Mod123 mod123) {
 		return Mod123DAO.calculateMod123(ctx, mod123);
 	}
 	@Override
-	public Mod123 saveMod123(AONContext ctx, Mod123 mod123) {
+	public Mod123 save(AONContext ctx, Mod123 mod123) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod123DAO.saveMod123(ctx, mod123));		
 	}
 	@Override
-	public Mod123 saveCommentsMod123(AONContext ctx, Mod123 mod123) {
+	public Mod123 saveComments(AONContext ctx, Mod123 mod123) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod123DAO.saveCommentsMod123(ctx, mod123));		
 	}
 	@Override
-	public Mod123 initializeForFinishMod123(AONContext ctx, Mod123 mod123){
+	public Mod123 initializeForFinish(AONContext ctx, Mod123 mod123){
 		return Mod123DAO.initializeForFinish(ctx, mod123);
 	}
 	@Override
-	public Mod123 finishMod123(AONContext ctx, Mod123 mod123){
+	public Mod123 markAsFinished(AONContext ctx, Mod123 mod123){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod123DAO.finish(ctx, mod123));		
+				configuration -> Mod123DAO.markAsFinished(ctx, mod123));		
 	}
 	@Override
-	public Mod123 reopenMod123(AONContext ctx, Mod123 mod123){
+	public Mod123 markAsSent(AONContext ctx, Mod123 mod123){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod123DAO.reopen(ctx, mod123));		
+				configuration -> Mod123DAO.markAsSent(ctx, mod123));		
+	}
+	@Override
+	public Mod123 markAsPending(AONContext ctx, Mod123 mod123){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod123DAO.markAsPending(ctx, mod123));		
 	}
 	
 	@Override
-	public void deleteMod123(AONContext ctx, Mod123 mod123) {
+	public void delete(AONContext ctx, Mod123 mod123) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod123DAO.delete(ctx, mod123));
 	}
 
 	@Override
-	public Mod123 initializeMod123(AONContext ctx, Mod123 mod123) {
+	public Mod123 initialize(AONContext ctx, Mod123 mod123) {
 		return Mod123DAO.initializeMod123(ctx,mod123);
 	}
 
 	@Override
-	public Mod123 createMod123(AONContext ctx, Mod123 mod123) {
+	public Mod123 create(AONContext ctx, Mod123 mod123) {
 		return Mod123DAO.createMod123(ctx,mod123);
 	}
 	@Override
-	public String getMod123Info(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
+	public String getInfo(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod123DAO.getMod123Info(ctx,mod123,script,infoKey);
 	}
 
@@ -574,51 +607,56 @@ public class FiscalImpl implements IFiscal {
 		return list;
 	}
 	@Override
-	public Mod130 calculateMod130(AONContext ctx, Mod130 mod130) {
+	public Mod130 calculate(AONContext ctx, Mod130 mod130) {
 		return Mod130DAO.calculateMod130(ctx, mod130);
 	}
 	@Override
-	public Mod130 saveMod130(AONContext ctx, Mod130 mod130) {
+	public Mod130 save(AONContext ctx, Mod130 mod130) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod130DAO.saveMod130(ctx, mod130));		
 	}
 	@Override
-	public Mod130 saveCommentsMod130(AONContext ctx, Mod130 mod130) {
+	public Mod130 saveComments(AONContext ctx, Mod130 mod130) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod130DAO.saveCommentsMod130(ctx, mod130));		
 	}
 	@Override
-	public Mod130 initializeForFinishMod130(AONContext ctx, Mod130 mod130){
+	public Mod130 initializeForFinish(AONContext ctx, Mod130 mod130){
 		return Mod130DAO.initializeForFinish(ctx, mod130);
 	}
 	@Override
-	public Mod130 finishMod130(AONContext ctx, Mod130 mod130){
+	public Mod130 markAsFinished(AONContext ctx, Mod130 mod130){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod130DAO.finish(ctx, mod130));		
+				configuration -> Mod130DAO.markAsFinished(ctx, mod130));		
 	}
 	@Override
-	public Mod130 reopenMod130(AONContext ctx, Mod130 mod130){
+	public Mod130 markAsSent(AONContext ctx, Mod130 mod130){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod130DAO.reopen(ctx, mod130));		
+				configuration -> Mod130DAO.markAsSent(ctx, mod130));		
+	}
+	@Override
+	public Mod130 markAsPending(AONContext ctx, Mod130 mod130){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod130DAO.markAsPending(ctx, mod130));		
 	}
 	
 	@Override
-	public void deleteMod130(AONContext ctx, Mod130 mod130) {
+	public void delete(AONContext ctx, Mod130 mod130) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod130DAO.delete(ctx, mod130));
 	}
 
 	@Override
-	public Mod130 initializeMod130(AONContext ctx, Mod130 mod130) {
+	public Mod130 initialize(AONContext ctx, Mod130 mod130) {
 		return Mod130DAO.initializeMod130(ctx,mod130);
 	}
 
 	@Override
-	public Mod130 createMod130(AONContext ctx, Mod130 mod130) {
+	public Mod130 create(AONContext ctx, Mod130 mod130) {
 		return Mod130DAO.createMod130(ctx,mod130);
 	}
 	@Override
-	public String getMod130Info(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) {
+	public String getInfo(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod130DAO.getMod130Info(ctx,mod130,script,infoKey);
 	}
 
@@ -635,56 +673,61 @@ public class FiscalImpl implements IFiscal {
 		return list;
 	}
 	@Override
-	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131) {
+	public Mod131 calculate(AONContext ctx, Mod131 mod131) {
 		return Mod131DAO.calculateMod131(ctx, mod131);
 	}
 	@Override
-	public Mod131Activity calculateMod131Activity(AONContext ctx, Mod131Activity activity) {
+	public Mod131Activity calculateActivity(AONContext ctx, Mod131Activity activity) {
 		return Mod131DAO.calculateMod131Activity(ctx, activity);
 	}
 	
 	@Override
-	public Mod131 saveMod131(AONContext ctx, Mod131 mod131) {
+	public Mod131 save(AONContext ctx, Mod131 mod131) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod131DAO.saveMod131(ctx, mod131));		
 	}
 	@Override
-	public Mod131 saveCommentsMod131(AONContext ctx, Mod131 mod131) {
+	public Mod131 saveComments(AONContext ctx, Mod131 mod131) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod131DAO.saveCommentsMod131(ctx, mod131));		
 	}
 	@Override
-	public Mod131 initializeForFinishMod131(AONContext ctx, Mod131 mod131){
+	public Mod131 initializeForFinish(AONContext ctx, Mod131 mod131){
 		return Mod131DAO.initializeForFinish(ctx, mod131);
 	}
 	@Override
-	public Mod131 finishMod131(AONContext ctx, Mod131 mod131){
+	public Mod131 markAsFinished(AONContext ctx, Mod131 mod131){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod131DAO.finish(ctx, mod131));		
+				configuration -> Mod131DAO.markAsFinished(ctx, mod131));		
 	}
 	@Override
-	public Mod131 reopenMod131(AONContext ctx, Mod131 mod131){
+	public Mod131 markAsSent(AONContext ctx, Mod131 mod131){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod131DAO.reopen(ctx, mod131));		
+				configuration -> Mod131DAO.markAsSent(ctx, mod131));		
+	}
+	@Override
+	public Mod131 markAsPending(AONContext ctx, Mod131 mod131){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod131DAO.markAsPending(ctx, mod131));		
 	}
 	
 	@Override
-	public void deleteMod131(AONContext ctx, Mod131 mod131) {
+	public void delete(AONContext ctx, Mod131 mod131) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod131DAO.delete(ctx, mod131));
 	}
 
 	@Override
-	public Mod131 initializeMod131(AONContext ctx, Mod131 mod131) {
+	public Mod131 initialize(AONContext ctx, Mod131 mod131) {
 		return Mod131DAO.initializeMod131(ctx,mod131);
 	}
 
 	@Override
-	public Mod131 createMod131(AONContext ctx, Mod131 mod131) {
+	public Mod131 create(AONContext ctx, Mod131 mod131) {
 		return Mod131DAO.createMod131(ctx,mod131);
 	}
 	@Override
-	public String getMod131Info(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
+	public String getInfo(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod131DAO.getMod131Info(ctx,mod131,script,infoKey);
 	}
 
@@ -701,51 +744,56 @@ public class FiscalImpl implements IFiscal {
 		return list;
 	}
 	@Override
-	public Mod202 calculateMod202(AONContext ctx, Mod202 mod202) {
+	public Mod202 calculate(AONContext ctx, Mod202 mod202) {
 		return Mod202DAO.calculateMod202(ctx, mod202);
 	}
 	@Override
-	public Mod202 saveMod202(AONContext ctx, Mod202 mod202) {
+	public Mod202 save(AONContext ctx, Mod202 mod202) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod202DAO.saveMod202(ctx, mod202));
 	}
 
 	@Override
-	public void deleteMod202(AONContext ctx, Mod202 mod202) {
+	public void delete(AONContext ctx, Mod202 mod202) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod202DAO.delete(ctx, mod202));
 	}
 
 	@Override
-	public Mod202 initializeMod202(AONContext ctx, Mod202 mod202) {
+	public Mod202 initialize(AONContext ctx, Mod202 mod202) {
 		return Mod202DAO.initializeMod202(ctx,mod202);
 	}
 	@Override
-	public Mod202 saveCommentsMod202(AONContext ctx, Mod202 mod202) {
+	public Mod202 saveComments(AONContext ctx, Mod202 mod202) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod202DAO.saveCommentsMod202(ctx, mod202));		
 	}
 	@Override
-	public Mod202 initializeForFinishMod202(AONContext ctx, Mod202 mod202){
+	public Mod202 initializeForFinish(AONContext ctx, Mod202 mod202){
 		return Mod202DAO.initializeForFinish(ctx, mod202);
 	}
 	@Override
-	public Mod202 finishMod202(AONContext ctx, Mod202 mod202){
+	public Mod202 markAsFinished(AONContext ctx, Mod202 mod202){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod202DAO.finish(ctx, mod202));		
+				configuration -> Mod202DAO.markAsFinished(ctx, mod202));		
 	}
 	@Override
-	public Mod202 reopenMod202(AONContext ctx, Mod202 mod202){
+	public Mod202 markAsSent(AONContext ctx, Mod202 mod202){
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod202DAO.reopen(ctx, mod202));		
+				configuration -> Mod202DAO.markAsSent(ctx, mod202));		
+	}
+	@Override
+	public Mod202 markAsPending(AONContext ctx, Mod202 mod202){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod202DAO.markAsPending(ctx, mod202));		
 	}
 
 	@Override
-	public Mod202 createMod202(AONContext ctx, Mod202 mod202) {
+	public Mod202 create(AONContext ctx, Mod202 mod202) {
 		return Mod202DAO.createMod202(ctx,mod202);
 	}
 	@Override
-	public String getMod202Info(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) {
+	public String getInfo(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod202DAO.getMod202Info(ctx,mod202,script,infoKey);
 	}
 

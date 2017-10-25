@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.mod111;
 
-import com.esferalia.aon.gwt.common.client.AON;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.esferalia.aon.watson.util.Pair;
 
 public class Model110Gipuzkoa extends Model111Base {
 	
@@ -13,12 +13,9 @@ public class Model110Gipuzkoa extends Model111Base {
 	}
 	
 	@Override
-	public Widget getInfoPanel(Mod111 mod111) {
-
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.add(getAnchorPanel(mod111
-				,"Informaci\u00F3n tributaria"
+	public LinkedList<Pair<String, String>> getInformationLinks() {
+		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
+		list.add(new Pair<String, String>("Informaci\u00F3n tributaria"
 				, "http://www2.gipuzkoa.net/wps/portal/!ut/p/b1/hZDbjqowFIaf"
 				+ "xQcgbakHvCxQBKZ2UECkNwQEO6iAjIro0293YrKzMxld62plff86_ECAe"
 				+ "ALhaApHGII1EHXalTI9l02dHv7WYpwgrlKiIwK1pWtAhwauETo6nGD0AO"
@@ -31,6 +28,6 @@ public class Model110Gipuzkoa extends Model111Base {
 				+ "32nJMDnu8o89WxyCdSTHnqbsrZCVUbsYDED8cGryz6mZObegE3pzZDlja"
 				+ "HxAEIBYB35xSagPKnGw2E3ZL-0rrjo5-AMzRZ9M/dl4/d5/L0lHSkovd0"
 				+ "RNQUxrQUVnQSEhLzRKVUUvZXM!/"));
-		return panel;
+		return list;
 	}
 }

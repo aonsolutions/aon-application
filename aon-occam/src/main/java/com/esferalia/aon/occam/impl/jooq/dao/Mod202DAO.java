@@ -604,12 +604,17 @@ public class Mod202DAO extends FiscalModelDAO {
 	}
 */
 	// -------------------------------------------------------------------- UTIL
-	public static Mod202 finish(AONContext ctx,Mod202 mod202) {
+	public static Mod202 markAsFinished(AONContext ctx,Mod202 mod202) {
 		mod202 = FiscalModelDAO.finish(ctx, mod202);
 		return saveMod202(ctx, mod202);
 	}
+	public static Mod202 markAsSent(AONContext ctx,Mod202 mod202) {
+		mod202.setStatus(FiscalStatus.SENT);
+		mod202= saveMod202(ctx, mod202);
+		return mod202;
+	}
 	
-	public static Mod202 reopen(AONContext ctx,Mod202 mod202) {
+	public static Mod202 markAsPending(AONContext ctx,Mod202 mod202) {
 		mod202.setDeclarationType( (String) null);
 		mod202.setStatus(FiscalStatus.PENDING);
 		Finance finance = mod202.getFinance();

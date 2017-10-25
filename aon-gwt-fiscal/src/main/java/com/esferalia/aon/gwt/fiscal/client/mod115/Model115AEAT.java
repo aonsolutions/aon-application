@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.mod115;
 
-import com.esferalia.aon.gwt.common.client.AON;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.esferalia.aon.watson.util.Pair;
 
 public class Model115AEAT extends Model115Base {
 	
@@ -14,20 +14,15 @@ public class Model115AEAT extends Model115Base {
 	}
 
 	@Override
-	public Widget getInfoPanel(Mod115 mod115) {
-
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.add(getAnchorPanel( mod115
-				,"Tr\u00E1mites."
+	public LinkedList<Pair<String, String>> getInformationLinks() {
+		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
+		list.add(new Pair<String, String>("Tr\u00E1mites."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GH02.shtml"));
-		panel.add(getAnchorPanel( mod115
-				,"Informaci\u00F3n general." 
+		list.add(new Pair<String, String>("Informaci\u00F3n general." 
 				,"http://www.agenciatributaria.es/AEAT.internet/GH02/informacion.shtml"));
-		panel.add(getAnchorPanel(mod115
-				,"Ficha."
+		list.add(new Pair<String, String>("Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GH02.shtml"));
-		return panel;
+		return list;
 	}
 
 

@@ -8,6 +8,7 @@ public enum FiscalStatus implements Serializable {
 	,FINISHED("Finalizado")
 	,BATCHED("En Lote")
 	,BLOCKED("Bloqueado")
+	,SENT("Presentado")
 	,MISSING("Desconocido")
 	;
 	

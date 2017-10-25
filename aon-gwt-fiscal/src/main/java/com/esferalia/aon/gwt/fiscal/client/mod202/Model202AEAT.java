@@ -1,17 +1,19 @@
 package com.esferalia.aon.gwt.fiscal.client.mod202;
 
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.shared.mod202.Model202AEATScript;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.fiscal.mod202.Model202AEATScript;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,7 +27,6 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Model202AEAT extends Model202Base {
 	
@@ -44,20 +45,15 @@ public class Model202AEAT extends Model202Base {
 	}
 
 	@Override
-	public Widget getInfoPanel(Mod202 mod202) {
-
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.add(getAnchorPanel( mod202
-				,"Tr\u00E1mites."
+	public LinkedList<Pair<String, String>> getInformationLinks() {
+		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
+		list.add(new Pair<String, String>("Tr\u00E1mites."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GE00.shtml"));
-		panel.add(getAnchorPanel( mod202
-				,"Informaci\u00F3n general." 
+		list.add(new Pair<String, String>("Informaci\u00F3n general." 
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/GE00.shtml"));
-		panel.add(getAnchorPanel(mod202
-				,"Ficha."
+		list.add(new Pair<String, String>("Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GE00.shtml"));
-		return panel;
+		return list;
 	}
 
 	@Override

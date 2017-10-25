@@ -317,7 +317,7 @@ public class Model303 extends MainEntryPoint {
 
 	private void onNew() {
 		cleanErrorPanel();
-		mod303Service.initializeMod303(getCurrentDomainName(),getCurrentDomain(),null,
+		mod303Service.initialize(getCurrentDomainName(),getCurrentDomain(),null,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 m303) {
@@ -347,7 +347,7 @@ public class Model303 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						mod303Service.createMod303(getCurrentDomainName(),getCurrentDomain(),mod303,
+						mod303Service.create(getCurrentDomainName(),getCurrentDomain(),mod303,
 								new AsyncCallback<Mod303>() {
 									@Override
 									public void onSuccess(Mod303 m303) {
