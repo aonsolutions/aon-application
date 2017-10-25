@@ -57,11 +57,29 @@
 						size="60" maxlength="64"
 						value="#{contractLeave.to.description}" />	
 						
-					<aon:outputLabel value="#{bundle.payroll_leaveBatch_leave_date}" />
-					<aon:outputText value="#{contractLeave.to.startDate}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
+					<aon:outputLabel value="#{bundle.aon_period} IT" />
+					<aon:div>
+						<aon:outputLabel styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:outputText value="#{contractLeave.to.startDate}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					
+						<aon:outputLabel styleClass="aon-form-date-label aon-margin-left"
+							rendered="#{not empty contractLeave.to.endDate}"
+							value="#{bundle.aon_date_to}:" />
+						<aon:outputText value="#{contractLeave.to.endDate}"
+							rendered="#{not empty contractLeave.to.endDate}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:outputText value="&#160;"
+							title="La fecha del parte de alta no coindide con la fecha de alta de IT" 
+							rendered="#{contractLeave.discharge.date ne contractLeave.to.endDate}"
+							styleClass="aon-icon-exception"
+							style="padding-left: 15px;" />
+					</aon:div>
 				</aon:panelGrid>
 				
 				<aon:panel>
@@ -154,21 +172,27 @@
 						
 						<aon:outputLabel for="ContractLeave_discharge_date"
 							value="#{bundle.aon_date} del parte" />
-						<aon:selectInputDate id="ContractLeave_discharge_date"  
-							value="#{contractLeave.discharge.date}"
-							reRender="dischargePanel"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}" >
-							<a4j:support event="onchanged" reRender="dischargePanel" />
-						</aon:selectInputDate>
+						<aon:div>
+							<aon:selectInputDate id="ContractLeave_discharge_date"  
+								value="#{contractLeave.discharge.date}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}" >
+								<a4j:support event="onchanged" reRender="ContractLeaveDetail_collegeNumber-discharge-div, ContractLeaveDetail_cias-discharge-div" />
+							</aon:selectInputDate>
+							<aon:outputText value="&#160;"
+								title="La fecha del parte de alta no coindide con la fecha de alta de IT" 
+								rendered="#{contractLeave.discharge.date ne contractLeave.to.endDate}"
+								styleClass="aon-icon-exception"
+								style="padding-left: 15px;" />
+						</aon:div>
 						
 						<aon:outputLabel for="ContractLeaveDetail_collegeNumber-discharge"
 							value="#{bundle.payroll_contractLeave_collegeNumber}" />
 						<aon:div id="ContractLeaveDetail_collegeNumber-discharge-div">
 							<aon:inputText id="ContractLeaveDetail_collegeNumber-discharge"
-								disabled="#{empty contractLeave.to.endDate}"
+								disabled="#{empty contractLeave.discharge.date}"
 								value="#{contractLeave.discharge.collegeNumber}" maxlength="8">
-								<a4j:support event="onchange" reRender="dischargePanel" />
+								<a4j:support event="onchange" reRender="ContractLeaveDetail_collegeNumber-discharge-div" />
 							</aon:inputText>
 							<aon:outputText value="&#160;" 
 								rendered="#{contractLeave.validDischargeCollegeNumber and contractLeave.validDischargeCollegeNumber!=null}"
@@ -190,7 +214,7 @@
 							value="#{bundle.payroll_contractLeave_cias}" />
 						<aon:div id="ContractLeaveDetail_cias-discharge-div">
 							<aon:inputText id="ContractLeaveDetail_cias-discharge"
-								disabled="#{empty contractLeave.to.endDate}"
+								disabled="#{empty contractLeave.discharge.date}"
 								value="#{contractLeave.discharge.cias}" maxlength="11">
 								<a4j:support event="onchange" reRender="ContractLeaveDetail_cias-discharge-div" />
 							</aon:inputText>

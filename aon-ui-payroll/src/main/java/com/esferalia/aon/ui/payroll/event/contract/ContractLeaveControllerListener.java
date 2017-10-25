@@ -40,14 +40,16 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		ContractLeaveController controller = (ContractLeaveController) event.getController();
-		ContractLeave leave = (ContractLeave) controller.getTo();
-		checkDates(leave);
+		ContractLeave it = (ContractLeave) controller.getTo();
+		fillDates(it, controller.getLeave(), controller.getDischarge());
 	}
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		checkDates((ContractLeave) event.getController().getTo());
+		ContractLeaveController controller = (ContractLeaveController) event.getController();
+		ContractLeave it = (ContractLeave) controller.getTo();
+		fillDates(it, controller.getLeave(), controller.getDischarge());
 	}
 	
 	@Override
@@ -92,9 +94,16 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		controller.setDischarge(obtainDetail((ContractLeave) controller.getTo(),LeaveReportType.DISCHARGE));
 	}
 	
-	private void checkDates(ContractLeave contractLeave) throws ControllerListenerException {
-		Date endDate = contractLeave.getEndDate();
-		Date startDate = contractLeave.getStartDate();
+	private void fillDates(ContractLeave it, ContractLeaveDetail leave, ContractLeaveDetail discharge) throws ControllerListenerException {
+		if(it.getType()==LeaveType.OCCUPATIONAL_DISEASE){
+			it.setStartDate(DateUtils.addDays(leave.getDate(), +1));
+		} else {
+			it.setStartDate(leave.getDate());
+		}
+		it.setEndDate(discharge.getDate());
+		
+		Date endDate = it.getEndDate();
+		Date startDate = it.getStartDate();
 		if(endDate!=null && endDate.before(startDate)){
 			endDate = null;
 			throw new ControllerListenerException("La fecha de alta no puede ser anterior a la fecha de baja");
@@ -116,11 +125,11 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 				detail.setType(type);
 				detail.setStatus(ContractLeaveStatus.PENDING);
 				if(type==LeaveReportType.LEAVE){
-					if(contractLeave.getType()==LeaveType.OCCUPATIONAL_DISEASE){
-						detail.setDate(DateUtils.setDays(contractLeave.getStartDate(), -1));
-					} else {
+//					if(contractLeave.getType()==LeaveType.OCCUPATIONAL_DISEASE){
+//						detail.setDate(DateUtils.setDays(contractLeave.getStartDate(), -1));
+//					} else {
 						detail.setDate(contractLeave.getStartDate());
-					}
+//					}
 				} else if(type==LeaveReportType.DISCHARGE){
 					detail.setDate(contractLeave.getEndDate());
 				}
