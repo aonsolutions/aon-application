@@ -86,18 +86,36 @@
 			<aon:if test="#{domainSwitcher.alphaDomain and showAttachPanel}">
 				<aon:panelCollapsible id="invoiceAttach-panel"
 					expanded="true" immediate="true" label="#{bundle.webmail_attach_files}">
-					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewAttach.xhtml" />
 					<aon:div id="invoiceAttachFile-panel">
 						<aon:div rendered="#{invoiceController.invoiceAttachFile.size > 0}">
-							<aon:outputText value="#{invoiceController.invoiceAttachFile.fileName}"/>
-							<a4j:commandButton ajaxSingle="true"
-								action="#{invoiceController.clearInvoiceAttachUploadData}"
-								title="#{bundle.aon_remove}"
-								reRender="invoiceAttach-panel, invoiceAttachPreview-panel"
-								style="margin-left: 0.4em;"
-								styleClass="aon-editDataTable-button aon-icon-cancel2" />
+							<aon:div styleClass="aon-toolbar aon-text-left">
+								<a4j:commandButton ajaxSingle="true"
+									action="#{invoiceController.clearInvoiceAttachUploadData}"
+									value="#{bundle.aon_clear}" title="#{bundle.aon_remove}"
+									reRender="invoiceAttach-panel, invoiceAttachPreview-panel"
+									style="margin-left: 0.4em;"
+									styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+								<aon:if test="#{invoiceController.definedOcrUrl}">
+									<aon:commandButton id="ocr-button" ajaxSingle="true" inmediate="true"
+										value="OCR" title="Reconocer el texto del documento" 
+										actionListener="#{invoiceController.processOcr}"
+										styleClass="aon-finding-toolbar-item aon-icon-audit"
+										reRender="#{formName}-New"
+										onclick="Richfaces.showModalPanel('waitProccess')"
+										oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+								</aon:if>
+							</aon:div>
+							<aon:panelGrid columns="2" 
+								styleClass="aon-group-body aon-nopadding aon-width-all aon-text-left"
+								columnClasses="aon-panelGrid-odd aon-width-50,
+									aon-panelGrid-even aon-width-auto">
+								<aon:outputText value="#{bundle.aon_name}"/>
+								<aon:inputText size="70" 
+									value="#{invoiceController.invoiceAttachFile.fileName}"/>
+							</aon:panelGrid>
 						</aon:div>
 					</aon:div>
+					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewAttach.xhtml" />
 				</aon:panelCollapsible>
 			</aon:if>
 	

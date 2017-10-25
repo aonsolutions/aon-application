@@ -47,6 +47,14 @@
 		.rich-fileupload-anc, .rich-fileupload-ico-stop {
 			display: none !important;
 		}
+		.rich-fileupload-ico-add-dis {
+		    margin:0 5px 0 0;
+		    font-weight:bold;
+		    cursor:hand;
+		    background-image:none;
+		    padding:2px 19px 2px 32px !important;
+		    background:none;
+		}
 	</style>
 	
 	<script type="text/javascript">
@@ -66,7 +74,7 @@
 		
 		function loadPdfPlugin(_pageNumber = 1, _zoomRatio = 1.0) {
 			panel.style.display = "block";
- 	 		filedrag.style.display = "none";
+ 	 		//filedrag.style.display = "none";
 			autoWidthContainer();
 		 	renderFile();
 		}
@@ -85,11 +93,11 @@
 	 	 	    fileReader.readAsArrayBuffer(file);
 	 	 	    PDFViewerApplication.setTitleUsingUrl(file.name);
 	 	 	    var appConfig = PDFViewerApplication.appConfig;
-	 	 	    disableButtons(appConfig);
+	 	 	    disableViewerButtons(appConfig);
 	 	 	}
 		}
 		
-		function disableButtons(appConfig) {
+		function disableViewerButtons(appConfig) {
  	        appConfig.toolbar.presentationModeButton.classList.add('hidden');
  	        appConfig.toolbar.print.classList.add('hidden');
  	 	    appConfig.toolbar.download.setAttribute('hidden', 'true');

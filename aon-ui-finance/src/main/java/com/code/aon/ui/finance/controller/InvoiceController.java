@@ -55,6 +55,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.InvestAsset;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
@@ -98,6 +99,7 @@ import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.finance.util.InvoiceImportManager;
+import com.code.aon.ui.finance.util.InvoiceOcrProcess;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -1842,5 +1844,28 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public static CompanyController getCompanyController() {
 		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);		
 	}
+	
+	public boolean isDefinedOcrUrl(){
+		ApplicationParameter urlParam = AppParamUtil.getParameter("OCR_URL");
+		return urlParam!=null && StringUtils.isNotBlank(urlParam.getValue());
+	}
+	
+	// TODO
+	public void processOcr(ActionEvent event){
+		ApplicationParameter urlParam = AppParamUtil.getParameter("OCR_URL");
+		if(urlParam!=null && StringUtils.isNotBlank(urlParam.getValue())){
+			try {
+				InvoiceOcrProcess ocr = new InvoiceOcrProcess();
+//				ocr.execute(urlParam.getValue(), AonUtil.getDomainName(), getInvoiceAttachFile().getData(), (Invoice) this.getTo());
+				ocr.execute(urlParam.getValue(), AonUtil.getDomainName(), null, (Invoice) this.getTo());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			AonUtil.addInfoMessage("No se ha definido la URL de procesamiento OCR.");
+		}
+	}
+	
 	
 }
