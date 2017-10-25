@@ -81,7 +81,6 @@ public class CRA extends AbstractFileFiller{
 			}
 		}
 		output.flush();
-		writeErrorsFile();
 		return exceptions;
 	}
 	

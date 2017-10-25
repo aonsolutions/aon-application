@@ -128,14 +128,16 @@ public class CraBatchController extends BasicController {
 			CraBatch batch = (CraBatch) getTo();
 			CRAWriter craWriter = new CRAWriter();
 			FileOutput output = craWriter.createCRA(getEnterpriseCCCList(), batch.getYear(), batch.getMonth());
-			if (output != null && output.getContent() != null) {
+			if(output.getErrors()!=null && output.getErrors().size()>0){
+				AonUtil.addErrorMessage("Error generando el fichero CRA");
+				output.getErrors().forEach(e -> AonUtil.addErrorMessage(e.getMessage()));
+			} else if (output != null && output.getContent() != null) {
 				batch.setOutcomeFile(output.getContent());
 				batch.setOutcomeFileDate(new Date());
 				batch.setStatus(FileStatus.GENERATED);
 				super.accept(null);
 			}
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("Error generating CRA file");
+		} catch (Exception e) {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
