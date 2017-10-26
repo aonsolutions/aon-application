@@ -1856,8 +1856,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		if(urlParam!=null && StringUtils.isNotBlank(urlParam.getValue())){
 			try {
 				InvoiceOcrProcess ocr = new InvoiceOcrProcess();
-//				ocr.execute(urlParam.getValue(), AonUtil.getDomainName(), getInvoiceAttachFile().getData(), (Invoice) this.getTo());
-				ocr.execute(urlParam.getValue(), AonUtil.getDomainName(), null, (Invoice) this.getTo());
+				ocr.execute(urlParam.getValue(), AonUtil.getDomainName(), getInvoiceAttachFile().getData(), (Invoice) this.getTo());
+//				ocr.execute(urlParam.getValue(), AonUtil.getDomainName(), null, (Invoice) this.getTo());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

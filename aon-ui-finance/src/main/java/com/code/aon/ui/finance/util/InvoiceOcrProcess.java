@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Scanner;
 
 import org.json.JSONException;
@@ -41,11 +42,12 @@ public class InvoiceOcrProcess {
 			conn.setDoOutput(true);
 			conn.setInstanceFollowRedirects( false );
 			conn.setRequestMethod("POST");
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			conn.setRequestProperty("Content-Type", "application/octet-stream");
 			conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 			try {
 				conn.connect();
-				conn.getOutputStream().write(postDataBytes);
+//				conn.getOutputStream().write(postDataBytes);
+				conn.getOutputStream().write(Base64.getEncoder().encode(data));
 				System.out.print("Server response: ");
 				System.out.print("[" + conn.getResponseCode() + "] ");
 				System.out.println(conn.getResponseMessage());
@@ -59,6 +61,7 @@ public class InvoiceOcrProcess {
 				System.out.println(sb);
 				fillInvoice(sb.toString(), invoice);
 				br.close();
+				conn.disconnect();
 			} catch (IOException e) {
 				System.out.println("IMPOSIBLE CONECTAR. " + e.getMessage());
 			}
@@ -108,7 +111,7 @@ public class InvoiceOcrProcess {
 			inputText = scanner.nextLine();
 			if(!"n".equals(inputText) && !"no".equals(inputText)){
 				InvoiceOcrProcess ocr = new InvoiceOcrProcess();
-				ocr.execute(path, null, null, new Invoice());
+				ocr.execute(path, null, "test".getBytes(), null);
 				System.out.println("Done.");
 			} else {
 				System.out.println("Aborted.");
