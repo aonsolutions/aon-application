@@ -211,26 +211,18 @@ public class InventoryController extends BasicController implements IAuditableCo
 			.setComments("")
 			.setSourceWarehouse(warehouse.getId())
 			.setSource((byte) 0)
-			.setSourceId(0)
-			.setCreationUser("system")
-			.setCreationDate(new Date())
-			.setModificationDate(new Date())
-			.setModificationUser("system");
+			.setSourceId(0);
 		wt.setId(AON.insertWarehouseTransfer(domainName, domainId, user, wt));
-		AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(warehouse.getId())).forEach(s ->{
-			if(s.getQuantity() != 0){
-				com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail wtd = new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail()
-					.setCreationDate(new Date())
-					.setCreationUser("system")
+		
+		AON.insertWarehouseTransferDetail(domainName, domainId, user, 
+			AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(warehouse.getId())).map(s -> {
+				return new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail()
 					.setDomain(DomainManager.getCurrentDomain())
 					.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(s.getItem()))
-					.setModificationDate(new Date())
-					.setModificationUser("system")
 					.setQuantity(s.getQuantity())
 					.setWarehouseTransfer(wt);
-				AON.insertWarehouseTransferDetail(domainName, domainId, user, wtd);
-			}
-		});
+			})
+		);
 		return wt;
 	}
 	

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.InsertValuesStep8;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
@@ -194,17 +195,17 @@ public class WarehouseDAO {
 		ctx.getDslContext().update(WAREHOUSE_TRANSFER)
 				.set(WAREHOUSE_TRANSFER.COMMENTS, warehouseTransfer.getComments())
 				.set(WAREHOUSE_TRANSFER.DOMAIN, warehouseTransfer.getDomain())
-				.set(WAREHOUSE_TRANSFER.CREATION_DATE, new Timestamp(warehouseTransfer.getCreationDate().getTime()))
-				.set(WAREHOUSE_TRANSFER.CREATION_USER, warehouseTransfer.getCreationUser())
 				.set(WAREHOUSE_TRANSFER.INVENTORY, warehouseTransfer.getInventory() != null ? warehouseTransfer.getInventory().getId(): null)
-				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,new Timestamp(warehouseTransfer.getModificationDate().getTime()))
-				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, warehouseTransfer.getModificationUser())
 				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, new Timestamp(warehouseTransfer.getIssueTime().getTime()))
 				.set(WAREHOUSE_TRANSFER.NUMBER, warehouseTransfer.getNumber())
 				.set(WAREHOUSE_TRANSFER.SOURCE, warehouseTransfer.getSource())
 				.set(WAREHOUSE_TRANSFER.SOURCE_ID, warehouseTransfer.getSourceId())
 				.set(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, warehouseTransfer.getSourceWarehouse())
 				.set(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE, warehouseTransfer.getTargetWarehouse())
+				.set(WAREHOUSE_TRANSFER.CREATION_DATE, new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER.CREATION_USER, ctx.getUser())
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, ctx.getUser())
 				.where(WAREHOUSE_TRANSFER.ID.eq(warehouseTransfer.getId()))
 				.execute();
 	}
@@ -215,13 +216,25 @@ public class WarehouseDAO {
 				.set(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, warehouseTransferDetail.getWarehouseTransfer().getId())
 				.set(WAREHOUSE_TRANSFER_DETAIL.ITEM, warehouseTransferDetail.getItem().getId())
 				.set(WAREHOUSE_TRANSFER_DETAIL.QUANTITY, warehouseTransferDetail.getQuantity())
-				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_DATE, new Timestamp(warehouseTransferDetail.getCreationDate().getTime()))
-				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_USER, warehouseTransferDetail.getCreationUser())
-				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE, new Timestamp(warehouseTransferDetail.getModificationDate().getTime()))
-				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER, warehouseTransferDetail.getModificationUser())
+				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_DATE, new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_USER, ctx.getUser())
+				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER, ctx.getUser())
 				.returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 	}
-	
+
+	public static Integer insertWarehouseTransferDetail(AONContext ctx, Stream<WarehouseTransferDetail> warehouseTransferDetail){
+		InsertValuesStep8<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double, Timestamp, String, Timestamp, String> jooq =
+				ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER,
+				WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.QUANTITY, WAREHOUSE_TRANSFER_DETAIL.CREATION_DATE, WAREHOUSE_TRANSFER_DETAIL.CREATION_USER,
+				WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE, WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER);
+		warehouseTransferDetail.forEach(wtd -> {
+			jooq.values(wtd.getDomain(), wtd.getWarehouseTransfer().getId(), wtd.getItem().getId(), wtd.getQuantity(),
+					new Timestamp(new Date().getTime()), ctx.getUser(),new Timestamp(new Date().getTime()), ctx.getUser());
+		});
+		return jooq.execute();
+	}
+
 	protected static class StockPropertiesDAO implements StockProperties {
 		protected Condition[] getConditions(StockFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);

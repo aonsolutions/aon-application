@@ -2831,6 +2831,18 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Integer insertWarehouseTransferDetail(String domainName, Integer domainId, String login,
+			Stream<WarehouseTransferDetail> warehouseTransferDetail){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertWarehouseTransferDetail(ctx, warehouseTransferDetail);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static void updateInventory(String domainName, Integer domainId,
 			String login, Inventory inventory) {

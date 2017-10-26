@@ -92,6 +92,7 @@ public interface IWarehouse {
 	void updateWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer);
 	Integer insertWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer);
 	Integer insertWarehouseTransferDetail(AONContext ctx, WarehouseTransferDetail warehouseTransferDetail);
+	Integer insertWarehouseTransferDetail(AONContext ctx, Stream<WarehouseTransferDetail> warehouseTransferDetail);
 
 	void deleteWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter);
 	

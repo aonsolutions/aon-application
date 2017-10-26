@@ -135,6 +135,12 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	@Override
+	public Integer insertWarehouseTransferDetail(AONContext ctx, Stream<WarehouseTransferDetail> warehouseTransferDetail) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WarehouseDAO.insertWarehouseTransferDetail(ctx, warehouseTransferDetail));		
+	}
+	
+	@Override
 	public void deleteWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter) {
 		ctx.getDslContext().transaction(configuration -> 
 			WarehouseDAO.deleteWarehouseTransfer(ctx, filter));		
