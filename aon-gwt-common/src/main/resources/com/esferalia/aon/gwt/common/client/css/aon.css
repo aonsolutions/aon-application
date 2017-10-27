@@ -791,6 +791,11 @@ input[type="checkbox"]:focus + label {
 	gwt-image: 'aonIconDuplicate';
 }
 
+@sprite .aon-icon-goto{
+	gwt-image: 'aonIconGoto';
+	width: auto;
+}
+
 @sprite .aon-icon-enterprise {
 	gwt-image: "aonIconEnterprise";
 }

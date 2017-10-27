@@ -47,7 +47,6 @@ public class Model180Table extends SimpleLayoutPanel implements HasSelectionHand
 				return mod180 == null ? null : mod180.getId();
 			}
 		};
-	
 		private NoSelectionModel<Mod180> model;
 		
 		public Model180CellTable(ProvidesKey<Mod180> providesKey) {

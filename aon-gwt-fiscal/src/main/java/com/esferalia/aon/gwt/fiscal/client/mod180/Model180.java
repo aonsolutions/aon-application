@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -27,8 +28,16 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ProvidesKey;
 
 public class Model180 extends MainEntryPoint {
+
+	public static final ProvidesKey<Mod180Detail> MOD180_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod180Detail>() {
+		@Override
+		public Object getKey(Mod180Detail det) {
+			return det == null ?null: det.getId() == null? det.getTempId(): det.getId();
+		}
+	};
 
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int BREAKDOWN_TAB = 1;
@@ -42,12 +51,14 @@ public class Model180 extends MainEntryPoint {
 
 		void onAccept(Mod180 mod180);
 		void onCancel();
+		void onSelect(Mod180 mod180, Integer selectedIndex);
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew();
 		
 	}
 	protected class Model180Callback implements IModel180Callback {
+		
 		@Override
 		public void onAccept(Mod180 mod180) {
 			// 
@@ -55,6 +66,10 @@ public class Model180 extends MainEntryPoint {
 		@Override
 		public void onCancel() {
 			cancel();
+		}
+		@Override
+		public void onSelect(Mod180 mod180, Integer selectedIndex) {
+			select(mod180, selectedIndex);
 		}
 		@Override
 		public void onNew() {
@@ -141,7 +156,7 @@ public class Model180 extends MainEntryPoint {
 						if (selected == null) {
 							showErrorPanel(AON.MSG.unableToFindDeclaration());
 						} else {
-							select(selected);
+							select(selected, null);
 						}
 					}
 
@@ -153,18 +168,18 @@ public class Model180 extends MainEntryPoint {
 	}
 	
 
-	private void select(Mod180 selected) {
+	private void select(Mod180 selected, Integer selectedIndex) {
 		cleanErrorPanel();
 		if ( selected.isAEAT() ) {
-			declarationContainer.setWidget( new Model1802017AEAT(selected,new Model180Callback()));
+			declarationContainer.setWidget( new Model1802017AEAT(selected,new Model180Callback(),selectedIndex));
 		} else if ( selected.isAraba() ) {
-			declarationContainer.setWidget( new Model1802017ARABA(selected,new Model180Callback()));			
+			declarationContainer.setWidget( new Model1802017ARABA(selected,new Model180Callback(),selectedIndex));			
 		} else if ( selected.isBizkaia() ) {
-			declarationContainer.setWidget( new Model1802017BIZKAIA(selected,new Model180Callback()));			
+			declarationContainer.setWidget( new Model1802017BIZKAIA(selected,new Model180Callback(),selectedIndex));			
 		} else if ( selected.isGipuzkoa() ) {
-			declarationContainer.setWidget( new Model1802017GIPUZKOA(selected,new Model180Callback()));			
+			declarationContainer.setWidget( new Model1802017GIPUZKOA(selected,new Model180Callback(),selectedIndex));			
 		} else if ( selected.isNavarra() ) {
-			declarationContainer.setWidget( new Model1802017NAVARRA(selected,new Model180Callback()));			
+			declarationContainer.setWidget( new Model1802017NAVARRA(selected,new Model180Callback(),selectedIndex));			
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
@@ -289,7 +304,7 @@ public class Model180 extends MainEntryPoint {
 									@Override
 									public void onSuccess(Mod180 model) {
 										popup.hide();
-										select(model);
+										select(model, null);
 									}
 
 									@Override

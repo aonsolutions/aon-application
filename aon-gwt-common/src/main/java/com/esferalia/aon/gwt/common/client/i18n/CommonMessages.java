@@ -283,7 +283,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Expresion aritmetica no correcta ({0})")
 	String arithmeticExpressionError(String value);
 
-	@DefaultMessage("No se pudieron leer la declaraci\u00F3n. Causa: \n {0}")
+	@DefaultMessage("No se pudo leer la declaraci\u00F3n. Causa: \n {0}")
 	String unableToReadDeclaration(String cause);
 
 	@DefaultMessage("No se pudo guardar la declaraci\u00F3n. Causa: \n {0}")

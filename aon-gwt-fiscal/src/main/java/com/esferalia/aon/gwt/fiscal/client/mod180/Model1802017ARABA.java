@@ -13,8 +13,9 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model1802017ARABA extends Model180Base {
+	private static final int PERCEPTORS_TAB = 1;
 
-	public Model1802017ARABA(Mod180 mod180,Model180Callback cbk) {
+	public Model1802017ARABA(Mod180 mod180,Model180Callback cbk,Integer selectedIndex) {
 		super(mod180, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -24,9 +25,10 @@ public class Model1802017ARABA extends Model180Base {
 		add(centerPanel);
 		
 		paintDeclarationTab(tabPanel);
-		paintPerceptorsTab(tabPanel);
+		paintPerceptorsTab(tabPanel, selectedIndex);
 		paintAdministrationTab(tabPanel);
 		
+		tabPanel.selectTab(PERCEPTORS_TAB, false);
 		
 	}
 

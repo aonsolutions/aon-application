@@ -195,6 +195,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-button")
 	String aonIconButton();
 
+	@ClassName("aon-icon-goto")
+	String aonIconGoto();
+
 	@ClassName("aon-italic")
 	String aonItalic();
 

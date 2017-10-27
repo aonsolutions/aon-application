@@ -14,7 +14,9 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model1802017NAVARRA extends Model180Base {
 
-	public Model1802017NAVARRA(Mod180 mod180,Model180Callback cbk) {
+	private static final int PERCEPTORS_TAB = 1;
+
+	public Model1802017NAVARRA(Mod180 mod180,Model180Callback cbk,Integer selectedIndex) {
 		super(mod180, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -24,9 +26,10 @@ public class Model1802017NAVARRA extends Model180Base {
 		add(centerPanel);
 		
 		paintDeclarationTab(tabPanel);
-		paintPerceptorsTab(tabPanel);
+		paintPerceptorsTab(tabPanel, selectedIndex);
 		paintAdministrationTab(tabPanel);
 		
+		tabPanel.selectTab(PERCEPTORS_TAB, false);
 		
 	}
 

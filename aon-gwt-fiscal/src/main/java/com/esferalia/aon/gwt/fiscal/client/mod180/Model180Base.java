@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -48,6 +49,9 @@ abstract class Model180Base extends DockLayoutPanel {
 	private static final String MODEL180_CERTIFICATE_PRINT = "/aon_gwt_fiscal/Model180CertificatePrint";
 	static final String MODEL180_FILE = "/aon_gwt_fiscal/Model180File";
 	
+	protected interface IModel180Detail extends IsWidget {
+		Integer getSelectedPerceptorIndex();
+	}
 	interface TabLabelTemplate extends SafeHtmlTemplates {
 		@Template("<span class=\"{1} aon-padding-right aon-padding-left-20\" style=\"width: auto !important\">{0}</span>")
 		SafeHtml render(String label, String iconStyle);
@@ -70,6 +74,10 @@ abstract class Model180Base extends DockLayoutPanel {
 		@Override	
 		public void onCancel() {
 			cbk.onCancel();
+		}
+		@Override	
+		public void onSelect(Mod180 mod180, Integer selectedIndex) {
+			cbk.onSelect(mod180, selectedIndex);
 		}
 		@Override
 		public void showError(String msg) {
@@ -110,6 +118,8 @@ abstract class Model180Base extends DockLayoutPanel {
 	protected Hidden mod180Hidden = new Hidden("mod180");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
+	
+	private IModel180Detail detailManager;
 	
 	public Model180Base(Mod180 mod180,Model180Callback cbk) {
 		super(Unit.PX);
@@ -215,9 +225,8 @@ abstract class Model180Base extends DockLayoutPanel {
 						getMod180(), new AsyncCallback<Mod180>() {
 							@Override
 							public void onSuccess(Mod180 result) {
-								select(result);
 								popup.hide();
-								callback.cleanErrorPanel();
+								callback.onSelect(result, detailManager.getSelectedPerceptorIndex() );
 							}
 
 							@Override
@@ -311,9 +320,7 @@ abstract class Model180Base extends DockLayoutPanel {
 				Model180.SERVICE.changeStatusMod180(Model180.getCurrentDomainName(), getMod180(), FiscalStatus.FINISHED, new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 result) {
-						select(result);
-						styleStatusLabel(result);
-						markAsFinishedButton.setEnabled(true);
+						callback.onSelect(result , detailManager.getSelectedPerceptorIndex() );
 					}
 
 					@Override
@@ -338,9 +345,7 @@ abstract class Model180Base extends DockLayoutPanel {
 				Model180.SERVICE.changeStatusMod180(Model180.getCurrentDomainName(), getMod180(), FiscalStatus.SENT, new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 result) {
-						select(result);
-						styleStatusLabel(result);
-						markAsSentButton.setEnabled(true);
+						callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
 					}
 
 					@Override
@@ -365,9 +370,7 @@ abstract class Model180Base extends DockLayoutPanel {
 				Model180.SERVICE.changeStatusMod180(Model180.getCurrentDomainName(), getMod180(), FiscalStatus.PENDING, new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 result) {
-						select(result);
-						styleStatusLabel(result);
-						markAsPendingButton.setEnabled(true);
+						callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
 					}
 
 					@Override
@@ -839,8 +842,11 @@ abstract class Model180Base extends DockLayoutPanel {
 		return panel;
 	}
 
-	protected void paintPerceptorsTab(TabLayoutPanel tabPanel) {	
-		tabPanel.add(new Model180Detail2014( getCallback() ), TAB_TEMPLATE.render(AON.MSG.receiverList(), AON.AON_CSS.aonIconInvoice()));
+	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
+		// Evaluar lo diferentes paneles por administraciuon y/o ejercicio. 
+		detailManager = new Model180Detail2017( getCallback() , selectedIndex );
+		tabPanel.add( (Widget) detailManager,  TAB_TEMPLATE.render(AON.MSG.receiverList(), AON.AON_CSS.aonIconInvoice()) );
+		
 	}
 
 	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
