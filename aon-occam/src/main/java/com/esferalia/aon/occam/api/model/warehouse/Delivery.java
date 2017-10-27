@@ -6,6 +6,7 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Delivery implements Serializable {
@@ -23,6 +24,15 @@ public class Delivery implements Serializable {
 	private Customer customer2;
 	private String customerName;
 	private Integer address;
+	
+	private StreetType addressStreetType;
+	private String addressName;
+	private String addressNumber;
+	private String addressTown;
+	private String addressZIP;
+	private String addressGeozoneCode;
+	private String addressGeozone;
+	
 	private Date issueTime;
 	private Integer payMethod;
 	private byte securityLevel;
@@ -107,6 +117,56 @@ public class Delivery implements Serializable {
 	public Delivery setAddress(Integer address) {
 		this.address = address;
 		return this;
+	}
+	public StreetType getAddressStreetType() {
+		return addressStreetType;
+	}
+	public Delivery setAddressStreetType(StreetType addressStreetType) {
+		this.addressStreetType = addressStreetType;
+		return this;
+	}
+	public String getAddressName() {
+		return addressName;
+	}
+	public Delivery setAddressName(String addressName) {
+		this.addressName = addressName;
+		return this;
+	}
+	public String getAddressNumber() {
+		return addressNumber;
+	}
+	public Delivery setAddressNumber(String addressNumber) {
+		this.addressNumber = addressNumber;
+		return this;
+	}
+	public String getAddressTown() {
+		return addressTown;
+	}
+	public Delivery setAddressTown(String addressTown) {
+		this.addressTown = addressTown;
+		return this;
+	}
+	public String getAddressZIP() {
+		return addressZIP;
+	}
+	public Delivery setAddressZIP(String addressZIP) {
+		this.addressZIP = addressZIP;
+		return this;
+	}
+	public String getAddressGeozoneCode() {
+		return addressGeozoneCode;
+	}
+	public Delivery setAddressGeozoneCode(String addressGeozoneCode) {
+		this.addressGeozoneCode = addressGeozoneCode;
+		return this;
+	}
+	public String getAddressGeozone() {
+		return addressGeozone;
+	}
+	public Delivery setAddressGeozone(String addressGeozone) {
+		this.addressGeozone = addressGeozone;
+		return this;
+		
 	}
 	public Date getIssueTime() {
 		return issueTime;

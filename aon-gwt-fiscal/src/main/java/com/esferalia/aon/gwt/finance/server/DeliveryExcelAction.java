@@ -10,9 +10,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -64,9 +62,6 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 			sheet.autoSizeColumn(i);
 		}
 		
-/*	    CellUtil.createCell(row, cellCount, "Tipo", headerCellStyle);
-		sheet.setColumnWidth(cellCount++, 10*256);
-*/
 	    CellUtil.createCell(row, cellCount, "Estado", headerCellStyle);
 		sheet.setColumnWidth(cellCount++, 10*256);
 
@@ -97,15 +92,6 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 	    CellUtil.createCell(row, cellCount, "Dirección", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 40*256);
 	    
-/*	    CellUtil.createCell(row, cellCount, "Localidad", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 30*256);		    
-	    
-	    CellUtil.createCell(row, cellCount, "C.P.", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 9*256);		    
-	    
-	    CellUtil.createCell(row, cellCount, "Provincia", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 25*256);		    
-*/	    
 	    CellUtil.createCell(row, cellCount, "Producto", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 19*256);		    
 	    
@@ -133,9 +119,6 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 	    CellUtil.createCell(row, cellCount, "Expediente", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 25*256);		    
 	    
-/*	    CellUtil.createCell(row, cellCount, "Ag. Comercial", headerCellStyle);
-	    sheet.setColumnWidth(cellCount++, 20*256);
-	*/    
 	    if (tags != null) {
 	    	int maxTagWidth = 0;
 		    for (String tag : tags) {
@@ -151,33 +134,23 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 	public void accept(DeliveryDetail detail) {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-//		alignCenter(addCell(SalesType.values()[detail.getSales().getDocumentType()].getName()));
 		alignCenter(addCell(detail.getDelivery().getStatus().getName()));
 		addCell(detail.getDelivery().getIssueTime());
-		addCell((detail.getDelivery().getSeries() != null  ?  detail.getDelivery().getSeries() + "/" : "")
-				+ detail.getDelivery().getNumber());
-		
-		SalesDetail pd = AON.getSalesDetailStream(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getSalesDetail()))
-				.findFirst().orElse(new SalesDetail());
-		addCell(pd.getSales() != null && pd.getSales().getPurchaseReference() != null ? pd.getSales().getPurchaseReference() : "");
-
+		addCell((detail.getDelivery().getSeries() != null  ?  detail.getDelivery().getSeries() + "/" : "") + detail.getDelivery().getNumber());
+		addCell(detail.getPurchaseReference());
 		addCell(Short.toString(detail.getLine()));
 		alignCenter(addCell(detail.getDelivery().getCustomer2().getDocumentType() == null ? null : 
 			detail.getDelivery().getCustomer2().getDocumentType().getDescription()));
 		alignCenter(addCell(detail.getDelivery().getCustomer2().getDocumentCountry()));
 		addCell( detail.getDelivery().getCustomer2().getDocument());
 		addCell( detail.getDelivery().getCustomer2().getName());
-		
-		RAddress ra = AON.getRAddress(getDomainName(), detail.getDomain(), "", f -> f.getIdProperty().eq(detail.getDelivery().getAddress()));
-		addCell(ra.getFullAddress() + " " 
-				+ (ra.getZip() != null ? ra.getZip() + " " : "") 	
-				+ (ra.getCity() != null ? ra.getCity() + " " : "") 
-				+ (ra.getGeozoneName() != null ? ra.getGeozoneName() :""));
-/*
-		addCell( detail.getOffer().getRegistryTown() );
-		addCell( detail.getOffer().getRegistryZIP() );
-		addCell( detail.getOffer().getRegistryProvince() );
-	*/	 
+		StreetType streetType = detail.getDelivery().getAddressStreetType();
+		addCell( ((streetType !=null) ? (streetType.getAeatCode() + " "): "")
+	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressName())? "":detail.getDelivery().getAddressName() + " ")
+	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressNumber())?"":detail.getDelivery().getAddressNumber() + " ")
+	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressZIP())?"":detail.getDelivery().getAddressZIP() + " ")
+	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressTown())?"":detail.getDelivery().getAddressTown() + " ")
+	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressGeozone())?"":detail.getDelivery().getAddressGeozone() + " ") );
 		addCell(detail.getItem()!= null ? detail.getItem().getCode() : null);
 		addCell(detail.getItem()!= null ? detail.getItem().getCategory() : null);
 		addCell(AonStringUtils.abbreviate(detail.getDescription(), 60)) ;
@@ -187,8 +160,6 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		addCell(detail.getDelivery().getScopeName());
 		addCell(detail.getDelivery().getWorkplaceName());
 		addCell(detail.getDelivery().getProject().getName());
-		//addCell(detail.getPurchase().getSeller()!=null?detail.getPurchase().getSeller().getRegistryName():null );
-
 		Integer productId = detail.getItem().getProductId();
 		if (tags != null && productTags != null && productId != null)  {
 			String[] tagArray = productTags.get(productId);

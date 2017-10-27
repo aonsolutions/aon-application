@@ -2,11 +2,15 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Sales.SALES;
+import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -27,6 +31,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
@@ -222,7 +227,6 @@ public class DeliveryDAO {
 
 	private static Result<Record> getFullDeliveries(AONContext ctx, DeliveryFilter filter) {
 		ctx.checkRead();
-
 		return ctx.getDslContext()
 			.select(
 				 DELIVERY.ID
@@ -237,6 +241,15 @@ public class DeliveryDAO {
 				,REGISTRY.DOCUMENT_COUNTRY
 				,REGISTRY.NAME
 				,REGISTRY.ID
+				,RADDRESS.STREET_TYPE
+				,RADDRESS.ADDRESS
+				,RADDRESS.NUMBER
+				,RADDRESS.ADDRESS2
+				,RADDRESS.ADDRESS3
+				,RADDRESS.ZIP
+				,RADDRESS.CITY
+				,GEOZONE.CODE
+				,GEOZONE.NAME
 				,SCOPE.DESCRIPTION
 				,PROJECT.NAME
 				,DELIVERY_DETAIL.LINE
@@ -254,17 +267,24 @@ public class DeliveryDAO {
 				,DELIVERY_DETAIL.PRICE
 				,DELIVERY_DETAIL.DISCOUNT_EXPR
 				,DELIVERY_DETAIL.SALES_DETAIL
+				,SALES.PURCHASE_REFERENCE
 				,WORKPLACE.DESCRIPTION
 			)
 			.from(DELIVERY)
 			.join(DELIVERY_DETAIL).on(DELIVERY_DETAIL.DELIVERY.equal(DELIVERY.ID))
 			.join(REGISTRY).on(REGISTRY.ID.equal(DELIVERY.CUSTOMER))
-			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(DELIVERY.SCOPE))
+			.join(SCOPE).on(SCOPE.ID.equal(DELIVERY.SCOPE))
+			.leftOuterJoin(RADDRESS).on(DELIVERY.ADDRESS.equal(RADDRESS.ID))
+			.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
 			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(DELIVERY.PROJECT))
 			.leftOuterJoin(ITEM).on(ITEM.ID.equal(DELIVERY_DETAIL.ITEM))
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(DELIVERY.WORKPLACE))
+			
+			.leftOuterJoin(SALES_DETAIL).on(SALES_DETAIL.ID.equal(DELIVERY_DETAIL.SALES_DETAIL))
+			.leftOuterJoin(SALES).on(SALES.ID.equal(SALES_DETAIL.SALES))
+			
 			.where(DELIVERY_PROPERTIES.getConditions(filter))
 			.orderBy(DELIVERY.ISSUE_TIME,DELIVERY.SERIES,DELIVERY.NUMBER,DELIVERY_DETAIL.LINE)
 			.fetch();
@@ -292,6 +312,15 @@ public class DeliveryDAO {
 				.setDelivery(new Delivery()
 					.setId(record.getValue(DELIVERY.ID))
 					.setAddress(record.getValue(DELIVERY.ADDRESS))
+					
+					.setAddressStreetType( StreetType.safeValueOf(record.getValue(RADDRESS.STREET_TYPE)))
+					.setAddressName(record.getValue(RADDRESS.ADDRESS))
+					.setAddressNumber(record.getValue(RADDRESS.NUMBER))
+					.setAddressTown(record.getValue(RADDRESS.CITY))
+					.setAddressZIP(record.getValue(RADDRESS.ZIP))
+					.setAddressGeozoneCode(record.getValue(GEOZONE.CODE))
+					.setAddressGeozone(record.getValue(GEOZONE.NAME))
+					
 					.setDomain(record.getValue(DELIVERY.DOMAIN))
 					.setStatus(AonEnumUtils.enumValue(DeliveryStatus.class,
 									record.getValue(DELIVERY.STATUS)))
@@ -322,7 +351,9 @@ public class DeliveryDAO {
 						.setDetail2(record.getValue( ITEM.DETAIL2 ))
 						.setDetail3(record.getValue( ITEM.DETAIL3 ))
 						.setDescription(record.getValue( ITEM.DESCRIPTION )))
-				.setSalesDetail(record.getValue(DELIVERY_DETAIL.SALES_DETAIL));
+				.setSalesDetail(record.getValue(DELIVERY_DETAIL.SALES_DETAIL))
+				.setPurchaseReference(record.getValue(SALES.PURCHASE_REFERENCE))
+				;
 		}
 	}
 	

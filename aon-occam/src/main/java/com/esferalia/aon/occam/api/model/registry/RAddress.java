@@ -188,8 +188,7 @@ public class RAddress implements Serializable {
 	
 	public String getFullAddress() {
 		String streetType = getStreet_type();
-		if("XX".equals(streetType) || "ZZ".equals(streetType)
-			|| "XX.".equals(streetType) || "ZZ.".equals(streetType)){
+		if("XX".equals(streetType) || "ZZ".equals(streetType) || "XX.".equals(streetType) || "ZZ.".equals(streetType)){
 			streetType = "";
 		}
     	StringBuffer buf = new StringBuffer();

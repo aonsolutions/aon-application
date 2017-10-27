@@ -25,6 +25,7 @@ public class DeliveryDetail implements Serializable {
 	private double price;
 	private String discountExpression;
 	private Integer salesDetail;
+	private String purchaseReference;
 	
 	private Date creationDate;
 	private String creationUser;
@@ -130,6 +131,13 @@ public class DeliveryDetail implements Serializable {
 	}
 	public DeliveryDetail setSalesDetail(Integer salesDetail) {
 		this.salesDetail = salesDetail;
+		return this;
+	}
+	public String getPurchaseReference() {
+		return purchaseReference;
+	}
+	public DeliveryDetail setPurchaseReference(String purchaseReference) {
+		this.purchaseReference = purchaseReference;
 		return this;
 	}
 	public Integer getWarehouse() {
