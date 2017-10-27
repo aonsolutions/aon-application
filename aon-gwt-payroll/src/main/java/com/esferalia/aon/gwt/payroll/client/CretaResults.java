@@ -158,10 +158,12 @@ public class CretaResults extends Composite implements RequiresResize{
 
 	public void addUnknown(CretaService.JsUnknownDato unknowns[]) {
 		for (CretaService.JsUnknownDato unknown : unknowns) {
-			if (unknown.isMandatory())
-				addError(unknown);
-			else
+			if (!unknown.isMandatory())
 				addWarning(unknown);
+			else if (unknown.getValue() != null )
+				addWarning(unknown);
+			else
+				addError(unknown);
 
 		}
 
