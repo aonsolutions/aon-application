@@ -30,16 +30,18 @@ public class RegistryAddressLinesController extends LinesController {
 			RegistryAddress ra = (RegistryAddress) getSelectedTO();
 			String params = "";
 			try {
-				params = ra.getAddress().trim();
-				if(ra.getNumber()!=null && !"".equals(ra.getNumber()))
-					params += " " + ra.getNumber().trim();
-				if(ra.getZip()!=null && !"".equals(ra.getZip()))
-					params += " " + ra.getZip().trim();
-				if(ra.getCity()!=null && !"".equals(ra.getCity()))
-					params += " " + ra.getCity().trim();
-				if(ra.getGeozone()!=null && ra.getGeozone().getId()!=null)
-					params += " " + ra.getGeozone().getName();
-				params = URLEncoder.encode(params, StandardCharsets.UTF_8.name());
+				if(ra.getAddress()!=null){
+					params = ra.getAddress().trim();
+					if(ra.getNumber()!=null && !"".equals(ra.getNumber()))
+						params += " " + ra.getNumber().trim();
+					if(ra.getZip()!=null && !"".equals(ra.getZip()))
+						params += " " + ra.getZip().trim();
+					if(ra.getCity()!=null && !"".equals(ra.getCity()))
+						params += " " + ra.getCity().trim();
+					if(ra.getGeozone()!=null && ra.getGeozone().getId()!=null)
+						params += " " + ra.getGeozone().getName();
+					params = URLEncoder.encode(params, StandardCharsets.UTF_8.name());
+				}
 			} catch (UnsupportedEncodingException e) {
 				params = "";
 			}
