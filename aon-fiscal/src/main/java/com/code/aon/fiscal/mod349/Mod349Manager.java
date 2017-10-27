@@ -13,10 +13,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.Mod349;
 import com.code.aon.fiscal.Mod349Detail;
 import com.code.aon.fiscal.enumeration.Mod349Type;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import net.aonsolutions.core.pool.AonConnectionException;
 
 public class Mod349Manager {
@@ -73,6 +74,7 @@ public class Mod349Manager {
 				}
 				declaredRs.close();
 				detail.setAmount( CommonUtil.round(detail.getAccumulated() - detail.getDeclared() ));
+				detail.setRectifiedAmount(0.0);
 				if (CommonUtil.round(detail.getAmount()) != 0.0) {
 					bean.insert(detail);	
 				}
