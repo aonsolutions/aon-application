@@ -184,6 +184,10 @@ public class VatReportExcelPrint extends HttpServlet {
 
 			CellUtil.createCell(row, cellCount, "CUOTA DED.", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
+			
+			CellUtil.createCell(row, cellCount, "N. REFERENCIA", headerCellStyle);
+			sheet.setColumnWidth(cellCount++, 45 * 256);
+			
 		}
 
 		@Override
@@ -216,6 +220,7 @@ public class VatReportExcelPrint extends HttpServlet {
 				addCell(vat.getDeductiblePercent());
 				addCell(vat.getDeductibleQuota());
 			}
+			addCell(vat.getReferenceCode());
 		}
 	}
 }
