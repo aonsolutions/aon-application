@@ -52,6 +52,10 @@ public class Warehouse extends Methods{
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/update_reception_quantity", requestData, callback);
 	}
 	
+	public void updateReceptionDetailQuantity(String requestData, AsyncCallback<JsObject> callback) {
+		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/update_reception_detail_quantity", requestData, callback);
+	}
+	
 	public void deleteCarrierPacking(Integer id) {
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}");
 	}

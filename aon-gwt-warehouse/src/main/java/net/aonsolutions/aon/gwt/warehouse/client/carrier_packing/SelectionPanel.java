@@ -20,9 +20,11 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -50,6 +52,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
@@ -705,7 +708,36 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		    db.getElement().getStyle().setHeight(13, Unit.PX);
 		    db.getElement().getStyle().setWidth(40, Unit.PX);
 		    db.getElement().getStyle().setPadding(0, Unit.PX);
-		    db.setEnabled(isShipment() && isSelectable(panl));
+		    db.setEnabled((isShipment() && isSelectable(panl)) || (isReception(panl) && !isFinished()));
+		    
+		    if(isReception(panl) && !isFinished()) {
+		    	db.addChangeHandler(new ChangeHandler() {
+					
+					@Override
+					public void onChange(com.google.gwt.event.dom.client.ChangeEvent event) {
+						if("income".equals(order.getOrderType())){
+							JSONObject rJson = new JSONObject();
+							rJson.put("income", new JSONString(detail.getId()+ ""));
+							rJson.put("quantity", new JSONNumber(db.getValue()));
+							rJson.put("net", new JSONString(getCarrierPacking().getNet() + ""));
+							rJson.put("carrier_packing", new JSONString(getCarrierPacking().getId() + ""));
+							String rd = JsonUtils.stringify(rJson.getJavaScriptObject());
+							getAPI().getWarehouse().updateReceptionDetailQuantity(rd, new AsyncCallback<JsObject>() {
+								@Override public void onFailure(Throwable caught) {}
+
+								@Override
+								public void onSuccess(JsObject result) {
+									SimpleLayoutPanel w = (SimpleLayoutPanel) receptionVerticalPanel.getParent();
+									receptionVerticalPanel.removeFromParent();
+									receptionPanel();
+									w.setWidget(receptionVerticalPanel);									
+								}
+							});
+						}
+					}
+				});
+		    }
+
 		    if(isSelected(panl) && isShipment()){
 		    	db.setValue(detail.getQuantity() - detail.getDelivered());
 		    }else db.setValue(detail.getQuantity());
@@ -1010,7 +1042,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		HorizontalPanel hp = new HorizontalPanel();
 		PaperInput quantity = new PaperInput();
 		quantity.setLabel("Cantidad");
-		quantity.setValue(q+ "");
+		quantity.setValue(AonMathUtils.round(q)+ "");
 		quantity.setMaxlength(8);
 		hp.add(quantity);
 		
@@ -1499,7 +1531,10 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 
 							@Override
 							public void onSuccess(JsObject result) {
+								SimpleLayoutPanel w = (SimpleLayoutPanel) receptionVerticalPanel.getParent();
+								receptionVerticalPanel.removeFromParent();
 								receptionPanel();
+								w.setWidget(receptionVerticalPanel);
 							}
 						});
 					}

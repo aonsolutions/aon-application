@@ -238,6 +238,8 @@ public class WarehouseServlet extends HttpServlet{
 				} else object = DBIncome.insertIncome(domain, userName, json);
 			} else if("update_reception_quantity".equals(pathInfo[3])) {
 				object = updateReceptionQuantity(domain, userName, json);
+			} else if("update_reception_detail_quantity".equals(pathInfo[3])) {
+				object = updateReceptionDetailQuantity(domain, userName, json);
 			}
 				
 			resp.setContentType("application/json;charset=UTF-8");
@@ -763,29 +765,73 @@ public class WarehouseServlet extends HttpServlet{
 
     private JSONObject updateReceptionQuantity(Domain domain, String login, JSONObject json) {
     	Integer neto = json.getInt("net");
-		Integer cpId = Integer.parseInt(json.getString("carrier_packing"));
+    	Integer cpId = Integer.parseInt(json.getString("carrier_packing"));
 		
-		total = 0.0;
-		HashMap<Integer, IncomeDetail> map = new HashMap<>();
-		AON.getIncomeStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(cpId))
-		.forEach(income -> {
-			AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
-			.forEach(detail -> {
-				total = total + detail.getQuantity();
-				map.put(detail.getId(), detail);
-			});
-		});
-		for (Integer key : map.keySet()) {
-			IncomeDetail id = map.get(key);
-			Double q = AonMathUtils.round((id.getQuantity()/total) * neto);
-			id.setQuantity(q);
-			AON.updateIncomeDetail(domain.getName(), domain.getId(), login, id);
-			PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
-			pd.setQuantity(q);
-			pd.setDelivered(q);
-			AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, pd);
-		}
-		return new JSONObject();
+    	total = 0.0;
+    	HashMap<Integer, IncomeDetail> map = new HashMap<>();
+    	AON.getIncomeStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(cpId))
+    	.forEach(income -> {
+    		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
+    		.forEach(detail -> {
+    			total = total + detail.getQuantity();
+    			map.put(detail.getId(), detail);
+    		});
+    	});
+    	for (Integer key : map.keySet()) {
+    		IncomeDetail id = map.get(key);
+    		Double q = AonMathUtils.round((id.getQuantity()/total) * neto);
+    		id.setQuantity(q);
+    		AON.updateIncomeDetail(domain.getName(), domain.getId(), login, id);
+    		PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
+    		pd.setQuantity(q);
+    		pd.setDelivered(q);
+    		AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, pd);
+    	}
+    	return new JSONObject();
     }
+    
+    private JSONObject updateReceptionDetailQuantity(Domain domain, String login, JSONObject json) {
+    	Double neto = Double.parseDouble(json.getString("net"));
+    	Integer cpId = Integer.parseInt(json.getString("carrier_packing"));
+    	Integer incomeId =  Integer.parseInt(json.getString("income"));
+    	Double quantity = json.getDouble("quantity");
+    
+    	HashMap<Integer, IncomeDetail> map = new HashMap<>();
+    	AON.getIncomeStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(cpId))
+    	.forEach(income -> {
+    		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
+    		.forEach(detail -> {
+    			map.put(detail.getId(), detail);
+    		});
+    	});
+    		
+    	Double oldPer = map.get(incomeId).getQuantity() / neto;
+    	Double newPer = quantity / neto;
+    		
+    	for (Integer key : map.keySet()) {
+    		if(!key.equals(incomeId)) {
+    			Double op = map.get(key).getQuantity() / neto;
+    			Double np = (op * (1-newPer)) / (1-oldPer); 
+    	    	IncomeDetail id = map.get(key);
+    	    	Double q = AonMathUtils.round(np * neto);
+        		id.setQuantity(q);
+        		AON.updateIncomeDetail(domain.getName(), domain.getId(), login, id);
+        		PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
+        		pd.setQuantity(q);
+        		pd.setDelivered(q);
+        		AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, pd);
+    		} else {
+    			AonMathUtils.round(quantity);
+    			IncomeDetail id = map.get(key);
+    			id.setQuantity(quantity);
+        		AON.updateIncomeDetail(domain.getName(), domain.getId(), login, id);
+        		PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
+        		pd.setQuantity(quantity);
+        		pd.setDelivered(quantity);
+        		AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, pd);
+    		}
+    	}
+		return new JSONObject();
+	}
 }
 

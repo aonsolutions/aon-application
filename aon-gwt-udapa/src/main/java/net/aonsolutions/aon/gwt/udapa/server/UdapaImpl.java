@@ -77,12 +77,16 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			map.put("product_supplier", i.getSupplierName());
 			map.put("product_quantity", id.getQuantity() + "");
 
-			map.put(!map.get(QualitySheetCode.UFQCC01.getName()).equals("0.0")
-					? map.get(QualitySheetCode.UFQCC01.getName())
-					: QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "");
-			map.put(!map.get(QualitySheetCode.UFQCD01.getName()).equals("0.0")
-					? map.get(QualitySheetCode.UFQCD01.getName())
-					: QualitySheetCode.UFQCD01.getName(), id.getQuantity() + "");	
+				
+			if(map.get(QualitySheetCode.UFQCC01.getName()).equals("0.0")) {
+				map.put(QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "");
+				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCC01, id.getQuantity() + "", map);
+			}
+			if(map.get(QualitySheetCode.UFQCD01.getName()).equals("0.0")) {
+				map.put(QualitySheetCode.UFQCD01.getName(), id.getQuantity() + "");
+				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCD01, id.getQuantity() + "", map);
+			}
+
 			map.put("product_price", id.getPrice() + "");
 			if(i.getCarrierPacking() != null){
 				CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));

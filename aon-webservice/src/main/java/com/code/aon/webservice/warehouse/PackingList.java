@@ -186,7 +186,7 @@ public class PackingList extends PdfUtils{
 		c5.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c5);
 			
-		PdfPCell c2 = new PdfPCell(new Phrase("Fecha de Carga:",getFont1()));
+		PdfPCell c2 = new PdfPCell(new Phrase("Fecha:",getFont1()));
 		c2.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c2);
 				
@@ -209,6 +209,8 @@ public class PackingList extends PdfUtils{
 		PdfPCell c9 = new PdfPCell(new Phrase("1",getFont2()));
 		c9.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c9);
+		
+		
 		
 		return header3;
 	}	
@@ -282,11 +284,11 @@ public class PackingList extends PdfUtils{
 		c9.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c9);
 		
-		PdfPCell c10 = new PdfPCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ? "Entrega:" : "Recogida:",getFont3()));
+		PdfPCell c10 = new PdfPCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ? "Entrega:" : "Carga:",getFont3()));
 		c10.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c10);
 		
-		PdfPCell c11 = new PdfPCell(new Phrase(json.getString("delivery_date"),getFont3()));
+		PdfPCell c11 = new PdfPCell(new Phrase(type.equals(CarrierPackingType.WAYBILL) ? json.getString("delivery_date") : json.getString("issue_date"),getFont3()));
 		c11.setBorder(PdfPCell.NO_BORDER);
 		carrier.addCell(c11);
 		
@@ -308,6 +310,7 @@ public class PackingList extends PdfUtils{
 		receptionLabelTable.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		receptionLabelTable.addCell(reception ? boldCell("Peso Bruto", getFont3()) : emptyCell());
 		receptionLabelTable.addCell(reception ? boldCell("Tara", getFont3()) : emptyCell());
+		receptionLabelTable.addCell(reception ? boldCell("Tara Adicional", getFont3()) : emptyCell());
 		receptionLabelTable.addCell(reception ? boldCell("Neto", getFont3()) : emptyCell());
 
 		carrier.addCell(receptionLabelTable);
@@ -317,6 +320,8 @@ public class PackingList extends PdfUtils{
 		receptionTable.addCell(reception ? boldCell(!gross.isNaN() ? gross.toString() : "-", getFont3()) : emptyCell());
 		Double tare = json.optDouble("tare");
 		receptionTable.addCell(reception ? boldCell(!tare.isNaN() ? tare.toString() : "-", getFont3()) : emptyCell());
+		Double additional_tare = json.optDouble("additional_tare");
+		receptionTable.addCell(reception ? boldCell(!tare.isNaN() ? additional_tare.toString() : "-", getFont3()) : emptyCell());
 		Double net = json.optDouble("net"); 
 		receptionTable.addCell(reception ? boldCell(!net.isNaN() ? net.toString() : "-", getFont3()) : emptyCell());
 		
