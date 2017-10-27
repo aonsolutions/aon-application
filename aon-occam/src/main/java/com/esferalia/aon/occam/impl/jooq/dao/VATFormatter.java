@@ -59,9 +59,8 @@ public class VATFormatter {
 			+ AonStringUtils.rightPad("TRAN.",6)
 			+ "S I A R C "
 			+ AonStringUtils.rightPad("EPIGR.",8)
-			+ AonStringUtils.rightPad("FACTURA",15)
-			+ AonStringUtils.rightPad("DOCUMENTO",15)
-			+ AonStringUtils.rightPad("TITULAR FACTURA",30)
+			+ AonStringUtils.rightPad("N\u00BA DOCUMENTO",15)
+			+ AonStringUtils.rightPad("TITULAR FACTURA",45)
 			+ AonStringUtils.rightPad("FECHA FAC.",10)
 			+ AonStringUtils.SPACE
 			+ AonStringUtils.rightPad("FECHA IMP.",10)
@@ -74,7 +73,7 @@ public class VATFormatter {
 			+ AonStringUtils.leftPad("% DED.",8)
 			+ AonStringUtils.leftPad("CUOTA DED.",15)
 			+ AonStringUtils.SPACE
-			+ AonStringUtils.rightPad("N. REFERENCIA.",25)
+			+ AonStringUtils.rightPad("N\u00BA REFERENCIA.",25)
 			+ AonStringUtils.repeat(" ", 2)
 			;
 

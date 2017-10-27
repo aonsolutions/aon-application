@@ -31,8 +31,8 @@ public class VatReportPanel extends ScrollPanel{
 			+ AonStringUtils.rightPad("TRAN",5)
 			+ "S I A R C "
 			+ AonStringUtils.rightPad("EPIGR.",8)
-			+ AonStringUtils.rightPad("FACTURA",15)
-			+ AonStringUtils.rightPad("DOCUMENTO Y NOMBRE TITULAR",31)
+			+ AonStringUtils.rightPad("N\u00BA DOCUMENTO",15)
+			+ AonStringUtils.rightPad("TITULAR FACTURA",31)
 			+ AonStringUtils.rightPad("FECHA FAC.",11)
 			+ AonStringUtils.rightPad("FECHA IMP.",11)
 			+ AonStringUtils.leftPad("BASE IMP.",15)		
@@ -43,7 +43,7 @@ public class VatReportPanel extends ScrollPanel{
 			+ AonStringUtils.leftPad("% DED.",8)
 			+ AonStringUtils.leftPad("CUOTA DED.",15)
 			+ AonStringUtils.SPACE
-			+ AonStringUtils.rightPad("N. REFERENCIA.",25)
+			+ AonStringUtils.rightPad("N\u00BA REFERENCIA",25)
 			+ AonStringUtils.repeat(" ", 2)
 			;
 
