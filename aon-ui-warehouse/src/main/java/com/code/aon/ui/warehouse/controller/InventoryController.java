@@ -39,13 +39,13 @@ import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.WarehouseTransfer;
-import com.code.aon.warehouse.WarehouseTransferDetail;
 import com.code.aon.warehouse.enumeration.InventoryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferSource;
 
 /**
@@ -216,7 +216,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		
 		AON.insertWarehouseTransferDetail(domainName, domainId, user, 
 			AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(warehouse.getId())).map(s -> {
-				return new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail()
+				return new WarehouseTransferDetail()
 					.setDomain(DomainManager.getCurrentDomain())
 					.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(s.getItem()))
 					.setQuantity(s.getQuantity())
@@ -262,7 +262,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			
 			inventory.setWarehouse(warehouse);
 			inventory = (Inventory) inventoryBean.insert(inventory);
-						
+			
 	        Query q = session.createQuery(
 	                " select item, sum(stock.quantity), item.id " +
 	                " from Item as item, Stock as stock " +
@@ -380,16 +380,21 @@ public class InventoryController extends BasicController implements IAuditableCo
 		List<InventoryDetail> details = getDetails(inventory, newElements);
 		if (! details.isEmpty() ) {
 			WarehouseTransfer wt = getWarehouseTransfer(inventory, newElements);
-			IManagerBean bean = BeanManager.getManagerBean(WarehouseTransferDetail.class);
-			for( InventoryDetail detail : details ) {
-				WarehouseTransferDetail wtd = new WarehouseTransferDetail();
-				wtd.setWarehouseTransfer(wt);
-				wtd.setItem(detail.getItem());
-				double quantity = Math.abs(detail.getActualQuantity()-detail.getRealQuantity());
-				wtd.setQuantity(quantity);
-				bean.insert(wtd);
-			}
-		}		
+			
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String user = AonUtil.getRemoteUser();
+			
+			AON.insertWarehouseTransferDetail(domainName, domainId, user, 
+				details.stream().map(detail -> {
+					return new WarehouseTransferDetail()
+						.setDomain(detail.getDomain())
+						.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(detail.getItem().getId()))
+						.setQuantity(Math.abs(detail.getActualQuantity()-detail.getRealQuantity()))
+						.setWarehouseTransfer(new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer().setId(wt.getId()));
+				})
+			);
+		}	
 	}
 	
 	public void onStartAdjustment(ActionEvent event) {

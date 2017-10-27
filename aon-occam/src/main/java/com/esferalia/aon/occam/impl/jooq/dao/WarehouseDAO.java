@@ -176,11 +176,7 @@ public class WarehouseDAO {
 		return ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER)
 				.set(WAREHOUSE_TRANSFER.COMMENTS, warehouseTransfer.getComments())
 				.set(WAREHOUSE_TRANSFER.DOMAIN, warehouseTransfer.getDomain())
-				.set(WAREHOUSE_TRANSFER.CREATION_DATE, new Timestamp(warehouseTransfer.getCreationDate().getTime()))
-				.set(WAREHOUSE_TRANSFER.CREATION_USER, warehouseTransfer.getCreationUser())
-				.set(WAREHOUSE_TRANSFER.INVENTORY, warehouseTransfer.getInventory() != null ? warehouseTransfer.getInventory().getId(): null)
-				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,new Timestamp(warehouseTransfer.getModificationDate().getTime()))
-				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, warehouseTransfer.getModificationUser())
+				.set(WAREHOUSE_TRANSFER.INVENTORY, warehouseTransfer.getInventory() != null ? warehouseTransfer.getInventory().getId(): null)				
 				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, new Timestamp(warehouseTransfer.getIssueTime().getTime()))
 				.set(WAREHOUSE_TRANSFER.SERIES, warehouseTransfer.getSeries())
 				.set(WAREHOUSE_TRANSFER.NUMBER, warehouseTransfer.getNumber())
@@ -188,6 +184,10 @@ public class WarehouseDAO {
 				.set(WAREHOUSE_TRANSFER.SOURCE_ID, warehouseTransfer.getSourceId())
 				.set(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, warehouseTransfer.getSourceWarehouse())
 				.set(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE, warehouseTransfer.getTargetWarehouse())
+				.set(WAREHOUSE_TRANSFER.CREATION_DATE, new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER.CREATION_USER, ctx.getUser())
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,  new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, ctx.getUser())
 				.returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 	}
 	
