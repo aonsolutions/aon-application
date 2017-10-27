@@ -123,7 +123,7 @@ public class ContractController extends BasicController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class);
 	
 	final static String ADDITIONAL_CLAUSES_TAB_NAME = "additionalClausesData";
 	
@@ -775,10 +775,9 @@ public class ContractController extends BasicController {
 					contract.setWorkPlace((WorkPlace) getWorkPlaces().get(0).getValue());
 				}
 			} catch (ManagerBeanException e) {
-				String msg = "Imposible cargar los Centros de Trabajo de la empresa. (" + e.getMessage() +")";
-				LOGGER.error(msg);
+				String msg = "Imposible cargar los Centros de Trabajo de la empresa.";
 				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg,e);
+				LOGGER.error(msg, e);
 			}
 			if(this.isNevv() && (getAgreement()==null || getAgreement().getId()==null)){
 				loadWorkplaceAgreement(null);
@@ -818,11 +817,10 @@ public class ContractController extends BasicController {
 				} else {
 					contract.setActivity(null);
 				}
-			} catch (ManagerBeanException e) {
-				String msg = "Imposible cargar las Actividades de la empresa. (" + e.getMessage() +")";
-				LOGGER.error(msg);
+			} catch (Exception e) {
+				String msg = "Imposible cargar las Actividades de la empresa.";
 				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg,e);
+				LOGGER.error(msg, e);
 			}
 			loadEnterpriseCCCs();
 		}
@@ -854,12 +852,11 @@ public class ContractController extends BasicController {
 					SelectItem item = new SelectItem(ccc, name);
 					getEnterpriseCCCs().add(item);
 				}
-			} catch (ManagerBeanException e) {
-				String msg = "Imposible cargar los CCC de la empresa. (" + e.getMessage() +")";
-				LOGGER.error(msg);
+			} catch (Exception e) {
+				String msg = "Imposible cargar los CCC de la empresa.";
 				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg,e);
-			}						
+				LOGGER.error(msg, e);
+			}
 		}
 	}
 	
@@ -889,9 +886,10 @@ public class ContractController extends BasicController {
 					}
 				}
 			}
-		} catch (ManagerBeanException e) {
+		} catch (Exception e) {
 			String msg = "error loading workplace agreement";
-			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg, e);
 		}
 	}
 	
