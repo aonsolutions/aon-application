@@ -80,7 +80,11 @@ public class FinanceUtils {
 			prop = prop.and(p.getRegistryProperty().eq(params.getRegistry()));
 		}
 		if (params.getActivity()  != null && params.getActivity().intValue() != 0 ) {
-			prop = prop.and(p.getActivityProperty().eq(params.getActivity()));
+			if (params.getActivity() < 0 ) {
+				prop = prop.and(p.getActivityProperty().isNull());
+			} else {
+				prop = prop.and(p.getActivityProperty().eq(params.getActivity()));
+			}
 		}
 		if (params.getAccrualRegime() != null) {
 			prop = prop.and(p.getAccrualRegimeProperty().eq( AonEnumUtils.getByte(params.getAccrualRegime())));

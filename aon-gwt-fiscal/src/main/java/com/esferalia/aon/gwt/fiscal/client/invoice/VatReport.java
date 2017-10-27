@@ -360,6 +360,7 @@ public class VatReport extends MainEntryPoint {
 				}
 				i++;
 			}
+			activity.addItem("-- Sin actividad --", "-1");
 			activity.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
