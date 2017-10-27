@@ -6524,6 +6524,8 @@ INSERT INTO `profile_role` VALUES
   (27,null,76,229),
   (28,null,76,230),
   (29,null,76,232),
+  (30,null,76,235),
+  (31,null,76,228),
 /*
   aon-aio (Invitado): Guest
 */
