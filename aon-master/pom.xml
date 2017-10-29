@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>net.aonsolutions.core</groupId>
 			<artifactId>dbutils</artifactId>
-			<version>9.11</version>
+			<version>9.12-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
