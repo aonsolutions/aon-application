@@ -42,9 +42,20 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		loadPayMethod(event);
+		super.afterBeanSelected(event);
+	}
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		loadPayMethod(event);
+		super.afterBeanUpdated(event);
+	}
+	
+	private void loadPayMethod(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Person person = (Person) event.getController().getTo();
-
+			
 			IManagerBean rPayBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 			Criteria rPayBeanCriteria = new Criteria();
 			rPayBeanCriteria.addEqualExpression(rPayBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), person.getId());
@@ -96,15 +107,6 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		super.beforeBeanAdded(event);
-	}
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		try {
-			IManagerBean rPayBean = event.getController().getManagerBean();
-			rPayBean.restoreNullSubPOJOs(getRegistryPayMethod());
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
 	}
 	
 
