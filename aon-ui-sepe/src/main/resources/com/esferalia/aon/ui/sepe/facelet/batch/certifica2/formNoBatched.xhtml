@@ -8,7 +8,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 	
-	
 	<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/formNoBatched.xhtml">
 		
 		<ui:param name="controllerList" value="#{certifica2List}" />
@@ -16,19 +15,27 @@
 		<ui:param name="checkboxTooltipText" value="El trabajador ya existe en la remesa." />
 		<ui:param name="enterpriseLookupRequired" value="#{true}" />
 		
-		
 		<ui:define name="afterToolbarContent" >
-				<aon:div style="float:right;width:300px;">
-					<rich:inplaceSelect id="massiveSuspensionCause" 
-						rendered="#{certifica2List.checkHandler.checkedCount gt 0}" 
-					 	value="#{certifica2List.suspensionCauseForAll}"
-					 	listHeight="300px" listWidth="300px" 
-					 	style="margin-left: 10px; border-bottom-style:none; cursor: pointer;"
-						defaultLabel="#{bundle.certifica2Batch_suspension_cause_select}" >
-						<f:selectItems value="#{sepeCollections.suspensionCauses}" />
-					</rich:inplaceSelect>
-				</aon:div>
-			<aon:div style="float:right;">
+			<aon:div id="suspensionCauseForAll-div" style="float:right;">
+				<aon:outputText value="#{bundle.certifica2Batch_suspension_cause}: " />
+				<aon:inputText size="5"
+					value="#{certifica2List.suspensionCauseForAllValue}" >
+					<a4j:support event="onchange" reRender="suspensionCauseForAll-div" />
+				</aon:inputText>
+				<aon:commandButton id="showSuspensionCauseWindow"
+					value="&#160;"
+					styleClass="aon-icon-commandButton aon-lookupButton aon-margin-left" >
+					<f:setPropertyActionListener
+						target="#{certifica2List.showSuspensionCauseWindow}" value="#{true}" />
+					<f:setPropertyActionListener
+						target="#{certifica2List.rowSuspensionCauseSelected}" value="#{false}" />
+				</aon:commandButton>
+				<aon:inputText disabled="#{true}" size="40"
+					value="#{certifica2List.suspensionCauseForAll}">
+					<rich:toolTip>
+						<aon:outputText value="#{certifica2List.suspensionCauseForAll}" />
+					</rich:toolTip>
+				</aon:inputText>
 				<aon:commandButton id="apply-massiveSuspensionCause"
 					disabled="#{certifica2List.checkHandler.checkedCount le 0}"
 					value="#{bundle.payroll_apply_to_all}"

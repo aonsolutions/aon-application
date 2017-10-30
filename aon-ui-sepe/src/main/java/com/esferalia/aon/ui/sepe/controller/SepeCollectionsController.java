@@ -57,7 +57,7 @@ public class SepeCollectionsController implements Serializable {
 			suspensionCauses = new LinkedList<SelectItem>();
 			SuspensionCause[] causes = SuspensionCause.values();
 			for (SuspensionCause c : causes) {
-				String name = c.getFullName(locale);
+				String name = c.getName(locale);
 				SelectItem item = new SelectItem(c, name);
 				suspensionCauses.add(item);
 			}

@@ -90,6 +90,11 @@
 					<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
 				</ui:include>
 				
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/modalSuspensionCause.xhtml">
+					<ui:param name="controller" value="#{certifica2List}" />
+					<ui:param name="reRender" value="listToolBarDiv, listDataDiv" />
+				</ui:include>
+				
 				<!-- SEPE ONLINE COMMUNICATION -->
 				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/certificados/modalCommunication.xhtml" >
 					<ui:param name="controller" value="#{certifica2Batch}" />

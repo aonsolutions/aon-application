@@ -8,7 +8,10 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +24,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -29,6 +33,7 @@ import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
+import com.esferalia.aon.ui.sepe.controller.SepeCollectionsController;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class Certifica2ListController extends BasicController {
@@ -37,14 +42,17 @@ public class Certifica2ListController extends BasicController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Certifica2ListController.class);
 
-	private boolean searchPanelExpanded;
-	
+	private boolean searchPanelExpanded;	
 	private Enterprise enterprise;
 	private Person person;
 	private Date endDateFrom;
 	private Date endDateTo;
 	
+	private boolean showSuspensionCauseWindow;
+	private boolean rowSuspensionCauseSelected;
+	private SerializableListDataModel suspensionCauseModel;
 	private SuspensionCause suspensionCauseForAll;
+	private Contract selectedRowContract;
 
 	private Certifica2BatchListCheckHandler checkHandler;
 	
@@ -57,6 +65,22 @@ public class Certifica2ListController extends BasicController {
 
 	public void setSearchPanelExpanded(boolean searchPanelExpanded) {
 		this.searchPanelExpanded = searchPanelExpanded;
+	}
+
+	public boolean isShowSuspensionCauseWindow() {
+		return showSuspensionCauseWindow;
+	}
+
+	public void setShowSuspensionCauseWindow(boolean showSuspensionCauseWindow) {
+		this.showSuspensionCauseWindow = showSuspensionCauseWindow;
+	}
+
+	public boolean isRowSuspensionCauseSelected() {
+		return rowSuspensionCauseSelected;
+	}
+
+	public void setRowSuspensionCauseSelected(boolean rowSuspensionCauseSelected) {
+		this.rowSuspensionCauseSelected = rowSuspensionCauseSelected;
 	}
 
 	public Date getEndDateFrom() {
@@ -75,12 +99,34 @@ public class Certifica2ListController extends BasicController {
 		this.endDateTo = endDateTo;
 	}
 
+	public Contract getSelectedRowContract() {
+		return selectedRowContract;
+	}
+
+	public void setSelectedRowContract(Contract selectedRowContract) {
+		this.selectedRowContract = selectedRowContract;
+	}
+
 	public SuspensionCause getSuspensionCauseForAll() {
 		return suspensionCauseForAll;
 	}
 
 	public void setSuspensionCauseForAll(SuspensionCause suspensionCauseForAll) {
 		this.suspensionCauseForAll = suspensionCauseForAll;
+	}
+	
+	public String getSuspensionCauseForAllValue() {
+		return suspensionCauseForAll!=null?suspensionCauseForAll.getValue():null;
+	}
+
+	public void setSuspensionCauseForAllValue(String value) {
+		setSuspensionCauseForAll(null);
+		if(StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)){
+			Integer ordinal = Integer.parseInt(value);
+			if(ordinal <= SuspensionCause.values().length){
+				setSuspensionCauseForAll(SuspensionCause.valueOf("C"+ordinal));
+			}
+		}
 	}
 	
 	public Certifica2BatchListCheckHandler getCheckHandler() {
@@ -114,6 +160,20 @@ public class Certifica2ListController extends BasicController {
 		return batchDetailList;
 	}
 
+	public String getRowSuspensionCauseValue() {
+		SuspensionCause row = getRowSuspensionCause();
+		return row!=null?row.getValue():null;
+	}
+
+	public void setRowSuspensionCauseValue(String value) {
+		if(StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)){
+			Integer ordinal = Integer.parseInt(value);
+			if(ordinal <= SuspensionCause.values().length){				
+				setRowSuspensionCause(SuspensionCause.valueOf("C"+ordinal));
+			}
+		}
+	}
+	
 	public SuspensionCause getRowSuspensionCause() {
 		try {
 			(((Contract)getModel().getRowData())).getId();
@@ -170,6 +230,7 @@ public class Certifica2ListController extends BasicController {
 		}
 		setEndDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
 		setEndDateTo(new Date());
+		setSuspensionCauseForAll(null);
 	}
 	
 	public void checkValidEndDate(){
@@ -265,6 +326,46 @@ public class Certifica2ListController extends BasicController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		super.onSearch(event);
+	}
+	
+	
+	
+	public SerializableListDataModel getSuspensionCauseModel(){
+		if(suspensionCauseModel==null){
+			SepeCollectionsController controller = (SepeCollectionsController) AonUtil.getRegisteredBean(ISepeConstants.COLLECTIONS_CONTROLLER_NAME);
+			suspensionCauseModel = new SerializableListDataModel(controller.getSuspensionCauses());
+		}
+		return suspensionCauseModel;
+	}
+	
+	public void onSelectSuspensionCauseForAll(ActionEvent event) {
+		if(suspensionCauseModel.isRowAvailable()){
+			setSuspensionCauseForAll((SuspensionCause) ((SelectItem)suspensionCauseModel.getRowData()).getValue());
+		}
+		setShowSuspensionCauseWindow(false);
+	}
+	
+	public void onSelectRowSuspensionCause(ActionEvent event) {
+		if(suspensionCauseModel.isRowAvailable()
+				&& getSelectedRowContract()!=null 
+				&& getSelectedRowContract().getId()!=null){
+			SuspensionCause suspensionCause = (SuspensionCause) ((SelectItem)suspensionCauseModel.getRowData()).getValue();
+			if ( suspensionCause!=null ) {
+				if ( !batchDetailList.containsKey(getSelectedRowContract().getId()) ) {
+					Certifica2BatchDetail detail = new Certifica2BatchDetail();
+					detail.setContract(getSelectedRowContract());
+					detail.setSuspensionCause(suspensionCause);
+					batchDetailList.put( getSelectedRowContract().getId(), detail );
+				} else {
+					batchDetailList.get( getSelectedRowContract().getId() ).setSuspensionCause(suspensionCause);
+				}
+			} else {
+				if ( batchDetailList.containsKey(getSelectedRowContract().getId()) ) {
+					batchDetailList.get( getSelectedRowContract().getId() ).setSuspensionCause(null);
+				}
+			}			
+		}
+		setShowSuspensionCauseWindow(false);
 	}
 	
 	public void onApplyAllSuspensionCause(ActionEvent event) {

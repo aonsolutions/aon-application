@@ -90,6 +90,10 @@
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/modalSuspensionCause.xhtml">
+			<ui:param name="controller" value="#{certifica2List}" />
+			<ui:param name="reRender" value="listToolBarDiv, listDataDiv" />
+		</ui:include>
 		
 	</ui:define>
 </ui:composition>

@@ -25,6 +25,7 @@ public interface ISepeConstants {
 	String EXTENSION_CONTRATA_CONTROLLER_NAME = "extensionContrata";
 	String SEPE_APP_PARAMS_CONTROLLER_NAME = "sepeAppParams";
 	String TRANSFORM_CONTRATA_CONTROLLER_NAME = "transformContrata";
+	String COLLECTIONS_CONTROLLER_NAME = "sepeCollections";
 
 	
 	// ************************************************************
