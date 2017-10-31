@@ -45,6 +45,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.util.PayrollUtils;
@@ -291,24 +292,27 @@ public class CertificadosWriter implements Serializable {
 	 * @return
 	 */
 	private TRABAJADORTYPE createTrabajadorType(Certifica2BatchDetail batchDetail) {
+		Contract contract = batchDetail.getContract();
 		SEPEUtils utils = SEPEUtils.getInstance();
-		String name = batchDetail.getContract().getPerson().getName();
-		String surname1 = batchDetail.getContract().getPerson().getFirstSurname();
-		String surname2 = batchDetail.getContract().getPerson().getSecondSurname();
-		String quoteGroup = utils.getContractDataMap(batchDetail.getContract(), Boolean.FALSE, Boolean.TRUE).get(ContextVariable.QUOTE_GROUP.getName());
-		String tc2 = utils.getContractDataMap(batchDetail.getContract(), Boolean.FALSE, Boolean.TRUE).get(ContextVariable.TC2.getName());
-		String occupation = utils.getContractDataMap(batchDetail.getContract(), Boolean.FALSE, Boolean.TRUE).get(ContextVariable.CNO.getName());
+		String name = contract.getPerson().getName();
+		String surname1 = contract.getPerson().getFirstSurname();
+		String surname2 = contract.getPerson().getSecondSurname();
+		String quoteGroup = utils.getContractDataMap(contract, Boolean.FALSE, Boolean.TRUE).get(ContextVariable.QUOTE_GROUP.getName());
+		String tc2 = utils.getContractDataMap(contract, Boolean.FALSE, Boolean.TRUE).get(ContextVariable.TC2.getName());
+		String occupation = utils.getContractDataMap(contract, Boolean.FALSE, Boolean.TRUE).get(ContextVariable.CNO.getName());
 
 		TRABAJADORTYPE o = new TRABAJADORTYPE();
 		
-		o.setDNINIE(batchDetail.getContract().getPerson().getRegistry().getDocument());
+		o.setDNINIE(contract.getPerson().getRegistry().getDocument());
 		o.setNombre(createNombreSimpleType(name));
 		o.setApellido1(createApellidoSimpleType(surname1));
 		o.setApellido2(StringUtils.isBlank(surname2)?null:createApellidoSimpleType(surname2));
-		o.setNumSS(batchDetail.getContract().getPerson().getSocialSecurityNumber());
-		o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
+		o.setNumSS(contract.getPerson().getSocialSecurityNumber());
+		if(contract.getEnterpriseCCC().getType()!=CCCType.AGRICULTURAL){
+			o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
+		}
 		o.setTipoContrato(tc2);
-		o.setDuracionContrato(completeLength(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString(),5,false));
+		o.setDuracionContrato(completeLength(differenceBetweenDates(contract.getStartDate(), contract.getEndDate()).toString(),5,false));
 		o.setIndicadorDuracionContrato(null);
 
 		o.setCodProfesion(completeLength(occupation,7, true));
@@ -319,9 +323,9 @@ public class CertificadosWriter implements Serializable {
 			o.setDedicacionCompleta(null);
 //		</xsd:choice>
 			
-		o.setFechaAltaEmpresa(createFechaSimpleType(batchDetail.getContract().getStartDate()));
+		o.setFechaAltaEmpresa(createFechaSimpleType(contract.getStartDate()));
 		o.setCodCausaSuspension(batchDetail.getSuspensionCause()!=null?batchDetail.getSuspensionCause().getValue():null);
-		o.setFechaSuspensionExtincion(createFechaSimpleType(batchDetail.getContract().getEndDate()));
+		o.setFechaSuspensionExtincion(createFechaSimpleType(contract.getEndDate()));
 		o.setFechaFinSuspension(null);
 		o.setERE(null);
 		o.setPorcentualReduccionERE(null);
@@ -341,7 +345,7 @@ public class CertificadosWriter implements Serializable {
 		
 		o.getDatosCotizacionREA().add(null);
 
-		o.setDatosVacacionesCotizadas(createVacacionesCotizadasType(batchDetail.getContract()));
+		o.setDatosVacacionesCotizadas(createVacacionesCotizadasType(contract));
 		o.setDatosVacacionesCotizadasREA(null);
 		return o;
 	}
