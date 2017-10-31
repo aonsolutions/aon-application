@@ -913,6 +913,15 @@ public abstract class AbstractSQLTestCase {
 		addData(aonContext, contract, startDate, endDate, variable.getName(), String.format("%f", value));
 	}
 
+	public static final void setData(AONContext aonContext, AgreementLevelCategoryRecord category, String name, String expression) {
+
+		aonContext.getDslContext()
+		.update(AGREEMENT_DATA)
+					.set(AGREEMENT_DATA.EXPRESSION, expression)
+					.where(AGREEMENT_DATA.NAME.eq(name))
+					.execute();
+	}
+
 	public static final void addData(AONContext aonContext, AgreementLevelCategoryRecord category, Date startDate,
 			Date endDate, Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
@@ -1038,7 +1047,7 @@ public abstract class AbstractSQLTestCase {
 
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,
 			String expression) {
-		addPayment(aonContext, contract, startDate, expression, SalaryType.SALARY);
+		addPayment(aonContext, contract, startDate, contract.getEndDate(), expression, SalaryType.SALARY);
 	}
 
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,Date endDate,
@@ -1095,8 +1104,10 @@ public abstract class AbstractSQLTestCase {
 	public static final void addIT(AONContext aonContext, ContractRecord contract, LeaveType type, Date startDate,
 			Date endDate, Double regulatoryBase) {
 		aonContext.getDslContext().insertInto(CONTRACT_LEAVE).set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
-				.set(CONTRACT_LEAVE.CONTRACT, contract.getId()).set(CONTRACT_LEAVE.START_DATE, startDate)
-				.set(CONTRACT_LEAVE.END_DATE, endDate).set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
+				.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
+				.set(CONTRACT_LEAVE.START_DATE, startDate)
+				.set(CONTRACT_LEAVE.END_DATE, endDate)
+				.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
 				// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
 				// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
 				.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
@@ -1104,6 +1115,10 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
+	public static void addPayment(AONContext aonContext, ContractRecord contract, String expression) {
+		addPayment(aonContext, contract, expression, "_P");
+	}
+	
 	public static void addPayment(AONContext aonContext, ContractRecord contract, String expression,
 			String quoteExpression) {
 		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT).set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())

@@ -38,6 +38,22 @@ import com.esferalia.aon.salary.expression.Period;
 
 public class SQLContractDelayCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
+	
+	
+	private static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
+
+		public DelaySQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate,
+				Date issueDate, Criteria criteria) throws SQLException, ExpressionException {
+			super(connection, startDate, endDate, issueDate, criteria);
+		}
+		
+		@Override
+		public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
+			return super.calculateBr(date);
+		}
+		
+	}
+	
 
 	public SQLContractDelayCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate) throws SQLException,
@@ -125,9 +141,9 @@ public class SQLContractDelayCalculatorContext extends
 		Collection<Period> periods = split(startDate, endDate);
 
 		for (Period period : periods) {
-			ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+			ISQLContractSalaryCalculatorContext ctx = new DelaySQLContractSalaryCalculatorContext(
 					connection, period.getStart(), period.getEnd(),
-					period.getEnd(), criteria);
+					period.getEnd(), criteria) ;
 			while (ctx.next()) {
 				calculator.calculate(ctx);
 				payments.addAll(delayPaymentBuilder.getContractPayments());

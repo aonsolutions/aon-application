@@ -1129,7 +1129,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			.findAny().ifPresent( r-> expressionContext.removeVariable(name));
 			
 
-			if (contractPayment.getType() != PaymentType.CRA_0055
+			if (contractPayment.getType() != PaymentType.CRA_0008
+					&& contractPayment.getType() != PaymentType.CRA_0055
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
 					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() > 0.00)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {

@@ -2912,6 +2912,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return br;
 
 		// No salaries are present.
+		return calculateBr(date);
+	}
+
+	public Object calculateBr(Date date) throws ExpressionException, SQLException, SalaryException {
+		int contractId = getId();
 		ISQLContractSalaryCalculatorContext ctx = (ISQLContractSalaryCalculatorContext) getNoItSalary(connection, date,
 				SalaryType.SALARY, contractId);
 		try {
@@ -2936,6 +2941,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			throw t;
 		}
 	}
+	
 
 	public Object br(Date start, Date end) throws ExpressionException, SalaryException, SQLException {
 		int count = 0;
