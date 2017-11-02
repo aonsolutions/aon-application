@@ -21,6 +21,8 @@
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
 								actionListener="#{inventory.onClosing}"
 								action="inventory_form"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')"
 								accesskey="#{bundle.aon_key_cancel}" />
 						</aon:if>
 						<aon:if test="#{inventory.closeButton2}">
@@ -29,6 +31,8 @@
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
 								actionListener="#{inventory.onContinueClosing}"
 								accesskey="#{bundle.aon_key_cancel}" 
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')"
 								reRender="showSeriesNumberWindow" >
 							</aon:commandButton>
 						</aon:if>
