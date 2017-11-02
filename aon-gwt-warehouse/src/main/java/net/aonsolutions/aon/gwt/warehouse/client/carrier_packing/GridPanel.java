@@ -6,11 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
-import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.google.gwt.cell.client.ActionCell;
@@ -122,7 +123,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsCarrierPacking> event) {
 				if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
-					if(event.getColumn() != 7) {
+					if(event.getColumn() != 5) {
 						Integer relRow = event.getIndex() - dataGrid.getPageStart();
 						Integer subrow = event.getContext().getSubIndex();
 						dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
@@ -304,14 +305,25 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(deliveryDateColumn, 12.5, Unit.PCT);
 		
 		/** CARRIER Column **/
-		Column<JsCarrierPacking,String> carrierColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
-			
-			@Override
-			public String getValue(JsCarrierPacking object) {
-				return object.getCarrier() != null ? object.getCarrier().getName() : "";
-			}
-		};
+		List<HasCell<JsCarrierPacking, ?>> cellsCarrier = new LinkedList<HasCell<JsCarrierPacking, ?>>();
+	    
+		cellsCarrier.add(new ActionHasCell("info", new Delegate<JsCarrierPacking>() {
+	    	
+	        @Override
+	        public void execute(JsCarrierPacking object) {
+	        	info(object);
+	        }
+	    }));
 		
+		CompositeCell<JsCarrierPacking> cellCarrier = new CompositeCell<JsCarrierPacking>(cellsCarrier);
+		
+		Column<JsCarrierPacking,JsCarrierPacking> carrierColumn = 	new Column<JsCarrierPacking, JsCarrierPacking>(cellCarrier){
+
+			@Override
+			public JsCarrierPacking getValue(JsCarrierPacking object) {
+				return object;
+			}
+		};		
 		carrierColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		carrierColumn.setSortable(true); 
 		sortHandler.setComparator(carrierColumn,new Comparator<JsCarrierPacking>() {
@@ -355,13 +367,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 	        @Override public void execute(JsCarrierPacking object) {}
 	    }));
 	    
-	    cells.add(new ActionHasCell("info", new Delegate<JsCarrierPacking>() {
-	    	
-	        @Override
-	        public void execute(JsCarrierPacking object) {
-	        	info(object);
-	        }
-	    }));
+	   
 		
 		CompositeCell<JsCarrierPacking> cell = new CompositeCell<JsCarrierPacking>(cells);
 		
@@ -378,97 +384,74 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 	}
 	
 	private void info(JsCarrierPacking js){
-		HashMap<String, LinkedList<String>> selectedFilter = new HashMap<>();
-		
-		LinkedList<String> list = new LinkedList<>();
-		list.add(js.getId() + "");
-		selectedFilter.put("carrier_packing", list);
-		
-		// -------------------- per page
-		list = new LinkedList<>();
-		list.add("30");
-		selectedFilter.put("per_page", list);
-		
-		// -------------------- page
-		list = new LinkedList<>();
-		list.add("1");
-		selectedFilter.put("page", list);
-		Boolean isSc = (js.getType().getId() +"") == "0";
-		parent.getAPI().getWarehouse().getOrders(isSc ? "purchase" : "delivery",
-				selectedFilter, new AsyncCallback<JSON<JsOrder>>() {
+		String registry = js.getCarrier().getId() + "";
+		parent.getAPI().getIncidence().getEnterpriseRmediaList(Integer.parseInt(registry), new AsyncCallback<JSON<JsRmedia>>() {
 			
 			@Override
-			public void onSuccess(JSON<JsOrder> result) {
+			public void onSuccess(JSON<JsRmedia> result) {
+				FlexTable grid = new FlexTable();
+				grid.setStyleName("aon-panelGrid");
 
-				
-				parent.getAPI().getWarehouse().getOrders("income", selectedFilter, new AsyncCallback<JSON<JsOrder>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsOrder> result2) {
-						FlexTable grid = new FlexTable();
-						grid.setStyleName("aon-panelGrid");
-						grid.setWidget(0, 0, new Label(isSc ? "Proveedores" : "Clientes"));
+				LinkedList<JsRmedia> r = result.getData().toLinkedList();
+				for(Integer i=0; i < r.size(); i++) {
+					String m = r.get(i).getMedia() + "";
+					grid.setWidget(i, 0, new Label(getMediaName(Integer.parseInt(m))));
+					grid.setWidget(i, 1, new Label(r.get(i).getValue()));
+				}
 
-						String registry = result.getData().toLinkedList().size() > 0 ? result.getData().toLinkedList().get(0).getRegistry().getName() : "-";						
-						for(Integer i = 1 ; i < result.getData().toLinkedList().size(); i++) {
-							registry = registry + "; " + result.getData().toLinkedList().get(i).getRegistry().getName();
-						}
-						grid.setWidget(0, 1, new Label(registry));
-						
-						grid.setWidget(1, 0, new Label("Lote"));
-						
-						if(result2.getData().toLinkedList().size() <= 0 ) {
-							grid.setWidget(1, 1, new Label("-"));
+				for (int i = 0; i < grid.getRowCount(); i++) {
+					for (int j = 0; j < grid.getCellCount(i); j++) {
+						if ((j % 2) == 0) {
+							grid.getCellFormatter().setStyleName(i, j,
+									"aon-panelGrid-odd");
 						} else {
-							String desc = "";
-							for(Integer i = 0 ; i < result2.getData().toLinkedList().size(); i++) {
-								for(Integer j = 0; j < result2.getData().toLinkedList().get(i).getDetails().toLinkedList().size(); j++) {
-									if(i == 0 && j == 0) {
-										desc = result2.getData().toLinkedList().get(i).getDetails().get(j).getDescription();
-									} else {
-										desc = desc + "; " + result2.getData().toLinkedList().get(i).getDetails().get(j).getDescription();
-									}
-								}
-							}
-							grid.setWidget(1, 1, new Label(desc));
-						}
-						for (int i = 0; i < grid.getRowCount(); i++) {
-							for (int j = 0; j < grid.getCellCount(i); j++) {
-								if ((j % 2) == 0) {
-									grid.getCellFormatter().setStyleName(i, j,
-											"aon-panelGrid-odd");
-								} else {
-									grid.getCellFormatter().setStyleName(i, j,
-											"aon-panelGrid-even");
-								}   
-							}
-						}	
-						
-						AonDialog dialog = new AonDialog("Informaci\u00f3n Adicional", grid) {
-							
-							@Override 
-							protected void onCancel() {
-								hide();
-							}
-							
-							@Override 
-							protected void onAccept() {
-								hide();
-							}
-						};
-						dialog.getCancel().setVisible(false);
-						dialog.setAutoHideEnabled(true);
-						dialog.getElement().getStyle().setWidth(310, Unit.PX);
-						dialog.center();
+							grid.getCellFormatter().setStyleName(i, j,
+									"aon-panelGrid-even");
+						}   
+					}
+				}	
+
+				AonDialog dialog = new AonDialog("Informaci\u00f3n Adicional", grid) {
+					
+					@Override 
+					protected void onCancel() {
+						hide();
 					}
 					
-					@Override public void onFailure(Throwable caught) {}
-				});	
+					@Override 
+					protected void onAccept() {
+						hide();
+					}
+				};
+
+				dialog.getCancel().setVisible(false);
+				dialog.setAutoHideEnabled(true);
+				dialog.getElement().getStyle().setWidth(310, Unit.PX);
+				dialog.center();
 			}
 			
-			@Override public void onFailure(Throwable caught) {}
+			@Override
+			public void onFailure(Throwable caught) {
+			
+			}
 		});
+	
 	}
+	
+	private String getMediaName(Integer media) {
+		if(MediaType.EMAIL.equals(MediaType.values()[media])){
+			return "Email";
+		} else if(MediaType.CELLULAR.equals(MediaType.values()[media])){
+			return "M\u00f3vil";
+		} else if(MediaType.FAX.equals(MediaType.values()[media])){
+			return "Fax";
+		} else if(MediaType.FIXED_PHONE.equals(MediaType.values()[media])){
+			return "Tel\u00e9fono";
+		} else if(MediaType.WEB.equals(MediaType.values()[media])){
+			return "Web";
+		} else return "desconocido";
+	}
+	
 	private class ActionHasCell implements HasCell<JsCarrierPacking, JsCarrierPacking> {
 	    private ActionCell<JsCarrierPacking> cell;
 	    String s;
@@ -488,11 +471,10 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 	        			sb.appendHtmlConstant("<button  alt=\""+ value.getStatus().getName() +"\" type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
 						sb.appendHtmlConstant("</button>");		
 	        		}
-	        	/*	if(text.equals("info")){
-	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\">");
+	        		if(text.equals("info")){
+	        			sb.appendHtmlConstant(value.getCarrier().getName() + "<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\">");
 	        			sb.appendHtmlConstant("</button>");
 	        		}
-	        	*/
 	        	}
 	        };
 	        
