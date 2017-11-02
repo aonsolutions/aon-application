@@ -221,7 +221,7 @@ public class DomainInfo implements Serializable {
 		for( Module module : this.bookinModules ) {
 			String name = null;
 			if ( isDomainManagement() && (module == Module.PAYROLL_PORTAL) ) {
-				name = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
+				name = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL_ACCESS);
 			} else {
 				name = module.getName(locale);
 			}

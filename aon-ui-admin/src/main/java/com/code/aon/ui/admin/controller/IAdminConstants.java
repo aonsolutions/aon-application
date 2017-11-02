@@ -47,5 +47,7 @@ public interface IAdminConstants {
 	int ACCOUNTING_PORTAL = 16;
 	int ACTIVE_PORTAL = 32;
 	int INACTIVE_PORTAL = 64;
+	int DOCUMENTAL_MANAGEMENT_PORTAL = 128;
+	int FINANCE_MANAGEMENT_PORTAL = 256;
 	
 }

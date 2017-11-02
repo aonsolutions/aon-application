@@ -86,7 +86,10 @@ public class BookingInfo implements Serializable {
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
 		this.bookingModules = calculateBookingModules();
 		this.displayModules = calculateDisplayModules();
-		return updateModules();
+		boolean retValue = updateModules();
+		this.aioInfo.sortApplicationModules(this.bookingModules);
+		this.aioInfo.sortApplicationModules(this.displayModules);
+		return retValue;
 	}
 	
 	private void initExternalApplications() {
@@ -129,6 +132,9 @@ public class BookingInfo implements Serializable {
 	}
 	
 	public void save() throws ManagerBeanException {
+		if (aioInfo.getModuleInfo(Module.FINANCE_PORTAL).isChecked() && !aioInfo.getModuleInfo(Module.PAYROLL_PORTAL).isChecked()) {
+			aioInfo.getModuleInfo(Module.PAYROLL_PORTAL).setChecked(true);
+		}
 		saveExternalApplications();
 		savePayerDomain();
 		if ( isAonOne() ) {
@@ -207,8 +213,14 @@ public class BookingInfo implements Serializable {
 		}
 	}
 	
+	public void onFinancePortalChanged( ActionEvent event ) {
+		if (this.aioInfo.getModuleInfo(Module.FINANCE_PORTAL).isChecked() ) {
+			this.aioInfo.getModuleInfo(Module.PAYROLL_PORTAL).setChecked(true);
+		}
+	}
+	
 	private boolean updateModules() throws ManagerBeanException {
-		convertToNewCofiguration();
+		convertToNewConfiguration();
 		this.documental = this.aioInfo.getModuleInfo(Module.DOCUMENT);
 		if ( getDomain().getType() == DomainType.ENTERPRISE ) {
 			updateEnterpriseModules();	
@@ -217,7 +229,7 @@ public class BookingInfo implements Serializable {
 		return this.aioInfo.updateApplicationModules();
 	}	
 
-	private void convertToNewCofiguration() throws ManagerBeanException {
+	private void convertToNewConfiguration() throws ManagerBeanException {
 		DomainModuleInfo contrata =  aioInfo.getModuleInfo(Module.CONTRATA);
 		contrata.setChecked(false);
 
@@ -227,7 +239,7 @@ public class BookingInfo implements Serializable {
 			payrollPortal.setChecked(true);
 		}
 		documentPortal.setChecked(false);
-		String description = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
+		String description = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL_ACCESS);
 		payrollPortal.setDescription(description);
 	}
 	
@@ -260,6 +272,7 @@ public class BookingInfo implements Serializable {
 				list.add(aioInfo.getModuleInfo(Module.PAYROLL));
 				list.add(aioInfo.getModuleInfo(Module.DOCUMENT));
 				list.add(aioInfo.getModuleInfo(Module.PAYROLL_PORTAL));
+				list.add(aioInfo.getModuleInfo(Module.FINANCE_PORTAL));
 				break;
 			case OFFICE:
 				list.add(aioInfo.getModuleInfo(Module.FISCAL));

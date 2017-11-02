@@ -316,6 +316,9 @@ public class DesktopState implements Serializable {
 		if ( isDocumentalInfoVisibleForPortal() ) {
 			categories = (String[]) ArrayUtils.add(categories, Module.DOCUMENT.getName());
 		}
+		if ( this.portalInfo.isFinanceManagement() ) {
+			categories = (String[]) ArrayUtils.add(categories, Module.FINANCE_PORTAL.getName());
+		}
 		return categories;
 	}
 	

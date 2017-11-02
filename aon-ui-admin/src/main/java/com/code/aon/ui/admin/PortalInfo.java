@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.admin.controller.IAdminConstants;
@@ -27,14 +26,10 @@ public class PortalInfo implements Serializable {
 	private int value;
 	
 	private boolean showAccountingInfo;
-	
 	private boolean showFiscalInfo;
-	
 	private boolean showPayrollInfo;
-	
 	private boolean showDocumentalInfo;
-	
-	private boolean showPayrollPortal;
+	private boolean showFinanceManagement;
 	
 	public PortalInfo() {
 		this.value = AppParamUtil.getValueAsInt(AppParam.AON_PORTAL);
@@ -56,7 +51,6 @@ public class PortalInfo implements Serializable {
 	private void calculateAvalilableOptions() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer parentDomainId = ds.getParentDomainId();
-		Integer domainId = DomainManager.getCurrentDomain();
 		Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
 		try {
 			this.showAccountingInfo = AuditManager.hasModule(parentDomainId, appId, Module.ACCOUNTING);
@@ -75,10 +69,9 @@ public class PortalInfo implements Serializable {
 			if (! this.showDocumentalInfo ) {
 				setDocumentalInfo(false);
 			}
-			this.showPayrollPortal = AuditManager.hasModule(parentDomainId, appId, Module.PAYROLL_PORTAL) ||
-					AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);
-			if (! this.showPayrollPortal ) {
-				setPayrollPortal(false);
+			this.showFinanceManagement = AuditManager.hasModule(parentDomainId, appId, Module.FINANCE_PORTAL);
+			if (! this.showFinanceManagement ) {
+				setFinanceManagement(false);
 			}
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
@@ -87,27 +80,23 @@ public class PortalInfo implements Serializable {
 	
 	public void update() {
 		setPortalValue(!isActive(), IAdminConstants.INACTIVE_PORTAL);
-		AppParamUtil.insertParameter(AppParam.AON_PORTAL, value);		
+		AppParamUtil.insertParameter(AppParam.AON_PORTAL, value);
 	}
 	
 	public boolean isShowAccountingInfo() {
 		return showAccountingInfo;
 	}
-
 	public boolean isShowFiscalInfo() {
 		return showFiscalInfo;
 	}
-
 	public boolean isShowPayrollInfo() {
 		return showPayrollInfo;
 	}
-
 	public boolean isShowDocumentalInfo() {
 		return showDocumentalInfo;
 	}
-
-	public boolean isShowPayrollPortal() {
-		return showPayrollPortal;
+	public boolean isShowFinanceManagement() {
+		return showFinanceManagement;
 	}
 
 	private boolean getPortalValue(int bitwise) {
@@ -134,8 +123,8 @@ public class PortalInfo implements Serializable {
 		return getPortalValue(IAdminConstants.ACCOUNTING_PORTAL);
 	}
 		
-	public void setAccountingInfo(boolean fiscalInfo) {
-		setPortalValue(fiscalInfo, IAdminConstants.ACCOUNTING_PORTAL);
+	public void setAccountingInfo(boolean accountingInfo) {
+		setPortalValue(accountingInfo, IAdminConstants.ACCOUNTING_PORTAL);
 	}	
 	
 	public boolean isFiscalInfo() {
@@ -144,6 +133,14 @@ public class PortalInfo implements Serializable {
 		
 	public void setFiscalInfo(boolean fiscalInfo) {
 		setPortalValue(fiscalInfo, IAdminConstants.FISCAL_INFO_PORTAL);
+	}
+
+	public boolean isPayrollInfo() {
+		return getPortalValue(IAdminConstants.PAYROLL_INFO_PORTAL);
+	}
+
+	public void setPayrollInfo(boolean payrollInfo) {
+		setPortalValue(payrollInfo, IAdminConstants.PAYROLL_INFO_PORTAL);
 	}
 
 	public boolean isPayrollPortal() {
@@ -162,14 +159,26 @@ public class PortalInfo implements Serializable {
 		setPortalValue(documentalInfo, IAdminConstants.DOCUMENTAL_INFO_PORTAL);
 	}
 	
-	public boolean isPayrollInfo() {
-		return getPortalValue(IAdminConstants.PAYROLL_INFO_PORTAL);
+	public boolean isDocumentalManagement() {
+		return getPortalValue(IAdminConstants.DOCUMENTAL_MANAGEMENT_PORTAL);
 	}
 
-	public void setPayrollInfo(boolean payrollInfo) {
-		setPortalValue(payrollInfo, IAdminConstants.PAYROLL_INFO_PORTAL);
+	public void setDocumentalManagement(boolean documentalManagement) {
+		setPortalValue(documentalManagement, IAdminConstants.DOCUMENTAL_MANAGEMENT_PORTAL);
+	}
+	
+	public boolean isFinanceManagement() {
+		return getPortalValue(IAdminConstants.FINANCE_MANAGEMENT_PORTAL);
 	}
 
+	public void setFinanceManagement(boolean financeManagement) {
+		setPortalValue(financeManagement, IAdminConstants.FINANCE_MANAGEMENT_PORTAL);
+	}
+	
+	public boolean isShowManagement() {
+		return isShowFinanceManagement() || isShowDocumentalInfo();
+	}
+	
 	public boolean isShowInfo() {
 		return isShowDocumentalInfo() || isShowFiscalInfo() || isShowPayrollInfo() || isShowAccountingInfo();
 	}

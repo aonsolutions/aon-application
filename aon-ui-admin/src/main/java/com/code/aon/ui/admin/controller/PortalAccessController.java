@@ -44,8 +44,16 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	private final static String PAYROLL_PORTAL_OPTION = "gwt_enterprise_site";
 	
 	private final static String PAYROLL_PORTAL_PROFILE = "Portal Laboral";
+
+	private final static String DOCUMENTAL_PORTAL_PROFILE = "Portal Documental";
+
+	private final static String FINANCE_PORTAL_PROFILE = "Portal Gestion";
 	
 	private Profile payrollPortalProfile;
+	
+	private Profile documentalPortalProfile;
+	
+	private Profile financePortalProfile;
 	
 	private User user;
 	
@@ -62,17 +70,19 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	public PortalAccessController() {
 		this.idCheck = new UserIdCheckUtil();
 		try {
-			this.payrollPortalProfile = getPayrollPortalProfile();
+			this.payrollPortalProfile = getPortalProfile(PAYROLL_PORTAL_PROFILE);
+			this.documentalPortalProfile = getPortalProfile(DOCUMENTAL_PORTAL_PROFILE);
+			this.financePortalProfile = getPortalProfile(FINANCE_PORTAL_PROFILE);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error getting profile 'Portal Laboral'", e);
 		}
 	}
 	
-	private Profile getPayrollPortalProfile() throws ManagerBeanException {
+	private Profile getPortalProfile(String profileName) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Profile.class);
 		Criteria criteria = new Criteria();
 		criteria.addNullExpression("Profile.domain");
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROFILE_NAME), PAYROLL_PORTAL_PROFILE);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROFILE_NAME), profileName);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			return (Profile) list.get(0);
@@ -256,35 +266,53 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	}
 
 	private void ensureProfiles(ApplicationUser appUser) throws ManagerBeanException {
-		boolean profileExists = false;
+		boolean payrollProfileExists = false;
+		boolean documentalProfileExists = false;
+		boolean financeProfileExists = false;
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID), appUser.getId());
 		List<ITransferObject> list = bean.getList(criteria);
-		for( ITransferObject to : list ) {
+		for(ITransferObject to : list) {
 			ApplicationUserProfile aup = (ApplicationUserProfile) to;
-			if ( aup.getProfile().equals(payrollPortalProfile) ) {
-				profileExists = true;
-				if (! (this.info.isPayrollPortal() || this.info.isPayrollInfo()) ) {
+			if (aup.getProfile().equals(payrollPortalProfile)) {
+				payrollProfileExists = true;
+				if (!(this.info.isPayrollPortal() || this.info.isPayrollInfo())) {
 					bean.remove(aup);
-					return;
 				}
-				break;
+			}
+			if (aup.getProfile().equals(documentalPortalProfile)) {
+				documentalProfileExists = true;
+				if (!this.info.isDocumentalManagement()) {
+					bean.remove(aup);
+				}
+			}
+			if (aup.getProfile().equals(financePortalProfile)) {
+				financeProfileExists = true;
+				if (!this.info.isFinanceManagement()) {
+					bean.remove(aup);
+				}
 			}
 		}
-		if (! profileExists && (this.info.isPayrollPortal() || this.info.isPayrollInfo())) {
+		if (!payrollProfileExists && (this.info.isPayrollPortal() || this.info.isPayrollInfo())) {
 			ApplicationUserProfile aup = new ApplicationUserProfile();
 			aup.setApplicationUser(appUser);
 			aup.setProfile(payrollPortalProfile);
 			bean.insert(aup);
 		}
-	}
-	
-	public void onInfoChanged( ActionEvent event ) {
-		if ( this.info.isInfoEnabled() && this.info.isShowPayrollPortal() ) {
-			this.info.setPayrollPortal(false);
+		if (!documentalProfileExists && this.info.isDocumentalManagement()) {
+			ApplicationUserProfile aup = new ApplicationUserProfile();
+			aup.setApplicationUser(appUser);
+			aup.setProfile(documentalPortalProfile);
+			bean.insert(aup);
 		}
-	}	
+		if (!financeProfileExists && this.info.isFinanceManagement()) {
+			ApplicationUserProfile aup = new ApplicationUserProfile();
+			aup.setApplicationUser(appUser);
+			aup.setProfile(financePortalProfile);
+			bean.insert(aup);
+		}
+	}
 	
 	public void onPayrollPortalChanged( ActionEvent event ) {
 		if ( this.info.isPayrollPortal() && this.info.isShowInfo() ) {

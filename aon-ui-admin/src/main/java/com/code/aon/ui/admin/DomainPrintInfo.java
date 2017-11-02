@@ -123,7 +123,7 @@ public class DomainPrintInfo implements Serializable {
 					if ( dam.getModule() != Module.AON_ONE ) {
 						String name = null;
 						if ( domain.isDomainManagement() && (dam.getModule() == Module.PAYROLL_PORTAL) ) {
-							name = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
+							name = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL_ACCESS);
 						} else {
 							name = dam.getModule().getName(locale);
 						}
