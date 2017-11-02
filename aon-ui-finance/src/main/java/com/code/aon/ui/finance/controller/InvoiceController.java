@@ -1845,22 +1845,31 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);		
 	}
 	
-	public boolean isDefinedOcrUrl(){
-		ApplicationParameter urlParam = AppParamUtil.getParameter("OCR_URL");
-		return urlParam!=null && StringUtils.isNotBlank(urlParam.getValue());
+	public boolean isDefinedOcrUrl() {
+		String url = obtainOcrUrl();
+		return url!=null && StringUtils.isNotBlank(url);
 	}
 	
-	// TODO
-	public void processOcr(ActionEvent event){
+	private String obtainOcrUrl() {
 		ApplicationParameter urlParam = AppParamUtil.getParameter("OCR_URL");
-		if(urlParam!=null && StringUtils.isNotBlank(urlParam.getValue())){
+		return urlParam!=null?urlParam.getValue():null;
+	}
+	
+	public void processOcr(ActionEvent event) {
+		String url = obtainOcrUrl();
+		if(url!=null && StringUtils.isNotBlank(url)){
 			try {
+				Invoice invoice = (Invoice) this.getTo();
 				InvoiceOcrProcess ocr = new InvoiceOcrProcess();
-				ocr.execute(urlParam.getValue(), AonUtil.getDomainName(), getInvoiceAttachFile().getData(), (Invoice) this.getTo());
-//				ocr.execute(urlParam.getValue(), AonUtil.getDomainName(), null, (Invoice) this.getTo());
+				ocr.process(url, AonUtil.getDomainName(), invoice, getInvoiceAttachFile().getData());
+				
+				loadAddresses(invoice.getRegistry().getId());
+				invoice.setRegistry(invoice.getRegistry().getRegistry());
+				invoice.setRegistryAddress(invoice.getRegistry().getDefaultAddress());
+				invoice.setRegistryDocumentCountry(invoice.getRegistry().getDocumentCountry());
+				invoice.setRegistryDocumentType(invoice.getRegistry().getDocumentType());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage());
 			}
 		} else {
 			AonUtil.addInfoMessage("No se ha definido la URL de procesamiento OCR.");

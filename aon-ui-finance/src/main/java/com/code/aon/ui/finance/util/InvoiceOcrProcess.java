@@ -9,16 +9,80 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.List;
 import java.util.Scanner;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.Registry;
+import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.finance.controller.ExpenseInvoiceController;
+import com.code.aon.ui.finance.controller.ExpenseInvoiceDetailController;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.finance.controller.PurchaseInvoiceController;
+import com.code.aon.ui.finance.controller.PurchaseInvoiceDetailController;
+import com.code.aon.ui.finance.controller.UndeductibleInvoiceController;
+import com.code.aon.ui.form.FormUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceOcrProcess {
 	
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	public void process(String path, String domain, Invoice invoice, byte[] data) throws Exception {
+		execute(path, domain, data, invoice);
+		
+		IRegistry ir = null;
+		IManagerBean bean = null;
+		bean = BeanManager.getManagerBean(Registry.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DOCUMENT), invoice.getRegistryDocument());
+		
+		List<ITransferObject> list = bean.getList(criteria);
+		if(list!=null && !list.isEmpty()){
+			Registry r = (Registry) list.get(0);
+			if(invoice.isPurchase()){
+				bean = BeanManager.getManagerBean(Supplier.class);
+				ir = ((Supplier) bean.get(r.getId()));
+				
+				PurchaseInvoiceController invoiceController = (PurchaseInvoiceController) FormUtil.getController(IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME);	
+				invoiceController.supplierChanged((Supplier)ir);
+			} else if(invoice.isExpense()){
+				bean = BeanManager.getManagerBean(Creditor.class);
+				ir = ((Creditor) bean.get(r.getId()));
+				
+				ExpenseInvoiceController invoiceController = (ExpenseInvoiceController) FormUtil.getController(IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME);	
+				invoiceController.creditorChanged((Creditor)ir);
+			} else if(invoice.isUndeductible()){
+				bean = BeanManager.getManagerBean(Creditor.class);
+				ir = ((Creditor) bean.get(r.getId()));
+				
+				UndeductibleInvoiceController invoiceController = (UndeductibleInvoiceController) FormUtil.getController(IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME);	
+				invoiceController.creditorChanged((Creditor)ir);
+			}
+		}
+		
+		if(invoice.isPurchase()){
+			PurchaseInvoiceDetailController detailController = (PurchaseInvoiceDetailController) FormUtil.getController(IFinanceConstants.PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
+			detailController.quantityChanged(1);
+			detailController.priceChanged(invoice.getTotal());
+			detailController.fillTaxDataInDetail(false, true);
+		} else if(invoice.isExpense() || invoice.isUndeductible()){
+			ExpenseInvoiceDetailController detailController = (ExpenseInvoiceDetailController) FormUtil.getController(IFinanceConstants.EXPENSE_INVOICE_DETAIL_CONTROLLER_NAME);
+			InvoiceDetail invoiceDetail = (InvoiceDetail)detailController.getTo();
+			detailController.setTotalChanged(invoice.getTotal());
+			detailController.totalChanged(invoiceDetail);
+		}
+	}
 				
 	public void execute(String path, String domain, byte[] data, Invoice invoice) throws Exception {
 		if(data!=null){
