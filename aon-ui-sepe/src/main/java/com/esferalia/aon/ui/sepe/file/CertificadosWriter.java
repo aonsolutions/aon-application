@@ -339,14 +339,18 @@ public class CertificadosWriter implements Serializable {
 			o.setDistribucionJornadas(createDistribucionJornadasType(batchDetail));
 		}
 		
-		for(COTIZACIONTYPE cotizacion: getCotizacionList(batchDetail)){
-			o.getDatosCotizacion().add(cotizacion);
+		if(contract.getEnterpriseCCC().getType()!=CCCType.AGRICULTURAL){
+			for(COTIZACIONTYPE cotizacion: getCotizacionList(batchDetail)){
+				o.getDatosCotizacion().add(cotizacion);
+			}
+			o.setDatosVacacionesCotizadas(createVacacionesCotizadasType(contract));
+		} else {
+			for(COTIZACIONREATYPE cotizacion: getCotizacionReaList(batchDetail)){
+				o.getDatosCotizacionREA().add(cotizacion);
+			}
+			o.setDatosVacacionesCotizadasREA(null);
 		}
-		
-		o.getDatosCotizacionREA().add(null);
 
-		o.setDatosVacacionesCotizadas(createVacacionesCotizadasType(contract));
-		o.setDatosVacacionesCotizadasREA(null);
 		return o;
 	}
 	
@@ -560,7 +564,6 @@ public class CertificadosWriter implements Serializable {
 					COTIZACIONTYPE cotizacion = createCotizacionType( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, 
 							salary.getTimeUnits(), baseCg, baseAcc, null);
 					cotizacionList.add(cotizacion);
-//					System.out.println("__cotizacion: " + cotizacion.getMes()+"/"+cotizacion.getAno());
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -588,16 +591,81 @@ public class CertificadosWriter implements Serializable {
 	 * 
 	 * @return
 	 */
-	private COTIZACIONREATYPE createCotizacionReaType(){
+	private COTIZACIONREATYPE createCotizacionReaType(int year, int month, String quoteGroup,
+			Integer contributionDays, Integer journalDays,
+			Double cgcContributionBase, Double unemploymentContributionBase,
+			String comments){
 		COTIZACIONREATYPE o = new COTIZACIONREATYPE();
-		o.setAno(createAnioSimpleType(null));
-		o.setMes(createMesSimpleType(null));
-		o.setGrupoCotizacion(createN2BasicType(null));
-		o.setNumDiasCotizados(createDiasCotizReaSimpleType());
-		o.setNumJornadasCotizadas(createJornCotizReaSimpleType());
-		o.setBaseCotizacionDesempleo(createN9BasicType(null));
-		o.setObservaciones(createBigStringBasicType(null));
+		o.setAno(String.valueOf(year));
+		o.setMes(completeLength(String.valueOf(month), 2,false));
+		o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
+		o.setNumDiasCotizados(contributionDays!=null?completeLength(contributionDays.toString(), 2,false):null);
+		o.setNumJornadasCotizadas(journalDays!=null?completeLength(journalDays.toString(), 2,false):null);
+		o.setBaseCotizacionDesempleo(completeLength(unemploymentContributionBase, 9,false));
+		o.setObservaciones(createBigStringBasicType(comments));
 		return o;
+	}
+	
+	private List<COTIZACIONREATYPE> getCotizacionReaList(Certifica2BatchDetail detail) {
+		SEPEUtils utils = SEPEUtils.getInstance();
+		List<ISalary> salaryList = null;
+		List<COTIZACIONREATYPE> cotizacionList = null;
+		Integer totalDias = 0;
+		Calendar calInicio = new GregorianCalendar();
+		Calendar calFin = new GregorianCalendar();
+		calInicio.setTime(detail.getContract().getStartDate());
+		calFin.setTime(detail.getContract().getEndDate());
+		calFin.set(Calendar.DAY_OF_MONTH, calFin.getActualMaximum(Calendar.DAY_OF_MONTH));
+		cotizacionList = new ArrayList<COTIZACIONREATYPE>();
+		List<ISalary> delayList;
+		try {
+			delayList = getSalaries(detail.getContract(), detail.getContract().getStartDate(), detail.getContract().getEndDate(), SalaryType.DELAY);
+			while((calInicio.before(calFin) || calInicio.equals(calFin)) && totalDias < 180) {
+				Calendar startDate = new GregorianCalendar();
+				Calendar endDate = new GregorianCalendar();
+				startDate.setTime(new Date(calFin.getTimeInMillis()));
+				endDate.setTime(new Date(calFin.getTimeInMillis()));
+				startDate.set(Calendar.DAY_OF_MONTH, 1);
+				endDate.set(Calendar.DAY_OF_MONTH, startDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+				salaryList = getSalaries(detail.getContract(), startDate.getTime(), endDate.getTime());
+				calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
+				for(ISalary salary: salaryList){
+					Double baseCg = salary.getCommonBase();
+					Double baseAcc = salary.getProfessionalBase();
+					
+					// obtener las bases de los atrasos de las nominas
+					if(delayList.size()>0){
+						baseCg += getDelayBaseAmount(delayList, startDate.getTime(), endDate.getTime(), ContextVariable.CGC_BASE);
+						baseAcc += getDelayBaseAmount(delayList, startDate.getTime(), endDate.getTime(), ContextVariable.CGP_BASE);
+					}
+					
+					List<SalaryData> journalDaysList = utils.getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), "JORNADAS_REALES");
+					Integer journalDays = null;
+					try {
+						journalDays = journalDaysList!=null && journalDaysList.size()>0 ? Integer.parseInt(journalDaysList.get(0).getExpression()) : null;
+					} catch (NumberFormatException e) {
+						LOGGER.error("No se han podido obtener las jornadas reales", e);
+					}
+					Integer quoteDays = null;
+					if(journalDays==null || journalDays==0){
+						quoteDays = salary.getTimeUnits();
+					}
+					
+					totalDias += salary.getTimeUnits();
+					Calendar cal = new GregorianCalendar();
+					cal.setTime(salary.getEndDate());
+					COTIZACIONREATYPE cotizacion = createCotizacionReaType( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, 
+							salary.getQuoteGroup(), quoteDays, journalDays, baseCg, baseAcc, null);
+					cotizacionList.add(cotizacion);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Ha ocurrido un error al obtener datos de las nominas.";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(msg, e);
+		}
+		return cotizacionList;
 	}
 	
 	/**
@@ -698,7 +766,8 @@ public class CertificadosWriter implements Serializable {
 	 * 
 	 * @return
 	 */
-	private TRABAJADORTYPE.DatosVacacionesCotizadasREA createVacacionesCotizadasReaType(){
+	private TRABAJADORTYPE.DatosVacacionesCotizadasREA createVacacionesCotizadasReaType(Contract contract){
+		// TODO createVacacionesCotizadasReaType()
 		TRABAJADORTYPE.DatosVacacionesCotizadasREA o = new TRABAJADORTYPE.DatosVacacionesCotizadasREA();
 		o.setGrupoCotizacion(createN2BasicType(null));
 		o.setNumDiasCotizados(createN2BasicType(null));
@@ -922,8 +991,8 @@ public class CertificadosWriter implements Serializable {
 	 * 
 	 * @return
 	 */
-	private String createDiasCotizReaSimpleType(){
-		return null;
+	private String createDiasCotizReaSimpleType(Integer days){
+		return completeLength(days, 2);
 	}
 	
 	/**
@@ -935,8 +1004,8 @@ public class CertificadosWriter implements Serializable {
 	 * 
 	 * @return
 	 */
-	private String createJornCotizReaSimpleType(){
-		return null;
+	private String createJornCotizReaSimpleType(Integer days){
+		return completeLength(days,  2);
 	}
 
 	/**
@@ -949,7 +1018,7 @@ public class CertificadosWriter implements Serializable {
 	 * @return
 	 */
 	private String createVacacJornCotizReaSimpleType(){
-		return null;
+		return "00";
 	}
 	
 	// *************************************** 
@@ -1108,7 +1177,9 @@ public class CertificadosWriter implements Serializable {
 	 * @return
 	 */
 	private String createSmallStringBasicType(String value){
-		return null;
+		if(value==null)
+			return null;
+		return value.length()>50?value.substring(0, 10):value;
 	}
 	
 	/**
@@ -1122,7 +1193,9 @@ public class CertificadosWriter implements Serializable {
 	 * @return
 	 */
 	private String createBigStringBasicType(String value){
-		return null;
+		if(value==null)
+			return null;
+		return value.length()>50?value.substring(0, 50):value;
 	}
 	
 	/**

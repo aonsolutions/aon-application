@@ -4,6 +4,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE229;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
 import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificate;
+import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificateSea;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contract.pdf.internship.InternshipModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
@@ -12,6 +13,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.PracticeModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.TemporaryModel;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 
 
 public class ContractPdfFactory<E> {
@@ -51,7 +53,11 @@ public class ContractPdfFactory<E> {
 		} 
 		// ENTERPRISE CERTIFICATE DOCUMENT
 		if (document.equals(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME)) {
-			return new EnterpriseCertificate();
+			if(contract.getEnterpriseCCC().getType()!=CCCType.AGRICULTURAL){
+				return new EnterpriseCertificate();
+			} else {
+				return new EnterpriseCertificateSea();
+			}
 		} 
 
 		return null;

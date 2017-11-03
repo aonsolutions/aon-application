@@ -52,6 +52,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentEx
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
 import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificate;
+import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificateSea;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
@@ -60,6 +61,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractClause;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -312,7 +314,11 @@ public class ContractPdfController implements Serializable {
 		} else if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			builder.append(Extension.EXTENSION_NAME);
 		} else if(getDocumentType()==ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT){
-			builder.append(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME);
+			if(contract.getEnterpriseCCC().getType()!=CCCType.AGRICULTURAL){
+				builder.append(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME);
+			} else {
+				builder.append(EnterpriseCertificateSea.ENTERPRISE_CERTIFICATE_NAME);
+			}
 		}
 		builder.append(IMAGE_URL_PREFIX2);
 		builder.append(getDocumentWidth());
@@ -537,7 +543,11 @@ public class ContractPdfController implements Serializable {
 		} else if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			fileName = Extension.EXTENSION_NAME+".pdf"; 
 		} else if(getDocumentType()==ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT){
-			fileName = EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME+".pdf"; 
+			if(contract.getEnterpriseCCC().getType()!=CCCType.AGRICULTURAL){
+				fileName = EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME+".pdf";
+			} else {
+				fileName = EnterpriseCertificateSea.ENTERPRISE_CERTIFICATE_NAME+".pdf";
+			}
 		}
 		URL url = getContractPdfWriter().getContractDocumentUrl(fileName);
 		if(getDocumentPage()<=3){

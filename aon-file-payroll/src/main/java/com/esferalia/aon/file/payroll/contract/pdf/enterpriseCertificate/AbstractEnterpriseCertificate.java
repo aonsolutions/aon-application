@@ -139,8 +139,8 @@ public abstract class AbstractEnterpriseCertificate implements IContractPdfDocum
 	
 	public enum EnterpriseCertificateField implements IStringEnum {
 		
-		ENTERPRISE_DIR_STAFF_NAME("Texto1-ce"),
-		ENTERPRISE_DIR_STAFF_CHARGE("Texto2-ce"),
+		ENTERPRISE_DIR_STAFF_NAME("Texto1-cer"),
+		ENTERPRISE_DIR_STAFF_CHARGE("Texto3-cer"),
 		
 		// ENTERPRISE
 		ENTERPRISE_NAME("Texto3-ce"),
@@ -279,6 +279,169 @@ public abstract class AbstractEnterpriseCertificate implements IContractPdfDocum
 		private String value;
 		
 		private EnterpriseCertificateField(String value) {
+			this.value = value;
+		}
+		
+		@Override
+		public String getValue() {
+			return value;
+		}
+		
+	}
+
+	public enum EnterpriseCertificateSeaField implements IStringEnum {
+		
+		ENTERPRISE_DIR_STAFF_NAME("Texto1-ce"),
+		ENTERPRISE_DIR_STAFF_CHARGE("Texto2-ce"),
+		
+		// ENTERPRISE
+		ENTERPRISE_NAME("Texto4-cer"),
+//		ENTERPRISE_REGIME_CODE(""),
+//		ENTERPRISE_REGIME_NAME(""),
+		ENTERPRISE_CCC("1-cer"),
+		ENTERPRISE_SOCIAL_ADDRESS("j-cer"),
+		ENTERPRISE_CITY("f-cer"),
+		ENTERPRISE_ZIP("6-cer"),
+		ENTERPRISE_PROVINCE("g-cer"),
+		ENTERPRISE_CNAE_CODE("Texto7-cer"),
+		ENTERPRISE_CNAE_NAME("Texto8-cer"),
+		ENTERPRISE_WORKPLACE_ADDRESS("l2-cer"),
+		
+		// EMPLOYEE
+		EMPLOYEE_FULLNAME("i-cer"),
+		EMPLOYEE_DOCUMENT("Texto5b-cer"),
+		EMPLOYEE_SS_NUMBER("1a-cer"),
+//		EMPLOYEE_QUOTE_GROUP(""),
+		EMPLOYEE_CONTRACT_TIPE("m-cer"),
+		EMPLOYEE_DURATION("Texto11-cer"),
+		
+		EMPLOYEE_TP_PERIOD1_TYPE("Texto9-cer"),
+		EMPLOYEE_TP_PERIOD1_DAYS("Texto10-cer"),
+		EMPLOYEE_TP_PERIOD1_FROM("Texto12-cer"),
+		EMPLOYEE_TP_PERIOD1_TO("Texto13-cer"),
+		
+		EMPLOYEE_TP_PERIOD2_TYPE("Texto9a-cer"),
+		EMPLOYEE_TP_PERIOD2_DAYS("Texto10a-cer"),
+		EMPLOYEE_TP_PERIOD2_FROM("Texto12a-cer"),
+		EMPLOYEE_TP_PERIOD2_TO("Texto13a-cer"),
+		
+		EMPLOYEE_TP_PERIOD3_TYPE("Texto9b-cer"),
+		EMPLOYEE_TP_PERIOD3_DAYS("Texto10b-cer"),
+		EMPLOYEE_TP_PERIOD3_FROM("Texto12b-cer"),
+		EMPLOYEE_TP_PERIOD3_TO("Texto13b-cer"),
+		
+		EMPLOYEE_TP_PERIOD4_TYPE("Texto9c-cer"),
+		EMPLOYEE_TP_PERIOD4_DAYS("Texto10c-cer"),
+		EMPLOYEE_TP_PERIOD4_FROM("Texto12c-cer"),
+		EMPLOYEE_TP_PERIOD4_TO("Texto13c-cer"),
+		
+		EMPLOYEE_PROFESSION_CODE("Texto14b"),
+		EMPLOYEE_PROFESSION_NAME("ñ-cer"),
+		EMPLOYEE_PROFESSION_NAME_MORE("n-cer"),
+		EMPLOYEE_PUBLIC_CHARGE("Texto14-cer"),
+		EMPLOYEE_PUBLIC_CHARGE_DURATION("Texto15y-cer"),
+		EMPLOYEE_START_DATE("f1-cer"),
+		EMPLOYEE_SUSPENSION_CODE("Texto16-cer"),
+		EMPLOYEE_SUSPENSION_NAME("Texto17-cer"),
+		EMPLOYEE_SUSPENSION_NAME_MORE("Texto18-cer"),
+		EMPLOYEE_END_DATE("Texto19-cer"),
+		EMPLOYEE_SUSPENDION_END_DATE("Texto20-cer"),
+		EMPLOYEE_ERE_NUMBER("Texto21-cer"),
+		EMPLOYEE_TIME_REDUCTION_PERCENT("Texto22-cer"),
+		EMPLOYEE_CARE_PERCENT("Texto23-cer"),
+		EMPLOYEE_SALARY_TRAMITATION_DAY_NUMBER("DÍAS-cer"),
+		EMPLOYEE_SALARY_TRAMITATION_FROM("10'-cer"),
+		EMPLOYEE_SALARY_TRAMITATION_TO("10''-cer"),
+		
+		// COTIZACIONES - CONT. COMUNES Y DESEMPLEO
+		ROW1_YEAR("90-cer"),
+		ROW1_MONTH("80-cer"),
+		ROW1_QUOTE_GROUP("9-cer"),
+		ROW1_QUOTE_DAYS("Texto15-cer"),
+		ROW1_JOURNAL_DAYS("Textob15-cer"),
+		ROW1_BASE_UNEMPLOYMENT("Textoc15-cer"),
+		ROW1_REMARKS("a1-cer"),
+
+		ROW2_YEAR("90a-cer"),
+		ROW2_MONTH("80a-cer"),
+		ROW2_QUOTE_GROUP("9a-cer"),
+		ROW2_QUOTE_DAYS("Texto15a-cer"),
+		ROW2_JOURNAL_DAYS("Textob15a-cer"),
+		ROW2_BASE_UNEMPLOYMENT("Textoc15a-cer"),
+		ROW2_REMARKS("a1a-cer"),
+
+		ROW3_YEAR("90b-cer"),
+		ROW3_MONTH("80b-cer"),
+		ROW3_QUOTE_GROUP("9b-cer"),
+		ROW3_QUOTE_DAYS("Texto15b-cer"),
+		ROW3_JOURNAL_DAYS("Textob15b-cer"),
+		ROW3_BASE_UNEMPLOYMENT("Textoc15b-cer"),
+		ROW3_REMARKS("a1b-cer"),
+
+		ROW4_YEAR("90c-cer"),
+		ROW4_MONTH("80c-cer"),
+		ROW4_QUOTE_GROUP("9c-cer"),
+		ROW4_QUOTE_DAYS("Texto15c-cer"),
+		ROW4_JOURNAL_DAYS("Textob15c-cer"),
+		ROW4_BASE_UNEMPLOYMENT("Textoc15c-cer"),
+		ROW4_REMARKS("a1c-cer"),
+
+		ROW5_YEAR("90d-cer"),
+		ROW5_MONTH("80d-cer"),
+		ROW5_QUOTE_GROUP("9d-cer"),
+		ROW5_QUOTE_DAYS("Texto15d-cer"),
+		ROW5_JOURNAL_DAYS("Textob15d-cer"),
+		ROW5_BASE_UNEMPLOYMENT("Textoc15d-cer"),
+		ROW5_REMARKS("a1d-cer"),
+
+		ROW6_YEAR("90e-cer"),
+		ROW6_MONTH("80e-cer"),
+		ROW6_QUOTE_GROUP("9e-cer"),
+		ROW6_QUOTE_DAYS("Texto15e-cer"),
+		ROW6_JOURNAL_DAYS("Textob15e-cer"),
+		ROW6_BASE_UNEMPLOYMENT("Textoc15e-cer"),
+		ROW6_REMARKS("a1e-cer"),
+
+		ROW7_YEAR("90f-cer"),
+		ROW7_MONTH("80f-cer"),
+		ROW7_QUOTE_GROUP("9f-cer"),
+		ROW7_QUOTE_DAYS("Texto15f-cer"),
+		ROW7_JOURNAL_DAYS("Textob15f-cer"),
+		ROW7_BASE_UNEMPLOYMENT("Textoc15f-cer"),
+		ROW7_REMARKS("a1f-cer"),
+
+		ROW8_YEAR("90g-cer"),
+		ROW8_MONTH("80g-cer"),
+		ROW8_QUOTE_GROUP("9g-cer"),
+		ROW8_QUOTE_DAYS("Texto15g-cer"),
+		ROW8_JOURNAL_DAYS("Textob15g-cer"),
+		ROW8_BASE_UNEMPLOYMENT("Textoc15g-cer"),
+		ROW8_REMARKS("a1g-cer"),
+		
+		
+		HOLIDAY_QUOTE_GROUP("9h-cer"),
+		HOLIDAY_QUOTE_DAYS("Texto15h-cer"),
+		HOLIDAY_JOURNAL_DAYS("Textob15h-cer"),
+		HOLIDAY_BASE_UNEMPLOYMENT("Textoc15h-cer"),
+		HOLIDAY_REMARKS("a1h-cer"),
+	
+		TOTAL_QUOTE_DAYS("Texto15i-cer"),
+		TOTAL_JOURNAL_DAYS("Textob15i-cer"),
+		TOTAL_BASE_UNEMPLOYMENT("Textoc15i-cer"),
+		TOTAL_REMARKS("a1i-cer"),
+		
+		// FOOTER
+		SIGN_CITY("CIUDAD-cer"),
+		SIGN_DAY("DIA-cer"),
+		SIGN_MONTH("MES-cer"),
+		SIGN_YEAR("AÑO-cer"),
+		SIGNATURE("CIU-cer"),
+		
+		;
+		
+		private String value;
+		
+		private EnterpriseCertificateSeaField(String value) {
 			this.value = value;
 		}
 		

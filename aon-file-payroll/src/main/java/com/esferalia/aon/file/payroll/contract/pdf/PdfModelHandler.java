@@ -149,6 +149,7 @@ public class PdfModelHandler implements Serializable {
 				Float f = form.getFieldPositions(key)[0];
 				field.setPage(f.intValue());
 				field.setLabel(key);
+//				field.setValue(key);
 				field.setBottomCoordinates(getBottomCoordinates(form, key));
 				field.setLeftCoordinates(getLeftCoordinates(form, key));
 				field.setWidth(getInputTextWidth(form, key));
@@ -189,6 +190,7 @@ public class PdfModelHandler implements Serializable {
 			Float f = form.getFieldPositions(key)[0];
 			field.setPage(f.intValue());
 			field.setLabel(key);
+//			field.setValue(key);
 			field.setBottomCoordinates(getBottomCoordinates(form, key));
 			field.setLeftCoordinates(getLeftCoordinates(form, key));
 			field.setWidth(getInputTextWidth(form, key));
