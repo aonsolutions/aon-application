@@ -16,6 +16,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Brand;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
@@ -33,9 +34,11 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
 
 public class InventoryDetailController extends LinesController implements ICollectionProvider,IAuditableController {
 	
@@ -118,7 +121,13 @@ public class InventoryDetailController extends LinesController implements IColle
 		Integer workplaceId = null;
 		if(inventory.getWarehouse().getWorkPlace() != null)
 			workplaceId = inventory.getWarehouse().getWorkPlace().getId();
-		Double cost  = InventoryController.getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate());
+		
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String user = AonUtil.getRemoteUser();
+		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
+
+		Double cost  = InventoryController.getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap);
 		inventoryDetail.setCost(cost);
 		accept(event);
 		int current = this.model.getRowIndex();

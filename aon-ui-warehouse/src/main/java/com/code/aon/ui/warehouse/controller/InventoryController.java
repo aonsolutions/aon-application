@@ -263,6 +263,8 @@ public class InventoryController extends BasicController implements IAuditableCo
 			inventory.setWarehouse(warehouse);
 			inventory = (Inventory) inventoryBean.insert(inventory);
 			
+			com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
+			
 	        Query q = session.createQuery(
 	                " select item, sum(stock.quantity), item.id " +
 	                " from Item as item, Stock as stock " +
@@ -285,7 +287,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 				inventoryDetail.setItem(item);
 				inventoryDetail.setRealQuantity(total);
 				inventoryDetail.setActualQuantity(total);
-				inventoryDetail.setCost(getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate()));
+				inventoryDetail.setCost(getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap));
 				inventoryDetail = (InventoryDetail) inventoryDetailBean.insert(inventoryDetail);
 			}
 			HibernateUtil.commitTransaction(sessionName);
@@ -405,11 +407,13 @@ public class InventoryController extends BasicController implements IAuditableCo
 		Integer workplaceId = null;
 		if(inventory.getWarehouse().getWorkPlace() != null)
 			workplaceId = inventory.getWarehouse().getWorkPlace().getId();
+		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
+
 		LinkedList<com.esferalia.aon.occam.api.model.warehouse.InventoryDetail> list = 
 				AON.getInventoryDetailList(domainName, domainId, user, inventory.getId());
 		for(com.esferalia.aon.occam.api.model.warehouse.InventoryDetail id : list){
 			InventoryDetail inventoryDetail = OccamClassesTransform.getInventoryDetail(id);
-			Double cost =  getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate());
+			Double cost =  getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap);
 			inventoryDetail.setCost(cost);
 			inventoryDetail.setInventory(inventory);
 			try {
@@ -495,9 +499,8 @@ public class InventoryController extends BasicController implements IAuditableCo
 		}
 	}
 	
-	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId, Date inventoryDate){
-		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.AON_PRODUCT_VALUATION_METHOD);
-		switch (ap != null ? ap.getValue() : "0") {
+	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId, Date inventoryDate, com.esferalia.aon.occam.api.model.ApplicationParameter ap){
+		switch ((ap != null && ap.getValue() != null) ? ap.getValue() : "0") {
 			case "0": return inventoryDetail.getRealQuantity() != 0 ? inventoryDetail.getItem().getPurchasePrice() : 0.0;
 			case "1": return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
 			case "2": return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
