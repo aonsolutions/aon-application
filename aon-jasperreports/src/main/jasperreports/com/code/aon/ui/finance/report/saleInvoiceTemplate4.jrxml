@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-30T14:11:13 -->
+<!-- 2017-11-03T15:13:35 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="9f2925b1-8fe6-4150-9401-400ac3b89246">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -400,7 +400,7 @@
 					<font fontName="SansSerif" size="10"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceProvince()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="87" y="135" width="423" height="38" isRemoveLineWhenBlank="true" uuid="45b5d1ba-9d54-470e-9aa6-9e8be4857bbe">

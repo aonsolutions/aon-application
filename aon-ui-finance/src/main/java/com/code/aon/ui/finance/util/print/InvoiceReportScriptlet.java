@@ -18,6 +18,7 @@ import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.registry.RecordData;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.util.ReportScriptlet;
 import com.code.aon.ui.util.AonUtil;
@@ -42,6 +43,7 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	 * REPORT TEMPLATE FIELDS
 	 */
 	public static final String FIELD_ID = "id";
+	public static final String FIELD_ADDRESS = "address";
 		
 	
 	
@@ -167,6 +169,23 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 			LOGGER.error(msg,e);
 		}
 		return null;
+	}
+	
+	public String getInvoiceProvince() throws JRScriptletException{
+		RegistryAddress raddress = (RegistryAddress) super.getFieldValue(FIELD_ADDRESS);
+		StringBuilder builder = new StringBuilder("");
+		if(raddress!=null && raddress.getId()!=null){
+			builder.append(raddress.getGeozone()!=null?raddress.getGeozone().getName():"");
+			try {
+				if(!raddress.getGeozone().getGeoZoneCountry().getId().equals(getAddress().getGeozone().getGeoZoneCountry().getId())){
+					builder.append(raddress.getGeozone().getGeoZoneCountry()!=null?" - "+raddress.getGeozone().getGeoZoneCountry().getName():"");		
+				}
+			} catch (Exception e) {
+				String msg = "ERROR: no se ha podido obtener la provincia";
+				LOGGER.error(msg,e);
+			}
+		}
+		return builder.toString();
 	}
 	
 }

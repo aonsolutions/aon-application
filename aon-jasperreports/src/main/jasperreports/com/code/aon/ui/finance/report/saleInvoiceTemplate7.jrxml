@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-30T14:10:44 -->
+<!-- 2017-11-03T15:12:11 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="bf352430-a19b-4ee5-89ee-fc85c0ca4d0c">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -470,7 +470,7 @@
 				<textFieldExpression><![CDATA[$F{address}.getFullAddress()
 + "\n" + ($F{address}.getZip()==null?"":$F{address}.getZip() + " ")
 + ($F{address}.getCity()==null?"":$F{address}.getCity())
-+ "\n" + ($F{address}.getGeozone()==null?"":$F{address}.getGeozone().getName())]]></textFieldExpression>
++ "\n" + $P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceProvince()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-49" x="126" y="143" width="125" height="20" uuid="e72020de-9fd1-4c23-a60c-9070cac5f3fa"/>
@@ -716,7 +716,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						<jr:groupHeader groupName="deliveryGroup">
 							<jr:cell height="15" rowSpan="1">
 								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-									<reportElement key="textField-1" positionType="Float" x="0" y="0" width="535" height="15" isRemoveLineWhenBlank="true" uuid="e048e14a-94a1-4b30-90fa-47b60af18077">
+									<reportElement key="textField-1" positionType="Float" x="0" y="0" width="535" height="15" uuid="e048e14a-94a1-4b30-90fa-47b60af18077">
 										<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
 									</reportElement>
 									<box leftPadding="5" rightPadding="5">
