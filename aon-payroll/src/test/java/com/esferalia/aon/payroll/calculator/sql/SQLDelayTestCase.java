@@ -37,7 +37,7 @@ import junit.framework.Assert;
 
 public class SQLDelayTestCase extends AbstractSQLTestCase {
 
-	protected static final double DELTA = 0.004;
+	protected static final double DELTA = 0.04;
 	
 	@Test
 	public void testDelaysI() throws ExpressionException, SQLException,
@@ -216,7 +216,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 
 
-	//@Test
+	@Test
 	public void testDelaysExtrasI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -316,8 +316,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		
-		Assert.assertEquals(150.00, delay.getTotalPayment());
-		Assert.assertEquals(150.00, delay.getCommonBase());
+		Assert.assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getCommonBase(), DELTA );
 		
 
 	}

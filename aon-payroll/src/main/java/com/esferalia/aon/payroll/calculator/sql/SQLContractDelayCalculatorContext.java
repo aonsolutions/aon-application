@@ -28,13 +28,17 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
+import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.payment.IPayment;
 
 public class SQLContractDelayCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
@@ -132,11 +136,24 @@ public class SQLContractDelayCalculatorContext extends
 				return payments.size()+1;
 			}
 		};
+		ExtraDelayPaymentDecorator extraPaymentDecorator = new ExtraDelayPaymentDecorator() {
+		@Override
+		public  int getOrdinal(IContractPayment payment) {
+			return payments.size()+1;
+		}
+	};
 
 		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 		DelayPaymentBuilder delayPaymentBuilder = new DelayPaymentBuilder(
 				getConnection(), salaryPaymentDecorator);
-		calculator.setSalaryBuilder(delayPaymentBuilder);
+
+		ExtrasDelayPaymentBuilder extrasDelayPaymentBuilder = new ExtrasDelayPaymentBuilder(
+				getConnection(), extraPaymentDecorator);
+		
+		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeBuilder = 
+				new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(delayPaymentBuilder, extrasDelayPaymentBuilder);
+		
+		calculator.setSalaryBuilder(compositeBuilder);
 
 		Collection<Period> periods = split(startDate, endDate);
 
@@ -147,30 +164,31 @@ public class SQLContractDelayCalculatorContext extends
 			while (ctx.next()) {
 				calculator.calculate(ctx);
 				payments.addAll(delayPaymentBuilder.getContractPayments());
+				payments.addAll(extrasDelayPaymentBuilder.getContractPayments());
 			}
 
 		}
 
-		ExtraDelayPaymentDecorator extraPaymentDecorator = new ExtraDelayPaymentDecorator() {
-			@Override
-			public  int getOrdinal(IContractPayment payment) {
-				return payments.size()+1;
-			}
-		};
-		ExtraDelayPaymentBuilder extraDelayPaymentBuilder = new ExtraDelayPaymentBuilder(
-				connection, extraPaymentDecorator);
-		calculator.setSalaryBuilder(extraDelayPaymentBuilder);
-
-		Collection<Extra> extras = getExtras(startDate, endDate);
-		for (Extra extra : extras) {
-			ISQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
-					connection, extra.getStartDate(), extra.getEndDate(),
-					extra.getEndDate(), extra.getChargeDate(), criteria);
-			while (ctx.next()) {
-				calculator.calculate(ctx);
-				payments.addAll(extraDelayPaymentBuilder.getContractPayments());
-			}
-		}
+//		ExtraDelayPaymentDecorator extraPaymentDecorator = new ExtraDelayPaymentDecorator() {
+//			@Override
+//			public  int getOrdinal(IContractPayment payment) {
+//				return payments.size()+1;
+//			}
+//		};
+//		ExtraDelayPaymentBuilder extraDelayPaymentBuilder = new ExtraDelayPaymentBuilder(
+//				connection, extraPaymentDecorator);
+//		calculator.setSalaryBuilder(extraDelayPaymentBuilder);
+//
+//		Collection<Extra> extras = getExtras(startDate, endDate);
+//		for (Extra extra : extras) {
+//			ISQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
+//					connection, extra.getStartDate(), extra.getEndDate(),
+//					extra.getEndDate(), extra.getChargeDate(), criteria);
+//			while (ctx.next()) {
+//				calculator.calculate(ctx);
+//				payments.addAll(extraDelayPaymentBuilder.getContractPayments());
+//			}
+//		}
 
 		return payments;
 
@@ -461,6 +479,8 @@ public class SQLContractDelayCalculatorContext extends
 				 * value, paidValue, value -paidValue) );
 				 */
 			}
+			
+			
 
 			List<IContractPayment> payments = new LinkedList<IContractPayment>();
 
@@ -472,7 +492,20 @@ public class SQLContractDelayCalculatorContext extends
 
 			return payments;
 		}
+		
+		protected Double getValue (String key) {
+			return values.getOrDefault(key, 0.00);
+		}
 
+		protected Double setValue (String key, Double value) {
+			return values.put(key, value);
+		}
+		
+		protected Double addValue (String key, Double value) {
+			return values.put(key, values.getOrDefault(key, 0.00) + value );
+		}
+
+		
 		private Map<String, Double> getPaidSalary(Set<String> fields)
 				throws SQLException {
 			ResultSet rs = null;
@@ -487,6 +520,7 @@ public class SQLContractDelayCalculatorContext extends
 				}
 
 				while (rs.next()) {
+					
 					for (String field : fields) {
 						Double value = values.get(field);
 						value += rs.getDouble(field);
@@ -559,6 +593,106 @@ public class SQLContractDelayCalculatorContext extends
 
 			return stmt.executeQuery();
 		}
+	}
+
+	private static class ExtrasDelayPaymentBuilder extends DelayPaymentBuilder {
+
+		private static final String EXTRA_PAYMENTS_SQL = 
+				"SELECT " 
+				+ " 0.00 AS " + SalaryColumns.CGC_BASE
+				+ ", SUM(" + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + ") AS " + SalaryColumns.IRPF_BASE
+				+ ", SUM(" + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + ") AS " + SalaryColumns.TOTAL_PAYMENT 
+
+				+ " FROM " 	+ SQLConstants.SALARY
+				+ " INNER JOIN " + SQLConstants.SALARY_PAYMENT 
+				+ " ON (" + SQLConstants.SALARY + "." + SalaryColumns.ID 
+				+ " = " + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.SALARY + ")"   
+				
+				+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.CONTRACT + " = ? " 
+				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.TYPE + "  = ? " 
+				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.START_DATE + "  = ? " 
+				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.END_DATE + " = ? " 
+				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.TYPE + " = ? "
+				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.AMOUNT + " = 0.00 "
+				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.IRPF + " = 0.00 "
+				;
+
+		public ExtrasDelayPaymentBuilder(Connection connection,
+				IDelayPaymentDecorator paymentDecorator) throws SQLException {
+			super(connection, paymentDecorator);
+			super.setValue(SalaryColumns.CGC_BASE, 0.00);
+			super.setValue(SalaryColumns.IRPF_BASE, 0.00);
+			super.setValue(SalaryColumns.TOTAL_PAYMENT, 0.00);
+		}
+		
+		// ------------------------------------------------------------- public
+		
+		@Override
+		public void setCgcBase(Double cgcBase) {
+		}
+		
+		@Override
+		public void setIrpfBase(Double irpfBase) {
+		}
+		
+		@Override
+		public void setTotalPayment(Double totalPayment) {
+		}
+		
+		
+		@Override
+		public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
+				Map context) {
+			if ( payment.getType() != PaymentType.CRA_0004 )
+				return;
+			
+			super.addValue(SalaryColumns.IRPF_BASE, quote);
+			super.addValue(SalaryColumns.TOTAL_PAYMENT, quote);
+		}
+		
+		// ---------------------------------------------------------- protected
+		
+		@Override
+		protected ContractPayment createContractPayment(double amount, double irpf, double quote) {
+			ContractPayment contractPayment =  super.createContractPayment(amount, irpf, quote);
+			contractPayment.setId(Integer.MIN_VALUE);
+			return contractPayment;
+		}
+		
+		@Override
+		public Collection getContractPayments() throws SQLException {
+			Collection contractPayments = super.getContractPayments();
+			super.setValue(SalaryColumns.IRPF_BASE, 0.00);
+			super.setValue(SalaryColumns.TOTAL_PAYMENT, 0.00);
+			return contractPayments;
+		}
+		
+		@Override
+		protected PreparedStatement initStatement(Connection connection)
+				throws SQLException {
+			return connection.prepareStatement(EXTRA_PAYMENTS_SQL);
+		}
+		
+		@Override
+		protected ResultSet initResultSet(PreparedStatement stmt,
+				Integer contract, SalaryType type, Date startDate, Date endDate)
+				throws SQLException {
+			
+			stmt.setInt(1, contract); 			// SalaryColumns.CONTRACT + " = ? "
+			
+			stmt.setInt(2, type.ordinal()); 	// SalaryColumns.TYPE + " = ? "
+
+			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
+			stmt.setDate(3, sqlStartDate); 		// SalaryColumns.START_DATE +
+			
+			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+			stmt.setDate(4, sqlEndDate); 		// SalaryColumns.END_DATE + "  = ? "
+			
+			stmt.setInt(5, PaymentType.CRA_0004.ordinal()  ); 
+
+			return stmt.executeQuery();
+		}
+
 	}
 
 	private static class ExtraDelayPaymentBuilder extends DelayPaymentBuilder {
