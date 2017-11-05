@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>aon.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>9.12-SNAPSHOT</version>
+		<version>9.12</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
