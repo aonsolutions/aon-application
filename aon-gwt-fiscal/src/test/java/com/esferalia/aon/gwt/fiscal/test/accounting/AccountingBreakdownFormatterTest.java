@@ -1,13 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.test.accounting;
 
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.gwt.fiscal.shared.mod130.Model130AEATScript;
 import com.esferalia.aon.occam.api.AONContext;
@@ -17,8 +13,6 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod130DAO;
 
-import net.aonsolutions.core.pool.AonConnectionException;
-
 
 public class AccountingBreakdownFormatterTest {
 
@@ -27,14 +21,12 @@ public class AccountingBreakdownFormatterTest {
 	private static int DOMAIN_ID = 5;
 	private static String USER = "jgarcia";
 	
-	@BeforeClass
-	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
+	
+	public static void main(String[] args) throws ClassNotFoundException, FileNotFoundException {
+		
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER);
-	}
-	
-	@Test
-	public void testInitializeAlava() throws IOException {
+
 		Mod130 mod130 = FISCAL.initializeMod130(DOMAIN_NAME, DOMAIN_ID, USER, null);
 		mod130.setAdministration(Administration.COMMON_TERRITORY);
 		System.out.println("INITIALIZED!");
