@@ -2081,7 +2081,7 @@
 				<textFieldExpression><![CDATA[$P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": " + $P{company}.getDocumentCountry() + "-" + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-25" x="0" y="287" width="200" height="12" isRemoveLineWhenBlank="true" uuid="7790103d-7eed-4033-8dc3-4736ae8a95cf">
+				<reportElement key="textField-25" positionType="Float" x="0" y="287" width="200" height="12" isRemoveLineWhenBlank="true" uuid="7790103d-7eed-4033-8dc3-4736ae8a95cf">
 					<printWhenExpression><![CDATA[$P{printDirStaff}.name().equals( "FOOTER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
