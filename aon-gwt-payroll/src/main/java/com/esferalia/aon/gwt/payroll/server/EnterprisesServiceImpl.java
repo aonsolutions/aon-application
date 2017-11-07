@@ -1041,6 +1041,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					employee.setEndDate(rs.getDate(SQLConstants.SALARY +"."+SalaryColumns.END_DATE));
 					employee.setName(rs.getString(SQLConstants.SALARY +"."+SalaryColumns.EMPLOYEE_NAME));
 					employee.setDocument(rs.getString(SQLConstants.SALARY +"."+SalaryColumns.EMPLOYEE_DOCUMENT));
+					employee.setSeniorityDate(rs.getDate(SQLConstants.SALARY +"."+SalaryColumns.SENIORITY_DATE));
 					
 					ccc.addEmployee(employee);
 				}

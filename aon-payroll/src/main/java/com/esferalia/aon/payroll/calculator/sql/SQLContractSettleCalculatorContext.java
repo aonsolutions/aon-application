@@ -199,8 +199,13 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		}
 	}
 	
+	@Override
+	public Date getStartDate() {
+		return super.getStart();
+	}
 	
-
+	
+	
 	@Override
 	protected void initContractExpressionCtx(NextHook hook) throws SQLException, ExpressionException {
 		initNoHolidays(getExpressionContext());
@@ -210,7 +215,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	
 	@Override
 	protected void loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
-		super.loadContractData(ctx, startDate, noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
+		super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
 	}
 	
 	

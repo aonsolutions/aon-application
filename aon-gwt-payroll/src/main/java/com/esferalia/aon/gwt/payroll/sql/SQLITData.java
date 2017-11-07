@@ -280,6 +280,7 @@ public class SQLITData implements Serializable {
 				String regBase = rs.getString(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.DAILY_REG_BASE);
 				int discharge_cause = Integer.parseInt(rs.getString(ContractLeaveColumns.DISCHARGE_CAUSE));
 				int contractLeave_id = rs.getInt(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.ID);
+				Date seniorityContract = rs.getDate(ContractColumns.SENIORITY_DATE);
 				
 				if(!itData.getEmployees().containsKey(contractId)) {					
 					
@@ -294,6 +295,7 @@ public class SQLITData implements Serializable {
 					employee.setStartDate(startContract);
 					employee.setEndDate(endContract);
 					itData.setEmployee(contractId, employee);
+					employee.setSeniorityDate(seniorityContract);
 				}
 				
 				if(type != -1) {

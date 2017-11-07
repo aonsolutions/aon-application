@@ -6,6 +6,7 @@
 	<g:HTMLPanel  tag="span">
 		<g:ListBox debugId="typeListBox" ui:field="typeListBox"/>
 		<aon:MonthListBox debugId="fromMonthListBox" ui:field="fromMonthListBox" visible="false" />
+		<aon:DateListBox debugId="fromDateListBox" ui:field="fromDateListBox" visible="false"/>
 		<aon:MonthListBox debugId="monthListBox" ui:field="monthListBox" />
 		<aon:DateListBox debugId="dateListBox" ui:field="dateListBox" visible="false"/>
 	</g:HTMLPanel>

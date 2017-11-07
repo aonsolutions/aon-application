@@ -163,6 +163,8 @@ public class Employee implements Serializable, HasId<Integer> {
 	private Date startDate;
 	private Date endDate;
 
+	private Date seniorityDate;
+
 	private String document;
 	
 	private Category category;
@@ -268,6 +270,15 @@ public class Employee implements Serializable, HasId<Integer> {
 		return this;
 	}
 	
+	public Date getSeniorityDate() {
+		return seniorityDate;
+	}
+
+	public Employee setSeniorityDate(Date seniorityDate) {
+		this.seniorityDate = seniorityDate;
+		return this;
+	}
+
 	public Category getCategory() {
 		return category;
 	}

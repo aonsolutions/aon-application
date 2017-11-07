@@ -44,6 +44,7 @@ public class ITData implements Serializable{
 			super.setSecondSurName(employee.getSecondSurName());
 			super.setSocialSecurity(employee.getSocialSecurity());
 			super.setStartDate(employee.getStartDate());
+			super.setSeniorityDate(employee.getSeniorityDate());
 			super.setEndDate(employee.getEndDate());
 			
 		}

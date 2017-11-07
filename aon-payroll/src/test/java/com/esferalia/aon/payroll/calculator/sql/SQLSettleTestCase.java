@@ -39,6 +39,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -48,6 +49,79 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	
 	
 	private static final double DELTA = 0.0005;
+
+	@Test
+	public void testSettleSeniority() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+						//put(COMPENSATION_CAUSE.getName(), CONTRACT_COMPLETE.getName());
+					}
+				}, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+						}, 
+				new String[] {
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_IRPF * 0.00/100" 
+				}, 
+		null);
+		//@formatter:off
+		
+		
+		addSSRegimeStuff(aonContext);
+		
+		Date seniority = add(contractStart, Calendar.YEAR, -2);
+		addData(aonContext, contract, seniority, null, COMPENSATION_CAUSE, CONTRACT_COMPLETE.getName());
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSQLContractSettleContext(connection, seniority, contract);
+		
+		Assert.assertEquals(seniority, ctx.getStartDate());
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("AÑOS_TRABAJADOS", seniority, getToday()))
+			Assert.assertEquals( (2.00 + 2/12.00), result.getValue());
+
+		double br = (1750.00) * 12.00 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
+
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("SALARIO_DIA", seniority, getToday())) {
+			Assert.assertEquals( seniority, result.getPeriod().getStart());
+			Assert.assertEquals( br , result.getValue());
+		}
+
+
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("12.00 * AÑOS_TRABAJADOS * SALARIO_DIA", seniority, getToday())) {
+			Assert.assertEquals( seniority, result.getPeriod().getStart());
+			Assert.assertEquals( 12.00 * (2.00 + 2/12.00) * br , result.getValue());
+		}
+			
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("FIN", seniority, getToday())) {
+			Assert.assertEquals( seniority, result.getPeriod().getStart());
+		}
+
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("CAUSA_INDEMNIZACION", seniority, getToday())) {
+			Assert.assertEquals( seniority, result.getPeriod().getStart());
+		}
+
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("(CAUSA_INDEMNIZACION == FIN) ? 12.00 * AÑOS_TRABAJADOS * SALARIO_DIA: 0.00", seniority, getToday()))
+			System.out.println(result.getPeriod().getStart() + ".." + result.getPeriod().getEnd() + " = " + result.getValue() );
+			//Assert.assertEquals( 12.00 * (2.00 + 2/12.00) * br , result.getValue());
+
+		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		
+
+		Assert.assertEquals( 12 * (2.00 + 2/12.00) * br, settle.getTotalPayment());
+		Assert.assertEquals( 12 * ( 2 + 2/12.00) * br, settle.getTotalLiquid());
+	}
 
 	@Test
 	public void testSettleContractEnd() throws ExpressionException, SQLException, SalaryException {

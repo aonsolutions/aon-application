@@ -371,6 +371,7 @@ public class JooqEmployees {
 		employee.setId(record.getValue(CONTRACT.ID));
 		employee.setStartDate(record.getValue(CONTRACT.START_DATE));
 		employee.setEndDate(record.getValue(CONTRACT.END_DATE));
+		employee.setSeniorityDate(record.getValue(CONTRACT.SENIORITY_DATE));
 
 		employee.setPerson(record.getValue(PERSON.REGISTRY));
 		employee.setName(record.getValue(PERSON.NAME));
@@ -444,6 +445,7 @@ public class JooqEmployees {
 				employee.setId(record.getValue(CONTRACT.ID));
 				employee.setStartDate(record.getValue(CONTRACT.START_DATE));
 				employee.setEndDate(record.getValue(CONTRACT.END_DATE));
+				employee.setSeniorityDate(record.getValue(CONTRACT.SENIORITY_DATE));
 
 				employee.setPerson(record.getValue(PERSON.REGISTRY));
 				employee.setName(record.getValue(PERSON.NAME));

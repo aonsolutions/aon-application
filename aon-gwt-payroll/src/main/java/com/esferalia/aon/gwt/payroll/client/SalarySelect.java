@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -84,10 +85,13 @@ public class SalarySelect extends Composite {
 		}
 	}
 
+
 	@UiField
 	ListBox typeListBox;
 	@UiField
 	DateListBox dateListBox;
+	@UiField
+	DateListBox fromDateListBox;
 	@UiField
 	MonthListBox monthListBox;
 	@UiField
@@ -181,6 +185,12 @@ public class SalarySelect extends Composite {
 
 	@UiHandler("fromMonthListBox")
 	void onFromMonthListBoxChanged(ChangeEvent event) {
+		syncSalarySelectDates();
+		fireOnChange();
+	}
+
+	@UiHandler("fromDateListBox")
+	void onFromDateListBoxChanged(ChangeEvent event) {
 		syncSalarySelectDates();
 		fireOnChange();
 	}
@@ -307,18 +317,24 @@ public class SalarySelect extends Composite {
 
 				Employee employee = SalarySelect.this.salaryPreview
 						.getEmployee();
+
 				Date contractStartDate = employee.getStartDate();
+				Date settleStartDate = fromDateListBox.getSelected();
+				if (settleStartDate == null)
+					settleStartDate = contractStartDate;
+				if (settleStartDate == null)
+					settleStartDate = DateUtils.copyDateOnly(new Date());
+
 				Date contractEndDate = employee.getEndDate();
+				Date settleEndDate = dateListBox.getSelected();
+				if (settleEndDate == null)
+					settleEndDate = contractEndDate;
+				if (settleEndDate == null)
+					settleEndDate = DateUtils.copyDateOnly(new Date());
 
-				Date settleDate = dateListBox.getSelected();
-				if (settleDate == null)
-					settleDate = contractEndDate;
-				if (settleDate == null)
-					settleDate = DateUtils.copyDateOnly(new Date());
-
-				SalarySelect.this.salaryPreview.setStartDate(contractStartDate);
-				SalarySelect.this.salaryPreview.setEndDate(settleDate);
-				SalarySelect.this.salaryPreview.setIssueDate(settleDate);
+				SalarySelect.this.salaryPreview.setStartDate(settleStartDate);
+				SalarySelect.this.salaryPreview.setEndDate(settleEndDate);
+				SalarySelect.this.salaryPreview.setIssueDate(settleEndDate);
 
 				return null;
 			}
@@ -361,6 +377,7 @@ public class SalarySelect extends Composite {
 			public Void visitSalary(Type type) {
 
 				dateListBox.setVisible(false);
+				fromDateListBox.setVisible(false);
 				fromMonthListBox.setVisible(false);
 				monthListBox.setVisible(true);
 
@@ -375,6 +392,7 @@ public class SalarySelect extends Composite {
 			public Void visitExtra(Type type) {
 				try {
 					monthListBox.setVisible(false);
+					fromDateListBox.setVisible(false);
 					fromMonthListBox.setVisible(false);
 					dateListBox.setVisible(true);
 
@@ -408,14 +426,29 @@ public class SalarySelect extends Composite {
 
 			@Override
 			public Void visitSettle(Type type) {
+				
 				monthListBox.setVisible(false);
 				fromMonthListBox.setVisible(false);
 				dateListBox.setVisible(true);
+				
 				if (extrasDatesProvider.hasDataDisplay(dateListBox))
 					extrasDatesProvider.removeDataDisplay(dateListBox);
 				if (!settleDatesProvider.hasDataDisplay(dateListBox))
 					settleDatesProvider.addDataDisplay(dateListBox);
 
+				if ( employee.getSeniorityDate() != null ) {
+					List<Date> fromDates = new ArrayList<Date>();
+					fromDates.add(employee.getSeniorityDate());
+					fromDates.add(employee.getStartDate());
+					fromDateListBox.setVisible(true);
+					fromDateListBox.setRowCount(2, true);
+					fromDateListBox.setRowData(0, fromDates);
+					fromDateListBox.setSelected(employee.getSeniorityDate(), true);
+				} else {
+					fromDateListBox.setVisible(false);
+				}
+				
+				
 				final Date issueDate = SalarySelect.this.salaryPreview
 						//.getEndDate();
 						.getIssueDate();
@@ -442,6 +475,7 @@ public class SalarySelect extends Composite {
 			public Void visitDelay(Type type) {
 
 				dateListBox.setVisible(false);
+				fromDateListBox.setVisible(false);
 				fromMonthListBox.setVisible(true);
 				monthListBox.setVisible(true);
 
