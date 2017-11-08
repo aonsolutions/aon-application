@@ -79,7 +79,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 					LinkedList<String> list = new LinkedList<>();
 					list.add(page +"");
 					parent.getFilterMap().put("page", list);
-					parent.getAPI().getCommon().getDataResponse(parent.getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+					parent.getAPI().getCommon().getDataResponseQuality(parent.getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 						
 						@Override
 						public void onSuccess(JSON<JsDataResponse> result) {

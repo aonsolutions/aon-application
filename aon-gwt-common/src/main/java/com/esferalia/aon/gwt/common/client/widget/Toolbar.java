@@ -28,7 +28,8 @@ public abstract class Toolbar extends Composite {
 	
 	@UiField Button excelDownload;
 	@UiField Button pdfDownload;
-		
+	
+	@UiField Button liqDownload;	
 	
 	@UiField PaperIconButton ant;
 	@UiField PaperIconButton next;
@@ -47,6 +48,7 @@ public abstract class Toolbar extends Composite {
 	protected abstract void email();
 	
 	protected abstract void excelDownload();
+	protected abstract void liqDownload();
 	protected abstract void pdfDownload();
 	
 	protected abstract void ant();
@@ -60,6 +62,15 @@ public abstract class Toolbar extends Composite {
 	
 	public void setExcelVisible(Boolean visible){
 		excelDownload.setVisible(visible);
+	}
+	
+	@UiHandler("liqDownload")
+	public void onLiqClick(ClickEvent event) {
+		liqDownload();
+	}
+	
+	public void setLiqVisible(Boolean visible){
+		liqDownload.setVisible(visible);
 	}
 	
 	@UiHandler("pdfDownload")
@@ -147,10 +158,7 @@ public abstract class Toolbar extends Composite {
 		setRemoveVisible(visible);
 		setExcelVisible(visible);
 		setPdfVisible(visible);
+		setLiqVisible(visible);
 	}
-	
-	
-	
-	
 
 }

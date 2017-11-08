@@ -13,5 +13,6 @@ public interface IUdapa extends RemoteService{
 	public HashMap<String, String> updateValue(String domainName, Integer domainId, Integer drId, QualitySheetCode code, String value, HashMap<String, String> map);
 	
 	public void deleteQuality(String domainName, Integer domainId, Integer drId);
-
+	
+	public void updateIncomeDetail(String domainName, Integer domainId, Double price, Double quantity, Integer incomeDetailId);
 }

@@ -48,6 +48,7 @@ public class ContractMediaPage extends AonTemplate2 {
 			@Override protected void ant() {}
 			@Override protected void excelDownload() {}
 			@Override protected void pdfDownload() {}
+			@Override protected void liqDownload() {}
 		};
 		toolbar.setAllVisible(false);
 		setToolbar(toolbar);

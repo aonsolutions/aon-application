@@ -233,7 +233,6 @@ public class FootPanel extends Composite {
 			Double color = "1".equals(col) || "1.0".equals(col) ? 0.003 : 0.0; 
 		
 			String product_price =  parent.getMap().containsKey("product_price") ?  parent.getMap().get("product_price") : "0.0";
-			
 			Double contractPrice = Double.parseDouble(product_price);
 
 			Double pFondo = dbPFondo.getValue() != null && !dbPFondo.getValue().equals("") ? dbPFondo.getValue() : 0.0;
@@ -349,29 +348,23 @@ public class FootPanel extends Composite {
 			FlexTable table1 = new FlexTable();
 		
 			// -------------------- TOTAL EUROS
-			Label total = new Label("Total Euros");
-			total.setTitle("Total Euros");
-			total.setStyleName(AON.AON_CSS.aonBold());
-			table1.setWidget(0, 0, total);
-			
 			Double totalEuros = eurosPeq + eurosGor + eurosNet;
-			table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(totalEuros))));
 
 			Label eurosKgBruto = new Label("Euros/Kg Bruto");
 			eurosKgBruto.setTitle("Euros/Kg Bruto");
 			eurosKgBruto.setStyleName(AON.AON_CSS.aonBold());
-			table1.setWidget(1, 0, eurosKgBruto);
+			table1.setWidget(0, 0, eurosKgBruto);
 			
 			Double eurosKgBruto2 = totalEuros / quantity;
-			table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 3))));
+			table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 4))));
 
 			Label eurosKgNeto = new Label("Euros/Kg Neto");
 			eurosKgNeto.setTitle("Euros/Kg Neto");
 			eurosKgNeto.setStyleName(AON.AON_CSS.aonBold());
-			table1.setWidget(2, 0, eurosKgNeto);
+			table1.setWidget(1, 0, eurosKgNeto);
 			
 			Double eurosKgNeto2 = totalEuros / kgNet;
-			table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
+			table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 4))));
 			
 			Label sinBon80 = new Label(">80 Sin Bonificaci\u00f3n");
 			sinBon80.setTitle(">80 Sin Bonificacion");
@@ -388,13 +381,23 @@ public class FootPanel extends Composite {
 			
 			Double dtoSinBon2 = ((quantity - kgPeq - kgGor - kgTer) * perDefec) /100;
 			table1.setWidget(4, 1, new Label(Double.toString(AonMathUtils.round(dtoSinBon2))));
+
+			Label total = new Label("Total Euros");
+			total.setTitle("Total Euros");
+			total.setStyleName(AON.AON_CSS.aonBold());
+			table1.setWidget(2, 0, total);
+
+			Double totalEuros2 =  AonMathUtils.round(kgNet) * AonMathUtils.round(eurosKgNeto2, 4);
+			table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(totalEuros2))));
+			
 			
 			VerticalPanel vp = new VerticalPanel();
 			vp.setWidth("100%");
 			vp.add(tInfo);
 			vp.add(table);
 			vp.add(table1);
-			
+		
+			updateIncomeDetail(eurosKgNeto2, kgNet);
 			dbPFondo.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -429,16 +432,27 @@ public class FootPanel extends Composite {
 					table1.setWidget(0, 1, new Label(Double.toString(AonMathUtils.round(totalEuros))));
 					
 					Double eurosKgBruto2 = totalEuros / quantity;
-					table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 3))));
+					table1.setWidget(1, 1, new Label(Double.toString(AonMathUtils.round(eurosKgBruto2, 4))));
 					
 					Double eurosKgNeto2 = totalEuros / kgNet;
-					table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 3))));
+					table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(eurosKgNeto2, 4))));
+
+					updateIncomeDetail(eurosKgNeto2, kgNet);
 				}
 			});
 			calculatePanel.setWidget(vp);
 		}
 	}
-
+	
+	private void updateIncomeDetail(Double price,Double quantity) {
+		String[] arr = parent.getMap().get("source").split("@");
+		parent.impl.updateIncomeDetail(parent.getAonData().getDomain().getName(), parent.getAonData().getDomain().getId(),
+			AonMathUtils.round(price, 4), AonMathUtils.round(quantity), Integer.parseInt(arr[1]), new AsyncCallback<Void>() {
+			@Override public void onFailure(Throwable caught) {}
+			@Override public void onSuccess(Void result) {}
+		});
+	}
+	
 	@UiField MinimizePanel footPanel;
 	@UiField TabLayoutPanel tabPanel;
 	@UiField ScrollPanel imgPanel;

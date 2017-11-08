@@ -70,7 +70,7 @@ public class QualityPrincipal extends Composite{
 		list = new LinkedList<>();
 		list.add("40");
 		getFilterMap().put("per_page", list);
-		parent.getAPI().getCommon().getDataResponse(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+		parent.getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsDataResponse> result) {

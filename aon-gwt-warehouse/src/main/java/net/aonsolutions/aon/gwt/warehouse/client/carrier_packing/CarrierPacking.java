@@ -170,11 +170,14 @@ public class CarrierPacking extends AonTemplate2{
 			@Override protected void excelDownload() {}
 
 			@Override protected void pdfDownload() {}
+
+			@Override protected void liqDownload() {}
 		};
 		toolbar.setAntVisible(false);
 		toolbar.setNextVisible(false);
 		toolbar.setExcelVisible(false);
 		toolbar.setPdfVisible(false);
+		toolbar.setLiqVisible(false);
 		setToolbar(toolbar);
 	}
 
