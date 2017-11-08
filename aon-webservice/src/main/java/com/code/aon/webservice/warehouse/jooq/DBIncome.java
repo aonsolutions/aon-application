@@ -10,7 +10,6 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
@@ -64,15 +63,15 @@ public class DBIncome {
 
 	public static JSONArray getIncomeDetails(Domain domain,String login, Map<String, String[]> map){
 		JSONArray array = new JSONArray();
-	
-		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> incomeDetailFilter(domain, map, f))
-			.forEach(detail -> {
-				if(map.containsKey("quality")) {
-					DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY,
-							f -> f.getSourceIdProperty().eq(detail.getId()).and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value())));
-					if(dr == null) array.put(incomeDetailToJSON(detail));
-				} else array.put(incomeDetailToJSON(detail));
-			});
+		if(map.containsKey("quality")) {
+			Integer[] ids = AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY, f -> f.getDomainProperty().eq(domain.getId()).and(f.getSourceIdProperty().isNotNull()))
+			.map(g -> g.getSourceId()).toArray(Integer[]::new);
+			
+			AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> 
+				incomeDetailFilter(domain, map, f).and(f.getIdProperty().notIn(ids)))
+			.forEach(detail -> array.put(incomeDetailToJSON(detail)));
+		} else AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> incomeDetailFilter(domain, map, f))
+			.forEach(detail -> array.put(incomeDetailToJSON(detail)));
 		return array;
 	}
     
