@@ -104,8 +104,8 @@ public class VisibilityManager extends BasicVisibilityManager {
 				enabledModules.remove(Module.PAYROLL);
 			}
 		}
-		if (user != null && user.getEnterprise() != null) {
-			enabledModules.add(Module.FINANCE_PORTAL);
+		if (parentDomainId == null || enabledModules.contains(Module.MANAGEMENT) || enabledModules.contains(Module.AON_ONE)) {
+			enabledModules.remove(Module.FINANCE_PORTAL);
 		}
 		return enabledModules;
 	}
