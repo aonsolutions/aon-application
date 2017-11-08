@@ -500,8 +500,8 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(null);
 		sincl.setImporteTotalNetoDeLaLineaDeArticulo(CommonUtil.round(detail
 				.getTaxableBase(), 3));
-		sincl.setPrecioBrutoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
-		sincl.setPrecioNetoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
+		sincl.setPrecioBrutoUnitario(CommonUtil.round(detail.getPrice(), 4));
+		sincl.setPrecioNetoUnitario(CommonUtil.round(detail.getPrice(), 4));
 		sincl.setUnidadDeMedidaDelPrecio(null);
 		sincl.setCalificadorIVA_IGIG(SINCL.SINCL_20.IVA_VAT.getValue());
 		sincl.setPorcentajeImpuestoIVA_IGIG(CommonUtil.round(detail.getVatPercent()));
