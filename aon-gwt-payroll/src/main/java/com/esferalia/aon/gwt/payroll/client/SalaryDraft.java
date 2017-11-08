@@ -2307,6 +2307,7 @@ public class SalaryDraft extends ResizeComposite
 
 		loadContentAssistManager();
 		
+		setAutomatic(  Arrays.asList(Type.EXTRA, Type.DELAY, Type.SETTLE).contains(salaryDraftObject.getType()));
 		setReadOnly(  Arrays.asList(Type.EXTRA, Type.DELAY).contains(salaryDraftObject.getType()));
 		
 
@@ -5102,6 +5103,22 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}-*/;
 
+	public void setAutomatic(boolean automatic) {
+
+//		acceptButton.setEnabled(!readOnly);
+		acceptButton.setVisible(!automatic);
+//		moreButton.setEnabled(!readOnly);
+		moreButton.setVisible(!automatic);
+//		datesListBox.setEnabled(!readOnly);
+		datesListBox.setVisible(!automatic);
+		
+		totalPaymentsLabel.setReadOnly(automatic);
+		totalLiquidLabel.setReadOnly(automatic);
+		
+		
+		
+	}
+	
 	public void setReadOnly(boolean readOnly) {
 
 //		fxButton.setEnabled(!readOnly);
@@ -5112,23 +5129,11 @@ public class SalaryDraft extends ResizeComposite
 		redoButton.setVisible(!readOnly);
 //		undoAllButton.setEnabled(!readOnly);
 		undoAllButton.setVisible(!readOnly);
-//		acceptButton.setEnabled(!readOnly);
-		acceptButton.setVisible(!readOnly);
-//		moreButton.setEnabled(!readOnly);
-		moreButton.setVisible(!readOnly);
-//		datesListBox.setEnabled(!readOnly);
-		datesListBox.setVisible(!readOnly);
-		
-		totalPaymentsLabel.setReadOnly(readOnly);
-		totalLiquidLabel.setReadOnly(readOnly);
-		
-		
+
 		contextTable.setStyleName("aon-ReadOnly", readOnly);
 		paymentsTable.setStyleName("aon-ReadOnly", readOnly);
-		
-		
 	}
-	
+
 	// ------------------------------------------------------- Static 'Library'
 	static boolean skipVariable(String name) {
 		for (String skip : SKIP_VARIABLES)
