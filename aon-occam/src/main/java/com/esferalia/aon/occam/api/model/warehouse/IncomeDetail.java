@@ -122,7 +122,7 @@ public class IncomeDetail implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	public double getQuantity() {
+	public Double getQuantity() {
 		return quantity;
 	}
 	public IncomeDetail setQuantity(double quantity) {

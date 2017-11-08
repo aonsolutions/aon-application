@@ -138,7 +138,7 @@ public class UdapaQuality extends AonTemplate2{
 				list = new LinkedList<>();
 				list.add("1");
 				filterMap.put("per_page", list);
-				getAPI().getCommon().getDataResponse(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+				getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsDataResponse> result) {
@@ -176,7 +176,7 @@ public class UdapaQuality extends AonTemplate2{
 					list = new LinkedList<>();
 					list.add("1");
 					filterMap.put("per_page", list);
-					getAPI().getCommon().getDataResponse(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+					getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 						
 						@Override
 						public void onSuccess(JSON<JsDataResponse> result) {
@@ -197,11 +197,17 @@ public class UdapaQuality extends AonTemplate2{
 			protected void pdfDownload() {
 				printQualityList("pdf");
 			}
+
+			@Override
+			protected void liqDownload() {
+				printLiqList("excel");			
+			}
 		};
 		toolbar.setAllVisible(false);
 		toolbar.setResetVisible(true);
 		toolbar.setExcelVisible(true);
 		toolbar.setPdfVisible(true);
+		toolbar.setLiqVisible(true);
 		setToolbar(toolbar);
 	}
 	
@@ -224,6 +230,7 @@ public class UdapaQuality extends AonTemplate2{
 		toolbar.setNextVisible(true);
 		toolbar.setExcelVisible(false);
 		toolbar.setPdfVisible(false);
+		toolbar.setLiqVisible(false);
 		setContent(new QualitySheet(this, js));
 	}
 
@@ -242,6 +249,10 @@ public class UdapaQuality extends AonTemplate2{
 	
 	private void printQualityList(String type) {
 		getAPI().getWarehouse().downloadUdapaQualityList(getFilterMap(), type);
+	}
+	
+	private void printLiqList(String type) {
+		getAPI().getWarehouse().downloadUdapaLiqList(getFilterMap(), type);
 	}
 	
 	private void removeQuality() {
@@ -270,10 +281,7 @@ public class UdapaQuality extends AonTemplate2{
 		};
 		dialog.setAutoHideEnabled(true);
 		dialog.getElement().getStyle().setWidth(310, Unit.PX);
-		dialog.center();
-		
-		
-		
+		dialog.center();	
 	}
 	
 	private void resetQuality() {
@@ -349,7 +357,8 @@ public class UdapaQuality extends AonTemplate2{
 						JSONObject dataResponseDetail = new JSONObject();
 						dataResponseDetail.put("data_response", new JSONString(result.getId() + ""));
 						dataResponseDetail.put("type", new JSONString("quality"));
-						dataResponseDetail.put("source", new JSONString("income_detail@" + orderDetail.getId()));						
+						dataResponseDetail.put("source", new JSONString("income_detail@" + orderDetail.getId()));			
+						dataResponseDetail.put("product_price", new JSONString(orderDetail.getPrice() + ""));
 						getAPI().getCommon().insertDataResponseDetail(JsonUtils.stringify(dataResponseDetail.getJavaScriptObject()));
 						hide();
 						sheetContent(result, getFilterMap());

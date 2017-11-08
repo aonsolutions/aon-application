@@ -99,7 +99,8 @@ public class PrincipalFootPanel extends Composite {
 									JSONObject dataResponseDetail = new JSONObject();
 									dataResponseDetail.put("data_response", new JSONString(result.getId() + ""));
 									dataResponseDetail.put("type", new JSONString("quality"));
-									dataResponseDetail.put("source", new JSONString("income_detail@" + r.getId()));						
+									dataResponseDetail.put("source", new JSONString("income_detail@" + r.getId()));		
+									dataResponseDetail.put("product_price", new JSONString(r.getPrice() + ""));
 									getAPI().getCommon().insertDataResponseDetail(JsonUtils.stringify(dataResponseDetail.getJavaScriptObject()));
 									parent.sheetContent(result, parent.getFilterMap());
 								}

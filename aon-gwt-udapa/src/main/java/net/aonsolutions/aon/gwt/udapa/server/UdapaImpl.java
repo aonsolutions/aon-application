@@ -35,6 +35,10 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	public static UdapaImpl getInstance() {
+		return new UdapaImpl();
+	}
+	
 	public HashMap<String, String> getValues(String domainName, Integer domainId, Integer drId){
 		String login = "";
 		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.QUALITY, f -> f.getIdProperty().eq(drId));
@@ -86,8 +90,15 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				map.put(QualitySheetCode.UFQCD01.getName(), id.getQuantity() + "");
 				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCD01, id.getQuantity() + "", map);
 			}
-
-			map.put("product_price", id.getPrice() + "");
+			if(!map.containsKey("product_price")) {
+				DataResponseDetail drd = new DataResponseDetail();
+				drd.setDomain(domainId);
+				drd.setDataResponse(drId);
+				drd.setDataVariable("product_price");
+				drd.setDataValue(id.getPrice() + "");
+				AON.insertDataResponseDetail(domainName, domainId, login, drd);
+				map.put("product_price", id.getPrice() + "");
+			}
 			if(i.getCarrierPacking() != null){
 				CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));
 				map.put("transport_carrier", cp.getCarrierName());
@@ -177,5 +188,15 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		return map.containsKey(QualitySheetCode.UFQDP1.getName()) && 
 			(map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.BASERRI.ordinal() + 1))
 			|| map.get(QualitySheetCode.UFQDP1.getName()).equals(Integer.toString(Destiny.EUSKOLABEL.ordinal() + 1)));
+	}
+	
+	public void updateIncomeDetail(String domainName, Integer domainId, Double price, Double quantity, Integer incomeDetailId) {
+		Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domainName, domainId, "", f -> f.getIdProperty().eq(incomeDetailId));
+		if(incomeDetail.isPresent()) {
+			incomeDetail.get().setQuantity(quantity);
+			incomeDetail.get().setPrice(price);
+			incomeDetail.get().setDiscountExpression("0");
+			AON.updateIncomeDetail(domainName, domainId, "", incomeDetail.get());
+		}
 	}
 }

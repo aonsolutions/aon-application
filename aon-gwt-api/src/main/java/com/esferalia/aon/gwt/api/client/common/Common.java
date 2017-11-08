@@ -71,6 +71,11 @@ public class Common extends Methods{
 		get(getUrl() + "common/"+getDomainName()+"/"+getUserName()+"/data_response" + filter, callback);
 	}
 	
+	public void getDataResponseQuality(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDataResponse>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "quality/"+getDomainName()+"/"+getUserName()+"/data_response" + filter, callback);
+	}
+	
 	public void insertDataResponse(String requestData, AsyncCallback<JsDataResponse> callback){
 		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/data_response", requestData, callback);
 	}
