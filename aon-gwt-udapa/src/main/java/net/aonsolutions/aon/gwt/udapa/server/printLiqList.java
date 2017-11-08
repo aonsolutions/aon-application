@@ -29,11 +29,13 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
@@ -323,6 +325,10 @@ public class printLiqList extends HttpServlet{
 							
 							// P FONDO
 							String p_fondo = map.containsKey(QualitySheetCode.UFQC2.getName()) ?  map.get(QualitySheetCode.UFQC2.getName()) : "0.0";
+							if("0.0".equals(p_fondo)){
+								ApplicationParameter app = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.QUALITY_PFONDO);
+								p_fondo = app != null ? app.getValue(): "0.0";
+							}
 							Double pFondo = Double.parseDouble(p_fondo.replace(",", "."));
 							cell(libro, row, style3, 23, pFondo);
 							

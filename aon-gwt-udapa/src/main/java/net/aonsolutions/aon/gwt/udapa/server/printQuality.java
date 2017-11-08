@@ -573,7 +573,8 @@ public class printQuality {
 		c3333.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c3333);
 
-		String color = "0".equals(map.get(QualitySheetCode.UFQAC8.getName())) ? "No" : "Si";
+		String color = "0".equals(map.get(QualitySheetCode.UFQAC8.getName()))
+				|| "0.0".equals(map.get(QualitySheetCode.UFQAC8.getName())) ? "No" : "Si";
 		PdfPCell c4444 = new PdfPCell(new Phrase(isPropaco(map) ? color : "",getFont2()));
 		c4444.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c4444);
