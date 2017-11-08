@@ -435,8 +435,9 @@ public class SalarySelect extends Composite {
 					extrasDatesProvider.removeDataDisplay(dateListBox);
 				if (!settleDatesProvider.hasDataDisplay(dateListBox))
 					settleDatesProvider.addDataDisplay(dateListBox);
-
-				if ( employee.getSeniorityDate() != null ) {
+				
+				if ( employee.getSeniorityDate() != null && 
+					!employee.getSeniorityDate().equals(employee.getStartDate())) {
 					List<Date> fromDates = new ArrayList<Date>();
 					fromDates.add(employee.getSeniorityDate());
 					fromDates.add(employee.getStartDate());
