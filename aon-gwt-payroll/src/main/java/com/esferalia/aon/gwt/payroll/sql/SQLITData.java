@@ -222,6 +222,7 @@ public class SQLITData implements Serializable {
 					+ SQLConstants.PERSON+"."+PersonColumns.SOCIAL_SECURITY_NUM+", "
 					+ SQLConstants.CONTRACT+"."+ContractColumns.START_DATE+", "
 					+ SQLConstants.CONTRACT+"."+ContractColumns.END_DATE+", "
+					+ SQLConstants.CONTRACT+"."+ContractColumns.SENIORITY_DATE+", "
 					
 					+" ifnull("+SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.TYPE+",-1) as type, "
 					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.ID+", "
