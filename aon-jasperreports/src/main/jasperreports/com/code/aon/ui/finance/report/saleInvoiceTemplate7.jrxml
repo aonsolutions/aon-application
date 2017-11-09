@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-03T15:12:11 -->
+<!-- 2017-11-09T11:20:22 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="bf352430-a19b-4ee5-89ee-fc85c0ca4d0c">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -498,7 +498,7 @@
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["FACTURA " +
+				<textFieldExpression><![CDATA[$R{finance_invoice}.toUpperCase() +
 ($F{rectifier} ? ("("+$R{finance_rectifier_invoice}.toUpperCase()+")") :
     ($F{rectified} ? ("("+$R{finance_rectified_invoice}.toUpperCase()+")") : ""))]]></textFieldExpression>
 			</textField>
@@ -557,7 +557,7 @@
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Documento"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_document}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-52" mode="Opaque" x="1" y="163" width="125" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="bc9db36b-1f3f-43ed-98ef-878d62e62a13"/>

@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
-import net.sf.jasperreports.engine.JRScriptletException;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +15,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
+import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RecordData;
-import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.util.ReportScriptlet;
 import com.code.aon.ui.util.AonUtil;
+
+import net.sf.jasperreports.engine.JRScriptletException;
 
 public class InvoiceReportScriptlet extends ReportScriptlet implements Serializable {
 	
@@ -118,26 +118,26 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 					}
 					if(StringUtils.isNotBlank(recordData.getVolume())){
 						builder.append(builder.length()>0?", ":"");
-						builder.append("Tomo ");
+						builder.append(AonUtil.getMessage("registry_rd_volume") + " ");
 						builder.append(recordData.getVolume());
 					}
 					if(StringUtils.isNotBlank(recordData.getSection())){
 						builder.append(builder.length()>0?", ":"");
-						builder.append("Sección ");
+						builder.append(AonUtil.getMessage("registry_rd_section") + " ");
 						builder.append(recordData.getSection());
 					}
 					if(StringUtils.isNotBlank(recordData.getPage())){
 						builder.append(builder.length()>0?", ":"");
-						builder.append("Folio ");
+						builder.append(AonUtil.getMessage("registry_rd_page") + " ");
 						builder.append(recordData.getPage());
 					}
 					if(StringUtils.isNotBlank(recordData.getSheet())){
 						builder.append(builder.length()>0?", ":"");
-						builder.append("Hoja ");
+						builder.append(AonUtil.getMessage("registry_rd_sheet") + " ");
 						builder.append(recordData.getSheet());
 					}
 					if(recordData.getRecordDate()!=null){
-						builder.append("con fecha ");
+						builder.append(", " + AonUtil.getMessage("registry_rd_record_date") + " ");
 						builder.append(new SimpleDateFormat("dd/MM/yyyy").format(recordData.getRecordDate()));
 					}
 				}
@@ -172,9 +172,9 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	}
 	
 	public String getInvoiceProvince() throws JRScriptletException{
-		RegistryAddress raddress = (RegistryAddress) super.getFieldValue(FIELD_ADDRESS);
+		IAddress raddress = (IAddress) super.getFieldValue(FIELD_ADDRESS);
 		StringBuilder builder = new StringBuilder("");
-		if(raddress!=null && raddress.getId()!=null){
+		if(raddress!=null && raddress.getGeozone().getId()!=null){
 			builder.append(raddress.getGeozone()!=null?raddress.getGeozone().getName():"");
 			try {
 				if(!raddress.getGeozone().getGeoZoneCountry().getId().equals(getAddress().getGeozone().getGeoZoneCountry().getId())){
