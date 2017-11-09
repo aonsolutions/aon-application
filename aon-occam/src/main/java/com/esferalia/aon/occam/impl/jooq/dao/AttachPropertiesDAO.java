@@ -333,7 +333,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Date> getAttachDateProperty() {return null;}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
 		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
-		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
+		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DATA_ATTACH.CREATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
 		@Override public Property<Date> getAttachModificationDateProperty() {return null;}

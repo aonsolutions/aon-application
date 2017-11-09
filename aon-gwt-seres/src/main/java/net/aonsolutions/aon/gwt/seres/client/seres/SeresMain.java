@@ -12,11 +12,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SeresMain extends AonTemplate2{
 
@@ -25,6 +25,7 @@ public class SeresMain extends AonTemplate2{
 	private AonData aonData;
 	
 	private Button sendAll;
+	private Button retrieveAll;
 	
 	final String OUTCOME_DELIVERY = "outcome_delivery";
 	final String OUTCOME_INVOICE = "outcome_invoice";
@@ -57,6 +58,10 @@ public class SeresMain extends AonTemplate2{
 	
 	public Button getSendAll() {
 		return sendAll;
+	}
+	
+	public Button getRetrieveAll() {
+		return retrieveAll;
 	}
 	
 	
@@ -107,12 +112,23 @@ public class SeresMain extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO sendAll
-//				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
-//				SimpleLayoutPanel slp = p.getContent();
-//				ContentGrid grid = (ContentGrid) slp.getWidget();
-//				grid.send(getFilterMap().get("seres").get(0)); 
-				Window.alert("En desarrollo.");
+				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
+				SimpleLayoutPanel slp = p.getContent();
+				ContentGrid grid = (ContentGrid) slp.getWidget();
+				grid.send(getFilterMap().get("seres").get(0));
+			}
+		});
+		
+		retrieveAll = toolbar.addButton("Recuperar", AON.AON_CSS.aonIconSave());
+		retrieveAll.setVisible(false);
+		retrieveAll.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
+				SimpleLayoutPanel slp = p.getContent();
+				ContentGrid grid = (ContentGrid) slp.getWidget();
+				grid.retrieve(getFilterMap().get("seres").get(0));
 			}
 		});
 	
@@ -125,18 +141,18 @@ public class SeresMain extends AonTemplate2{
 		VerticalPanel menuPanel = new VerticalPanel();
 		menuPanel.addStyleName(AON.AON_CSS.aonWidthAll());
 		
-		menuPanel.add(createMenuPanelButton("Vision global", "Vision global", null, false, false));
+		menuPanel.add(createMenuPanelButton("Visi\u00F3n global", "Visi\u00F3n global", null, false, false));
 		
-		menuPanel.add(createMenuPanelLabel("Ficheros Enviados"));
-		menuPanel.add(createMenuPanelButton("Albaranes", "Albaranes enviados", OUTCOME_DELIVERY));
-		menuPanel.add(createMenuPanelButton("Facturas", "Facturas enviadas", OUTCOME_INVOICE));
+		menuPanel.add(createMenuPanelLabel("Env\u00EDo de Ficheros"));
+		menuPanel.add(createMenuPanelButton("Albaranes", "Env\u00EDo de Albaranes", OUTCOME_DELIVERY));
+		menuPanel.add(createMenuPanelButton("Facturas", "Env\u00EDo de Facturas", OUTCOME_INVOICE));
 		
-		menuPanel.add(createMenuPanelLabel("Ficheros Recibidos"));
-		menuPanel.add(createMenuPanelButton("Pedidos", "Pedidos recibidos", INCOME_SALES));
-		menuPanel.add(createMenuPanelButton("Facturas", "Facturas recibidas", INCOME_INVOICE));
+		menuPanel.add(createMenuPanelLabel("Recepci\u00F3n de Ficheros"));
+		menuPanel.add(createMenuPanelButton("Pedidos", "Recepci\u00F3n de Pedidos", INCOME_SALES));
+		menuPanel.add(createMenuPanelButton("Facturas", "Recepci\u00F3n de Facturas", INCOME_INVOICE));
 		
 		menuPanel.add(createMenuPanelLabel("Ingenet"));
-		menuPanel.add(createMenuPanelButton("Albaranes Ingenet", "Albaranes Ingenet", INGENET_DELIVERY));
+		menuPanel.add(createMenuPanelButton("Albaranes", "Recepci\u00F3n de Albaranes Ingenet", INGENET_DELIVERY));
 		
 		setWestContent(menuPanel);
 	}
@@ -163,8 +179,11 @@ public class SeresMain extends AonTemplate2{
 		if(padding)
 			button.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		button.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {	
+			@Override public void onClick(ClickEvent event) {
+				cleanMenuPanelButtons();
+				button.addStyleName(AON.AON_CSS.aonBold());
 				sendAll.setVisible(false);
+				retrieveAll.setVisible(false);
 				LinkedList<String> list = new LinkedList<>();
 				list.add(action);
 				getFilterMap().put("seres",list);
@@ -177,6 +196,14 @@ public class SeresMain extends AonTemplate2{
 			}
 		});
 		return button;
+	}
+	
+	private void cleanMenuPanelButtons() {
+		VerticalPanel menuPanel = (VerticalPanel) getWestContent().getWidget();
+		for(int i=0; i<menuPanel.getWidgetCount(); i++){
+			Widget widget = menuPanel.getWidget(i);
+			widget.removeStyleName(AON.AON_CSS.aonBold());
+		}
 	}
 	
 	private void content() {

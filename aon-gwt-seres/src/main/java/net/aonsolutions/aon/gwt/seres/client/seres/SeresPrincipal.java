@@ -5,10 +5,8 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.seres.JsSeresFile;
 import com.esferalia.aon.gwt.api.client.seres.JsSummary;
-import com.esferalia.aon.gwt.api.client.warehouse.JsDelivery;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
@@ -52,9 +50,9 @@ public class SeresPrincipal extends Composite{
 	@UiField ScrollPanel errorPanel;
 	@UiField ScrollPanel historyPanel;
 
-	private SeresMain parent;
-	private SeresPrincipal me;
-	private String command;
+	SeresMain parent;
+	SeresPrincipal me;
+	String command;
 	
 	public API getAPI() {
 		return parent.getAPI();
@@ -124,133 +122,145 @@ public class SeresPrincipal extends Composite{
 		list = new LinkedList<>();
 		list.add("40");
 		getFilterMap().put("per_page", list);
+		
+		
+		Widget content = null;
+		if (parent.OUTCOME_DELIVERY.equals(command) || parent.OUTCOME_INVOICE.equals(command)
+				|| parent.INCOME_SALES.equals(command) || parent.INCOME_INVOICE.equals(command)
+				|| parent.INGENET_DELIVERY.equals(command)) {
+			ContentGrid contentGrid = (new ContentGrid(me));
+			reloadContentGrid(contentGrid);
+			content = contentGrid;
+		} else {
+			content = (createSummaryPanel());
+		}
+		getContent().setWidget(content);
 
+	}
+	
+	private Widget createSummaryPanel() {
+		VerticalPanel panel = new VerticalPanel(); 
+		panel.addStyleName(AON.AON_CSS.aonMarginTop());
+		getAPI().getSeres().getSummary(getFilterMap(), new AsyncCallback<JSON<JsSummary>>() {
+
+			@Override
+			public void onSuccess(JSON<JsSummary> result) {
+				for(JsSummary o: result.getData().toLinkedList()){
+					VerticalPanel innerPanel = new VerticalPanel();
+					SimplePanel titlePanel = new SimplePanel();
+					SimplePanel bodyPanel = new SimplePanel();
+					innerPanel.setStyleName(AON.AON_CSS.aonGroup());
+					titlePanel.setStyleName(AON.AON_CSS.aonGroupTitle());
+					bodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
+					innerPanel.add(titlePanel);
+					innerPanel.add(bodyPanel);
+					
+					FlexTable table = new FlexTable();
+					for(int i=0; i<6; i++)
+						table.getFlexCellFormatter().setWidth(0, i, "200px");
+					table.setWidget(0, 0, new Label("Total"));
+					table.setWidget(0, 1, boldLabel(o.getQuantity()));
+					table.setWidget(0, 2, new Label("Pendiente"));
+					table.setWidget(0, 3, boldLabel(o.getPending()));
+					table.setWidget(0, 4, new Label("Errores"));
+					table.setWidget(0, 5, boldLabel(o.getError()));
+					
+					InlineLabel title = null;
+					if(parent.OUTCOME_DELIVERY.equals(o.getLabel())){
+						title = new InlineLabel( "Albaranes enviados" );
+					} else if(parent.OUTCOME_INVOICE.equals(o.getLabel())){
+						title = new InlineLabel( "Facturas enviadas" );
+					} else if(parent.INCOME_SALES.equals(o.getLabel())){
+						title = new InlineLabel( "Pedidos recibidos" );
+					} else if(parent.INCOME_INVOICE.equals(o.getLabel())){
+						title = new InlineLabel( "Facturas recibidas" );
+					} else if(parent.INGENET_DELIVERY.equals(o.getLabel())){
+						title = new InlineLabel( "Ingenet - Albaranes recibidos" );
+					}
+					
+					titlePanel.add(title);
+					bodyPanel.add(table);
+					panel.add(innerPanel);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+		
+		return panel;
+	}
+	
+	public void reloadContentGrid() {
+		ContentGrid contentGrid = (ContentGrid) getContent().getWidget();
+		reloadContentGrid(contentGrid);
+	}
+		
+	public void reloadContentGrid(ContentGrid contentGrid) {
 		if(parent.OUTCOME_DELIVERY.equals(command)){
 			getAPI().getSeres().getOutcomeDelivery(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsSeresFile> result) {
-					content.setWidget(new ContentGrid(me, result.getData().toLinkedList()));
+					contentGrid.addAll(result.getData().toLinkedList());
+					contentGrid.dataGrid.redraw();
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
-					
-				}
+				public void onFailure(Throwable caught) {}
 			});
 		} else if(parent.OUTCOME_INVOICE.equals(command)){
 			getAPI().getSeres().getOutcomeInvoice(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsSeresFile> result) {
-					content.setWidget(new ContentGrid(me, result.getData().toLinkedList()));
+					contentGrid.addAll(result.getData().toLinkedList());
+					contentGrid.dataGrid.redraw();
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
-					
-				}
+				public void onFailure(Throwable caught) {}
 			});
 		} else if(parent.INCOME_SALES.equals(command)){
 			getAPI().getSeres().getIncomeSales(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsSeresFile> result) {
-					content.setWidget(new ContentGrid(me, result.getData().toLinkedList()));
+					contentGrid.addAll(result.getData().toLinkedList());
+					contentGrid.dataGrid.redraw();
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
-					
-				}
+				public void onFailure(Throwable caught) {}
 			});
 		} else if(parent.INCOME_INVOICE.equals(command)){
 			getAPI().getSeres().getIncomeInvoice(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsSeresFile> result) {
-					content.setWidget(new ContentGrid(me, result.getData().toLinkedList()));
+					contentGrid.addAll(result.getData().toLinkedList());
+					contentGrid.dataGrid.redraw();
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
-					
-				}
+				public void onFailure(Throwable caught) {}
 			});
 		} else if(parent.INGENET_DELIVERY.equals(command)){
-			// TODO
-//			content.setWidget(new Label("En desarrollo."));
-//			Window.alert("En desarrollo.");
 			getAPI().getSeres().getIngenetDelivery(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsSeresFile> result) {
-					content.setWidget(new ContentGrid(me, result.getData().toLinkedList()));
+					contentGrid.addAll(result.getData().toLinkedList());
+					contentGrid.dataGrid.redraw();
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
-					
-				}
+				public void onFailure(Throwable caught) {}
 			});
 		} else {
-			getAPI().getSeres().getSummary(getFilterMap(), new AsyncCallback<JSON<JsSummary>>() {
-				
-				@Override
-				public void onSuccess(JSON<JsSummary> result) {
-					content.setWidget(createSummaryPanel(result.getData().toLinkedList()));
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					
-				}
-			});
-		}
-		
-	}
-	
-	private Widget createSummaryPanel(LinkedList<JsSummary> list) {
-		VerticalPanel panel = new VerticalPanel(); 
-		panel.addStyleName(AON.AON_CSS.aonMarginTop());
-		for(JsSummary o: list){
-			VerticalPanel innerPanel = new VerticalPanel();
-			SimplePanel titlePanel = new SimplePanel();
-			SimplePanel bodyPanel = new SimplePanel();
-			innerPanel.setStyleName(AON.AON_CSS.aonGroup());
-			titlePanel.setStyleName(AON.AON_CSS.aonGroupTitle());
-			bodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
-			innerPanel.add(titlePanel);
-			innerPanel.add(bodyPanel);
 			
-			FlexTable table = new FlexTable();
-			for(int i=0; i<6; i++)
-				table.getFlexCellFormatter().setWidth(0, i, "200px");
-			table.setWidget(0, 0, new Label("Total"));
-			table.setWidget(0, 1, boldLabel(o.getQuantity()));
-			table.setWidget(0, 2, new Label("Pendiente"));
-			table.setWidget(0, 3, boldLabel(o.getPending()));
-			table.setWidget(0, 4, new Label("Errores"));
-			table.setWidget(0, 5, boldLabel(o.getError()));
-			
-			InlineLabel title = null;
-			if(parent.OUTCOME_DELIVERY.equals(o.getLabel())){
-				title = new InlineLabel( "Albaranes enviados" );
-			} else if(parent.OUTCOME_INVOICE.equals(o.getLabel())){
-				title = new InlineLabel( "Facturas enviadas" );
-			} else if(parent.INCOME_SALES.equals(o.getLabel())){
-				title = new InlineLabel( "Pedidos recibidos" );
-			} else if(parent.INCOME_INVOICE.equals(o.getLabel())){
-				title = new InlineLabel( "Facturas recibidas" );
-			} else if(parent.INGENET_DELIVERY.equals(o.getLabel())){
-				title = new InlineLabel( "Ingenet - Albaranes recibidos" );
-			}
-		
-			titlePanel.add(title);
-			bodyPanel.add(table);
-			panel.add(innerPanel);
 		}
-		return panel;
 	}
 
 	private Label boldLabel(String value){
@@ -268,6 +278,10 @@ public class SeresPrincipal extends Composite{
 	
 	public Button getSendAll() {
 		return parent.getSendAll();
+	}
+	
+	public Button getRetrieveAll() {
+		return parent.getRetrieveAll();
 	}
 	
 	@UiHandler("footPanel")
