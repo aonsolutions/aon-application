@@ -123,39 +123,45 @@ public class InvoiceDAO {
 		Boolean bienes = "bienes".equals(sii);
 		Boolean cp = "cp_cobros_pagos".equals(sii) || "cp_cobros".equals(sii) || "cp_pagos".equals(sii);
 		
-		if(pending && !intracomunitaria && !cp && !bienes){
-			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Pendiente");
-			if(aceptada) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Correcto"));
-			if(aceptadaErrores) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("AceptadoConErrores"));
-			if(incorrecta) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Incorrecto"));
-			if(anulada) c = c.and(DATA_RESPONSE_DETAIL.DATA_VALUE.ne("Anulada"));
-			FilterDAO d = (FilterDAO) filter.filter(INVOICE_PROPERTIES);
-			
+		if(pending && !intracomunitaria && !cp && !bienes
+				&& !aceptada && !aceptadaErrores && !incorrecta && !anulada){
+			FilterDAO d = (FilterDAO) filter.filter(INVOICE_PROPERTIES);			
+			return ctx.getDslContext().select()
+				.from(INVOICE).join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+				.where(INVOICE_PROPERTIES.getConditions(filter))
+				.and(INVOICE.ID.notIn(
+						ctx.getDslContext().select(DATA_RESPONSE.SOURCE_ID)
+							.from(DATA_RESPONSE)
+							.where(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()))
+							.and(DATA_RESPONSE.DOMAIN.eq(ctx.getDomainId()))
+						))
+				.limit(d.getPerPage())
+				.offset(d.getPerPage() * (d.getPage() -1))
+				.fetch().stream().map(new SiiInvoiceFiller(true));
+		/*	Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente");
+			if(aceptada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Correcto"));
+			if(aceptadaErrores) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("AceptadoConErrores"));
+			if(incorrecta) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Incorrecto"));
+			if(anulada) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Anulada"));
+								
 			Field[] f = new Field[INVOICE.fields().length + 2];
 			for(Integer i = 0 ; i < INVOICE.fields().length; i++)
 				f[i] = INVOICE.fields()[i];
 			f[INVOICE.fields().length] = SCOPE.DESCRIPTION;
 			f[INVOICE.fields().length + 1] = DATA_RESPONSE_DETAIL.DATA_VALUE;
 			
-			return ctx.getDslContext().selectDistinct(f)
-					.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
-					.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+			return ctx.getDslContext().select(f)
+					.from(INVOICE).join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
 					.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
-					.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status").and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID)))
+					.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status")
+															.and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
+															.and(c)
+													)
 					.where(INVOICE_PROPERTIES.getConditions(filter))
-					.and(INVOICE.ID.notIn(
-							ctx.getDslContext().select(DATA_RESPONSE.SOURCE_ID)
-							.from(DATA_RESPONSE).join(DATA_RESPONSE_DETAIL)
-									.on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("status")
-									.and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID))
-									.and(c))
-							.where(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()))
-							.and(DATA_RESPONSE.DOMAIN.eq(ctx.getDomainId()))
-							))
 					.limit(d.getPerPage())
 					.offset(d.getPerPage() * (d.getPage() -1))
-					.fetch().stream().map(new SiiInvoiceFiller());
-
+					.fetch().stream().map(new SiiInvoiceFiller(false));
+*/
 		} else {
 			Condition c = DATA_RESPONSE_DETAIL.DATA_VALUE.eq(""); 
 			if(pending) c = c.or(DATA_RESPONSE_DETAIL.DATA_VALUE.eq("Pendiente"));
@@ -173,7 +179,7 @@ public class InvoiceDAO {
 						.and(c))
 					.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
 				, filter)
-				.fetch().stream().map(new SiiInvoiceFiller());
+				.fetch().stream().map(new SiiInvoiceFiller(false));
 		}
 	}
 	
@@ -415,7 +421,11 @@ public class InvoiceDAO {
 	}
 	
 	public static class SiiInvoiceFiller  implements Function<Record,Invoice> {
-
+		Boolean pending;
+		public SiiInvoiceFiller(Boolean pending) {
+			this.pending = pending;
+		}
+		
 		@Override
 		public Invoice apply(Record record) {
 			return new Invoice()
@@ -454,7 +464,7 @@ public class InvoiceDAO {
 				.setTotal(record.getValue(INVOICE.TOTAL))	
 				.setComments(record.getValue(INVOICE.COMMENTS))
 				.setStatus(record.getValue(INVOICE.STATUS))
-				.setSiiStatus(record.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
+				.setSiiStatus(pending ? "Pendiente" : record.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
 		}
 		
 	}

@@ -112,10 +112,13 @@ public class SiiPrincipal extends Composite{
 		list = new LinkedList<>();
 		list.add("40");
 		getFilterMap().put("per_page", list);
+		FilterPanel fp = (FilterPanel) northContent.getWidget();
+		fp.enabledAllFilter(false);
 		getAPI().getFinance().getInvoices(getFilterMap(), new AsyncCallback<JSON<JsInvoice>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsInvoice> result) {
+				fp.enabledAllFilter(true);
 				content.setWidget(new InvoiceGrid(me, result.getData().toLinkedList()));
 			}
 			
