@@ -1543,13 +1543,13 @@ public class SIIBuilt {
 		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
 		contraparte.setNombreRazon(vat.getRegistryName());
 		if(vat.getRegistryDocumentCountry().equals(Country.ES)
-				&& validateNif(vat.getRegistryDocument(), vat.getRegistryName())){
+				&& (validateNif(vat.getRegistryDocument(), vat.getRegistryName()) || !vat.getInvoiceType().equals(InvoiceType.SALES))){
 			contraparte.setNIF(vat.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
 			otro.setID(vat.getRegistryDocument());
-			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) && vat.getInvoiceType().equals(InvoiceType.SALES)? 
+			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) ? 
 				IDType.NO_CENSADO.getName() : IDType.valueOf(vat.getRegistryDocumentType()).getName());
 			contraparte.setIDOtro(otro);
 		}	
