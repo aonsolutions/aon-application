@@ -1858,10 +1858,12 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public void processOcr(ActionEvent event) {
 		String url = obtainOcrUrl();
 		if(url!=null && StringUtils.isNotBlank(url)){
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
 			try {
 				Invoice invoice = (Invoice) this.getTo();
 				InvoiceOcrProcess ocr = new InvoiceOcrProcess();
-				ocr.process(url, AonUtil.getDomainName(), invoice, getInvoiceAttachFile().getData());
+				ocr.process(url, domainName, domainId, invoice, getInvoiceAttachFile().getData());
 				
 				loadAddresses(invoice.getRegistry().getId());
 				invoice.setRegistry(invoice.getRegistry().getRegistry());
