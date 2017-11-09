@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.shared.EvalWarning;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -33,7 +32,6 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.ui.Button;
@@ -44,7 +42,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Payment extends ResizeComposite {
@@ -139,7 +136,7 @@ public class Payment extends ResizeComposite {
 			if (changed) {
 				eval(fire);
 			} else {
-				setText(result);
+				setText(result != null ? result : expression);
 			}
 		}
 
@@ -617,8 +614,8 @@ public class Payment extends ResizeComposite {
 			public void onClose(CloseEvent<PopupPanel> event) {
 				textBox.setFocus(true);
 				if (fxDialog.isAccepted()) {
-					//textBox.setValue(fxDialog.getExpression());
-					textBox.setExpression(fxDialog.getExpression(), true);
+					textBox.setText(fxDialog.getExpression());
+					//textBox.setExpression(fxDialog.getExpression(), true);
 				}
 			}
 		});
