@@ -41,11 +41,6 @@ public class FilterPanel extends Composite {
     
     private SiiPrincipal parent;
     
-    private void onChange(String key, LinkedList<String> value) {
-    	parent.getFilterMap().put(key, value);
-		parent.gridContent();
-    }
-    
     public FilterPanel(SiiPrincipal parent) {
     	this.parent = parent;
     	initWidget(binder.createAndBindUi(this));       
@@ -91,12 +86,18 @@ public class FilterPanel extends Composite {
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(Long.toString(from.getValue().getTime()));
-				onChange("from", list);
+		    	parent.getFilterMap().put("from", list);
+				parent.gridContent();
 			}
 		});
 		datePanel.add(from);
 		
 		CheckBox cb = new CheckBox("Pendientes");
+		CheckBox cb2 = new CheckBox("Aceptadas");
+		CheckBox cb3 = new CheckBox("Aceptadas con Errores");
+		CheckBox cb4 = new CheckBox("Incorrectas");
+		CheckBox cb5 = new CheckBox("Anuladas");
+		
 		if(parent.getFilterMap().containsKey("pending")){
 			cb.setValue(parent.getFilterMap().get("pending").get(0).equalsIgnoreCase("true"));
 		}
@@ -104,14 +105,26 @@ public class FilterPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				cb2.setValue(false);
+				cb3.setValue(false);
+				cb4.setValue(false);
+				cb5.setValue(false);
+				LinkedList<String> list2 = new LinkedList<>();
+				list2.add(cb2.getValue().toString());
+				parent.getFilterMap().put("sent", list2);
+				parent.getFilterMap().put("sent_error", list2);
+				parent.getFilterMap().put("error", list2);
+				parent.getFilterMap().put("anulada", list2);
+				
 				LinkedList<String> list = new LinkedList<>();
 				list.add(cb.getValue().toString());
-				onChange("pending", list);
+				parent.getFilterMap().put("pending", list);
+				parent.gridContent();
 			}
 		});
 		datePanel.add(cb);
 		
-		CheckBox cb2 = new CheckBox("Aceptadas");
+
 		if(parent.getFilterMap().containsKey("sent")){
 			cb2.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
 		}
@@ -119,14 +132,19 @@ public class FilterPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				cb.setValue(false);
+				LinkedList<String> list2 = new LinkedList<>();
+				list2.add(cb.getValue().toString());
+				parent.getFilterMap().put("pending", list2);
+				
 				LinkedList<String> list = new LinkedList<>();
 				list.add(cb2.getValue().toString());
-				onChange("sent", list);				
+				parent.getFilterMap().put("sent", list);
+				parent.gridContent();
 			}
 		});
 		datePanel.add(cb2);
 		
-		CheckBox cb3 = new CheckBox("Aceptadas con Errores");
 		if(parent.getFilterMap().containsKey("sent")){
 			cb3.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
 		}
@@ -134,14 +152,20 @@ public class FilterPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				cb.setValue(false);
+				LinkedList<String> list2 = new LinkedList<>();
+				list2.add(cb.getValue().toString());
+				parent.getFilterMap().put("pending", list2);
+				
 				LinkedList<String> list = new LinkedList<>();
 				list.add(cb3.getValue().toString());
-				onChange("sent_error", list);				
+				parent.getFilterMap().put("sent_error", list);
+				parent.gridContent();
 			}
 		});
 		datePanel.add(cb3);
 		
-		CheckBox cb4 = new CheckBox("Incorrectas");
+		
 		if(parent.getFilterMap().containsKey("sent")){
 			cb4.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
 		}
@@ -149,14 +173,20 @@ public class FilterPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				cb.setValue(false);
+				LinkedList<String> list2 = new LinkedList<>();
+				list2.add(cb.getValue().toString());
+				parent.getFilterMap().put("pending", list2);
+
 				LinkedList<String> list = new LinkedList<>();
 				list.add(cb4.getValue().toString());
-				onChange("error", list);				
+				parent.getFilterMap().put("error", list);
+				parent.gridContent();
 			}
 		});
 		datePanel.add(cb4);
 		
-		CheckBox cb5 = new CheckBox("Anuladas");
+		
 		if(parent.getFilterMap().containsKey("sent")){
 			cb5.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
 		}
@@ -164,9 +194,15 @@ public class FilterPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				cb.setValue(false);
+				LinkedList<String> list2 = new LinkedList<>();
+				list2.add(cb.getValue().toString());
+				parent.getFilterMap().put("pending", list2);
+				
 				LinkedList<String> list = new LinkedList<>();
 				list.add(cb5.getValue().toString());
-				onChange("anulada", list);				
+				parent.getFilterMap().put("anulada", list);
+				parent.gridContent();			
 			}
 		});
 		datePanel.add(cb5);
@@ -181,8 +217,9 @@ public class FilterPanel extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				LinkedList<String> list = new LinkedList<>();
-				list.add(cb6.getValue().toString());
-				onChange("partial", list);				
+				list.add(cb6.getValue().toString());		
+				parent.getFilterMap().put("partial", list);
+				parent.gridContent();		
 			}
 		});
 		datePanel.add(cb6);
@@ -198,10 +235,21 @@ public class FilterPanel extends Composite {
 			public void onClick(ClickEvent event) {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(cb7.getValue().toString());
-				onChange("paid", list);				
+				parent.getFilterMap().put("paid", list);
+				parent.gridContent();
 			}
 		});
 		datePanel.add(cb7);
 		return datePanel;
+	}
+    
+    public void enabledAllFilter(Boolean enable) {
+    	HorizontalPanel hp = (HorizontalPanel) panel.getWidget(0);
+    	DateBoxEx d = (DateBoxEx) hp.getWidget(1);
+    	d.setEnabled(enable);
+    	for(Integer i = 2; i < hp.getWidgetCount(); i++) {
+    		CheckBox cb = (CheckBox) hp.getWidget(i);
+    		cb.setEnabled(enable);
+    	}
 	}
 }

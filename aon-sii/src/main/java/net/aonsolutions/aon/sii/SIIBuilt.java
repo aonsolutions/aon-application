@@ -1549,7 +1549,7 @@ public class SIIBuilt {
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
 			otro.setID(vat.getRegistryDocument());
-			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) ? 
+			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) && vat.getInvoiceType().equals(InvoiceType.SALES)? 
 				IDType.NO_CENSADO.getName() : IDType.valueOf(vat.getRegistryDocumentType()).getName());
 			contraparte.setIDOtro(otro);
 		}	
