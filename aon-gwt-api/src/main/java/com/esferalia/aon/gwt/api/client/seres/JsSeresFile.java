@@ -15,6 +15,10 @@ public class JsSeresFile extends JavaScriptObject {
 	protected JsSeresFile() {}
 	
 	public final native String getId() /*-{
+		return this.id;
+	}-*/;
+	
+	public final native String getCode() /*-{
 		return this.code;
 	}-*/;
 	

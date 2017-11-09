@@ -8,12 +8,8 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.documental.JsAttach;
-//import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.seres.JsSeresFile;
-import com.esferalia.aon.gwt.api.client.warehouse.JsDelivery;
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.google.gwt.cell.client.Cell.Context;
@@ -25,8 +21,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
@@ -42,17 +36,13 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
@@ -85,10 +75,10 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	}
 	
 	public ContentGrid(SeresPrincipal parent) {
-		
+		this(parent, new LinkedList<>());	
 	}
 
-	public ContentGrid(SeresPrincipal parent, LinkedList<JsSeresFile> list) {
+	public ContentGrid(SeresPrincipal parent, List<JsSeresFile> list) {
 		this.parent = parent;		
 		dataGrid = new CustomDataGrid<JsSeresFile>(Integer.MAX_VALUE, resources,
 				JsSeresFile.PROVIDES_KEY);
@@ -98,25 +88,16 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onScroll(ScrollEvent event) {
 				// TODO
-//				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
-//					Integer page = 2;
-//					if(parent.getFilterMap().containsKey("page")){
-//						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
-//					}
-//					LinkedList<String> list = new LinkedList<>();
-//					list.add(page +"");
-//					parent.getFilterMap().put("page", list);
-//					parent.getAPI().getFinance().getInvoices(parent.getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
-//						
-//						@Override
-//						public void onSuccess(JSON<JsSeresFile> result) {
-//							dataProvider.getList().addAll(result.getData().toLinkedList());
-//							dataGrid.redraw();
-//						}
-//						
-//						@Override public void onFailure(Throwable caught) {}
-//					});	
-//				}
+				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
+					Integer page = 2;
+					if(parent.getFilterMap().containsKey("page")){
+						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
+					}
+					LinkedList<String> list = new LinkedList<>();
+					list.add(page +"");
+					parent.getFilterMap().put("page", list);
+					parent.reloadContentGrid();
+				}
 			}
 		});
 		dataGrid.addHandler(new MouseOverHandler() {
@@ -134,7 +115,8 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	}	
 	
 	LinkedList<JsSeresFile> selFiles = new LinkedList<>();
-	private void load(LinkedList<JsSeresFile> list) {
+	
+	private void load(List<JsSeresFile> list) {
 		DefaultKeyboardSelectionHandler<JsSeresFile> selHandler = new DefaultKeyboardSelectionHandler<JsSeresFile>(dataGrid){
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsSeresFile> event) {
@@ -158,6 +140,9 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 						}
 					}
 					parent.getSendAll().setVisible(selFiles.size() > 0);
+//					String sii = parent.getFilterMap().get("sii").get(0);
+//					parent.getBaja().setVisible(selFiles.size() > 0 && !"cp_cobros_pagos".equals(sii)
+//							&& !"cp_cobros".equals(sii) && !"cp_pagos".equals(sii));
 				 }
 			}
 		};
@@ -169,13 +154,10 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		addDataDisplay(dataGrid, list);
 		ListHandler<JsSeresFile> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);
-	//	final SingleSelectionModel<JsSeresFile> selectionModel = new SingleSelectionModel<JsSeresFile>(
-	//			JsSeresFile.PROVIDES_KEY);
 		final MultiSelectionModel<JsSeresFile> selectionModel = new MultiSelectionModel<JsSeresFile>(JsSeresFile.PROVIDES_KEY);
 		
 		dataGrid.setSelectionModel(selectionModel,
 				DefaultSelectionEventManager.<JsSeresFile> createCheckboxManager());
-	//	dataGrid.setSelectionModel(selectionModel);
 		initTableColumns(selectionModel, sortHandler);
 		
 	}
@@ -183,8 +165,12 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	//------------------------------ DataGrid Utils
 	
 	private ListDataProvider<JsSeresFile> dataProvider = new ListDataProvider<JsSeresFile>();
+	
+	public void addAll(List<JsSeresFile> list){
+		dataProvider.getList().addAll(list);
+	}
 
-	public void addDataDisplay(HasData<JsSeresFile> display, LinkedList<JsSeresFile> list) {
+	public void addDataDisplay(HasData<JsSeresFile> display, List<JsSeresFile> list) {
 		dataProvider = new ListDataProvider<JsSeresFile>(list);
 		dataProvider.addDataDisplay(display);
 	}
@@ -221,7 +207,8 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 			}
 		};
 
-		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
+//		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
+		dataGrid.addColumn(checkColumn, "");
 		dataGrid.setColumnWidth(checkColumn, 40, Unit.PX);
 		
 		/** Code Column **/
@@ -251,7 +238,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 
 			@Override
 			public String getValue(JsSeresFile object) {
-				return object.getDate();
+				return object.getDate().replaceAll("-", "/");
 			}
 		};
 		taxDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
@@ -287,7 +274,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		});
 		dataGrid.getColumnSortList().push(contraparteColumn);
 		dataGrid.addColumn(contraparteColumn, "Cliente");
-		dataGrid.setColumnWidth(contraparteColumn, 30, Unit.PCT);
+		dataGrid.setColumnWidth(contraparteColumn, 40, Unit.PCT);
 	
 		/** Status Column **/
 		Column<JsSeresFile, String> statusColumn = new Column<JsSeresFile, String>(new TextCell()) {
@@ -323,7 +310,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		
 	}
 	
-	public final class CheckboxHeader extends Header {
+	public final class CheckboxHeader extends Header<Boolean> {
 
 	    private final MultiSelectionModel<JsSeresFile> selectionModel;
 	    private final ListDataProvider<JsSeresFile> provider;
@@ -346,7 +333,18 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	    public void onBrowserEvent(Context context, Element elem, NativeEvent event) {
 	        InputElement input = elem.getFirstChild().cast();
 	        Boolean isChecked = input.isChecked();
-	        parent.getSendAll().setVisible(isChecked);
+	        
+	        if(parent.command.equals(parent.parent.OUTCOME_DELIVERY)
+	        		|| parent.command.equals(parent.parent.OUTCOME_INVOICE)){
+	        	parent.getSendAll().setVisible(isChecked);
+			} else if(parent.command.equals(parent.parent.INCOME_SALES)
+	        		|| parent.command.equals(parent.parent.INCOME_INVOICE)){
+	        	parent.getRetrieveAll().setVisible(isChecked);
+			} else if(parent.command.equals(parent.parent.INGENET_DELIVERY)){
+				// TODO
+			}
+	        
+//	        parent.getBaja().setVisible(isChecked);
 	        for (JsSeresFile element : provider.getList()) {
 	            selectionModel.setSelected(element, isChecked);
 	            if(isChecked){
@@ -360,85 +358,53 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	}
 	
 	
-	
-	// TODO 
-	public void send(String action){
-		VerticalPanel vp = new VerticalPanel();
-		
-		HorizontalPanel hp0 = new HorizontalPanel();
-		hp0.add(new Label("Tipo de Operacion"));
-		ListBox lb0 = new ListBox();
-		lb0.addItem("Articulo 70, apartado uno, n\u00famero 7\u00BA, Ley del Impuesto(Ley 37/1992)", "A");
-		lb0.addItem("Articulo 16, apartado 2\u00BA, Ley del Impuesto(Ley 37/1992)", "B");
-		hp0.add(lb0);
-		if("intracomunitarias".equalsIgnoreCase(action)){
-			vp.add(hp0);
+	public void send(String action) {
+		if(action.equals(parent.parent.OUTCOME_DELIVERY)){
+			Window.alert("En desarrollo...");
+//			sendDeliveries();
+		} else if(action.equals(parent.parent.OUTCOME_INVOICE)){
+			Window.alert("En desarrollo...");
+//			sendInvoices();
+//		} else if(parent.command.equals(SeresMain.INGENET_DELIVERY)){
+//			Window.alert("En desarrollo...");
 		}
-		
-		HorizontalPanel hp1 = new HorizontalPanel();
-		hp1.addStyleName(AON.AON_CSS.aonPaddingTop());
-		hp1.add(new Label("Certificado"));
-		ListBox lb = new ListBox();
-		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsAttach> result) {
-				result.getData().stream().forEach(a -> {
-					lb.addItem(a.getTitle(), a.getId() + "");
-				});
-			}
+	}
+	
+	public void retrieve(String action) {
+		if(action.equals(parent.parent.INCOME_SALES)){
+			Window.alert("En desarrollo...");
+//			retrieveSales();
+		} else if(action.equals(parent.parent.INCOME_INVOICE)){
+			Window.alert("En desarrollo...");
+//			retrieveDeliveries();
+		}
+	}
 
-			@Override public void onFailure(Throwable caught) {}
-		});
-		hp1.add(lb);
+	private void retrieveDeliveries() {
+		// TODO Auto-generated method stub
 		
-		HorizontalPanel hp2 = new HorizontalPanel();
-		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
-		hp2.add(new Label("Contrase\u00f1a"));
-		PasswordTextBox tb = new PasswordTextBox();
-		tb.setStyleName(AON.AON_CSS.aonInputText());
-		hp2.add(tb);
-		vp.add(hp1);
-		vp.add(hp2);
+	}
+
+	private void retrieveSales() {
+		// TODO Auto-generated method stub
 		
-		HorizontalPanel hp3 = new HorizontalPanel();
-		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
-		Label l = new Label("NIF");
-		l.getElement().getStyle().setPaddingTop(5, Unit.PX);
-		l.getElement().getStyle().setPaddingLeft(5, Unit.PX);
-		l.setVisible(false);
-		TextBox t = new TextBox();t.setStyleName(AON.AON_CSS.aonInputText());
-		t.setVisible(false);
-		hp3.add(l);
-		hp3.add(t);
+	}
+
+	private void sendDeliveries() {
+		// TODO Auto-generated method stub
 		
-		HorizontalPanel hp4 = new HorizontalPanel();
-		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
-		Label l4 = new Label("Autorizaci\u00f3n");
-		l4.getElement().getStyle().setPaddingTop(5, Unit.PX);
-		l4.getElement().getStyle().setPaddingLeft(5, Unit.PX);
-		l4.setVisible(false);
-		TextBox t4 = new TextBox();t4.setStyleName(AON.AON_CSS.aonInputText());
-		t4.setVisible(false);
-		hp4.add(l4);
-		hp4.add(t4);
+	}
+
+	// TODO 
+	private void sendInvoices() {
+		VerticalPanel vp = new VerticalPanel();
+		if(selFiles.size()==1)
+			vp.add(new Label("Factura n. " + selFiles.get(0).getReferenceCode()));
+		else
+			vp.add(new Label("Total facturas: " + selFiles.size()));
 		
-		CheckBox cb = new CheckBox("Por terceros");
-		cb.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				l.setVisible(cb.getValue());
-				t.setVisible(cb.getValue());	
-				l4.setVisible(cb.getValue());
-				t4.setVisible(cb.getValue());	
-			}
-		});
-		vp.add(cb);
-		vp.add(hp3);
-	//	vp.add(hp4);
 		
-		AonDialog dialog = new AonDialog("Enviar Facturas", vp) {
+		AonDialog dialog = new AonDialog("Enviar datos", vp) {
 			
 			@Override
 			protected void onCancel() {
@@ -450,57 +416,31 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 				HashMap<String, LinkedList<String>> map =  new HashMap<>();
 				LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
 				map.put("id", list);
-		    	list = new LinkedList<>();
-		    	list.add("suministro");
-		    	map.put("action", list);
-		    	list = new LinkedList<>();
-		    	list.add(lb.getSelectedValue());
-		    	map.put("cert", list);
-		    	list = new LinkedList<>();
-		    	list.add(tb.getText());
-		    	map.put("pass", list);
-		    	list = new LinkedList<>();
-		    	list.add(action);
-		    	map.put("option", list);
-		    	hide();
-		    	
-		    	list = new LinkedList<>();
-		    	list.add(lb0.getSelectedValue());
-		    	map.put("tipo_operacion", list);
-	
-		    	list = new LinkedList<>();
-		    	list.add(cb.getValue() ? t.getValue() : "false");
-		    	map.put("terceros", list);
-		  /*  	
-		    	list = new LinkedList<>();
-		    	list.add(cb.getValue() ? t4.getValue() : "");
-		    	map.put("auth", list);
-		    */
-		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsObject> result) {
-						VerticalPanel vp = new VerticalPanel();
-						result.getData().stream().forEach(r -> {
-							Label label = new Label(r.getName());
-							String str = r.getId() + "";
-							String color = "red";
-							if(str.equals("200")) color = "green";
-							else if(str.substring(0, 1).equals("2")) color = "orange";
-							label.getElement().getStyle().setColor(color);
-							vp.add(label);
-						});
-						parent.errorPanel.setWidget(vp);
-						parent.tabLayout.selectTab(0);
-						parent.openFootPanel();
-						parent.gridContent();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						
-					}
-				});
+//		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
+//					
+//					@Override
+//					public void onSuccess(JSON<JsObject> result) {
+//						VerticalPanel vp = new VerticalPanel();
+//						result.getData().stream().forEach(r -> {
+//							Label label = new Label(r.getName());
+//							String str = r.getId() + "";
+//							String color = "red";
+//							if(str.equals("200")) color = "green";
+//							else if(str.substring(0, 1).equals("2")) color = "orange";
+//							label.getElement().getStyle().setColor(color);
+//							vp.add(label);
+//						});
+//						parent.errorPanel.setWidget(vp);
+//						parent.tabLayout.selectTab(0);
+//						parent.openFootPanel();
+//						parent.gridContent();
+//					}
+//					
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						
+//					}
+//				});
 			}
 		};
 		dialog.center();
