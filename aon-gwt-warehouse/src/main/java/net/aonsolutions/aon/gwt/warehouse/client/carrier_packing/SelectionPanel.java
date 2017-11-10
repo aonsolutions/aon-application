@@ -1116,7 +1116,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
 				ref.setValue(result.getOneData().getName());
-				lote.setValue(result.getOneData().getName() + "1");				
+				lote.setValue(result.getOneData().getName() + "0");				
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -1130,7 +1130,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					ref.setVisible(true);
 					warehouse.setVisible(true);
 					param.setVisible(true);
-					lote.setValue(ref.getValue() + "1");
+					lote.setValue(ref.getValue() + "0");
 				}else {
 					ref.setVisible(false);
 					warehouse.setVisible(false);
