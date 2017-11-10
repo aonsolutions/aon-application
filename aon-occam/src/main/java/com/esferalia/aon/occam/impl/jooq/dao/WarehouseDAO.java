@@ -288,9 +288,8 @@ public class WarehouseDAO {
 	public static void deleteWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){
 		LinkedList<Integer> list = new LinkedList<Integer>();
 		getWarehouseTransferStream(ctx, filter).forEach(wt -> {
-			final WarehouseTransfer wtAux = wt;
 			getWarehouseTransferDetailStream(ctx, f -> f.getWarehouseTransferProperty().eq(wt.getId()))
-			.forEach(wtd -> updateStock(ctx, wtAux, wtd));
+			.forEach(wtd -> updateStock(ctx, wt, wtd));
 			list.add(wt.getId());
 		});
 		Integer[] array = new Integer[list.size()];

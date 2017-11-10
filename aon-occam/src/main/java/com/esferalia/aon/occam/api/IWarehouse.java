@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
+import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -70,6 +71,7 @@ public interface IWarehouse {
 	// 	************************** INVENTORY DETAIL ***
 	// 	***********************************************
 	
+	Stream<InventoryDetail> getInventoryDetailStream(AONContext ctx, InventoryDetailFilter filter);
 	LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId);
 	void updateInventoryDetail(AONContext ctx, InventoryDetail inventoryDetail);
 	void updateZeroInventoryDetail(AONContext ctx);

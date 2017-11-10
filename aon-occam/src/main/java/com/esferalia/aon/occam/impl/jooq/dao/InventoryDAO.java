@@ -2,21 +2,37 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.Tables.PRODUCT;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.jooq.tables.records.InventoryDetailRecord;
 import com.esferalia.aon.jooq.tables.records.InventoryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InventoryDetailPropertiesDAO;
 
 public class InventoryDAO {
+	public static final InventoryDetailPropertiesDAO INVENTORY_DETAIL_PROPERTIES = new InventoryDetailPropertiesDAO();
+
+	public static Stream<InventoryDetail> getInventoryDetailStream(AONContext ctx, InventoryDetailFilter filter){
+		return ctx.getDslContext()
+			.select()
+			.from(INVENTORY_DETAIL).join(ITEM).on(INVENTORY_DETAIL.ITEM.eq(ITEM.ID))
+			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+			.where(INVENTORY_DETAIL_PROPERTIES.getConditions(filter))
+			.fetch()
+			.stream().map(new com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.InventoryDetailFiller());
+	}
 	
 	public static LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId){
 		
@@ -28,7 +44,6 @@ public class InventoryDAO {
 				.stream().map(new InventoryDetailFiller(ctx))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
-	
 	
 	public static LinkedList<Inventory> getInventoryList(AONContext ctx, Date startDate, Date endDate){
 		return ctx.getDslContext()

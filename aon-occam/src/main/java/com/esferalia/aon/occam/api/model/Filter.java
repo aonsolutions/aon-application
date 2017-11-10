@@ -22,6 +22,8 @@ import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
+import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
@@ -381,5 +383,15 @@ public interface Filter {
 	@FunctionalInterface
 	public interface AgreementLevelCategoryFilter{
 		Filter filter(AgreementLevelCategoryProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface InventoryFilter{
+		Filter filter(InventoryProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface InventoryDetailFilter{
+		Filter filter(InventoryDetailProperties properties);
 	}
 }

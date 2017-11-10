@@ -30,6 +30,8 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
+import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -54,6 +56,8 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
+import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -80,6 +84,8 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
+import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
@@ -911,5 +917,50 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getAgreementLevelProperty() {return new FilterDAO.PropertyDAO<>(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION);}
 		
+	}
+	
+	protected static class InventoryPropertiesDAO implements InventoryProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, InventoryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(InventoryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.DESCRIPTION);}
+		@Override public Property<Date> getInventoryDateProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.INVENTORY_DATE);}
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.WAREHOUSE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.STATUS);}
+	}
+	
+	protected static class InventoryDetailPropertiesDAO implements InventoryDetailProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, InventoryDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(InventoryDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY_DETAIL.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getInventoryProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY_DETAIL.INVENTORY);}
+ 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY_DETAIL.ITEM);}
+		@Override public Property<Double> getActualQuantityProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY_DETAIL.ACTUAL_QUANTITY);}
+		@Override public Property<Double> getRealQuantityProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY_DETAIL.REAL_QUANTITY);}
+		@Override public Property<Double> getCostProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY_DETAIL.COST);}
 	}
 }

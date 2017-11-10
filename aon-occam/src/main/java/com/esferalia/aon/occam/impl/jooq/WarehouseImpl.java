@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
+import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -90,6 +91,11 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public LinkedList<InventoryDetail> getInventoryDetailList(AONContext ctx, Integer inventoryId) {
 		return InventoryDAO.getInventoryDetailList(ctx,inventoryId);
+	}
+	
+	@Override
+	public Stream<InventoryDetail> getInventoryDetailStream(AONContext ctx, InventoryDetailFilter filter) {
+		return InventoryDAO.getInventoryDetailStream(ctx, filter);
 	}
 	
 	@Override

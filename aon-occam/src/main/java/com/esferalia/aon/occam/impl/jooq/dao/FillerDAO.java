@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
@@ -73,6 +74,8 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Inventory;
+import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class FillerDAO {
@@ -724,5 +727,74 @@ public class FillerDAO {
 					.setAgreementLevel(r.getValue(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
 					.setDescription(r.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
 		}
+	}
+	
+	public static class InventoryDetailFiller implements Function<Record, InventoryDetail> {
+		
+		@Override
+		public InventoryDetail apply(Record r) {
+			return new InventoryDetail()
+					.setId(r.getValue(INVENTORY_DETAIL.ID))
+					.setInventory(new Inventory().setId(r.getValue(INVENTORY_DETAIL.INVENTORY)).setDomain(r.getValue(INVENTORY_DETAIL.DOMAIN)))
+					.setCost(r.getValue(INVENTORY_DETAIL.COST))
+					.setActualQuantity(r.getValue(INVENTORY_DETAIL.ACTUAL_QUANTITY))
+					.setCreationDate(r.getValue(INVENTORY_DETAIL.CREATION_DATE))
+					.setCreationUser(r.getValue(INVENTORY_DETAIL.CREATION_USER))
+					.setDomain(r.getValue(INVENTORY_DETAIL.DOMAIN))
+					.setItem(
+						new Item().setId(r.getValue(ITEM.ID))
+							.setBarcode(r.getValue(ITEM.BARCODE))
+							.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+							.setCreationUser(r.getValue(ITEM.CREATION_USER))
+							.setDescription(r.getValue(ITEM.DESCRIPTION))
+							.setDetail(r.getValue(ITEM.DETAIL))
+							.setDetail2(r.getValue(ITEM.DETAIL2))
+							.setDetail3(r.getValue(ITEM.DETAIL3))
+							.setDomain(r.getValue(ITEM.DOMAIN))
+							.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
+							.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
+							.setInternet(r.getValue(ITEM.INTERNET) == 1)
+							.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+							.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
+							.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
+							.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
+							.setPrice(r.getValue(ITEM.PRICE))
+							.setProduct( 
+									new Product().setId(r.getValue(PRODUCT.ID))
+									.setName(r.getValue(PRODUCT.NAME))
+									.setDomain(r.getValue(PRODUCT.DOMAIN))
+									.setCode(r.getValue(PRODUCT.CODE))
+									.setComposition(r.getValue(PRODUCT.COMPOSITION) == 1)
+									.setComposition(r.getValue(PRODUCT.COMPOSITION))
+									.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE) == 1)
+									.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE))
+									.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) == 1)
+									.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) )
+									.setKind(r.getValue(PRODUCT.KIND) )
+									.setLotable(r.getValue(PRODUCT.LOTABLE)  == 1)
+									.setLotable(r.getValue(PRODUCT.LOTABLE) )
+									.setManufactured(r.getValue(PRODUCT.MANUFACTURED) )
+									.setPackaged(r.getValue(PRODUCT.PACKAGED)  == 1)
+									.setPurchaseAccount(r.getValue(PRODUCT.PURCHASE_ACCOUNT) )
+									.setRetention(r.getValue(PRODUCT.RETENTION) )
+									.setSalesAccount(r.getValue(PRODUCT.SALES_ACCOUNT) )
+									.setSerializable(r.getValue(PRODUCT.SERIALIZABLE) == 1)
+									.setSerializable(r.getValue(PRODUCT.SERIALIZABLE))
+									.setStatus(r.getValue(PRODUCT.STATUS))
+									.setType(r.getValue(PRODUCT.TYPE))
+									.setVat(r.getValue(PRODUCT.VAT))
+							)
+							.setProductId(r.getValue(ITEM.PRODUCT))
+							.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
+							.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
+							.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
+							.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+							.setStatus(r.getValue(ITEM.STATUS))
+					)
+					.setModificationDate(r.getValue(INVENTORY_DETAIL.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(INVENTORY_DETAIL.MODIFICATION_USER))
+					.setRealQuantity(r.getValue(INVENTORY_DETAIL.REAL_QUANTITY));
+		}
+
 	}
 }

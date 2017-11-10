@@ -977,4 +977,23 @@ public interface Properties {
 		Property<Integer> getAgreementLevelProperty();
 		Property<String> getDescriptionProperty();
 	}
+	
+	public interface InventoryProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Date> getInventoryDateProperty();
+		Property<Integer> getWarehouseProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
+	public interface InventoryDetailProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInventoryProperty();
+		Property<Integer> getItemProperty();
+		Property<Double> getActualQuantityProperty();
+		Property<Double> getRealQuantityProperty();
+		Property<Double> getCostProperty();
+	}
 }

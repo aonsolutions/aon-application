@@ -54,6 +54,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
+import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
@@ -2418,6 +2419,17 @@ public class AON {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getWarehouse().getIncomeDetailListUntilDate(ctx, item,
 					workplaceId, warehouseId, date);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<InventoryDetail> getInventoryDetailStream(String domainName, Integer domainId, String login, InventoryDetailFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getInventoryDetailStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
