@@ -611,7 +611,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	public IModuleCalculator getCalculator() {
 		if (calculator == null) {
 			FiscalActivity fa =  getFiscalActivity();
-			if (fa.getYear() >= 2015) {
+			if (fa.getYear() >= 2014) {
 				setCalculator( new Aeat2015ModuleCalculator(this));
 			}
 		}
