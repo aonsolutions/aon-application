@@ -121,8 +121,12 @@ public class InvoiceOcrProcess implements Serializable {
 	
 				
 	public void execute(String path, String domainName, Integer domainId, byte[] data, Invoice invoice) throws Exception {
-		data = null;
-		if(data!=null){
+//		data = null;
+		if(data==null){
+//			AonUtil.addInfoMessage("Sin datos");
+			data = "{ \"number\": \"F0123456789\", \"document\": 12345678Z, \"date\": \"2017-10-01\", \"amount\": 111.11 }".getBytes();
+			fillInvoice(new String(data), invoice);
+		} else {
 			String user = "ingenet";
 			String passwd = "1ng3n3t";
 			StringBuilder postData = new StringBuilder();
@@ -166,10 +170,6 @@ public class InvoiceOcrProcess implements Serializable {
 				LOGGER.error("IMPOSIBLE CONECTAR. " + e.getMessage());
 				AonUtil.addErrorMessage("IMPOSIBLE CONECTAR. " + e.getMessage());
 			}
-		} else {
-//			AonUtil.addInfoMessage("Sin datos");
-			data = "{ \"number\": \"F0123456789\", \"document\": 12345678Z, \"date\": \"2017-10-01\", \"amount\": 111.11 }".getBytes();
-			fillInvoice(new String(data), invoice);
 		}
 	}
 	
