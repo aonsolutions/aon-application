@@ -100,9 +100,13 @@
 										value="OCR" title="Reconocer el texto del documento" 
 										actionListener="#{invoiceController.processOcr}"
 										styleClass="aon-finding-toolbar-item aon-icon-audit"
-										reRender="#{formName}-New"
+										reRender="#{formName}-New, showOcrInformationWindow"
 										onclick="Richfaces.showModalPanel('waitProccess')"
-										oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+										oncomplete="Richfaces.hideModalPanel('waitProccess')">
+										<f:setPropertyActionListener
+											target="#{invoiceController.ocrProcess.showOcrInformationWindow}"
+											value="#{false}" />
+									</aon:commandButton>
 								</aon:if>
 							</aon:div>
 							<aon:panelGrid columns="2" 

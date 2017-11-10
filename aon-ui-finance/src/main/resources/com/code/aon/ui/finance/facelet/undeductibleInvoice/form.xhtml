@@ -258,6 +258,9 @@
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 			<ui:param name="bankAccountController" value="#{undeductibleInvoiceFinance.accountHelper}" />
 			<ui:param name="modalReRender" value="financeContainer" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalOcrInfo.xhtml">
+			<ui:param name="invoiceController" value="#{undeductibleInvoice}" />
 		</ui:include>		
 	</ui:define>
 </ui:composition>

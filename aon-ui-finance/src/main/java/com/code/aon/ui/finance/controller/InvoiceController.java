@@ -641,7 +641,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public void setShowFiscalInformationWindow(boolean showFiscalInformationWindow) {
 		this.showFiscalInformationWindow = showFiscalInformationWindow;
 	}
-
+	
 	public boolean isShowAmortizationWindow() {
 		return showAmortizationWindow;
 	}
@@ -1853,6 +1853,15 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private String obtainOcrUrl() {
 		ApplicationParameter urlParam = AppParamUtil.getParameter("OCR_URL");
 		return urlParam!=null?urlParam.getValue():null;
+	}
+	
+	private InvoiceOcrProcess ocrProcess;
+	
+	public InvoiceOcrProcess getOcrProcess(){
+		if(ocrProcess==null){
+			ocrProcess = new InvoiceOcrProcess();
+		}
+		return ocrProcess;
 	}
 	
 	public void processOcr(ActionEvent event) {

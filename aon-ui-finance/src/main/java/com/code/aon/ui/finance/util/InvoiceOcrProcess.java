@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +13,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.faces.event.ActionEvent;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -20,13 +23,13 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
-import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -40,64 +43,85 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class InvoiceOcrProcess {
+public class InvoiceOcrProcess implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceOcrProcess.class.getName());
+	
+	// TODO
+	private final String REPORT_EMAIL = "ocr@aonsolutions.es";
 	
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void process(String path, String domainName, Integer domainId, Invoice invoice, byte[] data) throws Exception {
-		execute(path, domainName, domainId, data, invoice);
-		
-		
-		if(invoice.getRegistryDocument()!=null && !"".equals(invoice.getRegistryDocument())){
-			IRegistry ir = null;
-			IManagerBean bean = null;
-			bean = BeanManager.getManagerBean(Registry.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DOCUMENT), invoice.getRegistryDocument());
-			
-			List<ITransferObject> list = bean.getList(criteria);
-			if(list!=null && !list.isEmpty()){
-				Registry r = (Registry) list.get(0);
-				if(invoice.isPurchase()){
-					bean = BeanManager.getManagerBean(Supplier.class);
-					ir = ((Supplier) bean.get(r.getId()));
-					
-					PurchaseInvoiceController invoiceController = (PurchaseInvoiceController) FormUtil.getController(IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME);	
-					invoiceController.supplierChanged((Supplier)ir);
-				} else if(invoice.isExpense()){
-					bean = BeanManager.getManagerBean(Creditor.class);
-					ir = ((Creditor) bean.get(r.getId()));
-					
-					ExpenseInvoiceController invoiceController = (ExpenseInvoiceController) FormUtil.getController(IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME);	
-					invoiceController.creditorChanged((Creditor)ir);
-				} else if(invoice.isUndeductible()){
-					bean = BeanManager.getManagerBean(Creditor.class);
-					ir = ((Creditor) bean.get(r.getId()));
-					
-					UndeductibleInvoiceController invoiceController = (UndeductibleInvoiceController) FormUtil.getController(IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME);	
-					invoiceController.creditorChanged((Creditor)ir);
-				}
-			}
-		}
-		
-		if(invoice.isPurchase()){
-			PurchaseInvoiceDetailController detailController = (PurchaseInvoiceDetailController) FormUtil.getController(IFinanceConstants.PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
-			InvoiceDetail invoiceDetail = (InvoiceDetail) detailController.getTo();
-			invoiceDetail.setDescription("Factura reconocida por OCR");
-			detailController.quantityChanged(1);
-			detailController.priceChanged(invoice.getTotal());
-			detailController.fillTaxDataInDetail(false, true);
-		} else if(invoice.isExpense() || invoice.isUndeductible()){
-			ExpenseInvoiceDetailController detailController = (ExpenseInvoiceDetailController) FormUtil.getController(IFinanceConstants.EXPENSE_INVOICE_DETAIL_CONTROLLER_NAME);
-			InvoiceDetail invoiceDetail = (InvoiceDetail)detailController.getTo();
-			detailController.setTotalChanged(invoice.getTotal());
-			detailController.totalChanged(invoiceDetail);
-		}
+	private boolean showOcrInformationWindow;
+	
+	private String number;
+	private String document;
+	private String date;
+	private String amount;
+
+	private Invoice invoice;
+	
+	
+	public boolean isShowOcrInformationWindow() {
+		return showOcrInformationWindow;
 	}
+
+	public void setShowOcrInformationWindow(boolean showOcrInformationWindow) {
+		this.showOcrInformationWindow = showOcrInformationWindow;
+	}
+	
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getAmount() {
+		return amount;
+	}
+
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+
+	public void process(String path, String domainName, Integer domainId, Invoice invoice, byte[] data) throws Exception {
+		clear();
+		this.invoice = invoice;
+		execute(path, domainName, domainId, data, invoice);
+		loadInvoiceData();
+	}
+	
+	private void clear() {
+		number = null;
+		document = null;
+		date = null;
+		amount = null;
+		invoice = null;
+	}
+	
 				
 	public void execute(String path, String domainName, Integer domainId, byte[] data, Invoice invoice) throws Exception {
+		data = null;
 		if(data!=null){
 			String user = "ingenet";
 			String passwd = "1ng3n3t";
@@ -143,17 +167,76 @@ public class InvoiceOcrProcess {
 				AonUtil.addErrorMessage("IMPOSIBLE CONECTAR. " + e.getMessage());
 			}
 		} else {
-			AonUtil.addInfoMessage("Sin datos");
+//			AonUtil.addInfoMessage("Sin datos");
+			data = "{ \"number\": \"F0123456789\", \"document\": 12345678Z, \"date\": \"2017-10-01\", \"amount\": 111.11 }".getBytes();
+			fillInvoice(new String(data), invoice);
 		}
+	}
+	
+
+	private void loadInvoiceData() throws ManagerBeanException {
+		if(invoice.getRegistryDocument()!=null && !"".equals(invoice.getRegistryDocument())){
+			IRegistry ir = obtainRegistry(invoice);
+			if (ir != null && ir.getRegistry().getId() != null) {
+				if (invoice.isPurchase()) {
+					PurchaseInvoiceController invoiceController = (PurchaseInvoiceController) FormUtil
+							.getController(IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME);
+					invoiceController.supplierChanged((Supplier) ir);
+				} else if (invoice.isExpense()) {
+					ExpenseInvoiceController invoiceController = (ExpenseInvoiceController) FormUtil
+							.getController(IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME);
+					invoiceController.creditorChanged((Creditor) ir);
+				} else if (invoice.isUndeductible()) {
+					UndeductibleInvoiceController invoiceController = (UndeductibleInvoiceController) FormUtil
+							.getController(IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME);
+					invoiceController.creditorChanged((Creditor) ir);
+				}
+			}
+		}
+		
+		if(invoice.isPurchase()){
+			PurchaseInvoiceDetailController detailController = (PurchaseInvoiceDetailController) FormUtil.getController(IFinanceConstants.PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
+			InvoiceDetail invoiceDetail = (InvoiceDetail) detailController.getTo();
+			invoiceDetail.setDescription("Factura reconocida por OCR");
+			detailController.quantityChanged(1);
+			detailController.priceChanged(invoice.getTotal());
+			detailController.fillTaxDataInDetail(false, true);
+		} else if(invoice.isExpense() || invoice.isUndeductible()){
+			ExpenseInvoiceDetailController detailController = (ExpenseInvoiceDetailController) FormUtil.getController(IFinanceConstants.EXPENSE_INVOICE_DETAIL_CONTROLLER_NAME);
+			InvoiceDetail invoiceDetail = (InvoiceDetail)detailController.getTo();
+			detailController.setTotalChanged(invoice.getTotal());
+			detailController.totalChanged(invoiceDetail);
+		}
+	}
+
+
+	private IRegistry obtainRegistry(Invoice invoice) throws ManagerBeanException{
+		IRegistry ir = null;
+		IManagerBean bean = null;
+		Criteria criteria = null;
+		if(invoice.isPurchase()){
+			bean = BeanManager.getManagerBean(Supplier.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_DOCUMENT), invoice.getRegistryDocument());
+			List<ITransferObject> list = bean.getList(criteria);
+			ir = list!=null && !list.isEmpty() ? (Supplier) list.get(0) : null;
+		} else if(invoice.isExpense() || invoice.isUndeductible()){
+			bean = BeanManager.getManagerBean(Creditor.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_REGISTRY_DOCUMENT), invoice.getRegistryDocument());
+			List<ITransferObject> list = bean.getList(criteria);
+			ir = list!=null && !list.isEmpty() ? (Creditor) list.get(0) : null;
+		}
+		return ir;
 	}
 	
 	private void fillInvoice(String value, Invoice invoice) {
 		try {
 			JSONObject obj = new JSONObject(value);
-			String number = obj.getString("number");
-			String document = obj.getString("document");
-			String date = obj.getString("date");
-			String amount = obj.getString("amount");
+			number = obj.getString("number");
+			document = obj.getString("document");
+			date = obj.getString("date");
+			amount = obj.getString("amount");
 			
 			invoice.setReferenceCode(number);
 			invoice.setRegistryDocument(document);
@@ -171,6 +254,30 @@ public class InvoiceOcrProcess {
 			LOGGER.error("Error de JSON. " + e.getMessage());
 		} catch (ParseException e) {
 			LOGGER.error("Error de parse. " + e.getMessage());
+		}
+	}
+	
+	private String getCompanyDocument(int domain){
+		CompanyController controller = (CompanyController) AonUtil
+				.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		return ((Company)controller.getTo()).getDocument();
+	}
+	
+	public void onAccept(ActionEvent event) throws ParseException, ManagerBeanException{
+		if(!number.equals(invoice.getReferenceCode()) 
+			|| !document.equals(invoice.getRegistryDocument())
+			|| !date.equals(invoice.getIssueDate())
+			|| !amount.equals(invoice.getTotal())){
+			
+			// TODO send email
+			System.out.println("sending email...");
+			
+			invoice.setReferenceCode(number);
+			invoice.setRegistryDocument(document);
+			invoice.setIssueDate(sdf.parse(date));
+			invoice.setTaxDate(sdf.parse(date));
+			invoice.setTotal(Double.parseDouble(amount));
+			loadInvoiceData();
 		}
 	}
 	
@@ -198,12 +305,6 @@ public class InvoiceOcrProcess {
 			exit = true;
 		}
 		scanner.close();
-	}
-	
-	private String getCompanyDocument(int domain){
-		CompanyController controller = (CompanyController) AonUtil
-				.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		return ((Company)controller.getTo()).getDocument();
 	}
 	
 }
