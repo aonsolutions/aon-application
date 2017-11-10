@@ -125,6 +125,11 @@ public class SalaryDAO {
 					.forEach(pay -> {
 						double amount = AonMathUtils.round(pay.getValue(SALARY_PAYMENT.AMOUNT));
 						Byte type = pay.getValue(SALARY_PAYMENT.TYPE);
+						// Puede ser nulo??
+						if (type == null) {
+							entry.setMoneySalary( AonMathUtils.round(entry.getMoneySalary() + amount));
+						} else 
+						// ----------------
 						if (AonNumberUtils.between(type, 42, 50) ) {
 							entry.setAllowance( AonMathUtils.round(entry.getAllowance()  + amount));
 						} else if (AonNumberUtils.between(type, 51, 54) ) {
