@@ -1151,6 +1151,28 @@ public class FISCAL {
 		}
 	}
 
+	public static Mod190 saveComments(String domainName, String user, Mod190 mod190) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod190.getDomain(),user);
+			return getFiscal().saveCommentsMod190(ctx, mod190);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod190 changeStatusMod190(String domainName, String user, Mod190 mod190, FiscalStatus newStatus) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod190.getDomain(),user);
+			return getFiscal().changeStatusMod190(ctx, mod190, newStatus);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	// ----------------------------------MODELO 193
 	public static LinkedList<Mod193> getMod193s(String domainName, int domainId,
 			String user) {

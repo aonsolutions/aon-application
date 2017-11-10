@@ -31,8 +31,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -116,38 +114,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			list.add(a);
 		}
 		return list;
-	}
-	
-	// ---------------------------------------------------------------MODELO 190
-	@Override
-	public Mod190 initializeMod190(String domainName, Integer domain,Integer year) {
-		return FISCAL.initializeMod190(domainName, domain, this.getUserLogin(), year);
-	}
-	
-	@Override
-	public LinkedList<Mod190> getMod190s(String domainName, int domain) {
-		return FISCAL.getMod190s(domainName, domain, this.getUserLogin());
-	}
-
-	@Override
-	public void deleteMod190(String domainName, int domain, Mod190 mod190) {
-		FISCAL.deleteMod190(domainName, domain, this.getUserLogin(), mod190);
-	}
-
-	@Override
-	public Mod190 saveMod190(String domainName, int domain,Mod190 mod190) {
-		return FISCAL.saveMod190(domainName, domain, this.getUserLogin(), mod190);
-	}
-
-
-	@Override
-	public Mod190 getMod190(String domainName, int domain, Integer id) {
-		return FISCAL.getMod190(domainName, domain, this.getUserLogin(), id);
-	}
-
-	@Override
-	public Mod190Detail getMod190Detail(String domainName, int domain, Integer id) {
-		return FISCAL.getMod190Detail(domainName, domain, this.getUserLogin(), id);
 	}
 
 	// ---------------------------------------------------------------MODELO 193

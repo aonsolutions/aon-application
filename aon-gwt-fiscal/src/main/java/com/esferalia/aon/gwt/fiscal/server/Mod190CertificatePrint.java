@@ -121,8 +121,8 @@ public class Mod190CertificatePrint extends HttpServlet {
 			cert.setDependencyContributions(0);
 			
 			if(detail.getKey().equals("A")){
-				cert.setApplicableReduction(cert.getApplicableReduction() + detail.getIrpfResult().getApplicableReduction());
-				cert.setDeducibleExpense(cert.getDeducibleExpense() + detail.getIrpfResult().getDeducibleExpense());
+				cert.setApplicableReduction(cert.getApplicableReduction() + detail.getApplicableReduction());
+				cert.setDeducibleExpense(cert.getDeducibleExpense() + detail.getDeducibleExpense());
 			}
 			
 			cert.setDelay1(obtainRetentionCertificate(mod190.getYear()-1));
@@ -161,13 +161,17 @@ public class Mod190CertificatePrint extends HttpServlet {
 			} else if(detail.getKey().equals("E")){
 				cert = completeCertificate(mod190, detail, cert, "E");
 			} else if(detail.getKey().equals("H")){
-				cert = completeCertificate(mod190, detail, cert, null);
-				if(detail.getSubKey().equals("02")){
-					cert.setProf1(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
-				} else if(detail.getSubKey().equals("03")){
-					cert.setProf2(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
-				} else if(detail.getSubKey().equals("04")){
-					cert.setProf3(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
+				if(detail.getSubKey().equals("01")){
+					cert = completeCertificate(mod190, detail, cert, "H" );
+				} else {
+					cert = completeCertificate(mod190, detail, cert, null );
+					if( detail.getSubKey().equals("02")){
+						cert.setProf1(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
+					} else if(detail.getSubKey().equals("03")){
+						cert.setProf2(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
+					} else if(detail.getSubKey().equals("04")){
+						cert.setProf3(completeCertificate(mod190, detail, new RetentionCertificate(), "H"));
+					}
 				}
 			}
 			

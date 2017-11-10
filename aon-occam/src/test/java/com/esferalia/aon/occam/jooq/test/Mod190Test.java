@@ -64,7 +64,7 @@ public class Mod190Test {
 				.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
 				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)))
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration()))
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
 				.and(SALARY.EMPLOYEE_DOCUMENT.equal(detail.getDocument()))
 				.fetch()
 				.stream()

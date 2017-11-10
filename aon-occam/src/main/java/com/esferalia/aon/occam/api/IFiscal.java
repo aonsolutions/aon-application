@@ -74,6 +74,8 @@ public interface IFiscal {
 	public Mod190 saveMod190(AONContext ctx,Mod190 mod190);
 	public void deleteMod190(AONContext ctx,Mod190 mod190);
 	public Mod190Detail getMod190Detail(AONContext ctx,Integer id);
+	public Mod190 saveCommentsMod190(AONContext ctx, Mod190 mod190);
+	public Mod190 changeStatusMod190(AONContext ctx, Mod190 mod190, FiscalStatus newStatus);
 
 	// 				   		  MOD193
 	public LinkedList<Mod193> getMod193s(AONContext ctx,int domain);

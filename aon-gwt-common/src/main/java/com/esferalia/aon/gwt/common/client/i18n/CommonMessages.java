@@ -936,7 +936,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Percepciones \u00CDntegras")
 	String perception();
 	
-	@DefaultMessage("Percepci\u00F3n \u00CDntegras / Valoraci\u00F3n")
+	@DefaultMessage("Percp. \u00CDntegra / Valoraci\u00F3n")
 	String perceptionValoration();
 	
 	@DefaultMessage("Ret. aplic./ Ingr. a cta.")
@@ -996,9 +996,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pensiones compensatorias")
 	String compensatoryPension();
 
+	@DefaultMessage("Importe no integrable en IRPF")
+	String noIRPFAmount();
+	
 	@DefaultMessage("Anualidades por alimentos")
 	String foodAnnuality();
-	
+
 	@DefaultMessage("Realiza pagos por pr\u00E9stamos destinados a la adquisici\u00F3n o rehabilitaci\u00F3n de su vivienda habitual.")
 	String regularHomePayments(); 
 
@@ -3447,7 +3450,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("N\u00F3mina")
 	String salary();
 
-	@DefaultMessage("Remuneraciones monetaria")
+	@DefaultMessage("Remuneraciones monetarias")
 	String moneySalary();
 	
 	@DefaultMessage("Remuneraciones en especie")

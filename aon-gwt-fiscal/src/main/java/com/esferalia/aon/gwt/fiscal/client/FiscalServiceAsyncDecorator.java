@@ -23,8 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -93,55 +91,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getActivities(activityGroup,
 				new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
-	}
-
-	// ---------------------------------------------------------------MODELO 190
-	@Override
-	public void deleteMod190(String domainName, int domain, Mod190 mod190,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.deleteMod190(domainName, domain, mod190,
-				new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void saveMod190(String domainName, int domain, Mod190 mod190,
-			AsyncCallback<Mod190> callback) {
-		AON.start();
-		fsa.saveMod190(domainName, domain, mod190,
-				new AsyncCallbackWrapper<Mod190>(callback));
-	}
-
-	@Override
-	public void getMod190s(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod190>> callback) {
-		AON.start();
-		fsa.getMod190s(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<Mod190>>(callback));
-	}
-
-	@Override
-	public void initializeMod190(String domainName, Integer domain,
-			Integer year, AsyncCallback<Mod190> callback) {
-		AON.start();
-		fsa.initializeMod190(domainName, domain, year,
-				new AsyncCallbackWrapper<Mod190>(callback));
-	}
-
-	@Override
-	public void getMod190(String domainName, int domain, Integer id,
-			AsyncCallback<Mod190> callback) {
-		AON.start();
-		fsa.getMod190(domainName, domain, id, new AsyncCallbackWrapper<Mod190>(
-				callback));
-	}
-
-	@Override
-	public void getMod190Detail(String domainName, int domain, Integer id,
-			AsyncCallback<Mod190Detail> callback) {
-		AON.start();
-		fsa.getMod190Detail(domainName, domain, id,
-				new AsyncCallbackWrapper<Mod190Detail>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 193

@@ -40,7 +40,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class Model190Detail2014 extends ResizeComposite {
+public class OLD_Model190Detail2014 extends ResizeComposite {
 
 	public static final ProvidesKey<Mod190Detail> MOD190_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod190Detail>() {
 		@Override
@@ -50,7 +50,7 @@ public class Model190Detail2014 extends ResizeComposite {
 	};
 	
 	interface Model190Detail2013Binder extends
-			UiBinder<Widget, Model190Detail2014> {
+			UiBinder<Widget, OLD_Model190Detail2014> {
 	}
 
 	private static Model190Detail2013Binder MODEL190_DETAIL_2013_BINDER = GWT
@@ -230,7 +230,7 @@ public class Model190Detail2014 extends ResizeComposite {
 	@UiField
 	IntegerBox disabilityAscendant65Ratio;
 
-	public Model190Detail2014() {
+	public OLD_Model190Detail2014() {
 		key = new KeyListBox();
 		
 		Mod190DetailCell mod190DetailCell = new Mod190DetailCell();
@@ -305,67 +305,42 @@ public class Model190Detail2014 extends ResizeComposite {
 		inKindPerception.setValue(getDetail().getInKindPerception());
 		inKindDeposit.setValue(getDetail().getInKindDeposit());
 		inKindOutputDeposit.setValue(getDetail().getInKindOutputDeposit());
-
-		IrpfData irpfData = getDetail().getIrpfData();
-		if (irpfData != null) {
-			ceutaMelilla.setValue(irpfData.isCeutaMelilla());
-			birthYear.setValue(irpfData.getBirthYear());
-			familySituation.setSelectedIndex(irpfData.getFamilySituation());
-			spouseDocument.setValue(irpfData.getSpouseDocument());
-			disability.setSelectedIndex(irpfData.ensureDisability());
-			contract.setSelectedIndex(irpfData.getContract());
-			workActivityExtension.setValue(irpfData.isWorkActivityExtension());
-			geographicMobility.setValue(irpfData.isGeographicMobility());
-		}
-		IrpfResult irpfResult = getDetail().getIrpfResult();
-		if (irpfResult != null) {
-			applicableReduction.setValue(irpfResult.getApplicableReduction());
-			deducibleExpense.setValue(irpfResult.getDeducibleExpense());
-			compensatoryPension.setValue(irpfResult.getCompensatoryPension());
-			foodAnnuality.setValue(irpfResult.getFoodAnnuality());
-			homeLoanCommunnication.setValue(irpfResult
-					.isHomeLoanCommunnication());
-			lessThan3Descendent.setValue(irpfResult.getLessThan3Descendent());
-			lessThan3DescendentRatio.setValue(irpfResult
-					.getLessThan3DescendentRatio());
-			otherDescendent.setValue(irpfResult.getOtherDescendent());
-			otherDescendentRatio.setValue(irpfResult.getOtherDescendentRatio());
-			firstChildCalculation.setSelectedIndex(irpfResult
-					.getFirstChildCalculation());
-			secondChildCalculation.setSelectedIndex(irpfResult
-					.getSecondChildCalculation());
-			thirdChildCalculation.setSelectedIndex(irpfResult
-					.getThirdChildCalculation());
-			disabilityDescendent33.setValue(irpfResult
-					.getDisabilityDescendent33());
-			disabilityDescendent33Ratio.setValue(irpfResult
-					.getDisabilityDescendent33Ratio());
-			disabilityDescendentDependence.setValue(irpfResult
-					.getDisabilityDescendentDependence());
-			disabilityDescendentDependenceRatio.setValue(irpfResult
-					.getDisabilityDescendentDependenceRatio());
-			disabilityDescendent65.setValue(irpfResult
-					.getDisabilityDescendent65());
-			disabilityDescendent65Ratio.setValue(irpfResult
-					.getDisabilityDescendent65Ratio());
-			lessThan75Ascendant.setValue(irpfResult.getLessThan75Ascendant());
-			lessThan75AscendantRatio.setValue(irpfResult
-					.getLessThan75AscendantRatio());
-			ascendant.setValue(irpfResult.getAscendant());
-			ascendantRatio.setValue(irpfResult.getAscendantRatio());
-			disabilityAscendant33.setValue(irpfResult
-					.getDisabilityAscendant33());
-			disabilityAscendant33Ratio.setValue(irpfResult
-					.getDisabilityAscendant33Ratio());
-			disabilityAscendantDependence.setValue(irpfResult
-					.getDisabilityAscendantDependence());
-			disabilityAscendantDependenceRatio.setValue(irpfResult
-					.getDisabilityAscendantDependenceRatio());
-			disabilityAscendant65.setValue(irpfResult
-					.getDisabilityAscendant65());
-			disabilityAscendant65Ratio.setValue(irpfResult
-					.getDisabilityAscendant65Ratio());
-		}
+		ceutaMelilla.setValue(getDetail().isCeutaMelilla());
+		birthYear.setValue(getDetail().getBirthYear());
+		familySituation.setSelectedIndex(getDetail().getFamilySituation());
+		spouseDocument.setValue(getDetail().getSpouseDocument());
+		disability.setSelectedIndex(getDetail().getDisability());
+		contract.setSelectedIndex(getDetail().getContract());
+		workActivityExtension.setValue(getDetail().isWorkActivityExtension());
+		geographicMobility.setValue(getDetail().isGeographicMobility());
+		applicableReduction.setValue(getDetail().getApplicableReduction());
+		deducibleExpense.setValue(getDetail().getDeducibleExpense());
+		compensatoryPension.setValue(getDetail().getCompensatoryPension());
+		foodAnnuality.setValue(getDetail().getFoodAnnuality());
+		homeLoanCommunnication.setValue(getDetail().isHomeLoanCommunnication());
+		lessThan3Descendent.setValue(getDetail().getLessThan3Descendent());
+		lessThan3DescendentRatio.setValue(getDetail().getLessThan3DescendentRatio());
+		otherDescendent.setValue(getDetail().getOtherDescendent());
+		otherDescendentRatio.setValue(getDetail().getOtherDescendentRatio());
+		firstChildCalculation.setSelectedIndex(getDetail().getFirstChildCalculation());
+		secondChildCalculation.setSelectedIndex(getDetail().getSecondChildCalculation());
+		thirdChildCalculation.setSelectedIndex(getDetail().getThirdChildCalculation());
+		disabilityDescendent33.setValue(getDetail().getDisabilityDescendent33());
+		disabilityDescendent33Ratio.setValue(getDetail().getDisabilityDescendent33Ratio());
+		disabilityDescendentDependence.setValue(getDetail().getDisabilityDescendentDependence());
+		disabilityDescendentDependenceRatio.setValue(getDetail().getDisabilityDescendentDependenceRatio());
+		disabilityDescendent65.setValue(getDetail().getDisabilityDescendent65());
+		disabilityDescendent65Ratio.setValue(getDetail().getDisabilityDescendent65Ratio());
+		lessThan75Ascendant.setValue(getDetail().getLessThan75Ascendant());
+		lessThan75AscendantRatio.setValue(getDetail().getLessThan75AscendantRatio());
+		ascendant.setValue(getDetail().getAscendant());
+		ascendantRatio.setValue(getDetail().getAscendantRatio());
+		disabilityAscendant33.setValue(getDetail().getDisabilityAscendant33());
+		disabilityAscendant33Ratio.setValue(getDetail().getDisabilityAscendant33Ratio());
+		disabilityAscendantDependence.setValue(getDetail().getDisabilityAscendantDependence());
+		disabilityAscendantDependenceRatio.setValue(getDetail().getDisabilityAscendantDependenceRatio());
+		disabilityAscendant65.setValue(getDetail().getDisabilityAscendant65());
+		disabilityAscendant65Ratio.setValue(getDetail().getDisabilityAscendant65Ratio());
 		restoreDeletedButton.setVisible(getDetail().isDeleted());
 		deleteDetailButton.setVisible(!getDetail().isDeleted());
 		enableOrDisableAdditionalDataPanel();
@@ -440,7 +415,7 @@ public class Model190Detail2014 extends ResizeComposite {
 
 	@UiHandler("ceutaMelilla")
 	void onChangeCeutaMelilla(ClickEvent event) {
-		getDetail().getIrpfData().setCeutaMelilla(ceutaMelilla.getValue());
+		getDetail().setCeutaMelilla(ceutaMelilla.getValue());
 		markAsDirty();
 	}
 
@@ -492,240 +467,214 @@ public class Model190Detail2014 extends ResizeComposite {
 
 	@UiHandler("birthYear")
 	void onChangeBirthYear(ChangeEvent event) {
-		getDetail().getIrpfData().setBirthYear(birthYear.getValue());
+		getDetail().setBirthYear(birthYear.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("familySituation")
 	void onChangeFamilySituation(ChangeEvent event) {
-		getDetail().getIrpfData().setFamilySituation(
+		getDetail().setFamilySituation(
 				(byte) familySituation.getSelectedIndex());
 		markAsDirty();
 	}
 
 	@UiHandler("spouseDocument")
 	void onChangeSpouseDocument(ChangeEvent event) {
-		getDetail().getIrpfData().setSpouseDocument(spouseDocument.getValue());
+		getDetail().setSpouseDocument(spouseDocument.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("disability")
 	void onChangeDisability(ChangeEvent event) {
-		getDetail().getIrpfData()
-				.setDisability((byte) disability.getSelectedIndex());
+		getDetail().setDisability((byte) disability.getSelectedIndex());
 		markAsDirty();
 	}
 
 	@UiHandler("contract")
 	void onChangeContract(ChangeEvent event) {
-		getDetail().getIrpfData().setContract((byte) contract.getSelectedIndex());
+		getDetail().setContract((byte) contract.getSelectedIndex());
 		markAsDirty();
 	}
 
 	@UiHandler("workActivityExtension")
 	void onChangeWorkActivityExtension(ClickEvent event) {
-		getDetail().getIrpfData().setWorkActivityExtension(
-				workActivityExtension.getValue());
+		getDetail().setWorkActivityExtension(workActivityExtension.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("geographicMobility")
 	void onChangeGeographicMobility(ClickEvent event) {
-		getDetail().getIrpfData().setGeographicMobility(
+		getDetail().setGeographicMobility(
 				geographicMobility.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("homeLoanCommunnication")
 	void onChangeHomeLoanCommunnication(ClickEvent event) {
-		getDetail().getIrpfResult().setHomeLoanCommunnication(
-				homeLoanCommunnication.getValue());
+		getDetail().setHomeLoanCommunnication(homeLoanCommunnication.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("applicableReduction")
 	void onChangeApplicableReduction(ChangeEvent event) {
-		getDetail().getIrpfResult().setApplicableReduction(
-				applicableReduction.getValue());
+		getDetail().setApplicableReduction(applicableReduction.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("deducibleExpense")
 	void onChangeDeducibleExpense(ChangeEvent event) {
-		getDetail().getIrpfResult().setDeducibleExpense(
-				deducibleExpense.getValue());
+		getDetail().setDeducibleExpense(deducibleExpense.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("compensatoryPension")
 	void onChangeCompensatoryPension(ChangeEvent event) {
-		getDetail().getIrpfResult().setCompensatoryPension(
-				compensatoryPension.getValue());
+		getDetail().setCompensatoryPension(compensatoryPension.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("foodAnnuality")
 	void onChangeFoodAnnuality(ChangeEvent event) {
-		getDetail().getIrpfResult().setFoodAnnuality(foodAnnuality.getValue());
+		getDetail().setFoodAnnuality(foodAnnuality.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("lessThan3Descendent")
 	void onChangeLessThan3Descendent(ChangeEvent event) {
-		getDetail().getIrpfResult().setLessThan3Descendent(
-				AonNumberUtils.toByte( lessThan3Descendent.getValue()));
+		getDetail().setLessThan3Descendent(AonNumberUtils.toByte( lessThan3Descendent.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("lessThan3DescendentRatio")
 	void onChangeLessThan3DescendentRatio(ChangeEvent event) {
-		getDetail().getIrpfResult().setLessThan3DescendentRatio(
-				AonNumberUtils.toByte( lessThan3DescendentRatio.getValue()));
+		getDetail().setLessThan3DescendentRatio(AonNumberUtils.toByte( lessThan3DescendentRatio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("otherDescendent")
 	void onChangeOtherDescendent(ChangeEvent event) {
-		getDetail().getIrpfResult().setOtherDescendent(
-				AonNumberUtils.toByte( otherDescendent.getValue()));
+		getDetail().setOtherDescendent(AonNumberUtils.toByte( otherDescendent.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("otherDescendentRatio")
 	void onChangeOtherDescendentRatio(ChangeEvent event) {
-		getDetail().getIrpfResult().setOtherDescendentRatio(
-				AonNumberUtils.toByte( otherDescendentRatio.getValue()));
+		getDetail().setOtherDescendentRatio(AonNumberUtils.toByte( otherDescendentRatio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("firstChildCalculation")
 	void onChangeFirstChildCalculation(ChangeEvent event) {
-		getDetail().getIrpfResult().setFirstChildCalculation(
-				AonNumberUtils.toByte( firstChildCalculation.getSelectedIndex()));
+		getDetail().setFirstChildCalculation(AonNumberUtils.toByte( firstChildCalculation.getSelectedIndex()));
 		markAsDirty();
 	}
 
 	@UiHandler("secondChildCalculation")
 	void onChangeSecondChildCalculation(ChangeEvent event) {
-		getDetail().getIrpfResult().setSecondChildCalculation(
-				AonNumberUtils.toByte( secondChildCalculation.getSelectedIndex()));
+		getDetail().setSecondChildCalculation(AonNumberUtils.toByte( secondChildCalculation.getSelectedIndex()));
 		markAsDirty();
 	}
 
 	@UiHandler("thirdChildCalculation")
 	void onChangeThirdChildCalculation(ChangeEvent event) {
-		getDetail().getIrpfResult().setThirdChildCalculation(
-				AonNumberUtils.toByte( thirdChildCalculation.getSelectedIndex()));
+		getDetail().setThirdChildCalculation(AonNumberUtils.toByte( thirdChildCalculation.getSelectedIndex()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendent33")
 	void onChangeDisabilityDescendent33(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityDescendent33(
-				AonNumberUtils.toByte( disabilityDescendent33.getValue()));
+		getDetail().setDisabilityDescendent33(AonNumberUtils.toByte( disabilityDescendent33.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendent33Ratio")
 	void onChangeDisabilityDescendent33Ratio(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityDescendent33Ratio(
-				AonNumberUtils.toByte( disabilityDescendent33Ratio.getValue()));
+		getDetail().setDisabilityDescendent33Ratio(AonNumberUtils.toByte( disabilityDescendent33Ratio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendentDependence")
 	void onChangeDisabilityDescendentDependence(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityDescendentDependence(
-				AonNumberUtils.toByte( disabilityDescendentDependence.getValue()));
+		getDetail().setDisabilityDescendentDependence(AonNumberUtils.toByte( disabilityDescendentDependence.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendentDependenceRatio")
 	void onChangeDisabilityDescendentDependenceRatio(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityDescendentDependenceRatio(
-				AonNumberUtils.toByte( disabilityDescendentDependenceRatio.getValue()));
+		getDetail().setDisabilityDescendentDependenceRatio(AonNumberUtils.toByte( disabilityDescendentDependenceRatio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendent65")
 	void onChangeDisabilityDescendent65(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityDescendent65(
-				AonNumberUtils.toByte( disabilityDescendent65.getValue()));
+		getDetail().setDisabilityDescendent65(AonNumberUtils.toByte( disabilityDescendent65.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityDescendent65Ratio")
 	void onChangeDisabilityDescendent65Ratio(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityDescendent65Ratio(
-				AonNumberUtils.toByte( disabilityDescendent65Ratio.getValue()));
+		getDetail().setDisabilityDescendent65Ratio(AonNumberUtils.toByte( disabilityDescendent65Ratio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("lessThan75Ascendant")
 	void onChangeLessThan75Ascendant(ChangeEvent event) {
-		getDetail().getIrpfResult().setLessThan75Ascendant(
-				AonNumberUtils.toByte( lessThan75Ascendant.getValue()));
+		getDetail().setLessThan75Ascendant(AonNumberUtils.toByte( lessThan75Ascendant.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("lessThan75AscendantRatio")
 	void onChangeLessThan75AscendantRatio(ChangeEvent event) {
-		getDetail().getIrpfResult().setLessThan75AscendantRatio(
-				AonNumberUtils.toByte( lessThan75AscendantRatio.getValue()));
+		getDetail().setLessThan75AscendantRatio(AonNumberUtils.toByte( lessThan75AscendantRatio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("ascendant")
 	void onChangeAscendant(ChangeEvent event) {
-		getDetail().getIrpfResult().setAscendant(AonNumberUtils.toByte( ascendant.getValue()));
+		getDetail().setAscendant(AonNumberUtils.toByte( ascendant.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("ascendantRatio")
 	void onChangeAscendantRatio(ChangeEvent event) {
-		getDetail().getIrpfResult().setAscendantRatio(AonNumberUtils.toByte( ascendantRatio.getValue()));
+		getDetail().setAscendantRatio(AonNumberUtils.toByte( ascendantRatio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendant33")
 	void onChangeDisabilityAscendant33(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityAscendant33(
+		getDetail().setDisabilityAscendant33(
 				AonNumberUtils.toByte( disabilityAscendant33.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendant33Ratio")
 	void onChangeDisabilityAscendant33Ratio(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityAscendant33Ratio(
-				AonNumberUtils.toByte( disabilityAscendant33Ratio.getValue()));
+		getDetail().setDisabilityAscendant33Ratio(AonNumberUtils.toByte( disabilityAscendant33Ratio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendantDependence")
 	void onChangeDisabilityAscendantDependence(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityAscendantDependence(
-				AonNumberUtils.toByte( disabilityAscendantDependence.getValue()));
+		getDetail().setDisabilityAscendantDependence(AonNumberUtils.toByte( disabilityAscendantDependence.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendantDependenceRatio")
 	void onChangeDisabilityAscendantDependenceRatio(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityAscendantDependenceRatio(
-				AonNumberUtils.toByte( disabilityAscendantDependenceRatio.getValue()));
+		getDetail().setDisabilityAscendantDependenceRatio(AonNumberUtils.toByte( disabilityAscendantDependenceRatio.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendant65")
 	void onChangeDisabilityAscendant65(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityAscendant65(
-				AonNumberUtils.toByte( disabilityAscendant65.getValue()));
+		getDetail().setDisabilityAscendant65(AonNumberUtils.toByte( disabilityAscendant65.getValue()));
 		markAsDirty();
 	}
 
 	@UiHandler("disabilityAscendant65Ratio")
 	void onChangeDisabilityAscendant65Ratio(ChangeEvent event) {
-		getDetail().getIrpfResult().setDisabilityAscendant65Ratio(
-				AonNumberUtils.toByte( disabilityAscendant65Ratio.getValue()));
+		getDetail().setDisabilityAscendant65Ratio(AonNumberUtils.toByte( disabilityAscendant65Ratio.getValue()));
 		markAsDirty();
 	}
 
@@ -763,8 +712,6 @@ public class Model190Detail2014 extends ResizeComposite {
 		currentMod190.getDetails().add(
 			new Mod190Detail()
 				.setKey("A")
-				.setIrpfData(new IrpfData())
-				.setIrpfResult(new IrpfResult())
 				.setDirty(true)
 				.setTempId((currentMod190.getDetails().size() + 1)  * (-1))
 			);

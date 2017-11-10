@@ -39,7 +39,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class Model190Detail2016Bizkaia extends ResizeComposite {
+public class OLD_Model190Detail2016Gipuzkoa extends ResizeComposite {
 
 	public static final ProvidesKey<Mod190Detail> MOD190_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod190Detail>() {
 		@Override
@@ -49,7 +49,7 @@ public class Model190Detail2016Bizkaia extends ResizeComposite {
 	};
 	
 	interface Model190Detail2013Binder extends
-			UiBinder<Widget, Model190Detail2016Bizkaia> {
+			UiBinder<Widget, OLD_Model190Detail2016Gipuzkoa> {
 	}
 
 	private static Model190Detail2013Binder MODEL190_DETAIL_2013_BINDER = GWT
@@ -163,6 +163,8 @@ public class Model190Detail2016Bizkaia extends ResizeComposite {
 	@UiField
 	ListBox disability;
 	@UiField
+	ListBox contract;
+	@UiField
 	DoubleBox applicableReduction;
 	@UiField
 	DoubleBox deducibleExpense;
@@ -171,7 +173,7 @@ public class Model190Detail2016Bizkaia extends ResizeComposite {
 	@UiField
 	IntegerBox otherDescendent;
 
-	public Model190Detail2016Bizkaia() {
+	public OLD_Model190Detail2016Gipuzkoa() {
 		key = new KeyListBox();
 		
 		Mod190DetailCell mod190DetailCell = new Mod190DetailCell();
@@ -202,6 +204,11 @@ public class Model190Detail2016Bizkaia extends ResizeComposite {
 		disability.addItem("2");
 		disability.addItem("3");
 
+		contract.addItem("-");
+		contract.addItem("1");
+		contract.addItem("2");
+		contract.addItem("3");
+		contract.addItem("4");
 	}
 
 	public void setMod190(Mod190 mod190) {
@@ -227,18 +234,12 @@ public class Model190Detail2016Bizkaia extends ResizeComposite {
 		perceptionIL.setValue(getDetail().getPerceptionIL());
 		retentionIL.setValue(getDetail().getRetentionIL());
 		outputRetentionIL.setValue(getDetail().getOutputRetentionIL());
-
-		IrpfData irpfData = getDetail().getIrpfData();
-		if (irpfData != null) {
-			disability.setSelectedIndex(irpfData.ensureDisability());
-		}
-		IrpfResult irpfResult = getDetail().getIrpfResult();
-		if (irpfResult != null) {
-			applicableReduction.setValue(irpfResult.getApplicableReduction());
-			deducibleExpense.setValue(irpfResult.getDeducibleExpense());
-			compensatoryPension.setValue(irpfResult.getCompensatoryPension());
-			otherDescendent.setValue(irpfResult.getOtherDescendent());
-		}
+		disability.setSelectedIndex(getDetail().getDisability());
+		contract.setSelectedIndex(getDetail().getContract());
+		applicableReduction.setValue(getDetail().getApplicableReduction());
+		deducibleExpense.setValue(getDetail().getDeducibleExpense());
+		compensatoryPension.setValue(getDetail().getCompensatoryPension());
+		otherDescendent.setValue(getDetail().getOtherDescendent());
 		restoreDeletedButton.setVisible(getDetail().isDeleted());
 		deleteDetailButton.setVisible(!getDetail().isDeleted());
 		enableOrDisableAdditionalDataPanel();
@@ -379,36 +380,37 @@ public class Model190Detail2016Bizkaia extends ResizeComposite {
 	
 	@UiHandler("disability")
 	void onChangeDisability(ChangeEvent event) {
-		getDetail().getIrpfData()
-				.setDisability((byte) disability.getSelectedIndex());
+		getDetail().setDisability((byte) disability.getSelectedIndex());
+		markAsDirty();
+	}
+
+	@UiHandler("contract")
+	void onChangeContract(ChangeEvent event) {
+		getDetail().setContract((byte) contract.getSelectedIndex());
 		markAsDirty();
 	}
 
 	@UiHandler("applicableReduction")
 	void onChangeApplicableReduction(ChangeEvent event) {
-		getDetail().getIrpfResult().setApplicableReduction(
-				applicableReduction.getValue());
+		getDetail().setApplicableReduction(applicableReduction.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("deducibleExpense")
 	void onChangeDeducibleExpense(ChangeEvent event) {
-		getDetail().getIrpfResult().setDeducibleExpense(
-				deducibleExpense.getValue());
+		getDetail().setDeducibleExpense(deducibleExpense.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("compensatoryPension")
 	void onChangeCompensatoryPension(ChangeEvent event) {
-		getDetail().getIrpfResult().setCompensatoryPension(
-				compensatoryPension.getValue());
+		getDetail().setCompensatoryPension(compensatoryPension.getValue());
 		markAsDirty();
 	}
 
 	@UiHandler("otherDescendent")
 	void onChangeOtherDescendent(ChangeEvent event) {
-		getDetail().getIrpfResult().setOtherDescendent(
-				AonNumberUtils.toByte( otherDescendent.getValue()));
+		getDetail().setOtherDescendent(AonNumberUtils.toByte( otherDescendent.getValue()));
 		markAsDirty();
 	}
 
@@ -446,8 +448,6 @@ public class Model190Detail2016Bizkaia extends ResizeComposite {
 		currentMod190.getDetails().add(
 			new Mod190Detail()
 				.setKey("A")
-				.setIrpfData(new IrpfData())
-				.setIrpfResult(new IrpfResult())
 				.setDirty(true)
 				.setTempId((currentMod190.getDetails().size() + 1)  * (-1))
 			);

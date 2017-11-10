@@ -76,7 +76,7 @@
 								<g:Label text="{msg.key}" />
 							</td>
 							<td class=" {aonResources.css.aonWidth40}" rowspan="4">
-								<m190:Model190Detail2014.KeyListBox ui:field="key"/>
+								<m190:OLD_Model190Detail2014.KeyListBox ui:field="key"/>
 							</td>
 							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth40}" rowspan="4">
 								<g:Label text="{msg.subkey}" />

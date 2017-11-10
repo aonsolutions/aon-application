@@ -76,7 +76,7 @@
 								<g:Label text="{msg.key}" />
 							</td>
 							<td class=" {aonResources.css.aonWidth40}" rowspan="4">
-								<m190:Model190Detail2016Bizkaia.KeyListBox ui:field="key"/>
+								<m190:OLD_Model190Detail2016Gipuzkoa.KeyListBox ui:field="key"/>
 							</td>
 							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth40}" rowspan="4">
 								<g:Label text="{msg.subkey}" />
@@ -175,6 +175,9 @@
 							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth90}">
 								<g:Label text="{msg.disability}" />
 							</td>
+							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth90}">
+								<g:Label text="{msg.contract}" />
+							</td>
 							<td class="{aonResources.css.aonFontMedium} {aonResources.css.aonWidth150}">
 								<g:Label text="{msg.applicableReduction}" />
 							</td>
@@ -191,6 +194,9 @@
 						<tr>
 							<td class="{aonResources.css.aonWidth50}">
 								<g:ListBox width="40px" ui:field="disability"/>
+							</td>
+							<td class="{aonResources.css.aonWidthAuto}">
+								<g:ListBox width="40px" ui:field="contract"/>
 							</td>
 							<td>
 								<aon:DoubleBox ui:field="applicableReduction"/>
