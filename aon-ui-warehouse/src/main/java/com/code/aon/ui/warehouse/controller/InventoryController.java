@@ -404,12 +404,12 @@ public class InventoryController extends BasicController implements IAuditableCo
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getRemoteUser();
-		Integer workplaceId = inventory.getWarehouse().getWorkPlace() != null ? 
-				workplaceId = inventory.getWarehouse().getWorkPlace().getId() : null;
-		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 		
+		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 		AON.getInventoryDetailStream(domainName, domainId, user, f -> f.getInventoryProperty().eq(inventory.getId()))
 		.forEach(id -> {
+			Integer workplaceId = inventory.getWarehouse().getWorkPlace() != null ? 
+					workplaceId = inventory.getWarehouse().getWorkPlace().getId() : null;
 			InventoryDetail inventoryDetail = OccamClassesTransform.getInventoryDetail(id);
 			Double cost =  getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap);
 			inventoryDetail.setCost(cost);
