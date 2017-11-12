@@ -13,7 +13,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.13-SNAPSHOT</version>
+      <version>9.13</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -180,7 +180,7 @@
         <dependency>
           <groupId>net.aonsolutions.core</groupId>
           <artifactId>pool</artifactId>
-          <version>9.13-SNAPSHOT</version>
+          <version>9.13</version>
         </dependency>
         <dependency>
           <groupId>com.mchange</groupId>

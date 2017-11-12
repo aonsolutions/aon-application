@@ -112,7 +112,7 @@
 	<dependency>
 		<groupId>net.aonsolutions.core</groupId>
 		<artifactId>pool</artifactId>
-		<version>9.13-SNAPSHOT</version>
+		<version>9.13</version>
 		<scope>compile</scope>
 	</dependency>
 	<dependency>
