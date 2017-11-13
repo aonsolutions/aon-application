@@ -138,7 +138,7 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		final ListBox key = new ListBox();
 		key.setWidth("40px");
 		for (Mod1902016Key k : Mod1902016Key.values()) {
-			key.addItem(k.getValue());
+			key.addItem(k.getDescription(),k.getValue());
 		}
 		
 		Model190AEAT2016DetailPanel.setValue(key, subkey, detail);

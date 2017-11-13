@@ -965,7 +965,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 	private static void setValue(ListBox key, ListBox subKey, Mod190Detail detail) {
 		if (AonStringUtils.isBlank( detail.getKey())) {
-			detail.setKey(Mod1902016Key.A.toString());
+			detail.setKey(Mod1902014Key.A.toString());
 		}
 		Mod1902014Key keyEnum = Mod1902014Key.valueOf(detail.getKey());
 		key.setSelectedIndex(keyEnum.ordinal());
