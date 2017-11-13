@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-10T12:43:54 -->
+<!-- 2017-11-13T11:08:10 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="offer" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="f76ca51a-23bb-4ef6-ab93-2118e15583f6">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -1505,14 +1505,14 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 	<lastPageFooter>
 		<band height="107">
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-88" positionType="Float" x="281" y="42" width="97" height="27" uuid="a594776f-17a6-424e-b51e-11898d96f587"/>
+				<reportElement key="textField-88" positionType="Float" x="290" y="42" width="97" height="27" uuid="a594776f-17a6-424e-b51e-11898d96f587"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_sign}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-104" positionType="Float" x="173" y="41" width="101" height="27" uuid="04f7a0b7-726b-432d-9eea-67fbf5ed752f"/>
+				<reportElement key="textField-104" positionType="Float" x="182" y="41" width="101" height="27" uuid="04f7a0b7-726b-432d-9eea-67fbf5ed752f"/>
 				<box>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
@@ -1522,14 +1522,14 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-105" positionType="Float" x="132" y="41" width="41" height="27" uuid="c855e640-6cc4-4bbc-9e9d-ff61230403bc"/>
+				<reportElement key="textField-105" positionType="Float" x="141" y="41" width="41" height="27" uuid="c855e640-6cc4-4bbc-9e9d-ff61230403bc"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_dni}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-106" positionType="Float" x="173" y="75" width="101" height="27" uuid="ffe477eb-f020-4dc8-a582-7852ec424bcf"/>
+				<reportElement key="textField-106" positionType="Float" x="182" y="75" width="101" height="27" uuid="ffe477eb-f020-4dc8-a582-7852ec424bcf"/>
 				<box>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
@@ -1539,7 +1539,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-107" positionType="Float" x="34" y="41" width="95" height="27" uuid="fa914a66-a227-4808-8b95-cb46b68d76cd"/>
+				<reportElement key="textField-107" positionType="Float" x="43" y="41" width="95" height="27" uuid="fa914a66-a227-4808-8b95-cb46b68d76cd"/>
 				<box>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
@@ -1549,7 +1549,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-108" positionType="Float" x="34" y="74" width="95" height="27" uuid="f44c3a37-05d9-4028-805e-2fe4865c5f5e"/>
+				<reportElement key="textField-108" positionType="Float" x="43" y="74" width="95" height="27" uuid="f44c3a37-05d9-4028-805e-2fe4865c5f5e"/>
 				<box>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
@@ -1559,21 +1559,23 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-109" positionType="Float" x="132" y="75" width="41" height="27" uuid="69ec0f0f-6033-4ae1-82cb-633df059f1c1"/>
+				<reportElement key="textField-109" positionType="Float" x="141" y="75" width="41" height="27" uuid="69ec0f0f-6033-4ae1-82cb-633df059f1c1"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_fecha}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-110" positionType="Float" x="2" y="41" width="32" height="27" uuid="287b174d-5963-4ed6-8339-f0e528dd77f7"/>
+				<reportElement key="textField-110" positionType="Float" x="2" y="41" width="41" height="27" uuid="287b174d-5963-4ed6-8339-f0e528dd77f7"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_mr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-111" positionType="Float" x="2" y="74" width="32" height="27" uuid="1c6a4d44-6b0c-4b35-8c47-6d1856b574c3"/>
+				<reportElement key="textField-111" positionType="Float" x="2" y="74" width="41" height="27" uuid="1c6a4d44-6b0c-4b35-8c47-6d1856b574c3">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
