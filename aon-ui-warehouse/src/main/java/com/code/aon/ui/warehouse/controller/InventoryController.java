@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -161,7 +162,6 @@ public class InventoryController extends BasicController implements IAuditableCo
 			user = user.substring(index + 1);
 		}
 		Integer userId = AON.getUser(domainName, domainId, user).getId();
-		System.out.println(userId);
 		Integer[] array = AON.getUserScopes(domainName, domainId, user, userId);
 		LinkedList<Series> list = AON.getSeriesList(domainName, domainId, user,
 				f -> f.getActiveProperty().eq((byte) 1)
@@ -389,6 +389,12 @@ public class InventoryController extends BasicController implements IAuditableCo
 			
 			AON.insertWarehouseTransferDetail(domainName, domainId, user, 
 				details.stream().map(detail -> {
+					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stck = AON.getStockStream(domainName, domainId, user, f -> f.getItemProperty().eq(detail.getItem().getId()))
+							.findFirst();
+					if(stck.isPresent())  {
+						stck.get().setQuantity(Math.abs(detail.getActualQuantity()-detail.getRealQuantity()));
+						AON.updateStock(domainName, domainId, user, stck.get());
+					}
 					return new WarehouseTransferDetail()
 						.setDomain(detail.getDomain())
 						.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(detail.getItem().getId()))
@@ -463,7 +469,6 @@ public class InventoryController extends BasicController implements IAuditableCo
 	}
 	
 	public void onRevert(ActionEvent event) {
-		long a = System.currentTimeMillis();
 		String s = "Inventario abierto, Traspasos asociados eliminados y Stock actualizado";
 		if(!s.equals(getText())){
 			Inventory inventory = (Inventory) getTo();
@@ -471,27 +476,17 @@ public class InventoryController extends BasicController implements IAuditableCo
 			Integer domainId = DomainManager.getCurrentDomain();
 			String user = AonUtil.getRemoteUser();
 			
-			long a1 = System.currentTimeMillis();
-
 			AON.deleteWarehouseTransfer(domainName, domainId, user,
 					f -> f.getInventoryProperty().eq(inventory.getId())
 					.and(f.getSourceProperty().ne(WarehouseTransferSource.INVENTORY_INIT_STOCK.value())));
-			long b1 = System.currentTimeMillis() - a1;	
-			System.out.println("delete WT -> " + (b1/1000d));
 			//AON.updateInventory(domainName, domainId, user,
 			//	OccamClassesTransform.getInventory(inventory));
-			long a2 = System.currentTimeMillis();
 			LinkedList<com.esferalia.aon.occam.api.model.warehouse.Inventory> list =  AON.getTwoLastInventory(domainName, domainId, user, inventory.getWarehouse().getId());
-			long b2 = System.currentTimeMillis() - a2;	
-			System.out.println("GET 2 INV -> " + (b2/1000d));
-			
-			long a3 = System.currentTimeMillis();
+				
 			if(list.getLast().getId().equals(inventory.getId()) &&
 				InventoryStatus.values()[list.getFirst().getStatus()].equals(InventoryStatus.OPEN)) {
 				AON.deleteInventory(domainName, domainId, user, list.getFirst().getId());
 			}
-			long b3 = System.currentTimeMillis() - a3;	
-			System.out.println("deletE INV -> " + (b3/1000d));
 			try {
 				inventory.setStatus(InventoryStatus.OPEN);
 				getManagerBean().update(inventory);
@@ -506,8 +501,6 @@ public class InventoryController extends BasicController implements IAuditableCo
 			setShowConfirmWindow(false);
 			initializeModel();
 		}
-		long b = System.currentTimeMillis() - a;	
-		System.out.println("adj -> " + (b/1000d));
 	}
 	
 	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId, Date inventoryDate, com.esferalia.aon.occam.api.model.ApplicationParameter ap){
