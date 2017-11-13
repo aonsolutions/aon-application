@@ -264,6 +264,24 @@
 										</aon:commandLink>
 									</aon:div>
 
+									<!-- *********************** [MODELO 193] -->
+									<aon:div>									
+										<aon:commandLink id="gwt_mod193-new" action="gwt_mod193-new" 
+											title="#{bundle.fiscal_model_193_module}" styleClass="aon-menu-fiscal">
+											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="193"/>
+											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="193"/>
+											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="193"/>
+											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="193"/>
+											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="193"/>
+											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="190"/>
+											<aon:outputText styleClass="aon-menu-fiscal-label"
+												value="&#160;" />
+											<aon:outputText styleClass="aon-icon-new-text"
+												style="padding-left: 20px;margin-left: 5px;" 
+												value="#{bundle.fiscal_model_193_module}" />
+										</aon:commandLink>
+									</aon:div>
+
 									<!-- *********************** [MODELO 202] -->
 									<aon:div rendered="#{fiscalParams.aeat}">									
 										<aon:commandLink id="gwt_mod202-new" action="gwt_mod202-new" 
@@ -303,19 +321,6 @@
 											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_200_module}" />
 										</aon:commandLink>
 									</aon:div>
-									<!-- *********************** [MODELO 193] -->
-									<aon:div>									
-										<aon:commandLink id="gwt_mod193-new" action="gwt_mod193-new" 
-											title="#{bundle.fiscal_model_193_module}" styleClass="aon-menu-fiscal">
-											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="193"/>
-											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="193"/>
-											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="193"/>
-											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="193"/>
-											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="193"/>
-											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_193_module}" />
-										</aon:commandLink>
-									</aon:div>
-									
 									<aon:div rendered="#{fiscalParams.aeat}">
 										<aon:commandLink id="gwt_sii-fiscal" action="gwt_sii-fiscal" 
 											title="SII - Suministro Inmediato de Información" styleClass="aon-menu-fiscal">

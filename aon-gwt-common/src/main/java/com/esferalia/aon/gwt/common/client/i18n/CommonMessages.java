@@ -2146,7 +2146,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("C\u00F3digo emisor")
 	String issuingCode();
 	
-	@DefaultMessage("C\u00F3digo cuenta valores / N\u00FAmero operaci\u00F3n pr\u00E9stamo")
+	@DefaultMessage("C.C.V. / N\u00BA op. pr\u00E9stamo")
 	String ccv();
 	
 	@DefaultMessage("Pago")
@@ -2155,7 +2155,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Tipo C\u00F3digo")
 	String codeType();
 	
-	@DefaultMessage("Importe de percepciones/remuneraci\u00F3n al prestamista")
+	@DefaultMessage("Imp percep/remun. prestamista")
 	String lenderAmount();
 	
 	@DefaultMessage("Reducciones")

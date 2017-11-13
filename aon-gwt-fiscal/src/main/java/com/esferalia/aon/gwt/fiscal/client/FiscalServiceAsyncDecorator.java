@@ -23,7 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
@@ -91,47 +90,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getActivities(activityGroup,
 				new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
-	}
-
-	// ---------------------------------------------------------------MODELO 193
-	@Override
-	public void deleteMod193(String domainName, int domain, Mod193 mod193,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.deleteMod193(domainName, domain, mod193,
-				new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void saveMod193(String domainName, int domain, Mod193 mod193,
-			AsyncCallback<Mod193> callback) {
-		AON.start();
-		fsa.saveMod193(domainName, domain, mod193,
-				new AsyncCallbackWrapper<Mod193>(callback));
-	}
-
-	@Override
-	public void getMod193s(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod193>> callback) {
-		AON.start();
-		fsa.getMod193s(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<Mod193>>(callback));
-	}
-
-	@Override
-	public void initializeMod193(String domainName, Integer domain,
-			Integer year, AsyncCallback<Mod193> callback) {
-		AON.start();
-		fsa.initializeMod193(domainName, domain, year,
-				new AsyncCallbackWrapper<Mod193>(callback));
-	}
-
-	@Override
-	public void getMod193(String domainName, int domain, Integer id,
-			AsyncCallback<Mod193> callback) {
-		AON.start();
-		fsa.getMod193(domainName, domain, id, new AsyncCallbackWrapper<Mod193>(
-				callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 184

@@ -1,9 +1,13 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
-import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 
-public class Mod193 implements Serializable {
+import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Period;
+
+public class Mod193 implements IFiscalModel, HasAudit {
 
 	private static final long serialVersionUID = 3763668880785687130L;
 	
@@ -11,9 +15,11 @@ public class Mod193 implements Serializable {
 	private int domain;
 	private int enterprise;
 	private int year;
-	private byte administration;
+	private Administration administration;
+	private FiscalStatus status;
 	private boolean confidential;
 	private boolean replacement;
+	private boolean complementary;
 	private String receipt;
 	private String replacedReceipt;
 	private String comments;
@@ -33,6 +39,14 @@ public class Mod193 implements Serializable {
 	private LinkedList<Mod193Detail> details;
 	private LinkedList<Mod193Detail> expenses;
 
+	private String domainName;
+
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
+
+	@Override
 	public Integer getId() { 
 		return id;
 	}
@@ -41,7 +55,11 @@ public class Mod193 implements Serializable {
 		this.id = id;
 		return this;
 	}
+	public boolean isNew() {
+		return id==null;
+	}
 
+	@Override
 	public int getDomain() {
 		return domain;
 	}
@@ -60,6 +78,7 @@ public class Mod193 implements Serializable {
 		return this;
 	}
 
+	@Override
 	public int getYear() {
 		return year;
 	}
@@ -69,12 +88,22 @@ public class Mod193 implements Serializable {
 		return this;
 	}
 
-	public byte getAdministration() {
+	@Override
+	public Administration getAdministration() {
 		return administration;
 	}
 
-	public Mod193 setAdministration(byte administration) {
+	public Mod193 setAdministration(Administration administration) {
 		this.administration = administration;
+		return this;
+	}
+
+	@Override
+	public FiscalStatus getStatus() {
+		return status;
+	}
+	public Mod193 setStatus(FiscalStatus status) {
+		this.status = status;
 		return this;
 	}
 
@@ -87,6 +116,7 @@ public class Mod193 implements Serializable {
 		return this;
 	}
 
+	@Override
 	public boolean isReplacement() {
 		return replacement;
 	}
@@ -96,6 +126,16 @@ public class Mod193 implements Serializable {
 		return this;
 	}
 	
+	@Override
+	public boolean isComplementary() {
+		return complementary;
+	}
+
+	public Mod193 setComplementary(boolean complementary) {
+		this.complementary = complementary;
+		return this;
+	}
+
 	public String getReceipt() {
 		return receipt;
 	}
@@ -123,6 +163,7 @@ public class Mod193 implements Serializable {
 		return this;
 	}
 
+	@Override
 	public String getDocument() {
 		return document;
 	}
@@ -132,6 +173,7 @@ public class Mod193 implements Serializable {
 		return this;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -141,6 +183,16 @@ public class Mod193 implements Serializable {
 		return this;
 	}
 	
+	@Override
+	public String getSurname() {
+		return null;
+	}
+
+	@Override
+	public String getFullName() {
+		return name;
+	}
+
 	public String getContactPerson() {
 		return contactPerson;
 	}
@@ -237,4 +289,65 @@ public class Mod193 implements Serializable {
 		return this;
 	}
 
+	@Override
+	public String getDomainName() {
+		return domainName;
+	}
+	public Mod193 setDomainName(String domainName) {
+		this.domainName = domainName;
+		return this;
+	}
+
+	@Override
+	public IFiscalModelKey getDeclarationTypeKey() {
+		return null;
+	}
+	
+	@Override
+	public double getResult() {
+		return 0;
+	}
+
+	@Override
+	public FiscalModelType getModel() {
+		return FiscalModelType.M193;
+	}
+
+	@Override
+	public Period getPeriod() {
+		return Period.YEAR;
+	}
+	// ---------------------------------------------------------- AUDIT
+	@Override
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public Mod193 setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	@Override
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public Mod193 setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	@Override
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public Mod193 setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	@Override
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public Mod193 setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
 }

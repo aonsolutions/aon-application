@@ -12,6 +12,8 @@ public class Mod193Detail implements Serializable {
 	public static final String DETAIL_TYPE = "P";
 	public static final String EXPENSE_TYPE = "G";
 	
+	private int tempId;
+
 	private Integer id;
 	private String type;
 	private String name;
@@ -50,6 +52,15 @@ public class Mod193Detail implements Serializable {
 	private boolean dirty;
 	private boolean deleted;
 
+	public int getTempId() {
+		return tempId;
+	}
+
+	public Mod193Detail setTempId(int tempId) {
+		this.tempId = tempId;
+		return this;
+	}
+	
 	public Integer getId() {
 		return id;
 	}

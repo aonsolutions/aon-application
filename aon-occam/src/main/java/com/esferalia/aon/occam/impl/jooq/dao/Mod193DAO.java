@@ -18,13 +18,16 @@ import java.util.stream.Collectors;
 
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel193Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -73,6 +76,23 @@ public class Mod193DAO {
 			.orElse(null);
 	}
 
+	public static Mod193 saveComments(AONContext ctx, Mod193 fm) {
+		try {
+			ctx.checkWrite();
+			if (fm.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL193)
+					.set(FS_MODEL193.COMMENTS,fm.getComments())
+					.where(FS_MODEL193.ID.equal(fm.getId()))
+					.execute();
+			}
+			return fm;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getMessage());
+		}
+	}
+
 	public static Mod193 save(AONContext ctx, Mod193 mod193) {
 		ctx.checkWrite();
 		if (mod193.getId() == null) {
@@ -90,6 +110,24 @@ public class Mod193DAO {
 		return getById(ctx, mod193.getId());
 	}
 
+	public static Mod193 changeStatus(AONContext ctx, Mod193 mod193, FiscalStatus newStatus) {
+		try {
+			ctx.checkWrite();
+			if (mod193.getId() != null) {
+				mod193.setStatus(newStatus);
+				ctx.getDslContext().update(FS_MODEL193)
+					.set(FS_MODEL193.STATUS,AonEnumUtils.getByte( mod193.getStatus()))
+					.where(FS_MODEL193.ID.equal(mod193.getId()))
+					.execute();
+			}
+			return mod193;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getMessage());
+		}
+	}
+
 	private static Mod193 insert(AONContext ctx, Mod193 mod193) {
 		validate(ctx, mod193);
 		FsModel193Record record = ctx
@@ -98,7 +136,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193.DOMAIN, mod193.getDomain())
 				.set(FS_MODEL193.ENTERPRISE, mod193.getEnterprise())
 				.set(FS_MODEL193.YEAR, mod193.getYear())
-				.set(FS_MODEL193.ADMINISTRATION, mod193.getAdministration())
+				.set(FS_MODEL193.ADMINISTRATION,mod193.getAdministration().getValue())
 				.set(FS_MODEL193.STATUS, (byte) 0)
 				.set(FS_MODEL193.SECURITY_LEVEL,AonEnumUtils.getByte(mod193.isConfidential()))
 				.set(FS_MODEL193.DOCUMENT, mod193.getDocument())
@@ -125,7 +163,7 @@ public class Mod193DAO {
 		ctx.getDslContext()
 				.update(FS_MODEL193)
 				.set(FS_MODEL193.YEAR, mod193.getYear())
-				.set(FS_MODEL193.ADMINISTRATION, mod193.getAdministration())
+				.set(FS_MODEL193.ADMINISTRATION,mod193.getAdministration().getValue())
 				.set(FS_MODEL193.STATUS, (byte) 0)
 				.set(FS_MODEL193.SECURITY_LEVEL,AonEnumUtils.getByte(mod193.isConfidential()))
 				.set(FS_MODEL193.DOCUMENT, mod193.getDocument())
@@ -387,8 +425,10 @@ public class Mod193DAO {
 				.setDomain(record.getValue(FS_MODEL193.DOMAIN))
 				.setEnterprise(record.getValue(FS_MODEL193.ENTERPRISE))
 				.setYear(record.getValue(FS_MODEL193.YEAR))
-				.setAdministration(record.getValue(FS_MODEL193.ADMINISTRATION))
+				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL193.ADMINISTRATION)))
 				.setReplacement(record.getValue(FS_MODEL193.REPLACEMENT) == 1)
+				.setComplementary(record.getValue(FS_MODEL193.COMPLEMENTARY)==1 )
+				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL193.STATUS)))
 				.setDocument(record.getValue(FS_MODEL193.DOCUMENT))
 				.setName(record.getValue(FS_MODEL193.NAME))
 				.setContactPerson(record.getValue(FS_MODEL193.CONTACT_PERSON))
@@ -514,7 +554,8 @@ public class Mod193DAO {
 		mod193.setDocument(params.getDocument());
 		mod193.setName(AonStringUtils.left(params.getName(), FS_MODEL193.NAME.getDataType().length()));
 		mod193.setYear(year);
-		mod193.setAdministration((byte) (params.getAdministration()!=null?params.getAdministration():4));
+		mod193.setReceipt("1930000000001");
+		mod193.setAdministration(params.getAdministration()!=null?Administration.safeValueOf(params.getAdministration()):Administration.COMMON_TERRITORY);
 		mod193.setContactPerson(AonStringUtils.left(params.getContactPerson(),FS_MODEL193.CONTACT_PERSON.getDataType().length()));
 		mod193.setContactPhone(AonStringUtils.left(params.getContactPhone(),FS_MODEL193.CONTACT_PHONE.getDataType().length()));
 		return mod193;
