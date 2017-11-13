@@ -650,7 +650,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>-1</value>
+			<value>25</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
