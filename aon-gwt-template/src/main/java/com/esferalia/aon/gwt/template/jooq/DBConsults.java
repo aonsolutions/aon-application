@@ -118,10 +118,12 @@ public class DBConsults {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					ti.setColumns(aux.getColumns());
-					ti.setType(aux.getType());
-					ti.setIsParent(true);
-					v.add(ti);
+					if(aux != null) {
+						ti.setColumns(aux.getColumns());
+						ti.setType(aux.getType());
+						ti.setIsParent(true);
+						v.add(ti);
+					}
 				});
 				Boolean version = false;
 				if(recordDefault.isNotEmpty()){

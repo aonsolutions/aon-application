@@ -1205,8 +1205,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		
 		LinkedList<ProductCategory> productCategoryList = AON.getProductCategoryList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		LinkedList<Brand> brandList = AON.getBrandStream(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new));
+		
+		Domain d = AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
 		LinkedList<Tag> tagList = AON.getTagList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-		LinkedList<Tax> taxList = AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		LinkedList<Tax> taxList = d.getParentId() != null ? AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId())))
+				: AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		
 		rowStream.forEach(row ->{
 			if(row.getRowNum() !=0){
