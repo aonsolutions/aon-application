@@ -174,7 +174,7 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	public String getInvoiceProvince() throws JRScriptletException{
 		IAddress raddress = (IAddress) super.getFieldValue(FIELD_ADDRESS);
 		StringBuilder builder = new StringBuilder("");
-		if(raddress!=null && raddress.getGeozone().getId()!=null){
+		if(raddress!=null && raddress.getGeozone()!=null && raddress.getGeozone().getId()!=null){
 			builder.append(raddress.getGeozone()!=null?raddress.getGeozone().getName():"");
 			try {
 				if(!raddress.getGeozone().getGeoZoneCountry().getId().equals(getAddress().getGeozone().getGeoZoneCountry().getId())){
