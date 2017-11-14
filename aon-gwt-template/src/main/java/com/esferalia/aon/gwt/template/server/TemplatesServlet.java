@@ -387,7 +387,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		
 		this.fees = fees;
 		if(rowCount != -1) rowCount = fees.size();
-		System.out.println(rowCount);
 		setOut(null);
 		setMimetype(null);
 	
@@ -400,7 +399,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Error insertFee(Domain domain) {
-		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
 		Error error = new Error();
 		if(textError.equals("")){
@@ -420,8 +418,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			error.setError(false);
  			error.setTextError(verror);
 		}
-		long timeAll = System.currentTimeMillis() - startAll;	
-		System.out.println("ALL    " + (timeAll/1000d));
 		return error;
 	}
 	
@@ -661,14 +657,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	Row rowAux ;
 	Boolean proposalBool;
 	public Integer executeExcelProposal(Domain domain, Iterator<Row> rowIterator, Error error){
-		System.out.println("GWT TEMPLATES - (Solicitud de compra) empieza a procesar el excel.");
 		Vector<StockInfo> stock = new Vector<StockInfo>();
 		proposalBool = true;
 		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		rowStream.forEach(row ->{
-			System.out.println("GWT TEMPLATES - (Solicitud de compra) empieza a procesar lineas del excel.");
 			if(row.getRowNum() !=0){
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
@@ -701,7 +695,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								error.setError(false);
 								textError =  textError + "*El archivo importado no es compatible con la plantilla seleccionada.\n";
 								if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
-								System.out.println("GWT TEMPLATES - (Solicitud de compra) - " + "*El archivo importado no es compatible con la plantilla seleccionada.\n");
 								error.setTextError(verror);
 								this.error = error;
 								rowCount = -1;
@@ -715,14 +708,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 									if(beforeCell == null){
 										textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
 										verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
-										System.out.println("GWT TEMPLATES - (Solicitud de compra) - " +"*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
 										error.setTextError(verror);
 										this.error = error;
 									}	
 									else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
 										textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
 										verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n");
-										System.out.println("GWT TEMPLATES - (Solicitud de compra) - " +"*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n");
 										error.setTextError(verror);
 										this.error = error;
 									}
@@ -735,7 +726,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
-									System.out.println("GWT TEMPLATES - (Solicitud de compra) - " +"*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
 									error.setTextError(verror);
 									this.error = error;
 									si = newStock();	
@@ -751,7 +741,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						textError= textError + "*El archivo importado no es compatible con la plantilla seleccionada. \n ";
 	            		if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
 	            		error.setTextError(verror);
-	            		System.out.println("GWT TEMPLATES - (Solicitud de compra) - " +"*El archivo importado no es compatible con la plantilla seleccionada. \n ");
 	            		this.error = error;
 	            		rowCount = -1;
 	            		proposalBool = false;
@@ -763,7 +752,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	           				if(ti.getColumns().get(cellnum).equals("Producto") || ti.getColumns().get(cellnum).equals("Almac\u00e9n Destino")){
 	           					verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
 	          					error.setTextError(verror);
-	          					System.out.println("GWT TEMPLATES - (Solicitud de compra) - " +"*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
 	          					this.error = error;
 	          					textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
 	           				}
@@ -783,14 +771,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		this.stock = stock;
 		if(rowCount != -1) rowCount = stock.size();
 		setOut(null);setMimetype(null);
-		System.out.println("GWT TEMPLATES - (Solicitud de compra) - TERMINA DE PROCESAR EXCEL");
-		System.out.println("GWT TEMPLATES - (Solicitud de compra) - LINEAS DE EXCEL = " + rowCount);
 		return rowCount;
 	}
 	
 	public Error insertProposal(Domain domain, Integer proposal,Integer workplace){
-		System.out.println("GWT TEMPLATES - (Solicitud de compra) - empieza a insertar");
-		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
 		Error error = new Error();
 		if(textError.equals("")){
@@ -802,9 +786,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
-			System.out.println("GWT TEMPLATES - (Solicitud de compra) - antes de insertar");
 			error = DBStock.insertProposal(domain, stock,proposal,ai,workplace, getUser().getLogin());
-			System.out.println("GWT TEMPLATES - (Solicitud de compra) - despues de insertar");
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -813,9 +795,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			error.setError(false);
  			error.setTextError(verror);
 		}
-		
-		long timeAll = System.currentTimeMillis() - startAll;
-		System.out.println("ALL    " + (timeAll/1000d));
 		return error;
 	}
 
@@ -937,8 +916,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						}  
 					}
 				});
-				//System.out.println(ti.getColumns().size());
-				//System.out.println(row.getLastCellNum());
 				if(row.getLastCellNum() != ti.getColumns().size()+1){
 					if(row.getRowNum() == 1){
 						error.setError(false);
@@ -983,7 +960,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		this.stock = stock;
 		this.stockMap = stockMap;
 		if(rowCount != -1) rowCount = stock.size();
-		System.out.println(rowCount);
 		setOut(null);setMimetype(null);
 		
 		return rowCount;
@@ -992,7 +968,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return s.equals("Producto") ||s.equals("Cantidad");
 	}
 	public Error insertStock(Domain domain) {
-		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
 		Error error = new Error();
 		if(textError.equals("")){
@@ -1012,16 +987,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			//Alguna de las filas contiene datos erroneos.
 			error.setError(false);
  			error.setTextError(verror);
-		}
-		
-		long timeAll = System.currentTimeMillis() - startAll;
-			
-		System.out.println("ALL    " + (timeAll/1000d));
+		}	
 		return error;
 	}
 	
 	public Error insertTransferStock(Domain domain){
-		long startAll= System.currentTimeMillis();
 		Vector<String> verror = error.getTextError();
 		Error error = new Error();
 		if(textError.equals("")){
@@ -1045,8 +1015,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
  			error.setTextError(verror);
 		}
 		
-		long timeAll = System.currentTimeMillis() - startAll;
-		System.out.println("ALL    " + (timeAll/1000d));
 		return error;
 	}
 
@@ -1194,8 +1162,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 
 	private void executeExcelProduct(Domain domain, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error) {
-		long startcheck= System.currentTimeMillis();
-
 		Vector<ProductInfo> products = new Vector<ProductInfo>();
 		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
@@ -1313,9 +1279,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		if(rowCount != -1) rowCount = products.size();
 		setOut(null);setMimetype(null);
-		long timecheck = System.currentTimeMillis() - startcheck;
-		System.out.println("timecheck: " + (timecheck/1000d));
-		System.out.println(rowCount);
 	}
 	
 	public Boolean esta(com.esferalia.aon.occam.api.model.product.ProductTag pt, Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts){
@@ -1330,7 +1293,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Error insertProduct(Domain domain, String kind) {
-		long startAll= System.currentTimeMillis();
 		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
@@ -1350,10 +1312,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			error.setError(false);
  			error.setTextError(verror);
 		}
-
-		long timeAll = System.currentTimeMillis() - startAll;
-			
-		System.out.println("ALL    " + (timeAll/1000d));
 		return error;
 	}
 
@@ -1872,21 +1830,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		pi.setItem(is);
 		pi.setTagList(new LinkedList<>());
 		return pi;
-	}
-	
-	private Vector<String> tags(String s) {
-		Vector<String> v = new Vector<String>();
-
-		if(!s.contains(",")){
-			if(!s.equals(""))
-				v.add(s);
-			return v;
-		}
-		Integer pos = s.indexOf(",");
-		v = tags(s.substring(pos+1));
-		v.add(s.substring(0, pos));
-		
-		return v;
 	}
 	
 	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates){

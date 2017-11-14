@@ -43,6 +43,7 @@ import com.code.aon.warehouse.WarehouseTransfer;
 import com.code.aon.warehouse.enumeration.InventoryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
@@ -150,9 +151,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		this.warehouse = null;
 		super.onReset(event);
 	}
-	
 
-	
 	public boolean isOneSeries2(){
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
@@ -389,47 +388,53 @@ public class InventoryController extends BasicController implements IAuditableCo
 			
 			AON.insertWarehouseTransferDetail(domainName, domainId, user, 
 				details.stream().map(detail -> {
+					Double q = Math.abs(detail.getActualQuantity()-detail.getRealQuantity());
 					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stck = AON.getStockStream(domainName, domainId, user, f -> f.getItemProperty().eq(detail.getItem().getId()))
 							.findFirst();
-					if(stck.isPresent())  {
-						stck.get().setQuantity(Math.abs(detail.getActualQuantity()-detail.getRealQuantity()));
+					if(stck.isPresent() && !q.equals(stck.get().getQuantity()))  {
+						stck.get().setQuantity(q);
 						AON.updateStock(domainName, domainId, user, stck.get());
 					}
 					return new WarehouseTransferDetail()
 						.setDomain(detail.getDomain())
 						.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(detail.getItem().getId()))
-						.setQuantity(Math.abs(detail.getActualQuantity()-detail.getRealQuantity()))
+						.setQuantity(q)
 						.setWarehouseTransfer(new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer().setId(wt.getId()));
 				})
 			);
 		}	
 	}
 	
-	public void onStartAdjustment(ActionEvent event) {
+	public void onStartAdjustment(ActionEvent event) {		
 		Inventory inventory = (Inventory) getTo();
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getRemoteUser();
 		
 		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
+		
 		AON.getInventoryDetailStream(domainName, domainId, user, f -> f.getInventoryProperty().eq(inventory.getId()))
+		.map(i -> OccamClassesTransform.getInventoryDetail(i))
 		.forEach(id -> {
 			Integer workplaceId = inventory.getWarehouse().getWorkPlace() != null ? 
-					workplaceId = inventory.getWarehouse().getWorkPlace().getId() : null;
-			InventoryDetail inventoryDetail = OccamClassesTransform.getInventoryDetail(id);
-			Double cost =  getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap);
-			inventoryDetail.setCost(cost);
-			inventoryDetail.setInventory(inventory);
-			try {
-				getManagerBean().update(inventoryDetail);
-			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+					inventory.getWarehouse().getWorkPlace().getId() : null;
+			Double cost = getCost(id, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap);
+			if(!cost.equals(id.getCost())) {
+				AONContext ctx = null;
+				try {
+					ctx = AONContext.getAONContext(domainName, domainId, user);
+					ctx.getDslContext().update(com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL)
+						.set(com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL.COST, cost)
+						.where(com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL.ID.eq(id.getId()))
+						.execute();
+				} finally {
+					if(ctx != null) ctx.close();
+				}
 			}
 		});
 		
 		try {
 			getManagerBean().update(inventory);
-			
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -479,8 +484,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			AON.deleteWarehouseTransfer(domainName, domainId, user,
 					f -> f.getInventoryProperty().eq(inventory.getId())
 					.and(f.getSourceProperty().ne(WarehouseTransferSource.INVENTORY_INIT_STOCK.value())));
-			//AON.updateInventory(domainName, domainId, user,
-			//	OccamClassesTransform.getInventory(inventory));
+
 			LinkedList<com.esferalia.aon.occam.api.model.warehouse.Inventory> list =  AON.getTwoLastInventory(domainName, domainId, user, inventory.getWarehouse().getId());
 				
 			if(list.getLast().getId().equals(inventory.getId()) &&
@@ -504,13 +508,12 @@ public class InventoryController extends BasicController implements IAuditableCo
 	}
 	
 	public static Double getCost(InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId, Date inventoryDate, com.esferalia.aon.occam.api.model.ApplicationParameter ap){
-		switch ((ap != null && ap.getValue() != null) ? ap.getValue() : "0") {
-			case "0": return inventoryDetail.getRealQuantity() != 0 ? inventoryDetail.getItem().getPurchasePrice() : 0.0;
-			case "1": return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
-			case "2": return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
-			case "3": return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);	
-			default : return inventoryDetail.getItem().getPurchasePrice(); 
-		}
+		if(ap != null && ap.getValue() != null && !"0".equals(ap.getValue())) {
+			if("1".equals(ap.getValue())) return getLastPurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
+			else if("2".equals(ap.getValue())) return getAveragePurchasePrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
+			else if("3".equals(ap.getValue())) return getFifoPrice(inventoryDetail.getItem(), inventoryDetail.getRealQuantity(), AonUtil.getRemoteUser(), workplaceId,warehouseId, inventoryDate);
+		} 
+		return inventoryDetail.getRealQuantity() != 0 ? inventoryDetail.getItem().getPurchasePrice() : 0.0;
 	}
 
 	public static Double getLastPurchasePrice(Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
