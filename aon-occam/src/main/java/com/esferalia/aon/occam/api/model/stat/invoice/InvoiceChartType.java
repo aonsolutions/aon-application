@@ -31,10 +31,16 @@ public enum InvoiceChartType implements Serializable {
 			chartVisitor. visitInvoiceTypeByDaysComboChart();
 		}
 	})
-	,ABC_INVOICE_TITULAR("ABC Titular Factura", new ITypeVisitor() {
+	,ABC_INVOICE_TITULAR("ABC Titular factura", new ITypeVisitor() {
 		@Override
 		public void visit(IInvoiceChartTypeVisitor chartVisitor) {
 			chartVisitor. visitAbcInvoiceTitular();
+		}
+	})
+	,ABC_INVOICE_TITULAR_ADDRESS("ABC Titular factura / Direcci\u00F3n facturaci\u00F3n ", new ITypeVisitor() {
+		@Override
+		public void visit(IInvoiceChartTypeVisitor chartVisitor) {
+			chartVisitor. visitAbcInvoiceTitularAddress();
 		}
 	})
 	,ABC_INVOICE_CATEGORY("ABC Categor\u00EDa", new ITypeVisitor() {
@@ -55,7 +61,7 @@ public enum InvoiceChartType implements Serializable {
 			chartVisitor. visitAbcInvoiceWorkplace();
 		}
 	})
-	,ABC_INVOICE_SELLER("ABC Agente Comercial", new ITypeVisitor() {
+	,ABC_INVOICE_SELLER("ABC Agente comercial", new ITypeVisitor() {
 		@Override
 		public void visit(IInvoiceChartTypeVisitor chartVisitor) {
 			chartVisitor. visitAbcInvoiceSeller();

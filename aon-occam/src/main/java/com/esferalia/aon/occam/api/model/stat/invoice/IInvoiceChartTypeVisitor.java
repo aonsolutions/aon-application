@@ -12,6 +12,8 @@ public interface IInvoiceChartTypeVisitor {
 
 	void visitAbcInvoiceTitular();
 
+	void visitAbcInvoiceTitularAddress();
+
 	void visitAbcInvoiceCategory();
 
 	void visitAbcInvoiceProduct();

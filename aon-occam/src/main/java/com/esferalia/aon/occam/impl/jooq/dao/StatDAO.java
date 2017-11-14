@@ -370,6 +370,36 @@ public class StatDAO {
 				}
 				
 				@Override
+				public void visitAbcInvoiceTitularAddress() {
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					ctx.getDslContext().select(INVOICE.REGISTRY, INVOICE.RNAME , RADDRESS.ALIAS, RADDRESS.ADDRESS, INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(INVOICE.RADDRESS))						
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(INVOICE.REGISTRY, INVOICE.RADDRESS, INVOICE.TYPE)
+						.orderBy(sum.desc())
+						.fetch().stream().forEach(rec -> {
+							double d = rec.getValue(sum).doubleValue();
+							if (d >= 0) {
+								String name = rec.getValue(RADDRESS.ALIAS);
+								if ( AonStringUtils.isBlank(name)) {
+									name = rec.getValue(RADDRESS.ADDRESS);	
+								}
+								if ( AonStringUtils.isBlank(name)) {
+									name = rec.getValue(INVOICE.RNAME); 
+								} else {
+									name = rec.getValue(INVOICE.RNAME) + " [" + name + "]"; 
+								}
+								InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+								table.put(name , type.getDescription(), d);
+							}
+						});
+				}
+
+				@Override
 				public void visitAbcInvoiceSeller() {
 					final AggregateFunction<BigDecimal> sum = getSelectField(params);
 					ctx.getDslContext().select(INVOICE_DETAIL.SELLER,
