@@ -8,8 +8,6 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:div styleClass="aon-portlet aon-width-half" style="display: inline-block;">
-		<script type="text/javascript"
-			src="https://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
 		<script type="text/javascript">
 			window.onload= function{
 				var aux =  "#{dashboard.initialize}"
@@ -35,75 +33,52 @@
 						<aon:commandLink 
 								id="gwtDocuments2"
 								action="gwt_documents"
-								actionListener="#{gwtSelectedMenu.onDocumental}"><!-- #{bundle.aon_documents}"-->
-						<span class="aon-outputText aon-icon-documental-docs" style="padding-left:20px;color: #4b4b4b !important;">Documental - Archivos recientes</span>
-						<!--  aon:outputText value="#{bundle.recent_files}" /-->
+								actionListener="#{gwtSelectedMenu.onDocumental}">
+							<span class="aon-outputText aon-icon-documental-docs" style="padding-left:20px;color: #4b4b4b !important;">Documental - Archivos recientes</span>
 						</aon:commandLink>						
-						<!-- <aon:selectOneMenu id="Dashboard_recentsFilePeriod"
-							style="border: none;" value="#{dashboard.salaryYear}">
-							<a4j:support event="onchange"
-								actionListener="#{dashboard.onSalaryYearChanged}"
-								reRender="recentsFileGraphContainer,messageList"
-								ajaxSingle="true" 
-								limitToList="true"
-								ignoreDupResponses="true"/>
-							<f:selectItems value="#{dashboard.salaryYears}" />
-						</aon:selectOneMenu>-->
 					</aon:div>
 					<aon:div id="table_div-recent_files"
 						style="width: 100%; height: 180px;" />
 
-					<script type='text/javascript' src='https://www.google.com/jsapi'></script>
-					<script type='text/javascript'>
-					google.load("visualization", "1", {'callback' : 'drawTable' ,'packages':["corechart","table"], 'language': 'es'});
-      			
-					var recentsFiles = []; 
-    				<c:forEach var="recent" items="#{dashboard.recentsFiles}">
-    					recentsFiles[recentsFiles.length] = {fileId:#{recent.id}, driveId:#{(empty recent.driveId)  ? 'null' : "\"".concat(recent.driveId).concat("\"")}, mimetype:#{recent.mimetype != null ? recent.mimetype : '-1' }, icon:"#{recent.icon}", title:"#{recent.name}" };
-					</c:forEach>
-					
-					function drawTable() {
-        				var data = new google.visualization.DataTable();
-        				data.addColumn('string', '#{bundle.doc_date}');
-        				data.addColumn('string', '#{bundle.aon_name}');
-        				data.addColumn('string', '#{bundle.aon_category}');
-        				data.addColumn('string', '#{bundle.doc_size}');
+				    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+				    <script type="text/javascript">
+				    	google.charts.load('current', {'packages':['corechart','table']});
+				    	google.charts.setOnLoadCallback(drawTable);
+				      
+				
+						var recentsFiles = []; 
+    					<c:forEach var="recent" items="#{dashboard.recentsFiles}">
+    						recentsFiles[recentsFiles.length] = {fileId:#{recent.id}, driveId:#{(empty recent.driveId)  ? 'null' : "\"".concat(recent.driveId).concat("\"")}, mimetype:#{recent.mimetype != null ? recent.mimetype : '-1' }, icon:"#{recent.icon}", title:"#{recent.name}" };
+						</c:forEach>
+						
+						function drawTable() {
+        					var data = new google.visualization.DataTable();
+        					data.addColumn('string', '#{bundle.doc_date}');
+        					data.addColumn('string', '#{bundle.aon_name}');
+        					data.addColumn('string', '#{bundle.aon_category}');
+        					data.addColumn('string', '#{bundle.doc_size}');
 
-        				<!--data.addRow(['Mike',  1, true]);
-        				data.addRow(['Jim',   2,  false]);
-        				data.addRow(['Alice', 3, true]);
-        				data.addRow(['Bob',   4,  true]);
-						-->
-						<c:set var="count" value="0" scope="page" />						
-        				<c:forEach var="recent" items="#{dashboard.recentsFiles}" >
-    						data.addRow(['&lt;div style="cursor:pointer;"  &gt; #{recent.date != null ? recent.date : "&amp;nbsp;"  } &lt;/div&gt;',
+							<c:set var="count" value="0" scope="page" />						
+        					<c:forEach var="recent" items="#{dashboard.recentsFiles}" >
+    							data.addRow(['&lt;div style="cursor:pointer;"  &gt; #{recent.date != null ? recent.date : "&amp;nbsp;"  } &lt;/div&gt;',
 							            "&lt;div style=\"cursor:pointer; text-align:left; \" &gt; &lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name} &lt;/div&gt;",
 						             	'&lt;div style="cursor:pointer;"  &gt; #{( empty recent.category ) ? "&amp;nbsp;"  : recent.category }&lt;/div&gt;',
 						             	'&lt;div style="cursor:pointer;"  &gt; #{( empty recent.sizeString ) ? "&amp;nbsp;" : recent.sizeString }&lt;/div&gt;']);
-        					<c:set var="count" value="${count + 1}" scope="page"/>
-						</c:forEach>
+        						<c:set var="count" value="${count + 1}" scope="page"/>
+							</c:forEach>
 						
-						var cssClasses = {headerRow: 'aon-chart-table-header', headerCell:'aon-chart-table-header-cell'};
+							var cssClasses = {headerRow: 'aon-chart-table-header', headerCell:'aon-chart-table-header-cell'};
 
-						var divRecentFiles = document.getElementById('aonContent:mainForm:table_div-recent_files');
-						
-        				var options = {
+							var divRecentFiles = document.getElementById('aonContent:mainForm:table_div-recent_files');
+							
+    	    				var options = {
         						showRowNumber: false,
         						allowHtml: true,
         						cssClassNames:cssClasses
-						      };
-        				var table = new google.visualization.Table(divRecentFiles);
-           				table.draw(data, options);
-           				// Every time the table fires the "select" event, it should call your
-           				// selectHandler() function.
-           				
-           				/*google.visualization.events.addListener(table, 'select', selectHandler);
-
-           				function selectHandler(e) {
-           					
-           			  		alert('A table row was selected');
-           				}*/	
-      				}
+						  	};
+        					var table = new google.visualization.Table(divRecentFiles);
+           					table.draw(data, options);
+      					}
     				</script>
 					</aon:div>
 					</aon:panelGrid>
