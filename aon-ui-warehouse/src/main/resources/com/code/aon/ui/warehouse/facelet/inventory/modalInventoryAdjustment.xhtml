@@ -42,7 +42,8 @@
 										styleClass="aon-finding-toolbar-item aon-icon-accept" />											
 									<aon:commandButton id="inventoryAdjustment-cancel"
 										value="#{bundle.aon_cancel}"
-										reRender="showInventoryAdjustmentWindow"
+										actionListener="#{inventoryDetail.onRefresh}"
+										reRender="showInventoryAdjustmentWindow, inventoryDetailList"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
