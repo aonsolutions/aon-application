@@ -33,7 +33,6 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferRecord;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
@@ -261,14 +260,12 @@ public class WarehouseDAO {
 	
 	public static void updateStock(AONContext ctx, WarehouseTransfer wt, WarehouseTransferDetail wtd){
 		Double quantity = wtd.getQuantity();
-	
-		if(quantity > 0 ){
-			Integer itemId = wtd.getItem().getId();
-			Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), itemId);
-			if(item.getProduct().isSerializable())
-				ProductDAO.updateItem(ctx, item.setStatus(ProductStatus.ACTIVE.value()));	
+
+		if(quantity > 0) {
+			ctx.getDslContext().update(com.esferalia.aon.jooq.tables.Item.ITEM)
+				.set(com.esferalia.aon.jooq.tables.Item.ITEM.STATUS, ProductStatus.ACTIVE.value())
+				.where(com.esferalia.aon.jooq.tables.Item.ITEM.ID.eq(wtd.getItem().getId()));
 		}
-		
 		if(wt.getSourceWarehouse() != null){
 			ctx.getDslContext().update(STOCK)
 				.set(STOCK.QUANTITY, STOCK.QUANTITY.add(quantity))

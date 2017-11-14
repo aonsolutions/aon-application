@@ -1,10 +1,11 @@
 package com.code.aon.ui.warehouse.controller;
 
+import static com.esferalia.aon.jooq.tables.Stock.STOCK;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -388,17 +389,23 @@ public class InventoryController extends BasicController implements IAuditableCo
 			
 			AON.insertWarehouseTransferDetail(domainName, domainId, user, 
 				details.stream().map(detail -> {
-					Double q = Math.abs(detail.getActualQuantity()-detail.getRealQuantity());
-					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stck = AON.getStockStream(domainName, domainId, user, f -> f.getItemProperty().eq(detail.getItem().getId()))
-							.findFirst();
-					if(stck.isPresent() && !q.equals(stck.get().getQuantity()))  {
-						stck.get().setQuantity(q);
-						AON.updateStock(domainName, domainId, user, stck.get());
+					AONContext ctx = null;
+					try {
+						ctx = AONContext.getAONContext(domainName, domainId, user);
+						if(wt.getTargetWarehouse() != null){
+							ctx.getDslContext().update(STOCK)
+								.set(STOCK.QUANTITY, detail.getRealQuantity())
+								.where(STOCK.WAREHOUSE.eq(wt.getTargetWarehouse().getId()))
+								.and(STOCK.ITEM.eq(detail.getItem().getId()))
+								.execute();
+						}
+					} finally {
+						if(ctx != null) ctx.close();
 					}
 					return new WarehouseTransferDetail()
 						.setDomain(detail.getDomain())
 						.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(detail.getItem().getId()))
-						.setQuantity(q)
+						.setQuantity( Math.abs(detail.getActualQuantity()-detail.getRealQuantity()))
 						.setWarehouseTransfer(new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer().setId(wt.getId()));
 				})
 			);
