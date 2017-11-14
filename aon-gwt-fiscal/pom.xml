@@ -99,24 +99,6 @@
       <scope>provided</scope>
       <classifier>sources</classifier>
     </dependency>
-    <!-- 		
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.file.tax</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-    		<exclusions>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm-attrs</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
- -->
     <dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.gwt.common</artifactId>

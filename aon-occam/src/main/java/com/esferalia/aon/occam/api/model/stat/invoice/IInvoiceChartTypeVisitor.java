@@ -6,6 +6,8 @@ public interface IInvoiceChartTypeVisitor {
 
 	void visitInvoiceTypeByMonthsComboChart();
 
+	void visitInvoiceTypeByWeeksComboChart();
+
 	void visitInvoiceTypeByDaysComboChart();
 
 	void visitAbcInvoiceTitular();

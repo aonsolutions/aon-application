@@ -274,6 +274,20 @@
 			<classifier>sources</classifier>
 		</dependency>
 		
+		<dependency>
+ 			<groupId>net.aonsolutions.polymer</groupId>
+ 			<artifactId>aon.gwt.polymer</artifactId>
+ 			<version>${project.version}</version> 
+  			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+ 			<groupId>net.aonsolutions.polymer</groupId>
+ 			<artifactId>aon.gwt.polymer</artifactId>
+ 			<version>${project.version}</version> 
+  			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
 		<!-- ******* -->
 		
 		<dependency>
@@ -283,12 +297,6 @@
   			<scope>provided</scope>
 		</dependency>
 		
-		<dependency>
- 			<groupId>net.aonsolutions.polymer</groupId>
- 			<artifactId>aon.gwt.polymer</artifactId>
- 			<version>${project.version}</version> 
-  			<scope>provided</scope>
-		</dependency>
 		 
 	</dependencies>
   <profiles>

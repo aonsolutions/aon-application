@@ -18,6 +18,13 @@ public enum InvoiceChartType implements Serializable {
 		}
 	})
 	
+	,INVOICE_TYPE_BY_WEEKS_COMBO_CHART("Facturaci\u00F3n por semanas", new ITypeVisitor() {
+		@Override
+		public void visit(IInvoiceChartTypeVisitor chartVisitor) {
+			chartVisitor. visitInvoiceTypeByWeeksComboChart();
+		}
+	})
+
 	,INVOICE_TYPE_BY_DAYS_COMBO_CHART("Facturaci\u00F3n por d\u00EDas", new ITypeVisitor() {
 		@Override
 		public void visit(IInvoiceChartTypeVisitor chartVisitor) {

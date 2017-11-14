@@ -193,7 +193,7 @@ public class StatDAO {
 							String y = AonNumberUtils.toString( rec.getValue(year));
 							if (params.isResultVisible()) {
 								Double d = table.get(y, RESULT);
-								d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+								d = AonMathUtils.round( (d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
 								table.put(y, RESULT, d);
 							}
 							table.put(y, type.getDescription(), amount);
@@ -232,6 +232,47 @@ public class StatDAO {
 						});
 				}
 				
+				@Override
+				public void visitInvoiceTypeByWeeksComboChart() {					
+					final AggregateFunction<BigDecimal> sum = getSelectField(params);
+					final Calendar calendar = Calendar.getInstance();
+					ctx.getDslContext().select(INVOICE.ISSUE_DATE , INVOICE.TYPE, sum)
+						.from(INVOICE)
+						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+						.where( getCondition(ctx, params))
+						.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
+						.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
+								   .when(INVOICE.TYPE.equal((byte) 1), 0)
+								   .when(INVOICE.TYPE.equal((byte) 0), 1)
+								   .when(INVOICE.TYPE.equal((byte) 2), 2)
+								   .when(INVOICE.TYPE.equal((byte) 3), 3))				
+						.fetch()
+						.stream()
+						.forEach(rec -> {
+							InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+							Date issueDate = rec.getValue(INVOICE.ISSUE_DATE);
+							calendar.setTime(issueDate);
+							calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+							String firstDayOfWeek = FMT.format( calendar.getTime() );
+							String weekKey = calendar.get(Calendar.WEEK_OF_YEAR) + " ("+firstDayOfWeek+")";
+							double amount = rec.getValue(sum).doubleValue();
+							if (params.isResultVisible()) {
+								Double d = table.get(weekKey, RESULT);
+								d = (d == null ? 0.0 : d);
+								amount = (amount * (type == InvoiceType.SALES ? 1 : -1));
+								System.out.print( weekKey + " -- (" + d + " + " + amount + ") "); 
+								d = AonMathUtils.round( d + amount);
+								System.out.println( " = " + d );
+								table.put(weekKey, RESULT, d);
+							}
+							Double acum = table.get(weekKey, type.getDescription());
+							acum = AonMathUtils.round( (acum == null ? 0.0 : acum) + amount); 
+							table.put(weekKey, type.getDescription(), acum);
+						});
+				}
+
 				@Override
 				public void visitInvoiceTypeByDaysComboChart() {
 					final AggregateFunction<BigDecimal> sum = getSelectField(params);

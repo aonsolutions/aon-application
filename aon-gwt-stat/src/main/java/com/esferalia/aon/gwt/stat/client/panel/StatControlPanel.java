@@ -487,6 +487,28 @@ public class StatControlPanel extends MainEntryPoint {
 		}
 		
 		@Override
+		public void visitInvoiceTypeByWeeksComboChart() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.days());
+						chart.options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
+						coreChartCallback.onSuccess(chart);
+					}
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					coreChartCallback.onFailure(caught);
+				}
+			});
+		}
+
+		@Override
 		public void visitInvoiceTypeByDaysComboChart() {
 			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
