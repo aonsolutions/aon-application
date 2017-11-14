@@ -495,7 +495,7 @@ public class StatControlPanel extends MainEntryPoint {
 				public void onSuccess(final StatData<String, String, Double> result) {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
-						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.days());
+						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.weeks());
 						chart.options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
 						coreChartCallback.onSuccess(chart);
 					}

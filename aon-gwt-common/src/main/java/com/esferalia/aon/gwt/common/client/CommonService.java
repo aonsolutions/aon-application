@@ -10,14 +10,12 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-/**
- * The client side stub for the RPC service.
- */
 @RemoteServiceRelativePath("Common")
 public interface CommonService extends RemoteService {
 
@@ -49,6 +47,7 @@ public interface CommonService extends RemoteService {
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,Integer id) throws AonCoreException;
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,String query) throws AonCoreException;
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,AccountingRegistryParams params) throws AonCoreException;
+	LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName,int domain,String query) throws AonCoreException;
 	AccountingRegistry insert(String domainName,int domain,AccountingRegistry reg) throws AonCoreException;
 	
 

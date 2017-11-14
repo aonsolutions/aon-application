@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -57,6 +58,8 @@ public interface CommonServiceAsync {
 			AsyncCallback<LinkedList<AccountingRegistry>> asyncCallback);
 	void getAccountingRegistries(String domainName, int domain, AccountingRegistryParams params,
 			AsyncCallback<LinkedList<AccountingRegistry>> callback);
+	void getInvoiceRegistries(String domainName, int domain, String query,
+			AsyncCallback<LinkedList<InvoiceRegistry>> asyncCallback);
 	void insert(String domainName, int domain, AccountingRegistry reg, AsyncCallback<AccountingRegistry> callback);
 	
 

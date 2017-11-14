@@ -21,6 +21,9 @@ public class StatParams implements Serializable, Cloneable {
 	private StatType statType;
 	private Byte chartType;
 	
+	private Integer registry;
+	private Integer product;
+	
 	private LinkedList<StatFilterItem> filterItems; 
 	private HashMap<String, String[]> filterMap;
 	
@@ -86,6 +89,22 @@ public class StatParams implements Serializable, Cloneable {
 
 	public StatParams setChartType(Byte chartType) {
 		this.chartType = chartType;
+		return this;
+	}
+	
+	public Integer getRegistry() {
+		return registry;
+	}
+	public StatParams setRegistry(Integer registry) {
+		this.registry = registry;
+		return this;
+	}
+	
+	public Integer getProduct() {
+		return product;
+	}
+	public StatParams setProduct(Integer product) {
+		this.product = product;
 		return this;
 	}
 	

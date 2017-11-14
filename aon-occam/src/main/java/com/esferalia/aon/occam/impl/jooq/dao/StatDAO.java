@@ -122,6 +122,12 @@ public class StatDAO {
 		if (params.getTo() != null) {
 			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql(params.getTo())));
 		}
+		if (params.getRegistry() != null) {
+			c = c.and(INVOICE.REGISTRY.eq(params.getRegistry()));
+		}
+		if (params.getProduct() != null) {
+			c = c.and(PRODUCT.ID.eq(params.getProduct()));
+		}
 		// Se ignoran los suplidos.
 		c = c.and(PRODUCT.TYPE.ne(ProductType.PREPAYMENT.value()));
 		// -----------------------
@@ -178,7 +184,7 @@ public class StatDAO {
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(year, INVOICE.TYPE)
 						.orderBy(year, DSL.decode()
 								   .when(INVOICE.TYPE.equal((byte) 1), 0)
@@ -210,7 +216,7 @@ public class StatDAO {
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(year,month, INVOICE.TYPE)
 						.orderBy(year,month, DSL.decode()
 								   .when(INVOICE.TYPE.equal((byte) 1), 0)
@@ -241,7 +247,7 @@ public class StatDAO {
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
 						.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
 								   .when(INVOICE.TYPE.equal((byte) 1), 0)
@@ -262,9 +268,7 @@ public class StatDAO {
 								Double d = table.get(weekKey, RESULT);
 								d = (d == null ? 0.0 : d);
 								amount = (amount * (type == InvoiceType.SALES ? 1 : -1));
-								System.out.print( weekKey + " -- (" + d + " + " + amount + ") "); 
 								d = AonMathUtils.round( d + amount);
-								System.out.println( " = " + d );
 								table.put(weekKey, RESULT, d);
 							}
 							Double acum = table.get(weekKey, type.getDescription());
@@ -281,7 +285,7 @@ public class StatDAO {
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
 						.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
 								   .when(INVOICE.TYPE.equal((byte) 1), 0)
@@ -311,7 +315,7 @@ public class StatDAO {
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(INVOICE.REGISTRY).and(RADDRESS.TYPE.eq((byte) 0)))
 						.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(GEOZONE.NAME)
 						.orderBy(sum.desc())
 						.fetch().stream().forEach(rec -> {
@@ -333,7 +337,7 @@ public class StatDAO {
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INVOICE_DETAIL.WORKPLACE))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(INVOICE_DETAIL.WORKPLACE, INVOICE.TYPE)
 						.orderBy(sum.desc())
 						.fetch().stream().forEach(rec -> {
@@ -355,7 +359,7 @@ public class StatDAO {
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(INVOICE.REGISTRY, INVOICE.TYPE)
 						.orderBy(sum.desc())
 						.fetch().stream().forEach(rec -> {
@@ -378,7 +382,7 @@ public class StatDAO {
 						.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(INVOICE.RADDRESS))						
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(INVOICE.REGISTRY, INVOICE.RADDRESS, INVOICE.TYPE)
 						.orderBy(sum.desc())
 						.fetch().stream().forEach(rec -> {
@@ -410,7 +414,7 @@ public class StatDAO {
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.leftOuterJoin(REGISTRY).on(INVOICE_DETAIL.SELLER.eq(REGISTRY.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(INVOICE_DETAIL.SELLER, INVOICE.TYPE)
 						.orderBy(sum.desc())
 						.fetch().stream().forEach(rec -> {
@@ -432,7 +436,7 @@ public class StatDAO {
 						.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(PRODUCT.ID, INVOICE.TYPE)
 						.orderBy(sum.desc())
 						.fetch().stream().forEach(rec -> {
@@ -455,7 +459,7 @@ public class StatDAO {
 						.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 						.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 						.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
-						.where( getCondition(ctx, params))
+						.where( StatDAO.getCondition(ctx, params))
 						.groupBy(PCATEGORY.ID, INVOICE.TYPE)
 						.orderBy(sum.desc())
 						.fetch().stream().forEach(rec -> {
@@ -814,6 +818,8 @@ public class StatDAO {
 							.and(scopes==null?null:p.getScopeProperty().in(scopes))							
 							.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))
 							.and(params.getTo()==null?null:p.getEndIssueDateProperty().le(params.getTo()))
+							.and(params.getRegistry()==null?null:p.getRegistryProperty().eq(params.getRegistry()))
+							.and(params.getProduct()==null?null:p.getProductProperty().eq(params.getProduct()))
 							.and((types==null||types.size()==0)?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
 							.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
 							.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))

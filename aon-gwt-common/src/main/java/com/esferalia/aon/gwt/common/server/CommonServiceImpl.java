@@ -18,13 +18,14 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Common Servlet", urlPatterns = { "/aon_gwt_fiscal/Common " })
+@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/Common", "/aon_gwt_aio/Common"})
 public class CommonServiceImpl extends AonRemoteServiceServlet implements CommonService {
 
 	// --------------------------------------------------------- CONFIGURATION
@@ -154,6 +155,19 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	@Override
 	public AccountingRegistry insert(String domainName, int domain, AccountingRegistry reg) throws AonCoreException {
 		return ACCOUNTING.insert(domainName, domain,AonServletUtils.getLoggedUser(), reg);
+	}
+	
+	@Override
+	public LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String query)
+			throws AonCoreException {
+		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
+			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
+				:(query);
+		return AON.getInvoiceRegistries(domainName, domain,AonServletUtils.getLoggedUser(),
+				p -> p.getDocumentProperty().like(q)
+					 .or(p.getNameProperty().like(q))
+					 .or(p.getAliasProperty().like(q))
+				).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	

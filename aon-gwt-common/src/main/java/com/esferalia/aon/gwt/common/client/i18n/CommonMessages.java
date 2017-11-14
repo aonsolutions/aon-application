@@ -780,7 +780,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cantidad")
 	String quantity();
 
-	@DefaultMessage("Cantidades")
+	@DefaultMessage("Mostrar cantidades en lugar de importes")
 	String quantities();
 
 	@DefaultMessage("Importe")
@@ -3243,6 +3243,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Categor\u00EDas de productos")
 	String productCategories();
  	
+ 	@DefaultMessage("Producto")
+	String product();
+
  	@DefaultMessage("Categor\u00EDa")
 	String category();
  	
@@ -3407,6 +3410,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("D\u00EDas")
 	String days();
+
+	@DefaultMessage("Semanas")
+	String weeks();
 
 	@DefaultMessage("Nueva Cuenta")
 	String newAccount();
