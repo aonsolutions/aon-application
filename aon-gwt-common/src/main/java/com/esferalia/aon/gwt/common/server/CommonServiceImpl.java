@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
@@ -170,5 +171,16 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 
+	@Override
+	public LinkedList<Product> getInvoiceProducts(String domainName, int domain, String query)
+			throws AonCoreException {
+		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
+			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
+				:(query);
+		return AON.getInvoiceProducts(domainName, domain,AonServletUtils.getLoggedUser()
+					,p -> p.getNameProperty().like(q)
+						.or(p.getCodeProperty().like(q))
+				).collect(Collectors.toCollection(LinkedList::new));
+	}
 	
 }

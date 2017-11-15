@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -161,6 +162,14 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 				new AsyncCallbackWrapper<LinkedList<InvoiceRegistry>>(callback));
 	}
 	
+	@Override
+	public void getInvoiceProducts(String domainName, int domain, String query,
+			AsyncCallback<LinkedList<Product>> callback) {
+		AON.start();
+		serviceAsync.getInvoiceProducts(domainName, domain, query,   
+				new AsyncCallbackWrapper<LinkedList<Product>>(callback));
+	}
+
 	@Override
 	public void insert(String domainName, int domain, AccountingRegistry reg,
 			AsyncCallback<AccountingRegistry> callback) {

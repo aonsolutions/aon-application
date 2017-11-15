@@ -40,8 +40,8 @@
 		</g:north>
 		<g:center>
 			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-				<g:north size="90">
-					<g:ScrollPanel ui:field="north" styleName="{aonResources.css.aonNoPrint}">
+				<g:north size="98">
+					<g:ScrollPanel ui:field="north" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonNoPrint}">
 						<stat:StatFilter ui:field="filter"/>
 					</g:ScrollPanel>
 				</g:north>

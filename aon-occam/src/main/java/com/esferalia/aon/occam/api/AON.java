@@ -4552,4 +4552,15 @@ public class AON {
 		}
 	}
 
+	public static Stream<Product> getInvoiceProducts(String domainName, int domain, String loggedUser, ProductFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, loggedUser);
+			return getFinance().getInvoiceProducts(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 }

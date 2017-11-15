@@ -37,10 +37,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -110,21 +112,28 @@ public class StatControlPanel extends MainEntryPoint {
 	Hidden domainName;
 	
 	private StatChartTypeVisitor statChartTypeVisitor;
-	private static final FlowPanel ERROR_PANEL = new FlowPanel();
+	private static final ScrollPanel ERROR_PANEL = new ScrollPanel();
 	static {
-		ERROR_PANEL.setWidth("100%");	
-		ERROR_PANEL.setHeight("100%");
-		ERROR_PANEL.setStyleName(AON.AON_CSS.aonPadding());
-		ERROR_PANEL.addStyleName(AON.AON_CSS.aonMarginTop());
-		ERROR_PANEL.addStyleName(AON.AON_CSS.aonVerticalAlignMiddle());
-		ERROR_PANEL.addStyleName(AON.AON_CSS.aonFontBig());
-		ERROR_PANEL.addStyleName(AON.AON_CSS.aonColorRed());
-		ERROR_PANEL.addStyleName(AON.AON_CSS.aonColorRed());
-		Label label = new Label(AON.MSG.noData());
-		label.setStyleName(AON.AON_CSS.aonMarginTop());
-		label.addStyleName(AON.AON_CSS.aonIconError());
-		label.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		ERROR_PANEL.add( label ); 
+		FlexTable tab = new FlexTable();
+		tab.setWidth("95%");
+		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.getColumnFormatter().setWidth(0, "20px");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		
+		InlineLabel icon = new InlineLabel("");
+		icon.setStyleName(AON.AON_CSS.aonIconPointRed());
+		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		tab.setWidget(0, 0, icon);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		
+		InlineLabel label = new InlineLabel(AON.MSG.noData());
+		label.addStyleName(AON.AON_CSS.aonColorRed());
+		label.addStyleName(AON.AON_CSS.aonBold());
+		tab.setWidget(0, 1, label);
+		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+		ERROR_PANEL.add(tab);
 	}
 
 	private Stack<Widget> stack = new Stack<Widget>();

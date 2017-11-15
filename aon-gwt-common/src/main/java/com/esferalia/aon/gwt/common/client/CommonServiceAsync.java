@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -60,6 +61,8 @@ public interface CommonServiceAsync {
 			AsyncCallback<LinkedList<AccountingRegistry>> callback);
 	void getInvoiceRegistries(String domainName, int domain, String query,
 			AsyncCallback<LinkedList<InvoiceRegistry>> asyncCallback);
+	void getInvoiceProducts(String domainName, int domain, String query,
+			AsyncCallback<LinkedList<Product>> asyncCallback);
 	void insert(String domainName, int domain, AccountingRegistry reg, AsyncCallback<AccountingRegistry> callback);
 	
 

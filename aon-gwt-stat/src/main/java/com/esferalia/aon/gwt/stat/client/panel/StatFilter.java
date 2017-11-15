@@ -5,10 +5,12 @@ import java.util.HashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceProductBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceRegistryBox;
 import com.esferalia.aon.gwt.stat.client.StatService;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
@@ -71,7 +73,8 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 					params.setStatType(StatType.INVOICE);
 					
 					FlexTable tab = new FlexTable();
-					tab.setStyleName(AON.AON_CSS.aonWidthAll());
+					tab.setStyleName(AON.AON_CSS.aonWidth98Percent());
+					tab.addStyleName(AON.AON_CSS.aonBlockCenter());
 					tab.addStyleName(AON.AON_CSS.aonNowrap());
 					
 					tab.getColumnFormatter().setWidth(0, "40px");
@@ -193,19 +196,23 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 					});
 					tab.setWidget(1, 2, quantities);
 
-//					tab.setWidget(2, 0, new MediumLabel(AON.MSG.product()));
-//					IntegerBox product = new IntegerBox();
-//					product.setVisibleLength(10);
-//					product.addValueChangeHandler( new ValueChangeHandler<Integer>() {
-//
-//						@Override
-//						public void onValueChange(ValueChangeEvent<Integer> event) {
-//							params.setProduct(product.getValue());
-//							ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-//						}
-//					});
-//					tab.setWidget(2, 1, product);
-//					tab.getFlexCellFormatter().setColSpan(2, 1, (col+4));
+					tab.setWidget(2, 0, new MediumLabel(AON.MSG.product()));
+					InvoiceProductBox product = new InvoiceProductBox(getCurrentDomainName(),getCurrentDomain() );
+					product.setRequired(false);
+					product.addSelectionHandler(new  SelectionHandler<Product>() {
+
+						@Override
+						public void onSelection(SelectionEvent<Product> event) {
+							if (event.getSelectedItem() != null) {
+								params.setProduct( event.getSelectedItem().getId());
+							} else {
+								params.setProduct( null );
+							}
+							ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+						}
+					});
+					tab.setWidget(2, 1, product);
+					tab.getFlexCellFormatter().setColSpan(2, 1, col);
 					
 					add(tab);
 					callback.onSuccess(result);

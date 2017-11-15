@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -48,6 +49,7 @@ public interface CommonService extends RemoteService {
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,String query) throws AonCoreException;
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,AccountingRegistryParams params) throws AonCoreException;
 	LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName,int domain,String query) throws AonCoreException;
+	LinkedList<Product> getInvoiceProducts(String domainName,int domain,String query) throws AonCoreException;
 	AccountingRegistry insert(String domainName,int domain,AccountingRegistry reg) throws AonCoreException;
 	
 

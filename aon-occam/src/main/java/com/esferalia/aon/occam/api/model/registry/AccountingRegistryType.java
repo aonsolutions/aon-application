@@ -63,5 +63,13 @@ public enum AccountingRegistryType implements Serializable {
 	public void visit(AccountingRegistry reg, IAccountingRegistryTypeVisitor visitor) {
 		walker.visit(reg,visitor);
 	}
-	
+	public static AccountingRegistryType getFor(InvoiceType type) {
+		if (type == null) return null;
+		if (type == InvoiceType.EXPENSES) return AccountingRegistryType.CREDITOR;
+		if (type == InvoiceType.UNDEDUCTIBLE) return AccountingRegistryType.CREDITOR;
+		if (type == InvoiceType.SALES) return AccountingRegistryType.CUSTOMER;
+		if (type == InvoiceType.PURCHASE) return AccountingRegistryType.SUPPLIER;
+		return null;
+	}
+		
 }
