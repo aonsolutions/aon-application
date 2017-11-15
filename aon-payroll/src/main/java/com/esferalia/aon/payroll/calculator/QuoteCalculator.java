@@ -15,6 +15,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 
 import java.util.ArrayList;
@@ -402,7 +403,9 @@ public abstract class QuoteCalculator {
 								CGC_BASE_RAW,
 								CGC_BASE_MIN, 
 								CGC_BASE_MAX,
-								context, start, end, 
+								context, 
+								start, 
+								end, 
 								MATERNITY_BASE,
 								ERE_BASE,
 								DIRECT_BASE
@@ -410,8 +413,11 @@ public abstract class QuoteCalculator {
 						//@formatter:on
 					if (context.containsVariable(CGP_BASE.getName(), start,
 							end))
-						quotesImpl.addAll(limit(CGP_BASE, CGP_BASE_RAW,
-								CGP_BASE_MIN, CGP_BASE_MAX,
+						quotesImpl.addAll(limit(
+								CGP_BASE, 
+								CGP_BASE_RAW,
+								CGP_BASE_MIN, 
+								CGP_BASE_MAX,
 								context, start, end, 
 								MATERNITY_BASE,
 								ERE_BASE, 
@@ -419,9 +425,23 @@ public abstract class QuoteCalculator {
 
 					return quotesImpl;
 				}
-
+				
+				
 			}
-
+			
+			if (AonStringUtils.equals(PREST_IT, name)) {
+				
+				add(CGC_BASE.getName(), quote, context, start, end);
+				add(CGC_BASE_RAW.getName(), quote, context, start, end);
+				
+				add(CGP_BASE.getName(), quote, context, start, end);
+				add(CGP_BASE_RAW.getName(), quote, context, start, end);
+				
+				add(String.format("BASE_%s", name), quote, context, start, end);
+				quotesImpl.add(new TimedResult<Double>(quote, new Period(start,end), Collections.emptyMap()));
+				return quotesImpl;
+			}
+			
 			PaymentType paymentType = payment.getType();
 			if (paymentType == null)
 				paymentType = PaymentType.CRA_0001;

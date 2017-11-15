@@ -285,14 +285,21 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimePayment(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
-			PaymentType paymentType, String expression, String quoteExpression, String irpfExpression,
+	protected final void addSSRegimePayment(AONContext aonContext, 
+			SSRegimeType ssRegimetype, 
+			Date startDate,
+			PaymentConceptRecord concept,
+			PaymentType paymentType, 
+			String expression, 
+			String quoteExpression, 
+			String irpfExpression,
 			SalaryType salaryType) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		aonContext.getDslContext().insertInto(SYSTEM_PAYMENT)
-
-				.set(SYSTEM_PAYMENT.START_DATE, startDate).set(SYSTEM_PAYMENT.EXPRESSION, expression)
+				.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, concept != null? concept.getId(): null)
+				.set(SYSTEM_PAYMENT.START_DATE, startDate)
+				.set(SYSTEM_PAYMENT.EXPRESSION, expression)
 				.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, irpfExpression)
 				.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(SYSTEM_PAYMENT.DOMAIN, (-1) * ssRegimetype.ordinal())
@@ -300,15 +307,27 @@ public abstract class AbstractSQLTestCase {
 						(byte) (paymentType != null ? paymentType.ordinal() : PaymentType.CRA_0001.ordinal()))
 				.set(SYSTEM_PAYMENT.SALARY_TYPE,
 						(byte) (salaryType != null ? salaryType.ordinal() : SalaryType.SALARY.ordinal()))
-
+		
 				.execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
+	protected final void addSSRegimePayment(AONContext aonContext, 
+			SSRegimeType ssRegimetype, 
+			Date startDate,
+			PaymentType paymentType, 
+			String expression, 
+			String quoteExpression, 
+			String irpfExpression,
+			SalaryType salaryType) {
+		addSSRegimePayment(aonContext, ssRegimetype, startDate, null, paymentType, expression, quoteExpression,
+				irpfExpression, null);
+	}
+
 	protected final void addSSRegimePayment(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
 			PaymentType paymentType, String expression, String quoteExpression, String irpfExpression) {
-		addSSRegimePayment(aonContext, ssRegimetype, startDate, paymentType, expression, quoteExpression,
+		addSSRegimePayment(aonContext, ssRegimetype, startDate, null, paymentType, expression, quoteExpression,
 				irpfExpression, null);
 	}
 
