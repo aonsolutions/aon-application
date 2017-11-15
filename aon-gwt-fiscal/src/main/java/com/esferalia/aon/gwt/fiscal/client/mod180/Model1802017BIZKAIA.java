@@ -43,14 +43,16 @@ public class Model1802017BIZKAIA extends Model180Base {
 	@Override
 	protected LinkedList<Pair<String, String>> getInformationLinks() {
 		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Car\u00E1tula"
-				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3D180+Car%C3%A1tula.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224093120453&ssbinary=true"));
-		list.add(new Pair<String, String>("Relaci\u00F3n de perceptores (arrendadores)." 
-				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3DRelaci%C3%B3n+de+perceptores+%28arrendadores%29.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224093120454&ssbinary=true"));
-		list.add(new Pair<String, String>("Orden Foral 737 de 25 de noviembre de 2014."
-				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3DOrden+Foral+737+de+25+de+noviembre+de+2014.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224093120456&ssbinary=true"));
-		list.add(new Pair<String, String>("Orden Foral 39 de 3 de febrero de 2010 que regula la obligaci\u00F3n de algunos sujetos y entidades de presentar este modelo de forma telem\u00E1tica por Internet."
-				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3DOrden+Foral+39+de+3+de+febrero+de+2010+que+regula+la+obligaci%C3%B3n+de+algunos+sujetos+y+entidades+de+presentar+este+modelo+de+forma+telem%C3%A1tica+por+Internet.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224093120457&ssbinary=true"));
+		list.add(new Pair<String, String>("Orden Foral 2310/2014 de 26 de noviembre."
+				,"http://www.bizkaia.eus/lehendakaritza/Bao_bob/2014/12/20141209a235.pdf#page=23"));
+		list.add(new Pair<String, String>("Impreso."
+				,"http://www.bizkaia.eus/fitxategiak/05/ogasuna/ereduak/Argitaratu/180EurBil.pdf"));
+		list.add(new Pair<String, String>("Hoja Interna." 
+				,"http://www.bizkaia.eus/fitxategiak/05/ogasuna/ereduak/Argitaratu/180EurBilHoja.pdf"));
+		list.add(new Pair<String, String>("Instrucciones."
+				,"http://www.bizkaia.eus/fitxategiak/05/ogasuna/ereduak/Argitaratu/180EurBilInst.pdf"));		
+		list.add(new Pair<String, String>("Programa de Ayuda."
+				,"http://www.bizkaia.eus/home2/Temas/DetalleTema.asp?Tem_Codigo=1993"));		
 		return list;
 	}
 	

@@ -109,5 +109,11 @@ public enum Period implements Serializable {
 	public boolean isLastPeriod() {
 		return (this == Period.T4 || this == Period.M12);
 	}
+	
+	public static Period safeValueOf( Byte i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= Period.values().length) return null;
+		return Period.values()[i];
+	}
 
 }

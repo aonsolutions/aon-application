@@ -22,6 +22,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
@@ -2069,5 +2071,100 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	// ----------------------------------MODELO 349
+	public static LinkedList<Mod349> getMod349s(String domainName, int domainId,
+			String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFiscal().getMod349s(ctx, domainId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod349 getMod349(String domainName, int domainId, String user,
+			Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFiscal().getMod349(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod349 initializeMod349(String domainName, int domainId,
+			String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFiscal().initializeMod349(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod349 saveMod349(String domainName, int domainId,
+			String user, Mod349 mod349) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFiscal().saveMod349(ctx, mod349);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void deleteMod349(String domainName, int domainId,
+			String user, Mod349 mod349) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			getFiscal().deleteMod349(ctx, mod349);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod349Detail getMod349Detail(String domainName, int domainId,
+			String user, Mod349 mod349) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFiscal().getMod349Detail(ctx, mod349);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static Mod349 saveComments(String domainName, String user, Mod349 mod349) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod349.getDomain(),user);
+			return getFiscal().saveCommentsMod349(ctx, mod349);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod349 changeStatusMod349(String domainName, String user, Mod349 mod349, FiscalStatus newStatus) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod349.getDomain(),user);
+			return getFiscal().changeStatusMod349(ctx, mod349, newStatus);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 
 }

@@ -251,7 +251,7 @@ public class Model180 extends MainEntryPoint {
 		}
 	}
 	private void showErrorPanel(String msg) {
-		openFootPanelIfNeeded();
+		//openFootPanelIfNeeded();
 
 		ScrollPanel panel = new ScrollPanel();
 		FlexTable tab = new FlexTable();
@@ -276,6 +276,10 @@ public class Model180 extends MainEntryPoint {
 		
 		panel.add(tab);
 		notificationsPanel.setWidget(panel);
+		
+		// Abrimos el panel inferior, si es necesario y seleccionamos la pestaña de notificaciones
+		openFootPanelIfNeeded();		
+		tabLayout.selectTab(NOTIFICATIONS_TAB);
 	}
 	
 	private void cleanBreakdownPanel() {

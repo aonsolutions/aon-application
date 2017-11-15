@@ -141,7 +141,7 @@ public interface CommonMessages extends Messages {
 //		,"M303_RS"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"
 		,"M340"		,"Mod. 340"
 		,"M347"		,"Mod. 347"
-		,"M349"		,"Mod. 349"
+		,"M349"		,"Declaraci\u00F3n Informativa. Declaraci\u00F3n recapitulativa de operaciones intracomunitarias."
 		,"M390"		,"IVA. Declaraci\u00F3n Resumen Anual."
 		,"M390_HF"	,"Mod. 390 Hac. For."
 		,"M180"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles urbanos. Resumen anual."

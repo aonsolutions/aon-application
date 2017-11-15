@@ -23,6 +23,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
@@ -269,5 +271,15 @@ public interface IFiscal {
 	public String dumpAEATMod2002016(Mod2002016 mod200);
 	public Mod2002016 importMod2002015(AONContext ctx, Mod2002016 mod200);
 	Stream<VatContext> getSiiVatContext(AONContext ctx, VatParams params, String sii);
+	
+	// 				   		  MOD349
+	public LinkedList<Mod349> getMod349s(AONContext ctx,int domain);
+	public Mod349 getMod349(AONContext ctx,Integer id);
+	public Mod349 initializeMod349(AONContext ctx);
+	public Mod349 saveMod349(AONContext ctx,Mod349 mod349);
+	public void deleteMod349(AONContext ctx,Mod349 mod349);
+	public Mod349Detail getMod349Detail(AONContext ctx,Mod349 mod349);
+	public Mod349 saveCommentsMod349(AONContext ctx, Mod349 mod349);
+	public Mod349 changeStatusMod349(AONContext ctx, Mod349 mod349, FiscalStatus newStatus);
 
 }
