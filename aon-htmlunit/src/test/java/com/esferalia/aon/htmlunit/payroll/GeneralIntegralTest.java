@@ -707,7 +707,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
-	@Test
 	public void TestNomina() throws Exception {
 
 		open("nominas");
