@@ -53,7 +53,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.ComboChart;
 import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
@@ -381,7 +380,7 @@ public class StatControlPanel extends MainEntryPoint {
 			return false;
 		}
 
-		protected DataTable getDataTable(Table.Options options, StatData<String, String, Double> result, String columnLabel) {
+		protected DataTable getDataTable(StatData<String, String, Double> result, String columnLabel) {
 			DataTable dataTable = DataTable.create();
 			dataTable.addColumn(ColumnType.STRING, columnLabel);
 			LinkedHashMap<String, Integer> colMap = new LinkedHashMap<String, Integer>();
@@ -405,10 +404,10 @@ public class StatControlPanel extends MainEntryPoint {
 			return dataTable;
 		}
 
-		protected DataTable getGeoDataTable(Table.Options options, StatData<String, String, Double> result, String columnLabel) {
+		protected DataTable getGeoDataTable(StatData<String, String, Double> result, String columnLabel) {
 			DataTable dataTable = DataTable.create();
 			dataTable.addColumn(ColumnType.STRING, columnLabel);
-			dataTable.addColumn(ColumnType.NUMBER, "Importe");
+			dataTable.addColumn(ColumnType.NUMBER, filter.getParams().mustViewAmounts()? "Caontidad" : "Importe");
 			int rowIndex = 0;
 			LinkedHashMap<String, Double> map = result.getMap().get("CHART");
 			for (String col : map.keySet()) {
@@ -441,12 +440,8 @@ public class StatControlPanel extends MainEntryPoint {
 			} else {
 				options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
 			}
-			Table.Options tableOptions = Table.Options.create();
-			tableOptions.setAlternatingRowStyle(true);
-			tableOptions.setWidth(south.getOffsetWidth() + "px");
-			tableOptions.setHeight(south.getOffsetHeight() + "px");
-			final DataTable dataTable = getDataTable(tableOptions, result, label);
-			ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+			final DataTable dataTable = getDataTable(result, label);
+			RawDataTable table =  new RawDataTable(dataTable);
 			south.setWidget(table);
 			excel.setEnabled(true);
 			final ResizableComboChart chart = new ResizableComboChart(dataTable, options);
@@ -559,12 +554,8 @@ public class StatControlPanel extends MainEntryPoint {
 						AxisOptions haxis = AxisOptions.create();
 						haxis.setTitle(AON.MSG.months());
 						options.setHAxisOptions(haxis);
-						Table.Options tableOptions = Table.Options.create();
-						tableOptions.setAlternatingRowStyle(true);
-						tableOptions.setWidth(south.getOffsetWidth() + "px");
-						tableOptions.setHeight(south.getOffsetHeight() + "px");
-						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						final DataTable dataTable = getDataTable(result, "ABC");
+						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
@@ -601,12 +592,8 @@ public class StatControlPanel extends MainEntryPoint {
 						AxisOptions haxis = AxisOptions.create();
 						haxis.setTitle(AON.MSG.months());
 						options.setHAxisOptions(haxis);
-						Table.Options tableOptions = Table.Options.create();
-						tableOptions.setAlternatingRowStyle(true);
-						tableOptions.setWidth(south.getOffsetWidth() + "px");
-						tableOptions.setHeight(south.getOffsetHeight() + "px");
-						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						final DataTable dataTable = getDataTable(result, "ABC");
+						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
@@ -643,12 +630,8 @@ public class StatControlPanel extends MainEntryPoint {
 							AxisOptions haxis = AxisOptions.create();
 							haxis.setTitle(AON.MSG.productCategories());
 							options.setHAxisOptions(haxis);
-							Table.Options tableOptions = Table.Options.create();
-							tableOptions.setAlternatingRowStyle(true);
-							tableOptions.setWidth(south.getOffsetWidth() + "px");
-							tableOptions.setHeight(south.getOffsetHeight() + "px");
-							final DataTable dataTable = getDataTable(tableOptions, result, AON.MSG.productCategories());
-							ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+							final DataTable dataTable = getDataTable(result, AON.MSG.productCategories());
+							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
 							excel.setEnabled(true);
 							ResizableComboChart chart = new ResizableComboChart(dataTable, options);
@@ -665,12 +648,8 @@ public class StatControlPanel extends MainEntryPoint {
 							AxisOptions haxis = AxisOptions.create();
 							haxis.setTitle(AON.MSG.months());
 							options.setHAxisOptions(haxis);
-							Table.Options tableOptions = Table.Options.create();
-							tableOptions.setAlternatingRowStyle(true);
-							tableOptions.setWidth(south.getOffsetWidth() + "px");
-							tableOptions.setHeight(south.getOffsetHeight() + "px");
-							final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-							ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+							final DataTable dataTable = getDataTable(result, "ABC");
+							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
 							excel.setEnabled(true);
 							final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
@@ -707,12 +686,8 @@ public class StatControlPanel extends MainEntryPoint {
 						AxisOptions haxis = AxisOptions.create();
 						haxis.setTitle(AON.MSG.months());
 						options.setHAxisOptions(haxis);
-						Table.Options tableOptions = Table.Options.create();
-						tableOptions.setAlternatingRowStyle(true);
-						tableOptions.setWidth(south.getOffsetWidth() + "px");
-						tableOptions.setHeight(south.getOffsetHeight() + "px");
-						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						final DataTable dataTable = getDataTable(result, "ABC");
+						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
@@ -748,12 +723,8 @@ public class StatControlPanel extends MainEntryPoint {
 						AxisOptions haxis = AxisOptions.create();
 						haxis.setTitle(AON.MSG.months());
 						options.setHAxisOptions(haxis);
-						Table.Options tableOptions = Table.Options.create();
-						tableOptions.setAlternatingRowStyle(true);
-						tableOptions.setWidth(south.getOffsetWidth() + "px");
-						tableOptions.setHeight(south.getOffsetHeight() + "px");
-						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						final DataTable dataTable = getDataTable(result, "ABC");
+						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
@@ -788,12 +759,8 @@ public class StatControlPanel extends MainEntryPoint {
 						AxisOptions haxis = AxisOptions.create();
 						haxis.setTitle(AON.MSG.months());
 						options.setHAxisOptions(haxis);
-						Table.Options tableOptions = Table.Options.create();
-						tableOptions.setAlternatingRowStyle(true);
-						tableOptions.setWidth(south.getOffsetWidth() + "px");
-						tableOptions.setHeight(south.getOffsetHeight() + "px");
-						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						final DataTable dataTable = getDataTable(result, "ABC");
+						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
@@ -824,13 +791,8 @@ public class StatControlPanel extends MainEntryPoint {
 						options.setHeight(content.getOffsetHeight());
 						options.setRegion("ES");
 						options.setDisplayMode(DisplayMode.MARKERS);
-						
-						Table.Options tableOptions = Table.Options.create();
-						tableOptions.setAlternatingRowStyle(true);
-						tableOptions.setWidth(south.getOffsetWidth() + "px");
-						tableOptions.setHeight(south.getOffsetHeight() + "px");
-						final DataTable dataTable = getGeoDataTable(tableOptions, result, "Provincias");
-						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						final DataTable dataTable = getGeoDataTable(result, "Provincias");
+						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
 						final ResizableGeoChart chart = new ResizableGeoChart(dataTable,options);
