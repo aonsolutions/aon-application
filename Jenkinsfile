@@ -107,14 +107,14 @@ node {
       sleep 30      
 	
       // Run the maven integration tests
-      sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org  -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -f aon-htmlunit/pom.xml integration-test"
+      //sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org  -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -f aon-htmlunit/pom.xml integration-test"
   
       // Recording test results
-      step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+      //step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
 
-      echo "currentBuild.result = ${currentBuild.result}"
+      //echo "currentBuild.result = ${currentBuild.result}"
 
-      if ( currentBuild.result != 'UNSTABLE' ) {
+      //if ( currentBuild.result != 'UNSTABLE' ) {
 
       stage 'Docker Publish'
 
@@ -144,7 +144,7 @@ node {
 
       sh "aws ecs update-service --cluster SNAPSHOT --service SNAPSHOT --task-definition ${snapshot_task_definition_arn}"
 
-      }
+      //}
 
       
    }   
