@@ -86,10 +86,18 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
+	void saveSalary(SalaryDraft salaryDraft, Date sections[], AsyncCallback<SalaryDraft> callback)
+			throws IllegalArgumentException;
+
 	void calculateIrpf(SalaryDraft salaryDraft, AsyncCallback<Double> callback)
 			throws IllegalArgumentException;
 
 	void calculateSalaryDraft(SalaryDraft salaryDraft,
+			AsyncCallback<SalaryDraft> callback)
+			throws IllegalArgumentException;
+
+	void calculateSalaryDraft(SalaryDraft salaryDraft, 
+			Date sections [],
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 

@@ -552,6 +552,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 			HashSet<String> alreadyDefined = new HashSet<String>();
 			for (IContractPayment contractPayment : contractPayments) {
+				
 				try {
 
 					resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator,
@@ -821,7 +822,6 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			salaryBuilder.setTotalIrpf(totalIrpf);
 			salaryBuilder.setTotalSS(ssContributions);
 
-			salaryBuilder.setTotalDeduction(totalDeduction);
 			return totalDeduction;
 		} catch (ExpressionException e) {
 			throw new SalaryException(e.getMessage(), e);

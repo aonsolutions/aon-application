@@ -124,11 +124,13 @@ public class SalaryDraftBuilder
 					payment);
 			if (dbCounterParts.size() == 0)
 				continue;
-			// Found almost one counterpart. Gets first of them.
-			IPayment dbPayment = dbCounterParts.get(0);
-			payment.setDbAmount(dbPayment.getAmount());
+			double amount = 0.00;
+			for ( IPayment dbPayment: dbCounterParts )
+				amount += dbPayment.getAmount();
+
+			payment.setDbAmount(amount);
 			// Remove it from the list to avoid processing later.
-			dbPayments.remove(dbPayment);
+			dbPayments.removeAll(dbCounterParts);
 		}
 
 		for (Payment draftPayment : salaryDraft.getDraftPayments()) {
@@ -179,11 +181,11 @@ public class SalaryDraftBuilder
 					dbDeductions, deduction);
 			if (dbCounterParts.size() == 0)
 				continue;
-			// Found almost one counterpart. Gets first of them.
-			IDeduction dbDeduction = dbCounterParts.get(0);
-			deduction.setDbAmount(dbDeduction.getAmount());
-			// Remove it from the list to avoid processing later.
-			dbDeductions.remove(dbDeduction);
+			double amount = 0.00;
+			for ( IDeduction dbDeduction: dbCounterParts )
+				amount += dbDeduction.getAmount();
+			deduction.setDbAmount(amount);
+			dbDeductions.removeAll(dbCounterParts);
 		}
 
 		for (IDeduction dbPayment : dbDeductions) {
@@ -203,11 +205,12 @@ public class SalaryDraftBuilder
 					dbCosts, cost);
 			if (dbCounterParts.size() == 0)
 				continue;
-			// Found almost one counterpart. Gets first of them.
-			IDeduction dbCost = dbCounterParts.get(0);
-			cost.setDbAmount(dbCost.getAmount());
-			// Remove it from the list to avoid processing later.
-			dbCosts.remove(dbCost);
+			double amount = 0.00;
+			for ( IDeduction dbcost: dbCounterParts )
+				amount += dbcost.getAmount();
+
+			cost.setDbAmount(amount);
+			dbCosts.removeAll(dbCounterParts);
 		}
 		
 		for (IDeduction dbCost : dbCosts) {
@@ -218,8 +221,16 @@ public class SalaryDraftBuilder
 			cost.setDescription(dbCost.getDescription());
 			salaryDraft.addCost(cost);
 		}
-
 		
+	}
+
+	public void setDbSalaryData(List<Variable> data) throws SalaryException {
+		for ( Variable var: data )
+			salaryDraft.addDbVariable(
+					var.getName(), 
+					var.getValue(), 
+					var.getStartDate(),
+					var.getEndDate());
 	}
 
 	@Override

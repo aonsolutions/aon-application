@@ -75,6 +75,9 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 
 	SalaryDraft saveSalary(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
+	
+	SalaryDraft saveSalary(SalaryDraft salaryDraft, Date sections [])
+			throws IllegalArgumentException;
 
 	AgreementDraft saveAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException;
@@ -95,6 +98,9 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 			throws IllegalArgumentException;
 
 	SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
+			throws IllegalArgumentException;
+
+	SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException;
 
 	SalaryDraft calculateSalaryDraft4Dummies(SalaryDraft salaryDraft)

@@ -100,7 +100,7 @@ public enum ContextVariable implements IResourceable{
 	COMPENSATION_AMOUNT("IMPORTE_INDEMNIZACION", VariableType.DOUBLE, false),
 
 	// Bases 
-	CGC_BASE("BASE_CGC", VariableType.DOUBLE),
+	CGC_BASE("BASE_CGC", VariableType.DOUBLE, false),
 	CGP_BASE("BASE_CGP", VariableType.DOUBLE),
 	IRPF_BASE("BASE_IRPF", VariableType.DOUBLE),
 	IPREM_BASE("BASE_IPREM", VariableType.DOUBLE),

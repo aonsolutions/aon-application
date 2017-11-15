@@ -62,6 +62,7 @@ public class SalaryDraft extends SalaryPreview {
 	private Double dbTotalDeduction;
 
 	private List<Variable> context;
+	private List<Variable> dbContext;
 	private List<Event> events;
 	private List<Payment> payments;
 	private List<Deduction> deductions;
@@ -80,6 +81,7 @@ public class SalaryDraft extends SalaryPreview {
 
 	public SalaryDraft() {
 		context = new LinkedList<Variable>();
+		dbContext = new LinkedList<Variable>();
 		events = new LinkedList<Event>();
 		payments = new LinkedList<Payment>();
 		deductions = new LinkedList<Deduction>();
@@ -118,6 +120,7 @@ public class SalaryDraft extends SalaryPreview {
 		dbRemuneration = null;
 		dbTotalLiquid = null;
 		dbTotalPayment = null;
+		dbContext.clear();
 		return this;
 	}
 
@@ -303,6 +306,27 @@ public class SalaryDraft extends SalaryPreview {
 		return draftContext.remove(variable);
 	}
 
+	public SalaryDraft addDbVariable(String name, Object value, Date startDate,
+			Date endDate) {
+		Variable var;
+		if (value instanceof Number) {
+			var = new NumberVariable();
+			((NumberVariable) var).value = (Number) value;
+		} else {
+			var = new StringVariable();
+			((StringVariable) var).value = value == null ? null : value
+					.toString();
+		}
+		var.setName(name);
+		var.setStartDate(startDate);
+		var.setEndDate(endDate);
+		var.setScope(Scope.SYSTEM);
+		var.setImplicit(true);
+		//if ( findVariable(name,startDate, endDate) == null )
+		dbContext.add(var);
+		return this;
+	}
+
 	public void addWarning(String message) {
 		for (Event event : events)
 			if (event.getType() == Event.Type.WARNING
@@ -378,6 +402,10 @@ public class SalaryDraft extends SalaryPreview {
 
 	public List<Variable> getContext() {
 		return context;
+	}
+
+	public List<Variable> getDbContext() {
+		return dbContext;
 	}
 
 	public List<Variable> getDraftContext() {

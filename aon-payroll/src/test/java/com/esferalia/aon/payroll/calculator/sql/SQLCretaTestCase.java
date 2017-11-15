@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -83,6 +84,10 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
 public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.006;
+	
+	private static class Sucessfull extends RuntimeException {
+		
+	}
 
 	// -------------------------------------------------------------------------
 	@Test
@@ -2023,6 +2028,101 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 
 	
+	@Test
+	public void testManualPeriods() throws ExpressionException, SQLException,
+	SalaryException{
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getToday(), 
+			new HashMap<String,String>(){
+			{
+				put(ContextVariable.TC2.getName(), "'100'");
+				put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+			}
+			},
+			new String[] { 
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"500.00*DIAS_TRABAJADOS/DIAS_MES",
+					}, 
+			new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					},
+			null
+		);
+		//@formatter:on
+
+		Date startDateI = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDateI = add( startDateI, DAY_OF_MONTH,9);
+		Date startDateII = add( endDateI, DAY_OF_MONTH,1);
+		Date endDateII = add( startDateII, DAY_OF_MONTH,9);
+		Date startDateIII = add( endDateII, DAY_OF_MONTH,1);
+		Date endDateIII= getLastDayOfMonth(startDateI);
+		
+		ISQLContractSalaryCalculatorContext ctxI = 
+				getContractSalaryCalculatorContext(connection,
+						startDateI,
+						endDateI,
+						endDateI,
+						contract);
+		ISQLContractSalaryCalculatorContext ctxII = 
+				getContractSalaryCalculatorContext(connection,
+						startDateII,
+						endDateII,
+						endDateII,
+						contract);
+		ISQLContractSalaryCalculatorContext ctxIII = 
+				getContractSalaryCalculatorContext(connection,
+						startDateIII,
+						endDateIII,
+						endDateIII,
+						contract);
+
+		CollectSalaryBuilder<ISalary> collectSalaryBuilder = new CollectSalaryBuilder<ISalary>();
+		
+		new ContractSalaryCalculator<ISalary>(collectSalaryBuilder).calculate(ctxI);
+		new ContractSalaryCalculator<ISalary>(collectSalaryBuilder).calculate(ctxII);
+		new ContractSalaryCalculator<ISalary>(collectSalaryBuilder).calculate(ctxIII);
+
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		collectSalaryBuilder.collect(jooqSalaryBuilder);
+		
+		
+		
+		int salaries = jooqSalaryBuilder.execute();
+		
+		// Only one salary saved to DB.
+		Assert.assertEquals(1, salaries);
+		
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
+
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(3, datas.size());
+					// I
+					Assert.assertEquals(startDateI, datas.get(0).getStartDate());
+					Assert.assertEquals(endDateI, datas.get(0).getEndDate());
+					Assert.assertEquals(1500.00 * 10 / 30.00,
+							Double.parseDouble(datas.get(0).getExpression()), DELTA);
+					// II
+					Assert.assertEquals(startDateI, datas.get(0).getStartDate());
+					Assert.assertEquals(endDateI, datas.get(0).getEndDate());
+					Assert.assertEquals(1500.00 * 10 / 30.00,
+							Double.parseDouble(datas.get(0).getExpression()), DELTA);
+
+
+				});
+		;
+	}
 	// ------------------------------------------------------------------------
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {

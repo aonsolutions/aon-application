@@ -8,6 +8,7 @@ import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENG
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -2060,6 +2061,24 @@ public class SalaryDraft extends ResizeComposite
 
 		@ClassName("context-tab-button-selected")
 		String contextTabButtonSelected();
+
+		@ClassName("section-even")
+		String sectionEven();
+
+		@ClassName("section-odd")
+		String sectionOdd();
+
+		@ClassName("db-section-even-er")
+		String dbSectionEvenEr();
+
+		@ClassName("db-section-odd-er")
+		String dbSectionOddEr();
+
+		@ClassName("db-section-even-ok")
+		String dbSectionEvenOk();
+
+		@ClassName("db-section-odd-ok")
+		String dbSectionOddOk();
 	}
 
 	interface Binder extends UiBinder<Widget, SalaryDraft> {
@@ -2193,6 +2212,8 @@ public class SalaryDraft extends ResizeComposite
 	ListBox datesListBox;
 
 	@UiField
+	CheckBox tgssCheck;
+	@UiField
 	CheckBox costsCheck;
 	@UiField
 	CheckBox dbSalaryCheck;
@@ -2207,6 +2228,9 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiField
 	Button moreButton;
+	
+	@UiField
+	HorizontalPanel timeRulePanel;
 
 	private int zoom;
 	private Scope scope;
@@ -2285,7 +2309,6 @@ public class SalaryDraft extends ResizeComposite
 	// ------------------------------------------------------------------------
 	@Override
 	public Calculate getCalculate() {
-		// TODO Auto-generated method stub
 		return dummies ? Calculate.DUMMIES : Calculate.STANDARD;
 	}
 	
@@ -2310,7 +2333,8 @@ public class SalaryDraft extends ResizeComposite
 		setAutomatic(  Arrays.asList(Type.EXTRA, Type.DELAY, Type.SETTLE).contains(salaryDraftObject.getType()));
 		setReadOnly(  Arrays.asList(Type.EXTRA, Type.DELAY).contains(salaryDraftObject.getType()));
 		
-
+		showTimeRulePanel();
+		showDbTimeRulePanel();
 	}
 
 	@Override
@@ -2579,6 +2603,8 @@ public class SalaryDraft extends ResizeComposite
 
 		for (HasVisibility obj : dbUIObjects)
 			obj.setVisible(visible);
+		
+		showDbTimeRulePanel();
 	}
 
 	private void showDraft() {
@@ -2591,6 +2617,7 @@ public class SalaryDraft extends ResizeComposite
 		salarySelect.setVisible(true);
 		datesListBox.setVisible(true);
 		printPreviewButton.setVisible(true);
+		tgssCheck.setVisible(isSalary());
 		dbSalaryCheck.setVisible(hasDbSalary());
 		
 	}
@@ -2604,6 +2631,7 @@ public class SalaryDraft extends ResizeComposite
 		fxButton.setVisible(false);
 		salarySelect.setVisible(false);
 		datesListBox.setVisible(false);
+		tgssCheck.setVisible(false);
 		dbSalaryCheck.setVisible(false);
 		printPreviewButton.setVisible(false);
 	}
@@ -2617,6 +2645,7 @@ public class SalaryDraft extends ResizeComposite
 		fxButton.setVisible(false);
 		salarySelect.setVisible(false);
 		datesListBox.setVisible(false);
+		tgssCheck.setVisible(false);
 		dbSalaryCheck.setVisible(false);
 		printPreviewButton.setVisible(false);
 
@@ -2946,7 +2975,7 @@ public class SalaryDraft extends ResizeComposite
 				break;
 		}
 		
-
+		initTgssCheck();
 		initDbSalaryCheck();		
 
 		setDbVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
@@ -2962,11 +2991,16 @@ public class SalaryDraft extends ResizeComposite
 
 	
 
+	private void initTgssCheck(){
+		tgssCheck.setVisible(isSalary());
+	}
+
+
 	private void initDbSalaryCheck(){
 		dbSalaryCheck.setVisible(hasDbSalary());
 		Widget dbDiffWidget = getDiffsWithDbSalary();
 		boolean hasDiffsWithDbSalary = dbDiffWidget != null;
-		dbSalaryCheck.setValue(hasDiffsWithDbSalary, false);
+		//dbSalaryCheck.setValue(hasDiffsWithDbSalary, false);
 		dbSalaryCheck.addStyleName(hasDiffsWithDbSalary ? style.textError() : style.textOk());
 		dbSalaryCheck.removeStyleName(hasDiffsWithDbSalary ? style.textOk() : style.textError());
 		if ( hasDiffsWithDbSalary )
@@ -3175,6 +3209,11 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("contextTimeLineButton")
 	void onContextTimeLineButtonClick(ClickEvent event) {
 		showContextTimeLine();
+	}
+	@UiHandler("tgssCheck")
+	void onTgssCheckChanged(ValueChangeEvent<Boolean> event) {
+		showTimeRulePanel();
+		showDbTimeRulePanel();
 	}
 
 	private void syncSalarySelect() {
@@ -5016,6 +5055,10 @@ public class SalaryDraft extends ResizeComposite
 		return false;
 	}
 	
+	private boolean isSalary(){
+		return salaryDraftObject != null && salaryDraftObject.getType() == Salary.Type.SALARY;
+	}
+
 	private boolean hasDbSalary(){
 		return salaryDraftObject != null  && salaryDraftObject.hasDbSalary();
 	}
@@ -5103,7 +5146,7 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}-*/;
 
-	public void setAutomatic(boolean automatic) {
+	private void setAutomatic(boolean automatic) {
 
 //		acceptButton.setEnabled(!readOnly);
 		acceptButton.setVisible(!automatic);
@@ -5119,7 +5162,7 @@ public class SalaryDraft extends ResizeComposite
 		
 	}
 	
-	public void setReadOnly(boolean readOnly) {
+	private void setReadOnly(boolean readOnly) {
 
 //		fxButton.setEnabled(!readOnly);
 		fxButton.setVisible(!readOnly);
@@ -5132,6 +5175,127 @@ public class SalaryDraft extends ResizeComposite
 
 		contextTable.setStyleName("aon-ReadOnly", readOnly);
 		paymentsTable.setStyleName("aon-ReadOnly", readOnly);
+	}
+	
+	private void showTimeRulePanel() {
+		timeRulePanel.clear();
+
+		if ( tgssCheck.getValue() == false  ) {
+			timeRulePanel.setVisible(false);
+			return;
+		}
+		
+		int startDay = this.salaryDraftObject.getStartDate().getDate();
+		int endDay = this.salaryDraftObject.getEndDate().getDate();
+		int days = ( endDay - startDay ) +1 ;  
+		
+		if ( days == 1 ) 
+			return; // only one day, no sense this rule 
+		
+		Integer sections [] = 
+		this.salaryDraftObject.getContext().
+		stream().filter(var -> "BASE_CGC".equals(var.getName()))
+		.map(var -> var.getStartDate().getDate()).sorted()
+		.toArray(Integer[]::new);
+		
+		for ( int i = startDay; i <= endDay; i++ ) 
+		{
+			int day = i;
+			Label dayLabel = new Label(( i < 10 ? "0" : "" ) + Integer.toString(day));
+			dayLabel.addStyleName("aon-text-center");
+
+			int section = 0;//Math.abs(Arrays.binarySearch(sections, day) );
+			for ( Integer s: sections ) {
+				if ( s > day )
+					break;
+				section++;
+			} //TODO: Not work properly .
+				
+			dayLabel.addStyleName(new String [] {style.sectionEven(), style.sectionOdd()}[section % 2 ] );
+			dayLabel.addDoubleClickHandler(e -> { onDraftSection(day); });
+			
+			Date dayDate = new Date(this.salaryDraftObject.getStartDate().getYear(), 
+					this.salaryDraftObject.getStartDate().getMonth(), day);
+			if ( salaryDraftObject.hasDraftSection(dayDate) ) {
+				dayLabel.addStyleName("aon-bold");
+				dayLabel.addStyleName("aon-black");
+			}
+			
+			timeRulePanel.add(dayLabel);
+		}
+
+		timeRulePanel.setVisible(true);
+		
+	}
+	
+	private void showDbTimeRulePanel() {
+
+		if ( !hasDbSalary() || dbSalaryCheck.getValue() == false || tgssCheck.getValue() == false  ) {
+			showTimeRulePanel();
+			return;
+		}
+		
+		int startDay = this.salaryDraftObject.getStartDate().getDate();
+		int endDay = this.salaryDraftObject.getEndDate().getDate();
+		int days = ( endDay - startDay ) +1 ;  
+		
+		if ( days == 1 ) 
+			return; // only one day, no sense this rule 
+		
+		Integer sections [] = 
+		this.salaryDraftObject.getContext().
+		stream().filter(var -> "BASE_CGC".equals(var.getName()))
+		.map(var -> var.getStartDate().getDate()).sorted()
+		.toArray(Integer[]::new);
+		
+		Integer dbSections [] = 
+		this.salaryDraftObject.getDbContext().
+		stream().filter(var -> "BASE_CGC".equals(var.getName()))
+		.map(var -> var.getStartDate().getDate()).sorted()
+		.toArray(Integer[]::new);
+
+		for ( int i = startDay; i <= endDay; i++ ) 
+		{
+			int day = i;
+			
+			Widget dayLabel = timeRulePanel.getWidget(i-1); 
+			
+			dayLabel.removeStyleName(style.sectionOdd());
+			dayLabel.removeStyleName(style.sectionEven());
+			
+			int dbSection = 0;
+			for ( Integer s: dbSections ) {
+				if ( s > day )
+					break;
+				dbSection++;
+			} //TODO: Not work properly .
+				
+			if ( sections.length > dbSection
+				&& dbSections[dbSection] == sections[dbSection]
+				&& dbSections[dbSection-1] == sections[dbSection-1])
+				dayLabel.addStyleName(new String [] {style.dbSectionEvenOk(), style.dbSectionOddOk()}[dbSection % 2 ] );
+			else if ( sections.length == dbSection 
+					&& dbSections[dbSection] == sections[dbSection] )
+				dayLabel.addStyleName(new String [] {style.dbSectionEvenOk(), style.dbSectionOddOk()}[dbSection % 2 ] );
+			else
+				dayLabel.addStyleName(new String [] {style.dbSectionEvenEr(), style.dbSectionOddEr()}[dbSection % 2 ] );
+			
+			
+		}
+
+		
+	}
+	private void onDraftSection(int day)  {
+		Date section = DateUtils.copyDateOnly(this.salaryDraftObject.getStartDate());
+		section.setDate(day);
+		
+		if ( salaryDraftObject.hasDraftSection( section ) )
+			salaryDraftObject.removeDraftSection(section);
+		else 
+			salaryDraftObject.addDraftSection(section);
+		
+		calculate();
+		
 	}
 
 	// ------------------------------------------------------- Static 'Library'

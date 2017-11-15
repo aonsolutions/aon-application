@@ -282,6 +282,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public SalaryDraft saveSalary(SalaryDraft salaryDraft, Date sections [])
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
+
+	@Override
 	public AgreementDraft saveAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
@@ -331,6 +339,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
+
+	@Override
+	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");

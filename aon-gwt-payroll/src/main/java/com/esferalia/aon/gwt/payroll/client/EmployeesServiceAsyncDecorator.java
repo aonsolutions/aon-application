@@ -263,6 +263,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
+	public void saveSalary(SalaryDraft salaryDraft,
+			Date sections [],
+			AsyncCallback<SalaryDraft> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.saveSalary(salaryDraft, sections,
+				new AsyncCallbackWrapper<SalaryDraft>(callback));
+	}
+
 	@Override
 	public void eval(String expression, SalaryDraft salaryDraft,
 			AsyncCallback<List<Result>> callback)
@@ -314,6 +323,17 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+				new AsyncCallbackWrapper<SalaryDraft>(callback));
+	}
+
+	@Override
+	public void calculateSalaryDraft(SalaryDraft salaryDraft,
+			Date sections [],
+			AsyncCallback<SalaryDraft> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+				sections,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 

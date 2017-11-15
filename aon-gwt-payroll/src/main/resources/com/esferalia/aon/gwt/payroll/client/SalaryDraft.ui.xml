@@ -9,9 +9,18 @@
 		.editor {
 			
 		}
+
+		.disabled {
+			opacity: 0.5;		
+		}
+		
 		
 		.vertical-space {
 			height: 20px;
+		}
+
+		.vertical-margin {
+			margin-bottom: 10px;
 		}
 
 		.horizontal-space {
@@ -175,6 +184,33 @@
 			background-color: inherit;
 		}
 		
+		.section-even {
+			background-color: #e2e2e2; 
+
+		}
+
+		.section-odd {
+			background-color: #f2f2f2; 
+		}
+
+		.db-section-odd-er {
+			background-color: #ff9999; 
+		}
+		
+		.db-section-odd-ok {
+			background-color: #b3e6b3; 
+		}
+		
+		.db-section-even-er {
+			background-color: red; 
+		}
+
+		.db-section-even-ok {
+			background-color: green; 
+		}
+
+		
+
 		@external gwt-ListBox;
 		@external gwt-TextBox;
 		@external aon-ReadOnly;
@@ -264,6 +300,9 @@
 									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 									<g:item value="{CUSTOM}">Personalizado...</g:item>
 								</g:ListBox>
+								<g:CheckBox debugId='tgssCheck' ui:field='tgssCheck'
+									styleName='aon-finding-toolbar-item aon-icon-segsocial-small {style.toolBar-checkBox} '
+									text="SILTRA" checked="false" />
 								<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="COSTES Y BONIFICACIONES" checked="false" />
@@ -283,6 +322,10 @@
 				<g:VerticalPanel styleName="{style.document}">
 					<g:DeckPanel ui:field="deckPanel">
 						<g:VerticalPanel ui:field="draftPanel" width="auto">
+							
+							<g:HorizontalPanel ui:field='timeRulePanel'  debugId='timeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin}" />
+							<!--  g:HorizontalPanel ui:field='dbTimeRulePanel'  debugId='dbTimeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin} {style.disabled}" /-->
+							
 							<g:Grid styleName="aon-dataTable">
 								<g:row styleName="aon-dataTable-row-odd">
 									<g:customCell style="width:50%">

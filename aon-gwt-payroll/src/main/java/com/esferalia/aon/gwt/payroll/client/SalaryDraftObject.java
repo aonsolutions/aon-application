@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
@@ -20,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -48,7 +51,7 @@ public class SalaryDraftObject implements IContextProvider {
 				visitor.visitStandard();
 			}
 		},
-		DUMMIES{
+		DUMMIES {
 			@Override
 			void accept(CalculateVisitor visitor) {
 				visitor.visit4Dummies();
@@ -257,6 +260,8 @@ public class SalaryDraftObject implements IContextProvider {
 
 	private Date draftEndDate;
 	private Date draftStartDate;
+	
+	private Set<Date> draftSections;
 
 	private ITDataObject dataObject;
 	private SalaryDraft salaryDraft;
@@ -269,6 +274,7 @@ public class SalaryDraftObject implements IContextProvider {
 			EmployeesServiceAsync employeesServiceAsync) {
 		this.dataObject = dataObject;
 		this.salaryDraft = salaryDraft;
+		this.draftSections = new HashSet<Date>();
 		this.employeesServiceAsync = employeesServiceAsync;
 		this.undoManager = new UndoManager<Undoable>();
 	}
@@ -382,8 +388,13 @@ public class SalaryDraftObject implements IContextProvider {
 			
 			@Override
 			public void visitStandard() {
-				employeesServiceAsync.calculateSalaryDraft(salaryDraft,
-						asyncCallback);
+				Date sections [] = getSections();
+				if ( sections != null && sections.length > 0 )
+					employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+							sections,asyncCallback);
+				else 
+					employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+							asyncCallback);
 			}
 			
 			@Override
@@ -391,6 +402,7 @@ public class SalaryDraftObject implements IContextProvider {
 				employeesServiceAsync.calculateSalaryDraft4Dummies(salaryDraft,
 						asyncCallback);
 			}
+
 		});
 	}
 
@@ -413,21 +425,26 @@ public class SalaryDraftObject implements IContextProvider {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		removeSalaryPart(salaryDraft);
+		
+		AsyncCallback<SalaryDraft> saveCallback = new AsyncCallback<SalaryDraft>() {
 
-		employeesServiceAsync.saveSalary(salaryDraft,
-				new AsyncCallback<SalaryDraft>() {
+			@Override
+			public void onSuccess(SalaryDraft result) {
+				SalaryDraftObject.this.salaryDraft = result;
+				callback.onCalculateSucces(SalaryDraftObject.this);
+			}
 
-					@Override
-					public void onSuccess(SalaryDraft result) {
-						SalaryDraftObject.this.salaryDraft = result;
-						callback.onCalculateSucces(SalaryDraftObject.this);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onCalculateFailure(caught);
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onCalculateFailure(caught);
+			}
+		};
+		
+		Date sections [] = getSections();
+		if ( sections == null || sections.length == 0 )
+			employeesServiceAsync.saveSalary(salaryDraft, saveCallback );
+		else 
+			employeesServiceAsync.saveSalary(salaryDraft, sections, saveCallback );
 	}
 
 	public void saveITData(final CalculateCallback callback) {
@@ -511,6 +528,18 @@ public class SalaryDraftObject implements IContextProvider {
 
 	public SalaryDraft asSalaryPreview() {
 		return salaryDraft;
+	}
+	
+	public void addDraftSection(Date section) {
+		draftSections.add(section);
+	}
+
+	public void removeDraftSection(Date section) {
+		draftSections.remove(section);
+	}
+	
+	public boolean hasDraftSection(Date section) {
+		return draftSections.contains(section);
 	}
 
 	// -------------------------------------------
@@ -669,6 +698,10 @@ public class SalaryDraftObject implements IContextProvider {
 
 	public String getEmployeeAgreementCategory() {
 		return salaryDraft.getEmployeeAgreementCategory();
+	}
+
+	public List<Variable> getDbContext() {
+		return salaryDraft.getDbContext();
 	}
 
 	public Double getDbCgcBase() {
@@ -852,6 +885,16 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	// ------------------------------------------
+	
+	private Date [] getSections() {
+		return
+		draftSections.stream()
+		.filter(s ->  s.compareTo(salaryDraft.getStartDate()) >= 0 )
+		.filter(s ->  s.compareTo(salaryDraft.getEndDate()) <= 0 )
+		.sorted()
+		.toArray(Date[]::new )
+		;
+	}
 
 	private Variable clone(Variable var, String newName) {
 		StringVariable newVar = new StringVariable();

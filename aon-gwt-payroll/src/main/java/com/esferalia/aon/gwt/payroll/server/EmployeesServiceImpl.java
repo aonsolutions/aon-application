@@ -54,6 +54,7 @@ import java.util.SortedSet;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.xerces.xinclude.MultipleScopeNamespaceSupport;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
@@ -142,11 +143,16 @@ import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
@@ -210,6 +216,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
@@ -975,6 +982,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
+	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft ,Date sections [])
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			calculate(salaryDraft, new ContractSalaryCalculator<ISalary>(), sections);
+			return salaryDraft;
+		} finally {
+			releaseFacesContext();
+		}
+	}
+
+	@Override
 	public SalaryDraft calculateSalaryDraft4Dummies(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		try {
@@ -1390,6 +1409,29 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 			calculateAndSave(conn, salaryDraft);
+			return salaryDraft;
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
+	}
+
+	@Override
+	public SalaryDraft saveSalary(SalaryDraft salaryDraft, Date sections [])
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			calculateAndSave(conn, salaryDraft, sections);
 			return salaryDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -3094,6 +3136,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return list.size() > 0 ? (ISalary) list.get(0) : null;
 	}
 
+	private static List<Variable> getDBSalaryData(ISalary salary)
+			throws ManagerBeanException {
+
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.esferalia.aon.payroll.SalaryData.class);
+
+		Criteria criteria = new Criteria();
+
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.SALARY_DATA_SALARY_ID),
+				salary.getId());
+
+		return Arrays.asList( beanManager.getList(criteria).stream()
+		.map(object -> (SalaryData) object )
+		.map(data -> { 
+			Variable var = new StringVariable();
+			var.setName(data.getName());
+			var.setStartDate(data.getStartDate());
+			var.setEndDate(data.getEndDate());
+			var.setValue(data.getExpression());
+			var.setDomain(data.getDomain());
+			return var;
+		})
+		.toArray(Variable[]::new ) );
+	}
+
 	private static List<Salary> getSalaries(Connection connection,
 			Integer enterpriseID, Integer personId, Date toDate)
 			throws SQLException {
@@ -3150,19 +3218,55 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static void calculate(SalaryDraft draft, ContractSalaryCalculator<ISalary> salaryCalculator) {
 
-		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
+		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		try {
-			calculate(draft, salaryBuilder, salaryBuilder, salaryCalculator);
+			calculate(draft, salaryDraftBuilder, salaryDraftBuilder, salaryCalculator);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		try {
+			salaryDraftBuilder.clearDb();
 			ISalary dbSalary = getDBSalary(draft);
-			if (dbSalary != null)
-				salaryBuilder.setDbSalary(dbSalary);
-			else
-				salaryBuilder.clearDb();
+			if (dbSalary != null) {
+				salaryDraftBuilder.setDbSalary(dbSalary);
+				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(dbSalary));
+			}
+		} catch (SalaryException e) {
+		} catch (ManagerBeanException e) {
+		}
+
+	}
+
+	private static void calculate(SalaryDraft draft, ContractSalaryCalculator<ISalary> salaryCalculator, Date sections []) {
+
+		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
+		CollectSalaryBuilder<ISalary> collectSalaryBuilder = new CollectSalaryBuilder<ISalary>();		
+		Date startDate = draft.getStartDate();
+		Date endDate = draft.getEndDate();
+		try {
+			for ( Date section : sections ) {
+				draft.setEndDate(AonDateUtils.add(section, Calendar.DAY_OF_MONTH, -1));
+				calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+				draft.setStartDate(section);
+			}
+			draft.setEndDate(endDate);
+			calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+			
+			collectSalaryBuilder.collect(salaryDraftBuilder);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		draft.setStartDate(startDate);
+		
+		try {
+			salaryDraftBuilder.clearDb();
+			ISalary dbSalary = getDBSalary(draft);
+			if (dbSalary != null) {
+				salaryDraftBuilder.setDbSalary(dbSalary);
+				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(dbSalary));
+			}
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
 		}
@@ -3357,9 +3461,67 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 		try {
+			salaryDraftBuilder.clearDb();
 			ISalary dbSalary = getDBSalary(draft);
-			if (dbSalary != null)
+			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
+				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(dbSalary));
+			}
+		} catch (SalaryException e) {
+		} catch (ManagerBeanException e) {
+		}
+
+	}
+
+	private static void calculateAndSave(Connection conn, SalaryDraft draft, Date sections [])
+			throws SQLException {
+		if (draft.hasDbSalary())
+			deleteSalaries(conn, draft.getDbId());
+
+		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
+
+		boolean autocommit = false;
+		Date startDate = draft.getStartDate();
+		Date endDate = draft.getEndDate();
+		try {
+			autocommit = conn.getAutoCommit();
+			conn.setAutoCommit(false);
+
+			CollectSalaryBuilder<ISalary> collectSalaryBuilder = new CollectSalaryBuilder<ISalary>();		
+			ContractSalaryCalculator<ISalary> salaryCalculator = new ContractSalaryCalculator<ISalary>();
+			for ( Date section : sections ) {
+				draft.setEndDate(AonDateUtils.add(section, Calendar.DAY_OF_MONTH, -1));
+				calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+				draft.setStartDate(section);
+			}
+			draft.setEndDate(endDate);
+			calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
+			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
+					d -> Math.round(d*1000.00)/1000.00);
+			jooqSalaryBuilder.setListener(new SalaryBuilderListener());
+			CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = 
+					new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(salaryDraftBuilder, roundSalaryBuilder);
+			collectSalaryBuilder.collect(compositeSalaryBuilder);
+
+			jooqSalaryBuilder.execute();
+			conn.commit();
+		} finally {
+			conn.setAutoCommit(autocommit);
+		}
+		draft.setStartDate(startDate);
+
+		try {
+			salaryDraftBuilder.clearDb();
+			ISalary dbSalary = getDBSalary(draft);
+			if (dbSalary != null) {
+				salaryDraftBuilder.setDbSalary(dbSalary);
+				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(dbSalary));
+			}
+			else {
+				//draft.clearDb();
+			}
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
 		}
