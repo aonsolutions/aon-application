@@ -249,7 +249,7 @@ public class DBIncome {
 	public static JSONObject getIncomeLastLote(Domain domain, String login, String referenceCode) {
 		number = 0;
 		AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().like(referenceCode + "%")).forEach(r->{
-			Integer n = Integer.parseInt(r.getReferenceCode().substring(6));
+			Integer n = Integer.parseInt(r.getReferenceCode().substring(5));
 			number = n >= number ? n + 1 : number;
 		});
 		
