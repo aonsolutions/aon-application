@@ -188,7 +188,6 @@ public class DBProduct {
 						if(r.getItem() != null){	
 							r.getItem().stream().forEach(i ->{
 								com.esferalia.aon.occam.api.model.product.Item item = getItem(domain, login, i, product);
-										//getItem(i, product.getId(), domain.getId(), sctx);
 								if(item != null && item.getId() != null){
 									if(item.getSerialNumber() != null &&  !product.isSerializable()){
 										error.setError(false);
@@ -229,7 +228,6 @@ public class DBProduct {
 							iNewProductsTag.put(code, list);
 						}
 					});
-					
 					
 					com.esferalia.aon.occam.api.model.product.Product product2 = r.getProduct();
 					product2.setKind(Byte.parseByte(kind));
