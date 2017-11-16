@@ -210,4 +210,9 @@ public class SeresMain extends AonTemplate2{
 		setContent(new SeresPrincipal(this));
 	}
 
+	public static native void consoleLog( String message) 
+	/*-{
+	    console.log( message );
+	}-*/;
+
 }

@@ -8,10 +8,7 @@ import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
 import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
-import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
-import com.esferalia.aon.gwt.api.client.warehouse.JsDelivery;
-import com.esferalia.aon.gwt.api.client.warehouse.JsSales;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -66,17 +63,21 @@ public class Seres extends Methods{
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/history_detail?id="+id, callback);
 	}
 	
-	public void sendSeres(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
-		String str = getFilter(filterMap) + "&domain="+ getDomainName() + "&login="+getUserName();
-		impl.base(str, new AsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String result) {
-				get(getUrl() + "seres/" + result, callback);
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
+	public void sendInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/outcome_invoice" + str, callback);
+	}
+	
+	public void sendDeliveries(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/outcome_delivery", callback);
+	}
+	
+	public void retrieveInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/income_invoice", callback);
+	}
+	
+	public void retrieveSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/income_sales", callback);
 	}
 	
 }

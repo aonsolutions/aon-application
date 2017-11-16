@@ -348,9 +348,10 @@ public class SeresServlet extends HttpServlet {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, invoice.getId());
 		json.put("registry_name", invoice.getRegistryName());
+		json.put("address", invoice.getAddress());
 		json.put("reference_code", invoice.getReferenceCode());
 		json.put("date", AonDateUtils.format(invoice.getTaxDate(), "dd-MM-yyyy"));
-		// TODO
+		// TODO invoice status
 		json.put("status", "Pendiente" );
 		return json;
 	}
@@ -361,7 +362,7 @@ public class SeresServlet extends HttpServlet {
 		json.put("registry_name", sales.getCustomer().getName());
 		json.put("reference_code", sales.getSeries()+"/"+sales.getNumber());
 		json.put("date", AonDateUtils.format(sales.getIssueDate(), "dd-MM-yyyy"));
-		// TODO
+		// TODO sales status
 		json.put("status", "Pendiente" );
 		return json;
 	}
@@ -372,7 +373,7 @@ public class SeresServlet extends HttpServlet {
 		json.put("registry_name", delivery.getCustomerName());
 		json.put("reference_code", delivery.getReferenceCode());
 		json.put("date", AonDateUtils.format(delivery.getIssueTime(), "dd-MM-yyyy"));
-		// TODO
+		// TODO delivery status
 		json.put("status", "Pendiente" );
 		return json;
 	}
