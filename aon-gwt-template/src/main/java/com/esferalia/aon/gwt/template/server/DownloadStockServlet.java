@@ -79,7 +79,7 @@ public class DownloadStockServlet extends HttpServlet {
         User user = new User().setId(userId).setLogin(login);
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
-        	w = DBStock.getWarehouse(domain, user, warehouse);
+        	w = DBStock.getInstance().getWarehouse(domain, user, warehouse);
         byte[] b = null ;
         
         if (driveId != ""){
@@ -163,11 +163,6 @@ public class DownloadStockServlet extends HttpServlet {
         }
         Cell celdaf = fila.createCell(columnsAux);
         celdaf.setCellStyle(style);
-        /*for(Integer i = 0; i<= columns; i++){
-        	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
-            	hoja.setDefaultColumnStyle(i, style3);
-        	else hoja.setDefaultColumnStyle(i, style2);
-        }*/
         
         Condition c = PRODUCT.DOMAIN.eq(domainId);
         Condition c2 = c;
@@ -288,35 +283,20 @@ public class DownloadStockServlet extends HttpServlet {
         		}
         	}
         }
-       /* if(!tags.equals("null") && !tags.equals("") && !tags.equals("undefined")){
-        	String s= tags.substring(1) ;
-        	while(s !=""){
-        		Integer index = s.indexOf("$");
-        		if(index == -1){
-        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
-        			s="";
-        		}
-        		else{ 
-        			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
-        			s = s.substring(index+1);
-        		}
-        	}
-        }*/
-        if(!barcode.equals("null") && !barcode.equals("") && !barcode.equals("undefined"))
-        	{
-        		c = c.and(ITEM.BARCODE.like("%"+barcode+"%"));
-        		c2 = c2.and(ITEM.BARCODE.like("%"+barcode+"%"));
-        	}
-        //if(!provider.equals("null") && !provider.equals("") && !provider.equals("undefined"))
+
+        if(!barcode.equals("null") && !barcode.equals("") && !barcode.equals("undefined")){
+        	c = c.and(ITEM.BARCODE.like("%"+barcode+"%"));
+        	c2 = c2.and(ITEM.BARCODE.like("%"+barcode+"%"));
+        }
         
         Vector<StockInfo> v;
         if(closeInventory){
         	String inventory_id = p_request.getParameter("inventory");
         	Integer inventoryId = Integer.parseInt(inventory_id);
-        	v= DBStock.getInventoryClosed(domain, inventoryId, c2, user.getLogin());
+        	v= DBStock.getInstance().getInventoryClosed(domain, inventoryId, c2, user.getLogin());
         }
         else
-        	v= DBStock.getStocks(domain,w.getId(),c,"1".equals(only_non_cero), user.getLogin());
+        	v= DBStock.getInstance().getStocks(domain,w.getId(),c,"1".equals(only_non_cero), user.getLogin());
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);
@@ -332,11 +312,6 @@ public class DownloadStockServlet extends HttpServlet {
         		case "Detalle 3":  celda.setCellValue(si.getItem().getDetail3());celda.setCellStyle(style2);break;
         		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         		case "Nombre": String str  = si.getProductName();
-        			/*if(si.getItem().getPackFormatTag().getName() != null)
-        				str = str + " "+si.getItem().getPackFormatTag().getName()+" "
-        				+ si.getItem().getPackUnits() + " " + si.getItem().getPackUnitsTag().getName() + " "
-        				+ si.getItem().getPackMeasurement() + " " + si.getItem().getPackMeasurementTag().getName();
-       				*/
        				celda.setCellValue(str);celda.setCellStyle(style3);break;
         		case "N\u00FAmero Serie": celda.setCellValue(si.getItem().getSerialNumber());celda.setCellStyle(style3);break;
         		case "Formato": celda.setCellValue(si.getItem().getPackFormatTag().getName());celda.setCellStyle(style3);break; 
@@ -390,11 +365,9 @@ public class DownloadStockServlet extends HttpServlet {
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
         
-        
         bis.close();
         bais.close();
         out.flush();
         out.close();
-    }
-	
-	}
+    }	
+}

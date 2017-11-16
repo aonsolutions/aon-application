@@ -122,12 +122,8 @@ public class DownloadProposalServlet extends HttpServlet {
         }
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
-      /*  for(Integer i = 0; i<= columns; i++){
-        	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
-        		hoja.setDefaultColumnStyle(i, style3);
-        	else hoja.setDefaultColumnStyle(i, style2);
-        }*/
-        Vector<StockInfo> v = DBStock.getProposal(domain, proposalId, login);
+        
+        Vector<StockInfo> v = DBStock.getInstance().getProposal(domain, proposalId, login);
         
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);
@@ -137,8 +133,6 @@ public class DownloadProposalServlet extends HttpServlet {
         		StockInfo si = v.get(j);
         		switch (type) {
         		case "Producto": celda.setCellValue(si.getProduct());celda.setCellStyle(style3);break;
-        		//case "Series": celda.setCellValue(si.getSeries().getCode());break;
-        		//case "Almac\u00e9n Destino": celda.setCellValue(si.getTargetWarehouse().getName());break;
         		case "Cantidad": celda.setCellValue(si.getQuantity());celda.setCellStyle(style2);break;
         		case "Detalle 1":  celda.setCellValue(si.getItem().getDetail());celda.setCellStyle(style2);break;
         		case "Detalle 2":  celda.setCellValue(si.getItem().getDetail2());celda.setCellStyle(style2);break;
@@ -146,7 +140,6 @@ public class DownloadProposalServlet extends HttpServlet {
         		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
         		case "Numero Serie": celda.setCellValue(si.getItem().getSerialNumber());celda.setCellStyle(style3);break;
-           		//case "Comentarios": celda.setCellValue(si.getComments());break;
         		default:
         			break;
         		}
@@ -181,13 +174,9 @@ public class DownloadProposalServlet extends HttpServlet {
         while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
             out.write(buffer, 0, bytes);
         
-        
         bis.close();
         bais.close();
         out.flush();
         out.close();
-        
-
     }
-	
-	}
+}

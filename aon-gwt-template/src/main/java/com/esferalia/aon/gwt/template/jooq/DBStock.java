@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import org.jooq.CaseConditionStep;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
@@ -40,6 +41,7 @@ import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProposalInfo;
@@ -52,6 +54,7 @@ import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -59,21 +62,21 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class DBStock {
 	
-	static String stockquery;
-	static String inventoryquery;
-	static String inventoryCostquery;
+	public static DBStock getInstance() {
+		return new DBStock();
+	}
+
+	private CaseConditionStep<Double> caseA;
+	private CaseConditionStep<Double> caseB;
 	
-	Vector<String> v = new Vector<String>();
-	static String itemIds;
-	static TransferInfo transferInfo;
-	public static Error insertStock2(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti, Integer inventoryId, AuditInfo ai, String login){
-		itemIds ="";
+	public Error insertStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti, Integer inventoryId, AuditInfo ai, String login){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -84,123 +87,119 @@ public class DBStock {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			 
 			Vector<String> v = new Vector<String>();
-			inventoryquery = "update inventory_detail set real_quantity = case ";
-			inventoryCostquery = "update inventory_detail set cost = case ";
-			transferInfo= ti;
+			caseA =null;
+			caseB =null;
+			LinkedList<Integer> idList = new LinkedList<>(); 
 			
 			AONContext sctx = ctx;
-			stock.stream().forEach(s ->{
-				if(s.getProduct() != null){
-					Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getItem().getSerialNumber());
-					if(s.getItem().getSerialNumber() == null)
-						serialNumber = ITEM.SERIAL_NUMBER.isNull();
-					Result<Record7<Integer, Double, Double, Byte, Byte, Integer, Byte>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE
-							, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
-						.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId))
-						.and(serialNumber).fetch();
-					if(data.isEmpty()){
-						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
-								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-								.where(PRODUCT.CODE.eq(s.getProduct()))
-										.and(serialNumber)
-										.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
-					}
-					if(data.size()>1){
-						Condition detail = ITEM.DETAIL.eq(s.getItem().getDetail());
-						if(s.getItem().getDetail() == "") 
-							detail = ITEM.DETAIL.eq("").or(ITEM.DETAIL.isNull());
-						
-						Condition detail2 = ITEM.DETAIL2.eq(s.getItem().getDetail2());
-						if(s.getItem().getDetail2() == "") 
-							detail2 = ITEM.DETAIL2.eq("").or(ITEM.DETAIL2.isNull());
-						
-						Condition detail3 = ITEM.DETAIL3.eq(s.getItem().getDetail3());
-						if(s.getItem().getDetail3() == "") 
-							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
-												
-						Condition formatTag = ITEM.PACK_FORMAT_TAG.isNull();
-						if(s.getItem().getPackFormatTag().getId() != null)
-							formatTag = ITEM.PACK_FORMAT_TAG.eq(s.getItem().getPackFormatTag().getId());
-																
-						Condition units = ITEM.PACK_UNITS.eq(s.getItem().getPackUnits().intValue());
-												
-						Condition unitsTag = ITEM.PACK_UNITS_TAG.isNull();
-						if(s.getItem().getPackUnitsTag().getId() != null)
-							unitsTag = ITEM.PACK_UNITS_TAG.eq(s.getItem().getPackUnitsTag().getId());
-																
-						Condition measurement = ITEM.PACK_MEASUREMENT.eq(s.getItem().getPackMeasurement());
-																
-						Condition measurementTag = ITEM.PACK_MEASUREMENT_TAG.isNull();
-						if(s.getItem().getPackMeasurementTag().getId() != null)
-							measurementTag = ITEM.PACK_MEASUREMENT_TAG.eq(s.getItem().getPackMeasurementTag().getId());
-																
-						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
-								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-								.where(PRODUCT.CODE.eq(s.getProduct()))
-									.and(detail).and(detail2).and(detail3).and(serialNumber)
-									.and(formatTag).and(unitsTag).and(units).and(measurementTag).and(measurement)
+			
+			Record3<Integer,Integer, Date> data3 = ctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE, INVENTORY.INVENTORY_DATE)
+					.from(INVENTORY).join(WAREHOUSE).on(WAREHOUSE.ID.eq(INVENTORY.WAREHOUSE))
+					.where(INVENTORY.ID.eq(inventoryId))
+					.limit(1).fetchOne();
+			Integer warehouseId = data3.getValue(WAREHOUSE.ID);
+			Integer workplaceId = data3.getValue(WAREHOUSE.WORKPLACE); 
+			java.util.Date inventoryDate = data3.getValue(INVENTORY.INVENTORY_DATE);
+			ApplicationParameter ap = AON.getApplicationParamenter(domain, domainId, login, AppParam.AON_PRODUCT_VALUATION_METHOD);
+
+			
+			stock.stream().filter(f -> f.getProduct() != null).forEach(s ->{
+				Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getItem().getSerialNumber());
+				if(s.getItem().getSerialNumber() == null)
+					serialNumber = ITEM.SERIAL_NUMBER.isNull();
+				Result<Record7<Integer, Double, Double, Byte, Byte, Integer, Byte>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE
+						, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
+					.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+					.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId))
+					.and(serialNumber).fetch();
+				if(data.isEmpty()){
+					data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
+							.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+							.where(PRODUCT.CODE.eq(s.getProduct()))
+									.and(serialNumber)
 									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
-					}
-					if(!data.isEmpty()){
-						Byte lotable = data.get(0).getValue(PRODUCT.LOTABLE);
-						if((s.getItem().getSerialNumber() != null &&  lotable != 1) && s.getQuantity() > 1 ){
-							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
-							error.setError(false);
-							error.setTextError(v);
-						} else {
-							Integer itemId = data.get(0).value1();
-							System.out.println(itemId);
-							s.setDomainId(domainId);
-							s.getItem().setId(itemId);
-						
-							Result<Record1<Integer>> data2 = sctx.getDslContext().select(INVENTORY_DETAIL.ID).from(INVENTORY_DETAIL)
-								.where(INVENTORY_DETAIL.ITEM.eq(itemId))
-								.and(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).fetch();
-						
-							Item item = new Item();
-							item.setId(itemId);
-							item.setPurchasePrice(data.get(0).value3() != null ? data.get(0).value3() :0.0);
-							Product product = new Product().setId(data.get(0).getValue(PRODUCT.ID))
-								.setManufactured(data.get(0).getValue(PRODUCT.MANUFACTURED))
-								.setInventoriable(data.get(0).getValue(PRODUCT.INVENTORIABLE));
-							item.setProduct(product);
-							item.setProductId(product.getId());
-							item.setDomain(domainId);
-						
-							Record3<Integer,Integer, Date> data3 = sctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE, INVENTORY.INVENTORY_DATE)
-								.from(INVENTORY).join(WAREHOUSE).on(WAREHOUSE.ID.eq(INVENTORY.WAREHOUSE))
-								.where(INVENTORY.ID.eq(inventoryId))
-								.limit(1).fetchOne();
-							Integer warehouseId = data3.getValue(WAREHOUSE.ID);
-							Integer workplaceId = data3.getValue(WAREHOUSE.WORKPLACE); 
-							java.util.Date inventoryDate = data3.getValue(INVENTORY.INVENTORY_DATE);
-							Double cost = Utils.getValCost(sctx, s.getQuantity(), item, login, workplaceId, warehouseId, inventoryDate);
-							if(data2.isNotEmpty()){
-								itemIds = itemIds + ","+itemId;
-								inventoryquery = inventoryquery + " when item = " + itemId + " then " + s.getQuantity();
-								inventoryCostquery = inventoryCostquery + " when item = " + itemId + " then " + cost;
-							}else{
-								sctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM)
-									.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId).execute() ;
-							}
-						}
-					}
-					else{
-						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coinciden.");
+				}
+				if(data.size()>1){
+					Condition detail = s.getItem().getDetail() == "" ? ITEM.DETAIL.eq("").or(ITEM.DETAIL.isNull()) : ITEM.DETAIL.eq(s.getItem().getDetail());
+					Condition detail2 = s.getItem().getDetail2() == "" ? ITEM.DETAIL2.eq("").or(ITEM.DETAIL2.isNull()) : ITEM.DETAIL2.eq(s.getItem().getDetail2());
+					Condition detail3 = s.getItem().getDetail3() == "" ? ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull()) : ITEM.DETAIL3.eq(s.getItem().getDetail3());
+					Condition formatTag = s.getItem().getPackFormatTag().getId() != null ? ITEM.PACK_FORMAT_TAG.eq(s.getItem().getPackFormatTag().getId()) : ITEM.PACK_FORMAT_TAG.isNull();
+					Condition units = ITEM.PACK_UNITS.eq(s.getItem().getPackUnits().intValue());						
+					Condition unitsTag = s.getItem().getPackUnitsTag().getId() != null ? ITEM.PACK_UNITS_TAG.eq(s.getItem().getPackUnitsTag().getId()) : ITEM.PACK_UNITS_TAG.isNull();
+					Condition measurement = ITEM.PACK_MEASUREMENT.eq(s.getItem().getPackMeasurement());
+					Condition measurementTag = s.getItem().getPackMeasurementTag().getId() != null ? ITEM.PACK_MEASUREMENT_TAG.eq(s.getItem().getPackMeasurementTag().getId()) : ITEM.PACK_MEASUREMENT_TAG.isNull();
+					
+					data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
+							.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+							.where(PRODUCT.CODE.eq(s.getProduct()))
+								.and(detail).and(detail2).and(detail3).and(serialNumber)
+								.and(formatTag).and(unitsTag).and(units).and(measurementTag).and(measurement)
+								.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
+				}
+				Integer index = 0;
+				if(!data.isEmpty()){
+					Byte lotable = data.get(index).getValue(PRODUCT.LOTABLE);
+					if((s.getItem().getSerialNumber() != null &&  lotable != 1) && s.getQuantity() > 1 ){
+						v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 						error.setError(false);
 						error.setTextError(v);
+					} else {
+						Integer itemId = data.get(index).value1();
+						s.setDomainId(domainId);
+						s.getItem().setId(itemId);
+						
+						Result<Record1<Integer>> data2 = sctx.getDslContext().select(INVENTORY_DETAIL.ID).from(INVENTORY_DETAIL)
+							.where(INVENTORY_DETAIL.ITEM.eq(itemId))
+							.and(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).fetch();
+					
+						Item item = new Item();
+						item.setId(itemId);
+						item.setPurchasePrice(data.get(index).value3() != null ? data.get(index).value3() :0.0);
+						Product product = new Product().setId(data.get(index).getValue(PRODUCT.ID))
+							.setManufactured(data.get(index).getValue(PRODUCT.MANUFACTURED))
+							.setInventoriable(data.get(index).getValue(PRODUCT.INVENTORIABLE));
+						item.setProduct(product);
+						item.setProductId(product.getId());
+						item.setDomain(domainId);
+
+						Double cost = Utils.getValCost(sctx.getDomainName(), s.getQuantity(), item, login, workplaceId, warehouseId, inventoryDate, ap);
+						if(data2.isNotEmpty()){
+							idList.add(itemId);
+							caseA = caseA != null ? caseA.when(INVENTORY_DETAIL.ITEM.eq(itemId), s.getQuantity())
+									: DSL.decode().when(INVENTORY_DETAIL.ITEM.eq(itemId), s.getQuantity());
+							caseB = caseB != null ? caseB.when(INVENTORY_DETAIL.ITEM.eq(itemId), cost)
+									: DSL.decode().when(INVENTORY_DETAIL.ITEM.eq(itemId), cost);
+						}else{
+							sctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM
+									, INVENTORY_DETAIL.CREATION_DATE, INVENTORY_DETAIL.CREATION_USER, INVENTORY_DETAIL.MODIFICATION_DATE, INVENTORY_DETAIL.MODIFICATION_USER)
+								.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId, new Timestamp(new java.util.Date().getTime()), "system", new Timestamp(new java.util.Date().getTime()), "system")
+								.execute() ;
+						}
 					}
 				}
-			});
-	
-			if(error.getError()){
-				if(!inventoryquery.equals("update inventory_detail set real_quantity = case ")){
-					inventoryquery = inventoryquery + " else " + 0.0 + " end where inventory = "+ inventoryId +" and domain = "+ domainId +" and item in ("+ itemIds.substring(1) +");";
-					ctx.getDslContext().query(inventoryquery).execute();
-					inventoryCostquery = inventoryCostquery + " else " + 0.0 + " end where inventory = " + inventoryId + " and domain = " + domainId + " and item in (" + itemIds.substring(1) + ");";
-					ctx.getDslContext().query(inventoryCostquery).execute();
+				else{
+					v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coinciden.");
+					error.setError(false);
+					error.setTextError(v);
 				}
+			});
+			
+			if(error.getError()){
+				if(caseA != null) {
+					ctx.getDslContext().update(INVENTORY_DETAIL).set(INVENTORY_DETAIL.REAL_QUANTITY, caseA.otherwise(0.0))
+					.where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).and(INVENTORY_DETAIL.DOMAIN.eq(domainId))
+					.and(INVENTORY_DETAIL.ITEM.in(idList.toArray(new Integer[idList.size()]))).execute();
+				}
+				if(caseB != null) {
+					ctx.getDslContext().update(INVENTORY_DETAIL).set(INVENTORY_DETAIL.COST, caseB.otherwise(0.0))
+					.where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).and(INVENTORY_DETAIL.DOMAIN.eq(domainId))
+					.and(INVENTORY_DETAIL.ITEM.in(idList.toArray(new Integer[idList.size()]))).execute();
+				}
+				ctx.getDslContext().update(INVENTORY_DETAIL)
+				.set(INVENTORY_DETAIL.MODIFICATION_DATE, new Timestamp(new java.util.Date().getTime()))
+				.set(INVENTORY_DETAIL.MODIFICATION_USER, "system")
+				.where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).and(INVENTORY_DETAIL.DOMAIN.eq(domainId))
+				.and(INVENTORY_DETAIL.ITEM.in(idList.toArray(new Integer[idList.size()]))).execute();
 			}
 			return error;
 		}finally {
@@ -208,7 +207,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Double[] getSupplier(AONContext ctx, Integer workplace, Integer domainId, Integer itemId){
+	private Double[] getSupplier(AONContext ctx, Integer workplace, Integer domainId, Integer itemId){
 		Record2<Integer,Double> a = ctx.getDslContext().select(RITEM.REGISTRY, RITEM.PRICE)
 		.from(RITEM)
 		.where(RITEM.WORKPLACE.eq(workplace))
@@ -231,7 +230,7 @@ public class DBStock {
 		return new Double[]{a.value1().doubleValue(), a.value2()};	
 	}
 	
-	public static Error insertProposal(Domain domain,Vector<StockInfo> stock,Integer proposal, AuditInfo ai, Integer workplace, String login){
+	public Error insertProposal(Domain domain,Vector<StockInfo> stock,Integer proposal, AuditInfo ai, Integer workplace, String login){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -388,7 +387,7 @@ public class DBStock {
 		
 	}
 	
-	private static Boolean isCatalogue(AONContext ctx, ProposalInfo pi){
+	private Boolean isCatalogue(AONContext ctx, ProposalInfo pi){
 		Result<Record1<Integer>> data = ctx.getDslContext().select(WORKPLACE_DEPARTMENT.CATALOGUE)
 					.from(PROPOSAL).join(WORKPLACE_DEPARTMENT).on(PROPOSAL.WORKPLACE.eq(WORKPLACE_DEPARTMENT.WORKPLACE).and(PROPOSAL.DEPARTMENT.eq(WORKPLACE_DEPARTMENT.DEPARTMENT)))
 					.where(PROPOSAL.ID.eq(pi.getProposal()))
@@ -409,7 +408,7 @@ public class DBStock {
 		return false;
 	}
 	
-	private static Boolean isProposal(AONContext ctx, ProposalInfo pi){
+	private Boolean isProposal(AONContext ctx, ProposalInfo pi){
 		
 		Result<Record1<Integer>> data = ctx.getDslContext().select(PROPOSAL_DETAIL.ID)
 					.from(PROPOSAL_DETAIL)
@@ -420,7 +419,7 @@ public class DBStock {
 		return data.isNotEmpty();
 	}
 	
-	private static ProposalInfo getProposal(AONContext ctx, ProposalInfo pi){
+	private ProposalInfo getProposal(AONContext ctx, ProposalInfo pi){
 		
 		Result<Record2<Integer, Double>> data = ctx.getDslContext().select(PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.QUANTITY)
 					.from(PROPOSAL_DETAIL)
@@ -435,7 +434,7 @@ public class DBStock {
 	
 	
 	
-	public static Error insertTransferStock(Domain domain,Vector<StockInfo> stock, TransferInfo ti,AuditInfo ai, String login){
+	public Error insertTransferStock(Domain domain,Vector<StockInfo> stock, TransferInfo ti,AuditInfo ai, String login){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
@@ -675,7 +674,7 @@ public class DBStock {
 		}
 	}
 	
-	public static void updateStock(AONContext ctx, Integer stockId, Integer itemId, Double quantity, Integer warehouseId){
+	public void updateStock(AONContext ctx, Integer stockId, Integer itemId, Double quantity, Integer warehouseId){
 		ctx.getDslContext().update(STOCK)
 			.set(STOCK.ITEM, itemId)
 			.set(STOCK.QUANTITY, quantity)
@@ -683,7 +682,7 @@ public class DBStock {
 			.where(STOCK.ID.eq(stockId)).execute();
 	}
 
-	public static Vector<StockInfo> getStocks(Domain domain,Integer wid, Condition c, boolean onlyNonCero, String login) {
+	public Vector<StockInfo> getStocks(Domain domain,Integer wid, Condition c, boolean onlyNonCero, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -718,7 +717,6 @@ public class DBStock {
 					}
 					
 					si.setQuantity(d.value4());
-					String[] s = getWarehouseComments(ctx.getDslContext(), d.value3());
 					si.setProductId(d.value5());
 					si.setProductName(i.getProduct().getName());
 					v.add(si);					
@@ -730,7 +728,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<StockInfo> getInventoryClosed(Domain domain, Integer inventoryId, Condition c, String login) {
+	public Vector<StockInfo> getInventoryClosed(Domain domain, Integer inventoryId, Condition c, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -763,7 +761,7 @@ public class DBStock {
 			if (ctx != null) ctx.close();
 		}
 	}
-	public static String[] getWarehouseComments(DSLContext dslContext, Integer id ){
+	public String[] getWarehouseComments(DSLContext dslContext, Integer id ){
 		
 		Result<Record2<String, String>> data = dslContext.select(WAREHOUSE_TRANSFER.COMMENTS,WAREHOUSE_TRANSFER.SERIES)
 			.from(WAREHOUSE_TRANSFER)
@@ -779,15 +777,15 @@ public class DBStock {
 		
 	}
 	
-	public static Tag getTag(Domain domain, String login, Integer id){
+	public Tag getTag(Domain domain, String login, Integer id){
 		return AON.getTag(domain.getName(), domain.getId(), login, id);
 	}
 
-	public static Item getItem(Domain domain, String login, Integer id ){
+	public Item getItem(Domain domain, String login, Integer id ){
 		return AON.getItem(domain.getName(), domain.getId(), login, id);
 	}
 
-	public static Boolean checkSeries(Domain domain, Series s, Warehouse w, Warehouse w2, String login){
+	public Boolean checkSeries(Domain domain, Series s, Warehouse w, Warehouse w2, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -814,7 +812,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Series getSeries(Domain domain, String serie, String login){
+	public Series getSeries(Domain domain, String serie, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -839,7 +837,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<Series> getSeries(Domain domain, Warehouse warehouse, Workplace workplace, String login){
+	public Vector<Series> getSeries(Domain domain, Warehouse warehouse, Workplace workplace, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -867,7 +865,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<Series> getSeries(Domain domain, String login){
+	public Vector<Series> getSeries(Domain domain, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(),  login);
@@ -895,7 +893,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Warehouse getWarehouse(Domain domain, User user, String warehouse){
+	public Warehouse getWarehouse(Domain domain, User user, String warehouse){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -931,7 +929,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<Warehouse> getWarehouse(Domain domain, User user){
+	public Vector<Warehouse> getWarehouse(Domain domain, User user){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -969,7 +967,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<Warehouse> getWarehouse(Domain domain, User user, Integer workplaceId){
+	public Vector<Warehouse> getWarehouse(Domain domain, User user, Integer workplaceId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -1011,7 +1009,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<StockInfo> getProposal(Domain domain, Integer proposalId, String login){
+	public Vector<StockInfo> getProposal(Domain domain, Integer proposalId, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -1054,7 +1052,7 @@ public class DBStock {
 		}
 	}
 	
-	public static Vector<StockInfo> getIncome(Domain domain, Integer incomeId, String login){
+	public Vector<StockInfo> getIncome(Domain domain, Integer incomeId, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);

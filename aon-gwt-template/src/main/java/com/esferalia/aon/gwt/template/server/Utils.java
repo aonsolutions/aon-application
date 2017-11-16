@@ -28,13 +28,11 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Utils {
@@ -458,15 +456,13 @@ public class Utils {
 		
 	}
 	
-	public static Double getValCost(AONContext ctx, Double quantity, Item item, String login, Integer workplaceId, Integer warehouseId, Date inventoryDate){
-		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_VALUATION_METHOD);
-		switch (ap != null ? ap.getValue() : "0") {
-			case "0": return quantity != 0 ? item.getPurchasePrice() : 0.0;
-			case "1": return getLastPurchasePrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId, inventoryDate);
-			case "2": return getAveragePurchasePrice(ctx, item, quantity, login, workplaceId, warehouseId, inventoryDate);
-			case "3": return getFifoPrice(ctx.getDomainName(), item, quantity, login, workplaceId, warehouseId, inventoryDate);	
-			default : return quantity != 0 ? item.getPurchasePrice() : 0.0;
-		}
+	public static Double getValCost(String domainName, Double quantity, Item item, String login, Integer workplaceId, Integer warehouseId, Date inventoryDate, ApplicationParameter ap){
+		if(ap != null && ap.getValue() != null && !"0".equals(ap.getValue())) {
+			if("1".equals(ap.getValue())) return getLastPurchasePrice(domainName, item, quantity, login, workplaceId, warehouseId, inventoryDate);
+			else if("2".equals(ap.getValue())) return getAveragePurchasePrice(domainName, item, quantity, login, workplaceId, warehouseId, inventoryDate);
+			else if("3".equals(ap.getValue())) return getFifoPrice(domainName, item, quantity, login, workplaceId, warehouseId, inventoryDate);
+		} 
+		return quantity != 0 ? item.getPurchasePrice() : 0.0;
 	}
 	
 	public static Double getLastPurchasePrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
@@ -501,15 +497,13 @@ public class Utils {
 		else return date1.compareTo(date2) < 0 ? price1 : price2;
 	}
 	
-	public static Double getAveragePurchasePrice(AONContext ctx, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
+	public static Double getAveragePurchasePrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0;
 		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
 					
-		String domainName = ctx.getDomainName();
 		Integer domainId = item.getDomain();
-		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.AON_PRODUCT_AVERAGE_MONTHS);
-		
+		ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, AppParam.AON_PRODUCT_AVERAGE_MONTHS);
 		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		

@@ -158,21 +158,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Vector<Warehouse> getWarehousesToConsumption(Domain domain, Integer workplaceId){
-		return DBStock.getWarehouse(domain, getUser(), workplaceId);
-		/* TODO
-		Vector<Warehouse> v = DBStock.getWarehouse(domain, getUser(), workplaceId);
-		Vector<Warehouse> v2 = new Vector<Warehouse>();
-		for (Warehouse w : v) {
-			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, w.getId(), getUser().getLogin());
-			if(ci.getInitialId() != null && ci.getFinalId() != null)
-				v2.add(w);
-		}
-		return v2;
-		*/
+		return DBStock.getInstance().getWarehouse(domain, getUser(), workplaceId);
 	}
 	
 	public Vector<Warehouse> getWarehousesToConsumption(Domain domain){
-		Vector<Warehouse> v = DBStock.getWarehouse(domain, getUser());
+		Vector<Warehouse> v = DBStock.getInstance().getWarehouse(domain, getUser());
 		Vector<Warehouse> v2 = new Vector<Warehouse>();
 		for (Warehouse w : v) {
 			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, w.getId(), getUser().getLogin());
@@ -183,7 +173,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Vector<Warehouse> getWarehouses(Domain domain){
-		return DBStock.getWarehouse(domain, getUser());
+		return DBStock.getInstance().getWarehouse(domain, getUser());
 	}
 	
 	public TemplateInfo newTemplate(Domain domain, TemplateInfo ti ){
@@ -786,7 +776,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
-			error = DBStock.insertProposal(domain, stock,proposal,ai,workplace, getUser().getLogin());
+			error = DBStock.getInstance().insertProposal(domain, stock,proposal,ai,workplace, getUser().getLogin());
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -825,10 +815,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		Integer domId;
 		if (ti.getDomainId().equals(0)) domId = domain.getId(); 
 		else domId = ti.getDomainId();
-		
-		if(warehouse1 != null && !warehouse1.equals("-")) w = DBStock.getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse1);
-		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse2);
-		s = DBStock.getSeries(domain, series, getUser().getLogin());
+		// DBSTOCK GET WAREHOUSE TARDA!! EL 1
+		if(warehouse1 != null && !warehouse1.equals("-")) w = DBStock.getInstance().getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse1);
+		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getInstance().getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse2);
+		s = DBStock.getInstance().getSeries(domain, series, getUser().getLogin());
 
     	//Boolean b = true;
 
@@ -974,17 +964,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-			//String domain = AonUtil.getDomainName();
 			AuditInfo ai = new AuditInfo();
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
-			error = DBStock.insertStock2(domain.getName(), domain.getId(), new Vector<>(stockMap.values()) ,transferInfo, inventoryId,ai, getUser().getLogin());
-
-	        //insertar STOCK en base de datos.!!
+			error = DBStock.getInstance().insertStock(domain.getName(), domain.getId(), new Vector<>(stockMap.values()) ,transferInfo, inventoryId,ai, getUser().getLogin());
 		}
 		else{
-			//Alguna de las filas contiene datos erroneos.
 			error.setError(false);
  			error.setTextError(verror);
 		}	
@@ -1005,7 +991,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			v.addAll(stockMap.values());
-			error = DBStock.insertTransferStock(domain,v,transferInfo,ai, getUser().getLogin());
+			error = DBStock.getInstance().insertTransferStock(domain,v,transferInfo,ai, getUser().getLogin());
 
 	        //insertar STOCK en base de datos.!!
 		}
@@ -1125,9 +1111,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain, String warehouse){
-		Warehouse w = DBStock.getWarehouse(domain, getUser(),warehouse);
+		Warehouse w = DBStock.getInstance().getWarehouse(domain, getUser(),warehouse);
 		Workplace workplace = DBCatalogue.getWorkplace(domain, getUser(), w.getWorkplace());
-		Vector<Series> series = DBStock.getSeries(domain,w, workplace,getUser().getLogin());
+		Vector<Series> series = DBStock.getInstance().getSeries(domain,w, workplace,getUser().getLogin());
 
 		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
@@ -1138,9 +1124,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		});
 		return seriesCode;
 	}
+	
 	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain){
 		Vector<Series> series = new Vector<Series>();
-		series = DBStock.getSeries(domain, getUser().getLogin());
+		series = DBStock.getInstance().getSeries(domain, getUser().getLogin());
 		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
 			com.esferalia.aon.gwt.template.shared.Series serie = new com.esferalia.aon.gwt.template.shared.Series();
