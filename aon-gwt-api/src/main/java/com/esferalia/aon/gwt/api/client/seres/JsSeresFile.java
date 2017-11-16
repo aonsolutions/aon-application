@@ -26,6 +26,10 @@ public class JsSeresFile extends JavaScriptObject {
 		return this.reference_code;
 	}-*/;
 
+	public final native String getAddress() /*-{
+		return this.address;
+	}-*/;
+	
 	public final native String getDate() /*-{
 		return this.date;
 	}-*/;

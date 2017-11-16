@@ -376,7 +376,7 @@ abstract class FtpConnector {
 				System.out.println("ERROR: the file is not uploaded successfully.");
 				throw new FtpException("Ha ocurrido un error en la transmision del fichero");
 			}
-			completed = ftp.completePendingCommand();
+//			completed = ftp.completePendingCommand();
 		}
 	}
 	

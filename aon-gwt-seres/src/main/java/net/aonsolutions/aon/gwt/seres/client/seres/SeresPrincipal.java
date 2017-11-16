@@ -303,5 +303,9 @@ public class SeresPrincipal extends Composite{
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
+
+	public void consoleLog(String string) {
+		parent.consoleLog(string);
+	}
 	
 }

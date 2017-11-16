@@ -10,8 +10,10 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.seres.JsSeresFile;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.TextCell;
@@ -206,32 +208,24 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 				return selectionModel.isSelected(object);
 			}
 		};
-
-//		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
-		dataGrid.addColumn(checkColumn, "");
-		dataGrid.setColumnWidth(checkColumn, 40, Unit.PX);
 		
 		/** Code Column **/
-		Column<JsSeresFile, String> codeColumn = new Column<JsSeresFile, String>(new TextCell()) {
+		Column<JsSeresFile, String> referenceCodeColumn = new Column<JsSeresFile, String>(new TextCell()) {
 
 			@Override
 			public String getValue(JsSeresFile object) {
 				return object.getReferenceCode();
 			}
-		
 		};
-		codeColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		codeColumn.setSortable(true); 
-		sortHandler.setComparator(codeColumn,new Comparator<JsSeresFile>() {
+		referenceCodeColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		referenceCodeColumn.setSortable(true); 
+		sortHandler.setComparator(referenceCodeColumn,new Comparator<JsSeresFile>() {
 			
 			@Override
 			public int compare(JsSeresFile o1, JsSeresFile o2) {
 				return o1.getReferenceCode().compareTo(o2.getReferenceCode());
 			}
 		});
-		dataGrid.getColumnSortList().push(codeColumn);
-		dataGrid.addColumn(codeColumn, "Codigo");
-		dataGrid.setColumnWidth(codeColumn, 10, Unit.PCT);
 
 		/** Date Column **/
 		Column<JsSeresFile, String> taxDateColumn = new Column<JsSeresFile, String>(new TextCell()) {
@@ -250,31 +244,42 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 				return o1.getDate().compareTo(o2.getDate());
 			}
 		});
-		dataGrid.getColumnSortList().push(taxDateColumn);
-		dataGrid.addColumn(taxDateColumn, "Fecha");
-		dataGrid.setColumnWidth(taxDateColumn, 10, Unit.PCT);
-		
+
 		/** Name Column **/
-		Column<JsSeresFile, String> contraparteColumn = new Column<JsSeresFile, String>(new TextCell()) {
+		Column<JsSeresFile, String> customerColumn = new Column<JsSeresFile, String>(new TextCell()) {
 
 			@Override
 			public String getValue(JsSeresFile object) {
 				return object.getRegistryName();
 			}
-		
 		};
-		contraparteColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		contraparteColumn.setSortable(true); 
-		sortHandler.setComparator(contraparteColumn,new Comparator<JsSeresFile>() {
+		customerColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		customerColumn.setSortable(true); 
+		sortHandler.setComparator(customerColumn,new Comparator<JsSeresFile>() {
 			
 			@Override
 			public int compare(JsSeresFile o1, JsSeresFile o2) {
 				return o1.getRegistryName().compareTo(o2.getRegistryName());
 			}
 		});
-		dataGrid.getColumnSortList().push(contraparteColumn);
-		dataGrid.addColumn(contraparteColumn, "Cliente");
-		dataGrid.setColumnWidth(contraparteColumn, 40, Unit.PCT);
+		
+		/** Address Column **/
+		Column<JsSeresFile, String> addressColumn = new Column<JsSeresFile, String>(new TextCell()) {
+			
+			@Override
+			public String getValue(JsSeresFile object) {
+				return object.getAddress();
+			}
+		};
+		addressColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		addressColumn.setSortable(true); 
+		sortHandler.setComparator(addressColumn,new Comparator<JsSeresFile>() {
+			
+			@Override
+			public int compare(JsSeresFile o1, JsSeresFile o2) {
+				return o1.getAddress().compareTo(o2.getAddress());
+			}
+		});
 	
 		/** Status Column **/
 		Column<JsSeresFile, String> statusColumn = new Column<JsSeresFile, String>(new TextCell()) {
@@ -293,7 +298,6 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 //				return object.getSiiStatus();
 				return "";
 			}
-		
 		};
 		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		statusColumn.setSortable(true); 
@@ -304,10 +308,30 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 				return o1.getStatus().compareTo(o2.getStatus());
 			}
 		});
-		dataGrid.getColumnSortList().push(statusColumn);
-		dataGrid.addColumn(statusColumn, "Estado");
-		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
 		
+		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
+//		dataGrid.addColumn(checkColumn, "");
+		dataGrid.addColumn(referenceCodeColumn, AON.MSG.number());
+		dataGrid.addColumn(taxDateColumn, AON.MSG.date());
+		dataGrid.addColumn(customerColumn, "Cliente");
+		// TODO addressColumn
+//		dataGrid.addColumn(addressColumn, AON.MSG.address());
+		dataGrid.addColumn(statusColumn, AON.MSG.status());
+		
+		dataGrid.getColumnSortList().push(taxDateColumn);
+		dataGrid.getColumnSortList().push(customerColumn);
+		// TODO addressColumn
+//		dataGrid.getColumnSortList().push(addressColumn);
+		dataGrid.getColumnSortList().push(statusColumn);
+		dataGrid.getColumnSortList().push(referenceCodeColumn);
+		
+		dataGrid.setColumnWidth(checkColumn, 40, Unit.PX);
+		dataGrid.setColumnWidth(referenceCodeColumn, 10, Unit.PCT);
+		dataGrid.setColumnWidth(taxDateColumn, 10, Unit.PCT);
+		dataGrid.setColumnWidth(customerColumn, 15, Unit.PCT);
+		// TODO addressColumn
+//		dataGrid.setColumnWidth(addressColumn, 25, Unit.PCT);
+		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);		
 	}
 	
 	public final class CheckboxHeader extends Header<Boolean> {
@@ -363,8 +387,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 			Window.alert("En desarrollo...");
 //			sendDeliveries();
 		} else if(action.equals(parent.parent.OUTCOME_INVOICE)){
-			Window.alert("En desarrollo...");
-//			sendInvoices();
+			sendInvoices();
 //		} else if(parent.command.equals(SeresMain.INGENET_DELIVERY)){
 //			Window.alert("En desarrollo...");
 		}
@@ -395,7 +418,6 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		
 	}
 
-	// TODO 
 	private void sendInvoices() {
 		VerticalPanel vp = new VerticalPanel();
 		if(selFiles.size()==1)
@@ -415,32 +437,34 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 			protected void onAccept() {
 				HashMap<String, LinkedList<String>> map =  new HashMap<>();
 				LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
-				map.put("id", list);
-//		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
-//					
-//					@Override
-//					public void onSuccess(JSON<JsObject> result) {
-//						VerticalPanel vp = new VerticalPanel();
-//						result.getData().stream().forEach(r -> {
-//							Label label = new Label(r.getName());
-//							String str = r.getId() + "";
-//							String color = "red";
-//							if(str.equals("200")) color = "green";
-//							else if(str.substring(0, 1).equals("2")) color = "orange";
-//							label.getElement().getStyle().setColor(color);
-//							vp.add(label);
-//						});
-//						parent.errorPanel.setWidget(vp);
-//						parent.tabLayout.selectTab(0);
-//						parent.openFootPanel();
-//						parent.gridContent();
-//					}
-//					
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						
-//					}
-//				});
+				map.put("id_list", list);
+				parent.consoleLog("selFiles.size -> " + list.size());
+				
+				getAPI().getSeres().sendInvoices(map, new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						VerticalPanel vp = new VerticalPanel();
+						result.getData().stream().forEach(r -> {
+							Label label = new Label(r.getName());
+							String str = r.getId() + "";
+							String color = "red";
+							if(str.equals("200")) color = "green";
+							else if(str.substring(0, 1).equals("2")) color = "orange";
+							label.getElement().getStyle().setColor(color);
+							vp.add(label);
+						});
+						parent.errorPanel.setWidget(vp);
+						parent.tabLayout.selectTab(0);
+						parent.openFootPanel();
+						parent.gridContent();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				});
 			}
 		};
 		dialog.center();
