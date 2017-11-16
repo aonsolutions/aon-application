@@ -48,7 +48,7 @@ public class Mod349DAO {
 			.join(DOMAIN).on(FS_MOD349.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MOD349.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
 			.orderBy(FS_MOD349.YEAR.desc()
-					,getDueMonth().asc()  // Se ordena por el mes hasta del periodo, por que en un mismo ejercicio podrían coincidir varias periodicidades (trimestral y mensual, por ejemplo)
+					,getDueMonth().desc()  // Se ordena por el mes hasta del periodo, por que en un mismo ejercicio podrían coincidir varias periodicidades (trimestral y mensual, por ejemplo)
 					,FS_MOD349.NAME.asc()
 					,FS_MOD349.COMPLEMENTARY.asc()
 					,FS_MOD349.REPLACEMENT.asc())
@@ -180,7 +180,8 @@ public class Mod349DAO {
 						
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MOD349)
-				.where(FS_MOD349.YEAR.equal(mod349.getYear())
+				.where(FS_MOD349.DOMAIN.equal(mod349.getDomain())
+						.and(FS_MOD349.YEAR.equal(mod349.getYear()))
 						.and(FS_MOD349.PERIOD.equal(mod349.getPeriod().getValue()))
 						.and(FS_MOD349.ADMINISTRATION.equal(mod349.getAdministration().getValue()))
 						.and(FS_MOD349.REPLACEMENT.equal( ONE_BYTE ))
@@ -214,7 +215,8 @@ public class Mod349DAO {
 			// Se comprueba que no exista ya una declaración, para el perido indicado
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MOD349)
-				.where(FS_MOD349.YEAR.equal(mod349.getYear())
+				.where(FS_MOD349.DOMAIN.equal(mod349.getDomain())
+						.and(FS_MOD349.YEAR.equal(mod349.getYear()))
 						.and(FS_MOD349.PERIOD.equal(mod349.getPeriod().getValue()))
 						.and(FS_MOD349.ADMINISTRATION.equal((byte) mod349.getAdministration().getValue()))
 						.and(FS_MOD349.REPLACEMENT.equal(ZERO_BYTE))
