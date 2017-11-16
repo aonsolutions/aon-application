@@ -321,8 +321,15 @@ public abstract class AbstractSQLTestCase {
 			String quoteExpression, 
 			String irpfExpression,
 			SalaryType salaryType) {
-		addSSRegimePayment(aonContext, ssRegimetype, startDate, null, paymentType, expression, quoteExpression,
-				irpfExpression, null);
+		addSSRegimePayment(aonContext, 
+				ssRegimetype, 
+				startDate, 
+				null, 
+				paymentType, 
+				expression, 
+				quoteExpression,
+				irpfExpression, 
+				salaryType);
 	}
 
 	protected final void addSSRegimePayment(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
