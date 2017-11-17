@@ -27,6 +27,7 @@ import org.jooq.CaseConditionStep;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
+import org.jooq.InsertValuesStep10;
 import org.jooq.InsertValuesStep12;
 import org.jooq.InsertValuesStep13;
 import org.jooq.InsertValuesStep4;
@@ -49,6 +50,7 @@ import com.esferalia.aon.gwt.template.server.StockInfo;
 import com.esferalia.aon.gwt.template.server.TransferInfo;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.jooq.tables.records.InventoryDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ProposalDetailRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
@@ -75,6 +77,7 @@ public class DBStock {
 
 	private CaseConditionStep<Double> caseA;
 	private CaseConditionStep<Double> caseB;
+	private InsertValuesStep10<InventoryDetailRecord, Double, Double, Double, Integer, Integer, Integer, Timestamp, String, Timestamp, String> insert;
 	
 	public Error insertStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti, Integer inventoryId, AuditInfo ai, String login){
 		Error error = new Error();
@@ -89,6 +92,8 @@ public class DBStock {
 			Vector<String> v = new Vector<String>();
 			caseA =null;
 			caseB =null;
+			insert = ctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM
+					, INVENTORY_DETAIL.CREATION_DATE, INVENTORY_DETAIL.CREATION_USER, INVENTORY_DETAIL.MODIFICATION_DATE, INVENTORY_DETAIL.MODIFICATION_USER);
 			LinkedList<Integer> idList = new LinkedList<>(); 
 			
 			AONContext sctx = ctx;
@@ -170,10 +175,7 @@ public class DBStock {
 							caseB = caseB != null ? caseB.when(INVENTORY_DETAIL.ITEM.eq(itemId), cost)
 									: DSL.decode().when(INVENTORY_DETAIL.ITEM.eq(itemId), cost);
 						}else{
-							sctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM
-									, INVENTORY_DETAIL.CREATION_DATE, INVENTORY_DETAIL.CREATION_USER, INVENTORY_DETAIL.MODIFICATION_DATE, INVENTORY_DETAIL.MODIFICATION_USER)
-								.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId, new Timestamp(new java.util.Date().getTime()), "system", new Timestamp(new java.util.Date().getTime()), "system")
-								.execute() ;
+							insert = insert.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId, new Timestamp(new java.util.Date().getTime()), "system", new Timestamp(new java.util.Date().getTime()), "system");
 						}
 					}
 				}
@@ -200,6 +202,7 @@ public class DBStock {
 				.set(INVENTORY_DETAIL.MODIFICATION_USER, "system")
 				.where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).and(INVENTORY_DETAIL.DOMAIN.eq(domainId))
 				.and(INVENTORY_DETAIL.ITEM.in(idList.toArray(new Integer[idList.size()]))).execute();
+				insert.execute();
 			}
 			return error;
 		}finally {

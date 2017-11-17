@@ -1,17 +1,22 @@
 package com.code.aon.ui.warehouse.controller;
 
+import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.jooq.CaseConditionStep;
+import org.jooq.InsertValuesStep4;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +48,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.WarehouseTransfer;
 import com.code.aon.warehouse.enumeration.InventoryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -378,6 +384,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		return wt;
 	}
 	
+	private CaseConditionStep<Double> updateWT;
 	private void createWarehouseTransfer( Inventory inventory, boolean newElements ) throws ManagerBeanException {
 		List<InventoryDetail> details = getDetails(inventory, newElements);
 		if (! details.isEmpty() ) {
@@ -386,22 +393,37 @@ public class InventoryController extends BasicController implements IAuditableCo
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
 			String user = AonUtil.getRemoteUser();
-			
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, user);
+				
+				updateWT = null;
+				LinkedList<Integer> idList = new LinkedList<>();
+				InsertValuesStep4<StockRecord, Integer, Integer, Double, Integer> insert = ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
+				details.stream().forEach(d -> {
+					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stock = AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(wt.getTargetWarehouse().getId())
+							.and(f.getItemProperty().eq(d.getItem().getId()))).findFirst();
+					if(stock.isPresent()) {
+						idList.add(stock.get().getId());
+						updateWT = updateWT != null ? updateWT.when(STOCK.ID.eq(stock.get().getId()), d.getRealQuantity())
+								: DSL.decode().when(STOCK.ID.eq(stock.get().getId()), d.getRealQuantity());
+					} else {
+						insert.values(domainId, d.getItem().getId(), d.getRealQuantity(), wt.getTargetWarehouse().getId());
+					}
+				});
+				if(updateWT != null) {
+					ctx.getDslContext().update(STOCK).set(STOCK.QUANTITY, updateWT.otherwise(0.0))
+					.where(STOCK.WAREHOUSE.eq( wt.getTargetWarehouse().getId()))
+					.and(STOCK.DOMAIN.eq(domainId))
+					.and(STOCK.ID.in(idList.toArray(new Integer[idList.size()])))
+					.execute();
+				}
+				insert.execute();
+			}finally {
+				if(ctx != null) ctx.close();
+			}
 			AON.insertWarehouseTransferDetail(domainName, domainId, user, 
 				details.stream().map(detail -> {
-					AONContext ctx = null;
-					try {
-						ctx = AONContext.getAONContext(domainName, domainId, user);
-						if(wt.getTargetWarehouse() != null){
-							ctx.getDslContext().update(STOCK)
-								.set(STOCK.QUANTITY, detail.getRealQuantity())
-								.where(STOCK.WAREHOUSE.eq(wt.getTargetWarehouse().getId()))
-								.and(STOCK.ITEM.eq(detail.getItem().getId()))
-								.execute();
-						}
-					} finally {
-						if(ctx != null) ctx.close();
-					}
 					return new WarehouseTransferDetail()
 						.setDomain(detail.getDomain())
 						.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(detail.getItem().getId()))
@@ -409,15 +431,19 @@ public class InventoryController extends BasicController implements IAuditableCo
 						.setWarehouseTransfer(new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer().setId(wt.getId()));
 				})
 			);
+			
 		}	
 	}
 	
+	private CaseConditionStep<Double> updateID;
 	public void onStartAdjustment(ActionEvent event) {		
 		Inventory inventory = (Inventory) getTo();
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getRemoteUser();
-		
+
+		updateID = null;
+		LinkedList<Integer> idList = new LinkedList<>();
 		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 		
 		AON.getInventoryDetailStream(domainName, domainId, user, f -> f.getInventoryProperty().eq(inventory.getId()))
@@ -427,19 +453,24 @@ public class InventoryController extends BasicController implements IAuditableCo
 					inventory.getWarehouse().getWorkPlace().getId() : null;
 			Double cost = getCost(id, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap);
 			if(!cost.equals(id.getCost())) {
-				AONContext ctx = null;
-				try {
-					ctx = AONContext.getAONContext(domainName, domainId, user);
-					ctx.getDslContext().update(com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL)
-						.set(com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL.COST, cost)
-						.where(com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL.ID.eq(id.getId()))
-						.execute();
-				} finally {
-					if(ctx != null) ctx.close();
-				}
+				idList.add(id.getId());
+				updateID = updateID != null ? updateID.when(INVENTORY_DETAIL.ID.eq(id.getId()), cost)
+						: DSL.decode().when(INVENTORY_DETAIL.ID.eq(id.getId()), cost);
 			}
 		});
-		
+		if(updateID != null) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, user);
+				ctx.getDslContext().update(INVENTORY_DETAIL).set(INVENTORY_DETAIL.COST, updateID.otherwise(0.0))
+				.where(INVENTORY_DETAIL.INVENTORY.eq(inventory.getId()))
+				.and(INVENTORY_DETAIL.DOMAIN.eq(domainId))
+				.and(INVENTORY_DETAIL.ID.in(idList.toArray(new Integer[idList.size()])))
+				.execute();
+			} finally {
+				if(ctx != null) ctx.close(); 
+			}
+		}
 		try {
 			getManagerBean().update(inventory);
 		} catch (ManagerBeanException e) {
