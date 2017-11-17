@@ -433,11 +433,11 @@ public abstract class QuoteCalculator {
 			if (AonStringUtils.equals(PREST_IT, name)) {
 				
 				GeneralQuote.this.rawCgcBase += quote;
-				add(CGC_BASE.getName(), quote, context, start, end);
-				add(CGC_BASE_RAW.getName(), quote, context, start, end);
+				set(CGC_BASE.getName(), quote, context, start, end);
+				set(CGC_BASE_RAW.getName(), quote, context, start, end);
 				
-				add(CGP_BASE.getName(), quote, context, start, end);
-				add(CGP_BASE_RAW.getName(), quote, context, start, end);
+				set(CGP_BASE.getName(), quote, context, start, end);
+				set(CGP_BASE_RAW.getName(), quote, context, start, end);
 				
 				add(String.format("BASE_%s", name), quote, context, start, end);
 				quotesImpl.add(new TimedResult<Double>(quote, new Period(start,end), Collections.emptyMap()));
@@ -862,6 +862,35 @@ public abstract class QuoteCalculator {
 
 	}
 	
+	private static void set(String name, Double value, ExpressionContext ctx,
+			Date start, Date end) {
+
+		List<ITimedVariable<Double>> vars = ctx.getVariables(name, start, end);
+
+		List<Period> valuePeriods = new ArrayList<Period>();
+
+		long valueDays = AonDateUtils.getDaysBetweenDates(start, end) + 1;
+
+		Double valueDay = value / valueDays;
+
+		for (ITimedVariable<Double> var : vars) {
+			Period period = var.getPeriod();
+			valuePeriods.add(period);
+			long days = AonDateUtils.getDaysBetweenDates(period.getStart(),
+					period.getEnd()) + 1;
+			ctx.putVariable(name, new BaseVariable(
+					(valueDay * days), period));
+		}
+
+		List<Period> nullPeriods = Period.sub(new Period(start, end),
+				valuePeriods);
+		for (Period period : nullPeriods) {
+			long days = AonDateUtils.getDaysBetweenDates(period.getStart(),
+					period.getEnd()) + 1;
+			ctx.putVariable(name,
+					new BaseVariable(valueDay * days, period));
+		}
+	}
 
 	private static List<ITimedResult<Double>> limit(
 			ContextVariable limitVar, 
