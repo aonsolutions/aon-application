@@ -38,17 +38,16 @@
 				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:north>
+		<g:north size="110">
+			<g:SimpleLayoutPanel height="109px" ui:field="north" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonNoPrint}">
+				<stat:StatFilter ui:field="filter"/>
+			</g:SimpleLayoutPanel>
+		</g:north>
 		<g:center>
 			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-				<g:north size="98">
-					<g:ScrollPanel ui:field="north" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonNoPrint}">
-						<stat:StatFilter ui:field="filter"/>
-					</g:ScrollPanel>
-				</g:north>
 				<g:center>
 					<g:SimpleLayoutPanel ui:field="content" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonHeightAll}"/>
 				</g:center>
-				
 				<g:south size="30">
 					<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
 						<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">

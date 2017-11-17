@@ -1,8 +1,10 @@
 package com.code.aon.webservice.stat;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -116,9 +118,14 @@ public class StatServlet extends HttpServlet{
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	private StatParams params(HttpServletRequest req) {
 		StatParams params = new StatParams();
-		params.setFilterMap((HashMap<String, String[]>) req.getParameterMap());
+		@SuppressWarnings("rawtypes")
+		Map paramsMap = req.getParameterMap();
+		HashMap<String, String[]> filterMap = new  HashMap<String, String[]>();
+		filterMap.putAll(paramsMap);
+		params.setFilterMap( filterMap );
 		if(req.getParameter("from") != null && !"".equals(req.getParameter("from"))){
 			params.setFrom(new Date(Long.parseLong(req.getParameter("from"))));
 		} else params.setFrom(new Date());
@@ -126,9 +133,9 @@ public class StatServlet extends HttpServlet{
 	}
 	
 	public static IssueFilter getFilter(Domain domain, String userName, HttpServletRequest req){
-		Date from = new Date();from.setHours(0);
+		Date from = AonDateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
 		from = AonDateUtils.addYears(from, -1);
-		Date to = new Date();to.setHours(0);
+		Date to = AonDateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
 		
 		if(req.getParameter("from") != null && !MSG.EMPTY.equals(req.getParameter("from"))){
 			from = AonDateUtils.simpleParse(req.getParameter("from"));

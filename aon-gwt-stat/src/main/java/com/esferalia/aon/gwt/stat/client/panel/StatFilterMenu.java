@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class StatFilterMenu extends PopupPanel implements HasSelectionHandlers<StatFilterItem>{
 		private FlowPanel container;
+		private int itemsSelected;
 		
 		public StatFilterMenu() {
 			super();
@@ -54,9 +55,11 @@ public class StatFilterMenu extends PopupPanel implements HasSelectionHandlers<S
 				public void onClick(ClickEvent event) {
 					item.setSelected( !item.isSelected() );
 					if(item.isSelected()){
+						itemsSelected = itemsSelected + 1;
 						itemPanel.addStyleName(AON.AON_CSS.aonStatCheckyes());
 						itemPanel.removeStyleName(AON.AON_CSS.aonListStat());
 					}else{
+						itemsSelected = itemsSelected - 1;
 						itemPanel.removeStyleName(AON.AON_CSS.aonStatCheckyes());
 						itemPanel.addStyleName(AON.AON_CSS.aonListStat());
 					}
@@ -71,5 +74,9 @@ public class StatFilterMenu extends PopupPanel implements HasSelectionHandlers<S
 	    public HandlerRegistration addSelectionHandler(SelectionHandler<StatFilterItem> handler) {
 			return super.addHandler(handler, SelectionEvent.getType());
 	    }       
-		
+
+		public int getItemsSelected() {
+			return itemsSelected;
+		}
+
 	}

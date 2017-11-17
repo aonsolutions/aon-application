@@ -86,7 +86,7 @@ public class StatControlPanel extends MainEntryPoint {
 	@UiField
 	Button invoices;
 	@UiField
-	ScrollPanel north;
+	SimpleLayoutPanel north;
 	@UiField
 	StatFilter filter;
 	@UiField

@@ -25,6 +25,20 @@ public class StatFilterItem implements Serializable {
 				statFilterItemVisitor.visitProductCategoryCondition(item);
 			}
 		 })
+		,PRODUCT_TAG("Etiquetas",new IFilterItemVisitor() {
+
+			@Override
+			public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
+				statFilterItemVisitor.visitProductTagCondition(item);
+			}
+		 })
+		,SEGMENT("Segmentaci\u00F3n",new IFilterItemVisitor() {
+
+			@Override
+			public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
+				statFilterItemVisitor.visitSegmentCondition(item);
+			}
+		 })
 		,WORKPLACE("Centro de trabajo",new IFilterItemVisitor() {
 
 			@Override

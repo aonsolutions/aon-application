@@ -71,7 +71,7 @@ public class RawDataTable extends ScrollPanel {
 		FMT.overrideFractionDigits(2, 2);
 
 		NumberFormat FMT2 = NumberFormat.getDecimalFormat();
-		FMT.overrideFractionDigits(4, 4);
+		FMT2.overrideFractionDigits(4, 4);
 
 		colIdx = 0;
 		for ( int col = 0; col < data.getNumberOfColumns();col++) {

@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 
 
@@ -198,7 +199,9 @@ public class ProductDAO {
 		return ctx.getDslContext().select()
 			.from(PRODUCT_TAG)
 			.where(PRODUCT_TAG_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new ProductTagFiller());
+			.fetch()
+			.stream()
+			.map(new ProductTagFiller());
 	}
 	
 	public static LinkedList<String> getProductTags(AONContext ctx){
@@ -210,6 +213,23 @@ public class ProductDAO {
 			.and(TAG.TYPE.eq( (byte) 1 ))
 			.fetch().stream().map( record -> record.getValue(TAG.NAME) )
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static Stream<Tag> getTags(AONContext ctx){
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select(TAG.ID,TAG.NAME)
+			.from(TAG)
+			.where(TAG.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.and(TAG.TYPE.eq( TagType.PRODUCT.value() ))
+			.orderBy(TAG.NAME)
+			.fetch()
+			.stream()
+			.map( record -> new Tag()
+						.setId(record.getValue(TAG.ID))
+						.setName(record.getValue(TAG.NAME))
+				)
+			;
 	}
 
 	public static LinkedHashMap<Integer,String[]> getProductTagMap(AONContext ctx) {

@@ -34,8 +34,8 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_stat</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/stat.xhtml</to-view-id>
+			<from-outcome>gwt_invoiceStat</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/invoiceStat.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -45,7 +45,7 @@
 			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/fee_projection.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- AON GWT WAREHOUSE -->
 	
 	<navigation-rule>

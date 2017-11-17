@@ -136,7 +136,15 @@ public class StatParams implements Serializable, Cloneable {
 			}
 			return (sales && other) || (!sales && !other);
 		}
-		return true;
+		return false;
+	}
+
+	public void clean() {
+		registry = null;
+		product = null;
+		for (StatFilterItem item : getFilterItems()) {
+			item.setSelected(false);
+		}
 	}
 	
 }

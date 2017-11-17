@@ -643,6 +643,15 @@ public class RegistryDAO {
 	
 	// ------------------------------------- RSEGMENT
 
+	public static Stream<Segment> getSegments(AONContext ctx){
+		return ctx.getDslContext().select().from(SEGMENT)
+				.where(SEGMENT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.orderBy(SEGMENT.NAME)
+				.fetchInto(SEGMENT)
+				.stream()
+				.map(new SegmentFiller());
+	}
+
 	public static Stream<Segment> getRSegmentStream(AONContext ctx, Integer registryId){
 		return ctx.getDslContext().select().from(RSEGMENT)
 				.join(SEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
