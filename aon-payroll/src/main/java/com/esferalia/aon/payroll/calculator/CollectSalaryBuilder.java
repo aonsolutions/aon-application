@@ -1,12 +1,15 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.payroll.ContractEmbargo;
+import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -23,7 +26,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<T> {
+public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<T>{
 
 	private Object contract;
 	private String ccc;
@@ -486,8 +489,6 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 
 	}
 	
-	
-	
 	public CollectSalaryBuilder() {
 		reset();
 	}
@@ -601,6 +602,32 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 		builder.getSalary();
 	}
 	
+	
+	public double getAllActiveDays() {
+		double quoteDays =
+		datas.stream()
+		.filter(data -> data.name.equals(ContextVariable.QUOTE_DAYS.getName()))
+		.map( data -> data.var.getValue(data.var.getPeriod() ) )
+		.collect(Collectors.summingDouble( value -> Double.parseDouble(value.toString()) ))
+		;
+		return quoteDays;
+	}
+	
+	public ITimedVariable<Double> getAllActiveDaysVar() {
+
+		return new ITimedVariable<Double>() {
+			
+			private Period period = new Period(startDate, endDate);
+			
+			@Override
+			public Period getPeriod() {
+				return period;
+			}
+			public Double getValue(Period period) {
+				return getAllActiveDays();
+			};
+		};
+	}
 	// --------------------------------------------------------- ISalaryBuilder
 
 	@Override
@@ -842,6 +869,8 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	}
 
 	
+	// ------------------------------------------------------------------------
+	
 	private void reset() {
 		
 		this.startDate = null;
@@ -876,5 +905,6 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 		zeroDeductions = new ArrayList<Deduction>();
 		
 	}
+	
 
 }

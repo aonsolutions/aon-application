@@ -65,6 +65,7 @@ public enum ContextVariable implements IResourceable{
 	STRIKE_DAYS("DIAS_HUELGA", VariableType.INTEGER, false),
 	ERE_DAYS("DIAS_ERE", VariableType.INTEGER, false),
 	GUARANTEED_DAYS("DIAS_GARANTIZADOS", VariableType.INTEGER, false),
+	ACTIVE_DAYS("DIAS_ALTA", VariableType.INTEGER, false),
 
 	//ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	//ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),

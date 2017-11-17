@@ -2029,7 +2029,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	
 	@Test
-	public void testManualPeriods() throws ExpressionException, SQLException,
+	public void testManualPeriodsI() throws ExpressionException, SQLException,
 	SalaryException{
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -2039,7 +2039,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
-				getToday(), 
+				getFirstDayOfYear(getToday()), 
 			new HashMap<String,String>(){
 			{
 				put(ContextVariable.TC2.getName(), "'100'");
@@ -2058,7 +2058,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		);
 		//@formatter:on
 
-		Date startDateI = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date startDateI = contract.getStartDate(); //add(getFirstDayOfMonth(getToday()), MONTH, 1)
+		;
 		Date endDateI = add( startDateI, DAY_OF_MONTH,9);
 		Date startDateII = add( endDateI, DAY_OF_MONTH,1);
 		Date endDateII = add( startDateII, DAY_OF_MONTH,9);
@@ -2083,11 +2084,14 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 						endDateIII,
 						endDateIII,
 						contract);
+		
 
 		CollectSalaryBuilder<ISalary> collectSalaryBuilder = new CollectSalaryBuilder<ISalary>();
 		
 		new ContractSalaryCalculator<ISalary>(collectSalaryBuilder).calculate(ctxI);
 		new ContractSalaryCalculator<ISalary>(collectSalaryBuilder).calculate(ctxII);
+		
+		ctxIII.getExpressionContext().putVariable(ContextVariable.ACTIVE_DAYS, collectSalaryBuilder.getAllActiveDaysVar());
 		new ContractSalaryCalculator<ISalary>(collectSalaryBuilder).calculate(ctxIII);
 
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
@@ -2114,16 +2118,21 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					Assert.assertEquals(1500.00 * 10 / 30.00,
 							Double.parseDouble(datas.get(0).getExpression()), DELTA);
 					// II
-					Assert.assertEquals(startDateI, datas.get(0).getStartDate());
-					Assert.assertEquals(endDateI, datas.get(0).getEndDate());
+					Assert.assertEquals(startDateII, datas.get(1).getStartDate());
+					Assert.assertEquals(endDateII, datas.get(1).getEndDate());
 					Assert.assertEquals(1500.00 * 10 / 30.00,
-							Double.parseDouble(datas.get(0).getExpression()), DELTA);
+							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
+					// III
+					Assert.assertEquals(startDateIII, datas.get(2).getStartDate());
+					Assert.assertEquals(endDateIII, datas.get(2).getEndDate());
+					Assert.assertEquals(1500.00 * 10 / 30.00,
+							Double.parseDouble(datas.get(2).getExpression()), DELTA);
 
 				});
 		;
 	}
-	// ------------------------------------------------------------------------
+
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);

@@ -6,6 +6,7 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoComm
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
 import static com.esferalia.aon.gwt.payroll.server.EnterprisesServiceImpl.getSSRegime;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTIVE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.DOMAIN;
@@ -3247,6 +3248,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				draft.setStartDate(section);
 			}
 			draft.setEndDate(endDate);
+			
+			draft.addDraftVariable(getActiveDaysVar(collectSalaryBuilder));
 			calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 			
 			collectSalaryBuilder.collect(salaryDraftBuilder);
@@ -3491,6 +3494,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				draft.setStartDate(section);
 			}
 			draft.setEndDate(endDate);
+			
+			draft.addDraftVariable(getActiveDaysVar(collectSalaryBuilder));
+		
 			calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
@@ -3523,7 +3529,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-
+	
+	
+	private static NumberVariable getActiveDaysVar (CollectSalaryBuilder<?> builder ) {
+		NumberVariable activeDays = new NumberVariable();
+		
+		ITimedVariable<Double> activeDaysVar = builder.getAllActiveDaysVar();
+		
+		activeDays.setImplicit(true);
+		activeDays.setScope(Scope.SYSTEM);
+		activeDays.setName(ACTIVE_DAYS.getName());
+		activeDays.setEndDate(null);
+		activeDays.setStartDate(activeDaysVar.getPeriod().getStart());
+		activeDays.setValue(activeDaysVar.getValue(activeDaysVar.getPeriod()));
+		
+		return activeDays;
+	}
+	
 	private static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
 			SalaryDraft draft, T salaryBuilder, L draftBuilder, ContractSalaryCalculator<ISalary> calculator) {
 

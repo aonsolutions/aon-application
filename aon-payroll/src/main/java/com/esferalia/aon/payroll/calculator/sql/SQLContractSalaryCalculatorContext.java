@@ -1797,6 +1797,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain);
 	}
 
+	protected double getActiveDays(Period p) {
+		
+		int startDay = AonDateUtils.get(p.getStart(), DAY_OF_MONTH);
+		//The first day of the month has value 1. ??? 
+		if ( startDay == 1 )
+			return 0.00; 
+		
+		Date start  = AonDateUtils.getFirstDayOfMonth(p.getStart());
+		Date end  = AonDateUtils.getLastDayOfMonth(p.getStart()); //AonDateUtils.add(p.getStart(), DAY_OF_MONTH,-1);
+		
+		return getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, start, end)
+		.stream().map( v -> (Double) v.getValue(v.getPeriod()) ).collect(Collectors.summingDouble( v -> v ))
+		;
+
+	}
+
 	protected AgreementKey getEnterpriseAgreementKey() {
 		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
 		Object domain = getObject(SQLConstants.ENTERPRISE, EnterpriseColumns.DOMAIN);
@@ -2675,7 +2691,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
-	private static long getAvailableDays(Date start, Date end) {
+	public static long getAvailableDays(Date start, Date end) {
 		long workedDays = CommonUtil.getDaysBetweenDates(start, end);
 		workedDays += 1;
 		return workedDays;
@@ -2780,21 +2796,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected double getWorkDays(ExpressionContext ctx, Period p) {
-
-		Long availableDays = getAvailableDays(Period.max(p.getStart(), contractStartDate),
-				Period.min(p.getEnd(), contractEndDate));
+		
+		Date workStart = Period.max(p.getStart(), contractStartDate);
+		Date workEnd = Period.min(p.getEnd(), contractEndDate);
+		
+		Long availableDays = getAvailableDays(workStart,workEnd);
 
 		// Long leaveDays = getLeaveDays(p);
 
 		double workedDays = availableDays /*- leaveDays*/;
 		workedDays *= 1.00 - getCurrentBindings().get(ERE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
 		workedDays -= getCurrentBindings().get(STRIKE_DAYS, obj -> ((Number) obj).doubleValue(), 0.00);
+		
+		double workEndDay = AonDateUtils.get(workEnd, DAY_OF_MONTH);
+		double monthDays = AonDateUtils.getMax(p.getStart(), DAY_OF_MONTH);
+		
+		if ( workEndDay < monthDays )
+			return workedDays; // Not the last period or doesn't work the full month. 
 
-		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
 
-		return workedDays == monthDays ? ctxMonthDays : workedDays;
+		double prevAdjustDays = getActiveDays(p) ;
+		
+		return (workedDays + prevAdjustDays)  == monthDays ? (ctxMonthDays - prevAdjustDays) : workedDays;
 	}
+	
 
 	private double getDays(ExpressionContext ctx, Period p, double factor) {
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
@@ -3032,6 +3058,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(TC2.getName()));
 		}
 		return ("14".indexOf(tc2.charAt(0)) != -1);
+	}
+	
+	private Date getContractStart() {
+		return getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
 	}
 
 	private boolean isShortContract() {
