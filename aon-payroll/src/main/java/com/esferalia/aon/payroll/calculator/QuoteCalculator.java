@@ -382,7 +382,8 @@ public abstract class QuoteCalculator {
 				Date end, final double quote) {
 			this.cgcBase = null;
 			this.cgpBase = null;
-
+			
+			
 			List<ITimedResult<Double>> quotesImpl = new ArrayList<ITimedResult<Double>>();
 			
 			String name = payment.getName();
@@ -431,6 +432,7 @@ public abstract class QuoteCalculator {
 			
 			if (AonStringUtils.equals(PREST_IT, name)) {
 				
+				GeneralQuote.this.rawCgcBase += quote;
 				add(CGC_BASE.getName(), quote, context, start, end);
 				add(CGC_BASE_RAW.getName(), quote, context, start, end);
 				
