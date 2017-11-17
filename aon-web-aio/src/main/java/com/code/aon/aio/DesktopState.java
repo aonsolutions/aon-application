@@ -313,7 +313,7 @@ public class DesktopState implements Serializable {
 		if ( isPayrollPortal(user) || isPayrollInfoVisibleForPortal() ) {
 			categories = (String[]) ArrayUtils.add(categories, Module.PAYROLL_PORTAL.getName());
 		}
-		if ( isDocumentalInfoVisibleForPortal() ) {
+		if ( isDocumentalInfoVisibleForPortal() || isDocumentalManagementVisibleForPortal() ) {
 			categories = (String[]) ArrayUtils.add(categories, Module.DOCUMENT.getName());
 		}
 		if ( this.portalInfo.isFinanceManagement() ) {
@@ -603,6 +603,16 @@ public class DesktopState implements Serializable {
 	
 	public boolean isDocumentalInfoVisibleForPortal() {
 		if ( this.portalInfo.isDocumentalInfo() ) {
+			if ( this.userWithPortalView ) {
+				return isDocumentalEnabled();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isDocumentalManagementVisibleForPortal() {
+		if ( this.portalInfo.isDocumentalManagement() ) {
 			if ( this.userWithPortalView ) {
 				return isDocumentalEnabled();
 			}
