@@ -25,13 +25,13 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.14-SNAPSHOT</version>
+      <version>9.14</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>dbutils</artifactId>
-      <version>9.14-SNAPSHOT</version>
+      <version>9.14</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

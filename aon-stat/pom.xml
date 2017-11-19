@@ -13,7 +13,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.14-SNAPSHOT</version>
+      <version>9.14</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
