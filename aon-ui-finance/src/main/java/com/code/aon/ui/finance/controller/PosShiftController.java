@@ -331,17 +331,23 @@ public class PosShiftController extends BasicController implements IFinanceConst
 				throw new AbortProcessingException(msg);
 			} else {
 				Invoice invoice = (Invoice)invoiceList.get(0);
-				double financeTotal = invoice.getFinanceTotal();
-				if (financeTotal != 0 || invoice.getTotal() == 0) {
-					NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(DECIMAL_2_PATTERN));
-					DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
-					String comments = StringUtils.isNotBlank(invoice.getComments()) ? invoice.getComments() + "\n" : "";
-					comments += dateFormat.format(invoice.getDate()) + " - " + AonUtil.getMessage(FINANCE_CHARGED) + ": " + numberFormat.format(financeTotal) + "\n";
-					invoice.setComments(comments);
+				if (invoice.isPayMethodNull()) {
+					String msg = "La Factura tiene Vencimientos sin Forma de Pago. Revisar posibles errores.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				} else {
+					double financeTotal = invoice.getFinanceTotal();
+					if (financeTotal != 0 || invoice.getTotal() == 0) {
+						NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(DECIMAL_2_PATTERN));
+						DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
+						String comments = StringUtils.isNotBlank(invoice.getComments()) ? invoice.getComments() + "\n" : "";
+						comments += dateFormat.format(invoice.getDate()) + " - " + AonUtil.getMessage(FINANCE_CHARGED) + ": " + numberFormat.format(financeTotal) + "\n";
+						invoice.setComments(comments);
+					}
+					invoice.setPosShift(((PosShift)getTo()));
+					invoice.setUpdateEnabled(false);
+					BeanManager.getManagerBean(Invoice.class).update(invoice);
 				}
-				invoice.setPosShift(((PosShift)getTo()));
-				invoice.setUpdateEnabled(false);
-				BeanManager.getManagerBean(Invoice.class).update(invoice);
 			} 
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());

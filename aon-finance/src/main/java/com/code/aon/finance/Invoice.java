@@ -394,6 +394,15 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 
 	@Transient
+	public boolean isPayMethodNull() throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
+		criteria.addNullExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD));
+		return financeBean.getCount(criteria) > 0;
+	}
+
+	@Transient
 	public String getPayMethod() throws ManagerBeanException {
 		String payMethodName = null;
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
