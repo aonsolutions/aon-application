@@ -19,7 +19,9 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{offer}" />
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/commercial/facelet/offer/searchContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/commercial/facelet/offer/searchContent.xhtml">
+						<ui:param name="searchController" value="#{offerSearch}" />
+					</ui:include>
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
@@ -27,8 +29,9 @@
 		<aon:if test="#{aonConfiguration.bean.offer.showSeller}">
 			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		</aon:if>
-		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
-		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />		
 	</ui:define>
 </ui:composition>

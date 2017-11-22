@@ -22,39 +22,39 @@ public class SalesSearchListener extends RegistrySearchListener {
 	private static final String REGISTRY_SEARCH_PREFFIX = "Sales_customer_registry_";
 
 	private Customer customer;
-
 	private Seller seller;
-	
-	private SalesStatus[] salesStatuses;
-	
-    private Item item;
-
 	private Project project;
+	private SalesStatus[] salesStatuses;
+    private Item item;
 	
 	public String getPreffix() throws ManagerBeanException {
 		return REGISTRY_SEARCH_PREFFIX;
 	}	
 	
-	public Seller getSeller() {
-		return seller;
-	}
-
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
-
 	public Customer getCustomer() {
 		return customer;
 	}
-
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
 
+	public Seller getSeller() {
+		return seller;
+	}
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
 	public SalesStatus[] getSalesStatuses() {
 		return salesStatuses;
 	}
-
 	public void setSalesStatuses(SalesStatus[] salesStatuses) {
 		this.salesStatuses = salesStatuses;
 	}
@@ -62,17 +62,8 @@ public class SalesSearchListener extends RegistrySearchListener {
 	public Item getItem() {
 		return item;
 	}
-
 	public void setItem(Item item) {
 		this.item = item;
-	}
-	
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
 	}
 	
 	@Override
@@ -80,10 +71,10 @@ public class SalesSearchListener extends RegistrySearchListener {
 		super.init();
 		setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
+		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		SalesStatus[] defaultSalesStatus = {SalesStatus.PENDING};
 		setSalesStatuses(defaultSalesStatus);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
-		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 	}
 	
 	@Override
@@ -95,6 +86,9 @@ public class SalesSearchListener extends RegistrySearchListener {
 		if (getSeller() != null && getSeller().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_SELLER_ID), getSeller().getId());			
 		}
+		if (getProject() != null && getProject().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_PROJECT_ID), getProject().getId());			
+		}
 		if (!ArrayUtils.isEmpty(getSalesStatuses())) {
 			String status = getController().resolveAlias(IEntityAlias.SALES_STATUS);
 			addEnumToCriteria(criteria, status, getSalesStatuses());
@@ -102,8 +96,5 @@ public class SalesSearchListener extends RegistrySearchListener {
 		if (getItem() != null && getItem().getId() != null) {
 			criteria.addEqualExpression("Sales.lines.item.id", getItem().getId());
 		}				
-		if (getProject() != null && getProject().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_PROJECT_ID), getProject().getId());			
-		}
 	}	
 }

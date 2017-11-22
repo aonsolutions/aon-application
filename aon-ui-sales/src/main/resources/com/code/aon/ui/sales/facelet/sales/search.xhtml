@@ -42,11 +42,11 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />		
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		</aon:if>
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />		
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
 			<ui:param name="addWaitProcessPoll" value="#{true}" />
 		</ui:include>

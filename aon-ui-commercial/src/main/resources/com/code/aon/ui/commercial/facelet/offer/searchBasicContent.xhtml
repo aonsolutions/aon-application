@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+
+	<aon:if test="#{lookup != null}">
+		<ui:param name="controller" value="#{lookup}"/>
+		<ui:param name="skipLookups" value="#{true}"/>
+	</aon:if>
+
+	<aon:if test="#{!skipLookups}">
+		<aon:if test="#{aonConfiguration.bean.offer.showSeller}">
+			<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{searchController.target}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+			</ui:include>	
+		</aon:if>
+
+		<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{searchController.seller}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+		</ui:include>
+	</aon:if>
+
+	<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{searchController.project}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Offer_issueDate-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Offer_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="Offer_issueDate-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Offer_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
+	<aon:outputLabel for="Offer_type"
+		value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="Offer_type"
+		value="#{searchController.offerType}"
+		converter="aon.EnumConverter"
+		reRender="offerSearch">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{commercialCollections.offerTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:if test="#{(!skipLookups) and searchController.dealership}">
+		<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{searchController.supplier}" />
+			<ui:param name="lookupLabel" value="#{bundle.offer_dealered}"/>
+			<ui:param name="skipNewButton" value="#{true}" />
+		</ui:include>	
+	</aon:if>
+
+	<aon:outputLabel for="Offer_workPlace_id"
+		value="#{bundle.purchase_workplace}" />
+	<aon:selectOneMenu id="Offer_workPlace_id"
+		value="#{companyCollections.workPlace}"
+		valueChangeListener="#{controller.addIdEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+	</aon:selectOneMenu>					
+
+	<aon:if test="#{currentUserScopes[1] != null}">
+		<aon:outputLabel for="Offer_scope_id"
+			value="#{bundle.aon_scope}" />
+		<aon:selectOneMenu id="Offer_scope_id"
+			value="#{configCollections.scope}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{currentUserScopes}" />
+		</aon:selectOneMenu>
+	</aon:if>					
+
+	<aon:if test="#{aonRole.confidentiality}">
+		<aon:outputLabel for="Offer_securityLevel"
+			value="#{bundle.aon_confidential}" />
+		<aon:selectOneRadio id="Offer_securityLevel"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
+	</aon:if>
+
+	<aon:if test="#{company.EInvoice}">
+		<aon:outputLabel for="Offer_signed" value="#{bundle.registry_corporateIdentity_signature}" />
+		<aon:selectOneRadio id="Offer_signed"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>				
+	</aon:if>
+
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{searchController.offerStatuses}">
+		<f:selectItems value="#{commercialCollections.offerStatuses}"/>
+	</aon:selectManyCheckbox>							
+
+</ui:composition>
