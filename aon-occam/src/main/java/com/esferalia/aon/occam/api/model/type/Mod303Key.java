@@ -395,19 +395,60 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_U5D("303-CTU5D",false,null,"A - Ep\u00EDgrafe IAE - Descripci\u00F3n")
 	,CT_U5C("303-CTU5C",false,null,"B - Clave - Otras")
 	,CT_U5E("303-CTU5E",false,null,"C - Ep\u00EDgrafe IAE - C\u00F3digo")
-
 	,CT_U13("303-CTU13",false,null,"D - Marque si ha efectuado operaciones por las que tenga obligaci\u00F3n de presentar la declaraci\u00F3n anual de operaciones con terceras personas.")
+	,CT_C89("303-CTA89",false,"89","\u00C1lava/Araba")
+	,CT_C90("303-CTA90",false,"90","Guipuzcoa/Gipuzkoa")
+	,CT_C91("303-CTA91",false,"91","Vizcaya/Bizkaia")
+	,CT_C92("303-CTA92",false,"92","Navarra/Nafarroa")
 	,CT_C80("303-CTA80",false,"80","Operaciones en r\u00E9gimen general")
 	,CT_C81("303-CTA81",false,"81","Operaciones en r\u00E9gimen especial del criterio de caja conforme art. 75 LIVA")
 	,CT_C82("303-CTA82",false,"82","Exportaciones, entregas intracomunitarias  y otras operaciones con derecho a deducci\u00F3n") 
+	,CT_C93("303-CTA93",false,"93","Entregas intracomunitarias exentas")
+	,CT_C94("303-CTA94",false,"94","Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n")
 	,CT_C83("303-CTA83",false,"83","Operaciones exentas sin derecho a deducci\u00F3n")
 	,CT_C84("303-CTA84",false,"84","Operaciones no sujetas por reglas de localizaci\u00F3n o con inversi\u00F3n del sujeto pasivo") 
 	,CT_C85("303-CTA85",false,"85","Entregas de bienes objeto de instalaci\u00F3n o montaje en otros Estados miembros") 
 	,CT_C86("303-CTA86",false,"86","Operaciones en r\u00E9gimen simplificado")
+	,CT_C95("303-CTA95",false,"95","Operaciones en r\u00E9gimen especial de la agricultura, ganader\u00EDa y pesca") 
+	,CT_C96("303-CTA96",false,"96","Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
+	,CT_C97("303-CTA97",false,"97","Operaciones en r\u00E9gimen especial de bienes usados, objetos de arte, antig\u00fcedades y objetos de colecci\u00F3n")
+	,CT_C98("303-CTA98",false,"98","Operaciones en r\u00E9gimen especial de Agencias de Viajes")
+	,CT_C79("303-CTA79",false,"79","Entregas de bienes inmuebles y operaciones fi nancieras no habituales") 
+	,CT_C99("303-CTA99",false,"99","Entregas de bienes de inversi\u00F3n") 
 	,CT_C87("303-CTA87",false,"87","Entregas de bienes inmuebles y de inversi\u00F3n y operaciones financieras no habituales")  
 	,CT_C88("303-CTA88",false,"88","Total volumen de operaciones")
-	,CT_U14("303-CTU14",false,null,"Exonerado de presentar el modelo 390 y con volumen de operaciones cero.")
+	
+	,CT_P1C("303-CTP1C",false,null,"CNAE")
+	,CT_P1I("303-CTP1I",false,null,"Imp. tot. Operaciones ")
+	,CT_P1D("303-CTP1D",false,null,"Imp. tot. Oper. con der. ded.")
+	,CT_P1T("303-CTP1T",false,null,"Tipo")
+	,CT_P1P("303-CTP1P",false,null,"% prorrata")
 
+	,CT_P2C("303-CTP2C",false,null,"CNAE")
+	,CT_P2I("303-CTP2I",false,null,"Imp. tot. Operaciones ")
+	,CT_P2D("303-CTP2D",false,null,"Imp. tot. Oper. con der. ded.")
+	,CT_P2T("303-CTP2T",false,null,"Tipo")
+	,CT_P2P("303-CTP2P",false,null,"% prorrata")
+
+	,CT_P3C("303-CTP3C",false,null,"CNAE")
+	,CT_P3I("303-CTP3I",false,null,"Imp. tot. Operaciones ")
+	,CT_P3D("303-CTP3D",false,null,"Imp. tot. Oper. con der. ded.")
+	,CT_P3T("303-CTP3T",false,null,"Tipo")
+	,CT_P3P("303-CTP3P",false,null,"% prorrata")
+
+	,CT_P4C("303-CTP4C",false,null,"CNAE")
+	,CT_P4I("303-CTP4I",false,null,"Imp. tot. Operaciones ")
+	,CT_P4D("303-CTP4D",false,null,"Imp. tot. Oper. con der. ded.")
+	,CT_P4T("303-CTP4T",false,null,"Tipo")
+	,CT_P4P("303-CTP4P",false,null,"% prorrata")
+
+	,CT_P5C("303-CTP5C",false,null,"CNAE")
+	,CT_P5I("303-CTP5I",false,null,"Imp. tot. Operaciones ")
+	,CT_P5D("303-CTP5D",false,null,"Imp. tot. Oper. con der. ded.")
+	,CT_P5T("303-CTP5T",false,null,"Tipo")
+	,CT_P5P("303-CTP5P",false,null,"% prorrata")
+
+	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  ARABA ------
 	// 	----------------------------------------------------------------------------------

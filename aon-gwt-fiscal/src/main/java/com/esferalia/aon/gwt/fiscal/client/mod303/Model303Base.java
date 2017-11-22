@@ -533,11 +533,15 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		if (table.getRowCount() > 0) {
 			table.removeAllRows();
 		}
+		paintScript(table, script, colsNumber);
+	}
+	
+	protected void paintScript(FlexTable table, IModelScript<Mod303Key>[] script, int colsNumber) {
 		for (IModelScript<Mod303Key> ms : script) {
 			paintRow(table,ms,colsNumber);	
 		}
 	}
-	
+
 	protected void paintEmptyRow(FlexTable table) {
 		int row = table.getRowCount();
 		table.setWidget(row, 0, new Label());

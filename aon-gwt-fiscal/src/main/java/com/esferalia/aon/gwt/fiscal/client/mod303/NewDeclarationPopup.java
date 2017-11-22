@@ -220,7 +220,6 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 				mod303.setDiffCalculationDisabled(!diffCalculation.getValue());
 			}
 		});
-		diffCalculation.setVisible(mod303.isComplementaryDeclarationAvailable());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, diffCalculation);

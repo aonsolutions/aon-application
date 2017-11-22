@@ -43,13 +43,13 @@ public class AppParamDAO {
 		,FS_ADMINISTRATION_CODE("FS_ADMINISTRATION_CODE", 
 			(params, value) -> params.setAdministrationCode(value))
 		,FS_TAX_REFUND_REGISTRY("FS_TAX_REFUND_REGISTRY",
-			(params, value) -> params.setTaxRefundRegistry(Boolean.parseBoolean(value)))
+			(params, value) -> params.setTaxRefundRegistry( Boolean.parseBoolean(value) || AonStringUtils.equals(value, AonStringUtils.ONE)))
 		,FS_TAX_REGIME("FS_TAX_REGIME", 
 			(params, value) -> params.setTaxRegime(Integer.parseInt(value)))
 		,FS_ADMON_CREDITOR("FS_ADMON_CREDITOR",
 			(params, value) -> params.setAdmonCreditor(Integer.parseInt(value)))
 		,FS_PERM_ADDRESS_CHANGES("FS_PERM_ADDRESS_CHANGES", 
-			(params, value) -> params.setPermAddressChanges(Boolean.parseBoolean(value)))
+			(params, value) -> params.setPermAddressChanges(Boolean.parseBoolean(value) || AonStringUtils.equals(value, AonStringUtils.ONE)))
 		,FS_CONCTACT_PERSON("FS_CONCTACT_PERSON", 
 			(params, value) -> params.setContactPerson(value))
 		,FS_CONCTACT_PHONE("FS_CONCTACT_PHONE", 
@@ -59,7 +59,7 @@ public class AppParamDAO {
 		,FS_CONCTACT_MAIL("FS_CONCTACT_MAIL", 
 			(params, value) -> params.setContactMail(value))
 		,FS_MOD303_BY_DIFFERENCE_DISABLED("FS_MOD303_BY_DIFFERENCE_DISABLED", 
-			(params, value) -> params.setMod303ByDifferenceDisabled(Boolean.parseBoolean(value)));
+			(params, value) -> params.setMod303ByDifferenceDisabled(Boolean.parseBoolean(value) || AonStringUtils.equals(value, AonStringUtils.ONE)));
 
 		private String name;
 		private IFiscalParamsFiller filler;
