@@ -474,8 +474,8 @@ public class ContractUtils implements Serializable {
 			throw new AbortProcessingException(msg,e);
 		}
 		
-		try {
-			if(params.isRetaQuote()){
+		if(params.isRetaQuote()){
+			try {
 				info = new ContractInfo();
 				info.setContract(contract);
 				info.setStartDate(contract.getStartDate());
@@ -483,10 +483,10 @@ public class ContractUtils implements Serializable {
 				info.setName( ContractVariable.SELF_EMPLOYED.getValue() );
 				info.setExpression(Boolean.TRUE.toString());
 				bean.insert(info);
+			} catch (ManagerBeanException e) {
+				String msg = "Error al grabar la variable RETA. (" +e.getMessage() + ")";
+				AonUtil.addErrorMessage(msg);
 			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el centro de formacion. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
 		}
 		
 		try {
@@ -893,6 +893,22 @@ public class ContractUtils implements Serializable {
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
 			throw new AbortProcessingException(msg,e);
+		}
+		
+		if(params.isRetaQuote()){
+			try {
+				ContractInfo retaInfo = obtainContractInfo(contract, ContractVariable.SELF_EMPLOYED.getValue());
+				info = retaInfo!=null?retaInfo:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.SELF_EMPLOYED.getValue() );
+				info.setExpression(Boolean.TRUE.toString());
+				bean.insertOrUpdate(info);
+			} catch (ManagerBeanException e) {
+				String msg = "Error al grabar la variable RETA. (" +e.getMessage() + ")";
+				AonUtil.addErrorMessage(msg);
+			}
 		}
 		
 		try {
