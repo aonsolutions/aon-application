@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
@@ -74,10 +75,12 @@ public class Model3032017AEAT extends Model303Base {
 	
 	private final Mod303ActivityProvidesKey providesKey = new Mod303ActivityProvidesKey();
 	private final Model303AEATActivityTable activityTable;
+	private ScrollPanel LastPeriodInformationScrollPanel; 
 	
 	private final static int GENERAL_REGIME_TAB = 2;
 	private final static int SIMPLIFIED_REGIME_TAB = 3;
 	private final static int RESULT_TAB = 4;
+	private final static int LAST_PERIOD_INFORMATION_TAB = 6;
 	
 	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
@@ -115,12 +118,22 @@ public class Model3032017AEAT extends Model303Base {
 			@Override
 			public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
 				double a02 = getCallback().getMod303().getAmount(Mod303Key.CT_A02);
-				if (event.getItem() == 2 && a02 == 0) {
+				if (event.getItem() == GENERAL_REGIME_TAB && a02 == 0) {
+					event.cancel();
 					MessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
 				}
-				if (event.getItem() == 3 && a02 == 2) {
+				if (event.getItem() == SIMPLIFIED_REGIME_TAB && a02 == 2) {
+					event.cancel();
 					MessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
 				}
+				if (getCallback().getMod303().isLastPeriod()) {
+					double a11 = getCallback().getMod303().getAmount(Mod303Key.CT_A11);
+					if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && a11 == 0) {
+						event.cancel();
+						MessageDialog.warning("Para rellenar estos datos, debe marcar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
+					}
+				}
+				
 			}
 		});
 	}
@@ -354,6 +367,56 @@ public class Model3032017AEAT extends Model303Base {
 		paintCheck(Mod303Key.CT_A08,table);	// ¿Es destinatario de operaciones a las que se aplique el régimen especial del criterio de caja?
 		CheckBox a11 = paintCheck(Mod303Key.CT_A11,table);	// Exonerados de la declaraci\u00F3n-resumen anual del IVA, modelo 390: ¿Existe volumen de operaciones (art. 121 LIVA)?
 		a11.setEnabled(getCallback().getMod303().isLastPeriod());
+		if (getCallback().getMod303().isLastPeriod()) {
+			a11.addValueChangeHandler( new ValueChangeHandler<Boolean>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Boolean> event) {
+					if (!a11.getValue()) {
+						if (AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U1D))
+						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U2D))								
+						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U3D))								
+						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U4D))
+						 || AonMathUtils.isNotZero( getCallback().getMod303().getAmount(Mod303Key.CT_C88))
+						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P1C))
+						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P2C))
+						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P3C))
+						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P4C))
+						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P5C))) {
+
+							Mod303Key[] keys = new Mod303Key[]{
+									 Mod303Key.CT_U1D,Mod303Key.CT_U1C,Mod303Key.CT_U1E
+									,Mod303Key.CT_U2D,Mod303Key.CT_U2C,Mod303Key.CT_U2E
+									,Mod303Key.CT_U3D,Mod303Key.CT_U3C,Mod303Key.CT_U3E
+									,Mod303Key.CT_U4D,Mod303Key.CT_U4C,Mod303Key.CT_U4E
+									,Mod303Key.CT_U5D,Mod303Key.CT_U5C,Mod303Key.CT_U5E
+									
+									,Mod303Key.CT_U13,Mod303Key.CT_C89,Mod303Key.CT_C90,Mod303Key.CT_C91,Mod303Key.CT_C92
+									,Mod303Key.CT_C80,Mod303Key.CT_C81,Mod303Key.CT_C82,Mod303Key.CT_C93,Mod303Key.CT_C94
+									,Mod303Key.CT_C83,Mod303Key.CT_C84,Mod303Key.CT_C85,Mod303Key.CT_C86,Mod303Key.CT_C95
+									,Mod303Key.CT_C96,Mod303Key.CT_C97,Mod303Key.CT_C98,Mod303Key.CT_C79,Mod303Key.CT_C99 
+									,Mod303Key.CT_C87,Mod303Key.CT_C88
+									
+									,Mod303Key.CT_P1C,Mod303Key.CT_P1I,Mod303Key.CT_P1D,Mod303Key.CT_P1T,Mod303Key.CT_P1P
+									,Mod303Key.CT_P2C,Mod303Key.CT_P2I,Mod303Key.CT_P2D,Mod303Key.CT_P2T,Mod303Key.CT_P2P
+									,Mod303Key.CT_P3C,Mod303Key.CT_P3I,Mod303Key.CT_P3D,Mod303Key.CT_P3T,Mod303Key.CT_P3P
+									,Mod303Key.CT_P4C,Mod303Key.CT_P4I,Mod303Key.CT_P4D,Mod303Key.CT_P4T,Mod303Key.CT_P4P
+									,Mod303Key.CT_P5C,Mod303Key.CT_P5I,Mod303Key.CT_P5D,Mod303Key.CT_P5T,Mod303Key.CT_P5P
+							};
+							for (Mod303Key key : keys) {
+								getCallback().getMod303().ensureDetail(key).clear();
+							}
+							LastPeriodInformationScrollPanel.clear();
+							fillLastPeriodInformationScrollPanel();
+							MessageDialog.warning("Se han inicializado los datos de la solapa \"Inf. Exonerados 390\"");
+						}
+					}
+					if (a11.getValue()) {
+						MessageDialog.warning("Debe rellenar los datos de la solapa \"Inf. Exonerados 390\"");
+					}
+				}
+			});
+		}
 		
 		paintCheck(Mod303Key.CT_A04,table);	// Ha sido declarado en concurso de acreedores en el presente período de liquidación?
 		paintDate (Mod303Key.CT_A05,table);	// Fecha en que se dictó el auto de declaración de concurso
@@ -645,8 +708,13 @@ public class Model3032017AEAT extends Model303Base {
 	}
 
 	private void paintLastPeriodInformationTab(TabLayoutPanel tabPanel) {
-		ScrollPanel resultScrollPanel = new ScrollPanel();
+		LastPeriodInformationScrollPanel = new ScrollPanel();
+		fillLastPeriodInformationScrollPanel();
+		tabPanel.add(LastPeriodInformationScrollPanel, TAB_TEMPLATE.render("Inf. Exonerados 390.", AON.AON_CSS.aonIconModel()));
+	}
 
+
+	private void fillLastPeriodInformationScrollPanel() {
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
 		table.addStyleName(AON.AON_CSS.aonMarginBottom());
@@ -745,10 +813,7 @@ public class Model3032017AEAT extends Model303Base {
 		table.setWidget(row, 0, actContainer2);
 		table.getFlexCellFormatter().setColSpan(row, 0, 4);
 		
-		resultScrollPanel.setWidget(table);
-		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render("Inf. Exonerados 390.", AON.AON_CSS.aonIconModel()));
-		
-		
+		LastPeriodInformationScrollPanel.setWidget(table);
 	}
 
 

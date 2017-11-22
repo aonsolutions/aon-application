@@ -96,4 +96,14 @@ public class FiscalModelDetail implements Serializable {
 		setAmount( getAmount() + amount);
 	}
 	
+	public void clear() {
+		setDescription(null);
+		setAccumulatedAmount(0.0);
+		setDeclaredAmount(0.0);
+		setResultAmount(0.0);
+		setAdjustAmount(0.0);
+		setAmount(0.0);
+		setExpression(null);
+	}
+	
 }
