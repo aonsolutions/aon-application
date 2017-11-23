@@ -25,8 +25,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -140,73 +138,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getMod390s(domainName, domain,
 				new AsyncCallbackWrapper<LinkedList<Mod390>>(callback));
-	}
-	
-	// ---------------------------------------------------------------MODELO 390 - 2014
-	@Override
-	public void getMod3902014(String domainName, Integer domain, Integer id,
-			AsyncCallback<Mod3902014> callback) {
-		AON.start();
-		fsa.getMod3902014(domainName, domain, id, new AsyncCallbackWrapper<Mod3902014>(
-				callback));
-	}
-
-	@Override
-	public void saveMod3902014(String domainName, Integer domain, Mod3902014 mod390,
-			AsyncCallback<Mod3902014> callback) {
-		AON.start();
-		fsa.saveMod3902014(domainName, domain, mod390,
-				new AsyncCallbackWrapper<Mod3902014>(callback));
-	}
-
-	@Override
-	public void deleteMod3902014(String domainName, Integer domain, Mod3902014 mod390,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.deleteMod3902014(domainName, domain, mod390,
-				new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void initializeMod3902014(String domainName, Integer domain,
-			Integer year, AsyncCallback<Mod3902014> callback) {
-		AON.start();
-		fsa.initializeMod3902014(domainName, domain, year,
-				new AsyncCallbackWrapper<Mod3902014>(callback));
-	}
-
-	// ---------------------------------------------------------------MODELO 390 - 2015
-
-	@Override
-	public void getMod3902015(String domainName, Integer domain, Integer id,
-			AsyncCallback<Mod3902015> callback) {
-		AON.start();
-		fsa.getMod3902015(domainName, domain, id, new AsyncCallbackWrapper<Mod3902015>(
-				callback));
-	}
-
-	@Override
-	public void saveMod3902015(String domainName, Integer domain, Mod3902015 mod390,
-			AsyncCallback<Mod3902015> callback) {
-		AON.start();
-		fsa.saveMod3902015(domainName, domain, mod390,
-				new AsyncCallbackWrapper<Mod3902015>(callback));
-	}
-
-	@Override
-	public void deleteMod3902015(String domainName, Integer domain, Mod3902015 mod390,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.deleteMod3902015(domainName, domain, mod390,
-				new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void initializeMod3902015(String domainName, Integer domain,
-			Integer year, AsyncCallback<Mod3902015> callback) {
-		AON.start();
-		fsa.initializeMod3902015(domainName, domain, year,
-				new AsyncCallbackWrapper<Mod3902015>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 200

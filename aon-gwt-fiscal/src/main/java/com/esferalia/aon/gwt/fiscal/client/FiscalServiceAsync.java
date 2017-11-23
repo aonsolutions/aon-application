@@ -23,8 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -59,18 +57,6 @@ public interface FiscalServiceAsync {
 
 	// ---------------------------------------------------------------MODELO 390
 	void getMod390s(String domainName, Integer domain, AsyncCallback<LinkedList<Mod390>> callback);
-	
-	// ---------------------------------------------------------------MODELO 390 - 2014
-	void getMod3902014(String domainName, Integer domain,Integer id, AsyncCallback<Mod3902014> callback);
-	void saveMod3902014(String domainName, Integer domain, Mod3902014 mod390, AsyncCallback<Mod3902014> callback);
-	void deleteMod3902014(String domainName, Integer domain, Mod3902014 mod390, AsyncCallback<Void> callback);
-	void initializeMod3902014(String domainName, Integer domain, Integer year, AsyncCallback<Mod3902014> callback);
-
-	// ---------------------------------------------------------------MODELO 390 - 2015
-	void getMod3902015(String domainName, Integer domain,Integer id, AsyncCallback<Mod3902015> callback);
-	void saveMod3902015(String domainName, Integer domain, Mod3902015 mod390, AsyncCallback<Mod3902015> callback);
-	void deleteMod3902015(String domainName, Integer domain, Mod3902015 mod390, AsyncCallback<Void> callback);
-	void initializeMod3902015(String domainName, Integer domain, Integer year, AsyncCallback<Mod3902015> callback);
 	
 	// ---------------------------------------------------------------MODELO 200 
 	void getMod200s(String currentDomainName, int currentDomain, AsyncCallback<LinkedList<Mod200>> asyncCallback);

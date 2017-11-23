@@ -23,8 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -33,9 +31,6 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-/**
- * The client side stub for the RPC service.
- */
 @RemoteServiceRelativePath("Fiscal")
 public interface FiscalService extends RemoteService {
 	// ---------------------------------- COMMON
@@ -62,18 +57,6 @@ public interface FiscalService extends RemoteService {
 	// ---------------------------------------------------------------MODELO 390
 	LinkedList<Mod390> getMod390s(String domainName, Integer domain) throws AonCoreException;
 	
-	// ---------------------------------------------------------------MODELO 390 - 2014
-	Mod3902014 getMod3902014(String domainName, Integer domain,Integer id) throws AonCoreException;
-	Mod3902014 saveMod3902014(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
-	void deleteMod3902014(String domainName, Integer domain,Mod3902014 mod390) throws AonCoreException;
-	Mod3902014 initializeMod3902014(String domainName, Integer domain, Integer year);
-	
-	// ---------------------------------------------------------------MODELO 390 - 2015
-	Mod3902015 getMod3902015(String domainName, Integer domain,Integer id) throws AonCoreException;
-	Mod3902015 saveMod3902015(String domainName, Integer domain,Mod3902015 mod390) throws AonCoreException;
-	void deleteMod3902015(String domainName, Integer domain,Mod3902015 mod390) throws AonCoreException;
-	Mod3902015 initializeMod3902015(String domainName, Integer domain, Integer year);
-
 	// ---------------------------------------------------------------MODELO 200 
 	LinkedList<Mod200> getMod200s(String currentDomainName, int currentDomain) throws AonCoreException;
 

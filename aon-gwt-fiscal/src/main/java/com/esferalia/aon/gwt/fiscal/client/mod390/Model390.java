@@ -35,7 +35,7 @@ public class Model390 extends MainEntryPoint {
 
 	public static interface IModel390 {
 		void select(Mod390 m390);
-		void onNew();
+		void onNew(int year);
 	}	
 
 	public static interface IMod390CallBack {
@@ -52,7 +52,6 @@ public class Model390 extends MainEntryPoint {
 	private FiscalServiceAsync fiscalService;
 	private NewContextMenu newContextMenu;
 
-	private static final Integer DEFAULT_YEAR = 2016;
 
 	private int domain;
 	private int enterprise;
@@ -118,7 +117,7 @@ public class Model390 extends MainEntryPoint {
 			Model3902014 model3902014 = new Model3902014(mod390CallBack);
 			formPanel.setWidget(model3902014);
 			model3902014.select(m390);
-		} else if (m390.getYear() == 2015 || m390.getYear() == 2016) {
+		} else if (m390.getYear() == 2015 || m390.getYear() == 2016 || m390.getYear() == 2017) {
 			Model3902015 model3902015 = new Model3902015(mod390CallBack);
 			formPanel.setWidget(model3902015);
 			model3902015.select(m390);
@@ -132,11 +131,11 @@ public class Model390 extends MainEntryPoint {
 		if (year == 2013 || year == 2014) {
 			Model3902014 model3902014 = new Model3902014(mod390CallBack);
 			formPanel.setWidget(model3902014);
-			model3902014.onNew();		
-		} else if (year == 2015 || year == 2016) {
+			model3902014.onNew(year);		
+		} else if (year == 2015 || year == 2016 || year == 2017) {
 			Model3902015 model3902015 = new Model3902015(mod390CallBack);
 			formPanel.setWidget(model3902015);
-			model3902015.onNew();		
+			model3902015.onNew(year);		
 		}
 		int i = deckPanel.getWidgetIndex(formPanel);
 		deckPanel.showWidget(i);
@@ -151,7 +150,7 @@ public class Model390 extends MainEntryPoint {
 						if (result == null || result.size() == 0) {
 							int i = deckPanel.getWidgetIndex(formPanel);
 							deckPanel.showWidget(i);
-							newModel(2016);
+							newModel(2017);
 						} else {
 							int i = deckPanel.getWidgetIndex(listPanel);
 							table.setRowData(result);
@@ -182,6 +181,8 @@ public class Model390 extends MainEntryPoint {
 	public class NewContextMenu extends ContextMenu {
 		
 		public NewContextMenu() {
+			addNewMod3902017();
+			addSeparator();
 			addNewMod3902016();
 			addSeparator();
 			addNewMod3902015();
@@ -233,6 +234,15 @@ public class Model390 extends MainEntryPoint {
 			return this; 
 		}
 		
+		protected NewContextMenu addNewMod3902017() {
+			addItem(FiscalModelType.M390,AON.MSG.newSomething( "390 - 2017" ), new ScheduledCommand() {
+						@Override
+						public void execute() {
+							newModel(2017);
+						}
+			});
+			return this; 
+		}
 	}
 	
 	

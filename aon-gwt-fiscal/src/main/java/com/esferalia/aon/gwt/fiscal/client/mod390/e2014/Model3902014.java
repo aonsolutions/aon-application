@@ -63,7 +63,8 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	private static final Model390Binder MODEL_390_BINDER = GWT.create(Model390Binder.class);
 
 	private Mod3902014 mod390;
-	private FiscalServiceAsync fiscalService;
+	private FiscalServiceAsync FISCAL_SERVICE;
+	private Mod3902014ServiceAsync MOD390_SERVICE;
 	
 	private IMod390CallBack mod390CallBack;
 
@@ -146,10 +147,12 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		
 		AON.ensureInjected();
 
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
+		
+		Mod3902014ServiceAsync mod3902014ServiceRaw = GWT.create(Mod3902014Service.class);
+		MOD390_SERVICE = new Mod3902014ServiceAsyncDecorator(mod3902014ServiceRaw);
+		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
@@ -227,7 +230,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		try {
-			fiscalService.getMod3902014(getCurrentDomainName(), getCurrentDomain(),
+			MOD390_SERVICE.getMod3902014(getCurrentDomainName(), getCurrentDomain(),
 					m390.getId(), new AsyncCallback<Mod3902014>() {
 				@Override
 				public void onSuccess(Mod3902014 selected) {
@@ -284,7 +287,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 			populateMod390();
 			cleanErrorMessage();
 			validate(this.mod390);
-			fiscalService.saveMod3902014(getCurrentDomainName(),getCurrentDomain(),this.mod390
+			MOD390_SERVICE.saveMod3902014(getCurrentDomainName(),getCurrentDomain(),this.mod390
 					, new AsyncCallback<Mod3902014>() {
 						@Override
 						public void onSuccess(Mod3902014 result) {
@@ -307,7 +310,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-			fiscalService.deleteMod3902014(getCurrentDomainName(),getCurrentDomain(),
+			MOD390_SERVICE.deleteMod3902014(getCurrentDomainName(),getCurrentDomain(),
 					this.mod390, new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
@@ -325,13 +328,13 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
-		onNew();
+		onNew( DEFAULT_YEAR );
 	}
 	
 	@Override
-	public void onNew() {
+	public void onNew( int year) {
 		cleanErrorMessage();
-		fiscalService.initializeMod3902014(getCurrentDomainName(),domain, DEFAULT_YEAR,
+		MOD390_SERVICE.initializeMod3902014(getCurrentDomainName(),domain, year,
 				new AsyncCallback<Mod3902014>() {
 			@Override
 			public void onSuccess(Mod3902014 mod390) {

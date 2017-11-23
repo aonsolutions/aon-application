@@ -663,10 +663,11 @@ public class Mod3902015DAO {
 			.setEnterpriseName(params.getName())
 			.setYear( year );
 		
-		if (year == 2016) {
+		if (year == 2016 || year == 2017) {
 			LinkedList<Mod390> mod390s = Mod390DAO.getByDomain(ctx, ctx.getDomainId());
 			for (Mod390 m390 : mod390s) {
-				if (m390.getYear() == 2015) {
+				if ( (year == 2016 && m390.getYear() == 2015)
+				  || (year == 2017 && m390.getYear() == 2016)){
 					Mod3902015 mod3902015 = getById(ctx, m390.getId());
 					mod390.setMainActivity(mod3902015.getMainActivity());
 					mod390.setActivity1(mod3902015.getActivity1());
@@ -739,7 +740,7 @@ public class Mod3902015DAO {
 		mod390.setComments(record.getValue(FS_MODEL390.COMMENTS));
 		StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
 		try {
-			if (mod390.getYear() == 2015 || mod390.getYear() == 2016) {
+			if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2015.class);
 				Unmarshaller um = context.createUnmarshaller();
 				AEATIVA2015 iva = (AEATIVA2015) um.unmarshal(reader);
@@ -773,7 +774,7 @@ public class Mod3902015DAO {
 	
 	private static String getXMLModel( Mod3902015 mod390 ) {
 		try {
-			if (mod390.getYear() == 2015 || mod390.getYear() == 2016) {
+			if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
 				AEATIVA2015 iva = Mod390toAEATIVA2015.getAEATIVA2015(mod390);
 				StringWriter writer = new StringWriter();
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2015.class);
