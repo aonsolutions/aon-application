@@ -114,6 +114,14 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		addValue(paymentMethod, PAYMENT_METHOD_DD_VALUE);
 		paymentInformation.appendChild(paymentMethod);		
 
+		Element numberOfTransactions = createElement(NUMBER_OF_TRANSACTIONS);
+		addValue(numberOfTransactions, lot.getOrderer().getNumIndividuals());
+		paymentInformation.appendChild(numberOfTransactions);
+
+		Element controlSum = createElement(CONTROL_SUM);
+		addDecimalNumber(controlSum, lot.getAmount());
+		paymentInformation.appendChild(controlSum);
+
 		addPaymentTypeInformation(paymentInformation, getLocalInstrumentCode(), SEQUENCE_TYPE_RCUR_VALUE);
 		
 		Element requestedCollectionDate = createElement(REQUEST_COLLECTION_DATE);
