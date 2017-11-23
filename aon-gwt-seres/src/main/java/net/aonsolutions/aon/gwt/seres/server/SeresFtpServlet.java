@@ -1,16 +1,5 @@
 package net.aonsolutions.aon.gwt.seres.server;
 
-import static com.code.aon.customer.IEdiSupport.ACTIVE;
-import static com.code.aon.customer.IEdiSupport.ALBARANES;
-import static com.code.aon.customer.IEdiSupport.CABECERA;
-import static com.code.aon.customer.IEdiSupport.EDI_CODES_PATTERN;
-import static com.code.aon.customer.IEdiSupport.EDI_PACKING_PATTERN;
-import static com.code.aon.customer.IEdiSupport.FACTURA;
-import static com.code.aon.customer.IEdiSupport.FINANCIERA;
-import static com.code.aon.customer.IEdiSupport.MEDIDA;
-import static com.code.aon.customer.IEdiSupport.PEDIDOS;
-import static com.code.aon.customer.IEdiSupport.PTO_ENTREGA;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -19,7 +8,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -29,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -53,15 +39,13 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tag;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.CustomerEdiSupport;
 import com.code.aon.customer.IEdiSupport;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryNote;
-import com.code.aon.registry.enumeration.NoteType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.util.ftp.FtpException;
 import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
@@ -69,7 +53,10 @@ import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.file.seres.util.writer.connect.ConnectSaleInvoiceWriter;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")
@@ -107,16 +94,16 @@ public class SeresFtpServlet extends HttpServlet {
 				
 				switch (pathInfo[3]) {
 				case OUTCOME_DELIVERY:
-					sendDeliveries(req, resp);
+					sendDeliveries(req, resp, idLsit);
 					break;
 				case OUTCOME_INVOICE:
-					sendInvoices(req, resp, idLsit);
+					sendInvoices(domainName, userName, req, resp, idLsit);
 					break;
 				case INCOME_SALES:
-					retrieveSales(req, resp);
+					retrieveSales(req, resp, idLsit);
 					break;
 				case INCOME_INVOICE:
-					retrieveInvoices(req, resp);
+					retrieveInvoices(req, resp, idLsit);
 					break;
 				case INGENET_DELIVERY:
 //					object = getIngenetDelivery(domain, userName, req);
@@ -136,10 +123,9 @@ public class SeresFtpServlet extends HttpServlet {
 	}
 
 	
-	public void sendInvoices(HttpServletRequest req, HttpServletResponse resp, String[] _idList) {
+	public void sendInvoices(String domainName, String userName, HttpServletRequest req, HttpServletResponse resp, String[] _idList) {
 		List<Integer> idList = Arrays.asList(_idList).stream().map(o -> Integer.parseInt(o))
 				.collect(Collectors.toCollection(LinkedList::new));
-		;
 		try {
 			AonServletUtils.initFacesContext(getServletContext(), req, resp);
 			List<ITransferObject> list = getInvoiceList(idList);
@@ -156,17 +142,17 @@ public class SeresFtpServlet extends HttpServlet {
 	}
 	
 	// TODO sendDeliveries
-	public void sendDeliveries(HttpServletRequest req, HttpServletResponse resp){
+	public void sendDeliveries(HttpServletRequest req, HttpServletResponse resp, String[] _idList){
 		
 	}
 	
 	// TODO retrieveInvoices
-	public void retrieveInvoices(HttpServletRequest req, HttpServletResponse resp){
+	public void retrieveInvoices(HttpServletRequest req, HttpServletResponse resp, String[] _idList){
 		
 	}
 	
 	// TODO retrieveSales
-	public void retrieveSales(HttpServletRequest req, HttpServletResponse resp){
+	public void retrieveSales(HttpServletRequest req, HttpServletResponse resp, String[] _idList){
 		
 	}
 	
@@ -335,11 +321,9 @@ public class SeresFtpServlet extends HttpServlet {
 				showFtpServerConnectionData = false;
 				SeresFtpConnectionProvider.checkLogin(server, port, user, password);
 			} catch (FtpLoginException e) {
-//				showFtpServerConnectionData = true;
-//				AonUtil.addErrorMessage(e.getMessage());
+				throw new AonCoreException(e.getMessage(), e);
 			} catch (FtpException e) {
-//				showFtpServerConnectionData = true;
-//				AonUtil.addErrorMessage(e.getMessage());
+				throw new AonCoreException(e.getMessage(), e);
 			}
 		}
 		
@@ -361,41 +345,16 @@ public class SeresFtpServlet extends HttpServlet {
 					} else {
 						byte[] data = output.getContent();
 						String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
-						fsp.add(data, referenceCode);
+						fsp.put(invoice.getId(), data, referenceCode);
 					}
 				});
 				
 				SeresFtpProcessThread thread = new SeresFtpProcessThread(fsp); 
 				thread.start();
+				
 				// TODO: mark this invoice as sended
+				
 			
-			} catch (Throwable e) {
-				throw new AonCoreException(e.getMessage(), e);
-			}
-		}
-		
-		public void onEdiFtpTransfer(Invoice invoice) {
-			initContext();
-			checkValidLogin();
-			
-			FileOutput output = null;
-			try {
-				output = exportEdiFile(invoice);
-				if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
-					for(Exception e: output.getErrors()){
-						Fd0Exception fd0 = (Fd0Exception) e;
-						LOGGER.log(Level.SEVERE, fd0.getMessage());
-					}
-				} else {
-					// upload file
-					byte[] data = output.getContent();
-					String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
-					FtpStoreProcess sdp = new FtpStoreProcess(data, referenceCode);
-					SeresFtpProcessThread thread = new SeresFtpProcessThread(sdp); 
-					thread.start();
-					
-					// TODO: mark this invoice as sended 
-				}
 			} catch (Throwable e) {
 				throw new AonCoreException(e.getMessage(), e);
 			}
@@ -422,7 +381,7 @@ public class SeresFtpServlet extends HttpServlet {
 						String customerEdiPtoEntregaCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
 						String customerEdiFacturaCode = ediCodes.get(IEdiSupport.FACTURA);
 						
-						Tag packingTag = ediSuport.obtainPackingTag(
+						Tag packingTag = ediSuport.obtainPackingTagInvoice(
 								invoice.getRegistry(),
 								invoice.getRegistryAddress());
 						if(packingTag!=null && packingTag.getId()!=null){
@@ -470,190 +429,48 @@ public class SeresFtpServlet extends HttpServlet {
 			return null;
 		}
 
-
-		public class CustomerEdiSupport {
-			private Map<Integer, List<String>> addressCodes;
-			private List<RegistryAddress> customerAddresses;
-			private boolean enabled;
-			
-			public boolean isEnabled(){
-				return enabled;
-			}
-			
-			private void init(Customer customer) throws ManagerBeanException {
-				this.customerAddresses = this.getAddresses(customer);
-				this.addressCodes = new HashMap<Integer, List<String>>();
-				
-				RegistryNote active = this.getRegistryNote(ACTIVE, customer.getId());
-				enabled = active != null && new Boolean(active.getComments());
-				
-				this.customerAddresses.forEach(
-						address -> {
-							addressCodes.put(
-									address.getId(),
-									getAddressCodes(this.obtainRegistryNote(address.getId(),
-											customer)));
-						});
-			}
-			
-			private List<RegistryAddress> getAddresses(Customer customer) {
-				try {
-					IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(
-							registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID),
-							customer.getId());
-					criteria.addOrder(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS));
-					return (List) registryAddressBean.getList(criteria);
-				} catch (ManagerBeanException e) {
-					 LOGGER.info(e.getMessage());
-				}
-				return null;
-			}
-			
-			private List<String> getAddressCodes(RegistryNote registryNote) {
-				String value = null;
-				if (registryNote != null) {
-					value = registryNote.getComments();
-				}
-				String[] values = { "", "", "", "", "", "", "" };
-				Matcher m;
-
-				Pattern p1 = Pattern.compile(EDI_CODES_PATTERN);
-				if (value != null && (m = p1.matcher(value)).find()) {
-					values[0] = m.group(1);
-					values[1] = m.group(2);
-					values[2] = m.group(3);
-					values[3] = m.group(4);
-					values[4] = m.group(5);
-					values[5] = m.group(6);
-				}
-				Pattern p2 = Pattern.compile(EDI_PACKING_PATTERN);
-				if (value != null && (m = p2.matcher(value)).find()) {
-					values[6] = m.group(1);
-				}
-				return Arrays.asList(values);
-			}
-			
-			private RegistryNote obtainRegistryNote(Integer addressId, Customer customer) {
-				RegistryNote note = this.getRegistryNote(addressId.toString(), customer.getId());
-				if (note == null) {
-					note = getEmptyNote(customer.getRegistry(), addressId.toString());
-				}
-				return note;
-			}
-
-			private RegistryNote getEmptyNote(Registry registry, String key) {
-				RegistryNote note = new RegistryNote();
-				note.setNoteDate(new Date());
-				note.setRegistry(registry);
-				note.setNotetype(NoteType.FACTURAE);
-				note.setDescription(key);
-				return note;
-			}
-
-			private RegistryNote getRegistryNote(String key, Integer registryId) {
-				RegistryNote note = null;
-				try {
-					IManagerBean bean = BeanManager.getManagerBean(RegistryNote.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID), registryId);
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE),
-							NoteType.FACTURAE);
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_DESCRIPTION), key);
-					List<ITransferObject> list = bean.getList(criteria);
-					if (!list.isEmpty()) {
-						note = (RegistryNote) list.get(0);
-					}
-				} catch (ManagerBeanException e) {
-					 LOGGER.info(e.getMessage());
-				}
-				return note;
-			}
-			
-			public Map<String, String> getEdiCodes(Registry registry, RegistryAddress address){
-				RegistryNote rnote = this.getRegistryNote(address.getId().toString(),
-						registry.getId());
-				String value = null;
-				if (rnote != null) {
-					value = rnote.getComments();
-				}
-				Map<String, String> values = new HashMap<>();
-				Matcher m;
-				Pattern p = Pattern.compile(EDI_CODES_PATTERN);
-				if (value != null && (m = p.matcher(value)).find()) {
-					values.put(CABECERA, m.groupCount()>0 ? m.group(1) : null);
-					values.put(PEDIDOS, m.groupCount()>1 ? m.group(2) : null);
-					values.put(PTO_ENTREGA, m.groupCount()>2 ? m.group(3) : null);
-					values.put(FACTURA, m.groupCount()>3 ? m.group(4) : null);
-					values.put(FINANCIERA, m.groupCount()>4 ? m.group(5) : null);
-					values.put(ALBARANES, m.groupCount()>5 ? m.group(6) : null);
-					values.put(MEDIDA, m.groupCount()>6 ? m.group(7) : null);
-				}
-				return values;
-			}
-			
-			public Tag obtainPackingTag(Registry registry, RegistryAddress address) {
-				RegistryNote rNote = this.getRegistryNote(address.getId().toString(),
-						registry.getId());
-				String value = null;
-				if (rNote != null) {
-					value = rNote.getComments();
-				}
-				Matcher m;
-				Pattern p = Pattern.compile(MEDIDA + "=([^;]*);");
-				try {
-					if (value != null && (m = p.matcher(value)).find()) {
-						IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
-						return (Tag) tagBean.get(Integer.valueOf(m.group(1)));
-					}
-				} catch (ManagerBeanException e) {
-					LOGGER.info(e.getMessage());
-				} catch (NumberFormatException e) {
-					LOGGER.info(e.getMessage());
-				}
-				return null;
-			}
-			
-		}
 		
 		
 		public class FtpStoreProcess implements ILongProcess {
 
 			private boolean success = false;
 			
-			private List<byte[]> dataList;
-			private List<String> referenceCodeList;
+			private Map<Integer, byte[]> dataMap;
+			private Map<Integer, String> referenceCodeMap;
 			
 			public FtpStoreProcess() {
-				dataList = new ArrayList<>();
-				referenceCodeList = new ArrayList<>();
+				dataMap = new HashMap<>();
+				referenceCodeMap = new HashMap<>();
 			}
-			public FtpStoreProcess(byte[] data, String referenceCode) {
+			public FtpStoreProcess(int id, byte[] data, String referenceCode) {
 				this();
-				if(data!=null) this.add(data, referenceCode);
+				this.put(id, data, referenceCode);
 			}
 
-			public void add(byte[] data, String referenceCode) {
-				dataList.add(data);
-				referenceCodeList.add(referenceCode);
+			public void put(int id, byte[] data, String referenceCode) {
+				dataMap.put(id, data);
+				referenceCodeMap.put(id, referenceCode);
 			}
 
 			@Override
 			public void execute() {
-				for(int i=0; i<dataList.size(); i++){
+				for(Integer id: dataMap.keySet()){
+					byte[] data = dataMap.get(id);
+					String referenceCode = referenceCodeMap.get(id);
+					
 					InputStream inputStream = new BufferedInputStream(
-							new ByteArrayInputStream(dataList.get(i)));
-					success = storeFtpFile("factura-" + referenceCodeList.get(i) + ".edi",
+							new ByteArrayInputStream(data));
+					success = storeFtpFile("factura-" + referenceCode + ".edi",
 							inputStream);
+					
+					log(Level.INFO, "FTP STORE: " + success);
+					// TODO log store proccess result
+//					if (success) {
+//						log(Level.INFO, "Fichero EDI generado y enviado CORRECTAMENTE.", true, domainName, domainId, user, id, referenceCode);
+//					} else {
+//						log(Level.INFO, "El fichero no se ha podido enviar.", true, domainName, domainId, user, id, referenceCode);
+//					}
 					IOUtils.closeQuietly(inputStream);
-				}
-				
-				LOGGER.info("FTP STORE: " + success);
-				if (success) {
-					LOGGER.info("Fichero EDI generado y enviado CORRECTAMENTE.");
-				} else {
-					LOGGER.info("El fichero no se ha podido enviar.");
 				}
 			}
 			
@@ -667,6 +484,45 @@ public class SeresFtpServlet extends HttpServlet {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 				return false;
+			}
+			
+			private void log(Level level, String message) {
+				log(level, message, false, null, 0, null, 0, null);	
+			}
+			
+			private void log(Level level, String message, boolean isTrackable, String domainName, int domainId, String user, int id, String referenceCode) {
+				LOGGER.log(level, message);
+				if(isTrackable){
+					DataResponse dr= new DataResponse();
+					dr.setDomain(domainId);
+					dr.setCode(referenceCode);
+					dr.setResponseDate(new Date());
+					// TODO fill DataResponseSource
+					dr.setSource(DataResponseSource.SERES_INVOICE);
+					dr.setSourceId(id);
+					dr.setCreationUser(user);
+					dr.setCreationDate(new Date());
+					AON.insertDataResponse(domainName, domainId, user, dr);
+					// TODO fill dataResponse ID
+//					dr.setId(null);
+					
+					DataResponseDetail drd = new DataResponseDetail();
+					drd.setDataResponse(dr.getId());
+					drd.setDomain(domainId);
+					drd.setDataValue(null); // TODO
+					drd.setDataVariable(null); // TODO
+					drd.setCreationUser(user);
+					drd.setCreationDate(new Date());
+					AON.insertDataResponseDetail(domainName, domainId, user, drd);
+					
+//					Attach attach = new Attach();
+//					attach.setAttachType(AttachType.DATA);
+//					attach.setSourceBatch(response.getId());
+//					attach.setType(DataAttachType.REQUEST.value());
+//					attach.setSourceType(DataAttachSource.SERES.value());
+//					attach.setData(null); // TODO
+//					attach.setDate(new Date());
+				}
 			}
 
 		}

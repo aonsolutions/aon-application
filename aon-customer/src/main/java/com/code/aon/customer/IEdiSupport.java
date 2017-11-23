@@ -13,6 +13,18 @@ public interface IEdiSupport {
 	public String FINANCIERA = "EDI_FINANCIERA";
 	public String ALBARANES = "EDI_ALBARANES";
 	public String MEDIDA = "EDI_MEDIDA";
+	public String MEDIDA_FACTURA = "EDI_MEDIDA_FACTURA";
+	
+	public String[] EDI_VALUES = {
+			CABECERA, 
+			PEDIDOS,
+			PTO_ENTREGA,
+			FACTURA,
+			FINANCIERA,
+			ALBARANES,
+			MEDIDA,
+			MEDIDA_FACTURA
+	};
 	
 	public String EDI_CODES_PATTERN = CABECERA + "=([^;]*);" 
 			+ PEDIDOS + "=([^;]*);"
@@ -21,6 +33,8 @@ public interface IEdiSupport {
 			+ FINANCIERA + "=([^;]*);"
 			+ ALBARANES + "=([^;]*);";
 
-	public String EDI_PACKING_PATTERN = MEDIDA + "=([^;]*);";
+	public String EDI_PACKING_PATTERN = MEDIDA + "=([^;]*);"
+			+ "(?:" + MEDIDA_FACTURA + "=([^;]*);)?"
+			;
 
 }
