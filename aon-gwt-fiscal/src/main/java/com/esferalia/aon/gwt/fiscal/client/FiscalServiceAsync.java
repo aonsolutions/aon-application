@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -47,13 +46,6 @@ public interface FiscalServiceAsync {
 	// -------------------------------------------------------------- ACTIVITIES
 	void getActivities(int activityGroup,
 			AsyncCallback<LinkedList<Activity>> callback);
-
-	// ---------------------------------------------------------------MODELO 184
-	void deleteMod184(String domainName, int domain,Mod184 mod184, AsyncCallback<Void> callback);
-	void saveMod184(String domainName, int domain,Mod184 mod184, AsyncCallback<Mod184> callback);
-	void getMod184s(String domainName, int domain, AsyncCallback<LinkedList<Mod184>> callback);
-	void getMod184(String domainName, int domain,Integer id, AsyncCallback<Mod184> callback);
-	void initializeMod184(String domainName, Integer domain, Integer year,AsyncCallback<Mod184> callback);
 
 	// ---------------------------------------------------------------MODELO 390
 	void getMod390s(String domainName, Integer domain, AsyncCallback<LinkedList<Mod390>> callback);

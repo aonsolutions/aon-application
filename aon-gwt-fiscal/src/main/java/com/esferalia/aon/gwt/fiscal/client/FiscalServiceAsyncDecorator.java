@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -88,47 +87,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getActivities(activityGroup,
 				new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
-	}
-
-	// ---------------------------------------------------------------MODELO 184
-	@Override
-	public void deleteMod184(String domainName, int domain, Mod184 mod184,
-			AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.deleteMod184(domainName, domain, mod184,
-				new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void saveMod184(String domainName, int domain, Mod184 mod184,
-			AsyncCallback<Mod184> callback) {
-		AON.start();
-		fsa.saveMod184(domainName, domain, mod184,
-				new AsyncCallbackWrapper<Mod184>(callback));
-	}
-
-	@Override
-	public void getMod184s(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod184>> callback) {
-		AON.start();
-		fsa.getMod184s(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<Mod184>>(callback));
-	}
-
-	@Override
-	public void initializeMod184(String domainName, Integer domain,
-			Integer year, AsyncCallback<Mod184> callback) {
-		AON.start();
-		fsa.initializeMod184(domainName, domain, year,
-				new AsyncCallbackWrapper<Mod184>(callback));
-	}
-
-	@Override
-	public void getMod184(String domainName, int domain, Integer id,
-			AsyncCallback<Mod184> callback) {
-		AON.start();
-		fsa.getMod184(domainName, domain, id, new AsyncCallbackWrapper<Mod184>(
-				callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 390

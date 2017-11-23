@@ -14,9 +14,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -56,7 +53,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model184 extends MainEntryPoint {
 
-	static FiscalServiceAsync fiscalService;
+	static Model184ServiceAsync MOD184_SERVICE;
 	
 	interface Model184Binder extends UiBinder<Widget, Model184> {
 	}
@@ -96,11 +93,6 @@ public class Model184 extends MainEntryPoint {
 	SimpleLayoutPanel incomesPanel;
 	@UiField
 	SimpleLayoutPanel partnersPanel;
-
-//	@UiField
-//	Model184Income2014 incomesPanel;
-//	@UiField
-//	Model184Partner2014 partnersPanel;
 
 	@UiField
 	Button saveButton;
@@ -167,10 +159,8 @@ public class Model184 extends MainEntryPoint {
 	public void onModuleLoad() {
 		AON.ensureInjected();
 
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
-		FiscalServiceAsync mod184ServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(mod184ServiceRaw);
+		Model184ServiceAsync mod184ServiceRaw = GWT.create(Model184Service.class);
+		MOD184_SERVICE = new Model184ServiceAsyncDecorator(mod184ServiceRaw);
 
 		table = new Model184Table(new Mod184SelectionHandler());
 
@@ -322,7 +312,7 @@ public class Model184 extends MainEntryPoint {
 		@Override
 		public void onSelectionChange(SelectionChangeEvent event) {
 			Mod184 sel = table.getSelected();
-			fiscalService.getMod184(getCurrentDomainName(), getCurrentDomain(),
+			MOD184_SERVICE.getMod184(getCurrentDomainName(), getCurrentDomain(),
 					sel.getId(), new AsyncCallback<Mod184>() {
 						@Override
 						public void onSuccess(Mod184 selected) {
@@ -422,7 +412,7 @@ public class Model184 extends MainEntryPoint {
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		fiscalService.getMod184s(getCurrentDomainName(), getCurrentDomain(),
+		MOD184_SERVICE.getMod184s(getCurrentDomainName(), getCurrentDomain(),
 				new AsyncCallback<LinkedList<Mod184>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod184> result) {
@@ -464,7 +454,7 @@ public class Model184 extends MainEntryPoint {
 		popup.center();
 
 		populateMod184();
-		fiscalService.saveMod184(getCurrentDomainName(), getCurrentDomain(),
+		MOD184_SERVICE.saveMod184(getCurrentDomainName(), getCurrentDomain(),
 				this.currentMod184, new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 result) {
@@ -484,7 +474,7 @@ public class Model184 extends MainEntryPoint {
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm(AON.MSG.confirmDeclarationDeleteAction())) {
-			fiscalService.deleteMod184(getCurrentDomainName(),
+			MOD184_SERVICE.deleteMod184(getCurrentDomainName(),
 					getCurrentDomain(), this.currentMod184, new AsyncCallback<Void>() {
 						@Override
 						public void onSuccess(Void result) {
@@ -504,7 +494,7 @@ public class Model184 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		fiscalService.initializeMod184(getCurrentDomainName(),getCurrentDomain(), 2016,
+		MOD184_SERVICE.initializeMod184(getCurrentDomainName(),getCurrentDomain(), 2016,
 				new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 m184) {

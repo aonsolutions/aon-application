@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -46,13 +45,6 @@ public interface FiscalService extends RemoteService {
 	
 	// -------------------------------------------------------------- ACTIVITIES
 	LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException;
-
-	// ---------------------------------------------------------------MODELO 184
-	void deleteMod184(String domainName, int domain,Mod184 mod184) throws AonCoreException;
-	Mod184 saveMod184(String domainName, int domain,Mod184 mod184) throws AonCoreException;
-	LinkedList<Mod184> getMod184s(String domainName, int domain) throws AonCoreException;
-	Mod184 getMod184(String domainName, int domain,Integer id) throws AonCoreException;
-	Mod184 initializeMod184(String domainName, Integer domain, Integer year);
 
 	// ---------------------------------------------------------------MODELO 390
 	LinkedList<Mod390> getMod390s(String domainName, Integer domain) throws AonCoreException;
