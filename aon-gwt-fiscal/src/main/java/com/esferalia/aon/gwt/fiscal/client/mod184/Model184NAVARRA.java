@@ -12,11 +12,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model184AEAT extends Model184Base {
+public class Model184NAVARRA extends Model184Base {
 
 	private static final int PERCEPTORS_TAB = 1;
 
-	public Model184AEAT(Mod184 mod184,Model184Callback cbk,Integer selectedIndex) {
+	public Model184NAVARRA(Mod184 mod184,Model184Callback cbk,Integer selectedIndex) {
 		super(mod184, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -45,12 +45,8 @@ public class Model184AEAT extends Model184Base {
 	@Override
 	protected LinkedList<Pair<String, String>> getInformationLinks() {
 		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Tr\u00E1mites."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GI04.shtml"));
-		list.add(new Pair<String, String>("Informaci\u00F3n general y ayuda." 
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/GI04.shtml"));
-		list.add(new Pair<String, String>("Ficha."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GI04.shtml"));
+		list.add(new Pair<String, String>("Informaci\u00F3n general." 
+				,"https://hacienda.navarra.es/GImpresos/Detalle.aspx?busqueda=184&modo=2"));
 		return list;
 	}
 	

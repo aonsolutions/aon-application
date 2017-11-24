@@ -177,19 +177,19 @@ public class Model184 extends MainEntryPoint {
 
 	private void select(Mod184 selected, Integer selectedIndex) {
 		cleanErrorPanel();
-//		if ( selected.isAEAT() ) {
+		if ( selected.isAEAT() ) {
 			declarationContainer.setWidget( new Model184AEAT(selected,new Model184Callback(),selectedIndex));
-//		} else if ( selected.isAraba() ) {
-//			declarationContainer.setWidget( new Model1842017ARABA(selected,new Model184Callback(),selectedIndex));			
-//		} else if ( selected.isBizkaia() ) {
-//			declarationContainer.setWidget( new Model1842017BIZKAIA(selected,new Model184Callback(),selectedIndex));			
-//		} else if ( selected.isGipuzkoa() ) {
-//			declarationContainer.setWidget( new Model1842017GIPUZKOA(selected,new Model184Callback(),selectedIndex));			
-//		} else if ( selected.isNavarra() ) {
-//			declarationContainer.setWidget( new Model1842017NAVARRA(selected,new Model184Callback(),selectedIndex));			
-//		} else {
-//			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
-//		}
+		} else if ( selected.isAraba() ) {
+			declarationContainer.setWidget( new Model184ARABA(selected,new Model184Callback(),selectedIndex));			
+		} else if ( selected.isBizkaia() ) {
+			declarationContainer.setWidget( new Model184BIZKAIA(selected,new Model184Callback(),selectedIndex));			
+		} else if ( selected.isGipuzkoa() ) {
+			declarationContainer.setWidget( new Model184GIPUZKOA(selected,new Model184Callback(),selectedIndex));			
+		} else if ( selected.isNavarra() ) {
+			declarationContainer.setWidget( new Model184NAVARRA(selected,new Model184Callback(),selectedIndex));			
+		} else {
+			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
+		}
 	}
 
 	private void newModel() {

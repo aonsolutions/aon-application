@@ -54,7 +54,6 @@ import com.google.gwt.user.client.ui.Widget;
 abstract class Model184Base extends DockLayoutPanel {
 
 	static final String MODEL184_PRINT = "/aon_gwt_fiscal/Model184Print";
-	private static final String MODEL184_CERTIFICATE_PRINT = "/aon_gwt_fiscal/Model184CertificatePrint";
 	static final String MODEL184_FILE = "/aon_gwt_fiscal/Model184File";
 	
 	protected static class MediumLabel extends InlineLabel {
@@ -1003,50 +1002,6 @@ abstract class Model184Base extends DockLayoutPanel {
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 		panel.add(tab);
-		
-		FlexTable tab2 = new FlexTable();
-		tab2.getColumnFormatter().setWidth(0, "30px");
-		tab2.getColumnFormatter().setWidth(1, "auto");
-		tab2.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab2.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab2.addStyleName(AON.AON_CSS.aonPanelGrid());
-		tab2.addStyleName(AON.AON_CSS.aonMarginTop());
-		Label title2 = new Label("Otros");
-		tab2.getFlexCellFormatter().setColSpan(0, 0, 2);
-		tab2.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab2.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab2.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab2.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod184().getAdministration()));
-		tab2.setWidget(0, 0, title2);
-		
-		row = 1;
-		Label icon2 = new Label();
-		icon2.addStyleName(AON.AON_CSS.aonIconPdf());
-		tab2.setWidget(row, 0, icon2 );
-		tab2.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		FlowPanel p2 = new FlowPanel();
-		p2.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button2 = new Button("Certificado de retenciones e ingresos a cuenta del I.R.P.F.");
-		button2.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button2.addStyleName(AON.AON_CSS.aonBorderNone());
-		button2.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button2.addStyleName(AON.AON_CSS.aonClickable());
-		button2.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getMod184().isFinished() || getMod184().isSent()) {
-					submitForm(MODEL184_CERTIFICATE_PRINT);
-				} else {
-					getCallback().showError("Para imprimir los certificados, debe finalizar la confecci\u00F3n del modelo.");
-				}
-			}
-		});
-		p2.add(button2);
-		tab2.setWidget(row, 1, p2 );
-		tab2.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		row++;
-		
-		panel.add(tab2);
 		
 		return panel;
 	}
