@@ -111,7 +111,7 @@ public interface ICommon {
 	// DATA RESPONSE
 	public Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseSource source, DataResponseFilter filter);
 	public DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse);
-	public DataResponse updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter);
+	public Integer updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter);
 	public DataResponse deleteDataResponse(AONContext ctx, DataResponseFilter filter);
 	
 	public Stream<DataResponseDetail> getDataResponseDetailStream(AONContext ctx, DataResponseDetailFilter filter);

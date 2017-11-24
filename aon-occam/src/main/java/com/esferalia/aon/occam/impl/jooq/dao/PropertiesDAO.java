@@ -768,6 +768,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.DOMAIN);}
 		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CODE);}
 		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.RESPONSE_DATE);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CODE);}
 		
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.SOURCE);}
 		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.SOURCE_ID);}

@@ -4470,7 +4470,7 @@ public class AON {
 		}
 	}
 	
-	public static DataResponse updateDataResponse(String domainName, Integer domainId, String login, DataResponse dataResponse, DataResponseFilter filter){
+	public static Integer updateDataResponse(String domainName, Integer domainId, String login, DataResponse dataResponse, DataResponseFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);

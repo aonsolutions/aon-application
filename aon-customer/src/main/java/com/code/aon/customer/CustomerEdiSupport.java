@@ -185,7 +185,9 @@ public class CustomerEdiSupport implements Serializable, IEdiSupport {
 		try {
 			if (value != null && (m = p.matcher(value)).find()) {
 				IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
-				return (Tag) tagBean.get(Integer.valueOf(m.group(1)));
+				String tagValue = m.group(1);
+				if(tagValue!=null)
+					return (Tag) tagBean.get(Integer.valueOf(tagValue));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.info(e.getMessage());

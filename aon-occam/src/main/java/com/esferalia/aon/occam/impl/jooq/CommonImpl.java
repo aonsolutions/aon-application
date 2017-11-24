@@ -281,7 +281,7 @@ public class CommonImpl implements ICommon {
 	}
 
 	@Override
-	public DataResponse updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter) {
+	public Integer updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 					DataResponseDAO.updateDataResponse(ctx, dataResponse, filter));
 	}

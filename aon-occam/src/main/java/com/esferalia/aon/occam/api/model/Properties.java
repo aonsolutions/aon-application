@@ -831,6 +831,7 @@ public interface Properties {
 		Property<Date> getIssueDateProperty();
 		Property<Byte> getSourceProperty();
 		Property<Integer> getSourceIdProperty();
+		Property<String> getCodeProperty();
 		
 		// DATA RESPONSE DETAIL
 		Property<String> getDetailVariableProperty();

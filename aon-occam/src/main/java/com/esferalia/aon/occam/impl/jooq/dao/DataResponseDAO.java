@@ -51,8 +51,17 @@ public class DataResponseDAO {
 		.returning().fetch().stream().map(new DataResponseFiller()).findFirst().orElse(dataResponse);
 	}
 	
-	public static DataResponse updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter){	
-		return new DataResponse();
+	public static Integer updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter){
+		return ctx.getDslContext().update(DATA_RESPONSE)
+			.set(DATA_RESPONSE.DOMAIN, dataResponse.getDomain())
+			.set(DATA_RESPONSE.CODE, dataResponse.getCode())
+			.set(DATA_RESPONSE.RESPONSE_DATE, AonDateUtils.toSql(dataResponse.getResponseDate())) 
+			.set(DATA_RESPONSE.SOURCE, dataResponse.getSource().value())
+			.set(DATA_RESPONSE.SOURCE_ID, dataResponse.getSourceId())
+			.set(DATA_RESPONSE.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.set(DATA_RESPONSE.MODIFICATION_USER, ctx.getUser())
+			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	public static DataResponse deleteDataResponse(AONContext ctx, DataResponseFilter filter){	

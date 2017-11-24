@@ -19,6 +19,7 @@ import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPReply;
 
 import com.code.aon.common.ILogger;
+import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider.StoreResult;
 
 public class SeresFtpConnectionProvider implements Serializable {
 
@@ -42,20 +43,25 @@ public class SeresFtpConnectionProvider implements Serializable {
 		return true;
 	}
 	
+	static class StoreResult {
+		boolean completed;
+		String message;
+	}
 	public static boolean storeFile(String remotePath, String fileName,
 			InputStream localInputStream, String server, Integer port,
 			String user, String passwd) throws FtpLoginException, FtpException {
-		boolean completed = false;
+		StoreResult result = new StoreResult();
+		result.completed = false;
 		FtpConnector ftp = new FtpConnector() {
 			@Override
 			public void onSuccess() throws IOException, FtpException {
 				this.storeFile(remotePath, fileName, localInputStream,
-						completed);
+						result);
 				localInputStream.close();
 			}
 		};
 		ftp.connect(server, port, user, passwd);
-		return completed;
+		return result.completed;
 	}
 	
 	public static byte[] retrieveFile(String remotePath, String remoteFile,
@@ -366,13 +372,14 @@ abstract class FtpConnector {
 		return success;
 	}
 	
-	protected void storeFile(String remotePath, String fileName, InputStream localInputStream, boolean completed) throws IOException, FtpException {
+	protected void storeFile(String remotePath, String fileName, InputStream localInputStream, StoreResult result) throws IOException, FtpException {
 		boolean success = changeWorkingDirectory(remotePath);
 		if (success) {
 			ftp.setFileType(FTP.BINARY_FILE_TYPE);
-			success =  ftp.storeFile(fileName, localInputStream);
-			if (!success) {
+			result.completed =  ftp.storeFile(fileName, localInputStream);
+			if (!result.completed) {
 				// TODO log me
+				result.message = "ERROR: the file is not uploaded successfully.";
 				System.out.println("ERROR: the file is not uploaded successfully.");
 				throw new FtpException("Ha ocurrido un error en la transmision del fichero");
 			}

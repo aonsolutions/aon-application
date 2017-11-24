@@ -80,7 +80,7 @@ public class SeresFtpServlet extends HttpServlet {
 		String userName = pathInfo[2];
 		String md5 = Utils.getMd5(userName + domainName);
 		
-		Map<String, String[]> filterMap = req.getParameterMap(); filterMap.size();filterMap.keySet();
+		Map<String, String[]> filterMap = req.getParameterMap();
 		String[] idLsit = null;
 		if (filterMap.containsKey("id_list")) {
 			idLsit = filterMap.get("id_list");
@@ -97,7 +97,7 @@ public class SeresFtpServlet extends HttpServlet {
 					sendDeliveries(req, resp, idLsit);
 					break;
 				case OUTCOME_INVOICE:
-					sendInvoices(domainName, userName, req, resp, idLsit);
+					sendInvoices(domain, userName, req, resp, idLsit);
 					break;
 				case INCOME_SALES:
 					retrieveSales(req, resp, idLsit);
@@ -123,14 +123,14 @@ public class SeresFtpServlet extends HttpServlet {
 	}
 
 	
-	public void sendInvoices(String domainName, String userName, HttpServletRequest req, HttpServletResponse resp, String[] _idList) {
+	public void sendInvoices(Domain domain, String loggedUser, HttpServletRequest req, HttpServletResponse resp, String[] _idList) {
 		List<Integer> idList = Arrays.asList(_idList).stream().map(o -> Integer.parseInt(o))
 				.collect(Collectors.toCollection(LinkedList::new));
 		try {
 			AonServletUtils.initFacesContext(getServletContext(), req, resp);
 			List<ITransferObject> list = getInvoiceList(idList);
 			if (list != null && list.size() > 0) {
-				new FtpSaleInvoiceUploaderHandler()
+				new FtpSaleInvoiceUploaderHandler(domain, loggedUser)
 						.onEdiFtpTransfer(list.stream().map(o -> (Invoice) o).collect(Collectors.toList()));
 			}
 		} catch (Exception e) {
@@ -231,67 +231,59 @@ public class SeresFtpServlet extends HttpServlet {
 		private final String PARAM_FTP_PASSWORD = "SERES_FTP_PASSWORD";
 		private final String PARAM_FTP_REMOTE_PATH = "SERES_FTP_PATH_PUSH_INVOICE";
 		
-		private boolean showEdiFtpWindow;
+		private String ftpServer;
+		private Integer ftpPort;
+		private String ftpUser;
+		private String ftpPassword;
+		private String ftpRemotePath;
 		
-		private String server;
-		private Integer port;
-		private String user;
-		private String password;
-		private String remotePath;
+		private Domain domain;
+		private String loggedUser;
 		
-		private boolean showFtpServerConnectionData;
-
-		public boolean isShowEdiFtpWindow() {
-			return showEdiFtpWindow;
+		public FtpSaleInvoiceUploaderHandler(Domain domain, String loggedUser) {
+			this.domain = domain;
+			this.loggedUser = loggedUser;
 		}
 
-		public void setShowEdiFtpWindow(boolean showEdiFtpWindow) {
-			this.showEdiFtpWindow = showEdiFtpWindow;
-		}
-
-		public String getServer() {
-			return server;
-		}
-
-		public void setServer(String server) {
-			this.server = server;
-		}
-
-		public Integer getPort() {
-			return port;
-		}
-
-		public void setPort(Integer port) {
-			this.port = port;
-		}
-
-		public String getUser() {
-			return user;
-		}
-
-		public void setUser(String user) {
-			this.user = user;
-		}
-
-		public String getPassword() {
-			return password;
-		}
-
-		public void setPassword(String password) {
-			this.password = password;
-		}
-
-		public String getRemotePath() {
-			return remotePath;
-		}
-
-		public void setRemotePath(String remotePath) {
-			this.remotePath = remotePath;
-		}
-
-		public boolean isShowFtpServerConnectionData(){
-			return showFtpServerConnectionData;
-		}
+//		public String getServer() {
+//			return server;
+//		}
+//
+//		public void setServer(String server) {
+//			this.server = server;
+//		}
+//
+//		public Integer getPort() {
+//			return port;
+//		}
+//
+//		public void setPort(Integer port) {
+//			this.port = port;
+//		}
+//
+//		public String getUser() {
+//			return user;
+//		}
+//
+//		public void setUser(String user) {
+//			this.user = user;
+//		}
+//
+//		public String getPassword() {
+//			return password;
+//		}
+//
+//		public void setPassword(String password) {
+//			this.password = password;
+//		}
+//
+//		public String getRemotePath() {
+//			return remotePath;
+//		}
+//
+//		public void setRemotePath(String remotePath) {
+//			this.remotePath = remotePath;
+//		}
 		
 		private void initContext() {
 			ApplicationParameter pServer = AppParamUtil.getParameter(PARAM_FTP_SERVER_NAME);
@@ -301,41 +293,37 @@ public class SeresFtpServlet extends HttpServlet {
 			ApplicationParameter pPath = AppParamUtil.getParameter(PARAM_FTP_REMOTE_PATH);
 			
 			if (pServer != null)
-				server = pServer.getValue();
+				ftpServer = pServer.getValue();
 			if (pPort != null && NumberUtils.isNumber(pPort.getValue()))
-				port = Integer.valueOf(pPort.getValue());
-			else 
-				port = 21;
+				ftpPort = Integer.valueOf(pPort.getValue());
+			else ftpPort = 21;
 			if (pUser != null)
-				user = pUser.getValue();
+				ftpUser = pUser.getValue();
 			if (pPasswd != null)
-				password = pPasswd.getValue();
+				ftpPassword = pPasswd.getValue();
 			if (pPath != null)
-				remotePath = pPath.getValue();
-			else 
-				remotePath = "/";
+				ftpRemotePath = pPath.getValue();
+			else ftpRemotePath = "/";
 		}
 
 		private void checkValidLogin() {
 			try {
-				showFtpServerConnectionData = false;
-				SeresFtpConnectionProvider.checkLogin(server, port, user, password);
+				SeresFtpConnectionProvider.checkLogin(ftpServer, ftpPort, ftpUser, ftpPassword);
 			} catch (FtpLoginException e) {
-				throw new AonCoreException(e.getMessage(), e);
+				throw new AonCoreException("SERES: Login rechazado, usuario y/o contraseña incorrecta.", e);
 			} catch (FtpException e) {
-				throw new AonCoreException(e.getMessage(), e);
+				throw new AonCoreException("SERES: Error de conexion ftp.", e);
 			}
 		}
 		
-
 		public void onEdiFtpTransfer(List<Invoice> invoiceList) {
 			initContext();
 			checkValidLogin();
 			
 			try {
-				FtpStoreProcess fsp = new FtpStoreProcess();
+				FtpStoreProcess fsp = new FtpStoreProcess(this.domain.getName(), this.domain.getId(), this.loggedUser);
 				
-				invoiceList.forEach(invoice -> {
+				for(Invoice invoice: invoiceList) {
 					FileOutput output = exportEdiFile(invoice);
 					if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
 						for(Exception e: output.getErrors()){
@@ -346,14 +334,13 @@ public class SeresFtpServlet extends HttpServlet {
 						byte[] data = output.getContent();
 						String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
 						fsp.put(invoice.getId(), data, referenceCode);
+						
+						invoiceTracking(this.domain.getName(), this.domain.getId(), this.loggedUser, invoice.getId(), referenceCode);
 					}
-				});
+				}
 				
 				SeresFtpProcessThread thread = new SeresFtpProcessThread(fsp); 
 				thread.start();
-				
-				// TODO: mark this invoice as sended
-				
 			
 			} catch (Throwable e) {
 				throw new AonCoreException(e.getMessage(), e);
@@ -393,7 +380,7 @@ public class SeresFtpServlet extends HttpServlet {
 							// writer file
 							ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
 							Company company = getCompany(invoice.getDomain());
-							company.getId();
+							
 							output = writer.createFile(invoice, company, companyEdiCode,
 									customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode,
 									customerPackage);
@@ -428,6 +415,25 @@ public class SeresFtpServlet extends HttpServlet {
 			}
 			return null;
 		}
+		
+		private void invoiceTracking(String domainName, int domainId, String user, int invoiceId, String referenceCode) {
+			DataResponse dr = AON.getDataResponse(domainName, domainId, user, DataResponseSource.SERES_INVOICE, f->f.getCodeProperty().eq(referenceCode));
+			if(dr==null || dr.getId()==null)
+				dr = new DataResponse();
+			dr.setDomain(domainId);
+			dr.setCode(referenceCode);
+			dr.setResponseDate(new Date());
+			dr.setSource(DataResponseSource.SERES_INVOICE);
+			dr.setSourceId(invoiceId);
+			dr.setCreationUser(user);
+			dr.setCreationDate(new Date());
+			if(dr.getId()!=null) {
+				Integer drId = dr.getId();
+				AON.updateDataResponse(domainName, domainId, user, dr, f->f.getIdProperty().eq(drId));
+			} else {
+				AON.insertDataResponse(domainName, domainId, user, dr);
+			}
+		}
 
 		
 		
@@ -437,13 +443,19 @@ public class SeresFtpServlet extends HttpServlet {
 			
 			private Map<Integer, byte[]> dataMap;
 			private Map<Integer, String> referenceCodeMap;
+			private String domainName;
+			private int domainId;
+			private String loggedUser;
 			
-			public FtpStoreProcess() {
+			public FtpStoreProcess(String domainName, int domainId, String loggedUser) {
 				dataMap = new HashMap<>();
 				referenceCodeMap = new HashMap<>();
+				this.domainName = domainName;
+				this.domainId = domainId;
+				this.loggedUser = loggedUser;
 			}
-			public FtpStoreProcess(int id, byte[] data, String referenceCode) {
-				this();
+			public FtpStoreProcess(String domainName, int domainId, String loggedUser, int id, byte[] data, String referenceCode) {
+				this(domainName, domainId, loggedUser);
 				this.put(id, data, referenceCode);
 			}
 
@@ -464,20 +476,19 @@ public class SeresFtpServlet extends HttpServlet {
 							inputStream);
 					
 					log(Level.INFO, "FTP STORE: " + success);
-					// TODO log store proccess result
-//					if (success) {
-//						log(Level.INFO, "Fichero EDI generado y enviado CORRECTAMENTE.", true, domainName, domainId, user, id, referenceCode);
-//					} else {
-//						log(Level.INFO, "El fichero no se ha podido enviar.", true, domainName, domainId, user, id, referenceCode);
-//					}
+					if (success) {
+						log(Level.INFO, "Fichero EDI generado y enviado CORRECTAMENTE.", true, domainName, domainId, loggedUser, id, referenceCode);
+					} else {
+						log(Level.SEVERE, "El fichero no se ha podido enviar.", true, domainName, domainId, loggedUser, id, referenceCode);
+					}
 					IOUtils.closeQuietly(inputStream);
 				}
 			}
 			
 			private boolean storeFtpFile(String fileName, InputStream inputStream) {
 				try {
-					return SeresFtpConnectionProvider.storeFile(remotePath, fileName,
-							inputStream, server, port, user, password);
+					return SeresFtpConnectionProvider.storeFile(ftpRemotePath, fileName,
+							inputStream, ftpServer, ftpPort, ftpUser, ftpPassword);
 				} catch (FtpLoginException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				} catch (FtpException e) {
@@ -490,38 +501,30 @@ public class SeresFtpServlet extends HttpServlet {
 				log(level, message, false, null, 0, null, 0, null);	
 			}
 			
-			private void log(Level level, String message, boolean isTrackable, String domainName, int domainId, String user, int id, String referenceCode) {
+			private void log(Level level, String message, boolean isTrackable, String domainName, int domainId, String loggedUser, int id, String referenceCode) {
 				LOGGER.log(level, message);
 				if(isTrackable){
-					DataResponse dr= new DataResponse();
-					dr.setDomain(domainId);
-					dr.setCode(referenceCode);
-					dr.setResponseDate(new Date());
-					// TODO fill DataResponseSource
-					dr.setSource(DataResponseSource.SERES_INVOICE);
-					dr.setSourceId(id);
-					dr.setCreationUser(user);
-					dr.setCreationDate(new Date());
-					AON.insertDataResponse(domainName, domainId, user, dr);
-					// TODO fill dataResponse ID
-//					dr.setId(null);
-					
+					DataResponse dr = AON.getDataResponse(domainName, domainId, loggedUser, DataResponseSource.SERES_INVOICE, f->f.getCodeProperty().eq(referenceCode));
+					if(dr==null || dr.getId()==null) {
+						dr = new DataResponse();
+						dr.setDomain(domainId);
+						dr.setCode(referenceCode);
+						dr.setResponseDate(new Date());
+						dr.setSource(DataResponseSource.SERES_INVOICE);
+						dr.setSourceId(id);
+						dr.setCreationUser(loggedUser);
+						dr.setCreationDate(new Date());
+						AON.insertDataResponse(domainName, domainId, loggedUser, dr);
+						dr = AON.getDataResponse(domainName, domainId, loggedUser, DataResponseSource.SERES_INVOICE, f->f.getCodeProperty().eq(referenceCode));
+					}
 					DataResponseDetail drd = new DataResponseDetail();
 					drd.setDataResponse(dr.getId());
 					drd.setDomain(domainId);
-					drd.setDataValue(null); // TODO
-					drd.setDataVariable(null); // TODO
-					drd.setCreationUser(user);
+					drd.setDataVariable("REQUEST");
+					drd.setDataValue(level.equals(Level.INFO)?"OK":"FAIL");
+					drd.setCreationUser(loggedUser);
 					drd.setCreationDate(new Date());
-					AON.insertDataResponseDetail(domainName, domainId, user, drd);
-					
-//					Attach attach = new Attach();
-//					attach.setAttachType(AttachType.DATA);
-//					attach.setSourceBatch(response.getId());
-//					attach.setType(DataAttachType.REQUEST.value());
-//					attach.setSourceType(DataAttachSource.SERES.value());
-//					attach.setData(null); // TODO
-//					attach.setDate(new Date());
+					AON.insertDataResponseDetail(domainName, domainId, loggedUser, drd);
 				}
 			}
 
