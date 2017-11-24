@@ -5,24 +5,30 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel184.FS_MODEL184;
 import static com.esferalia.aon.jooq.tables.FsModel184Detail.FS_MODEL184_DETAIL;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Record;
+import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.FsModel184Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod184DAO {
+	private static byte ZERO_BYTE = 0;
 
 	public static LinkedList<Mod184> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();
@@ -82,6 +88,23 @@ public class Mod184DAO {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
+	public static Mod184 saveComments(AONContext ctx, Mod184 fm) {
+		try {
+			ctx.checkWrite();
+			if (fm.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL184)
+					.set(FS_MODEL184.COMMENTS,fm.getComments())
+					.where(FS_MODEL184.ID.equal(fm.getId()))
+					.execute();
+			}
+			return fm;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getMessage());
+		}
+	}
+
 	public static Mod184 save(AONContext ctx, Mod184 mod184) {
 		ctx.checkWrite();
 		if (mod184.getId() == null) {
@@ -104,8 +127,8 @@ public class Mod184DAO {
 				.set(FS_MODEL184.DOMAIN,mod184.getDomain())
 				.set(FS_MODEL184.ENTERPRISE,mod184.getEnterprise())
 				.set(FS_MODEL184.YEAR,mod184.getYear())
-				.set(FS_MODEL184.ADMINISTRATION,(byte) mod184.getAdministration())
-				.set(FS_MODEL184.STATUS,(byte) 0)
+				.set(FS_MODEL184.ADMINISTRATION, mod184.getAdministration().getValue())
+				.set(FS_MODEL184.STATUS, ZERO_BYTE )
 				.set(FS_MODEL184.SECURITY_LEVEL,AonEnumUtils.getByte(mod184.isConfidential()) ) 
 				.set(FS_MODEL184.DOCUMENT,mod184.getDocument())
 				.set(FS_MODEL184.NAME,mod184.getName())
@@ -126,6 +149,8 @@ public class Mod184DAO {
 				.set(FS_MODEL184.NET_SALES_AMOUNT,mod184.getNetSalesAmount())
 				.set(FS_MODEL184.LRDOCUMENT,mod184.getLrDocument())
 				.set(FS_MODEL184.LRNAME,mod184.getLrName())
+				.set(FS_MODEL184.CREATION_USER,ctx.getUser())
+				.set(FS_MODEL184.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(FS_MODEL184.ID)
 			.fetchOne();
 		mod184.setId(record.getId());
@@ -135,8 +160,8 @@ public class Mod184DAO {
 	private static Mod184 update(AONContext ctx, Mod184 mod184) {
 		ctx.getDslContext().update(FS_MODEL184)
 			.set(FS_MODEL184.YEAR,mod184.getYear())
-			.set(FS_MODEL184.ADMINISTRATION,(byte) mod184.getAdministration())
-			.set(FS_MODEL184.STATUS,(byte) 0)
+			.set(FS_MODEL184.ADMINISTRATION,mod184.getAdministration().getValue())
+			.set(FS_MODEL184.STATUS,AonEnumUtils.getByte( mod184.getStatus()  ))
 			.set(FS_MODEL184.SECURITY_LEVEL,AonEnumUtils.getByte(mod184.isConfidential()) ) 
 			.set(FS_MODEL184.DOCUMENT,mod184.getDocument())
 			.set(FS_MODEL184.NAME,mod184.getName())
@@ -157,6 +182,8 @@ public class Mod184DAO {
 			.set(FS_MODEL184.NET_SALES_AMOUNT,mod184.getNetSalesAmount())
 			.set(FS_MODEL184.LRDOCUMENT,mod184.getLrDocument())
 			.set(FS_MODEL184.LRNAME,mod184.getLrName())
+			.set(FS_MODEL184.MODIFICATION_USER,ctx.getUser())
+			.set(FS_MODEL184.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FS_MODEL184.ID.equal(mod184.getId()))
 			.execute();
 		return mod184;
@@ -354,8 +381,10 @@ public class Mod184DAO {
 				.setDomain(record.getValue(FS_MODEL184.DOMAIN))
 				.setEnterprise(record.getValue(FS_MODEL184.ENTERPRISE))
 				.setYear(record.getValue(FS_MODEL184.YEAR))
-				.setAdministration( record.getValue(FS_MODEL184.ADMINISTRATION))
-				.setReplacement( AonEnumUtils.getBoolean( record.getValue(FS_MODEL184.REPLACEMENT)) )
+				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL184.ADMINISTRATION)))
+				.setReplacement( record.getValue(FS_MODEL184.REPLACEMENT)==1 )
+				.setComplementary(record.getValue(FS_MODEL184.COMPLEMENTARY)==1 )
+				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL184.STATUS)))
 				.setDocument(record.getValue(FS_MODEL184.DOCUMENT))
 				.setName(record.getValue(FS_MODEL184.NAME))
 				.setContactPerson(record.getValue(FS_MODEL184.CONTACT_PERSON))
@@ -372,7 +401,11 @@ public class Mod184DAO {
 				.setTaxIS(AonEnumUtils.getBoolean( record.getValue(FS_MODEL184.TAX_IS)) )
 				.setNetSalesAmount(record.getValue(FS_MODEL184.NET_SALES_AMOUNT))
 				.setLrDocument(record.getValue(FS_MODEL184.LRDOCUMENT))
-				.setLrName(record.getValue(FS_MODEL184.LRNAME));
+				.setLrName(record.getValue(FS_MODEL184.LRNAME))
+				.setCreationUser(record.getValue(FS_MODEL184.CREATION_USER))
+				.setCreationDate(record.getValue(FS_MODEL184.CREATION_DATE))
+				.setModificationUser(record.getValue(FS_MODEL184.MODIFICATION_USER))
+				.setModificationDate(record.getValue(FS_MODEL184.MODIFICATION_DATE));
 		}
 	}
 			
@@ -453,7 +486,8 @@ public class Mod184DAO {
 		mod184.setName(params.getName());
 		mod184.setYear(year);
 		mod184.setReceipt("1840000000001");
-		mod184.setAdministration((byte) (params.getAdministration() != null ? params.getAdministration() : 4));
+		mod184.setStatus(FiscalStatus.PENDING);
+		mod184.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
 		mod184.setContactPerson(AonStringUtils.left(params.getContactPerson(),
 				FS_MODEL184.CONTACT_PERSON.getDataType().length()));
 		mod184.setContactPhone(AonStringUtils.left(params.getContactPhone(),
@@ -464,5 +498,23 @@ public class Mod184DAO {
 		mod184.setIncomes(new LinkedList<Mod184Income>());
 		mod184.setPartners(new LinkedList<Mod184Partner>());
 		return mod184;
+	}
+	
+	public static Mod184 changeStatusMod184(AONContext ctx, Mod184 mod184, FiscalStatus newStatus) {
+		try {
+			ctx.checkWrite();
+			if (mod184.getId() != null) {
+				mod184.setStatus(newStatus);
+				ctx.getDslContext().update(FS_MODEL184)
+					.set(FS_MODEL184.STATUS,AonEnumUtils.getByte( mod184.getStatus()))
+					.where(FS_MODEL184.ID.equal(mod184.getId()))
+					.execute();
+			}
+			return mod184;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getMessage());
+		}
 	}
 }

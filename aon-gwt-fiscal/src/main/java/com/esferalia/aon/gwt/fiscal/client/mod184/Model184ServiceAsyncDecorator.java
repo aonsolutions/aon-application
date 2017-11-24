@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -55,4 +56,19 @@ public class Model184ServiceAsyncDecorator implements Model184ServiceAsync {
 				callback));
 	}
 
+	@Override
+	public void saveCommentsMod184(String domainName, Mod184 mod184,
+			AsyncCallback<Mod184> callback) {
+		AON.start();
+		fsa.saveCommentsMod184(domainName, mod184, new AsyncCallbackWrapper<Mod184>(
+				callback));
+	}
+
+	@Override
+	public void changeStatusMod184(String domainName, Mod184 mod184, FiscalStatus newStatus,
+			AsyncCallback<Mod184> callback) {
+		AON.start();
+		fsa.changeStatusMod184(domainName, mod184, newStatus, 
+				new AsyncCallbackWrapper<Mod184>(callback));
+	}
 }

@@ -7,7 +7,10 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184Service;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod184 Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod184" })
@@ -39,4 +42,13 @@ public class Mod184ServiceImpl extends AonRemoteServiceServlet implements Model1
 		return FISCAL.getMod184(domainName, domain, this.getUserLogin(), id);
 	}
 
+	@Override
+	public Mod184 saveCommentsMod184(String domainName, Mod184 mod184) {
+		return FISCAL.saveComments(domainName, this.getUserLogin(), mod184);
+	}
+
+	@Override
+	public Mod184 changeStatusMod184(String domainName, Mod184 mod184, FiscalStatus newStatus) throws AonCoreException {
+		return FISCAL.changeStatusMod184(domainName, this.getUserLogin(), mod184, newStatus);
+	}
 }

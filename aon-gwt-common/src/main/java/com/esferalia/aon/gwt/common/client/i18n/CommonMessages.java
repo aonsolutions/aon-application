@@ -2264,6 +2264,8 @@ public interface CommonMessages extends Messages {
 	String localEntities();
 	@DefaultMessage("Tipo de entidad")
 	String entityType();
+	@DefaultMessage("Entidad")
+	String entity();
 	@DefaultMessage("Entidades en r\u00E9gimen de atribuci\u00F3n de rentas constituidas en el extranjero")
 	String foreignEntities();
 	@DefaultMessage("Objeto")
@@ -3628,6 +3630,5 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Importar declaraciones antiguas")
 	String transferModels();
 	
-
 }
 

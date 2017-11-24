@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
 import static com.esferalia.aon.jooq.tables.FsModel180Detail.FS_MODEL180_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -422,10 +421,10 @@ public class Mod180DAO {
 				.setReceiptTotal(record.getValue(FS_MODEL180.RECEIPT_TOTAL))
 				.setRetentionTotal(record.getValue(FS_MODEL180.RETENTION_TOTAL))
 				.setComments(record.getValue(FS_MODEL180.COMMENTS))
-				.setCreationUser(record.getValue(FS_MODEL.CREATION_USER))
-				.setCreationDate(record.getValue(FS_MODEL.CREATION_DATE))
-				.setModificationUser(record.getValue(FS_MODEL.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FS_MODEL.MODIFICATION_DATE))
+				.setCreationUser(record.getValue(FS_MODEL180.CREATION_USER))
+				.setCreationDate(record.getValue(FS_MODEL180.CREATION_DATE))
+				.setModificationUser(record.getValue(FS_MODEL180.MODIFICATION_USER))
+				.setModificationDate(record.getValue(FS_MODEL180.MODIFICATION_DATE))
 				;
 		}
 	}

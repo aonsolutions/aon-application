@@ -1318,6 +1318,27 @@ public class FISCAL {
 		}
 	}
 
+	public static Mod184 saveComments(String domainName, String user, Mod184 mod184) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod184.getDomain(),user);
+			return getFiscal().saveCommentsMod184(ctx, mod184);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod184 changeStatusMod184(String domainName, String user, Mod184 mod184, FiscalStatus newStatus) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod184.getDomain(),user);
+			return getFiscal().changeStatusMod184(ctx, mod184, newStatus);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	// ----------------------------------MODELO 202
 	public static LinkedList<Mod202> getMod202s(String domainName,int domainId, String user) {
 		AONContext ctx = null;

@@ -255,6 +255,16 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod184DAO.delete(ctx, mod184));
 	}
 
+	@Override
+	public Mod184 saveCommentsMod184(AONContext ctx, Mod184 mod184) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod184DAO.saveComments(ctx, mod184));		
+	}
+	@Override
+	public Mod184 changeStatusMod184(AONContext ctx, Mod184 mod184, FiscalStatus newStatus) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod184DAO.changeStatusMod184(ctx, mod184, newStatus));		
+	}
 	// ----------------------------------------------------------- [MODELO 390 - 2014]
 	@Override
 	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain) {
