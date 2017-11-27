@@ -493,7 +493,7 @@ public class ConnectSaleInvoiceWriter {
 		
 		double unitQuantity = obtainPackageQuantity(detail, customerPackage);
 		double unitPriceFactor = detail.getQuantity() / unitQuantity;
-		sincl.setCantidadFacturada_47_(detail.getQuantity());
+		sincl.setCantidadFacturada_47_(unitQuantity);
 		sincl.setCantidadBonificada_15E_(null);
 		sincl.setUnidadDeMedida(null);
 		sincl.setUnidadesEntregadas(null);
