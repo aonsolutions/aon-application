@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Model349ServiceAsyncDecorator implements Model349ServiceAsync {
@@ -59,10 +60,10 @@ public class Model349ServiceAsyncDecorator implements Model349ServiceAsync {
 	}
 
 	@Override
-	public void getMod349Detail(String domainName, int domainId, Mod349 mod349,
+	public void getMod349Detail(String domainName, int domainId, Integer id,
 			AsyncCallback<Mod349Detail> callback) {
 		AON.start();
-		fsa.getMod349Detail(domainName, domainId, mod349,new AsyncCallbackWrapper<Mod349Detail>(callback));
+		fsa.getMod349Detail(domainName, domainId, id,new AsyncCallbackWrapper<Mod349Detail>(callback));
 	}
 	
 	@Override
@@ -79,6 +80,13 @@ public class Model349ServiceAsyncDecorator implements Model349ServiceAsync {
 		AON.start();
 		fsa.changeStatusMod349(domainName, mod349, newStatus, 
 				new AsyncCallbackWrapper<Mod349>(callback));
+	}
+	
+	@Override
+	public void getInfo(String domainName, int domain, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey,
+			AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInfo(domainName, domain, mod349, detail, infoKey, new AsyncCallbackWrapper<String>(callback));		
 	}
 
 }

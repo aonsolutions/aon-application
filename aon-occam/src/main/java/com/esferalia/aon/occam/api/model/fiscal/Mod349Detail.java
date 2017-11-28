@@ -12,9 +12,7 @@ public class Mod349Detail implements Serializable {
 	
 	private Integer id;	
 	private int domain;
-	
-	private Mod349 mod349;
-	
+	private int mod349;	
 	private Mod349Key type;  // Clave de operación
 	private Integer registry;
 	private Country country;
@@ -59,11 +57,11 @@ public class Mod349Detail implements Serializable {
 		return this;
 	}
 
-	public Mod349 getMod349() {
+	public int getMod349() {
 		return mod349;
 	}
 
-	public Mod349Detail setMod349(Mod349 mod349) {
+	public Mod349Detail setMod349(int mod349) {
 		this.mod349 = mod349;
 		return this;
 	}
@@ -192,6 +190,12 @@ public class Mod349Detail implements Serializable {
 	public Mod349Detail setTempId(int tempId) {
 		this.tempId = tempId;
 		return this;
+	}
+
+	// Devuelve cierto si acumulado-declarado es distinto de base imponible, 
+	// para indicar que el importe de la base imponible se ha modificado, o bien la línea ha sido introducida manualmente
+	public boolean isAdjusted() {		
+		return (getAccumulated()-getDeclared() != getAmount());
 	}
 
 	

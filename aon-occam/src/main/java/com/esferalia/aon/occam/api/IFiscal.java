@@ -280,8 +280,9 @@ public interface IFiscal {
 	public Mod349 initializeMod349(AONContext ctx);
 	public Mod349 saveMod349(AONContext ctx,Mod349 mod349);
 	public void deleteMod349(AONContext ctx,Mod349 mod349);
-	public Mod349Detail getMod349Detail(AONContext ctx,Mod349 mod349);
+	public Mod349Detail getMod349Detail(AONContext ctx, Integer id);
 	public Mod349 saveCommentsMod349(AONContext ctx, Mod349 mod349);
 	public Mod349 changeStatusMod349(AONContext ctx, Mod349 mod349, FiscalStatus newStatus);
+	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey);
 
 }

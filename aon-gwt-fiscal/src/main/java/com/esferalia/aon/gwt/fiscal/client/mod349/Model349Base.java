@@ -9,13 +9,12 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
-import com.esferalia.aon.gwt.fiscal.client.mod349.Model349Detail;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.IModel349Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.Model349Callback;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -94,6 +93,14 @@ abstract class Model349Base extends DockLayoutPanel {
 		@Override
 		public void onNew() {
 			cbk.onNew();
+		}
+		@Override
+		public void showBreakdownPanel(String htmlText) {
+			cbk.showBreakdownPanel(htmlText);
+		}
+		@Override
+		public void cleanBreakdownPanel() {
+			cbk.cleanBreakdownPanel();
 		}
 	}
 	
@@ -229,6 +236,9 @@ abstract class Model349Base extends DockLayoutPanel {
 							@Override
 							public void onSuccess(Mod349 result) {
 								popup.hide();
+								
+								// PRUEBA - Mostrar getSelected
+								//com.google.gwt.user.client.Window.alert("Entramos en onSucces: "+detailManager.getSelectedOperatorIndex());								
 								callback.onSelect(result, detailManager.getSelectedOperatorIndex());
 							}
 
@@ -440,10 +450,37 @@ abstract class Model349Base extends DockLayoutPanel {
 
 	protected void styleDirtyLabel() {
 		dirtyPanel.clear();
-		if ( isDirty()) {
+		
+		// Indicar que el modelo se ha modificado
+		if (isDirty()) {
 			InlineLabel dirtyLabel = new InlineLabel("[*]");
 			dirtyLabel.setStyleName(AON.AON_CSS.aonColorRed());
 			dirtyPanel.add(dirtyLabel);
+		}
+		
+		// Indicar que el modelo ha sido calculado por diferencias
+		if (!this.mod349.isDiffCalculationDisabled()) {
+			InlineLabel diffLabel = new InlineLabel("[DIF.]");
+			diffLabel.setStyleName(AON.AON_CSS.aonMarginLeft5());
+			diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
+			dirtyPanel.add(diffLabel);
+		}
+		
+		// Indicar si se han realizado algún ajuste o introducción manual del importe a declarar
+		// se asume eso si el importe a declarar es distinto de acumulado-declarado
+		boolean adjusted = false;
+		for (Mod349Detail det : this.mod349.getDetails() ) {			
+			if (det.isAdjusted()) {
+				adjusted = true;
+				break;
+			}
+		}
+		if (adjusted) {
+			InlineLabel adjLabel = new InlineLabel("[AJUSTES]");
+			adjLabel.setStyleName(AON.AON_CSS.aonMarginLeft5());
+			adjLabel.addStyleName(AON.AON_CSS.aonColoRoyalblue());
+			adjLabel.setTitle("Ajustes realizados o introducci\u00F3n manual de datos");
+			dirtyPanel.add(adjLabel);
 		}
 	}
 	
