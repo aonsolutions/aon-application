@@ -133,7 +133,7 @@ public class CretaServlet extends HttpServlet
 		String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
 
 		List<String> defaultsList = new ArrayList<String>();
-		defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=I"));
+		defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=1"));
 
 		String paramDefaults[] = req.getParameterValues(CretaService.Parameter.DEFAULTS.name());
 		if (paramDefaults != null && paramDefaults.length > 0)
