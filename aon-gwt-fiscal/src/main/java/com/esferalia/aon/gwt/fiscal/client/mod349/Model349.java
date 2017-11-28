@@ -18,6 +18,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -57,8 +58,11 @@ public class Model349 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew();
+		void showBreakdownPanel(String htmlText);
+		void cleanBreakdownPanel();
 		
 	}
+	
 	protected class Model349Callback implements IModel349Callback {
 		
 		@Override
@@ -90,6 +94,17 @@ public class Model349 extends MainEntryPoint {
 		public void showError(String msg) {
 			Model349.this.showErrorPanel(msg);
 		}
+		
+		@Override
+		public void showBreakdownPanel(String htmlText) {
+			Model349.this.showBreakdownPanel(htmlText);
+		}
+		
+		@Override
+		public void cleanBreakdownPanel() {
+			Model349.this.cleanBreakdownPanel();
+		}
+		
 	};
 
 	@UiField
@@ -294,6 +309,15 @@ public class Model349 extends MainEntryPoint {
 		if (w != null) {
 			breakdownPanel.remove( breakdownPanel.getWidget() ); 
 		}
+		closeFootPanel();
+	}
+	
+	private void showBreakdownPanel(String htmlText) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(BREAKDOWN_TAB);
+		HTMLPanel panel = new HTMLPanel(htmlText);
+		breakdownPanel.setWidget(panel);
+		breakdownPanel.scrollToTop();
 	}
 	
 	private void showNewDeclarationPopup(Mod349 model) {

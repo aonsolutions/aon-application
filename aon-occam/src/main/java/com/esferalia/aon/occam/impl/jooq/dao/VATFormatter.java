@@ -49,7 +49,7 @@ public class VATFormatter {
 //	static final String DIV_MSG_BOLD_BORDER_BOTTOM = "<div style=\"border-bottom:solid black 1px;\"><b>{0}</b></div>";
 //	static final String DIV_MSG_BOLD_BLUE= "<div style=\"color: blue;\"><b>{0}</b></div>";
 	private static final String SPAN_MSG_ORANGE= "<span style=\"color: orange;\">{0}</span>";
-	private static final String SPAN_MSG_GRAY= "<span style=\"color: gray;\">{0}</span>";
+	protected static final String SPAN_MSG_GRAY= "<span style=\"color: gray;\">{0}</span>";
 	private static final String SPAN_MSG_RED= "<span style=\"color: red;\">{0}</span>";
 
 	private static final String LEGEND = "S (Servicio); I (Inversi\u00F3n); A (R\u00E9gimen agrario); R (Rectificativa); C (Criterio de caja)";

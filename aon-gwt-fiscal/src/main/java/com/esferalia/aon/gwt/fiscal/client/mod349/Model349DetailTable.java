@@ -44,6 +44,7 @@ public class Model349DetailTable extends SimpleLayoutPanel implements HasSelecti
 			this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 			
 			addNameColumn();
+			addAjustColumn();
 			
 			model = new SingleSelectionModel<Mod349Detail>(Model349.MOD349_DETAIL_PROVIDES_KEY);
 			this.setSelectionModel(model);
@@ -75,7 +76,33 @@ public class Model349DetailTable extends SimpleLayoutPanel implements HasSelecti
 				
 			};
 			this.addColumn(nameColumn);
-			this.setColumnWidth(nameColumn, "auto");
+			this.setColumnWidth(nameColumn, "auto");			
+		}
+		
+		// Añadimos una columna para indicar si esa línea tiene ajuste manual en el importe a declarar 
+		private void addAjustColumn() {
+			final TextColumn<Mod349Detail> nameColumn = new TextColumn<Mod349Detail>() {
+				@Override
+				public String getValue(Mod349Detail detail) {
+					return detail.isAdjusted()?"[AJ]":"";
+				}
+				@Override
+				public void render(Context context, Mod349Detail detail, SafeHtmlBuilder sb) {
+					sb.appendHtmlConstant("<div style='");
+					if (detail.isDirty()) {
+						sb.appendHtmlConstant("font-weight:bold;");
+					}
+					if (detail.isDeleted()) {
+						sb.appendHtmlConstant("text-decoration:line-through;");
+					}
+					sb.appendHtmlConstant("font-size: 0.9em;height: auto;overflow: hidden; padding-right: 3px; text-transform: uppercase;width: auto;'>");
+					sb.appendEscaped(getValue(detail));
+					sb.appendHtmlConstant("</div>");
+				} 
+				
+			};			
+			this.addColumn(nameColumn);
+			this.setColumnWidth(nameColumn, "20px");
 		}
 	
 		public Mod349Detail getSelected() {
@@ -115,8 +142,11 @@ public class Model349DetailTable extends SimpleLayoutPanel implements HasSelecti
 		refresh();
 		if (table.getVisibleItemCount() == 0) {
 			newOperator( cbk );	
-		} else if ( selectedIndex != null) {
-			table.getSelectionModel().setSelected(cbk.getMod349().getDetails().get(selectedIndex), true);	
+		} else if (selectedIndex != null) {
+			// Controlar que selectedIndex está dentro de la tabla que se muestra
+			if (selectedIndex < table.getVisibleItemCount())
+				table.getSelectionModel().setSelected(cbk.getMod349().getDetails().get(selectedIndex), true);
+			else table.getSelectionModel().setSelected(cbk.getMod349().getDetails().get(table.getVisibleItemCount()-1), true);
 		} else {
 			table.getSelectionModel().setSelected( table.getVisibleItems().get(0), true);	
 		}
@@ -227,7 +257,7 @@ public class Model349DetailTable extends SimpleLayoutPanel implements HasSelecti
 				new Mod349Detail()
 					.setDirty(true)
 					.setTempId((cbk.getMod349().getDetails().size() * (-1)))
-					.setMod349(cbk.getMod349())
+					//.setMod349(cbk.getMod349())
 			);
 		table.setRowData(cbk.getMod349().getDetails());
 		table.redraw();

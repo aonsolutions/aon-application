@@ -2155,16 +2155,17 @@ public class FISCAL {
 	}
 
 	public static Mod349Detail getMod349Detail(String domainName, int domainId,
-			String user, Mod349 mod349) {
+			String user, Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFiscal().getMod349Detail(ctx, mod349);
+			return getFiscal().getMod349Detail(ctx, id);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
+	
 	public static Mod349 saveComments(String domainName, String user, Mod349 mod349) {
 		AONContext ctx = null;
 		try {
@@ -2186,6 +2187,17 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
-
+	
+	public static String getMod349Info(String domainName, int domain, String user, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().getMod349Info(ctx, mod349, detail, infoKey);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 
 }

@@ -1094,8 +1094,8 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
-	public Mod349Detail getMod349Detail(AONContext ctx, Mod349 mod349) {
-		return Mod349DAO.getDetail(ctx, mod349);
+	public Mod349Detail getMod349Detail(AONContext ctx, Integer id) {
+		return Mod349DAO.getDetail(ctx, id);
 	}
 	
 	@Override
@@ -1107,6 +1107,11 @@ public class FiscalImpl implements IFiscal {
 	public Mod349 changeStatusMod349(AONContext ctx, Mod349 mod349, FiscalStatus newStatus) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod349DAO.changeStatusMod349(ctx, mod349, newStatus));		
-	}	
+	}
+	@Override
+	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
+		return Mod349DAO.getMod349Info(ctx, mod349, detail, infoKey);
+	}
+
 	
 }

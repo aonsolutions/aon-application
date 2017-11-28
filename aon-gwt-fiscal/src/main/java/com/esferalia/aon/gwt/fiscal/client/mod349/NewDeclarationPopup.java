@@ -30,6 +30,7 @@ public class NewDeclarationPopup extends CustomDialog {
 	private PeriodListBox periodList = new PeriodListBox();
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
+	private CheckBox diffCalculation = new CheckBox();
 	
 	public NewDeclarationPopup(final Mod349 mod349 ,final Model349Callback callback) {
 		setCaption(AON.MSG.newDeclaration());
@@ -159,6 +160,28 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, replacement);
 		row++;
+		
+		// CALCULO POR DIFERENCIA (Solo si no está deshabilitado en la parametrización)
+		// FALTA - Como el campo aún no está creado en la base de datos, siempre aparece el check marcado y no se puede modificar
+		// cuando se añada el campo, entonces se tendrá en cuenta la parametrizacion y se dejará modificar el check
+		//if (!mod349.isDiffCalculationDisabled()) {
+			diffCalculation.setText(AON.MSG.diffCalculation());
+			diffCalculation.setValue(!mod349.isDiffCalculationDisabled());
+			// FALTA - Quitar cuando se añada el campo			
+			diffCalculation.setEnabled(false);			
+			// -----
+			diffCalculation.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					mod349.setDiffCalculationDisabled(!diffCalculation.getValue());
+				}
+				
+			});			
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+			tab.setWidget(row, 0, diffCalculation);		
+		//}
 		
 		rootPanel.add(tab);
 		

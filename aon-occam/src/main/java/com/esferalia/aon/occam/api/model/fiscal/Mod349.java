@@ -37,6 +37,10 @@ public class Mod349 implements IFiscalModel, HasAudit {
 	private String modificationUser;
 	private Date modificationDate;
 	
+	// FALTA - Campo que falta en la base de datos, supongo que se guarda como en el 
+	// modelo 303 que lo que se guarda es si está deshabilitado realmente el calculo por diferencias
+	private boolean diffCalculationDisabled;
+	
 	private LinkedList<Mod349Detail> details;
 	
 	@Override
@@ -291,6 +295,15 @@ public class Mod349 implements IFiscalModel, HasAudit {
 	}
 	public Mod349 setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
+	}
+
+	public boolean isDiffCalculationDisabled() {
+		return diffCalculationDisabled;
+	}
+
+	public Mod349 setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		this.diffCalculationDisabled = diffCalculationDisabled;
 		return this;
 	}
 	

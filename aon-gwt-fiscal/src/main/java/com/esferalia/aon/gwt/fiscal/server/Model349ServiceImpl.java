@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")
@@ -43,8 +44,8 @@ public class Model349ServiceImpl extends AonRemoteServiceServlet implements Mode
 	}
 
 	@Override
-	public Mod349Detail getMod349Detail(String domainName, int domain, Mod349 mod349) {
-		return FISCAL.getMod349Detail(domainName, domain, this.getUserLogin(), mod349);
+	public Mod349Detail getMod349Detail(String domainName, int domain, Integer id) {
+		return FISCAL.getMod349Detail(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
@@ -55,6 +56,13 @@ public class Model349ServiceImpl extends AonRemoteServiceServlet implements Mode
 	@Override
 	public Mod349 changeStatusMod349(String domainName, Mod349 mod349, FiscalStatus newStatus) throws AonCoreException {
 		return FISCAL.changeStatusMod349(domainName, this.getUserLogin(), mod349, newStatus);
+	}
+	
+	@Override
+	public String getInfo(String domainName, int domain, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey)
+			throws AonCoreException {
+		return FISCAL.getMod349Info(domainName, domain, this.getUserLogin(), mod349, detail, infoKey);
+		
 	}
 
 }
