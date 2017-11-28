@@ -72,6 +72,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -1086,10 +1087,10 @@ public class SalaryDraftBuilder
 		salaryDraft
 		.getContext()
 		.stream()
-		.filter(v -> v.getName().equals(name))
-		.filter(v -> v.getValue().equals(value))
-		.filter(v -> v.getEndDate().compareTo(_startDate) >= 0)
-		.filter(v -> v.getStartDate().compareTo(_endDate) <= 0);
+		.filter(v -> AonUtils.equals(v.getName(),name))
+		.filter(v -> AonUtils.equals(v.getValue(),value))
+		.filter(v -> Period.compare(v.getEndDate(),_startDate) >= 0)
+		.filter(v -> Period.compare(v.getStartDate(),_endDate) <= 0);
 	}
 
 
@@ -1202,6 +1203,7 @@ public class SalaryDraftBuilder
 
 		return type1.ordinal() == type2.ordinal();
 	}
+
 
 	private static boolean isImplicit(String name) {
 		ContextVariable var = ContextVariable.getVariableByName(name);
