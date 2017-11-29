@@ -511,6 +511,9 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		} catch (Throwable th) {
 			addError(albaran, th.getLocalizedMessage());
 		}
+		
+		delivery.setTotalPackages(0.0);
+		delivery.setTotalWeight(0.0);
 		delivery.setPayMethod(null);
 		delivery.setNumberOfPymnts((short) 0);
 		delivery.setDaysToFirstPymnt((short) 0);
