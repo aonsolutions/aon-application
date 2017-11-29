@@ -385,6 +385,11 @@ public abstract class QuoteCalculator {
 			
 			
 			List<ITimedResult<Double>> quotesImpl = new ArrayList<ITimedResult<Double>>();
+
+			if (quote == 0 &&
+				payment.getType() == PaymentType.CRA_0055 &&
+				context.containsVariable("BASE_" + PREST_IT, start,end))
+				return quotesImpl;
 			
 			String name = payment.getName();
 

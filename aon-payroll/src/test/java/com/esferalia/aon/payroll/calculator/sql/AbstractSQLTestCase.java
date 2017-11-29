@@ -921,6 +921,10 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
+	public static final void setData(AONContext aonContext, ContractRecord contract,String name, String expression) {
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), name, expression);
+	}
+
 	public static final void addData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			String name, String expression) {
 		aonContext.getDslContext().insertInto(CONTRACT_DATA).set(CONTRACT_DATA.DOMAIN, contract.getDomain())
@@ -1147,10 +1151,13 @@ public abstract class AbstractSQLTestCase {
 	
 	public static void addPayment(AONContext aonContext, ContractRecord contract, String expression,
 			String quoteExpression) {
-		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT).set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
+				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
 				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
 				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate()).set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.TYPE, (byte) PaymentType.CRA_0001.ordinal())
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal()).execute();
@@ -1187,6 +1194,16 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_BONUS.BONUS_CONCEPT, concept.getId()).set(CONTRACT_BONUS.CONTRACT, contract.getId())
 				.set(CONTRACT_BONUS.START_DATE, contract.getStartDate())
 				.set(CONTRACT_BONUS.END_DATE, contract.getEndDate()).set(CONTRACT_BONUS.EXPRESSION, expression)
+				.returning().fetchOne();
+
+	}
+
+	public static final ContractBonusRecord addBonus(AONContext aonContext, ContractRecord contract,
+			Date startDate, BonusConceptRecord concept) {
+		return aonContext.getDslContext().insertInto(CONTRACT_BONUS).set(CONTRACT_BONUS.DOMAIN, contract.getDomain())
+				.set(CONTRACT_BONUS.BONUS_CONCEPT, concept.getId()).set(CONTRACT_BONUS.CONTRACT, contract.getId())
+				.set(CONTRACT_BONUS.START_DATE, startDate)
+				.set(CONTRACT_BONUS.END_DATE, contract.getEndDate())
 				.returning().fetchOne();
 
 	}

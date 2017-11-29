@@ -554,7 +554,6 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			for (IContractPayment contractPayment : contractPayments) {
 				
 				try {
-
 					resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator,
 							quoteCalculator);
 					alreadyDefined.add(contractPayment.getName());
@@ -1209,9 +1208,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 			}
 
-			if (AonStringUtils.isNotBlank(name))
-				for (Period p : Period.sub(new Period(start, end), expressionContext.getPeriods(name)))
-					addResult(expressionContext, name, p.getStart(), p.getEnd(), 0.00);
+			if (AonStringUtils.isNotBlank(name)) 
+				for (Period unSetPeriod : Period.sub(new Period(start, end), expressionContext.getPeriods(name)))
+					for ( Period p: Period.sub(unSetPeriod, leavePeriods))
+						addResult(expressionContext, name, unSetPeriod.getStart(), unSetPeriod.getEnd(), 0.00);
+			
+			
 
 			// quoteCalculator.quote(contractPayment, paymentStart,
 			// paymentEnd, total);

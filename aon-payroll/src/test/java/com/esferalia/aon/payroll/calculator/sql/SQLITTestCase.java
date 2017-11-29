@@ -2525,6 +2525,86 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testBaseMinITV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addSSRegimeData(aonContext, 
+				SSRegimeType.GENERAL, 
+				getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String, String>() {
+					{
+						put("BASE_CGC_MIN","1000.00");						
+					}
+				});
+
+		// @formatter:off
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, ContextVariable.PREST_IT);
+		
+		
+		addSSRegimePayment(aonContext 
+				,SSRegimeType.GENERAL 
+				,getFirstDayOfYear(getToday())
+				,prestIT
+				,PaymentType.CRA_0000
+				,String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				,"_P"
+				,SalaryType.SALARY);
+		
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap()
+				, new String[] { 
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		PaymentConceptRecord sbase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord garantizado = addConcept(aonContext, "GARANTIZADO");
+		
+		addPayment(aonContext, contract, sbase, "500.00 * DIAS_TRABAJADOS / DIAS_MES");
+		addPayment(aonContext, contract, garantizado, "GTZDO(TODO)", "0.00", PaymentType.CRA_0055);
+		
+		Date startIt = add(getLastDayOfMonth(getFirstDayOfYear(getToday())), DAY_OF_MONTH, -1);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				1.00);
+
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		Assert.assertEquals( 1002.00, salary.getCommonBase(), DELTA );
+		
+		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
+			if ( d.getName().startsWith("BASE_CGC") ) {
+				if ( d.getStartDate().equals(startIt) ) 
+					Assert.assertEquals(2.00, Double.parseDouble(d.getExpression()), DELTA);
+				else if ( d.getStartDate().equals(startDate) ) 
+					Assert.assertEquals(1000.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+				else 
+					Assert.fail("Unexpected BASE_CGC");
+			}
+		}
+		
+
+	}
+
+	@Test
 	public void testWarningQuoteIT() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
