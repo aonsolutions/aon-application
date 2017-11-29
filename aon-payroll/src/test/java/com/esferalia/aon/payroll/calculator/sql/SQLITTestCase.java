@@ -419,7 +419,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() + ", "+ p.getQuote() );
 
-		Assert.assertEquals(10, salary.getSalaryPayments().size());
+		Assert.assertEquals(4 /*payments*/ * 2 /*tramos activo*/, salary.getSalaryPayments().size());
 
 	}
 
