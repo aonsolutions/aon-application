@@ -251,10 +251,19 @@ public class SeresServlet extends HttpServlet {
 		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
 		
     	if(req.getParameterMap().containsKey("seres")){
+    		
+			Date from = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			List<DataResponse> list = AON
+					.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.SERES_INVOICE,
+							f -> f.getDomainProperty().eq(domain.getId())
+									.and(f.getSourceProperty().eq(DataResponseSource.SERES_INVOICE.value())
+											.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(from)))))
+					.collect(Collectors.toList());
+    		
     		AON.getInvoiceList(domain.getName(), domain.getId(), login, 	
         			f -> saleInvoiceFilter(domain, ediRegistryIds, filterMap, f))
 	    		.forEach(o -> {
-	    			JSONObject json = toSeresFileJSON(o);
+	    			JSONObject json = toSeresFileJSON(o, list);
 //	    			json.put(MSG.SII_SENT, true);
 //	    			json.put(MSG.SII, "emitida");
 	    			array.put(json);
@@ -286,7 +295,7 @@ public class SeresServlet extends HttpServlet {
 		if(req.getParameterMap().containsKey("seres")){
     		AON.getInvoiceList(domain.getName(), domain.getId(), login, 	
         			f -> saleInvoiceFilter(domain, ediRegistryIds, filterMap, f))
-	    		.forEach(o -> array.put(toSeresFileJSON(o)));
+	    		.forEach(o -> array.put(toSeresFileJSON(o, null)));
     	}
 		return array;
 	}
@@ -344,15 +353,24 @@ public class SeresServlet extends HttpServlet {
 		return ids;
 	}
 	
-	public static JSONObject toSeresFileJSON(Invoice invoice) {
+	public static JSONObject toSeresFileJSON(Invoice invoice, List<DataResponse> list) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, invoice.getId());
 		json.put("registry_name", invoice.getRegistryName());
 		json.put("address", invoice.getAddress());
 		json.put("reference_code", invoice.getReferenceCode());
 		json.put("date", AonDateUtils.format(invoice.getTaxDate(), "dd-MM-yyyy"));
+		
+		if(list!=null) {
+			long count = list.stream().filter(dr -> dr.getSourceId().equals(invoice.getId())).count();
+			if(count > 0)
+				json.put("status", "Enviado" );
+			else
+				json.put("status", "Pendiente" );
+		}
 		// TODO invoice status
-		json.put("status", "Pendiente" );
+//		json.put("status", "CORRECT" );
+//		json.put("status", "FAIL" );
 		return json;
 	}
 	
