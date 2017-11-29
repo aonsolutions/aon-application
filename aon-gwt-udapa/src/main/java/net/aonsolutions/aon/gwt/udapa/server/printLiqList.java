@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -318,6 +319,17 @@ public class printLiqList extends HttpServlet{
 								drd.setDataValue(incomeDetail.get().getPrice().toString());
 								AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
 								map.put("product_price", incomeDetail.get().getPrice() + "");
+							}  else if(map.get("product_price").equals("0") || map.get("product_price").equals("0.0")) {
+								if(incomeDetail.get().getPurchaseDetail() != null) {
+									PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getPurchaseDetail()));
+									DataResponseDetail drd = new DataResponseDetail();
+									drd.setDomain( domain.getId());
+									drd.setDataResponse(r.getId());
+									drd.setDataVariable("product_price");
+									drd.setDataValue(pd.getPrice() + "");
+									AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
+									map.put("product_price", pd.getPrice() + "");
+								}
 							}
 							String product_price =  map.containsKey("product_price") ? map.get("product_price") : incomeDetail.get().getPrice().toString();
 							Double contractPrice = Double.parseDouble(product_price);
