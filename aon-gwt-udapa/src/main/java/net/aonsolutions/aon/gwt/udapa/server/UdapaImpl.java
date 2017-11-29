@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -98,6 +99,17 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				drd.setDataValue(id.getPrice() + "");
 				AON.insertDataResponseDetail(domainName, domainId, login, drd);
 				map.put("product_price", id.getPrice() + "");
+			} else if(map.get("product_price").equals("0") || map.get("product_price").equals("0.0")) {
+				if(id.getPurchaseDetail() != null) {
+					PurchaseDetail pd = AON.getPurchaseDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
+					DataResponseDetail drd = new DataResponseDetail();
+					drd.setDomain(domainId);
+					drd.setDataResponse(drId);
+					drd.setDataVariable("product_price");
+					drd.setDataValue(pd.getPrice() + "");
+					AON.insertDataResponseDetail(domainName, domainId, login, drd);
+					map.put("product_price", pd.getPrice() + "");
+				}
 			}
 			if(i.getCarrierPacking() != null){
 				CarrierPacking cp = AON.getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(i.getCarrierPacking()));
