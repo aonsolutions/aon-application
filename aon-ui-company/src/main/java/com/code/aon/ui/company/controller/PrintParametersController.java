@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -30,8 +32,18 @@ import javax.faces.component.UIInput;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +66,7 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -66,6 +79,8 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.sun.faces.util.MessageFactory;
 
 
@@ -179,20 +194,22 @@ public class PrintParametersController implements Serializable {
 	}
 
 	private byte[] getData(IAttachment attach) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = attach.getDomain();
+		String user = AonUtil.getAuthPrincipal().getShortName();
 		byte[] data = null;
 		if (attach != null && attach.getData() != null) {
 			data = attach.getData();
 		} else if(attach != null && attach.getDriveId()!=null){
-			data = DriveUtils.getByteFile(AonUtil.getDomainName(),
-					attach.getDomain(), AonUtil.getAuthPrincipal().getShortName(),
-					attach.getDriveId(), attach.getId());
+			data = DriveUtils.getByteFile(domainName, domainId, user, attach.getDriveId(), attach.getId());
 		}
-		if(data==null) {
+		if (data == null)
 			data = "".getBytes();
-		}
+		if (protectAgainstCrossData(data, attach, domainName, domainId, user))
+			data = "".getBytes();
 		return data;
 	}
-	
+
 	private void deleteDriveData(IAttachment attach) {
 		if(attach != null && attach.getDriveId()!=null && !"".equals(attach.getDriveId())){
 			try {
@@ -206,6 +223,20 @@ public class PrintParametersController implements Serializable {
 					attach.getDomain(), AonUtil.getAuthPrincipal().getShortName(),
 					attach.getDriveId());
 		}
+	}
+	
+	private boolean protectAgainstCrossData(byte[] data, IAttachment attach, String domainName, Integer domainId, String user) {
+		String value = new String(data);
+		if (value.startsWith("<?xml")) {
+			String msg = "INVOICE_FOOTER TEXT: CROSSED VALUE!!! [domain_name: " + domainName + "; domain_id: "
+					+ domainId + "; logged_user: " + user + "; attach_id: " + attach.getId() + "; drive_id: "
+					+ attach.getDriveId() + "]";
+			String msg2 = "\nVALUE FOUND: " + value;
+			LOGGER.error(msg + msg2);
+			sendEmail(domainName, domainId, user, "ERROR", "InvoiceFooterText", msg, "error", value, "soporte@aonsolutions.es");
+			return true;
+		}
+		return false;
 	}
 	
 	public String onSampleReportSaleInvoice() throws ManagerBeanException {
@@ -925,6 +956,76 @@ public class PrintParametersController implements Serializable {
 			}
 			return null;
 		}
+	}
+	
+	protected void sendEmail(String domainName, Integer domainId, String user, String logLevel, String subject, String content, String attachName,
+			String attachValue, String... recipients) {
+		JSONObject json = new JSONObject();
+		try {
+			MailAccount mail = getAdminMailAccount(domainName, domainId, user);
+			if(mail==null || mail.getId()==null){
+				LOGGER.error("No ADMIN mail account defined, cannot continue with email sending!");
+			} else {
+				HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+		    	boolean isDevEnabled = request.getServerPort()==8080
+		    			&& request.getRequestURL().lastIndexOf(":8080")>=0;
+				
+				String recipientsTo = "";
+				subject = "[DESARROLLO-AON/" + (isDevEnabled?"Test-":"") + logLevel + "] " + subject;
+				if (recipients != null) {
+					for (String to : recipients) {
+						if (!recipientsTo.isEmpty())
+							recipientsTo += ",";
+						recipientsTo += to;
+					}
+				}
+				if (isDevEnabled) {
+					recipientsTo = "eagirrezabal@aonsolutions.es";
+				}
+				
+				json.put("mailAccountId", mail.getId())
+						.put("recipientsTo", recipientsTo)
+						.put("content", content).put("subject", subject)
+						.put("login", user).put("domainName", domainName)
+						.put("domainId", domainId)
+						.put("bcc", "eagirrezabal@aonsolutions.es");
+
+				if (attachValue == null || "".equals(attachValue)) {
+					json.put("md5", "");
+				} else {
+					String encode = Base64.getEncoder().encodeToString(
+							attachValue.getBytes());
+					json.put("md5", encode)
+							.put("attachName", attachName + ".xml")
+							.put("mimetype", MimeType.MIME_XML.ordinal());
+				}
+
+				String url = "http" + (isDevEnabled ? "" : "s") + "://" + domainName
+						+ (isDevEnabled ? ":8080/aon-aio" : "")
+						+ "/send_email/";
+//				String url = "https://" + domainName + "/send_email/";
+				LOGGER.info("*** SEND EMAIL URL " + url);
+				HttpClientBuilder base = HttpClientBuilder.create();
+				HttpClient client = base.build();
+				HttpPost post = new HttpPost(url);
+				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+				urlParameters.add(new BasicNameValuePair("details", json
+						.toString()));
+				post.setEntity(new UrlEncodedFormEntity(urlParameters));
+				HttpResponse resp = client.execute(post);
+				System.out.println(resp);
+			}
+		} catch (JSONException e) {
+			LOGGER.error("Error on mailing", e.getMessage());
+		} catch (IOException e) {
+			LOGGER.error("Error on mailing", e.getMessage());
+		}
+	}
+	
+	public MailAccount getAdminMailAccount(String domainName, Integer domainId, String user) {
+		LinkedList<MailAccount> list = AON.getMailAccountList(domainName, domainId, user, 
+				f -> f.getDomainProperty().eq(0));
+		return list!=null && !list.isEmpty()?list.getFirst():null;
 	}
 	
 }
