@@ -244,46 +244,6 @@ public class SeresFtpServlet extends HttpServlet {
 			this.domain = domain;
 			this.loggedUser = loggedUser;
 		}
-
-//		public String getServer() {
-//			return server;
-//		}
-//
-//		public void setServer(String server) {
-//			this.server = server;
-//		}
-//
-//		public Integer getPort() {
-//			return port;
-//		}
-//
-//		public void setPort(Integer port) {
-//			this.port = port;
-//		}
-//
-//		public String getUser() {
-//			return user;
-//		}
-//
-//		public void setUser(String user) {
-//			this.user = user;
-//		}
-//
-//		public String getPassword() {
-//			return password;
-//		}
-//
-//		public void setPassword(String password) {
-//			this.password = password;
-//		}
-//
-//		public String getRemotePath() {
-//			return remotePath;
-//		}
-//
-//		public void setRemotePath(String remotePath) {
-//			this.remotePath = remotePath;
-//		}
 		
 		private void initContext() {
 			ApplicationParameter pServer = AppParamUtil.getParameter(PARAM_FTP_SERVER_NAME);

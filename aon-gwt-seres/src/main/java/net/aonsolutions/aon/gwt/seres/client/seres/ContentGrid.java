@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.seres.JsSeresFile;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -51,6 +52,8 @@ import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
+
+import net.aonsolutions.aon.gwt.seres.shared.SeresFileStatus;
 
 public class ContentGrid extends ResizeComposite implements RequiresResize {
 
@@ -284,18 +287,19 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		Column<JsSeresFile, String> statusColumn = new Column<JsSeresFile, String>(new TextCell()) {
 			@Override	
 			public void render(Context context, JsSeresFile object, SafeHtmlBuilder sb) {
-//				String icon = AON.AON_CSS.aonIconPointLightGreen();
-//				if(object.getSiiStatus().equals("Correcto") || object.getSiiStatus().equals("Pagado")) icon = AON.AON_CSS.aonIconPointGreen();
-//				else if(object.getSiiStatus().equals("AceptadoConErrores") || object.getSiiStatus().equals("Parcial")) icon = AON.AON_CSS.aonIconPointOrange();
-//				else if(object.getSiiStatus().equals("Incorrecto")) icon= AON.AON_CSS.aonIconPointRed();
-//				else if(object.getSiiStatus().equals("Anulada")) icon = AON.AON_CSS.aonIconPointYellow();
-//				sb.appendHtmlConstant("<g:Label class=\""+ icon + "\" style=\"padding-left: 16px;\" >"+ "&nbsp;&nbsp;" + object.getSiiStatus());
+				String icon = AON.AON_CSS.aonIconPointLightGreen();
+				if(object.getStatus().equals(SeresFileStatus.PENDING.getDescription())) icon = AON.AON_CSS.aonIconQuestion();
+				else if(object.getStatus().equals(SeresFileStatus.SEND.getDescription())) icon = AON.AON_CSS.aonIconPointLightGreen();
+				else if(object.getStatus().equals(SeresFileStatus.CANCEL.getDescription())) icon = AON.AON_CSS.aonIconPointYellow();
+				else if(object.getStatus().equals(SeresFileStatus.ACCEPT.getDescription())) icon = AON.AON_CSS.aonIconPointGreen();
+//				else if(object.getStatus().equals("AceptadoConErrores")) icon = AON.AON_CSS.aonIconPointOrange();
+				else if(object.getStatus().equals(SeresFileStatus.FAIL.getDescription())) icon= AON.AON_CSS.aonIconPointRed();
+				sb.appendHtmlConstant("<g:Label class=\""+ icon + "\" style=\"padding-left: 16px;\" >"+ "&nbsp;&nbsp;" + object.getStatus());
 			}
 			
 			@Override
 			public String getValue(JsSeresFile object) {
-//				return object.getSiiStatus();
-				return "";
+				return object.getStatus();
 			}
 		};
 		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
@@ -383,8 +387,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	
 	public void send(String action) {
 		if(action.equals(parent.parent.OUTCOME_DELIVERY)){
-			Window.alert("En desarrollo...");
-//			sendDeliveries();
+			sendDeliveries();
 		} else if(action.equals(parent.parent.OUTCOME_INVOICE)){
 			sendInvoices();
 //		} else if(parent.command.equals(SeresMain.INGENET_DELIVERY)){
@@ -394,26 +397,27 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	
 	public void retrieve(String action) {
 		if(action.equals(parent.parent.INCOME_SALES)){
-			Window.alert("En desarrollo...");
-//			retrieveSales();
+			retrieveSales();
 		} else if(action.equals(parent.parent.INCOME_INVOICE)){
-			Window.alert("En desarrollo...");
-//			retrieveDeliveries();
+			retrieveDeliveries();
 		}
 	}
 
 	private void retrieveDeliveries() {
 		// TODO Auto-generated method stub
+		Window.alert("En desarrollo...");
 		
 	}
 
 	private void retrieveSales() {
 		// TODO Auto-generated method stub
+		Window.alert("En desarrollo...");
 		
 	}
 
 	private void sendDeliveries() {
 		// TODO Auto-generated method stub
+		Window.alert("En desarrollo...");
 		
 	}
 
