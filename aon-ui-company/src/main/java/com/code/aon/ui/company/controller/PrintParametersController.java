@@ -32,7 +32,6 @@ import javax.faces.component.UIInput;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -66,7 +65,6 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -966,9 +964,10 @@ public class PrintParametersController implements Serializable {
 			if(mail==null || mail.getId()==null){
 				LOGGER.error("No ADMIN mail account defined, cannot continue with email sending!");
 			} else {
-				HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
-		    	boolean isDevEnabled = request.getServerPort()==8080
-		    			&& request.getRequestURL().lastIndexOf(":8080")>=0;
+//				HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+//		    	boolean isDevEnabled = request.getServerPort()==8080
+//		    			&& request.getRequestURL().lastIndexOf(":8080")>=0;
+				boolean isDevEnabled = false;				
 				
 				String recipientsTo = "";
 				subject = "[DESARROLLO-AON/" + (isDevEnabled?"Test-":"") + logLevel + "] " + subject;
