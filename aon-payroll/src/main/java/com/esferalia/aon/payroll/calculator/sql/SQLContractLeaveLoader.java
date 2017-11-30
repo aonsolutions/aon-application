@@ -5,15 +5,18 @@ import static com.esferalia.aon.payroll.enumeration.LeaveType.OCCUPATIONAL_DISEA
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader;
+import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLContractLeaveLoader extends ContractLeaveLoader{
 
@@ -37,6 +40,7 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 		Date leaveStart = rs.getDate(ContractLeaveColumns.START_DATE);
 		final Date start = Period.max(leaveStart, startDate);
 		Date leaveEnd = rs.getDate(ContractLeaveColumns.END_DATE);
+		
 		final Date end = Period.min(leaveEnd, endDate);
 
 		final long parentDays = rs
@@ -52,6 +56,24 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 		Integer id = rs.getInt(ContractLeaveColumns.ID);
 		loadContractLeave(id, leaveStart, end, parentDays, type,
 				(Double) dailyRegBase, exprCtx);
+		
+		Date lastDayOMonth = AonDateUtils.getLastDayOfMonth(startDate);
+		
+		if ( Period.compare(end , lastDayOMonth) == 0 ) 
+			return;
+
+		if ( Period.compare(end , leaveEnd) == 0 ) 
+			return;
+		
+		Date lastLeaveStart = AonDateUtils.add(end, Calendar.DATE, 1);
+		Date lastLeaveEnd = Period.min(lastDayOMonth,leaveEnd);
+		if ( Period.compare(lastLeaveStart, lastLeaveEnd) <= 0)
+			add(new Leave(id, 
+					lastLeaveStart,
+					lastLeaveEnd,
+					type, 
+					AonDateUtils.get(end, Calendar.DATE) - AonDateUtils.get(leaveStart, Calendar.DATE) + 1));
+		
 	}
 
 	public void loadContractLeave(final Integer id, final Date leaveStart,

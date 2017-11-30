@@ -1,12 +1,17 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
+import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
+import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_DATA;
+import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_PAYMENT;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,16 +23,17 @@ import java.util.Set;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
+import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.CompositeIterator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
@@ -39,6 +45,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SQLContractDelayCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
@@ -53,7 +60,12 @@ public class SQLContractDelayCalculatorContext extends
 		
 		@Override
 		public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
-			return super.calculateBr(date);
+			Date contractStart = super.getDate(CONTRACT, ContractColumns.START_DATE);
+			if ( contractStart.before(getFirstDayOfMonth(date)))
+				date = AonDateUtils.add(date, Calendar.MONTH, -1);
+			
+			Object br =  super.calculateBr(date);
+			return br;
 		}
 		
 	}
@@ -155,7 +167,8 @@ public class SQLContractDelayCalculatorContext extends
 		
 		calculator.setSalaryBuilder(compositeBuilder);
 
-		Collection<Period> periods = split(startDate, endDate);
+		Collection<Period> periods = getCgcPeriods(connection, getId(), startDate, endDate);//split(startDate, endDate);
+		
 
 		for (Period period : periods) {
 			ISQLContractSalaryCalculatorContext ctx = new DelaySQLContractSalaryCalculatorContext(
@@ -169,175 +182,12 @@ public class SQLContractDelayCalculatorContext extends
 
 		}
 
-//		ExtraDelayPaymentDecorator extraPaymentDecorator = new ExtraDelayPaymentDecorator() {
-//			@Override
-//			public  int getOrdinal(IContractPayment payment) {
-//				return payments.size()+1;
-//			}
-//		};
-//		ExtraDelayPaymentBuilder extraDelayPaymentBuilder = new ExtraDelayPaymentBuilder(
-//				connection, extraPaymentDecorator);
-//		calculator.setSalaryBuilder(extraDelayPaymentBuilder);
-//
-//		Collection<Extra> extras = getExtras(startDate, endDate);
-//		for (Extra extra : extras) {
-//			ISQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
-//					connection, extra.getStartDate(), extra.getEndDate(),
-//					extra.getEndDate(), extra.getChargeDate(), criteria);
-//			while (ctx.next()) {
-//				calculator.calculate(ctx);
-//				payments.addAll(extraDelayPaymentBuilder.getContractPayments());
-//			}
-//		}
 
 		return payments;
 
 	}
 
-	private Collection<Extra> getExtras(Date startDate, Date endDate)
-			throws SQLException {
-		Collection<Extra> extras = Collections.emptyList();
-		Collection<Extra> agrementExtras = Collections.emptyList();
-		
-		/*
-		AgreementKey enterpriseAgreementKey = getEnterpriseAgreementKey();
-		if (enterpriseAgreementKey != null) {
-			agrementExtras = getAgreementExtras(agreementKey, startDate, endDate);
-			extras = getExtras(agrementExtras, startDate, endDate);
-		}*/
-		// TODO: Overriden Extras
 
-		AgreementKey agreementKey = getAgreementKey();
-
-		if (agreementKey != null) {
-			agrementExtras = getAgreementExtras(agreementKey, startDate, endDate);
-			extras = getExtras(agrementExtras, startDate, endDate);
-		}
-
-		if (extras.isEmpty()) {
-			extras = getPaidExtras(agrementExtras, startDate, endDate);
-		}
-
-		return extras;
-
-	}
-
-	private Collection<Extra> getAgreementExtras(AgreementKey agreementKey,
-			Date startDate, Date endDate) throws SQLException {
-		Collection<Extra> extras = new LinkedList<Extra>();
-
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
-		Collection<Integer> years = years(startDate, endDate);
-
-		Period period = new Period(startDate, endDate);
-
-		try {
-			Connection connection = getConnection();
-			//@formatter:off
-			stmt = connection.prepareStatement("SELECT *"
-					+ " FROM agreement_extra" 
-					+ " WHERE agreement= ?"
-					+ " AND domain = ? ");
-			//@formatter:on
-			stmt.setInt(1, agreementKey.getId());
-			stmt.setInt(2, agreementKey.getDomain());
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				String extraIssue = rs
-						.getString(AgreementExtraColumns.ISSUE_DATE);
-				String extraStart = rs
-						.getString(AgreementExtraColumns.START_DATE);
-				String extraEnd = rs.getString(AgreementExtraColumns.END_DATE);
-
-				for (Integer year : years) {
-					Date extraIssueDate = AgreementExtra.parseAgreementDate(
-							extraIssue, year);
-					Date extraStartDate = AgreementExtra.parseAgreementDate(
-							extraStart, year);
-					Date extraEndDate = AgreementExtra.parseAgreementDate(
-							extraEnd, year);
-
-					Extra extra = new Extra(extraStartDate, extraEndDate,
-							extraIssueDate);
-					extras.add(extra);
-				}
-			}
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				stmt.close();
-			}
-		}
-
-		return extras;
-	}
-
-	private Collection<Extra> getExtras(Collection<Extra> extras,
-			Date startDate, Date endDate) throws SQLException {
-
-		Collection<Extra> delayedExtras = new LinkedList<Extra>();
-
-		Period period = new Period(startDate, endDate);
-
-		for (Extra extra : extras) {
-			if (period.contains(extra.chargeDate)) {
-				delayedExtras.add(extra);
-			}
-		}
-
-		return delayedExtras;
-	}
-
-	private Collection<Extra> getPaidExtras(Collection<Extra> agreementExtras,
-			Date startDate, Date endDate) throws SQLException {
-		Collection<Extra> extras = new LinkedList<Extra>();
-
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
-		try {
-			Connection connection = getConnection();
-			stmt = connection.prepareStatement("SELECT *" + " FROM salary"
-					+ " WHERE contract = ?" + " AND type = ? "
-					+ " AND charge_date >= ? " + " AND charge_date <= ? ");
-
-			stmt.setInt(1, getId());
-			stmt.setInt(2, SalaryType.EXTRA.ordinal());
-			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-			stmt.setDate(3, sqlStartDate);
-			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-			stmt.setDate(4, sqlEndDate);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				Date extraStartDate = rs.getDate(SalaryColumns.START_DATE);
-				Date extraEndDate = rs.getDate(SalaryColumns.END_DATE);
-				Date chargeDate = rs.getDate(SalaryColumns.CHARGE_DATE);
-				Extra extra = new Extra(extraStartDate, extraEndDate,
-						chargeDate);
-				Extra agreementExtra = getAgreementExtra(agreementExtras, extra);
-				if (agreementExtra != null) {
-					extra.startDate = agreementExtra.startDate;
-					extra.endDate = agreementExtra.endDate;
-				}
-
-				extras.add(extra);
-			}
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				stmt.close();
-			}
-		}
-
-		return extras;
-
-	}
 
 	private abstract class SalaryDelayPaymentDecorator implements
 			IDelayPaymentDecorator {
@@ -391,6 +241,50 @@ public class SQLContractDelayCalculatorContext extends
 
 	}
 
+	private static Collection<Period> getCgcPeriods(Connection connection, Integer contract, Date startDate, Date endDate) 
+	throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null ;
+
+		Collection<Period> cgcPeriods = new LinkedList<Period>();
+		try {
+			stmt = connection.prepareStatement(
+				"SELECT" 
+				+" " + SALARY_DATA + "." + SalaryDataColumns.START_DATE 
+				+"," + SALARY_DATA + "." + SalaryDataColumns.END_DATE 
+				+" FROM " + SALARY
+				+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
+				+" WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ? "
+				+" AND " + SALARY + "." + SalaryColumns.START_DATE + " >= ? " 
+				+" AND " + SALARY + "." + SalaryColumns.END_DATE + " <= ? "
+				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + " = '" + CGC_BASE.getName() + "'"
+				+" GROUP BY 1, 2"
+				); 
+			stmt.setInt(1, contract);
+			stmt.setDate(2, toSqlDate(startDate));
+			stmt.setDate(3, toSqlDate(endDate));
+			rs = stmt.executeQuery();
+			
+			while ( rs.next() ) {
+				java.sql.Date start = rs.getDate(SALARY_DATA + "." + SalaryDataColumns.START_DATE);
+				java.sql.Date end = rs.getDate(SALARY_DATA + "." + SalaryDataColumns.END_DATE);
+				cgcPeriods.add(new Period(start,end));
+			}
+			
+		}catch ( SQLException e ) {
+			//e.printStackTrace();
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+		
+		return cgcPeriods;
+
+	}
+
 	public interface IDelayPaymentDecorator {
 		int getOrdinal(IContractPayment payment);
 		String getDescriptionFor(IContractPayment payment);
@@ -399,11 +293,73 @@ public class SQLContractDelayCalculatorContext extends
 
 	private static class DelayPaymentBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
 
-		private static final String SALARY_SQL = "SELECT *" + " FROM "
-				+ SQLConstants.SALARY + " WHERE " + SalaryColumns.CONTRACT
-				+ " = ? " + " AND " + SalaryColumns.TYPE + "  = ? " + " AND "
-				+ SalaryColumns.START_DATE + "  = ? " + " AND "
-				+ SalaryColumns.END_DATE + " = ? ";
+		private static final String PREST_IT_IRPF_SQL = 
+				"IFNULL((SELECT"
+				+ " SUM(" + SalaryPaymentColumns.IRPF+")"
+				+ " FROM " + SALARY_PAYMENT 
+				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = 'PREST_IT')"
+				+", 0.00)";
+				;
+
+		private static final String PREST_IT_AMOUNT_SQL = 
+				"IFNULL((SELECT"
+				+ " SUM(" + SalaryPaymentColumns.AMOUNT+")"
+				+ " FROM " + SALARY_PAYMENT 
+				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = 'PREST_IT')"
+				+", 0.00)";
+				;
+
+		private static final String WORKED_DAYS = 
+				"(SELECT"
+				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
+				+ " FROM " + SALARY_DATA 
+				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryDataColumns.NAME + " = 'DIAS_TRABAJADOS'"
+				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
+				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
+				+ ")"
+				;
+		
+		private static final String ALL_WORKED_DAYS = 
+				"(SELECT"
+				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
+				+ " FROM " + SALARY_DATA 
+				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryDataColumns.NAME + " = 'DIAS_TRABAJADOS'"
+				+ ")"
+				;
+
+		private static final String SALARY_SQL = 
+				"SELECT " 
+				
+				+ " " + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
+				+ " AS " + SalaryColumns.CGC_BASE
+				
+				+ ", IFNULL( "+ SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF  
+				+ ", (" + SalaryColumns.IRPF_BASE + "- (" + PREST_IT_IRPF_SQL + ")) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS + ")"
+				+ " AS " + SalaryColumns.IRPF_BASE
+
+				+ ", IFNULL( " + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT
+				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- (" + PREST_IT_AMOUNT_SQL + ")) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS +")"
+				+ " AS " + SalaryColumns.TOTAL_PAYMENT
+				
+				+ " FROM "
+				+ SALARY 
+				+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
+				+" LEFT JOIN " + SALARY_PAYMENT + " ON (" + SALARY_DATA + "." + SalaryDataColumns.SALARY +  " = " + SALARY_PAYMENT + "." + SalaryPaymentColumns.SALARY 
+														+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.PAYMENT_CONCEPT + " =  'PREST_IT'"  
+														+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.QUOTE + " =  CONVERT(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION +", DOUBLE(15,3))"
+														+")" 
+				
+				+ " WHERE " 
+				+ SALARY + "." + SalaryColumns.CONTRACT + " = ? " 
+				+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
+				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
+				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
+				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  = '" + CGC_BASE.getName() + "'" 
+				;
 
 		private SalaryType type;
 		private Date startDate;
@@ -523,7 +479,7 @@ public class SQLContractDelayCalculatorContext extends
 					
 					for (String field : fields) {
 						Double value = values.get(field);
-						value += rs.getDouble(field);
+						value += rs.getDouble(field) ;
 						values.put(field, value);
 					}
 				}
@@ -583,13 +539,18 @@ public class SQLContractDelayCalculatorContext extends
 				Integer contract, SalaryType type, Date startDate, Date endDate)
 				throws SQLException {
 			ResultSet rs = null;
-			stmt.setInt(1, contract); // SalaryColumns.CONTRACT + " = ? "
-			stmt.setInt(2, type.ordinal()); // SalaryColumns.TYPE + " = ? "
+			int i = 1;
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-			stmt.setDate(3, sqlStartDate); // SalaryColumns.START_DATE +
-											// "  = ? "
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-			stmt.setDate(4, sqlEndDate); // SalaryColumns.END_DATE + "  = ? "
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
+			
+			stmt.setInt(i++, contract); // SalaryColumns.CONTRACT + " = ? "
+			stmt.setInt(i++, type.ordinal()); // SalaryColumns.TYPE + " = ? "
+			stmt.setDate(i++, sqlStartDate); // SalaryColumns.START_DATE +
+			stmt.setDate(i++, sqlEndDate); // SalaryColumns.END_DATE + "  = ? "
 
 			return stmt.executeQuery();
 		}
