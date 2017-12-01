@@ -34,6 +34,8 @@
 						<f:setPropertyActionListener
 							target="#{salaryExpense.endDate}" value="#{reportPrint.toDate}" />
 						<f:setPropertyActionListener
+							target="#{salaryExpense.salaryTypes}" value="#{reportPrint.salaryTypes}" />
+						<f:setPropertyActionListener
 							target="#{salaryExpense.person}" value="#{reportPrint.person}" />
 						<f:setPropertyActionListener
 							target="#{salaryExpense.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
@@ -49,6 +51,8 @@
 							target="#{salaryExpense.startDate}" value="#{reportPrint.fromDate}" />
 						<f:setPropertyActionListener
 							target="#{salaryExpense.endDate}" value="#{reportPrint.toDate}" />
+						<f:setPropertyActionListener
+							target="#{salaryExpense.salaryTypes}" value="#{reportPrint.salaryTypes}" />
 						<f:setPropertyActionListener
 							target="#{salaryExpense.person}" value="#{reportPrint.person}" />
 						<f:setPropertyActionListener
@@ -67,6 +71,8 @@
 						<f:setPropertyActionListener
 							target="#{salaryExpense.endDate}" value="#{reportPrint.toDate}" />
 						<f:setPropertyActionListener
+							target="#{salaryExpense.salaryTypes}" value="#{reportPrint.salaryTypes}" />
+						<f:setPropertyActionListener
 							target="#{salaryExpense.person}" value="#{reportPrint.person}" />
 						<f:setPropertyActionListener
 							target="#{salaryExpense.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
@@ -82,6 +88,8 @@
 							target="#{salaryExpense.startDate}" value="#{reportPrint.fromDate}" />
 						<f:setPropertyActionListener
 							target="#{salaryExpense.endDate}" value="#{reportPrint.toDate}" />
+						<f:setPropertyActionListener
+							target="#{salaryExpense.salaryTypes}" value="#{reportPrint.salaryTypes}" />
 						<f:setPropertyActionListener
 							target="#{salaryExpense.person}" value="#{reportPrint.person}" />
 						<f:setPropertyActionListener
@@ -169,16 +177,15 @@
 						</aon:panel>
 					</aon:div>
 					
-					<!--  
 					<aon:outputLabel for="Salary_type"
 						value="#{bundle.aon_type}" />
 					<aon:selectManyCheckbox id="Salary_type"
 						value="#{reportPrint.salaryTypes}" reRender="reportPrintSearch">
 						<f:selectItem itemLabel="Nómina" itemValue="SALARY" />
 						<f:selectItem itemLabel="Extra" itemValue="EXTRA" />
+						<f:selectItem itemLabel="Atraso" itemValue="DELAY" />
 						<f:selectItem itemLabel="Finiquito" itemValue="SETTLE" />
 					</aon:selectManyCheckbox>
-					-->
 						
 					<!--  
 					<aon:if test="#{salaryPrint.showWorkPlaces}">

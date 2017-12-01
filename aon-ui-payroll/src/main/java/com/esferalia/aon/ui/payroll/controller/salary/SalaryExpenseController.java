@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller.salary;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -60,6 +61,7 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	private boolean expenseDraft;
 	private Integer activeEmployeeCount;
 	private Integer salaryCount;
+	private String[] salaryTypes;
 	
 	
 	public Person getPerson() {
@@ -192,6 +194,14 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 		this.endDate = endDate;
 	}
 
+	public String[] getSalaryTypes() {
+		return salaryTypes;
+	}
+
+	public void setSalaryTypes(String[] salaryTypes) {
+		this.salaryTypes = salaryTypes;
+	}
+
 	public List<ISalary> getList() {
 		return list;
 	}
@@ -247,6 +257,14 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 			criteria.addGreaterThanOrEqualExpression(alias, getStartDate());
 			alias = bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE);
 			criteria.addLessThanOrEqualExpression(alias, getEndDate());
+			if(getSalaryTypes()!=null && getSalaryTypes().length>0) {			
+				alias = bean.getFieldName(IEntityAlias.SALARY_TYPE);
+				List<SalaryType> types = new ArrayList<SalaryType>();
+				for(String type: getSalaryTypes()) {
+					types.add(SalaryType.valueOf(type));
+				}
+				criteria.addInExpression(alias, types);
+			}
 			if(isGroupByPerson()){
 				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
