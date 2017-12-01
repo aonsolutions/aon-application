@@ -2769,7 +2769,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		PaymentConceptRecord maternity = addConcept(aonContext, ContextVariable.MATERNITY.getName());
 		addPayment(aonContext, contract, maternity, "DIAS_PATERNIDAD * 0" , "DIAS_PATERNIDAD * BASE_REGULADORA");
 		
-		Date startITDate = getToday();
+		int dayOfIt = (int ) (Math.floor(Math.random() * (29 - 2)) + 2);
+		Date startITDate = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH,dayOfIt);
 		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,
 				null, 100.00);
 		addData(aonContext, contract, startITDate,

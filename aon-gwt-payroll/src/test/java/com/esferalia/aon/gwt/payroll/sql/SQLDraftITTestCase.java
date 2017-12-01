@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.sql;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
@@ -21,7 +20,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
@@ -41,7 +39,6 @@ import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLITTestCase;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -122,7 +119,8 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 		PaymentConceptRecord maternity = addConcept(aonContext, ContextVariable.MATERNITY.getName());
 		addPayment(aonContext, contract, maternity, "DIAS_PATERNIDAD * 0" , "DIAS_PATERNIDAD * BASE_REGULADORA");
 		
-		Date startITDate = getToday();
+		int dayOfIt = (int ) (Math.floor(Math.random() * (29 - 2)) + 2);
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH, dayOfIt);
 		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,
 				null, 100.00);
 

@@ -231,7 +231,10 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				agreementHours += 8;
 		}
 		
-		testWorkedDays(contract, 4.0/40.00, null, workDays * ( workedHours / agreementHours ));
+		if ( get(getToday(), DAY_OF_MONTH) > 1 )
+			testWorkedDays(contract, 4.0/40.00, null, workDays * ( workedHours / agreementHours ));
+		else // whole month so  
+			testWorkedDays(contract, 4.0/40.00, null, workDays * ( 4.00 / 40.00 ));
 	}
 
 	//@Test
@@ -389,8 +392,11 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				agreementHours += ( 39.00 / 5.00 );
 		}
 		double workDays = getMax(getToday(), DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1;
-
-		testWorkedDays(contract, 5.00/39.00, null, workDays * ( workedHours / agreementHours ) );
+		
+		if ( get(getToday(), DAY_OF_MONTH) > 1)
+			testWorkedDays(contract, 5.00/39.00, null, workDays * ( workedHours / agreementHours ) );
+		else // whole month
+			testWorkedDays(contract, 5.00/39.00, null, workDays * ( 5.00/39.00 ) );
 
 	}
 
