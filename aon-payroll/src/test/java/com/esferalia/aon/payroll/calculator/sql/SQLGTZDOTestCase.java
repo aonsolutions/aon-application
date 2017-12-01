@@ -52,7 +52,7 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
-	private static final double DELTA = 0.000001;
+	private static final double DELTA = 0.001;
 
 	@Test
 	public void testGtzdoOrderI() throws ExpressionException, SQLException,
@@ -1403,6 +1403,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ContractRecord contract = newContract(aonContext,  
 				AonDateUtils.getFirstDayOfYear(getToday()),
 				new HashMap<String, String>() {
+					{
+						
+					}
 				}, new String[] { 
 						"( P_1 + P_2 )* 0.10 ",
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
@@ -1431,7 +1434,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				LeaveType.COMMON_DISEASE, 
 				startIt,
 				endIt, 
-				null);
+				( 1750.00 + 1750.00*0.10 )/30.00
+				);
 		
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -1453,7 +1457,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
 				+ (1500.00 + 250.00 ) * Math.max(0,Math.min(30,itDays)-3) / monthDays
-				+ 50 * 0.75 * Math.max(itDays-30,0) 
+				+ (1750.00 + 1750.00*0.10)/30.00 * 0.75 * Math.max(itDays-30,0) 
 				, 
 				salary.getTotalPayment() 
 				, DELTA);
