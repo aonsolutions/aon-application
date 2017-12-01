@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -32,6 +33,8 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.api.services.drive.Drive;
 
@@ -95,6 +98,10 @@ public class SIIServlet extends HttpServlet{
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
+			
+			ApplicationParameter param= AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
+			Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
+
 			try{
 				Object object = new Object();
 				if(option.equals("cp_cobros_pagos")){
@@ -106,11 +113,11 @@ public class SIIServlet extends HttpServlet{
 					JSONArray array = new JSONArray();
 					if(int1.length > 0){
 						LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(int1));	
-						array = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidasCobros(domain, login, company, financeList,  new LinkedList<>(Arrays.asList(int1)), terceros, auth);
+						array = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidasCobros(domain, login, company, financeList,  new LinkedList<>(Arrays.asList(int1)), terceros, auth, administration);
 					} 
 					if(int2.length > 0){
 						LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(int2));
-						JSONArray a = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidasPagos(domain, login, company, financeList, new LinkedList<>(Arrays.asList(int2)), terceros, auth);
+						JSONArray a = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasRecibidasPagos(domain, login, company, financeList, new LinkedList<>(Arrays.asList(int2)), terceros, auth, administration);
 						for(Integer i = 0; i < a.length(); i++){
 							array.put(a.get(i));
 						}
@@ -118,52 +125,52 @@ public class SIIServlet extends HttpServlet{
 					object = array;
 				} else if(option.equals("cp_cobros")){
 					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
-					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidasCobros(domain, login, company, financeList, new LinkedList<>(Arrays.asList(ids)), terceros, auth);
+					object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidasCobros(domain, login, company, financeList, new LinkedList<>(Arrays.asList(ids)), terceros, auth, administration);
 				} else if(option.equals("cp_pagos")){
 					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
-					object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidasPagos(domain, login, company, financeList, new LinkedList<>(Arrays.asList(ids)), terceros, auth);
+					object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasRecibidasPagos(domain, login, company, financeList, new LinkedList<>(Arrays.asList(ids)), terceros, auth, administration);
 				} else if(option.equals("intracomunitarias")){
 					String tipoOp = parameters.get("tipo_operacion");
 					if(action.equals("suministro")){
-						object = SIIPost.getInstance(attach.getData(), pass).suministroOperacionesIntracomunitarias(domain, login,company, new LinkedList<>(Arrays.asList(ids)), contextList, tipoOp, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).suministroOperacionesIntracomunitarias(domain, login,company, new LinkedList<>(Arrays.asList(ids)), contextList, tipoOp, terceros, auth, administration);
 					}else if(action.equals("baja")){
-						object= SIIPost.getInstance(attach.getData(), pass).bajaOperacionesIntracomunitarias(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object= SIIPost.getInstance(attach.getData(), pass, administration).bajaOperacionesIntracomunitarias(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					}
 				} else if(option.contains("fe_")){
 					if(action.equals("suministro")){
-						object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					} else if(action.equals("baja")){
-						object = SIIPost.getInstance(attach.getData(), pass).bajaFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).bajaFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					}
 				} else if(option.contains("fr_")){
 					if(action.equals("suministro")){
-						object = SIIPost.getInstance(attach.getData(), pass).suministroFacturasRecibidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasRecibidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					} else if(action.equals("baja")){
-						object = SIIPost.getInstance(attach.getData(), pass).bajaFacturasRecibidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).bajaFacturasRecibidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					}
 				} else if("bienes".equalsIgnoreCase(option)){
 					if(action.equals("suministro")){
-						object = SIIPost.getInstance(attach.getData(), pass).suministroBienesInversion(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);	
+						object = SIIPost.getInstance(attach.getData(), pass, administration).suministroBienesInversion(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);	
 					} else if(action.equals("baja")){
-						object = SIIPost.getInstance(attach.getData(), pass).bajaBienesInversion(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).bajaBienesInversion(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					}
 				} else if("metalico".equalsIgnoreCase(option)){
 					if(action.equals("suministro")){
-						object = SIIPost.getInstance(attach.getData(), pass).suministroCobrosMetalico(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).suministroCobrosMetalico(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					} else if(action.equals("baja")){
-						object = SIIPost.getInstance(attach.getData(), pass).bajaCobrosMetalico(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).bajaCobrosMetalico(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
 					}
 				} else if("seguros".equalsIgnoreCase(option)){
 					if(action.equals("suministro")){
-						object = SIIPost.getInstance(attach.getData(), pass).suministroOperacionesSeguros(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).suministroOperacionesSeguros(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					} else if(action.equals("baja")){
-						object = SIIPost.getInstance(attach.getData(), pass).bajaOperacionesSeguros(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).bajaOperacionesSeguros(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
 					}
 				} else if("agencias".equalsIgnoreCase(option)){
 					if(action.equals("suministro")){
-						object = SIIPost.getInstance(attach.getData(), pass).suministroAgenciasViajes(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).suministroAgenciasViajes(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					} else if(action.equals("baja")){
-						object = SIIPost.getInstance(attach.getData(), pass).bajaAgenciasViajes(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
+						object = SIIPost.getInstance(attach.getData(), pass, administration).bajaAgenciasViajes(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
 					}
 				}				
 				giveBack(req, resp, object, new JSONObject());
