@@ -7,7 +7,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
-import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -21,8 +20,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -38,17 +35,15 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
-import com.esferalia.aon.payroll.sql.AbstractSQL.PaymentConcept;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+
+import junit.framework.Assert;
 
 public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
@@ -2534,6 +2529,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 						"BASE_IRPF * PORCENTAJE_IRPF/100" 
 				}, 
 				category);
+		addPrestIts(aonContext, contract);
+
 		//@formatter:on
 		PaymentConceptRecord gtzdo = addConcept(aonContext, "GARANTIZADO");
 		addPayment(aonContext, contract, gtzdo, "GTZDO(SALARIO_BASE)", "0.00");
@@ -2546,7 +2543,6 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		});
 		
 		
-		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -2690,12 +2686,14 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				}, 
 				category);
 		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+
 		PaymentConceptRecord gtzdo = addConcept(aonContext, "GARANTIZADO");
 		addPayment(aonContext, contract, gtzdo, "GTZDO(SALARIO_BASE)", "0.00");
 		PaymentConceptRecord sbase = addConcept(aonContext, "SALARIO_BASE");
 		addPayment(aonContext, contract, sbase, "1000.00 * DIAS_TRABAJADOS / DIAS_MES");
 		
-		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -2760,6 +2758,10 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				super.addPayment(0.00, quote, tax, "EXTRA", startDate, endDate, payment, context);
 			}
 		}).calculate(ctx);
+		for ( SalaryPayment p:  salary.getSalaryPayments() ) {
+			System.out.println(p.getName() + " , "+ p.getExpression() +" = " + p.getAmount() );
+			
+		}
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
