@@ -59,7 +59,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
-
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -122,6 +124,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -189,6 +193,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -261,6 +267,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -333,6 +341,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -398,6 +408,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 
 		// @formatter:off
 		
@@ -471,6 +484,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -542,6 +557,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 
 		// @formatter:off
 		
@@ -628,6 +646,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -720,6 +740,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -815,6 +837,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -912,6 +936,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -979,6 +1005,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -1058,6 +1086,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		AONContext aonContext = new AONContext(connection);
 		
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -1126,6 +1156,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		
 
@@ -1280,6 +1312,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		// @formatter:off
 		AgreementLevelCategoryRecord category = newAgreement(aonContext,
 				new Extra[] { new Extra() {
