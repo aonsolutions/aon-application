@@ -110,7 +110,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<variable name="subtotalPayment" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
-		<variableExpression><![CDATA[$F{salary}.getTotalPayment()]]></variableExpression>
+		<variableExpression><![CDATA[$F{salary}.getRemuneration()]]></variableExpression>
 	</variable>
 	<variable name="subtotalSSEmployee" class="java.lang.Double" resetType="Group" resetGroup="workplace" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions()]]></variableExpression>
@@ -132,7 +132,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 +$F{salary}.getTotalEnterprise()-$F{salary}.getBonuses().getTotal()]]></variableExpression>
 	</variable>
 	<variable name="totalPayment" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{salary}.getTotalPayment()]]></variableExpression>
+		<variableExpression><![CDATA[$F{salary}.getRemuneration()]]></variableExpression>
 	</variable>
 	<variable name="totalIrpf" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[(($F{salary}.getInKindIrpfBase()!=null && $F{salary}.getInKindIrpfBase()!=0.00 && $F{salary}.getIrpfBase()!=null && $F{salary}.getIrpfBase()!=0.00)
@@ -659,7 +659,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getTotalPayment()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getRemuneration()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-8" style="employee" x="261" y="0" width="60" height="14" uuid="cfca50a1-f87d-4a48-92a4-7c4c0650df52"/>
@@ -771,7 +771,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getTotalPayment()+$F{salary}.getTotalEnterprise()-($F{salary}.getBonuses().getTotal()==null?new Double(0.0):$F{salary}.getBonuses().getTotal())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getRemuneration()+$F{salary}.getTotalEnterprise()-($F{salary}.getBonuses().getTotal()==null?new Double(0.0):$F{salary}.getBonuses().getTotal())]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-8" style="employee" x="741" y="0" width="60" height="14" uuid="804fa654-e8d9-462e-b5ce-9dc8354f9a58"/>
