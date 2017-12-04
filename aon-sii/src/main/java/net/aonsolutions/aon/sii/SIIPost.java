@@ -174,12 +174,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		else if(isBizkaia()) suministroNew = SIIBizkaiaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
     		else if(isNavarra()) suministroNew = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
     		
-			byte[] xml = SIIArabaBuilt.getInstance().getSuministroFacturasEmitidas((net.aonsolutions.core.araba.sii.SuministroLRFacturasEmitidas) suministroNew);
-			LinkedList<String> st = new LinkedList<>();
-			st.add("correcto");
-			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, xml, null, st, contextList, SendType.ALTA_EMITIDAS);
-    		
-    		JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministroNew);
+			JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministroNew);
     		
     		if(isAeat() || isNavarra()) {
     			RespuestaLRFEmitidasType respuesta = (RespuestaLRFEmitidasType) response.getValue();
