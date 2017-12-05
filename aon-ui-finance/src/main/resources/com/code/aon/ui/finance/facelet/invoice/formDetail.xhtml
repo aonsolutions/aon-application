@@ -35,7 +35,7 @@
 						<aon:commandLink id="#{dataTableId}-selectButton"
 							styleClass="aon-table-row-link" value="&#160;"
 							immediate="true" ajaxSingle="true" requestDelay="100"
-							rendered="#{!invoiceController.readOnly and detailController.editable}"
+							rendered="#{!invoiceController.readOnly and (detailController.editable or to.sourceId &lt; 0)}"
 							actionListener="#{detailController.onSelect}"
 							reRender="aonContent"
 							onkeyup="#{dataTableId}KeyUp(this)"
@@ -330,12 +330,14 @@
 								<aon:commandLink id="invoiceDetailSourceLink" immediate="true"
 									styleClass="aon-button-goto" style="padding-right: 12px;"
 									value="&#160;" title="#{bundle.aon_go}" 
-									rendered="#{!controller.editable}" 
+									rendered="#{!controller.editable and to.sourceId > 0}" 
 									actionListener="#{controller.onLoadSource}"
 									action="#{controller.getSourceViewer}"
-									reRender="aonContent">
-									<rich:toolTip value="#{controller.lineSourceInfo}" />
-								</aon:commandLink>
+									reRender="aonContent" />
+								<aon:outputText value="&#160;" 
+									styleClass="aon-icon-wrong aon-padding"
+									rendered="#{!controller.editable and to.sourceId &lt; 0}" />
+								<rich:toolTip value="#{controller.lineSourceInfo}" />
 								<aon:commandButton id="invoiceDetailProject" value="&#160;"
 									styleClass="#{(to.project != null and to.project.id == invoiceController.to.project.id) ? 
 													('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"

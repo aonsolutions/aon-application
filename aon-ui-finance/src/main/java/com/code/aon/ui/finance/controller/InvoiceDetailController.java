@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.SOURCE;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -16,6 +17,7 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
@@ -31,6 +33,8 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryTax;
 import com.code.aon.sales.Sales;
@@ -133,15 +137,33 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return (Invoice)getMasterController().getTo();
 	}
 
+	@Override
+	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
+		List<ITransferObject> list = super.search(start, count);
+		afterSearch(list);
+		return list;
+	}
+
+	private void afterSearch(List<ITransferObject> detailList) throws ManagerBeanException {
+		for (ITransferObject ito : detailList) {
+			getLineSourceInfo((InvoiceDetail)ito);
+		}
+	}
+
 	public boolean isEditable() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			InvoiceDetail to = (InvoiceDetail)this.getModel().getRowData();
-			if (to.isDeliverySource() || to.isIncomeSource() || to.isSalesSource() || to.isPurchaseSource() || to.isOfferSource() || to.isPrepaymentSource()) {
-				return false;
-			}
+			return isEditable(to);
 		}
 		return true;
 	}	
+
+	private boolean isEditable(InvoiceDetail to) throws ManagerBeanException {
+		if (to.isDeliverySource() || to.isIncomeSource() || to.isSalesSource() || to.isPurchaseSource() || to.isOfferSource() || to.isPrepaymentSource()) {
+			return false;
+		}
+		return true;
+	}
 
 	public boolean isIncreaseDetail() {
 		if (getInvoice().isSales()) {
@@ -311,61 +333,96 @@ public class InvoiceDetailController extends LinesController implements IFinance
 	}
 
 	public String getLineSourceInfo() throws ManagerBeanException {
-		StringBuffer info = new StringBuffer(64);
-
 		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
-		if (!isEditable() && invoiceDetail.getSourceId() != null) {
+		return getLineSourceInfo(invoiceDetail);
+	}
+
+	public String getLineSourceInfo(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+		if (!isEditable(invoiceDetail) && invoiceDetail.getSourceId() != null) {
 			String message = null;
-			String refCode = null;
-			Integer line = null;
+			Object[] objs = null;
 			if (invoiceDetail.isOfferSource()) {
-				IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
-				OfferDetail offerDetail = (OfferDetail)offerDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_OFFER);
-				refCode = offerDetail.getOffer().getReferenceCode();
-				line = offerDetail.getLine();
+				if (invoiceDetail.getSourceId() > 0) {
+					IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ID), invoiceDetail.getSourceId());
+					Projection prjRefCode = Projection.property(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_REFERENCE_CODE));
+					Projection prjLine = Projection.property(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_LINE));
+					objs = (Object[])offerDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+				}
 			} else if (invoiceDetail.isSalesSource()) {
-				IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-				SalesDetail salesDetail = (SalesDetail)salesDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_SALES);
-				refCode = salesDetail.getSales().getReferenceCode();
-				line = salesDetail.getLine();
+					if (invoiceDetail.getSourceId() > 0) {
+					IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_ID), invoiceDetail.getSourceId());
+					Projection prjRefCode = Projection.property(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_REFERENCE_CODE));
+					Projection prjLine = Projection.property(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
+					objs = (Object[])salesDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+				}
 			} else if (invoiceDetail.isPurchaseSource()) {
-				IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-				PurchaseDetail purchaseDetail = (PurchaseDetail)purchaseDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_SALES);
-				refCode = purchaseDetail.getPurchase().getReferenceCode();
-				line = purchaseDetail.getLine();
+					if (invoiceDetail.getSourceId() > 0) {
+					IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ID), invoiceDetail.getSourceId());
+					Projection prjRefCode = Projection.property(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_REFERENCE_CODE));
+					Projection prjLine = Projection.property(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_LINE));
+					objs = (Object[])purchaseDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+				}
 			} else if (invoiceDetail.isDeliverySource()) {
-				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY);
-				refCode = deliveryDetail.getDelivery().getReferenceCode();
-				line = deliveryDetail.getLine();
+				if (invoiceDetail.getSourceId() > 0) {
+					IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_ID), invoiceDetail.getSourceId());
+					Projection prjRefCode = Projection.property(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_REFERENCE_CODE));
+					Projection prjLine = Projection.property(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
+					objs = (Object[])deliveryDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+				}
 			} else if (invoiceDetail.isIncomeSource()) {
-				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
-				IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY);
-				refCode = incomeDetail.getIncome().getReferenceCode();
-				line = incomeDetail.getLine();
+				if (invoiceDetail.getSourceId() > 0) {
+					IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_ID), invoiceDetail.getSourceId());
+					Projection prjRefCode = Projection.property(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_REFERENCE_CODE));
+					Projection prjLine = Projection.property(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
+					objs = (Object[])incomeDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+				}
 			} else if (invoiceDetail.isPrepaymentSource()) {
 				message = AonUtil.getMessage(ICommonMessages.FINANCE_PREPAYMENTS);
 			}
+
 
 			if (message != null) {
 				info.append(AonUtil.getMessage(SOURCE));
 				info.append(" ");
 				info.append(message);
 			}
-			if (refCode != null) {
+			if (objs != null) {
+				if (objs[0] != null) {
+					info.append(" ");
+					info.append((String)objs[0]);
+				}
+				if (objs[1] != null) {
+					info.append(" - ");
+					info.append(AonUtil.getMessage(LINE));
+					info.append(" ");
+					info.append((Integer)objs[1]);
+				}
+			} else if (!invoiceDetail.isPrepaymentSource()) {
 				info.append(" ");
-				info.append(refCode);
-			}
-			if (line != null) {
-				info.append(" - ");
-				info.append(AonUtil.getMessage(LINE));
-				info.append(" ");
-				info.append(line);
+				info.append(AonUtil.getMessage(ICommonMessages.UNKNOWN).toUpperCase());
+
+				if (invoiceDetail.getSourceId() > 0) {
+					invoiceDetail.setSourceId(0 - invoiceDetail.getSourceId());
+					invoiceDetail.setUpdateEnabled(false);
+					invoiceDetail.getInvoice().setUpdateEnabled(false);
+					invoiceDetail = (InvoiceDetail)getManagerBean().update(invoiceDetail);
+				}
 			}
 		}
 		return info.toString();

@@ -160,6 +160,7 @@ public interface ICommonMessages {
 	String TRANSACTION_TYPE = "aon_transaction_type";
 	String TYPE = "aon_type";
 	String UNITS = "aon_units";
+	String UNKNOWN = "aon_unknown";
 	String USER_PASSWORD_INVALID = "aon_login_err_0";
 	String USER_INVALID = "aon_login_err_1";
 	String USED_SPACE_MESSAGE = "aon_used_space_message";

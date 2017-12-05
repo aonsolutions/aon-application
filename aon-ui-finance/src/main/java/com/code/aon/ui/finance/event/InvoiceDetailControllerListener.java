@@ -131,6 +131,10 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
 				fillWorkPlace(event, invoiceDetail);
 			}
+			if (!controller.isEditable(invoiceDetail) && invoiceDetail.getSourceId() < 0) {
+				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+				invoiceDetail.setSourceId(null);
+			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
