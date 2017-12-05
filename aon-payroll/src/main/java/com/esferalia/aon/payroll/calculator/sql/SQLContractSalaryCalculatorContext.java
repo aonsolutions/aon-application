@@ -1680,6 +1680,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return this.contractExpressionContext.getVariable(name, this.contractStartDate, this.contractEndDate, toType);
 	}
 
+	public Boolean hasVariable(String name, Date start, Date end) {
+		List<ITimedVariable<Object>> vars = this.contractExpressionContext.getVariables(name, start, end);
+		if ( vars.isEmpty()  )
+			return false;
+		
+		Period periods [] = vars.stream().map(v-> v.getPeriod()).sorted().toArray(Period[]::new);
+		for ( int i= 1; i < periods.length; i++)
+			if ( Period.compare(add(periods[i-1].getEnd(), DAY_OF_MONTH,1),periods[i].getStart()) != 0 ) 
+				return false;
+		
+		if ( Period.compare(periods[0].getStart(), start) > 0 )
+			return false;
+		
+		return Period.compare(periods[periods.length-1].getEnd(), end) >= 0; 
+	}
+
+	public Period []  getPeriods(String varName) {
+		return this.contractExpressionContext.getVariables(varName).stream()
+				.map(v->v.getPeriod()).toArray(Period[]::new);
+	}
+
 	public static java.sql.Date toSqlDate(Date date) {
 		return new java.sql.Date(date.getTime());
 	}
@@ -2113,11 +2134,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if (leaveLoader.isEmpty())
 			throw new UndefinedContextVariablesException(ContextVariable.LEAVE_DAYS);
 
-		// Assert all PREST_IT payments have been calculated.
-		Double prestIts = getVariable(PREST_IT, Double.class);
 		Double totalPayment = getVariable(ContextVariable.TOTAL_PAYMENT, Double.class);
-		if (prestIts == null && totalPayment == null)
-			throw new UndefinedVariablesException(PREST_IT);
+		// Assert all PREST_IT payments have been calculated.
+		//Double prestIts = getVariable(PREST_IT, Double.class);
+		//if (prestIts == null && totalPayment == null)
+		//	throw new UndefinedVariablesException(PREST_IT);
+		if ( totalPayment == null )
+			for ( Leave leave : leaveLoader.getLeaves() )
+				if ( !hasVariable(PREST_IT, leave.getStart(), leave.getEnd()) )
+					throw new UndefinedVariablesException(PREST_IT);
+		
 
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());

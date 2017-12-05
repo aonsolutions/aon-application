@@ -1211,7 +1211,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			if (AonStringUtils.isNotBlank(name)) 
 				for (Period unSetPeriod : Period.sub(new Period(start, end), expressionContext.getPeriods(name)))
 					for ( Period p: Period.sub(unSetPeriod, leavePeriods))
-						addResult(expressionContext, name, unSetPeriod.getStart(), unSetPeriod.getEnd(), 0.00);
+						addResult(expressionContext, name, p.getStart(), p.getEnd(), 0.00);
 			
 			
 
