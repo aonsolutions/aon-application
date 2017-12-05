@@ -158,7 +158,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return true;
 	}	
 
-	private boolean isEditable(InvoiceDetail to) throws ManagerBeanException {
+	public boolean isEditable(InvoiceDetail to) throws ManagerBeanException {
 		if (to.isDeliverySource() || to.isIncomeSource() || to.isSalesSource() || to.isPurchaseSource() || to.isOfferSource() || to.isPrepaymentSource()) {
 			return false;
 		}
