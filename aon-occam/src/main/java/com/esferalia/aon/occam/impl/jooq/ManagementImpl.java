@@ -159,6 +159,12 @@ public class ManagementImpl implements IManagement {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DeliveryDAO.getDeliveryDetails(ctx, filter));
 	}
+	
+	@Override
+	public DeliveryDetail insertDeliveryDetail(AONContext ctx, DeliveryDetail deliveryDetail) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> DeliveryDAO.insertDeliveryDetail(ctx, deliveryDetail));
+	}
 
 	// ------------------ INCOME DETAIL
 	

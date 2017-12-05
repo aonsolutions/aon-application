@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -74,5 +75,7 @@ public interface IFinance {
 	// 	***********************************************
 	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter);
 	public Stream<Product> getInvoiceProducts(AONContext ctx, ProductFilter filter);
+	
+	public PayMethod getPayMethod(AONContext ctx, String name);
 }
 	

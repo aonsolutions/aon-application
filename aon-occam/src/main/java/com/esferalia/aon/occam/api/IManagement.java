@@ -60,6 +60,7 @@ public interface IManagement {
 	
 	// -------------------- DELIVERY DETAIL
 	Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryDetailFilter filter);
+	DeliveryDetail insertDeliveryDetail(AONContext ctx, DeliveryDetail deliveryDetail);
 
 	// -------------------- INCOME DETAIL
 	Stream<IncomeDetail> getIncomeDetails(AONContext ctx, IncomeFilter filter);

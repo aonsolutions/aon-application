@@ -50,6 +50,8 @@ public interface ITemplateAsync {
 			Integer number, AsyncCallback<Integer> callback);
 
 	void insertProduct(Domain domain, String value, AsyncCallback<Error> callback);
+	
+	void insertDelivery(Domain domain, AsyncCallback<Error> callback);
 
 	void insertFee(Domain domain, AsyncCallback<Error> callback);
 

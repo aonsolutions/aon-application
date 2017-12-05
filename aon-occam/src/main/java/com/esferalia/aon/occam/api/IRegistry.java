@@ -56,7 +56,7 @@ public interface IRegistry {
 	public Stream<Seller> getRSellerStream(AONContext ctx, Integer registryId);
 
 	public Stream<RAddress> getRAddressStream(AONContext ctx, RegistryAddressFilter filter);
-	
+	public RAddress insertRAddress(AONContext ctx, RAddress raddress);
 	
 	public Registry insertRegistry(AONContext ctx, Registry registry);
 	public Registry updateRegistry(AONContext ctx, Registry registry);
@@ -71,6 +71,7 @@ public interface IRegistry {
 
 	// ------------------- CUSTOMER
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
+	public Customer insertCustomer(AONContext ctx, Customer customer);
 
 	// ------------------- SELLER
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);

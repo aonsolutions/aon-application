@@ -5,6 +5,7 @@ public enum ImportType {
 	PRODUCT,
 	FEE,
 	PROPOSAL,
-	STOCK;
+	STOCK,
+	DELIVERY;
 	
 }

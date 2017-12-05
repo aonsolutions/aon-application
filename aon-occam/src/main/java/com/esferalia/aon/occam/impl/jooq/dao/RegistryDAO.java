@@ -705,6 +705,15 @@ public class RegistryDAO {
 				.fetch().stream().map(new RAddressFiller());
 	}
 	
+	public static RAddress insertRAddress(AONContext ctx, RAddress raddress){
+		return ctx.getDslContext().insertInto(RADDRESS, RADDRESS.ADDRESS, RADDRESS.ADDRESS2, RADDRESS.ADDRESS3, RADDRESS.ALIAS,
+				RADDRESS.CITY, RADDRESS.DOMAIN, RADDRESS.GEOZONE, RADDRESS.MUNICIPALITY_CODE, RADDRESS.NUMBER, RADDRESS.RECIPIENT,
+				RADDRESS.REGISTRY, RADDRESS.STREET_TYPE, RADDRESS.TYPE, RADDRESS.ZIP)
+			.values(raddress.getAddress(), raddress.getAddress2(), raddress.getAddress3(), raddress.getAlias(),
+					raddress.getCity(), raddress.getDomain(), raddress.getGeozone(), raddress.getMunicipality_code(), raddress.getNumber(), raddress.getRecipient(),
+					raddress.getRegistry(), raddress.getStreet_type(), raddress.getType(), raddress.getZip()).returning()
+			.fetch().stream().map(new RAddressFiller()).findFirst().orElse(new RAddress());
+	}
 	
 	public static Registry insertRegistry(AONContext ctx, Registry registry){
 		return ctx.getDslContext().insertInto(REGISTRY, REGISTRY.ALIAS, REGISTRY.DOCUMENT, REGISTRY.DOMAIN,
@@ -783,6 +792,15 @@ public class RegistryDAO {
 				.fetch().stream().map(new CustomerFiller());
 	}
 	
+	public static Customer insertCustomer(AONContext ctx, Customer customer){
+		return ctx.getDslContext().insertInto(CUSTOMER, CUSTOMER.ACCOUNT, CUSTOMER.DELIVERY_GROUPED, CUSTOMER.DELIVERY_VALUATED,
+				CUSTOMER.DOMAIN, CUSTOMER.E_INVOICE, CUSTOMER.INVOICING_GROUP, CUSTOMER.PROJECT_GROUPED, CUSTOMER.REGISTRY,
+				CUSTOMER.SCOPE, CUSTOMER.STATUS, CUSTOMER.SURCHARGE, CUSTOMER.TARIFF, CUSTOMER.TRANSACTION, CUSTOMER.WITHHOLDING)
+			.values(customer.getAccount(), customer.getDeliveryGrouped(), customer.getDeliveryValuated(), 
+					customer.getDomain(), customer.geteInvoice(), customer.getInvoicingGroup(), customer.getProjectGrouped(), customer.getRegistry().getId(),
+					customer.getScope(), customer.getStatus().value(), customer.getSurcharge(), customer.getTariff(), customer.getTransaction(), customer.getWithholding()).returning()
+			.fetch().stream().map(new CustomerFiller()).findFirst().orElse(new Customer());
+	}
 	// ------------------- SELLER
 
 	public static Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter){

@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
@@ -1651,6 +1652,16 @@ public class AON {
 	public static DeliveryDetail getDeliveryDetail(String domainName,
 			Integer domainId, String login, Integer id) {
 		return getDeliveryDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id));	
+	}
+	
+	public static DeliveryDetail insertDeliveryDetail(String domainName, Integer domainId, String login, DeliveryDetail deliveryDetail) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().insertDeliveryDetail(ctx, deliveryDetail);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
 	}
 	
 	// ********************************************
@@ -3374,6 +3385,17 @@ public class AON {
 		return getCustomer(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
 	}
 	
+	public static Customer insertCustomer(String domainName, Integer domainId, String login, Customer customer) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertCustomer(ctx, customer);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ------------------- SELLER
 	
 	public static Stream<Seller> getSellerStream(String domainName, Integer domainId, String login, SellerFilter filter){
@@ -3604,6 +3626,15 @@ public class AON {
 				.findFirst().orElse(new RAddress());
 	}
 	
+	public static RAddress insertRAddress(String domainName, Integer domainId, String login, RAddress raddress) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertRAddress(ctx, raddress);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+ 	}
 	// ------------------- RECORD DATA
 	
 	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
@@ -4562,5 +4593,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static PayMethod getPayMethod(String domainName, Integer domain, String login, String name) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, login);
+			return getFinance().getPayMethod(ctx, name);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
+	
 }

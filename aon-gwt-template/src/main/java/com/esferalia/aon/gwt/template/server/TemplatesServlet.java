@@ -42,6 +42,8 @@ import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.jooq.DBFee;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
+import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
+import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
@@ -196,7 +198,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	//-------------------- IMPORTAR 
-	
+	DeliveryInfo di; 
 	Vector<String> verror;
 	public Integer executeExcel(Domain domain, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
@@ -236,6 +238,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				executeExcelProposal(domain, rowIterator, error);
 			else if(importType.equals(ImportType.STOCK))
 				executeExcelStock(domain, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
+			else if(ImportType.DELIVERY.equals(importType)) {
+				di = DeliveryImport.getInstance().importation(data);
+			}
 			
 			workbook.close();
 		} catch (IOException e) {
@@ -1293,6 +1298,29 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
  			error = DBProduct.insertProducts2(domain, v, ti,ai, getUser().getLogin(), kind);
+		}
+		else{
+			//Alguna de las filas contiene datos erroneos.
+			error.setError(false);
+ 			error.setTextError(verror);
+		}
+		return error;
+	}
+	
+	public Error insertDelivery(Domain domain) {
+		Error error = new Error();
+		if(textError.equals("")){
+			error.setError(true);
+			verror.add("");
+			error.setTextError(verror);
+
+			java.util.List<ProductInfo> l = new ArrayList<ProductInfo>(map.values());
+			Vector<ProductInfo> v = new Vector<ProductInfo>(l);
+			AuditInfo ai = new AuditInfo();
+			ai.setDate(new Date());
+			ai.setUserId(getUser().getId());
+			ai.setUsername(getUser().getLogin());
+ 			error = DeliveryImport.getInstance().insertDelivery(domain, getUser(), di);
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.

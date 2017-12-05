@@ -67,6 +67,17 @@ public class FinanceDAO {
 				.collect(Collectors.toCollection(LinkedList::new))
 				;
 	}
+	
+	public static PayMethod  getPayMethod(AONContext ctx, String name) {
+		return ctx.getDslContext()
+				.selectFrom(PAY_METHOD)
+				.where(PAY_METHOD.DOMAIN.eq(ctx.getDomainId()))
+				.and(PAY_METHOD.NAME.eq(name))
+				.fetch()
+				.stream()
+				.map( new FullPayMethodFiller())
+				.findFirst().orElse(new PayMethod());
+	}
 	// ------------------------------------------------------------- FINANCE
 	public static Finance getFinance(AONContext ctx,Integer id) {
 		return fetch(ctx,p -> p.getDomainProperty().eq(ctx.getDomainId())

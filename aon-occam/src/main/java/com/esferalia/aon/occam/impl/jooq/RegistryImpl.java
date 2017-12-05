@@ -120,6 +120,12 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getRAddressStream(ctx, filter));
 	}
+	
+	@Override
+	public RAddress insertRAddress(AONContext ctx, RAddress raddress) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertRAddress(ctx, raddress));
+	}
 
 	@Override
 	public Registry insertRegistry(AONContext ctx, Registry registry) {
@@ -176,6 +182,12 @@ public class RegistryImpl implements IRegistry{
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getCustomerStream(ctx, filter));
+	}
+	
+	@Override
+	public Customer insertCustomer(AONContext ctx, Customer customer) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertCustomer(ctx, customer));
 	}
 	
 	// -------------------- SELLER

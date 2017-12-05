@@ -113,10 +113,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				}
 				else if(dialog.getType().contains("import") || dialog.getType().contains("export") 
 						|| dialog.getType().equals("editEcommerceTemplate")){
-					if(dialog.getType().equals("importResponse")){
+					if("importResponse".equals(dialog.getType()) || "importDelivery".equals(dialog.getType())){
 						onAccept();
-					}
-					else{
+					} else{
 						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
 						Label label1 = (Label) flex_table.getWidget(0, 0);
 						if(label1.getText().equals("Plantilla")){
@@ -187,6 +186,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "importEcommerceTemplate": importEcommerce(dialog);break;
 		case "editEcommerceTemplate": editEcommerce(dialog);break;
 		case "exportEcommerce":exportEcommerce(dialog);break;
+		case "importDelivery":importDelivery(dialog.getUrl());break;
 		default:
 			break;
 		}
@@ -671,6 +671,20 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		flexTableCss();
 	}
+	
+	private void importDelivery(String url) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		SingleUploader upload = newUploader(null, url, 1);
+		flex_table.setWidget(0, 0, new Label(MSG.file()));
+		flex_table.setWidget(0, 1, upload);
+			
+		flexTableCss();
+	}
+
 	
 	private void importProduct(String url,TemplateList templates) {
 		flex_table.setStyleName("aon-panelGrid");
