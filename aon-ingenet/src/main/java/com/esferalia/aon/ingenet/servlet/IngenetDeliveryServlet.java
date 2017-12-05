@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,7 @@ import com.esferalia.aon.ingenet.api.albaranes.PRODUCTOTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
@@ -51,6 +53,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -61,6 +64,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -71,6 +75,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -1134,7 +1139,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			product.setName("ENVASE AUTOGENERADO ("+productotype.getCODIGO()+")");
 			product.setType(ProductType.AUXILIARY.value());
 			product.setKind(ProductKind.SALE_PURCHASE.value());
-			product.setVat(0);
+			product.setVat(obtainDefaultVat(ctx));
 			product.setCreationUser(ctx.getUser());
 			product.setCreationDate(new Date());
 			ProductDAO.insert(ctx, product);
@@ -1203,6 +1208,25 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		return rNotes!=null && rNotes.size()>0?rNotes.get(0):null;
 	}
 	
+	private int obtainDefaultVat(AONContext ctx) {
+		ApplicationParameter ap = AON.getApplicationParameter(ctx.getDomainName(),
+				ctx.getDomainId(),
+				ctx.getUser(),
+				AppParam.ACC_DEFAULT_VAT_PERCENT.name());
+		if(ap!=null && ap.getValue()!=null && NumberUtils.isNumber(ap.getValue())) {
+			return Integer.valueOf(ap.getValue());
+		} else {
+			Tax tax = AON.getTaxStream(ctx.getDomainName(),
+					ctx.getDomainId(),
+					ctx.getUser(),
+					f -> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getTaxTypeProperty().eq(TaxType.VAT.value()))
+					).sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
+					.findFirst().orElse(null);
+			return tax.getId();
+		}
+	}
+	
 	private void createDataAttach(Attach attach, String data) {
 		attach.setDomain(new Domain().setId(getDomainId()));
 		attach.setSourceType(DataAttachSource.INGENET.value());
@@ -1214,6 +1238,13 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		attach.setCreationDate(new Date());
 		int id = AON.insertAttach(getDomain(), getDomainId(), getUser(), attach);
 		attach.setId(id);
+	}
+	
+	private void updateDataAttach(Attach attach, Integer deliveryId) {
+		attach.setSourceBatch(deliveryId);
+		attach.setModificationUser(getUser());
+		attach.setModificationDate(new Date());
+		AON.updateAttach(getDomain(), getDomainId(), getUser(), attach);
 	}
 	
 	private void updateDataAttach(Attach attach, Delivery delivery, boolean success) {
