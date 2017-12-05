@@ -172,7 +172,13 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		public boolean evaluate(Object obj) {
 			IContractPayment payment = (IContractPayment) obj;
 			Integer id = payment.getId();
-			return id == null || id == Integer.MIN_VALUE || ids.add(payment.getId());
+			if ( id == null )
+				return true;
+			if ( id == Integer.MIN_VALUE) 
+				return true;
+			if  ( payment.getScope() == ExpressionScope.SALARY ) // Draft
+				return ids.add(payment.getId());
+			return !ids.contains(id);
 		}
 
 	}
