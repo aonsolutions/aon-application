@@ -1916,8 +1916,7 @@ public class FISCAL {
 	}
 
 	// ----------------------------------MODELO 390
-	public static LinkedList<Mod390> getMod390s(String domainName, int domainId,
-			String login) {
+	public static LinkedList<Mod390> getMod390s(String domainName, int domainId, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1927,8 +1926,62 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	public static Mod390 initialize(String domainName, int domain, String login, int year) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, login);
+			return getFiscal().initialize(ctx, year);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390 create(String domainName, int domain, String login, Mod390 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, login);
+			return getFiscal().create(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Mod390 saveComments(String domainName, int domain, String login, Mod390 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, login);
+			return getFiscal().saveComments(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static Mod3902015 changeStatusMod3902015(String domainName, String userLogin, Mod3902015 mod390, FiscalStatus status) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod390.getDomain(), userLogin);
+			return getFiscal().changeStatusMod3902015(ctx, mod390,  status);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// ----------------------------------MODELO 390 - 2014
+	public static Mod3902014 getMod3902014(String domainName, int domainId,
+			String login, Mod390 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFiscal().getMod3902014(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static Mod3902014 getMod3902014(String domainName, int domainId,
 			String login, int id) {
 		AONContext ctx = null;
@@ -1947,18 +2000,6 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getFiscal().getMod3902014XML(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod3902014 initializeMod3902014(String domainName,
-			int domainId, String login, Integer year) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFiscal().initializeMod3902014(ctx, year);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1991,11 +2032,23 @@ public class FISCAL {
 
 	// ----------------------------------MODELO 390 - 2015
 	public static Mod3902015 getMod3902015(String domainName, int domainId,
-			String login, int id) {
+			String login, Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getFiscal().getMod3902015(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod3902015 getMod3902015(String domainName, int domainId,
+			String login, Mod390 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFiscal().getMod3902015(ctx, mod390);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2008,18 +2061,6 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getFiscal().getMod3902015XML(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod3902015 initializeMod3902015(String domainName,
-			int domainId, String login, Integer year) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFiscal().initializeMod3902015(ctx, year);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2198,6 +2239,5 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
-	
 
 }

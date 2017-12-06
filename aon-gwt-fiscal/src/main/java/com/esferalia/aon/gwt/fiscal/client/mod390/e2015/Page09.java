@@ -52,13 +52,13 @@ public class Page09 extends ResizeComposite implements RequiresResize , IMod3902
 	@UiField
 	DoubleBox box657;
 
-	public Page09() {
+	public Page09(Mod3902015 m390) {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
+		setValue(m390);
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		box230.setValue(m390.getBox230());
 		box109.setValue(m390.getBox109());
 		box231.setValue(m390.getBox231());

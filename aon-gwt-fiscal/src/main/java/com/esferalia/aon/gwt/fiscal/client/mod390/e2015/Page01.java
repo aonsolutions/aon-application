@@ -107,10 +107,11 @@ public class Page01 extends ResizeComposite implements IMod3902015Page {
 	TextBox mergedDeclarationName;
 
 	
-	public Page01() {
+	public Page01(Mod3902015 m390) {
 		activityPanel = new ActivityPanel();
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
+		setValue(m390);
 	}
 	
 	@UiHandler("mainActivityButton")
@@ -258,8 +259,7 @@ public class Page01 extends ResizeComposite implements IMod3902015Page {
 		activity5Epigraph.setText(null);
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		if (m390.getMainActivity() != null) {
 			mainActivityDescription.setText(m390.getMainActivity().getDescription());	
 			mainActivityKey.setText(m390.getMainActivity().getKey());

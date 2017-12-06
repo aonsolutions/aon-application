@@ -79,29 +79,10 @@
 		</g:west>
 
 		<g:center>
-			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-				<g:center>
-					<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
-						<g:DeckPanel ui:field="pagesPanel">
-						</g:DeckPanel>
-					</g:ScrollPanel>
-				</g:center>
-				
-				<g:south size="0">
-					<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
-						<g:TabLayoutPanel barHeight="26" barUnit="PX">
-							<g:tab>
-								<g:header>
-									<span class="aon-icon-time aon-icon-commandButton" style="padding-left: 20px;">
-										Notificaciones
-									</span>
-								</g:header>
-								<aon:ResultsPanel ui:field="resultsPanel" />
-							</g:tab>
-						</g:TabLayoutPanel>
-					</aon:MinimizePanel>
-				</g:south>
-			</g:SplitLayoutPanel>
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:DeckPanel ui:field="pagesPanel">
+				</g:DeckPanel>
+			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>	
 </ui:UiBinder>

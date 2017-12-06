@@ -73,14 +73,14 @@ public class Page00 extends ResizeComposite implements IMod3902015Page {
 
 	private static final PageBinder BINDER = GWT.create(PageBinder.class);
 
-	public Page00() {
+	public Page00(Mod3902015 m390) {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
 		document.setEnabled(false);
+		setValue(m390);
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		document.setValue(m390.getDocument());
 		name.setValue(m390.getName());
 		replacement.setValue(m390.isReplacement());
@@ -105,16 +105,11 @@ public class Page00 extends ResizeComposite implements IMod3902015Page {
 		groupDependent.setValue(m390.isGroupDependent());
 		groupDeclarations.setValue(m390.isGroupDeclarations());
 		
-		if (m390.is2013()) {
-			page0Panel.showWidget(page0Panel.getWidgetIndex(panel0));
-			insolvencyDeclarations.setValue(m390.isInsolvencyDeclarations());
-		} else {
-			page0Panel.showWidget(page0Panel.getWidgetIndex(panel1));
-			insolvencyStateThisYear.setValue(m390.isInsolvencyStateThisYear());
-			insolvencyStateLastPeriod.setValue(m390.isInsolvencyStateLastPeriod());
-			accrualRegime.setValue(m390.isAccrualRegime());
-			accrualRegimeTarget.setValue(m390.isAccrualRegimeTarget());
-		}
+		page0Panel.showWidget(page0Panel.getWidgetIndex(panel1));
+		insolvencyStateThisYear.setValue(m390.isInsolvencyStateThisYear());
+		insolvencyStateLastPeriod.setValue(m390.isInsolvencyStateLastPeriod());
+		accrualRegime.setValue(m390.isAccrualRegime());
+		accrualRegimeTarget.setValue(m390.isAccrualRegimeTarget());
 		groupRegimeType.setValue(m390.isGroupRegimeType());
 		groupDocument.setValue(m390.getGroupDocument());
 		groupDeclarations.setValue(m390.isGroupDeclarations());

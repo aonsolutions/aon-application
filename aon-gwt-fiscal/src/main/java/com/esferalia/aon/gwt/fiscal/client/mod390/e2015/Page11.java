@@ -134,12 +134,13 @@ public class Page11 extends ResizeComposite implements RequiresResize , IMod3902
 	
 		
 
-	public Page11() {
+	public Page11(Mod3902015 m390) {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
+		setValue(m390);
 	}
 
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		if (m390.getRegime1() == null) m390.setRegime1(new DeductionRegime());
 		box139.setValue(m390.getRegime1().getBase1());
 		box140.setValue(m390.getRegime1().getQuota1());

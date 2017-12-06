@@ -31,7 +31,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -112,12 +111,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return list;
 	}
 	
-	// ---------------------------------------------------------------MODELO 390  
-	@Override
-	public LinkedList<Mod390> getMod390s(String domainName, Integer domain) {
-		return FISCAL.getMod390s(domainName, domain, this.getUserLogin());
-	}
-
 	// ---------------------------------------------------------------MODELO 200
 	@Override
 	public LinkedList<Mod200> getMod200s(String domainName,int domain) throws AonCoreException {

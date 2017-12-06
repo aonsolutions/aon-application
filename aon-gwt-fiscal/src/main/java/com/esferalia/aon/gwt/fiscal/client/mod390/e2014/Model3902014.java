@@ -12,10 +12,10 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ErrorPage;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.IMod390CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.IModel390;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.ValidationMessages;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
+import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage.ValidationMessages;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -53,7 +53,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
-public class Model3902014 extends ResizeComposite implements IModel390 {
+public class Model3902014 extends ResizeComposite {
 	
 	private static final Integer DEFAULT_YEAR = 2014;
 
@@ -66,7 +66,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	private FiscalServiceAsync FISCAL_SERVICE;
 	private Mod3902014ServiceAsync MOD390_SERVICE;
 	
-	private IMod390CallBack mod390CallBack;
+	private Model390Callback mod390CallBack;
 
 	static interface IMod3902014CallBack {
 		void calculateAndRefresh();
@@ -142,7 +142,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
 
-	public Model3902014(final IMod390CallBack mod390CallBack) {
+	public Model3902014(final Model390Callback mod390CallBack) {
 		this.mod390CallBack = mod390CallBack;
 		
 		AON.ensureInjected();
@@ -220,7 +220,6 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		panel.showPage();	
 	}
 	
-	@Override
 	public void select(Mod390 m390) {
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
@@ -230,8 +229,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		try {
-			MOD390_SERVICE.getMod3902014(getCurrentDomainName(), getCurrentDomain(),
-					m390.getId(), new AsyncCallback<Mod3902014>() {
+			MOD390_SERVICE.getMod3902014(getCurrentDomainName(), getCurrentDomain(),m390, new AsyncCallback<Mod3902014>() {
 				@Override
 				public void onSuccess(Mod3902014 selected) {
 					if (selected == null) {
@@ -331,13 +329,12 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		onNew( DEFAULT_YEAR );
 	}
 	
-	@Override
 	public void onNew( int year) {
 		cleanErrorMessage();
-		MOD390_SERVICE.initializeMod3902014(getCurrentDomainName(),domain, year,
-				new AsyncCallback<Mod3902014>() {
+		Model390.MOD390_SERVICE.initialize(getCurrentDomainName(),domain, year,
+				new AsyncCallback<Mod390>() {
 			@Override
-			public void onSuccess(Mod3902014 mod390) {
+			public void onSuccess(Mod390 mod390) {
 				select( mod390 );
 				pagesPanel.showWidget(0);
 			}
@@ -366,7 +363,7 @@ public class Model3902014 extends ResizeComposite implements IModel390 {
 		mod390.setEnterprise(enterprise);
 		mod390.setDocument(enterpriseSuggest.getValue());
 		mod390.setEnterpriseName(enterpriseSuggest.getName().getValue());
-		mod390.setAdministration( (byte) Administration.COMMON_TERRITORY.ordinal());
+		mod390.setAdministration( Administration.COMMON_TERRITORY);
 		mod390.setConfidential(false);
 		mod390.setComments(null);
 		

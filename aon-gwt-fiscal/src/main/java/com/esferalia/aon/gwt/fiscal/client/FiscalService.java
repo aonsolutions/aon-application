@@ -21,7 +21,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -46,9 +45,6 @@ public interface FiscalService extends RemoteService {
 	// -------------------------------------------------------------- ACTIVITIES
 	LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException;
 
-	// ---------------------------------------------------------------MODELO 390
-	LinkedList<Mod390> getMod390s(String domainName, Integer domain) throws AonCoreException;
-	
 	// ---------------------------------------------------------------MODELO 200 
 	LinkedList<Mod200> getMod200s(String currentDomainName, int currentDomain) throws AonCoreException;
 

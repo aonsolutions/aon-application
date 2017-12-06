@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.IModel349Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.Model349Callback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -236,9 +235,6 @@ abstract class Model349Base extends DockLayoutPanel {
 							@Override
 							public void onSuccess(Mod349 result) {
 								popup.hide();
-								
-								// PRUEBA - Mostrar getSelected
-								//com.google.gwt.user.client.Window.alert("Entramos en onSucces: "+detailManager.getSelectedOperatorIndex());								
 								callback.onSelect(result, detailManager.getSelectedOperatorIndex());
 							}
 
@@ -733,7 +729,7 @@ abstract class Model349Base extends DockLayoutPanel {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						getMod349().setComments(event.getValue());
 						styleCommentsButton();
-						Model349.SERVICE.saveCommentsMod349(Model303.getCurrentDomainName(), getMod349(), new AsyncCallback<Mod349>() {
+						Model349.SERVICE.saveCommentsMod349(Model349.getCurrentDomainName(), getMod349(), new AsyncCallback<Mod349>() {
 							@Override
 							public void onSuccess(Mod349 result) {
 								toast.hide();

@@ -38,13 +38,13 @@ public class Page07 extends ResizeComposite implements RequiresResize , IMod3902
 	int domain;
 	int year;
 
-	public Page07() {
+	public Page07(Mod3902015 m390) {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
+		setValue(m390);
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		box95.setValue(m390.getBox95());
 		box96.setValue(m390.getBox96());
 		box524.setValue(m390.getBox524());

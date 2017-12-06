@@ -97,7 +97,7 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 	@UiField
 	Button newProrrata;
 	
-	public Page10() {
+	public Page10(Mod3902015 m390) {
 		cnaePanel = new Cnae2009Panel();
 
 		table = new CellTable<Prorrata>(50, AON.AON_CELL_TABLE_STYLE);
@@ -117,6 +117,7 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
+		setValue(m390);
 	}
 
 	private void addCnaePanelColumn() {
@@ -314,8 +315,7 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 		table.redraw();		    		
 	}
 	
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		dataProvider = new ListDataProvider<Prorrata>(m390.getProrratas());
 		dataProvider.addDataDisplay(table);
 		table.redraw();

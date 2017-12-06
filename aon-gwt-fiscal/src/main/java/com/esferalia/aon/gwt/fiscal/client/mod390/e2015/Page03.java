@@ -62,19 +62,16 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	private EnumMap<Mod3902015DetailKey, Mod390DetailFields> map; 
 					
-	public Page03() {
+	public Page03(Mod3902015 m390) {
 		FlowPanel container = new FlowPanel();
 		table = new FlexTable();
+		initializeMap(m390);
+		initializeTable(m390);
+		
 		container.add(table);
 		initWidget(container);
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
-		initializeMap(m390);
-//		refreshMap(m390,false);
-		initializeTable(m390);
-	}
 	private void initializeMap(Mod3902015 m390) {
 		map = new EnumMap<Mod3902015DetailKey, Mod390DetailFields>(Mod3902015DetailKey.class);
 		for (Mod3902015DetailKey key: Mod3902015DetailKey.values() ) {
@@ -94,25 +91,6 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 		}
 	}
 
-	public void refreshMap(Mod3902015 mod390) {  
-		if (mod390.getGeneralRegime() != null) {
-			for (Mod3902015DetailKey key : mod390.getGeneralRegime().keySet()) {
-				Mod390Detail detail = mod390.getGeneralRegime().get(key);
-				Mod390DetailFields fields = map.get(key);
-				if (fields.getTaxableBase().getValue() != null) {
-					if (key.hasTaxableBaseAvailable() && !AonMathUtils.equals(fields.getTaxableBase().getValue(),detail.getTaxableBase())) {
-						fields.setTaxableBase(detail.getTaxableBase(),true);	
-					}
-				}
-				if (fields.getQuota().getValue() != null) {
-					if (!AonMathUtils.equals(fields.getQuota().getValue(),detail.getQuota())) {
-						fields.setQuota(detail.getQuota(),true);
-					}
-				}
-			}
-		}
-	}
-	
 	@Override
 	public void populate(Mod3902015 mod390) {
 		for (Mod3902015DetailKey key : map.keySet()) {
@@ -259,7 +237,7 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 
 							++y;
 						
-							// Quota  
+							// Quota
 							fields.getQuota().setValue(det.getQuota());
 							fields.getQuota().setReadOnly(key.isReadonly());
 							fields.getQuota().setEnabled(!key.isReadonly());
@@ -422,7 +400,23 @@ public class Page03 extends ResizeComposite implements RequiresResize , IMod3902
 	}
 	
 	@Override
-	public void refresh(Mod3902015 m390) {
-		refreshMap(m390);
+	public void refresh(Mod3902015 mod390) {  
+		if (mod390.getGeneralRegime() != null) {
+			for (Mod3902015DetailKey key : mod390.getGeneralRegime().keySet()) {
+				Mod390Detail detail = mod390.getGeneralRegime().get(key);
+				Mod390DetailFields fields = map.get(key);
+				if (fields.getTaxableBase().getValue() != null) {
+					if (key.hasTaxableBaseAvailable() && !AonMathUtils.equals(fields.getTaxableBase().getValue(),detail.getTaxableBase())) {
+						fields.setTaxableBase(detail.getTaxableBase(),true);	
+					}
+				}
+				if (fields.getQuota().getValue() != null) {
+					if (!AonMathUtils.equals(fields.getQuota().getValue(),detail.getQuota())) {
+						fields.setQuota(detail.getQuota(),true);
+					}
+				}
+			}
+		}
 	}
+	
 }

@@ -29,18 +29,21 @@ import javax.xml.bind.Unmarshaller;
 
 import org.jooq.Field;
 import org.jooq.Record1;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -327,7 +330,8 @@ public class Mod3902015DAO {
 		public String getValue() {
 			return value;
 		}
-	}	
+	}
+/*	
 	public static class VatContext {
 		
 		private InvoiceType invoiceType;
@@ -450,8 +454,8 @@ public class Mod3902015DAO {
 			return isNational() && isSales();
 		}
 		public boolean isIntracommunitySales() {
-		return isIntracommunity() && isSales();
-	}
+			return isIntracommunity() && isSales();
+		}
 		public boolean isNationalPurchase() {
 			return isNational() && isPurchase();
 		}
@@ -486,7 +490,7 @@ public class Mod3902015DAO {
 			return  vatDeductionType == VatDeductionType.WITHOUT_RIGHT;
 		}
 	}
-	
+*/	
 	public static enum DetailKey implements Serializable {
 		
 		  K00_04 (Mod3902015DetailKey.K00_04, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() ==  4)))
@@ -612,7 +616,7 @@ public class Mod3902015DAO {
 		 ,K37	 (Mod3902015DetailKey.K37, null)
 		 
 		 ,B099	 (Mod3902015DetailKey.B099, (vc -> (vc.isNationalSales() && !vc.isRectification())))
-		 ,B653	 (Mod3902015DetailKey.B653, (vc -> (vc.isSales() && vc.isAccrualRegime() )))
+		 ,B653	 (Mod3902015DetailKey.B653, (vc -> (vc.isSales() && vc.isVatAccrualRegime() )))
 		 ,B103	 (Mod3902015DetailKey.B103, (vc -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
 		 ,B104	 (Mod3902015DetailKey.B104, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
 		 ,B105	 (Mod3902015DetailKey.B105, (vc -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
@@ -654,15 +658,34 @@ public class Mod3902015DAO {
 		}
 	}
 
-	public static Mod3902015 initialize(AONContext ctx, int year) {
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-		Mod3902015 mod390 = new Mod3902015()
-			.setEnterprise(params.getCompany())
-			.setDomain(ctx.getDomainId())
-			.setDocument(params.getDocument())
-			.setEnterpriseName(params.getName())
-			.setYear( year );
+	public static Mod3902015 create(AONContext ctx, Mod390 model) {
+		Mod3902015 mod390 =  new Mod3902015();
+		mod390.setId(model.getId());
+		mod390.setDomain(model.getDomain());
+		mod390.setDomainName(model.getDomainName());
+		mod390.setEnterprise(model.getEnterprise());
+		mod390.setEnterpriseName(model.getEnterpriseName());
+		mod390.setYear(model.getYear());
+		mod390.setAdministration(model.getAdministration());
+		mod390.setStatus(model.getStatus());
+		mod390.setOldStyle(model.isOldStyle());
+		mod390.setReplacement(model.isReplacement());
+		mod390.setComplementary(model.isComplementary());
+		mod390.setWithoutActivity(model.isWithoutActivity());
+		mod390.setDocument(model.getDocument());
+		mod390.setName(model.getName());
+		mod390.setFirstSurname(model.getFirstSurname());
+		mod390.setSecondSurname(model.getSecondSurname());
+		mod390.setContactPhone(model.getContactPhone());
+		mod390.setReceipt(model.getReceipt());
+		mod390.setReplacedReceipt(model.getReplacedReceipt());
+		mod390.setComments(model.getComments());
+		mod390.setCreationUser(model.getCreationUser());
+		mod390.setCreationDate(model.getCreationDate());
+		mod390.setModificationUser(model.getModificationUser());
+		mod390.setModificationDate(model.getModificationDate());
 		
+		int year = mod390.getYear();
 		if (year == 2016 || year == 2017) {
 			LinkedList<Mod390> mod390s = Mod390DAO.getByDomain(ctx, ctx.getDomainId());
 			for (Mod390 m390 : mod390s) {
@@ -684,28 +707,61 @@ public class Mod3902015DAO {
 				}
 			}
 		}
-		
-		if (mod390.isLegalEntity()) {
-			mod390.setName(mod390.getEnterpriseName());
-		} else {
-			String tmpName = mod390.getEnterpriseName();
-			if (AonStringUtils.contains(tmpName, ',')) {
-				mod390.setName(AonStringUtils.trim(AonStringUtils.substringAfter(tmpName, ",")));
-				mod390.setFirstSurname(AonStringUtils.trim(AonStringUtils.substringBefore(tmpName, ",")));
-			} else {
-				mod390.setName(AonStringUtils.trim(AonStringUtils.substringBefore(tmpName, " ")));
-				mod390.setFirstSurname(AonStringUtils.trim(AonStringUtils.substringAfter(tmpName, " ")));
-			}
-		}
 		fillSimplifedRegimeData(ctx, mod390);
 		fillGeneralRegimeData(ctx, mod390);
 		if (mod390.isSimplifiedRegime()) {
 			fillSimplifiedDeclarationResults(ctx, mod390);
 		} else {
-			fillGeneralDeclarationResults(ctx, mod390);
+			if (mod390.isOldStyle()) {
+				fillGeneralDeclarationResultsOldStyle(ctx, mod390);
+			} else {
+				fillGeneralDeclarationResults(ctx, mod390);
+			}
 		}
 		mod390.calculate();
 		return mod390;	
+	}
+
+	public static Mod3902015 getMod3902015(AONContext ctx, Mod390 m390) {
+		if (m390.getId() == null) {
+			return create(ctx, m390);
+//			mod390.setId(m390.getId());
+//			mod390.setDomain(m390.getDomain());
+//			mod390.setDomainName(m390.getDomainName());
+//			mod390.setEnterprise(m390.getEnterprise());
+//			mod390.setEnterpriseName(m390.getEnterpriseName());
+//			mod390.setYear(m390.getYear());
+//			mod390.setAdministration(m390.getAdministration());
+//			mod390.setStatus(m390.getStatus());
+//			mod390.setReplacement(m390.isReplacement());
+//			mod390.setComplementary(m390.isComplementary());
+//			mod390.setWithoutActivity(m390.isWithoutActivity());
+//			mod390.setDocument(m390.getDocument());
+//			mod390.setName(m390.getName());
+//			mod390.setFirstSurname(m390.getFirstSurname());
+//			mod390.setSecondSurname(m390.getSecondSurname());
+//			mod390.setContactPhone(m390.getContactPhone());
+//			mod390.setReceipt(m390.getReceipt());
+//			mod390.setReplacedReceipt(m390.getReplacedReceipt());
+//			mod390.setComments(m390.getComments());
+//			mod390.setCreationUser(m390.getCreationUser());
+//			mod390.setCreationDate(m390.getCreationDate());
+//			mod390.setModificationUser(m390.getModificationUser());
+//			mod390.setModificationDate(m390.getModificationDate());
+//			if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
+//				AEATIVA2015 iva = Mod390toAEATIVA2015.getAEATIVA2015(mod390);
+//				try {
+//					AEATIVA2015toMod390.populate(mod390, iva);
+//					return mod390;
+//				} catch (ParseException e) {
+//					e.printStackTrace();
+//					throw new AonCoreException("XML PROBLEM",e);
+//				}
+//			} else {
+//				throw new IllegalArgumentException("Ejercicio incorrecto.");
+//			}
+		}
+		return getById(ctx, m390.getId());
 	}
 
 	public static Mod3902015 getById(AONContext ctx, int id) {
@@ -727,17 +783,20 @@ public class Mod3902015DAO {
 	}
 
 	private static void populate(FsModel390Record record, Mod3902015 mod390)  {
-		mod390.setId(record.getValue(FS_MODEL390.ID));
-		mod390.setAdministration(record.getValue(FS_MODEL390.ADMINISTRATION));
-		mod390.setYear(record.getValue(FS_MODEL390.YEAR));
-		mod390.setDomain(record.getValue(FS_MODEL390.DOMAIN));
-		mod390.setEnterprise(record.getValue(FS_MODEL390.ENTERPRISE));
-		mod390.setDocument(record.getValue(FS_MODEL390.DOCUMENT));
-		mod390.setEnterpriseName(record.getValue(FS_MODEL390.NAME));
-		mod390.setReceipt(record.getValue(FS_MODEL390.RECEIPT));
-		mod390.setReplacement(record.getValue(FS_MODEL390.REPLACEMENT) == 1);
-		mod390.setReplacedReceipt(record.getValue(FS_MODEL390.REPLACED_RECEIPT));
-		mod390.setComments(record.getValue(FS_MODEL390.COMMENTS));
+		mod390
+		.setId(record.getValue(FS_MODEL390.ID))
+		.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL390.ADMINISTRATION)))
+		.setReplacement( record.getValue(FS_MODEL390.REPLACEMENT)==1 )
+		.setComplementary(record.getValue(FS_MODEL390.COMPLEMENTARY)==1 )
+		.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL390.STATUS)))
+		.setYear(record.getValue(FS_MODEL390.YEAR))
+		.setDomain(record.getValue(FS_MODEL390.DOMAIN))
+		.setEnterprise(record.getValue(FS_MODEL390.ENTERPRISE))
+		.setDocument(record.getValue(FS_MODEL390.DOCUMENT))
+		.setEnterpriseName(record.getValue(FS_MODEL390.NAME))
+		.setReceipt(record.getValue(FS_MODEL390.RECEIPT))
+		.setReplacedReceipt(record.getValue(FS_MODEL390.REPLACED_RECEIPT))
+		.setComments(record.getValue(FS_MODEL390.COMMENTS));
 		StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
 		try {
 			if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
@@ -799,13 +858,13 @@ public class Mod3902015DAO {
 			.set(FS_MODEL390.DOMAIN, mod390.getDomain())
 			.set(FS_MODEL390.ENTERPRISE, mod390.getEnterprise())
 			.set(FS_MODEL390.YEAR, mod390.getYear())
-			.set(FS_MODEL390.ADMINISTRATION, mod390.getAdministration())
-			.set(FS_MODEL390.STATUS, (byte) 0)
+			.set(FS_MODEL390.ADMINISTRATION,mod390.getAdministration().getValue())
+			.set(FS_MODEL390.STATUS,AonEnumUtils.getByte( mod390.getStatus()  ))
 			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
-			.set(FS_MODEL390.DOCUMENT, mod390.getDocument())
-			.set(FS_MODEL390.NAME, mod390.getName())
 			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
 			.set(FS_MODEL390.REPLACEMENT,AonEnumUtils.getByte(mod390.isReplacement()))
+			.set(FS_MODEL390.DOCUMENT, mod390.getDocument())
+			.set(FS_MODEL390.NAME, mod390.getName())
 			.set(FS_MODEL390.COMMENTS, mod390.getComments())
 			.set(FS_MODEL390.RECEIPT, mod390.getReceipt())
 			.set(FS_MODEL390.REPLACED_RECEIPT, mod390.getReplacedReceipt())
@@ -820,13 +879,14 @@ public class Mod3902015DAO {
 		ctx.getDslContext()
 			.update(FS_MODEL390)
 			.set(FS_MODEL390.YEAR, mod390.getYear())
-			.set(FS_MODEL390.ADMINISTRATION, mod390.getAdministration())
-			.set(FS_MODEL390.STATUS, (byte) 0)
+			.set(FS_MODEL390.ADMINISTRATION,mod390.getAdministration().getValue())
+			.set(FS_MODEL390.STATUS,AonEnumUtils.getByte( mod390.getStatus()  ))
+			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
+			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
+			.set(FS_MODEL390.REPLACEMENT,AonEnumUtils.getByte(mod390.isReplacement()))
 			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
 			.set(FS_MODEL390.DOCUMENT, mod390.getDocument())
 			.set(FS_MODEL390.NAME, mod390.getName())
-			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
-			.set(FS_MODEL390.REPLACEMENT,AonEnumUtils.getByte(mod390.isReplacement()))
 			.set(FS_MODEL390.COMMENTS, mod390.getComments())
 			.set(FS_MODEL390.RECEIPT, mod390.getReceipt())
 			.set(FS_MODEL390.REPLACED_RECEIPT, mod390.getReplacedReceipt())
@@ -893,8 +953,84 @@ public class Mod3902015DAO {
 		ctx.getDslContext().delete(FS_MODEL390)
 				.where(FS_MODEL390.ID.equal(mod390.getId())).execute();
 	}
-
-	private static LinkedList<Mod390Detail> getMod390Details(AONContext ctx, Mod3902015 mod390 ) {
+	
+	private static LinkedList<Mod390Detail> getDetails(AONContext ctx, Mod3902015 mod390 ) {
+		EnumMap<Mod3902015DetailKey, Mod390Detail> map = new EnumMap<Mod3902015DetailKey, Mod390Detail>(Mod3902015DetailKey.class); 
+		Mod390Detail det = null;
+		for (Mod3902015DetailKey key : Mod3902015DetailKey.values() ) {
+			if (key.accept(mod390.getYear())) {
+				det = new Mod390Detail();
+				det.setKey(key);
+				det.setPercent(key.getPercent());
+				map.put(key, det);
+			}
+		}
+		
+		final MutableDouble mutProrrata = new MutableDouble();
+		ctx.getDslContext()
+				.select(FS_VAT.PRORATA)
+				.from(FS_VAT)
+				.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
+				.and(FS_VAT.YEAR.equal(mod390.getYear()))
+				.fetch()
+				.stream()
+				.forEach( record -> {
+						mutProrrata.setValue( record.getValue(FS_VAT.PRORATA) );
+					}
+				);
+		double prorrata = AonMathUtils.round( mutProrrata.doubleValue() / 100);
+		boolean mustApplyProrrata = (prorrata != AonMathUtils.round(0.00));		
+		
+		Date firstDay = AonDateUtils.getYearFirstDay(mod390.getYear());
+		Date lastDay = AonDateUtils.getYearLastDay(mod390.getYear());
+		VATDAO.getVatBreakdown(ctx, firstDay, lastDay)
+		.forEach(vc -> {
+			Mod3902015DetailKey[] keys = DetailKey.getKeys(vc);			
+			if (keys != null) {
+				for (Mod3902015DetailKey key : keys) {
+					Mod390Detail detail = map.get(key);
+					if (detail == null) {
+						detail = new Mod390Detail();
+						map.put(key, detail );
+					}
+					detail.setKey(key);
+					detail.setPercent(vc.getPercentage());
+					double q = key.isSurcharge()?vc.getSurchargeQuota():vc.getQuota();
+					if ( mustApplyProrrata &&  key.isProrrataEnabled() ) {
+						q = AonMathUtils.round(q * prorrata);
+					}
+					detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
+					detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + vc.getBase()));
+				}
+			}
+			
+		});
+		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata 
+		Record1<BigDecimal> record = ctx.getDslContext()
+			.select(DSL.sum(FS_VAT_DETAIL.QUOTA))
+			.from(FS_VAT_DETAIL)
+			.join(FS_VAT).on(FS_VAT.ID.equal(FS_VAT_DETAIL.FS_VAT))
+			.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
+			.and(FS_VAT.YEAR.equal(mod390.getYear()))
+			.and(FS_VAT_DETAIL.VAT_KEY.equal("RP"))
+			.fetchOne();
+		if (record != null) {
+			BigDecimal quota = record.getValue(DSL.sum(FS_VAT_DETAIL.QUOTA));
+			if (quota != null) {
+				Mod390Detail detail = map.get(Mod3902015DetailKey.K35);
+				if (detail == null) {
+					detail = new Mod390Detail();
+					map.put(Mod3902015DetailKey.K35, detail );
+				}
+				detail.setKey(Mod3902015DetailKey.K35);
+				detail.setQuota(quota.doubleValue());
+			}
+		}
+			
+		return new LinkedList<Mod390Detail>(map.values());
+	}
+	
+	private static LinkedList<Mod390Detail> getDetailsOldStyle(AONContext ctx, Mod3902015 mod390 ) {
 		Date firstDay = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod390.getYear());
 		
@@ -975,7 +1111,7 @@ public class Mod3902015DAO {
 									.setService(record.getValue(INVOICE.SERVICE) == 1)
 									.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)])
 									.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1)
-									.setAccrualRegime(false)
+									.setVatAccrualRegime(false)
 									.setFarmerRegime(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1)
 									.setSurchargePercent(record.getValue(INVOICE_TAX.SURCHARGE).doubleValue())
 									.setSurcharge(AonMathUtils.round(record.getValue(INVOICE_TAX.SURCHARGE).doubleValue()) > 0)
@@ -1058,7 +1194,7 @@ public class Mod3902015DAO {
 							vc.setService(record.getValue(INVOICE.SERVICE) == 1);
 							vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
 							vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
-							vc.setAccrualRegime(true);
+							vc.setVatAccrualRegime(true);
 							vc.setFarmerRegime(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1);
 							
 							double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
@@ -1177,7 +1313,7 @@ public class Mod3902015DAO {
 								vc.setService(record.getValue(INVOICE.SERVICE) == 1);
 								vc.setTransaction(InvoiceTransactionType.values()[record.getValue(INVOICE.TRANSACTION)]);
 								vc.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1);
-								vc.setAccrualRegime(true);
+								vc.setVatAccrualRegime(true);
 								vc.setFarmerRegime(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1);
 								
 								double surchargePercent = record.getValue(INVOICE_TAX.SURCHARGE).doubleValue();
@@ -1250,12 +1386,18 @@ public class Mod3902015DAO {
 				
 		return new LinkedList<Mod390Detail>(map.values());
 	}
-	
+
 	private static Mod3902015 fillGeneralRegimeData(AONContext ctx, Mod3902015 mod390) {
 		try {
 			EnumMap<Mod3902015DetailKey, Mod390Detail> map = new EnumMap<Mod3902015DetailKey, Mod390Detail>(Mod3902015DetailKey.class);
 			Mod390Detail det = null;
-			LinkedList<Mod390Detail> details = getMod390Details(ctx, mod390);
+			LinkedList<Mod390Detail> details = null;
+			if (mod390.isOldStyle()) {
+				details = getDetailsOldStyle(ctx, mod390);
+			} else {
+				details = getDetails(ctx, mod390);
+			}
+			
 			for (Mod390Detail detail : details) {
 				map.put(detail.getKey(), detail); 
 			}
@@ -1535,8 +1677,35 @@ public class Mod3902015DAO {
 		);
 		return mod390;
 	}
-	
 	private static void fillGeneralDeclarationResults(AONContext ctx, Mod3902015 mod390) {
+		Mod303DAO.getMod303s(ctx, mod390.getDomain())
+			.filter(m303 -> m303.getYear() == mod390.getYear())
+			.filter(m303 -> m303.getAdministration() == mod390.getAdministration())
+			.forEach(m303 -> {
+				Period period = m303.getPeriod();
+				if (m303.getDeclarationType() == FiscalModelDeclarationType.BANK
+				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
+				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT_CCT) {
+					mod390.setBox95( AonMathUtils.round(mod390.getBox95() + m303.getResult()));
+				} 
+				if ( m303.isEnrolledInDevolutionRegistry()) {
+					mod390.setTaxRefund(true);
+				}
+				if (m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK
+				 || m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT) {
+					mod390.setBox96( AonMathUtils.round(mod390.getBox96() + + m303.getResult()));
+					if (period == Period.M12 || period == Period.T4) {
+						mod390.setBox98( m303.getResult() );	
+					} 
+				}
+				if (m303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE
+				 && (period == Period.M12 || period == Period.T4)) {
+					mod390.setBox97(  m303.getResult() );
+				}
+			});
+		
+	}
+	private static void fillGeneralDeclarationResultsOldStyle(AONContext ctx, Mod3902015 mod390) {
 		ctx.getDslContext().select(FS_VAT.PERIOD,FS_VAT.TAX_REFUND_REGISTRY
 				,FS_VAT_DECLARATION.DEPOSIT,FS_VAT_DECLARATION.PAY_BACK,FS_VAT_DECLARATION.COMPENSATE)
 				.from(FS_VAT)
@@ -1585,4 +1754,23 @@ public class Mod3902015DAO {
 			}
 		}
 	}
+
+	public static Mod3902015 changeStatus(AONContext ctx, Mod3902015 mod390, FiscalStatus newStatus) {
+		try {
+			ctx.checkWrite();
+			if (mod390.getId() != null) {
+				mod390.setStatus(newStatus);
+				ctx.getDslContext().update(FS_MODEL390)
+					.set(FS_MODEL390.STATUS,AonEnumUtils.getByte( mod390.getStatus()))
+					.where(FS_MODEL390.ID.equal(mod390.getId()))
+					.execute();
+			}
+			return mod390;
+		} catch (DataAccessException t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getMessage());
+		}
+	}
+
 }

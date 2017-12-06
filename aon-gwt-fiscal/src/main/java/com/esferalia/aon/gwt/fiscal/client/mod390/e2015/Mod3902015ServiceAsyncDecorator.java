@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -14,10 +16,10 @@ public class Mod3902015ServiceAsyncDecorator implements Mod3902015ServiceAsync {
 	}
 
 	@Override
-	public void getMod3902015(String domainName, Integer domain, Integer id,
+	public void getMod3902015(String domainName, Integer domain, Mod390 mod390,
 			AsyncCallback<Mod3902015> callback) {
 		AON.start();
-		fsa.getMod3902015(domainName, domain, id, new AsyncCallbackWrapper<Mod3902015>(
+		fsa.getMod3902015(domainName, domain, mod390, new AsyncCallbackWrapper<Mod3902015>(
 				callback));
 	}
 
@@ -38,11 +40,10 @@ public class Mod3902015ServiceAsyncDecorator implements Mod3902015ServiceAsync {
 	}
 
 	@Override
-	public void initializeMod3902015(String domainName, Integer domain,
-			Integer year, AsyncCallback<Mod3902015> callback) {
+	public void changeStatus(String domainName, Mod3902015 mod390, FiscalStatus status,
+			AsyncCallback<Mod3902015> callback) {
 		AON.start();
-		fsa.initializeMod3902015(domainName, domain, year,
-				new AsyncCallbackWrapper<Mod3902015>(callback));
+		fsa.changeStatus(domainName, mod390, status,new AsyncCallbackWrapper<Mod3902015>(callback));
 	}
 
 }

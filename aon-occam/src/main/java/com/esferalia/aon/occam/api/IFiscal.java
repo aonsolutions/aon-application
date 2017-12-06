@@ -79,7 +79,7 @@ public interface IFiscal {
 	public Mod190 saveCommentsMod190(AONContext ctx, Mod190 mod190);
 	public Mod190 changeStatusMod190(AONContext ctx, Mod190 mod190, FiscalStatus newStatus);
 
-	// 				   		  MOD193
+	// 				   		  	MOD193
 	public LinkedList<Mod193> getMod193s(AONContext ctx,int domain);
 	public Mod193 getMod193(AONContext ctx,Integer id);
 	public Mod193 initializeMod193(AONContext ctx, int year);
@@ -97,20 +97,26 @@ public interface IFiscal {
 	public Mod184 saveCommentsMod184(AONContext ctx, Mod184 mod184);
 	public Mod184 changeStatusMod184(AONContext ctx, Mod184 mod184, FiscalStatus newStatus);
 
-	// 				   		  MOD390
+	// 				   		  	MOD390
 	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain);
-	// 2014
+	public Mod390 initialize(AONContext ctx, int year);
+	public Mod390 create(AONContext ctx, Mod390 mod390);
+	public Mod390 saveComments(AONContext ctx, Mod390 mod390);
+
+	// 							MOD390 -- 2014
+	public Mod3902014 getMod3902014(AONContext ctx,Mod390 mod390);
 	public Mod3902014 getMod3902014(AONContext ctx,Integer id);
 	public String getMod3902014XML(AONContext aonContext, int id);
 	public Mod3902014 saveMod3902014(AONContext ctx,Mod3902014 mod390);
 	public void deleteMod3902014(AONContext ctx,Mod3902014 mod390);
-	public Mod3902014 initializeMod3902014(AONContext ctx, int year);
-	// 2015
+
+	// 							MOD390 -- 2015
+	public Mod3902015 getMod3902015(AONContext ctx,Mod390 mod390);
 	public Mod3902015 getMod3902015(AONContext ctx,Integer id);
 	public String getMod3902015XML(AONContext aonContext, int id);
-	public Mod3902015 saveMod3902015(AONContext ctx,Mod3902015 mod390);
+	public Mod3902015 saveMod3902015(AONContext ctx, Mod3902015 mod390);
 	public void deleteMod3902015(AONContext ctx,Mod3902015 mod390);
-	public Mod3902015 initializeMod3902015(AONContext ctx, int year);
+	public Mod3902015 changeStatusMod3902015(AONContext ctx, Mod3902015 mod184, FiscalStatus newStatus);
 	
 	// 				   		  MOD303
 	public Mod303 getMod303(AONContext ctx, int id);
@@ -272,7 +278,6 @@ public interface IFiscal {
 	public void deleteMod2002016(AONContext ctx, int id);
 	public String dumpAEATMod2002016(Mod2002016 mod200);
 	public Mod2002016 importMod2002015(AONContext ctx, Mod2002016 mod200);
-	Stream<VatContext> getSiiVatContext(AONContext ctx, VatParams params, String sii);
 	
 	// 				   		  MOD349
 	public LinkedList<Mod349> getMod349s(AONContext ctx,int domain);
@@ -285,4 +290,7 @@ public interface IFiscal {
 	public Mod349 changeStatusMod349(AONContext ctx, Mod349 mod349, FiscalStatus newStatus);
 	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey);
 
+	// 						SII
+	Stream<VatContext> getSiiVatContext(AONContext ctx, VatParams params, String sii);
+	
 }

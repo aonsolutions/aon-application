@@ -130,7 +130,7 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 	@UiField
 	DoubleBox box83;
 	
-	public Page04() {
+	public Page04(Mod3902015 m390) {
 		f01C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
 		f02C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
 		f03C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
@@ -155,10 +155,10 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 		f03C.setVisibleLength(5);
 		f04C.setVisibleLength(5);
 		f05C.setVisibleLength(5);
+		setValue(m390);
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		SimpliedRegimeActivity regime = m390.getSimpRegime1();
 		if (regime != null) {
 			activity1.setValue(regime);

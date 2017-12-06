@@ -7,12 +7,9 @@ import java.util.Map;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod3902014 implements Serializable {
+public class Mod3902014 extends Mod390 {
 
 	private static final long serialVersionUID = -6573468107163112737L;
-	
-	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
-
 	
 	public static class SimpliedRegimeActivity implements Serializable {
 
@@ -684,32 +681,11 @@ public class Mod3902014 implements Serializable {
 		}
 	}
 
-	private Integer id;
-	private int domain;
-	private int enterprise;
-	private String enterpriseName;
-	private int year;
-	private byte administration;
 	private boolean confidential;
-	private boolean replacement;
 	private boolean replacementDueInsolvencyState;
-	private String receipt;
-	private String replacedReceipt;
-	private String comments;
-	
-	private String document;
-	private String name;
-	private String firstSurname;
-	private String secondSurname;
-	
-	private String contactPhone;
-
-	
 	private boolean insolvencyDeclarations;
-	
 	private boolean insolvencyStateThisYear;
 	private boolean insolvencyStateLastPeriod;
-	
 	private boolean accrualRegime;
 	private boolean accrualRegimeTarget;
 
@@ -807,56 +783,15 @@ public class Mod3902014 implements Serializable {
 	
 	private ArrayList<Prorrata> prorratas = new ArrayList<Mod3902014.Prorrata>();
 	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public int getDomain() {
-		return domain;
-	}
-	public void setDomain(int domain) {
-		this.domain = domain;
-	}
-	public int getEnterprise() {
-		return enterprise;
-	}
-	public void setEnterprise(int enterprise) {
-		this.enterprise = enterprise;
-	}
-	public String getEnterpriseName() {
-		return enterpriseName;
-	}
-	public void setEnterpriseName(String enterpriseName) {
-		this.enterpriseName = enterpriseName;
-	}
-	public int getYear() {
-		return year;
-	}
-	public void setYear(int year) {
-		this.year = year;
-	}
 	public boolean is2013() {
-		return (this.year == 2013); 
+		return (getYear() == 2013); 
 	}
-	public byte getAdministration() {
-		return administration;
-	}
-	public void setAdministration(byte administration) {
-		this.administration = administration;
-	}
+
 	public boolean isConfidential() {
 		return confidential;
 	}
 	public void setConfidential(boolean confidential) {
 		this.confidential = confidential;
-	}
-	public boolean isReplacement() {
-		return replacement;
-	}
-	public void setReplacement(boolean replacement) {
-		this.replacement = replacement;
 	}
 	public boolean isReplacementDueInsolvencyState() {
 		return replacementDueInsolvencyState;
@@ -864,57 +799,6 @@ public class Mod3902014 implements Serializable {
 	public void setReplacementDueInsolvencyState(
 			boolean replacementDueInsolvencyState) {
 		this.replacementDueInsolvencyState = replacementDueInsolvencyState;
-	}
-	public String getReceipt() {
-		return receipt;
-	}
-	public void setReceipt(String receipt) {
-		this.receipt = receipt;
-	}
-	public String getReplacedReceipt() {
-		return replacedReceipt;
-	}
-	public void setReplacedReceipt(String replacedReceipt) {
-		this.replacedReceipt = replacedReceipt;
-	}
-	public String getComments() {
-		return comments;
-	}
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-	public boolean isLegalEntity() {
-		return AonStringUtils.isNotEmpty(document) && !document.matches(LEGAL_ENTITY_PATTERN);
-	}
-	public String getDocument() {
-		return document;
-	}
-	public void setDocument(String document) {
-		this.document = document;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getFirstSurname() {
-		return firstSurname;
-	}
-	public void setFirstSurname(String firstSurname) {
-		this.firstSurname = firstSurname;
-	}
-	public String getSecondSurname() {
-		return secondSurname;
-	}
-	public void setSecondSurname(String secondSurname) {
-		this.secondSurname = secondSurname;
-	}
-	public String getContactPhone() {
-		return contactPhone;
-	}
-	public void setContactPhone(String contactPhone) {
-		this.contactPhone = contactPhone;
 	}
 	public boolean isInsolvencyDeclarations() {
 		return insolvencyDeclarations;

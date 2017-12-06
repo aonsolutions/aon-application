@@ -23,7 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -87,15 +86,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getActivities(activityGroup,
 				new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
-	}
-
-	// ---------------------------------------------------------------MODELO 390
-	@Override
-	public void getMod390s(String domainName, Integer domain,
-			AsyncCallback<LinkedList<Mod390>> callback) {
-		AON.start();
-		fsa.getMod390s(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<Mod390>>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 200

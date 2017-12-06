@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390.e2014;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -14,10 +15,18 @@ public class Mod3902014ServiceAsyncDecorator implements Mod3902014ServiceAsync {
 	}
 
 	@Override
-	public void getMod3902014(String domainName, Integer domain, Integer id,
+	public void getMod3902014(String domainName, Integer domain, Mod390 mod390,
 			AsyncCallback<Mod3902014> callback) {
 		AON.start();
-		fsa.getMod3902014(domainName, domain, id, new AsyncCallbackWrapper<Mod3902014>(
+		fsa.getMod3902014(domainName, domain, mod390, new AsyncCallbackWrapper<Mod3902014>(
+				callback));
+	}
+
+	@Override
+	public void getById(String domainName, Integer domain, Integer id,
+			AsyncCallback<Mod3902014> callback) {
+		AON.start();
+		fsa.getById(domainName, domain, id, new AsyncCallbackWrapper<Mod3902014>(
 				callback));
 	}
 
@@ -35,14 +44,6 @@ public class Mod3902014ServiceAsyncDecorator implements Mod3902014ServiceAsync {
 		AON.start();
 		fsa.deleteMod3902014(domainName, domain, mod390,
 				new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void initializeMod3902014(String domainName, Integer domain,
-			Integer year, AsyncCallback<Mod3902014> callback) {
-		AON.start();
-		fsa.initializeMod3902014(domainName, domain, year,
-				new AsyncCallbackWrapper<Mod3902014>(callback));
 	}
 
 }

@@ -49,7 +49,7 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 	@UiField
 	DoubleBox box94;
 
-	public Page06() {
+	public Page06(Mod3902015 m390) {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
 		box87.setMaxLength(6);
@@ -70,6 +70,7 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 		box84.setEnabled(false);
 		box92.setEnabled(false);
 		box94.setEnabled(false);
+		setValue(m390);
 	}
 	
 	@UiHandler("box658")
@@ -116,8 +117,7 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 		});
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		box658.setValue(m390.getBox658());
 		box84.setValue(m390.getBox84());
 		box87.setValue(m390.getBox87());

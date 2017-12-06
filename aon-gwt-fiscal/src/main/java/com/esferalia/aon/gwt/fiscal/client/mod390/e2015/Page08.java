@@ -70,14 +70,14 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	@UiField
 	DoubleBox box108;
 	
-	public Page08() {
+	public Page08(Mod3902015 m390) {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
 		box108.setEnabled(false);
+		setValue(m390);
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		box99.setValue(m390.getBox99());
 		box653.setValue(m390.getBox653());
 		box103.setValue(m390.getBox103());

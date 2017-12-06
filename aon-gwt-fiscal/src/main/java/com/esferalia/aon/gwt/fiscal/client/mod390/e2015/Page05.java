@@ -41,11 +41,12 @@ public class Page05 extends ResizeComposite implements RequiresResize, IMod39020
 	@UiField
 	DoubleBox box86;
 	
-	public Page05() {
+	public Page05(Mod3902015 m390) {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
 		box84.setEnabled(false);
 		box86.setEnabled(false);
+		setValue(m390);
 	}
 	
 	@UiHandler("box658")
@@ -81,7 +82,7 @@ public class Page05 extends ResizeComposite implements RequiresResize, IMod39020
 		});
 	}
 	
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		box658.setValue(m390.getBox658());
 		box84.setValue(m390.getBox84());
 		box659.setValue(m390.getBox659());

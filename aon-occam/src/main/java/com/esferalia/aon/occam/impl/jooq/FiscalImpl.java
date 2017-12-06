@@ -265,7 +265,7 @@ public class FiscalImpl implements IFiscal {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod184DAO.changeStatusMod184(ctx, mod184, newStatus));		
 	}
-	// ----------------------------------------------------------- [MODELO 390 - 2014]
+	// ----------------------------------------------------------- [MODELO 390]
 	@Override
 	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain) {
 		try {
@@ -275,8 +275,47 @@ public class FiscalImpl implements IFiscal {
 			throw t;
 		}
 	}
+	
+	@Override
+	public Mod390 initialize(AONContext ctx, int year) {
+		try {
+			return Mod390DAO.initialize(ctx, year);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+	}
+
+	@Override
+	public Mod390 create(AONContext ctx, Mod390 mod390) {
+		try {
+			return Mod390DAO.create(ctx, mod390);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+	}
+	@Override
+	public Mod390 saveComments(AONContext ctx, Mod390 mod390) {
+		try {
+			return Mod390DAO.saveComments(ctx, mod390);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+	}	
 
 	// ----------------------------------------------------------- [MODELO 390 - 2014]
+	@Override
+	public Mod3902014 getMod3902014(AONContext ctx, Mod390 mod390) {
+		try {
+			return Mod3902014DAO.getMod3902014(ctx, mod390);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+	}
+
 	@Override
 	public Mod3902014 getMod3902014(AONContext ctx, Integer id) {
 		try {
@@ -293,16 +332,6 @@ public class FiscalImpl implements IFiscal {
 	}
 	
 	@Override
-	public Mod3902014 initializeMod3902014(AONContext ctx, int year) {
-		try {
-			return Mod3902014DAO.initialize(ctx, year);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
 	public Mod3902014 saveMod3902014(AONContext ctx, Mod3902014 mod390) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod3902014DAO.save(ctx, mod390));
@@ -316,6 +345,16 @@ public class FiscalImpl implements IFiscal {
 	
 	// ----------------------------------------------------------- [MODELO 390 - 2015]
 	
+	@Override
+	public Mod3902015 getMod3902015(AONContext ctx, Mod390 mod390) {
+		try {
+			return Mod3902015DAO.getMod3902015(ctx, mod390);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+	}
+
 	@Override
 	public Mod3902015 getMod3902015(AONContext ctx, Integer id) {
 		try {
@@ -332,16 +371,6 @@ public class FiscalImpl implements IFiscal {
 	}
 	
 	@Override
-	public Mod3902015 initializeMod3902015(AONContext ctx, int year) {
-		try {
-			return Mod3902015DAO.initialize(ctx, year);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
 	public Mod3902015 saveMod3902015(AONContext ctx, Mod3902015 mod390) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod3902015DAO.save(ctx, mod390));
@@ -353,6 +382,12 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod3902015DAO.delete(ctx, mod390));
 	}
 	
+	@Override
+	public Mod3902015 changeStatusMod3902015(AONContext ctx, Mod3902015 mod390, FiscalStatus newStatus) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod3902015DAO.changeStatus(ctx, mod390, newStatus));		
+	}
+
 	// ----------------------------------------------------------- [MODELO 303]
 	@Override
 	public Mod303 getMod303(AONContext ctx, int id) {

@@ -81,14 +81,13 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 	@UiField
 	TextBox notary3;
 
-	public Page02() {
+	public Page02(Mod3902015 m390) {
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
-
+		setValue(m390);
 	}
 
-	@Override
-	public void setValue(Mod3902015 m390) {
+	private void setValue(Mod3902015 m390) {
 		if (m390.getAddress() != null) {
 			rdocument.setValue(m390.getAddress().getRdocument());
 			rname.setValue(m390.getAddress().getRname());

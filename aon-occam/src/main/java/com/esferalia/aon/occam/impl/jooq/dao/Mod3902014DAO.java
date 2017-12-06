@@ -34,7 +34,8 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014.Mod390Detail;
@@ -671,25 +672,31 @@ public class Mod3902014DAO {
 		}
 	}
 
-	public static Mod3902014 initialize(AONContext ctx, int year) {
+	public static Mod3902014 create(AONContext ctx, Mod390 model) {
 		Mod3902014 mod390 = new Mod3902014();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-		mod390.setEnterprise(params.getCompany());
-		mod390.setDomain(ctx.getDomainId());
-		mod390.setDocument(params.getDocument());
-		mod390.setEnterpriseName(params.getName());
-		mod390.setYear( year );
-		if (mod390.isLegalEntity()) mod390.setName(mod390.getEnterpriseName());
-		else {
-			String tmpName = mod390.getEnterpriseName();
-			if (AonStringUtils.contains(tmpName, ',')) {
-				mod390.setName(AonStringUtils.trim(AonStringUtils.substringAfter(tmpName, ",")));
-				mod390.setFirstSurname(AonStringUtils.trim(AonStringUtils.substringBefore(tmpName, ",")));
-			} else {
-				mod390.setName(AonStringUtils.trim(AonStringUtils.substringBefore(tmpName, " ")));
-				mod390.setFirstSurname(AonStringUtils.trim(AonStringUtils.substringAfter(tmpName, " ")));
-			}
-		}
+		mod390.setId(model.getId());
+		mod390.setDomain(model.getDomain());
+		mod390.setDomainName(model.getDomainName());
+		mod390.setEnterprise(model.getEnterprise());
+		mod390.setEnterpriseName(model.getEnterpriseName());
+		mod390.setYear(model.getYear());
+		mod390.setAdministration(model.getAdministration());
+		mod390.setStatus(model.getStatus());
+		mod390.setReplacement(model.isReplacement());
+		mod390.setComplementary(model.isComplementary());
+		mod390.setWithoutActivity(model.isWithoutActivity());
+		mod390.setDocument(model.getDocument());
+		mod390.setName(model.getName());
+		mod390.setFirstSurname(model.getFirstSurname());
+		mod390.setSecondSurname(model.getSecondSurname());
+		mod390.setContactPhone(model.getContactPhone());
+		mod390.setReceipt(model.getReceipt());
+		mod390.setReplacedReceipt(model.getReplacedReceipt());
+		mod390.setComments(model.getComments());
+		mod390.setCreationUser(model.getCreationUser());
+		mod390.setCreationDate(model.getCreationDate());
+		mod390.setModificationUser(model.getModificationUser());
+		mod390.setModificationDate(model.getModificationDate());
 		fillSimplifedRegimeData(ctx, mod390);
 		fillGeneralRegimeData(ctx, mod390);
 		if (mod390.isSimplifiedRegime()) {
@@ -699,6 +706,52 @@ public class Mod3902014DAO {
 		}
 		mod390.calculate();
 		return mod390;	
+	}
+
+
+	public static Mod3902014 getMod3902014(AONContext ctx, Mod390 m390) {
+		if (m390.getId() == null) {
+			Mod3902014 mod390 = new Mod3902014();
+			mod390.setId(m390.getId());
+			mod390.setDomain(m390.getDomain());
+			mod390.setDomainName(m390.getDomainName());
+			mod390.setEnterprise(m390.getEnterprise());
+			mod390.setEnterpriseName(m390.getEnterpriseName());
+			mod390.setYear(m390.getYear());
+			mod390.setAdministration(m390.getAdministration());
+			mod390.setStatus(m390.getStatus());
+			mod390.setReplacement(m390.isReplacement());
+			mod390.setComplementary(m390.isComplementary());
+			mod390.setWithoutActivity(m390.isWithoutActivity());
+			mod390.setDocument(m390.getDocument());
+			mod390.setName(m390.getName());
+			mod390.setFirstSurname(m390.getFirstSurname());
+			mod390.setSecondSurname(m390.getSecondSurname());
+			mod390.setContactPhone(m390.getContactPhone());
+			mod390.setReceipt(m390.getReceipt());
+			mod390.setReplacedReceipt(m390.getReplacedReceipt());
+			mod390.setComments(m390.getComments());
+			mod390.setCreationUser(m390.getCreationUser());
+			mod390.setCreationDate(m390.getCreationDate());
+			mod390.setModificationUser(m390.getModificationUser());
+			mod390.setModificationDate(m390.getModificationDate());
+			try {
+				if (mod390.getYear() == 2013) {
+					AEATIVA2013 iva = Mod390toAEATIVA2013.getAEATIVA2013(mod390);
+					AEATIVA2013toMod390.populate(mod390, iva);
+				} else if (mod390.getYear() == 2014) {
+					AEATIVA2014 iva = Mod390toAEATIVA2014.getAEATIVA2014(mod390);
+					AEATIVA2014toMod390.populate(mod390, iva);
+				} else {
+					throw new IllegalArgumentException("Ejercicio incorrecto.");
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+				throw new AonCoreException("XML PROBLEM",e);
+			}
+			return mod390;
+		}
+		return getById(ctx, m390.getId());
 	}
 
 	public static Mod3902014 getById(AONContext ctx, int id) {
@@ -720,17 +773,19 @@ public class Mod3902014DAO {
 	}
 
 	private static void populate(FsModel390Record record, Mod3902014 mod390)  {
-		mod390.setId(record.getValue(FS_MODEL390.ID));
-		mod390.setAdministration(record.getValue(FS_MODEL390.ADMINISTRATION));
-		mod390.setYear(record.getValue(FS_MODEL390.YEAR));
-		mod390.setDomain(record.getValue(FS_MODEL390.DOMAIN));
-		mod390.setEnterprise(record.getValue(FS_MODEL390.ENTERPRISE));
-		mod390.setDocument(record.getValue(FS_MODEL390.DOCUMENT));
-		mod390.setEnterpriseName(record.getValue(FS_MODEL390.NAME));
-		mod390.setReceipt(record.getValue(FS_MODEL390.RECEIPT));
-		mod390.setReplacement(record.getValue(FS_MODEL390.REPLACEMENT) == 1);
-		mod390.setReplacedReceipt(record.getValue(FS_MODEL390.REPLACED_RECEIPT));
-		mod390.setComments(record.getValue(FS_MODEL390.COMMENTS));
+		mod390.setId(record.getValue(FS_MODEL390.ID))
+		.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL390.ADMINISTRATION)))
+		.setReplacement( record.getValue(FS_MODEL390.REPLACEMENT)==1 )
+		.setComplementary(record.getValue(FS_MODEL390.COMPLEMENTARY)==1 )
+		.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL390.STATUS)))
+		.setYear(record.getValue(FS_MODEL390.YEAR))
+		.setDomain(record.getValue(FS_MODEL390.DOMAIN))
+		.setEnterprise(record.getValue(FS_MODEL390.ENTERPRISE))
+		.setDocument(record.getValue(FS_MODEL390.DOCUMENT))
+		.setEnterpriseName(record.getValue(FS_MODEL390.NAME))
+		.setReceipt(record.getValue(FS_MODEL390.RECEIPT))
+		.setReplacedReceipt(record.getValue(FS_MODEL390.REPLACED_RECEIPT))
+		.setComments(record.getValue(FS_MODEL390.COMMENTS));
 		try {
 			StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
 			if (mod390.getYear() == 2013) {
@@ -808,13 +863,13 @@ public class Mod3902014DAO {
 			.set(FS_MODEL390.DOMAIN, mod390.getDomain())
 			.set(FS_MODEL390.ENTERPRISE, mod390.getEnterprise())
 			.set(FS_MODEL390.YEAR, mod390.getYear())
-			.set(FS_MODEL390.ADMINISTRATION, mod390.getAdministration())
-			.set(FS_MODEL390.STATUS, (byte) 0)
+			.set(FS_MODEL390.ADMINISTRATION,mod390.getAdministration().getValue())
+			.set(FS_MODEL390.STATUS,AonEnumUtils.getByte( mod390.getStatus()  ))
 			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
-			.set(FS_MODEL390.DOCUMENT, mod390.getDocument())
-			.set(FS_MODEL390.NAME, mod390.getName())
 			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
 			.set(FS_MODEL390.REPLACEMENT,AonEnumUtils.getByte(mod390.isReplacement()))
+			.set(FS_MODEL390.DOCUMENT, mod390.getDocument())
+			.set(FS_MODEL390.NAME, mod390.getName())
 			.set(FS_MODEL390.COMMENTS, mod390.getComments())
 			.set(FS_MODEL390.RECEIPT, mod390.getReceipt())
 			.set(FS_MODEL390.REPLACED_RECEIPT, mod390.getReplacedReceipt())
@@ -829,13 +884,14 @@ public class Mod3902014DAO {
 		ctx.getDslContext()
 			.update(FS_MODEL390)
 			.set(FS_MODEL390.YEAR, mod390.getYear())
-			.set(FS_MODEL390.ADMINISTRATION, mod390.getAdministration())
-			.set(FS_MODEL390.STATUS, (byte) 0)
+			.set(FS_MODEL390.ADMINISTRATION,mod390.getAdministration().getValue())
+			.set(FS_MODEL390.STATUS,AonEnumUtils.getByte( mod390.getStatus()  ))
+			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
+			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
+			.set(FS_MODEL390.REPLACEMENT,AonEnumUtils.getByte(mod390.isReplacement()))
 			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
 			.set(FS_MODEL390.DOCUMENT, mod390.getDocument())
 			.set(FS_MODEL390.NAME, mod390.getName())
-			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
-			.set(FS_MODEL390.REPLACEMENT,AonEnumUtils.getByte(mod390.isReplacement()))
 			.set(FS_MODEL390.COMMENTS, mod390.getComments())
 			.set(FS_MODEL390.RECEIPT, mod390.getReceipt())
 			.set(FS_MODEL390.REPLACED_RECEIPT, mod390.getReplacedReceipt())
