@@ -4496,8 +4496,18 @@ CREATE TABLE `fs_mod347` (
   `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad',
   `complementary` tinyint(1) DEFAULT '0' COMMENT 'Declaracion complementaria',
   `replacement` tinyint(1) DEFAULT '0' COMMENT 'Declaracion sustitutiva',
-  `number` int(4) DEFAULT '0' COMMENT 'Numero de Decl.',
-  `replaced_number` int(4) DEFAULT '0' COMMENT 'Numero de Decl. complementada o sustituida',
+  `number` varchar(13) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Decl.',
+  `replaced_number` varchar(13) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Decl. complementada o sustituida',
+  `document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF',
+  `name` varchar(40) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
+  `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono Persona de Contacto',  
+  `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',
+  `contact_person` varchar(40) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
+  `representative_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF Representante Legal',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MOD347_DOMAIN` (`domain`),
   CONSTRAINT `FK_FS_MOD347_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -4514,6 +4524,7 @@ CREATE TABLE `fs_mod347_detail` (
   `sheet` varchar(1) COLLATE latin1_spanish_ci NOT NULL DEFAULT 'D' COMMENT 'Tipo de hoja (Declarado o Inmueble)',
   `type` varchar(1) COLLATE latin1_spanish_ci DEFAULT '0' COMMENT 'Clave de operacion',
   `document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF del declarado',
+  `representative_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF Representante Legal',
   `registry` int(4) DEFAULT '0' COMMENT 'Identificador del Declarado',
   `name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Apellidos  y Nombre del declarado',
   `province` int(4) DEFAULT '0' COMMENT 'Provincia del declarado',
@@ -4583,8 +4594,10 @@ CREATE TABLE `fs_mod349` (
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `representative_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF Representante Legal',
   `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono Persona de Contacto',  
+  `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',
   `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
   `periodicity_change` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indicador Cambio Periodicidad',
+  `diff_enabled` tinyint(1) DEFAULT '1' COMMENT 'Declaracion por diferencia',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -4686,6 +4699,7 @@ CREATE TABLE `fs_model180` (
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
   `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telf. Fijo de Contacto',
+  `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',
   `complementary` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion complementaria',
   `replacement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion sustitutiva',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
@@ -4763,6 +4777,7 @@ CREATE TABLE `fs_model184` (
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
   `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telf. Fijo de Contacto',
+  `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',
   `complementary` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion complementaria',
   `replacement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion sustitutiva',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
@@ -4861,6 +4876,7 @@ CREATE TABLE `fs_model190` (
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
   `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telf. Fijo de Contacto',
+  `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',  
   `complementary` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion complementaria',
   `replacement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion sustitutiva',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
@@ -4962,6 +4978,7 @@ CREATE TABLE `fs_model193` (
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
   `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telf. Fijo de Contacto',
+  `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',
   `complementary` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion complementaria',
   `replacement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion sustitutiva',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
@@ -8466,7 +8483,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('9.14.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('9.14.1');
 
 COMMIT;
 
