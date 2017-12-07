@@ -143,6 +143,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193.NAME, mod193.getName())
 				.set(FS_MODEL193.CONTACT_PERSON, mod193.getContactPerson())
 				.set(FS_MODEL193.CONTACT_PHONE, mod193.getContactPhone())
+				.set(FS_MODEL193.CONTACT_MAIL, mod193.getContactMail())
 				.set(FS_MODEL193.COMPLEMENTARY, (byte) 0)
 				.set(FS_MODEL193.REPLACEMENT,AonEnumUtils.getByte(mod193.isReplacement()))
 				.set(FS_MODEL193.COMMENTS, mod193.getComments())
@@ -170,6 +171,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193.NAME, mod193.getName())
 				.set(FS_MODEL193.CONTACT_PERSON, mod193.getContactPerson())
 				.set(FS_MODEL193.CONTACT_PHONE, mod193.getContactPhone())
+				.set(FS_MODEL193.CONTACT_MAIL, mod193.getContactMail())
 				.set(FS_MODEL193.COMPLEMENTARY, (byte) 0)
 				.set(FS_MODEL193.REPLACEMENT,AonEnumUtils.getByte(mod193.isReplacement()))
 				.set(FS_MODEL193.COMMENTS, mod193.getComments())
@@ -433,6 +435,7 @@ public class Mod193DAO {
 				.setName(record.getValue(FS_MODEL193.NAME))
 				.setContactPerson(record.getValue(FS_MODEL193.CONTACT_PERSON))
 				.setContactPhone(record.getValue(FS_MODEL193.CONTACT_PHONE))
+				.setContactMail(record.getValue(FS_MODEL193.CONTACT_MAIL))
 				.setReceipt(record.getValue(FS_MODEL193.RECEIPT))
 				.setReplacedReceipt(record.getValue(FS_MODEL193.REPLACED_RECEIPT))
 				.setReceiverCountTotal(record.getValue(FS_MODEL193.RECEIVER_COUNT_TOTAL))
@@ -558,6 +561,7 @@ public class Mod193DAO {
 		mod193.setAdministration(params.getAdministration()!=null?Administration.safeValueOf(params.getAdministration()):Administration.COMMON_TERRITORY);
 		mod193.setContactPerson(AonStringUtils.left(params.getContactPerson(),FS_MODEL193.CONTACT_PERSON.getDataType().length()));
 		mod193.setContactPhone(AonStringUtils.left(params.getContactPhone(),FS_MODEL193.CONTACT_PHONE.getDataType().length()));
+		mod193.setContactMail(AonStringUtils.left(params.getContactMail(),FS_MODEL193.CONTACT_MAIL.getDataType().length()));
 		return mod193;
 	}
 
