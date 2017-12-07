@@ -530,25 +530,8 @@ abstract class Model190Base extends DockLayoutPanel {
 		table.setWidget(1, 1, name);
 		table.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
 		
-		table.setWidget( 2, 0, new InlineLabel(AON.MSG.contactPhone()));
+		table.setWidget( 2, 0, new InlineLabel(AON.MSG.contactPerson()));
 		table.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox contactPhone = new TextBox();
-		contactPhone.setStyleName(AON.AON_CSS.aonInputText());
-		contactPhone.setMaxLength(9);
-		contactPhone.setVisibleLength(10);
-		contactPhone.setValue(getMod190().getContactPhone());
-		contactPhone.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod190().setContactPhone(contactPhone.getValue());
-				markAsDirty();
-			}
-		});
-		table.setWidget(2, 1, contactPhone);
-		table.getCellFormatter().setStyleName(2,1, AON.AON_CSS.aonPanelGridEven());
-		
-		table.setWidget( 3, 0, new InlineLabel(AON.MSG.contactPerson()));
-		table.getCellFormatter().setStyleName(3,0, AON.AON_CSS.aonPanelGridOdd());
 		TextBox contactPerson = new TextBox();
 		contactPerson.setStyleName(AON.AON_CSS.aonInputText());
 		contactPerson.setMaxLength(40);
@@ -561,11 +544,46 @@ abstract class Model190Base extends DockLayoutPanel {
 				markAsDirty();
 			}
 		});
-		table.setWidget(3, 1, contactPerson);
+		table.setWidget(2, 1, contactPerson);
+		table.getCellFormatter().setStyleName(2,1, AON.AON_CSS.aonPanelGridEven());
+
+		table.setWidget( 3, 0, new InlineLabel(AON.MSG.contactPhone()));
+		table.getCellFormatter().setStyleName(3,0, AON.AON_CSS.aonPanelGridOdd());
+		TextBox contactPhone = new TextBox();
+		contactPhone.setStyleName(AON.AON_CSS.aonInputText());
+		contactPhone.setMaxLength(9);
+		contactPhone.setVisibleLength(10);
+		contactPhone.setValue(getMod190().getContactPhone());
+		contactPhone.addValueChangeHandler( new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				getMod190().setContactPhone(contactPhone.getValue());
+				markAsDirty();
+			}
+		});
+		table.setWidget(3, 1, contactPhone);
 		table.getCellFormatter().setStyleName(3,1, AON.AON_CSS.aonPanelGridEven());
 		
-		table.setWidget( 4, 0, new InlineLabel(AON.MSG.receipt()));
+
+		table.setWidget( 4, 0, new InlineLabel(AON.MSG.contactMail()));
 		table.getCellFormatter().setStyleName(4,0, AON.AON_CSS.aonPanelGridOdd());
+		TextBox contactMail = new TextBox();
+		contactMail.setStyleName(AON.AON_CSS.aonInputText());
+		contactMail.setMaxLength(50);
+		contactMail.setVisibleLength(50);
+		contactMail.setValue(getMod190().getContactMail());
+		contactMail.addValueChangeHandler( new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				getMod190().setContactMail(contactMail.getValue());
+				markAsDirty();
+			}
+		});
+		table.setWidget(4, 1, contactMail);
+		table.getCellFormatter().setStyleName(4,1, AON.AON_CSS.aonPanelGridEven());
+		
+		table.setWidget( 5, 0, new InlineLabel(AON.MSG.receipt()));
+		table.getCellFormatter().setStyleName(5,0, AON.AON_CSS.aonPanelGridOdd());
 		TextBox receipt = new TextBox();
 		receipt.setStyleName(AON.AON_CSS.aonInputText());
 		receipt.setMaxLength(13);
@@ -580,11 +598,11 @@ abstract class Model190Base extends DockLayoutPanel {
 				markAsDirty();
 			}
 		});
-		table.setWidget(4, 1, receipt);
-		table.getCellFormatter().setStyleName(4,1, AON.AON_CSS.aonPanelGridEven());
+		table.setWidget(5, 1, receipt);
+		table.getCellFormatter().setStyleName(5,1, AON.AON_CSS.aonPanelGridEven());
 
-		table.setWidget( 5, 0, new InlineLabel(AON.MSG.previousDeclaration()));
-		table.getCellFormatter().setStyleName(5,0, AON.AON_CSS.aonPanelGridOdd());
+		table.setWidget( 6, 0, new InlineLabel(AON.MSG.previousDeclaration()));
+		table.getCellFormatter().setStyleName(6,0, AON.AON_CSS.aonPanelGridOdd());
 		TextBox replaced = new TextBox();
 		replaced.setStyleName(AON.AON_CSS.aonInputText());
 		replaced.setMaxLength(13);
@@ -599,8 +617,8 @@ abstract class Model190Base extends DockLayoutPanel {
 				markAsDirty();
 			}
 		});
-		table.setWidget(5, 1, replaced);
-		table.getCellFormatter().setStyleName(5,1, AON.AON_CSS.aonPanelGridEven());
+		table.setWidget(6, 1, replaced);
+		table.getCellFormatter().setStyleName(6,1, AON.AON_CSS.aonPanelGridEven());
 		
 		declarationScrollPanel.setWidget(table);
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));

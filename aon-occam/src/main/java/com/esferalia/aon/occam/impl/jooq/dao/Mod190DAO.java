@@ -124,6 +124,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190.NAME, mod190.getName())
 				.set(FS_MODEL190.CONTACT_PERSON, mod190.getContactPerson())
 				.set(FS_MODEL190.CONTACT_PHONE, mod190.getContactPhone())
+				.set(FS_MODEL190.CONTACT_MAIL, mod190.getContactMail())
 				.set(FS_MODEL190.COMPLEMENTARY, (byte) 0)
 				.set(FS_MODEL190.REPLACEMENT,AonEnumUtils.getByte(mod190.isReplacement()))
 				.set(FS_MODEL190.COMMENTS, mod190.getComments())
@@ -153,6 +154,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190.NAME, mod190.getName())
 				.set(FS_MODEL190.CONTACT_PERSON, mod190.getContactPerson())
 				.set(FS_MODEL190.CONTACT_PHONE, mod190.getContactPhone())
+				.set(FS_MODEL190.CONTACT_MAIL, mod190.getContactMail())
 				.set(FS_MODEL190.COMPLEMENTARY, (byte) 0)
 				.set(FS_MODEL190.REPLACEMENT,AonEnumUtils.getByte(mod190.isReplacement()))
 				.set(FS_MODEL190.COMMENTS, mod190.getComments())
@@ -787,6 +789,7 @@ public class Mod190DAO {
 		mod190.setAdministration(params.getAdministration()!=null?Administration.safeValueOf(params.getAdministration()):Administration.COMMON_TERRITORY);
 		mod190.setContactPerson(AonStringUtils.left(params.getContactPerson(),FS_MODEL190.CONTACT_PERSON.getDataType().length()));
 		mod190.setContactPhone(AonStringUtils.left(params.getContactPhone(),FS_MODEL190.CONTACT_PHONE.getDataType().length()));
+		mod190.setContactMail(AonStringUtils.left(params.getContactMail(),FS_MODEL190.CONTACT_MAIL.getDataType().length()));
 		mod190.setStatus(FiscalStatus.PENDING);
 		return mod190;
 	}
@@ -808,6 +811,7 @@ public class Mod190DAO {
 				.setName(record.getValue(FS_MODEL190.NAME))
 				.setContactPerson(record.getValue(FS_MODEL190.CONTACT_PERSON))
 				.setContactPhone(record.getValue(FS_MODEL190.CONTACT_PHONE))
+				.setContactMail(record.getValue(FS_MODEL190.CONTACT_MAIL))
 				.setReceipt(record.getValue(FS_MODEL190.RECEIPT))
 				.setReplacedReceipt(record.getValue(FS_MODEL190.REPLACED_RECEIPT))
 				.setReceiverCountTotal(record.getValue(FS_MODEL190.RECEIVER_COUNT_TOTAL))
