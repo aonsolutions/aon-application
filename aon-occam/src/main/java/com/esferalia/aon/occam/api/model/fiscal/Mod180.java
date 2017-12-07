@@ -27,6 +27,7 @@ public class Mod180 implements IFiscalModel, HasAudit {
 	private String name;
 	private String contactPerson;
 	private String contactPhone;
+	private String contactMail;
 	private int receiverCountTotal;
 	private double receiptTotal;
 	private double retentionTotal;
@@ -206,6 +207,14 @@ public class Mod180 implements IFiscalModel, HasAudit {
 	}
 	public Mod180 setContactPhone(String contactPhone) {
 		this.contactPhone = contactPhone;
+		return this;
+	}
+
+	public String getContactMail() {
+		return contactMail;
+	}
+	public Mod180 setContactMail(String contactMail) {
+		this.contactMail = contactMail;
 		return this;
 	}
 

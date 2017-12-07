@@ -120,6 +120,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.NAME,mod180.getName())
 			.set(FS_MODEL180.CONTACT_PERSON,mod180.getContactPerson())
 			.set(FS_MODEL180.CONTACT_PHONE,mod180.getContactPhone())
+			.set(FS_MODEL180.CONTACT_MAIL,mod180.getContactMail())
 			.set(FS_MODEL180.COMPLEMENTARY, ZERO_BYTE )
 			.set(FS_MODEL180.REPLACEMENT,AonEnumUtils.getByte(mod180.isReplacement()))
 			.set(FS_MODEL180.COMMENTS,mod180.getComments())
@@ -147,6 +148,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.NAME,mod180.getName())
 			.set(FS_MODEL180.CONTACT_PERSON,mod180.getContactPerson())
 			.set(FS_MODEL180.CONTACT_PHONE,mod180.getContactPhone())
+			.set(FS_MODEL180.CONTACT_MAIL,mod180.getContactMail())
 			.set(FS_MODEL180.COMPLEMENTARY, ZERO_BYTE)
 			.set(FS_MODEL180.REPLACEMENT,AonEnumUtils.getByte(mod180.isReplacement()))
 			.set(FS_MODEL180.COMMENTS,mod180.getComments())
@@ -392,6 +394,8 @@ public class Mod180DAO {
 				FS_MODEL180.CONTACT_PERSON.getDataType().length()));
 		mod180.setContactPhone(AonStringUtils.left(params.getContactPhone(),
 				FS_MODEL180.CONTACT_PHONE.getDataType().length()));
+		mod180.setContactMail(AonStringUtils.left(params.getContactMail(),
+				FS_MODEL180.CONTACT_MAIL.getDataType().length()));
 		mod180.setReceipt("1800000000001");
 		mod180.setStatus(FiscalStatus.PENDING);
 		mod180.setDetails(new LinkedList<Mod180Detail>());
@@ -415,6 +419,7 @@ public class Mod180DAO {
 				.setName(record.getValue(FS_MODEL180.NAME))
 				.setContactPerson(record.getValue(FS_MODEL180.CONTACT_PERSON))
 				.setContactPhone(record.getValue(FS_MODEL180.CONTACT_PHONE))
+				.setContactMail(record.getValue(FS_MODEL180.CONTACT_MAIL))				
 				.setReceipt(record.getValue(FS_MODEL180.RECEIPT))
 				.setReplacedReceipt(record.getValue(FS_MODEL180.REPLACED_RECEIPT))
 				.setReceiverCountTotal( record.getValue(FS_MODEL180.RECEIVER_COUNT_TOTAL))
