@@ -42,14 +42,14 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		loadPayMethod(event);
 		super.afterBeanSelected(event);
+		loadPayMethod(event);
 	}
 	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		loadPayMethod(event);
 		super.afterBeanUpdated(event);
+		loadPayMethod(event);
 	}
 	
 	private void loadPayMethod(ControllerEvent event) throws ControllerListenerException {
