@@ -64,16 +64,17 @@ import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorContext>
 		extends DelegateSQLContractSalaryCalculatorContext<T> {
+	
+	static interface IsDraft {
+		
+	}
 
-
-	static class DraftPayment extends ContractPayment {
+	static class DraftPayment extends ContractPayment implements IsDraft{
 
 		private String name;
 
@@ -151,6 +152,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	private static class DraftCompositePayments extends CompositePayments
 			implements Predicate {
+		
+		
 
 		public DraftCompositePayments(Collection<IContractPayment>... payments) {
 			super(payments);
@@ -171,16 +174,32 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		@Override
 		public boolean evaluate(Object obj) {
 			IContractPayment payment = (IContractPayment) obj;
+			
 			Integer id = payment.getId();
 			if ( id == null )
 				return true;
 			if ( id == Integer.MIN_VALUE) 
 				return true;
-			if  ( payment.getScope() == ExpressionScope.SALARY ) // Draft
+			if  ( payment instanceof IsDraft) // Draft
 				return ids.add(payment.getId());
 			return !ids.contains(id);
 		}
 
+		// -------------------------------------------------- CompositePayments
+		
+		protected static class DraftPeriodsContractPaymentIterator 
+			extends PeriodsContractPaymentIterator implements IsDraft{
+
+			public DraftPeriodsContractPaymentIterator(IContractPayment payment, Iterator<Period> periodsIt) {
+				super(payment, periodsIt);
+			}
+			
+		}
+		
+		@Override
+		protected Iterator getIterator4(IContractPayment payment, Iterator periodsIt) {
+			return new DraftPeriodsContractPaymentIterator(payment, periodsIt);
+		}
 	}
 
 	static class DraftHierarchyEmbargos<T extends IContractEmbargo> extends
