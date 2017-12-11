@@ -115,7 +115,9 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append("</T30301000>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_REG_2 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() <= 2016) || (mod303.getYear() == 2017 && !mod303.isLastPeriod()))) ,new IPropertyFiller[] {
+		,AEAT_2017_REG_2 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() <= 2016) || (mod303.getYear() == 2017 && !mod303.isLastPeriod())))
+				&& mod303.getAmount(Mod303Key.CT_A02) < 2 // Simplificado
+				,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30302000>")
 		   ,(wr, mod) -> wr.append(" ")
 		   
