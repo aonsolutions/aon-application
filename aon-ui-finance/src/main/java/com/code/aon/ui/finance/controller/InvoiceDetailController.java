@@ -10,6 +10,7 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -348,29 +349,32 @@ public class InvoiceDetailController extends LinesController implements IFinance
 					IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ID), invoiceDetail.getSourceId());
-					Projection prjRefCode = Projection.property(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_REFERENCE_CODE));
+					Projection prjNumber = Projection.property(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_NUMBER));
+					Projection prjSeries = Projection.property(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_SERIES));
 					Projection prjLine = Projection.property(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_LINE));
-					objs = (Object[])offerDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+					objs = (Object[])offerDetailBean.getUniqueResult(new ProjectionList(prjNumber, prjLine, prjSeries), criteria);
 				}
 			} else if (invoiceDetail.isSalesSource()) {
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_SALES);
-					if (invoiceDetail.getSourceId() > 0) {
+				if (invoiceDetail.getSourceId() > 0) {
 					IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_ID), invoiceDetail.getSourceId());
-					Projection prjRefCode = Projection.property(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_REFERENCE_CODE));
+					Projection prjNumber = Projection.property(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_NUMBER));
+					Projection prjSeries = Projection.property(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_SERIES));
 					Projection prjLine = Projection.property(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
-					objs = (Object[])salesDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+					objs = (Object[])salesDetailBean.getUniqueResult(new ProjectionList(prjNumber, prjLine, prjSeries), criteria);
 				}
 			} else if (invoiceDetail.isPurchaseSource()) {
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_SALES);
-					if (invoiceDetail.getSourceId() > 0) {
+				if (invoiceDetail.getSourceId() > 0) {
 					IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ID), invoiceDetail.getSourceId());
-					Projection prjRefCode = Projection.property(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_REFERENCE_CODE));
+					Projection prjNumber = Projection.property(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_NUMBER));
+					Projection prjSeries = Projection.property(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_SERIES));
 					Projection prjLine = Projection.property(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_LINE));
-					objs = (Object[])purchaseDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+					objs = (Object[])purchaseDetailBean.getUniqueResult(new ProjectionList(prjNumber, prjLine, prjSeries), criteria);
 				}
 			} else if (invoiceDetail.isDeliverySource()) {
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY);
@@ -378,9 +382,10 @@ public class InvoiceDetailController extends LinesController implements IFinance
 					IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_ID), invoiceDetail.getSourceId());
-					Projection prjRefCode = Projection.property(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_REFERENCE_CODE));
+					Projection prjNumber = Projection.property(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_NUMBER));
+					Projection prjSeries = Projection.property(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_SERIES));
 					Projection prjLine = Projection.property(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
-					objs = (Object[])deliveryDetailBean.getUniqueResult(new ProjectionList(prjRefCode, prjLine), criteria);
+					objs = (Object[])deliveryDetailBean.getUniqueResult(new ProjectionList(prjNumber, prjLine, prjSeries), criteria);
 				}
 			} else if (invoiceDetail.isIncomeSource()) {
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY);
@@ -403,6 +408,13 @@ public class InvoiceDetailController extends LinesController implements IFinance
 				info.append(message);
 			}
 			if (objs != null) {
+				if (objs.length == 3) {
+					objs[0] = StringUtils.leftPad(Integer.toString((Integer)objs[0]), 6, "0");
+			    	if (!StringUtils.isEmpty(ObjectUtils.toString(objs[2]))) {
+						objs[0] = (String)objs[2] + "/" + (String)objs[0];
+					}
+				}
+
 				if (objs[0] != null) {
 					info.append(" ");
 					info.append((String)objs[0]);
