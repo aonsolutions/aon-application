@@ -21,6 +21,11 @@ public class Error implements IsSerializable{
 		this.textError = textError;
 	}
 	
+	public void setTextError(String textError) {
+		Vector<String> vector = new Vector<>();
+		vector.add(textError);
+		this.textError = vector;
+	}
 	
 	
 }

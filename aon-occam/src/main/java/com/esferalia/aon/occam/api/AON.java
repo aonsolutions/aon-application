@@ -67,10 +67,12 @@ import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -139,9 +141,11 @@ import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -3452,6 +3456,97 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getRegistry().getCategoryList(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+
+	// ------------------------------------- RBANK
+	
+	public static Stream<RegistryBank> getRBankStream(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRBankStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+		
+	public static RegistryBank getRBank(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
+		return getRBankStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new RegistryBank());
+	}
+		
+	public static LinkedList<RegistryBank> getRBankList(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
+		return getRBankStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static RegistryBank insertRBank(String domainName, Integer domainId, String login, RegistryBank rmedia) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertRBank(ctx, rmedia);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static RegistryBank deleteRBank(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().deleteRBank(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	// ------------------------------------- RPAYMETHOD
+	
+	public static Stream<RegistryPayMethod> getRPayMethodStream(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRPayMethodStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+		
+	public static RegistryPayMethod getRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+		return getRPayMethodStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new RegistryPayMethod());
+	}
+		
+	public static LinkedList<RegistryPayMethod> getRPayMethodList(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+		return getRPayMethodStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static RegistryPayMethod insertRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethod rmedia) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertRPayMethod(ctx, rmedia);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static RegistryPayMethod deleteRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().deleteRPayMethod(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

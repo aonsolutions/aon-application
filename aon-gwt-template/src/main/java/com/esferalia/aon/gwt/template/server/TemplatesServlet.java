@@ -1308,6 +1308,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public Error insertDelivery(Domain domain) {
+		domain = AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
 		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
@@ -1320,7 +1321,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
- 			error = DeliveryImport.getInstance().insertDelivery(domain, getUser(), di);
+ 			error = DeliveryImport.getInstance().insertDelivery(domain, getUser(), di, error);
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.

@@ -23,6 +23,8 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
@@ -135,12 +137,17 @@ public class DeliveryImport {
 		return null;
 	}
 	
-	public com.esferalia.aon.gwt.template.shared.Error insertDelivery(Domain domain, User user, DeliveryInfo di) {
-		HashMap<String, Integer> clientes = importClientes(domain, user, di.getClientList());
-		HashMap<Integer, Delivery> albv = importAlbv(domain, user, di.getAlbvList(), clientes);
-		importAlbvDet(domain, user, di.getAlbvDetList(), albv);
-		
-		return new com.esferalia.aon.gwt.template.shared.Error();
+	public com.esferalia.aon.gwt.template.shared.Error insertDelivery(Domain domain, User user, DeliveryInfo di, com.esferalia.aon.gwt.template.shared.Error error) {
+		try {
+			HashMap<String, Integer> clientes = importClientes(domain, user, di.getClientList());
+			HashMap<Integer, Delivery> albv = importAlbv(domain, user, di.getAlbvList(), clientes);
+			importAlbvDet(domain, user, di.getAlbvDetList(), albv);
+		} catch (Exception e) {
+			
+			error.setError(false);
+			error.setTextError(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+		}
+		return error;
 	}
 	
 	private void checkClientes(String title, Cell cell) {
@@ -186,6 +193,10 @@ public class DeliveryImport {
 		}
 		if("facturarAlbaranesAgrupados".equalsIgnoreCase(title)) {
 			cli.setFacturarAlbaranesAgrupados(((Double)cell.getNumericCellValue()).intValue());
+			return;
+		}
+		if("aliasDireccion".equalsIgnoreCase(title)) {
+			cli.setAliasDireccion(cell.getStringCellValue());
 			return;
 		}
 		if("tipoVia".equalsIgnoreCase(title)) {
@@ -249,6 +260,43 @@ public class DeliveryImport {
 			cli.setWeb(cell.getStringCellValue());
 			return;
 		}
+		if("banco".equalsIgnoreCase(title)) {
+			cli.setBanco(cell.getStringCellValue());
+			return;
+		}
+		if("bic".equalsIgnoreCase(title)) {
+			cli.setBic(cell.getStringCellValue());
+			return;
+		}
+		if("cuentaBanco".equalsIgnoreCase(title)) {
+			cli.setCuentaBanco(cell.getStringCellValue());
+			return;
+		}
+		if("formaPago".equalsIgnoreCase(title)) {
+			cli.setFormaPago(cell.getStringCellValue());
+			return;
+		}
+		if("numeroVtos".equalsIgnoreCase(title)) {
+			cli.setNumeroVtos(((Double)cell.getNumericCellValue()).intValue());
+			return;
+		}
+		if("diasAlPrimerVto".equalsIgnoreCase(title)) {
+			cli.setDiasAlPrimerVto(((Double)cell.getNumericCellValue()).intValue());
+			return;
+		}
+		if("diasEntreVtos".equalsIgnoreCase(title)) {
+			cli.setDiasEntreVtos(((Double)cell.getNumericCellValue()).intValue());
+			return;
+		}
+		if("diasPago".equalsIgnoreCase(title)) {
+			cli.setDiasPago(cell.getStringCellValue());
+			return;
+		}
+		if("segmento".equalsIgnoreCase(title)) {
+			cli.setSegmento(cell.getStringCellValue());
+			return;
+		}
+
 	}
 	
 	private void checkAlbv(String title, Cell cell) {
@@ -259,7 +307,6 @@ public class DeliveryImport {
 		if("serie".equalsIgnoreCase(title)) {
 			albv.setSerie(cell.getStringCellValue());
 			return;
-			
 		}
 		if("numero".equalsIgnoreCase(title)) {
 			System.out.println(cell);
@@ -328,6 +375,10 @@ public class DeliveryImport {
 		}
 		if("banco".equalsIgnoreCase(title)) {
 			albv.setBanco(cell.getStringCellValue());
+			return;
+		}
+		if("bic".equalsIgnoreCase(title)) {
+			albv.setBic(cell.getStringCellValue());
 			return;
 		}
 		if("cuentaBanco".equalsIgnoreCase(title)) {
@@ -410,7 +461,7 @@ public class DeliveryImport {
 		Integer scope = scps != null ? scps[0] : null;
 		clientes.stream().forEach(r -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDocumentProperty().eq(r.getDocumento()));
-			Boolean isNewCustomer = customer.getId() == null;
+
 			if(customer.getId() == null) {
 				Registry registry = new Registry()
 						.setAlias(r.getAlias())
@@ -440,8 +491,10 @@ public class DeliveryImport {
 			Integer customerID = customer.getId();
 			if(r.getAliasDireccion() != null) {
 				RAddress address = AON.getRAddress(domain.getName(), domain.getId(), user.getLogin(), f -> f.getAliasProperty().eq(r.getAliasDireccion()).and(f.getRegistryProperty().eq(customerID)));
-				if(address == null || isNewCustomer) {
+				if(address.getId() == null) {
 					address = new RAddress()
+						.setType((byte)0)
+						.setRegistry(customerID)
 						.setAddress(r.getDireccion())
 						.setAddress2(r.getDireccion2())
 						.setAddress3(r.getDireccion3())
@@ -452,6 +505,38 @@ public class DeliveryImport {
 						.setStreet_type(r.getTipoVia())
 						.setZip(r.getCp());
 					AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);				
+				}
+			}
+			
+			if(r.getCuentaBanco() != null) {
+				RegistryBank rbank = new RegistryBank()
+						.setDomain(domain.getId())
+						.setRegistry(customerID)
+						.setBankAccount(r.getCuentaBanco())
+						.setBic(r.getBic())
+						.setSuffix("")
+						.setAlias(r.getBanco())
+						.setActive(true)
+						.setAccount(customer.getAccount());
+				AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
+			}
+			
+			if(r.getFormaPago() != null) {
+				RegistryPayMethod rpm = AON.getRPayMethod(domain.getName(), domain.getId(), user.getLogin(), f -> f.getRegistryProperty().eq(customerID));
+				if(rpm.getId() == null) {
+					PayMethod pm = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getFormaPago());
+					if(domain.isEnableHeredity() && pm.getId() == null) pm = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getFormaPago());
+					if(pm.getId() != null) {
+						RegistryPayMethod rpaymethod = new RegistryPayMethod()
+								.setDomain(domain.getId())
+								.setRegistry(customerID)
+								.setPayMethod(pm.getId())
+								.setNumberOfPymnts(r.getNumeroVtos().shortValue())
+								.setDaysToFirstPymnt(r.getDiasAlPrimerVto().shortValue())
+								.setDaysBetwenPymnts(r.getDiasEntreVtos().shortValue())
+								.setPymnt_days(r.getDiasPago()); 
+						AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
+					}
 				}
 			}
 			map.put(r.getDocumento(), customerID);
@@ -492,9 +577,11 @@ public class DeliveryImport {
 			PayMethod pm = new PayMethod();
 			Project p = new Project();
 			if(r.getFormaPago() != null) pm = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getFormaPago());
+			if(domain.isEnableHeredity() && pm.getId() == null) pm = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getFormaPago());
 			if(r.getExpediente() != null) p = AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getExpediente())));
 			
 			Delivery delivery = new Delivery()
+					.setDomain(domain.getId())
 					.setSeries(r.getSerie())
 					.setScope(scope)
 					.setStatus(DeliveryStatus.PENDING)
@@ -510,6 +597,8 @@ public class DeliveryImport {
 					.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 					.setDaysBetweenPymnt(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
 					.setPymntDays(r.getDiasPago() != null ? r.getDiasPago() : "0")					
+					.setTotalPackages(0.0)
+					.setTotalWeight(0.0)
 					.setProject(p);
 			delivery = AON.insertDelivery(domain.getName(), domain.getId(), user.getLogin(), delivery);
 			
@@ -532,13 +621,14 @@ public class DeliveryImport {
 			
 			if(item != null) {
 				DeliveryDetail dd = new DeliveryDetail()
+						.setDomain(domain.getId())
 						.setDelivery(albv.get(r.getAlbv()))
 						.setWarehouse(albv.get(r.getAlbv()).getNumber())
 						.setLine(r.getLinea().shortValue())
 						.setItem(item)
 						.setDescription(r.getConcepto())
 						.setPrice(r.getPrecio())
-						.setDiscountExpression(r.getDescuentos());
+						.setDiscountExpression(r.getDescuentos() != null ? r.getDescuentos() : "0.0");
 				AON.insertDeliveryDetail(domain.getName(), domain.getId(), user.getLogin(), dd);
 			}
 		});

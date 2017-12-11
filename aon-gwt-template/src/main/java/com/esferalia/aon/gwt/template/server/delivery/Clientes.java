@@ -33,6 +33,20 @@ public class Clientes {
 	String email;
 	String web;
 	
+	// RBANK
+	String banco;
+	String bic;
+	String cuentaBanco;
+	
+	// RPAYMETHOD
+	String formaPago;
+	Integer numeroVtos;
+	Integer diasAlPrimerVto;
+	Integer diasEntreVtos;
+	String diasPago;
+	
+	// ¿?
+	String segmento;
 	public String getRazonSocial() {
 		return razonSocial;
 	}
@@ -222,4 +236,68 @@ public class Clientes {
 		this.web = web;
 		return this;
 	}
+	public String getBanco() {
+		return banco;
+	}
+	public Clientes setBanco(String banco) {
+		this.banco = banco;
+		return this;
+	}
+	public String getBic() {
+		return bic;
+	}
+	public Clientes setBic(String bic) {
+		this.bic = bic;
+		return this;
+	}
+	public String getCuentaBanco() {
+		return cuentaBanco;
+	}
+	public Clientes setCuentaBanco(String cuentaBanco) {
+		this.cuentaBanco = cuentaBanco;
+		return this;
+	}
+	public String getFormaPago() {
+		return formaPago;
+	}
+	public Clientes setFormaPago(String formaPago) {
+		this.formaPago = formaPago;
+		return this;
+	}
+	public Integer getNumeroVtos() {
+		return numeroVtos;
+	}
+	public Clientes setNumeroVtos(Integer numeroVtos) {
+		this.numeroVtos = numeroVtos;
+		return this;
+	}
+	public Integer getDiasAlPrimerVto() {
+		return diasAlPrimerVto;
+	}
+	public Clientes setDiasAlPrimerVto(Integer diasAlPrimerVto) {
+		this.diasAlPrimerVto = diasAlPrimerVto;
+		return this;
+	}
+	public Integer getDiasEntreVtos() {
+		return diasEntreVtos;
+	}
+	public Clientes setDiasEntreVtos(Integer diasEntreVtos) {
+		this.diasEntreVtos = diasEntreVtos;
+		return this;
+	}
+	public String getDiasPago() {
+		return diasPago;
+	}
+	public Clientes setDiasPago(String diasPago) {
+		this.diasPago = diasPago;
+		return this;
+	}
+	public String getSegmento() {
+		return segmento;
+	}
+	public Clientes setSegmento(String segmento) {
+		this.segmento = segmento;
+		return this;
+	}
+	
 }

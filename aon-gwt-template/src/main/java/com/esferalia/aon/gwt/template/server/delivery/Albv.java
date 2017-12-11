@@ -23,6 +23,7 @@ public class Albv {
 	String nombreProvincia;
 	
 	String banco;
+	String bic;
 	String cuentaBanco;
 	String formaPago;
 	Integer numeroVtos;
@@ -211,6 +212,13 @@ public class Albv {
 	}
 	public Albv setDireccion3(String direccion3) {
 		this.direccion3 = direccion3;
+		return this;
+	}
+	public String getBic() {
+		return bic;
+	}
+	public Albv setBic(String bic) {
+		this.bic = bic;
 		return this;
 	}
 	

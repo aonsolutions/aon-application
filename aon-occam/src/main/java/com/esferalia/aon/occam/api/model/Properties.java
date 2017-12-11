@@ -424,6 +424,30 @@ public interface Properties {
 		Property<Byte> getStatusProperty();
 	}
 	
+	public interface RegistryBankProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<String> getBankAccountProperty();
+		Property<String> getBicProperty();
+		Property<String> getSufixProperty();
+		Property<String> getAliasProperty();
+		Property<Byte> getActiveProperty();
+		Property<Integer> getAccountProperty();
+	}
+	
+	public interface RegistryPayMethodProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getPayMethodProperty();
+		Property<Integer> getRBankProperty();
+		Property<Integer> getNumberOfPymntsProperty();
+		Property<Integer> getDaysToFirstPymntProperty();
+		Property<Integer> getDaysBetweenPymntsProperty();
+		Property<String> getPymntDaysProperty();
+	}
+	
 	public interface StockProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

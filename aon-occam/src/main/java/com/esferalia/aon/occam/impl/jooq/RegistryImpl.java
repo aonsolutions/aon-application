@@ -14,9 +14,11 @@ import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Person;
@@ -28,9 +30,11 @@ import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -244,5 +248,57 @@ public class RegistryImpl implements IRegistry{
 	public Stream<Person> getPersonStream(AONContext ctx, PersonFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getPersonStream(ctx, filter));
+	}
+	
+	// -------------------- RBANK
+
+	@Override
+	public Stream<RegistryBank> getRBankStream(AONContext ctx, RegistryBankFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRBankStream(ctx, filter));
+	}
+
+	@Override
+	public RegistryBank insertRBank(AONContext ctx, RegistryBank rbank) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertRBank(ctx, rbank));
+	}
+
+	@Override
+	public RegistryBank updateRBank(AONContext ctx, RegistryBank rbank) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.updateRBank(ctx, rbank));
+	}
+
+	@Override
+	public RegistryBank deleteRBank(AONContext ctx, RegistryBankFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.deleteRBank(ctx, filter));
+	}
+
+	// -------------------- RPAYMETHOD
+	
+	@Override
+	public Stream<RegistryPayMethod> getRPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRPayMethodStream(ctx, filter));
+	}
+
+	@Override
+	public RegistryPayMethod insertRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertRPayMethod(ctx, rpaymethod));
+	}
+
+	@Override
+	public RegistryPayMethod updateRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.updateRPayMethod(ctx, rpaymethod));
+	}
+
+	@Override
+	public RegistryPayMethod deleteRPayMethod(AONContext ctx, RegistryPayMethodFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.deleteRPayMethod(ctx, filter));
 	}
 }

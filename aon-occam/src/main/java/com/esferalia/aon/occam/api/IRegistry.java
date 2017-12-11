@@ -12,9 +12,11 @@ import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Person;
@@ -26,9 +28,11 @@ import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -93,4 +97,17 @@ public interface IRegistry {
 	// ------------------- PERSON
 	public Stream<Person> getPersonStream(AONContext ctx, PersonFilter filter);
 	
+	// ------------------- RBANK
+	
+	public Stream<RegistryBank> getRBankStream(AONContext ctx, RegistryBankFilter filter);
+	public RegistryBank insertRBank(AONContext ctx, RegistryBank rbank);
+	public RegistryBank updateRBank(AONContext ctx, RegistryBank rbank);
+	public RegistryBank deleteRBank(AONContext ctx, RegistryBankFilter filter);
+	
+	// ------------------- RPAYMETHOD
+	
+	public Stream<RegistryPayMethod> getRPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter);
+	public RegistryPayMethod insertRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);
+	public RegistryPayMethod updateRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);
+	public RegistryPayMethod deleteRPayMethod(AONContext ctx, RegistryPayMethodFilter filter);
 }
