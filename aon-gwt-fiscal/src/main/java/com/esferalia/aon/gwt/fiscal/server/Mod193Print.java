@@ -86,7 +86,18 @@ public class Mod193Print extends HttpServlet {
 
 		String urlParameters = "";
 		String request = "";
-		if (mod193.getYear() == 2016) {
+		if (mod193.getYear() < 2016) {
+			urlParameters = 
+					"HID=INV5193A" + 
+					"&IDI=ES" + 
+					"&FIC="	+ encodedFile + 
+					"&RUT=" + 
+					"&PRG=" + 
+					"&FIN=" + 
+					"&EJF=" + mod193.getYear() +
+					"&MOD=193";
+				request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";	
+		} else if (mod193.getYear() == 2016) {
 			urlParameters = 
 				"HID=IE6193A" + 
 				"&IDI=ES" +
@@ -97,23 +108,19 @@ public class Mod193Print extends HttpServlet {
 				"&FIN=" + 
 				"&EJF=" + mod193.getYear() +
 				"&MOD=193";
-			// IMPRESION PRODUCCION
-			//request = "https://www2.agenciatributaria.gob.es/wlpl/OVCT-IPDF/ovweb/vistaprevia";
-			// IMPRESION PRUEBAS
-			//request = "https://www6.aeat.es/wlpl/OVCT-IPDF/ovweb/vistaprevia";
-			// VALIDACION PRUEBAS
 			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 		} else {
 			urlParameters = 
-				"HID=INV5193A" + 
-				"&IDI=ES" + 
+				"HID=IE7193A" + 
+				"&IDI=ES" +
+				"&LEV=000000000000" +
 				"&FIC="	+ encodedFile + 
 				"&RUT=" + 
 				"&PRG=" + 
 				"&FIN=" + 
 				"&EJF=" + mod193.getYear() +
 				"&MOD=193";
-			request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";	
+			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 		}
 
 		

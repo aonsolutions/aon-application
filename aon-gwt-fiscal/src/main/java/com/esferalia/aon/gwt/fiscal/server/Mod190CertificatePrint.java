@@ -37,7 +37,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod190 Print", urlPatterns = { "/aon_gwt_fiscal/Model190CertificatePrint" })
+@WebServlet(name = "Mod190 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/Model190CertificatePrint" })
 public class Mod190CertificatePrint extends HttpServlet {
 	
 	public final String REPORT_TEMPLATE_EMPLOYEE 		= "/com/code/aon/ui/fiscal/report/mod190_retentionCertificate_page1.jasper";

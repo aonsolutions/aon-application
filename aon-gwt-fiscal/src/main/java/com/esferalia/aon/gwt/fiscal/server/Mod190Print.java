@@ -99,7 +99,7 @@ public class Mod190Print extends HttpServlet {
 					"&EJF=2015" + 
 					"&MOD=190";
 			request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
-		} else {
+		} if (mod190.getYear() == 2016) {
 			urlParameters = 
 					"HID=INV6190A" + 
 					"&IDI=ES" +
@@ -112,7 +112,19 @@ public class Mod190Print extends HttpServlet {
 					"&MOD=190";
 //			request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
 			request = "https://www6.aeat.es/es13/l/zi22zilk0022";
-			
+		} else {
+			urlParameters = 
+					"HID=IE7190AA" + 
+					"&IDI=ES" +
+					"&LEV=000000000000" +
+					"&FIC="	+ encodedFile + 
+					"&RUT=" + 
+					"&PRG=" + 
+					"&FIN=" + 
+					"&EJF=2017" + 
+					"&MOD=190";
+			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
+//			request = "https://www2.agenciatributaria.gob.es/wlpl/OVCT-IPDF/ovweb/vistaprevia";		
 		}
 
 		URL url = new URL(request);

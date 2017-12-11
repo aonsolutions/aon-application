@@ -64,7 +64,6 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
  		tab1.setWidget(1, 1, new MediumLabel(AON.MSG.receiverDocument()));
 		tab1.setWidget(1, 2, new MediumLabel(AON.MSG.representativeDocument()));
 		tab1.setWidget(1, 3, new MediumLabel(AON.MSG.fullName()));
-		tab1.setWidget(1, 4, new MediumLabel(AON.MSG.province()));
 		
 		CheckBox pending = new CheckBox(AON.MSG.pending());
 		pending.setValue(detail.isPending());
