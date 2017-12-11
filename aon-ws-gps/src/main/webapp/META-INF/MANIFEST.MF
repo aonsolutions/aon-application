@@ -1,16 +1,16 @@
 Manifest-Version: 1.0
 Implementation-Title: AON WS GPS
-buildNumber: 2546
-Implementation-Version: 9.17
+buildNumber: 3
+Implementation-Version: 9.17.1
 Built-By: ec2-user
 Specification-Vendor: esferalia Networks S.A.
 Specification-Title: AON WS GPS
 Implementation-Vendor-Id: com.esferalia.aon
 Implementation-Vendor: esferalia Networks S.A.
-buildDate: 10/12/2017
+buildDate: 11/12/2017
 dbVersion: 
-buildRevision: 44602
+buildRevision: 44615
 Created-By: Apache Maven 3.3.3
 Build-Jdk: 1.8.0_131
-Specification-Version: 9.17
+Specification-Version: 9.17.1
 
