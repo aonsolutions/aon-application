@@ -80,8 +80,8 @@
 		<hibernate names="address.id,bankAccount,bankAlias,bic,comments,daysBetweenPayments,daysToFirstPayment,discountExpression,domain,externalReference,id,issueDate,number,numberOfPayments,payMethod.id,paymentDays,project.id,remarks,scope&lt;id,securityLevel,seller.id,series,signed,status,supplier_id,target.id,type,version,workPlace.id"/>
 	</bean>
 	<bean class="com.code.aon.commercial.OfferDetail" sqlName="offer_detail">
-		<alias names="id,offer,offer_id,offer_referenceCode,offer_target_id,offer_issueDate,offer_address_geozone_id,offer_series,offer_number,offer_seller_id,offer_securityLevel,offer_status,offer_workPlace_id,line,item_id,item_product_product_category_id,item_product_type,item_product_serializable,item_serialNumber,description,quantity,price,discountExpression,status"/>
-		<hibernate names="id,offer,offer.id,offer.referenceCode,offer.target.id,offer.issueDate,offer.address.geozone.id,offer.series,offer.number,offer.seller.id,offer.securityLevel,offer.status,offer.workPlace.id,line,item.id,item.product.category.id,item.product.type,item.product.serializable,item.serialNumber,description,quantity,price,discountExpression,status"/>
+		<alias names="id,offer,offer_id,offer_target_id,offer_issueDate,offer_address_geozone_id,offer_series,offer_number,offer_seller_id,offer_securityLevel,offer_status,offer_workPlace_id,line,item_id,item_product_product_category_id,item_product_type,item_product_serializable,item_serialNumber,description,quantity,price,discountExpression,status"/>
+		<hibernate names="id,offer,offer.id,offer.target.id,offer.issueDate,offer.address.geozone.id,offer.series,offer.number,offer.seller.id,offer.securityLevel,offer.status,offer.workPlace.id,line,item.id,item.product.category.id,item.product.type,item.product.serializable,item.serialNumber,description,quantity,price,discountExpression,status"/>
 	</bean>
 	<bean class="com.code.aon.commercial.OfferDetailCommission" sqlName="offer_detail_commission">
 		<alias names="amount,commission,id,offerDetail_id,offerDetail_item_id,offerDetail_item_product_type,offerDetail_description,offerDetail_status,offerDetail_offer_id,offerDetail_offer_issueDate,offerDetail_offer_number,offerDetail_offer_scope_id,offerDetail_offer_securityLevel,offerDetail_offer_seller_id,offerDetail_offer_series,offerDetail_offer_status,offerDetail_offer_target_id,offerDetail_offer_supplier_id,offerDetail_offer_type,offerDetail_offer_signed,offerDetail_offer_workPlace_id,payDate,status"/>
@@ -462,8 +462,8 @@
 		<hibernate names="bankAccount,bankAlias,bic,carrier,carrier_id,comments,daysBetweenPayments,daysToFirstPayment,discountExpression,documentType,domain,emailCommunication,id,issueDate,number,numberOfPayments,payMethod.id,paymentDays,project.id,registryAddress,registryAddress.id,remarks,scope&lt;id,securityLevel,series,shippingAlternativeAddress,shippingAlternativeAddress2,shippingAlternativeCity,shippingAlternativePhone,shippingAlternativeRecipient,shippingAlternativeZip,shippingContact,shippingPeriod,status,supplier.id,workPlace.id,warehouse,warehouse.id" />
   	</bean>
 	<bean class="com.code.aon.purchase.PurchaseDetail" sqlName="purchase_detail">
-  		<alias 	names="carrier,carrier_id,domain,delivered,deliveryDate,description,discountExpression,id,item_id,item_product_serializable,item_serialNumber,line,price,project_id,proposalDetail_id,purchase_documentType,purchase_id,purchase_referenceCode,quantity,status,source,sourceId,taxes" />
-		<hibernate names="carrier,carrier.id,domain,delivered,deliveryDate,description,discountExpression,id,item.id,item.product.serializable,item.serialNumber,line,price,project.id,proposalDetail.id,purchase.documentType,purchase.id,purchase.referenceCode,quantity,status,source,sourceId,taxes" />
+  		<alias 	names="carrier,carrier_id,domain,delivered,deliveryDate,description,discountExpression,id,item_id,item_product_serializable,item_serialNumber,line,price,project_id,proposalDetail_id,purchase_documentType,purchase_id,purchase_number,purchase_series,quantity,status,source,sourceId,taxes" />
+		<hibernate names="carrier,carrier.id,domain,delivered,deliveryDate,description,discountExpression,id,item.id,item.product.serializable,item.serialNumber,line,price,project.id,proposalDetail.id,purchase.documentType,purchase.id,purchase.number,purchase.series,quantity,status,source,sourceId,taxes" />
   	</bean>
 
 	<!-- ** AON REGISTRY  **************************************************** -->
@@ -482,8 +482,8 @@
 		<hibernate names="bankAccount,bankAlias,bic,carrier,carrier.id,comments,customer.id,daysBetweenPayments,daysToFirstPayment,discountExpression,documentType,domain,id,issueDate,number,numberOfPayments,payMethod.id,paymentDays,project.id,purchaseReference,remarks,scope&lt;id,securityLevel,seller.id,series,shippingAddress,shippingAddress.id,shippingAlternativeAddress,shippingAlternativeAddress2,shippingAlternativeCity,shippingAlternativePhone,shippingAlternativeRecipient,shippingAlternativeZip,shippingContact,shippingPeriod,status,workPlace.id"/>
 	</bean>
 	<bean class="com.code.aon.sales.SalesDetail" sqlName="sales_detail">
-  		<alias 	names="carrier,carrier_id,domain,delivered,deliveryDate,description,discountExpression,id,item_id,item_product_id,item_product_manufactured,item_product_serializable,item_serialNumber,line,offerDetail_id,price,quantity,sales_id,sales_referenceCode,status,taxes" />
-		<hibernate names="carrier,carrier.id,domain,delivered,deliveryDate,description,discountExpression,id,item.id,item.product.id,item.product.manufactured,item.product.serializable,item.serialNumber,line,offerDetail.id,price,quantity,sales.id,sales.referenceCode,status,taxes" />
+  		<alias 	names="carrier,carrier_id,domain,delivered,deliveryDate,description,discountExpression,id,item_id,item_product_id,item_product_manufactured,item_product_serializable,item_serialNumber,line,offerDetail_id,price,quantity,sales_id,sales_number,sales_series,status,taxes" />
+		<hibernate names="carrier,carrier.id,domain,delivered,deliveryDate,description,discountExpression,id,item.id,item.product.id,item.product.manufactured,item.product.serializable,item.serialNumber,line,offerDetail.id,price,quantity,sales.id,sales.number,sales.series,status,taxes" />
   	</bean>
 
 	<!-- ** AON SELLER  **************************************************** -->
@@ -519,8 +519,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.DeliveryDetail">
-		<alias names="delivery_id,delivery_referenceCode,description,discountExpression,id,item_id,line,price,quantity,salesDetail_id,warehouse_id,item_product_id,item_product_type,salesDetail_sales_id"/>
-		<hibernate names="delivery.id,delivery.referenceCode,description,discountExpression,id,item.id,line,price,quantity,salesDetail.id,warehouse.id,item.product.id,item.product.type,salesDetail.sales.id"/>
+		<alias names="delivery_id,delivery_number,delivery_series,description,discountExpression,id,item_id,line,price,quantity,salesDetail_id,warehouse_id,item_product_id,item_product_type,salesDetail_sales_id"/>
+		<hibernate names="delivery.id,delivery.number,delivery.series,description,discountExpression,id,item.id,line,price,quantity,salesDetail.id,warehouse.id,item.product.id,item.product.type,salesDetail.sales.id"/>
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.Income">
