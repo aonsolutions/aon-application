@@ -264,7 +264,7 @@ public class FDIWriter implements Serializable {
 //				57	Alta MATEPSS (Art. 128)
 				
 			}
-			dit.setFechaAlta( Integer.parseInt( dateFormatter.format( detail.getContractLeave().getEndDate() )) );
+			dit.setFechaAlta( Integer.parseInt( dateFormatter.format( detail.getDate() )) );
 		}
 		if(dit.getCausa()==null){
 			dit.setCausa("00");
@@ -286,7 +286,7 @@ public class FDIWriter implements Serializable {
 //		5	Periodos de observaci√≥n de enfermedad profesional
 
 		
-		dit.setFechaBaja(  Integer.parseInt( dateFormatter.format( detail.getContractLeave().getStartDate() )) );
+		dit.setFechaBaja(  Integer.parseInt( dateFormatter.format( detail.getDate() )) );
 		if( StringUtils.isBlank(detail.getCollegeNumber()) && StringUtils.isBlank(detail.getCias()) ){
 			AonUtil.addErrorMessage("Ausencia de n∫ de colegiado o CIAS para el parte de "+detail.getContractLeave().getContract().getPerson().getFullName());
 		}
