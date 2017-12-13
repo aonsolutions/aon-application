@@ -20,9 +20,6 @@ public interface AonGwtTemplateCSS extends CssResource{
 	@ClassName("aon-popup-aux-template")
 	String aonPopupAuxTemplate();
 	
-	@ClassName("aon-check-template")
-	String aonCheckTemplate();
-	
 	@ClassName("aon-finding-toolbar-item-template")
 	String aonFindingToolbarItemTemplate();
 	
@@ -55,8 +52,5 @@ public interface AonGwtTemplateCSS extends CssResource{
 	
 	@ClassName("aon-check-button-send-email-dialog")
 	String aonAonCheckButtonSendEmailDialog();
-	
-	@ClassName("aon-check-send-email-dialog")
-	String aonAonCheckSendEmailDialog();
 	
 }

@@ -112,6 +112,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	static Integer size;
 	private static String mimetype;
 	
+	public static TemplatesServlet getInstance() {
+		return new TemplatesServlet();
+	}
+	
 	public static byte[] getOut() {
 		return out;
 	}
@@ -1309,26 +1313,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	
 	public Error insertDelivery(Domain domain) {
 		domain = AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
-		Error error = new Error();
-		if(textError.equals("")){
-			error.setError(true);
-			verror.add("");
-			error.setTextError(verror);
-
+		if(di.getError().getTextError().isEmpty()) {
 			java.util.List<ProductInfo> l = new ArrayList<ProductInfo>(map.values());
 			Vector<ProductInfo> v = new Vector<ProductInfo>(l);
 			AuditInfo ai = new AuditInfo();
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
- 			error = DeliveryImport.getInstance().insertDelivery(domain, getUser(), di, error);
+ 			di = DeliveryImport.getInstance().insertDelivery(domain, getUser(), di, error);
 		}
-		else{
-			//Alguna de las filas contiene datos erroneos.
-			error.setError(false);
- 			error.setTextError(verror);
-		}
-		return error;
+		return di.getError();
 	}
 
 	private ProductInfo check(Domain domain, Integer row, String column, String template, Object value,ProductInfo product, Integer type
@@ -1799,7 +1793,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return product;
 	}
 	
-	private ProductInfo newProduct(Domain domain) {
+	public ProductInfo newProduct(Domain domain) {
 		ProductInfo pi = new ProductInfo();
 		com.esferalia.aon.occam.api.model.product.Product p2 = new com.esferalia.aon.occam.api.model.product.Product();
 		p2.setDomain(domain.getId());
@@ -2567,7 +2561,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				return null;
 		}
 	}
-	
 	
 	public String toString(Object value, Integer type){
 		if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){

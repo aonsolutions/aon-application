@@ -54,6 +54,8 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 
 
@@ -328,11 +330,7 @@ public class ProductDAO {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ProductValidation.validate(ctx, p);
-			Timestamp creationDate = null, modificationDate = null;
-			if(p.getCreationDate() != null)
-				creationDate = new java.sql.Timestamp(p.getCreationDate().getTime());
-			if(p.getModificationDate() != null)
-				modificationDate = new java.sql.Timestamp(p.getModificationDate().getTime());
+			Timestamp now = new java.sql.Timestamp(new java.util.Date().getTime());
 			
 			ctx.getDslContext()
 				.insertInto(PRODUCT, PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND, PRODUCT.CATEGORY, PRODUCT.INVENTORIABLE,
@@ -342,10 +340,26 @@ public class ProductDAO {
 						PRODUCT.MODIFICATION_DATE, PRODUCT.KIND, PRODUCT.PACKAGED)
 				.values(p.getDomain(), p.getName(), p.getCode(), p.getBrand(), p.getCategory(), p.getInventoriable(), p.getSerializable(),
 						p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(), p.getManufactured(),p.getComposition(),
-						p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), p.getCreationUser(), creationDate,
-						p.getModificationUser(), modificationDate, p.getKind() != null ? p.getKind() : 0, p.getPackagedValue())
-				.execute();
+						p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), ctx.getUser(), now,
+						ctx.getUser(), now, p.getKind() != null ? p.getKind() : 0, p.getPackagedValue())
+				.returning().fetch().stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery());
 		});
+	}
+	
+	public static Product insertProduct(AONContext ctx, Product p) {
+		Timestamp now = new java.sql.Timestamp(new java.util.Date().getTime());
+
+		return ctx.getDslContext()
+		.insertInto(PRODUCT, PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND, PRODUCT.CATEGORY, PRODUCT.INVENTORIABLE,
+				PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE, PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION, PRODUCT.TYPE,
+				PRODUCT.MANUFACTURED, PRODUCT.COMPOSITION, PRODUCT.COMPOSITION_PRICE, PRODUCT.SALES_ACCOUNT,
+				PRODUCT.PURCHASE_ACCOUNT, PRODUCT.CREATION_USER, PRODUCT.CREATION_DATE, PRODUCT.MODIFICATION_USER,
+				PRODUCT.MODIFICATION_DATE, PRODUCT.KIND, PRODUCT.PACKAGED)
+		.values(p.getDomain(), p.getName(), p.getCode(), p.getBrand(), p.getCategory(), p.getInventoriable(), p.getSerializable(),
+				p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(), p.getManufactured(),p.getComposition(),
+				p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), p.getCreationUser(), now,
+				p.getModificationUser(), now, p.getKind() != null ? p.getKind() : 0, p.getPackagedValue())
+		.returning().fetch().stream().map(new FullProductFiller()).findFirst().orElse(new Product());
 	}
 	
 	public static void insertWithId(AONContext ctx, Product p) {

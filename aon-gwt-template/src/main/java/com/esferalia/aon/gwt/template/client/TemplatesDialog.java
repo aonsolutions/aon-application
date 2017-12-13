@@ -40,6 +40,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,7 +65,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	@UiField(provided = true) Label label;
 	@UiField Button accept_button;
 	@UiField Button cancel_button;
-	@UiField(provided = true) VerticalPanel vp;
+	@UiField(provided = true) ScrollPanel scroll;
 	
 	Integer column = 1;
 	HandlerRegistration handler;
@@ -83,7 +84,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		if(dialog.getSeries2() != null) series = dialog.getSeries2();
 		label = new Label();
 		flex_table = new FlexTable();
-		vp = new VerticalPanel();
+		scroll = new ScrollPanel();
 		ti = dialog.getTemplateInfo();
 		build(dialog);
 		d = dialog;
@@ -105,7 +106,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					if(!lb1.getSelectedItemText().equals("-")) lb2 = (ListBox) flex_table.getWidget(1, 1);
 					if(lb1.getSelectedItemText().equals("-") || lb2.getSelectedItemText().equals("-")){
 						label.setText(MSG.error3());
-						label.setStyleName("aon-check-template");
+						label.getElement().getStyle().setColor("red");
 					}
 					else{
 						onAccept();
@@ -121,7 +122,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 						if(label1.getText().equals("Plantilla")){
 							if(lb1.getSelectedItemText().equals("-")){
 								label.setText(MSG.error2());
-								label.setStyleName("aon-check-template");
+								label.getElement().getStyle().setColor("red");
 							}
 							else onAccept();
 						}
@@ -143,8 +144,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					}
 					else {
 						label.setText(MSG.error1());
-						label.setStyleName("aon-check-template");
-					}
+						label.getElement().getStyle().setColor("red");					}
 				}
 			}
 		});
@@ -582,26 +582,34 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	private void importResponse(Error error){
-		
+		scroll.setHeight("200px");
+		VerticalPanel vp = new VerticalPanel();
 		if(!error.getError()){
 			Label l1 = new Label("No se ha importado correctamente");
-			l1.setStyleName("aon-check-template");
+			l1.getElement().getStyle().setColor("red");
 			vp.add(l1);
-			for(String s : error.getTextError()){
-				if(vp.getWidgetCount()< 11){
-					Label l = new Label(s);
-					l.setStyleName("aon-check-template");
+			if(error.getTextError() != null) {
+				error.getTextError().stream().forEach(e -> {
+					Label l = new Label(e);
+					l.getElement().getStyle().setColor("red");
 					vp.add(l);
-				}
-					
+				});
 			}
-			//label.setText(error.getTextError());
+			
 		}
 		else label.setText(MSG.importOk());
+		
+		if(error.getTextWarning() != null) {
+			error.getTextWarning().stream().forEach( w -> {
+				Label l = new Label(w);
+				l.getElement().getStyle().setColor("orange");
+				vp.add(l);
+			});
+		}
+		scroll.add(vp);
 	}
 	
-	private void exportProduct(TemplateList templates){
-		
+	private void exportProduct(TemplateList templates){	
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);

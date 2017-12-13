@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Vector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -13,6 +14,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
+import com.esferalia.aon.gwt.template.jooq.DBProduct;
+import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -20,16 +23,22 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -48,6 +57,7 @@ public class DeliveryImport {
 	Albv albv = new Albv();
 	AlbvDet albvDet = new AlbvDet();
 
+	DeliveryInfo di;
 	public DeliveryInfo importation(byte[] data){
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
@@ -56,7 +66,9 @@ public class DeliveryImport {
 			HSSFSheet customerSheet = workbook.getSheet("CLIENTES");
 			HSSFSheet deliverySheet = workbook.getSheet("ALBV");
 			HSSFSheet deliveryDetailSheet = workbook.getSheet("ALBVDET");
-			
+
+			di = new DeliveryInfo();
+			di.setError(new Error().setError(true).setTextError(new Vector<>()).setTextWarning(new Vector<>()));
 			// CUSTOMER
 			
 			LinkedList<String> titleList = new LinkedList<>();
@@ -75,10 +87,20 @@ public class DeliveryImport {
 						titleList.add(cell.getStringCellValue());	
 					} else {
 						String title = titleList.get(cell.getColumnIndex());
-						checkClientes(title, cell);
+						try {
+							checkClientes(title, cell);
+						} catch (Exception e) {
+							e.printStackTrace();
+							di.getError().getTextError().add(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+							di.getError().setError(false);
+						}
 					}
 				});
-				if(row.getRowNum() != 0) clientList.add(cli);
+				if(hasClientRequiredParameters()) {
+					if(row.getRowNum() != 0) clientList.add(cli);
+				} else {
+					// TODO ERROR
+				}
 			});
 			
 			// ALBV
@@ -99,10 +121,20 @@ public class DeliveryImport {
 						titleList2.add(cell.getStringCellValue());	
 					} else {
 						String title = titleList2.get(cell.getColumnIndex());
-						checkAlbv(title, cell);
+						try {
+							checkAlbv(title, cell);
+						} catch (Exception e) {
+							e.printStackTrace();
+							di.getError().getTextError().add(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+							di.getError().setError(false);
+						}
 					}
 				});
-				if(row.getRowNum() != 0) albvList.add(albv);
+				if(hasAlbvRequiredParameters()) {
+					if(row.getRowNum() != 0) albvList.add(albv);
+				} else {
+					// TODO ERROR
+				}
 			});
 
 			// ALBVDET
@@ -123,12 +155,22 @@ public class DeliveryImport {
 						titleList3.add(cell.getStringCellValue());	
 					} else {
 						String title = titleList3.get(cell.getColumnIndex());
-						checkAlbvDet(title, cell);
+						try {
+							checkAlbvDet(title, cell);
+						} catch (Exception e) {
+							e.printStackTrace();
+							di.getError().getTextError().add(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+							di.getError().setError(false);
+						}
 					}
 				});
-				if(row.getRowNum() != 0) albvDetList.add(albvDet);
+				if(hasAlbvDetRequiredParameters()) {
+					if(row.getRowNum() != 0) albvDetList.add(albvDet);
+				} else {
+					// TODO  ERROR
+				}
 			});
-			return new DeliveryInfo().setClientList(clientList)
+			return di.setClientList(clientList)
 				.setAlbvList(albvList)
 				.setAlbvDetList(albvDetList);
 		} catch (IOException e) {
@@ -137,94 +179,194 @@ public class DeliveryImport {
 		return null;
 	}
 	
-	public com.esferalia.aon.gwt.template.shared.Error insertDelivery(Domain domain, User user, DeliveryInfo di, com.esferalia.aon.gwt.template.shared.Error error) {
+	public DeliveryInfo insertDelivery(Domain domain, User user, DeliveryInfo di, com.esferalia.aon.gwt.template.shared.Error error) {
 		try {
 			HashMap<String, Integer> clientes = importClientes(domain, user, di.getClientList());
 			HashMap<Integer, Delivery> albv = importAlbv(domain, user, di.getAlbvList(), clientes);
 			importAlbvDet(domain, user, di.getAlbvDetList(), albv);
 		} catch (Exception e) {
-			
-			error.setError(false);
-			error.setTextError(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+			e.printStackTrace();
+			di.getError().setError(false);
+			di.getError().setTextError(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
 		}
-		return error;
+		return di;
+	}
+
+	private Boolean hasClientRequiredParameters() {
+		return cli.getRazonSocial() != null && cli.getTipoDocumento() != null
+			&& cli.getPaisDocumento() != null && cli.getDocumento() != null
+			&& cli.getNacionalidad() != null;
+	}
+	
+	private Object getObjectValue(Cell cell){
+		if(Cell.CELL_TYPE_STRING == cell.getCellType())
+			return cell.getStringCellValue();
+		if(Cell.CELL_TYPE_NUMERIC == cell.getCellType())
+			return cell.getNumericCellValue();
+		if(Cell.CELL_TYPE_FORMULA == cell.getCellType())
+			return cell.getCellFormula();
+		if(Cell.CELL_TYPE_BOOLEAN == cell.getCellType()) {
+			return cell.getBooleanCellValue() ? 1.0 : 0.0;
+		}
+		return null;
 	}
 	
 	private void checkClientes(String title, Cell cell) {
+		Object o = getObjectValue(cell);
+		if(o == null) return;
 		if("razonSocial".equalsIgnoreCase(title)) {
-			cli.setRazonSocial(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				cli.setRazonSocial(o.toString().substring(0,64));
+			} else cli.setRazonSocial(o.toString());
 			return;
 		}
 		if("alias".equalsIgnoreCase(title)) {
-			cli.setAlias(cell.getStringCellValue());
+			if(o.toString().length() > 32) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				cli.setAlias(o.toString().substring(0, 32));
+			} else cli.setAlias(o.toString());
 			return;
 		}
 		if("tipoDocumento".equalsIgnoreCase(title)) {
-			cli.setTipoDocumento(((Double)cell.getNumericCellValue()).intValue());
+			Integer val = ((Double) o).intValue();
+			if(val >= 0 && val < 7) {
+				cli.setTipoDocumento(val);
+			} else {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 6 - OTROS");
+				cli.setTipoDocumento(6); // 6 - OTROS.
+			}
 			return;
 		}
 		if("paisDocumento".equalsIgnoreCase(title)) {
-			cli.setPaisDocumento(cell.getStringCellValue());
+			Country c = Country.safeValueOf(o.toString());
+			if(c != null) {
+				cli.setPaisDocumento(cell.getStringCellValue());
+			} else {
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " incorrecto");
+				di.getError().setError(false);
+			}
 			return;
 		}
 		if("documento".equalsIgnoreCase(title)) {
-			cli.setDocumento(cell.getStringCellValue());
+			if(o.toString().length() > 16) {
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				di.getError().setError(false);
+			} else cli.setDocumento(o.toString());
 			return;
 		}
 		if("nacionalidad".equalsIgnoreCase(title)) {
-			cli.setNacionalidad(cell.getStringCellValue());
+			Country c = Country.safeValueOf(o.toString());
+			if(c != null) {
+				cli.setNacionalidad(cell.getStringCellValue());
+			} else {
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " incorrecto");
+				di.getError().setError(false);
+			}
 			return;
 		}
 		if("cuenta".equalsIgnoreCase(title)) {
-			cli.setCuenta(cell.getStringCellValue());
+			if(o.toString().length() == 9) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea != 9");
+			} else cli.setCuenta(cell.getStringCellValue());
 			return;
 		}
 		if("re".equalsIgnoreCase(title)) {
-			cli.setRe(((Double)cell.getNumericCellValue()).intValue());
+			Integer val = ((Double) o).intValue();
+			if(val.equals(1) || val.equals(0))
+				cli.setRe(val);
+			else {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 0 - No");
+				cli.setRe(0);
+			}
 			return;
 		}
 		if("transaccion".equalsIgnoreCase(title)) {
-			cli.setTransaccion(((Double)cell.getNumericCellValue()).intValue());
+			Integer val = ((Double) o).intValue();
+			if(val >= 0 && val < 5) {
+				cli.setTransaccion(val);
+			} else {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 0 - NACIONAL");
+				cli.setTransaccion(0);
+			}
 			return;
 		}
 		if("retencion".equalsIgnoreCase(title)) {
-			cli.setRetencion(((Double)cell.getNumericCellValue()).intValue());
+			Integer val = ((Double) o).intValue();
+			if(val.equals(1) || val.equals(0)) {
+				cli.setRetencion(val);
+			} else {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 0 - No");
+				cli.setRetencion(0);
+			}
 			return;
 		}
 		if("facturarAlbaranesAgrupados".equalsIgnoreCase(title)) {
-			cli.setFacturarAlbaranesAgrupados(((Double)cell.getNumericCellValue()).intValue());
+			Integer val = ((Double) o).intValue();
+			if(val.equals(1) || val.equals(0)) {
+				cli.setFacturarAlbaranesAgrupados(val);
+			} else {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 1 - Si");
+				cli.setFacturarAlbaranesAgrupados(1);
+			}
 			return;
 		}
 		if("aliasDireccion".equalsIgnoreCase(title)) {
-			cli.setAliasDireccion(cell.getStringCellValue());
+			if(o.toString().length() > 13) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 13");
+				cli.setAliasDireccion(o.toString().substring(0,13));
+			} else cli.setAliasDireccion(o.toString());
 			return;
 		}
 		if("tipoVia".equalsIgnoreCase(title)) {
-			cli.setTipoVia(cell.getStringCellValue());
+			StreetType st = StreetType.safeValueOf(o.toString());
+			if(st != null) {
+				cli.setTipoVia(st.getAeatCode());
+			} else {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " incorrecto");
+			}
 			return;
 		}
 		if("direccion".equalsIgnoreCase(title)) {
-			cli.setDireccion(cell.getStringCellValue());
+			if(o.toString().length() > 128) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				cli.setDireccion(o.toString().substring(0, 128));
+			} else cli.setDireccion(o.toString());
 			return;
 		}
 		if("numero".equalsIgnoreCase(title)) {
-			cli.setNumero(cell.getStringCellValue());
+			if(o.toString().length() > 6) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 6");
+				cli.setNumero(o.toString().substring(0, 6));
+			} else cli.setNumero(o.toString());
 			return;
 		}
 		if("direccion2".equalsIgnoreCase(title)) {
-			cli.setDireccion2(cell.getStringCellValue());
+			if(o.toString().length() > 128) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				cli.setDireccion2(o.toString().substring(0, 128));
+			} else cli.setDireccion2(o.toString());
 			return;
 		}
 		if("direccion3".equalsIgnoreCase(title)) {
-			cli.setDireccion3(cell.getStringCellValue());
+			if(o.toString().length() > 128) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				cli.setDireccion3(o.toString().substring(0, 128));
+			} else cli.setDireccion3(o.toString());
 			return;
 		}
 		if("cp".equalsIgnoreCase(title)) {
-			cli.setCp(cell.getStringCellValue());
+			if(o.toString().length() > 16) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				cli.setCp(o.toString().substring(0, 16));
+			} else cli.setCp(o.toString());
 			return;
 		}
 		if("ciudad".equalsIgnoreCase(title)) {
-			cli.setCiudad(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				cli.setCiudad(o.toString().substring(0, 64));
+			} else cli.setCiudad(o.toString());
 			return;
 		}
 		if("provincia".equalsIgnoreCase(title)) {
@@ -232,7 +374,10 @@ public class DeliveryImport {
 			return;
 		}
 		if("nombreProvincia".equalsIgnoreCase(title)) {
-			cli.setNombreProvincia(cell.getStringCellValue());
+			if(o.toString().length() > 32) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				cli.setNombreProvincia(o.toString().substring(0, 32));		
+			} else cli.setNombreProvincia(o.toString());
 			return;
 		}
 		if("pais".equalsIgnoreCase(title)) {
@@ -241,62 +386,93 @@ public class DeliveryImport {
 		}
 		
 		if("telefono1".equalsIgnoreCase(title)) {
-			cli.setTelefono1(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+			} else cli.setTelefono1(o.toString());
 			return;
 		}
 		if("telefono2".equalsIgnoreCase(title)) {
-			cli.setTelefono2(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+			} else cli.setTelefono2(o.toString());
 			return;
 		}
 		if("fax".equalsIgnoreCase(title)) {
-			cli.setFax(cell.getStringCellValue());
-			return;
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+			} else cli.setFax(o.toString());
+			return;  
 		}
 		if("email".equalsIgnoreCase(title)) {
-			cli.setEmail(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+			} else cli.setEmail(o.toString());
 			return;
 		}
 		if("web".equalsIgnoreCase(title)) {
-			cli.setWeb(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+			} else cli.setEmail(o.toString());
 			return;
 		}
 		if("banco".equalsIgnoreCase(title)) {
-			cli.setBanco(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				cli.setBanco(o.toString().substring(0,64));
+			} else cli.setBanco(o.toString());
 			return;
 		}
 		if("bic".equalsIgnoreCase(title)) {
-			cli.setBic(cell.getStringCellValue());
+			if(o.toString().length() == 11) {
+				cli.setBic(o.toString());
+			} else {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea != 11");
+			}
 			return;
 		}
 		if("cuentaBanco".equalsIgnoreCase(title)) {
-			cli.setCuentaBanco(cell.getStringCellValue());
+			if(o.toString().length() > 34) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 34");
+			} else cli.setCuentaBanco(o.toString());
 			return;
 		}
 		if("formaPago".equalsIgnoreCase(title)) {
-			cli.setFormaPago(cell.getStringCellValue());
+			if(o.toString().length() > 32) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+			} else cli.setFormaPago(o.toString());
 			return;
 		}
 		if("numeroVtos".equalsIgnoreCase(title)) {
-			cli.setNumeroVtos(((Double)cell.getNumericCellValue()).intValue());
+			Integer val = ((Double) o).intValue();
+			cli.setNumeroVtos(val);
 			return;
 		}
 		if("diasAlPrimerVto".equalsIgnoreCase(title)) {
-			cli.setDiasAlPrimerVto(((Double)cell.getNumericCellValue()).intValue());
+			Integer val = ((Double) o).intValue();
+			cli.setDiasAlPrimerVto(val);
 			return;
 		}
 		if("diasEntreVtos".equalsIgnoreCase(title)) {
-			cli.setDiasEntreVtos(((Double)cell.getNumericCellValue()).intValue());
+			Integer val = ((Double) o).intValue();
+			cli.setDiasEntreVtos(val);
 			return;
 		}
 		if("diasPago".equalsIgnoreCase(title)) {
-			cli.setDiasPago(cell.getStringCellValue());
+			if(o.toString().length() > 8) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 8");
+			} else cli.setDiasPago(o.toString());
 			return;
 		}
 		if("segmento".equalsIgnoreCase(title)) {
 			cli.setSegmento(cell.getStringCellValue());
 			return;
 		}
-
+	}
+	
+	private Boolean hasAlbvRequiredParameters() {
+		return albv.getId() != null && albv.getNumero() != null
+			&& albv.getDocumento() != null && albv.getFecha() != null
+			&& albv.getAlmacen() != null;
 	}
 	
 	private void checkAlbv(String title, Cell cell) {
@@ -411,6 +587,12 @@ public class DeliveryImport {
 		}
 	}
 	
+	private Boolean hasAlbvDetRequiredParameters() {
+		return albvDet.getAlbv() != null && albvDet.getLinea() != null
+			&& albvDet.getArticulo() != null && albvDet.getConcepto() != null
+			&& albvDet.getCantidad() != null && albvDet.getPrecio() != null;
+	}
+	
 	private void checkAlbvDet(String title, Cell cell) {
 		if("albv".equalsIgnoreCase(title)) {
 			albvDet.setAlbv(((Double)cell.getNumericCellValue()).intValue());
@@ -446,6 +628,10 @@ public class DeliveryImport {
 		}
 		if("precio".equalsIgnoreCase(title)) {
 			albvDet.setPrecio(cell.getNumericCellValue());
+			return;
+		}
+		if("precioCoste".equalsIgnoreCase(title)) {
+			albvDet.setPrecioCoste(cell.getNumericCellValue());
 			return;
 		}
 		if("descuentos".equalsIgnoreCase(title)) {
@@ -485,16 +671,17 @@ public class DeliveryImport {
 						.setAccount(account)
 						.setSurcharge(r.getRe() != null ? r.getRe().byteValue() : 0)
 						.setWithholding(r.getRetencion() != null ? r.getRetencion().byteValue() : 0)
-						.setDeliveryGrouped(r.getFacturarAlbaranesAgrupados() != null ? r.getFacturarAlbaranesAgrupados().byteValue() : 1);
-				customer = AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);				
-			}
-			Integer customerID = customer.getId();
-			if(r.getAliasDireccion() != null) {
-				RAddress address = AON.getRAddress(domain.getName(), domain.getId(), user.getLogin(), f -> f.getAliasProperty().eq(r.getAliasDireccion()).and(f.getRegistryProperty().eq(customerID)));
-				if(address.getId() == null) {
-					address = new RAddress()
+						.setDeliveryGrouped(r.getFacturarAlbaranesAgrupados() != null ? r.getFacturarAlbaranesAgrupados().byteValue() : 1)
+						.setDeliveryValuated((byte) 1)
+						.setProjectGrouped((byte) 1)
+						.seteInvoice((byte) 0);
+				
+				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);				
+			
+				if(r.getAliasDireccion() != null) {
+					RAddress address = new RAddress()
 						.setType((byte)0)
-						.setRegistry(customerID)
+						.setRegistry(registry.getId())
 						.setAddress(r.getDireccion())
 						.setAddress2(r.getDireccion2())
 						.setAddress3(r.getDireccion3())
@@ -506,40 +693,84 @@ public class DeliveryImport {
 						.setZip(r.getCp());
 					AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);				
 				}
-			}
-			
-			if(r.getCuentaBanco() != null) {
-				RegistryBank rbank = new RegistryBank()
-						.setDomain(domain.getId())
-						.setRegistry(customerID)
-						.setBankAccount(r.getCuentaBanco())
-						.setBic(r.getBic())
-						.setSuffix("")
-						.setAlias(r.getBanco())
-						.setActive(true)
-						.setAccount(customer.getAccount());
-				AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
-			}
-			
-			if(r.getFormaPago() != null) {
-				RegistryPayMethod rpm = AON.getRPayMethod(domain.getName(), domain.getId(), user.getLogin(), f -> f.getRegistryProperty().eq(customerID));
-				if(rpm.getId() == null) {
+				
+				
+				if(r.getTelefono1() != null) {
+					RegistryMedia rm = new RegistryMedia()
+							.setDomain(domain.getId())
+							.setRegistry(new Registry().setId(registry.getId()))
+							.setMedia(MediaType.FIXED_PHONE.value())
+							.setValue(r.getTelefono1());
+					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
+				}
+				
+				if(r.getTelefono2() != null) {
+					RegistryMedia rm = new RegistryMedia()
+							.setDomain(domain.getId())
+							.setRegistry(new Registry().setId(registry.getId()))
+							.setMedia(MediaType.FIXED_PHONE.value())
+							.setValue(r.getTelefono2());
+					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
+				}
+				
+				if(r.getFax() != null) {
+					RegistryMedia rm = new RegistryMedia()
+							.setDomain(domain.getId())
+							.setRegistry(new Registry().setId(registry.getId()))
+							.setMedia(MediaType.FAX.value())
+							.setValue(r.getFax());
+					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
+				}
+				
+				if(r.getEmail() != null) {
+					RegistryMedia rm = new RegistryMedia()
+							.setDomain(domain.getId())
+							.setRegistry(new Registry().setId(registry.getId()))
+							.setMedia(MediaType.EMAIL.value())
+							.setValue(r.getTelefono1());
+					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
+				}
+				
+				if(r.getWeb() != null) {
+					RegistryMedia rm = new RegistryMedia()
+							.setDomain(domain.getId())
+							.setRegistry(new Registry().setId(registry.getId()))
+							.setMedia(MediaType.WEB.value())
+							.setValue(r.getWeb());
+					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
+				}
+				
+				if(r.getCuentaBanco() != null) {
+					RegistryBank rbank = new RegistryBank()
+							.setDomain(domain.getId())
+							.setRegistry(registry.getId())
+							.setBankAccount(r.getCuentaBanco())
+							.setBic(r.getBic())
+							.setSuffix("")
+							.setAlias(r.getBanco())
+							.setActive(true)
+							.setAccount(customer.getAccount());
+					AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
+				}
+				
+				if(r.getFormaPago() != null) {
 					PayMethod pm = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getFormaPago());
 					if(domain.isEnableHeredity() && pm.getId() == null) pm = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getFormaPago());
 					if(pm.getId() != null) {
 						RegistryPayMethod rpaymethod = new RegistryPayMethod()
 								.setDomain(domain.getId())
-								.setRegistry(customerID)
+								.setRegistry(registry.getId())
 								.setPayMethod(pm.getId())
-								.setNumberOfPymnts(r.getNumeroVtos().shortValue())
-								.setDaysToFirstPymnt(r.getDiasAlPrimerVto().shortValue())
-								.setDaysBetwenPymnts(r.getDiasEntreVtos().shortValue())
+								.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 0)
+								.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
+								.setDaysBetwenPymnts(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
 								.setPymnt_days(r.getDiasPago()); 
 						AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
 					}
 				}
 			}
-			map.put(r.getDocumento(), customerID);
+			
+			map.put(r.getDocumento(), customer.getRegistry().getId());
 		});
 		return map;
 	}
@@ -610,7 +841,26 @@ public class DeliveryImport {
 	private void importAlbvDet(Domain domain, User user, LinkedList<AlbvDet> albvDet, HashMap<Integer, Delivery> albv) {
 		albvDet.stream().forEach(r -> {
 			Product product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));			
-			Item item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> f.getProductProperty().eq(product.getId())
+			
+			if(product.getId() == null) {
+				Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(),"GENERAL", user.getLogin());
+				product = new Product()
+						.setDomain(domain.getId())
+						.setName(r.getConcepto())
+						.setCode(r.getArticulo())
+						.setKind((byte) 2)
+						.setType(ProductType.COMMERCIAL_PRODUCT.value())
+						.setVat(vat.getId())
+						.setInventoriable(false)
+						.setComposition(false)
+						.setCompositionPrice(false)
+						.setPackaged(false)
+						.setStatus(ProductStatus.ACTIVE.value());
+				product = AON.insertProduct(domain.getName(), domain.getId(), user.getLogin(), product);
+			}
+			Integer productId = product.getId();			
+			
+			Item item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> f.getProductProperty().eq(productId)
 					.and(r.getDetalle() != null ? f.getDetailProperty().eq(r.getDetalle()) :
 						f.getDetailProperty().eq("").or(f.getDetailProperty().isNull()))
 					.and(r.getDetalle2() != null ? f.getDetail2Property().eq(r.getDetalle2()) :
@@ -618,19 +868,32 @@ public class DeliveryImport {
 					.and(r.getDetalle3() != null ? f.getDetail3Property().eq(r.getDetalle3()):
 						f.getDetail3Property().eq("").or(f.getDetail3Property().isNull())));
 			
-			
-			if(item != null) {
-				DeliveryDetail dd = new DeliveryDetail()
+			if(item.getId() == null) {
+				item = new Item()
 						.setDomain(domain.getId())
-						.setDelivery(albv.get(r.getAlbv()))
-						.setWarehouse(albv.get(r.getAlbv()).getNumber())
-						.setLine(r.getLinea().shortValue())
-						.setItem(item)
+						.setActive(true)
+						.setProduct(product)
+						.setProductId(productId)
+						.setDetail(r.getDetalle())
+						.setDetail2(r.getDetalle2())
+						.setDetail3(r.getDetalle3())
 						.setDescription(r.getConcepto())
 						.setPrice(r.getPrecio())
-						.setDiscountExpression(r.getDescuentos() != null ? r.getDescuentos() : "0.0");
-				AON.insertDeliveryDetail(domain.getName(), domain.getId(), user.getLogin(), dd);
+						.setPurchasePrice(r.getPrecioCoste());
+				item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), item);	
 			}
+			
+			DeliveryDetail dd = new DeliveryDetail()
+					.setDomain(domain.getId())
+					.setDelivery(albv.get(r.getAlbv()))
+					.setWarehouse(albv.get(r.getAlbv()).getNumber())
+					.setLine(r.getLinea().shortValue())
+					.setItem(item)
+					.setDescription(r.getConcepto())
+					.setQuantity(r.getCantidad())
+					.setPrice(r.getPrecio())
+					.setDiscountExpression(r.getDescuentos() != null ? r.getDescuentos() : "0.0");
+			AON.insertDeliveryDetail(domain.getName(), domain.getId(), user.getLogin(), dd);
 		});
 	}
 }

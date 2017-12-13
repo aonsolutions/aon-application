@@ -55,7 +55,7 @@ public abstract class SendEmailDialog extends CustomDialogB  {
 			textEditor.setVisible(false);
 			setCaption("ERROR");
 			Label label = new Label("*Error: No tiene una cuenta de correo asociada.");
-			label.setStyleName("aon-check-send-email-dialog");
+			label.getElement().getStyle().setColor("red");
 			Button cancel = new Button("Aceptar");
 			cancel.setStyleName("aon-check-button-send-email-dialog");
 			cancel.addClickHandler(new ClickHandler() {

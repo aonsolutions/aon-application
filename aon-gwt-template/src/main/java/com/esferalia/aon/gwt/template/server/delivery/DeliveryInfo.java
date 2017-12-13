@@ -2,10 +2,14 @@ package com.esferalia.aon.gwt.template.server.delivery;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.template.shared.Error;
+
 public class DeliveryInfo {
 	LinkedList<Clientes> clientList;
 	LinkedList<Albv> albvList;
 	LinkedList<AlbvDet> albvDetList;
+	
+	Error error;
 	
 	public static DeliveryInfo getInstance() {
 		return new DeliveryInfo();
@@ -40,6 +44,14 @@ public class DeliveryInfo {
 	public DeliveryInfo setAlbvDetList(LinkedList<AlbvDet> albvDetList) {
 		this.albvDetList = albvDetList;
 		return this;
+	}
+
+	public Error getError() {
+		return error;
+	}
+
+	public void setError(Error error) {
+		this.error = error;
 	}
 	
 	

@@ -8,24 +8,35 @@ public class Error implements IsSerializable{
 
 	Boolean error;
 	Vector<String> textError;
+	Vector<String> textWarning;
+	
 	public Boolean getError() {
 		return error;
 	}
-	public void setError(Boolean error) {
+	public Error setError(Boolean error) {
 		this.error = error;
+		return this;
 	}
+	
 	public Vector<String> getTextError() {
 		return textError;
 	}
-	public void setTextError(Vector<String> textError) {
+	public Error setTextError(Vector<String> textError) {
 		this.textError = textError;
+		return this;
 	}
 	
-	public void setTextError(String textError) {
+	public Error setTextError(String textError) {
 		Vector<String> vector = new Vector<>();
 		vector.add(textError);
 		this.textError = vector;
+		return this;
 	}
-	
-	
+	public Vector<String> getTextWarning() {
+		return textWarning;
+	}
+	public Error setTextWarning(Vector<String> textWarning) {
+		this.textWarning = textWarning;
+		return this;
+	}
 }

@@ -19,6 +19,7 @@ public interface IProduct {
 	// PRODUCT
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
 	public void insert(AONContext ctx,Product p);
+	public Product insertProduct(AONContext ctx,Product p);
 	public void insertWithId(AONContext ctx,Product p);
 	public LinkedList<Product> insert(AONContext ctx,Stream<Product> ps);
 	public void insertWithId(AONContext ctx,Stream<Product> ps);

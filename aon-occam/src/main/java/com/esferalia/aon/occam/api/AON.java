@@ -800,7 +800,17 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
-
+	
+	public static Product insertProduct(String domainName, Integer domainId, String login, Product p) {
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().insertProduct(ctx, p);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static void insert(AONContext ctx, Product p) {
 		getProduct().insert(ctx, p);
 	}

@@ -11,6 +11,7 @@ public class AlbvDet {
 	String concepto;
 	Double cantidad;
 	Double precio;
+	Double precioCoste;
 	String descuentos;
 	
 	public Integer getAlbv() {
@@ -65,19 +66,30 @@ public class AlbvDet {
 	public String getDetalle() {
 		return detalle;
 	}
-	public void setDetalle(String detalle) {
+	public AlbvDet setDetalle(String detalle) {
 		this.detalle = detalle;
+		return this;
 	}
 	public String getDetalle2() {
 		return detalle2;
 	}
-	public void setDetalle2(String detalle2) {
+	public AlbvDet setDetalle2(String detalle2) {
 		this.detalle2 = detalle2;
+		return this;
 	}
 	public String getDetalle3() {
 		return detalle3;
 	}
-	public void setDetalle3(String detalle3) {
+	public AlbvDet setDetalle3(String detalle3) {
 		this.detalle3 = detalle3;
+		return this;
 	}
+	public Double getPrecioCoste() {
+		return precioCoste;
+	}
+	public AlbvDet setPrecioCoste(Double precioCoste) {
+		this.precioCoste = precioCoste;
+		return this;
+	}
+	
 }

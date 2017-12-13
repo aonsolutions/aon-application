@@ -710,7 +710,7 @@ public class RegistryDAO {
 			RegistryAddressFilter filter) {
 		return ctx.getDslContext().select().from(RADDRESS)
 					.join(REGISTRY).on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
-					.join(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
+					.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
 				.where(RADDRESS_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new RAddressFiller());
 	}
@@ -826,13 +826,13 @@ public class RegistryDAO {
 	}
 	
 	public static Customer insertCustomer(AONContext ctx, Customer customer){
-		return ctx.getDslContext().insertInto(CUSTOMER, CUSTOMER.ACCOUNT, CUSTOMER.DELIVERY_GROUPED, CUSTOMER.DELIVERY_VALUATED,
+		ctx.getDslContext().insertInto(CUSTOMER, CUSTOMER.ACCOUNT, CUSTOMER.DELIVERY_GROUPED, CUSTOMER.DELIVERY_VALUATED,
 				CUSTOMER.DOMAIN, CUSTOMER.E_INVOICE, CUSTOMER.INVOICING_GROUP, CUSTOMER.PROJECT_GROUPED, CUSTOMER.REGISTRY,
 				CUSTOMER.SCOPE, CUSTOMER.STATUS, CUSTOMER.SURCHARGE, CUSTOMER.TARIFF, CUSTOMER.TRANSACTION, CUSTOMER.WITHHOLDING)
 			.values(customer.getAccount(), customer.getDeliveryGrouped(), customer.getDeliveryValuated(), 
 					customer.getDomain(), customer.geteInvoice(), customer.getInvoicingGroup(), customer.getProjectGrouped(), customer.getRegistry().getId(),
-					customer.getScope(), customer.getStatus().value(), customer.getSurcharge(), customer.getTariff(), customer.getTransaction(), customer.getWithholding()).returning()
-			.fetch().stream().map(new CustomerFiller()).findFirst().orElse(new Customer());
+					customer.getScope(), customer.getStatus().value(), customer.getSurcharge(), customer.getTariff(), customer.getTransaction(), customer.getWithholding()).execute();
+		return customer;
 	}
 	// ------------------- SELLER
 

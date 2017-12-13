@@ -33,10 +33,6 @@
 	background-color: white;
 }
 
-.aon-check-template{
-	color: red;	
-}
-
 .aon-finding-toolbar-item-template {
 	color: #000;
 	text-transform: uppercase;
@@ -104,10 +100,6 @@
 
 .form-send-email-dialog textarea {
 	resize: none;		
-}
-
-.aon-check-send-email-dialog{
-	color: red;	
 }
 
 .aon-check-button-send-email-dialog{
