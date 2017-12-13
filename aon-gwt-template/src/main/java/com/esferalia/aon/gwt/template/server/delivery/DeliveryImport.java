@@ -96,10 +96,13 @@ public class DeliveryImport {
 						}
 					}
 				});
-				if(hasClientRequiredParameters()) {
-					if(row.getRowNum() != 0) clientList.add(cli);
-				} else {
-					// TODO ERROR
+				if(row.getRowNum() != 0) {
+					if(hasClientRequiredParameters()) {
+						clientList.add(cli);
+					} else {
+						di.getError().getTextError().add("ERROR! CLIENTES: linea " + row.getRowNum() + " -  Faltan datos obligatorios.");
+						di.getError().setError(false);
+					}
 				}
 			});
 			
@@ -130,10 +133,13 @@ public class DeliveryImport {
 						}
 					}
 				});
-				if(hasAlbvRequiredParameters()) {
-					if(row.getRowNum() != 0) albvList.add(albv);
-				} else {
-					// TODO ERROR
+				if(row.getRowNum() != 0) {
+					if(hasAlbvRequiredParameters()) {
+						albvList.add(albv);
+					} else {
+						di.getError().getTextError().add("ERROR! ALBV: linea " + row.getRowNum() + " -  Faltan datos obligatorios.");
+						di.getError().setError(false);
+					}
 				}
 			});
 
@@ -164,10 +170,13 @@ public class DeliveryImport {
 						}
 					}
 				});
-				if(hasAlbvDetRequiredParameters()) {
-					if(row.getRowNum() != 0) albvDetList.add(albvDet);
-				} else {
-					// TODO  ERROR
+				if(row.getRowNum() != 0) {
+					if(hasAlbvDetRequiredParameters()) {
+						albvDetList.add(albvDet);
+					} else {
+						di.getError().getTextError().add("ERROR! ALBVDET: linea " + row.getRowNum() + " -  Faltan datos obligatorios.");
+						di.getError().setError(false);
+					}
 				}
 			});
 			return di.setClientList(clientList)
@@ -179,11 +188,12 @@ public class DeliveryImport {
 		return null;
 	}
 	
-	public DeliveryInfo insertDelivery(Domain domain, User user, DeliveryInfo di, com.esferalia.aon.gwt.template.shared.Error error) {
+	public DeliveryInfo insertDelivery(Domain domain, User user, DeliveryInfo dinfo, com.esferalia.aon.gwt.template.shared.Error error) {
+		di = dinfo;
 		try {
-			HashMap<String, Integer> clientes = importClientes(domain, user, di.getClientList());
-			HashMap<Integer, Delivery> albv = importAlbv(domain, user, di.getAlbvList(), clientes);
-			importAlbvDet(domain, user, di.getAlbvDetList(), albv);
+			HashMap<String, Integer> clientes = importClientes(domain, user);
+			HashMap<Integer, Delivery> albv = importAlbv(domain, user, clientes);
+			importAlbvDet(domain, user, albv);
 		} catch (Exception e) {
 			e.printStackTrace();
 			di.getError().setError(false);
@@ -421,7 +431,8 @@ public class DeliveryImport {
 				cli.setBanco(o.toString().substring(0,64));
 			} else cli.setBanco(o.toString());
 			return;
-		}
+		}			albv.setTipoVia(cell.getStringCellValue());
+
 		if("bic".equalsIgnoreCase(title)) {
 			if(o.toString().length() == 11) {
 				cli.setBic(o.toString());
@@ -476,21 +487,27 @@ public class DeliveryImport {
 	}
 	
 	private void checkAlbv(String title, Cell cell) {
+		Object o = getObjectValue(cell);
+		if(o == null) return;
 		if("id".equalsIgnoreCase(title)) {
 			albv.setId(((Double)cell.getNumericCellValue()).intValue());
 			return;
 		}
 		if("serie".equalsIgnoreCase(title)) {
-			albv.setSerie(cell.getStringCellValue());
+			if(o.toString().length() > 5) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 5");
+			} else albv.setSerie(o.toString());
 			return;
 		}
 		if("numero".equalsIgnoreCase(title)) {
-			System.out.println(cell);
 			albv.setNumero(((Double)cell.getNumericCellValue()).intValue());
 			return;
 		}
 		if("documento".equalsIgnoreCase(title)) {
-			albv.setDocumento(cell.getStringCellValue());
+			if(o.toString().length() > 16) {
+				di.getError().getTextWarning().add("ERROR! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				di.getError().setError(false);
+			} else albv.setDocumento(o.toString());
 			return;
 		}
 		if("fecha".equalsIgnoreCase(title)) {
@@ -498,27 +515,45 @@ public class DeliveryImport {
 			return;
 		}
 		if("centroTrabajo".equalsIgnoreCase(title)) {
-			albv.setCentroTrabajo(cell.getStringCellValue());
+			if(o.toString().length() > 32) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+			} else albv.setCentroTrabajo(o.toString());
 			return;
 		}
 		if("almacen".equalsIgnoreCase(title)) {
-			albv.setAlmacen(cell.getStringCellValue());
+			if(o.toString().length() > 32) {
+				di.getError().getTextWarning().add("ERROR! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				di.getError().setError(false);
+			} else albv.setAlmacen(o.toString());
 			return;
 		}
 		if("expediente".equalsIgnoreCase(title)) {
-			albv.setExpediente(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+			} else albv.setCentroTrabajo(o.toString());
 			return;
 		}
 		if("aliasDireccion".equalsIgnoreCase(title)) {
-			albv.setAliasDireccion(cell.getStringCellValue());
+			if(o.toString().length() > 13) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 13");
+				albv.setAliasDireccion(o.toString().substring(0,13));
+			} else albv.setCentroTrabajo(o.toString());
 			return;
 		}
 		if("tipoVia".equalsIgnoreCase(title)) {
-			albv.setTipoVia(cell.getStringCellValue());
+			StreetType st = StreetType.safeValueOf(o.toString());
+			if(st != null) {
+				albv.setTipoVia(st.getAeatCode());
+			} else {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " incorrecto");
+			}
 			return;
 		}
 		if("direccion".equalsIgnoreCase(title)) {
-			albv.setDireccion(cell.getStringCellValue());
+			if(o.toString().length() > 128) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				albv.setDireccion(o.toString().substring(0, 128));
+			} else albv.setDireccion(o.toString());
 			return;
 		}
 		if("numeroDir".equalsIgnoreCase(title)) {
@@ -526,19 +561,31 @@ public class DeliveryImport {
 			return;
 		}
 		if("direccion2".equalsIgnoreCase(title)) {
-			albv.setDireccion2(cell.getStringCellValue());
+			if(o.toString().length() > 128) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				albv.setDireccion2(o.toString().substring(0, 128));
+			} else albv.setDireccion2(o.toString());
 			return;
 		}
 		if("direccion3".equalsIgnoreCase(title)) {
-			albv.setDireccion3(cell.getStringCellValue());
+			if(o.toString().length() > 128) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				albv.setDireccion3(o.toString().substring(0, 128));
+			} else albv.setDireccion3(o.toString());
 			return;
 		}
 		if("cp".equalsIgnoreCase(title)) {
-			albv.setCp(cell.getStringCellValue());
+			if(o.toString().length() > 16) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				albv.setCp(o.toString().substring(0, 16));
+			} else albv.setCp(o.toString());
 			return;
 		}
 		if("ciudad".equalsIgnoreCase(title)) {
-			albv.setCiudad(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				albv.setCiudad(o.toString().substring(0, 64));
+			} else albv.setCiudad(o.toString());
 			return;
 		}
 		if("provincia".equalsIgnoreCase(title)) {
@@ -546,23 +593,36 @@ public class DeliveryImport {
 			return;
 		}
 		if("nombreProvincia".equalsIgnoreCase(title)) {
-			albv.setNombreProvincia(cell.getStringCellValue());
+			if(o.toString().length() > 32) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				albv.setCiudad(o.toString().substring(0, 64));
+			} else albv.setNombreProvincia(o.toString());
 			return;
 		}
 		if("banco".equalsIgnoreCase(title)) {
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				albv.setBanco(o.toString().substring(0, 64));
+			} else albv.setBanco(o.toString());
 			albv.setBanco(cell.getStringCellValue());
 			return;
 		}
 		if("bic".equalsIgnoreCase(title)) {
-			albv.setBic(cell.getStringCellValue());
+			if(o.toString().length() != 11) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea != 11");
+			} else albv.setBic(o.toString());
 			return;
 		}
 		if("cuentaBanco".equalsIgnoreCase(title)) {
-			albv.setCuentaBanco(cell.getStringCellValue());
+			if(o.toString().length() > 34) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 34");
+			} else albv.setCuentaBanco(o.toString());
 			return;
 		}
 		if("formaPago".equalsIgnoreCase(title)) {
-			albv.setFormaPago(cell.getStringCellValue());
+			if(o.toString().length() > 32) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+			} else albv.setFormaPago(o.toString());
 			return;
 		}
 		if("numeroVtos".equalsIgnoreCase(title)) {
@@ -578,7 +638,9 @@ public class DeliveryImport {
 			return;
 		}
 		if("diasPago".equalsIgnoreCase(title)) {
-			albv.setDiasPago(cell.getStringCellValue());
+			if(o.toString().length() > 8) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 8");
+			} else albv.setDiasPago(o.toString());
 			return;
 		}
 		if("segmento".equalsIgnoreCase(title)) {
@@ -594,6 +656,8 @@ public class DeliveryImport {
 	}
 	
 	private void checkAlbvDet(String title, Cell cell) {
+		Object o = getObjectValue(cell);
+		if(o == null) return;
 		if("albv".equalsIgnoreCase(title)) {
 			albvDet.setAlbv(((Double)cell.getNumericCellValue()).intValue());
 			return;
@@ -603,23 +667,34 @@ public class DeliveryImport {
 			return;
 		}
 		if("articulo".equalsIgnoreCase(title)) {
-			albvDet.setArticulo(cell.getStringCellValue());
+			if(o.toString().length() > 15) {
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 15");
+				albvDet.setArticulo(o.toString().substring(0,15));
+			} else albvDet.setArticulo(o.toString());
 			return;
 		}
 		if("detalle".equalsIgnoreCase(title)) {
-			albvDet.setDetalle(cell.getStringCellValue());
+			if(o.toString().length() > 15) {
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 15");
+			} else albvDet.setDetalle(o.toString());
 			return;
 		}
 		if("detalle2".equalsIgnoreCase(title)) {
-			albvDet.setDetalle2(cell.getStringCellValue());
+			if(o.toString().length() > 15) {
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 15");
+			} else albvDet.setDetalle2(o.toString());
 			return;
 		}
 		if("detalle3".equalsIgnoreCase(title)) {
-			albvDet.setDetalle3(cell.getStringCellValue());
+			if(o.toString().length() > 15) {
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 15");
+			} else albvDet.setDetalle3(o.toString());
 			return;
 		}
 		if("concepto".equalsIgnoreCase(title)) {
-			albvDet.setConcepto(cell.getStringCellValue());
+			if(o.toString().length() > 64) {
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+			} else albvDet.setConcepto(o.toString());
 			return;
 		}
 		if("cantidad".equalsIgnoreCase(title)) {
@@ -627,7 +702,11 @@ public class DeliveryImport {
 			return;
 		}
 		if("precio".equalsIgnoreCase(title)) {
-			albvDet.setPrecio(cell.getNumericCellValue());
+			Double d = Double.parseDouble(o.toString());
+			System.out.println(d);
+			if(Double.isNaN(d)){
+				
+			} else albvDet.setPrecio(d);
 			return;
 		}
 		if("precioCoste".equalsIgnoreCase(title)) {
@@ -635,17 +714,19 @@ public class DeliveryImport {
 			return;
 		}
 		if("descuentos".equalsIgnoreCase(title)) {
-			albvDet.setDescuentos(cell.getStringCellValue());
+			if(o.toString().length() > 16) {
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+			} else albvDet.setConcepto(o.toString());
 			return;
 		}
 	}
 	
-	private HashMap<String, Integer> importClientes(Domain domain, User user, LinkedList<Clientes> clientes) {
+	private HashMap<String, Integer> importClientes(Domain domain, User user) {
 		HashMap<String, Integer> map = new HashMap<>();
 		Integer[] scps = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain(), user.getLogin(), user.getId());
 		Integer scope = scps != null ? scps[0] : null;
-		clientes.stream().forEach(r -> {
+		di.getClientList().stream().forEach(r -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDocumentProperty().eq(r.getDocumento()));
 
 			if(customer.getId() == null) {
@@ -775,12 +856,12 @@ public class DeliveryImport {
 		return map;
 	}
 	
-	private HashMap<Integer, Delivery> importAlbv(Domain domain, User user, LinkedList<Albv> albv, HashMap<String, Integer> clientes) {
+	private HashMap<Integer, Delivery> importAlbv(Domain domain, User user, HashMap<String, Integer> clientes) {
 		HashMap<Integer, Delivery> map = new HashMap<>();
 		Integer[] scps = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain(), user.getLogin(), user.getId());
 		Integer scope = scps != null ? scps[0] : null;
-		albv.stream().forEach(r -> {
+		di.getAlbvList().stream().forEach(r -> {
 			Integer customerID = null;
 			Integer raddress = null;
 			if(clientes.containsKey(r.getDocumento())) {
@@ -804,14 +885,17 @@ public class DeliveryImport {
 				}
 			}
 			Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getAlmacen())));
-			
-			PayMethod pm = new PayMethod();
-			Project p = new Project();
-			if(r.getFormaPago() != null) pm = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getFormaPago());
-			if(domain.isEnableHeredity() && pm.getId() == null) pm = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getFormaPago());
-			if(r.getExpediente() != null) p = AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getExpediente())));
-			
-			Delivery delivery = new Delivery()
+			if(warehouse == null) {
+				di.getError().getTextError().addElement("ERROR! ALBV: El almacén " + r.getAlmacen() + " del albarán " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
+				di.getError().setError(false);
+			} else {
+				PayMethod pm = new PayMethod();
+				Project p = new Project();
+				if(r.getFormaPago() != null) pm = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getFormaPago());
+				if(domain.isEnableHeredity() && pm.getId() == null) pm = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getFormaPago());
+				if(r.getExpediente() != null) p = AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getExpediente())));
+				
+				Delivery delivery = new Delivery()
 					.setDomain(domain.getId())
 					.setSeries(r.getSerie())
 					.setScope(scope)
@@ -831,20 +915,22 @@ public class DeliveryImport {
 					.setTotalPackages(0.0)
 					.setTotalWeight(0.0)
 					.setProject(p);
-			delivery = AON.insertDelivery(domain.getName(), domain.getId(), user.getLogin(), delivery);
+				delivery = AON.insertDelivery(domain.getName(), domain.getId(), user.getLogin(), delivery);
 			
-			map.put(r.getId(), new Delivery().setId(delivery.getId()).setNumber(warehouse.getId()));
+				map.put(r.getId(), new Delivery().setId(delivery.getId()).setNumber(warehouse.getId()));
+			}
 		});
 		return map;
 	}
 	
-	private void importAlbvDet(Domain domain, User user, LinkedList<AlbvDet> albvDet, HashMap<Integer, Delivery> albv) {
-		albvDet.stream().forEach(r -> {
-			Product product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));			
+	private void importAlbvDet(Domain domain, User user, HashMap<Integer, Delivery> albv) {
+		di.getAlbvDetList().stream().forEach(r -> {
+			if(albv.containsKey(r.getAlbv())) {
+				Product product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));			
 			
-			if(product.getId() == null) {
-				Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(),"GENERAL", user.getLogin());
-				product = new Product()
+				if(product.getId() == null) {
+					Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(),"GENERAL", user.getLogin());
+					product = new Product()
 						.setDomain(domain.getId())
 						.setName(r.getConcepto())
 						.setCode(r.getArticulo())
@@ -856,11 +942,11 @@ public class DeliveryImport {
 						.setCompositionPrice(false)
 						.setPackaged(false)
 						.setStatus(ProductStatus.ACTIVE.value());
-				product = AON.insertProduct(domain.getName(), domain.getId(), user.getLogin(), product);
-			}
-			Integer productId = product.getId();			
+					product = AON.insertProduct(domain.getName(), domain.getId(), user.getLogin(), product);
+				}
+				Integer productId = product.getId();			
 			
-			Item item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> f.getProductProperty().eq(productId)
+				Item item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> f.getProductProperty().eq(productId)
 					.and(r.getDetalle() != null ? f.getDetailProperty().eq(r.getDetalle()) :
 						f.getDetailProperty().eq("").or(f.getDetailProperty().isNull()))
 					.and(r.getDetalle2() != null ? f.getDetail2Property().eq(r.getDetalle2()) :
@@ -868,8 +954,8 @@ public class DeliveryImport {
 					.and(r.getDetalle3() != null ? f.getDetail3Property().eq(r.getDetalle3()):
 						f.getDetail3Property().eq("").or(f.getDetail3Property().isNull())));
 			
-			if(item.getId() == null) {
-				item = new Item()
+				if(item.getId() == null) {
+					item = new Item()
 						.setDomain(domain.getId())
 						.setActive(true)
 						.setProduct(product)
@@ -880,10 +966,10 @@ public class DeliveryImport {
 						.setDescription(r.getConcepto())
 						.setPrice(r.getPrecio())
 						.setPurchasePrice(r.getPrecioCoste());
-				item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), item);	
-			}
+					item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), item);	
+				}
 			
-			DeliveryDetail dd = new DeliveryDetail()
+				DeliveryDetail dd = new DeliveryDetail()
 					.setDomain(domain.getId())
 					.setDelivery(albv.get(r.getAlbv()))
 					.setWarehouse(albv.get(r.getAlbv()).getNumber())
@@ -893,7 +979,8 @@ public class DeliveryImport {
 					.setQuantity(r.getCantidad())
 					.setPrice(r.getPrecio())
 					.setDiscountExpression(r.getDescuentos() != null ? r.getDescuentos() : "0.0");
-			AON.insertDeliveryDetail(domain.getName(), domain.getId(), user.getLogin(), dd);
+				AON.insertDeliveryDetail(domain.getName(), domain.getId(), user.getLogin(), dd);
+			}
 		});
 	}
 }

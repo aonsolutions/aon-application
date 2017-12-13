@@ -582,7 +582,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	private void importResponse(Error error){
-		scroll.setHeight("200px");
 		VerticalPanel vp = new VerticalPanel();
 		if(!error.getError()){
 			Label l1 = new Label("No se ha importado correctamente");
@@ -595,9 +594,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					vp.add(l);
 				});
 			}
-			
+		} else {
+			Label label = new Label(MSG.importOk());
+			vp.add(label);
 		}
-		else label.setText(MSG.importOk());
 		
 		if(error.getTextWarning() != null) {
 			error.getTextWarning().stream().forEach( w -> {
@@ -605,6 +605,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				l.getElement().getStyle().setColor("orange");
 				vp.add(l);
 			});
+		}
+		if(error.getTextError().size() > 0 || error.getTextWarning().size() > 0) {
+			scroll.setHeight("200px");
 		}
 		scroll.add(vp);
 	}
