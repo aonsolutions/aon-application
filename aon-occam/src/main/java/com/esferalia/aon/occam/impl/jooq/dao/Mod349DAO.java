@@ -126,14 +126,15 @@ public class Mod349DAO {
 			.set(FS_MOD349.NUMBER,mod349.getNumber())
 			.set(FS_MOD349.REPLACED_NUMBER,mod349.getReplacedNumber())
 			.set(FS_MOD349.DOCUMENT,mod349.getDocument())
+			.set(FS_MOD349.REPRESENTATIVE_DOCUMENT,mod349.getRepresentativeDocument())
 			.set(FS_MOD349.NAME,mod349.getName())
 			.set(FS_MOD349.CONTACT_PHONE,mod349.getContactPhone())
-			.set(FS_MOD349.CONTACT_PERSON,mod349.getContactPerson())			
+	    	.set(FS_MOD349.CONTACT_PERSON,mod349.getContactPerson())
+			.set(FS_MOD349.CONTACT_MAIL,mod349.getContactMail())			
 			.set(FS_MOD349.PERIODICITY_CHANGE,AonEnumUtils.getByte(mod349.isPeriodicityChange()))
-			.set(FS_MOD349.REPRESENTATIVE_DOCUMENT,mod349.getRepresentativeDocument())
+			.set(FS_MOD349.DIFF_ENABLED, AonEnumUtils.getByte(mod349.isDiffEnabled()) )			
 			.set(FS_MOD349.CREATION_USER,ctx.getUser())
-			.set(FS_MOD349.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-			// FALTA - Campo por Diferencias
+			.set(FS_MOD349.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )						
 		.returning(FS_MOD349.ID)
 		.fetchOne();
 		mod349.setId(record.getId());
@@ -157,12 +158,13 @@ public class Mod349DAO {
 			.set(FS_MOD349.DOCUMENT,mod349.getDocument())
 			.set(FS_MOD349.NAME,mod349.getName())
 			.set(FS_MOD349.CONTACT_PHONE,mod349.getContactPhone())
-			.set(FS_MOD349.CONTACT_PERSON,mod349.getContactPerson())			
+			.set(FS_MOD349.CONTACT_PERSON,mod349.getContactPerson())
+			.set(FS_MOD349.CONTACT_MAIL,mod349.getContactMail())
 			.set(FS_MOD349.PERIODICITY_CHANGE,AonEnumUtils.getByte(mod349.isPeriodicityChange()))
+			.set(FS_MOD349.DIFF_ENABLED, AonEnumUtils.getByte(mod349.isDiffEnabled()) )
 			.set(FS_MOD349.REPRESENTATIVE_DOCUMENT,mod349.getRepresentativeDocument())
 			.set(FS_MOD349.MODIFICATION_USER,ctx.getUser())
-			.set(FS_MOD349.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-			// FALTA - Campo por Diferencias
+			.set(FS_MOD349.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )			
 			.where(FS_MOD349.ID.equal(mod349.getId()))
 		.execute();
 		return mod349;
@@ -390,10 +392,9 @@ public class Mod349DAO {
 		mod349.setName(AonStringUtils.left(params.getName(), FS_MOD349.NAME.getDataType().length()));
 		mod349.setContactPhone(AonStringUtils.left(params.getContactPhone(), FS_MOD349.CONTACT_PHONE.getDataType().length()));
 		mod349.setContactPerson(AonStringUtils.left(params.getContactPerson(), FS_MOD349.CONTACT_PERSON.getDataType().length()));
+		mod349.setContactMail(AonStringUtils.left(params.getContactMail(), FS_MOD349.CONTACT_MAIL.getDataType().length()));		
 		mod349.setStatus(FiscalStatus.PENDING);
-		// FALTA - Hasta que se añada el campo a la BD, se asume que siempre se calcula por diferencias
-		// mod349.setDiffCalculationDisabled(params.isMod303ByDifferenceDisabled());
-		mod349.setDiffCalculationDisabled(false);		
+	    mod349.setDiffEnabled(!params.isMod303ByDifferenceDisabled());				
 		mod349.setDetails(new LinkedList<Mod349Detail>());
 		return mod349;
 	}
@@ -416,16 +417,17 @@ public class Mod349DAO {
 				.setNumber(record.getValue(FS_MOD349.NUMBER))
 				.setReplacedNumber(record.getValue(FS_MOD349.REPLACED_NUMBER))
 				.setDocument(record.getValue(FS_MOD349.DOCUMENT))
+				.setRepresentativeDocument(record.getValue(FS_MOD349.REPRESENTATIVE_DOCUMENT))
 				.setName(record.getValue(FS_MOD349.NAME))
 				.setContactPerson(record.getValue(FS_MOD349.CONTACT_PERSON))
 				.setContactPhone(record.getValue(FS_MOD349.CONTACT_PHONE))
+				.setContactMail(record.getValue(FS_MOD349.CONTACT_MAIL))
 			    .setPeriodicityChange(AonEnumUtils.getBoolean(record.getValue(FS_MOD349.PERIODICITY_CHANGE)))
-				.setRepresentativeDocument(record.getValue(FS_MOD349.REPRESENTATIVE_DOCUMENT))
+			    .setDiffEnabled(AonEnumUtils.getBoolean(record.getValue(FS_MOD349.DIFF_ENABLED)))				
 				.setCreationUser(record.getValue(FS_MOD349.CREATION_USER))
 				.setCreationDate(record.getValue(FS_MOD349.CREATION_DATE))
 				.setModificationUser(record.getValue(FS_MOD349.MODIFICATION_USER))
 				.setModificationDate(record.getValue(FS_MOD349.MODIFICATION_DATE))
-				// FALTA - Campo por Diferencias
 				;
 		}
 	}
@@ -524,7 +526,7 @@ public class Mod349DAO {
 				  
 				   // Obtener declarado si el calculo es por diferencias
 				   double declared = 0.0;
-				   if (!mod349.isDiffCalculationDisabled()) {
+				   if (mod349.isDiffEnabled()) {
 					   declared = getDeclaredModels(ctx, mod349, keyOperation, country, document)
 							   .mapToDouble(p -> p.getAmount() - p.getRectifiedAmount())
 							   .sum();
@@ -611,9 +613,9 @@ public class Mod349DAO {
 	}
 	
 	// Obtiene el desglose de las facturas intracomunitarias, para el periodo del modelo, según sea por diferencias o no
-	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final boolean isDiffDisabled) {
+	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final boolean isDiffEnabled) {
 		
-		Date fromDate = isDiffDisabled ? FiscalUtils.getPeriodStart(mod349) : AonDateUtils.getYearFirstDay(mod349.getYear());
+		Date fromDate = isDiffEnabled ? AonDateUtils.getYearFirstDay(mod349.getYear()) : FiscalUtils.getPeriodStart(mod349);
 		Date toDate = FiscalUtils.getPeriodEnd(mod349);
 		
 		// Obtenemos el desglose de las facturas intracomunitarias entre las fechas indicadas
@@ -624,10 +626,10 @@ public class Mod349DAO {
 	}
 	
 	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349) {
-		return getVatBreakdown(ctx, mod349, mod349.isDiffCalculationDisabled());		
+		return getVatBreakdown(ctx, mod349, mod349.isDiffEnabled());		
 	}
 	
-	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final Mod349Detail detail, final boolean isDiffDisabled) {
+	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final Mod349Detail detail, final boolean isDiffEnabled) {
 		
 		// Facturas a localizar según la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
 		final InvoiceType invoiceType1;
@@ -660,7 +662,7 @@ public class Mod349DAO {
 	    	isService = false;
 	    }
 		
-		return getVatBreakdown(ctx, mod349, isDiffDisabled)  
+		return getVatBreakdown(ctx, mod349, isDiffEnabled)  
 			   .filter( p -> (p.getInvoiceType() == invoiceType1 || p.getInvoiceType() == invoiceType2) && p.isService() == isService && p.getRegistryDocumentCountry() == detail.getCountry() && AonStringUtils.equals(p.getRegistryDocument(),detail.getDocument()));
 		
 	}
@@ -699,7 +701,7 @@ public class Mod349DAO {
 		
 		return VATFormatter.formatInvoices(title
 				,getSubtitle(detail)
-				,getVatBreakdown(ctx, mod349, detail, true).collect(Collectors.toCollection(LinkedList::new)));
+				,getVatBreakdown(ctx, mod349, detail, false).collect(Collectors.toCollection(LinkedList::new)));
 		
 	}
 	
@@ -714,7 +716,7 @@ public class Mod349DAO {
 				,getSubtitle(detail)
 				,mod349.getPeriod()			
 				,getDeclaredModels(ctx, mod349, detail.getType(), detail.getCountry(), detail.getDocument()).collect(Collectors.toCollection(LinkedList::new))			 	
-				,getVatBreakdown(ctx, mod349, detail, false).collect(Collectors.toCollection(LinkedList::new)));
+				,getVatBreakdown(ctx, mod349, detail, true).collect(Collectors.toCollection(LinkedList::new)));
 		
 	}
 	

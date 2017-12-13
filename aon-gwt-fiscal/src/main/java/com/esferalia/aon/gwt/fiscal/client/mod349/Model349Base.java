@@ -455,7 +455,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		}
 		
 		// Indicar que el modelo ha sido calculado por diferencias
-		if (!this.mod349.isDiffCalculationDisabled()) {
+		if (this.mod349.isDiffEnabled()) {
 			InlineLabel diffLabel = new InlineLabel("[DIF.]");
 			diffLabel.setStyleName(AON.AON_CSS.aonMarginLeft5());
 			diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
@@ -601,12 +601,30 @@ abstract class Model349Base extends DockLayoutPanel {
 		table.setWidget(3, 1, contactPerson);
 		table.getCellFormatter().setStyleName(3,1, AON.AON_CSS.aonPanelGridEven());
 		
+		// Email persona de contacto
+		table.setWidget( 4, 0, new InlineLabel(AON.MSG.contactMail()));
+		table.getCellFormatter().setStyleName(4,0, AON.AON_CSS.aonPanelGridOdd());
+		TextBox contactMail = new TextBox();
+		contactMail.setStyleName(AON.AON_CSS.aonInputText());
+		contactMail.setMaxLength(50);
+		contactMail.setVisibleLength(50);
+		contactMail.setValue(getMod349().getContactMail());
+		contactMail.addValueChangeHandler( new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				getMod349().setContactMail(contactMail.getValue());
+				markAsDirty();
+			}
+		});
+		table.setWidget(4, 1, contactMail);
+		table.getCellFormatter().setStyleName(4,1, AON.AON_CSS.aonPanelGridEven());		
+		
 		// Número declaración anterior
 		// Solo se habilita si es Territorio Común o Alava y está marcado complementaria o sustitutiva
 		// o bien es Navarra y está marcado sustitutiva (complementaria en Navarra no lleva numero declaración anterior)
 		// además ni Gipuzcoa ni Bizkaia llevan numero de declaración anterior		
-		table.setWidget( 4, 0, new InlineLabel(AON.MSG.previousDeclaration()));
-		table.getCellFormatter().setStyleName(4,0, AON.AON_CSS.aonPanelGridOdd());
+		table.setWidget( 5, 0, new InlineLabel(AON.MSG.previousDeclaration()));
+		table.getCellFormatter().setStyleName(5,0, AON.AON_CSS.aonPanelGridOdd());
 		TextBox replaced = new TextBox();
 		replaced.setStyleName(AON.AON_CSS.aonInputText());
 		replaced.setMaxLength(13);
@@ -622,12 +640,12 @@ abstract class Model349Base extends DockLayoutPanel {
 				markAsDirty();
 			}
 		});
-		table.setWidget(4, 1, replaced);
-		table.getCellFormatter().setStyleName(4,1, AON.AON_CSS.aonPanelGridEven());		
+		table.setWidget(5, 1, replaced);
+		table.getCellFormatter().setStyleName(5,1, AON.AON_CSS.aonPanelGridEven());		
 		
 		// Cambio en la periodicidad
-		table.setWidget( 5, 0, new InlineLabel("Indicador cambio periodicidad"));
-		table.getCellFormatter().setStyleName(5,0, AON.AON_CSS.aonPanelGridOdd());
+		table.setWidget( 6, 0, new InlineLabel("Indicador cambio periodicidad"));
+		table.getCellFormatter().setStyleName(6,0, AON.AON_CSS.aonPanelGridOdd());
 		CheckBox periodicity = new CheckBox();		
 		periodicity.setValue(getMod349().isPeriodicityChange());
 		periodicity.addClickHandler(new ClickHandler() {			
@@ -638,12 +656,12 @@ abstract class Model349Base extends DockLayoutPanel {
 				markAsDirty();				
 			}
 		});   
-		table.setWidget(5, 1, periodicity);
-		table.getCellFormatter().setStyleName(5,1, AON.AON_CSS.aonPanelGridEven());
+		table.setWidget(6, 1, periodicity);
+		table.getCellFormatter().setStyleName(6,1, AON.AON_CSS.aonPanelGridEven());
 		
 		// NIF Representante Legal
-		table.setWidget( 6, 0, new InlineLabel("NIF Representante Legal"));
-		table.getCellFormatter().setStyleName(6,0, AON.AON_CSS.aonPanelGridOdd());
+		table.setWidget( 7, 0, new InlineLabel("NIF Representante Legal"));
+		table.getCellFormatter().setStyleName(7,0, AON.AON_CSS.aonPanelGridOdd());
 		DocumentTextBox representativeDocument = new DocumentTextBox();
 		representativeDocument.setValue(getMod349().getRepresentativeDocument());
 		representativeDocument.setMaxLength(9);
@@ -655,8 +673,8 @@ abstract class Model349Base extends DockLayoutPanel {
 				markAsDirty();
 			}
 		});
-		table.setWidget(6, 1, representativeDocument);
-		table.getCellFormatter().setStyleName(6,1, AON.AON_CSS.aonPanelGridEven());
+		table.setWidget(7, 1, representativeDocument);
+		table.getCellFormatter().setStyleName(7,1, AON.AON_CSS.aonPanelGridEven());
 		
 		declarationScrollPanel.setWidget(table);
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));

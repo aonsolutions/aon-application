@@ -15,7 +15,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod349 Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod349" })
-public class Model349ServiceImpl extends AonRemoteServiceServlet implements Model349Service {
+public class Mod349ServiceImpl extends AonRemoteServiceServlet implements Model349Service {
 
 	@Override
 	public Mod349 initializeMod349(String domainName, Integer domain) {

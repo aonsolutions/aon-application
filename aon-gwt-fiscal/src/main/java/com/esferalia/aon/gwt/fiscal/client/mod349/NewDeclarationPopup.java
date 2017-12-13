@@ -162,26 +162,21 @@ public class NewDeclarationPopup extends CustomDialog {
 		row++;
 		
 		// CALCULO POR DIFERENCIA (Solo si no está deshabilitado en la parametrización)
-		// FALTA - Como el campo aún no está creado en la base de datos, siempre aparece el check marcado y no se puede modificar
-		// cuando se añada el campo, entonces se tendrá en cuenta la parametrizacion y se dejará modificar el check
-		//if (!mod349.isDiffCalculationDisabled()) {
+		if (mod349.isDiffEnabled()) {
 			diffCalculation.setText(AON.MSG.diffCalculation());
-			diffCalculation.setValue(!mod349.isDiffCalculationDisabled());
-			// FALTA - Quitar cuando se añada el campo			
-			diffCalculation.setEnabled(false);			
-			// -----
+			diffCalculation.setValue(mod349.isDiffEnabled());
 			diffCalculation.addClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					mod349.setDiffCalculationDisabled(!diffCalculation.getValue());
+					mod349.setDiffEnabled(diffCalculation.getValue());
 				}
 				
 			});			
 			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 			tab.setWidget(row, 0, diffCalculation);		
-		//}
+		}
 		
 		rootPanel.add(tab);
 		

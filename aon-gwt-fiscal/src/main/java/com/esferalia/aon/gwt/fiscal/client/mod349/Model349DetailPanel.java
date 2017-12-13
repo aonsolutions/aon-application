@@ -38,7 +38,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 	public Model349DetailPanel(Mod349Detail detail, IModel349DetailCallback callback, Model349BaseCallback callbackM349) {
 		
 		boolean isGipuzkoa = callbackM349.getMod349().isGipuzkoa();
-		boolean isDiffDisabled = callbackM349.getMod349().isDiffCalculationDisabled();
+		boolean isDiffEnabled = callbackM349.getMod349().isDiffEnabled();
 				
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.AON_CSS.aonWidthAll());
@@ -233,7 +233,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		buttonDiff.setStyleName(AON.AON_CSS.aonIconCommandButton());
 		buttonDiff.addStyleName(AON.AON_CSS.aonIconDiff());
 		buttonDiff.setTabIndex(-2); // NO FOCUS
-		buttonDiff.setVisible(!isDiffDisabled);			
+		buttonDiff.setVisible(isDiffEnabled);			
 		buttonDiff.addClickHandler(new ClickHandler() {
 			
 			@Override
