@@ -115,6 +115,7 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 			rprovince.setSelectedIndex(0);
 			rzip.setValue(null);
 		}
+		
 		if (m390.getLegalRepr1() != null) {
 			name1.setValue(m390.getLegalRepr1().getName());
 			document1.setValue(m390.getLegalRepr1().getDocument());
@@ -151,6 +152,31 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 			notary3.setValue(null);
 			notaryDate3.setValue(null);
 		}
+		
+		rdocument.setEnabled(!m390.isLegalEntity());
+		rname.setEnabled(!m390.isLegalEntity());
+		rstreetType.setEnabled(!m390.isLegalEntity());
+		rstreetName.setEnabled(!m390.isLegalEntity());
+		rstreetNumber.setEnabled(!m390.isLegalEntity());
+		rstreetStair.setEnabled(!m390.isLegalEntity());
+		rstreetFloor.setEnabled(!m390.isLegalEntity());
+		rstreetDoor.setEnabled(!m390.isLegalEntity());
+		rphone.setEnabled(!m390.isLegalEntity());
+		rtown.setEnabled(!m390.isLegalEntity());
+		rprovince.setEnabled(!m390.isLegalEntity());
+		rzip.setEnabled(!m390.isLegalEntity());
+		name1.setEnabled(m390.isLegalEntity());
+		document1.setEnabled(m390.isLegalEntity());
+		notaryDate1.setEnabled(m390.isLegalEntity());
+		notary1.setEnabled(m390.isLegalEntity());
+		name2.setEnabled(m390.isLegalEntity());
+		document2.setEnabled(m390.isLegalEntity());
+		notaryDate2.setEnabled(m390.isLegalEntity());
+		notary2.setEnabled(m390.isLegalEntity());
+		name3.setEnabled(m390.isLegalEntity());
+		document3.setEnabled(m390.isLegalEntity());
+		notaryDate3.setEnabled(m390.isLegalEntity());
+		notary3.setEnabled(m390.isLegalEntity());
 	}
 
 	@Override

@@ -1683,6 +1683,7 @@ public class Mod3902015DAO {
 			.filter(m303 -> m303.getAdministration() == mod390.getAdministration())
 			.forEach(m303 -> {
 				Period period = m303.getPeriod();
+				System.out.println(period  + "/" + m303.getDeclarationType() + " - " + m303.getResult());
 				if (m303.getDeclarationType() == FiscalModelDeclarationType.BANK
 				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
 				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT_CCT) {
@@ -1693,7 +1694,7 @@ public class Mod3902015DAO {
 				}
 				if (m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK
 				 || m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT) {
-					mod390.setBox96( AonMathUtils.round(mod390.getBox96() + + m303.getResult()));
+					mod390.setBox96( AonMathUtils.round(mod390.getBox96() + m303.getResult()));
 					if (period == Period.M12 || period == Period.T4) {
 						mod390.setBox98( m303.getResult() );	
 					} 

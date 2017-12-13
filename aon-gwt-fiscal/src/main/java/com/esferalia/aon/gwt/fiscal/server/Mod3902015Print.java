@@ -82,14 +82,18 @@ public class Mod3902015Print extends HttpServlet {
 
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
 			String fileName, byte[] content, int year) throws IOException,
-			KeyManagementException, NoSuchAlgorithmException {
+			KeyManagementException, NoSuchAlgorithmException, ServletException {
 
 		String fileString = new String(content);
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		String urlParameters2015 = "HID=INF5390A" 
+		String urlParameters = null;
+		String request = null;
+		if (year == 2015) {
+			request = "https://www6.aeat.es/es13/l/zi21zilk0021";
+			urlParameters = "HID=INF5390A" 
 				+ "&IDI=ES"
 				+ "&LEV=000000000000"
 				+ "&F01=" + encodedFile 
@@ -98,8 +102,9 @@ public class Mod3902015Print extends HttpServlet {
 				+ "&MOD=390" 
 				+ "&PRG=PTLINK9T"
 				+ "&EJF=2015";
-
-		String urlParameters2016 = "HID=INF6390A" 
+		} else if (year == 2016) {
+			request = "https://www6.aeat.es/es13/l/zi21zilk0021";
+			urlParameters = "HID=INF6390A" 
 				+ "&IDI=ES"
 				+ "&LEV=000000000000"
 				+ "&F01=" + encodedFile 
@@ -108,10 +113,24 @@ public class Mod3902015Print extends HttpServlet {
 				+ "&MOD=390" 
 				+ "&PRG=PTLINKF3"
 				+ "&EJF=2016";
-		String urlParameters = (year == 2015 ? urlParameters2015 : urlParameters2016);
+		} else if (year == 2017) {
+			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
+			urlParameters = "HID=INF7390A" 
+				+ "&IDI=ES"
+				+ "&LEV=000000000000"
+				+ "&F01=" + encodedFile 
+				+ "&RUT="  
+				+ "&PRG=PTLINKN3"
+				+ "&FIN=" 
+				+ "&EJF=2017"
+				+ "&MOD=390";
+		} else {
+			throw new ServletException("Ejercicio no soportado.");
+		}
+		
 		// PRODUCCION String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021" PRUEBAS 
 		// String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
-		String request = "https://www6.aeat.es/es13/l/zi21zilk0021";
+		 
 		
 
 		URL url = new URL(request);
@@ -145,7 +164,7 @@ public class Mod3902015Print extends HttpServlet {
 		DataInputStream input = new DataInputStream(connection.getInputStream());
 
 		// resp.setContentType(MimeType.MIME_PDF.getName()); //
-		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
+		// resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
 		AonIOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();
 		connection.disconnect();

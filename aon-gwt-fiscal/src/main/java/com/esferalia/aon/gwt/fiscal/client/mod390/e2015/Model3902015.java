@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
@@ -15,7 +14,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage.ValidationMessages;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -26,7 +24,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -64,28 +61,10 @@ public class Model3902015 extends DockLayoutPanel  {
 		void setCallback( IMod3902015CallBack callback );
 	}	
 	
-	private Button newButton = new Button();
-	private Button saveButton = new Button();
-	private Button cancelButton = new Button();
-	private Button deleteButton = new Button();
-	private Button markAsPendingButton = new Button();
-	private Button markAsFinishedButton = new Button();
-	private Button markAsSentButton = new Button();
-	private Button printButton = new Button();
-	private Button generateFileButton = new Button();
-	
-	private InlineLabel documentLabel = new InlineLabel();
-	private InlineLabel nameLabel = new InlineLabel();
-	private InlineLabel surnameLabel = new InlineLabel();
-	private FlowPanel  dirtyPanel = new FlowPanel ();
-	private InlineLabel statusLabel = new InlineLabel();
-	private InlineLabel replacedLabel = new InlineLabel();
-	private Button commentsButton = new Button();
-	
 	private FlowPanel linkContainer;
 	private DeckPanel pagesPanel;
 	
-	private FormPanel diskForm = new FormPanel("_blank");
+	private FormPanel diskForm;
 	private Hidden mod390Hidden = new Hidden("mod390");
 	private Hidden domainIdHidden = new Hidden("domainId");
 	private Hidden domainNameHidden = new Hidden("domainName");
@@ -154,6 +133,8 @@ public class Model3902015 extends DockLayoutPanel  {
 		toolbar.setWidget(0, 2, buttonContainer);
 		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
 		
+		Button newButton = new Button();
+		newButton.setVisible(!m390.isNew());
 		newButton.setText(AON.MSG.newAction());
 		newButton.setTitle(newButton.getText());
 		newButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -168,6 +149,8 @@ public class Model3902015 extends DockLayoutPanel  {
 		});
 		buttonContainer.add(newButton);
 		
+		Button saveButton = new Button();
+		saveButton.setVisible(!m390.isFinished() && !m390.isSent());
 		saveButton.setText(AON.MSG.saveAction());
 		saveButton.setTitle(newButton.getText());
 		saveButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -214,6 +197,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		});
 		buttonContainer.add(saveButton);
 
+		Button cancelButton = new Button();
 		cancelButton.setText(AON.MSG.cancelAction());
 		cancelButton.setTitle(newButton.getText());
 		cancelButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -228,6 +212,8 @@ public class Model3902015 extends DockLayoutPanel  {
 		});
 		buttonContainer.add(cancelButton);
 
+		Button deleteButton = new Button();
+		deleteButton.setVisible(!m390.isNew() && !m390.isFinished() && !m390.isSent());
 		deleteButton.setText(AON.MSG.deleteAction());
 		deleteButton.setTitle(newButton.getText());
 		deleteButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -269,6 +255,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		});
 		buttonContainer.add(deleteButton);
 		
+		Button markAsFinishedButton = new Button();
 		markAsFinishedButton.setVisible(!m390.isNew() &&
 				(m390.getStatus() == FiscalStatus.PENDING 
 				|| m390.getStatus() == FiscalStatus.MISSING));
@@ -297,8 +284,8 @@ public class Model3902015 extends DockLayoutPanel  {
 		});
 		buttonContainer.add(markAsFinishedButton);
 
-		markAsSentButton.setVisible(!m390.isNew() &&
-				(m390.getStatus() == FiscalStatus.FINISHED));
+		Button markAsSentButton = new Button();
+		markAsSentButton.setVisible(!m390.isNew() && (m390.isFinished()));		
 		markAsSentButton.setText(AON.MSG.markAsSent());
 		markAsSentButton.setTitle(markAsSentButton.getText());
 		markAsSentButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -323,12 +310,13 @@ public class Model3902015 extends DockLayoutPanel  {
 			}
 		});
 		buttonContainer.add(markAsSentButton);
-
-		markAsPendingButton.setVisible(!m390.isNew() &&
-				(m390.getStatus() == FiscalStatus.FINISHED 
-				|| m390.getStatus() == FiscalStatus.BATCHED
-				|| m390.getStatus() == FiscalStatus.SENT
-				|| m390.getStatus() == FiscalStatus.BLOCKED));
+		
+		Button markAsPendingButton = new Button();
+		markAsPendingButton.setVisible(!m390.isNew() 
+				&& (m390.isFinished() 
+				|| m390.getStatus() == FiscalStatus.BATCHED 
+				|| m390.isSent()
+				|| m390.isBlocked()));
 		markAsPendingButton.setText(AON.MSG.reopen());
 		markAsPendingButton.setTitle(markAsPendingButton.getText());
 		markAsPendingButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -353,7 +341,9 @@ public class Model3902015 extends DockLayoutPanel  {
 			}
 		});
 		buttonContainer.add(markAsPendingButton);
-
+		
+		Button  printButton = new Button();
+		printButton.setVisible(!m390.isNew());
 		printButton.setText(AON.MSG.predeclaration());
 		printButton.setTitle(newButton.getText());
 		printButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -367,6 +357,8 @@ public class Model3902015 extends DockLayoutPanel  {
 		});
 		buttonContainer.add(printButton);
 		
+		Button generateFileButton = new Button();
+		generateFileButton.setVisible(!m390.isNew() && (m390.isFinished() || m390.isSent()));
 		generateFileButton.setText(AON.MSG.generateFile());
 		generateFileButton.setTitle(newButton.getText());
 		generateFileButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -375,15 +367,22 @@ public class Model3902015 extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("Se va a proceder a la generaci\u00F3n del fichero.\n"
-						+ " Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n"
-						+ " El fichero se genera a partir de los datos guardados.");
 				submitForm(MOD390_2015_FILE, m390.getId());
 			}
 		});
 		buttonContainer.add(generateFileButton);
-				
 		toolbarPanel.add(toolbar);
+				
+		FlowPanel formContainer = new FlowPanel();
+		diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		formFlowPanel.add(mod390Hidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formContainer.add(diskForm);
+		toolbarPanel.add(formContainer);
 		return toolbarPanel;
 	}
 
@@ -416,13 +415,6 @@ public class Model3902015 extends DockLayoutPanel  {
 		add(container);
 		WestFocusPanel wfp = (WestFocusPanel) linkContainer.getWidget(0);
 		wfp.showPage();
-
-		deleteButton.setVisible(m390.getId() != null);
-		newButton.setVisible(m390.getId() != null);
-		cancelButton.setVisible(true);
-		saveButton.setVisible(true);
-		generateFileButton.setVisible(m390.getId() != null);
-		printButton.setVisible(m390.getId() != null);
 	}
 
 	private Widget getLinksPanel(Mod3902015 m390, Model390Callback cbk) {
@@ -618,11 +610,16 @@ public class Model3902015 extends DockLayoutPanel  {
 		FlowPanel cell01 = new FlowPanel();
 		cell01.setStyleName(AON.AON_CSS.aonFontBig());
 		cell01.addStyleName(AON.AON_CSS.aonTextCenter());
+		InlineLabel documentLabel = new InlineLabel();
 		documentLabel.setText(m390.getDocument());
 		cell01.add(documentLabel);
+		
+		InlineLabel  nameLabel = new InlineLabel();
 		nameLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
 		nameLabel.setText(m390.getName());
 		cell01.add(nameLabel);
+		
+		InlineLabel surnameLabel = new InlineLabel();
 		surnameLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
 		surnameLabel.setText(m390.getSurname());
 		cell01.add(surnameLabel);
@@ -632,6 +629,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		table.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
 		table.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
 
+		InlineLabel replacedLabel = new InlineLabel();
 		if (m390.isReplacement()) {
 			replacedLabel.setText("Sustit.");
 			replacedLabel.setStyleName(AON.AON_CSS.aonIconChecked());
@@ -650,17 +648,23 @@ public class Model3902015 extends DockLayoutPanel  {
 		table.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridEven());
 		table.getCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonTextCenter());
 		
+		FlowPanel  dirtyPanel = new FlowPanel ();
 		table.setWidget(0, 3, dirtyPanel);
 		table.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonPanelGridEven());
 		table.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonTextCenter());
 		
-		styleStatusLabel(m390);
+		InlineLabel statusLabel = new InlineLabel();
+		statusLabel.setText(m390.getStatus().getName());
+		statusLabel.setStyleName(FiscalModelUtils.getStatusIconStyle(m390.getStatus()));
+		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+
 		table.setWidget(0, 4, statusLabel);
 		table.getCellFormatter().setStyleName(0, 4, AON.AON_CSS.aonPanelGridEven());
 		table.getCellFormatter().addStyleName(0, 4, AON.AON_CSS.aonNowrap());
 		table.getCellFormatter().addStyleName(0, 4, AON.AON_CSS.aonTextCenter());
 		
 		FlowPanel commentsPanel = new FlowPanel();
+		Button commentsButton = new Button();
 		commentsButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
 		commentsButton.addClickHandler(new ClickHandler() {
 			
@@ -676,7 +680,7 @@ public class Model3902015 extends DockLayoutPanel  {
 					@Override
 					public void onValueChange(ValueChangeEvent<String> event) {
 						m390.setComments(event.getValue());
-						styleCommentsButton(m390);
+						styleCommentsButton(m390,commentsButton);
 						Model390.MOD390_SERVICE.saveComments(Model303.getCurrentDomainName(), m390, new AsyncCallback<Mod390>() {
 							@Override
 							public void onSuccess(Mod390 result) {
@@ -704,7 +708,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		commentsPanel.add(commentsButton);
 		commentsPanel.add(new InlineLabel(AON.MSG.comments()));
 		table.setWidget(0, 5, commentsPanel);
-		styleCommentsButton(m390);
+		styleCommentsButton(m390,commentsButton);
 		table.getCellFormatter().setStyleName(0, 5, AON.AON_CSS.aonPanelGridEven());
 		table.getCellFormatter().addStyleName(0, 5, AON.AON_CSS.aonTextCenter());
 
@@ -712,13 +716,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		return panel;
 	}
 
-	private void styleStatusLabel(Mod390 mod) {
-		statusLabel.setText(mod.getStatus().getName());
-		statusLabel.setStyleName(FiscalModelUtils.getStatusIconStyle(mod.getStatus()));
-		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-	}
-
-	private void styleCommentsButton(Mod3902015 m390) {
+	private void styleCommentsButton(Mod3902015 m390, Button commentsButton) {
 		if (AonStringUtils.isEmpty(m390.getComments())) {
 			commentsButton.addStyleName(AON.AON_CSS.aonIconComment());
 			commentsButton.removeStyleName(AON.AON_CSS.aonIconCommentRed());

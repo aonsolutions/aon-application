@@ -31,7 +31,7 @@ public class NewDeclarationPopup extends CustomDialog {
 	private CheckBox withoutActivity = new CheckBox();
 	private Label defaultVatRegimeLabel = new Label();
 	private ListBox defaultVatRegime = new ListBox();
-	private CheckBox oldStyle = new CheckBox();
+	private ListBox oldStyle = new ListBox();
 	
 	public NewDeclarationPopup(final Mod390 mod390 ,final Model390Callback callback) {
 		setCaption(AON.MSG.newDeclaration());
@@ -142,17 +142,26 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.setWidget(row, 0, withoutActivity);
 		row++;
 		
+		
+		Button acceptButton = new Button();
+
 		// ORIGEN DATOS.
-		oldStyle.setText("Marque si a realizado los modelos 303 con el programa antiguo");
-		oldStyle.addClickHandler(new ClickHandler() {
+		oldStyle.addStyleName(AON.AON_CSS.aonMarginTop()); 
+		oldStyle.addStyleName(AON.AON_CSS.aonMarginBottom());
+		oldStyle.addItem("<Seleccione una opci\u00F3n>");
+		oldStyle.addItem("Modelos 303 en el programa antiguo");
+		oldStyle.addItem("Modelos 303 en el programa nuevo");
+		oldStyle.addChangeHandler(new ChangeHandler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				mod390.setOldStyle(oldStyle.getValue());
+			public void onChange(ChangeEvent event) {
+				acceptButton.setVisible(oldStyle.getSelectedIndex() != 0);
+				mod390.setOldStyle(oldStyle.getSelectedIndex() == 1);
 			}
 		});
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
 		tab.setWidget(row, 0, oldStyle);
 		row++;
 
@@ -162,9 +171,10 @@ public class NewDeclarationPopup extends CustomDialog {
 		buttonsPanel.setStyleName(AON.AON_CSS.aonPadding());
 		buttonsPanel.addStyleName(AON.AON_CSS.aonMarginTop());
 		buttonsPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		Button acceptButton = new Button();
+
 		acceptButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
 		acceptButton.setText( AON.MSG.accept());
+		acceptButton.setVisible(false);
 		
 		acceptButton.addClickHandler(new ClickHandler() {
 			
