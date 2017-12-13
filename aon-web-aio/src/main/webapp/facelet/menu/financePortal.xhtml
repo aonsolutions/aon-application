@@ -277,6 +277,11 @@
 									<aon:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 										<aon:if test="#{aonRole.accountingOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="account-financePortal"
+													action="account_list-financePortal"
+													value="#{bundle.account_module}" />
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="invoiceExporter-financePortal"
 													action="#{exporter.initialAction}"
 													actionListener="#{exporter.onInit}"
