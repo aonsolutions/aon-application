@@ -11,13 +11,10 @@
 	For non-sticky sessions the configuration (for both/all tomcats) would look like this
 	-->
         <!--Manager
-		sticky="false"
-		lockingMode="none"
-		sessionBackupAsync="false"
-		requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js|logo)$"
-                className="de.javakaffee.web.msm.MemcachedBackupSessionManager"
-                memcachedNodes="MEMCACHED_NODES"
-		transcoderFactoryClass="de.javakaffee.web.msm.JavaSerializationTranscoderFactory"
-	>
+		createIfNotExist="true" 
+		regionId="DYNAMODB_MANAGER_REGION_ID"
+		className="com.amazonaws.services.dynamodb.sessionmanager.DynamoDBSessionManager" 
+		>
         </Manager-->
+   
 </Context>

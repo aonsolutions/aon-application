@@ -46,11 +46,11 @@ EOF
 	jdbc:mysql://$DB_HOST:$DB_PORT $DB_USER $DB_PASSWD org.gjt.mm.mysql.Driver \
 	|| echo -e "Can't up2date all databases";
 
-	[[ -n $MEMCACHED_NODES ]] && \
+	[[ -n $DYNAMODB_MANAGER_REGION_ID ]] && \
 	sed -i \
 	-e 's/Manager-->/Manager>/' \
 	-e 's/<!--Manager/<Manager/' \
-	-e 's/MEMCACHED_NODES/'$MEMCACHED_NODES'/' $AON_AIO_HOME/META-INF/context.xml;
+	-e 's/DYNAMODB_MANAGER_REGION_ID/'$DYNAMODB_MANAGER_REGION_ID'/' $AON_AIO_HOME/META-INF/context.xml;
 
         cat << EOF > $TOMCAT_BINDIR/setenv.sh
 CATALINA_OPTS="-Duser.language=es -Duser.country=ES -Djava.security.auth.login.config=$TOMCAT_CONFDIR/login.config"

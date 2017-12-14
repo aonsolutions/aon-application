@@ -29,10 +29,8 @@ ENV COMMONS_DBUTILS_URL=http://central.maven.org/maven2/commons-dbutils/commons-
 ENV MCHANGE_COMMONS_URL=http://central.maven.org/maven2/com/mchange/mchange-commons-java/0.2.3.3/mchange-commons-java-0.2.3.3.jar
 ENV COMMONS_LOGGING_URL=http://central.maven.org/maven2/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar
 ENV COMMONS_COLLECTIONS_URL=http://central.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar
-ENV SPY_MEMCACHED_URL=http://central.maven.org/maven2/net/spy/spymemcached/2.11.1/spymemcached-2.11.1.jar
-ENV MEMCACHED_SESSION_MANAGER_URL=http://central.maven.org/maven2/de/javakaffee/msm/memcached-session-manager/2.1.1/memcached-session-manager-2.1.1.jar
-ENV MEMCACHED_SESSION_MANAGER_TC9_URL=http://dev.esferalia.net/maven2_repositories/external_free/de/javakaffee/msm/memcached-session-manager-tc9/2.1.1/memcached-session-manager-tc9-2.1.1.jar
 ENV IZENPESIGNER_APPLET=http://dev.esferalia.net/maven2_repositories/external_free/izenpe/izenpesigner-applet/1.0/izenpesigner-applet-1.0.jar
+ENV DYNAMODB_SESSION_MANAGER=https://github.com/aws/aws-dynamodb-session-tomcat/releases/download/v2.0.4/aws-dynamodb-session-tomcat-2.0.4.jar
 
 RUN set -x \
 	\
@@ -45,9 +43,7 @@ RUN set -x \
 	&& wget "$COMMONS_LOGGING_URL" \
 	&& wget "$MCHANGE_COMMONS_URL" \ 
 	&& wget "$COMMONS_COLLECTIONS_URL" \
-	&& wget "$SPY_MEMCACHED_URL" \
-	&& wget "$MEMCACHED_SESSION_MANAGER_URL" \
-	&& wget "$MEMCACHED_SESSION_MANAGER_TC9_URL"
+	&& wget "$DYNAMODB_SESSION_MANAGER"
 
 
 ENV TOMCAT_BINDIR $CATALINA_HOME/bin
