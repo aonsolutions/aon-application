@@ -511,8 +511,10 @@ public class Mod349DAO {
 				   
 				   Mod349Key keyOperation = null;  // Clave Modelo 349 según tipo de la factura (igual que antes en el modelo viejo)
 				   
-				   if (invoiceType == InvoiceType.PURCHASE) {				
-						keyOperation = Mod349Key.A; // // Compras (Adquisiciones intracomunitarias de bienes) 
+				   if (invoiceType == InvoiceType.PURCHASE) {
+					   if (isService)
+						   keyOperation = Mod349Key.I; // Compras (Adquisiciones intracomunitarias de servicios)
+					   else keyOperation = Mod349Key.A; // Compras (Adquisiciones intracomunitarias de bienes) 
 				   }
 				   else if (invoiceType == InvoiceType.SALES) {
 						if (isService)
@@ -634,36 +636,42 @@ public class Mod349DAO {
 		// Facturas a localizar según la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
 		final InvoiceType invoiceType1;
 		final InvoiceType invoiceType2;
+		final InvoiceType invoiceType3;
 		final boolean isService;
 		
 		if (detail.getType() == Mod349Key.A) {       // Compras (Adquisiciones intracomunitarias de bienes)
 			invoiceType1 = InvoiceType.PURCHASE;
 			invoiceType2 = null;
+			invoiceType3 = null;
 			isService = false;
 	    }
-	    else if (detail.getType() == Mod349Key.S) {  // Ventas (Prestaciones Intracomunitarias de Servicios)
+	    else if (detail.getType() == Mod349Key.S) {  // Ventas de Servicios (Prestaciones Intracomunitarias de Servicios)
 	    	invoiceType1 = InvoiceType.SALES;
 	    	invoiceType2 = null;
+	    	invoiceType3 = null;
 	    	isService = true;
 	    }
 	    else if (detail.getType() == Mod349Key.E ) { // Ventas (Entregas intracomunitarias de bienes)
 	    	invoiceType1 = InvoiceType.SALES;
 	    	invoiceType2 = null;
+	    	invoiceType3 = null;
 	    	isService = false;
 	    }				
-	    else if (detail.getType() == Mod349Key.I) {  // Gastos (Adquisiciones intracomunitarias de servicios)
+	    else if (detail.getType() == Mod349Key.I) {  // Gastos y Compras de Servicios (Adquisiciones intracomunitarias de servicios)
 	    	invoiceType1 = InvoiceType.EXPENSES;
 	    	invoiceType2 = InvoiceType.UNDEDUCTIBLE;
+	    	invoiceType3 = InvoiceType.PURCHASE;
 	    	isService = true;
 	    }
 	    else {
 	    	invoiceType1 = null;
 	    	invoiceType2 = null;
+	    	invoiceType3 = null;
 	    	isService = false;
 	    }
 		
 		return getVatBreakdown(ctx, mod349, isDiffEnabled)  
-			   .filter( p -> (p.getInvoiceType() == invoiceType1 || p.getInvoiceType() == invoiceType2) && p.isService() == isService && p.getRegistryDocumentCountry() == detail.getCountry() && AonStringUtils.equals(p.getRegistryDocument(),detail.getDocument()));
+			   .filter( p -> (p.getInvoiceType() == invoiceType1 || p.getInvoiceType() == invoiceType2 || p.getInvoiceType() == invoiceType3) && p.isService() == isService && p.getRegistryDocumentCountry() == detail.getCountry() && AonStringUtils.equals(p.getRegistryDocument(),detail.getDocument()));
 		
 	}
 	
