@@ -366,7 +366,9 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append("</T30301000>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_4T_REG_2 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod()))) ,new IPropertyFiller[] {
+		,AEAT_2017_4T_REG_2 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod()))) 
+				&& mod303.getAmount(Mod303Key.CT_A02) < 2 // Simplificado
+				,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30302000>")
 		   ,(wr, mod) -> wr.append(" ")
 		   
@@ -529,14 +531,14 @@ public class Mod303Writer {
 			   ,(wr, mod) -> wr.append("</T30303000>")
 			   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_4T_REG_4 (mod303 -> (mod303.isAEAT() 
-				&& ((mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod()))
-				&& (AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P1C))
-				 || AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P2C))
-				 || AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P3C))
-				 || AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P4C))
-				 || AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P5C))
-				)) 
+		,AEAT_2017_4T_REG_4 (mod303 -> mod303.isAEAT() 
+				&& (mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod())
+//				&& (AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P1C))
+//				 || AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P2C))
+//				 || AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P3C))
+//				 || AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P4C))
+//				 || AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_P5C))
+//				)) 
 				,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30304000>")
 		   ,(wr, mod) -> wr.append(" ")
