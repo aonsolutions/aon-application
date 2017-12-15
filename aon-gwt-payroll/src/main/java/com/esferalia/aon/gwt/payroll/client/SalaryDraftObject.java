@@ -258,8 +258,6 @@ public class SalaryDraftObject implements IContextProvider {
 		}
 	}
 
-	private Date draftEndDate;
-	private Date draftStartDate;
 	
 	private Set<Date> draftSections;
 
@@ -766,23 +764,17 @@ public class SalaryDraftObject implements IContextProvider {
 	//
 
 	public Date getDraftEndDate() {
-		return draftEndDate == null ? salaryDraft.getEndDate()
-				: (draftEndDate == NULL_DATE ? null : draftEndDate);
+		return null;
+//		return draftEndDate == null ? salaryDraft.getEndDate()
+//				: (draftEndDate == NULL_DATE ? null : draftEndDate);
 	}
 
 	public Date getDraftStartDate() {
-		return draftStartDate == null ? salaryDraft.getStartDate()
-				: draftStartDate;
+		return salaryDraft.getStartDate();
+//		return draftStartDate == null ? salaryDraft.getStartDate()
+//				: draftStartDate;
 	}
 
-	public void setDraftPeriod(Date draftStartDate) {
-		setDraftPeriod(draftStartDate, NULL_DATE);
-	}
-
-	public void setDraftPeriod(Date draftStartDate, Date draftEndDate) {
-		this.draftStartDate = draftStartDate;
-		this.draftEndDate = draftEndDate;
-	}
 
 	// ------------------------------------------
 	// Undo & Redo Support

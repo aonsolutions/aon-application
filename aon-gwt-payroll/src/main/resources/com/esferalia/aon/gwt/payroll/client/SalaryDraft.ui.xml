@@ -265,9 +265,6 @@
 								<g:ListBox ui:field="zoomListBox" />
 								<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
-								<g:Button debugId='moreButton' ui:field='moreButton'
-									styleName='{style.aon-button-view} aon-finding-toolbar-item aon-icon-view'
-									text="M&Aacute;S..." />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -295,11 +292,6 @@
 									styleName='aon-finding-toolbar-item {res.css.aonIconUndo}' />
 								<g:Button debugId='redoButton' ui:field='redoButton'
 									styleName="aon-finding-toolbar-item {res.css.aonIconRedo}" />
-								<g:ListBox debugId='datesListBox' ui:field='datesListBox'>
-									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo este mes</g:item>
-									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
-									<g:item value="{CUSTOM}">Personalizado...</g:item>
-								</g:ListBox>
 								<g:CheckBox debugId='tgssCheck' ui:field='tgssCheck'
 									styleName='aon-finding-toolbar-item aon-icon-segsocial-small {style.toolBar-checkBox} '
 									text="SILTRA" checked="false" />

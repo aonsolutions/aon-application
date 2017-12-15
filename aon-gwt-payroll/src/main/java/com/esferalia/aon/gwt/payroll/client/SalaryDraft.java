@@ -956,7 +956,7 @@ public class SalaryDraft extends ResizeComposite
 
 			}
 
-			salaryDraftObject.setDraftPeriod(salaryDraftObject.getDraftStartDate(), noHolidaysVar.getEndDate());
+			//salaryDraftObject.setDraftPeriod(salaryDraftObject.getDraftStartDate(), noHolidaysVar.getEndDate());
 
 			SalaryDraft.this.calculate(getNextVariableFocusCallback());
 
@@ -2208,8 +2208,6 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Button undoAllButton;
 
-	@UiField
-	ListBox datesListBox;
 
 	@UiField
 	CheckBox tgssCheck;
@@ -2226,9 +2224,6 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	MyStyle style;
 
-	@UiField
-	Button moreButton;
-	
 	@UiField
 	HorizontalPanel timeRulePanel;
 
@@ -2277,7 +2272,6 @@ public class SalaryDraft extends ResizeComposite
 		zoom = Constants.DEFAULT_ZOOM;
 		initEventsStyles(style);
 		initSalaryDb();
-		initDatesListBox();
 		export2JS(this);
 	}
 
@@ -2295,7 +2289,6 @@ public class SalaryDraft extends ResizeComposite
 	@Override
 	public void onChange(SalarySelect salarySelect) {
 		salaryDraftObject.calculate(this);
-		syncDatesListBox();
 	}
 
 	@Override
@@ -2345,59 +2338,6 @@ public class SalaryDraft extends ResizeComposite
 
 	// ------------------------------------------------------------ @UIHandlers
 
-	@UiHandler("moreButton")
-	void onMoreClick(ClickEvent event) {
-		if (morePopup == null) {
-			MenuBar menuBar = new MenuBar(true);
-			autoSaveMenuItem = new MenuItem("Guardar Autom\u00e1ticamente al Emitir N\u00f3mina", new Command() {
-				@Override
-				public void execute() {
-					autoSave = !autoSave;
-					autoSaveMenuItem.setStyleName("aon-MenuItemCheckYes", autoSave);
-					morePopup.hide();
-				}
-			});
-			autoSaveMenuItem.setStyleName("aon-MenuItemCheckYes", autoSave);
-			autoSaveMenuItem.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
-			menuBar.addItem(autoSaveMenuItem);
-			
-			dummiesMenuItem = new MenuItem("N\u00f3minas para DUMMIES (\u25CEo\u25CE)", new Command() {
-				@Override
-				public void execute() {
-					dummies = !dummies;
-					dummiesMenuItem.setStyleName("aon-MenuItemCheckYes", dummies);
-					SalaryDraft.this.calculate();
-					morePopup.hide();
-				}
-			});
-			dummiesMenuItem.setStyleName("aon-MenuItemCheckYes", dummies);
-			dummiesMenuItem.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
-			menuBar.addItem(dummiesMenuItem);
-
-			morePopup = new PopupPanel();
-			morePopup.add(menuBar);
-			morePopup.setStyleName("gwt-MenuBarPopup");
-			morePopup.setAutoHideEnabled(true);
-		}
-
-		morePopup.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-
-			@Override
-			public void setPosition(int offsetWidth, int offsetHeight) {
-
-				int left = moreButton.getAbsoluteLeft();
-				int top = moreButton.getAbsoluteTop() + moreButton.getOffsetHeight();
-
-				int popUpWidth = morePopup.getOffsetWidth();
-				int windowWidth = Window.getClientWidth();
-
-				left = Math.min(left, windowWidth - popUpWidth);
-
-				morePopup.setPopupPosition(left, top);
-			}
-		});
-
-	}
 
 	@UiHandler("irpfPreviewButton")
 	void onIrpfPreviewClick(ClickEvent event) {
@@ -2615,7 +2555,6 @@ public class SalaryDraft extends ResizeComposite
 
 		fxButton.setVisible(true);
 		salarySelect.setVisible(true);
-		datesListBox.setVisible(true);
 		printPreviewButton.setVisible(true);
 		tgssCheck.setVisible(isSalary());
 		dbSalaryCheck.setVisible(hasDbSalary());
@@ -2630,7 +2569,6 @@ public class SalaryDraft extends ResizeComposite
 
 		fxButton.setVisible(false);
 		salarySelect.setVisible(false);
-		datesListBox.setVisible(false);
 		tgssCheck.setVisible(false);
 		dbSalaryCheck.setVisible(false);
 		printPreviewButton.setVisible(false);
@@ -2644,7 +2582,6 @@ public class SalaryDraft extends ResizeComposite
 
 		fxButton.setVisible(false);
 		salarySelect.setVisible(false);
-		datesListBox.setVisible(false);
 		tgssCheck.setVisible(false);
 		dbSalaryCheck.setVisible(false);
 		printPreviewButton.setVisible(false);
@@ -2854,7 +2791,6 @@ public class SalaryDraft extends ResizeComposite
 		
 		salaryDraftObject.calculate(this);
 
-		syncDatesListBox();
 		syncSalarySelect();
 
 		// clean...???
@@ -3095,63 +3031,6 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}
 
-	private void initDatesListBox() {
-		datesListBox.addChangeHandler(new ChangeHandler() {
-
-			PeriodDialog periodDialog = null;
-
-			private PeriodDialog getPeriodDialog() {
-
-				if (periodDialog != null)
-					return periodDialog;
-
-				periodDialog = new PeriodDialog() {
-					{
-						setDateTimeFormat(DATE_SHORT);
-					}
-
-					@Override
-					protected void onAccept() {
-						if (getEndDate() == null) {
-							salaryDraftObject.setDraftPeriod(getStartDate());
-						} else {
-							salaryDraftObject.setDraftPeriod(getStartDate(), getEndDate());
-						}
-						syncDatesListBox();
-					}
-				};
-				return periodDialog;
-			}
-
-			@Override
-			public void onChange(ChangeEvent event) {
-
-				int index = datesListBox.getSelectedIndex();
-				String value = datesListBox.getValue(index);
-				if (CUSTOM.equals(value)) {
-					getPeriodDialog().center();
-					getPeriodDialog().show();
-				} else if (ONLY_THIS_MONTH.equals(value)) {
-					salaryDraftObject.setDraftPeriod(null, null);
-				} else if (FROM_THIS_MONTH.equals(value)) {
-					salaryDraftObject.setDraftPeriod(null);
-				} else {
-					String dates[] = value.split("\\.\\.\\.");
-					Date start = DATE_SHORT.parse(dates[0]);
-					if (dates.length == 1) {
-						salaryDraftObject.setDraftPeriod(start);
-					} else {
-						Date end = DATE_SHORT.parse(dates[1]);
-						salaryDraftObject.setDraftPeriod(start, end);
-					}
-				}
-
-				acceptButton.setEnabled(salaryDraftObject.hasDrafts());
-
-				salaryDraftObject.calculate(SalaryDraft.this);
-			}
-		});
-	}
 
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
@@ -3227,43 +3106,6 @@ public class SalaryDraft extends ResizeComposite
 				salarySelect.setExtras(extras);
 			}
 		});
-	}
-
-	private void syncDatesListBox() {
-
-		Date draftStartDate = salaryDraftObject.getDraftStartDate();
-		Date draftEndDate = salaryDraftObject.getDraftEndDate();
-
-		Date date = salaryDraftObject.getStartDate();
-		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(date);
-
-		datesListBox.setItemText(0, "Este mes ( " + AON.MONTH_FORMAT.format(firstDayOfMonth) + " )");
-		datesListBox.setItemText(1, "A partir de este mes ( " + AON.MONTH_FORMAT.format(firstDayOfMonth) + "...)");
-
-		if (DateUtils.equals(draftStartDate, firstDayOfMonth)) {
-			if (draftEndDate == null) {
-				datesListBox.setSelectedIndex(1);
-				return;
-			}
-			Date lastDayOfMonth = DateUtils.getLastDayOfMonth(date);
-			if (DateUtils.equals(draftEndDate, lastDayOfMonth)) {
-				datesListBox.setSelectedIndex(0);
-				return;
-			}
-		}
-
-		StringBuffer buffer = new StringBuffer("");
-		buffer.append(DATE_SHORT.format(draftStartDate));
-		buffer.append("...");
-		if (draftEndDate != null)
-			buffer.append(DATE_SHORT.format(draftEndDate));
-
-		datesListBox.setItemText(2, buffer.toString());
-		datesListBox.setValue(2, buffer.toString());
-		datesListBox.setSelectedIndex(2);
-
-		if (datesListBox.getItemCount() < 4)
-			datesListBox.addItem("Personalizado...", CUSTOM);
 	}
 
 	private void initSalaryDb() {
@@ -5150,10 +4992,6 @@ public class SalaryDraft extends ResizeComposite
 
 //		acceptButton.setEnabled(!readOnly);
 		acceptButton.setVisible(!automatic);
-//		moreButton.setEnabled(!readOnly);
-		moreButton.setVisible(!automatic);
-//		datesListBox.setEnabled(!readOnly);
-		datesListBox.setVisible(!automatic);
 		
 		totalPaymentsLabel.setReadOnly(automatic);
 		totalLiquidLabel.setReadOnly(automatic);
