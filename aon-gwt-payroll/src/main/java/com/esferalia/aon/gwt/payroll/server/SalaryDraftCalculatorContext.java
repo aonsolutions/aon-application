@@ -687,11 +687,13 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			return;
 		if (implicit == null)
 			return;
-		
-		if (implicit instanceof IExpressionVariable<?>
-				&& ((IExpressionVariable<?>) implicit).getExpression()
+		// TODO: What hell is this
+		if (implicit instanceof IExpressionVariable<?> )
+			if ( ((IExpressionVariable<?>) implicit).getExpression() != null )
+				if (((IExpressionVariable<?>) implicit).getExpression().getScope() != null )
+					if (((IExpressionVariable<?>) implicit).getExpression()
 						.getScope().compareTo(ExpressionScope.AGREEMENT) >= 0)
-			return;
+						return;
 		
 		if ( isUndefined(implicit))
 			return;
