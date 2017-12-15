@@ -673,21 +673,34 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
 		,CT_S119(Mod303Key.CT_S119,null,null,null, "calculateIndiceTemporada( CT_S1X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S119,ensureActivity(mod,0).getInd())
-			,mod -> ensureActivity(mod,0).setInd(mod.getAmount(Mod303Key.CT_S119))
+			,mod -> ensureActivity(mod,0).setInd(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S119))
 			,true)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,CT_S120(Mod303Key.CT_S120,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S120,ensureActivity(mod,0).getPor())
-			,mod -> ensureActivity(mod,0).setPor(mod.getAmount(Mod303Key.CT_S120))
+			,mod -> ensureActivity(mod,0).setPor(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S120))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
 		,CT_S121(Mod303Key.CT_S121,null,null,null, "calculateIngresoCuenta(1, CT_S1X1, CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S121,ensureActivity(mod,0).getIng())
-			,mod -> ensureActivity(mod,0).setIng(mod.getAmount(Mod303Key.CT_S121))
+			,mod -> ensureActivity(mod,0).setIng(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S121))
+			,true)
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		,CT_S12X(Mod303Key.CT_S12X,null,null,null,"isLastPeriod()?(CT_S117 * 1 / 100):0.0"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_S12X,ensureActivity(mod,0).getSopx())
+			,mod -> ensureActivity(mod,0).setSopx(mod.getAmount(Mod303Key.CT_S12X))
+			,true)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas
+		,CT_S12Y(Mod303Key.CT_S12Y,null,null,null,null
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_S12Y,ensureActivity(mod,0).getSopy())
+			,mod -> ensureActivity(mod,0).setSopy(mod.getAmount(Mod303Key.CT_S12Y))
 			,true)
 		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes
-		,CT_S122(Mod303Key.CT_S122,null,null,null,null,null
+		,CT_S122(Mod303Key.CT_S122,null,null,null,"isLastPeriod()?(CT_S12X+CT_S12Y):0.0"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S122,ensureActivity(mod,0).getSop())
 			,mod -> ensureActivity(mod,0).setSop(mod.getAmount(Mod303Key.CT_S122))
 			,true)
@@ -921,20 +934,33 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
 		,CT_S219(Mod303Key.CT_S219,null,null,null, "calculateIndiceTemporada( CT_S2X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S219,ensureActivity(mod,1).getInd())
-			,mod -> ensureActivity(mod,1).setInd(mod.getAmount(Mod303Key.CT_S219))
+			,mod -> ensureActivity(mod,1).setInd(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S219))
 			,true)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,CT_S220(Mod303Key.CT_S220,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_S220,ensureActivity(mod,1).getPor())
-			,mod -> ensureActivity(mod,1).setPor(mod.getAmount(Mod303Key.CT_S220))
+			,mod -> ensureActivity(mod,1).setPor(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S220))
 			,true)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
 		,CT_S221(Mod303Key.CT_S221,null,null,null,"calculateIngresoCuenta(2, CT_S2X1, CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S221,ensureActivity(mod,1).getIng())
-			,mod -> ensureActivity(mod,1).setIng(mod.getAmount(Mod303Key.CT_S221))
+			,mod -> ensureActivity(mod,1).setIng(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S221))
+			,true)
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		,CT_S22X(Mod303Key.CT_S22X,null,null,null,"isLastPeriod()?(CT_S217 * 1 / 100):0.0"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_S22X,ensureActivity(mod,1).getSopx())
+			,mod -> ensureActivity(mod,1).setSopx(mod.getAmount(Mod303Key.CT_S22X))
+			,true)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas
+		,CT_S22Y(Mod303Key.CT_S22Y,null,null,null,null
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_S22Y,ensureActivity(mod,1).getSopy())
+			,mod -> ensureActivity(mod,1).setSopy(mod.getAmount(Mod303Key.CT_S22Y))
 			,true)
 		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes
-		,CT_S222(Mod303Key.CT_S222,null,null,null,null,null
+		,CT_S222(Mod303Key.CT_S222,null,null,null,"isLastPeriod()?(CT_S22X+CT_S22Y):0.0"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S222,ensureActivity(mod,1).getSop())
 			,mod -> ensureActivity(mod,1).setSop(mod.getAmount(Mod303Key.CT_S222))
 			,true)
@@ -1180,8 +1206,21 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> mod.putAmount(Mod303Key.CT_S321,ensureActivity(mod,2).getIng())
 			,mod -> ensureActivity(mod,2).setIng(mod.getAmount(Mod303Key.CT_S321))
 			,true)
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		,CT_S32X(Mod303Key.CT_S32X,null,null,null,"isLastPeriod()?(CT_S317 * 1 / 100):0.0"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_S32X,ensureActivity(mod,2).getSopx())
+			,mod -> ensureActivity(mod,2).setSopx(mod.getAmount(Mod303Key.CT_S32X))
+			,true)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas
+		,CT_S32Y(Mod303Key.CT_S32Y,null,null,null,null
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_S32Y,ensureActivity(mod,2).getSopy())
+			,mod -> ensureActivity(mod,2).setSopy(mod.getAmount(Mod303Key.CT_S32Y))
+			,true)
 		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes
-		,CT_S322(Mod303Key.CT_S322,null,null,null,null,null
+		,CT_S322(Mod303Key.CT_S322,null,null,null,"isLastPeriod()?(CT_S32X+CT_S32Y):0.0"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S322,ensureActivity(mod,2).getSop())
 			,mod -> ensureActivity(mod,2).setSop(mod.getAmount(Mod303Key.CT_S322))
 			,true)
@@ -1427,8 +1466,21 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> mod.putAmount(Mod303Key.CT_S421,ensureActivity(mod,3).getIng())
 			,mod -> ensureActivity(mod,3).setIng(mod.getAmount(Mod303Key.CT_S421))
 			,true)
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		,CT_S42X(Mod303Key.CT_S42X,null,null,null,"isLastPeriod()?(CT_S417 * 1 / 100):0.0"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_S42X,ensureActivity(mod,3).getSopx())
+			,mod -> ensureActivity(mod,3).setSopx(mod.getAmount(Mod303Key.CT_S42X))
+			,true)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas
+		,CT_S42Y(Mod303Key.CT_S42Y,null,null,null,null
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_S42Y,ensureActivity(mod,3).getSopy())
+			,mod -> ensureActivity(mod,3).setSopy(mod.getAmount(Mod303Key.CT_S42Y))
+			,true)
 		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes
-		,CT_S422(Mod303Key.CT_S422,null,null,null,null,null
+		,CT_S422(Mod303Key.CT_S422,null,null,null,"isLastPeriod()?(CT_S42X+CT_S42Y):0.0"
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S422,ensureActivity(mod,3).getSop())
 			,mod -> ensureActivity(mod,3).setSop(mod.getAmount(Mod303Key.CT_S422))
 			,true)
@@ -1968,6 +2020,30 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 						FiscalModelDetail det = mod303.ensureDetail(key.getKey());
 						det.setAmount(prev.getAmount());
 						det.setDescription(prev.getDescription());
+						if (key == Mod303KeyDAO.CT_S125 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S101))) {
+							Epigraph epi = Epigraph.getEpigraph(mod303.getDescription(Mod303Key.CT_S101));
+							if (epi != null) {
+								mod303.ensureDetail(Mod303Key.CT_S125).setAmount(epi.getPorcMin());
+							}
+						};
+						if (key == Mod303KeyDAO.CT_S225 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S201))) {
+							Epigraph epi = Epigraph.getEpigraph(mod303.getDescription(Mod303Key.CT_S201));
+							if (epi != null) {
+								mod303.ensureDetail(Mod303Key.CT_S225).setAmount(epi.getPorcMin());
+							}
+						};
+						if (key == Mod303KeyDAO.CT_S325 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S301))) {
+							Epigraph epi = Epigraph.getEpigraph(mod303.getDescription(Mod303Key.CT_S301));
+							if (epi != null) {
+								mod303.ensureDetail(Mod303Key.CT_S325).setAmount(epi.getPorcMin());
+							}
+						};
+						if (key == Mod303KeyDAO.CT_S425 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S401))) {
+							Epigraph epi = Epigraph.getEpigraph(mod303.getDescription(Mod303Key.CT_S401));
+							if (epi != null) {
+								mod303.ensureDetail(Mod303Key.CT_S425).setAmount(epi.getPorcMin());
+							}
+						};
 					}
 				}
 			}

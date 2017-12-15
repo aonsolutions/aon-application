@@ -105,8 +105,7 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 	public double calculateResultadoAnual(double quota, double reductions, double supportedQuotas, double tempIndex) {
 		
 		if (!isLastPeriod()) return 0.0;
-		double expenses = AonMathUtils.round(quota * 1 / 100);  
-		double q = AonMathUtils.round((quota - reductions - supportedQuotas - expenses));
+		double q = AonMathUtils.round((quota - reductions - supportedQuotas));
 		if (AonMathUtils.isNotZero(tempIndex)) {
 			q = AonMathUtils.round( q * tempIndex);   
 		}

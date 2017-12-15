@@ -28,6 +28,8 @@ public class Mod303Activity implements Serializable {
 	private double ing;			// Ingreso a cuenta
 	
 	// 4T	
+	private double sopx;		// 1% cuota devengada
+	private double sopy;		// Cuotas soportadas
 	private double sop;			// Cuotas soportadas operaciones corrientes
 	private double ict;			// Índice corrector de actividades de temporada
 	private double res;			// RESULTADO ( [C] - [D] - [G] ) x [H]
@@ -175,6 +177,24 @@ public class Mod303Activity implements Serializable {
 		return this;
 	}
 
+	public double getSopx() {
+		return sopx;
+	}
+
+	public Mod303Activity setSopx(double sopx) {
+		this.sopx = sopx;
+		return this;
+	}
+
+	public double getSopy() {
+		return sopy;
+	}
+
+	public Mod303Activity setSopy(double sopy) {
+		this.sopy = sopy;
+		return this;
+	}
+
 	public double getSop() {
 		return sop;
 	}
@@ -258,6 +278,8 @@ public class Mod303Activity implements Serializable {
 		this.setDia(0);
 		this.setPor(0);
 		this.setIng(0);
+		this.setSopx(0);
+		this.setSopy(0);
 		this.setSop(0);
 		this.setIct(0);
 		this.setRes(0);
@@ -282,6 +304,8 @@ public class Mod303Activity implements Serializable {
 				.setInd(toClone.getInd())
 				.setPor(toClone.getPor())
 				.setIng(toClone.getIng())
+				.setSopx(toClone.getSopx())
+				.setSopy(toClone.getSopy())
 				.setSop(toClone.getSop())
 				.setIct(toClone.getIct())
 				.setRes(toClone.getRes())

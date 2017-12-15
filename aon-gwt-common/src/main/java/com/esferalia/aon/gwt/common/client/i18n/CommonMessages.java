@@ -1121,9 +1121,15 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cuota devengada operaciones corrientes")
 	String page6C();
 
+	@DefaultMessage("1% de la cuota devengada por operaciones corrientes")
+	String devQuota1();
+	
+	@DefaultMessage("Resto cuotas soportadas")
+	String sopQuotaRest();
+
 	@DefaultMessage("Cuotas soportadas operaciones corrientes")
 	String page6D();
-	
+
 	@DefaultMessage("Cuo. Sop. op. corr.")
 	String page6DAbbr();
 
@@ -1153,6 +1159,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Cuota derivada r\u00E9gimen simplificado")
 	String page6J();
+
+	@DefaultMessage("Cuota anual derivada r\u00E9gimen simplificado")
+	String yearSimplifiedQuota();
 
 	@DefaultMessage("Cuota derivada")
 	String derQuota();

@@ -658,7 +658,7 @@ public class Model3032017AEAT extends Model303Base {
 				dialog.setAnimationEnabled(true);
 				dialog.add(actPanel);
 				dialog.setWidth("700px");
-				dialog.setHeight("580px");
+				dialog.setHeight("620px");
 				dialog.show();
 				dialog.center();
 			}
