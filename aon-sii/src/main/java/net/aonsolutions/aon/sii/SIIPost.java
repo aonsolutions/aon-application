@@ -105,6 +105,9 @@ public class SIIPost extends WebServiceGatewaySupport{
     	
     	CustJaxbUnMarshaller marshaller = new CustJaxbUnMarshaller();
     
+    	if(isAraba() || isNavarra() || isGipuzkoa() || isBizkaia())
+    		pruebas = true;
+    	
     	if(isAeat() || isNavarra()) marshaller.setContextPath("net.aonsolutions.core.aeat.sii");
     	else if(isAraba()) marshaller.setContextPath("net.aonsolutions.core.araba.sii");
     	else if(isGipuzkoa()) marshaller.setContextPath("net.aonsolutions.core.gipuzkoa.sii");
