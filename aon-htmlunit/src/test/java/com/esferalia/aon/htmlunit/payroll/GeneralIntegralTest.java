@@ -177,8 +177,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		click("undoButton");
 		wait4Id("agreement-button-1");
-		
-		selectSaveTo("FROM_THIS_MONTH");
+
 		click("acceptButton"); // click without waiting for calculate ?
 		wait4Disabled("acceptButton", true);
 		
@@ -251,7 +250,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentsLabel", totalPayment);
 		assertText("prorationBaseLabel", prorationBase);
 
-		selectSaveTo("FROM_THIS_MONTH");
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		
@@ -917,7 +915,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("description-box-3");
 		assertValue("description-box-3", "[3]ATRASOS");
 
-		selectSaveTo("FROM_THIS_MONTH");
 		click("acceptButton"); // click without waiting for calculate ?
 		wait4Disabled("acceptButton", true);
 		
