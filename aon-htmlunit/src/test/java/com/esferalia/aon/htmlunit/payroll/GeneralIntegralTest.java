@@ -921,7 +921,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.JANUARY);
 		click("delete-button-3");
-		selectSaveTo("FROM_THIS_MONTH");
 		click("acceptButton"); // click without waiting for calculate ?
 		wait4Disabled("acceptButton", true);
 		
