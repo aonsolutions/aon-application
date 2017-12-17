@@ -902,13 +902,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertFalse(undoButton.isDisplayed());
 		HtmlButton redoButton = getElementById("redoButton");
 		Assert.assertFalse(redoButton.isDisplayed());
-		HtmlButton moreButton = getElementById("moreButton");
-		Assert.assertFalse(moreButton.isDisplayed());
-		
-		HtmlSelect dateListBox = getElementById("dateListBox");
-		Assert.assertFalse(dateListBox.isDisplayed());
-		
-		
+
+
 		calculate(Calendar.JANUARY);
 		setValue("description-box-new-payment", "[3]ATRASOS");
 		setValue("amount-box-new-payment", "100");
