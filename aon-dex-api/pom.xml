@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>9.18</version>
+		<version>9.19-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.dex.api</artifactId>
-	<version>9.18</version>
+	<version>9.19-SNAPSHOT</version>
 	<name>AON DEX API</name>
 	<build>
 		<plugins>

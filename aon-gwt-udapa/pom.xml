@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.18</version>
+    <version>9.19-SNAPSHOT</version>
   </parent>
   <groupId>net.aonsolutions</groupId>
   <artifactId>aon.gwt.udapa</artifactId>
