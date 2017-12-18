@@ -289,13 +289,6 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.config}">
-									<aon:if test="#{aonRole.accountingOperator}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="account-configuration"
-												action="account_list-configuration"
-												value="#{bundle.account_module}" />
-										</aon:div>
-									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="template-configuration"
 													action="gwt_templates" title="#{bundle.aon_templates}">
