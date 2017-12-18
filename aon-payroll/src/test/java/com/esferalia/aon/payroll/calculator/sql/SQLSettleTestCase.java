@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -582,7 +583,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put("PORCENTAJE_CGC", format("%f", 4.70));
+						put("PORCENTAJE_CGC", format(Locale.US,"%f", 4.70));
 						put("DIAS_INDEMNIZACION_FIN", format("%d", 12));
 						put("BASE_CGC_MAX","(3642.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");						
 						put("BASE_CGC_MIN","(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA)");						

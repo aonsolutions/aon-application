@@ -359,8 +359,9 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				AGREEMENT.DESCRIPTION
 				)
 				.from(CONTRACT)
-				.join(AGREEMENT_LEVEL_CATEGORY).on(CONTRACT.AGREEMENT_LEVEL_CATEGORY.eq(AGREEMENT_LEVEL_CATEGORY.ID))
-				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+				.join(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+				//.join(AGREEMENT_LEVEL_CATEGORY).on(CONTRACT.AGREEMENT_LEVEL_CATEGORY.eq(AGREEMENT_LEVEL_CATEGORY.ID))
+				//.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
 				.join(AGREEMENT_EXTRA).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT_EXTRA.AGREEMENT))
 				.join(AGREEMENT_PAYMENT).on(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(AGREEMENT_PAYMENT.ID))
 				.join(AGREEMENT).on(AGREEMENT_PAYMENT.AGREEMENT.eq(AGREEMENT.ID))
@@ -394,20 +395,29 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		Cursor<Record> cursor = dslContext
 				.select()
 				.from(CONTRACT)
-				.where(CONTRACT.AGREEMENT_LEVEL_CATEGORY.in(
-
-				dslContext
-						.select(AGREEMENT_LEVEL_CATEGORY.ID)
-						.from(AGREEMENT_LEVEL_CATEGORY)
-						.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.in(
-
+//				.where(CONTRACT.AGREEMENT_LEVEL_CATEGORY.in(
+				.where(CONTRACT.AGREEMENT_LEVEL.in(
+						
 						dslContext
-								.select(AGREEMENT_LEVEL.ID)
-								.from(AGREEMENT_LEVEL)
-								.where(AGREEMENT_LEVEL.AGREEMENT
-										.in(agreementId))))))
+						.select(AGREEMENT_LEVEL.ID)
+						.from(AGREEMENT_LEVEL)
+						.where(AGREEMENT_LEVEL.AGREEMENT
+								.in(agreementId))))
 
-				.fetchLazy();
+		.fetchLazy();
+
+//				dslContext
+//						.select(AGREEMENT_LEVEL_CATEGORY.ID)
+//						.from(AGREEMENT_LEVEL_CATEGORY)
+//						.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.in(
+//
+//						dslContext
+//								.select(AGREEMENT_LEVEL.ID)
+//								.from(AGREEMENT_LEVEL)
+//								.where(AGREEMENT_LEVEL.AGREEMENT
+//										.in(agreementId))))))
+//
+//				.fetchLazy();
 
 		return (cursor.hasNext()) ? true : false;
 
@@ -515,13 +525,21 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 			dslContext
 					.update(CONTRACT)
-					.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
-							(CONTRACT.AGREEMENT_LEVEL_CATEGORY != null) ? CONTRACT.AGREEMENT_LEVEL_CATEGORY
+					.set(CONTRACT.AGREEMENT_LEVEL,
+							(CONTRACT.AGREEMENT_LEVEL != null) ? CONTRACT.AGREEMENT_LEVEL
 									.mul(-1)
-									: CONTRACT.AGREEMENT_LEVEL_CATEGORY)
+									: CONTRACT.AGREEMENT_LEVEL)
 
-					.where(CONTRACT.AGREEMENT_LEVEL_CATEGORY
-							.in(agreementLevelCategoryId)).execute();
+					.where(CONTRACT.AGREEMENT_LEVEL
+							.in(agreementLevelId)).execute();
+
+//					.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
+//							(CONTRACT.AGREEMENT_LEVEL_CATEGORY != null) ? CONTRACT.AGREEMENT_LEVEL_CATEGORY
+//									.mul(-1)
+//									: CONTRACT.AGREEMENT_LEVEL_CATEGORY)
+//
+//					.where(CONTRACT.AGREEMENT_LEVEL_CATEGORY
+//							.in(agreementLevelCategoryId)).execute();
 
 			dslContext
 					.update(AGREEMENT_LEVEL_CATEGORY)
