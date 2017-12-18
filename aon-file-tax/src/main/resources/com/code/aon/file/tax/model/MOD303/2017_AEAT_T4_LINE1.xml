@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Line1">
+	<field name="init0" value="&lt;T" format="AlphaNumeric" pattern="X(2)" />
+	<field name="init1" value="303" format="AlphaNumeric" pattern="X(3)" />
+	<field name="init2" value="01000" format="AlphaNumeric" pattern="X(5)" />
+	<field name="init3" value=">" format="AlphaNumeric" pattern="X(1)" />
+	<field name="init4" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="type" value="bean" bean="dec" property="declarationType" format="AlphaNumeric" pattern="X(1)" />
+	<field name="document" value="bean" bean="dec" property="document" format="Nif" pattern="X(9)" />
+	<field name="surname" value="bean" bean="dec" property="surname" format="AlphaNumeric" pattern="X(60)" />
+	<field name="name" value="bean" bean="dec" property="name" format="AlphaNumeric" pattern="X(20)" />
+	<field name="year" value="bean" bean="dec" property="year" format="Numeric" pattern="9(4)" />
+	<field name="period" value="bean" bean="dec" property="period" format="AlphaNumeric" pattern="X(2)" />
+	<field name="taxRefundRegistry" value="bean" bean="dec" property="taxRefundRegistryNumber" format="Numeric" pattern="9(1)" />
+	<field name="simplRegimeOnly" value="bean" bean="dec" property="simplRegimeOnlyNumber" format="Numeric" pattern="9(1)" />
+	<field name="mergedDeclaration" value="bean" bean="dec" property="mergedDeclarationNumber" format="Numeric" pattern="9(1)" />
+	<field name="concurso" value="bean" bean="dec" property="concursoNumber" format="Numeric" pattern="9(1)" />
+	<field name="concursoDateString" value="bean" bean="dec" property="concursoDateString" format="AlphaNumeric" pattern="X(8)" />
+	<field name="concursoAuto" value="bean" bean="dec" property="concursoAuto" format="AlphaNumeric" pattern="X(1)" />
+	<field name="vatAccrualRegime" value="bean" bean="dec" property="vatAccrualRegimeNumber" format="Numeric" pattern="9(1)" />
+	<field name="vatAccrualRegimeReceiver" value="bean" bean="dec" property="vatAccrualRegimeReceiverNumber" format="Numeric" pattern="9(1)" />
+	<field name="prorataOption" value="bean" bean="dec" property="prorataOptionNumber" format="Numeric" pattern="9(1)" />
+	<field name="prorataRevoke" value="bean" bean="dec" property="prorataRevokeNumber" format="Numeric" pattern="9(1)" />
+	<field name="baseOutputVat4" value="bean" bean="gr" property="outputVat(4.0).taxableBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="percentOutputVat4" value="bean" bean="gr" property="outputVat(4.0).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaOutputVat4" value="bean" bean="gr" property="outputVat(4.0).quota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="baseOutputVat10" value="bean" bean="gr" property="outputVat(10.0).taxableBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="percentOutputVat10" value="bean" bean="gr" property="outputVat(10.0).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaOutputVat10" value="bean" bean="gr" property="outputVat(10.0).quota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="baseOutputVat21" value="bean" bean="gr" property="outputVat(21.0).taxableBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="percentOutputVat21" value="bean" bean="gr" property="outputVat(21.0).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaOutputVat121" value="bean" bean="gr" property="outputVat(21.0).quota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="baseIntracommunitaryCT" value="bean" bean="gr" property="baseIntracommunitaryCT" format="DefNumeric" pattern="9(15)V99" />
+	<field name="quotaIntracommunitaryCT" value="bean" bean="gr" property="quotaIntracommunitaryCT" format="DefNumeric" pattern="9(15)V99" />
+	<field name="baseISPCT" value="bean" bean="gr" property="baseISPCT" format="DefNumeric" pattern="9(15)V99" />
+	<field name="quotaISPCT" value="bean" bean="gr" property="quotaISPCT" format="DefNumeric" pattern="9(15)V99" />
+	<field name="baseModifications" value="bean" bean="gr" property="baseModifications" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="quotaModifications" value="bean" bean="gr" property="quotaModifications" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="baseSurcharge05" value="bean" bean="gr" property="surcharge(0.5).taxableBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="percentSurcharge05" value="bean" bean="gr" property="surcharge(0.5).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaSurcharge05" value="bean" bean="gr" property="surcharge(0.5).quota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="baseSurcharge14" value="bean" bean="gr" property="surcharge(1.4).taxableBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="percentSurcharge14" value="bean" bean="gr" property="surcharge(1.4).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaSurcharge14" value="bean" bean="gr" property="surcharge(1.4).quota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="baseSurcharge52" value="bean" bean="gr" property="surcharge(5.2).taxableBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="percentSurcharge52" value="bean" bean="gr" property="surcharge(5.2).percent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quotaSurcharge52" value="bean" bean="gr" property="surcharge(5.2).quota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="baseSurchrageModifications" value="bean" bean="gr" property="baseSurchrageModifications" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="quotaSurchrageModifications" value="bean" bean="gr" property="quotaSurchrageModifications" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="outputTotal" value="bean" bean="gr" property="outputTotal" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="innerOperationsBase" value="bean" bean="gr" property="innerOperationsBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="innerOperationsQuota" value="bean" bean="gr" property="innerOperationsQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="innerInvestmentOperationsBase" value="bean" bean="gr" property="innerInvestmentOperationsBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="innerInvestmentOperationsQuota" value="bean" bean="gr" property="innerInvestmentOperationsQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="importedCommonOperationsBase" value="bean" bean="gr" property="importedCommonOperationsBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="importedCommonOperationsQuota" value="bean" bean="gr" property="importedCommonOperationsQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="importedInvestmentOperationsBase" value="bean" bean="gr" property="importedInvestmentOperationsBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="importedInvestmentOperationsQuota" value="bean" bean="gr" property="importedInvestmentOperationsQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="intracommunitaryOperationsCTBase" value="bean" bean="gr" property="intracommunitaryOperationsCTBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="intracommunitaryOperationsCTQuota" value="bean" bean="gr" property="intracommunitaryOperationsCTQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="intracommunitaryInvestmentOperationsBase" value="bean" bean="gr" property="intracommunitaryInvestmentOperationsBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="intracommunitaryInvestmentOperationsQuota" value="bean" bean="gr" property="intracommunitaryInvestmentOperationsQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="deductionRestificationBase" value="bean" bean="gr" property="deductionRestificationBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="deductionRestificationQuota" value="bean" bean="gr" property="deductionRestificationQuota" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="agriculturalRegimeCompensation" value="bean" bean="gr" property="agriculturalRegimeCompensation" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="investmentNormalization" value="bean" bean="gr" property="investmentNormalization" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="prorataNormalization" value="bean" bean="gr" property="prorataNormalization" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="deductTotal" value="bean" bean="gr" property="deductTotal" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="difference" value="bean" bean="gr" property="result" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="exonerado" value="bean" bean="dec" property="exonerado" format="Numeric" pattern="9(1)" />	
+	<field name="free5" value=" " format="Alphabetic" pattern="X(581)" />
+	<field name="free6" value=" " format="Alphabetic" pattern="X(13)" />
+	<field name="free7" value="&lt;/T30301000>" format="Alphabetic" pattern="X(12)" />
+</register>

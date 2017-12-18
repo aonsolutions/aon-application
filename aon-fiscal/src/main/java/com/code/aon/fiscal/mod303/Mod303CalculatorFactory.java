@@ -11,6 +11,7 @@ public class Mod303CalculatorFactory {
 	
 	public Mod303CalculatorFactory() {
 		calculators = new LinkedList<IMod303Calculator>();
+		calculators.add(new Aeat2017Mod303Calculator());
 		calculators.add(new Aeat2014Mod303Calculator());
 	}
 	

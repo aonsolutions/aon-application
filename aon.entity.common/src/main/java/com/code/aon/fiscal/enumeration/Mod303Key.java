@@ -239,6 +239,20 @@ public enum Mod303Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	C86      ("303-86"   ,2014 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
 	C87      ("303-87"   ,2014 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
 	C88      ("303-88"   ,2014 ,false,false,false,true ,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	
+	C79      ("303-79"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C89      ("303-89"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C90      ("303-90"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C91      ("303-91"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C92      ("303-92"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C93      ("303-93"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C94      ("303-94"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C95      ("303-95"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C96      ("303-96"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C97      ("303-97"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C98      ("303-98"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+	C99      ("303-99"   ,2017 ,false,false,false,false,1,null,new Period[]{Period.T4,Period.M12},PBK),
+
 	;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";

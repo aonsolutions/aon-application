@@ -18,11 +18,20 @@
 			
 			<ui:define name="afterTab">
 				<aon:if test="#{controller.extraTabVisible}">
-					<aon:panelTab id="extraTab" label="#{bundle.fiscal_model_347_extra_info}">
-						<ui:include src="/com/code/aon/ui/fiscal/facelet/mod303/extraInfo.xhtml" >
-							<ui:param name="controller" value="#{controller}" />
-						</ui:include>
-					</aon:panelTab>
+					<aon:if test="#{controller.to.year lt 2017}">	
+						<aon:panelTab id="extraTab" label="#{bundle.fiscal_model_347_extra_info}">
+							<ui:include src="/com/code/aon/ui/fiscal/facelet/mod303/extraInfo.xhtml" >
+								<ui:param name="controller" value="#{controller}" />
+							</ui:include>
+						</aon:panelTab>
+					</aon:if>
+					<aon:if test="#{controller.to.year gt 2016}">	
+						<aon:panelTab id="extraTab2017" label="#{bundle.fiscal_model_347_extra_info}">
+							<ui:include src="/com/code/aon/ui/fiscal/facelet/mod303/extraInfo2017.xhtml" >
+								<ui:param name="controller" value="#{controller}" />
+							</ui:include>
+						</aon:panelTab>
+					</aon:if>
 				</aon:if>
 			</ui:define>	
 			

@@ -8,11 +8,11 @@ import com.code.aon.fiscal.enumeration.Mod303Key;
 import com.code.aon.fiscal.model.FiscalModelDetailCalculator;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implements IMod303Calculator {
+public class Aeat2017Mod303Calculator extends FiscalModelDetailCalculator implements IMod303Calculator {
 
 	@Override
 	public boolean accept(int year, Administration administration) {
-		if ( year >= 2014 && year < 2014 && administration == Administration.COMMON_TERRITORY) {
+		if ( year >= 2014 && administration == Administration.COMMON_TERRITORY) {
 			return true;
 		}
 		return false;
@@ -454,13 +454,20 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 		
 		double c80 = mod303.ensureDetail( Mod303Key.C80 ).getAmount();
 		double c81 = mod303.ensureDetail( Mod303Key.C81 ).getAmount();
-		double c82 = mod303.ensureDetail( Mod303Key.C82 ).getAmount();
+		double c93 = mod303.ensureDetail( Mod303Key.C93 ).getAmount();
+		double c94 = mod303.ensureDetail( Mod303Key.C94 ).getAmount();
 		double c83 = mod303.ensureDetail( Mod303Key.C83 ).getAmount();
 		double c84 = mod303.ensureDetail( Mod303Key.C84 ).getAmount();
 		double c85 = mod303.ensureDetail( Mod303Key.C85 ).getAmount();
 		double c86 = mod303.ensureDetail( Mod303Key.C86 ).getAmount();
-		double c87 = mod303.ensureDetail( Mod303Key.C87 ).getAmount();
-		double c88 = CommonUtil.round(c80 + c81 + c82 + c83 + c84 + c85 + c86 - c87);
+		double c95 = mod303.ensureDetail( Mod303Key.C95 ).getAmount();
+		double c96 = mod303.ensureDetail( Mod303Key.C96 ).getAmount();
+		double c97 = mod303.ensureDetail( Mod303Key.C97 ).getAmount();
+		double c98 = mod303.ensureDetail( Mod303Key.C98 ).getAmount();
+		double c79 = mod303.ensureDetail( Mod303Key.C79 ).getAmount();
+		double c99 = mod303.ensureDetail( Mod303Key.C99 ).getAmount();
+		
+		double c88 = CommonUtil.round(c80 + c81 + c93 + c94 + c83 + c84 + c85 + c86 + c95 + c96 + c97 + c98 - c79 - c99);
 		mod303.ensureDetail( Mod303Key.C88 ).setAmount( c88 );
 	}
 
