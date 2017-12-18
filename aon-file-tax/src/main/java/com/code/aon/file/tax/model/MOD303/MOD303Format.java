@@ -2,6 +2,7 @@ package com.code.aon.file.tax.model.MOD303;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.fiscal.enumeration.Period;
 
 public enum MOD303Format {
 
@@ -21,6 +22,10 @@ public enum MOD303Format {
 			,Administration.GIPUZKOA
 			,MimeType.MIME_TXT
 			,Gipuzkoa2010MOD303Factory.class)
+	,AEAT_2017_T4(2017
+			,Administration.COMMON_TERRITORY
+			,MimeType.MIME_TXT
+			,Aeat2017T4MOD303Factory.class)
 	,AEAT_2017(2017
 			,Administration.COMMON_TERRITORY
 			,MimeType.MIME_TXT
@@ -54,7 +59,7 @@ public enum MOD303Format {
 	public void setAdministration(Administration administration) {
 		this.administration = administration;
 	}
-	
+
 	public Integer getYear() {
 		return year;
 	}
@@ -81,12 +86,23 @@ public enum MOD303Format {
 		return prefix + year + period +"."+getMimeType().getExtension();
 	}
 	
-	public synchronized static MOD303Format getFormat(Administration administration, int year) {
+	public synchronized static MOD303Format getFormat(Administration administration, int year, Period period) {
 		MOD303Format format = null;
-		for (MOD303Format f : MOD303Format.values()) {
-			if (f.getAdministration() == administration && year >= f.getYear()) {
-				format = f;
-				break;
+		
+		if (administration ==  Administration.COMMON_TERRITORY && year == 2017) {
+			if (period == Period.M12 || period == Period.T4) {
+				format = AEAT_2017_T4;
+			} else {
+				format = AEAT_2017;
+			}
+		}
+
+		if (format == null) {
+			for (MOD303Format f : MOD303Format.values()) {
+				if (f.getAdministration() == administration && year >= f.getYear()) {
+					format = f;
+					break;
+				}
 			}
 		}
 		if (format == null) {

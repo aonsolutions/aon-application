@@ -16,6 +16,7 @@ public class Declaration {
 	private String replacedNumber;
 	private boolean taxRefundRegistry;
 	private boolean simplRegimeOnly;
+	private int exonerado;
 	private boolean mergedDeclaration;
 	private boolean concurso;
 	private Date concursoDate;
@@ -111,7 +112,20 @@ public class Declaration {
 	private double c86;
 	private double c87;
 	private double c88;
-
+	
+	private double c79;
+	private double c89;
+	private double c90;
+	private double c91;
+	private double c92;
+	private double c93;
+	private double c94;
+	private double c95;
+	private double c96;
+	private double c97;
+	private double c98;
+	private double c99;
+	
 	private GeneralRegime generalRegime;
 	private SimplifiedRegime simplifiedRegime;
 
@@ -201,6 +215,13 @@ public class Declaration {
 	}
 	public int getTaxRefundRegistryNumber() {
 		return isTaxRefundRegistry()?1:2;
+	}
+	
+	public int getExonerado() {
+		return exonerado;
+	}
+	public void setExonerado(int exonerado) {
+		this.exonerado = exonerado;
 	}
 	
 	public boolean isSimplRegimeOnly() {
@@ -840,7 +861,78 @@ public class Declaration {
 	public void setC88(double c88) {
 		this.c88 = c88;
 	}
-
+	public double getC79() {
+		return c79;
+	}
+	public void setC79(double c79) {
+		this.c79 = c79;
+	}
+	public double getC89() {
+		return c89;
+	}
+	public void setC89(double c89) {
+		this.c89 = c89;
+	}
+	public double getC90() {
+		return c90;
+	}
+	public void setC90(double c90) {
+		this.c90 = c90;
+	}
+	public double getC91() {
+		return c91;
+	}
+	public void setC91(double c91) {
+		this.c91 = c91;
+	}
+	public double getC92() {
+		return c92;
+	}
+	public void setC92(double c92) {
+		this.c92 = c92;
+	}
+	public double getC93() {
+		return c93;
+	}
+	public void setC93(double c93) {
+		this.c93 = c93;
+	}
+	public double getC94() {
+		return c94;
+	}
+	public void setC94(double c94) {
+		this.c94 = c94;
+	}
+	public double getC95() {
+		return c95;
+	}
+	public void setC95(double c95) {
+		this.c95 = c95;
+	}
+	public double getC96() {
+		return c96;
+	}
+	public void setC96(double c96) {
+		this.c96 = c96;
+	}
+	public double getC97() {
+		return c97;
+	}
+	public void setC97(double c97) {
+		this.c97 = c97;
+	}
+	public double getC98() {
+		return c98;
+	}
+	public void setC98(double c98) {
+		this.c98 = c98;
+	}
+	public double getC99() {
+		return c99;
+	}
+	public void setC99(double c99) {
+		this.c99 = c99;
+	}
 	public void changeInvalidCharacters() {
 		setPeriod(FileTaxUtil.changeInvalidCharacters(getPeriod()));
 		setBankName(FileTaxUtil.changeInvalidCharacters(getBankName()));

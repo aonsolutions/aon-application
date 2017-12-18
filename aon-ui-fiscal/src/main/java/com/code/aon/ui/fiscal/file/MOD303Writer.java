@@ -32,6 +32,7 @@ import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.enumeration.Mod303Key;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.mod303.IMod303Declaration;
 import com.code.aon.fiscal.mod303.Mod303;
@@ -210,8 +211,15 @@ public class MOD303Writer {
 		
 		if (additionalInfo != null) {
 			fillAdditionalInfo(declaration, additionalInfo);
+			declaration.setExonerado(1);
+		} else {
+			if (vatTaxDeclaration.getVatTax().getPeriod() == Period.M12 || vatTaxDeclaration.getVatTax().getPeriod() == Period.T4) {
+				declaration.setExonerado(2);
+			} else {
+				declaration.setExonerado(0);
+			}
 		}
-	
+		
 	}
 	
 	private void fillAdditionalInfo(Declaration declaration, Mod303 mod303) {
@@ -252,6 +260,7 @@ public class MOD303Writer {
 		 || AonStringUtils.isNotBlank(epi4)
 		 || AonStringUtils.isNotBlank(epi5)
 		 || AonStringUtils.isNotBlank(epi6)) {
+
 			declaration.setC80(mod303.getEnsuredAmount(Mod303Key.C80));
 			declaration.setC81(mod303.getEnsuredAmount(Mod303Key.C81));
 			declaration.setC82(mod303.getEnsuredAmount(Mod303Key.C82));
@@ -261,6 +270,19 @@ public class MOD303Writer {
 			declaration.setC86(mod303.getEnsuredAmount(Mod303Key.C86));
 			declaration.setC87(mod303.getEnsuredAmount(Mod303Key.C87));
 			declaration.setC88(mod303.getEnsuredAmount(Mod303Key.C88));
+			
+			declaration.setC79(mod303.getEnsuredAmount(Mod303Key.C79));
+			declaration.setC89(mod303.getEnsuredAmount(Mod303Key.C89));
+			declaration.setC90(mod303.getEnsuredAmount(Mod303Key.C90));
+			declaration.setC91(mod303.getEnsuredAmount(Mod303Key.C91));
+			declaration.setC92(mod303.getEnsuredAmount(Mod303Key.C92));
+			declaration.setC93(mod303.getEnsuredAmount(Mod303Key.C93));
+			declaration.setC94(mod303.getEnsuredAmount(Mod303Key.C94));
+			declaration.setC95(mod303.getEnsuredAmount(Mod303Key.C95));
+			declaration.setC96(mod303.getEnsuredAmount(Mod303Key.C96));
+			declaration.setC97(mod303.getEnsuredAmount(Mod303Key.C97));
+			declaration.setC98(mod303.getEnsuredAmount(Mod303Key.C98));
+			declaration.setC99(mod303.getEnsuredAmount(Mod303Key.C99));
 		}
 	}
 
@@ -636,6 +658,7 @@ public class MOD303Writer {
 		 || AonStringUtils.isNotBlank(epi4)
 		 || AonStringUtils.isNotBlank(epi5)
 		 || AonStringUtils.isNotBlank(epi6)) {
+			declaration.setExonerado(1);
 			declaration.setC80(mod303.getEnsuredAmount(Mod303Key.C80));
 			declaration.setC81(mod303.getEnsuredAmount(Mod303Key.C81));
 			declaration.setC82(mod303.getEnsuredAmount(Mod303Key.C82));
@@ -645,6 +668,20 @@ public class MOD303Writer {
 			declaration.setC86(mod303.getEnsuredAmount(Mod303Key.C86));
 			declaration.setC87(mod303.getEnsuredAmount(Mod303Key.C87));
 			declaration.setC88(mod303.getEnsuredAmount(Mod303Key.C88));
+			
+			declaration.setC79(mod303.getEnsuredAmount(Mod303Key.C79));
+			declaration.setC89(mod303.getEnsuredAmount(Mod303Key.C89));
+			declaration.setC90(mod303.getEnsuredAmount(Mod303Key.C90));
+			declaration.setC91(mod303.getEnsuredAmount(Mod303Key.C91));
+			declaration.setC92(mod303.getEnsuredAmount(Mod303Key.C92));
+			declaration.setC93(mod303.getEnsuredAmount(Mod303Key.C93));
+			declaration.setC94(mod303.getEnsuredAmount(Mod303Key.C94));
+			declaration.setC95(mod303.getEnsuredAmount(Mod303Key.C95));
+			declaration.setC96(mod303.getEnsuredAmount(Mod303Key.C96));
+			declaration.setC97(mod303.getEnsuredAmount(Mod303Key.C97));
+			declaration.setC98(mod303.getEnsuredAmount(Mod303Key.C98));
+			declaration.setC99(mod303.getEnsuredAmount(Mod303Key.C99));
+
 		}
 		
 	}

@@ -489,7 +489,33 @@ public class Mod303Controller extends FiscalModelController {
 	public Mod303Key getKeyC87()   { return Mod303Key.C87; }
 	public FiscalModelDetail getDetailC88()   { return getDeclaration().getMap().get(Mod303Key.C88); }
 	public Mod303Key getKeyC88()   { return Mod303Key.C88; }
-
+	
+	
+	public FiscalModelDetail getDetailC79()   { return getDeclaration().getMap().get(Mod303Key.C79); }
+	public Mod303Key getKeyC79()   { return Mod303Key.C79; }
+	public FiscalModelDetail getDetailC89()   { return getDeclaration().getMap().get(Mod303Key.C89); }
+	public Mod303Key getKeyC89()   { return Mod303Key.C89; }
+	public FiscalModelDetail getDetailC90()   { return getDeclaration().getMap().get(Mod303Key.C90); }
+	public Mod303Key getKeyC90()   { return Mod303Key.C90; }
+	public FiscalModelDetail getDetailC91()   { return getDeclaration().getMap().get(Mod303Key.C91); }
+	public Mod303Key getKeyC91()   { return Mod303Key.C91; }
+	public FiscalModelDetail getDetailC92()   { return getDeclaration().getMap().get(Mod303Key.C92); }
+	public Mod303Key getKeyC92()   { return Mod303Key.C92; }
+	public FiscalModelDetail getDetailC93()   { return getDeclaration().getMap().get(Mod303Key.C93); }
+	public Mod303Key getKeyC93()   { return Mod303Key.C93; }
+	public FiscalModelDetail getDetailC94()   { return getDeclaration().getMap().get(Mod303Key.C94); }
+	public Mod303Key getKeyC94()   { return Mod303Key.C94; }
+	public FiscalModelDetail getDetailC95()   { return getDeclaration().getMap().get(Mod303Key.C95); }
+	public Mod303Key getKeyC95()   { return Mod303Key.C95; }
+	public FiscalModelDetail getDetailC96()   { return getDeclaration().getMap().get(Mod303Key.C96); }
+	public Mod303Key getKeyC96()   { return Mod303Key.C96; }
+	public FiscalModelDetail getDetailC97()   { return getDeclaration().getMap().get(Mod303Key.C97); }
+	public Mod303Key getKeyC97()   { return Mod303Key.C97; }
+	public FiscalModelDetail getDetailC98()   { return getDeclaration().getMap().get(Mod303Key.C98); }
+	public Mod303Key getKeyC98()   { return Mod303Key.C98; }
+	public FiscalModelDetail getDetailC99()   { return getDeclaration().getMap().get(Mod303Key.C99); }
+	public Mod303Key getKeyC99()   { return Mod303Key.C99; }
+	
 	private FiscalModelDetail getSelectedDetail(String suffix) {
 		String keyValue = getSelectedKey().toString() + "_" + suffix; 
 		Mod303Key key = Mod303Key.valueOf(keyValue);  
@@ -507,7 +533,7 @@ public class Mod303Controller extends FiscalModelController {
 			List<IMod303Declaration> list = new LinkedList<IMod303Declaration>();
 			Mod303 declaration = (Mod303) getDeclaration(); 
 			list.add(declaration);
-			MOD303Format format = MOD303Format.getFormat(fm.getAdministration(), fm.getYear());
+			MOD303Format format = MOD303Format.getFormat(fm.getAdministration(), fm.getYear(), fm.getPeriod());
 			setFileOutput( mod303Writer.createMOD303(list, format, null) );
 		    if (getFileOutput() != null) {
 		    	if (getFileOutput().getErrors().size() > 0) {
@@ -529,7 +555,7 @@ public class Mod303Controller extends FiscalModelController {
 	@Override
 	public MimeType getMimeType() {
 		FiscalModel fm = (FiscalModel) getTo();
-		MOD303Format format = MOD303Format.getFormat(fm.getAdministration(), fm.getYear());
+		MOD303Format format = MOD303Format.getFormat(fm.getAdministration(), fm.getYear(), fm.getPeriod());
 		return format.getMimeType();
 	}
 	
