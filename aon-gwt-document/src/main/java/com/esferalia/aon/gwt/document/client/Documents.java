@@ -3111,7 +3111,6 @@ public class Documents implements EntryPoint {
 					ti = tree.addTextItem(f.getParent().getTitle());
 					sons(ti, f.getSons());
 				}
-				//treepanel.add(tree);
 			}
 
 			@Override
@@ -3119,25 +3118,7 @@ public class Documents implements EntryPoint {
 			}
 		});
 	}
-	
-	/* VISOR
-	private void getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList){
-		Viewer.getViewer(attach, index, attachList);
-	}
-	
-	private void getViewer(final FileInfo fileInfo) {
-		Attach attach = new Attach()
-				.setId(fileInfo.getFileId())
-				.setAttachType(AttachType.REGISTRY)
-				.setDescription(fileInfo.getTitle())
-				.setDomain(new Domain().setName(fileInfo.getDomain()).setId(fileInfo.getDomainId()))
-				.setDriveId(fileInfo.getDriveId())
-				.setIcon(fileInfo.getIcon())
-				.setMimeType(MimeType.values()[fileInfo.getMimetype()]);
-		
-		Viewer.getViewer(attach);
-	}
-	*/
+
 	private void getViewer(final FileInfo fileInfo, final Integer index, Vector<FileInfo> viewList) {
 		idoc.getLink(getDomain(), fileInfo, GWT.getModuleBaseURL(), new AsyncCallback<String>() {
 				
@@ -3149,49 +3130,6 @@ public class Documents implements EntryPoint {
 			@Override
 				public void onFailure(Throwable caught) {}
 			});
-		
-		/* VISOR GWT
-		
-		idoc.getAttachList(viewList, new AsyncCallback<LinkedList<Attach>>() {
-			
-			@Override
-			public void onSuccess(LinkedList<Attach> result) {
-				Viewer.getViewer(result.get(index), index, result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-				Window.alert(caught.getMessage());
-			}
-		});
-		
-		*/
-		
-		
-	//	}
-		/*
-		Attach attach = new Attach()
-				.setId(fileInfo.getFileId())
-				.setAttachType(AttachType.REGISTRY)
-				.setDescription(fileInfo.getTitle())
-				.setDomain(new Domain().setName(fileInfo.getDomain()).setId(fileInfo.getDomainId()))
-				.setDriveId(fileInfo.getDriveId())
-				.setIcon(fileInfo.getIcon())
-				.setMimeType(MimeType.values()[fileInfo.getMimetype()]);
-		
-		LinkedList<Attach> attachList = new LinkedList<Attach>();
-		for (FileInfo fileInfo2 : viewList) {
-			attachList.add(new Attach()
-				.setId(fileInfo2.getFileId())
-				.setAttachType(AttachType.REGISTRY)
-				.setDescription(fileInfo2.getTitle())
-				.setDomain(new Domain().setName(fileInfo2.getDomain()).setId(fileInfo2.getDomainId()))
-				.setDriveId(fileInfo2.getDriveId())
-				.setIcon(fileInfo2.getIcon())
-				.setMimeType(MimeType.values()[fileInfo2.getMimetype()]));
-		}	
-		Viewer.getViewer(attach, index, attachList);*/
 	}
 
 	@UiHandler("reset")

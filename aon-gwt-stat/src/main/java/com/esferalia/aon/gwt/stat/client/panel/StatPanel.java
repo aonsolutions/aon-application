@@ -189,4 +189,16 @@ public abstract class StatPanel implements EntryPoint {
 		pdf();
 	}
 
+	public void setPdfVisible(Boolean bool) {
+		pdf.setVisible(bool);
+	}
+	public void setPdfText(String text) {
+		pdf.setText(text);
+	}
+	public void setExcelVisible(Boolean bool) {
+		excel.setVisible(bool);
+	}
+	public void setExcelText(String text) {
+		excel.setText(text);
+	}
 }

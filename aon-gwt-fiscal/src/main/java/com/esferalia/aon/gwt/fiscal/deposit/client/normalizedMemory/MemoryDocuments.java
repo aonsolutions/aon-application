@@ -345,7 +345,7 @@ public class MemoryDocuments extends PageAbs {
 			Integer row = rowAux;
 			@Override
 			public void onClick(ClickEvent event) {
-			//	getViewer(mf, row-1, memoryFiles);
+				
 			}
 		});
 		
@@ -355,19 +355,6 @@ public class MemoryDocuments extends PageAbs {
 		panel.add(view);
 		tab.setWidget(row, col, panel);
 	}
-	/*
-	private  void getViewer(MemoryFiles mf, final Integer index, final List<MemoryFiles> viewList) {
-		LinkedList<Attach> attachList = new LinkedList<Attach>();
-		for (MemoryFiles memoryFiles : viewList) {
-			attachList.add(new Attach().setId(memoryFiles.getId())
-					.setDescription(mf.getName())
-					.setMimeType(MimeType.values()[mf.getMimeTypeNumber()])
-					.setDomain(getDomain())
-					.setAttachType(AttachType.REGISTRY));
-		}
-		Viewer.getViewer(attachList.get(index), index, attachList);
-	}
-	*/
 
 	public static native String getCurrentDomainName()
 	/*-{

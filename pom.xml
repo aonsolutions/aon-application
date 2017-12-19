@@ -146,7 +146,6 @@
 		<module>aon-gwt-aio</module>
 		<module>aon-gwt-polymer</module>
 		<module>aon-gwt-common</module>
-		<module>aon-gwt-viewer</module>
 		<module>aon-gwt-visualization</module>
 		<module>aon-gwt-codemirror</module>
 		<module>aon-gwt-connect</module>

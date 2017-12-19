@@ -1,9 +1,6 @@
 package com.code.aon.webservice.finance;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,11 +20,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.artofsolving.jodconverter.OfficeDocumentConverter;
-import org.artofsolving.jodconverter.document.DefaultDocumentFormatRegistry;
-import org.artofsolving.jodconverter.document.DocumentFormatRegistry;
-import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
-import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
@@ -36,11 +28,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.AonMonth;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "DownloadFeeProjection", urlPatterns = {"/aon_gwt_aio/download_fee_projection/*",
 																"/download_fee_projection/*"})
@@ -71,9 +61,7 @@ public class FeeProjectionDownload extends HttpServlet{
 		
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		
-		if(type.equalsIgnoreCase(MSG.PDF)){
-			pdf(req, resp, domain, userName, date, filterMap);
-		} else if(type.equalsIgnoreCase(MSG.EXCEL)){
+		if(type.equalsIgnoreCase(MSG.EXCEL)){
 			excel(req, resp, domain, userName, date, filterMap);
 		}
 	}
@@ -89,46 +77,6 @@ public class FeeProjectionDownload extends HttpServlet{
 		workbook.close();
 
 		Utils.giveBackData(resp, data, "fee_projection.xls");
-	}
-	
-	private void pdf(HttpServletRequest req, HttpServletResponse resp,
-			Domain domain, String userName, Date date, HashMap<String, String[]>filterMap) throws ServletException, IOException {
-		HSSFWorkbook workbook = proba(domain, userName, date, filterMap, true);
-
-		ByteArrayOutputStream archivo = new ByteArrayOutputStream();
-		workbook.write(archivo);  
-		archivo.close();
-		workbook.close();
-
-		
-		String fileName = MSG.FEE_PROJECTION;
-		
-		File inputFile = File.createTempFile("tmp", fileName + "." + MimeType.MS_EXCEL.getExtension());
-		FileOutputStream inputFileOs = new FileOutputStream(inputFile);
-		AonIOUtils.write(archivo.toByteArray(), inputFileOs);
-		inputFileOs.flush();
-		inputFileOs.close();
-			
-		File outputFile = File.createTempFile("tmp", fileName + "." + MimeType.PDF.getExtension());
-		DocumentFormatRegistry formatRegistry = new DefaultDocumentFormatRegistry();
-		
-		OfficeManager officeManager = new DefaultOfficeManagerConfiguration()
-			.setPortNumber(DEFAULT_OFFICE_PORT)
-			.buildOfficeManager();
-		officeManager.start();
-		OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager, formatRegistry);
-		converter.convert(inputFile, outputFile);
-		resp.setContentType(MimeType.PDF.getName());
-		resp.setHeader("Content-disposition", "inline; filename=\"" + fileName + ".pdf\";");
-		FileInputStream fileInpurOs =  new FileInputStream(outputFile);
-		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
-		inputFileOs.flush();
-		inputFileOs.close();
-		resp.flushBuffer();
-
-		if (inputFile != null && inputFile.canWrite()) {inputFile.delete();}
-		if (outputFile != null && outputFile.canWrite()) {outputFile.delete();}
-		if (officeManager != null) {officeManager.stop();}
 	}
 	
 	Integer rowIndex;

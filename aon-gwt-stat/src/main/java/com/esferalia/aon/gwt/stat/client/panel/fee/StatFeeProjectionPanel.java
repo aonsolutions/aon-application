@@ -31,6 +31,8 @@ public class StatFeeProjectionPanel extends StatPanel {
 		
 		Polymer.whenReady(o -> {
 			super.onModuleLoad();
+			setPdfVisible(false);
+			setExcelText(AON.MSG.export());
 			this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 					aonData.getDomain().getName(), aonData.getUser().getLogin());
 			searchContent();
