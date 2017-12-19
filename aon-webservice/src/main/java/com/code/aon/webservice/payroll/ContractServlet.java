@@ -142,6 +142,7 @@ public class ContractServlet extends HttpServlet{
 			
 		//	Date start = AonDateUtils.getYear(contract.getStartDate()) == year ? contract.getStartDate() : ejInitDate;
 		//	Date end = contract.getEndDate() != null && AonDateUtils.getYear(contract.getEndDate()) == year ? contract.getEndDate() : ejFinalDate;
+			Optional<AgreementLevelCategory> alc = PAYROLL.getAgreementLevelCategory(domainName, domainId, login, f -> f.getIdProperty().eq(contract.getAgreementLevelCategory()));
 			if(qg.isPresent()){
 				JSONObject json = new JSONObject();
 				String q = qg.get().getExpression();
@@ -158,7 +159,7 @@ public class ContractServlet extends HttpServlet{
 				json.put("end_fixed", AonMathUtils.round(endFixed[0]));
 				json.put("end_unfixed", AonMathUtils.round(endUnfixed[0]));
 	
-				json.put("category",  ToJSON.objectToJSON(-1, contract.getCategoryDescription()));
+				json.put("category", alc.isPresent() ? ToJSON.objectToJSON(alc.get().getId(), alc.get().getDescription()) : ToJSON.objectToJSON(-1, contract.getCategoryDescription()));
 				Integer disabilityId = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? irpfData.get().getDisability().intValue() : -1;
 				String disabilityName = (irpfData.isPresent() && irpfData.get().getDisability() != null) ? DisabiltyLevel.values()[disabilityId].getName() : "-"; 
 				json.put("disability", ToJSON.objectToJSON(disabilityId, disabilityName));
