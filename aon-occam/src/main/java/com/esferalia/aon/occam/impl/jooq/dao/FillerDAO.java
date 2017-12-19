@@ -683,7 +683,7 @@ public class FillerDAO {
 					.setSeniorityDate(r.getValue(CONTRACT.SENIORITY_DATE))
 					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
 					.setSsRegime(SSRegimeType.values()[r.getValue(CONTRACT.SS_REGIME)])
-					.setAgreementLevel(r.getValue(CONTRACT.AGREEMENT_LEVEL))
+					.setAgreementLevelCategory(r.getValue(CONTRACT.AGREEMENT_LEVEL_CATEGORY))
 				//TODO	.setModel(ContractModel.values()[r.getValue(CONTRACT.MODEL)])
 					.setCategoryDescription(r.getValue(CONTRACT.CATEGORY_DESCRIPTION));
 				//TODO	.setSsStatus(ContractStatus.values()[r.getValue(CONTRACT.SS_STATUS)]);

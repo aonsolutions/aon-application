@@ -953,8 +953,8 @@ public interface Properties {
 		Property<Date> getSeniorityDateProperty();
 		Property<Integer> getEnterpriseActivityProperty();
 		Property<Byte> getSSRegimeProperty();
+		Property<Integer> getAgreementLevelCategoryProperty();
 		Property<Byte> getModelProperty();
-		Property<Integer> getAgreementLevelProperty();
 		Property<String> getCategoryDescriptionProperty();
 		Property<Byte> getSSStatusProperty();
 	}

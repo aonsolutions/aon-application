@@ -885,11 +885,10 @@ public class PropertiesDAO {
 		@Override public Property<Date> getSeniorityDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SENIORITY_DATE);}
 		@Override public Property<Integer> getEnterpriseActivityProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.ENTERPRISE_ACTIVITY);}
 		@Override public Property<Byte> getSSRegimeProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SS_REGIME);}
-		@Override public Property<Integer> getAgreementLevelProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.AGREEMENT_LEVEL);}
+		@Override public Property<Integer> getAgreementLevelCategoryProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.AGREEMENT_LEVEL_CATEGORY);}
 		@Override public Property<Byte> getModelProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.MODEL);}
 		@Override public Property<String> getCategoryDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.CATEGORY_DESCRIPTION);}
 		@Override public Property<Byte> getSSStatusProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SS_STATUS);}
-
 	}
 	
 	protected static class ContractDataPropertiesDAO implements ContractDataProperties{
