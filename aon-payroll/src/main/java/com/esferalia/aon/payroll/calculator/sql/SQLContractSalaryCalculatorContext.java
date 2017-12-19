@@ -222,6 +222,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
+import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -249,8 +250,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private static final String MAIN_SQL = "SELECT * " + " FROM contract"
 			+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
 			+ " LEFT JOIN enterprise_activity ON (contract.enterprise_activity = enterprise_activity.id)"
-			+ " LEFT JOIN agreement_level_category ON (contract.agreement_level_category = agreement_level_category.id)"
-			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
+			+ " LEFT JOIN agreement_level ON (contract.agreement_level = agreement_level.id)"
+//			+ " LEFT JOIN agreement_level_category ON (contract.agreement_level_category = agreement_level_category.id)"
+//			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
 			+ " LEFT JOIN agreement ON (agreement.id = agreement_level.agreement)" + ", person" + ", registry AS "
 			+ PERSON_REGISTRY + ", workplace"
 			+ " LEFT JOIN payroll_workplace ON (payroll_workplace.workplace = workplace.id)" + ", enterprise"
@@ -1325,10 +1327,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	@Override
 	public String getCategory() {
 		String category = getString(SQLConstants.CONTRACT, ContractColumns.CATEGORY_DESCRIPTION);
-		if (AonStringUtils.isNotBlank(category))
-			return category;
+//		if (AonStringUtils.isNotBlank(category))
+		return category;
 
-		return getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.DESCRIPTION);
+//		return getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.DESCRIPTION);
 	}
 
 	@Override
@@ -1901,7 +1903,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private Integer getAgreementLevel() {
-		Object value = getObject(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.AGREEMENT_LEVEL);
+		Object value = getObject(SQLConstants.CONTRACT, ContractColumns.AGREEMENT_LEVEL);
+//		Object value = getObject(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.AGREEMENT_LEVEL);
 		return value == null ? null : (Integer) value;
 	}
 

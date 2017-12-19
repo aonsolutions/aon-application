@@ -75,6 +75,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import junit.framework.Assert;
 
@@ -275,7 +276,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 						put(TC2.getName(),
 								format("\"%s\"", random(PARTIAL_TIME)
 										.getValue()));
-						put(PARTIAL_FACTOR.getName(), format("%f", 0.69));
+						put(PARTIAL_FACTOR.getName(), format(Locale.US,"%f", 0.69));
 					}
 				});
 
@@ -364,17 +365,17 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 										.getValue()));
 						put(AGREEMENT_HOURS.getName(), format("%d", 39));
 						
-						put(MONDAY_HOURS.getName(), format("%f", 0.00));
+						put(MONDAY_HOURS.getName(), format(Locale.US,"%f", 0.00));
 						
-						put(TUESDAY_HOURS.getName(), format("%f", 2.50));
+						put(TUESDAY_HOURS.getName(), format(Locale.US,"%f", 2.50));
 						
-						put(WEDNESDAY_HOURS.getName(), format("%f", 0.00));
+						put(WEDNESDAY_HOURS.getName(), format(Locale.US,"%f", 0.00));
 						
-						put(THURSDAY_HOURS.getName(), format("%f", 2.50));
+						put(THURSDAY_HOURS.getName(), format(Locale.US,"%f", 2.50));
 						
-						put(FRIDAY_HOURS.getName(), format("%f", 0.00));
-						put(SATURDAY_HOURS.getName(), format("%f", 0.00));
-						put(SUNDAY_HOURS.getName(), format("%f", 0.00));
+						put(FRIDAY_HOURS.getName(), format(Locale.US,"%f", 0.00));
+						put(SATURDAY_HOURS.getName(), format(Locale.US,"%f", 0.00));
+						put(SUNDAY_HOURS.getName(), format(Locale.US,"%f", 0.00));
 					}
 				});
 
@@ -431,13 +432,13 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 										.getValue()));
 						put(AGREEMENT_HOURS.getName(), format("%d", 40));
 						
-						put(SUNDAY_HOURS.getName(), format("%f", weekHours[0]));
-						put(MONDAY_HOURS.getName(), format("%f", weekHours[1]));
-						put(TUESDAY_HOURS.getName(), format("%f", weekHours[2]));
-						put(WEDNESDAY_HOURS.getName(), format("%f", weekHours[3]));
-						put(THURSDAY_HOURS.getName(), format("%f", weekHours[4]));
-						put(FRIDAY_HOURS.getName(), format("%f", weekHours[5]));
-						put(SATURDAY_HOURS.getName(), format("%f", weekHours[6]));
+						put(SUNDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[0]));
+						put(MONDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[1]));
+						put(TUESDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[2]));
+						put(WEDNESDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[3]));
+						put(THURSDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[4]));
+						put(FRIDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[5]));
+						put(SATURDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[6]));
 					}
 				});
 
@@ -482,13 +483,13 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 										.getValue()));
 						put(AGREEMENT_HOURS.getName(), format("%d", 40));
 						
-						put(SUNDAY_HOURS.getName(), format("%f", weekHours[0]));
-						put(MONDAY_HOURS.getName(), format("%f", weekHours[1]));
-						put(TUESDAY_HOURS.getName(), format("%f", weekHours[2]));
-						put(WEDNESDAY_HOURS.getName(), format("%f", weekHours[3]));
-						put(THURSDAY_HOURS.getName(), format("%f", weekHours[4]));
-						put(FRIDAY_HOURS.getName(), format("%f", weekHours[5]));
-						put(SATURDAY_HOURS.getName(), format("%f", weekHours[6]));
+						put(SUNDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[0]));
+						put(MONDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[1]));
+						put(TUESDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[2]));
+						put(WEDNESDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[3]));
+						put(THURSDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[4]));
+						put(FRIDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[5]));
+						put(SATURDAY_HOURS.getName(), format(Locale.US,"%f", weekHours[6]));
 					}
 				});
 
