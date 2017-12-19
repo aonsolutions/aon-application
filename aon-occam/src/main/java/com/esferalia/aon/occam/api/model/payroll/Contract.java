@@ -24,7 +24,7 @@ public class Contract implements Serializable{
 	Date seniorityDate;
 	Integer enterpriseActivity;
 	SSRegimeType ssRegime;
-	Integer agreementLevelCategory;
+	Integer agreementLevel;
 	ContractModel model;
 	String categoryDescription;
 	ContractStatus ssStatus;
@@ -159,12 +159,12 @@ public class Contract implements Serializable{
 		return this;
 	}
 
-	public Integer getAgreementLevelCategory() {
-		return agreementLevelCategory;
+	public Integer getAgreementLevel() {
+		return agreementLevel;
 	}
 
-	public Contract setAgreementLevelCategory(Integer agreementLevelCategory) {
-		this.agreementLevelCategory = agreementLevelCategory;
+	public Contract setAgreementLevel(Integer agreementLevel) {
+		this.agreementLevel = agreementLevel;
 		return this;
 	}
 
