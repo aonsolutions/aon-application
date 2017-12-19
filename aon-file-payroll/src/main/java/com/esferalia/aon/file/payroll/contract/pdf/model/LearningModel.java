@@ -286,12 +286,11 @@ public class LearningModel extends AbstractContractModel {
 			} else {
 				if(contrata!=null && contrata.getCno()!=null ){
 					setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_PROFFESION.getValue(), contrata.getCno().getTitle());
-					setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_CATEGORY.getValue(), contract.getCategoryDescription());
-//					if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-//						setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
-//					} else {
-//						setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_CATEGORY.getValue(), contract.getCategoryDescription());
-//					}
+					if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+						setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
+					} else {
+						setPdfFieldValue(PdfFieldLearning.ACTIVITY_EMPLOYEE_CATEGORY.getValue(), contract.getCategoryDescription());
+					}
 					
 					String cno = contrata.getCno().getCode();
 					if( !StringUtils.isEmpty(cno) ){

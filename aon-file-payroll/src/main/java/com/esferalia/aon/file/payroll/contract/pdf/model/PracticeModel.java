@@ -262,12 +262,11 @@ public class PracticeModel extends AbstractContractModel {
 			if(contrata!=null){
 				setPdfFieldValue(PdfFieldPractice.PROFESSION.getValue(), contrata.getCno().getTitle());
 			}
-			setPdfFieldValue(PdfFieldPractice.CATEGORY.getValue(), contract.getCategoryDescription());
-//			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-//				setPdfFieldValue(PdfFieldPractice.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
-//			} else {
-//				setPdfFieldValue(PdfFieldPractice.CATEGORY.getValue(), contract.getCategoryDescription());
-//			}
+			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+				setPdfFieldValue(PdfFieldPractice.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
+			} else {
+				setPdfFieldValue(PdfFieldPractice.CATEGORY.getValue(), contract.getCategoryDescription());
+			}
 			
 			setPdfFieldValue(PdfFieldPractice.WORKPLACE_FULL_ADDRESS.getValue(), null);
 			setPdfFieldValue(PdfFieldPractice.WORKPLACE_FULL_ADDRESS_MORE.getValue(), contract.getWorkPlace().getAddress().getFullAddress()+", "+contract.getWorkPlace().getAddress().getLocation());
@@ -365,12 +364,9 @@ public class PracticeModel extends AbstractContractModel {
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldPractice.HOLIDAYS.toString()))){
 				setPdfFieldValue(PdfFieldPractice.HOLIDAYS.getValue(), getContractInfoMap(contract).get(PdfFieldPractice.HOLIDAYS.toString()));
 			}
-			if(contract.getAgreementLevel()!=null){
-				setPdfFieldValue(PdfFieldPractice.AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevel().getAgreement().getDescription());
+			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+				setPdfFieldValue(PdfFieldPractice.AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
 			}
-//			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-//				setPdfFieldValue(PdfFieldPractice.AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
-//			}
 			setPdfFieldValue(PdfFieldPractice.AGREEMENT_COLLECTIVE_MORE.getValue(), null);
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldPractice.SEPE_START_COMMUNICATION.toString()))){
 				setPdfFieldValue(PdfFieldPractice.SEPE_START_COMMUNICATION.getValue(), getContractInfoMap(contract).get(PdfFieldPractice.SEPE_START_COMMUNICATION.toString()));
@@ -454,12 +450,9 @@ public class PracticeModel extends AbstractContractModel {
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldPractice.OPT4_STAFF_ADJUSTMENT_MORE.toString()))){
 					setPdfFieldValue(PdfFieldPractice.OPT4_STAFF_ADJUSTMENT_MORE.getValue(),getContractInfoMap(contract).get(PdfFieldPractice.OPT4_STAFF_ADJUSTMENT_MORE.toString()));
 				}
-				if(contract.getAgreementLevel()!=null){
-					setPdfFieldValue(PdfFieldPractice.OPT4_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevel().getAgreement().getDescription());
+				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+					setPdfFieldValue(PdfFieldPractice.OPT4_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
 				}
-//				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-//					setPdfFieldValue(PdfFieldPractice.OPT4_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
-//				}
 			} else if(modelOption == ModelOption.PRACTICE_OPT5){
 				setPdfFieldValue(PdfFieldPractice.MAIN_OPT5_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldPractice.OPT5_OPTION_CHECK.getValue(),"true");
@@ -490,12 +483,9 @@ public class PracticeModel extends AbstractContractModel {
 						setPdfFieldValue(PdfFieldPractice.OPT5_EMPLOYER_UNIVERSITY.getValue(),"true");
 					}
 				}
-				if(contract.getAgreementLevel()!=null){
-					setPdfFieldValue(PdfFieldPractice.OPT5_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevel().getAgreement().getDescription());
+				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+					setPdfFieldValue(PdfFieldPractice.OPT5_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
 				}
-//				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-//					setPdfFieldValue(PdfFieldPractice.OPT5_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
-//				}
 			}
 		} catch (IOException e) {
 			// do nothing
