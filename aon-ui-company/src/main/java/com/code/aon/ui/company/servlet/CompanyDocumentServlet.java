@@ -136,11 +136,10 @@ public class CompanyDocumentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
 		Attach attach = getAttachment(req);
-		if ( attach != null && attach.getData() != null) {			
+		if ( attach != null && attach.getData() != null) {
 			Integer length = attach.getData().length;
 			ByteArrayInputStream bais = new ByteArrayInputStream(attach.getData());
-		       
-		    res.addHeader("Content-Disposition","attachment; filename=\"" + attach.getDescription() +"\"");
+		    res.addHeader("Content-Disposition","attachment; filename=\"" + attach.getDescription() + "." + attach.getMimeType().getExtension() +"\"");
 		    //p_response.setContentType("application/octet-stream");
 		    res.setContentType(attach.getMimeType().getName());
 
@@ -163,5 +162,4 @@ public class CompanyDocumentServlet extends HttpServlet {
 	        out.close();
 		}
 	}
-
 }
