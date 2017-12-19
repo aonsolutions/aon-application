@@ -235,10 +235,9 @@ public class SQLSalaryDraft {
 					+ ", " + SQLConstants.CONTRACT + " AS CONTRACT "
 					+ " WHERE CONTRACT." + ContractColumns.ID + " =  ? "
 					+ " AND CONTRACT."
-					+ ContractColumns.AGREEMENT_LEVEL
-//					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
-//					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
-//					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
+					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
+					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
 					+ " = DATA." + AgreementLevelDataColumns.AGREEMENT_LEVEL + " AND DATA."
 					+ AgreementLevelDataColumns.NAME + " =  ? " + " AND DATA."
 					+ AgreementLevelDataColumns.START_DATE + " <= ? "
@@ -265,10 +264,9 @@ public class SQLSalaryDraft {
 					+ ", " + SQLConstants.CONTRACT + " AS CONTRACT "
 					+ " WHERE CONTRACT." + ContractColumns.ID + " =  ? "
 					+ " AND CONTRACT."
-					+ ContractColumns.AGREEMENT_LEVEL
-//					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
-//					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
-//					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
+					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
+					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
 					+ " = LEVEL." + AgreementLevelColumns.ID + " AND LEVEL."
 					+ AgreementLevelColumns.AGREEMENT + " =  DATA."
 					+ AgreementDataColumns.AGREEMENT + " AND DATA."
@@ -442,10 +440,9 @@ public class SQLSalaryDraft {
 					+ ", " + SQLConstants.CONTRACT + " AS CONTRACT "
 					+ " WHERE CONTRACT." + ContractColumns.ID + " =  ? "
 					+ " AND CONTRACT."
-					+ ContractColumns.AGREEMENT_LEVEL
-//					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
-//					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
-//					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
+					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
+					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
 					+ " = LEVEL." + AgreementLevelColumns.ID + " AND LEVEL."
 					+ AgreementLevelColumns.AGREEMENT + " =  PAYMENT."
 					+ AgreementPaymentColumns.AGREEMENT + " AND PAYMENT."

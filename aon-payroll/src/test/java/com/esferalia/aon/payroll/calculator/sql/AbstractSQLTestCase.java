@@ -691,8 +691,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT.PERSON, personId).set(CONTRACT.WORKPLACE, workplaceId).set(CONTRACT.START_DATE, startDate)
 				.set(CONTRACT.SENIORITY_DATE, startDate).set(CONTRACT.END_DATE, endDate)
 				.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccId).set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseActivityId)
-				.set(CONTRACT.AGREEMENT_LEVEL, category != null ? category.getAgreementLevel() : null).returning()
-//				.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY, category != null ? category.getId() : null).returning()
+				.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY, category != null ? category.getId() : null).returning()
 				.fetchOne();
 
 		for (int i = 0; i < payments.length; i++) {
@@ -941,7 +940,7 @@ public abstract class AbstractSQLTestCase {
 
 	public static final void addData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			ContextVariable variable, Double value) {
-		addData(aonContext, contract, startDate, endDate, variable.getName(), String.format(Locale.US,"%f", value));
+		addData(aonContext, contract, startDate, endDate, variable.getName(), String.format("%f", value));
 	}
 
 	public static final void setData(AONContext aonContext, AgreementLevelCategoryRecord category, String name, String expression) {

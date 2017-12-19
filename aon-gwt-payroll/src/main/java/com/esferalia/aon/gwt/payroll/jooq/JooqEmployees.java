@@ -361,8 +361,8 @@ public class JooqEmployees {
 												.eq(AGREEMENT.ID))).on(
 								AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
 										.eq(AGREEMENT_LEVEL.ID)))
-				.on(CONTRACT.AGREEMENT_LEVEL
-						.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL));
+				.on(CONTRACT.AGREEMENT_LEVEL_CATEGORY
+						.eq(AGREEMENT_LEVEL_CATEGORY.ID));
 	}
 
 	private static Employee newEmployee(Record record) {
@@ -427,8 +427,8 @@ public class JooqEmployees {
 													.eq(AGREEMENT.ID))).on(
 									AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
 											.eq(AGREEMENT_LEVEL.ID)))
-					.on(CONTRACT.AGREEMENT_LEVEL
-							.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
+					.on(CONTRACT.AGREEMENT_LEVEL_CATEGORY
+							.eq(AGREEMENT_LEVEL_CATEGORY.ID))
 					.where(CONTRACT.WORKPLACE.eq(workplaceId))
 					.and(CONTRACT.ID.lessThan(0));
 
@@ -610,8 +610,8 @@ public class JooqEmployees {
 												.eq(AGREEMENT.ID))).on(
 								AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
 										.eq(AGREEMENT_LEVEL.ID)))
-				.on(CONTRACT.AGREEMENT_LEVEL
-						.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
+				.on(CONTRACT.AGREEMENT_LEVEL_CATEGORY
+						.eq(AGREEMENT_LEVEL_CATEGORY.ID))
 				.where(CONTRACT.ID.eq(contractId)).fetchOne();
 		// @formatter:on
 
@@ -660,9 +660,9 @@ public class JooqEmployees {
 						contractRecord.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
 				.set(CONTRACT.SS_REGIME,
 						contractRecord.getValue(CONTRACT.SS_REGIME))
-				.set(CONTRACT.AGREEMENT_LEVEL,
+				.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
 						contractRecord
-								.getValue(CONTRACT.AGREEMENT_LEVEL))
+								.getValue(CONTRACT.AGREEMENT_LEVEL_CATEGORY))
 				.set(CONTRACT.MODEL, contractRecord.getValue(CONTRACT.MODEL))
 				.set(CONTRACT.CATEGORY_DESCRIPTION,
 						contractRecord.getValue(CONTRACT.CATEGORY_DESCRIPTION))

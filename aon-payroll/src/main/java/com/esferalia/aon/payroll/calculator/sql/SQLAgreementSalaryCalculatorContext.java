@@ -44,9 +44,8 @@ public class SQLAgreementSalaryCalculatorContext extends SQLContractSalaryCalcul
 	private static final String MAIN_SQL = "SELECT * " + " FROM %s"
 			+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
 			+ " LEFT JOIN enterprise_activity ON (contract.enterprise_activity = enterprise_activity.id)"
-			+ " LEFT JOIN agreement_level ON (contract.agreement_level = agreement_level.id)"
-//			+ " LEFT JOIN %s ON (contract.agreement_level_category = agreement_level_category.id)"
-//			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
+			+ " LEFT JOIN %s ON (contract.agreement_level_category = agreement_level_category.id)"
+			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
 			+ " LEFT JOIN agreement ON (agreement.id = agreement_level.agreement)" + ", %s" + ", %s " + ", %s"
 			+ " LEFT JOIN payroll_workplace ON (payroll_workplace.workplace = workplace.id)" + ", %s" + ", %s"
 			+ " LEFT JOIN customer ON (customer.registry = " + ENTERPRISE_REGISTRY + ".id)" + ", %s"
@@ -76,15 +75,14 @@ public class SQLAgreementSalaryCalculatorContext extends SQLContractSalaryCalcul
 			" ,NULL " + ContractColumns.END_DATE + " ,NULL " + ContractColumns.CALENDAR + " ,NULL "
 			+ ContractColumns.DESCRIPTION + " ,0 " + ContractColumns.SEPE_STATUS + " ,NULL "
 			+ ContractColumns.REGISTRATION + " ,'%2$tY-%2$tm-%2$td' " + ContractColumns.SENIORITY_DATE + " ,NULL "
-			+ ContractColumns.ENTERPRISE_ACTIVITY + " ,NULL " + ContractColumns.SS_REGIME + " ,%3$d "
-//			+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " ,NULL " + ContractColumns.MODEL + " ,NULL "
-			+ ContractColumns.AGREEMENT_LEVEL + " ,NULL " + ContractColumns.MODEL + " ,NULL "
+			+ ContractColumns.ENTERPRISE_ACTIVITY + " ,NULL " + ContractColumns.SS_REGIME + " ,0 "
+			+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " ,NULL " + ContractColumns.MODEL + " ,NULL "
 			+ ContractColumns.CATEGORY_DESCRIPTION + " ,0 " + ContractColumns.SS_STATUS + " ) AS  "
 			+ SQLConstants.CONTRACT;
 			// @formatter:on
 
 	// @formatter:off
-	private static final String __CATEGORY = "( SELECT " + "0 " + AgreementLevelCategoryColumns.ID + " ,0 "
+	private static final String CATEGORY = "( SELECT " + "0 " + AgreementLevelCategoryColumns.ID + " ,0 "
 			+ AgreementLevelCategoryColumns.DOMAIN + " ,%d " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " ,NULL "
 			+ AgreementLevelCategoryColumns.DESCRIPTION + " ) AS  " + SQLConstants.AGREEMENT_LEVEL_CATEGORY;
 			// @formatter:on
@@ -171,8 +169,8 @@ public class SQLAgreementSalaryCalculatorContext extends SQLContractSalaryCalcul
 	protected String getMainSql(Object... args) {
 		Date startDate = (Date) args[0];
 		int agreementLevelId = (Integer) args[1];
-		return String.format(MAIN_SQL, String.format(CONTRACT, startDate, startDate, agreementLevelId),
-				/*String.format(CATEGORY, agreementLevelId),*/ PERSON, P_REGISTRY, WORKPLACE, ENTERPRISE, E_REGISTRY,
+		return String.format(MAIN_SQL, String.format(CONTRACT, startDate, startDate),
+				String.format(CATEGORY, agreementLevelId), PERSON, P_REGISTRY, WORKPLACE, ENTERPRISE, E_REGISTRY,
 				RADDRESS);
 	}
 	
