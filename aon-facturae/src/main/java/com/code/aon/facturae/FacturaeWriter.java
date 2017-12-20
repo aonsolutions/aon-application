@@ -358,7 +358,6 @@ public class FacturaeWriter {
 		taxIdentification.setTaxIdentificationNumber( Util.toTextMax30Type(document) );
 		party.setTaxIdentification(taxIdentification);
 		party.setPartyIdentification( Util.toTextMax10Type(String.valueOf(registry.getId())) );
-		party.setAdministrativeCentres(new AdministrativeCentresType());
 		if ( personType == PersonTypeCodeType.F ) {
 			party.setIndividual( getIndividual(registry, name, address) );
 		} else {
