@@ -613,23 +613,79 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
    	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS, administration);
-    	BajaLRFacturasRecibidas suministro = SIIBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
-
-    	JAXBElement<RespuestaLRBajaFRecibidasType> response = (JAXBElement<RespuestaLRBajaFRecibidasType>) post(uri, suministro);
-    	RespuestaLRBajaFRecibidasType respuesta = response.getValue();
-    	
+    
     	JSONArray array = new JSONArray();
-    	for(RespuestaRecibidaBajaType rect : respuesta.getRespuestaLinea()){
-        	Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    		array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+    	byte[] requestXml = null;
+    	byte[] responseXml = null;
+    	LinkedList<String> statusList = new LinkedList<>();
+    	
+    	if(isAeat() || isNavarra()) {
+    		BajaLRFacturasRecibidas suministro = SIIBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<RespuestaLRBajaFRecibidasType> response = (JAXBElement<RespuestaLRBajaFRecibidasType>) post(uri, suministro);
+    		RespuestaLRBajaFRecibidasType respuesta = response.getValue();
+    	
+    		for(RespuestaRecibidaBajaType rect : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
         	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
         	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIBuilt.getInstance().getBajaFacturasRecibidas(suministro);
+    		responseXml = SIIBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isAraba()) {
+    		net.aonsolutions.core.araba.sii.BajaLRFacturasRecibidas suministro = SIIArabaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaFRecibidasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaFRecibidasType>) post(uri, suministro);
+    		net.aonsolutions.core.araba.sii.RespuestaLRBajaFRecibidasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.araba.sii.RespuestaRecibidaBajaType rect : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rect.getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIArabaBuilt.getInstance().getBajaFacturasRecibidas(suministro);
+    		responseXml = SIIArabaBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isGipuzkoa()) {
+    		net.aonsolutions.core.gipuzkoa.sii.BajaLRFacturasRecibidas suministro = SIIGipuzkoaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaFRecibidasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaFRecibidasType>) post(uri, suministro);
+    		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaFRecibidasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.gipuzkoa.sii.RespuestaRecibidaBajaType rect : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIGipuzkoaBuilt.getInstance().getBajaFacturasRecibidas(suministro);
+    		responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isBizkaia()) {
+    		net.aonsolutions.core.bizkaia.sii.BajaLRFacturasRecibidas suministro = SIIBizkaiaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaFRecibidasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaFRecibidasType>) post(uri, suministro);
+    		net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaFRecibidasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.bizkaia.sii.RespuestaRecibidaBajaType rect : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIBizkaiaBuilt.getInstance().getBajaFacturasRecibidas(suministro);
+    		responseXml = SIIBizkaiaBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	}
     	
-    	byte[] requestXml = SIIBuilt.getInstance().getBajaFacturasRecibidas(suministro);
-    	byte[] responseXml = SIIBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
-		LinkedList<String> statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-		HashMap<Integer, String> status = new HashMap<>();
+    	HashMap<Integer, String> status = new HashMap<>();
     	for(Integer i = 0; i < invoiceList.size(); i ++){
     		status.put(invoiceList.get(i), statusList.get(i));
     	}
@@ -643,23 +699,82 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
     protected JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, LinkedList<Integer> invoiceList, String terceros, String auth, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS_PAGOS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS_PAGOS, administration);
-    	SuministroLRPagosRecibidas suministro = SIIBuilt.getInstance().suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceList);     	
-    
-    	JAXBElement<RespuestaLRPagosRecibidasType> response = (JAXBElement<RespuestaLRPagosRecibidasType>) post(uri, suministro);
-    	RespuestaLRPagosRecibidasType respuesta = response.getValue();
     	
     	JSONArray array = new JSONArray();
-    	for(RespuestaRecibidaPagoType rrpt : respuesta.getRespuestaLinea()){
-        	Boolean correcto = rrpt.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    		array.put(json(correcto ? 200 : rrpt.getCodigoErrorRegistro().intValue(), 
+    	byte[] requestXml = null;
+    	byte[] responseXml = null;
+    	LinkedList<String> statusList = new LinkedList<>();
+    	
+    	if(isAeat() || isNavarra()) {
+    		SuministroLRPagosRecibidas suministro = SIIBuilt.getInstance().suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceList);     	
+    
+    		JAXBElement<RespuestaLRPagosRecibidasType> response = (JAXBElement<RespuestaLRPagosRecibidasType>) post(uri, suministro);
+    		RespuestaLRPagosRecibidasType respuesta = response.getValue();
+    	
+    		for(RespuestaRecibidaPagoType rrpt : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rrpt.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rrpt.getCodigoErrorRegistro().intValue(), 
         	    	correcto ? "Envio realizado correctamente" : rrpt.getDescripcionErrorRegistro(),
         	    			rrpt.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidasPagos(suministro);
+    		responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
+
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isAraba()) {
+    		net.aonsolutions.core.araba.sii.SuministroLRPagosRecibidas suministro = SIIArabaBuilt.getInstance().suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceList);     	
+    	    
+    		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRPagosRecibidasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRPagosRecibidasType>) post(uri, suministro);
+    		net.aonsolutions.core.araba.sii.RespuestaLRPagosRecibidasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.araba.sii.RespuestaRecibidaPagoType rrpt : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rrpt.getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rrpt.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rrpt.getDescripcionErrorRegistro(),
+        	    			rrpt.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIArabaBuilt.getInstance().getSuministroFacturasRecibidasPagos(suministro);
+    		responseXml = SIIArabaBuilt.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
+
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isGipuzkoa()) {
+    		net.aonsolutions.core.gipuzkoa.sii.SuministroLRPagosRecibidas suministro = SIIGipuzkoaBuilt.getInstance().suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceList);     	
+    	    
+    		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRPagosRecibidasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRPagosRecibidasType>) post(uri, suministro);
+    		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRPagosRecibidasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.gipuzkoa.sii.RespuestaRecibidaPagoType rrpt : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rrpt.getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rrpt.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rrpt.getDescripcionErrorRegistro(),
+        	    			rrpt.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIGipuzkoaBuilt.getInstance().getSuministroFacturasRecibidasPagos(suministro);
+    		responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
+
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isBizkaia()) {
+    		net.aonsolutions.core.bizkaia.sii.SuministroLRPagosRecibidas suministro = SIIBizkaiaBuilt.getInstance().suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceList);     	
+    	    
+    		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRPagosRecibidasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRPagosRecibidasType>) post(uri, suministro);
+    		net.aonsolutions.core.bizkaia.sii.RespuestaLRPagosRecibidasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.bizkaia.sii.RespuestaRecibidaPagoType rrpt : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rrpt.getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rrpt.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rrpt.getDescripcionErrorRegistro(),
+        	    			rrpt.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIBizkaiaBuilt.getInstance().getSuministroFacturasRecibidasPagos(suministro);
+    		responseXml = SIIBizkaiaBuilt.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
+
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	}
     	
-    	byte[] requestXml = SIIBuilt.getInstance().getSuministroFacturasRecibidasPagos(suministro);
-    	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
-
-    	LinkedList<String> statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	HashMap<Integer, String> status = new HashMap<>();
     	for(Integer i = 0; i < invoiceList.size(); i ++){
     		status.put(invoiceList.get(i), statusList.get(i));
@@ -682,43 +797,146 @@ public class SIIPost extends WebServiceGatewaySupport{
     			|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
     	
     	JSONArray array = new JSONArray();
-
+    	byte[] requestXml = null;
+    	byte[] responseXml = null;
+    	LinkedList<String> status = new LinkedList<>();
+    	
     	// ALTA
     	if(newList.size() > 0){
-        	SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
-          	JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
-        	RespuestaLRBienesInversionType respuesta = response.getValue();
+    		if(isAeat() || isNavarra()) {
+    			SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+    			JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
+    			RespuestaLRBienesInversionType respuesta = response.getValue();
     		
-        	byte[] requestXml = SIIBuilt.getInstance().getSuministroBienesInversion(suministro);
-        	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
-    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INVERSION);
-    	
-    		for (RespuestaBienType r : respuesta.getRespuestaLinea()) {
-    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
-    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    			requestXml = SIIBuilt.getInstance().getSuministroBienesInversion(suministro);
+    			responseXml = SIIBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INVERSION);
+    			
+    			for (RespuestaBienType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    						correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
     						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isAraba()) {
+     			net.aonsolutions.core.araba.sii.SuministroLRBienesInversion suministro = SIIArabaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+    			JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
+    			net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
+    		
+    			requestXml = SIIArabaBuilt.getInstance().getSuministroBienesInversion(suministro);
+    			responseXml = SIIArabaBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INVERSION);
+    			
+    			for (net.aonsolutions.core.araba.sii.RespuestaBienType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    						correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isGipuzkoa()) {
+     			net.aonsolutions.core.gipuzkoa.sii.SuministroLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+    			JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
+    			net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
+    		
+    			requestXml = SIIGipuzkoaBuilt.getInstance().getSuministroBienesInversion(suministro);
+    			responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INVERSION);
+    			
+    			for (net.aonsolutions.core.gipuzkoa.sii.RespuestaBienType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    						correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isBizkaia()) {
+     			net.aonsolutions.core.bizkaia.sii.SuministroLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+    			JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
+    			net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
+    		
+    			requestXml = SIIBizkaiaBuilt.getInstance().getSuministroBienesInversion(suministro);
+    			responseXml = SIIBizkaiaBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INVERSION);
+    			
+    			for (net.aonsolutions.core.bizkaia.sii.RespuestaBienType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    						correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
     		}
     	} 
     	
     	// MODIFICACI�N
     	if(modList.size() > 0){
-        	SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
-          	JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
-        	RespuestaLRBienesInversionType respuesta = response.getValue();
+        	if(isAeat() || isNavarra()) {
+        		SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
+        		JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
+        		RespuestaLRBienesInversionType respuesta = response.getValue();
         	
-        	byte[] requestXml = SIIBuilt.getInstance().getSuministroBienesInversion(suministro);
-        	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
-        	LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INVERSION);
+        		requestXml = SIIBuilt.getInstance().getSuministroBienesInversion(suministro);
+        		responseXml = SIIBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+        		status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+        		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INVERSION);
     	
-    		for (RespuestaBienType r : respuesta.getRespuestaLinea()) {
-    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+        		for (RespuestaBienType r : respuesta.getRespuestaLinea()) {
+        			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+        			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
     					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
     						r.getIDFactura().getNumSerieFacturaEmisor()));
-    		}
+        		}
+        	} else if(isAraba()) {
+        		net.aonsolutions.core.araba.sii.SuministroLRBienesInversion suministro = SIIArabaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
+        		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
+        		net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
+        	
+        		requestXml = SIIArabaBuilt.getInstance().getSuministroBienesInversion(suministro);
+        		responseXml = SIIArabaBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+        		status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+        		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INVERSION);
+    	
+        		for (net.aonsolutions.core.araba.sii.RespuestaBienType r : respuesta.getRespuestaLinea()) {
+        			Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+        			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+        		}
+        	} else if(isGipuzkoa()) {
+        		net.aonsolutions.core.gipuzkoa.sii.SuministroLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
+        		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
+        		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
+        	
+        		requestXml = SIIGipuzkoaBuilt.getInstance().getSuministroBienesInversion(suministro);
+        		responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+        		status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+        		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INVERSION);
+    	
+        		for (net.aonsolutions.core.gipuzkoa.sii.RespuestaBienType r : respuesta.getRespuestaLinea()) {
+        			Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+        			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+        		}
+        	} else if(isBizkaia()) {
+        		net.aonsolutions.core.bizkaia.sii.SuministroLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
+        		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
+        		net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
+        	
+        		requestXml = SIIBizkaiaBuilt.getInstance().getSuministroBienesInversion(suministro);
+        		responseXml = SIIBizkaiaBuilt.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+        		status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+        		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INVERSION);
+    	
+        		for (net.aonsolutions.core.bizkaia.sii.RespuestaBienType r : respuesta.getRespuestaLinea()) {
+        			Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+        			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+        		}
+        	}
     	}
     	return array;
     }
@@ -726,23 +944,79 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
     protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION, administration) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION, administration);
-    	BajaLRBienesInversion suministro = SIIBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
 
-    	JAXBElement<RespuestaLRBajaBienesInversionType> response = (JAXBElement<RespuestaLRBajaBienesInversionType>) post(uri, suministro);
-    	RespuestaLRBajaBienesInversionType respuesta = response.getValue();
-    	
     	JSONArray array = new JSONArray();
-    	for(RespuestaBienBajaType rect : respuesta.getRespuestaLinea()){
-        	Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    		array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+    	byte[] requestXml = null;
+    	byte[] responseXml = null;
+    	LinkedList<String> statusList = new LinkedList<>();
+    	
+    	if(isAeat() || isNavarra()) {
+    		BajaLRBienesInversion suministro = SIIBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<RespuestaLRBajaBienesInversionType> response = (JAXBElement<RespuestaLRBajaBienesInversionType>) post(uri, suministro);
+    		RespuestaLRBajaBienesInversionType respuesta = response.getValue();
+    		
+	    	for(RespuestaBienBajaType rect : respuesta.getRespuestaLinea()){
+	    		Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+	    		array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
         	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
         	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
-    	}
+	    	}
     	
-    	byte[] requestXml = SIIBuilt.getInstance().getBajaBienesInversion(suministro);
-    	byte[] responseXml = SIIBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
-		LinkedList<String> statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-		HashMap<Integer, String> status = new HashMap<>();
+	    	requestXml = SIIBuilt.getInstance().getBajaBienesInversion(suministro);
+	    	responseXml = SIIBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
+	    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isAraba()) {
+    		net.aonsolutions.core.araba.sii.BajaLRBienesInversion suministro = SIIArabaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaBienesInversionType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaBienesInversionType>) post(uri, suministro);
+    		net.aonsolutions.core.araba.sii.RespuestaLRBajaBienesInversionType respuesta = response.getValue();
+    		
+	    	for(net.aonsolutions.core.araba.sii.RespuestaBienBajaType rect : respuesta.getRespuestaLinea()){
+	    		Boolean correcto = rect.getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+	    		array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+	    	}
+    	
+	    	requestXml = SIIArabaBuilt.getInstance().getBajaBienesInversion(suministro);
+	    	responseXml = SIIArabaBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
+	    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isGipuzkoa()) {
+    		net.aonsolutions.core.gipuzkoa.sii.BajaLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaBienesInversionType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaBienesInversionType>) post(uri, suministro);
+    		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaBienesInversionType respuesta = response.getValue();
+    		
+	    	for(net.aonsolutions.core.gipuzkoa.sii.RespuestaBienBajaType rect : respuesta.getRespuestaLinea()){
+	    		Boolean correcto = rect.getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+	    		array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+	    	}
+    	
+	    	requestXml = SIIGipuzkoaBuilt.getInstance().getBajaBienesInversion(suministro);
+	    	responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
+	    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));    		
+    	} else if(isBizkaia()) {
+    		net.aonsolutions.core.bizkaia.sii.BajaLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaBienesInversionType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaBienesInversionType>) post(uri, suministro);
+    		net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaBienesInversionType respuesta = response.getValue();
+    		
+	    	for(net.aonsolutions.core.bizkaia.sii.RespuestaBienBajaType rect : respuesta.getRespuestaLinea()){
+	    		Boolean correcto = rect.getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+	    		array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+	    	}
+    	
+	    	requestXml = SIIBizkaiaBuilt.getInstance().getBajaBienesInversion(suministro);
+	    	responseXml = SIIBizkaiaBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
+	    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	}
+	    	
+	    HashMap<Integer, String> status = new HashMap<>();
     	for(Integer i = 0; i < invoiceList.size(); i ++){
     		status.put(invoiceList.get(i), statusList.get(i));
     	}
@@ -765,44 +1039,152 @@ public class SIIPost extends WebServiceGatewaySupport{
     			|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
     	
 		JSONArray array = new JSONArray();
-
-		// ALTA
+		byte[] requestXml = null;
+    	byte[] responseXml = null;
+    	LinkedList<String> status = new LinkedList<>();
+    	// ALTA
     	if(newList.size() > 0){
-    		SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    		if(isAeat() || isNavarra()) {
+    			SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
     	
-    		JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
-    		RespuestaLROComunitariasType respuesta = response.getValue();
+    			JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
+    			RespuestaLROComunitariasType respuesta = response.getValue();
     	
-    		byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
-    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
-    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INTRACOMUNITARIAS);
+    			requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    			responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INTRACOMUNITARIAS);
     	
-    		for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
-    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    			for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
     					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
     						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isAraba()) {
+    			net.aonsolutions.core.araba.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    	    	
+    			JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType>) post(uri, suministro);
+    			net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType respuesta = response.getValue();
+    	
+    			requestXml = SIIArabaBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    			responseXml = SIIArabaBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INTRACOMUNITARIAS);
+    	
+    			for (net.aonsolutions.core.araba.sii.RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isGipuzkoa()) {
+    			net.aonsolutions.core.gipuzkoa.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    	    	
+    			JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType>) post(uri, suministro);
+    			net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType respuesta = response.getValue();
+    	
+    			requestXml = SIIGipuzkoaBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    			responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INTRACOMUNITARIAS);
+    	
+    			for (net.aonsolutions.core.gipuzkoa.sii.RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isBizkaia()) {
+    			net.aonsolutions.core.bizkaia.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    	    	
+    			JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType>) post(uri, suministro);
+    			net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType respuesta = response.getValue();
+    	
+    			requestXml = SIIBizkaiaBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    			responseXml = SIIBizkaiaBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.ALTA_INTRACOMUNITARIAS);
+    	
+    			for (net.aonsolutions.core.bizkaia.sii.RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
     		}
     	}  
     	
     	// MODIFICACI�N
     	if(modList.size() > 0){
-    		SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
+    		if(isAeat() || isNavarra()) {
+    			SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
     	
-    		JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
-    		RespuestaLROComunitariasType respuesta = response.getValue();
+    			JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
+    			RespuestaLROComunitariasType respuesta = response.getValue();
     	
-    		byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
-    		byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
-    		LinkedList<String> status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    		SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INTRACOMUNITARIAS);
+    			requestXml = SIIBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    			responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INTRACOMUNITARIAS);
     	
-    		for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
-    			Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    			for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
     					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
     						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isAraba()) {
+    			net.aonsolutions.core.araba.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
+    	    	
+    			JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType>) post(uri, suministro);
+    			net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType respuesta = response.getValue();
+    	
+    			requestXml = SIIArabaBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    			responseXml = SIIArabaBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INTRACOMUNITARIAS);
+    	
+    			for (net.aonsolutions.core.araba.sii.RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isGipuzkoa()) {
+    			net.aonsolutions.core.gipuzkoa.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
+    	    	
+    			JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType>) post(uri, suministro);
+    			net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType respuesta = response.getValue();
+    	
+    			requestXml = SIIGipuzkoaBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    			responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INTRACOMUNITARIAS);
+    	
+    			for (net.aonsolutions.core.gipuzkoa.sii.RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
+    		} else if(isBizkaia()) {
+    			net.aonsolutions.core.bizkaia.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
+    	    	
+    			JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType>) post(uri, suministro);
+    			net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType respuesta = response.getValue();
+    	
+    			requestXml = SIIBizkaiaBuilt.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
+    			responseXml = SIIBizkaiaBuilt.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    			SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, SendType.MOD_INTRACOMUNITARIAS);
+    	
+    			for (net.aonsolutions.core.bizkaia.sii.RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
+    				Boolean correcto = r.getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+    				array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    					correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+    						r.getIDFactura().getNumSerieFacturaEmisor()));
+    			}
     		}
     	}
     	return array;
@@ -811,24 +1193,82 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
     protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration);
-    	BajaLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
-
-    	JAXBElement<RespuestaLRBajaOComunitariasType> response = (JAXBElement<RespuestaLRBajaOComunitariasType>) post(uri, suministro);
-    	RespuestaLRBajaOComunitariasType respuesta = response.getValue();
     	
-    	JSONArray array = new JSONArray();
-    	for(RespuestaComunitariaBajaType rect : respuesta.getRespuestaLinea()){
-        	Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    		array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+		JSONArray array = new JSONArray();
+		byte[] requestXml = null;
+    	byte[] responseXml = null;
+    	LinkedList<String> statusList = new LinkedList<>();
+    	
+    	if(isAeat() || isNavarra()) {
+    		BajaLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<RespuestaLRBajaOComunitariasType> response = (JAXBElement<RespuestaLRBajaOComunitariasType>) post(uri, suministro);
+    		RespuestaLRBajaOComunitariasType respuesta = response.getValue();
+    	
+    		for(RespuestaComunitariaBajaType rect : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
         	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
         	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIBuilt.getInstance().getBajaOperacionesIntracomunitarias(suministro);
+    		responseXml = SIIBuilt.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta);
+    	
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isAraba()) {
+    		net.aonsolutions.core.araba.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaOComunitariasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaOComunitariasType>) post(uri, suministro);
+    		net.aonsolutions.core.araba.sii.RespuestaLRBajaOComunitariasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.araba.sii.RespuestaComunitariaBajaType rect : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rect.getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIArabaBuilt.getInstance().getBajaOperacionesIntracomunitarias(suministro);
+    		responseXml = SIIArabaBuilt.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta);
+    	
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isGipuzkoa()) {
+    		net.aonsolutions.core.gipuzkoa.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaOComunitariasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaOComunitariasType>) post(uri, suministro);
+    		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaOComunitariasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.gipuzkoa.sii.RespuestaComunitariaBajaType rect : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rect.getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIGipuzkoaBuilt.getInstance().getBajaOperacionesIntracomunitarias(suministro);
+    		responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta);
+    	
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	} else if(isBizkaia()) {
+    		net.aonsolutions.core.bizkaia.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+
+    		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaOComunitariasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaOComunitariasType>) post(uri, suministro);
+    		net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaOComunitariasType respuesta = response.getValue();
+    	
+    		for(net.aonsolutions.core.bizkaia.sii.RespuestaComunitariaBajaType rect : respuesta.getRespuestaLinea()){
+    			Boolean correcto = rect.getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
+        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
+    	
+    		requestXml = SIIBizkaiaBuilt.getInstance().getBajaOperacionesIntracomunitarias(suministro);
+    		responseXml = SIIBizkaiaBuilt.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta);
+    	
+    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	}
-    	
-    	byte[] requestXml = SIIBuilt.getInstance().getBajaOperacionesIntracomunitarias(suministro);
-    	byte[] responseXml = SIIBuilt.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta);
-    	
-		LinkedList<String> statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-		HashMap<Integer, String> status = new HashMap<>();
+   		HashMap<Integer, String> status = new HashMap<>();
     	for(Integer i = 0; i < invoiceList.size(); i ++){
     		status.put(invoiceList.get(i), statusList.get(i));
     	}
@@ -842,19 +1282,65 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
     protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.COBROS_METALICO, administration) : SIIUri.getInstance().getURI(SIIType.COBROS_METALICO, administration);
-    	SuministroLRCobrosMetalico suministro = SIIBuilt.getInstance().suministroCobrosMetalico(domain, login, company, invoiceList, contextList);     	
     	
-    	JAXBElement<RespuestaLRIMetalicoType> response = (JAXBElement<RespuestaLRIMetalicoType>) post(uri, suministro);
-    	RespuestaLRIMetalicoType respuesta = response.getValue();
-    	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-  
-    //	byte[] requestXml = SIIBuilt.getInstance().getSuministroCobrosMetalico(suministro);
-    //	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroCobrosMetalico(respuesta);
-   // 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_METALICO_OK : SIIDataVariable.INVOICE_SUMINISTRO_METALICO_ERROR);
+    	if(isAeat() || isNavarra()) {
+    		SuministroLRCobrosMetalico suministro = SIIBuilt.getInstance().suministroCobrosMetalico(domain, login, company, invoiceList, contextList);     	
     	
-    	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    		JAXBElement<RespuestaLRIMetalicoType> response = (JAXBElement<RespuestaLRIMetalicoType>) post(uri, suministro);
+    		RespuestaLRIMetalicoType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    		
+    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroCobrosMetalico(suministro);
+    		//	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroCobrosMetalico(respuesta);
+    		// 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_METALICO_OK : SIIDataVariable.INVOICE_SUMINISTRO_METALICO_ERROR);
+    	
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
     			"");
+    	} else if(isAraba()) {
+    		net.aonsolutions.core.araba.sii.SuministroLRCobrosMetalico suministro = SIIArabaBuilt.getInstance().suministroCobrosMetalico(domain, login, company, invoiceList, contextList);     	
+        	
+    		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRIMetalicoType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRIMetalicoType>) post(uri, suministro);
+    		net.aonsolutions.core.araba.sii.RespuestaLRIMetalicoType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+    		
+    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroCobrosMetalico(suministro);
+    		//	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroCobrosMetalico(respuesta);
+    		// 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_METALICO_OK : SIIDataVariable.INVOICE_SUMINISTRO_METALICO_ERROR);
+    	
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    	} else if(isGipuzkoa()) {
+    		net.aonsolutions.core.gipuzkoa.sii.SuministroLRCobrosMetalico suministro = SIIGipuzkoaBuilt.getInstance().suministroCobrosMetalico(domain, login, company, invoiceList, contextList);     	
+        	
+    		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRIMetalicoType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRIMetalicoType>) post(uri, suministro);
+    		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRIMetalicoType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+    		
+    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroCobrosMetalico(suministro);
+    		//	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroCobrosMetalico(respuesta);
+    		// 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_METALICO_OK : SIIDataVariable.INVOICE_SUMINISTRO_METALICO_ERROR);
+    	
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    	} else if(isBizkaia()) {
+    		net.aonsolutions.core.bizkaia.sii.SuministroLRCobrosMetalico suministro = SIIBizkaiaBuilt.getInstance().suministroCobrosMetalico(domain, login, company, invoiceList, contextList);     	
+        	
+    		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRIMetalicoType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRIMetalicoType>) post(uri, suministro);
+    		net.aonsolutions.core.bizkaia.sii.RespuestaLRIMetalicoType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+    		
+    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroCobrosMetalico(suministro);
+    		//	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroCobrosMetalico(respuesta);
+    		// 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_METALICO_OK : SIIDataVariable.INVOICE_SUMINISTRO_METALICO_ERROR);
+    	
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    	} 
+    	return new JSONObject();
     }
     
     protected JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth) {
@@ -867,19 +1353,67 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
     protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_SEGUROS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_SEGUROS, administration);
-    	SuministroLROperacionesSeguros suministro = SIIBuilt.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceList, contextList);     	
+    		
+    	if(isAeat() || isNavarra()) {
+    		SuministroLROperacionesSeguros suministro = SIIBuilt.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceList, contextList);     	
     	
-    	JAXBElement<RespuestaLROperacionesSegurosType> response = (JAXBElement<RespuestaLROperacionesSegurosType>) post(uri, suministro);
-    	RespuestaLROperacionesSegurosType respuesta = response.getValue();
-    	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    		JAXBElement<RespuestaLROperacionesSegurosType> response = (JAXBElement<RespuestaLROperacionesSegurosType>) post(uri, suministro);
+    		RespuestaLROperacionesSegurosType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     	
-    //	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesSeguros(suministro);
-    //	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesSeguros(respuesta);
-    //	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_OK: SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_ERROR);
+    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesSeguros(suministro);
+    		//	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesSeguros(respuesta);
+    		//	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_OK: SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_ERROR);
     	
-    	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
     			"");
+    	} else if(isAraba()) {
+    		net.aonsolutions.core.araba.sii.SuministroLROperacionesSeguros suministro = SIIArabaBuilt.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceList, contextList);     	
+        	
+    		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROperacionesSegurosType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROperacionesSegurosType>) post(uri, suministro);
+    		net.aonsolutions.core.araba.sii.RespuestaLROperacionesSegurosType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+    		
+    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesSeguros(suministro);
+    		//	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesSeguros(respuesta);
+    		//	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_OK: SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_ERROR);
+    	
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    	} else if(isGipuzkoa()) {
+    		/* TODO
+    		net.aonsolutions.core.gipuzkoa.sii.SuministroLROperacionesSeguros suministro = SIIGipuzkoaBuilt.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceList, contextList);     	
+        	
+    		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROperacionesSegurosType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROperacionesSegurosType>) post(uri, suministro);
+    		net.aonsolutions.core.gipuzkoa.sii.RespuestaLROperacionesSegurosType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+    		
+    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesSeguros(suministro);
+    		//	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesSeguros(respuesta);
+    		//	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_OK: SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_ERROR);
+    	
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    		*/
+    	} else if(isBizkaia()) {
+    		net.aonsolutions.core.bizkaia.sii.SuministroLROperacionesSeguros suministro = SIIBizkaiaBuilt.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceList, contextList);     	
+        	
+    		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROperacionesSegurosType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROperacionesSegurosType>) post(uri, suministro);
+    		net.aonsolutions.core.bizkaia.sii.RespuestaLROperacionesSegurosType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+    	
+    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesSeguros(suministro);
+    		//	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroOperacionesSeguros(respuesta);
+    		//	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_OK: SIIDataVariable.INVOICE_SUMINISTRO_SEGUROS_ERROR);
+    	
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    	} 
+    	return new JSONObject();
     }
     
     protected JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth) {
@@ -892,19 +1426,60 @@ public class SIIPost extends WebServiceGatewaySupport{
     @SuppressWarnings("unchecked")
     protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.AGENCIAS_VIAJES, administration) : SIIUri.getInstance().getURI(SIIType.AGENCIAS_VIAJES, administration);
-    	SuministroLRAgenciasViajes suministro = SIIBuilt.getInstance().suministroAgenciasViajes(domain, login, company, invoiceList, contextList);     	
-    	
-    	JAXBElement<RespuestaLRAgenciasViajesType> response = (JAXBElement<RespuestaLRAgenciasViajesType>) post(uri, suministro);
-    	RespuestaLRAgenciasViajesType respuesta = response.getValue();
-    	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    	if(isAeat() || isNavarra()) {
+    		SuministroLRAgenciasViajes suministro = SIIBuilt.getInstance().suministroAgenciasViajes(domain, login, company, invoiceList, contextList);     	
+    		JAXBElement<RespuestaLRAgenciasViajesType> response = (JAXBElement<RespuestaLRAgenciasViajesType>) post(uri, suministro);
+    		RespuestaLRAgenciasViajesType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
 
-  // 	byte[] requestXml = SIIBuilt.getInstance().getSuministroAgenciasViajes(suministro);
-  // 	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroAgenciasViajes(respuesta);
-  //  	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_ERROR);
+    		// 	byte[] requestXml = SIIBuilt.getInstance().getSuministroAgenciasViajes(suministro);
+    		// 	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroAgenciasViajes(respuesta);
+    		// 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_ERROR);
    
-    	return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
     			"");
+    	} else if(isAraba()) {
+    		net.aonsolutions.core.araba.sii.SuministroLRAgenciasViajes suministro = SIIArabaBuilt.getInstance().suministroAgenciasViajes(domain, login, company, invoiceList, contextList);     	
+    		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRAgenciasViajesType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRAgenciasViajesType>) post(uri, suministro);
+    		net.aonsolutions.core.araba.sii.RespuestaLRAgenciasViajesType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.araba.sii.EstadoRegistroType.CORRECTO);
+
+    		// 	byte[] requestXml = SIIBuilt.getInstance().getSuministroAgenciasViajes(suministro);
+    		// 	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroAgenciasViajes(respuesta);
+    		// 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_ERROR);
+   
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    	} else if(isGipuzkoa()) {
+    		net.aonsolutions.core.gipuzkoa.sii.SuministroLRAgenciasViajes suministro = SIIGipuzkoaBuilt.getInstance().suministroAgenciasViajes(domain, login, company, invoiceList, contextList);     	
+    		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRAgenciasViajesType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRAgenciasViajesType>) post(uri, suministro);
+    		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRAgenciasViajesType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.gipuzkoa.sii.EstadoRegistroType.CORRECTO);
+
+    		// 	byte[] requestXml = SIIBuilt.getInstance().getSuministroAgenciasViajes(suministro);
+    		// 	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroAgenciasViajes(respuesta);
+    		// 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_ERROR);
+   
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    	} else if(isBizkaia()) {
+    		net.aonsolutions.core.bizkaia.sii.SuministroLRAgenciasViajes suministro = SIIBizkaiaBuilt.getInstance().suministroAgenciasViajes(domain, login, company, invoiceList, contextList);     	
+    		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRAgenciasViajesType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRAgenciasViajesType>) post(uri, suministro);
+    		net.aonsolutions.core.bizkaia.sii.RespuestaLRAgenciasViajesType respuesta = response.getValue();
+    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(net.aonsolutions.core.bizkaia.sii.EstadoRegistroType.CORRECTO);
+
+    		// 	byte[] requestXml = SIIBuilt.getInstance().getSuministroAgenciasViajes(suministro);
+    		// 	byte[] responseXml = SIIBuilt.getInstance().getRespuestaSuministroAgenciasViajes(respuesta);
+    		// 	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, correcto || aceptadoConErrores ? SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_OK : SIIDataVariable.INVOICE_SUMINISTRO_AGENCIAS_ERROR);
+   
+    		return json(correcto ? 200 : respuesta.getRespuestaLinea().get(0).getCodigoErrorRegistro().intValue(), 
+    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(),
+    			"");
+    	}
+    	return new JSONObject();
     }
     
     protected JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth) {

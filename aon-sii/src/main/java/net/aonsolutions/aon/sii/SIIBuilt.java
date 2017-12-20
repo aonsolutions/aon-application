@@ -302,7 +302,7 @@ public class SIIBuilt {
 			fet.setNumRegistroAcuerdoFacturacion("");//auth);//TODO TIENE K DARLO EL CLIENTE
 			
 			// IMPORTE TOTAL 
-			Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
+			//Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
 			Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota()).sum();
 			fet.setImporteTotal(Double.toString(AonMathUtils.round(total)));
 
@@ -334,7 +334,7 @@ public class SIIBuilt {
 				dit.setSituacionInmueble("");//TODO
 				datosInmueble.getDetalleInmueble().add(dit);
 				fet.setDatosInmueble(datosInmueble);
-				Invoice i = new Invoice();
+				//Invoice i = new Invoice();
 			}
 			// IMPORTE TRANSMISION SUJETOS A IVA (OPTIONAL) ... importe TODO ¿?
 			//fet.setImporteTransmisionSujetoAIVA("");//TODO
