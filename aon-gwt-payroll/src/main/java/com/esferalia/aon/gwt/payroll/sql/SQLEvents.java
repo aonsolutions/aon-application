@@ -944,8 +944,6 @@ public class SQLEvents {
 			
 			Record1<Integer> result = dslContext.select(AGREEMENT_LEVEL.AGREEMENT)
 			.from(AGREEMENT_LEVEL)
-			.leftJoin(AGREEMENT_LEVEL_CATEGORY)
-			.on(AGREEMENT_LEVEL.ID.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL))
 			.leftJoin(CONTRACT)
 			.on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
 			.where(CONTRACT.ID.eq(employeeId)).fetchOne();
