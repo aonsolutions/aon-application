@@ -118,7 +118,7 @@ public class Mod3902015Print extends HttpServlet {
 			urlParameters = "HID=INF7390A" 
 				+ "&IDI=ES"
 				+ "&LEV=000000000000"
-				+ "&F01=" + encodedFile 
+				+ "&FIC=" + encodedFile 
 				+ "&RUT="  
 				+ "&PRG=PTLINKN3"
 				+ "&FIN=" 

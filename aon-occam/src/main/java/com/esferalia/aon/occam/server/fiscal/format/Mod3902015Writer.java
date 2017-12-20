@@ -94,17 +94,17 @@ public class Mod3902015Writer {
 		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr1() != null)?AonFiscalFileUtils.changeInvalidCharacters(m390.getLegalRepr1().getName()):"",80))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr1() != null)?m390.getLegalRepr1().getDocument():"",9))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.dateES((m390.isLegalEntity() && m390.getLegalRepr1() != null)?m390.getLegalRepr1().getNotaryDate():null))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.dateZeroES((m390.isLegalEntity() && m390.getLegalRepr1() != null)?m390.getLegalRepr1().getNotaryDate():null))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr1() != null)?AonFiscalFileUtils.changeInvalidCharacters(m390.getLegalRepr1().getNotary()):"",12))
 
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr2() != null)?AonFiscalFileUtils.changeInvalidCharacters(m390.getLegalRepr2().getName()):"",80))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr2() != null)?m390.getLegalRepr2().getDocument():"",9))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.dateES((m390.isLegalEntity() && m390.getLegalRepr2() != null)?m390.getLegalRepr2().getNotaryDate():null))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.dateZeroES((m390.isLegalEntity() && m390.getLegalRepr2() != null)?m390.getLegalRepr2().getNotaryDate():null))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr2() != null)?AonFiscalFileUtils.changeInvalidCharacters(m390.getLegalRepr2().getNotary()):"",12))
 
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr3() != null)?AonFiscalFileUtils.changeInvalidCharacters(m390.getLegalRepr3().getName()):"",80))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr3() != null)?m390.getLegalRepr3().getDocument():"",9))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.dateES((m390.isLegalEntity() && m390.getLegalRepr3() != null)?m390.getLegalRepr3().getNotaryDate():null))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.dateZeroES((m390.isLegalEntity() && m390.getLegalRepr3() != null)?m390.getLegalRepr3().getNotaryDate():null))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text((m390.isLegalEntity() && m390.getLegalRepr3() != null)?AonFiscalFileUtils.changeInvalidCharacters(m390.getLegalRepr3().getNotary()):"",12))
 
 		   ,(wr,m390) -> wr.append(AonStringUtils.repeat(' ', 21))

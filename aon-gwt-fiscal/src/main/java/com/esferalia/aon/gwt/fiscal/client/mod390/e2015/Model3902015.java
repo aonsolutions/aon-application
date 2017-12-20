@@ -344,7 +344,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		
 		Button  printButton = new Button();
 		printButton.setVisible(!m390.isNew());
-		printButton.setText(AON.MSG.predeclaration());
+		printButton.setText(AON.MSG.validatePrintViaAeat());
 		printButton.setTitle(newButton.getText());
 		printButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		printButton.addStyleName(AON.AON_CSS.aonIconAeat());
