@@ -5,6 +5,7 @@ public class AlbvDet {
 	Integer albv;
 	Integer linea;
 	String articulo;
+	Double iva;
 	String detalle;
 	String detalle2;
 	String detalle3;
@@ -89,6 +90,13 @@ public class AlbvDet {
 	}
 	public AlbvDet setPrecioCoste(Double precioCoste) {
 		this.precioCoste = precioCoste;
+		return this;
+	}
+	public Double getIva() {
+		return iva;
+	}
+	public AlbvDet setIva(Double iva) {
+		this.iva = iva;
 		return this;
 	}
 	

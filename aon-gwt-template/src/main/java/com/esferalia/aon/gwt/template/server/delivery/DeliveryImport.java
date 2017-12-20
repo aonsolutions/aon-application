@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.server.delivery;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -56,7 +57,6 @@ public class DeliveryImport {
 	Clientes cli = new Clientes();
 	Albv albv = new Albv();
 	AlbvDet albvDet = new AlbvDet();
-
 	DeliveryInfo di;
 	public DeliveryInfo importation(byte[] data){
 		try {
@@ -431,7 +431,7 @@ public class DeliveryImport {
 				cli.setBanco(o.toString().substring(0,64));
 			} else cli.setBanco(o.toString());
 			return;
-		}			albv.setTipoVia(cell.getStringCellValue());
+		}
 
 		if("bic".equalsIgnoreCase(title)) {
 			if(o.toString().length() == 11) {
@@ -530,14 +530,14 @@ public class DeliveryImport {
 		if("expediente".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
 				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
-			} else albv.setCentroTrabajo(o.toString());
+			} else albv.setExpediente(o.toString());
 			return;
 		}
 		if("aliasDireccion".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 13) {
 				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 13");
 				albv.setAliasDireccion(o.toString().substring(0,13));
-			} else albv.setCentroTrabajo(o.toString());
+			} else albv.setAliasDireccion(o.toString());
 			return;
 		}
 		if("tipoVia".equalsIgnoreCase(title)) {
@@ -719,6 +719,10 @@ public class DeliveryImport {
 			} else albvDet.setConcepto(o.toString());
 			return;
 		}
+		if("iva".equalsIgnoreCase(title)) {
+			albvDet.setIva(cell.getNumericCellValue());
+			return;
+		}
 	}
 	
 	private HashMap<String, Integer> importClientes(Domain domain, User user) {
@@ -862,62 +866,86 @@ public class DeliveryImport {
 		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain(), user.getLogin(), user.getId());
 		Integer scope = scps != null ? scps[0] : null;
 		di.getAlbvList().stream().forEach(r -> {
-			Integer customerID = null;
-			Integer raddress = null;
-			if(clientes.containsKey(r.getDocumento())) {
-				customerID = clientes.get(r.getDocumento());
-				if(r.getAliasDireccion() != null) {
-					RAddress address = AON.getRAddress(domain.getName(), domain.getId(), user.getLogin(), f -> f.getAliasProperty().eq(r.getAliasDireccion()).and(f.getRegistryProperty().eq(clientes.get(r.getDocumento()))));
-					if(address == null) {
-						address = new RAddress()
-							.setAddress(r.getDireccion())
-							.setAddress2(r.getDireccion2())
-							.setAddress3(r.getDireccion3())
-							.setAlias(r.getAliasDireccion())
-							.setCity(r.getCiudad())
-							.setDomain(domain.getId())
-							.setNumber(r.getNumeroDir())
-							.setStreet_type(r.getTipoVia())
-							.setZip(r.getCp());
-						AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);				
+			Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), user.getLogin(), f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getNumberProperty().eq(r.getNumero()))
+					.and(f.getSeriesProperty().eq(r.getSerie())));
+			if(delivery.getId() == null) {
+				Integer customerID = null;
+				Integer raddress = null;
+				if(clientes.containsKey(r.getDocumento())) {
+					customerID = clientes.get(r.getDocumento());
+					if(r.getAliasDireccion() != null) {
+						RAddress address = AON.getRAddress(domain.getName(), domain.getId(), user.getLogin(), f -> f.getAliasProperty().eq(r.getAliasDireccion()).and(f.getRegistryProperty().eq(clientes.get(r.getDocumento()))));
+						if(address.getId() == null) {
+							address = new RAddress()
+									.setType((byte)0)
+									.setRegistry(customerID)
+									.setAddress(r.getDireccion())
+									.setAddress2(r.getDireccion2())
+									.setAddress3(r.getDireccion3())
+									.setAlias(r.getAliasDireccion())
+									.setCity(r.getCiudad())
+									.setDomain(domain.getId())
+									.setNumber(r.getNumeroDir())
+									.setStreet_type(r.getTipoVia())
+									.setZip(r.getCp());
+							address = AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);				
+						}
+						if(address != null) raddress = address.getId();
 					}
-					if(address != null) raddress = address.getId();
 				}
-			}
-			Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getAlmacen())));
-			if(warehouse == null) {
-				di.getError().getTextError().addElement("ERROR! ALBV: El almacén " + r.getAlmacen() + " del albarán " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
-				di.getError().setError(false);
-			} else {
-				PayMethod pm = new PayMethod();
-				Project p = new Project();
-				if(r.getFormaPago() != null) pm = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getFormaPago());
-				if(domain.isEnableHeredity() && pm.getId() == null) pm = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getFormaPago());
-				if(r.getExpediente() != null) p = AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getExpediente())));
+				Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getAlmacen())));
+				if(warehouse == null) {
+					di.getError().getTextError().addElement("ERROR! ALBV: El almacén " + r.getAlmacen() + " del albarán " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
+					di.getError().setError(false);
+				} else {
+					PayMethod pm = new PayMethod();
+					Project p = new Project();
+					if(r.getFormaPago() != null) pm = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getFormaPago());
+					if(domain.isEnableHeredity() && pm.getId() == null) pm = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getFormaPago());
+					if(r.getExpediente() != null) {
+						p = AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getExpediente())));
+						if(p.getId() == null) {
+							p = new Project().setActive(true)
+									.setAlias("")
+									.setDate(new Date())
+									.setDomain(domain.getId())
+									.setName(r.getExpediente())
+									.setRegistryId(customerID);
+							Integer id = AON.insertProject(domain.getName(), domain.getId(), user.getLogin(), p);
+							p.setId(id);
+						}
+					}
 				
-				Delivery delivery = new Delivery()
-					.setDomain(domain.getId())
-					.setSeries(r.getSerie())
-					.setScope(scope)
-					.setStatus(DeliveryStatus.PENDING)
-					.setNumber(r.getNumero())
-					.setCustomer(customerID)
-					.setIssueTime(r.getFecha())
-					.setWorkplace(warehouse.getWorkplace())
-					.setAddress(raddress)
-					.setBankAccount(r.getCuentaBanco())
-					.setBic(r.getBanco())
-					.setPayMethod(pm.getId())
-					.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 0)
-					.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
-					.setDaysBetweenPymnt(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
-					.setPymntDays(r.getDiasPago() != null ? r.getDiasPago() : "0")					
-					.setTotalPackages(0.0)
-					.setTotalWeight(0.0)
-					.setProject(p);
-				delivery = AON.insertDelivery(domain.getName(), domain.getId(), user.getLogin(), delivery);
+					delivery = new Delivery()
+							.setDomain(domain.getId())
+							.setSeries(r.getSerie())
+							.setScope(scope)
+							.setStatus(DeliveryStatus.PENDING)
+							.setNumber(r.getNumero())
+							.setCustomer(customerID)
+							.setIssueTime(r.getFecha())
+							.setWorkplace(warehouse.getWorkplace())
+							.setAddress(raddress)
+							.setBankAccount(r.getCuentaBanco())
+							.setBic(r.getBic())
+							.setBankAlias(r.getBanco())
+							.setPayMethod(pm.getId())
+							.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
+							.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
+							.setDaysBetweenPymnt(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
+							.setPymntDays(r.getDiasPago() != null ? r.getDiasPago() : "0")					
+							.setTotalPackages(0.0)
+							.setTotalWeight(0.0)
+							.setProject(p);
+					delivery = AON.insertDelivery(domain.getName(), domain.getId(), user.getLogin(), delivery);
 			
-				map.put(r.getId(), new Delivery().setId(delivery.getId()).setNumber(warehouse.getId()));
+					map.put(r.getId(), new Delivery().setId(delivery.getId()).setNumber(warehouse.getId()));
+				}
+			} else {
+				di.getError().getTextError().addElement("ERROR! ALBV: El albarán de venta " + r.getSerie() + "/" + r.getNumero()  + " ya existe.");
+				di.getError().setError(false);
 			}
 		});
 		return map;
@@ -929,14 +957,14 @@ public class DeliveryImport {
 				Product product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));			
 			
 				if(product.getId() == null) {
-					Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(),"GENERAL", user.getLogin());
+					Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(), user.getLogin(), r.getIva() != null ? r.getIva() : 21.0);
 					product = new Product()
 						.setDomain(domain.getId())
 						.setName(r.getConcepto())
 						.setCode(r.getArticulo())
 						.setKind((byte) 2)
 						.setType(ProductType.COMMERCIAL_PRODUCT.value())
-						.setVat(vat.getId())
+						.setVat(vat.getId() != null ? vat.getId() : null)
 						.setInventoriable(false)
 						.setComposition(false)
 						.setCompositionPrice(false)

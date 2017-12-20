@@ -749,6 +749,16 @@ public class DBProduct {
 		return tax;
 	}
 	
+	public static Tax getIVAName(String domainName, Integer domainId, String login, Double percent) {
+		Domain domain = AON.getDomain(domainName, domainId, login);
+		Tax tax = AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
+				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getPercentageProperty().eq(percent)));
+		if(tax.getId() == null && domain.isEnableHeredity())
+			return AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domain.getParentId())
+				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getPercentageProperty().eq(percent)));
+		return tax;
+	}
+	
 	public static Item compare(Item i,Item item){
 		item.setBarcode(i.getBarcode() != null ? i.getBarcode() : item.getBarcode());
 		item.setDescription(i.getDescription() != null ? i.getDescription() : item.getDescription());
