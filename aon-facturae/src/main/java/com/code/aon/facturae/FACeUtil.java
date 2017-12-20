@@ -15,8 +15,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.NoteType;
@@ -56,7 +54,7 @@ public class FACeUtil {
 	
 	public static final String FACE_FISCAL_ROLE_TYPE_CODE = "01";
 	
-	public static final String FACE_FISCAL_DESCRIPTION = "Oficinal Contable";
+	public static final String FACE_FISCAL_DESCRIPTION = "Oficina Contable";
 
 	public static final String FACE_RECEPTOR_CENTRE_CODE = FACE_PREFFIX + RECEPTOR + CENTRE_CODE_SUFFIX;
 	
@@ -82,6 +80,10 @@ public class FACeUtil {
 	
 	public static final String FACE_COMPRADOR_DESCRIPTION = "Subdirección de compras";
 	
+	public static final String FACE_VENDEDOR_ROLE_TYPE_CODE = "06";
+	
+	public static final String FACE_VENDEDOR_DESCRIPTION = "Vendedor";
+
 	public static final String FACE_INVOICE_DELIVERY_NUMBER = FACE_PREFFIX + INVOICE + DELIVERY_NUMBER_SUFFIX;
 	
 	public static final String FACE_INVOICE_SEQUENCE_NUMBER = FACE_PREFFIX + INVOICE + SEQUENCE_NUMBER_SUFFIX;
@@ -128,12 +130,9 @@ public class FACeUtil {
 		       		Criteria criteria = new Criteria();
 		       		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID), customer.getId());
 		       		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
-		       		Expression expression = ExpressionUtilities.getLikeExpression(
-		       				bean.getFieldName(IEntityAlias.REGISTRY_NOTE_DESCRIPTION),
-		       				FACE_PREFFIX + "%");
-		       		criteria.addExpression(expression);
-		       		int count = bean.getCount(criteria);
-		       		return (count >= 6);
+		       		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_DESCRIPTION), FACE_ENABLED);
+		       		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS), Boolean.TRUE.toString().toLowerCase());
+		       		return (bean.getCount(criteria) > 0);
 				}
 			} catch (ManagerBeanException e) {
 				LOGGER.error( e.getMessage(), e );

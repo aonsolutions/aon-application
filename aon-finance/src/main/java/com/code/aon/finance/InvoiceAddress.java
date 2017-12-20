@@ -24,6 +24,13 @@ public class InvoiceAddress extends InvoiceAddressDB implements IAddress {
 	}
 
 	@Transient
+	public String getAlias() {
+		return null;
+	}
+	public void setAlias(String alias) {
+	}
+
+	@Transient
     public String getFullAddress() {
     	StringBuffer buf = new StringBuffer();
     	buf.append((getStreetType()!=null) ? getStreetType() : "");

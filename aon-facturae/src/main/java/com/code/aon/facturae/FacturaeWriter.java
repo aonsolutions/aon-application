@@ -1,8 +1,11 @@
 package com.code.aon.facturae;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
@@ -355,6 +358,7 @@ public class FacturaeWriter {
 		taxIdentification.setTaxIdentificationNumber( Util.toTextMax30Type(document) );
 		party.setTaxIdentification(taxIdentification);
 		party.setPartyIdentification( Util.toTextMax10Type(String.valueOf(registry.getId())) );
+		party.setAdministrativeCentres(new AdministrativeCentresType());
 		if ( personType == PersonTypeCodeType.F ) {
 			party.setIndividual( getIndividual(registry, name, address) );
 		} else {
@@ -377,8 +381,7 @@ public class FacturaeWriter {
 		return FinanceUtil.getEnterprise(invoiceDetail);
 	}
 	
-	private AdministrativeCentresType getFACeAdministrativeCentres() throws ManagerBeanException {
-		AdministrativeCentresType centres = new AdministrativeCentresType();
+	private void getFACeAdministrativeCentres(AdministrativeCentresType centres) throws ManagerBeanException {
 		addAdministrativeCentre( centres,
 				FACeUtil.FACE_FISCAL_CENTRE_CODE,
 				FACeUtil.FACE_FISCAL_ROLE_TYPE_CODE,
@@ -399,7 +402,6 @@ public class FacturaeWriter {
 				FACeUtil.FACE_COMPRADOR_ROLE_TYPE_CODE,
 				FACeUtil.FACE_COMPRADOR_ADDRESS,
 				FACeUtil.FACE_COMPRADOR_DESCRIPTION);
-		return centres;		
 	}
 
 	private void addAdministrativeCentre( AdministrativeCentresType centres,
@@ -459,8 +461,26 @@ public class FacturaeWriter {
 		String tradeName = registry.getAlias();
 		BusinessType registryParty = getBusinessType(registry, name, tradeName, document, address);
 		if ( FACeUtil.isDefined(invoice) ) {
-			AdministrativeCentresType centres = getFACeAdministrativeCentres();
-			registryParty.setAdministrativeCentres(centres);			
+			if (registryParty.getAdministrativeCentres() == null) {
+				registryParty.setAdministrativeCentres(new AdministrativeCentresType());			
+			}
+			getFACeAdministrativeCentres(registryParty.getAdministrativeCentres());
+		}
+		if (address != null && StringUtils.isNotBlank(address.getAlias())) {
+			if (registryParty.getAdministrativeCentres() == null) {
+				registryParty.setAdministrativeCentres(new AdministrativeCentresType());			
+			}
+			AdministrativeCentreType centre = new AdministrativeCentreType();
+			centre.setCentreCode(address.getAlias());
+			centre.setRoleTypeCode(FACeUtil.FACE_VENDEDOR_ROLE_TYPE_CODE);
+			CountryType country = getCountry(address.getGeozone());
+			if ( CountryType.ESP.equals(country) ) {
+				centre.setAddressInSpain( getAddress(address, country) );	
+			} else {
+				centre.setOverseasAddress( getOverseasAddress(address, country) );
+			}
+			centre.setCentreDescription(FACeUtil.FACE_VENDEDOR_DESCRIPTION);
+			registryParty.getAdministrativeCentres().getAdministrativeCentre().add(centre);
 		}
 		return registryParty;
 	}
@@ -668,6 +688,18 @@ public class FacturaeWriter {
 		return dar;
 	}
 	
+	private IHeaderObject getHeaderObject( InvoiceDetail detail ) {
+		try {
+			ITransferObject header = detail.getSourceTo();
+			if ( header != null ) {
+				return (IHeaderObject)header;
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
 	private String getReferenceCode( InvoiceDetail detail ) {
 		try {
 			ITransferObject header = detail.getSourceTo();
@@ -713,11 +745,11 @@ public class FacturaeWriter {
 		return null;
 	}
 	
-	private String getDeliveryNoteNumber( InvoiceDetail detail ) {
+	private IHeaderObject getDelivery( InvoiceDetail detail ) {
 		switch ( detail.getSource() ) {
 			case DELIVERY:
 			case INCOME:
-				return getReferenceCode(detail);
+				return getHeaderObject(detail);
 			default:
 				return null;
 		}
@@ -725,7 +757,10 @@ public class FacturaeWriter {
 	
 	private InvoiceLineType getInvoiceLine( InvoiceDetail line, InvoiceType invoiceType ) {
 		InvoiceLineType invoiceLine = new InvoiceLineType();
-		invoiceLine.setIssuerTransactionReference(Util.toTextMax20Type(String.valueOf(line.getId())) );
+		invoiceLine.setIssuerTransactionReference(Util.toTextMax20Type(String.valueOf(line.getId())));
+		if (line.getProject() != null) {
+			invoiceLine.setReceiverContractReference(line.getProject().getName());
+		}
 		invoiceLine.setItemDescription(Util.toTextMax2500Type(line.getDescription()) );
 		invoiceLine.setQuantity( line.getQuantity() );
 		invoiceLine.setUnitPriceWithoutTax( getLineAmount(line.getPrice()) );
@@ -748,11 +783,17 @@ public class FacturaeWriter {
 		}
 		String deliveryNoteNumberOption = FACeUtil.getValue(FACeUtil.FACE_INVOICE_DELIVERY_NUMBER, invoice);
 		if (Boolean.parseBoolean(deliveryNoteNumberOption)) {
-			String deliveryNoteNumber = getDeliveryNoteNumber(line);
-			if (! StringUtils.isEmpty(deliveryNoteNumber) ) {
+			IHeaderObject delivery = getDelivery(line);
+			if (delivery != null) {
 				DeliveryNotesReferencesType notes = new DeliveryNotesReferencesType();
 				DeliveryNoteType noteType = new DeliveryNoteType();
-				noteType.setDeliveryNoteNumber(deliveryNoteNumber);
+				noteType.setDeliveryNoteNumber(delivery.getReferenceCode());
+				try {
+					GregorianCalendar deliveryNoteDate = new GregorianCalendar();
+					deliveryNoteDate.setTime(delivery.getDate());
+					noteType.setDeliveryNoteDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(deliveryNoteDate));
+				} catch (DatatypeConfigurationException ex) {
+				}
 				notes.getDeliveryNote().add(noteType);
 				invoiceLine.setDeliveryNotesReferences(notes);
 			}

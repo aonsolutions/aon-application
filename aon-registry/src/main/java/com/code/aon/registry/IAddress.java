@@ -32,6 +32,9 @@ public interface IAddress {
 	public GeoZone getGeozone();
 	public void setGeozone(GeoZone geoZone);
 
+	public String getAlias();
+	public void setAlias(String alias);
+	
     public String getFullAddress();
 
     public String getShortAddress();
