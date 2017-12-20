@@ -350,19 +350,11 @@ public class JooqEmployees {
 	private static SelectOnConditionStep<Record> getEmployeeSelect(DSLContext context) {
 		return context
 				.select()
-				.from(CONTRACT.join(PERSON).on(
-				CONTRACT.PERSON.eq(PERSON.REGISTRY)))
-				.leftOuterJoin(REGISTRY)
-				.on(REGISTRY.ID.eq(PERSON.REGISTRY))
-				.leftOuterJoin(
-						AGREEMENT_LEVEL_CATEGORY.join(
-								AGREEMENT_LEVEL.join(AGREEMENT).on(
-										AGREEMENT_LEVEL.AGREEMENT
-												.eq(AGREEMENT.ID))).on(
-								AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
-										.eq(AGREEMENT_LEVEL.ID)))
-				.on(CONTRACT.AGREEMENT_LEVEL
-						.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL));
+				.from(CONTRACT.join(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY)))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(PERSON.REGISTRY))
+				.leftOuterJoin(AGREEMENT_LEVEL.join(AGREEMENT).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID));
+
+//				.leftOuterJoin(AGREEMENT_LEVEL_CATEGORY.join(AGREEMENT_LEVEL.join(AGREEMENT).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))).on(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL));
 	}
 
 	private static Employee newEmployee(Record record) {
@@ -379,16 +371,16 @@ public class JooqEmployees {
 		employee.setSecondSurName(record
 				.getValue(PERSON.SECOND_SURNAME));
 		employee.setDocument(record.getValue(REGISTRY.DOCUMENT));
-		Integer categoryId = record
-				.getValue(AGREEMENT_LEVEL_CATEGORY.ID);
-		if (categoryId != null) {
+		Integer levelId = record
+				.getValue(AGREEMENT_LEVEL.ID);
+		if (levelId != null) {
 			Category category = new Category();
-			category.setId(categoryId);
-			category.setLevelId(record.getValue(AGREEMENT_LEVEL.ID));
+			//category.setId(categoryId);
+			category.setLevelId(levelId);
 			category.setLevel(record
 					.getValue(AGREEMENT_LEVEL.DESCRIPTION));
 			category.setDescription(record
-					.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
+					.getValue(CONTRACT.CATEGORY_DESCRIPTION));
 
 			Agreement agreement = new Agreement();
 			agreement.setId(record.getValue(AGREEMENT.ID));
