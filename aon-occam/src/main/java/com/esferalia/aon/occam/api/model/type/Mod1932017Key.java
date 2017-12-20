@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api.model.type;
 
-public enum Mod193Key {
+public enum Mod1932017Key {
 	 A ("A - Rendimientos o rentas obtenidos por la participaci\u00F3n en los fondos propios de cualquier entidad."
 		,new String[] { "01", "02", "03", "04", "05", "06", "07", "08" }
 		,new String[] { 
@@ -27,7 +27,7 @@ public enum Mod193Key {
 		}
 	)
 	,C ("C - Otros rendimientos del capital mobiliario o rentas no incluidos en las claves \"A\", \"B\" o \"D\"."
-		,new String[] { "01", "02", "03", "04", "05", "06", "07" }
+		,new String[] { "01", "02", "03", "04", "05", "06", "07","08", "09", "10", "11", "12", "13", "14" }
 		,new String[] { 
 			 "01 - Rendimientos o rentas procedentes de la propiedad intelectual cuando el perceptor no sea el autor." 
 			,"02 - Rendimientos o rentas procedentes de la propiedad industrial que no se encuentre afecta a actividades econ\u00F3micas realizadas por el perceptor." 
@@ -40,11 +40,13 @@ public enum Mod193Key {
 			,"09 - Rentas obtenidas como consecuencia de premios derivados de la participaci\u00F3n en juegos, concursos, rifas o combinaciones aleatorias, est\u00E9n o no vinculados a la oferta, promoci\u00F3n o venta de determinados bienes, productos o servicios, siempre que se trate de perceptores (registros) que tengan la condici\u00F3n de sujetos pasivos del Impuesto sobre Sociedades o de contribuyentes por el Impuesto sobre la Renta de no Residentes que obtengan rentas mediante establecimiento permanente."
 			,"10 - Contraprestaciones obtenidas como consecuencia de la atribuci\u00F3n de cargos de administrador o consejero sociedades, siempre perceptores (registros) que se que en otras trate de tengan la condici\u00F3n de sujetos pasivos del Impuesto sobre Sociedades o de contribuyentes por el Impuesto sobre la Renta de no Residentes que obtengan rentas mediante establecimiento permanente. En el supuesto de perceptores que tengan la condici\u00F3n de contribuyentes por el Impuesto sobre la Renta de las Personas F\u00EDsicas, estas rentas deben declararse en el modelo 190."
 			,"11 - Rendimientos exentos."
-			,"12 - Otros rendimientos de capital mobiliario o rentas no incluibles en los d\u00EDgitos anteriores de esta clave."
+			,"12 - Otros rendimientos de capital mobiliario o rentas no incluibles en los dígitos anteriores de esta clave a integrar en la base imponible general."
+			,"13 - Otros rendimientos de capital mobiliario o rentas no incluibles en los dígitos anteriores de esta clave a integrar en la base imponible del ahorro"
+			,"14 - Otros rendimientos de capital mobiliario o rentas no incluibles en los dígitos anteriores de esta clave en los supuestos en los que el perceptor no sea un contribuyente del IRPF"
 		}
 	)
 	,D ("D - Rendimientos o rentas obtenidos por la cesi\u00F3n a terceros de capitales propios procedentes de entidades vinculadas cuando el perceptor sea contribuyente del Impuesto sobre la Renta de las Personas F\u00EDsicas."
-		,new String[] { "01", "02", "03", "04", "05", "06", "07","08", "09", "10", "11", "12" }
+		,new String[] { "01", "02", "03", "04", "05", "06", "07" }
 		,new String[] { 
 				 "01 - Intereses de obligaciones, bonos, certificados de dep\u00F3sito u otros t\u00EDtulos privados."
 				,"02 - Intereses de obligaciones, bonos, c\u00E9dulas, deuda p\u00FAblica u otros t\u00EDtulos p\u00FAblicos."
@@ -61,7 +63,7 @@ public enum Mod193Key {
 	private String[] natures;
 	private String[] natureDescriptions;
 
-	private Mod193Key(String description, String[] natures, String[] natureDescriptions) {
+	private Mod1932017Key(String description, String[] natures, String[] natureDescriptions) {
 		this.description = description;
 		this.natures = natures;
 		this.natureDescriptions = natureDescriptions;

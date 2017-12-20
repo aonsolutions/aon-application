@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2015.IModel193DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
-import com.esferalia.aon.occam.api.model.type.Mod193Key;
+import com.esferalia.aon.occam.api.model.type.Mod1932015Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -144,7 +144,7 @@ public class Model193AEAT2015DetailPanel extends SimpleLayoutPanel implements Fo
 
 		final ListBox key = new ListBox();
 		key.setWidth("40px");
-		for (Mod193Key k : Mod193Key.values()) {
+		for (Mod1932015Key k : Mod1932015Key.values()) {
 			key.addItem(AonStringUtils.abbreviate(k.getDescription(),150), k.getValue());
 		}
 		
@@ -154,7 +154,7 @@ public class Model193AEAT2015DetailPanel extends SimpleLayoutPanel implements Fo
 			@Override
 			public void onChange(ChangeEvent event) {
 				nature.clear();
-				Mod193Key keyEnum = Mod193Key.values()[key.getSelectedIndex()];
+				Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
 				detail.setKey( keyEnum.toString() );
 				nature.setEnabled(true);
 				for (int i = 0; i < keyEnum.getNatures().length; i++) {
@@ -170,7 +170,7 @@ public class Model193AEAT2015DetailPanel extends SimpleLayoutPanel implements Fo
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				Mod193Key keyEnum = Mod193Key.values()[key.getSelectedIndex()];
+				Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
 				int idx = nature.getSelectedIndex() == -1 ? 0 : nature.getSelectedIndex();
 				detail.setNature(keyEnum.getNatures()[idx]);
 				callback.onValueChanged(detail);
@@ -476,9 +476,9 @@ public class Model193AEAT2015DetailPanel extends SimpleLayoutPanel implements Fo
 
 	private static void setValue(ListBox key, ListBox nature, Mod193Detail detail) {
 		if (AonStringUtils.isBlank( detail.getKey())) {
-			detail.setKey(Mod193Key.A.toString());
+			detail.setKey(Mod1932015Key.A.toString());
 		}
-		Mod193Key keyEnum = Mod193Key.valueOf(detail.getKey());
+		Mod1932015Key keyEnum = Mod1932015Key.valueOf(detail.getKey());
 		key.setSelectedIndex(keyEnum.ordinal());
 		nature.clear();
 		nature.setEnabled(true);

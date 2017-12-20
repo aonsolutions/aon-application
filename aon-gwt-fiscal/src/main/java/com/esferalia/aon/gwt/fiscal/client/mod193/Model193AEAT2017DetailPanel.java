@@ -8,9 +8,9 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
-import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2016.IModel193DetailCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2017.IModel193DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
-import com.esferalia.aon.occam.api.model.type.Mod1932015Key;
+import com.esferalia.aon.occam.api.model.type.Mod1932017Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Focusable {
+public class Model193AEAT2017DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
 	private static class MediumLabel extends InlineLabel {
 		private MediumLabel(String label) {
@@ -40,7 +40,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 	private int tabIndex; 
 	private DocumentTextBox document;
 	
-	public Model193AEAT2016DetailPanel(Mod193Detail detail, IModel193DetailCallback callback) {
+	public Model193AEAT2017DetailPanel(Mod193Detail detail, IModel193DetailCallback callback) {
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.AON_CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
@@ -143,17 +143,17 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 
 		final ListBox key = new ListBox();
 		key.setWidth("40px");
-		for (Mod1932015Key k : Mod1932015Key.values()) {
+		for (Mod1932017Key k : Mod1932017Key.values()) {
 			key.addItem(AonStringUtils.abbreviate(k.getDescription(),150), k.getValue());
 		}
 		
-		Model193AEAT2016DetailPanel.setValue(key, nature, detail);
+		Model193AEAT2017DetailPanel.setValue(key, nature, detail);
 		
 		key.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
 				nature.clear();
-				Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
+				Mod1932017Key keyEnum = Mod1932017Key.values()[key.getSelectedIndex()];
 				detail.setKey( keyEnum.toString() );
 				nature.setEnabled(true);
 				for (int i = 0; i < keyEnum.getNatures().length; i++) {
@@ -169,7 +169,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
+				Mod1932017Key keyEnum = Mod1932017Key.values()[key.getSelectedIndex()];
 				int idx = nature.getSelectedIndex() == -1 ? 0 : nature.getSelectedIndex();
 				detail.setNature(keyEnum.getNatures()[idx]);
 				callback.onValueChanged(detail);
@@ -488,9 +488,9 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 
 	private static void setValue(ListBox key, ListBox nature, Mod193Detail detail) {
 		if (AonStringUtils.isBlank( detail.getKey())) {
-			detail.setKey(Mod1932015Key.A.toString());
+			detail.setKey(Mod1932017Key.A.toString());
 		}
-		Mod1932015Key keyEnum = Mod1932015Key.valueOf(detail.getKey());
+		Mod1932017Key keyEnum = Mod1932017Key.valueOf(detail.getKey());
 		key.setSelectedIndex(keyEnum.ordinal());
 		nature.clear();
 		nature.setEnabled(true);

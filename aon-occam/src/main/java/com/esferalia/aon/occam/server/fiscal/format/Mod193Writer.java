@@ -27,7 +27,7 @@ public class Mod193Writer {
 		   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.text(mod193.getContactPhone(),9))
 		   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.text(mod193.getContactPerson(),40))
 		   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod193.getReceipt(),13,0))
-		   ,(wr, mod193,detail) -> wr.append(" ")
+		   ,(wr, mod193,detail) -> wr.append(mod193.isComplementary()?"C":" ")
 		   ,(wr, mod193,detail) -> wr.append(mod193.isReplacement()?"S":" ")
 		   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod193.getReplacedReceipt(),13,0))
 		   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod193.getDetails().size(),9,0))

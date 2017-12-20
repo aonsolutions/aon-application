@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193Base.Model193BaseCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
-import com.esferalia.aon.occam.api.model.type.Mod193Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
@@ -228,7 +227,7 @@ public class Model193DetailTable extends SimpleLayoutPanel implements HasSelecti
 				new Mod193Detail()
 					.setDirty(true)
 					.setType(Mod193Detail.DETAIL_TYPE)
-					.setKey(Mod193Key.A.getValue())
+					.setKey("A")
 					.setNature("01")
 					.setTempId((cbk.getMod193().getDetails().size() * (-1)))
 			);
