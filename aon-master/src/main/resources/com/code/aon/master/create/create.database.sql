@@ -4955,6 +4955,9 @@ CREATE TABLE `fs_model190_detail` (
   `perception_il` double(15,3) DEFAULT '0.000' COMMENT 'Percepción Integra/valoracion derivada de incapacidad laboral',
   `retention_il` double(15,3) DEFAULT '0.000' COMMENT 'Retenciones practicadas/ingresos a cuenta efectuados derivadas de incapacidad laboral',
   `output_retention_il` double(15,3) DEFAULT '0.000' COMMENT 'Ingresos a cuenta repercutidos derivados de incapacidad laboral',
+  `in_kind_perception_il` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Percepción especie Integra/valoracion derivada de incapacidad laboral',
+  `in_kind_deposit_il` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Retenciones especie derivadas de incapacidad laboral',
+  `in_kind_output_deposit_il` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Ingresos a cuenta repercutidos derivados de incapacidad laboral',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL190_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL190_DETAIL_FS_MODEL190` (`fs_model190`),
@@ -8483,7 +8486,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('9.14.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('9.15.1');
 
 COMMIT;
 

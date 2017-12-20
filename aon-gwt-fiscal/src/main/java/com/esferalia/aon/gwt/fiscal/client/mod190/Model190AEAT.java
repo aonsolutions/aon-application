@@ -59,8 +59,10 @@ public class Model190AEAT extends Model190Base {
 			setDetailManager( new Model190AEATDetail2014( getCallback() , selectedIndex ));
 		} else if ( getCallback().getMod190().getYear() == 2015) {
 			setDetailManager( new Model190AEATDetail2015( getCallback() , selectedIndex ));
-		} else {
+		} else if ( getCallback().getMod190().getYear() == 2016) {
 			setDetailManager( new Model190AEATDetail2016( getCallback() , selectedIndex ));
+		} else {
+			setDetailManager( new Model190AEATDetail2017( getCallback() , selectedIndex ));
 		}
 		tabPanel.add( (Widget) getDetailManager(),  TAB_TEMPLATE.render(AON.MSG.receiverList(), AON.AON_CSS.aonIconInvoice()) );
 	}

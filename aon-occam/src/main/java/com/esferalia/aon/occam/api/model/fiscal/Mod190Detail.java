@@ -38,6 +38,10 @@ public class Mod190Detail implements Serializable {
 	private double perceptionIL;
 	private double retentionIL;
 	private double outputRetentionIL;
+	
+	private double inKindPerceptionIL;
+	private double inKindDepositIL;
+    private double inKindOutputDepositIL;
 
 	private double applicableReduction;
 	private double deducibleExpense;
@@ -227,12 +231,36 @@ public class Mod190Detail implements Serializable {
 		this.retentionIL = retentionIL;
 		return this;
 	}
-
+	
 	public double getOutputRetentionIL() {
 		return outputRetentionIL;
 	}
 	public Mod190Detail setOutputRetentionIL(double outputRetentionIL) {
 		this.outputRetentionIL = outputRetentionIL;
+		return this;
+	}
+
+	public double getInKindPerceptionIL() {
+		return inKindPerceptionIL;
+	}
+	public Mod190Detail setInKindPerceptionIL(double inKindPerceptionIL) {
+		this.inKindPerceptionIL = inKindPerceptionIL;
+		return this;
+	}
+
+	public double getInKindDepositIL() {
+		return inKindDepositIL;
+	}
+	public Mod190Detail setInKindDepositIL(double inKindDepositIL) {
+		this.inKindDepositIL = inKindDepositIL;
+		return this;
+	}
+
+	public double getInKindOutputDepositIL() {
+		return inKindOutputDepositIL;
+	}
+	public Mod190Detail setInKindOutputDepositIL(double inKindOutputDepositIL) {
+		this.inKindOutputDepositIL = inKindOutputDepositIL;
 		return this;
 	}
 

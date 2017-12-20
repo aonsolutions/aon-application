@@ -228,7 +228,10 @@ public class Mod190DAO {
 								FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION,
 								FS_MODEL190_DETAIL.PERCEPTION_IL,
 								FS_MODEL190_DETAIL.RETENTION_IL,
-								FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL
+								FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL,
+								FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL,
+								FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL,
+								FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL
 								)
 						.values(null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
@@ -236,7 +239,7 @@ public class Mod190DAO {
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
-								null, null, null, null, null));
+								null, null, null, null, null, null, null, null));
 		for (Mod190Detail detail : mod190.getDetails()) {
 			batch.bind(detail.getDomain()
 					, detail.getMod190()
@@ -291,6 +294,9 @@ public class Mod190DAO {
 					, detail.getPerceptionIL()
 					, detail.getRetentionIL()
 					, detail.getOutputRetentionIL()
+					, detail.getInKindPerceptionIL()
+					, detail.getInKindDepositIL()
+					, detail.getInKindOutputDepositIL()
 					);
 		}
 		batch.execute();
@@ -370,6 +376,9 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.PERCEPTION_IL, detail.getPerceptionIL())
 				.set(FS_MODEL190_DETAIL.RETENTION_IL, detail.getRetentionIL())
 				.set(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL, detail.getOutputRetentionIL())
+				.set(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL, detail.getInKindPerceptionIL())
+				.set(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL, detail.getInKindDepositIL())
+				.set(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL, detail.getInKindOutputDepositIL())
 				;
 	}
 
@@ -431,6 +440,9 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.PERCEPTION_IL, detail.getPerceptionIL())
 				.set(FS_MODEL190_DETAIL.RETENTION_IL, detail.getRetentionIL())
 				.set(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL, detail.getOutputRetentionIL())
+				.set(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL, detail.getInKindPerceptionIL())
+				.set(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL, detail.getInKindDepositIL())
+				.set(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL, detail.getInKindOutputDepositIL())
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -842,6 +854,9 @@ public class Mod190DAO {
 				.setPerceptionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.PERCEPTION_IL)))
 				.setRetentionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.RETENTION_IL)))
 				.setOutputRetentionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL)))
+				.setInKindPerceptionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL)))
+				.setInKindDepositIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL)))
+				.setInKindOutputDepositIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL)))
 				.setBirthYear(record.getValue(FS_MODEL190_DETAIL.BIRTH_YEAR))
 				.setCeutaMelilla(AonEnumUtils.getBoolean(record.getValue(FS_MODEL190_DETAIL.CEUTA_MELILLA)))
 				.setFamilySituation(record.getValue(FS_MODEL190_DETAIL.FAMILY_SITUATION))
