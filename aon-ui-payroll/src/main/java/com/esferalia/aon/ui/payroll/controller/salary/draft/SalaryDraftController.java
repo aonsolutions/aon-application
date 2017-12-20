@@ -695,7 +695,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			IManagerBean cBean = BeanManager.getManagerBean(ContractPayment.class);
 			Contract contract = (Contract) getTo();
 			Criteria aCriteria = new Criteria();
-			aCriteria.addEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+			aCriteria.addEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevel().getAgreement().getId());
 			aCriteria.addOrder(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
@@ -1130,8 +1130,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		List<Month> months = new LinkedList<Month>();
 		try {
 			Criteria criteria = new Criteria();
-			AgreementLevelCategory category = contract.getAgreementLevelCategory();
-			AgreementLevel level = category.getLevel();
+			AgreementLevel level = contract.getAgreementLevel();
 			Agreement agreement = level.getAgreement(); 
 
 			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);

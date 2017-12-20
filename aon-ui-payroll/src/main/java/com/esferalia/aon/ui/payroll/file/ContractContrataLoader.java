@@ -352,7 +352,7 @@ public class ContractContrataLoader implements IContractLoader, Serializable {
 					contract.setEnterpriseCCC(ccc);
 					contract.setWorkPlace(pwp.getWorkPlace());
 					contract.setActivity(pwp.getEnterpriseActivity());
-					contract.setAgreementLevelCategory(null);
+					contract.setAgreementLevel(null);
 					contract.setCategoryDescription(null);
 					contract.setCalendar(null);
 					contract.setDescription(null);

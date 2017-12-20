@@ -149,7 +149,7 @@ public class PayrollUtils extends com.esferalia.aon.payroll.util.PayrollUtils{
 		IManagerBean bean = BeanManager.getManagerBean(AgreementPayment.class);
 		Criteria criteria = null;
 		criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevel().getAgreement().getId());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
 		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
 		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
@@ -172,7 +172,7 @@ public class PayrollUtils extends com.esferalia.aon.payroll.util.PayrollUtils{
 					}
 				}
 			}
-			if(contract.getAgreementLevelCategory()!=null){
+			if(contract.getAgreementLevel()!=null){
 				for(ITransferObject to: getAgreementPaymentList(contract, startDate, endDate)){
 					AgreementPayment payment = (AgreementPayment) to;
 					for(String name: getPaymentVariableList(payment)){
@@ -224,7 +224,7 @@ public class PayrollUtils extends com.esferalia.aon.payroll.util.PayrollUtils{
 	public List<ITransferObject> getAgreementLevelDataList(Contract contract, Date startDate, Date endDate, String variableName) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());			
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevel().getId());			
 		if(variableName!=null){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), variableName);
 		}
@@ -238,7 +238,7 @@ public class PayrollUtils extends com.esferalia.aon.payroll.util.PayrollUtils{
 	public List<ITransferObject> getAgreementDataList(Contract contract, Date startDate, Date endDate, String variableName) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(AgreementData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());			
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_AGREEMENT_ID), contract.getAgreementLevel().getAgreement().getId());			
 		if(variableName!=null){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_NAME), variableName);
 		}

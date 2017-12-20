@@ -348,7 +348,7 @@ public class ContractAfiLoader implements IContractLoader, Serializable {
 								contract.setEnterpriseCCC(ccc);
 								contract.setWorkPlace(pwp.getWorkPlace());
 								contract.setActivity(pwp.getEnterpriseActivity());
-								contract.setAgreementLevelCategory(null);
+								contract.setAgreementLevel(null);
 //								contract.setCategoryDescription(tra.getFab().getCategoriaProfesional());
 								contract.setCalendar(null);
 								contract.setDescription(null);

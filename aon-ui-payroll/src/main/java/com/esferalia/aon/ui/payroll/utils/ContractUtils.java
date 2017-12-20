@@ -1258,11 +1258,10 @@ public class ContractUtils implements Serializable {
 	
 	public Agreement obtainAgreement(Contract contract) {
 		try {
-			if(contract.getAgreementLevelCategory()!=null 
-					&& contract.getAgreementLevelCategory().getLevel()!=null 
-					&& contract.getAgreementLevelCategory().getLevel().getAgreement()!=null 
-					&& contract.getAgreementLevelCategory().getLevel().getAgreement().getId()!=null){
-				return contract.getAgreementLevelCategory().getLevel().getAgreement();
+			if(contract.getAgreementLevel()!=null 
+					&& contract.getAgreementLevel().getAgreement()!=null 
+					&& contract.getAgreementLevel().getAgreement().getId()!=null){
+				return contract.getAgreementLevel().getAgreement();
 			} else {
 				IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 				Criteria criteria = new Criteria();

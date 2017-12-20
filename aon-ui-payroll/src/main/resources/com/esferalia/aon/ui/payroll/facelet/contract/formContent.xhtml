@@ -257,7 +257,7 @@
 							value="&#160;&#160;&#160;&#160;&#160;"
 							title="#{bundle.payroll_contract_no_category_selected}"
 							styleClass="aon-icon-info"
-							rendered="#{contract.agreement.id!=null and contract.to.agreementLevelCategory.id==null}" />
+							rendered="#{contract.agreement.id!=null and contract.to.agreementLevel.id==null}" />
 					</ui:define>
 				</ui:decorate>
 	
@@ -265,7 +265,7 @@
 					value="#{bundle.aon_category}" />
 				<aon:panelGroup>
 					<aon:selectOneMenu id="agreementLevelCategory" styleClass="aon-margin-left"
-						value="#{contract.to.agreementLevelCategory}" >
+						value="#{contract.agreementLevelCategory}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contract.agreementLevelCategories}" />
 						<a4j:support event="onchange" reRender="agreementLevelCategory-content" ajaxSingle="#{true}" />

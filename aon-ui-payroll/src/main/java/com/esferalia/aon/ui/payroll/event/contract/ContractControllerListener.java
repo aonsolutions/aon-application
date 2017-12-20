@@ -114,11 +114,14 @@ public class ContractControllerListener extends ControllerAdapter{
 		Contract contract = (Contract) controller.getTo();
 		
 		try {
-			if(contract.getAgreementLevelCategory()!=null 
-					&& contract.getAgreementLevelCategory().getLevel()!=null 
-					&& contract.getAgreementLevelCategory().getLevel().getAgreement()!=null 
-					&& contract.getAgreementLevelCategory().getLevel().getAgreement().getId()!=null){
-				controller.setAgreement(contract.getAgreementLevelCategory().getLevel().getAgreement());
+			if(contract.getAgreementLevel()!=null 
+					&& contract.getAgreementLevel().getAgreement()!=null 
+					&& contract.getAgreementLevel().getAgreement().getId()!=null){
+				controller.setAgreement(contract.getAgreementLevel().getAgreement());
+				controller.setAgreementLevelCategoryOnly(
+						controller.getAgreementLevelCategory(
+								contract.getAgreementLevel(), 
+								contract.getCategoryDescription()));
 			} else {
 				controller.setAgreement((Agreement) BeanManager.getManagerBean(Agreement.class).createNewTo());
 			}
@@ -178,6 +181,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			controller.getParams().setCno((CNO) BeanManager.getManagerBean(CNO.class).createNewTo());
 			controller.getParams().setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
 			controller.setAgreement((Agreement) BeanManager.getManagerBean(Agreement.class).createNewTo());
+			controller.setAgreementLevelCategory(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Error on afterBeanCreated";
 			LOGGER.error(msg);

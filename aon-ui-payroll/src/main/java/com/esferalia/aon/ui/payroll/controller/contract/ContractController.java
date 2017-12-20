@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -67,6 +68,7 @@ import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.payroll.Agreement;
+import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.CNO;
@@ -118,6 +120,7 @@ import com.esferalia.aon.ui.sepe.controller.ContrataProrrogasController;
 import com.esferalia.aon.ui.sepe.controller.ContrataTransformacionesController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class ContractController extends BasicController {
 
@@ -150,6 +153,27 @@ public class ContractController extends BasicController {
 	
 	private WorkdayManager workdayManager;
 	
+	private AgreementLevelCategory agreementLevelCategory;
+	
+	
+	public AgreementLevelCategory getAgreementLevelCategory() {
+		return agreementLevelCategory;
+	}
+	public void setAgreementLevelCategory(AgreementLevelCategory agreementLevelCategory) {
+		Contract contract = (Contract) getTo();
+		this.agreementLevelCategory = agreementLevelCategory;
+		if  ( agreementLevelCategory == null )
+			contract.setAgreementLevel(null);
+		else { 
+			contract.setAgreementLevel(agreementLevelCategory.getLevel());
+			contract.setCategoryDescription(agreementLevelCategory.getDescription());
+		}
+	}
+
+	public void setAgreementLevelCategoryOnly(AgreementLevelCategory agreementLevelCategory) {
+		this.agreementLevelCategory = agreementLevelCategory;
+	}
+
 	public WorkdayManager getWorkdayManager() {
 		if(workdayManager==null){
 			workdayManager = new WorkdayManager();
@@ -919,11 +943,36 @@ public class ContractController extends BasicController {
 		return list;
 	}
 	
+	public AgreementLevelCategory getAgreementLevelCategory(AgreementLevel agreementLevel, String categoryDescription){
+		try {
+			Criteria criteria = new Criteria();
+			if(getAgreement()!=null && getAgreement().getId()!=null){
+				PayrollUtils utils = PayrollUtils.getInstance();
+				Integer[] ids = {0, DomainManager.getCurrentDomain(), utils.getParentDomainId()};
+				IManagerBean cBean = BeanManager.getManagerBean(AgreementLevelCategory.class);
+				criteria = new Criteria();
+				criteria.setSkipDomainFilter(true);
+				criteria.addInExpression("AgreementLevelCategory.domain", ids);
+				criteria.addEqualExpression(cBean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_ID), agreementLevel.getId());
+				AgreementLevelCategory alc = null;
+				for (ITransferObject to : cBean.getList(criteria)) {
+					alc = (AgreementLevelCategory) to;
+					if ( AonUtils.equals(alc.getDescription(), categoryDescription ) )
+						return alc;
+				}
+				return alc;
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, no se cargan datos del convenio
+		}
+		return null;
+	}
+
 	@Deprecated
 	public void onChangeAgreement(LookupChangeEvent event){
 		if (event.getNewValue() == null || event.getNewValue().equals("")) {
 			Contract contract = (Contract) getTo();
-			contract.setAgreementLevelCategory(null);
+			contract.setAgreementLevel(null);
 		}
 	}
 	
@@ -932,10 +981,10 @@ public class ContractController extends BasicController {
 		// TODO if is new contract then ask for the salary. how obtain the salary from de agreement?
 		Contract contract = (Contract) getTo();
 		try {
-			if(contract.getAgreementLevelCategory()!=null){
+			if(contract.getAgreementLevel()!=null){
 				IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevel().getId());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), "P05_IMPORTE");
 				List<ITransferObject> list = bean.getList(criteria);
 				if(!list.isEmpty()){
@@ -1215,7 +1264,7 @@ public class ContractController extends BasicController {
 			newContract.setWorkPlace(contract.getWorkPlace());
 			newContract.setActivity(contract.getActivity());
 			newContract.setEnterpriseCCC(contract.getEnterpriseCCC());
-			newContract.setAgreementLevelCategory(contract.getAgreementLevelCategory());
+			newContract.setAgreementLevel(contract.getAgreementLevel());
 			newContract.setCategoryDescription(contract.getCategoryDescription());
 			newContract.setCalendar(contract.getCalendar());
 			newContract.setDescription(contract.getDescription());
