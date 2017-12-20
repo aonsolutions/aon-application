@@ -238,11 +238,14 @@ public class IndefiniteModel extends AbstractContractModel {
 			if(contrata!=null){
 				setPdfFieldValue(PdfFieldIndefinite.PROFESSION.getValue(), contrata.getCno().getTitle());
 			}
-			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-				setPdfFieldValue(PdfFieldIndefinite.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
-			} else {
-				setPdfFieldValue(PdfFieldIndefinite.CATEGORY.getValue(), contract.getCategoryDescription());
-			}
+			
+			setPdfFieldValue(PdfFieldIndefinite.CATEGORY.getValue(), contract.getCategoryDescription());
+			
+//			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+//				setPdfFieldValue(PdfFieldIndefinite.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
+//			} else {
+//				setPdfFieldValue(PdfFieldIndefinite.CATEGORY.getValue(), contract.getCategoryDescription());
+//			}
 			
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FUNCTIONS.toString()))){
 				setPdfFieldValue(PdfFieldIndefinite.FUNCTIONS.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.FUNCTIONS.toString()));
@@ -274,9 +277,13 @@ public class IndefiniteModel extends AbstractContractModel {
 					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_ESTIMATED_DURATION.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIMATED_DURATION.toString()));
 				}
 				
-				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
+				if(contract.getAgreementLevel()!=null){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevel().getAgreement().getDescription());
 				}
+				
+//				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+//					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
+//				}
 				
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_HOURS.toString()))){
 					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_HOURS.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_HOURS.toString()));
@@ -413,9 +420,12 @@ public class IndefiniteModel extends AbstractContractModel {
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.HOLIDAYS.toString()))){
 				setPdfFieldValue(PdfFieldIndefinite.HOLIDAYS.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.HOLIDAYS.toString()));
 			}
-			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-				setPdfFieldValue(PdfFieldIndefinite.AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
+			if(contract.getAgreementLevel()!=null){
+				setPdfFieldValue(PdfFieldIndefinite.AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevel().getAgreement().getDescription());
 			}
+//			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+//				setPdfFieldValue(PdfFieldIndefinite.AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
+//			}
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.SEPE_MUNICIPALITY.toString()))){
 				setPdfFieldValue(PdfFieldIndefinite.SEPE_MUNICIPALITY.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.SEPE_MUNICIPALITY.toString()));
 			}

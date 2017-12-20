@@ -235,11 +235,12 @@ public class TemporaryModel extends AbstractContractModel {
 			if(contrata!=null && contrata.getCno()!=null){
 				setPdfFieldValue(PdfFieldTemporary.PROFESSION.getValue(), contrata.getCno().getTitle());
 			}
-			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-				setPdfFieldValue(PdfFieldTemporary.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
-			} else {
-				setPdfFieldValue(PdfFieldTemporary.CATEGORY.getValue(), contract.getCategoryDescription());
-			}
+			setPdfFieldValue(PdfFieldTemporary.CATEGORY.getValue(), contract.getCategoryDescription());
+//			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+//				setPdfFieldValue(PdfFieldTemporary.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
+//			} else {
+//				setPdfFieldValue(PdfFieldTemporary.CATEGORY.getValue(), contract.getCategoryDescription());
+//			}
 			
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.FUNCTIONS.toString()))){
 				setPdfFieldValue(PdfFieldTemporary.FUNCTIONS.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.FUNCTIONS.toString()));
@@ -587,10 +588,13 @@ public class TemporaryModel extends AbstractContractModel {
 						setPdfFieldValue(PdfFieldTemporary.OPT11_EMPLOYER_UNIVERSITY_CHECK.getValue(),"true");
 					}
 				}
-				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getLevel()!=null
-					 && contract.getAgreementLevelCategory().getLevel().getAgreement()!=null){
-					setPdfFieldValue(PdfFieldTemporary.OPT11_COLLECTIVE_AGREEMENT.getValue(),contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
-				}
+				if(contract.getAgreementLevel()!=null && contract.getAgreementLevel().getAgreement()!=null){
+						setPdfFieldValue(PdfFieldTemporary.OPT11_COLLECTIVE_AGREEMENT.getValue(),contract.getAgreementLevel().getAgreement().getDescription());
+					}
+//				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getLevel()!=null
+//					 && contract.getAgreementLevelCategory().getLevel().getAgreement()!=null){
+//					setPdfFieldValue(PdfFieldTemporary.OPT11_COLLECTIVE_AGREEMENT.getValue(),contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
+//				}
 			} else if(modelOption == ModelOption.TEMPORARY_OPT12){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT12_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT12_OPTION_CHECK.getValue(),"true");
@@ -746,10 +750,13 @@ public class TemporaryModel extends AbstractContractModel {
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.OPT14_DISTANCE_ADJUSTMENT_MORE.toString()))){
 					setPdfFieldValue(PdfFieldTemporary.OPT14_DISTANCE_ADJUSTMENT_MORE.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.OPT14_DISTANCE_ADJUSTMENT_MORE.toString()));
 				}
-				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getLevel()!=null
-					 && contract.getAgreementLevelCategory().getLevel().getAgreement()!=null){
-					setPdfFieldValue(PdfFieldTemporary.OPT14_COLLECTIVE_AGREEMENT.getValue(),contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
+				if(contract.getAgreementLevel()!=null && contract.getAgreementLevel().getAgreement()!=null){
+						setPdfFieldValue(PdfFieldTemporary.OPT14_COLLECTIVE_AGREEMENT.getValue(),contract.getAgreementLevel().getAgreement().getDescription());
 				}
+//				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getLevel()!=null
+//						 && contract.getAgreementLevelCategory().getLevel().getAgreement()!=null){
+//						setPdfFieldValue(PdfFieldTemporary.OPT14_COLLECTIVE_AGREEMENT.getValue(),contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
+//				}
 			} else if(modelOption == ModelOption.TEMPORARY_OPT15){
 				setPdfFieldValue(PdfFieldTemporary.MAIN_OPT15_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldTemporary.OPT15_OPTION_CHECK.getValue(),"true");
