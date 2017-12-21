@@ -277,8 +277,6 @@ public class SIIBuilt {
 				fet.setFacturasAgrupadas(fa);
 			}
 		
-			// FECHA OPERACION 
-			fet.setFechaOperacion(AonDateUtils.format(vat.getTaxDate(), "dd-MM-yyyy")); 
 			
 			// CLAVE REGIMEN IVA || TRANSCENDENCIA  
 			
@@ -759,7 +757,8 @@ public class SIIBuilt {
 			frt.setFechaOperacion(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));//TODO
 				
 			// FECHA REGISTRO CONTABLE
-			frt.setFechaRegContable(AonDateUtils.format(vat.getTaxDate(), "dd-MM-yyyy"));//TODO
+			//frt.setFechaRegContable(AonDateUtils.format(vat.getRegContableDate(), "dd-MM-yyyy"));
+			frt.setFechaRegContable(AonDateUtils.format(vat.getTaxDate(), "dd-MM-yyyy"));
 			
 			// IMPORTE TOTAL
 			Double total = noExenta.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum()

@@ -30,6 +30,7 @@ public class VatContext implements Serializable {
 	private String registryName;
 	private Date issueDate;
 	private Date taxDate;
+	private Date regContableDate;
 	
 	private String detailDescription;
 	
@@ -428,6 +429,13 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setAmortizationInitialDate(Date amortizationInitialDate) {
 		this.amortizationInitialDate = amortizationInitialDate;
+		return this;
+	}
+	public Date getRegContableDate() {
+		return regContableDate;
+	}
+	public VatContext setRegContableDate(Date regContableDate) {
+		this.regContableDate = regContableDate;
 		return this;
 	}
 	

@@ -155,7 +155,7 @@ public class SIIUri {
 		if(SIIType.FACTURAS_RECIBIDAS.equals(type)) {
 			if(Administration.COMMON_TERRITORY.equals(place)) return "https://www7.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			if(Administration.ALAVA.equals(place)) return "https://pruebas-sii.araba.eus/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
-			if(Administration.BIZKAIA.equals(place)) return "https://pruapps.bizkaia.eus/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
+			if(Administration.BIZKAIA.equals(place)) return "https://pruapps.bizkaia.eus/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			if(Administration.GIPUZKOA.equals(place)) return "https://prep9.gipuzkoa.eus/JBS/HACI/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 			if(Administration.NAVARRA.equals(place)) return "https://www7.aeat.es/wlpl/SSII-FACT/ws/fr/SiiFactFRV1SOAP";
 		}
