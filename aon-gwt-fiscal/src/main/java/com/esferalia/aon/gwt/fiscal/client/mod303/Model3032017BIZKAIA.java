@@ -252,20 +252,15 @@ public class Model3032017BIZKAIA extends Model303Base {
 	protected LinkedList<Pair<String, String>> getInformationLinks() {
 		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
 		list.add(new Pair<String, String>("Impreso"
-			,"http://www.bizkaia.eus/fitxategiak/05/ogasuna/ereduak/Argitaratu/180EurBil.pdf"));
-		list.add(new Pair<String, String>("Hoja interna"
-			,"http://www.bizkaia.eus/fitxategiak/05/ogasuna/ereduak/Argitaratu/180EurBilHoja.pdf"));
+			,"http://www.bizkaia.eus/fitxategiak/05/ogasuna/ereduak/Argitaratu/303EurCas.pdf"));
 		list.add(new Pair<String, String>("Instrucciones"
-			,"http://www.bizkaia.eus/fitxategiak/05/ogasuna/ereduak/Argitaratu/180EurBilInst.pdf"));
-		list.add(new Pair<String, String>("ORDEN FORAL 2310/2014, de 26 de noviembre"
-			,"http://www.bizkaia.eus/lehendakaritza/Bao_bob/2014/12/20141209a235.pdf#page=23"));
-		list.add(new Pair<String, String>("Enlace al programa de ayuda"
-			,"http://www.bizkaia.eus/home2/Temas/DetalleTema.asp?Tem_Codigo=1993"));
+			,"http://www.bizkaia.eus/fitxategiak/05/ogasuna/ereduak/Argitaratu/308EurBilInst.pdf"));
+		list.add(new Pair<String, String>("ORDEN FORAL 2311/2012, de 20 de agosto"
+			,"http://www.bizkaia.eus/lehendakaritza/Bao_bob/2012/08/20120829a166.pdf#page=18"));
 		list.add(new Pair<String, String>("Enlace a las fechas de vencimiento en el a\u00F1o vigente"
-			,"http://www.bizkaia.eus/ogasuna/egutegia/egutegia_anual.asp?id=0&Modelos=281&Age_Codigo=20/10/2017&Tem_Codigo=5346"));
-		
+			,"http://www.bizkaia.eus/ogasuna/egutegia/egutegia_anual.asp?id=0&Modelos=227&Age_Codigo=21/12/2017&Tem_Codigo=5346"));
 		list.add(new Pair<String, String>("Enlace a la gu\u00EDa de informaci\u00F3n tributaria GURE GIDA"
-			,"http://www.bizkaia.eus/ogasuna/guregida/fitxabisorea.asp?Idioma=CA&Tem_Codigo=7884&bnetmobile=0&dpto_biz=5&codpath_biz=5|3405|7884&IdPublicoMostrar=810&IdPublicoMostrarAnterior=804"));
+			,"http://www.bizkaia.eus/ogasuna/guregida/fitxabisorea.asp?Idioma=ca&Tem_Codigo=7884&bnetmobile=0&dpto_biz=5&codpath_biz=5|3405|7884&IdPublicoMostrar=1322"));
 		return list;
 	}
 
