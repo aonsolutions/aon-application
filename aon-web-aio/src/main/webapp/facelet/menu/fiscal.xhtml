@@ -110,18 +110,22 @@
 										</aon:commandLink>
 									</aon:div>
 
-									<!-- *********************** [MODELO 347] 
-									<aon:div>
-										<aon:commandLink id="gwt_mod347-new" action="gwt_mod347-new" 
-											title="#{bundle.fiscal_model_347_module}" styleClass="aon-menu-fiscal">
-											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="347"/>
-											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="347"/>
-											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="347"/>
-											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="347"/>
-											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="347"/>
-											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_347_module}" />
-										</aon:commandLink>
-									</aon:div> -->
+									<!-- *********************** [MODELO 347] --> 
+									<aon:if test="#{domainSwitcher.snapshotVersion}">
+										<aon:div>
+											<aon:commandLink id="gwt_mod347-new" action="gwt_mod347-new" 
+												title="#{bundle.fiscal_model_347_module}" styleClass="aon-menu-fiscal">
+												<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-aeat" value="347"/>
+												<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="347"/>
+												<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="347"/>
+												<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="347"/>
+												<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="347"/>												
+												<aon:outputText styleClass="aon-icon-beta-text"
+													style="padding-left: 2em;margin-left: 1em;" 
+													value="#{bundle.fiscal_model_347_module}"/>
+											</aon:commandLink>
+										</aon:div>
+									</aon:if> 
 
 									<!-- *********************** [MODELO 349] -->
 									<aon:if test="#{domainSwitcher.snapshotVersion}"> 

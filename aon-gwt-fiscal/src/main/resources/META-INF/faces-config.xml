@@ -78,6 +78,10 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod303.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_mod347</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod347.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_mod349</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod349.xhtml</to-view-id>
 		</navigation-case>

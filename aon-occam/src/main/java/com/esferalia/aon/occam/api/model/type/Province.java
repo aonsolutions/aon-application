@@ -110,4 +110,8 @@ public enum Province implements Serializable {
 		return DESCONOCIDO;
 	}
 	
+	public static int safeValue( Province province ) {		
+		return province==null ? 0 : province.ordinal();
+	}
+	
 }

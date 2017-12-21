@@ -22,6 +22,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -2239,5 +2241,111 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	// ----------------------------------MODELO 347
+		public static LinkedList<Mod347> getMod347s(String domainName, int domainId,
+				String user) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, user);
+				return getFiscal().getMod347s(ctx, domainId);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+		public static Mod347 getMod347(String domainName, int domainId, String user,
+				Integer id) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, user);
+				return getFiscal().getMod347(ctx, id);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+		public static Mod347 initializeMod347(String domainName, int domainId,
+				String user) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, user);
+				return getFiscal().initializeMod347(ctx);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+		public static Mod347 saveMod347(String domainName, int domainId,
+				String user, Mod347 mod347) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, user);
+				return getFiscal().saveMod347(ctx, mod347);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+		public static void deleteMod347(String domainName, int domainId,
+				String user, Mod347 mod347) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, user);
+				getFiscal().deleteMod347(ctx, mod347);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+//		public static Mod347Detail getMod347Detail(String domainName, int domainId,
+//				String user, Integer id) {
+//			AONContext ctx = null;
+//			try {
+//				ctx = AONContext.getAONContext(domainName, domainId, user);
+//				return getFiscal().getMod347Detail(ctx, id);
+//			} finally {
+//				if (ctx != null)
+//					ctx.close();
+//			}
+//		}
+		
+		public static Mod347 saveComments(String domainName, String user, Mod347 mod347) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, mod347.getDomain(),user);
+				return getFiscal().saveCommentsMod347(ctx, mod347);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+		public static Mod347 changeStatusMod347(String domainName, String user, Mod347 mod347, FiscalStatus newStatus) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, mod347.getDomain(),user);
+				return getFiscal().changeStatusMod347(ctx, mod347, newStatus);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+		
+		public static String getMod347Info(String domainName, int domain, String user, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domain,user);
+				return getFiscal().getMod347Info(ctx, mod347, declared, infoKey);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
 
 }

@@ -25,6 +25,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -59,6 +61,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod347DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod349DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
@@ -1147,6 +1150,53 @@ public class FiscalImpl implements IFiscal {
 	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
 		return Mod349DAO.getMod349Info(ctx, mod349, detail, infoKey);
 	}
-
 	
+	// ---------------------------------------------------- [MODELO 347]
+		@Override
+		public LinkedList<Mod347> getMod347s(AONContext ctx, int domain) {
+			return Mod347DAO.getByDomain(ctx, domain);
+		}
+
+		@Override
+		public Mod347 getMod347(AONContext ctx, Integer id) {
+			return Mod347DAO.getById(ctx, id);
+		}
+
+		@Override
+		public Mod347 initializeMod347(AONContext ctx) {
+			return Mod347DAO.initialize(ctx);		
+		}
+
+		@Override
+		public Mod347 saveMod347(AONContext ctx, Mod347 mod347) {
+			return ctx.getDslContext().transactionResult(
+					configuration -> Mod347DAO.save(ctx, mod347));
+		}
+
+		@Override
+		public void deleteMod347(AONContext ctx, Mod347 mod347) {
+			ctx.getDslContext().transaction(
+					configuration -> Mod347DAO.delete(ctx, mod347));
+		}
+
+//		@Override
+//		public Mod347Detail getMod347Detail(AONContext ctx, Integer id) {
+//			return Mod347DAO.getDetail(ctx, id);
+//		}
+		
+		@Override
+		public Mod347 saveCommentsMod347(AONContext ctx, Mod347 mod347) {
+			return ctx.getDslContext().transactionResult(
+					configuration -> Mod347DAO.saveComments(ctx, mod347));		
+		}
+		@Override
+		public Mod347 changeStatusMod347(AONContext ctx, Mod347 mod347, FiscalStatus newStatus) {
+			return ctx.getDslContext().transactionResult(
+					configuration -> Mod347DAO.changeStatusMod347(ctx, mod347, newStatus));		
+		}
+		@Override
+		public String getMod347Info(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) {
+			return Mod347DAO.getMod347Info(ctx, mod347, declared, infoKey);
+		}
+
 }

@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
+import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.google.gwt.core.client.EntryPoint;
@@ -45,6 +46,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
 	private static final String FS_MOD202_ENTRY_POINT = "Model202";
 	private static final String FS_MOD303_ENTRY_POINT = "Model303";
+	private static final String FS_MOD347_ENTRY_POINT = "Model347";
 	private static final String FS_MOD349_ENTRY_POINT = "Model349";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
 	
@@ -256,6 +258,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					Model303 model303 = new Model303();
 					model303.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD347_ENTRY_POINT)) {
+			GWT.runAsync(Model347.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model347 model347 = new Model347();
+					model347.onModuleLoad();
 				}
 				
 			});
