@@ -278,7 +278,7 @@ public class FDIWriter implements Serializable {
 		} else if (detail.getContractLeave().getType() == LeaveType.OCCUPATIONAL_DISEASE) { 
 //			3	Accidente de trabajo		
 			dit.setContingencia(T35.T35_3.getCode());
-			dit.setFechaATEP( Integer.parseInt( dateFormatter.format( detail.getContractLeave().getStartDate() )) );
+			dit.setFechaATEP( Integer.parseInt( dateFormatter.format( detail.getDate() )) );
 		} else {
 			dit.setContingencia("0");
 		}
@@ -286,7 +286,7 @@ public class FDIWriter implements Serializable {
 //		5	Periodos de observaci√≥n de enfermedad profesional
 
 		
-		dit.setFechaBaja(  Integer.parseInt( dateFormatter.format( detail.getDate() )) );
+		dit.setFechaBaja(  Integer.parseInt( dateFormatter.format( detail.getContractLeave().getStartDate() )) );
 		if( StringUtils.isBlank(detail.getCollegeNumber()) && StringUtils.isBlank(detail.getCias()) ){
 			AonUtil.addErrorMessage("Ausencia de n∫ de colegiado o CIAS para el parte de "+detail.getContractLeave().getContract().getPerson().getFullName());
 		}
