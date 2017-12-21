@@ -171,11 +171,10 @@ public class SIIPost extends WebServiceGatewaySupport{
     	// ALTA
     	if(newList.size() > 0){
     		Object suministroNew = null;
-    		if(isAeat()) suministroNew = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
+    		if(isAeat() || isNavarra()) suministroNew = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
     		else if(isAraba()) suministroNew = SIIArabaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
     		else if(isGipuzkoa()) suministroNew = SIIGipuzkoaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
     		else if(isBizkaia()) suministroNew = SIIBizkaiaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
-    		else if(isNavarra()) suministroNew = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
     		
 			JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministroNew);
     		

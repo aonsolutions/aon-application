@@ -1543,7 +1543,7 @@ public class SIIBuilt {
 		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
 		contraparte.setNombreRazon(vat.getRegistryName());
 		if(vat.getRegistryDocumentCountry().equals(Country.ES)
-				&& (validateNif(vat.getRegistryDocument(), vat.getRegistryName()) || !vat.getInvoiceType().equals(InvoiceType.SALES))){
+				&& (!vat.getInvoiceType().equals(InvoiceType.SALES) || !isPersonaFisica(vat.getRegistryDocument()) || validateNif(vat.getRegistryDocument(), vat.getRegistryName()))){
 			contraparte.setNIF(vat.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();
@@ -1554,6 +1554,21 @@ public class SIIBuilt {
 			contraparte.setIDOtro(otro);
 		}	
 		return contraparte;
+	}
+	
+	private Boolean isPersonaFisica(String document){
+		String pri = document.substring(0, 1);
+	return document.length() == 9 
+		&& (isNumber(pri) || pri.equals("L") || pri.equals("K"));
+	}
+	
+	private Boolean isNumber(String s) {
+		try {
+			Integer.parseInt(s);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	private PersonaFisicaJuridicaType contraparteIntracomunitario(VatContext vat) {

@@ -298,10 +298,10 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			@Override	
 			public void render(Context context, JsInvoice object, SafeHtmlBuilder sb) {
 				String icon = AON.AON_CSS.aonIconPointLightGreen();
-				if(object.getSiiStatus().equals("Correcto") || object.getSiiStatus().equals("Pagado")) icon = AON.AON_CSS.aonIconPointGreen();
-				else if(object.getSiiStatus().equals("AceptadoConErrores") || object.getSiiStatus().equals("Parcial")) icon = AON.AON_CSS.aonIconPointOrange();
-				else if(object.getSiiStatus().equals("Incorrecto")) icon= AON.AON_CSS.aonIconPointRed();
-				else if(object.getSiiStatus().equals("Anulada")) icon = AON.AON_CSS.aonIconPointYellow();
+				if(object.getSiiStatus().equalsIgnoreCase("Correcto") || object.getSiiStatus().equalsIgnoreCase("Pagado")) icon = AON.AON_CSS.aonIconPointGreen();
+				else if(object.getSiiStatus().equalsIgnoreCase("AceptadoConErrores") || object.getSiiStatus().equalsIgnoreCase("Parcial")) icon = AON.AON_CSS.aonIconPointOrange();
+				else if(object.getSiiStatus().equalsIgnoreCase("Incorrecto")) icon= AON.AON_CSS.aonIconPointRed();
+				else if(object.getSiiStatus().equalsIgnoreCase("Anulada")) icon = AON.AON_CSS.aonIconPointYellow();
 				sb.appendHtmlConstant("<g:Label class=\""+ icon + "\" style=\"padding-left: 16px;\" >"+ "&nbsp;&nbsp;" + object.getSiiStatus());
 			}
 			
