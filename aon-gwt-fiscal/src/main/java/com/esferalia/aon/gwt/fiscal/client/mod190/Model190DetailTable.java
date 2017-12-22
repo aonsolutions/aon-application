@@ -54,7 +54,11 @@ public class Model190DetailTable extends SimpleLayoutPanel implements HasSelecti
 			final TextColumn<Mod190Detail> nameColumn = new TextColumn<Mod190Detail>() {
 				@Override
 				public String getValue(Mod190Detail detail) {
-					return AonStringUtils.defaultIfBlank(detail.getName(), AON.MSG.newPerceptor());
+					return AonStringUtils.abbreviate( AonStringUtils.defaultIfBlank(detail.getName(), AON.MSG.newPerceptor()) , 30 )
+							+ " ("+detail.getKey()
+							+ (AonStringUtils.isBlank( detail.getSubKey() )?"":(","+detail.getSubKey()))
+							+")"
+							;
 				}
 				@Override
 				public void render(Context context, Mod190Detail detail, SafeHtmlBuilder sb) {
@@ -66,7 +70,7 @@ public class Model190DetailTable extends SimpleLayoutPanel implements HasSelecti
 						sb.appendHtmlConstant("text-decoration:line-through;");
 					}
 					sb.appendHtmlConstant("font-size: 0.9em;height: auto;overflow: hidden; padding-right: 3px; text-transform: uppercase;width: auto;'>");
-					sb.appendEscaped( AonStringUtils.abbreviate( getValue(detail), 35 ));
+					sb.appendEscaped( getValue(detail) );
 					if (detail.isDirty()) {
 						sb.appendEscaped("*");
 					}

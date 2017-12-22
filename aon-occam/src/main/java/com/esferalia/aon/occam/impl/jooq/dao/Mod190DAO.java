@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
 import static com.esferalia.aon.jooq.tables.FsModel190Detail.FS_MODEL190_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -15,11 +16,13 @@ import static com.esferalia.aon.jooq.tables.IrpfDataDescendients.IRPF_DATA_DESCE
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -47,6 +50,8 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod1902014Key;
 import com.esferalia.aon.occam.api.model.type.Mod1902015Key;
 import com.esferalia.aon.occam.api.model.type.Mod1902016Key;
+import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -57,6 +62,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod190DAO {
 	private static byte ZERO_BYTE = 0;
 	private static byte ONE_BYTE = 1;
+	private static String PREST_IT = "PREST_IT";
 
 	public static Mod190 saveComments(AONContext ctx, Mod190 fm) {
 		try {
@@ -139,7 +145,11 @@ public class Mod190DAO {
 		mod190.setId(record.getId());
 		insertDetailsFromInvoice(ctx, mod190);
 		// insertDetailsFromSalary(ctx, mod190);
-		insertDetailsFromSalary2(ctx, mod190);
+		if (mod190.getYear() < 2017) {
+			insertDetailsFromSalary2016(ctx, mod190);
+		} else {
+			insertDetailsFromSalary2017(ctx, mod190);
+		}
 		return mod190;
 	}
 
@@ -447,14 +457,15 @@ public class Mod190DAO {
 	}
 
 	private static void validate(AONContext ctx, Mod190 mod190) {
-		if (mod190.isReplacement()) {
+		if (mod190.isReplacement() || mod190.isComplementary()) {
 			// Se comprueba que exista la declaración sustituida.
 			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL190)
 					.where(FS_MODEL190.YEAR.equal(mod190.getYear())
 					.and(FS_MODEL190.ADMINISTRATION.equal(mod190.getAdministration().getValue()))
 					.and(FS_MODEL190.ENTERPRISE.equal(mod190.getEnterprise()))
-					.and(FS_MODEL190.RECEIPT.equal(mod190.getReplacedReceipt())))
+//					.and(FS_MODEL190.RECEIPT.equal(mod190.getReplacedReceipt()))
+					)
 					.fetch()
 					.stream()
 					.findFirst()
@@ -658,8 +669,7 @@ public class Mod190DAO {
 	private static void fillLastIrpfDataByPerson(AONContext ctx, int person,
 			Date fromDate, Date toDate, Mod190Detail detail) {
 		ctx.checkRead();
-		List<IrpfDataRecord> list = ctx
-				.getDslContext()
+		List<IrpfDataRecord> list = ctx.getDslContext()
 				.select(IRPF_DATA.fields())
 				.from(IRPF_DATA)
 				.join(CONTRACT)
@@ -897,7 +907,7 @@ public class Mod190DAO {
 		}
 	}
 
-	private static void insertDetailsFromSalary2(AONContext ctx, final Mod190 mod190) {
+	private static void insertDetailsFromSalary2016(AONContext ctx, final Mod190 mod190) {
 		Date firstDay = AonDateUtils.getYearFirstDay(mod190.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod190.getYear());
 		
@@ -989,89 +999,204 @@ public class Mod190DAO {
 		mod190.getDetails().addAll( map.values() );
 	}
 
-/*
-	private static void insertDetailsFromSalary(AONContext ctx, final Mod190 mod190) {
+	private static void insertDetailsFromSalary2017(AONContext ctx, final Mod190 mod190) {
 		Date firstDay = AonDateUtils.getYearFirstDay(mod190.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod190.getYear());
-		
-		Field<BigDecimal> moneyIrpfBase = DSL.sum(DSL.decode()
-				.when(SALARY.INKIND_IRPF_BASE.equal(0.0), SALARY.IRPF_BASE)
-				.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0), SALARY.MONEY_IRPF_BASE));
-		Field<BigDecimal> inKindIrpfBase = DSL.sum(SALARY.INKIND_IRPF_BASE);
-	//	Field<BigDecimal> totalIrpf = DSL.sum(SALARY.TOTAL_IRPF);
-		Field<BigDecimal> socialSecurityContributions = DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
 		Field<Integer> birthYear = DSL.year(PERSON.BIRTH_DATE);
-		
+		final TreeMap<String, Mod190Detail> map = new TreeMap<String, Mod190Detail>();
+		final HashSet<Integer> salaries = new HashSet<Integer>();
+		ctx.getDslContext().select(
+				 SALARY.ID
+				,SALARY.EMPLOYEE_DOCUMENT
+				,SALARY.EMPLOYEE_NAME
+				,SALARY.TOTAL_IRPF
+				,SALARY.IRPF_BASE
+				,SALARY.SOCIAL_SECURITY_CONTRIBUTIONS
 
-		Field<Double> moneyQuotaOp = DSL.round((SALARY.MONEY_IRPF_BASE.mul(SALARY.TOTAL_IRPF)).div( SALARY.IRPF_BASE ),2);  
-		Field<BigDecimal> moneyQuota = DSL.sum(DSL.decode()
-			.when(SALARY.INKIND_IRPF_BASE.equal(0.0), SALARY.TOTAL_IRPF)
-			.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0), moneyQuotaOp));
-		Field<BigDecimal> inKindQuota = DSL.sum( DSL.decode()
-				.when(DSL.round(SALARY.INKIND_IRPF_BASE,2).equal(0.0), 0.0)
-				.when(SALARY.INKIND_IRPF_BASE.notEqual(0.0),SALARY.TOTAL_IRPF.minus(moneyQuotaOp)));
-		
-		ctx.getDslContext()
-				.select(SALARY.EMPLOYEE_DOCUMENT, SALARY.EMPLOYEE_NAME,
-						moneyIrpfBase, inKindIrpfBase, moneyQuota, inKindQuota,
-						socialSecurityContributions,PERSON.REGISTRY, birthYear)
-				.from(SALARY)
-				.join(CONTRACT)
-				.on(SALARY.CONTRACT.equal(CONTRACT.ID))
-				.join(WORKPLACE)
-				.on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
-				.join(PERSON)
-				.on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
-				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
-				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
-				.groupBy(SALARY.EMPLOYEE_DOCUMENT,PERSON.REGISTRY)
-				.fetch()
-				.stream()
-				.forEach(
-						salaryData -> {
-							Mod190Detail detail = new Mod190Detail();
+				,ENTERPRISE_CCC.TYPE
+				
+				,SALARY_PAYMENT.TYPE
+				,SALARY_PAYMENT.PAYMENT_CONCEPT
+				,SALARY_PAYMENT.AMOUNT
+				,SALARY_PAYMENT.IRPF
+				
+				,PERSON.REGISTRY
+				,birthYear)
+		.from(SALARY_PAYMENT)
+		.join(SALARY).on(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
+		.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
+		.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
+		.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
+		.join(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.equal(ENTERPRISE_CCC.ID))
+		.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+		.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
+		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
+		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.fetch()
+		.stream()
+		.forEach(rec -> {
+				String document = rec.getValue(SALARY.EMPLOYEE_DOCUMENT);
+				Integer person = rec.getValue(PERSON.REGISTRY);
+				
+				Byte p = rec.getValue(SALARY_PAYMENT.TYPE);
+				PaymentType paymentType = (p == null)?PaymentType.CRA_0001 : PaymentType.values()[ (int) p];
+				paymentType.accept(new PaymentTypeVisitor() {
+
+					@Override
+					public void visitNonStructuralHours(PaymentType paymentType) {
+						visitOther(paymentType);
+					}
+
+					@Override
+					public void visitStructuralHours(PaymentType paymentType) {
+						visitOther(paymentType);
+					}
+
+					@Override
+					public void visitOther(PaymentType paymentType) {
+						if (!isBoss()) visitAKey();
+					}
+
+					@Override
+					public void visitSalaryInKind(PaymentType paymentType) {
+						if (!isBoss()) visitAInKindKey();
+					}
+					
+					@Override
+					public void visitCompensation(PaymentType paymentType) {
+						if (!isBoss()) visitCompensation();
+					}
+					
+					@Override
+					public void visitExpenses(PaymentType paymentType) {
+						if (!isBoss()) visitExpenses();
+					}
+
+					// -------------------------------------------------------------------------------------
+					// -------------------------------------------------------------------------------------
+					
+					private boolean isBoss() {
+						Byte boss = rec.getValue(ENTERPRISE_CCC.TYPE);
+						if ( boss != null && boss.byteValue() == 4) {
+							double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+							double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+							double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+							double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+									?0.0
+									:(irpfBase * totalIrpf / totalIrpfBase);
+							Mod190Detail detail = getDetail(document,person,Mod1902016Key.E,"01");
+							detail.setPerception(AonMathUtils.round(detail.getPerception() + irpfBase ));
+							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
+							Integer salary = rec.getValue(SALARY.ID);
+							if (!salaries.contains(salary)) {
+								salaries.add(salary);
+								double ss = rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+								detail.setDeducibleExpense(AonMathUtils.round(detail.getDeducibleExpense() + ss ));
+							}
+							return true;
+						}
+						return false;
+					}
+
+					private void visitExpenses() {
+						double amount = rec.getValue(SALARY_PAYMENT.AMOUNT);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						
+						// Parte exenta va a la L
+						double expense = AonMathUtils.round(amount - irpfBase);  
+						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"01");
+						detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
+						
+						// Parte no exenta va a la A
+						visitAKey();	
+					}
+						
+					private void visitCompensation() {
+						double amount = rec.getValue(SALARY_PAYMENT.AMOUNT);
+						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"05");
+						detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
+					}
+					
+					private void visitAKey() {
+						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+								?0.0
+								:(irpfBase * totalIrpf / totalIrpfBase);
+						Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
+						Integer salary = rec.getValue(SALARY.ID);
+						if (!salaries.contains(salary)) {
+							salaries.add(salary);
+							double ss = rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+							detail.setDeducibleExpense(AonMathUtils.round(detail.getDeducibleExpense() + ss ));
+						}
+						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
+						if (PREST_IT.equals(prest)) {
+							detail.setPerceptionIL(AonMathUtils.round(detail.getPerceptionIL() + irpfBase ));
+							detail.setRetentionIL(AonMathUtils.round(detail.getRetentionIL() + irpfQuota ));
+						} else {
+							detail.setPerception(AonMathUtils.round(detail.getPerception() + irpfBase ));
+							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
+						}
+					}
+					
+					private void visitAInKindKey() {
+						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+								?0.0
+								:(irpfBase * totalIrpf / totalIrpfBase);
+						Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
+						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
+						if (PREST_IT.equals(prest)) {
+							detail.setInKindPerceptionIL(AonMathUtils.round(detail.getInKindPerceptionIL() + irpfBase ));
+							detail.setInKindDepositIL(AonMathUtils.round(detail.getInKindDepositIL() + irpfQuota ));
+						} else {
+							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
+							detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
+						}
+					}
+					
+					private Mod190Detail getDetail(String document,int person, Mod1902016Key key, String subKey) {
+						String mapKey =  document + "_" + person + "_" + key.getValue() + (subKey != null?("_" + subKey):"");
+						if ( !map.containsKey(mapKey) ) {
+							final Mod190Detail detail = new Mod190Detail();
+							map.put(mapKey, detail);
 							detail.setDomain(mod190.getDomain());
 							detail.setMod190(mod190.getId());
-							detail.setDocument(salaryData.getValue(SALARY.EMPLOYEE_DOCUMENT));
-							detail.setName(salaryData.getValue(SALARY.EMPLOYEE_NAME));
-							detail.setKey(Mod1902015Key.A.getValue());
-							if (mod190.getYear() == 2015) {
-								detail.setSubKey("01");
-							} 
-							detail.setPerception(salaryData.getValue(moneyIrpfBase).doubleValue());
-							detail.setInKindPerception(salaryData.getValue(inKindIrpfBase).doubleValue());
-							detail.setRetention( salaryData.getValue(moneyQuota).doubleValue());
-							detail.setInKindDeposit(salaryData.getValue(inKindQuota).doubleValue());
-							detail.setIrpfData(getLastIrpfDataByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay, detail));
-							Integer birthData = salaryData.getValue(birthYear);
-							detail.getIrpfData().setBirthYear(birthData==null?0:birthData);
-//							detail.setIrpfResult(getLastIrpfResultByPerson(ctx,salaryData.getValue(PERSON.REGISTRY),firstDay, lastDay));
-							detail.getIrpfResult().setDeducibleExpense(salaryData.getValue( socialSecurityContributions).doubleValue());
-							ctx.getDslContext()
-									.select(GEOZONE.CODE)
-									.from(RADDRESS)
-									.join(GEOZONE)
-									.on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-									.where(RADDRESS.REGISTRY.equal(salaryData
-											.getValue(PERSON.REGISTRY)))
-									.and(RADDRESS.TYPE.equal((byte) 0))
-									.limit(1)
-									.fetch()
-									.stream()
-									.forEach(
-											province -> {
-												try {
-													detail.setProvince(Integer.parseInt(province
-															.getValue(GEOZONE.CODE)));
-												} catch (NumberFormatException e) {
-													// nothing. If not a number,
-													// not a valid province.
-												}
-											});
-							mod190.getDetails().add(detail);
-						});
-
+							detail.setKey(key.getValue());
+							detail.setSubKey(subKey);
+							detail.setDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT));
+							detail.setName(rec.getValue(SALARY.EMPLOYEE_NAME));
+							ctx.getDslContext().select(GEOZONE.CODE)
+								.from(RADDRESS)
+								.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+								.where(RADDRESS.REGISTRY.equal(rec.getValue(PERSON.REGISTRY)))
+								.and(RADDRESS.TYPE.equal((byte) 0))
+								.limit(1)
+								.fetch()
+								.stream()
+								.forEach(
+									province -> {
+										try {detail.setProvince(Integer.parseInt(province.getValue(GEOZONE.CODE)));
+										} catch (NumberFormatException e) {} // nothing. If not a number,  not a valid province.
+									}
+								);
+							if (key == Mod1902016Key.A) {
+								Integer birthData = rec.getValue(birthYear);
+								detail.setBirthYear(birthData==null?0:birthData);
+								fillLastIrpfDataByPerson(ctx,rec.getValue(PERSON.REGISTRY),firstDay, lastDay, detail);
+							}
+						}
+						return map.get(mapKey);
+					}
+					
+				}); 
+		});
+		;
+		mod190.getDetails().addAll(map.values());
 	}
-*/
+	
 }
