@@ -125,19 +125,70 @@ public enum PaymentType {
 	CRA_0039,
 	CRA_0040,
 	CRA_0041,
-	CRA_0042,
-	CRA_0043,
-	CRA_0044,
-	CRA_0045,
-	CRA_0046,
-	CRA_0047,
-	CRA_0048,
-	CRA_0049,
-	CRA_0050,
+	
+	CRA_0042{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
+	CRA_0043{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
+	CRA_0044{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
+	CRA_0045{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
+	CRA_0046{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
+	CRA_0047{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
+	CRA_0048{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
+	CRA_0049{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
+	CRA_0050{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitExpenses(this); 
+		}
+	},
 	CRA_0051,
 	CRA_0052,
 	CRA_0053,
-	CRA_0054,
+	CRA_0054{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitCompensation(this); 
+		}
+	},
 	CRA_0055,
 	CRA_0056;
 	
@@ -171,7 +222,14 @@ public enum PaymentType {
 
     	void visitStructuralHours(PaymentType paymentType);
 
-
+    	default void visitCompensation(PaymentType paymentType){
+    		visitOther(paymentType);	
+    	}
+    	
+    	default void visitExpenses(PaymentType paymentType){
+    		visitOther(paymentType);
+    	}
+    	
     }
     
     // ------------------------------------------------------------------------
@@ -197,6 +255,14 @@ public enum PaymentType {
 
 			@Override
 			public void visitStructuralHours(PaymentType paymentType) {
+			}
+
+			@Override
+			public void visitCompensation(PaymentType paymentType) {
+			}
+
+			@Override
+			public void visitExpenses(PaymentType paymentType) {
 			}
     		
     	}
