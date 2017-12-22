@@ -79,7 +79,7 @@ public class Mod193Print extends HttpServlet {
 
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
 			String fileName, byte[] content, Mod193 mod193) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-		String fileString = new String(content);
+		String fileString = new String(content, "ISO-8859-1");
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
