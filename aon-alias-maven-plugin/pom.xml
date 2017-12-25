@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>aon.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>9.19-SNAPSHOT</version>
+		<version>9.19</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-alias-maven-plugin</artifactId>
