@@ -308,7 +308,7 @@ public class Model190AEAT2017DetailPanel extends SimpleLayoutPanel implements Fo
 		tab3.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
 		tab3.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
 		tab3.getFlexCellFormatter().setColSpan(0, 0, 5);
-		tab3.setWidget(0, 0, new InlineLabel("Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A, B.01"));
+		tab3.setWidget(0, 0, new InlineLabel("Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A, B.01)"));
 
 		tab3.setWidget(1, 0, new Label());
 		tab3.setWidget(1, 1, new MediumLabel(AON.MSG.perceptionValoration()));
