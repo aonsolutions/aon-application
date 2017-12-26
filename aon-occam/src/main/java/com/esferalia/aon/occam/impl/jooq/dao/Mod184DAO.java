@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -135,7 +136,7 @@ public class Mod184DAO {
 				.set(FS_MODEL184.CONTACT_PERSON,mod184.getContactPerson())
 				.set(FS_MODEL184.CONTACT_PHONE,mod184.getContactPhone())
 				.set(FS_MODEL184.CONTACT_MAIL,mod184.getContactMail())
-				.set(FS_MODEL184.COMPLEMENTARY, (byte) 0)
+				.set(FS_MODEL184.COMPLEMENTARY,AonEnumUtils.getByte(mod184.isComplementary()))
 				.set(FS_MODEL184.REPLACEMENT,AonEnumUtils.getByte(mod184.isReplacement()))
 				.set(FS_MODEL184.COMMENTS,mod184.getComments())
 				.set(FS_MODEL184.RECEIPT,mod184.getReceipt())
@@ -169,7 +170,7 @@ public class Mod184DAO {
 			.set(FS_MODEL184.CONTACT_PERSON,mod184.getContactPerson())
 			.set(FS_MODEL184.CONTACT_PHONE,mod184.getContactPhone())
 			.set(FS_MODEL184.CONTACT_MAIL,mod184.getContactMail())
-			.set(FS_MODEL184.COMPLEMENTARY, (byte) 0)
+			.set(FS_MODEL184.COMPLEMENTARY,AonEnumUtils.getByte(mod184.isComplementary()))
 			.set(FS_MODEL184.REPLACEMENT,AonEnumUtils.getByte(mod184.isReplacement()))
 			.set(FS_MODEL184.COMMENTS,mod184.getComments())
 			.set(FS_MODEL184.RECEIPT,mod184.getReceipt())
@@ -358,6 +359,35 @@ public class Mod184DAO {
 	}
 
 	private static void validate(AONContext ctx, Mod184 mod184) {
+		if (mod184.isReplacement() || mod184.isComplementary()) {
+			// Se comprueba que exista la declaración sustituida.
+			if (!ctx.getDslContext().selectOne()
+					.from(FS_MODEL184)
+					.where(FS_MODEL184.YEAR.equal(mod184.getYear())
+					.and(FS_MODEL184.ADMINISTRATION.equal(mod184.getAdministration().getValue()))
+					.and(FS_MODEL184.ENTERPRISE.equal(mod184.getEnterprise()))
+					)
+					.fetch()
+					.stream()
+					.findFirst()
+					.isPresent()) 
+				throw new AonCoreException(
+						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
+		} else {
+			// Se comprueba que no exista ya una declaración.
+			if (ctx.getDslContext().selectOne()
+				.from(FS_MODEL184)
+				.where(FS_MODEL184.YEAR.equal(mod184.getYear())
+				.and(FS_MODEL184.ADMINISTRATION.equal(mod184.getAdministration().getValue()))
+				.and(FS_MODEL184.ENTERPRISE.equal(mod184.getEnterprise()))
+				.and(FS_MODEL184.REPLACEMENT.equal(ZERO_BYTE)))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent()) 
+				throw new AonCoreException(
+						AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
+		}
 	}
 
 	public static void delete(AONContext ctx, Mod184 mod184) {

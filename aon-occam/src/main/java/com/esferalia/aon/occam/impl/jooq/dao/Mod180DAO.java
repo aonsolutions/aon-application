@@ -40,8 +40,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod180DAO {
 	
 	private static byte ZERO_BYTE = 0;
-	private static byte ONE_BYTE = 1;
-	
 
 	public static LinkedList<Mod180> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();
@@ -121,7 +119,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.CONTACT_PERSON,mod180.getContactPerson())
 			.set(FS_MODEL180.CONTACT_PHONE,mod180.getContactPhone())
 			.set(FS_MODEL180.CONTACT_MAIL,mod180.getContactMail())
-			.set(FS_MODEL180.COMPLEMENTARY, ZERO_BYTE )
+			.set(FS_MODEL180.COMPLEMENTARY,AonEnumUtils.getByte(mod180.isComplementary()))
 			.set(FS_MODEL180.REPLACEMENT,AonEnumUtils.getByte(mod180.isReplacement()))
 			.set(FS_MODEL180.COMMENTS,mod180.getComments())
 			.set(FS_MODEL180.RECEIPT,mod180.getReceipt())
@@ -149,7 +147,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.CONTACT_PERSON,mod180.getContactPerson())
 			.set(FS_MODEL180.CONTACT_PHONE,mod180.getContactPhone())
 			.set(FS_MODEL180.CONTACT_MAIL,mod180.getContactMail())
-			.set(FS_MODEL180.COMPLEMENTARY, ZERO_BYTE)
+			.set(FS_MODEL180.COMPLEMENTARY,AonEnumUtils.getByte(mod180.isComplementary()))
 			.set(FS_MODEL180.REPLACEMENT,AonEnumUtils.getByte(mod180.isReplacement()))
 			.set(FS_MODEL180.COMMENTS,mod180.getComments())
 			.set(FS_MODEL180.RECEIPT,mod180.getReceipt())
@@ -173,34 +171,19 @@ public class Mod180DAO {
 	}
 
 	private static void validate(AONContext ctx, Mod180 mod180) {
-		if (mod180.isReplacement()) {
+		if (mod180.isReplacement() || mod180.isComplementary()) {
 			// Se comprueba que exista la declaración ssustituida.
 			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL180)
 					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
 					.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().getValue()))
-					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
-					.and(FS_MODEL180.RECEIPT.equal(mod180.getReplacedReceipt())))
+					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise())))
 					.fetch()
 					.stream()
 					.findFirst()
 					.isPresent()) 
 				throw new AonCoreException(
 						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
-
-			// Se comprueba que no exista una declaración sustitutiva.
-			if (ctx.getDslContext().selectOne()
-				.from(FS_MODEL180)
-				.where(FS_MODEL180.YEAR.equal(mod180.getYear())
-				.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().getValue()))						
-				.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
-				.and(FS_MODEL180.REPLACEMENT.equal( ONE_BYTE ))					
-				.and(FS_MODEL180.REPLACED_RECEIPT.equal(mod180.getReplacedReceipt())))
-				.fetch()
-				.stream()
-				.findFirst()
-				.isPresent()) 
-				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
 		} else {
 			// Se comprueba que no exista ya una declaración.
 			if (ctx.getDslContext().selectOne()

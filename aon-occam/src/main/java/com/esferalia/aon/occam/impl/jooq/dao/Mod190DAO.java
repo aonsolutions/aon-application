@@ -61,7 +61,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod190DAO {
 	private static byte ZERO_BYTE = 0;
-	private static byte ONE_BYTE = 1;
 	private static String PREST_IT = "PREST_IT";
 
 	public static Mod190 saveComments(AONContext ctx, Mod190 fm) {
@@ -131,8 +130,8 @@ public class Mod190DAO {
 				.set(FS_MODEL190.CONTACT_PERSON, mod190.getContactPerson())
 				.set(FS_MODEL190.CONTACT_PHONE, mod190.getContactPhone())
 				.set(FS_MODEL190.CONTACT_MAIL, mod190.getContactMail())
-				.set(FS_MODEL190.COMPLEMENTARY, (byte) 0)
-				.set(FS_MODEL190.REPLACEMENT,AonEnumUtils.getByte(mod190.isReplacement()))
+				.set(FS_MODEL190.COMPLEMENTARY, AonEnumUtils.getByte(mod190.isComplementary()))
+				.set(FS_MODEL190.REPLACEMENT, AonEnumUtils.getByte(mod190.isReplacement()))
 				.set(FS_MODEL190.COMMENTS, mod190.getComments())
 				.set(FS_MODEL190.RECEIPT, mod190.getReceipt())
 				.set(FS_MODEL190.REPLACED_RECEIPT, mod190.getReplacedReceipt())
@@ -165,7 +164,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190.CONTACT_PERSON, mod190.getContactPerson())
 				.set(FS_MODEL190.CONTACT_PHONE, mod190.getContactPhone())
 				.set(FS_MODEL190.CONTACT_MAIL, mod190.getContactMail())
-				.set(FS_MODEL190.COMPLEMENTARY, (byte) 0)
+				.set(FS_MODEL190.COMPLEMENTARY, AonEnumUtils.getByte(mod190.isComplementary()))
 				.set(FS_MODEL190.REPLACEMENT,AonEnumUtils.getByte(mod190.isReplacement()))
 				.set(FS_MODEL190.COMMENTS, mod190.getComments())
 				.set(FS_MODEL190.RECEIPT, mod190.getReceipt())
@@ -464,7 +463,6 @@ public class Mod190DAO {
 					.where(FS_MODEL190.YEAR.equal(mod190.getYear())
 					.and(FS_MODEL190.ADMINISTRATION.equal(mod190.getAdministration().getValue()))
 					.and(FS_MODEL190.ENTERPRISE.equal(mod190.getEnterprise()))
-//					.and(FS_MODEL190.RECEIPT.equal(mod190.getReplacedReceipt()))
 					)
 					.fetch()
 					.stream()
@@ -472,21 +470,6 @@ public class Mod190DAO {
 					.isPresent()) 
 				throw new AonCoreException(
 						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
-			
-
-			// Se comprueba que no exista una declaración sustitutiva.
-			if (ctx.getDslContext().selectOne()
-					.from(FS_MODEL190)
-					.where(FS_MODEL190.YEAR.equal(mod190.getYear())
-					.and(FS_MODEL190.ADMINISTRATION.equal(mod190.getAdministration().getValue()))
-					.and(FS_MODEL190.ENTERPRISE.equal(mod190.getEnterprise()))
-					.and(FS_MODEL190.REPLACEMENT.equal( ONE_BYTE ))					
-					.and(FS_MODEL190.REPLACED_RECEIPT.equal(mod190.getReplacedReceipt())))
-					.fetch()
-					.stream()
-					.findFirst()
-					.isPresent()) 
-					throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
 		} else {
 			// Se comprueba que no exista ya una declaración.
 			if (ctx.getDslContext().selectOne()

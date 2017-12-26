@@ -58,6 +58,7 @@ public class Model190Table extends SimpleLayoutPanel implements HasSelectionHand
 			addAdministrationColumn();
 			addYearColumn();
 			addReplacementColumn();
+			addComplementaryColumn();
 			addStatusColumn();
 			addStatusLabelColumn();
 			addDocumentColumn();
@@ -132,16 +133,31 @@ public class Model190Table extends SimpleLayoutPanel implements HasSelectionHand
 					new ImageResourceCell()) {
 				@Override
 				public ImageResource getValue(Mod190 mod190) {
-					return (mod190.isComplementary() || mod190.isReplacement())  
+					return (mod190.isReplacement())  
 							? AON.AON_RESOURCES.aonIconChecked()
 							: AON.AON_RESOURCES.aonIconCheck();
 				}
 			};
-			this.addColumn(replacementColumn, "C/S" );
+			this.addColumn(replacementColumn, "S" );
 			replacementColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
 			this.setColumnWidth(replacementColumn, 20, Unit.PX);
 		}
 	
+		private void addComplementaryColumn() {
+			Column<Mod190, ImageResource> complementaryColumn = new Column<Mod190, ImageResource>(
+					new ImageResourceCell()) {
+				@Override
+				public ImageResource getValue(Mod190 mod190) {
+					return (mod190.isComplementary())  
+							? AON.AON_RESOURCES.aonIconChecked()
+							: AON.AON_RESOURCES.aonIconCheck();
+				}
+			};
+			this.addColumn(complementaryColumn, "C" );
+			complementaryColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
+			this.setColumnWidth(complementaryColumn, 20, Unit.PX);
+		}
+
 		private void addDocumentColumn() {
 			final TextColumn<Mod190> documentColumn = new TextColumn<Mod190>() {
 				@Override

@@ -206,7 +206,7 @@ public class Model184 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 					}
 				});
 	}
@@ -321,7 +321,7 @@ public class Model184 extends MainEntryPoint {
 									@Override
 									public void onFailure(Throwable caught) {
 										popup.hide();
-										showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 									}
 								});
 					}

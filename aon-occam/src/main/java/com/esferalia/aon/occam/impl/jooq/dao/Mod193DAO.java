@@ -40,7 +40,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod193DAO {
 
 	private static byte ZERO_BYTE = 0;
-	private static byte ONE_BYTE = 1;
 
 	public static LinkedList<Mod193> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();
@@ -144,7 +143,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193.CONTACT_PERSON, mod193.getContactPerson())
 				.set(FS_MODEL193.CONTACT_PHONE, mod193.getContactPhone())
 				.set(FS_MODEL193.CONTACT_MAIL, mod193.getContactMail())
-				.set(FS_MODEL193.COMPLEMENTARY, (byte) 0)
+				.set(FS_MODEL193.COMPLEMENTARY, AonEnumUtils.getByte(mod193.isComplementary()))
 				.set(FS_MODEL193.REPLACEMENT,AonEnumUtils.getByte(mod193.isReplacement()))
 				.set(FS_MODEL193.COMMENTS, mod193.getComments())
 				.set(FS_MODEL193.RECEIPT, mod193.getReceipt())
@@ -172,7 +171,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193.CONTACT_PERSON, mod193.getContactPerson())
 				.set(FS_MODEL193.CONTACT_PHONE, mod193.getContactPhone())
 				.set(FS_MODEL193.CONTACT_MAIL, mod193.getContactMail())
-				.set(FS_MODEL193.COMPLEMENTARY, (byte) 0)
+				.set(FS_MODEL193.COMPLEMENTARY,AonEnumUtils.getByte(mod193.isComplementary()))
 				.set(FS_MODEL193.REPLACEMENT,AonEnumUtils.getByte(mod193.isReplacement()))
 				.set(FS_MODEL193.COMMENTS, mod193.getComments())
 				.set(FS_MODEL193.RECEIPT, mod193.getReceipt())
@@ -356,32 +355,17 @@ public class Mod193DAO {
 	}
 
 	private static void validate(AONContext ctx, Mod193 mod193) {
-		if (mod193.isReplacement()) {
-			// Se comprueba que exista la declaración ssustituida.
+		if (mod193.isReplacement() || mod193.isComplementary()) {
 			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL193)
 					.where(FS_MODEL193.YEAR.equal(mod193.getYear())
-					.and(FS_MODEL193.ENTERPRISE.equal(mod193.getEnterprise()))
-					.and(FS_MODEL193.RECEIPT.equal(mod193.getReplacedReceipt())))
+					.and(FS_MODEL193.ENTERPRISE.equal(mod193.getEnterprise())))
 					.fetch()
 					.stream()
 					.findFirst()
 					.isPresent()) 
 				throw new AonCoreException(
 						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
-
-			// Se comprueba que no exista una declaración sustitutiva.
-			if (ctx.getDslContext().selectOne()
-				.from(FS_MODEL193)
-				.where(FS_MODEL193.YEAR.equal(mod193.getYear())
-				.and(FS_MODEL193.ENTERPRISE.equal(mod193.getEnterprise()))
-				.and(FS_MODEL193.REPLACEMENT.equal( ONE_BYTE ))					
-				.and(FS_MODEL193.REPLACED_RECEIPT.equal(mod193.getReplacedReceipt())))
-				.fetch()
-				.stream()
-				.findFirst()
-				.isPresent()) 
-				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());
 		} else {
 			// Se comprueba que no exista ya una declaración.
 			if (ctx.getDslContext().selectOne()
