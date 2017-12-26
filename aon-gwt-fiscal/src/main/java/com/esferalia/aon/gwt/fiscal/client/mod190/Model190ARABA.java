@@ -70,7 +70,11 @@ public class Model190ARABA extends Model190Base {
 	
 	@Override
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		setDetailManager( new Model190ARABADetail2016( getCallback() , selectedIndex ));
+		if ( getCallback().getMod190().getYear() < 2017) {
+			setDetailManager( new Model190ARABADetail2016( getCallback() , selectedIndex ));	
+		} else {
+			setDetailManager( new Model190ARABADetail2017( getCallback() , selectedIndex ));
+		}
 		tabPanel.add( (Widget) getDetailManager(),  TAB_TEMPLATE.render(AON.MSG.receiverList(), AON.AON_CSS.aonIconInvoice()) );
 	}
 }
