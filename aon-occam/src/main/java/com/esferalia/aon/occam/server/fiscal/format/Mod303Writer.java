@@ -29,7 +29,7 @@ public class Mod303Writer {
 	private enum Mod303File2016 {
 		
 		// **************************************************************** AEAT < 2017 - 4T 									
-		AEAT_2017_REG_0_START (mod303 -> (mod303.isAEAT() && ((mod303.getYear() <= 2016) || (mod303.getYear() == 2017 && !mod303.isLastPeriod()))) ,new IPropertyFiller[] { 
+		AEAT_2017_REG_0_START (mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016) ,new IPropertyFiller[] { 
 			(wr, mod) -> wr.append("<T")
 		   ,(wr, mod) -> wr.append("303")
 		   ,(wr, mod) -> wr.append("0")
@@ -45,7 +45,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append("</AUX>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_REG_1 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() <= 2016) || (mod303.getYear() == 2017 && !mod303.isLastPeriod()))) ,new IPropertyFiller[] {
+		,AEAT_2017_REG_1 (mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016) ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30301000>")
 		   ,(wr, mod) -> wr.append(" ")
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType().getValue(), 1))
@@ -115,7 +115,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append("</T30301000>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_REG_2 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() <= 2016) || (mod303.getYear() == 2017 && !mod303.isLastPeriod())))
+		,AEAT_2017_REG_2 (mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016)
 				&& mod303.getAmount(Mod303Key.CT_A02) < 2 // Simplificado
 				,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30302000>")
@@ -214,7 +214,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append("</T30302000>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_REG_3 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() <= 2016) || (mod303.getYear() == 2017 && !mod303.isLastPeriod()))) ,new IPropertyFiller[] {
+		,AEAT_2017_REG_3 (mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016) ,new IPropertyFiller[] {
 				(wr, mod) -> wr.append("<T30303000>")
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C59),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C60),17,2))
@@ -268,7 +268,7 @@ public class Mod303Writer {
 			   ,(wr, mod) -> wr.append("</T30303000>")
 			   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_REG_0_END (mod303 -> (mod303.isAEAT() && ((mod303.getYear() <= 2016) || (mod303.getYear() == 2017 && !mod303.isLastPeriod()))) ,new IPropertyFiller[] { 
+		,AEAT_2017_REG_0_END (mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016) ,new IPropertyFiller[] { 
 		    (wr, mod) -> wr.append("</T")
 		   ,(wr, mod) -> wr.append("303")
 		   ,(wr, mod) -> wr.append("0")
@@ -279,7 +279,7 @@ public class Mod303Writer {
 		})
 		
 		// **************************************************************** AEAT = 2017 - 4T 									
-		,AEAT_2017_4T_REG_0_START (mod303 -> (mod303.isAEAT() && ((mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod()))) ,new IPropertyFiller[] { 
+		,AEAT_2017_4T_REG_0_START (mod303 -> (mod303.isAEAT() && mod303.getYear() >= 2017) ,new IPropertyFiller[] { 
 			(wr, mod) -> wr.append("<T")
 		   ,(wr, mod) -> wr.append("303")
 		   ,(wr, mod) -> wr.append("0")
@@ -295,7 +295,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append("</AUX>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_4T_REG_1 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod()))) ,new IPropertyFiller[] {
+		,AEAT_2017_4T_REG_1 (mod303 -> (mod303.isAEAT() && mod303.getYear() >= 2017) ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30301000>")
 		   ,(wr, mod) -> wr.append(" ")
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType().getValue(), 1))
@@ -360,13 +360,13 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C44),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C45),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C46),17,2))
-		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_A11)==1?"1":"2")
+		   ,(wr, mod) -> wr.append(mod.isLastPeriod()?(mod.getAmount(Mod303Key.CT_A11)==1?"1":"2"):" ")
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 581))
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 13))
 		   ,(wr, mod) -> wr.append("</T30301000>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_4T_REG_2 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod()))) 
+		,AEAT_2017_4T_REG_2 (mod303 -> (mod303.isAEAT() && mod303.getYear() >= 2017) 
 				&& mod303.getAmount(Mod303Key.CT_A02) < 2 // Simplificado
 				,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30302000>")
@@ -465,7 +465,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append("</T30302000>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_4T_REG_3 (mod303 -> (mod303.isAEAT() && ((mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod()))) ,new IPropertyFiller[] {
+		,AEAT_2017_4T_REG_3 (mod303 -> (mod303.isAEAT() && mod303.getYear() >= 2017) ,new IPropertyFiller[] {
 				(wr, mod) -> wr.append("<T30303000>")
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C59),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C60),17,2))
@@ -516,17 +516,17 @@ public class Mod303Writer {
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C86),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C79),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C88),17,2))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0', 1	))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C89),5,2))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C90),5,2))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C91),5,2))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C92),5,2))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0',17	))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0',17	))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0',17	))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0',17	))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0',17	))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0',17	))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonStringUtils.repeat('0', 1):AonStringUtils.repeat(' ',1))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C89),5,2):AonStringUtils.repeat(' ',5))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C90),5,2):AonStringUtils.repeat(' ',5))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C91),5,2):AonStringUtils.repeat(' ',5))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C92),5,2):AonStringUtils.repeat(' ',5))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonStringUtils.repeat('0',17):AonStringUtils.repeat(' ',17))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonStringUtils.repeat('0',17):AonStringUtils.repeat(' ',17))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonStringUtils.repeat('0',17):AonStringUtils.repeat(' ',17))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonStringUtils.repeat('0',17):AonStringUtils.repeat(' ',17))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonStringUtils.repeat('0',17):AonStringUtils.repeat(' ',17))
+			   ,(wr, mod) -> wr.append(mod.isLastPeriod()?AonStringUtils.repeat('0',17):AonStringUtils.repeat(' ',17))
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 468))
 			   ,(wr, mod) -> wr.append("</T30303000>")
 			   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
@@ -612,7 +612,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append("</T30304000>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,AEAT_2017_4T_REG_0_END (mod303 -> (mod303.isAEAT() && ((mod303.getYear() > 2017) || (mod303.getYear() == 2017 && mod303.isLastPeriod()))) ,new IPropertyFiller[] { 
+		,AEAT_2017_4T_REG_0_END (mod303 -> (mod303.isAEAT() && mod303.getYear() >= 2017) ,new IPropertyFiller[] { 
 		    (wr, mod) -> wr.append("</T")
 		   ,(wr, mod) -> wr.append("303")
 		   ,(wr, mod) -> wr.append("0")

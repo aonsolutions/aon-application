@@ -211,12 +211,12 @@ public class MOD303Writer {
 		
 		if (additionalInfo != null) {
 			fillAdditionalInfo(declaration, additionalInfo);
-			declaration.setExonerado(1);
+			declaration.setExonerado("1");
 		} else {
 			if (vatTaxDeclaration.getVatTax().getPeriod() == Period.M12 || vatTaxDeclaration.getVatTax().getPeriod() == Period.T4) {
-				declaration.setExonerado(2);
+				declaration.setExonerado("2");
 			} else {
-				declaration.setExonerado(0);
+				declaration.setExonerado(" ");
 			}
 		}
 		
@@ -658,7 +658,7 @@ public class MOD303Writer {
 		 || AonStringUtils.isNotBlank(epi4)
 		 || AonStringUtils.isNotBlank(epi5)
 		 || AonStringUtils.isNotBlank(epi6)) {
-			declaration.setExonerado(1);
+			declaration.setExonerado("1");
 			declaration.setC80(mod303.getEnsuredAmount(Mod303Key.C80));
 			declaration.setC81(mod303.getEnsuredAmount(Mod303Key.C81));
 			declaration.setC82(mod303.getEnsuredAmount(Mod303Key.C82));

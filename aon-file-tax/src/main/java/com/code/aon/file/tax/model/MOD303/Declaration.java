@@ -16,7 +16,7 @@ public class Declaration {
 	private String replacedNumber;
 	private boolean taxRefundRegistry;
 	private boolean simplRegimeOnly;
-	private int exonerado;
+	private String exonerado;
 	private boolean mergedDeclaration;
 	private boolean concurso;
 	private Date concursoDate;
@@ -217,10 +217,10 @@ public class Declaration {
 		return isTaxRefundRegistry()?1:2;
 	}
 	
-	public int getExonerado() {
+	public String getExonerado() {
 		return exonerado;
 	}
-	public void setExonerado(int exonerado) {
+	public void setExonerado(String exonerado) {
 		this.exonerado = exonerado;
 	}
 	

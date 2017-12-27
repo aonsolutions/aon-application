@@ -61,7 +61,7 @@
 	<field name="c79" value="bean" bean="dec" property="c79" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="c88" value="bean" bean="dec" property="c88" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="free" value="0" format="DefNumeric" pattern="9" />
-	
+<!-- 	
 	<field name="c89" value="bean" bean="dec" property="c89" format="DefNumeric" pattern="9(3)V99" />
 	<field name="c90" value="bean" bean="dec" property="c90" format="DefNumeric" pattern="9(3)V99" />
 	<field name="c91" value="bean" bean="dec" property="c91" format="DefNumeric" pattern="9(3)V99" />
@@ -73,7 +73,18 @@
 	<field name="c97" value="bean" bean="dec" property="c97" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="c98" value="bean" bean="dec" property="c98" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="c99" value="bean" bean="dec" property="c99" format="DefNumeric" pattern="S9(14)V99" />
-	
+ -->	
+	<field name="free89" value=" " format="Alphabetic" pattern="X(5)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(5)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(5)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(5)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(17)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(17)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(17)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(17)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(17)" />
+	<field name="free89" value=" " format="Alphabetic" pattern="X(17)" />
+
 	<field name="free6" value=" " format="Alphabetic" pattern="X(468)" />
 	<field name="free7" value="&lt;/T30303000>" format="Alphabetic" pattern="X(12)" />
 </register>
