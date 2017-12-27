@@ -731,7 +731,7 @@ public class DeliveryImport {
 		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain(), user.getLogin(), user.getId());
 		Integer scope = scps != null ? scps[0] : null;
 		di.getClientList().stream().forEach(r -> {
-			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDocumentProperty().eq(r.getDocumento()));
+			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getDocumento())));
 
 			if(customer.getId() == null) {
 				Registry registry = new Registry()
