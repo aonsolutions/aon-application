@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
+import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -49,6 +50,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD347_ENTRY_POINT = "Model347";
 	private static final String FS_MOD349_ENTRY_POINT = "Model349";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
+	private static final String FS_MOD390_HF_ENTRY_POINT = "Model390HF";
 	
 	//	
 	//    ================================================================== FINANCE
@@ -303,6 +305,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					Model390 model390 = new Model390();
 					model390.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_HF_ENTRY_POINT)) {
+			GWT.runAsync(Model390HF.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					Model390HF model390HF = new Model390HF();
+					model390HF.onModuleLoad();
 				}
 				
 			});

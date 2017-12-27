@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -45,6 +46,7 @@ import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
 public interface IFiscal {
 	// 			        VAT
@@ -136,6 +138,22 @@ public interface IFiscal {
 	public void deleteMod303(AONContext ctx, Mod303 mod303);
 	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
 	public void importMod303(AONContext ctx, int domain);
+
+	// 				   		  MOD390HF
+	public Mod390HF getMod390HF(AONContext ctx, int id);
+	public LinkedList<Mod390HF> getMod390HFs(AONContext ctx, int domain);
+	public Mod390HF calculateMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF saveMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF saveCommentsMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF initializeForFinishMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF markAsFinishedMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF markAsPendingMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF markAsSentMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF initializeMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF createMod390HF(AONContext ctx, Mod390HF mod303);
+	public Mod390HF declarationChanged(AONContext ctx, Mod390HF mod303);
+	public void deleteMod390HF(AONContext ctx, Mod390HF mod303);
+	public String getMod390HFInfo(AONContext ctx, Mod390HF mod303, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey);
 
 	// 				   		  MOD111
 	public Mod111 getMod111(AONContext ctx, int id);

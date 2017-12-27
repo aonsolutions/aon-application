@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -201,7 +202,7 @@ public class FiscalModelDAO {
 				.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
 				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 				.where(FS_MODEL.DOMAIN.eq(domain))
-				.and(FS_MODEL.MODEL.eq(model.getName()))
+				.and(FS_MODEL.MODEL.eq(model.getValue()))
 				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
 				.fetch()
 				.stream();
@@ -440,6 +441,10 @@ public class FiscalModelDAO {
 	
 	public static Mod303 map303(Mod303 mod303,Record record) {
 		FiscalModelBuilder<Mod303> builder = new FiscalModelBuilder<Mod303>(new Mod303());
+		return builder.create( new FiscalModelTemplate(record) );
+	}
+	public static Mod390HF map390HF(Mod390HF mod303,Record record) {
+		FiscalModelBuilder<Mod390HF> builder = new FiscalModelBuilder<Mod390HF>(new Mod390HF());
 		return builder.create( new FiscalModelTemplate(record) );
 	}
 	public static Mod111 map111(Mod111 mod111,Record record) {

@@ -89,6 +89,10 @@
 			<from-outcome>gwt_mod390</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod390.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_mod390HF</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod390HF.xhtml</to-view-id>
+		</navigation-case>
 		
 	</navigation-rule>
 

@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -45,6 +46,7 @@ import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 
 public class FISCAL {
@@ -253,6 +255,164 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	// ----------------------------------MODELO 390 HACIENDAS FORALES
+	public static LinkedList<Mod390HF> getMod390HFs(String domainName,int domainId, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId,user);
+			return getFiscal().getMod390HFs(ctx, domainId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF getMod390HF(String domainName, int domainId, String user, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId,user);
+			return getFiscal().getMod390HF(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF calculate(String domainName, String user, Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod.getDomain(),user);
+			return getFiscal().calculateMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF save(String domainName, String user, Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod.getDomain(),user);
+			return getFiscal().saveMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF saveComments(String domainName, String user, Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod.getDomain(),user);
+			return getFiscal().saveCommentsMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Mod390HF initializeForFinish(String domainName, String user, Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod.getDomain(),user);
+			return getFiscal().initializeForFinishMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF finish(String domainName, String user, Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod.getDomain(),user);
+			return getFiscal().markAsFinishedMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF reopen(String domainName, String user, Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod.getDomain(),user);
+			return getFiscal().markAsPendingMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Mod390HF markAsSent(String domainName, Mod390HF mod, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod.getDomain(),user);
+			return getFiscal().markAsSentMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void deleteMod390HF(String domainName, String user, Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod.getDomain(),user);
+			getFiscal().deleteMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF initializeMod390HF(String domainName, int domain, String user,Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().initializeMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF createMod390HF(String domainName, int domain, String user,Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().createMod390HF(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod390HF declarationChanged(String domainName, int domain, String user,Mod390HF mod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().declarationChanged(ctx, mod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static String getMod390HFInfo(String domainName, int domain, String user, Mod390HF mod
+			,IModelScript<Mod390Key> script,FiscalModelKeyInfo infoKey) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,user);
+			return getFiscal().getMod390HFInfo(ctx, mod, script, infoKey);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	
 	// ----------------------------------MODELO 111
 	public static LinkedList<Mod111> getMod111s(String domainName,int domainId, String user) {
 		AONContext ctx = null;

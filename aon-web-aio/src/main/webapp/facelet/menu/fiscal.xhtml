@@ -155,6 +155,19 @@
 											<aon:outputText styleClass="aon-menu-fiscal-label" value="#{bundle.fiscal_model_390_module}" />
 										</aon:commandLink>
 									</aon:div>
+									
+									<!-- *********************** [MODELO 390 HACIENDAS FORALES] -->
+									<aon:div rendered="#{fiscalParams.bizkaia || fiscalParams.araba || fiscalParams.gipuzkoa}">									
+										<aon:commandLink id="gwt_mod390HF-new" action="gwt_mod390HF-new" 
+											title="Haciendas Forales. #{bundle.fiscal_model_390_module}" styleClass="aon-menu-fiscal">
+											<aon:outputText rendered="#{fiscalParams.aeat}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.araba}" styleClass="aon-menu-fiscal-model aon-menu-icon-araba" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.bizkaia}" styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia" value="390"/>
+											<aon:outputText rendered="#{fiscalParams.gipuzkoa}" styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa" value="&#160;"/>
+											<aon:outputText rendered="#{fiscalParams.navarra}" styleClass="aon-menu-fiscal-model aon-menu-icon-navarra" value="&#160;"/>
+											<aon:outputText styleClass="aon-menu-fiscal-label" value="Haciendas Forales. #{bundle.fiscal_model_390_module}" />
+										</aon:commandLink>
+									</aon:div>
 
 									<!-- *********************** [MODELO 111] -->
 									<aon:div  style="margin-top: 15px;">									

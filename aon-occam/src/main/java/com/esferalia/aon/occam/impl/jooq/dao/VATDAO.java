@@ -26,7 +26,9 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.VATFilter;
 import com.esferalia.aon.occam.api.model.finance.VATProperties;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
@@ -136,17 +138,20 @@ public class VATDAO  {
 	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod303 mod303) {
 		return getVatBreakdown(ctx, fromDate, toDate,null , mod303);
 	}
+	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod390HF mod) {
+		return getVatBreakdown(ctx, fromDate, toDate,null , mod);
+	}
 	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		return getVatBreakdown(ctx, fromDate, toDate,filter , null);
 	}
 	
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter, Mod303 mod303) {
+	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter, IFiscalModel mod) {
 		return Stream.concat(
 				 getNoAccrualVatBreakdown(ctx,fromDate,toDate,filter)
 				,getAccrualVatBreakdown	 (ctx,fromDate,toDate,filter)
 				
 				)
-			.peek( vat -> vat.setInsidePeriod(mod303==null ? false :FiscalUtils.isInPeriodRange(mod303, vat.getTaxDate() ) ))
+			.peek( vat -> vat.setInsidePeriod(mod==null ? false :FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ))
 		;
 	}
 
@@ -210,7 +215,10 @@ public class VATDAO  {
 	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod303 mod303) {
 		return getAccrualBreakdown(ctx, fromDate, toDate, null, mod303); 
 	}
-	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter , Mod303 mod303) {
+	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod390HF mod) {
+		return getAccrualBreakdown(ctx, fromDate, toDate, null, mod); 
+	}
+	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter , IFiscalModel mod) {
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
 		return ctx.getDslContext().select(
@@ -264,7 +272,7 @@ public class VATDAO  {
 				.fetch()
 				.stream()
 				.map(new VatContextFiller())
-				.peek( vat -> vat.setInsidePeriod(mod303==null ? false :FiscalUtils.isInPeriodRange(mod303, vat.getTaxDate() ) ))
+				.peek( vat -> vat.setInsidePeriod(mod==null ? false :FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ))
 				;
 	}
 	
