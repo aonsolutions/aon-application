@@ -525,7 +525,7 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,BZ_C094	(Mod303Key.BZ_C094
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasNoPercent(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C093,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.BZ_C094,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C095	(Mod303Key.BZ_C095,null,null,null,"BZ_C083+BZ_C086+BZ_C089+BZ_C092",null)
