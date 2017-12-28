@@ -8,10 +8,12 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -25,7 +27,8 @@ public class SiiMain extends AonTemplate2{
 	private API API;
 	HashMap<String, LinkedList<String>> filterMap;
 	private AonData aonData;
-	
+	private Administration administration;
+
 	public API getAPI() {
 		return API;
 	}
@@ -55,10 +58,19 @@ public class SiiMain extends AonTemplate2{
 	}
 	
 	private void startApplication() {
-		initializeFilterMap();
-		toolbar();
-		westContent();
-		content();
+		impl.getAdministration(aonData.getDomain(), aonData.getUser().getLogin(), new AsyncCallback<Administration>() {
+			
+			@Override
+			public void onSuccess(Administration result) {
+				administration = result;
+				initializeFilterMap();
+				toolbar();
+				westContent();
+				content();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	public void initializeFilterMap() {
@@ -68,6 +80,11 @@ public class SiiMain extends AonTemplate2{
 		filterMap.put("sii",list);
 		
 		Date date = new Date(2017-1900, 6, 1);
+		if(administration.equals(Administration.ALAVA) || administration.equals(Administration.BIZKAIA)
+				|| administration.equals(Administration.GIPUZKOA) || administration.equals(Administration.NAVARRA)) {
+			date = new Date(2018-1900, 0, 1);
+		}
+		
 		list = new LinkedList<>();
 		list.add(Long.toString(date.getTime()));
 		filterMap.put("from",list);
@@ -91,7 +108,6 @@ public class SiiMain extends AonTemplate2{
 		list = new LinkedList<>();
 		list.add("false");
 		filterMap.put("anulada", list);
-		
 	}
 	
 	Button sendAll;
