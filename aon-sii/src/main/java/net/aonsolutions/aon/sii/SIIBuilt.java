@@ -14,6 +14,7 @@ import javax.xml.bind.Unmarshaller;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Company;
@@ -317,7 +318,10 @@ public class SIIBuilt {
 			String str = "";
 			if(ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null){
 				for(AccountEntryDetail aed : ai.getAccountEntry().getDetails()){
-					str = str + ACCOUNTING.getAccount(domain.getName(), domain.getId(), login,  aed.getAccount()).getDescription() + "-";
+					Account a = ACCOUNTING.getAccount(domain.getName(), domain.getId(), login,  aed.getAccount());
+					if(a.getCode().substring(0, 1).equals("6") ||  a.getCode().substring(0, 1).equals("7")) {
+						str = str + a.getDescription() + "-";
+					}
 				}
 			}
 			fet.setDescripcionOperacion(str + vat.getDetailDescription());
@@ -748,7 +752,10 @@ public class SIIBuilt {
 			String str = "";
 			if(ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null){
 				for(AccountEntryDetail aed : ai.getAccountEntry().getDetails()){
-					str = str + ACCOUNTING.getAccount(domain.getName(), domain.getId(), login,  aed.getAccount()).getDescription() + "-";
+					Account a = ACCOUNTING.getAccount(domain.getName(), domain.getId(), login,  aed.getAccount());
+					if(a.getCode().substring(0, 1).equals("6") ||  a.getCode().substring(0, 1).equals("7")) {
+						str = str + a.getDescription() + "-";
+					}
 				}
 			}
 			frt.setDescripcionOperacion(str + vat.getDetailDescription());
