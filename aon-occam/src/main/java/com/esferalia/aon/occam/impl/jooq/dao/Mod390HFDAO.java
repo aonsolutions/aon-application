@@ -206,7 +206,7 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		}
 
 		calculateMod390HF(ctx, mod);		
-		dec.specificInitialization(mod);
+		dec.specificInitialization(ctx, mod);
 		return mod; 
 	}
 

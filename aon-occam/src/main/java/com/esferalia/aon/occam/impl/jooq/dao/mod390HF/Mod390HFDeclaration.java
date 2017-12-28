@@ -35,7 +35,7 @@ public abstract class Mod390HFDeclaration {
 		}
 	}
 
-	public void specificInitialization(Mod390HF mod) {}
+	public void specificInitialization(AONContext ctx, Mod390HF mod) {}
 	public abstract IMod390KeyDAO safeValueOf(Mod390HF mod, String key);
 	public abstract IMod390KeyDAO valueOf(String string);
 	public abstract IMod390KeyDAO[] getKeys();

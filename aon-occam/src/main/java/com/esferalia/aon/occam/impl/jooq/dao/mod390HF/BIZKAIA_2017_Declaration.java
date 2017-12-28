@@ -1,14 +1,21 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 
+import java.util.Date;
+import java.util.LinkedList;
+
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
@@ -737,6 +744,48 @@ public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
 		return PRORATE_KEYS;
 	}
 
+	@Override
+	public void specificInitialization(AONContext ctx, Mod390HF mod) {
+		Date fromDate = AonDateUtils.getYearFirstDay(mod.getYear());
+		Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
+		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, fromDate, toDate, false);
+		Mod390Key[][] eKeys = new Mod390Key[][]{
+			 new Mod390Key[]{Mod390Key.BZ_SE1N,Mod390Key.BZ_SE1D,Mod390Key.BZ_SE1H}
+			,new Mod390Key[]{Mod390Key.BZ_SE2N,Mod390Key.BZ_SE2D,Mod390Key.BZ_SE2H}
+			,new Mod390Key[]{Mod390Key.BZ_SE3N,Mod390Key.BZ_SE3D,Mod390Key.BZ_SE3H}
+			,new Mod390Key[]{Mod390Key.BZ_SE4N,Mod390Key.BZ_SE4D,Mod390Key.BZ_SE4H}
+			,new Mod390Key[]{Mod390Key.BZ_SE5N,Mod390Key.BZ_SE5D,Mod390Key.BZ_SE5H}
+			};
+		Mod390Key[][] rKeys = new Mod390Key[][]{
+			 new Mod390Key[]{Mod390Key.BZ_SR1N,Mod390Key.BZ_SR1D,Mod390Key.BZ_SR1H}
+			,new Mod390Key[]{Mod390Key.BZ_SR2N,Mod390Key.BZ_SR2D,Mod390Key.BZ_SR2H}
+			,new Mod390Key[]{Mod390Key.BZ_SR3N,Mod390Key.BZ_SR3D,Mod390Key.BZ_SR3H}
+			,new Mod390Key[]{Mod390Key.BZ_SR4N,Mod390Key.BZ_SR4D,Mod390Key.BZ_SR4H}
+			,new Mod390Key[]{Mod390Key.BZ_SR5N,Mod390Key.BZ_SR5D,Mod390Key.BZ_SR5H}
+		};
+		int e = 0;
+		int r = 0;
+		for (InvoiceSeries series : seriesList) {
+			if (series.isSeriesInfo()) {
+				Mod390Key[][] keys = series.isSales()?eKeys:rKeys;
+				int idx = series.isSales()?e:r;
+				if (idx < 5) {
+					Mod390Key seriesKeys = keys[idx][0];
+					mod.putDescription(seriesKeys, series.getDescription());
+					Mod390Key fromKeys = keys[idx][1];
+					mod.putDescription(fromKeys, AonNumberUtils.toString( series.getFromNumber()));
+					Mod390Key toKeys = keys[idx][2];
+					mod.putDescription(toKeys, AonNumberUtils.toString( series.getToNumber()));
+					if (series.isSales()) {
+						++e;
+					} else {
+						++r;
+					}
+				}
+			}
+		}
+	}
+	
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------
@@ -809,4 +858,5 @@ public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
+	
 }
