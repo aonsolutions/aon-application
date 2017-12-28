@@ -36,6 +36,7 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.strategy.TaxBreakDown;
+import com.code.aon.purchase.Purchase;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RecordData;
@@ -44,6 +45,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.sales.Sales;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -715,7 +717,7 @@ public class FacturaeWriter {
 		if ( detail.getSource() == InvoiceSource.DELIVERY ) {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(DeliveryDetail.class);
-				DeliveryDetail dd = (DeliveryDetail) bean.get(detail.getSourceId());
+				DeliveryDetail dd = (DeliveryDetail)bean.get(detail.getSourceId());
 				if ( (dd != null) && (dd.getSalesDetail() != null) ) {
 					if (purchaseReference)
 						return dd.getSalesDetail().getSales().getPurchaseReference();
@@ -728,13 +730,33 @@ public class FacturaeWriter {
 		} else if ( detail.getSource() == InvoiceSource.INCOME ) {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(IncomeDetail.class);
-				IncomeDetail id = (IncomeDetail) bean.get(detail.getSourceId());
+				IncomeDetail id = (IncomeDetail)bean.get(detail.getSourceId());
 				if ( (id != null) && (id.getPurchaseDetail() != null) ) {
 					if (purchaseReference)
 						return id.getPurchaseDetail().getPurchase().getPurchaseReference();
 					else
 						return id.getPurchaseDetail().getPurchase().getReferenceCode();
 				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}			
+		} else if ( detail.getSource() == InvoiceSource.SALES ) {
+			try {
+				Sales sales = (Sales)detail.getSourceTo();
+				if (purchaseReference)
+					return sales.getPurchaseReference();
+				else
+					return sales.getReferenceCode();
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}			
+		} else if ( detail.getSource() == InvoiceSource.PURCHASE ) {
+			try {
+				Purchase purchase = (Purchase)detail.getSourceTo();
+				if (purchaseReference)
+					return purchase.getPurchaseReference();
+				else
+					return purchase.getReferenceCode();
 			} catch (ManagerBeanException e) {
 				LOGGER.error(e.getMessage(), e);
 			}			
