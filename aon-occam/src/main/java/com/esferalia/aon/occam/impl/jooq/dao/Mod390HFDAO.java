@@ -204,9 +204,8 @@ public class Mod390HFDAO extends FiscalModelDAO {
 				det.setAccumulatedAmount(AonMathUtils.round(det.getAccumulatedAmount() * mod.getProratePercent() / 100));
 			}
 		}
-
-		calculateMod390HF(ctx, mod);		
 		dec.specificInitialization(ctx, mod);
+		calculateMod390HF(ctx, mod);		
 		return mod; 
 	}
 

@@ -248,14 +248,14 @@ public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
 		,BZ_C120	(Mod390Key.BZ_C120)
 		
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Territ. común.
-		,BZ_C081	(Mod390Key.BZ_C081)
-		,BZ_C082	(Mod390Key.BZ_C082)
+		,BZ_C081	(Mod390Key.BZ_C081,null,null,(ctx,mod) -> add(Mod390Key.BZ_C081,mod,0.0),null,null)
+		,BZ_C082	(Mod390Key.BZ_C082,null,null,(ctx,mod) -> add(Mod390Key.BZ_C082,mod,0.0),null,null)
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Alava
-		,BZ_C083	(Mod390Key.BZ_C083)
-		,BZ_C084	(Mod390Key.BZ_C084)
+		,BZ_C083	(Mod390Key.BZ_C083,null,null,(ctx,mod) -> add(Mod390Key.BZ_C083,mod,0.0),null,null)
+		,BZ_C084	(Mod390Key.BZ_C084,null,null,(ctx,mod) -> add(Mod390Key.BZ_C084,mod,0.0),null,null)
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Gipuzkoa
-		,BZ_C085	(Mod390Key.BZ_C085)
-		,BZ_C086	(Mod390Key.BZ_C086)
+		,BZ_C085	(Mod390Key.BZ_C085,null,null,(ctx,mod) -> add(Mod390Key.BZ_C085,mod,0.0),null,null)
+		,BZ_C086	(Mod390Key.BZ_C086,null,null,(ctx,mod) -> add(Mod390Key.BZ_C086,mod,0.0),null,null)
 
 		// ***********************************************************************************
 		// ***********************************************************************************
@@ -268,11 +268,13 @@ public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
 
 		,BZ_C088	(Mod390Key.BZ_C088,null,null,(ctx,mod) -> add(Mod390Key.BZ_C088,mod,100.0),null,null)
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Navarra		
-		,BZ_C089	(Mod390Key.BZ_C089)
-		,BZ_C090	(Mod390Key.BZ_C090)
+		,BZ_C089	(Mod390Key.BZ_C089,null,null,(ctx,mod) -> add(Mod390Key.BZ_C089,mod,0.0),null,null)
+		,BZ_C090	(Mod390Key.BZ_C090,null,null,(ctx,mod) -> add(Mod390Key.BZ_C090,mod,0.0),null,null)
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Total		
-		,BZ_C091	(Mod390Key.BZ_C091,null,null,null,"BZ_C081+BZ_C083+BZ_C085+BZ_C087+BZ_C089",null)
-		,BZ_C092	(Mod390Key.BZ_C092,null,null,null,"BZ_C082+BZ_C084+BZ_C086+BZ_C088+BZ_C090",null)
+		,BZ_C091	(Mod390Key.BZ_C091,null,null,null,null,null)
+		,BZ_C092	(Mod390Key.BZ_C092,null,null,null,null,null)
+//		,BZ_C091	(Mod390Key.BZ_C091,null,null,null,"BZ_C081+BZ_C083+BZ_C085+BZ_C087+BZ_C089",null)
+//		,BZ_C092	(Mod390Key.BZ_C092,null,null,null,"BZ_C082+BZ_C084+BZ_C086+BZ_C088+BZ_C090",null)
 		
 		// Cuota atribuible a Bizkaia
 		,BZ_C096	(Mod390Key.BZ_C096,null,null,null,"(BZ_C095+BZ_C120)*BZ_C088/100",null)
@@ -587,22 +589,37 @@ public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
 		,BZ_C194	(Mod390Key.BZ_C194)
 		
 		// ---------------------------------------------------------------
-		// ---------------------------------------- VOLUMNE DE OPERACIONES
+		// ---------------------------------------- VOLUMEN DE OPERACIONES
 		// ---------------------------------------------------------------
 		// Operaciones en r\u00E9gimen general
-		,BZ_C200	(Mod390Key.BZ_C200)
+		,BZ_C200	(Mod390Key.BZ_C200
+			,(mod,vat) -> vat.isNationalSales() && !vat.isVatAccrualRegime() && !vat.isInvestment()
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C200,mod,vat.getBase())
+			,null,null,null)
 		// Operaciones a las que habi\u00E9ndoles sido aplicado el r\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 de la NFIVA
-		,BZ_C201	(Mod390Key.BZ_C201)
+		,BZ_C201	(Mod390Key.BZ_C201
+			,(mod,vat) -> vat.isNationalSales() && vat.isVatAccrualRegime() && !vat.isInvestment()
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C201,mod,vat.getBase())
+			,null,null,null)
 		// Entregas intracomunitarias exentas
-		,BZ_C202	(Mod390Key.BZ_C202)
+		,BZ_C202	(Mod390Key.BZ_C202
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && !vat.isService()
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C202,mod,vat.getBase())
+			,null,null,null)
 		// Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n
-		,BZ_C203	(Mod390Key.BZ_C203)
+		,BZ_C203	(Mod390Key.BZ_C203
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C203,mod,vat.getBase())
+			,null,null,null)
 		// Operaciones exentas sin derecho a deducci\u00F3n
 		,BZ_C204	(Mod390Key.BZ_C204)
 		// Operaciones no sujetas por reglas de localizaci\u00F3n
 		,BZ_C205	(Mod390Key.BZ_C205)
 		// Operaciones con inversi\u00F3n del sujeto pasivo
-		,BZ_C206	(Mod390Key.BZ_C206)
+		,BZ_C206	(Mod390Key.BZ_C206
+			,(mod,vat) -> vat.isOtherISPSales() 
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C206,mod,vat.getBase())
+			,null,null,null)
 		// Entregas de bienes objeto de instalaci\u00F3n o montaje en otros Estados miembros
 		,BZ_C207	(Mod390Key.BZ_C207)
 		// Operaciones en r\u00E9gimen simplificado
@@ -618,7 +635,10 @@ public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
 		// Entregas de bienes inmuebles y operaciones financieras no habituales
 		,BZ_C213	(Mod390Key.BZ_C213)
 		// Entregas de bienes de inversi\u00F3n
-		,BZ_C214	(Mod390Key.BZ_C214)
+		,BZ_C214	(Mod390Key.BZ_C214
+			,(mod,vat) -> vat.isNationalSales() && vat.isInvestment()
+			,(ctx,mod,vat) -> add(Mod390Key.BZ_C214,mod,vat.getBase())
+			,null,null,null)
 		// Total volumen de operaciones
 		,BZ_C215	(Mod390Key.BZ_C215,null,null,null,"BZ_C200+BZ_C201+BZ_C202+BZ_C203+BZ_C204+BZ_C205+BZ_C206+BZ_C207+BZ_C208+BZ_C209+BZ_C210+BZ_C211+BZ_C212+BZ_C213+BZ_C214",null)
 
@@ -633,30 +653,6 @@ public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
 		,BZ_C222	(Mod390Key.BZ_C214)
 		// Subvenciones de capital percibidas en el ejercicio
 		,BZ_C223	(Mod390Key.BZ_C214)
-
-
-/*		
-		,BZ_C104	(Mod390Key.BZ_C104
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C104,mod,vat.getBase())
-			,null,null,null)
-		,BZ_C105	(Mod390Key.BZ_C105
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && !vat.isService()
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C105,mod,vat.getBase())
-			,null,null,null)
-		,BZ_C106	(Mod390Key.BZ_C106
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C106,mod,vat.getBase())
-			,null,null,null)
-		,BZ_C107	(Mod390Key.BZ_C107
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C107,mod,vat.getBase())
-			,null,null,null)
-		,BZ_C108	(Mod390Key.BZ_C108
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && vat.isService()
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C108,mod,vat.getBase())
-			,null,null,null)
-*/			
 		;
 		
 		private Mod390Key key;

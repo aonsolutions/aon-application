@@ -53,7 +53,7 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	public double getResult() {
 		if (getAdministration() == null) return 0;
 //		else if (isAraba()) return getAmount(Mod303Key.AR_C080);
-		else if (isBizkaia()) return  getAmount(Mod390Key.BZ_C112);
+		else if (isBizkaia()) return  getAmount(Mod390Key.BZ_C110);
 //		else if (isGipuzkoa()) return  getAmount(Mod303Key.GP_C035);
 		else if (isNavarra()) return 0;
 		return 0;

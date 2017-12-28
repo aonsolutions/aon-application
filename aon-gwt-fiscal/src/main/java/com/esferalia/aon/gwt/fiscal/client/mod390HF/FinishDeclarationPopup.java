@@ -21,7 +21,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -81,9 +80,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 
 		// SIN ACTIVIDAD!!!
-		if (mod390.getDeclarationType() == FiscalModelDeclarationType.NEGATIVE
-				|| (mod390.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE
-						&& mod390.getPeriod() != Period.T4 && mod390.getPeriod() != Period.M12)) {
+		if (mod390.getDeclarationType() == FiscalModelDeclarationType.NEGATIVE) {
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
 			tab.setWidget(row, 1, new Label(mod390.getDeclarationType().getDescription()));
@@ -98,10 +95,6 @@ public class FinishDeclarationPopup extends CustomDialog {
 			if (AonMathUtils.isLessThanZero(mod390.getResult())) {
 				listBox.addItem(FiscalModelDeclarationType.PAYBACK.getDescription(),
 						FiscalModelDeclarationType.PAYBACK.getValue());
-				if (mod390.isAEAT()) {
-					listBox.addItem(FiscalModelDeclarationType.PAYBACK_CCT.getDescription(),
-							FiscalModelDeclarationType.PAYBACK_CCT.getValue());
-				}
 				listBox.addItem(FiscalModelDeclarationType.COMPENSATE.getDescription(),
 						FiscalModelDeclarationType.COMPENSATE.getValue());
 			} else {
@@ -109,10 +102,6 @@ public class FinishDeclarationPopup extends CustomDialog {
 						FiscalModelDeclarationType.DEPOSIT.getValue());
 				listBox.addItem(FiscalModelDeclarationType.BANK.getDescription(),
 						FiscalModelDeclarationType.BANK.getValue());
-				if (mod390.isAEAT()) {
-					listBox.addItem(FiscalModelDeclarationType.DEPOSIT_CCT.getDescription(),
-							FiscalModelDeclarationType.DEPOSIT_CCT.getValue());
-				}
 			}
 			listBox.addChangeHandler(new ChangeHandler() {
 				@Override

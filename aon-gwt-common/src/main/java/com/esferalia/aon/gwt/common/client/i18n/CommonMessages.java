@@ -117,7 +117,7 @@ public interface CommonMessages extends Messages {
 		,"M347"		,"Mod. 347"
 		,"M349"		,"Mod. 349"
 		,"M390"		,"Mod. 390"
-		,"M390_HF"	,"Mod. 390 Hac. For."
+		,"M390_HF"	,"Mod. 390"
 		,"M180"		,"Mod. 180"
 		,"M184"		,"Mod. 184"
 		,"M190"		,"Mod. 190"

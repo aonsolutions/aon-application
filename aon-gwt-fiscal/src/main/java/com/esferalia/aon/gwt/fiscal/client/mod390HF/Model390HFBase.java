@@ -778,7 +778,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			double d1 = mod390.getAmount(key);
 			double d2 = fieldsMap.get(key).getValue();
 			if (!AonNumberUtils.equals(d1, d2)) {
-				fieldsMap.get(key).setValue(d1,true,true);
+				fieldsMap.get(key).setValue(d1,false,false);
 			}
 		}
 	}

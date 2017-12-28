@@ -301,6 +301,9 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		
 		paintCheck(Mod390Key.BZ_C005, table);	// Opción por la aplicación de la prorrata especial
 		paintCheck(Mod390Key.BZ_C006, table);	// Revocación de la opción por la aplicación de la prorrata especial
+		paintCheck(Mod390Key.BZ_C193, table);	// Prorrata general	
+		paintCheck(Mod390Key.BZ_C194, table);	// Prorrata especial
+		
 		paintCheck(Mod390Key.BZ_C007, table);	// Aplicar el r\u00E9gimen especial art. 163 Sexies. Cinco de la NF del IVA
 			
 		paintWithoutActivityCheck(table);		// Sin actividad
