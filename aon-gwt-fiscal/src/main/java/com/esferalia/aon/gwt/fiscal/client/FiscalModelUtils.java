@@ -109,6 +109,11 @@ public class FiscalModelUtils {
 		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
 		
 		FlexTable headerTable = new FlexTable();
+		headerTable.getColumnFormatter().setWidth(0, "55px");
+		headerTable.getColumnFormatter().setWidth(1, "70px");
+		headerTable.getColumnFormatter().setWidth(2, "auto");
+		headerTable.getColumnFormatter().setWidth(3, "75px");
+		
 		headerTable.setStyleName(AON.AON_CSS.aonFiscalModelTable());
 		
 		Label image = new Label("");

@@ -51,7 +51,7 @@ public enum Model3902017BIZKAIAScript2 implements IModelScript<Mod390Key> {
 	,LQ009(Mod390Key.BZ_C110.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C110},null,COMPUTE)
 	,LQ010(Mod390Key.BZ_C115.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C115},null,COMPUTE_KEY)
 	,LQ011(Mod390Key.BZ_C116.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C116},null,COMPUTE_KEY)
-	,LQ012(Mod390Key.BZ_C117.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C117},null,COMPUTE_KEY)
+	,LQ012(Mod390Key.BZ_C117.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C117},null,COMPUTE)
 	;
 	
 	private String label;

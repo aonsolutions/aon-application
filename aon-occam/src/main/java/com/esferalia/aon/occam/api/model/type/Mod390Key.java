@@ -29,6 +29,11 @@ public enum Mod390Key implements IFiscalModelKey  {
 	,BZ_C006 ("390-BZ006" ,"06" ,"Revocaci\u00F3n de la opci\u00F3n por la aplicaci\u00F3n de la prorrata especial")
 	,BZ_C007 ("390-BZ007" ,"07" ,"Aplicar el r\u00E9gimen especial art. 163 Sexies. Cinco de la NF del IVA")
 	,BZ_C080 ("390-BZ080" ,"80" ,"RDM o Grupos de entidades")
+	
+	,BZ_A000 ("390-BZA000" ,null ,"N\u00FAmero Grupo")
+	,BZ_A001 ("390-BZA001" ,null ,"Actividad principal. Ep\u00EDgrafe")
+	,BZ_A002 ("390-BZA002" ,null ,"Actividad principal. Descripci\u00F3n")
+	
 	,BZ_C020("390-BZ020"  ,"20" ,"R\u00E9gimen general - Base imponible")
 	,BZ_X020("390-BZX020" ,null ,"R\u00E9gimen general - Tipo %")
 	,BZ_C021("390-BZ021"  ,"21" ,"R\u00E9gimen general - Cuota")

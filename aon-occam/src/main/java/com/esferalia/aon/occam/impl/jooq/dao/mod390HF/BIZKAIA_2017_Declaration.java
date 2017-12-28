@@ -63,6 +63,8 @@ public class BIZKAIA_2017_Declaration extends Mod390HFDeclaration {
 		,BZ_C007	(Mod390Key.BZ_C007)		// Aplicar el régimen especial art. 163 Sexies. Cinco de la NF del IVA		
 		,BZ_C080	(Mod390Key.BZ_C080) 	// RDM o Grupos de entidades		
 		
+		,BZ_A001	(Mod390Key.BZ_A001) 	// Actividad principal. Epigrafe. 
+		,BZ_A002	(Mod390Key.BZ_A002) 	// Actividad principal. Descripcion.
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEVENGADO

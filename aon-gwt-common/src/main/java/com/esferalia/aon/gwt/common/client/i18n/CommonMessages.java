@@ -143,7 +143,7 @@ public interface CommonMessages extends Messages {
 		,"M347"		,"Declaraci\u00F3n Informativa. Declaraci\u00F3n anual operaciones con terceras personas."
 		,"M349"		,"Declaraci\u00F3n Informativa. Declaraci\u00F3n recapitulativa de operaciones intracomunitarias."
 		,"M390"		,"IVA. Declaraci\u00F3n Resumen Anual."
-		,"M390_HF"	,"Mod. 390 Hac. For."
+		,"M390_HF"	,"IVA. Autoliquidaci\u00F3n Final."
 		,"M180"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles urbanos. Resumen anual."
 		,"M184"		,"Declaraci\u00F3n Informativa. Entidades en r\u00E9gimen de atribuci\u00F3n de rentas."
 		,"M190"		,"Declaraci\u00F3n Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades econ\u00F3micas, premios y determinadas ganancias patrimoniales e imputaciones de rentas"
@@ -1373,6 +1373,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Prorrata")
 	String prorrata();
 	
+	@DefaultMessage("Libro de facturas")
+	String invoiceBook();
+
 	@DefaultMessage("Porcentaje de prorrata")
 	String prorrataPercent();
 	

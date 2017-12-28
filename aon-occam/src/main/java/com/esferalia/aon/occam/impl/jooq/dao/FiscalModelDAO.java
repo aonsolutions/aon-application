@@ -379,7 +379,11 @@ public class FiscalModelDAO {
 				month = 12;  // Mas abajo restamos.
 			}
 			fm.setYear(year);
-			fm.setPeriod( Period.getQuarterlyPeriod(month-1));
+			if (fm.getModel().isYearly()) {
+				fm.setPeriod( Period.YEAR );
+			}else {
+				fm.setPeriod( Period.getQuarterlyPeriod(month-1));
+			}
 		}
 		fm.setAdmonAeat(params.getAdministrationCode());
 		fm.setStatus(FiscalStatus.PENDING);
