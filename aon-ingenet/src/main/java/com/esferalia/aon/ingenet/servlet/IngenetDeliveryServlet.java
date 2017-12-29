@@ -38,6 +38,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
@@ -67,6 +69,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
@@ -197,6 +200,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						content = fillSuccessMessage(ctx, albaranes.getDATOSALBARANES(), deliveryList);
 						log(IngenetLogLevel.INFO, subject, content, null, null, RECIPIENTS_TO_SUCCESS);
 						
+						processDataAttach(attach, deliveryList);
+						
 						// if autoCommit enabled, commit automatically the deliveries to SERES
 						if(!this.isDevEnabled()){
 							FtpDeliveryUploadOccamHandler handler = new FtpDeliveryUploadOccamHandler(getDomain(), getDomainId(), getUser());
@@ -216,7 +221,11 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 										content += "<br/>MOTIVO: " + th.getMessage();
 										log(IngenetLogLevel.ERROR, subject, content, null, null, RECIPIENTS_TO_FAILURES);
 									}
-									updateDataAttach(attach, d, success);
+									if(success) {
+										// TODO mark delivery as sended
+										setDeliverySended(attach, d, success);
+									}
+//										updateDataAttach(attach, d, success);
 								}
 							}
 						}
@@ -1246,11 +1255,59 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		attach.setModificationDate(new Date());
 		AON.updateAttach(getDomain(), getDomainId(), getUser(), attach);
 	}
-	
+
 	private void updateDataAttach(Attach attach, Delivery delivery, boolean success) {
 		attach.setSourceBatch(delivery.getId());
 		attach.setType((success ? DataAttachType.RESPONSE_OK : DataAttachType.RESPONSE_ERROR).value());
 		AON.updateAttach(getDomain(), getDomainId(), getUser(), attach);
 	}
+
+	private void processDataAttach(Attach attach, List<Delivery> deliveryList) {
+		if(deliveryList!=null && deliveryList.size()>0) {
+			DataResponse response = new DataResponse();
+			response.setCode("");
+			response.setDomain(getDomainId());
+			response.setResponseDate(new Date());
+			response.setSource(DataResponseSource.INGENET);
+			response.setSourceId(attach.getId());
+			response.setCreationUser(getUser());
+			response.setCreationDate(new Date());
+			int id = AON.insertDataResponse(getDomain(), getDomainId(), getUser(), response).getId();
+			response.setId(id);
+			
+			for(Delivery delivery: deliveryList) {
+				DataResponseDetail detail = new DataResponseDetail();
+				detail.setDomain(getDomainId());
+				detail.setDataResponse(response.getId());
+				detail.setDataVariable(delivery.getId().toString());
+				detail.setDataValue("PROCESSED");
+				detail.setCreationUser(getUser());
+				detail.setCreationDate(new Date());
+				AON.insertDataResponseDetail(getDomain(), getDomainId(), getUser(), detail);
+			}
+			
+			attach.setSourceBatch(response.getId());
+			attach.setType(DataAttachType.RESPONSE_OK.value());
+		} else {
+			attach.setType(DataAttachType.RESPONSE_ERROR.value());
+		}
+		AON.updateAttach(getDomain(), getDomainId(), getUser(), attach);
+	}
+	
+	private void setDeliverySended(Attach attach, Delivery delivery, boolean success) {
+		if (attach.getSourceBatch() != null) {
+			DataResponseDetail detail = AON.getDataResponseDetail(getDomain(), getDomainId(), getUser(),
+					f -> f.getDomainProperty().eq(getDomainId())
+							.and(f.getDataResponseProperty().eq(attach.getSourceBatch()))
+							.and(f.getDataVariableProperty().eq(delivery.getId().toString())))
+					.orElse(null);
+			if (detail != null) {
+				detail.setDataValue("SENDED");
+				detail.setModificationUser(getUser());
+				detail.setModificationDate(new Date());
+			}
+		}
+	}
 		
 }
+
