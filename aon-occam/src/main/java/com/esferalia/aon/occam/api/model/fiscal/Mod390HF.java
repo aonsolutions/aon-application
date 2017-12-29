@@ -26,7 +26,7 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	@Override
 	public boolean isComplementaryDeclarationAvailable() {
 		if (getAdministration() == null) return false;
-		else if (isAraba()) return true;
+		else if (isAraba()) return false;
 		else if (isBizkaia()) return true;
 		else if (isGipuzkoa()) return false;
 		else if (isNavarra()) return false;
@@ -52,7 +52,7 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	@Override
 	public double getResult() {
 		if (getAdministration() == null) return 0;
-//		else if (isAraba()) return getAmount(Mod303Key.AR_C080);
+		else if (isAraba()) return getAmount(Mod390Key.AR_C13X);
 		else if (isBizkaia()) return  getAmount(Mod390Key.BZ_C110);
 //		else if (isGipuzkoa()) return  getAmount(Mod303Key.GP_C035);
 		else if (isNavarra()) return 0;

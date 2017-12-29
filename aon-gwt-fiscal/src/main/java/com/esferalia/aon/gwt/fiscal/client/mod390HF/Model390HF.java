@@ -171,10 +171,10 @@ public class Model390HF extends MainEntryPoint {
 	
 	private void select(Mod390HF selected) {
 		cleanErrorPanel();
-		if (selected.isBizkaia()) {
-			if (selected.getYear() >= 2017) {
-				declarationContainer.setWidget( new Model3902017BIZKAIA(selected,new Model390HFCallback()));
-			}
+		if (selected.isBizkaia() && selected.getYear() >= 2017) {
+			declarationContainer.setWidget( new Model3902017BIZKAIA(selected,new Model390HFCallback()));
+		} else if (selected.isAraba() && selected.getYear() >= 2017) {
+			declarationContainer.setWidget( new Model3902017ARABA(selected,new Model390HFCallback()));
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}

@@ -11,6 +11,7 @@ public abstract class Mod390HFDeclaration {
 	public static Mod390HFDeclaration getInstance( Mod390HF mod) {
 		
 		if (BIZKAIA_2017_Declaration.accept(mod)) 	return new BIZKAIA_2017_Declaration();
+		if (ARABA_2017_Declaration.accept(mod)) 	return new ARABA_2017_Declaration();
 		
 		throw new AonCoreException("No existe una declaración para el modelo solicitado");
 	}
