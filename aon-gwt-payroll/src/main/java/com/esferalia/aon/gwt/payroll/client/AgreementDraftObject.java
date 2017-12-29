@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -228,6 +230,8 @@ public class AgreementDraftObject {
 	private AgreementDraft oldAgreementDraft;
 	private UndoManager<Undoable> undoManager;
 	private EmployeesServiceAsync employeesServiceAsync;
+	private ArrayList<Date> newDatesChanges;
+	private ArrayList<Date> deleteDatesChanges;
 
 	public AgreementDraftObject(Integer draftDomain,
 			AgreementDraft agreementDraft,
@@ -238,6 +242,8 @@ public class AgreementDraftObject {
 		this.employeesServiceAsync = employeesServiceAsync;
 		this.shownVariables = new HashSet<String>();
 		this.draftDomain = draftDomain;
+		this.newDatesChanges = new ArrayList<>();
+		this.deleteDatesChanges = new ArrayList<>();
 	}
 
 	public boolean isMine() {
@@ -408,8 +414,36 @@ public class AgreementDraftObject {
 	}
 
 	public SortedSet<Date> getDatesWithChanges() {
-		return agreementDraft.getDatesWithChanges();
+		SortedSet<Date> newList = agreementDraft.getDatesWithChanges();
+		newList.addAll(newDatesChanges);
+		Date[] datesList = newList.toArray(new Date[]{});
+		
+		SortedSet<Date> resultList = new TreeSet<>();
+		for(int i=0; i<datesList.length; i++){
+			if(this.deleteDatesChanges.contains(datesList[i])){
+				continue;
+			}
+			resultList.add(datesList[i]);
+		}
+		
+		return resultList;
 	}
+	
+	public void addNewDatesWithChanges(Date newDate) {
+		this.newDatesChanges.add(newDate);
+	}
+	
+	public void addDeleteDatesChanges(Date date) {
+		this.deleteDatesChanges.add(date);
+	}
+	
+	public void clearNewDatesWithChanges() {
+		this.newDatesChanges.clear();
+	}
+	
+//	public SortedSet<Date> getDatesWithChanges() {
+//		return agreementDraft.getDatesWithChanges();
+//	}
 
 	public boolean isDraftLevel(Level level) {
 		return agreementDraft.getDraftLevels().contains(level);
@@ -959,5 +993,10 @@ public class AgreementDraftObject {
 				add("A\u00D1OS_ANTIGUEDAD");
 			}
 		};
+	}
+
+	public void clearDeleteDatesWithChanges() {
+		this.deleteDatesChanges.clear();
+		
 	}
 }
