@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>net.aonsolutions.core</groupId>
 			<artifactId>dbutils</artifactId>
-			<version>9.20-SNAPSHOT</version>
+			<version>9.20</version>
 		</dependency>
 		<dependency>
 		    <groupId>commons-dbutils</groupId>
