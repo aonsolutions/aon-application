@@ -2974,6 +2974,16 @@ public class AON {
 	
 	// ------------------ CARRIER PACKING
 	
+	public static Stream<String> getCarrierPackingSeries(String domainName, Integer domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getCarrierPackingSeries(ctx);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+
 	public static Stream<CarrierPacking> getCarrierPackingStream(String domainName, Integer domainId, String login, CarrierPackingFilter filter) {
 		AONContext ctx = null;
 		try {

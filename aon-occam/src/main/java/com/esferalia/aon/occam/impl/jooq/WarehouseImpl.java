@@ -208,6 +208,12 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	// ------------------ CARRIER PACKING
+
+	@Override
+	public Stream<String> getCarrierPackingSeries(AONContext ctx){
+		return ctx.getDslContext().transactionResult(configuration ->
+			WarehouseDAO.getCarrierPackingSeries(ctx));
+	}
 	
 	@Override
 	public Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter){
