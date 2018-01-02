@@ -122,9 +122,12 @@ public interface IWarehouse {
 	Optional<Stock> insertStock(AONContext ctx, Stock stock);
 	Optional<Stock> updateStock(AONContext ctx, Stock stock);
 	Optional<Stock> deleteStock(AONContext ctx, Integer stockId);
-
 	
-	// ------------------- CARRIER PACKING
+	// 	***********************************************
+	// 	************************** CARRIER PACKING ****
+	// 	***********************************************
+	
+	Stream<String> getCarrierPackingSeries(AONContext ctx);
 	Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter);
 	Integer insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking);
 	CarrierPacking updateCarrierPacking(AONContext ctx, CarrierPacking carrierPacking, CarrierPackingFilter filter);
