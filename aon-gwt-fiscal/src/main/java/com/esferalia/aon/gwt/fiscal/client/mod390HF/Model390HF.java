@@ -175,6 +175,8 @@ public class Model390HF extends MainEntryPoint {
 			declarationContainer.setWidget( new Model3902017BIZKAIA(selected,new Model390HFCallback()));
 		} else if (selected.isAraba() && selected.getYear() >= 2017) {
 			declarationContainer.setWidget( new Model3902017ARABA(selected,new Model390HFCallback()));
+		} else if (selected.isGipuzkoa() && selected.getYear() >= 2017) {
+			declarationContainer.setWidget( new Model3902017GIPUZKOA(selected,new Model390HFCallback()));
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
