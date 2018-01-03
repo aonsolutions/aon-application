@@ -1096,8 +1096,15 @@ public class Mod190DAO {
 						
 					private void visitCompensation() {
 						double amount = rec.getValue(SALARY_PAYMENT.AMOUNT);
+						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+								?0.0
+								:(irpfBase * totalIrpf / totalIrpfBase);
 						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"05");
 						detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
+						detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
 					}
 					
 					private void visitAKey() {
