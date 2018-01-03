@@ -360,7 +360,7 @@ public class Mod303Writer {
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C44),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C45),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C46),17,2))
-		   ,(wr, mod) -> wr.append(mod.isLastPeriod()?(mod.getAmount(Mod303Key.CT_A11)==1?"1":"2"):" ")
+		   ,(wr, mod) -> wr.append(!mod.isLastPeriod()?"0":AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_A11),1,0 ))
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 581))
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 13))
 		   ,(wr, mod) -> wr.append("</T30301000>")
