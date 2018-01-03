@@ -169,11 +169,15 @@ public class DBStock {
 
 						Double cost = Utils.getValCost(sctx.getDomainName(), s.getQuantity(), item, login, workplaceId, warehouseId, inventoryDate, ap);
 						if(data2.isNotEmpty()){
-							idList.add(itemId);
-							caseA = caseA != null ? caseA.when(INVENTORY_DETAIL.ITEM.eq(itemId), s.getQuantity())
-									: DSL.decode().when(INVENTORY_DETAIL.ITEM.eq(itemId), s.getQuantity());
-							caseB = caseB != null ? caseB.when(INVENTORY_DETAIL.ITEM.eq(itemId), cost)
-									: DSL.decode().when(INVENTORY_DETAIL.ITEM.eq(itemId), cost);
+							Boolean first = true;
+							for(Integer i = 0; i < data2.size(); i++) {
+								idList.add(itemId);
+								caseA = caseA != null ? caseA.when(INVENTORY_DETAIL.ID.eq(data2.get(i).getValue(INVENTORY_DETAIL.ID)), first ? s.getQuantity() : 0)
+									: DSL.decode().when(INVENTORY_DETAIL.ID.eq(data2.get(i).getValue(INVENTORY_DETAIL.ID)), first ? s.getQuantity() : 0);
+								caseB = caseB != null ? caseB.when(INVENTORY_DETAIL.ID.eq(data2.get(i).getValue(INVENTORY_DETAIL.ID)), cost)
+									: DSL.decode().when(INVENTORY_DETAIL.ID.eq(data2.get(i).getValue(INVENTORY_DETAIL.ID)), cost);
+								first = false;
+							}
 						}else{
 							insert = insert.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId, new Timestamp(new java.util.Date().getTime()), "system", new Timestamp(new java.util.Date().getTime()), "system");
 						}
