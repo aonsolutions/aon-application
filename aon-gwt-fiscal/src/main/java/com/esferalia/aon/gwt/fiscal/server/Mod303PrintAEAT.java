@@ -68,7 +68,7 @@ public class Mod303PrintAEAT extends HttpServlet {
 
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
 			Mod303 mod303,String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-		String fileString = new String(content);
+		String fileString = new String(content, "ISO-8859-1");
 		fileString = fileString.replace("'", " ");
 		fileString = fileString.replace("&", " ");
 		fileString = fileString.replace("\n", "");
