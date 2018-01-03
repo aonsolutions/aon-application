@@ -1,16 +1,16 @@
 Manifest-Version: 1.0
 Implementation-Title: AON WS DEX
-buildNumber: 2
-Implementation-Version: 9.20.1
+buildNumber: 3
+Implementation-Version: 9.20.2
 Built-By: ec2-user
 Specification-Vendor: esferalia Networks S.A.
 Specification-Title: AON WS DEX
 Implementation-Vendor-Id: com.esferalia.aon
 Implementation-Vendor: esferalia Networks S.A.
-buildDate: 02/01/2018
+buildDate: 03/01/2018
 dbVersion: 
-buildRevision: 44724
+buildRevision: 44741
 Created-By: Apache Maven 3.3.3
 Build-Jdk: 1.8.0_131
-Specification-Version: 9.20.1
+Specification-Version: 9.20.2
 
