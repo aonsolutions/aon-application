@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -400,17 +401,26 @@ public class InventoryController extends BasicController implements IAuditableCo
 				updateWT = null;
 				LinkedList<Integer> idList = new LinkedList<>();
 				InsertValuesStep4<StockRecord, Integer, Integer, Double, Integer> insert = ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
+				
+				HashMap<Integer, Double> dMap = new HashMap<>();
 				details.stream().forEach(d -> {
+					if(dMap.containsKey(d.getItem().getId())) {
+						dMap.put(d.getItem().getId(), dMap.get(d.getItem().getId()) + d.getRealQuantity());
+					} else dMap.put(d.getItem().getId(), d.getRealQuantity());
+				});
+				
+				dMap.keySet().stream().forEach(i -> {
 					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stock = AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(wt.getTargetWarehouse().getId())
-							.and(f.getItemProperty().eq(d.getItem().getId()))).findFirst();
+							.and(f.getItemProperty().eq(i))).findFirst();
 					if(stock.isPresent()) {
 						idList.add(stock.get().getId());
-						updateWT = updateWT != null ? updateWT.when(STOCK.ID.eq(stock.get().getId()), d.getRealQuantity())
-								: DSL.decode().when(STOCK.ID.eq(stock.get().getId()), d.getRealQuantity());
+						updateWT = updateWT != null ? updateWT.when(STOCK.ID.eq(stock.get().getId()), dMap.get(i))
+								: DSL.decode().when(STOCK.ID.eq(stock.get().getId()), dMap.get(i));
 					} else {
-						insert.values(domainId, d.getItem().getId(), d.getRealQuantity(), wt.getTargetWarehouse().getId());
+						insert.values(domainId, i, dMap.get(i), wt.getTargetWarehouse().getId());
 					}
 				});
+				
 				if(updateWT != null) {
 					ctx.getDslContext().update(STOCK).set(STOCK.QUANTITY, updateWT.otherwise(0.0))
 					.where(STOCK.WAREHOUSE.eq( wt.getTargetWarehouse().getId()))
