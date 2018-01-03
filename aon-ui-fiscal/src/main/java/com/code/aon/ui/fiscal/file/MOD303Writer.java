@@ -214,9 +214,9 @@ public class MOD303Writer {
 			declaration.setExonerado("1");
 		} else {
 			if (vatTaxDeclaration.getVatTax().getPeriod() == Period.M12 || vatTaxDeclaration.getVatTax().getPeriod() == Period.T4) {
-				declaration.setExonerado("2");
+				declaration.setExonerado("0");
 			} else {
-				declaration.setExonerado(" ");
+				declaration.setExonerado("0");
 			}
 		}
 		
