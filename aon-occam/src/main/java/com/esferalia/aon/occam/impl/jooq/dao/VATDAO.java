@@ -355,7 +355,7 @@ public class VATDAO  {
 				,INVOICE.RECTIFICATION_TYPE, INVOICE.SERVICE, INVOICE.TRANSACTION
 				,INVOICE.INVESTMENT, INVOICE.WITHHOLDING_FARMER, INVOICE.VAT_ACCRUAL_PAYMENT
 				,INVOICE.TOTAL, INVOICE.REGISTRY, INVOICE.RECTIFICATION_INVOICE, INVOICE.CREATION_DATE
-				
+				,INVOICE.TAXABLE_BASE, INVOICE.VAT_QUOTA
 				,INVOICE_DETAIL.TAXABLE_BASE, INVOICE_DETAIL.INVEST_ASSET, INVOICE_DETAIL.DESCRIPTION
 				
 				,INVOICE_TAX.BASE, INVOICE_TAX.PERCENTAGE, INVOICE_TAX.QUOTA
@@ -369,14 +369,16 @@ public class VATDAO  {
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.leftOuterJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID)
+					.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+					.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1)))
 			.leftOuterJoin(DATA_RESPONSE).on(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()).and(DATA_RESPONSE.SOURCE_ID.eq(INVOICE.ID)))
 			.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq(status).and(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE.ID)))
 			.leftOuterJoin(AMORTIZATION_INVOICE).on(AMORTIZATION_INVOICE.INVOICE.eq(INVOICE.ID))
 			.leftOuterJoin(AMORTIZATION).on(AMORTIZATION.ID.eq(AMORTIZATION_INVOICE.AMORTIZATION))
 			.where(VAT_PROPERTIES.getConditions(filter))
-			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
+//			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+//			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 			.orderBy(InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch().stream().map(new SiiVatContextFiller())
 		;
@@ -603,15 +605,15 @@ public class VATDAO  {
 				
 				.setSiiStatus(rec.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE) != null ? rec.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE) : "Pendiente")
 				
-				.setBase( rec.getValue(INVOICE_TAX.BASE) )
-				.setPercentage(rec.getValue(INVOICE_TAX.PERCENTAGE))
-				.setQuota( getQuota(rec) )
-				.setSurcharge(AonMathUtils.round(rec.getValue(INVOICE_TAX.SURCHARGE)) > 0)
-				.setSurchargePercent(rec.getValue(INVOICE_TAX.SURCHARGE))
-				.setSurchargeQuota(getSurchargeQuota(rec))
+				.setBase(rec.getValue(INVOICE_TAX.BASE) != null ? rec.getValue(INVOICE_TAX.BASE) : rec.getValue(INVOICE.TAXABLE_BASE))
+				.setPercentage(rec.getValue(INVOICE_TAX.PERCENTAGE) != null ? rec.getValue(INVOICE_TAX.PERCENTAGE) : 0.0)
+				.setQuota(rec.getValue(INVOICE_TAX.QUOTA) != null ? getQuota(rec): rec.getValue(INVOICE.VAT_QUOTA))
+				.setSurcharge(rec.getValue(INVOICE_TAX.SURCHARGE) != null ? AonMathUtils.round(rec.getValue(INVOICE_TAX.SURCHARGE)) > 0 : false)
+				.setSurchargePercent(rec.getValue(INVOICE_TAX.SURCHARGE) != null ? rec.getValue(INVOICE_TAX.SURCHARGE) : 0.0)
+				.setSurchargeQuota( rec.getValue(INVOICE_TAX.SURCHARGE_QUOTA) != null ? getSurchargeQuota(rec): 0.0)
 	
-				.setDeductiblePercent(getDeductiblePercent(rec))
-				.setDeductibleQuota(getDeductibleQuota(rec))
+				.setDeductiblePercent(rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT) != null ? getDeductiblePercent(rec) : 0.0)
+				.setDeductibleQuota(rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA) != null ? getDeductibleQuota(rec) : 0.0)
 				
 				.setAmortizationDescription(rec.getValue(AMORTIZATION.DESCRIPTION))
 				.setAmortizationInitialDate(rec.getValue(AMORTIZATION.INITIAL_DATE))
