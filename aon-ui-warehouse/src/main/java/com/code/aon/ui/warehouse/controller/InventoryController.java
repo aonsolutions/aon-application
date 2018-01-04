@@ -715,9 +715,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getRemoteUser();
 		
-		AON.deleteWarehouseTransfer(domainName, domainId, user,
-				f -> f.getSourceProperty().eq(WarehouseTransferSource.INVENTORY_INIT_STOCK.value())
-				.and(f.getSourceIdProperty().eq(inventory.getId())));
+		AON.deleteWarehouseTransfer(domainName, domainId, user, f -> f.getInventoryProperty().eq(inventory.getId()));
 		
 		super.onRemove(event);
 	}
