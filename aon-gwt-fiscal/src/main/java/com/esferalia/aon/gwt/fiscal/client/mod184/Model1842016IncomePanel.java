@@ -355,8 +355,8 @@ public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusa
 		tab2.setWidget(3, 0, activityType);
 		
 		epigraph.setStyleName(AON.AON_CSS.aonInputText());
-		epigraph.setMaxLength(3); 
-		epigraph.setVisibleLength(3);
+		epigraph.setMaxLength(4); 
+		epigraph.setVisibleLength(4);
 		epigraph.setValue( income.getEpigraph() );
 		epigraph.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override

@@ -58,12 +58,12 @@ public class Model184 extends MainEntryPoint {
 
 		void onAccept(Mod184 mod184);
 		void onCancel();
-		void onSelect(Mod184 mod184, Integer selectedIndex);
+		void onSelect(Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex);
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew();
-		
 	}
+	
 	protected class Model184Callback implements IModel184Callback {
 		
 		@Override
@@ -75,8 +75,8 @@ public class Model184 extends MainEntryPoint {
 			cancel();
 		}
 		@Override
-		public void onSelect(Mod184 mod184, Integer selectedIndex) {
-			select(mod184, selectedIndex);
+		public void onSelect(Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex) {
+			select(mod184, selectedIncomeIndex,selectedPartnerIndex,tabIndex);
 		}
 		@Override
 		public void onNew() {
@@ -163,7 +163,7 @@ public class Model184 extends MainEntryPoint {
 						if (selected == null) {
 							showErrorPanel(AON.MSG.unableToFindDeclaration());
 						} else {
-							select(selected, null);
+							select(selected, null, null, null);
 						}
 					}
 
@@ -175,18 +175,18 @@ public class Model184 extends MainEntryPoint {
 	}
 	
 
-	private void select(Mod184 selected, Integer selectedIndex) {
+	private void select(Mod184 selected, Integer selectedIncomeIndex, Integer selectedPartnerIndex,Integer tabIndex) {
 		cleanErrorPanel();
 		if ( selected.isAEAT() ) {
-			declarationContainer.setWidget( new Model184AEAT(selected,new Model184Callback(),selectedIndex));
+			declarationContainer.setWidget( new Model184AEAT(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else if ( selected.isAraba() ) {
-			declarationContainer.setWidget( new Model184ARABA(selected,new Model184Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model184ARABA(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else if ( selected.isBizkaia() ) {
-			declarationContainer.setWidget( new Model184BIZKAIA(selected,new Model184Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model184BIZKAIA(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else if ( selected.isGipuzkoa() ) {
-			declarationContainer.setWidget( new Model184GIPUZKOA(selected,new Model184Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model184GIPUZKOA(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else if ( selected.isNavarra() ) {
-			declarationContainer.setWidget( new Model184NAVARRA(selected,new Model184Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model184NAVARRA(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
@@ -315,7 +315,7 @@ public class Model184 extends MainEntryPoint {
 									@Override
 									public void onSuccess(Mod184 model) {
 										popup.hide();
-										select(model, null);
+										select(model, null, null, null);
 									}
 
 									@Override
