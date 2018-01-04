@@ -1701,7 +1701,7 @@ public class Mod3902015DAO {
 				}
 				if (m303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE
 				 && (period == Period.M12 || period == Period.T4)) {
-					mod390.setBox97(  m303.getResult() );
+					mod390.setBox97(  AonMathUtils.round( m303.getResult() * (-1) ));
 				}
 			});
 		
