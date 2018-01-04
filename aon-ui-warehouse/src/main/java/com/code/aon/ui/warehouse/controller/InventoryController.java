@@ -390,7 +390,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		List<InventoryDetail> details = getDetails(inventory, newElements);
 		if (! details.isEmpty() ) {
 			WarehouseTransfer wt = getWarehouseTransfer(inventory, newElements);
-			
+			Integer wtId = newElements ? wt.getTargetWarehouse().getId() : wt.getSourceWarehouse().getId();
 			String domainName = AonUtil.getDomainName();
 			Integer domainId = DomainManager.getCurrentDomain();
 			String user = AonUtil.getRemoteUser();
@@ -410,7 +410,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 				});
 				
 				dMap.keySet().stream().forEach(i -> {
-					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stock = AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(wt.getTargetWarehouse().getId())
+					Optional<com.esferalia.aon.occam.api.model.warehouse.Stock> stock = AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(wtId)
 							.and(f.getItemProperty().eq(i))).findFirst();
 					if(stock.isPresent()) {
 						idList.add(stock.get().getId());
@@ -423,7 +423,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 				
 				if(updateWT != null) {
 					ctx.getDslContext().update(STOCK).set(STOCK.QUANTITY, updateWT.otherwise(0.0))
-					.where(STOCK.WAREHOUSE.eq( wt.getTargetWarehouse().getId()))
+					.where(STOCK.WAREHOUSE.eq(wtId))
 					.and(STOCK.DOMAIN.eq(domainId))
 					.and(STOCK.ID.in(idList.toArray(new Integer[idList.size()])))
 					.execute();
