@@ -414,7 +414,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		typeBox.setWidth("40px");
 		typeBox.addItem(" - ", "");
 		typeBox.addItem("G - General", "G");
-		typeBox.addItem("E - Espaecial", "E");
+		typeBox.addItem("E - Especial", "E");
 		String type = getCallback().getMod390HF().getDescription(typeKey);
 		if (AonStringUtils.equals(type, "G")) typeBox.setSelectedIndex(1);
 		else if (AonStringUtils.equals(type, "E")) typeBox.setSelectedIndex(2);
