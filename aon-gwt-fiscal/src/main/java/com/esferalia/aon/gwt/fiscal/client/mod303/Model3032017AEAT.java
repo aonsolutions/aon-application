@@ -369,8 +369,8 @@ public class Model3032017AEAT extends Model303Base {
 		final ListBox a11 = new ListBox();
 		a11.setWidth("200px");
 		a11.addItem("(0) No exonerado o la declaraci\u00F3n no es del \u00FAltimo periodo del ejercicio", "0");
-		a11.addItem("(1) Est\u00E1 exonerado y supera el volumen de operaciones referido en el art.131 LIVA", "1");
-		a11.addItem("(2) Est\u00E1 exonerado y NO supera el volumen de operaciones referido en el art.131 LIVA", "2");
+		a11.addItem("(1) Est\u00E1 exonerado y supera el volumen de operaciones referido en el art.121 LIVA", "1");
+		a11.addItem("(2) Est\u00E1 exonerado y NO supera el volumen de operaciones referido en el art.121 LIVA", "2");
 		paintListBox(a11, Mod303Key.CT_A11, table);
 		a11.setEnabled(getCallback().getMod303().isLastPeriod());
 		if (getCallback().getMod303().isLastPeriod()) {
