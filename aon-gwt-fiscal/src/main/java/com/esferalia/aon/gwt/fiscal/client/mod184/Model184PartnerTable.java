@@ -114,8 +114,11 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 		tableDockLayout.add(tablePanel);
 		refresh();
 		if (table.getVisibleItemCount() == 0) {
-			newPartner( cbk );	
-		} else if ( selectedIndex != null) {
+			newPartner( cbk );
+		} else if ( selectedIndex != null && selectedIndex >= 0) {
+			if (selectedIndex >= cbk.getMod184().getPartners().size()) {
+				selectedIndex = cbk.getMod184().getPartners().size() - 1;
+			}
 			table.getSelectionModel().setSelected(cbk.getMod184().getPartners().get(selectedIndex), true);	
 		} else {
 			table.getSelectionModel().setSelected( table.getVisibleItems().get(0), true);	
@@ -225,6 +228,8 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 	private void newPartner(Model184BaseCallback cbk) {
 		cbk.getMod184().getPartners().add(
 				new Mod184Partner()
+					.setKey("A")
+					.setSubKey("01")
 					.setDirty(true)
 					.setTempId((cbk.getMod184().getPartners().size() * (-1)))
 			);

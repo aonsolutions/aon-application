@@ -141,7 +141,10 @@ public class Model184IncomeTable extends SimpleLayoutPanel implements HasSelecti
 		refresh();
 		if (table.getVisibleItemCount() == 0) {
 			newIncome( cbk );	
-		} else if ( selectedIndex != null) {
+		} else if ( selectedIndex != null && selectedIndex >= 0) {
+			if (selectedIndex >= cbk.getMod184().getIncomes().size()) {
+				selectedIndex = cbk.getMod184().getIncomes().size() - 1;
+			}
 			table.getSelectionModel().setSelected(cbk.getMod184().getIncomes().get(selectedIndex), true);	
 		} else {
 			table.getSelectionModel().setSelected( table.getVisibleItems().get(0), true);	
@@ -252,6 +255,8 @@ public class Model184IncomeTable extends SimpleLayoutPanel implements HasSelecti
 		cbk.getMod184().getIncomes().add(
 				new Mod184Income()
 					.setDirty(true)
+					.setKey("A")
+					.setSubKey("01")
 					.setTempId((cbk.getMod184().getIncomes().size() * (-1)))
 			);
 		table.setRowData(cbk.getMod184().getIncomes());

@@ -8,15 +8,17 @@ import com.esferalia.aon.gwt.fiscal.client.mod184.Model184.Model184Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model184GIPUZKOA extends Model184Base {
 
-	private static final int PERCEPTORS_TAB = 1;
+	private static final int ENTITY_TAB = 1;
 
-	public Model184GIPUZKOA(Mod184 mod184,Model184Callback cbk,Integer selectedIndex) {
+	public Model184GIPUZKOA(Mod184 mod184,Model184Callback cbk,Integer selectedIncomeIndex,Integer selectedPartnerIndex,Integer tabIndex ) {
 		super(mod184, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -27,11 +29,22 @@ public class Model184GIPUZKOA extends Model184Base {
 		
 		paintDeclarationTab(tabPanel);
 		paintEntityTab(tabPanel);
-		paintIncomeTab(tabPanel, selectedIndex);
-		paintPartnersTab(tabPanel, selectedIndex);
+		paintIncomeTab(tabPanel, selectedIncomeIndex);
+		paintPartnersTab(tabPanel, selectedPartnerIndex);
 		paintAdministrationTab(tabPanel);
 		
-		tabPanel.selectTab(PERCEPTORS_TAB, false);
+		tabPanel.addSelectionHandler( new SelectionHandler<Integer>() {
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				setSelectedTab(event.getSelectedItem());
+			}
+		});
+		setSelectedTab(tabIndex);
+
+		if (tabIndex == null || tabIndex < 0 || tabIndex >= tabPanel.getWidgetCount()) {
+			tabIndex = ENTITY_TAB;
+		}
+		tabPanel.selectTab(tabIndex, false);
 		
 	}
 

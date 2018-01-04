@@ -6,8 +6,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -100,8 +100,8 @@ abstract class Model184Base extends DockLayoutPanel {
 			cbk.onCancel();
 		}
 		@Override	
-		public void onSelect(Mod184 mod184, Integer selectedIndex) {
-			cbk.onSelect(mod184, selectedIndex);
+		public void onSelect(Mod184 result, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex) {
+			cbk.onSelect(result, selectedIncomeIndex,selectedPartnerIndex,tabIndex);
 		}
 		@Override
 		public void showError(String msg) {
@@ -121,6 +121,7 @@ abstract class Model184Base extends DockLayoutPanel {
 	private Mod184 mod184;
 	private Model184BaseCallback callback;
 	private boolean dirty;
+	protected Integer selectedTab;
 
 	protected InlineLabel documentLabel = new InlineLabel();
 	protected InlineLabel nameLabel = new InlineLabel();
@@ -251,7 +252,7 @@ abstract class Model184Base extends DockLayoutPanel {
 							@Override
 							public void onSuccess(Mod184 result) {
 								popup.hide();
-//								callback.onSelect(result, detailManager.getSelectedPerceptorIndex() );
+								callback.onSelect(result, incomeManager.getSelectedIncomeIndex(), partnerManager.getSelectedPartnerIndex(), getSelectedTab() );
 							}
 
 							@Override
@@ -345,7 +346,7 @@ abstract class Model184Base extends DockLayoutPanel {
 				Model184.SERVICE.changeStatusMod184(Model184.getCurrentDomainName(), getMod184(), FiscalStatus.FINISHED, new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 result) {
-						callback.onSelect(result , 0 );
+						callback.onSelect(result , null, null, null );
 					}
 
 					@Override
@@ -370,7 +371,7 @@ abstract class Model184Base extends DockLayoutPanel {
 				Model184.SERVICE.changeStatusMod184(Model184.getCurrentDomainName(), getMod184(), FiscalStatus.SENT, new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 result) {
-						callback.onSelect(result , 0 );
+						callback.onSelect(result , null, null , null);
 					}
 
 					@Override
@@ -395,7 +396,7 @@ abstract class Model184Base extends DockLayoutPanel {
 				Model184.SERVICE.changeStatusMod184(Model184.getCurrentDomainName(), getMod184(), FiscalStatus.PENDING, new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 result) {
-						callback.onSelect(result , 0 );
+						callback.onSelect(result , null, null , null);
 					}
 
 					@Override
@@ -1065,8 +1066,13 @@ abstract class Model184Base extends DockLayoutPanel {
 		}
 		tabPanel.add( (Widget) partnerManager,  TAB_TEMPLATE.render(AON.MSG.entityPartners(), AON.AON_CSS.aonIconEmployee()) );
 	}
-
-	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
+	protected Integer getSelectedTab() {
+		return selectedTab;
+	}
+	protected void setSelectedTab(Integer selectedTab) {
+		this.selectedTab = selectedTab;
+	}
 	
+	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
 	
 }
