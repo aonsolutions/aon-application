@@ -549,4 +549,24 @@ public class Mod184DAO {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
+	
+	public static Mod184 duplicateNextYear(AONContext ctx, int id) {
+		Mod184 mod184 = getById(ctx, id);
+		mod184.setYear( mod184.getYear() + 1 );
+		mod184.setId(null);
+		mod184 = save(ctx, mod184);
+		Mod184 original = getById(ctx, id);
+		for (Mod184Income income : original.getIncomes()) {
+			income.setId(null);
+			income.setMod184(mod184.getId());
+			mod184.getIncomes().add(income);
+		}
+		for (Mod184Partner partner : original.getPartners()) {
+			partner.setId(null);
+			partner.setMod184(mod184.getId());
+			mod184.getPartners().add(partner);
+		}
+		return save(ctx, mod184);
+	}
+	
 }

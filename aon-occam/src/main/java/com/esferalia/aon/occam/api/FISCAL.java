@@ -1501,6 +1501,18 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	public static Mod184 duplicateNextYearMod184(String domainName, Integer domain, String userLogin, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,userLogin);
+			return getFiscal().duplicateNextYearMod184(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ----------------------------------MODELO 202
 	public static LinkedList<Mod202> getMod202s(String domainName,int domainId, String user) {
 		AONContext ctx = null;
