@@ -70,6 +70,12 @@ public class Model190ServiceAsyncDecorator implements Model190ServiceAsync {
 		AON.start();
 		fsa.changeStatus(domainName, mod190, newStatus, new AsyncCallbackWrapper<Mod190>(callback));
 	}
+
+	@Override
+	public void duplicateNextYear(String domainName, Integer domain, Integer id, AsyncCallback<Mod190> callback) {
+		AON.start();
+		fsa.duplicateNextYear(domainName, domain, id, new AsyncCallbackWrapper<Mod190>(callback));
+	}
 	
 
 }

@@ -1347,6 +1347,17 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	public static Mod190 duplicateNextYearMod190(String domainName, Integer domain, String userLogin, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,userLogin);
+			return getFiscal().duplicateNextYearMod190(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// ----------------------------------MODELO 193
 	public static LinkedList<Mod193> getMod193s(String domainName, int domainId,

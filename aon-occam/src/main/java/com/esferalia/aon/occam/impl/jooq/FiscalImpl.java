@@ -200,6 +200,11 @@ public class FiscalImpl implements IFiscal {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod190DAO.changeStatus(ctx, mod190, newStatus));		
 	}
+	@Override
+	public Mod190 duplicateNextYearMod190(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod190DAO.duplicateNextYear(ctx, id));		
+	}
 
 	// ----------------------------------------------------------- [MODELO 193]
 	@Override

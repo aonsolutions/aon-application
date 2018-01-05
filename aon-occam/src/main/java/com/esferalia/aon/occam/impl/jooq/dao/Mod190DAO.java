@@ -113,8 +113,12 @@ public class Mod190DAO {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
-
+	
 	private static Mod190 insert(AONContext ctx, Mod190 mod190) {
+		return insert(ctx, mod190, true);
+	}
+
+	private static Mod190 insert(AONContext ctx, Mod190 mod190, boolean generateDetails) {
 		validate(ctx, mod190);
 		FsModel190Record record = ctx
 				.getDslContext()
@@ -142,13 +146,16 @@ public class Mod190DAO {
 				.set(FS_MODEL190.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FS_MODEL190.ID).fetchOne();
 		mod190.setId(record.getId());
-		insertDetailsFromInvoice(ctx, mod190);
-		// insertDetailsFromSalary(ctx, mod190);
-		if (mod190.getYear() < 2017) {
-			insertDetailsFromSalary2016(ctx, mod190);
-		} else {
-			insertDetailsFromSalary2017(ctx, mod190);
+		
+		if (generateDetails) {
+			insertDetailsFromInvoice(ctx, mod190);
+			if (mod190.getYear() < 2017) {
+				insertDetailsFromSalary2016(ctx, mod190);
+			} else {
+				insertDetailsFromSalary2017(ctx, mod190);
+			}
 		}
+		
 		return mod190;
 	}
 
@@ -1189,4 +1196,17 @@ public class Mod190DAO {
 		mod190.getDetails().addAll(map.values());
 	}
 	
+	public static Mod190 duplicateNextYear(AONContext ctx, int id) {
+		Mod190 mod190 = getById(ctx, id);
+		mod190.setYear( mod190.getYear() + 1 );
+		mod190.setId(null);
+		mod190 = insert(ctx, mod190, false);
+		Mod190 original = getById(ctx, id);
+		for (Mod190Detail detail : original.getDetails()) {
+			detail.setId(null);
+			detail.setMod190(mod190.getId());
+			saveDetail(ctx,mod190,detail);
+		}
+		return getById(ctx, mod190 .getId());
+	}
 }
