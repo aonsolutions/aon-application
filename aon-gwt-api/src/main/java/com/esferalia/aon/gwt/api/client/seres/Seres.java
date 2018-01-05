@@ -50,7 +50,7 @@ public class Seres extends Methods{
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/income_invoice"+filter, callback);
 	}
 	
-	public void getIngenetDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
+	public void getIngenetDeliveryAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsAttachFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/ingenet_delivery"+filter, callback);
 	}
@@ -61,6 +61,11 @@ public class Seres extends Methods{
 	
 	public void getHistoryDetail(Integer id, AsyncCallback<JSON<JsObject>> callback){
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/history_detail?id="+id, callback);
+	}
+	
+	public void processIngenetAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "ingenet_attach/"+getDomainName()+"/"+getUserName()+"/delivery" + str, callback);
 	}
 	
 	public void sendInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){

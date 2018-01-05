@@ -26,6 +26,7 @@ public class SeresMain extends AonTemplate2{
 	
 	private Button sendAll;
 	private Button retrieveAll;
+	private Button processAll;
 	
 	final String OUTCOME_DELIVERY = "outcome_delivery";
 	final String OUTCOME_INVOICE = "outcome_invoice";
@@ -59,9 +60,13 @@ public class SeresMain extends AonTemplate2{
 	public Button getSendAll() {
 		return sendAll;
 	}
-	
+
 	public Button getRetrieveAll() {
 		return retrieveAll;
+	}
+	
+	public Button getProcessAll() {
+		return processAll;
 	}
 	
 	
@@ -106,8 +111,13 @@ public class SeresMain extends AonTemplate2{
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar("Comunicaciones SERES") {};
+		
 		sendAll = toolbar.addButton("Enviar", AON.AON_CSS.aonIconSave());
-		sendAll.setVisible(false);
+		retrieveAll = toolbar.addButton("Recuperar", AON.AON_CSS.aonIconImport());
+		processAll = toolbar.addButton("Procesar", AON.AON_CSS.aonIconSave());
+		
+		cleanToolbarButtons();
+		
 		sendAll.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -119,8 +129,6 @@ public class SeresMain extends AonTemplate2{
 			}
 		});
 		
-		retrieveAll = toolbar.addButton("Recuperar", AON.AON_CSS.aonIconSave());
-		retrieveAll.setVisible(false);
 		retrieveAll.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -131,9 +139,27 @@ public class SeresMain extends AonTemplate2{
 				grid.retrieve(getFilterMap().get("seres").get(0));
 			}
 		});
+		
+		processAll.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
+				SimpleLayoutPanel slp = p.getContent();
+				ContentGridIngenet grid = (ContentGridIngenet) slp.getWidget();
+				grid.process(getFilterMap().get("seres").get(0));
+			}
+		});
 	
 		setToolbar(toolbar);
 	}
+	
+	protected void cleanToolbarButtons() {
+		sendAll.setVisible(false);
+		retrieveAll.setVisible(false);
+		processAll.setVisible(false);
+	}
+	
 	
 	private void westContent() {
 		getDockLayoutPanel().setWidgetSize(getWestContent(), 300);
@@ -144,12 +170,12 @@ public class SeresMain extends AonTemplate2{
 		menuPanel.add(createMenuPanelButton("Visi\u00F3n global", "Visi\u00F3n global", null, false, false));
 		
 		menuPanel.add(createMenuPanelLabel("Env\u00EDo de Ficheros"));
-		menuPanel.add(createMenuPanelButton("Albaranes", "Env\u00EDo de Albaranes", OUTCOME_DELIVERY));
+		menuPanel.add(createMenuPanelButton("Albaranes", "Env\u00EDo de Albaranes", OUTCOME_DELIVERY, true, true));
 		menuPanel.add(createMenuPanelButton("Facturas", "Env\u00EDo de Facturas", OUTCOME_INVOICE));
 		
 		menuPanel.add(createMenuPanelLabel("Recepci\u00F3n de Ficheros"));
-		menuPanel.add(createMenuPanelButton("Pedidos", "Recepci\u00F3n de Pedidos", INCOME_SALES));
-		menuPanel.add(createMenuPanelButton("Facturas", "Recepci\u00F3n de Facturas", INCOME_INVOICE));
+		menuPanel.add(createMenuPanelButton("Pedidos", "Recepci\u00F3n de Pedidos", INCOME_SALES, true, true));
+		menuPanel.add(createMenuPanelButton("Facturas", "Recepci\u00F3n de Facturas", INCOME_INVOICE, true, true));
 		
 		menuPanel.add(createMenuPanelLabel("Ingenet"));
 		menuPanel.add(createMenuPanelButton("Albaranes", "Recepci\u00F3n de Albaranes Ingenet", INGENET_DELIVERY));
@@ -182,8 +208,7 @@ public class SeresMain extends AonTemplate2{
 			@Override public void onClick(ClickEvent event) {
 				cleanMenuPanelButtons();
 				button.addStyleName(AON.AON_CSS.aonBold());
-				sendAll.setVisible(false);
-				retrieveAll.setVisible(false);
+				cleanToolbarButtons();
 				LinkedList<String> list = new LinkedList<>();
 				list.add(action);
 				getFilterMap().put("seres",list);
@@ -193,6 +218,7 @@ public class SeresMain extends AonTemplate2{
 				fp.setCheckVisible(false);
 				fp.setTitle(title);
 				p.gridContent(action);
+				p.closeFootPanel();
 			}
 		});
 		return button;

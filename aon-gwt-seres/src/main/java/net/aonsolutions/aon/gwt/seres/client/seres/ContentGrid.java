@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.seres.JsSeresFile;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -143,7 +142,18 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 							selFiles.add(f);
 						}
 					}
-					parent.getSendAll().setVisible(selFiles.size() > 0);
+					
+					boolean enable = selFiles.size() > 0;
+					if(parent.command.equals(parent.parent.OUTCOME_DELIVERY)
+			        		|| parent.command.equals(parent.parent.OUTCOME_INVOICE)){
+						parent.getSendAll().setVisible(enable);
+					} else if(parent.command.equals(parent.parent.INCOME_SALES)
+			        		|| parent.command.equals(parent.parent.INCOME_INVOICE)){
+						parent.getRetrieveAll().setVisible(enable);
+					} else if(parent.command.equals(parent.parent.INGENET_DELIVERY)){
+						parent.getProcessAll().setVisible(enable);
+					}
+					
 //					String sii = parent.getFilterMap().get("sii").get(0);
 //					parent.getBaja().setVisible(selFiles.size() > 0 && !"cp_cobros_pagos".equals(sii)
 //							&& !"cp_cobros".equals(sii) && !"cp_pagos".equals(sii));
@@ -368,7 +378,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 	        		|| parent.command.equals(parent.parent.INCOME_INVOICE)){
 	        	parent.getRetrieveAll().setVisible(isChecked);
 			} else if(parent.command.equals(parent.parent.INGENET_DELIVERY)){
-				// TODO
+				parent.getProcessAll().setVisible(isChecked);
 			}
 	        
 //	        parent.getBaja().setVisible(isChecked);
@@ -402,22 +412,34 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 			retrieveDeliveries();
 		}
 	}
+	
+	public void process(String action) {
+		if(action.equals(parent.parent.INGENET_DELIVERY)){
+			processIngenetDeliveries();
+		}
+	}
 
 	private void retrieveDeliveries() {
 		// TODO Auto-generated method stub
-		Window.alert("En desarrollo...");
+		Window.alert("RECUPERAR ALBARANES \n En desarrollo...");
 		
 	}
 
 	private void retrieveSales() {
 		// TODO Auto-generated method stub
-		Window.alert("En desarrollo...");
+		Window.alert("RECUPERAR PEDIDOS \n En desarrollo...");
 		
 	}
 
 	private void sendDeliveries() {
 		// TODO Auto-generated method stub
-		Window.alert("En desarrollo...");
+		Window.alert("ENVIAR albaranes \n En desarrollo...");
+		
+	}
+	
+	private void processIngenetDeliveries() {
+		// TODO Auto-generated method stub
+		Window.alert("PROCESAR ALBARANES INGENET \n En desarrollo...");
 		
 	}
 

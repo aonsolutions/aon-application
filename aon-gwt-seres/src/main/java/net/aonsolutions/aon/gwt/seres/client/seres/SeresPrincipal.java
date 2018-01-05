@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.seres.JsAttachFile;
 import com.esferalia.aon.gwt.api.client.seres.JsSeresFile;
 import com.esferalia.aon.gwt.api.client.seres.JsSummary;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -126,9 +127,12 @@ public class SeresPrincipal extends Composite{
 		
 		Widget content = null;
 		if (parent.OUTCOME_DELIVERY.equals(command) || parent.OUTCOME_INVOICE.equals(command)
-				|| parent.INCOME_SALES.equals(command) || parent.INCOME_INVOICE.equals(command)
-				|| parent.INGENET_DELIVERY.equals(command)) {
+				|| parent.INCOME_SALES.equals(command) || parent.INCOME_INVOICE.equals(command)) {
 			ContentGrid contentGrid = (new ContentGrid(me));
+			reloadContentGrid(contentGrid);
+			content = contentGrid;
+		} else if(parent.INGENET_DELIVERY.equals(command)) {
+			ContentGridIngenet contentGrid = (new ContentGridIngenet(me));
 			reloadContentGrid(contentGrid);
 			content = contentGrid;
 		} else {
@@ -246,11 +250,17 @@ public class SeresPrincipal extends Composite{
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
-		} else if(parent.INGENET_DELIVERY.equals(command)){
-			getAPI().getSeres().getIngenetDelivery(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
+		} else {
+			
+		}
+	}
+	
+	public void reloadContentGrid(ContentGridIngenet contentGrid) {
+		if(parent.INGENET_DELIVERY.equals(command)){
+			getAPI().getSeres().getIngenetDeliveryAttach(getFilterMap(), new AsyncCallback<JSON<JsAttachFile>>() {
 				
 				@Override
-				public void onSuccess(JSON<JsSeresFile> result) {
+				public void onSuccess(JSON<JsAttachFile> result) {
 					contentGrid.addAll(result.getData().toLinkedList());
 					contentGrid.dataGrid.redraw();
 				}
@@ -283,6 +293,10 @@ public class SeresPrincipal extends Composite{
 	public Button getRetrieveAll() {
 		return parent.getRetrieveAll();
 	}
+
+	public Button getProcessAll() {
+		return parent.getProcessAll();
+	}
 	
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
@@ -305,7 +319,7 @@ public class SeresPrincipal extends Composite{
 	}
 
 	public void consoleLog(String string) {
-		parent.consoleLog(string);
+		SeresMain.consoleLog(string);
 	}
 	
 }
