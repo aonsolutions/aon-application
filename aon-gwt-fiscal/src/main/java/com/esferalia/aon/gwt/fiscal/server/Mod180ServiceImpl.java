@@ -57,4 +57,8 @@ public class Mod180ServiceImpl extends AonRemoteServiceServlet implements Model1
 		return FISCAL.changeStatusMod180(domainName, this.getUserLogin(), mod180, newStatus);
 	}
 
+	@Override
+	public Mod180 duplicateNextYear(String domainName, Integer domain, Integer id) {
+		return FISCAL.duplicateNextYearMod180(domainName, domain, this.getUserLogin(), id);
+	}
 }

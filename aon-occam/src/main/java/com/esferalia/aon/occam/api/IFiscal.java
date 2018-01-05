@@ -72,6 +72,7 @@ public interface IFiscal {
 	public Mod180Detail getMod180Detail(AONContext ctx,Integer id);
 	public Mod180 saveCommentsMod180(AONContext ctx, Mod180 mod180);
 	public Mod180 changeStatusMod180(AONContext ctx, Mod180 mod180, FiscalStatus newStatus);
+	public Mod180 duplicateNextYearMod180(AONContext ctx, Integer id);
 	
 	// 				   		  MOD190
 	public LinkedList<Mod190> getMod190s(AONContext ctx,int domain);
