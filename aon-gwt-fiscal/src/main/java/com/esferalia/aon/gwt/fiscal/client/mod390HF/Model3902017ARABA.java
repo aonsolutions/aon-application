@@ -281,9 +281,9 @@ public class Model3902017ARABA extends Model390HFBase {
 				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3DOrden+Foral+769+de+10+de+diciembre+de+2014.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224093065859&ssbinary=true"));
 		list.add(new Pair<String, String>("Orden Foral 765 de 11 de diciembre de 2013."
 				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3DOrden+Foral+765+de+11+de+diciembre+de+2013.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224093065860&ssbinary=true"));
-		list.add(new Pair<String, String>("Orden Foral 39 de 3 de febrero de 2010 que regula la obligación de algunos sujetos y entidades de presentar este modelo de forma telemática por Internet."
+		list.add(new Pair<String, String>("Orden Foral 39 de 3 de febrero de 2010 que regula la obligaci\u00F3n de algunos sujetos y entidades de presentar este modelo de forma telem\u00E1tica por Internet."
 				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3DOrden+Foral+39+de+3+de+febrero+de+2010+que+regula+la+obligaci%C3%B3n+de+algunos+sujetos+y+entidades+de+presentar+este+modelo+de+forma+telem%C3%A1tica+por+Internet.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224093065861&ssbinary=true"));
-		list.add(new Pair<String, String>("Resolución 2335 de 15 de diciembre de 2016."
+		list.add(new Pair<String, String>("Resoluci\u00F3n 2335 de 15 de diciembre de 2016."
 				,"http://www.araba.eus/cs/Satellite?blobcol=urldata&blobheader=application%2Fpdf&blobheadername1=Content-disposition&blobheadername2=pragma&blobheadervalue1=attachment%3B+filename%3DResoluci%C3%B3n+2335+de+15+de+diciembre+de+2016.pdf&blobheadervalue2=public&blobkey=id&blobtable=MungoBlobs&blobwhere=1224093065862&ssbinary=true"));
 		return list;
 	}
