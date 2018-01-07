@@ -43,7 +43,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.21-SNAPSHOT</version>
+      <version>9.21</version>
     </dependency>
     <dependency>
       <groupId>com.esferalia.aon</groupId>
@@ -78,7 +78,7 @@
         <dependency>
           <groupId>net.aonsolutions.core</groupId>
           <artifactId>pool</artifactId>
-          <version>9.21-SNAPSHOT</version>
+          <version>9.21</version>
         </dependency>
         <dependency>
           <groupId>org.jooq</groupId>
