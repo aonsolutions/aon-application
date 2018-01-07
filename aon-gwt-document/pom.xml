@@ -144,7 +144,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.21</version>
+      <version>9.22-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>

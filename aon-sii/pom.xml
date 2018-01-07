@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>net.aonsolutions.core</groupId>
 			<artifactId>sii</artifactId>
-			<version>9.21</version>
+			<version>9.22-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
         
