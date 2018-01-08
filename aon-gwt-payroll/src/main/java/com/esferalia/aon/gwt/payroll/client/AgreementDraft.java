@@ -200,11 +200,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		@ClassName("text-error")
 		String textError();
 		
+		String selectButtonSalaryToggleButton();
+		
 		String marginToggleButton();
 		
 		String moreButton();
 		
-		String deleteButton();
+		String deleteButtonUp();
+		
+		String deleteButtonDown();
 		
 		String datePickerPanel();
 		
@@ -1104,112 +1108,129 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		showDraft();
 	}
 
-	private void initSalarytabs(Date draftStratDate) {
+	private void initSalarytabs(Date draftStratDate, boolean readOnly) {
 		salaryToggleButtonsPanel.clear();
 		moreToggleButtonsPanel.clear();
 		int startTab = 0;
 		
 		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
-		for(int i=0; i<datesList.length; i++){
-			Date date = datesList[i];
-			if (date.equals(draftStratDate)){
-				startTab = i;
-				startTab = startTab*2;
-			}
-			
-			HorizontalPanel hPanel = new HorizontalPanel();
-			ToggleButton button = new ToggleButton(date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900));
-			button.addClickHandler(new ClickHandler() {
+		if (datesList.length != 0){
+			for(int i=0; i<datesList.length; i++){
+				Date date = datesList[i];
+				if (date.equals(draftStratDate)){
+					startTab = i;
+					startTab = startTab*2;
+				}
 				
-				@Override
-				public void onClick(ClickEvent event) {
-					if(button.isDown()){
-						putAllToggleButtonsUp();
-						button.setDown(true);
-						int selectedButton = 0;
-						
-						for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i++){
-							if(i%2 !=0){
-								continue;
+				HorizontalPanel hPanel = new HorizontalPanel();
+				ToggleButton button = new ToggleButton(date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900));
+				button.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						if(button.isDown()){
+							putAllToggleButtonsUp();
+							button.setDown(true);
+							int selectedButton = 0;
+							
+							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i++){
+								if(i%2 !=0){
+									continue;
+								}
+								HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+								if(button.equals(toggleButton)){
+									break;
+								}
+								selectedButton++;
 							}
+							
+						
+							Date month = datesList[selectedButton];
+							agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
+							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+							calculate();
+						
+						}else{
+							return;
+						}
+					}
+	
+					private void putAllToggleButtonsUp() {
+						for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
 							HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
 							ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-							if(button.equals(toggleButton)){
-								break;
+							toggleButton.setDown(false);
+						}	
+					}
+				});
+				
+				hPanel.add(button);
+				
+				if(!readOnly){
+					Button deleteButton = new Button("x");
+					deleteButton.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							int selectedButton = 0;
+							
+							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+								if(i%2 !=0){
+									continue;
+								}
+								HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+								if(button.equals(toggleButton)){
+									break;
+								}
+								selectedButton++;
 							}
-							selectedButton++;
-						}
-						
+							
+							Date month = datesList[selectedButton];
+							agreementDraftObject.addDeleteDatesChanges(month);
+							Date newSelectMonth = null;
+							if(selectedButton==0)
+								newSelectMonth = datesList[selectedButton+1];
+							else
+								newSelectMonth = datesList[selectedButton-1];
+							
+							if(newSelectMonth == null)
+								newSelectMonth = new Date(0);
+							agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(newSelectMonth));
+							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(newSelectMonth));
+							calculate();
+						}	
+					});
 					
-						Date month = datesList[selectedButton];
-						agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
-						agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
-						calculate();
-					
-					}else{
-						return;
-					}
+					deleteButton.addStyleName(style.deleteButtonUp());
+					hPanel.add(deleteButton);
 				}
-
-				private void putAllToggleButtonsUp() {
-					for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
-						HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
-						ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-						toggleButton.setDown(false);
-					}	
-				}
-			});
-			
-			Button deleteButton = new Button("x");
-			deleteButton.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					int selectedButton = 0;
-					
-					for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
-						if(i%2 !=0){
-							continue;
-						}
-						HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
-						ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-						if(button.equals(toggleButton)){
-							break;
-						}
-						selectedButton++;
-					}
-					
-					Date month = datesList[selectedButton];
-					agreementDraftObject.addDeleteDatesChanges(month);
-					Date newSelectMonth = null;
-					if(selectedButton==0)
-						newSelectMonth = datesList[selectedButton+1];
-					else
-						newSelectMonth = datesList[selectedButton-1];
-					
-					agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(newSelectMonth));
-					agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(newSelectMonth));
-					calculate();
-				}	
-			});
-			
-			deleteButton.addStyleName(style.deleteButton());
-			hPanel.add(button);
-			hPanel.add(deleteButton);
-			hPanel.addStyleName(style.panelButtons());
-			salaryToggleButtonsPanel.add(hPanel);
-			HTML html = new HTML("&nbsp");
-			salaryToggleButtonsPanel.add(html);
-			
+				
+				hPanel.addStyleName(style.panelButtons());
+				salaryToggleButtonsPanel.add(hPanel);
+				HTML html = new HTML("&nbsp");
+				salaryToggleButtonsPanel.add(html);
+				
+			}
 		}
 		
 		//addMoreButton
-		Button moreButton = addMoreButton();
-		moreToggleButtonsPanel.add(moreButton);
+		if(!readOnly){
+			Button moreButton = addMoreButton();
+			moreToggleButtonsPanel.add(moreButton);
+		}
 		
 		
-		HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(startTab);
-		ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-		toggleButton.setDown(true);
+		if (datesList.length != 0){
+			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(startTab);
+			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+			toggleButton.setDown(true);
+			if(!readOnly){
+				Button deleteButton = (Button) hPanel.getWidget(1);
+				deleteButton.addStyleName(style.deleteButtonDown());
+			}
+			hPanel.addStyleName(style.selectButtonSalaryToggleButton());
+		}
 	}
 
 	private Button addMoreButton() {
@@ -1275,7 +1296,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 //		draftMonthListBox.setHighLightMonths(agreementDraftObject.getDatesWithChanges());
 	
-		initSalarytabs(agreementDraftObject.getStartDate());
+		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
 		
 //		draftMonthListBox.setSelectedMonth(agreementDraftObject.getStartDate());
 //		syncDatesListBox();
@@ -1293,13 +1314,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		clearPaymentsTable();
 		paymentEditors.clear();
 		paymentEditors.addAll(dumpPayments());
-		paymentEditors.add(insertNewPaymentRow(paymentsTable.getRowCount()));
+		if(object.isMine())
+			paymentEditors.add(insertNewPaymentRow(paymentsTable.getRowCount()));
 
 		clearExtrasTable();
 		SortedSet<Payment> extraPayments = getAvailableExtraPayments();
 		extraEditors.clear();
 		extraEditors.addAll(dumpExtras(extraPayments));
-		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(), extraPayments));
+		if(object.isMine())
+			extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(), extraPayments));
 
 		clearEventsTable();
 		dumpEvents();
