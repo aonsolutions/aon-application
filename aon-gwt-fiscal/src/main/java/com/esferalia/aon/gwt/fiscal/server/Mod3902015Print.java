@@ -84,7 +84,7 @@ public class Mod3902015Print extends HttpServlet {
 			String fileName, byte[] content, int year) throws IOException,
 			KeyManagementException, NoSuchAlgorithmException, ServletException {
 
-		String fileString = new String(content);
+		String fileString = new String(content, "ISO-8859-1");
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
