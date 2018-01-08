@@ -575,7 +575,7 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 				 || location.getSelectedIndex() == 2
 				 || location.getSelectedIndex() == 3)
 				);
-		declaredKey.setEnabled(!"0".equals(partner.getLocation()));
+		declaredKey.setEnabled(location.isEnabled() && !"0".equals(partner.getLocation()));
 	}
 
 }
