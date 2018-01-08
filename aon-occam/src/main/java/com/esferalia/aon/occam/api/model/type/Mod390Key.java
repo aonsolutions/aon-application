@@ -233,7 +233,7 @@ public enum Mod390Key implements IFiscalModelKey  {
 	,AR_C250("390-AR250","250" ,"Opci\u00F3n por la aplicaci\u00F3n de la prorrata especial")
 	,AR_C251("390-AR251","251" ,"Revocaci\u00F3n de la opci\u00F3n por la aplicaci\u00F3n de la prorrata especial")
 	,AR_C150("390-AR150","150" ,"Prorrata general")
-	,AR_C151("390-AR151","151" ,"Prorrata especial")
+	,AR_C152("390-AR152","152" ,"Prorrata especial")
 	 
 	,AR_C001("390-AR001","1","R\u00E9gimen general - Base imponible")
 	,AR_C002("390-AR002","2","R\u00E9gimen general - Tipo %")

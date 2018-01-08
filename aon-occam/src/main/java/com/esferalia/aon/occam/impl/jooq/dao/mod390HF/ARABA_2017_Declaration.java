@@ -55,7 +55,7 @@ public class ARABA_2017_Declaration extends Mod390HFDeclaration {
 		,AR_C250	(Mod390Key.AR_C250)
 		,AR_C251	(Mod390Key.AR_C251)
 		,AR_C150	(Mod390Key.AR_C150)
-		,AR_C151	(Mod390Key.AR_C151)
+		,AR_C152	(Mod390Key.AR_C152)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEVENGADO

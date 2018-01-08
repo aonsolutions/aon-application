@@ -15,10 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod390HFWriter;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "Mod390HF File download", urlPatterns = { "/aon_gwt_fiscal/Model390HFFile" })
@@ -30,11 +30,11 @@ public class Mod390HFFile extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			int id = Integer.parseInt(req.getParameter("mod303"));
+			int id = Integer.parseInt(req.getParameter("mod390"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = AonServletUtils.getLoggedUser(); 
-			Mod303 mod303 = FISCAL.getMod303(domainName, domainId, user ,id);
+			Mod390HF mod303 = FISCAL.getMod390HF(domainName, domainId, user ,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -44,7 +44,7 @@ public class Mod390HFFile extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod303Writer.fillWriter(mod303, writer);
+			Mod390HFWriter.fillWriter(mod303, writer);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
 		    String fileName = AonFiscalFileUtils.getFileName(mod303);

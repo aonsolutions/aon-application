@@ -23,6 +23,14 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		ensureDetail(Mod303Key.CM_005).setAmount(defaultVatRegime == null?0:defaultVatRegime.ordinal());
 	}
 	
+	public boolean isEnrolledInDevolutionRegistry() {
+		if (getAdministration() == null) return false;
+		else if (isAraba()) return getAmount(Mod390Key.AR_C918) == 1;
+		else if (isBizkaia()) return getAmount(Mod390Key.BZ_C080) == 1;
+		else if (isGipuzkoa()) return getAmount(Mod390Key.GP_A003) == 1;
+		return false;
+	}
+
 	@Override
 	public boolean isComplementaryDeclarationAvailable() {
 		if (getAdministration() == null) return false;
