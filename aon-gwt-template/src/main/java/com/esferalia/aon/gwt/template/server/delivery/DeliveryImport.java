@@ -993,7 +993,7 @@ public class DeliveryImport {
 						.setDetail3(r.getDetalle3())
 						.setDescription(r.getConcepto())
 						.setPrice(r.getPrecio())
-						.setPurchasePrice(r.getPrecioCoste());
+						.setPurchasePrice(r.getPrecioCoste() != null ? r.getPrecioCoste() : 0.0);
 					item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), item);	
 				}
 			
