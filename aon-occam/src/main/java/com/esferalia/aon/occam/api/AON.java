@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -3707,12 +3708,15 @@ public class AON {
 		}		
 	}
 	
-	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login,
-			Integer registryId){
+	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login, Integer registryId){
+		return getRSellerStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId).and(f.getRegistryProperty().eq(registryId)));
+	}
+	
+	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login, RegistrySellerFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRSellerStream(ctx, registryId);
+			return getRegistry().getRSellerStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

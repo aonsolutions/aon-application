@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Person;
@@ -107,6 +108,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RNotePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RPayMethodPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RecordDataPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistrySellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -139,6 +141,7 @@ public class RegistryDAO {
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
+	private static final RegistrySellerPropertiesDAO RSELLER_PROPERTIES = new RegistrySellerPropertiesDAO();
 	private static final CarrierPropertiesDAO CARRIER_PROPERTIES = new CarrierPropertiesDAO();
 	private static final RecordDataPropertiesDAO RECORD_DATA_PROPERTIES = new RecordDataPropertiesDAO();
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
@@ -680,10 +683,10 @@ public class RegistryDAO {
 		}
 	}
 	
-	public static Stream<Seller> getRSellerStream(AONContext ctx, Integer registryId){
+	public static Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter filter){
 		return ctx.getDslContext().select().from(RSELLER)
 				.join(REGISTRY).on(RSELLER.SELLER.eq(REGISTRY.ID))
-				.where(RSELLER.REGISTRY.eq(registryId))
+				.where(RSELLER_PROPERTIES.getConditions(filter))
 				.fetchInto(REGISTRY).stream().map(new SellerFiller());
 	}
 	

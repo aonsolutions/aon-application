@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -137,7 +138,7 @@ public class RegistryServlet extends HttpServlet{
 		AON.getRSegmentStream(domain.getName(), domain.getId(), login, registryId)
 		.forEach(s -> {segmentation = segmentation + " - " + s.getName();});
 
-		AON.getRSellerStream(domain.getName(), domain.getId(), login, registryId)
+		AON.getRSellerStream(domain.getName(), domain.getId(), login, f-> f.getRegistryProperty().eq(registryId).and(f.getStatusProperty().eq(SellerStatus.ACTIVE.value())))
 		.forEach(s -> {commercial = commercial + " - " + s.getRegistryName();});
 		
 		CustomerStatus status = AON.getCustomer(domain.getName(), domain.getId(), login, registryId).getStatus();

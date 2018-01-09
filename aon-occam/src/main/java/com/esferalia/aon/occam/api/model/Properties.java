@@ -386,6 +386,16 @@ public interface Properties {
 		Property<String> getMunicipalityCodeProperty();
 	}
 	
+	public interface RegistrySellerProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getSellerProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
 	public interface RegistryMediaProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

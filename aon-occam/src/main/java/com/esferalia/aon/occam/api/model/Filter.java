@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryPayMethodProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
@@ -190,6 +191,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface RegistryAddressFilter{
 		Filter filter(RegistryAddressProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface RegistrySellerFilter{
+		Filter filter(RegistrySellerProperties properties);
 	}
 	
 	@FunctionalInterface
