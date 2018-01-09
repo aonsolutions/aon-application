@@ -324,6 +324,7 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 
 		memberEndOfYear.setText(AON.MSG.memberEndOfYear());
 		memberEndOfYear.setStyleName(AON.AON_CSS.aonFontMedium());
+		memberEndOfYear.setValue(partner.isMemberEndOfYear());
 		memberEndOfYear.addClickHandler(new ClickHandler() {
 			
 			@Override
