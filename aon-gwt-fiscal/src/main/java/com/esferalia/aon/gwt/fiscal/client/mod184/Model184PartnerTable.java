@@ -267,6 +267,11 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 				.setProvince(partner.getProvince())
 				.setCountry(partner.getCountry())
 				.setPartType(partner.getPartType())
+				
+				.setMemberEndOfYear(partner.isMemberEndOfYear())
+				.setMemberDays(partner.getMemberDays())
+				.setPartPercent(partner.getPartPercent())
+				.setAddress(partner.getAddress())
 			);
 		table.setRowData(cbk.getMod184().getPartners());
 		table.redraw();
