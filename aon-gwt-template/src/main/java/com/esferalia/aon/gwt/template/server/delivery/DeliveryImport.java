@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -846,10 +847,10 @@ public class DeliveryImport {
 								.setDomain(domain.getId())
 								.setRegistry(registry.getId())
 								.setPayMethod(pm.getId())
-								.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 0)
+								.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
 								.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 								.setDaysBetwenPymnts(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
-								.setPymnt_days(r.getDiasPago()); 
+								.setPymnt_days(r.getDiasPago() != null ? getDiasPago(r.getDiasPago())  : ""); 
 						AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
 					}
 				}
@@ -917,7 +918,7 @@ public class DeliveryImport {
 							p.setId(id);
 						}
 					}
-				
+					
 					delivery = new Delivery()
 							.setDomain(domain.getId())
 							.setSeries(r.getSerie())
@@ -935,7 +936,7 @@ public class DeliveryImport {
 							.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
 							.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 							.setDaysBetweenPymnt(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
-							.setPymntDays(r.getDiasPago() != null ? r.getDiasPago() : "0")					
+							.setPymntDays(r.getDiasPago() != null ? getDiasPago(r.getDiasPago()) : "")					
 							.setTotalPackages(0.0)
 							.setTotalWeight(0.0)
 							.setProject(p);
@@ -950,6 +951,20 @@ public class DeliveryImport {
 		});
 		return map;
 	}
+	
+	private String getDiasPago(String dp){
+		try {
+			StringTokenizer strTknzr = new StringTokenizer(dp, " ");
+    		for (int i = 0; i < strTknzr.countTokens(); i++){
+    			Integer val = Integer.parseInt(strTknzr.nextToken());
+    			if(val == 0) return "";
+    		}
+    		return dp;
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
 	
 	private void importAlbvDet(Domain domain, User user, HashMap<Integer, Delivery> albv) {
 		di.getAlbvDetList().stream().forEach(r -> {
