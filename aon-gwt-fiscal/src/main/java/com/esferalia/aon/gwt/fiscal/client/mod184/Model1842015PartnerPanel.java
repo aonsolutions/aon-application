@@ -31,7 +31,7 @@ public class Model1842015PartnerPanel extends SimpleLayoutPanel implements Focus
 	
 	private static enum Mod184PartnerKey {
 		 A ("A - Rendimientos del capital mobiliario."
-			 ,new String[] {"01","02","03"}
+			 ,new String[] {"01","02"}
 		 	 ,new String[] {
 	 			 "01 - Rendimientos capital mobiliario ap. 1, 2, y 3 art. 25 LIRPF"
 		 		,"02 - Rendimientos capital mobiliario ap. 4 art. 25 LIRPF"})

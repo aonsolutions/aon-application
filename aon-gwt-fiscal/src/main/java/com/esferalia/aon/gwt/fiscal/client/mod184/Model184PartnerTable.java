@@ -43,6 +43,7 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 			this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 			this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 			
+			addKeyColumn();
 			addNameColumn();
 			
 			model = new SingleSelectionModel<Mod184Partner>(Model184.MOD184_PARTNER_PROVIDES_KEY);
@@ -50,6 +51,32 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 			this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 		}
 	
+		private void addKeyColumn() {
+			final TextColumn<Mod184Partner> nameColumn = new TextColumn<Mod184Partner>() {
+				@Override
+				public String getValue(Mod184Partner detail) {
+					return AonStringUtils.defaultIfBlank(detail.getKey(), AON.MSG.newPartner())
+						+ (AonStringUtils.isBlank( detail.getSubKey()) ? "" : " - " + detail.getSubKey()); 
+				}
+				@Override
+				public void render(Context context, Mod184Partner partner, SafeHtmlBuilder sb) {
+					sb.appendHtmlConstant("<div style='");
+					if (partner.isDirty()) {
+						sb.appendHtmlConstant("font-weight:bold;");
+					}
+					if (partner.isDeleted()) {
+						sb.appendHtmlConstant("text-decoration:line-through;");
+					}
+					sb.appendHtmlConstant("font-size: 0.8em;height: auto;overflow: hidden; padding-right: 1px; text-transform: uppercase;width: auto; white-space: nowrap;'>");
+					sb.appendEscaped( getValue(partner) );
+					sb.appendHtmlConstant("</div>");
+				} 
+				
+			};
+			this.addColumn(nameColumn, "C");
+			this.setColumnWidth(nameColumn, "38px");
+		}
+
 		private void addNameColumn() {
 			final TextColumn<Mod184Partner> nameColumn = new TextColumn<Mod184Partner>() {
 				@Override
@@ -65,8 +92,10 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 					if (detail.isDeleted()) {
 						sb.appendHtmlConstant("text-decoration:line-through;");
 					}
-					sb.appendHtmlConstant("font-size: 0.9em;height: auto;overflow: hidden; padding-right: 3px; text-transform: uppercase;width: auto;'>");
-					sb.appendEscaped( AonStringUtils.abbreviate( getValue(detail), 35 ));
+					sb.appendHtmlConstant("font-size: 0.8em;height: auto;overflow: hidden; padding-right: 3px; text-transform: uppercase;width: auto;'>");
+					sb.appendEscaped( AonStringUtils.defaultIfBlank(detail.getDocument(), ""));
+					sb.appendEscaped( AonStringUtils.HYPHEN);
+					sb.appendEscaped( AonStringUtils.abbreviate( getValue(detail), 25 ));
 					if (detail.isDirty()) {
 						sb.appendEscaped("*");
 					}
@@ -113,13 +142,20 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 		tablePanel.add(table);
 		tableDockLayout.add(tablePanel);
 		refresh();
+		
+		// Al cambiar el orden de búsqueda de los socios, (orderBy) en el Mod184DAO debido a una validación errornea
+		// en AEAT (Issue #1685), el comportamiento de seleccionar el socio es incoherente. Se selecciona siempre el 
+		// primero. 
+		selectedIndex = null;
+		// ----------------------------------------------------
+		
 		if (table.getVisibleItemCount() == 0) {
 			newPartner( cbk );
-		} else if ( selectedIndex != null && selectedIndex >= 0) {
-			if (selectedIndex >= cbk.getMod184().getPartners().size()) {
-				selectedIndex = cbk.getMod184().getPartners().size() - 1;
-			}
-			table.getSelectionModel().setSelected(cbk.getMod184().getPartners().get(selectedIndex), true);	
+//		} else if ( selectedIndex != null && selectedIndex >= 0) {
+//			if (selectedIndex >= cbk.getMod184().getPartners().size()) {
+//				selectedIndex = cbk.getMod184().getPartners().size() - 1;
+//			}
+//			table.getSelectionModel().setSelected(cbk.getMod184().getPartners().get(selectedIndex), true);	
 		} else {
 			table.getSelectionModel().setSelected( table.getVisibleItems().get(0), true);	
 		}

@@ -72,6 +72,7 @@ public class Mod184DAO {
 			.selectFrom(FS_MODEL184_DETAIL)
 			.where(FS_MODEL184_DETAIL.FS_MODEL184.equal(mod184))
 			.and(FS_MODEL184_DETAIL.TYPE.eq("P"))
+			.orderBy(FS_MODEL184_DETAIL.DOCUMENT,FS_MODEL184_DETAIL.KEY,FS_MODEL184_DETAIL.SUBKEY )
 			.fetch()
 			.stream()
 			.map( new Mod184PartnerFiller() )
