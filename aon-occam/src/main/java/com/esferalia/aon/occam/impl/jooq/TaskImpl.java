@@ -218,6 +218,12 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
+	public TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.updateTaskHolder(ctx, taskHolder));
+	}
+	
+	@Override
 	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.insertTaskHolder(ctx, taskHolder));

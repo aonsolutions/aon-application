@@ -763,6 +763,13 @@ public class TaskDAO {
 				.fetchInto(TASK_HOLDER).stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 	
+	public static TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder){
+		return ctx.getDslContext().update(TASK_HOLDER)
+				.set(TASK_HOLDER.ACTIVE, taskHolder.getActive())
+				.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
+			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());	
+	}
+	
 	public static TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder){
 		return ctx.getDslContext().insertInto(TASK_HOLDER, TASK_HOLDER.ACTIVE, TASK_HOLDER.COST_PROFILE, TASK_HOLDER.DOMAIN, TASK_HOLDER.REGISTRY, TASK_HOLDER.TYPE, TASK_HOLDER.USER_ID)
 			.values(taskHolder.getActive(), taskHolder.getCostProfile(), taskHolder.getDomain(), taskHolder.getId(),taskHolder.getType(), taskHolder.getUserId())

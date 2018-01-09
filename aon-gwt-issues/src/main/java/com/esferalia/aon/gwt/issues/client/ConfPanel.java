@@ -583,14 +583,32 @@ public class ConfPanel extends Composite {
 	}
     
     private void updateWorkgroup(JsUser user){
+    	VerticalPanel vp = new VerticalPanel();
+    	
     	PaperInput pi = new PaperInput();
 		pi.setLabel("Grupo de Trabajo");
 		pi.setValue(user.getLogin());
-		AonDialog2 dialog =  new AonDialog2("Editar Grupo de Trabajo",pi){
+		
+		PaperToggleButton active = new PaperToggleButton();
+		active.setChecked(user.getStatus().getName().equalsIgnoreCase("ACTIVO"));
+    
+    	InlineLabel label1 = new InlineLabel("Activo");
+    	label1.getElement().getStyle().setFontSize(16, Unit.PX);
+    	active.add(label1);
+    	
+    	vp.add(pi);
+    	vp.add(active);
+		
+		AonDialog2 dialog =  new AonDialog2("Editar Grupo de Trabajo",vp){
 			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
-				PaperInput pi = (PaperInput) content.getWidget(0);
-				incidence.updateGroup(user.getId(), "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsUser>() {
+				VerticalPanel vp = (VerticalPanel) content.getWidget(0);
+				PaperInput pi = (PaperInput) vp.getWidget(0);
+				PaperToggleButton active = (PaperToggleButton) vp.getWidget(1);
+
+				incidence.updateGroup(user.getId(), "{\"name\":\""+ pi.getValue() +"\","
+						+ "\"active\":\""+ active.getChecked() +"\""
+						+ "}", new AsyncCallback<JsUser>() {
 					
 					@Override
 					public void onSuccess(JsUser result) {
@@ -724,6 +742,15 @@ public class ConfPanel extends Composite {
 				pi2.setValue(user.getEmail());
 				pi2.setLabel("Email");
 				vp.add(pi2);
+				
+				PaperToggleButton active = new PaperToggleButton();
+				active.setChecked(user.getStatus().getName().equalsIgnoreCase("ACTIVO"));
+		    	InlineLabel label1 = new InlineLabel("Activo");
+		    	label1.getElement().getStyle().setFontSize(16, Unit.PX);
+		    	active.add(label1);
+		    	
+		    	vp.add(active);
+				
 				VaadinComboBox acb = new VaadinComboBox();
 				acb.setLabel("Grupo de Trabajo");
 				acb.setItemLabelPath("login");
@@ -744,6 +771,7 @@ public class ConfPanel extends Composite {
 					}
 				});
 				vp.add(acb);
+				
 				user.getWorkgroups().stream().forEach(r -> printSelectedWorkgroup(r, vp));
 				AonDialog2 dialog =  new AonDialog2("Editar Operario",vp){
 					@Override protected void onCancel() {hide();}
@@ -751,12 +779,16 @@ public class ConfPanel extends Composite {
 						VerticalPanel vp = (VerticalPanel) content.getWidget(0);
 						PaperInput name = (PaperInput) vp.getWidget(0);
 						PaperInput email = (PaperInput) vp.getWidget(1);
+						PaperToggleButton active = (PaperToggleButton) vp.getWidget(2);
 						String str = "";
-						for(Integer i = 3; i < vp.getWidgetCount(); i++){
+						for(Integer i = 4; i < vp.getWidgetCount(); i++){
 							HorizontalPanel hp = (HorizontalPanel) vp.getWidget(i);
 							str = str + hp.getLayoutData().toString() + "@";
 						}
-						incidence.updateOperator(user.getId(), "{\"name\":\""+ name.getValue() +"\",\"email\":\""+ email.getValue() +"\",\"workgroups\":\""+str+"\"}", new AsyncCallback<JsUser>() {
+						incidence.updateOperator(user.getId(), "{\"name\":\""+ name.getValue() +"\","
+								+ "\"email\":\""+ email.getValue() +"\","
+								+ "\"active\":\""+ active.getChecked() +"\","
+								+ "\"workgroups\":\""+str+"\"}", new AsyncCallback<JsUser>() {
 					
 							@Override
 							public void onSuccess(JsUser result) {
