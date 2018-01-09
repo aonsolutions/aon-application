@@ -43,16 +43,22 @@ public enum InvoiceChartType implements Serializable {
 			chartVisitor. visitAbcInvoiceTitularAddress();
 		}
 	})
+	,ABC_INVOICE_PRODUCT("ABC Productos", new ITypeVisitor() {
+		@Override
+		public void visit(IInvoiceChartTypeVisitor chartVisitor) {
+			chartVisitor. visitAbcInvoiceProduct();
+		}
+	})
 	,ABC_INVOICE_CATEGORY("ABC Categor\u00EDa", new ITypeVisitor() {
 		@Override
 		public void visit(IInvoiceChartTypeVisitor chartVisitor) {
 			chartVisitor. visitAbcInvoiceCategory();
 		}
 	})
-	,ABC_INVOICE_PRODUCT("ABC Productos", new ITypeVisitor() {
+	,ABC_PRODUCT_BRAND("ABC Marca producto", new ITypeVisitor() {
 		@Override
 		public void visit(IInvoiceChartTypeVisitor chartVisitor) {
-			chartVisitor. visitAbcInvoiceProduct();
+			chartVisitor. visitAbcProductBrand();
 		}
 	})
 	,ABC_INVOICE_WORKPLACE("ABC Centro de trabajo", new ITypeVisitor() {

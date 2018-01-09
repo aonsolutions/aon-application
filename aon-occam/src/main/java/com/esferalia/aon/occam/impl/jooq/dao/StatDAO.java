@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
@@ -97,6 +98,13 @@ public class StatDAO {
 					.setLabel(pc.getName())
 					.setType(StatFilterType.PRODUCT_CATEGORY));
 		}
+		
+		ProductDAO.getBrandStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
+			.forEach(brand -> params.getFilterItems().add(
+				new StatFilterItem().setId(AonNumberUtils.toString(brand.getId()))
+				.setLabel(brand.getName())
+				.setType(StatFilterType.PRODUCT_BRAND)));
+		
 		ProductDAO.getTags(ctx).forEach( tag -> 
 		 	params.getFilterItems().add(new StatFilterItem()
 		 			.setId(AonNumberUtils.toString(tag.getId()))
@@ -467,6 +475,23 @@ public class StatDAO {
 										, rec.getValue(sum).doubleValue());
 							});
 					}
+					
+					@Override
+					public void visitAbcProductBrand() {
+						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
+						getSelect(ctx,BRAND.ID,BRAND.NAME, INVOICE.TYPE, sum)
+							.leftOuterJoin(BRAND).on(PRODUCT.BRAND.eq(BRAND.ID))
+							.where( StatDAO.getInvoiceCondition(ctx, params))
+							.groupBy(BRAND.ID, INVOICE.TYPE)
+							.orderBy(sum.desc())
+							.fetch().stream().forEach(rec -> {
+								InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+								table.put(AonStringUtils.defaultIfBlank(rec.getValue(BRAND.NAME), UNKNOWN)
+										, type.getDescription()
+										, rec.getValue(sum).doubleValue());
+							});
+					}
+					
 				});
 			}
 
@@ -710,6 +735,7 @@ public class StatDAO {
 	private static class StatDAOInvoiceFilterItemVisitor implements IStatFilterItemVisitor {
 		
 		private Condition productCategoriesCondition = null;
+		private Condition productBrandsCondition = null;
 		private Condition productTagCondition = null;
 		private Condition invoiceTypeCondition = null;
 		private Condition workplaceCondition = null;
@@ -739,6 +765,19 @@ public class StatDAO {
 						productCategoriesCondition = PRODUCT.CATEGORY.eq( productCategoryId );
 					} else {
 						productCategoriesCondition = productCategoriesCondition.or(PRODUCT.CATEGORY.eq(productCategoryId));
+					}
+				}
+			}
+		}
+		@Override
+		public void visitProductBrandCondition(StatFilterItem item) {
+			if (item.isSelected() ) {
+				if (item.getType() == StatFilterType.PRODUCT_BRAND) {
+					int productBrandId = AonNumberUtils.toInteger( item.getId());
+					if (productBrandsCondition == null) {
+						productBrandsCondition = PRODUCT.BRAND.eq( productBrandId );
+					} else {
+						productBrandsCondition = productBrandsCondition.or(PRODUCT.BRAND.eq(productBrandId));
 					}
 				}
 			}
@@ -829,6 +868,7 @@ public class StatDAO {
 		final LinkedList<Byte> types = new LinkedList<Byte>();
 		final LinkedList<Integer> categories = new LinkedList<Integer>();
 		final LinkedList<Integer> tags = new LinkedList<Integer>();
+		final LinkedList<Integer> brands = new LinkedList<Integer>();
 		final LinkedList<Integer> workplaces = new LinkedList<Integer>();
 		final LinkedList<Integer> sellers = new LinkedList<Integer>();
 		final LinkedList<Integer> segments = new LinkedList<Integer>();
@@ -851,6 +891,11 @@ public class StatDAO {
 			}
 
 			@Override
+			public void visitProductBrandCondition(StatFilterItem item) {
+				if (item.isSelected() ) brands.add( AonNumberUtils.toInteger( item.getId() ));
+			}
+
+			@Override
 			public void visitWorkplaceCondition(StatFilterItem item) {
 				if (item.isSelected() ) workplaces.add( AonNumberUtils.toInteger( item.getId() ));
 			}
@@ -869,8 +914,6 @@ public class StatDAO {
 			item.getType().visit(visitor,item);
 		}
 		
-		// tags.isEmpty()
-		
 		return InvoiceFormatter.formatInvoices("LISTADO DE FACTURAS", 
 				"(M\u00E1x. 1000 Facturas)",
 				InvoiceDAO.getInvoiceDetails(ctx, 
@@ -882,6 +925,7 @@ public class StatDAO {
 							.and(params.getProduct()==null?null:p.getProductProperty().eq(params.getProduct()))
 							.and((types==null||types.size()==0)?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
 							.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
+							.and((brands==null||brands.size()==0)?null:p.getProductBrandProperty().in(brands.toArray(new Integer[brands.size()])))
 							.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
 							.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
 							.and(p.getProductTypeProperty().ne(ProductType.PREPAYMENT.value()))

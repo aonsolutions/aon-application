@@ -32,6 +32,13 @@ public class StatFilterItem implements Serializable {
 				statFilterItemVisitor.visitProductTagCondition(item);
 			}
 		 })
+		,PRODUCT_BRAND("Marcas",new IFilterItemVisitor() {
+
+			@Override
+			public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
+				statFilterItemVisitor.visitProductBrandCondition(item);
+			}
+		 })
 		,SEGMENT("Segmentaci\u00F3n",new IFilterItemVisitor() {
 
 			@Override

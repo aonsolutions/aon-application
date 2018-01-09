@@ -2856,6 +2856,7 @@ right
 
 .aon-stat-menu-style{
 	max-height: 300px;
+	min-width: 200px;
 }
 
 	.custom-dialog-panel {

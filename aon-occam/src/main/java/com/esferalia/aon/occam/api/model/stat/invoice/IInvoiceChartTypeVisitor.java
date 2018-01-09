@@ -23,5 +23,7 @@ public interface IInvoiceChartTypeVisitor {
 	void visitAbcInvoiceSeller();
 
 	void visitGeoProvince();
+
+	void visitAbcProductBrand();
 	
 }

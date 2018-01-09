@@ -33,12 +33,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class StatFilter extends SimpleLayoutPanel implements HasValueChangeHandlers<StatParams> {
+public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<StatParams> {
 
 	private static class MediumLabel extends InlineLabel {
 		private MediumLabel(String label) {
@@ -63,8 +62,6 @@ public class StatFilter extends SimpleLayoutPanel implements HasValueChangeHandl
 	public void paintFilter(StatParams result) {
 		params = result;
 		params.setStatType(StatType.INVOICE);
-		FlowPanel container = new FlowPanel();
-		container.setHeight("100%");
 		
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonWidth98Percent());
@@ -75,8 +72,13 @@ public class StatFilter extends SimpleLayoutPanel implements HasValueChangeHandl
 		tab.getColumnFormatter().setWidth(1, "90px");
 		tab.getColumnFormatter().setWidth(2, "40px");
 		tab.getColumnFormatter().setWidth(3, "90px");
+		tab.getColumnFormatter().setWidth(4, "auto");
+		tab.getColumnFormatter().setWidth(5, "90px");
+		tab.getColumnFormatter().setWidth(6, "300px");
+		tab.getColumnFormatter().setWidth(7, "90px");
 		
-		tab.setWidget(0, 0, new MediumLabel(AON.MSG.from()));
+		int row = 0;
+		tab.setWidget(row, 0, new MediumLabel(AON.MSG.from()));
 		final DateBoxEx from = new DateBoxEx();
 		from.setValue(params.getFrom());
 		from.addValueChangeHandler(new ValueChangeHandler<Date>() {
@@ -86,10 +88,10 @@ public class StatFilter extends SimpleLayoutPanel implements HasValueChangeHandl
 				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
 			}
 		});
-		tab.setWidget(0, 1, from);
+		tab.setWidget(row, 1, from);
 		
 		
-		tab.setWidget(0, 2, new MediumLabel(AON.MSG.until()));
+		tab.setWidget(row, 2, new MediumLabel(AON.MSG.until()));
 		final DateBoxEx to = new DateBoxEx();
 		to.setValue(params.getTo());
 		to.addValueChangeHandler(new ValueChangeHandler<Date>() {
@@ -99,9 +101,94 @@ public class StatFilter extends SimpleLayoutPanel implements HasValueChangeHandl
 				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
 			}
 		});
-		tab.setWidget(0, 3, to);
+		tab.setWidget(row, 3, to);
 		
-		int col = 4;
+		final CheckBox quantities = new CheckBox( AON.MSG.quantities());
+		quantities.setStyleName(AON.AON_CSS.aonFontMedium());
+		quantities.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				params.setViewAmounts(quantities.getValue());
+				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+			}
+		});
+		tab.setWidget(row, 4, quantities);
+		
+		tab.setWidget(row, 5, new MediumLabel(AON.MSG.graphicType()));
+		final ListBox chartType = new ListBox();
+		chartType.setStyleName(AON.AON_CSS.aonMarginRight());
+		chartType.addStyleName(AON.AON_CSS.aonWidth300());
+		for (InvoiceChartType type : InvoiceChartType.values()) {
+			chartType.addItem(type.getDescription());
+		}
+
+		chartType.setSelectedIndex(result.getChartType());
+		chartType.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				params.setChartType((byte) chartType.getSelectedIndex());
+				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+			}
+		});
+		tab.setWidget(row, 6, chartType);
+		
+		
+		Button clean = new Button( AON.MSG.clean() );
+		clean.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				result.clean();
+				paintFilter(result);	
+				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+			}
+		});
+		tab.setWidget(row, 7, clean );
+		row++;
+		
+		tab.setWidget(row, 0, new MediumLabel(AON.MSG.titular()));
+		InvoiceRegistryBox titular = new InvoiceRegistryBox(getCurrentDomainName(),getCurrentDomain() );
+		titular.setRequired(false);
+		titular.addSelectionHandler(new  SelectionHandler<InvoiceRegistry>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<InvoiceRegistry> event) {
+				if (event.getSelectedItem() != null) {
+					params.setRegistry( event.getSelectedItem().getId());
+				} else {
+					params.setRegistry( null );
+				}
+				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+			}
+		});
+		tab.getFlexCellFormatter().setColSpan(row, 1, 7);
+		tab.setWidget(row, 1, titular);
+		row++;
+		
+		tab.setWidget(row, 0, new MediumLabel(AON.MSG.product()));
+		InvoiceProductBox product = new InvoiceProductBox(getCurrentDomainName(),getCurrentDomain() );
+		product.setRequired(false);
+		product.addSelectionHandler(new  SelectionHandler<Product>() {
+
+			@Override
+			public void onSelection(SelectionEvent<Product> event) {
+				if (event.getSelectedItem() != null) {
+					params.setProduct( event.getSelectedItem().getId());
+				} else {
+					params.setProduct( null );
+				}
+				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+			}
+		});
+		tab.getFlexCellFormatter().setColSpan(row, 1, 7);
+		tab.setWidget(row, 1, product);
+		row++;
+
+		tab.setWidget(row, 0, new MediumLabel("Filtrar por: "));
+		FlexTable filterTab = new FlexTable();
+		int col = 1;
 		final HashMap<StatFilterType,StatFilterMenu> menus = new HashMap<StatFilterType,StatFilterMenu>();					
 		for (final StatFilterItem item : result.getFilterItems()) {
 			if (!menus.containsKey( item.getType())) {
@@ -122,8 +209,8 @@ public class StatFilter extends SimpleLayoutPanel implements HasValueChangeHandl
 					}
 				});
 				
-				tab.getColumnFormatter().setWidth(col, "120px");
-				tab.setWidget(0, col++, button);
+				filterTab.getColumnFormatter().setWidth(col, "120px");
+				filterTab.setWidget(0, col++, button);
 				menu.addSelectionHandler(new SelectionHandler<StatFilterItem>() {
 					
 					@Override
@@ -144,101 +231,11 @@ public class StatFilter extends SimpleLayoutPanel implements HasValueChangeHandl
 			parent.addItem( item );						
 			
 		}
-		
-		Button clean = new Button( AON.MSG.clean() );
-		clean.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				result.clean();
-				paintFilter(result);	
-				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-			}
-		});
-		tab.getColumnFormatter().setWidth(col, "auto");
-		tab.getCellFormatter().setStyleName(0, col, AON.AON_CSS.aonTextRight());
-		tab.setWidget(0, col++, clean );
-		container.add(tab);
-		
-		FlexTable tab1 = new FlexTable();
-		tab1.setStyleName(AON.AON_CSS.aonWidth98Percent());
-		tab1.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab1.addStyleName(AON.AON_CSS.aonNowrap());
-		
-		tab1.getColumnFormatter().setWidth(0, "40px");
-		tab1.getColumnFormatter().setWidth(1, "auto");
-		tab1.getColumnFormatter().setWidth(2, "90px");
-		tab1.getColumnFormatter().setWidth(3, "300px");
-		
-		tab1.setWidget(0, 0, new MediumLabel(AON.MSG.titular()));
-		InvoiceRegistryBox titular = new InvoiceRegistryBox(getCurrentDomainName(),getCurrentDomain() );
-		titular.setRequired(false);
-		titular.addSelectionHandler(new  SelectionHandler<InvoiceRegistry>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<InvoiceRegistry> event) {
-				if (event.getSelectedItem() != null) {
-					params.setRegistry( event.getSelectedItem().getId());
-				} else {
-					params.setRegistry( null );
-				}
-				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-			}
-		});							
-		tab1.setWidget(0, 1, titular);
-		
-		final CheckBox quantities = new CheckBox( AON.MSG.quantities());
-		quantities.setStyleName(AON.AON_CSS.aonFontMedium());
-		quantities.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				params.setViewAmounts(quantities.getValue());
-				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-			}
-		});
-		tab1.setWidget(0, 3, quantities);
-		
-		tab1.setWidget(1, 0, new MediumLabel(AON.MSG.product()));
-		InvoiceProductBox product = new InvoiceProductBox(getCurrentDomainName(),getCurrentDomain() );
-		product.setRequired(false);
-		product.addSelectionHandler(new  SelectionHandler<Product>() {
+		tab.getFlexCellFormatter().setColSpan(row, 1, 7);
+		tab.setWidget(row, 1, filterTab);
+		row++;
 
-			@Override
-			public void onSelection(SelectionEvent<Product> event) {
-				if (event.getSelectedItem() != null) {
-					params.setProduct( event.getSelectedItem().getId());
-				} else {
-					params.setProduct( null );
-				}
-				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-			}
-		});
-		tab1.setWidget(1, 1, product);
-
-		tab1.getCellFormatter().setStyleName(1, 2, AON.AON_CSS.aonTextRight());
-		tab1.setWidget(1, 2, new MediumLabel(AON.MSG.graphicType()));
-		final ListBox chartType = new ListBox();
-		chartType.setStyleName(AON.AON_CSS.aonMarginRight());
-		chartType.addStyleName(AON.AON_CSS.aonWidth300());
-		for (InvoiceChartType type : InvoiceChartType.values()) {
-			chartType.addItem(type.getDescription());
-		}
-
-		chartType.setSelectedIndex(result.getChartType());
-		chartType.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				params.setChartType((byte) chartType.getSelectedIndex());
-				ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-			}
-		});
-		tab1.setWidget(1, 3, chartType);
-		
-		container.add(tab1);
-		
-		setWidget(container);
+		setWidget(tab);
 	}
 
 	public void paintFilter(final AsyncCallback<StatParams> callback) {
