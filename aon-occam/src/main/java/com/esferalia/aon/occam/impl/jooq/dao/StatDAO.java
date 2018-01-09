@@ -28,6 +28,9 @@ import java.util.stream.Stream;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.SelectField;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -142,7 +145,7 @@ public class StatDAO {
 			c = c.and(PRODUCT.ID.eq(params.getProduct()));
 		}
 		// Se ignoran los suplidos.
-		c = c.and(PRODUCT.TYPE.ne(ProductType.PREPAYMENT.value()));
+		c = c.and(PRODUCT.TYPE.isNull().or(PRODUCT.TYPE.ne(ProductType.PREPAYMENT.value())));
 		// -----------------------
 		StatDAOInvoiceFilterItemVisitor visitor = new StatDAOInvoiceFilterItemVisitor();		
 		for (StatFilterItem item : params.getFilterItems() ) {
@@ -199,13 +202,7 @@ public class StatDAO {
 					public void visitInvoiceTypeByYearComboChart() {
 						final Field<Integer> year = DSL.year(INVOICE.ISSUE_DATE);
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(year, INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
+						getSelect(ctx,year, INVOICE.TYPE, sum)
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(year, INVOICE.TYPE)
 							.orderBy(year, DSL.decode()
@@ -228,20 +225,32 @@ public class StatDAO {
 							});
 					}
 					
+					private SelectOnConditionStep<Record> getSelect(AONContext ctx, SelectField<?> ... fields) {
+						SelectOnConditionStep<Record> sel = ctx.getDslContext()
+								.select(fields)
+								.from(INVOICE)
+								.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+								.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+								.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+								;
+							if (params.hasTagFilter()) {
+								sel = sel
+									.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID));
+							}
+							if (params.hasSegmentFilter()) {
+								sel = sel.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY));
+							}
+						return sel;
+					}
+
 					@Override
 					public void visitInvoiceTypeByMonthsComboChart() {
 						final Field<Integer> year = DSL.year(INVOICE.ISSUE_DATE);
 						final Field<Integer> month = DSL.month(INVOICE.ISSUE_DATE);
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(year,month, INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
+						getSelect(ctx, year,month, INVOICE.TYPE, sum )
 							.where( StatDAO.getInvoiceCondition(ctx, params))
-							.groupBy(year,month, INVOICE.TYPE)
+						    .groupBy(year,month, INVOICE.TYPE)
 							.orderBy(year,month, DSL.decode()
 									   .when(INVOICE.TYPE.equal((byte) 1), 0)
 									   .when(INVOICE.TYPE.equal((byte) 0), 1)
@@ -262,17 +271,12 @@ public class StatDAO {
 							});
 					}
 					
+
 					@Override
 					public void visitInvoiceTypeByWeeksComboChart() {					
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
 						final Calendar calendar = Calendar.getInstance();
-						ctx.getDslContext().select(INVOICE.ISSUE_DATE , INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
+						getSelect(ctx,INVOICE.ISSUE_DATE , INVOICE.TYPE, sum)
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
 							.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
@@ -306,13 +310,7 @@ public class StatDAO {
 					@Override
 					public void visitInvoiceTypeByDaysComboChart() {
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(INVOICE.ISSUE_DATE , INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
+						getSelect(ctx,INVOICE.ISSUE_DATE , INVOICE.TYPE, sum)
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
 							.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
@@ -336,15 +334,9 @@ public class StatDAO {
 					@Override
 					public void visitGeoProvince() {
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(GEOZONE.NAME, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
+						getSelect(ctx,GEOZONE.NAME, sum)
 							.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(INVOICE.REGISTRY).and(RADDRESS.TYPE.eq((byte) 0)))
 							.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.eq(GEOZONE.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(GEOZONE.NAME)
 							.orderBy(sum.desc())
@@ -361,13 +353,7 @@ public class StatDAO {
 					@Override
 					public void visitAbcInvoiceWorkplace() {
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(INVOICE_DETAIL.WORKPLACE,WORKPLACE.DESCRIPTION, INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
+						getSelect(ctx,INVOICE_DETAIL.WORKPLACE,WORKPLACE.DESCRIPTION, INVOICE.TYPE, sum)
 							.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INVOICE_DETAIL.WORKPLACE))
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(INVOICE_DETAIL.WORKPLACE, INVOICE.TYPE)
@@ -386,13 +372,7 @@ public class StatDAO {
 					@Override
 					public void visitAbcInvoiceTitular() {
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(INVOICE.REGISTRY, INVOICE.RNAME , INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
+						getSelect(ctx,INVOICE.REGISTRY, INVOICE.RNAME , INVOICE.TYPE, sum)
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(INVOICE.REGISTRY, INVOICE.TYPE)
 							.orderBy(sum.desc())
@@ -410,14 +390,8 @@ public class StatDAO {
 					@Override
 					public void visitAbcInvoiceTitularAddress() {
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(INVOICE.REGISTRY, INVOICE.RNAME , RADDRESS.ALIAS, RADDRESS.ADDRESS, INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						getSelect(ctx,INVOICE.REGISTRY, INVOICE.RNAME , RADDRESS.ALIAS, RADDRESS.ADDRESS, INVOICE.TYPE, sum)
 							.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(INVOICE.RADDRESS))						
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(INVOICE.REGISTRY, INVOICE.RADDRESS, INVOICE.TYPE)
 							.orderBy(sum.desc())
@@ -442,16 +416,10 @@ public class StatDAO {
 					@Override
 					public void visitAbcInvoiceSeller() {
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(INVOICE_DETAIL.SELLER,
+						getSelect(ctx,INVOICE_DETAIL.SELLER,
 								DSL.nvl(REGISTRY.NAME, UNKNOWN)
 								, INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
 							.leftOuterJoin(REGISTRY).on(INVOICE_DETAIL.SELLER.eq(REGISTRY.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(INVOICE_DETAIL.SELLER, INVOICE.TYPE)
 							.orderBy(sum.desc())
@@ -469,13 +437,7 @@ public class StatDAO {
 					@Override
 					public void visitAbcInvoiceProduct() {
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(PRODUCT.ID,PRODUCT.NAME, INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
+						getSelect(ctx,PRODUCT.ID,PRODUCT.NAME, INVOICE.TYPE, sum)
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(PRODUCT.ID, INVOICE.TYPE)
 							.orderBy(sum.desc())
@@ -493,14 +455,8 @@ public class StatDAO {
 					@Override
 					public void visitAbcInvoiceCategory() {
 						final AggregateFunction<BigDecimal> sum = getInvoiceSelectField(params);
-						ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME, INVOICE.TYPE, sum)
-							.from(INVOICE)
-							.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
-							.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
-							.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
-							.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID))
+						getSelect(ctx,PCATEGORY.ID,PCATEGORY.NAME, INVOICE.TYPE, sum)
 							.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
-							.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY))
 							.where( StatDAO.getInvoiceCondition(ctx, params))
 							.groupBy(PCATEGORY.ID, INVOICE.TYPE)
 							.orderBy(sum.desc())
