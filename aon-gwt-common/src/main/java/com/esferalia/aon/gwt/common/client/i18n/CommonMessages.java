@@ -3257,6 +3257,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Categor\u00EDas de productos")
 	String productCategories();
  	
+ 	@DefaultMessage("Marcas de productos")
+	String productBrands();
+
  	@DefaultMessage("Producto")
 	String product();
 
