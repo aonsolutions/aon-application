@@ -388,7 +388,10 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 		tab2.setWidget(5, 2, reduction);
 
 
- 		tab2.setWidget(6, 0, new MediumLabel(AON.MSG.address()));
+		InlineLabel addressLabel = new InlineLabel("Domicilio fiscal del miembro de la entidad");
+		addressLabel.setStyleName(AON.AON_CSS.aonFontMedium());
+ 		tab2.setWidget(6, 0, addressLabel);
+ 		tab2.getFlexCellFormatter().setColSpan(6, 0, 2);
  		address.setStyleName(AON.AON_CSS.aonInputText());
  		address.setMaxLength(40);
  		address.setVisibleLength(40);
