@@ -192,7 +192,8 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		final HashMap<StatFilterType,StatFilterMenu> menus = new HashMap<StatFilterType,StatFilterMenu>();					
 		for (final StatFilterItem item : result.getFilterItems()) {
 			if (!menus.containsKey( item.getType())) {
-				final StatFilterMenu menu = new StatFilterMenu();
+				boolean multipleSelection = item.getType() == StatFilterType.SEGMENT || item.getType() == StatFilterType.PRODUCT_TAG; 
+				final StatFilterMenu menu = new StatFilterMenu(multipleSelection);
 				menus.put(item.getType(), menu);								
 				
 				final Button button = new Button(item.getType().getName() );

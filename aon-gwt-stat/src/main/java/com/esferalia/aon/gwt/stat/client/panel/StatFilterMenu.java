@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.stat.client.panel;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -18,10 +21,13 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 public class StatFilterMenu extends PopupPanel implements HasSelectionHandlers<StatFilterItem>{
 		private FlowPanel container;
 		private int itemsSelected;
+		private boolean multipleSelection;
+		private HashMap<StatFilterItem,FocusPanel> options = new HashMap<StatFilterItem,FocusPanel>();
 		
-		public StatFilterMenu() {
+		public StatFilterMenu(boolean multipleSelection) {
 			super();
-		
+			
+			this.multipleSelection = multipleSelection;
 			ScrollPanel scroll = new ScrollPanel();			
 			container = new FlowPanel();
 			scroll.add(container);
@@ -55,6 +61,7 @@ public class StatFilterMenu extends PopupPanel implements HasSelectionHandlers<S
 				public void onClick(ClickEvent event) {
 					item.setSelected( !item.isSelected() );
 					if(item.isSelected()){
+						if (multipleSelection) chekMultipleSelection(item.getId());
 						itemsSelected = itemsSelected + 1;
 						itemPanel.addStyleName(AON.AON_CSS.aonStatCheckyes());
 						itemPanel.removeStyleName(AON.AON_CSS.aonListStat());
@@ -66,8 +73,22 @@ public class StatFilterMenu extends PopupPanel implements HasSelectionHandlers<S
 					SelectionEvent.<StatFilterItem>fire(StatFilterMenu.this, item);
 				}
 			});
+			options.put(item,itemPanel);
 			container.add(itemPanel);
 			
+		}
+		
+		public void chekMultipleSelection(String selectedId) {
+			for (Entry<StatFilterItem, FocusPanel> entry : options.entrySet()) {
+				StatFilterItem item = entry.getKey();
+				if (item.isSelected() && !AonStringUtils.equals(selectedId, item.getId())) {
+					item.setSelected(false);
+					itemsSelected = itemsSelected - 1;
+					FocusPanel itemPanel = entry.getValue();
+					itemPanel.removeStyleName(AON.AON_CSS.aonStatCheckyes());
+					itemPanel.addStyleName(AON.AON_CSS.aonListStat());
+				}
+			}
 		}
 		
 		@Override
