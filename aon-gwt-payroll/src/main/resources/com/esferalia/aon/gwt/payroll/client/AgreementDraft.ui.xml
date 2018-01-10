@@ -16,6 +16,10 @@
 		.editor {
 			
 		}
+
+		.hide {
+			visibility: hidden;
+		}
 		
 		.label {
 			margin-top:10x;
@@ -129,6 +133,19 @@
     		height: 22px !important;
     		background: white !important;
 			padding-top: 2px !important;
+		}
+
+		.categoryButton{
+			top: 46px;
+    		right: -88px;
+    		float: right;
+    		position: relative;
+			border: none;
+    		border-bottom: none;
+    		color: black;
+    		font-weight: bold;
+    		height: 22px;
+    		background: #e2e2e2;
 		}
 
 		.panelButtons{
@@ -349,6 +366,7 @@
 							<g:HTML styleName="{style.vertical-space}" />
 
 							<g:HorizontalPanel> 
+								<g:HorizontalPanel ui:field='categoryButtonPanel'/>
 								<g:HorizontalPanel ui:field='salaryToggleButtonsPanel'/>
 								<g:HorizontalPanel ui:field='moreToggleButtonsPanel'/> 
 							</g:HorizontalPanel>
@@ -358,8 +376,8 @@
 							<g:ScrollPanel debugId='salaryTableScrollPane' ui:field='salaryTableScrollPane'>
 								<g:FlexTable debugId='salaryTable' ui:field='salaryTable'
 									styleName="aon-dataTable {style.edit-cells} " height="100%" />
-							</g:ScrollPanel>
-
+							</g:ScrollPanel> 
+							
 							<g:HTML styleName="{style.vertical-space}" />
 
 							<g:FlexTable debugId='eventsTable' ui:field='eventsTable' styleName="aon-dataTable" />
