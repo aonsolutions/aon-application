@@ -182,6 +182,7 @@
 		
 		<!-- WEB MODULES -->
 		<module>aon-web-aio</module>
+		<module>aon-micro-services</module>
 
 		<!-- WS MODULES -->
 		<module>aon-ws-gps</module>
