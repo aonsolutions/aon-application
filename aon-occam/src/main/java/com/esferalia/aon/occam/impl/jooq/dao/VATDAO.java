@@ -511,13 +511,12 @@ public class VATDAO  {
 		@Override
 		public VatContext apply(Record rec) {
 			VatContext vat = super.apply(rec);
-			double invoiceTotal = rec.getValue(INVOICE.TOTAL);
+			double invoiceTotal = rec.getValue(INVOICE.TOTAL);			
 			double financeAmount = rec.getValue(FINANCE_TRACKING.AMOUNT);
-			FinanceTrackingType type = FinanceTrackingType.safeValueOf(rec.getValue(FINANCE_TRACKING.TYPE));
+			FinanceTrackingType type = FinanceTrackingType.safeValueOf(rec.getValue(FINANCE_TRACKING.TYPE));			
 			if (type == FinanceTrackingType.RETURNED) {
 				financeAmount = -financeAmount;
 			}
-			
 			double base = AonMathUtils.round(financeAmount * vat.getBase() / invoiceTotal,4);
 			double quota = AonMathUtils.round(base * vat.getPercentage() / 100);
 			double surchargeQuota = AonMathUtils.round(base * vat.getSurchargePercent() / 100);
@@ -570,6 +569,8 @@ public class VATDAO  {
 	
 				.setDeductiblePercent(getDeductiblePercent(rec))
 				.setDeductibleQuota(getDeductibleQuota(rec))
+				
+				.setAmount347(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP ? ( rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) : rec.getValue(INVOICE_TAX.BASE))
 			;
 		}
 	}
