@@ -203,6 +203,7 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return domainSwitcher.getDomainId();
 	}
 
+
 	protected static Integer[] getChildDomainIDs(Integer domainId) throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(Domain.class);

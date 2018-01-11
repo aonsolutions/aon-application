@@ -741,10 +741,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			agreementDraft.setDescription(agreement.getDescription());
 			agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 			agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
-			final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(enterprise.getDomain(),
+			final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
+					enterprise.getDomain(),
+					Wnd.getCurrentDomainNameURL(),
 					agreementDraft, employeesService);
 
-			employeesService.getChanges(agreement, new AsyncCallback<SortedSet<Date>>() {
+			employeesService.getChanges(
+					Wnd.getCurrentDomainNameURL(),
+					agreement, new AsyncCallback<SortedSet<Date>>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					agreementItem.setUserObject(agreementDraftObject);
@@ -1434,11 +1438,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			categoryDraft.setDescription(agreement.getDescription());
 			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
-			final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(enterprise.getDomain(),
-					categoryDraft, employeesService);
+			final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
+					enterprise.getDomain(),
+					Wnd.getCurrentDomainNameURL(),
+					categoryDraft, 
+					employeesService);
 			// categoryItem.setUserObject(categoryDraftObject);
 
-			employeesService.getChanges(agreement, new AsyncCallback<SortedSet<Date>>() {
+			employeesService.getChanges(Wnd.getCurrentDomainNameURL(),agreement, new AsyncCallback<SortedSet<Date>>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					categoryItem.setUserObject(categoryDraftObject);
@@ -1924,4 +1931,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	public void onCollapseAllButtonClick(ClickEvent event) {
 		collapse();
 	}
+	
+	
 }

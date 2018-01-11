@@ -16,8 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
+import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.occam.api.AONContext;
+
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
+import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class AonServletUtils {
 	
@@ -59,6 +63,41 @@ public class AonServletUtils {
 			return null;
 		} catch (AonConnectionException e) {
 			throw new SQLException(e.getMessage(), e);
+		}
+	}
+
+	public static Connection getConnection(String domainName) throws SQLException {
+		try {
+			Connection connection = AonDataSource.getInstance().getConnection(domainName);
+			return connection;
+		} catch (AonConnectionException e) {
+			throw new SQLException(e.getMessage(), e);
+		}
+	}
+
+	public static Integer getDomainID(String domainName) throws SQLException {
+		try {
+			return ConnectionInfo.getDefaultConnectionInfo().getDomainMap().get(domainName);
+		} catch (AonConnectionException e) {
+			throw new SQLException(e.getMessage(), e);
+		}
+	}
+
+	public static Integer getParentDomainID(String domainName) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = getConnection(domainName);
+			AONContext aonContext = new AONContext(connection);
+			return  aonContext.getDslContext()
+			.select()
+			.from(Domain.DOMAIN)
+			.where(Domain.DOMAIN.NAME.eq(domainName))
+			.fetchOne(Domain.DOMAIN.PARENT);
+		} catch (Exception e) {
+			throw new SQLException(e.getMessage(), e);
+		} finally {
+			if ( connection != null )
+				connection.close();
 		}
 	}
 

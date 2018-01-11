@@ -420,7 +420,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return JooqEmployees.getEmployees(conn, workplaceId, fromDate,
+ 			return JooqEmployees.getEmployees(conn, workplaceId, fromDate,
 					pattern, offset, limit);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -841,7 +841,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
+	public String getAgreementDraftReceiptHTML(String domain,AgreementDraft agreementDraft,
 			int levelId, Salary.Type type , int zoom)
 			throws IllegalArgumentException {
 
@@ -912,24 +912,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Result> eval(String expression, AgreementDraft agreementDraft,
+	public List<Result> eval(String domain, String expression, AgreementDraft agreementDraft,
 			int levelId) throws IllegalArgumentException, EvalException {
-		try {
-			initFacesContext();
-			List<ITimedResult<Double>> results = eval(expression,
-					agreementDraft, levelId, Double.class);
+		List<ITimedResult<Double>> results = eval(domain, expression,
+				agreementDraft, levelId, Double.class);
 
-			List<Result> returnList = new ArrayList<Result>(results.size());
-			for (ITimedResult<Double> result : results) {
-				returnList.add(new Result(cast(result), cast(result
-						.getContext())));
-			}
-
-			return returnList;
-		} finally {
-			releaseFacesContext();
+		List<Result> returnList = new ArrayList<Result>(results.size());
+		for (ITimedResult<Double> result : results) {
+			returnList.add(new Result(cast(result), cast(result
+					.getContext())));
 		}
 
+		return returnList;
 	}
 
 	@Override
@@ -944,14 +938,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public ContextDescriptor getContext(AgreementDraft agreementDraft,
-			int levelId) throws IllegalArgumentException {
-		try {
-			initFacesContext();
-			return getDraftContext(agreementDraft, levelId);
-		} finally {
-			releaseFacesContext();
-		}
+	public ContextDescriptor getContext(String domain, AgreementDraft agreementDraft,
+		int levelId) throws IllegalArgumentException {
+		return getDraftContext(domain, agreementDraft, levelId);
 	}
 
 	@Override
@@ -1174,14 +1163,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft)
+	public AgreementDraft calculateAgreementDraft(String domain, AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = getConnection();
-			EmployeesServiceHelper.calculate(connection, agreementDraft,
-					getDomainID(), agreementDraft.getDomain()/*getParentDomainID()*/);
+			connection = AonServletUtils.getConnection(domain);
+			EmployeesServiceHelper.calculate(
+					connection, 
+					agreementDraft,
+					AonServletUtils.getDomainID(domain), 
+					agreementDraft.getDomain());
 			return agreementDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -1192,17 +1183,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public AgreementDraft saveAgreementDraft(AgreementDraft agreementDraft)
+	public AgreementDraft saveAgreementDraft(String domain, AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
 			conn = getConnection();
 			disableAutoCommit(conn);
 			SQLAgreementDraft.save(conn, agreementDraft, getDomainID(),
@@ -1221,7 +1210,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
@@ -1898,15 +1886,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public SortedSet<Date> getChanges(Agreement agreement)
+	public SortedSet<Date> getChanges(String domain, Agreement agreement)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 
-			Integer domainId = getDomainID();
-			Integer parentDomainId = getParentDomainID();
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 
 			return parentDomainId != null ? SQLAgreementDraft
 					.getDatesWithChanges(conn, agreement.getId(), domainId,
@@ -1923,7 +1910,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
@@ -2318,8 +2304,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		try {
 
-			initFacesContext();
-
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
@@ -2356,7 +2340,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
-			releaseFacesContext();
 		}
 
 	}
@@ -3621,13 +3604,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static <T> List<ITimedResult<T>> eval(String expression,
-			AgreementDraft draft, int levelId, Class<T> toType)
+	private static <T> List<ITimedResult<T>> eval(String domain, 
+			String expression, AgreementDraft draft, int levelId, Class<T> toType)
 			throws EvalException {
 		Connection conn = null;
 
 		try {
-			conn = getConnection();
+			conn = getConnection(domain);
 			ISalaryCalculatorContext ctx = getSalaryCalculatorContext(conn,
 					draft, -1);
 			return ctx.getExpressionContext().eval(expression,
@@ -3782,11 +3765,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	protected static ContextDescriptor getDraftContext(AgreementDraft draft,
+	protected static ContextDescriptor getDraftContext(String domain, AgreementDraft draft,
 			int levelId) {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(
 					conn, draft, levelId);

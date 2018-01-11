@@ -413,7 +413,10 @@ public class MainTrash extends MainEntryPoint implements
 			draft.setStartDate(DateUtils.getFirstDayOfMonth());
 			draft.setEndDate(DateUtils.getLastDayOfMonth());
 
-			agreementDraftObject = new AgreementDraftObject(getDomain(), draft,
+			agreementDraftObject = new AgreementDraftObject(
+					getDomain(),
+					Wnd.getCurrentDomainNameURL(),
+					draft,
 					agreementsTree.getEmployeesService());
 			agreementDrafts.put(agreement.getId(), agreementDraftObject);			
 	

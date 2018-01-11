@@ -290,7 +290,8 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public AgreementDraft saveAgreementDraft(AgreementDraft agreementDraft)
+	public AgreementDraft saveAgreementDraft(String domain, 
+			AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -306,7 +307,8 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ContextDescriptor getContext(AgreementDraft agreementDraft,
+	public ContextDescriptor getContext(String domain, 
+			AgreementDraft agreementDraft,
 			int levelId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -322,7 +324,8 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Result> eval(String expression, AgreementDraft agreementDraft,
+	public List<Result> eval(String domain, 
+			String expression, AgreementDraft agreementDraft,
 			int levelId) throws IllegalArgumentException, EvalException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -362,7 +365,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft)
+	public AgreementDraft calculateAgreementDraft(String domain, AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -386,7 +389,8 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
+	public String getAgreementDraftReceiptHTML(String domain, 
+			AgreementDraft agreementDraft,
 			int levelId, Type type, int zoom) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -491,7 +495,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public SortedSet<Date> getChanges(Agreement agreement)
+	public SortedSet<Date> getChanges(String domain, Agreement agreement)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");

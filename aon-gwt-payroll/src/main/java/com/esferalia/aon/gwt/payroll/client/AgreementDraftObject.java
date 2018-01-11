@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -219,6 +221,7 @@ public class AgreementDraftObject {
 	private Date draftStartDate;
 
 	private Integer draftDomain;
+	private String draftDomainName;
 
 	private int nextDraftLevelId = 0;
 	private int nextDraftExtraId = 0;
@@ -227,17 +230,24 @@ public class AgreementDraftObject {
 	private AgreementDraft agreementDraft;
 	private AgreementDraft oldAgreementDraft;
 	private UndoManager<Undoable> undoManager;
-	private EmployeesServiceAsync employeesServiceAsync;
+	private AgreementServiceAsync agreementsServiceAsync;
+	private ArrayList<Date> newDatesChanges;
+	private ArrayList<Date> deleteDatesChanges;
 
-	public AgreementDraftObject(Integer draftDomain,
+	public AgreementDraftObject(
+			Integer draftDomain,
+			String draftDomainName,
 			AgreementDraft agreementDraft,
-			EmployeesServiceAsync employeesServiceAsync) {
+			AgreementServiceAsync employeesServiceAsync) {
 		this.oldAgreementDraft = null;
 		this.agreementDraft = agreementDraft;
 		this.undoManager = new UndoManager<Undoable>();
-		this.employeesServiceAsync = employeesServiceAsync;
+		this.agreementsServiceAsync = employeesServiceAsync;
 		this.shownVariables = new HashSet<String>();
 		this.draftDomain = draftDomain;
+		this.draftDomainName = draftDomainName;
+		this.newDatesChanges = new ArrayList<>();
+		this.deleteDatesChanges = new ArrayList<>();
 	}
 
 	public boolean isMine() {
@@ -408,8 +418,36 @@ public class AgreementDraftObject {
 	}
 
 	public SortedSet<Date> getDatesWithChanges() {
-		return agreementDraft.getDatesWithChanges();
+		SortedSet<Date> newList = agreementDraft.getDatesWithChanges();
+		newList.addAll(newDatesChanges);
+		Date[] datesList = newList.toArray(new Date[]{});
+		
+		SortedSet<Date> resultList = new TreeSet<>();
+		for(int i=0; i<datesList.length; i++){
+			if(this.deleteDatesChanges.contains(datesList[i])){
+				continue;
+			}
+			resultList.add(datesList[i]);
+		}
+		
+		return resultList;
 	}
+	
+	public void addNewDatesWithChanges(Date newDate) {
+		this.newDatesChanges.add(newDate);
+	}
+	
+	public void addDeleteDatesChanges(Date date) {
+		this.deleteDatesChanges.add(date);
+	}
+	
+	public void clearNewDatesWithChanges() {
+		this.newDatesChanges.clear();
+	}
+	
+//	public SortedSet<Date> getDatesWithChanges() {
+//		return agreementDraft.getDatesWithChanges();
+//	}
 
 	public boolean isDraftLevel(Level level) {
 		return agreementDraft.getDraftLevels().contains(level);
@@ -513,8 +551,8 @@ public class AgreementDraftObject {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), agreementDraft);
 		// TODO: Clean Database data.
-
-		employeesServiceAsync.saveAgreementDraft(agreementDraft,
+		
+		agreementsServiceAsync.saveAgreementDraft(draftDomainName, agreementDraft,
 				new AsyncCallback<AgreementDraft>() {
 
 					@Override
@@ -537,8 +575,12 @@ public class AgreementDraftObject {
 	}
 
 	public void calculate(final CalculateCallback callback) {
+		
+		AgreementServiceAsync agreementServiceAsync = agreementsServiceAsync;
 
-		employeesServiceAsync.calculateAgreementDraft(agreementDraft,
+		agreementServiceAsync.calculateAgreementDraft(
+				draftDomainName,
+				agreementDraft,
 				new AsyncCallback<AgreementDraft>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -559,12 +601,12 @@ public class AgreementDraftObject {
 	public void preview(int levelId,
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type type, int zoom,
 			AsyncCallback<String> callback) {
-		employeesServiceAsync.getAgreementDraftReceiptHTML(agreementDraft,
-				levelId, type, zoom, callback);
+		agreementsServiceAsync.getAgreementDraftReceiptHTML(draftDomainName, 
+				agreementDraft,levelId, type, zoom, callback);
 	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
-		employeesServiceAsync.getAvailablePayments(Integer.MIN_VALUE, callback);
+		agreementsServiceAsync.getAvailablePayments(Integer.MIN_VALUE, callback);
 	}
 
 	public boolean hasErrors() {
@@ -579,13 +621,13 @@ public class AgreementDraftObject {
 
 	public void getContext(int levelId,
 			AsyncCallback<ContextDescriptor> callback) {
-		employeesServiceAsync.getContext(agreementDraft, levelId, callback);
+		agreementsServiceAsync.getContext(draftDomainName, agreementDraft, levelId, callback);
 	}
 
 	public void eval(String expression, int levelId, List<Variable> vars,
 			AsyncCallback<List<Result>> callback) {
 
-		employeesServiceAsync.eval(expression,
+		agreementsServiceAsync.eval(draftDomainName, expression,
 				newAgreementDraft(agreementDraft, vars), levelId, callback);
 	}
 
@@ -642,7 +684,7 @@ public class AgreementDraftObject {
 	public void getSystemContext(final CalculateCallback callback,
 			final AgreementDraft agreementDraft) {
 
-		employeesServiceAsync.getContext(agreementDraft, -666,
+		agreementsServiceAsync.getContext(draftDomainName, agreementDraft, -666,
 				new AsyncCallback<ContextDescriptor>() {
 
 					@Override
@@ -959,5 +1001,10 @@ public class AgreementDraftObject {
 				add("A\u00D1OS_ANTIGUEDAD");
 			}
 		};
+	}
+
+	public void clearDeleteDatesWithChanges() {
+		this.deleteDatesChanges.clear();
+		
 	}
 }

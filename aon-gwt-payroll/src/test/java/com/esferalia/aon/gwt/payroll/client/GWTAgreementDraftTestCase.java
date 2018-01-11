@@ -37,7 +37,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 	private static final class EmployeesServiceImpl extends
 			AbstractEmployeesServiceAsync {
 		@Override
-		public void getContext(
+		public void getContext(String domain,
 				com.esferalia.aon.gwt.payroll.shared.AgreementDraft agreementDraft,
 				int levelId,
 				AsyncCallback<ContextDescriptor> callback)
@@ -55,7 +55,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void calculateAgreementDraft(
+		public void calculateAgreementDraft(String domain,
 				com.esferalia.aon.gwt.payroll.shared.AgreementDraft draft,
 				AsyncCallback<com.esferalia.aon.gwt.payroll.shared.AgreementDraft> callback)
 				throws IllegalArgumentException {
@@ -125,10 +125,11 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
 
 		final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
-				6969, agreementDraft, new AbstractEmployeesServiceAsync() {
+				6969, "TODO: Domain Name", agreementDraft, new AbstractEmployeesServiceAsync() {
 
 					@Override
 					public void getContext(
+							String domain,
 							com.esferalia.aon.gwt.payroll.shared.AgreementDraft agreementDraft,
 							int levelId,
 							AsyncCallback<ContextDescriptor> callback)
@@ -147,7 +148,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void calculateAgreementDraft(
+					public void calculateAgreementDraft(String domain,
 							com.esferalia.aon.gwt.payroll.shared.AgreementDraft agreementDraft,
 							AsyncCallback<com.esferalia.aon.gwt.payroll.shared.AgreementDraft> callback)
 							throws IllegalArgumentException {
@@ -206,7 +207,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		EmployeesServiceAsync employeesService= GWT
 				.create(EmployeesService.class);
 		final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
-				6969, agreementDraft, employeesService);
+				6969, "TODO: Domain Name", agreementDraft, employeesService);
 
 		AgreementDraft agreementDraftWidget = new AgreementDraft();
 		// agreementDraftWidget.setAgreementDraftObject(agreementDraftObject);
