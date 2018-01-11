@@ -86,6 +86,7 @@ node {
 
       // Run the docker build
       sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
+      sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ./aon-micro-services"
 
       // Mark the Integration Tests 'stage'....
       stage 'Integration Tests'
@@ -121,6 +122,7 @@ node {
       sh "docker login -u rtrepiana -p aon945121010"
 
       sh "docker push aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
+      sh "docker push aonsolutions/aon-micro-services:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
 
       sh "aws ecs list-task-definitions --family-prefix SNAPSHOT > snapshot-task-definitions.json"
 
