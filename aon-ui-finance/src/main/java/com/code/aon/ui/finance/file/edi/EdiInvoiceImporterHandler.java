@@ -46,7 +46,7 @@ import com.esferalia.aon.file.seres.connect.invoice.v4.data.RECTL;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCL;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCP;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCT;
-import com.esferalia.aon.file.seres.util.reader.connect.ConnectInvoiceReader;
+import com.esferalia.aon.seres.reader.connect.ConnectInvoiceReader;
 
 public class EdiInvoiceImporterHandler implements Serializable {
 

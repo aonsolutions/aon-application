@@ -70,6 +70,7 @@
 		<module>aon-webservice</module>
 		<module>aon-dump</module>
 		<module>aon-sii</module>
+		<module>aon-seres</module>
 
 		<!-- ENTITY -->
 		<module>aon-carrier</module>

@@ -42,7 +42,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCC;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCL;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCT;
-import com.esferalia.aon.file.seres.util.reader.udapa.UdapaInvoiceReader;
+import com.esferalia.aon.seres.reader.udapa.UdapaInvoiceReader;
 
 public class UdapaEdiInvoiceImporterHandler implements Serializable {
 

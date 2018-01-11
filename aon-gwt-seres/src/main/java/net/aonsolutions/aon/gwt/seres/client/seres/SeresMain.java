@@ -12,11 +12,17 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import net.aonsolutions.aon.gwt.seres.shared.CommunicationTarget;
 
 public class SeresMain extends AonTemplate2{
 
@@ -28,12 +34,6 @@ public class SeresMain extends AonTemplate2{
 	private Button retrieveAll;
 	private Button processAll;
 	
-	final String OUTCOME_DELIVERY = "outcome_delivery";
-	final String OUTCOME_INVOICE = "outcome_invoice";
-	final String INCOME_SALES = "income_sales";
-	final String INCOME_INVOICE = "income_invoice";
-	final String INGENET_DELIVERY = "ingenet_delivery";
-
 	
 	public SeresMain(AonData aonData) {
 		this.aonData = aonData;
@@ -169,16 +169,16 @@ public class SeresMain extends AonTemplate2{
 		
 		menuPanel.add(createMenuPanelButton("Visi\u00F3n global", "Visi\u00F3n global", null, false, false));
 		
-		menuPanel.add(createMenuPanelLabel("Env\u00EDo de Ficheros"));
-		menuPanel.add(createMenuPanelButton("Albaranes", "Env\u00EDo de Albaranes", OUTCOME_DELIVERY, true, true));
-		menuPanel.add(createMenuPanelButton("Facturas", "Env\u00EDo de Facturas", OUTCOME_INVOICE));
+		menuPanel.add(createMenuPanelLabel("SERES - Env\u00EDo de Ficheros"));
+		menuPanel.add(createMenuPanelButton("Albaranes", "Env\u00EDo de Albaranes", CommunicationTarget.OUTCOME_DELIVERY));
+		menuPanel.add(createMenuPanelButton("Facturas", "Env\u00EDo de Facturas", CommunicationTarget.OUTCOME_INVOICE));
 		
-		menuPanel.add(createMenuPanelLabel("Recepci\u00F3n de Ficheros"));
-		menuPanel.add(createMenuPanelButton("Pedidos", "Recepci\u00F3n de Pedidos", INCOME_SALES, true, true));
-		menuPanel.add(createMenuPanelButton("Facturas", "Recepci\u00F3n de Facturas", INCOME_INVOICE, true, true));
+		menuPanel.add(createMenuPanelLabel("SERES - Recepci\u00F3n de Ficheros"));
+		menuPanel.add(createMenuPanelButton("Pedidos", "Recepci\u00F3n de Pedidos", CommunicationTarget.INCOME_SALES, true, true));
+		menuPanel.add(createMenuPanelButton("Facturas", "Recepci\u00F3n de Facturas", CommunicationTarget.INCOME_INVOICE, true, true));
 		
-		menuPanel.add(createMenuPanelLabel("Ingenet"));
-		menuPanel.add(createMenuPanelButton("Albaranes", "Recepci\u00F3n de Albaranes Ingenet", INGENET_DELIVERY));
+		menuPanel.add(createMenuPanelLabel("Ingenet - Recepci\u00F3n de Ficheros"));
+		menuPanel.add(createMenuPanelButton("Albaranes", "Recepci\u00F3n de Albaranes Ingenet", CommunicationTarget.INGENET_DELIVERY));
 		
 		setWestContent(menuPanel);
 	}
@@ -192,25 +192,47 @@ public class SeresMain extends AonTemplate2{
 		return label;
 	}
 	
-	private Button createMenuPanelButton(String buttonName, String title, String action){
+	private Button createMenuPanelButton(String buttonName, String title, CommunicationTarget action){
 		return createMenuPanelButton(buttonName, title, action, true, false);
 	}
 	
-	private Button createMenuPanelButton(String buttonName, String title, String action, boolean padding, boolean disabled){
+	private Button createMenuPanelButton(String buttonName, String title, CommunicationTarget action, boolean padding, boolean disabled){
 		Button button = new Button(buttonName);
 		button.setStyleName("aon-editDataTable-button");
 		button.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		button.addStyleName(AON.AON_CSS.aonWidthAll());
+		button.addStyleName(AON.AON_CSS.aonTextLeft());
+		button.addStyleName(AON.AON_CSS.aonMarginLeft10());
+		button.addStyleName(AON.AON_CSS.aonMarginRight10());
 		if(disabled)
 			button.addStyleName(AON.AON_CSS.aonTextLineThrough());
 		if(padding)
 			button.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		else {
+			button.addStyleName(AON.AON_CSS.aonBorderBottom());
+			button.addStyleName(AON.AON_CSS.aonNopadding());
+		}
+		button.addMouseOverHandler(new MouseOverHandler() {
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				button.addStyleName(AON.AON_CSS.aonBackgroundWhite());
+			}
+		});
+		button.addMouseOutHandler(new MouseOutHandler() {
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				button.removeStyleName(AON.AON_CSS.aonBackgroundWhite());
+			}
+		});
+		
 		button.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				cleanMenuPanelButtons();
 				button.addStyleName(AON.AON_CSS.aonBold());
 				cleanToolbarButtons();
 				LinkedList<String> list = new LinkedList<>();
-				list.add(action);
+				if(action!=null)
+					list.add(action.getValue());
 				getFilterMap().put("seres",list);
 				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();

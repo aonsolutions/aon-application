@@ -52,6 +52,7 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 
+import net.aonsolutions.aon.gwt.seres.shared.CommunicationTarget;
 import net.aonsolutions.aon.gwt.seres.shared.IngenetAttachStatus;
 
 public class ContentGridIngenet extends ResizeComposite implements RequiresResize {
@@ -144,7 +145,7 @@ public class ContentGridIngenet extends ResizeComposite implements RequiresResiz
 					}
 					
 					boolean enable = selFiles.size() > 0;
-					if(parent.command.equals(parent.parent.INGENET_DELIVERY)){
+					if(parent.command==(CommunicationTarget.INGENET_DELIVERY)){
 						parent.getProcessAll().setVisible(enable);
 					}
 					
@@ -320,7 +321,7 @@ public class ContentGridIngenet extends ResizeComposite implements RequiresResiz
 	        InputElement input = elem.getFirstChild().cast();
 	        Boolean isChecked = input.isChecked();
 	        
-	        if(parent.command.equals(parent.parent.INGENET_DELIVERY)){
+	        if(parent.command==CommunicationTarget.INGENET_DELIVERY){
 				parent.getProcessAll().setVisible(isChecked);
 			}
 	        
@@ -344,7 +345,7 @@ public class ContentGridIngenet extends ResizeComposite implements RequiresResiz
 	}
 	
 	public void process(String action) {
-		if(action.equals(parent.parent.INGENET_DELIVERY)){
+		if(action==CommunicationTarget.INGENET_DELIVERY.getValue()){
 			processIngenetDeliveries();
 		}
 	}

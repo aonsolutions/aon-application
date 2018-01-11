@@ -1,15 +1,12 @@
 package com.code.aon.ui.finance.file.edi;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
+import java.util.logging.Level;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tag;
@@ -26,18 +24,21 @@ import com.code.aon.customer.IEdiSupport;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
-import com.code.aon.ui.common.ILongProcess;
-import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.file.seres.util.ftp.FtpException;
-import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
-import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
-import com.esferalia.aon.file.seres.util.writer.connect.ConnectSaleInvoiceWriter;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.seres.ftp.FtpException;
+import com.esferalia.aon.seres.ftp.FtpLoginException;
+import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
+import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess;
+import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.ResponseMessageType;
+import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.SeresFtpProcessThread;
+import com.esferalia.aon.seres.writer.connect.ConnectSaleInvoiceWriter;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class FtpSaleInvoiceUploaderHandler implements Serializable {
@@ -190,11 +191,26 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 			} else {
 				// upload file
 				String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
-				byte[] data = output.getContent();
-				FtpStoreProcess sdp = new FtpStoreProcess(data, referenceCode);
-				LongProcessThread thread = new LongProcessThread(sdp); 
+				Integer sourceId = invoice.getId();
+				String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				String loggedUser = UserUtils.getInstance().getLoggedUser().getLogin();
+				
+				FtpStoreProcess fsp = new FtpStoreProcess(DataResponseSource.SERES_INVOICE, domainName, domainId, loggedUser,
+						this.remotePath, this.server, this.port, this.user, this.password);
+				if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
+					for(Exception e: output.getErrors()){
+						Fd0Exception fd0 = (Fd0Exception) e;
+						LOGGER.error(fd0.getMessage());
+					}
+					fsp.track(Level.SEVERE, ResponseMessageType.COMMIT, sourceId, referenceCode);
+				} else {
+					byte[] data = output.getContent();
+					fsp.put(sourceId, data, referenceCode);
+					fsp.track(Level.INFO, ResponseMessageType.COMMIT, sourceId, referenceCode);
+				}
+				SeresFtpProcessThread thread = fsp.new SeresFtpProcessThread(fsp); 
 				thread.start();
-				// TODO: mark this invoice as sended 
 			}
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage());
@@ -258,51 +274,6 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
         	AonUtil.addErrorMessage(e.getMessage());
         	throw new AbortProcessingException(e.getMessage(), e);
 		}
-	}
-	
-	public class FtpStoreProcess implements ILongProcess {
-
-		private boolean success = false;
-		private byte[] data;
-		private String referenceCode;
-		
-		public FtpStoreProcess(byte[] data, String referenceCode) {
-			this.data = data;
-			this.referenceCode = referenceCode;
-		}
-
-		@Override
-		public void execute() {
-			InputStream inputStream = new BufferedInputStream(
-					new ByteArrayInputStream(data));				
-			success = storeFtpFile("factura-" + referenceCode + ".edi",
-					inputStream);
-			IOUtils.closeQuietly(inputStream);
-			
-			LOGGER.error("FTP STORE: " + success);
-			if (success)
-				AonUtil.addInfoMessage("Fichero EDI generado y enviado CORRECTAMENTE.");
-			else
-				AonUtil.addErrorMessage("El fichero no se ha podido enviar.");
-		}
-		
-		private boolean storeFtpFile(String fileName, InputStream inputStream) {
-			if (showFtpServerConnectionData) {
-				saveLoginInfo();
-			}
-			try {
-				return SeresFtpConnectionProvider.storeFile(remotePath, fileName,
-						inputStream, server, port, user, password);
-			} catch (FtpLoginException e) {
-				LOGGER.error(e.getMessage());
-				AonUtil.addErrorMessage(e.getMessage());
-			} catch (FtpException e) {
-				LOGGER.error(e.getMessage());
-				AonUtil.addErrorMessage(e.getMessage());
-			}
-			return false;
-		}
-
 	}
 	
 }

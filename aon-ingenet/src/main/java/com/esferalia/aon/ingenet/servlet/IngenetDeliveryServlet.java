@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.customer.IEdiSupport;
-import com.esferalia.aon.file.seres.util.ftp.seres.FtpDeliveryUploadOccamHandler;
+import com.esferalia.aon.seres.ftp.seres.FtpDeliveryUploadOccamHandler;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ERRORESTYPE;
@@ -128,7 +128,8 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 								if(autoSendDelivery){
 									boolean success = false;
 									try {
-										handler.transferEdiFtp(d);
+//										handler.transferEdiFtp(d);
+										handler.onEdiFtpTransfer(d);
 										success = true;
 									} catch (Throwable th) {
 										success = false;
@@ -139,7 +140,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 									}
 									if(success) {
 										// TODO mark delivery as sended
-										setDeliverySended(attach, d, success);
+//										setDeliverySended(attach, d, success);
 									}
 //										updateDataAttach(attach, d, success);
 								}

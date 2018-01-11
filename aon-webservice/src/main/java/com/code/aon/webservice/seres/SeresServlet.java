@@ -47,11 +47,11 @@ public class SeresServlet extends HttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(SeresServlet.class.getName());
 	
-	final String OUTCOME_DELIVERY = "outcome_delivery";
-	final String OUTCOME_INVOICE = "outcome_invoice";
-	final String INCOME_SALES = "income_sales";
-	final String INCOME_INVOICE = "income_invoice";
-	final String INGENET_DELIVERY = "ingenet_delivery";
+	final static String OUTCOME_DELIVERY = "outcome_delivery";
+	final static String OUTCOME_INVOICE = "outcome_invoice";
+	final static String INCOME_SALES = "income_sales";
+	final static String INCOME_INVOICE = "income_invoice";
+	final static String INGENET_DELIVERY = "ingenet_delivery";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -299,30 +299,6 @@ public class SeresServlet extends HttpServlet {
     	}
 		return array;
 	}
-	
-	private JSONArray getIngenetDelivery(Domain domain, String login, HttpServletRequest req){
-		Map<String, String[]> filterMap = req.getParameterMap();
-		JSONArray array = new JSONArray();
-		
-		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
-		
-    	if(req.getParameterMap().containsKey("seres")){
-    		
-    		
-			AON.getAttachStream(domain.getName(), domain.getId(), login,
-					f -> f.getDomainProperty().eq(domain.getId())
-							.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value())
-									.and(f.getSourceTypeProperty().eq(DataAttachSource.INGENET.value()))),
-					AttachType.DATA, false);
-			
-			
-    		AON.getDeliveryStream(domain.getName(), domain.getId(), login,
-    				f -> deliveryFilter(domain, ediRegistryIds, filterMap, f))
-    		.filter(o -> o.getCreationUser().equals("ingenet"))
-    		.forEach(o -> array.put(toSeresFileJSON((o))));
-    	}
-    	return array;
-	}
 
 	private JSONArray getIngenetDeliveryAttach(Domain domain, String login, HttpServletRequest req){
 		Map<String, String[]> filterMap = req.getParameterMap();
@@ -331,7 +307,8 @@ public class SeresServlet extends HttpServlet {
     	if(req.getParameterMap().containsKey("seres")){
     		
 			AON.getAttachStream(domain.getName(), domain.getId(), login,
-					f -> dataAttachFilter(domain, filterMap, f),
+					f -> dataAttachFilter(domain, filterMap, f)
+						.and(f.getSourceTypeProperty().eq(DataAttachSource.INGENET.value())),
 					AttachType.DATA, false)
 			.forEach(o -> array.put(toDeliveryAttachJSON((o))));
 			
@@ -376,6 +353,12 @@ public class SeresServlet extends HttpServlet {
 				.map(m -> m.getRegistry()).toArray(Integer[]::new);
 		return ids;
 	}
+	
+	/**
+	 * 
+	 * JSON transform
+	 * 
+	 */
 	
 	public static JSONObject toSeresFileJSON(Invoice invoice, List<DataResponse> list) {
 		JSONObject json = new JSONObject();
@@ -430,6 +413,12 @@ public class SeresServlet extends HttpServlet {
 		json.put("creation_date", AonDateUtils.format(attach.getCreationDate(), "dd-MM-yyyy HH:mm:ss"));
 		return json;
 	}
+	
+	/**
+	 * 
+	 * FILTER
+	 * 
+	 */
 	
 	private void fillPaginationFilter(Filter filter, Map<String, String[]> filterMap) {
 		if (filterMap.containsKey("page") && filterMap.containsKey("per_page")) {
@@ -486,7 +475,6 @@ public class SeresServlet extends HttpServlet {
 	private Filter dataAttachFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		fillPaginationFilter(filter, filterMap);
-		filter = filter.and(f.getSourceTypeProperty().eq(DataAttachSource.INGENET.value()));
 		
 		if (filterMap.containsKey(MSG.FROM)) {
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));

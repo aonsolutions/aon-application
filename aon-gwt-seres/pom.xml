@@ -33,7 +33,7 @@
 	
 		<dependency>
  			<groupId>com.esferalia.aon</groupId>
- 			<artifactId>aon.file.seres</artifactId>
+ 			<artifactId>aon.seres</artifactId>
  			<version>${project.version}</version>
  			<scope>compile</scope>
  		</dependency>

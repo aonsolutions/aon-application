@@ -37,11 +37,11 @@ import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
-import com.esferalia.aon.file.seres.util.ftp.FtpException;
-import com.esferalia.aon.file.seres.util.ftp.FtpFile;
-import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
-import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
-import com.esferalia.aon.file.seres.util.reader.connect.ConnectSalesReader;
+import com.esferalia.aon.seres.ftp.FtpException;
+import com.esferalia.aon.seres.ftp.FtpFile;
+import com.esferalia.aon.seres.ftp.FtpLoginException;
+import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
+import com.esferalia.aon.seres.reader.connect.ConnectSalesReader;
 
 public class FtpSalesDownloadHandler implements Serializable {
 	
