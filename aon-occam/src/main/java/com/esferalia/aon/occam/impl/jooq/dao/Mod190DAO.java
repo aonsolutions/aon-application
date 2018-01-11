@@ -1017,7 +1017,7 @@ public class Mod190DAO {
 		.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
 		.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 		.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
-		.join(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.equal(ENTERPRISE_CCC.ID))
+		.leftOuterJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.equal(ENTERPRISE_CCC.ID))
 		.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 		.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
