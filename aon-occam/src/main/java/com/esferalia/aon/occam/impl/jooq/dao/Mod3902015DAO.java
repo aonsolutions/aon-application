@@ -983,7 +983,7 @@ public class Mod3902015DAO {
 		
 		Date firstDay = AonDateUtils.getYearFirstDay(mod390.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod390.getYear());
-		VATDAO.getVatBreakdown(ctx, firstDay, lastDay)
+		VATDAO.getVatBreakdown(ctx, firstDay, lastDay, mod390)
 		.forEach(vc -> {
 			Mod3902015DetailKey[] keys = DetailKey.getKeys(vc);			
 			if (keys != null) {
@@ -1683,7 +1683,6 @@ public class Mod3902015DAO {
 			.filter(m303 -> m303.getAdministration() == mod390.getAdministration())
 			.forEach(m303 -> {
 				Period period = m303.getPeriod();
-				System.out.println(period  + "/" + m303.getDeclarationType() + " - " + m303.getResult());
 				if (m303.getDeclarationType() == FiscalModelDeclarationType.BANK
 				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
 				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT_CCT) {
