@@ -3505,6 +3505,7 @@ public class SalaryDraft extends ResizeComposite
 			expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		}
 
+		
 		String description = DEDUCTION_DESCRIPTIONS.get(deduction.getType());
 		if (description == null)
 			description = deduction.getDescription();
@@ -4278,6 +4279,9 @@ public class SalaryDraft extends ResizeComposite
 	private StyleToggleButton getPaymentButton(final HasPayment hasPayment, final String iconStyleName,
 			final String textStyleName) {
 		
+		if ( hasPayment.getPayment() == null)
+			return null;
+		
 		if ( calculated(hasPayment))
 			return null;
 		
@@ -4310,6 +4314,9 @@ public class SalaryDraft extends ResizeComposite
 	private StyleToggleButton getDeductionButton(final HasDeduction hasDeduction, final String iconStyleName,
 			final String textStyleName) {
 
+		if ( hasDeduction.getDeduction() == null)
+			return null;
+
 		StyleToggleButton paymentButton = new StyleToggleButton("aon-icon-file-entrance", "aon-icon-file-exit-cancel");
 
 		paymentButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
@@ -4319,12 +4326,16 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				boolean down = event.getValue();
-				if (down) {
-					tr = showDeduction(hasDeduction.getDeduction(), iconStyleName, textStyleName);
-				} else {
-					removePayment(tr);
-					removeDeduction(hasDeduction.getDeduction());
+				try {
+					boolean down = event.getValue();
+					if (down) {
+						tr = showDeduction(hasDeduction.getDeduction(), iconStyleName, textStyleName);
+					} else {
+						removePayment(tr);
+						removeDeduction(hasDeduction.getDeduction());
+					}
+				} catch ( Throwable t ) {
+					// Why ????
 				}
 
 			}
@@ -4335,7 +4346,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private StyleToggleButton getBonusButton(final HasBonus hasBonus, final String iconStyleName,
 			final String textStyleName) {
-
+		
+		if ( hasBonus.getBonus() == null )
+			return null;
+		
 		StyleToggleButton paymentButton = new StyleToggleButton("aon-icon-file-entrance", "aon-icon-file-exit-cancel");
 
 		paymentButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
@@ -4440,11 +4454,12 @@ public class SalaryDraft extends ResizeComposite
 
 		List<Deduction> deductions = salaryDraftObject.getDeductions();
 		ItemComparator<Deduction.Type> comparator = new ItemComparator<Deduction.Type>();
-
+		
 		int idx = 0;
 		for (; idx < deductions.size(); idx++)
 			if (comparator.compare(deductions.get(idx), deduction) > 0)
 				break;
+
 
 		deductions.add(idx, deduction);
 
@@ -5198,7 +5213,9 @@ public class SalaryDraft extends ResizeComposite
 
 	private static Double getPercent(Deduction.Type type, Double amount, Double irpfBase, Double cgcBase,
 			Double cgpBase, Double hExtraBase, Double nonHExtraBase) {
-
+		if ( amount == null )
+			return null;
+		
 		switch (type) {
 		case IRPF:
 			return NumberUtils.isValid(irpfBase) ? amount / irpfBase * 100 : null;
