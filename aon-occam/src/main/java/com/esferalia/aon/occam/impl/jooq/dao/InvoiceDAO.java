@@ -767,9 +767,10 @@ public class InvoiceDAO {
 		Field<Integer> orderedType = getOrderedType();
 		AggregateFunction<Integer> min = DSL.min(INVOICE.NUMBER);
 		AggregateFunction<Integer> max = DSL.max(INVOICE.NUMBER);
+		AggregateFunction<Integer> records = DSL.count();
 		LinkedList<InvoiceSeries> list = new LinkedList<InvoiceSeries>(); 
 		ctx.getDslContext()
-		.select(orderedType,INVOICE.SERIES,min,max)
+		.select(orderedType,INVOICE.SERIES,min,max,records)
 		.from(INVOICE)
 		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 		.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
@@ -782,7 +783,8 @@ public class InvoiceDAO {
 				.setSeriesInfo(true)
 				.setDescription(rec.getValue(INVOICE.SERIES))
 				.setFromNumber(rec.getValue(min))
-				.setToNumber(rec.getValue(max)))
+				.setToNumber(rec.getValue(max))
+				.setCount(rec.getValue(records)))
 				);
 		AggregateFunction<Integer> count = DSL.count();
 		ctx.getDslContext()

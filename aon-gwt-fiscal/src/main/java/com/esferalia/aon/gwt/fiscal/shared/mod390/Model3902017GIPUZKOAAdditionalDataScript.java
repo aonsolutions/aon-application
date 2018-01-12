@@ -23,8 +23,8 @@ public enum Model3902017GIPUZKOAAdditionalDataScript implements IModelScript<Mod
 	,DVG08 ("Gastos",null,TITLE)
 	,DVG09 (null					,new Mod390Key[]{Mod390Key.GP_C057,Mod390Key.GP_X057,Mod390Key.GP_C058,null				},INVOICE)
 	,DVG10 (null					,new Mod390Key[]{Mod390Key.GP_C059,Mod390Key.GP_X059,Mod390Key.GP_C060,null				},INVOICE)
-	,DVG11 (null					,new Mod390Key[]{Mod390Key.GP_C061,Mod390Key.GP_X061,Mod390Key.GP_C061,null				},INVOICE)
-	,DVG13 (null					,new Mod390Key[]{Mod390Key.GP_C063,null				,Mod390Key.GP_C063,Mod390Key.GP_C065},INVOICE)
+	,DVG11 (null					,new Mod390Key[]{Mod390Key.GP_C061,Mod390Key.GP_X061,Mod390Key.GP_C062,null				},INVOICE)
+	,DVG13 (null					,new Mod390Key[]{Mod390Key.GP_C063,null				,Mod390Key.GP_C064,Mod390Key.GP_C065},INVOICE)
 
 	,DVG15 ("Bienes de inversi\u00F3n",null,TITLE)
 	,DVG16 (null					,new Mod390Key[]{Mod390Key.GP_C066,Mod390Key.GP_X066,Mod390Key.GP_C067,null				},INVOICE)

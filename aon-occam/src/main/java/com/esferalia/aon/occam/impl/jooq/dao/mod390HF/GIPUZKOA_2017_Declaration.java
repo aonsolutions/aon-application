@@ -377,6 +377,8 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C073,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
+		,GP_C074	(Mod390Key.GP_C074,null,null,null,"GP_C067+GP_C069+GP_C071+GP_C073",null)
+
 		,GP_C075	(Mod390Key.GP_C075,null,null,null,"GP_C046+GP_C048+GP_C050+GP_C052+GP_C054+GP_C057+GP_C059+GP_C061+GP_C063+GP_C066+GP_C068+GP_C070+GP_C072",null)
 		,GP_C076	(Mod390Key.GP_C076,null,null,null,"GP_C047+GP_C049+GP_C051+GP_C053+GP_C055+GP_C058+GP_C060+GP_C062+GP_C064+GP_C067+GP_C069+GP_C071+GP_C073",null)
 		,GP_C077	(Mod390Key.GP_C077,null,null,null,"GP_C056+GP_C065+GP_C074",null)
@@ -530,18 +532,18 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 		Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
 		LinkedList<InvoiceSeries> seriesList = InvoiceDAO.getInvoiceSeries(ctx, fromDate, toDate, false);
 		Mod390Key[][] eKeys = new Mod390Key[][]{
-			 new Mod390Key[]{Mod390Key.GP_SE1N,Mod390Key.GP_SE1D,Mod390Key.GP_SE1H}
-			,new Mod390Key[]{Mod390Key.GP_SE2N,Mod390Key.GP_SE2D,Mod390Key.GP_SE2H}
-			,new Mod390Key[]{Mod390Key.GP_SE3N,Mod390Key.GP_SE3D,Mod390Key.GP_SE3H}
-			,new Mod390Key[]{Mod390Key.GP_SE4N,Mod390Key.GP_SE4D,Mod390Key.GP_SE4H}
-			,new Mod390Key[]{Mod390Key.GP_SE5N,Mod390Key.GP_SE5D,Mod390Key.GP_SE5H}
+			 new Mod390Key[]{Mod390Key.GP_SE1N,Mod390Key.GP_SE1D,Mod390Key.GP_SE1H,Mod390Key.GP_SE1X}
+			,new Mod390Key[]{Mod390Key.GP_SE2N,Mod390Key.GP_SE2D,Mod390Key.GP_SE2H,Mod390Key.GP_SE2X}
+			,new Mod390Key[]{Mod390Key.GP_SE3N,Mod390Key.GP_SE3D,Mod390Key.GP_SE3H,Mod390Key.GP_SE3X}
+			,new Mod390Key[]{Mod390Key.GP_SE4N,Mod390Key.GP_SE4D,Mod390Key.GP_SE4H,Mod390Key.GP_SE4X}
+			,new Mod390Key[]{Mod390Key.GP_SE5N,Mod390Key.GP_SE5D,Mod390Key.GP_SE5H,Mod390Key.GP_SE5X}
 			};
 		Mod390Key[][] rKeys = new Mod390Key[][]{
-			 new Mod390Key[]{Mod390Key.GP_SR1N,Mod390Key.GP_SR1D,Mod390Key.GP_SR1H}
-			,new Mod390Key[]{Mod390Key.GP_SR2N,Mod390Key.GP_SR2D,Mod390Key.GP_SR2H}
-			,new Mod390Key[]{Mod390Key.GP_SR3N,Mod390Key.GP_SR3D,Mod390Key.GP_SR3H}
-			,new Mod390Key[]{Mod390Key.GP_SR4N,Mod390Key.GP_SR4D,Mod390Key.GP_SR4H}
-			,new Mod390Key[]{Mod390Key.GP_SR5N,Mod390Key.GP_SR5D,Mod390Key.GP_SR5H}
+			 new Mod390Key[]{Mod390Key.GP_SR1N,Mod390Key.GP_SR1D,Mod390Key.GP_SR1H,Mod390Key.GP_SR1X}
+			,new Mod390Key[]{Mod390Key.GP_SR2N,Mod390Key.GP_SR2D,Mod390Key.GP_SR2H,Mod390Key.GP_SR2X}
+			,new Mod390Key[]{Mod390Key.GP_SR3N,Mod390Key.GP_SR3D,Mod390Key.GP_SR3H,Mod390Key.GP_SR3X}
+			,new Mod390Key[]{Mod390Key.GP_SR4N,Mod390Key.GP_SR4D,Mod390Key.GP_SR4H,Mod390Key.GP_SR4X}
+			,new Mod390Key[]{Mod390Key.GP_SR5N,Mod390Key.GP_SR5D,Mod390Key.GP_SR5H,Mod390Key.GP_SR5X}
 		};
 		int e = 0;
 		int r = 0;
@@ -556,6 +558,8 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 					mod.putDescription(fromKeys, AonNumberUtils.toString( series.getFromNumber()));
 					Mod390Key toKeys = keys[idx][2];
 					mod.putDescription(toKeys, AonNumberUtils.toString( series.getToNumber()));
+					Mod390Key countKeys = keys[idx][3];
+					mod.putAmount(countKeys, series.getCount());
 					if (series.isSales()) {
 						++e;
 					} else {

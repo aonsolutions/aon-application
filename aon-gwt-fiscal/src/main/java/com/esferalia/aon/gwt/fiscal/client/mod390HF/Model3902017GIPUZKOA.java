@@ -459,41 +459,46 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		
 		tab2.setWidget(0, 0, new Label( "Facturas emitidas") );
 		tab2.getFlexCellFormatter().addStyleName(0,0,AON.AON_CSS.aonDataTableHeader());
-		tab2.getFlexCellFormatter().setColSpan(0, 0, 3);
+		tab2.getFlexCellFormatter().setColSpan(0, 0, 4);
 		tab2.setWidget(0, 1, new Label("Facturas recibidas") ); 
 		tab2.getFlexCellFormatter().addStyleName(0,1,AON.AON_CSS.aonDataTableHeader());
-		tab2.getFlexCellFormatter().setColSpan(0, 1, 3);
+		tab2.getFlexCellFormatter().setColSpan(0, 1, 4);
 
 		tab2.setWidget(1, 0, new Label( "Serie") );
 		tab2.getFlexCellFormatter().addStyleName(1,0,AON.AON_CSS.aonDataTableHeader());
 		tab2.setWidget(1, 1, new Label("Inicio") ); 
 		tab2.getFlexCellFormatter().addStyleName(1,1,AON.AON_CSS.aonDataTableHeader());
-		tab2.setWidget(1, 2, new Label("terminaci\u00F3n") );
+		tab2.setWidget(1, 2, new Label("Terminaci\u00F3n") );
 		tab2.getFlexCellFormatter().addStyleName(1,2,AON.AON_CSS.aonDataTableHeader());
-		
-		tab2.setWidget(1, 3, new Label( "Serie") );
+		tab2.setWidget(1, 3, new Label("Registros") );
 		tab2.getFlexCellFormatter().addStyleName(1,3,AON.AON_CSS.aonDataTableHeader());
-		tab2.setWidget(1, 4, new Label("Inicio") ); 
-		tab2.getFlexCellFormatter().addStyleName(1,4,AON.AON_CSS.aonDataTableHeader());
-		tab2.setWidget(1, 5, new Label("terminaci\u00F3n") );
-		tab2.getFlexCellFormatter().addStyleName(1,5,AON.AON_CSS.aonDataTableHeader());
-		tab2.setWidget(1, 6, new Label() ); 
-		tab2.getFlexCellFormatter().addStyleName(1,6,AON.AON_CSS.aonDataTableHeader());
 		
-		paintInvoiceFields(tab2,2,0,Mod390Key.GP_SE1N,Mod390Key.GP_SE1D,Mod390Key.GP_SE1H);
-		paintInvoiceFields(tab2,2,3,Mod390Key.GP_SR1N,Mod390Key.GP_SR1D,Mod390Key.GP_SR1H);
-		paintInvoiceFields(tab2,3,0,Mod390Key.GP_SE2N,Mod390Key.GP_SE2D,Mod390Key.GP_SE2H);
-		paintInvoiceFields(tab2,3,3,Mod390Key.GP_SR2N,Mod390Key.GP_SR2D,Mod390Key.GP_SR2H);
-		paintInvoiceFields(tab2,4,0,Mod390Key.GP_SE3N,Mod390Key.GP_SE3D,Mod390Key.GP_SE3H);
-		paintInvoiceFields(tab2,4,3,Mod390Key.GP_SR3N,Mod390Key.GP_SR3D,Mod390Key.GP_SR3H);
-		paintInvoiceFields(tab2,5,0,Mod390Key.GP_SE4N,Mod390Key.GP_SE4D,Mod390Key.GP_SE4H);
-		paintInvoiceFields(tab2,5,3,Mod390Key.GP_SR4N,Mod390Key.GP_SR4D,Mod390Key.GP_SR4H);
-		paintInvoiceFields(tab2,6,0,Mod390Key.GP_SE5N,Mod390Key.GP_SE5D,Mod390Key.GP_SE5H);
-		paintInvoiceFields(tab2,6,3,Mod390Key.GP_SR5N,Mod390Key.GP_SR5D,Mod390Key.GP_SR5H);
+		tab2.setWidget(1, 4, new Label( "Serie") );
+		tab2.getFlexCellFormatter().addStyleName(1,4,AON.AON_CSS.aonDataTableHeader());
+		tab2.setWidget(1, 5, new Label("Inicio") ); 
+		tab2.getFlexCellFormatter().addStyleName(1,5,AON.AON_CSS.aonDataTableHeader());
+		tab2.setWidget(1, 6, new Label("Terminaci\u00F3n") );
+		tab2.getFlexCellFormatter().addStyleName(1,6,AON.AON_CSS.aonDataTableHeader());
+		tab2.setWidget(1, 7, new Label("Registros") );
+		tab2.getFlexCellFormatter().addStyleName(1,7,AON.AON_CSS.aonDataTableHeader());
+
+		tab2.setWidget(1, 8, new Label() ); 
+		
+		
+		paintInvoiceFields(tab2,2,0,Mod390Key.GP_SE1N,Mod390Key.GP_SE1D,Mod390Key.GP_SE1H,Mod390Key.GP_SE1X);
+		paintInvoiceFields(tab2,2,4,Mod390Key.GP_SR1N,Mod390Key.GP_SR1D,Mod390Key.GP_SR1H,Mod390Key.GP_SR1X);
+		paintInvoiceFields(tab2,3,0,Mod390Key.GP_SE2N,Mod390Key.GP_SE2D,Mod390Key.GP_SE2H,Mod390Key.GP_SE2X);
+		paintInvoiceFields(tab2,3,4,Mod390Key.GP_SR2N,Mod390Key.GP_SR2D,Mod390Key.GP_SR2H,Mod390Key.GP_SR2X);
+		paintInvoiceFields(tab2,4,0,Mod390Key.GP_SE3N,Mod390Key.GP_SE3D,Mod390Key.GP_SE3H,Mod390Key.GP_SE3X);
+		paintInvoiceFields(tab2,4,4,Mod390Key.GP_SR3N,Mod390Key.GP_SR3D,Mod390Key.GP_SR3H,Mod390Key.GP_SR3X);
+		paintInvoiceFields(tab2,5,0,Mod390Key.GP_SE4N,Mod390Key.GP_SE4D,Mod390Key.GP_SE4H,Mod390Key.GP_SE4X);
+		paintInvoiceFields(tab2,5,4,Mod390Key.GP_SR4N,Mod390Key.GP_SR4D,Mod390Key.GP_SR4H,Mod390Key.GP_SR4X);
+		paintInvoiceFields(tab2,6,0,Mod390Key.GP_SE5N,Mod390Key.GP_SE5D,Mod390Key.GP_SE5H,Mod390Key.GP_SE5X);
+		paintInvoiceFields(tab2,6,4,Mod390Key.GP_SR5N,Mod390Key.GP_SR5D,Mod390Key.GP_SR5H,Mod390Key.GP_SR5X);
 		return tab2;
 	}
 
-	private void paintInvoiceFields(FlexTable tab, int row, int col, Mod390Key seriesKey, Mod390Key fromKey,Mod390Key toKey) {
+	private void paintInvoiceFields(FlexTable tab, int row, int col, Mod390Key seriesKey, Mod390Key fromKey,Mod390Key toKey,Mod390Key countKey) {
 		TextBox series = new TextBox();
 		series.setVisibleLength(8);
 		series.setMaxLength(5);
@@ -511,8 +516,8 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		tab.setWidget(row, col, series);
 		
 		TextBox from = new TextBox();
-		from.setVisibleLength(15);
-		from.setMaxLength(15);
+		from.setVisibleLength(10);
+		from.setMaxLength(10);
 		from.setStyleName(AON.AON_CSS.aonInputText());
 		from.setValue(getCallback().getMod390HF().getDescription(fromKey));
 		from.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -527,8 +532,8 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		tab.setWidget(row, col+1, from);
 
 		TextBox to = new TextBox();
-		to.setVisibleLength(15);
-		to.setMaxLength(15);
+		to.setVisibleLength(10);
+		to.setMaxLength(10);
 		to.setStyleName(AON.AON_CSS.aonInputText());
 		to.setValue(getCallback().getMod390HF().getDescription(toKey));
 		to.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -541,5 +546,21 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 			
 		});
 		tab.setWidget(row, col+2, to);
+		
+		DoubleBox count = new DoubleBox();
+		count.setVisibleLength(9);
+		count.setMaxLength(9);
+		count.setValue(getCallback().getMod390HF().getAmount(countKey));
+		count.addValueChangeHandler(new ValueChangeHandler<Double>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				getCallback().getMod390HF().putAmount(countKey, count.getValue() );
+				markAsDirty();
+			}
+			
+		});
+		
+		tab.setWidget(row, col+3, count);
 	}
 }

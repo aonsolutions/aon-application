@@ -3,9 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
-import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod390HF extends FiscalModel implements Serializable {
@@ -15,12 +13,6 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	public Mod390HF() {
 		super();
 		setModel(FiscalModelType.M390_HF);
-	}
-	public VATRegime getDefaultVATRegime() {
-		return  VATRegime.safeValueOf( (byte) getAmount(Mod303Key.CM_005) );
-	}
-	public void setDefaultVatRegime(VATRegime defaultVatRegime) {
-		ensureDetail(Mod303Key.CM_005).setAmount(defaultVatRegime == null?0:defaultVatRegime.ordinal());
 	}
 	
 	public boolean isEnrolledInDevolutionRegistry() {
@@ -62,7 +54,7 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		if (getAdministration() == null) return 0;
 		else if (isAraba()) return getAmount(Mod390Key.AR_C13X);
 		else if (isBizkaia()) return  getAmount(Mod390Key.BZ_C110);
-		else if (isGipuzkoa()) return  getAmount(Mod303Key.GP_C040);
+		else if (isGipuzkoa()) return  getAmount(Mod390Key.GP_C040);
 		else if (isNavarra()) return 0;
 		return 0;
 	}
