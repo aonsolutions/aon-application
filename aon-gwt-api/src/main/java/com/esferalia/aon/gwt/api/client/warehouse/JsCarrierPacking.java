@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.warehouse;
 
+import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
@@ -128,8 +129,16 @@ public class JsCarrierPacking extends JavaScriptObject {
 	public final native String getSupplier() /*-{
 		return this.supplier;
 	}-*/;
+	public final native AonJsArray<JsObject> getSupplierArray() /*-{
+		return this.supplier_array;
+	}-*/;
 	
 	public final native String getCustomer() /*-{
 		return this.customer;
 	}-*/;
+	
+	public final native AonJsArray<JsObject> getCustomerArray() /*-{
+		return this.customer_array;
+	}-*/;
+
 }

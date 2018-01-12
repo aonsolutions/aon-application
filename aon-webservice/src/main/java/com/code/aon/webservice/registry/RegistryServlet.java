@@ -85,7 +85,15 @@ public class RegistryServlet extends HttpServlet{
 						object = getRmediaList(domain, userName);
 					}
 					break;
-				case "rnote": // RNOTE
+				case "raddress": // RADDRESS
+					if(pathInfo.length > 4){
+						if (pathInfo[4].equals("registry")) {
+							if(pathInfo.length > 5)
+								object = getRaddress(domain, userName, Integer.parseInt(pathInfo[5]));
+						}
+					}
+					break;
+ 				case "rnote": // RNOTE
 					if(pathInfo.length > 4){
 						if (pathInfo[4].equals("registry")) {
 							if(pathInfo.length > 5)
@@ -172,6 +180,15 @@ public class RegistryServlet extends HttpServlet{
     private JSONObject getRmedia(Domain domain, String login, Integer id){
     	return ToJSON.rmediaToJSON(AON.getRMedia(domain.getName(),
     			domain.getId(), login, f -> f.getIdProperty().eq(id)));
+    }
+    
+    private JSONArray getRaddress(Domain domain, String login, Integer id){
+    	JSONArray array = new JSONArray();
+    	RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), login, id);
+		String direction = n(ra.getStreet_type()) + " " + n(ra.getAddress()) + " " + n(ra.getNumber())+ " " + n(ra.getAddress2())
+			+ " " +n(ra.getAddress3()) + " " + n(ra.getZip()) + " " + n(ra.getCity());
+		array.put(ToJSON.objectToJSON(ra.getId(), direction));
+		return array;
     }
     
     private JSONArray getRnoteList(Domain domain, String login){

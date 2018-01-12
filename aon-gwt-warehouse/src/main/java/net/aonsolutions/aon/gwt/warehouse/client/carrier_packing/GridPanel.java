@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -45,6 +46,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -123,7 +125,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsCarrierPacking> event) {
 				if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
-					if(event.getColumn() != 5) {
+					if(event.getColumn() != 5 && event.getColumn() != 1) {
 						Integer relRow = event.getIndex() - dataGrid.getPageStart();
 						Integer subrow = event.getContext().getSubIndex();
 						dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
@@ -211,21 +213,40 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(typeColumn, 15, Unit.PCT);
 		
 		/** CUSTOMER/SUPPLIER **/
-		Column<JsCarrierPacking, String> regColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
+		List<HasCell<JsCarrierPacking, ?>> cellsReg = new LinkedList<HasCell<JsCarrierPacking, ?>>();
+	    
+		cellsReg.add(new ActionHasCell("regInfo", new Delegate<JsCarrierPacking>() {
+	    	
+	        @Override
+	        public void execute(JsCarrierPacking object) {
+	        	regInfo(object);
+	        }
+	    }));
+		
+		CompositeCell<JsCarrierPacking> cellReg = new CompositeCell<JsCarrierPacking>(cellsReg);
+		
+		Column<JsCarrierPacking,JsCarrierPacking> regColumn = 	new Column<JsCarrierPacking, JsCarrierPacking>(cellReg){
 
 			@Override
-			public String getValue(JsCarrierPacking object) {
-				return object.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName()) ? object.getSupplier() : object.getCustomer();
+			public JsCarrierPacking getValue(JsCarrierPacking object) {
+				return object;
 			}
-		
-		};
+		};		
 		regColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		regColumn.setSortable(true); 
-
+		sortHandler.setComparator(regColumn,new Comparator<JsCarrierPacking>() {
+			
+			@Override
+			public int compare(JsCarrierPacking o1, JsCarrierPacking o2) {
+				String s1 = o1.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName()) ? o1.getSupplier() : o1.getCustomer();
+				String s2 = o2.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName()) ? o2.getSupplier() : o2.getCustomer();
+				return s1.compareTo(s2);
+			}
+		});
 		dataGrid.getColumnSortList().push(regColumn);
 		dataGrid.addColumn(regColumn, "Cliente" + "/" + "Proveedor");
 		dataGrid.setColumnWidth(regColumn, 30, Unit.PCT);
-		
+
 		/** S/RefColumn **/
 		Column<JsCarrierPacking, String> referenceColumn = new Column<JsCarrierPacking, String>(new TextCell()) {
 
@@ -311,7 +332,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 	    	
 	        @Override
 	        public void execute(JsCarrierPacking object) {
-	        	info(object);
+	        	carrierInfo(object);
 	        }
 	    }));
 		
@@ -383,7 +404,7 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
 	}
 	
-	private void info(JsCarrierPacking js){
+	private void carrierInfo(JsCarrierPacking js){
 		String registry = js.getCarrier().getId() + "";
 		parent.getAPI().getIncidence().getEnterpriseRmediaList(Integer.parseInt(registry), new AsyncCallback<JSON<JsRmedia>>() {
 			
@@ -437,7 +458,88 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 		});
 	
 	}
+
+	private void regInfo(JsCarrierPacking js){
+		VerticalPanel vp = new  VerticalPanel();
+		js.getCustomerArray().stream().forEach(customer -> regInfo2(vp, customer));
+		js.getSupplierArray().stream().forEach(supplier -> regInfo2(vp, supplier));
+				
+		AonDialog dialog = new AonDialog("Informaci\u00f3n Adicional", vp) {
+			
+			@Override 
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override 
+			protected void onAccept() {
+				hide();
+			}
+		};
+		
+		dialog.getCancel().setVisible(false);
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
+	}
 	
+	private void regInfo2(VerticalPanel vp, JsObject o) {
+		String key = o.getId() + "";
+
+		parent.getAPI().getIncidence().getEnterpriseRmediaList(Integer.parseInt(key), new AsyncCallback<JSON<JsRmedia>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsRmedia> result) {
+				parent.getAPI().getIncidence().getEnterpriseRaddressList(Integer.parseInt(key), new AsyncCallback<JSON<JsObject>>() {
+					@Override
+					public void onSuccess(JSON<JsObject> res) {
+						
+						Label lbl = new Label(o.getName());
+						lbl.addStyleName(AON.AON_CSS.aonBold());
+						lbl.addStyleName(AON.AON_CSS.aonPadding());
+						vp.add(lbl);
+						FlexTable grid = new FlexTable();
+						grid.setStyleName("aon-panelGrid");
+						
+						if(res.getData().length() > 0) {
+							grid.setWidget(0, 0, new Label("Direcci\u00f3n"));
+							grid.setWidget(0, 1, new Label(res.getData().get(0).getName()));
+						}
+						LinkedList<JsRmedia> r = result.getData().toLinkedList();
+						
+						for(Integer i=1; i < r.size(); i++) {
+							String m = r.get(i).getMedia() + "";
+							grid.setWidget(i, 0, new Label(getMediaName(Integer.parseInt(m))));
+							grid.setWidget(i, 1, new Label(r.get(i).getValue()));
+						}
+						vp.add(grid);
+						for (int i = 0; i < grid.getRowCount(); i++) {
+							for (int j = 0; j < grid.getCellCount(i); j++) {
+								if ((j % 2) == 0) {
+									grid.getCellFormatter().setStyleName(i, j,
+											"aon-panelGrid-odd");
+								} else {
+									grid.getCellFormatter().setStyleName(i, j,
+											"aon-panelGrid-even");
+								}   
+							}
+						}
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+			
+			}
+		});
+		
+		
+	}
+
 	private String getMediaName(Integer media) {
 		if(MediaType.EMAIL.equals(MediaType.values()[media])){
 			return "Email";
@@ -472,8 +574,17 @@ public class GridPanel extends ResizeComposite implements RequiresResize {
 						sb.appendHtmlConstant("</button>");		
 	        		}
 	        		if(text.equals("info")){
-	        			sb.appendHtmlConstant(value.getCarrier().getName() + "<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\">");
+	        			sb.appendHtmlConstant(value.getCarrier().getName() + "<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\" style=\"margin-left: 5px;position: absolute;\">");
 	        			sb.appendHtmlConstant("</button>");
+	        		}
+	        		if(text.equals("regInfo")){
+	        			String v = value.getType().getName().equals(CarrierPackingType.SHIPMENT_REQUEST.getName()) ? value.getSupplier() : value.getCustomer();
+	        			if("-".equals(v)) {
+	        				sb.appendHtmlConstant(v);
+	        			}else {
+	        				sb.appendHtmlConstant(v + "<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\" style=\"margin-left: 5px;position: absolute;\">");
+	        				sb.appendHtmlConstant("</button>");
+	        			}
 	        		}
 	        	}
 	        };

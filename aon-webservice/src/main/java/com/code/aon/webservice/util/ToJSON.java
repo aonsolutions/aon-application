@@ -281,7 +281,9 @@ public class ToJSON {
 			.put(MSG.MODIFICATION_DATE, carrierPacking.getModificationDate() != null ? AonDateUtils.simpleFormat(carrierPacking.getModificationDate()) : "")
 			.put(MSG.MODIFICATION_USER, carrierPacking.getModificationUser())
 			.put("supplier", "-")
-			.put("customer", "-");
+			.put("customer", "-")
+			.put("supplier_array", new JSONArray())
+			.put("customer_array", new JSONArray());
 		
 	}
 	
