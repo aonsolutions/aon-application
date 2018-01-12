@@ -511,7 +511,9 @@ public class SalaryDraftObject implements IContextProvider {
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
 		int employeeId = salaryDraft.getEmployee().getId();
-		employeesServiceAsync.getAvailablePayments(employeeId, callback);
+		employeesServiceAsync.getAvailablePayments(
+				Wnd.getCurrentDomainNameURL(), // TODO: Constructor param ? 
+				employeeId, callback);
 	}
 
 	public void getDeductionConcepts(AsyncCallback<List<Deduction>> callback) {

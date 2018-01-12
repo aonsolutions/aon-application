@@ -36,9 +36,6 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEnterprises(AsyncCallback<Enterprise[]> callback)
 			throws IllegalArgumentException;
 
-	void getAvailablePayments(int employeeId,
-			AsyncCallback<List<Payment>> callback)
-			throws IllegalArgumentException;
 
 	void getAvailableDeductions(int employeeId,
 			AsyncCallback<List<Deduction>> callback)

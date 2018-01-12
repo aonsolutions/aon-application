@@ -24,7 +24,7 @@ public interface AgreementService extends RemoteService{
 	SortedSet<Date> getChanges(String domain, Agreement agreement)
 			throws IllegalArgumentException;
 
-	List<Payment> getAvailablePayments(int employeeId)
+	List<Payment> getAvailablePayments(String domain, int employeeId)
 			throws IllegalArgumentException;
 
 	AgreementDraft calculateAgreementDraft(String domain, AgreementDraft agreementDraft)

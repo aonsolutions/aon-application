@@ -1593,18 +1593,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Payment> getAvailablePayments(int employeeId)
+	public List<Payment> getAvailablePayments(String domain, int employeeId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
+			conn = AonServletUtils.getConnection(domain);
 
-			conn = getConnection();
-
-			int domainId = getDomainID();
+			int domainId = AonServletUtils.getDomainID(domain);
+			
 
 			List<Payment> paymentConcepts = JooqPayments.getPaymentConcepts(
-					conn, domainId, getParentDomainID());
+					conn, domainId, AonServletUtils.getParentDomainID(domain));
 			List<Payment> employeePayments = Collections.emptyList();
 			/* getEmployeePayments(conn, employeeId); */
 			List<Payment> enterprisePayments = Collections.emptyList();
@@ -1630,7 +1629,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 

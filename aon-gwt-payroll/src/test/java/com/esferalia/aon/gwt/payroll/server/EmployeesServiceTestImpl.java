@@ -170,7 +170,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Payment> getAvailablePayments(int employeeId)
+	public List<Payment> getAvailablePayments(String domain, int employeeId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");

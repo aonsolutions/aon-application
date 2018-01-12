@@ -606,7 +606,7 @@ public class AgreementDraftObject {
 	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
-		agreementsServiceAsync.getAvailablePayments(Integer.MIN_VALUE, callback);
+		agreementsServiceAsync.getAvailablePayments(draftDomainName, Integer.MIN_VALUE, callback);
 	}
 
 	public boolean hasErrors() {

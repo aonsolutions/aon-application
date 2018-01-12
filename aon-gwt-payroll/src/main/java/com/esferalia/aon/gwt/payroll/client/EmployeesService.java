@@ -37,9 +37,6 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 
 	Enterprise[] getEnterprises() throws IllegalArgumentException;
 
-	List<Payment> getAvailablePayments(int employeeId)
-			throws IllegalArgumentException;
-
 	List<Deduction> getAvailableDeductions(int employeeId)
 			throws IllegalArgumentException;
 

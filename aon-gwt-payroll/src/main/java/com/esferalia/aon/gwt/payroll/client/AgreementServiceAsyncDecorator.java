@@ -31,11 +31,11 @@ public class AgreementServiceAsyncDecorator implements AgreementServiceAsync {
 	}
 
 	@Override
-	public void getAvailablePayments(int employeeId,
+	public void getAvailablePayments(String domain, int employeeId,
 			AsyncCallback<List<Payment>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		agreementServiceAsync.getAvailablePayments(employeeId,
+		agreementServiceAsync.getAvailablePayments(domain, employeeId,
 				new AsyncCallbackWrapper<List<Payment>>(callback));
 	}
 

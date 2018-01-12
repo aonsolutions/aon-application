@@ -22,7 +22,7 @@ public interface AgreementServiceAsync {
 			AsyncCallback<List<Result>> callback)
 			throws IllegalArgumentException, EvalException;
 
-	void getAvailablePayments(int employeeId,
+	void getAvailablePayments(String domain, int employeeId,
 			AsyncCallback<List<Payment>> callback)
 			throws IllegalArgumentException;
 

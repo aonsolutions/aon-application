@@ -47,7 +47,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getAvailablePayments(int employeeId,
+		public void getAvailablePayments(String domain, int employeeId,
 				AsyncCallback<List<Payment>> callback)
 				throws IllegalArgumentException {
 			List<Payment> concepts = new ArrayList<Payment>();
@@ -139,7 +139,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void getAvailablePayments(int employeeId,
+					public void getAvailablePayments(String domain,int employeeId,
 							AsyncCallback<List<Payment>> callback)
 							throws IllegalArgumentException {
 						List<Payment> concepts = new ArrayList<Payment>();

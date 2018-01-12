@@ -144,7 +144,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getAvailablePayments(int employeeId, AsyncCallback<List<Payment>> callback)
+	public void getAvailablePayments(String domain, int employeeId, AsyncCallback<List<Payment>> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
