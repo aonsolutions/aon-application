@@ -16,6 +16,7 @@ WORKDIR $TOMCAT_LIBDIR
 
 RUN set -x \
 	\
+	&& wget $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/aon.jaas-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`.jar \
 	&& wget $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/pool-`wget -O - $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $POOL_VERSION`.jar
 
 
