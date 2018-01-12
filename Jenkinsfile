@@ -146,6 +146,29 @@ node {
 
       sh "aws ecs update-service --cluster SNAPSHOT --service SNAPSHOT --task-definition ${snapshot_task_definition_arn}"
 
+
+      sh "aws ecs list-task-definitions --family-prefix SNAPSHOT-SERVICES > snapshot-services-task-definitions.json"
+
+      def snapshot_services_task_definitions_json = readFile 'snapshot-services-task-definitions.json'
+
+      def snapshot_services_task_definitions_arns = getTaskDefinitionArns(snapshot_services_task_definitions_json)
+
+      def last_snapshot_services_task_definition_arn = snapshot_services_task_definitions_arns[snapshot_services_task_definitions_arns.size()-1]
+
+      sh "aws ecs describe-task-definition --task-definition ${last_snapshot_services_task_definition_arn} > last-snapshot-services-task-definition.json"
+
+      def last_snapshot_services_task_definition_json = readFile 'last-snapshot-services-task-definition.json'
+
+      def snapshot_services_container_definitions_json = getContainerDefinitions(last_snapshot_services_task_definition_json, "aonsolutions/aon-micro-services:${pom.version}-${BUILD_NUMBER}-tomcat9-jre8")
+
+      sh "aws ecs register-task-definition --family SNAPSHOT-SERVICES --container-definitions '${snapshot_services_container_definitions_json}' > snapshot-services-task-definition.json"
+	
+      def snapshot_services_task_definition_json = readFile 'snapshot-services-task-definition.json'
+
+      def snapshot_services_task_definition_arn = getTaskDefinitionArn(snapshot_services_task_definition_json)
+
+      sh "aws ecs update-service --cluster SNAPSHOT --service SNAPSHOT-SERVICES --task-definition ${snapshot_services_task_definition_arn}"
+
       }
 
       
