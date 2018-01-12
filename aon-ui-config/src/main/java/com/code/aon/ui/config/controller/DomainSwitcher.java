@@ -409,7 +409,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			Domain domain = (Domain) bean.get(getDomainId());
 			String path = FacesContext.getCurrentInstance()
 					.getExternalContext().getRequestContextPath();
-			domainURL = "http://" + domain.getName() + path;
+			domainURL = "https://" + domain.getName() + path;
 		}
 		return domainURL;
 	}
