@@ -109,8 +109,10 @@ public class SeresPrincipal extends Composite{
 		});
 	}
 	
-	public void filterContent(){			
-		northContent.setWidget(new FilterPanel(this));
+	FilterPanel filterPanel;
+	public void filterContent(){
+		filterPanel = new FilterPanel(this);
+		northContent.setWidget(filterPanel);
 	}
 	
 	public void gridContent(){
@@ -125,6 +127,10 @@ public class SeresPrincipal extends Composite{
 		list = new LinkedList<>();
 		list.add("40");
 		getFilterMap().put("per_page", list);
+		
+		filterPanel.setCheckVisible(command==CommunicationTarget.OUTCOME_DELIVERY
+				|| command==CommunicationTarget.OUTCOME_INVOICE
+				|| command==CommunicationTarget.INGENET_DELIVERY);
 		
 		
 		Widget content = null;

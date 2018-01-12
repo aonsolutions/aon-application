@@ -137,17 +137,15 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 	}
 	
 	private boolean storeFtpFile(String fileName, InputStream inputStream) {
-		// TODO uncomment code below
-		return true;
-//		try {
-////			return SeresFtpConnectionProvider.storeFile(ftpRemotePath, fileName,
-////					inputStream, ftpServer, ftpPort, ftpUser, ftpPassword);
-//		} catch (FtpLoginException e) {
-//			LOGGER.error(e.getMessage());
-//		} catch (FtpException e) {
-//			LOGGER.error(e.getMessage());
-//		}
-//		return false;
+		try {
+			return SeresFtpConnectionProvider.storeFile(ftpRemotePath, fileName,
+					inputStream, ftpServer, ftpPort, ftpUser, ftpPassword);
+		} catch (FtpLoginException e) {
+			LOGGER.error(e.getMessage());
+		} catch (FtpException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return false;
 	}
 	
 	public void track(Level level, ResponseMessageType label, int sourceId, String referenceCode) {
@@ -179,7 +177,6 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 		drd.setCreationDate(new Date());
 		AON.insertDataResponseDetail(domainName, domainId, loggedUser, drd);
 		if( !level.equals(Level.INFO) ) {
-			// TODO send email
 			sendEmail2(domainName, domainId, loggedUser, "ERROR", "Envio al FTP de Seresnet", "Envio NO correcto: "+referenceCode, null, null, RECIPIENTS_TO_FAILURES);
 		}
 	}

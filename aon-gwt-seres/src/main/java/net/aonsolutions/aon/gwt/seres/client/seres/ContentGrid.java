@@ -92,16 +92,16 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 			@Override
 			public void onScroll(ScrollEvent event) {
 				// TODO
-				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
-					Integer page = 2;
-					if(parent.getFilterMap().containsKey("page")){
-						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
-					}
-					LinkedList<String> list = new LinkedList<>();
-					list.add(page +"");
-					parent.getFilterMap().put("page", list);
-					parent.reloadContentGrid();
-				}
+//				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
+//					Integer page = 2;
+//					if(parent.getFilterMap().containsKey("page")){
+//						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
+//					}
+//					LinkedList<String> list = new LinkedList<>();
+//					list.add(page +"");
+//					parent.getFilterMap().put("page", list);
+//					parent.reloadContentGrid();
+//				}
 			}
 		});
 		dataGrid.addHandler(new MouseOverHandler() {
