@@ -1719,7 +1719,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		offsetWidth += offsetWidth * 1.5 * (SALARY_TABLE_COLS - 1);
 		offsetWidth += cellFormatter.getElement(0, salaryTable.getCellCount(0) - 1).getOffsetWidth();
 
-		offsetWidth = 689;
+		//offsetWidth = 689;
 		salaryTableScrollPane.setWidth(offsetWidth + "px");
 		
 		return editors;
@@ -1837,7 +1837,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		offsetWidth += cellFormatter.getElement(0, salaryTable.getCellCount(0) - 1).getOffsetWidth();
 
 		salaryTableScrollPane.setWidth(offsetWidth + "px");
-
+		
 		return editors;
 	}
 	
