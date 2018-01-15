@@ -688,6 +688,7 @@ public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusa
 			|| ("B".equals(income.getKey()) )
 			|| ("C".equals(income.getKey()) && "01".equals(income.getSubKey()))
 			|| ("C".equals(income.getKey()) && "02".equals(income.getSubKey()))
+			|| ("D".equals(income.getKey()) && "01".equals(income.getSubKey()))
 			|| ("D".equals(income.getKey()) && "02".equals(income.getSubKey()))
 			|| ("H".equals(income.getKey()) )									
 				);
