@@ -7,7 +7,6 @@ import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -29,7 +28,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * The async counterpart of <code>EmployeesService</code>.
  */
-public interface EmployeesServiceAsync extends StatisticsServiceAsync,
+public interface EmployeesServiceAsync extends AgreementServiceAsync, StatisticsServiceAsync,
 		CalendarServiceAsync, EmployeeEventsServiceAsync, GPSReportsServiceAsync {
 	void getEnterprise(AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
@@ -37,9 +36,6 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void getEnterprises(AsyncCallback<Enterprise[]> callback)
 			throws IllegalArgumentException;
 
-	void getAvailablePayments(int employeeId,
-			AsyncCallback<List<Payment>> callback)
-			throws IllegalArgumentException;
 
 	void getAvailableDeductions(int employeeId,
 			AsyncCallback<List<Deduction>> callback)
@@ -79,10 +75,6 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void saveSalaryDraft(SalaryDraft salaryDraft, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 
-	void saveAgreementDraft(AgreementDraft agreementDraft,
-			AsyncCallback<AgreementDraft> callback)
-			throws IllegalArgumentException;
-
 	void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
@@ -105,15 +97,7 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
-	void calculateAgreementDraft(AgreementDraft agreementDraft,
-			AsyncCallback<AgreementDraft> callback)
-			throws IllegalArgumentException;
-
 	void eval(String expression, SalaryDraft salaryDraft,
-			AsyncCallback<List<Result>> callback)
-			throws IllegalArgumentException, EvalException;
-
-	void eval(String expression, AgreementDraft agreementDraft, int levelId,
 			AsyncCallback<List<Result>> callback)
 			throws IllegalArgumentException, EvalException;
 
@@ -121,18 +105,10 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 			AsyncCallback<ContextDescriptor> callback)
 			throws IllegalArgumentException;
 
-	void getContext(AgreementDraft agreementDraft, int levelId,
-			AsyncCallback<ContextDescriptor> callback)
-			throws IllegalArgumentException;
-
 	void getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
-			AsyncCallback<String> callback) throws IllegalArgumentException;
-
-	void getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
-			int levelId, Salary.Type type, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime,
@@ -178,9 +154,6 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 			throws IllegalArgumentException;
 
 	void delete(Salary salaries[], AsyncCallback<Void> callback)
-			throws IllegalArgumentException;
-
-	void getChanges(Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
 			throws IllegalArgumentException;
 
 	void pasteContract(int workplaceId, int contractId, String document,

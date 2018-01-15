@@ -390,6 +390,10 @@ public class Incidence extends Methods{
 		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rmedia/registry/"+enterprise, callback);
 	}
 	
+	public void getEnterpriseRaddressList(Integer enterprise, AsyncCallback<JSON<JsObject>> callback){
+		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/raddress/registry/"+enterprise, callback);
+	}
+	
 	public void getEnterpriseRnoteList(Integer enterprise, AsyncCallback<JSON<JsRnote>> callback){
 		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rnote/registry/"+enterprise, callback);
 	}

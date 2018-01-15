@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.20-SNAPSHOT</version>
+    <version>9.23-SNAPSHOT</version>
   </parent>
   <artifactId>aon-aio</artifactId>
   <packaging>war</packaging>
@@ -84,7 +84,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.20-SNAPSHOT</version>
+      <version>9.23-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -933,7 +933,7 @@
         <dependency>
           <groupId>net.aonsolutions.core</groupId>
           <artifactId>pool</artifactId>
-          <version>9.20-SNAPSHOT</version>
+          <version>9.23-SNAPSHOT</version>
           <scope>compile</scope>
         </dependency>
         <dependency>

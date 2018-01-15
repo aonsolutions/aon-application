@@ -72,6 +72,7 @@ public interface IFiscal {
 	public Mod180Detail getMod180Detail(AONContext ctx,Integer id);
 	public Mod180 saveCommentsMod180(AONContext ctx, Mod180 mod180);
 	public Mod180 changeStatusMod180(AONContext ctx, Mod180 mod180, FiscalStatus newStatus);
+	public Mod180 duplicateNextYearMod180(AONContext ctx, Integer id);
 	
 	// 				   		  MOD190
 	public LinkedList<Mod190> getMod190s(AONContext ctx,int domain);
@@ -82,6 +83,7 @@ public interface IFiscal {
 	public Mod190Detail getMod190Detail(AONContext ctx,Integer id);
 	public Mod190 saveCommentsMod190(AONContext ctx, Mod190 mod190);
 	public Mod190 changeStatusMod190(AONContext ctx, Mod190 mod190, FiscalStatus newStatus);
+	public Mod190 duplicateNextYearMod190(AONContext ctx, Integer id);
 
 	// 				   		  	MOD193
 	public LinkedList<Mod193> getMod193s(AONContext ctx,int domain);
@@ -91,6 +93,7 @@ public interface IFiscal {
 	public void deleteMod193(AONContext ctx,Mod193 mod193);
 	public Mod193 saveCommentsMod193(AONContext ctx, Mod193 mod193);
 	public Mod193 changeStatusMod193(AONContext ctx, Mod193 mod193, FiscalStatus newStatus);
+	public Mod193 duplicateNextYearMod193(AONContext ctx, Integer id);
 	
 	// 				   		  MOD184
 	public LinkedList<Mod184> getMod184s(AONContext ctx,int domain);
@@ -100,6 +103,7 @@ public interface IFiscal {
 	public void deleteMod184(AONContext ctx,Mod184 mod184);
 	public Mod184 saveCommentsMod184(AONContext ctx, Mod184 mod184);
 	public Mod184 changeStatusMod184(AONContext ctx, Mod184 mod184, FiscalStatus newStatus);
+	public Mod184 duplicateNextYearMod184(AONContext ctx, Integer id);
 
 	// 				   		  	MOD390
 	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain);

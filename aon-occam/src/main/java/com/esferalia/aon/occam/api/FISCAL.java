@@ -1241,6 +1241,17 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	public static Mod180 duplicateNextYearMod180(String domainName, Integer domain, String userLogin, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,userLogin);
+			return getFiscal().duplicateNextYearMod180(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// ----------------------------------MODELO 190
 	public static LinkedList<Mod190> getMod190s(String domainName, int domainId,
@@ -1336,6 +1347,17 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	public static Mod190 duplicateNextYearMod190(String domainName, Integer domain, String userLogin, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,userLogin);
+			return getFiscal().duplicateNextYearMod190(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// ----------------------------------MODELO 193
 	public static LinkedList<Mod193> getMod193s(String domainName, int domainId,
@@ -1414,6 +1436,16 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, mod193.getDomain(),user);
 			return getFiscal().changeStatusMod193(ctx, mod193, newStatus);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static Mod193 duplicateNextYearMod193(String domainName, Integer domain, String userLogin, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,userLogin);
+			return getFiscal().duplicateNextYearMod193(ctx, id);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1501,6 +1533,18 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	public static Mod184 duplicateNextYearMod184(String domainName, Integer domain, String userLogin, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,userLogin);
+			return getFiscal().duplicateNextYearMod184(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ----------------------------------MODELO 202
 	public static LinkedList<Mod202> getMod202s(String domainName,int domainId, String user) {
 		AONContext ctx = null;

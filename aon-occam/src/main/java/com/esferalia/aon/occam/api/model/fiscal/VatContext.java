@@ -65,7 +65,7 @@ public class VatContext implements Serializable {
 	private Double amortizationPercentage;
 	private Date amortizationInitialDate;
 	
-
+	private double amount347; // Importe que se declara en el modelo 347
 	
 	public String getSiiStatus() {
 		return siiStatus;
@@ -436,6 +436,13 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setRegContableDate(Date regContableDate) {
 		this.regContableDate = regContableDate;
+		return this;
+	}
+	public double getAmount347() {
+		return amount347;
+	}
+	public VatContext setAmount347(double amount347) {
+		this.amount347 = amount347;
 		return this;
 	}
 	

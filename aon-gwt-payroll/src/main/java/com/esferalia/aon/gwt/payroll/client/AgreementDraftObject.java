@@ -221,6 +221,7 @@ public class AgreementDraftObject {
 	private Date draftStartDate;
 
 	private Integer draftDomain;
+	private String draftDomainName;
 
 	private int nextDraftLevelId = 0;
 	private int nextDraftExtraId = 0;
@@ -229,19 +230,22 @@ public class AgreementDraftObject {
 	private AgreementDraft agreementDraft;
 	private AgreementDraft oldAgreementDraft;
 	private UndoManager<Undoable> undoManager;
-	private EmployeesServiceAsync employeesServiceAsync;
+	private AgreementServiceAsync agreementsServiceAsync;
 	private ArrayList<Date> newDatesChanges;
 	private ArrayList<Date> deleteDatesChanges;
 
-	public AgreementDraftObject(Integer draftDomain,
+	public AgreementDraftObject(
+			Integer draftDomain,
+			String draftDomainName,
 			AgreementDraft agreementDraft,
-			EmployeesServiceAsync employeesServiceAsync) {
+			AgreementServiceAsync employeesServiceAsync) {
 		this.oldAgreementDraft = null;
 		this.agreementDraft = agreementDraft;
 		this.undoManager = new UndoManager<Undoable>();
-		this.employeesServiceAsync = employeesServiceAsync;
+		this.agreementsServiceAsync = employeesServiceAsync;
 		this.shownVariables = new HashSet<String>();
 		this.draftDomain = draftDomain;
+		this.draftDomainName = draftDomainName;
 		this.newDatesChanges = new ArrayList<>();
 		this.deleteDatesChanges = new ArrayList<>();
 	}
@@ -547,8 +551,8 @@ public class AgreementDraftObject {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), agreementDraft);
 		// TODO: Clean Database data.
-
-		employeesServiceAsync.saveAgreementDraft(agreementDraft,
+		
+		agreementsServiceAsync.saveAgreementDraft(draftDomainName, agreementDraft,
 				new AsyncCallback<AgreementDraft>() {
 
 					@Override
@@ -571,8 +575,12 @@ public class AgreementDraftObject {
 	}
 
 	public void calculate(final CalculateCallback callback) {
+		
+		AgreementServiceAsync agreementServiceAsync = agreementsServiceAsync;
 
-		employeesServiceAsync.calculateAgreementDraft(agreementDraft,
+		agreementServiceAsync.calculateAgreementDraft(
+				draftDomainName,
+				agreementDraft,
 				new AsyncCallback<AgreementDraft>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -593,12 +601,12 @@ public class AgreementDraftObject {
 	public void preview(int levelId,
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type type, int zoom,
 			AsyncCallback<String> callback) {
-		employeesServiceAsync.getAgreementDraftReceiptHTML(agreementDraft,
-				levelId, type, zoom, callback);
+		agreementsServiceAsync.getAgreementDraftReceiptHTML(draftDomainName, 
+				agreementDraft,levelId, type, zoom, callback);
 	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
-		employeesServiceAsync.getAvailablePayments(Integer.MIN_VALUE, callback);
+		agreementsServiceAsync.getAvailablePayments(draftDomainName, Integer.MIN_VALUE, callback);
 	}
 
 	public boolean hasErrors() {
@@ -613,13 +621,13 @@ public class AgreementDraftObject {
 
 	public void getContext(int levelId,
 			AsyncCallback<ContextDescriptor> callback) {
-		employeesServiceAsync.getContext(agreementDraft, levelId, callback);
+		agreementsServiceAsync.getContext(draftDomainName, agreementDraft, levelId, callback);
 	}
 
 	public void eval(String expression, int levelId, List<Variable> vars,
 			AsyncCallback<List<Result>> callback) {
 
-		employeesServiceAsync.eval(expression,
+		agreementsServiceAsync.eval(draftDomainName, expression,
 				newAgreementDraft(agreementDraft, vars), levelId, callback);
 	}
 
@@ -676,7 +684,7 @@ public class AgreementDraftObject {
 	public void getSystemContext(final CalculateCallback callback,
 			final AgreementDraft agreementDraft) {
 
-		employeesServiceAsync.getContext(agreementDraft, -666,
+		agreementsServiceAsync.getContext(draftDomainName, agreementDraft, -666,
 				new AsyncCallback<ContextDescriptor>() {
 
 					@Override
@@ -897,7 +905,7 @@ public class AgreementDraftObject {
 
 
 				// DIAS
-				add("DIAS_AﾑO");
+				add("DIAS_Aﾃ前");
 				add("DIAS_MES");
 				add("DIAS_NATURALES_MES");
 				add("DIAS_VACACIONES");
@@ -922,13 +930,13 @@ public class AgreementDraftObject {
 				add("DIAS_ERE");
 				
 				//ANTIGUEDAD
-				add("AﾑOS_ANTIGUEDAD");
+				add("Aﾃ前S_ANTIGUEDAD");
 				
 				
 				// FINIQUITO ?
 				add("DIAS_INDEMNIZACION");
 				add("CAUSA_INDEMNIZACION");
-				add("AﾑOS_TRABAJADOS");
+				add("Aﾃ前S_TRABAJADOS");
 
 				add("MESES_NOMINA");
 				add("MESES_PAGA");
@@ -968,7 +976,7 @@ public class AgreementDraftObject {
 				add("TARIFA_IT");
 				add("TARIFA_IMS");
 				add("CONTRATO_CORTA_DURACION");
-				add("AﾑOS_ANTIGUEDAD");
+				add("Aﾃ前S_ANTIGUEDAD");
 				add("COLECT_PECULIAR_COTIZACION");
 				add("COD_FIN_CONTRATO");
 				add("DESC_FIN_CONTRATO");

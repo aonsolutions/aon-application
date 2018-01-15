@@ -65,9 +65,10 @@ public interface ITask {
 	public Workgroup updateWorkgroup(AONContext ctx, Workgroup workgroup); 
 	public Workgroup deleteWorkgroup(AONContext ctx, Integer wId); 
 	public Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
-
+	
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter);
+	public TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder); 
 	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder);
 	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder);
 	

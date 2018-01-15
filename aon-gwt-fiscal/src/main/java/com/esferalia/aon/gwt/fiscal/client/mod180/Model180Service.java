@@ -20,5 +20,6 @@ public interface Model180Service extends RemoteService {
 	Mod180 initializeMod180(String domainName, Integer domain, Integer year);
 	Mod180 saveCommentsMod180(String domainName, Mod180 mod180) throws AonCoreException;
 	Mod180 changeStatusMod180(String domainName, Mod180 mod180, FiscalStatus newStatus) throws AonCoreException;
+	Mod180 duplicateNextYear(String domainName, Integer domain,Integer id) throws AonCoreException;
 	
 }

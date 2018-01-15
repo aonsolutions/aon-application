@@ -1,0 +1,409 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+		<property name="connection.provider_class">com.code.aon.ui.common.hibernate.HibernateConnectionProvider</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+
+		<!-- AON-ACADEMY Mapping files -->
+		<mapping class="com.code.aon.academy.Absence"/>
+		<mapping class="com.code.aon.academy.AcademicSkill"/>
+		<mapping class="com.code.aon.academy.AcademicYear"/>
+		<mapping class="com.code.aon.academy.AlumnLoan"/>
+		<mapping class="com.code.aon.academy.Course"/>
+		<mapping class="com.code.aon.academy.CourseAcademicSkill"/>
+		<mapping class="com.code.aon.academy.CourseAlumn"/>
+		<mapping class="com.code.aon.academy.CourseEvaluation"/>
+		<mapping class="com.code.aon.academy.CourseInstructor"/>
+		<mapping class="com.code.aon.academy.CourseLevel"/>
+		<mapping class="com.code.aon.academy.CourseObservation"/>
+		<mapping class="com.code.aon.academy.CourseSchedule"/>
+		<mapping class="com.code.aon.academy.CourseSubject"/>
+		<mapping class="com.code.aon.academy.EvaluationObservation"/>
+		<mapping class="com.code.aon.academy.Mark"/>
+		<mapping class="com.code.aon.academy.Observation"/>
+		<mapping class="com.code.aon.academy.Qualification"/>
+		<mapping class="com.code.aon.academy.QualitySkill"/>
+		
+		<!-- AON-ACCOUNT Mapping files -->
+		<mapping class="com.code.aon.account.Account"/>
+
+		<!-- AON-ACCOUNTING Mapping files -->
+		<mapping class="com.code.aon.accounting.AutoConcept"/>
+		<mapping class="com.code.aon.accounting.AccountEntry"/>
+		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
+		<mapping class="com.code.aon.accounting.AccountHelper"/>
+		<mapping class="com.code.aon.accounting.Amortization"/>
+		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
+		<mapping class="com.code.aon.accounting.AmortizationInvoice"/>
+		<mapping class="com.code.aon.accounting.AmortizationType"/>
+		<mapping class="com.code.aon.accounting.Balance"/>
+		<mapping class="com.code.aon.accounting.BalanceDetail"/>
+		<mapping class="com.code.aon.accounting.Loan"/>
+		<mapping class="com.code.aon.accounting.Period"/>
+		
+		<!-- AON-ACCOUNT-BRIDGE Mapping files -->
+		<mapping class="com.code.aon.account.bridge.AccountEntryBankStatement"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceTracking"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
+		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
+		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
+
+		<!-- AON-ADMIN Mapping files -->	
+		<mapping class="com.code.aon.admin.ApplicationRole"/>
+		<mapping class="com.code.aon.admin.ApplicationUserProfile"/>
+		<mapping class="com.code.aon.admin.Profile"/>
+		<mapping class="com.code.aon.admin.ProfileRole"/>
+		<mapping class="com.code.aon.admin.Role"/>
+
+		<!-- AON-ASSET Mapping files --> 
+		<mapping class="com.code.aon.asset.Asset"/>
+		<mapping class="com.code.aon.asset.AssetFeature"/>
+		<mapping class="com.code.aon.asset.AssetActivity"/>
+		<mapping class="com.code.aon.asset.AssetType"/>
+		<mapping class="com.code.aon.asset.AssetInterval"/>
+		<mapping class="com.code.aon.asset.Feature"/>
+
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.DomainApplicationModule"/>
+		<mapping class="com.code.aon.audit.ProfileActionDenied"/>		
+		<mapping class="com.code.aon.audit.ProfileModuleDenied"/>
+		<mapping class="com.code.aon.audit.Session"/>		
+
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>	
+		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
+		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
+		
+		<!-- AON-CARRIER Mapping files -->	
+		<mapping class="com.esferalia.aon.carrier.Carrier"/>
+
+		<!-- AON-COMMERCIAL Mapping files -->	
+		<mapping class="com.code.aon.commercial.CommercialActivity"/>
+		<mapping class="com.code.aon.commercial.CommercialTerm"/>
+		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.Commission"/>
+		<mapping class="com.code.aon.commercial.CommissionCategory"/>
+		<mapping class="com.code.aon.commercial.CommissionItem"/>
+		<mapping class="com.code.aon.commercial.CommissionTypeCommission"/>
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferAttachment"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
+		<mapping class="com.code.aon.commercial.OfferTerm"/>
+		<mapping class="com.code.aon.commercial.ProjectCommercial"/>
+		<mapping class="com.code.aon.commercial.Target"/>
+		
+		<!-- AON-COMPANY Mapping files -->
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Department"/>
+		<mapping class="com.code.aon.company.Enterprise"/>
+		<mapping class="com.code.aon.company.EnterpriseData"/>				
+		<mapping class="com.code.aon.company.InvestAsset"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
+
+		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.Application"/>
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.ApplicationUser"/>
+		<mapping class="com.code.aon.config.Catalogue"/>
+		<mapping class="com.code.aon.config.CNAE"/>
+		<mapping class="com.code.aon.config.CNAE2009"/>
+		<mapping class="com.code.aon.config.CNAE2009Rate"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.Domain"/>
+		<mapping class="com.code.aon.config.DomainApplication"/>
+		<mapping class="com.code.aon.config.IAE"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+        <mapping class="com.code.aon.config.Tag"/>
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.TariffAddInfo"/>
+		<mapping class="com.code.aon.config.TariffCatalogue"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		
+		<!-- AON-CUSTOMER Mapping files -->	
+		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.customer.InvoicingGroup"/>
+
+		<!-- AON-DATA Mapping files -->	
+		<mapping class="com.code.aon.data.DataAttachment"/>
+
+		<!-- AON-FINANCE Mapping files -->	
+		<mapping class="com.code.aon.finance.BankConcept"/>
+		<mapping class="com.code.aon.finance.BankStatement"/>
+		<mapping class="com.code.aon.finance.BankStatementLink"/>
+		<mapping class="com.code.aon.finance.CashFlowForecast"/>
+		<mapping class="com.code.aon.finance.Creditor"/>
+		<mapping class="com.code.aon.finance.CustomerFee"/>
+		<mapping class="com.code.aon.finance.Finance"/>
+		<mapping class="com.code.aon.finance.FinanceBatch"/>
+		<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
+		<mapping class="com.code.aon.finance.FinanceTracking"/>
+		<mapping class="com.code.aon.finance.Invoice"/>
+		<mapping class="com.code.aon.finance.InvoiceAddress"/>
+		<mapping class="com.code.aon.finance.InvoiceAttachment"/>
+		<mapping class="com.code.aon.finance.InvoiceDetail"/>
+		<mapping class="com.code.aon.finance.InvoiceTax"/>
+		<mapping class="com.code.aon.finance.Pos"/>
+		<mapping class="com.code.aon.finance.PosCatalogue"/>
+		<mapping class="com.code.aon.finance.PosShift"/>
+		<mapping class="com.code.aon.finance.PosShiftCount"/>
+		<mapping class="com.code.aon.finance.Prepayment"/>
+
+		<!-- AON-FISCAL Mapping files -->
+		<mapping class="com.code.aon.fiscal.FiscalActivity"/>
+		<mapping class="com.code.aon.fiscal.FiscalActivityInfo"/>
+		<mapping class="com.code.aon.fiscal.FiscalModel"/>
+		<mapping class="com.code.aon.fiscal.FiscalModelDetail"/>
+		<mapping class="com.code.aon.fiscal.Mod347"/>
+		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
+		<mapping class="com.code.aon.fiscal.Mod349"/>
+		<mapping class="com.code.aon.fiscal.Mod349Detail"/>
+		<mapping class="com.code.aon.fiscal.VatTax"/>
+		<mapping class="com.code.aon.fiscal.VatTaxDeclaration"/>
+		<mapping class="com.code.aon.fiscal.VatTaxDetail"/>
+		
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoTree"/>
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+
+		<!-- AON-GROUPWARE Mapping files --> 
+		<mapping class="com.code.aon.groupware.Alarm"/>
+		<mapping class="com.code.aon.groupware.Campaign"/>
+		<mapping class="com.code.aon.groupware.CampaignProject"/>
+		<mapping class="com.code.aon.groupware.CampaignType"/>
+		<mapping class="com.code.aon.groupware.CostProfile"/>
+		<mapping class="com.code.aon.groupware.DailyTracking"/>
+		<mapping class="com.code.aon.groupware.Favorite"/>
+		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
+		<mapping class="com.code.aon.groupware.JobType"/>
+		<mapping class="com.code.aon.groupware.Note"/>
+		<mapping class="com.code.aon.groupware.Notice"/>
+		<mapping class="com.code.aon.groupware.Process"/>
+		<mapping class="com.code.aon.groupware.ProcessDetail"/>
+		<mapping class="com.code.aon.groupware.ProcessDetailTransition"/>
+		<mapping class="com.code.aon.groupware.ProcessTask"/>
+		<mapping class="com.code.aon.groupware.ProcessTransitionType"/>
+		<mapping class="com.code.aon.groupware.Task"/>
+		<mapping class="com.code.aon.groupware.TaskHolder"/>
+		<mapping class="com.code.aon.groupware.TaskHolderWorkgroup"/>
+
+		<!-- AON-MARKETING Mapping files --> 
+		<mapping class="com.code.aon.marketing.ActionTarget"/>
+		<mapping class="com.code.aon.marketing.MarketingCampaign"/>
+		<mapping class="com.code.aon.marketing.MarketingAction"/>
+		<mapping class="com.code.aon.marketing.News"/>
+		<mapping class="com.code.aon.marketing.Newsletter"/>	
+		<mapping class="com.code.aon.marketing.NewsletterDetail"/>
+		<mapping class="com.code.aon.marketing.Survey"/>
+		<mapping class="com.code.aon.marketing.SurveyQuestion"/>
+		<mapping class="com.code.aon.marketing.SurveyResponse"/>
+		<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
+		<mapping class="com.code.aon.marketing.SurveyWorkflow"/>
+		<mapping class="com.code.aon.marketing.Template"/>
+					
+		<!-- AON-PAYROLL Mapping files -->
+		<mapping class="com.esferalia.aon.payroll.Agreement"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementData"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementExtra"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevel"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevelCategory"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevelData"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementPayment"/>
+		<mapping class="com.esferalia.aon.payroll.BonusConcept"/>
+		<mapping class="com.esferalia.aon.payroll.Certifica2Batch"/>
+		<mapping class="com.esferalia.aon.payroll.Certifica2BatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.Certifica2BatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.CNO"/>
+		<mapping class="com.esferalia.aon.payroll.Contract"/>
+		<mapping class="com.esferalia.aon.payroll.ContractAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatch"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBonus"/>
+		<mapping class="com.esferalia.aon.payroll.ContractCalendarEvent"/>
+		<mapping class="com.esferalia.aon.payroll.ContractClause"/>
+		<mapping class="com.esferalia.aon.payroll.ContractData"/>
+		<mapping class="com.esferalia.aon.payroll.ContractDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.ContractEmbargo"/>
+		<mapping class="com.esferalia.aon.payroll.ContractInfo"/>
+		<mapping class="com.esferalia.aon.payroll.ContractLeave"/>
+		<mapping class="com.esferalia.aon.payroll.ContractLeaveDetail"/>
+		<mapping class="com.esferalia.aon.payroll.ContractPayment"/>
+		<mapping class="com.esferalia.aon.payroll.ContrataBatch"/>
+		<mapping class="com.esferalia.aon.payroll.ContrataBatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.ContrataBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.CraBatch"/>
+		<mapping class="com.esferalia.aon.payroll.CraBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseActivity"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatch"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.GeozoneIrpf"/>
+		<mapping class="com.esferalia.aon.payroll.GeozoneIrpfDescendant"/>
+		<mapping class="com.esferalia.aon.payroll.GeozoneIrpfHandicap"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfData"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfDataAscendants"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfDataDescendients"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfRegularization"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfResult"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
+		<mapping class="com.esferalia.aon.payroll.PayrollWorkPlace"/>
+		<mapping class="com.esferalia.aon.payroll.Salary"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryData"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryBonus"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryCost"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryEmbargo"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryPayment"/>
+		<mapping class="com.esferalia.aon.payroll.SystemData"/>
+		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
+		<mapping class="com.esferalia.aon.payroll.TrainingCenter"/>
+		<mapping class="com.esferalia.aon.payroll.TrainingCourse"/>
+
+		<!-- AON-PMS Mapping files -->	
+		<mapping class="com.esferalia.aon.pms.Allotment"/>
+		<mapping class="com.esferalia.aon.pms.AllotmentItem"/>
+		<mapping class="com.esferalia.aon.pms.AllotmentTariff"/>
+		<mapping class="com.esferalia.aon.pms.Hotel"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationDivert"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestGuest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestRoom"/>
+		<mapping class="com.esferalia.aon.pms.Room"/>
+		<mapping class="com.esferalia.aon.pms.StopSales"/>
+		<mapping class="com.esferalia.aon.pms.StopSalesItem"/>
+		<mapping class="com.esferalia.aon.pms.StopSalesTariff"/>
+
+		<!-- AON-PROJECT Mapping files -->  
+		<mapping class="com.code.aon.project.ActivityType"/>
+		<mapping class="com.code.aon.project.Project"/>
+		<mapping class="com.code.aon.project.ProjectActivity"/>
+		<mapping class="com.code.aon.project.ProjectAttachment"/>
+		<mapping class="com.code.aon.project.ProjectType"/>
+
+		<!-- AON-PRODUCT Mapping files -->	
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.CatalogueCategory"/>
+		<mapping class="com.code.aon.product.CatalogueItem"/>
+		<mapping class="com.code.aon.product.Item"/>
+    	<mapping class="com.code.aon.product.ItemAddInfo"/>
+		<mapping class="com.code.aon.product.ItemAlternative"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>
+		<mapping class="com.code.aon.product.ItemComposition"/>
+		<mapping class="com.code.aon.product.ItemTariff"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductTag"/>
+
+		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Proposal"/>
+		<mapping class="com.code.aon.purchase.ProposalDetail"/>
+		<mapping class="com.code.aon.purchase.Purchase"/>
+		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
+
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.person.Person"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.Question"/>
+		<mapping class="com.code.aon.registry.QuestionValue"/>				
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RegistryItem"/>		
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryProfile"/>		
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.RegistrySeller"/>
+		<mapping class="com.code.aon.registry.RegistrySupplier"/>		
+		<mapping class="com.code.aon.registry.RegistryTax"/>		
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.Segment"/>
+
+		<!-- AON-SALES Mapping files -->	
+		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesDetail"/>
+
+		<!-- AON-SELLER Mapping files -->	
+		<mapping class="com.code.aon.seller.Seller"/>
+
+		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.Supplier"/>
+
+		<!-- AON-TAS Mapping files -->	
+		<mapping class="com.code.aon.tas.Make"/>
+		<mapping class="com.code.aon.tas.Model"/>
+		<mapping class="com.code.aon.tas.ProjectTas"/>
+		<mapping class="com.code.aon.tas.TasItem"/>
+
+		<!-- AON-WAREHOUSE Mapping files -->		
+		<mapping class="com.code.aon.warehouse.Delivery"/>
+		<mapping class="com.code.aon.warehouse.DeliveryDetail"/>
+		<mapping class="com.code.aon.warehouse.Income"/>
+		<mapping class="com.code.aon.warehouse.IncomeDetail"/>
+		<mapping class="com.code.aon.warehouse.Inventory"/>
+		<mapping class="com.code.aon.warehouse.InventoryDetail"/>
+		<mapping class="com.code.aon.warehouse.ItemWarehouse"/>
+		<mapping class="com.code.aon.warehouse.Stock"/>
+		<mapping class="com.code.aon.warehouse.Warehouse"/>
+		<mapping class="com.code.aon.warehouse.WarehouseTransfer"/>
+		<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
+
+		<!-- AON-WEBINFO Mapping files -->
+		<mapping class="com.code.aon.infoweb.WebInfo"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPage"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPageDetail"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPageResource"/>
+		<mapping class="com.code.aon.infoweb.WebInfoStyle"/>
+		
+		<!-- AON-WEBMAIL Mapping files -->	
+		<mapping class="com.code.aon.webmail.db.Contact"/>
+		<mapping class="com.code.aon.webmail.db.ContactData"/>
+		<mapping class="com.code.aon.webmail.db.ContactDetail"/>
+		<mapping class="com.code.aon.webmail.db.MailAccount"/>
+		<mapping class="com.code.aon.webmail.db.Signature"/>
+
+	</session-factory>
+
+</hibernate-configuration>

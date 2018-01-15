@@ -33,7 +33,7 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 	
 	private static enum Mod184PartnerKey {
 		 A ("A - Rendimientos del capital mobiliario."
-			 ,new String[] {"01","02","03"}
+			 ,new String[] {"01","02"}
 		 	 ,new String[] {
 	 			 "01 - Rendimientos capital mobiliario ap. 1, 2, y 3 art. 25 LIRPF"
 		 		,"02 - Rendimientos capital mobiliario ap. 4 art. 25 LIRPF"})
@@ -179,7 +179,7 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 			key.addItem(k.getDescription(),k.getValue());
 		}
 		
-		Model1842016PartnerPanel.setValue(key, subkey, partner);
+		Model1842016PartnerPanel.setValue(key, subkey, partner, callback);
 		
 		key.addChangeHandler(new ChangeHandler() {
 			@Override
@@ -324,6 +324,7 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 
 		memberEndOfYear.setText(AON.MSG.memberEndOfYear());
 		memberEndOfYear.setStyleName(AON.AON_CSS.aonFontMedium());
+		memberEndOfYear.setValue(partner.isMemberEndOfYear());
 		memberEndOfYear.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -388,7 +389,10 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 		tab2.setWidget(5, 2, reduction);
 
 
- 		tab2.setWidget(6, 0, new MediumLabel(AON.MSG.address()));
+		InlineLabel addressLabel = new InlineLabel("Domicilio fiscal del miembro de la entidad");
+		addressLabel.setStyleName(AON.AON_CSS.aonFontMedium());
+ 		tab2.setWidget(6, 0, addressLabel);
+ 		tab2.getFlexCellFormatter().setColSpan(6, 0, 2);
  		address.setStyleName(AON.AON_CSS.aonInputText());
  		address.setMaxLength(40);
  		address.setVisibleLength(40);
@@ -538,11 +542,17 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 		tabIndex = index;
 	}
 	
-	private static void setValue(ListBox key, ListBox subKey, Mod184Partner detail) {
+	private static void setValue(ListBox key, ListBox subKey, Mod184Partner detail, IModel184PartnerCallback callback) {
 		if (AonStringUtils.isBlank( detail.getKey())) {
 			detail.setKey(Mod184PartnerKey.A.toString());
+			callback.onValueChanged(detail);
 		}
 		Mod184PartnerKey keyEnum = Mod184PartnerKey.valueOf(detail.getKey());
+		if (keyEnum.hasSubkeys() && AonStringUtils.isBlank( detail.getSubKey())) {
+			detail.setSubKey(keyEnum.subkeys[0]);
+			callback.onValueChanged(detail);
+		}
+		
 		key.setSelectedIndex(keyEnum.ordinal());
 		subKey.clear();
 		if (keyEnum.hasSubkeys()) {
@@ -575,7 +585,7 @@ public class Model1842016PartnerPanel extends SimpleLayoutPanel implements Focus
 				 || location.getSelectedIndex() == 2
 				 || location.getSelectedIndex() == 3)
 				);
-		declaredKey.setEnabled(!"0".equals(partner.getLocation()));
+		declaredKey.setEnabled(location.isEnabled() && !"0".equals(partner.getLocation()));
 	}
 
 }

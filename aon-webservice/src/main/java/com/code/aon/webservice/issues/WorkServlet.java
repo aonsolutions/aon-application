@@ -24,6 +24,8 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -181,6 +183,9 @@ public class WorkServlet extends HttpServlet{
 		Registry registry = AON.getRegistry(domain.getName(), domain.getId(), userName, id)
 			.setName(json.getString("name")).setAlias(json.getString("name"));
 		AON.updateRegistry(domain.getName(), domain.getId(), userName, registry);
+		TaskHolder holder = AON.getTaskHolder(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
+		holder.setActive(json.getString("active").equals("true") ? (byte) 1 : (byte) 0);
+		AON.updateTaskHolder(domain.getName(), domain.getId(), userName, holder);
 		if(json.opt("email") != null){
 			RegistryMedia rmedia = AON.getRMedia(domain.getName(), domain.getId(), userName,
 				f -> f.getMediaProperty().eq((byte) 4).and(f.getRegistryProperty().eq(id)));
@@ -229,7 +234,9 @@ public class WorkServlet extends HttpServlet{
 	
 	private JSONObject updateWorkgroup(Domain domain, String userName, Integer id, JSONObject json){
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, id)
-			.setDescription(json.getString("name"));
+			.setDescription(json.getString("name"))
+			.setStatus(json.getString("active").equalsIgnoreCase("true") ? WorkgroupStatus.ACTIVE.value() : WorkgroupStatus.INACTIVE.value());
+		
 		AON.updateWorkgroup(domain.getName(), domain.getId(), userName, workgroup);
 		return new JSONObject(); // TODO
 	}
@@ -247,7 +254,8 @@ public class WorkServlet extends HttpServlet{
 		public User apply(TaskHolder r) {
 			return new User()
 					.setId(r.getId())
-					.setLogin(r.getName());  
+					.setLogin(r.getName())
+					.setStatus(r.getActive() == 1 ? CustomerStatus.ACTIVE : CustomerStatus.INACTIVE);  
 		}
 	}
 
@@ -257,7 +265,8 @@ public class WorkServlet extends HttpServlet{
 		public User apply(Workgroup r) {
 			return new User()
 					.setId(r.getId())
-					.setLogin(r.getDescription());  
+					.setLogin(r.getDescription())
+					.setStatus(CustomerStatus.values()[r.getStatus()]);  
 		}
 	}
 }

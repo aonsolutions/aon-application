@@ -624,13 +624,71 @@ public class StatControlPanel extends MainEntryPoint {
 							options.set("animation", StatUtils.ANIMATION);
 							options.setWidth(content.getOffsetWidth());
 							options.setHeight(content.getOffsetHeight());
-							options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);						AxisOptions vaxis = AxisOptions.create();
+							options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
+							AxisOptions vaxis = AxisOptions.create();
 							vaxis.setTitle(AON.MSG.amount());
 							options.setVAxisOptions(vaxis);
 							AxisOptions haxis = AxisOptions.create();
 							haxis.setTitle(AON.MSG.productCategories());
 							options.setHAxisOptions(haxis);
 							final DataTable dataTable = getDataTable(result, AON.MSG.productCategories());
+							RawDataTable table =  new RawDataTable(dataTable);
+							south.setWidget(table);
+							excel.setEnabled(true);
+							ResizableComboChart chart = new ResizableComboChart(dataTable, options);
+							coreChartCallback.onSuccess(chart);
+						} else {
+							final PieOptions options = PieChart.createPieOptions();
+							options.set("animation", StatUtils.ANIMATION);
+							options.setWidth(content.getOffsetWidth());
+							options.setHeight(content.getOffsetHeight());
+							options.set3D(true);
+							AxisOptions vaxis = AxisOptions.create();
+							vaxis.setTitle(AON.MSG.amount());
+							options.setVAxisOptions(vaxis);
+							AxisOptions haxis = AxisOptions.create();
+							haxis.setTitle(AON.MSG.months());
+							options.setHAxisOptions(haxis);
+							final DataTable dataTable = getDataTable(result, "ABC");
+							RawDataTable table =  new RawDataTable(dataTable);
+							south.setWidget(table);
+							excel.setEnabled(true);
+							final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+							coreChartCallback.onSuccess(chart);
+						}
+					}
+				}
+
+
+				@Override
+				public void onFailure(Throwable caught) {
+					coreChartCallback.onFailure(caught);
+				}
+			});
+		}
+
+		@Override
+		public void visitAbcProductBrand() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						if (hasNegativeValues(result)) {
+							final ComboChart.Options options = ComboChart.createComboOptions();
+							options.set("animation", StatUtils.ANIMATION);
+							options.setWidth(content.getOffsetWidth());
+							options.setHeight(content.getOffsetHeight());
+							options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
+							AxisOptions vaxis = AxisOptions.create();
+							vaxis.setTitle(AON.MSG.amount());
+							options.setVAxisOptions(vaxis);
+							AxisOptions haxis = AxisOptions.create();
+							haxis.setTitle(AON.MSG.productBrands());
+							options.setHAxisOptions(haxis);
+							final DataTable dataTable = getDataTable(result, AON.MSG.productBrands());
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
 							excel.setEnabled(true);

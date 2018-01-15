@@ -113,8 +113,12 @@ public class Mod190DAO {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
-
+	
 	private static Mod190 insert(AONContext ctx, Mod190 mod190) {
+		return insert(ctx, mod190, true);
+	}
+
+	private static Mod190 insert(AONContext ctx, Mod190 mod190, boolean generateDetails) {
 		validate(ctx, mod190);
 		FsModel190Record record = ctx
 				.getDslContext()
@@ -142,13 +146,16 @@ public class Mod190DAO {
 				.set(FS_MODEL190.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FS_MODEL190.ID).fetchOne();
 		mod190.setId(record.getId());
-		insertDetailsFromInvoice(ctx, mod190);
-		// insertDetailsFromSalary(ctx, mod190);
-		if (mod190.getYear() < 2017) {
-			insertDetailsFromSalary2016(ctx, mod190);
-		} else {
-			insertDetailsFromSalary2017(ctx, mod190);
+		
+		if (generateDetails) {
+			insertDetailsFromInvoice(ctx, mod190);
+			if (mod190.getYear() < 2017) {
+				insertDetailsFromSalary2016(ctx, mod190);
+			} else {
+				insertDetailsFromSalary2017(ctx, mod190);
+			}
 		}
+		
 		return mod190;
 	}
 
@@ -1010,7 +1017,7 @@ public class Mod190DAO {
 		.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
 		.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 		.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
-		.join(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.equal(ENTERPRISE_CCC.ID))
+		.leftOuterJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.equal(ENTERPRISE_CCC.ID))
 		.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 		.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
@@ -1096,8 +1103,15 @@ public class Mod190DAO {
 						
 					private void visitCompensation() {
 						double amount = rec.getValue(SALARY_PAYMENT.AMOUNT);
+						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+								?0.0
+								:(irpfBase * totalIrpf / totalIrpfBase);
 						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"05");
 						detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
+						detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
 					}
 					
 					private void visitAKey() {
@@ -1182,4 +1196,17 @@ public class Mod190DAO {
 		mod190.getDetails().addAll(map.values());
 	}
 	
+	public static Mod190 duplicateNextYear(AONContext ctx, int id) {
+		Mod190 mod190 = getById(ctx, id);
+		mod190.setYear( mod190.getYear() + 1 );
+		mod190.setId(null);
+		mod190 = insert(ctx, mod190, false);
+		Mod190 original = getById(ctx, id);
+		for (Mod190Detail detail : original.getDetails()) {
+			detail.setId(null);
+			detail.setMod190(mod190.getId());
+			saveDetail(ctx,mod190,detail);
+		}
+		return getById(ctx, mod190 .getId());
+	}
 }

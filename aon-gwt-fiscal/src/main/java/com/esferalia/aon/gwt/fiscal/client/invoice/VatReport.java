@@ -848,9 +848,11 @@ public class VatReport extends MainEntryPoint {
 
 					row = paintTotal( tab, row,type,typeOutputBase,typeOutputQuota,typeInputBase,typeInputQuota,typeInputDeductibleQuota);					
 					
-					outputBase = outputBase + typeOutputBase;
+					if (type != VatSummaryType.SURCHARGE) {
+						outputBase = outputBase + typeOutputBase;
+						inputBase = inputBase + typeInputBase;
+					}
 					outputQuota = outputQuota  + typeOutputQuota; 
-					inputBase = inputBase + typeInputBase;
 					inputQuota = inputQuota + typeInputQuota;
 					inputDeductibleQuota = inputDeductibleQuota + typeInputDeductibleQuota;
 				}

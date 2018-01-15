@@ -83,8 +83,8 @@
 					<aon:outputLabel for="Domain_name"
 						value="#{bundle.admin_domain_url}" />
 					<aon:if test="#{!aonRole.sysAdmin}">
-						<aon:outputLink id="Domain_name" target="_blank" value="http://#{adminDomain.to.name}" >
-							<aon:outputText value="http://#{adminDomain.to.name}" />
+						<aon:outputLink id="Domain_name" target="_blank" value="https://#{adminDomain.to.name}" >
+							<aon:outputText value="https://#{adminDomain.to.name}" />
 					    </aon:outputLink>
 					</aon:if>
 					<aon:if test="#{aonRole.sysAdmin}">

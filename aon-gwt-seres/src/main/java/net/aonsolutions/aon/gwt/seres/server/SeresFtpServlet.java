@@ -1,17 +1,12 @@
 package net.aonsolutions.aon.gwt.seres.server;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +20,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONObject;
 
@@ -47,17 +41,22 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.seres.util.ftp.FtpException;
-import com.esferalia.aon.file.seres.util.ftp.FtpLoginException;
-import com.esferalia.aon.file.seres.util.ftp.SeresFtpConnectionProvider;
-import com.esferalia.aon.file.seres.util.writer.connect.ConnectSaleInvoiceWriter;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.seres.ftp.FtpException;
+import com.esferalia.aon.seres.ftp.FtpLoginException;
+import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
+import com.esferalia.aon.seres.ftp.seres.FtpDeliveryUploadOccamHandler;
+import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess;
+import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.ResponseMessageType;
+import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.SeresFtpProcessThread;
+import com.esferalia.aon.seres.writer.connect.ConnectSaleInvoiceWriter;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import net.aonsolutions.aon.gwt.seres.shared.CommunicationTarget;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "SeresFtpServlet", urlPatterns = { "/seres_ftp/*", "/aon_gwt_aio/seres_ftp/*" })
@@ -65,11 +64,6 @@ public class SeresFtpServlet extends HttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(SeresFtpServlet.class.getName());
 	
-	final String OUTCOME_DELIVERY = "outcome_delivery";
-	final String OUTCOME_INVOICE = "outcome_invoice";
-	final String INCOME_SALES = "income_sales";
-	final String INCOME_INVOICE = "income_invoice";
-	final String INGENET_DELIVERY = "ingenet_delivery";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -92,9 +86,10 @@ public class SeresFtpServlet extends HttpServlet {
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				
-				switch (pathInfo[3]) {
+				CommunicationTarget target = CommunicationTarget.getEnumByValue(pathInfo[3]);
+				switch (target) {
 				case OUTCOME_DELIVERY:
-					sendDeliveries(req, resp, idLsit);
+					sendDeliveries(domain, userName, req, resp, idLsit);
 					break;
 				case OUTCOME_INVOICE:
 					sendInvoices(domain, userName, req, resp, idLsit);
@@ -104,9 +99,6 @@ public class SeresFtpServlet extends HttpServlet {
 					break;
 				case INCOME_INVOICE:
 					retrieveInvoices(req, resp, idLsit);
-					break;
-				case INGENET_DELIVERY:
-//					object = getIngenetDelivery(domain, userName, req);
 					break;
 				default:
 					break;
@@ -134,6 +126,7 @@ public class SeresFtpServlet extends HttpServlet {
 						.onEdiFtpTransfer(list.stream().map(o -> (Invoice) o).collect(Collectors.toList()));
 			}
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -141,9 +134,27 @@ public class SeresFtpServlet extends HttpServlet {
 		}
 	}
 	
-	// TODO sendDeliveries
-	public void sendDeliveries(HttpServletRequest req, HttpServletResponse resp, String[] _idList){
-		
+	public void sendDeliveries(Domain domain, String loggedUser, HttpServletRequest req, HttpServletResponse resp, String[] _idList){
+		List<Integer> idList = Arrays.asList(_idList).stream().map(o -> Integer.parseInt(o))
+				.collect(Collectors.toCollection(LinkedList::new));
+		try {
+			List<Delivery> list = getDeliveryList(domain, loggedUser, idList);
+			if (list != null && list.size() > 0) {
+				new FtpDeliveryUploadOccamHandler(domain.getName(), domain.getId(), loggedUser)
+						.onEdiFtpTransfer(list.stream().map(o -> (Delivery) o).collect(Collectors.toList()));
+			}
+		} catch (FtpLoginException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		} catch (FtpException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
 	}
 	
 	// TODO retrieveInvoices
@@ -166,6 +177,13 @@ public class SeresFtpServlet extends HttpServlet {
 				beanManager.getFieldName(IEntityAlias.INVOICE_ID),
 				idList );
 		return beanManager.getList(criteria);
+	}
+	
+	private List<Delivery> getDeliveryList(Domain domain, String loggedUser, List<Integer> _idList)
+			throws ManagerBeanException {
+		Integer[] idList = _idList.toArray(new Integer[_idList.size()]);
+		return AON.getDeliveryStream(domain.getName(), domain.getId(), loggedUser, f -> f.getIdProperty().in(idList))
+				.collect(Collectors.toList());
 	}
 	
 	
@@ -281,25 +299,26 @@ public class SeresFtpServlet extends HttpServlet {
 			checkValidLogin();
 			
 			try {
-				FtpStoreProcess fsp = new FtpStoreProcess(this.domain.getName(), this.domain.getId(), this.loggedUser);
+				FtpStoreProcess fsp = new FtpStoreProcess(DataResponseSource.SERES_INVOICE, this.domain.getName(), this.domain.getId(), this.loggedUser,
+						this.ftpRemotePath, this.ftpServer, this.ftpPort, this.ftpUser, this.ftpPassword);
 				
 				for(Invoice invoice: invoiceList) {
+					String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
 					FileOutput output = exportEdiFile(invoice);
 					if(output!=null && output.getErrors()!=null && output.getErrors().size()>0){
 						for(Exception e: output.getErrors()){
 							Fd0Exception fd0 = (Fd0Exception) e;
 							LOGGER.log(Level.SEVERE, fd0.getMessage());
 						}
+						fsp.track(Level.SEVERE, ResponseMessageType.COMMIT, invoice.getId(), referenceCode);
 					} else {
 						byte[] data = output.getContent();
-						String referenceCode = invoice.getSeries()+"_"+invoice.getNumber();
 						fsp.put(invoice.getId(), data, referenceCode);
-						
-						invoiceTracking(this.domain.getName(), this.domain.getId(), this.loggedUser, invoice.getId(), referenceCode);
+						fsp.track(Level.INFO, ResponseMessageType.COMMIT, invoice.getId(), referenceCode);
 					}
 				}
 				
-				SeresFtpProcessThread thread = new SeresFtpProcessThread(fsp); 
+				SeresFtpProcessThread thread = fsp.new SeresFtpProcessThread(fsp); 
 				thread.start();
 			
 			} catch (Throwable e) {
@@ -375,158 +394,6 @@ public class SeresFtpServlet extends HttpServlet {
 			}
 			return null;
 		}
-		
-		private void invoiceTracking(String domainName, int domainId, String user, int invoiceId, String referenceCode) {
-			DataResponse dr = AON.getDataResponse(domainName, domainId, user, DataResponseSource.SERES_INVOICE, f->f.getCodeProperty().eq(referenceCode));
-			if(dr==null || dr.getId()==null)
-				dr = new DataResponse();
-			dr.setDomain(domainId);
-			dr.setCode(referenceCode);
-			dr.setResponseDate(new Date());
-			dr.setSource(DataResponseSource.SERES_INVOICE);
-			dr.setSourceId(invoiceId);
-			dr.setCreationUser(user);
-			dr.setCreationDate(new Date());
-			if(dr.getId()!=null) {
-				Integer drId = dr.getId();
-				AON.updateDataResponse(domainName, domainId, user, dr, f->f.getIdProperty().eq(drId));
-			} else {
-				AON.insertDataResponse(domainName, domainId, user, dr);
-			}
-		}
-
-		
-		
-		public class FtpStoreProcess implements ILongProcess {
-
-			private boolean success = false;
-			
-			private Map<Integer, byte[]> dataMap;
-			private Map<Integer, String> referenceCodeMap;
-			private String domainName;
-			private int domainId;
-			private String loggedUser;
-			
-			public FtpStoreProcess(String domainName, int domainId, String loggedUser) {
-				dataMap = new HashMap<>();
-				referenceCodeMap = new HashMap<>();
-				this.domainName = domainName;
-				this.domainId = domainId;
-				this.loggedUser = loggedUser;
-			}
-			public FtpStoreProcess(String domainName, int domainId, String loggedUser, int id, byte[] data, String referenceCode) {
-				this(domainName, domainId, loggedUser);
-				this.put(id, data, referenceCode);
-			}
-
-			public void put(int id, byte[] data, String referenceCode) {
-				dataMap.put(id, data);
-				referenceCodeMap.put(id, referenceCode);
-			}
-
-			@Override
-			public void execute() {
-				for(Integer id: dataMap.keySet()){
-					byte[] data = dataMap.get(id);
-					String referenceCode = referenceCodeMap.get(id);
-					
-					InputStream inputStream = new BufferedInputStream(
-							new ByteArrayInputStream(data));
-					success = storeFtpFile("factura-" + referenceCode + ".edi",
-							inputStream);
-					
-					log(Level.INFO, "FTP STORE: " + success);
-					if (success) {
-						log(Level.INFO, "Fichero EDI generado y enviado CORRECTAMENTE.", true, domainName, domainId, loggedUser, id, referenceCode);
-					} else {
-						log(Level.SEVERE, "El fichero no se ha podido enviar.", true, domainName, domainId, loggedUser, id, referenceCode);
-					}
-					IOUtils.closeQuietly(inputStream);
-				}
-			}
-			
-			private boolean storeFtpFile(String fileName, InputStream inputStream) {
-				try {
-					return SeresFtpConnectionProvider.storeFile(ftpRemotePath, fileName,
-							inputStream, ftpServer, ftpPort, ftpUser, ftpPassword);
-				} catch (FtpLoginException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
-				} catch (FtpException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
-				}
-				return false;
-			}
-			
-			private void log(Level level, String message) {
-				log(level, message, false, null, 0, null, 0, null);	
-			}
-			
-			private void log(Level level, String message, boolean isTrackable, String domainName, int domainId, String loggedUser, int id, String referenceCode) {
-				LOGGER.log(level, message);
-				if(isTrackable){
-					DataResponse dr = AON.getDataResponse(domainName, domainId, loggedUser, DataResponseSource.SERES_INVOICE, f->f.getCodeProperty().eq(referenceCode));
-					if(dr==null || dr.getId()==null) {
-						dr = new DataResponse();
-						dr.setDomain(domainId);
-						dr.setCode(referenceCode);
-						dr.setResponseDate(new Date());
-						dr.setSource(DataResponseSource.SERES_INVOICE);
-						dr.setSourceId(id);
-						dr.setCreationUser(loggedUser);
-						dr.setCreationDate(new Date());
-						AON.insertDataResponse(domainName, domainId, loggedUser, dr);
-						dr = AON.getDataResponse(domainName, domainId, loggedUser, DataResponseSource.SERES_INVOICE, f->f.getCodeProperty().eq(referenceCode));
-					}
-					DataResponseDetail drd = new DataResponseDetail();
-					drd.setDataResponse(dr.getId());
-					drd.setDomain(domainId);
-					drd.setDataVariable("REQUEST");
-					drd.setDataValue(level.equals(Level.INFO)?"OK":"FAIL");
-					drd.setCreationUser(loggedUser);
-					drd.setCreationDate(new Date());
-					AON.insertDataResponseDetail(domainName, domainId, loggedUser, drd);
-				}
-			}
-
-		}
-	}
-	public interface ILongProcess {
-		void execute();		
-	}
-	public class SeresFtpProcessThread implements Runnable {
-
-		private ILongProcess longProcess;
-		private Thread thread;
-	    
-	    public SeresFtpProcessThread(ILongProcess longProcess) {
-	         this.longProcess = longProcess;
-	    }
-
-		public void start() {
-	         thread = new Thread(this);
-	         thread.start();
-	    }
-		
-		public void interrupt() {
-			if(thread!=null){
-				thread.interrupt();
-			}
-		}
-		
-		public boolean isTerminated(){
-			return thread.getState()==Thread.State.TERMINATED;
-		}
-			
-		@Override
-		public void run() {
-	        if (thread != null) {
-	    		try {
-	    			longProcess.execute();
-	    		} finally {
-	    		}
-	        }
-		}
-
 	}
 	
 

@@ -112,6 +112,7 @@ abstract class Model190Base extends DockLayoutPanel {
 	protected final Button markAsPendingButton = new Button();
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
+	protected final Button duplicateButton = new Button();
 	protected final Button auditButton = new Button();
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
@@ -390,6 +391,43 @@ abstract class Model190Base extends DockLayoutPanel {
 		});
 		buttonContainer.add(markAsPendingButton);
 		
+		duplicateButton.setText(AON.MSG.duplicate());
+		duplicateButton.setTitle(duplicateButton.getText());
+		duplicateButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		duplicateButton.addStyleName(AON.AON_CSS.aonIconDuplicate());
+		duplicateButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				duplicateButton.setEnabled(false);
+				ConfirmDialog cd = new ConfirmDialog();
+				String msg = "Desea duplicar el modelo para el ejercicio " + (mod190.getYear() + 1 ) + "?";
+				cd.confirm(msg, new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {}
+							
+					@Override
+					public void onAccept() {
+						Model190.SERVICE.duplicateNextYear(Model190.getCurrentDomainName(), Model190.getCurrentDomain(), 
+								mod190.getId(), new AsyncCallback<Mod190>() {
+							@Override
+							public void onSuccess(Mod190 result) {
+								callback.onCancel();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								duplicateButton.setEnabled(true);
+								callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+							}
+						});
+					}
+				}); 
+			}
+		});
+		buttonContainer.add(duplicateButton);
+
 		auditButton.setText(AON.MSG.audit());
 		auditButton.setTitle(auditButton.getText());
 		auditButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -477,7 +515,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			|| getMod190().getStatus() == FiscalStatus.MISSING));
 		markAsSentButton.setVisible(!getMod190().isNew() &&
 			(getMod190().getStatus() == FiscalStatus.FINISHED));
-		
+		duplicateButton.setVisible(!getMod190().isNew());
 		auditButton.setVisible(!getMod190().isNew());
 	}
 

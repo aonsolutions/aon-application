@@ -29,6 +29,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
@@ -72,6 +73,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
@@ -101,6 +103,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryPayMethodProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -142,6 +145,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PRODUCT);}
 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.ITEM);}
 		@Override public Property<Integer> getProductCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PCATEGORY.ID);}
+		@Override public Property<Integer> getProductBrandProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.BRAND);}
 		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}	
 		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.TYPE);}
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TRANSACTION);}
@@ -221,6 +225,28 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SELLER.STATUS);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SELLER.SCOPE);}
 		@Override public Property<Integer> getCommissionTypeProperty() {return new FilterDAO.PropertyDAO<>(SELLER.COMMISSION_TYPE);}
+	}
+	
+	public static class RegistrySellerPropertiesDAO implements RegistrySellerProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, RegistrySellerFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(RegistrySellerFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) {
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.DOMAIN);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.STATUS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.ID);}
+ 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.SELLER);}
+		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
+		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}
 	}
 	
 	public static class SupplierPropertiesDAO implements SupplierProperties {

@@ -40,7 +40,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -130,7 +129,7 @@ public class Model3032017AEAT extends Model303Base {
 					double a11 = getCallback().getMod303().getAmount(Mod303Key.CT_A11);
 					if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && a11 == 0) {
 						event.cancel();
-						MessageDialog.warning("Para rellenar estos datos, debe marcar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
+						MessageDialog.warning("Para rellenar estos datos, debe rellenar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
 					}
 				}
 				
@@ -365,14 +364,21 @@ public class Model3032017AEAT extends Model303Base {
 		
 		paintCheck(Mod303Key.CT_A07,table);	// ¿Ha optado por el régimen especial del criterio de Caja (art. 163 undecies LIVA)?
 		paintCheck(Mod303Key.CT_A08,table);	// ¿Es destinatario de operaciones a las que se aplique el régimen especial del criterio de caja?
-		CheckBox a11 = paintCheck(Mod303Key.CT_A11,table);	// Exonerados de la declaraci\u00F3n-resumen anual del IVA, modelo 390: ¿Existe volumen de operaciones (art. 121 LIVA)?
+		
+		
+		final ListBox a11 = new ListBox();
+		a11.setWidth("200px");
+		a11.addItem("(0) NO exonerado (\u00FAltimo periodo), o la declaraci\u00F3n no es del \u00FAltimo periodo", "0");
+		a11.addItem("(1) Exonerados, cuando se tiene volumen de operaciones  (art. 121 LIVA)", "1");
+		a11.addItem("(2) Exonerados, cuando NO se tiene volumen de operaciones  (art. 121 LIVA)", "2");
+		paintListBox(a11, Mod303Key.CT_A11, table);
 		a11.setEnabled(getCallback().getMod303().isLastPeriod());
 		if (getCallback().getMod303().isLastPeriod()) {
-			a11.addValueChangeHandler( new ValueChangeHandler<Boolean>() {
+			a11.addChangeHandler( new ChangeHandler() {
 				
 				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					if (!a11.getValue()) {
+				public void onChange(ChangeEvent event) {
+					if (a11.getSelectedIndex() != 0) {
 						if (AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U1D))
 						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U2D))								
 						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U3D))								
@@ -411,7 +417,7 @@ public class Model3032017AEAT extends Model303Base {
 							MessageDialog.warning("Se han inicializado los datos de la solapa \"Inf. Exonerados 390\"");
 						}
 					}
-					if (a11.getValue()) {
+					if (a11.getSelectedIndex() != 0) {
 						MessageDialog.warning("Debe rellenar los datos de la solapa \"Inf. Exonerados 390\"");
 					}
 				}
@@ -886,7 +892,7 @@ public class Model3032017AEAT extends Model303Base {
 		typeBox.setWidth("40px");
 		typeBox.addItem(" - ", "");
 		typeBox.addItem("G - General", "G");
-		typeBox.addItem("E - Espaecial", "E");
+		typeBox.addItem("E - Especial", "E");
 		String type = getCallback().getMod303().getDescription(typeKey);
 		if (AonStringUtils.equals(type, "G")) typeBox.setSelectedIndex(1);
 		else if (AonStringUtils.equals(type, "E")) typeBox.setSelectedIndex(2);

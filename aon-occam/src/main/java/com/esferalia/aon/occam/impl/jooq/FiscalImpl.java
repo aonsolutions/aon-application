@@ -152,7 +152,11 @@ public class FiscalImpl implements IFiscal {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod180DAO.changeStatusMod180(ctx, mod180, newStatus));		
 	}
-
+	@Override
+	public Mod180 duplicateNextYearMod180(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod180DAO.duplicateNextYear(ctx, id));		
+	}
 
 	// ----------------------------------------------------------- [MODELO 190]
 	@Override
@@ -196,6 +200,11 @@ public class FiscalImpl implements IFiscal {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod190DAO.changeStatus(ctx, mod190, newStatus));		
 	}
+	@Override
+	public Mod190 duplicateNextYearMod190(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod190DAO.duplicateNextYear(ctx, id));		
+	}
 
 	// ----------------------------------------------------------- [MODELO 193]
 	@Override
@@ -234,6 +243,11 @@ public class FiscalImpl implements IFiscal {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod193DAO.changeStatus(ctx, mod193, newStatus));		
 	}
+	@Override
+	public Mod193 duplicateNextYearMod193(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod193DAO.duplicateNextYear(ctx, id));		
+	}
 	// ----------------------------------------------------------- [MODELO 184]
 	@Override
 	public LinkedList<Mod184> getMod184s(AONContext ctx, int domain) {
@@ -270,6 +284,11 @@ public class FiscalImpl implements IFiscal {
 	public Mod184 changeStatusMod184(AONContext ctx, Mod184 mod184, FiscalStatus newStatus) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod184DAO.changeStatusMod184(ctx, mod184, newStatus));		
+	}
+	@Override
+	public Mod184 duplicateNextYearMod184(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod184DAO.duplicateNextYear(ctx, id));		
 	}
 	// ----------------------------------------------------------- [MODELO 390]
 	@Override

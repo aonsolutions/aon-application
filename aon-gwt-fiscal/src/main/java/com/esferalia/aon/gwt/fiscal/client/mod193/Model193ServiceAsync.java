@@ -15,5 +15,6 @@ public interface Model193ServiceAsync {
 	void initialize(String domainName, Integer domain, Integer year,AsyncCallback<Mod193> callback);
 	void changeStatus(String domainName, Mod193 mod193, FiscalStatus newStatus, AsyncCallback<Mod193> callback);
 	void saveComments(String domainName, Mod193 mod193, AsyncCallback<Mod193> callback);
+	void duplicateNextYear(String domainName, Integer domain, Integer id, AsyncCallback<Mod193> callback);
 
 }

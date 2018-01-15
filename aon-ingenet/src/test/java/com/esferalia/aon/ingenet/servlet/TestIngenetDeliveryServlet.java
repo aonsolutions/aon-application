@@ -36,7 +36,8 @@ public class TestIngenetDeliveryServlet  {
 
 	public static void main(String[] args) throws Exception {
 		String path = "";
-		path = "http://udapa.esferalia.net:8080/aon-aio";
+//		path = "http://udapa.esferalia.net:8080/aon-aio";
+		path = "http://udapa.aonsolutions.me:8080/aon-aio";
 //		path = "https://udapa.aonsolutions.net";
 		path += "/ingenet/delivery";
 		

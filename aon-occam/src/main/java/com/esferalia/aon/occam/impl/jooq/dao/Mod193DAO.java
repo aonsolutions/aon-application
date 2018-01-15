@@ -126,8 +126,11 @@ public class Mod193DAO {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
-
 	private static Mod193 insert(AONContext ctx, Mod193 mod193) {
+		return insert(ctx, mod193, true);
+	}
+
+	private static Mod193 insert(AONContext ctx, Mod193 mod193, boolean generateDetails) {
 		validate(ctx, mod193);
 		FsModel193Record record = ctx
 				.getDslContext()
@@ -155,7 +158,9 @@ public class Mod193DAO {
 				.set(FS_MODEL193.EXPENSES_TOTAL, mod193.getExpensesTotal())
 				.returning(FS_MODEL193.ID).fetchOne();
 		mod193.setId(record.getId());
-		insertDetailsFromInvoice(ctx, mod193);
+		if (generateDetails) {
+			insertDetailsFromInvoice(ctx, mod193);
+		}
 		return mod193;
 	}
 
@@ -562,5 +567,19 @@ public class Mod193DAO {
 			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
 			.findFirst()
 			.orElse(0);
+	}
+
+	public static Mod193 duplicateNextYear(AONContext ctx, int id) {
+		Mod193 mod193 = getById(ctx, id);
+		mod193.setYear( mod193.getYear() + 1 );
+		mod193.setId(null);
+		mod193 = insert(ctx, mod193, false);
+		Mod193 original = getById(ctx, id);
+		for (Mod193Detail detail : original.getDetails()) {
+			detail.setId(null);
+			detail.setMod193(mod193.getId());
+			saveDetail(ctx,mod193,detail);
+		}
+		return getById(ctx, mod193 .getId());
 	}
 }

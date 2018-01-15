@@ -575,7 +575,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 	public  void addSSRegimeStuff(AONContext aonContext) {
 		
-		Date startDate = AonDateUtils.add(getFirstDayOfYear(getToday()), Calendar.YEAR, -2);
+		Date startDate = AonDateUtils.add(getFirstDayOfYear(getToday()), Calendar.YEAR, -3);
 		
 		addSSRegimeData(aonContext, 
 				SSRegimeType.GENERAL, 

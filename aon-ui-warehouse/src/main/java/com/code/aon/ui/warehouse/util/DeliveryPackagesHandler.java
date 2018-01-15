@@ -27,7 +27,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.esferalia.aon.file.seres.util.DeliveryPackages;
+import com.esferalia.aon.seres.DeliveryPackages;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;

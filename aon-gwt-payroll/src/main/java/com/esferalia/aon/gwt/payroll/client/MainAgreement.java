@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.code.aon.config.Domain;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
@@ -247,6 +248,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	private List<EditionListener> editionsListener;
 	
+	private AgreementServiceAsync agreementServiceAsync;
+	
 	@Override
 	public void onModuleLoad() {
 
@@ -260,6 +263,11 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 		
+		AgreementServiceAsync agreementServiceRaw = GWT
+				.create(AgreementService.class);
+		agreementServiceAsync = new AgreementServiceAsyncDecorator(
+				agreementServiceRaw);
+
 		// LocalStorage getItems
 		this.storage = Storage.getLocalStorageIfSupported();
 
@@ -324,8 +332,11 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			draft.setStartDate(DateUtils.getFirstDayOfMonth());
 			draft.setEndDate(DateUtils.getLastDayOfMonth());
 			
-			agreementDraftObject = new AgreementDraftObject(agreements
-					.getDomain(), draft, agreements.getAgreementsTree().getEmployeesService());
+			agreementDraftObject = new AgreementDraftObject(
+					agreements.getDomain()
+					, Wnd.getCurrentDomainNameURL()
+					, draft 
+					, agreementServiceAsync);
 			agreementDrafts.put(agreement.getId(), agreementDraftObject);
 			
 			TreeItem treeItem = agreements.getAgreementsTree().getSelectedItem();
@@ -334,8 +345,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 					agreementDraftObject));
 			
 			agreements.getAgreementsTree().getEmployeesService()
-					.getChanges(agreement, new AgreementChangesCallback(
-							agreementDraftObject));
+					.getChanges( 
+							Wnd.getCurrentDomainNameURL(),
+							agreement, 
+							new AgreementChangesCallback(agreementDraftObject));
 
 		} // end-if: Not exists, create it then...
 		else {

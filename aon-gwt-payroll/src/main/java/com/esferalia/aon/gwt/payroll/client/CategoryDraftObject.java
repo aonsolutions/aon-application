@@ -4,9 +4,9 @@ import com.esferalia.aon.gwt.payroll.shared.CategoryDraft;
 
 public class CategoryDraftObject extends AgreementDraftObject {
 
-	public CategoryDraftObject(Integer domain, CategoryDraft categoryDraft,
+	public CategoryDraftObject(Integer domain, String domainName, CategoryDraft categoryDraft,
 			EmployeesServiceAsync employeesServiceAsync) {
-		super(domain, categoryDraft, employeesServiceAsync);
+		super(domain, domainName, categoryDraft, employeesServiceAsync);
 	}
 	
 	protected CategoryDraft getCategoryDraft() {

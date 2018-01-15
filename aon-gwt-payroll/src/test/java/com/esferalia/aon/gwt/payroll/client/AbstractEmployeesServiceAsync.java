@@ -20,7 +20,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
@@ -29,11 +28,11 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceAsync {
@@ -145,7 +144,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getAvailablePayments(int employeeId, AsyncCallback<List<Payment>> callback)
+	public void getAvailablePayments(String domain, int employeeId, AsyncCallback<List<Payment>> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
@@ -232,7 +231,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void saveAgreementDraft(AgreementDraft agreementDraft, AsyncCallback<AgreementDraft> callback)
+	public void saveAgreementDraft(String domain, AgreementDraft agreementDraft, AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
@@ -279,7 +278,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void calculateAgreementDraft(AgreementDraft agreementDraft, AsyncCallback<AgreementDraft> callback)
+	public void calculateAgreementDraft(String domain,AgreementDraft agreementDraft, AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
@@ -293,7 +292,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void eval(String expression, AgreementDraft agreementDraft, int levelId,
+	public void eval(String domain, String expression, AgreementDraft agreementDraft, int levelId,
 			AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
 		failure(callback);
 
@@ -307,7 +306,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getContext(AgreementDraft agreementDraft, int levelId, AsyncCallback<ContextDescriptor> callback)
+	public void getContext(String domain, AgreementDraft agreementDraft, int levelId, AsyncCallback<ContextDescriptor> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
@@ -328,7 +327,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getAgreementDraftReceiptHTML(AgreementDraft agreementDraft, int levelId, Type type, int zoom,
+	public void getAgreementDraftReceiptHTML(String domain, AgreementDraft agreementDraft, int levelId, Type type, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		failure(callback);
 
@@ -415,7 +414,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getChanges(Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
+	public void getChanges(String domain, Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 

@@ -12,9 +12,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@SuppressWarnings("serial")
 @WebServlet(name = "Mod190 Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod190" })
 public class Mod190ServiceImpl extends AonRemoteServiceServlet implements Model190Service {
+
+	private static final long serialVersionUID = -313529134373496651L;
 
 	@Override
 	public LinkedList<Mod190> getMod190s(String domainName, int domain) {
@@ -54,5 +55,10 @@ public class Mod190ServiceImpl extends AonRemoteServiceServlet implements Model1
 	@Override
 	public Mod190 changeStatus(String domainName, Mod190 mod190, FiscalStatus newStatus) throws AonCoreException {
 		return FISCAL.changeStatusMod190(domainName, this.getUserLogin(), mod190, newStatus);
+	}
+
+	@Override
+	public Mod190 duplicateNextYear(String domainName, Integer domain, Integer id) throws AonCoreException {
+		return FISCAL.duplicateNextYearMod190(domainName, domain, this.getUserLogin(), id);
 	}
 }

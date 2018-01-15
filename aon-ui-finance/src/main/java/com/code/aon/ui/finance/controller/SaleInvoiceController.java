@@ -65,7 +65,7 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.bridge.DeliveryTransferManager;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.seres.util.writer.udapa.UdapaSaleInvoiceWriter;
+import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 
 public class SaleInvoiceController extends InvoiceController {
 	

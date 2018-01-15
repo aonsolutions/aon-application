@@ -17,7 +17,8 @@ import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "OrgsServlet", urlPatterns = { "/orgs/*",
@@ -76,7 +77,10 @@ public class OrgsServlet extends HttpServlet{
 				.sorted((e1,e2) -> e1.getName().compareTo(e2.getName())).map(new RegistryToUserFiller());
 		
 		array.put(new User().setId(-1).setLogin("Sin Asignar").toJSON());
-		userList.forEach(l->array.put(l.toJSON()));
+		userList.forEach(l->{
+			if(l.getStatus().equals(CustomerStatus.ACTIVE)) 
+				array.put(l.toJSON());	
+		});
 		return array;
 	}
 	
@@ -85,7 +89,10 @@ public class OrgsServlet extends HttpServlet{
 		Stream<User> userList = AON.getTaskWorkgroupStream(domain.getName(), domain.getId(), userName,"%" + filter + "%")
 				.map(new WorkgroupToUserFiller());
 		array.put(new User().setId(-1).setLogin("Sin Asignar").toJSON());
-		userList.forEach(l->array.put(l.toJSON()));
+		userList.forEach(l->{
+			if(l.getStatus().equals(CustomerStatus.ACTIVE)) 
+				array.put(l.toJSON());	
+		});
 
 		return array;
 	}
@@ -98,13 +105,14 @@ public class OrgsServlet extends HttpServlet{
 	}
 	
 	
-	private static class RegistryToUserFiller implements Function<Registry, User> {
+	private static class RegistryToUserFiller implements Function<TaskHolder, User> {
 		
 		@Override
-		public User apply(Registry r) {
+		public User apply(TaskHolder r) {
 			return new User()
 					.setId(r.getId())
-					.setLogin(r.getName());  
+					.setLogin(r.getName())
+					.setStatus(r.getActive() == 1 ? CustomerStatus.ACTIVE : CustomerStatus.INACTIVE);  
 		}
 	}
 	
@@ -124,7 +132,8 @@ public class OrgsServlet extends HttpServlet{
 		public User apply(Workgroup r) {
 			return new User()
 					.setId(r.getId())
-					.setLogin(r.getDescription());  
+					.setLogin(r.getDescription())
+					.setStatus(CustomerStatus.values()[r.getStatus()]);    
 		}
 	}
 }

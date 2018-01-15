@@ -603,6 +603,12 @@ public class WarehouseDAO {
 	}
 	
 	// ----------------- CARRIER PACKING
+
+	public static Stream<String> getCarrierPackingSeries(AONContext ctx){
+		return ctx.getDslContext().selectDistinct(CARRIER_PACKING.SERIES).from(CARRIER_PACKING)
+				.where(CARRIER_PACKING.DOMAIN.eq(ctx.getDomainId()))
+				.fetch().stream().map(r -> r.getValue(CARRIER_PACKING.SERIES));
+	}	
 	
 	public static Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter){
 		return CARRIER_PACKING_PROPERTIES.build(ctx.getDslContext().select().from(CARRIER_PACKING)

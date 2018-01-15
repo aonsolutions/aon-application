@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod303ExcelAction extends ModelVAExcelAction {
+public class Mod303ExcelAction extends ModelVAExcelAction<Mod303,Mod303Key> {
 
 	public Mod303ExcelAction(Mod303 mod303) {
 		super(mod303);

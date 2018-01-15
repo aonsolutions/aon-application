@@ -11,6 +11,7 @@ public class InvoiceSeries implements Serializable {
 	private boolean sales;
 	private int fromNumber;
 	private int toNumber;
+	private int count;
 
 	public String getDescription() {
 		return description;
@@ -48,6 +49,12 @@ public class InvoiceSeries implements Serializable {
 		this.toNumber = toNumber;
 		return this;
 	}
-	
+	public int getCount() {
+		return count;
+	}
+	public InvoiceSeries setCount(int count) {
+		this.count = count;
+		return this;
+	}
 	
 }

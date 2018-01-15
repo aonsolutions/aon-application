@@ -54,7 +54,7 @@ import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1L;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1P;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1T;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
-import com.esferalia.aon.file.seres.util.reader.connect.ConnectSalesReader;
+import com.esferalia.aon.seres.reader.connect.ConnectSalesReader;
 
 public class EdiSalesImporterHandler implements Serializable {
 	

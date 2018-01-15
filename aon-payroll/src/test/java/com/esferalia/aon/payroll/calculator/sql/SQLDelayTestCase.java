@@ -444,8 +444,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		Assert.assertEquals(90.00 + ( 10/30.00*20 ) + ( 10/30.00 * 8 * 0.60 ) , salary.getIrpfBase(), DELTA);
-		Assert.assertEquals(90.00 + ( 10/30.00*20 ) + ( 10/30.00 * 8 * 0.60 ) , salary.getTotalPayment(), DELTA);
+		int monthDays = AonDateUtils.getMax(startITDate, Calendar.DAY_OF_MONTH);
+		Assert.assertEquals(90.00 + ( 10/30.00*(monthDays-11) ) + ( 10/30.00 * 8 * 0.60 ) , salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(90.00 + ( 10/30.00*(monthDays-11) ) + ( 10/30.00 * 8 * 0.60 ) , salary.getTotalPayment(), DELTA);
 
 			
 		

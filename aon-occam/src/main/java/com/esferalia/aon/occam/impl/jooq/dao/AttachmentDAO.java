@@ -99,7 +99,7 @@ public class AttachmentDAO {
 	
 	@SuppressWarnings("rawtypes")
 	private static SelectField[] dataAttachWD = {DATA_ATTACH.ID, DATA_ATTACH.DOMAIN, DATA_ATTACH.SOURCE,
-			DATA_ATTACH.SOURCE_ID,DATA_ATTACH.MIMETYPE,/* DATA_ATTACH.DESCRIPTION,*/ DATA_ATTACH.TYPE,
+			DATA_ATTACH.SOURCE_ID, DATA_ATTACH.MIMETYPE, DATA_ATTACH.DESCRIPTION, DATA_ATTACH.TYPE,
 			DATA_ATTACH.DRIVE_ID, DATA_ATTACH.CREATION_DATE, DATA_ATTACH.CREATION_USER,
 			DATA_ATTACH.MODIFICATION_DATE, DATA_ATTACH.MODIFICATION_USER};
 
@@ -451,6 +451,7 @@ public class AttachmentDAO {
 			.set(DATA_ATTACH.SOURCE_ID, attach.getSourceBatch())
 			.set(DATA_ATTACH.SOURCE, (byte) attach.getSourceType())
 			.set(DATA_ATTACH.TYPE, (byte) attach.getType())
+			.set(DATA_ATTACH.DESCRIPTION, attach.getDescription())
 		.where(DATA_ATTACH.ID.eq(attach.getId()))
 		.execute();
 	}
@@ -871,7 +872,12 @@ public class AttachmentDAO {
 							.setMimeType(MimeType.values()[r.getValue(DATA_ATTACH.MIMETYPE)])
 							.setSourceBatch(r.getValue(DATA_ATTACH.SOURCE_ID))
 							.setSourceType(r.getValue(DATA_ATTACH.SOURCE))
-							.setType(r.getValue(DATA_ATTACH.TYPE));		
+							.setType(r.getValue(DATA_ATTACH.TYPE))
+							.setDescription(r.getValue(DATA_ATTACH.DESCRIPTION))
+							.setCreationDate(r.getValue(DATA_ATTACH.CREATION_DATE))
+							.setCreationUser(r.getValue(DATA_ATTACH.CREATION_USER))
+							.setModificationDate(r.getValue(DATA_ATTACH.MODIFICATION_DATE))
+							.setModificationUser(r.getValue(DATA_ATTACH.MODIFICATION_USER));
 		}
 	}
 	

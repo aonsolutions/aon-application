@@ -50,7 +50,7 @@ public class Seres extends Methods{
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/income_invoice"+filter, callback);
 	}
 	
-	public void getIngenetDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
+	public void getIngenetDeliveryAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsAttachFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/ingenet_delivery"+filter, callback);
 	}
@@ -63,21 +63,29 @@ public class Seres extends Methods{
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/history_detail?id="+id, callback);
 	}
 	
+	public void processIngenetAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "ingenet_attach/"+getDomainName()+"/"+getUserName()+"/delivery" + str, callback);
+	}
+	
 	public void sendInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/outcome_invoice" + str, callback);
 	}
 	
 	public void sendDeliveries(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/outcome_delivery", callback);
+		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/outcome_delivery" + str, callback);
 	}
 	
 	public void retrieveInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/income_invoice", callback);
+		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/income_invoice" + str, callback);
 	}
 	
 	public void retrieveSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/income_sales", callback);
+		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "seres_ftp/"+getDomainName()+"/"+getUserName()+"/income_sales" + str, callback);
 	}
 	
 }

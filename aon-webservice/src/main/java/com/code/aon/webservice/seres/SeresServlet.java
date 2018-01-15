@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
-import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -47,11 +46,11 @@ public class SeresServlet extends HttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(SeresServlet.class.getName());
 	
-	final String OUTCOME_DELIVERY = "outcome_delivery";
-	final String OUTCOME_INVOICE = "outcome_invoice";
-	final String INCOME_SALES = "income_sales";
-	final String INCOME_INVOICE = "income_invoice";
-	final String INGENET_DELIVERY = "ingenet_delivery";
+	final static String OUTCOME_DELIVERY = "outcome_delivery";
+	final static String OUTCOME_INVOICE = "outcome_invoice";
+	final static String INCOME_SALES = "income_sales";
+	final static String INCOME_INVOICE = "income_invoice";
+	final static String INGENET_DELIVERY = "ingenet_delivery";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -84,7 +83,7 @@ public class SeresServlet extends HttpServlet {
 					object = getIncomeInvoice(domain, userName, req);
 					break;
 				case INGENET_DELIVERY:
-					object = getIngenetDelivery(domain, userName, req);
+					object = getIngenetDeliveryAttach(domain, userName, req);
 					break;
 				case "history":
 					object = getHistory(domain, userName);
@@ -104,6 +103,10 @@ public class SeresServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Seres Servlet - POST METHOD");
 	}
+	
+	private Map<String, String[]> getFilterMap(HttpServletRequest req) {
+		return req.getParameterMap();
+	}
 
 	private JSONArray getSummary(Domain domain, String login, HttpServletRequest req) {
 		JSONArray array = new JSONArray();
@@ -122,7 +125,7 @@ public class SeresServlet extends HttpServlet {
 	}
 	
 	private JSONArray getOutcomeAll(Domain domain, String login, HttpServletRequest req) {
-		Map<String, String[]> filterMap = req.getParameterMap();
+		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
 		
 		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
@@ -163,7 +166,7 @@ public class SeresServlet extends HttpServlet {
 	}
 	
 	private JSONArray getIncomeAll(Domain domain, String login, HttpServletRequest req) {
-		Map<String, String[]> filterMap = req.getParameterMap();
+		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
 		
 		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
@@ -204,7 +207,7 @@ public class SeresServlet extends HttpServlet {
 	}
 	
 	private JSONArray getIngenetAll(Domain domain, String login, HttpServletRequest req) {
-		Map<String, String[]> filterMap = req.getParameterMap();
+		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
 		
 		Supplier<Stream<Attach>> dataAttachStreamSupplier = () -> AON
@@ -231,21 +234,29 @@ public class SeresServlet extends HttpServlet {
 	
 	
 	private JSONArray getOutcomeDelivery(Domain domain, String login, HttpServletRequest req){
-		Map<String, String[]> filterMap = req.getParameterMap();
+		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
 		
 		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
 		
     	if(req.getParameterMap().containsKey("seres")){
+    		Date from = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			List<DataResponse> dataResponseList = AON
+					.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.SERES_DELIVERY,
+							f -> f.getDomainProperty().eq(domain.getId())
+									.and(f.getSourceProperty().eq(DataResponseSource.SERES_DELIVERY.value())
+											.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(from)))))
+					.collect(Collectors.toList());
+    		
     		AON.getDeliveryStream(domain.getName(), domain.getId(), login,
     				f -> deliveryFilter(domain, ediRegistryIds, filterMap, f))
-    		.forEach(o -> array.put(toSeresFileJSON((o))));
+    		.forEach(o -> array.put(toSeresFileJSON(o, dataResponseList)));
     	}
     	return array;
 	}
 	
 	private JSONArray getOutcomeInvoice(Domain domain, String login, HttpServletRequest req){
-		Map<String, String[]> filterMap = req.getParameterMap();
+		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
 		
 		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
@@ -253,7 +264,7 @@ public class SeresServlet extends HttpServlet {
     	if(req.getParameterMap().containsKey("seres")){
     		
 			Date from = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
-			List<DataResponse> list = AON
+			List<DataResponse> dataResponseList = AON
 					.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.SERES_INVOICE,
 							f -> f.getDomainProperty().eq(domain.getId())
 									.and(f.getSourceProperty().eq(DataResponseSource.SERES_INVOICE.value())
@@ -263,56 +274,51 @@ public class SeresServlet extends HttpServlet {
     		AON.getInvoiceList(domain.getName(), domain.getId(), login, 	
         			f -> saleInvoiceFilter(domain, ediRegistryIds, filterMap, f))
 	    		.forEach(o -> {
-	    			JSONObject json = toSeresFileJSON(o, list);
-//	    			json.put(MSG.SII_SENT, true);
-//	    			json.put(MSG.SII, "emitida");
+	    			JSONObject json = toSeresFileJSON(o, dataResponseList);
 	    			array.put(json);
 	    		});
     	}
     	return array;
     }
 	
-	private JSONArray getIncomeSales(Domain domain, String login, HttpServletRequest req){
-		Map<String, String[]> filterMap = req.getParameterMap();
+	private JSONArray getIncomeSales(Domain domain, String login, HttpServletRequest req) {
+		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
-		
+
 		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
-		
-		if(req.getParameterMap().containsKey("seres")){
-    		AON.getSalesStream(domain.getName(), domain.getId(), login, 	
-        			f -> salesFilter(domain, ediRegistryIds, filterMap, f))
-	    		.forEach(o -> array.put(toSeresFileJSON(o)));
-    	}
+
+		if (req.getParameterMap().containsKey("seres")) {
+			AON.getSalesStream(domain.getName(), domain.getId(), login,
+					f -> salesFilter(domain, ediRegistryIds, filterMap, f)).forEach(o -> array.put(toSeresFileJSON(o)));
+		}
 		return array;
 	}
 	
-	private JSONArray getIncomeInvoice(Domain domain, String login, HttpServletRequest req){
-		Map<String, String[]> filterMap = req.getParameterMap();
+	private JSONArray getIncomeInvoice(Domain domain, String login, HttpServletRequest req) {
+		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
-		
+
 		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
-		
-		if(req.getParameterMap().containsKey("seres")){
-    		AON.getInvoiceList(domain.getName(), domain.getId(), login, 	
-        			f -> saleInvoiceFilter(domain, ediRegistryIds, filterMap, f))
-	    		.forEach(o -> array.put(toSeresFileJSON(o, null)));
-    	}
+
+		if (req.getParameterMap().containsKey("seres")) {
+			AON.getInvoiceList(domain.getName(), domain.getId(), login,
+					f -> saleInvoiceFilter(domain, ediRegistryIds, filterMap, f))
+					.forEach(o -> array.put(toSeresFileJSON(o, null)));
+		}
 		return array;
 	}
-	
-	private JSONArray getIngenetDelivery(Domain domain, String login, HttpServletRequest req){
-		Map<String, String[]> filterMap = req.getParameterMap();
+
+	private JSONArray getIngenetDeliveryAttach(Domain domain, String login, HttpServletRequest req) {
+		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
-		
-		Integer[] ediRegistryIds = getEdiActiveRegistry(domain, login);
-		
-    	if(req.getParameterMap().containsKey("seres")){
-    		AON.getDeliveryStream(domain.getName(), domain.getId(), login,
-    				f -> deliveryFilter(domain, ediRegistryIds, filterMap, f))
-    		.filter(o -> o.getCreationUser().equals("ingenet"))
-    		.forEach(o -> array.put(toSeresFileJSON((o))));
-    	}
-    	return array;
+
+		if (req.getParameterMap().containsKey("seres")) {
+			AON.getAttachStream(domain.getName(), domain.getId(), login,
+					f -> dataAttachFilter(domain, filterMap, f)
+							.and(f.getSourceTypeProperty().eq(DataAttachSource.INGENET.value())),
+					AttachType.DATA, false).forEach(o -> array.put(toDeliveryAttachJSON((o))));
+		}
+		return array;
 	}
 	
 	private JSONArray getHistory(Domain domain, String login) {
@@ -353,6 +359,12 @@ public class SeresServlet extends HttpServlet {
 		return ids;
 	}
 	
+	/**
+	 * 
+	 * JSON transform
+	 * 
+	 */
+	
 	public static JSONObject toSeresFileJSON(Invoice invoice, List<DataResponse> list) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, invoice.getId());
@@ -369,8 +381,9 @@ public class SeresServlet extends HttpServlet {
 				json.put("status", "Pendiente" );
 		}
 		// TODO invoice status
-//		json.put("status", "CORRECT" );
-//		json.put("status", "FAIL" );
+//		json.put("status", "Error" );
+//		json.put("status", "Aceptado" );
+//		json.put("status", "Rechazado" );
 		return json;
 	}
 	
@@ -382,21 +395,50 @@ public class SeresServlet extends HttpServlet {
 		json.put("date", AonDateUtils.format(sales.getIssueDate(), "dd-MM-yyyy"));
 		// TODO sales status
 		json.put("status", "Pendiente" );
+//		json.put("status", "Enviado" );
+//		json.put("status", "Error" );
+//		json.put("status", "Aceptado" );
+//		json.put("status", "Rechazado" );
 		return json;
 	}
 	
-	public static JSONObject toSeresFileJSON(Delivery delivery) {
+	public static JSONObject toSeresFileJSON(Delivery delivery, List<DataResponse> list) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, delivery.getId());
 		json.put("registry_name", delivery.getCustomerName());
 		json.put("reference_code", delivery.getReferenceCode());
 		json.put("date", AonDateUtils.format(delivery.getIssueTime(), "dd-MM-yyyy"));
+		if(list!=null) {
+			long count = list.stream().filter(dr -> dr.getSourceId().equals(delivery.getId())).count();
+			if(count > 0)
+				json.put("status", "Enviado" );
+			else
+				json.put("status", "Pendiente" );
+		}
 		// TODO delivery status
-		json.put("status", "Pendiente" );
+//		json.put("status", "Error" );
+//		json.put("status", "Aceptado" );
+//		json.put("status", "Rechazado" );
 		return json;
 	}
 	
-
+	public static JSONObject toDeliveryAttachJSON(Attach attach) {
+		JSONObject json = new JSONObject();
+		json.put(MSG.ID, attach.getId());
+		json.put("source", attach.getSourceType());
+		json.put("source_id", attach.getSourceBatch());
+		json.put("description", attach.getDescription());
+		json.put("type", attach.getType());
+		json.put("creation_date", AonDateUtils.format(attach.getCreationDate(), "dd-MM-yyyy HH:mm:ss"));
+		return json;
+	}
+	
+	/**
+	 * 
+	 * FILTER
+	 * 
+	 */
+	
 	private void fillPaginationFilter(Filter filter, Map<String, String[]> filterMap) {
 		if (filterMap.containsKey("page") && filterMap.containsKey("per_page")) {
 			Integer page =  filterMap.containsKey("page") ? Integer.parseInt(filterMap.get("page")[0]) : 1;
@@ -405,12 +447,13 @@ public class SeresServlet extends HttpServlet {
 		} else {
 			filter = filter.page(1).perPage(40);
 		}
+		// TODO pagination
+		filter = filter.page(null).perPage(null);
 	}
 	
 	
 	private Filter deliveryFilter(Domain domain, Integer[] ediRegistryIds, Map<String, String[]> filterMap, DeliveryProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
-		fillPaginationFilter(filter, filterMap);
 		if(ediRegistryIds!=null && ediRegistryIds.length>0)
 			filter = filter.and(f.getCustomerProperty().in(ediRegistryIds));
 		
@@ -418,6 +461,7 @@ public class SeresServlet extends HttpServlet {
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
 			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(date)));
 		}
+		fillPaginationFilter(filter, filterMap);
 		return filter;
 	}
 
@@ -425,7 +469,6 @@ public class SeresServlet extends HttpServlet {
 	private Filter saleInvoiceFilter(Domain domain, Integer[] ediRegistryIds, Map<String, String[]> filterMap, InvoiceProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter = filter.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
-		fillPaginationFilter(filter, filterMap);
 		if(ediRegistryIds!=null && ediRegistryIds.length>0)
 			filter = filter.and(f.getRegistryProperty().in(ediRegistryIds));
 		
@@ -433,12 +476,12 @@ public class SeresServlet extends HttpServlet {
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
 			filter = filter.and(f.getTaxDateProperty().ge(AonDateUtils.toTimestamp(date)));
 		}
+		fillPaginationFilter(filter, filterMap);
 		return filter;
 	}
 	
 	private Filter salesFilter(Domain domain, Integer[] ediRegistryIds, Map<String, String[]> filterMap, SalesProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
-		fillPaginationFilter(filter, filterMap);
 		if(ediRegistryIds!=null && ediRegistryIds.length>0)
 			filter = filter.and(f.getCustomerProperty().in(ediRegistryIds));
 		
@@ -446,97 +489,20 @@ public class SeresServlet extends HttpServlet {
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
 			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(date)));
 		}
+		fillPaginationFilter(filter, filterMap);
 		return filter;
 	}
 	
 	private Filter dataAttachFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
-		fillPaginationFilter(filter, filterMap);
 		
 		if (filterMap.containsKey(MSG.FROM)) {
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
 			filter = filter.and(f.getCreationDateTimeStampProperty().ge(AonDateUtils.toTimestamp(date)));
 		}
+		fillPaginationFilter(filter, filterMap);
 		return filter;
 	}
 
-	private Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
-		Filter filter = f.getDomainProperty().eq(domain.getId());
-
-		if (filterMap.containsKey(MSG.FROM)) {
-			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
-			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(date)));
-		}
-
-		// if(filterMap.containsKey(MSG.DELIVERY_DATE)){
-		// filter = filter.and(f.getDeliveryDateProperty().ge(new
-		// Timestamp(Long.parseLong(filterMap.get(MSG.DELIVERY_DATE)[0])))
-		// .or(f.getDeliveryDateProperty().isNull()));
-		// }
-		//
-		// if(filterMap.containsKey(MSG.SERIES)){
-		// Filter fseries =
-		// f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[0]);
-		// for(Integer i = 1; i < filterMap.get(MSG.SERIES).length ; i++){
-		// fseries =
-		// fseries.or(f.getSeriesProperty().eq(filterMap.get(MSG.SERIES)[i]));
-		// }
-		// filter = filter.and(fseries);
-		// }
-		//
-		// if(filterMap.containsKey(MSG.CARRIER)){
-		// Filter fcarrier =
-		// f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER)[0]));
-		// for(Integer i = 1; i < filterMap.get(MSG.CARRIER).length ; i++){
-		// fcarrier =
-		// fcarrier.or(f.getCarrierProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER)[i])));
-		// }
-		// filter = filter.and(fcarrier);
-		// }
-		//
-		// if(filterMap.containsKey(MSG.TYPE)){
-		// Filter ftype = f.getTypeProperty().eq((byte)
-		// Integer.parseInt(filterMap.get(MSG.TYPE)[0]));
-		// for(Integer i = 1; i < filterMap.get(MSG.TYPE).length ; i++){
-		// ftype = ftype.or(f.getTypeProperty().eq((byte)
-		// Integer.parseInt(filterMap.get(MSG.TYPE)[i])));
-		// }
-		// filter = filter.and(ftype);
-		// }
-		//
-		// if(filterMap.containsKey(MSG.STATUS)){
-		// Filter fstatus = f.getStatusProperty().eq((byte)
-		// Integer.parseInt(filterMap.get(MSG.STATUS)[0]));
-		// for(Integer i = 1; i < filterMap.get(MSG.STATUS).length ; i++){
-		// fstatus = fstatus.or(f.getStatusProperty().eq((byte)
-		// Integer.parseInt(filterMap.get(MSG.STATUS)[i])));
-		// }
-		// filter = filter.and(fstatus);
-		// }
-		//
-		// if(filterMap.containsKey("text") &&
-		// !"".equals(filterMap.get("text")[0])){
-		// Filter ftext = f.getNumberPlateProperty().like("%" +
-		// filterMap.get("text")[0] + "%");
-		// ftext = ftext.or(f.getDriverNameProperty().like("%" +
-		// filterMap.get("text")[0] + "%"));
-		// ftext = ftext.or(f.getDriverDocumentProperty().like("%" +
-		// filterMap.get("text")[0] + "%"));
-		// ftext = ftext.or(f.getCarrierReferenceProperty().like("%" +
-		// filterMap.get("text")[0] + "%"));
-		// ftext = filter = filter.and(ftext);
-		// }
-		// if(filterMap.containsKey("per_page")){
-		// String per_page = filterMap.get("per_page")[0];
-		// Integer perPage = Integer.parseInt(per_page);
-		// filter.perPage(perPage);
-		// }
-		// if(filterMap.containsKey("page")){
-		// String page_str = filterMap.get("page")[0];
-		// Integer page = Integer.parseInt(page_str);
-		// filter.page(page);
-		// }
-		return filter;
-	}
 
 }

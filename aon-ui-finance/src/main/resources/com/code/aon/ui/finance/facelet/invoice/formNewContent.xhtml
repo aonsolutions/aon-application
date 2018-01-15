@@ -83,7 +83,7 @@
 				</aon:panelGrid>
 	
 			</aon:panelCollapsible>
-			<aon:if test="#{domainSwitcher.alphaDomain and showAttachPanel}">
+			<aon:if test="#{showAttachPanel}">
 				<aon:panelCollapsible id="invoiceAttach-panel"
 					expanded="true" immediate="true" label="#{bundle.webmail_attach_files}">
 					<aon:div id="invoiceAttachFile-panel">
@@ -95,7 +95,7 @@
 									reRender="invoiceAttach-panel, invoiceAttachPreview-panel"
 									style="margin-left: 0.4em;"
 									styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-								<aon:if test="#{invoiceController.definedOcrUrl}">
+								<aon:if test="#{domainSwitcher.alphaDomain and invoiceController.definedOcrUrl}">
 									<aon:commandButton id="ocr-button" ajaxSingle="true" inmediate="true"
 										value="OCR" title="Reconocer el texto del documento" 
 										actionListener="#{invoiceController.processOcr}"
@@ -125,7 +125,7 @@
 	
 		</aon:div>
 		
-		<aon:if test="#{domainSwitcher.alphaDomain and showAttachPanel}">
+		<aon:if test="#{showAttachPanel}">
 			<aon:div id="invoiceAttachPreview-panel" style="display: none;">
 				<aon:div id="invoiceAttachPreview-group"
 					styleClass="aon-group">

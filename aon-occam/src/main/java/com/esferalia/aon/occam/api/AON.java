@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -2974,6 +2975,16 @@ public class AON {
 	
 	// ------------------ CARRIER PACKING
 	
+	public static Stream<String> getCarrierPackingSeries(String domainName, Integer domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getCarrierPackingSeries(ctx);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+
 	public static Stream<CarrierPacking> getCarrierPackingStream(String domainName, Integer domainId, String login, CarrierPackingFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -3697,12 +3708,15 @@ public class AON {
 		}		
 	}
 	
-	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login,
-			Integer registryId){
+	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login, Integer registryId){
+		return getRSellerStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId).and(f.getRegistryProperty().eq(registryId)));
+	}
+	
+	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login, RegistrySellerFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRSellerStream(ctx, registryId);
+			return getRegistry().getRSellerStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -4445,6 +4459,16 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getTask().getTaskHolderStream(ctx, filter).findFirst().orElse(new TaskHolder());
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static TaskHolder updateTaskHolder(String domainName, Integer domainId, String login, TaskHolder taskHolder){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().updateTaskHolder(ctx, taskHolder);
 		} finally {
 			if (ctx != null) ctx.close();
 		}

@@ -2,6 +2,7 @@ package com.code.aon.webservice.warehouse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -67,7 +68,7 @@ public class WarehouseServlet extends HttpServlet{
 				if(MSG.CARRIER_PACKING.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						if(MSG.SERIES.equals(pathInfo[4])){
-							object = getSeriesList();
+							object = getSeriesList(domain, userName);
 						} else if(MSG.TYPE.equals(pathInfo[4])){
 							object = getCarrierPackingTypeList();
 						} else if(MSG.STATUS.equals(pathInfo[4])){
@@ -473,6 +474,8 @@ public class WarehouseServlet extends HttpServlet{
     			map2.get(pd.getCarrierPacking()).add(pd.getPurchase().getSupplier());
     			map.get(pd.getCarrierPacking()).put("supplier", map.get(pd.getCarrierPacking()).get("supplier").equals("-") ?
     				pd.getPurchase().getSupplierName() : map.get(pd.getCarrierPacking()).get("supplier") + "; " + pd.getPurchase().getSupplierName());	
+    			map.get(pd.getCarrierPacking()).put("supplier_array", map.get(pd.getCarrierPacking()).getJSONArray("supplier_array").put(ToJSON.objectToJSON(pd.getPurchase().getSupplier(), pd.getPurchase().getSupplierName())));
+
     		}
    		});  
     	
@@ -484,7 +487,9 @@ public class WarehouseServlet extends HttpServlet{
     			map3.put(d.getCarrierPacking(), new LinkedList<>());
         	if(!map3.get(d.getCarrierPacking()).contains(d.getCustomer())) {
         		map3.get(d.getCarrierPacking()).add(d.getCustomer());
-    			map.get(d.getCarrierPacking()).put("customer", map.get(d.getCarrierPacking()).get("customer") + "; " + d.getCustomerName());
+    			map.get(d.getCarrierPacking()).put("customer", map.get(d.getCarrierPacking()).getJSONObject("customer").get("name") + "; " + d.getCustomerName());
+    			map.get(d.getCarrierPacking()).put("customer_array", map.get(d.getCarrierPacking()).getJSONArray("customer_array").put(ToJSON.objectToJSON(d.getCustomer(), d.getCustomerName())));
+    			
         	}
        	}); 
  
@@ -632,11 +637,16 @@ public class WarehouseServlet extends HttpServlet{
     	return array;
     }
     
-    private JSONArray getSeriesList() {
-    	JSONArray array = new JSONArray();
-    	array.put(ToJSON.objectToJSON(2017, "2017"));
-    	array.put(ToJSON.objectToJSON(2016, "2016"));
-    	array.put(ToJSON.objectToJSON(2015, "2015"));
+    private JSONArray getSeriesList(Domain domain,String login) {
+    	Calendar c = Calendar.getInstance();
+    	Integer year = c.getWeekYear();
+		JSONArray array = new JSONArray();
+    	array.put(ToJSON.objectToJSON(year, year.toString()));
+    	AON.getCarrierPackingSeries(domain.getName(), domain.getId(), login)
+    	.forEach(series -> {
+    		if(!series.equals(year.toString()))
+    			array.put(ToJSON.objectToJSON(Integer.parseInt(series), series));
+    	});
     	return array;
     }
     

@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -84,7 +85,15 @@ public class RegistryServlet extends HttpServlet{
 						object = getRmediaList(domain, userName);
 					}
 					break;
-				case "rnote": // RNOTE
+				case "raddress": // RADDRESS
+					if(pathInfo.length > 4){
+						if (pathInfo[4].equals("registry")) {
+							if(pathInfo.length > 5)
+								object = getRaddress(domain, userName, Integer.parseInt(pathInfo[5]));
+						}
+					}
+					break;
+ 				case "rnote": // RNOTE
 					if(pathInfo.length > 4){
 						if (pathInfo[4].equals("registry")) {
 							if(pathInfo.length > 5)
@@ -137,7 +146,7 @@ public class RegistryServlet extends HttpServlet{
 		AON.getRSegmentStream(domain.getName(), domain.getId(), login, registryId)
 		.forEach(s -> {segmentation = segmentation + " - " + s.getName();});
 
-		AON.getRSellerStream(domain.getName(), domain.getId(), login, registryId)
+		AON.getRSellerStream(domain.getName(), domain.getId(), login, f-> f.getRegistryProperty().eq(registryId).and(f.getStatusProperty().eq(SellerStatus.ACTIVE.value())))
 		.forEach(s -> {commercial = commercial + " - " + s.getRegistryName();});
 		
 		CustomerStatus status = AON.getCustomer(domain.getName(), domain.getId(), login, registryId).getStatus();
@@ -171,6 +180,15 @@ public class RegistryServlet extends HttpServlet{
     private JSONObject getRmedia(Domain domain, String login, Integer id){
     	return ToJSON.rmediaToJSON(AON.getRMedia(domain.getName(),
     			domain.getId(), login, f -> f.getIdProperty().eq(id)));
+    }
+    
+    private JSONArray getRaddress(Domain domain, String login, Integer id){
+    	JSONArray array = new JSONArray();
+    	RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), login, id);
+		String direction = n(ra.getStreet_type()) + " " + n(ra.getAddress()) + " " + n(ra.getNumber())+ " " + n(ra.getAddress2())
+			+ " " +n(ra.getAddress3()) + " " + n(ra.getZip()) + " " + n(ra.getCity());
+		array.put(ToJSON.objectToJSON(ra.getId(), direction));
+		return array;
     }
     
     private JSONArray getRnoteList(Domain domain, String login){

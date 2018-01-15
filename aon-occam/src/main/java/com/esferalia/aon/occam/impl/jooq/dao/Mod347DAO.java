@@ -3,11 +3,18 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
 import static com.esferalia.aon.jooq.tables.FsMod347Detail.FS_MOD347_DETAIL;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,15 +29,19 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod347DAO {
@@ -406,6 +417,7 @@ public class Mod347DAO {
 			.set(FS_MOD347_DETAIL.DEPOSIT_REGIME,AonEnumUtils.getByte(declared.isDepositRegime()))
 			.set(FS_MOD347_DETAIL.VAT_ACCRUAL_AMOUNT, declared.getVatAccrualAmount())
 			.execute();
+		
 	}
 
 	private static void updateDeclared(AONContext ctx, Mod347Declared declared) {
@@ -591,10 +603,207 @@ public class Mod347DAO {
 			.execute();		
 	}
 	
-	// FALTA --------------- INSERT DETAILS FROM INVOICE ---------------
+	// --------------- INSERT DETAILS FROM INVOICE ---------------
 	
 	private static void insertDetailsFromInvoice(AONContext ctx , final Mod347 mod347) {
+		
+		// PROCEDIMIENTO A SEGUIR:
+		// - Se leen las facturas normales o ISP, del ejercicio actual y del anterior (para las facturas RECC)
+		// - Se asigna a todas las compras y gastos, el tipo "0" y a las ventas el "1"
+		// - Se ordenan por Documento + Tipo + ISP + RECC
+		// - Se van leyendo en orden y por cada Documento + Tipo + ISP + RECC, se va creando una linea de 
+		//   declarado (si el total de operaciones de Documento + Tipo supera el valor mínimo)
+		// - Si la factura lleva retención, se ignora
+		// - Si la factura es RECC se acumula el importe total de la factura, si es del ejercicio actual y 
+		//   además se acumula tambien el importe declarado según la regla RECC del IVA
+		
+		// Se pone solo el ejercicio actual, porque getVatBreakdown ya lee automaticamente las facturas RECC del ejercicio anterior
+		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
+		Date toDate = AonDateUtils.getYearLastDay(mod347.getYear());
+		
+		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
+		LinkedList<VatContext> v = VATDAO.getVatBreakdown(ctx, fromDate, toDate)
+				.filter(mod -> mod.getTransaction() == InvoiceTransactionType.NATIONAL || mod.getTransaction() == InvoiceTransactionType.OTHER_ISP)
+				.peek(vat -> vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE))
+				.sorted(Comparator.comparing(VatContext::getRegistryDocument).thenComparing(VatContext::getInvoiceType).thenComparing(VatContext::getTransaction).thenComparing(VatContext::isVatAccrualRegime))
+		        .collect(Collectors.toCollection(LinkedList::new));		
+		
+		String control = "";
+		double acumulated = 0;
+		double minAmount = 3005.06;		
+		Calendar cal = Calendar.getInstance();		
+		Map<String,Mod347Declared> map = new TreeMap<String, Mod347Declared>();
+		
+		for (VatContext vat : v) {
 			
+			// Se ignoran las facturas con retencion
+			if (getRetentionQuota(ctx, vat.getInvoice()) != 0)
+				continue;
+
+			// Facturas del ejercicio actual, o del ejercicio anterior y regimen criterio de caja
+
+			// El importe mínimo a declarar se controla por NIF y Tipo (Ventas o Compras)
+			String c = vat.getRegistryDocument() + ";" + vat.getInvoiceType();
+			if (!control.equals(c)) {
+
+				// Añadir el bloque a la base de datos, si supera el importe minimo
+				if (Math.abs(acumulated) > minAmount) {
+					for (Mod347Declared declared : map.values()) {
+						insertDeclared(ctx, declared);
+					}
+				}
+
+				control = c;
+				acumulated = 0;
+				map.clear();
+			}
+			
+			// Añadir la factura al registro que corresponda del bloque actual
+			// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
+			// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
+			c = vat.getRegistryDocument() + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
+			Mod347Declared declared = map.get(c);
+			if (declared == null) {
+
+				declared = new Mod347Declared();
+				declared.setMod347(mod347.getId());
+
+				String document = vat.getRegistryDocument();
+				Country country = vat.getRegistryDocumentCountry();
+
+				if (country == null || country == Country.ES) {
+
+					if (AonStringUtils.length(document) > 9) {
+						declared.setDocument(AonStringUtils.substring(document, 0, 9));
+					} else {
+						declared.setDocument(document);
+					}
+
+					// La provincia no la tengo en VATContext, se obtiene de RADRESS de la dirección principal 
+					declared.setProvince(Province.safeValueOf(getRegistryMainAddressProvince(ctx, vat.getInvoice())));
+
+				} else {
+
+					declared.setOperatorNif(country.getIso2() + document);
+					declared.setCountry(country);
+					declared.setProvince(Province.NO_RESIDENTE);
+					
+				}
+
+				String name = vat.getRegistryName();
+				if (AonStringUtils.length(name) > 64) {
+					name = AonStringUtils.substring(name, 0, 63);
+				}
+				declared.setName(name);
+
+				declared.setType(vat.getInvoiceType() == InvoiceType.SALES ? Mod347Key.B : Mod347Key.A);
+
+				declared.setVatAccrual(vat.isVatAccrualRegime());
+				declared.setIsp(vat.getTransaction() == InvoiceTransactionType.OTHER_ISP);
+			
+				declared.setFirstQuarterAmount(0.0);
+				declared.setSecondQuarterAmount(0.0);
+				declared.setThirdQuarterAmount(0.0);
+				declared.setFourthQuarterAmount(0.0);
+				declared.setAmount(0.0);
+				declared.setVatAccrualAmount(0.0);
+				
+				// Añadir el declarado al map
+				map.put(c, declared);
+			}
+
+			// Acumular el importe que se declara en el 347
+			double amount = vat.getAmount347();
+
+			if (vat.isVatAccrualRegime()) {
+				
+				// Factura Criterio de Caja
+									
+				// Acumular el importe según RECC (La base y las cuotas tienen lo declarado según los cobros/pagos realizados)
+				declared.setVatAccrualAmount(AonMathUtils.round(declared.getVatAccrualAmount() + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota()));
+				
+				// Si la factura es del ejercicio anterior, no se tiene en cuenta el importe, para el minimo a declarar
+				// ni aparece el importe en el 347				
+				if (vat.getTaxDate().compareTo(AonDateUtils.getYearFirstDay(mod347.getYear())) < 0) {
+					amount = 0;						
+				}
+				
+			} else if (mod347.getDocument() != null && !mod347.getDocument().startsWith("H")) {
+
+				// No es factura RECC, ni NIF declarante empieza por "H", se acumula por trimestres
+				cal.setTime(vat.getTaxDate());
+				int quarter = (cal.get(Calendar.MONTH) / 3);
+				if (quarter == 0) {
+					declared.setFirstQuarterAmount(AonMathUtils.round(declared.getFirstQuarterAmount() + amount));
+				} else if (quarter == 1) {
+					declared.setSecondQuarterAmount(AonMathUtils.round(declared.getSecondQuarterAmount() + amount));
+				} else if (quarter == 2) {
+					declared.setThirdQuarterAmount(AonMathUtils.round(declared.getThirdQuarterAmount() + amount));
+				} else if (quarter == 3) {
+					declared.setFourthQuarterAmount(AonMathUtils.round(declared.getFourthQuarterAmount() + amount));
+				}
+				
+			}
+			
+			// Acumular el total
+			declared.setAmount(AonMathUtils.round(declared.getAmount() + amount));
+			
+			// Acumular el importe para ver si al final supera el minimo a declarar (por NIF + Tipo)
+			acumulated = acumulated + amount;
+
+		}
+
+		// Añadir ultimo bloque de map, si existe
+		if (Math.abs(acumulated) > minAmount) {
+			for (Mod347Declared declared : map.values()) {
+				insertDeclared(ctx, declared);
+			}
+		}		
+			
+	}
+	
+	private static double getRetentionQuota(AONContext ctx, Integer invoice) {
+		 
+		return ctx.getDslContext()
+				.select(INVOICE.RETENTION_QUOTA)
+				.from(INVOICE)
+				.where(INVOICE.ID.equal(invoice))
+				.limit(1)
+				.fetch()
+				.stream()
+				.mapToDouble(rec -> rec.getValue(INVOICE.RETENTION_QUOTA ))
+				.findFirst()
+				.orElse(0);		
+		
+	}
+	
+	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer invoice) {
+		
+		// Obtenemos registry de la factura, por que tampoco tenemos registry en vat
+		Integer registry = ctx.getDslContext()
+				.select(INVOICE.REGISTRY)
+				.from(INVOICE)
+				.where(INVOICE.ID.equal(invoice))
+				.limit(1)
+				.fetch()
+				.stream()
+				.mapToInt(rec -> rec.getValue(INVOICE.REGISTRY ))
+				.findFirst()
+				.orElse(0);		
+		
+		// Ahora obtenemos la provincia de la direccion principal de registry
+		return ctx.getDslContext()
+			.select(GEOZONE.CODE)
+			.from(RADDRESS)
+			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+			.where(RADDRESS.REGISTRY.equal(registry))
+			.and(RADDRESS.TYPE.equal( ZERO_BYTE ))		// Dirección principal.
+			.limit(1)
+			.fetch()
+			.stream()
+			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
+			.findFirst()
+			.orElse(0);
 	}
 	
 	// FALTA --------------- INVOICES INFO --------------- 

@@ -85,7 +85,7 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.seres.util.writer.udapa.UdapaDeliveryWriter;
+import com.esferalia.aon.seres.writer.udapa.UdapaDeliveryWriter;
 
 public class DeliveryController extends HeaderObjectController implements IWarehouseConstants, IAuditableController {
 	

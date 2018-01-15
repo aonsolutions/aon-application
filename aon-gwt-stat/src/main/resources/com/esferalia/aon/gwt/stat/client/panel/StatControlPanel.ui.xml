@@ -38,8 +38,8 @@
 				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:north>
-		<g:north size="110">
-			<g:SimpleLayoutPanel height="109px" ui:field="north" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonNoPrint}">
+		<g:north size="122">
+			<g:SimpleLayoutPanel height="121px" ui:field="north" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonNoPrint}">
 				<stat:StatFilter ui:field="filter"/>
 			</g:SimpleLayoutPanel>
 		</g:north>

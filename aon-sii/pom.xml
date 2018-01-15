@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>9.20-SNAPSHOT</version>
+		<version>9.23-SNAPSHOT</version>
 	</parent>
 	<groupId>net.aonsolutions</groupId>
 	<artifactId>aon.sii</artifactId>
@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>net.aonsolutions.core</groupId>
 			<artifactId>sii</artifactId>
-			<version>9.20-SNAPSHOT</version>
+			<version>9.23-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
         

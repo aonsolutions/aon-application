@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>9.20-SNAPSHOT</version>
+    <version>9.23-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.esferalia.aon</groupId>
@@ -140,13 +140,13 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>dbutils</artifactId>
-      <version>9.20-SNAPSHOT</version>
+      <version>9.23-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>pool</artifactId>
-      <version>9.20-SNAPSHOT</version>
+      <version>9.23-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
           <dependency>

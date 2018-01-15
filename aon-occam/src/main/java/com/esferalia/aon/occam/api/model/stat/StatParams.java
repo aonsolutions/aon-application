@@ -146,5 +146,24 @@ public class StatParams implements Serializable, Cloneable {
 			item.setSelected(false);
 		}
 	}
-	
+	public boolean hasSegmentFilter() {
+		boolean found = false;
+		for (StatFilterItem item : getFilterItems() ) {
+			if (item.getType() == StatFilterType.SEGMENT && item.isSelected()) {
+				found = true;
+				break;
+			}
+		}
+		return found;
+	}
+	public boolean hasTagFilter() {
+		boolean found = false;
+		for (StatFilterItem item : getFilterItems() ) {
+			if (item.getType() == StatFilterType.PRODUCT_TAG && item.isSelected()) {
+				found = true;
+				break;
+			}
+		}
+		return found;
+	}
 }

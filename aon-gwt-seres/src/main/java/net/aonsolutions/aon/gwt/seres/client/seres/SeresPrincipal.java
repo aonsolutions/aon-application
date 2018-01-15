@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.seres.JsAttachFile;
 import com.esferalia.aon.gwt.api.client.seres.JsSeresFile;
 import com.esferalia.aon.gwt.api.client.seres.JsSummary;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -34,6 +35,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import net.aonsolutions.aon.gwt.seres.shared.CommunicationTarget;
+
 
 public class SeresPrincipal extends Composite{
 	
@@ -52,7 +55,7 @@ public class SeresPrincipal extends Composite{
 
 	SeresMain parent;
 	SeresPrincipal me;
-	String command;
+	CommunicationTarget command;
 	
 	public API getAPI() {
 		return parent.getAPI();
@@ -106,15 +109,17 @@ public class SeresPrincipal extends Composite{
 		});
 	}
 	
-	public void filterContent(){			
-		northContent.setWidget(new FilterPanel(this));
+	FilterPanel filterPanel;
+	public void filterContent(){
+		filterPanel = new FilterPanel(this);
+		northContent.setWidget(filterPanel);
 	}
 	
 	public void gridContent(){
 		gridContent(command);
 	}
 	
-	public void gridContent(String command){
+	public void gridContent(CommunicationTarget command){
 		this.command = command;
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
@@ -123,12 +128,19 @@ public class SeresPrincipal extends Composite{
 		list.add("40");
 		getFilterMap().put("per_page", list);
 		
+		filterPanel.setCheckVisible(command==CommunicationTarget.OUTCOME_DELIVERY
+				|| command==CommunicationTarget.OUTCOME_INVOICE
+				|| command==CommunicationTarget.INGENET_DELIVERY);
+		
 		
 		Widget content = null;
-		if (parent.OUTCOME_DELIVERY.equals(command) || parent.OUTCOME_INVOICE.equals(command)
-				|| parent.INCOME_SALES.equals(command) || parent.INCOME_INVOICE.equals(command)
-				|| parent.INGENET_DELIVERY.equals(command)) {
+		if (CommunicationTarget.OUTCOME_DELIVERY==command || CommunicationTarget.OUTCOME_INVOICE==command
+				|| CommunicationTarget.INCOME_SALES==command || CommunicationTarget.INCOME_INVOICE==command) {
 			ContentGrid contentGrid = (new ContentGrid(me));
+			reloadContentGrid(contentGrid);
+			content = contentGrid;
+		} else if(CommunicationTarget.INGENET_DELIVERY==command) {
+			ContentGridIngenet contentGrid = (new ContentGridIngenet(me));
 			reloadContentGrid(contentGrid);
 			content = contentGrid;
 		} else {
@@ -156,26 +168,49 @@ public class SeresPrincipal extends Composite{
 					innerPanel.add(bodyPanel);
 					
 					FlexTable table = new FlexTable();
-					for(int i=0; i<6; i++)
+					for(int i=0; i<7; i++)
 						table.getFlexCellFormatter().setWidth(0, i, "200px");
-					table.setWidget(0, 0, new Label("Total"));
-					table.setWidget(0, 1, boldLabel(o.getQuantity()));
-					table.setWidget(0, 2, new Label("Pendiente"));
-					table.setWidget(0, 3, boldLabel(o.getPending()));
-					table.setWidget(0, 4, new Label("Errores"));
-					table.setWidget(0, 5, boldLabel(o.getError()));
+					
+					String name = null;
+					if(CommunicationTarget.OUTCOME_DELIVERY.getValue().equals(o.getLabel())){
+						name = "ALBARANES";
+					} else if(CommunicationTarget.OUTCOME_INVOICE.getValue().equals(o.getLabel())){
+						name = "FACTURAS";
+					} else if(CommunicationTarget.INCOME_SALES.getValue().equals(o.getLabel())){
+						name = "PEDIDOS";
+					} else if(CommunicationTarget.INCOME_INVOICE.getValue().equals(o.getLabel())){
+						name = "FACTURAS";
+					} else if(CommunicationTarget.INGENET_DELIVERY.getValue().equals(o.getLabel())){
+						name = "ALBARANES ";
+					}
+					table.setWidget(0, 0, boldLabel(name));
+					table.setWidget(0, 1, new Label("Total"));
+					table.setWidget(0, 2, boldLabel(o.getQuantity()));
+					table.setWidget(0, 3, new Label("Pendiente"));
+					table.setWidget(0, 4, boldLabel(o.getPending()));
+					table.setWidget(0, 5, new Label("Errores"));
+					table.setWidget(0, 6, boldLabel(o.getError()));
 					
 					InlineLabel title = null;
-					if(parent.OUTCOME_DELIVERY.equals(o.getLabel())){
-						title = new InlineLabel( "Albaranes enviados" );
-					} else if(parent.OUTCOME_INVOICE.equals(o.getLabel())){
-						title = new InlineLabel( "Facturas enviadas" );
-					} else if(parent.INCOME_SALES.equals(o.getLabel())){
-						title = new InlineLabel( "Pedidos recibidos" );
-					} else if(parent.INCOME_INVOICE.equals(o.getLabel())){
-						title = new InlineLabel( "Facturas recibidas" );
-					} else if(parent.INGENET_DELIVERY.equals(o.getLabel())){
-						title = new InlineLabel( "Ingenet - Albaranes recibidos" );
+//					if(parent.OUTCOME_DELIVERY.equals(o.getLabel())){
+//						title = new InlineLabel( "Albaranes enviados" );
+//					} else if(parent.OUTCOME_INVOICE.equals(o.getLabel())){
+//						title = new InlineLabel( "Facturas enviadas" );
+//					} else if(parent.INCOME_SALES.equals(o.getLabel())){
+//						title = new InlineLabel( "Pedidos recibidos" );
+//					} else if(parent.INCOME_INVOICE.equals(o.getLabel())){
+//						title = new InlineLabel( "Facturas recibidas" );
+//					} else if(parent.INGENET_DELIVERY.equals(o.getLabel())){
+//						title = new InlineLabel( "Ingenet - Albaranes recibidos" );
+//					}
+					if(CommunicationTarget.OUTCOME_DELIVERY.getValue().equals(o.getLabel())
+							|| CommunicationTarget.OUTCOME_INVOICE.getValue().equals(o.getLabel())){
+						title = new InlineLabel( "SERES - Env\u00EDo de Ficheros" );
+					} else if(CommunicationTarget.INCOME_SALES.getValue().equals(o.getLabel())
+							|| CommunicationTarget.INCOME_INVOICE.getValue().equals(o.getLabel())){
+						title = new InlineLabel( "SERES - Recepci\u00F3n de Ficheros" );
+					} else if(CommunicationTarget.INGENET_DELIVERY.getValue().equals(o.getLabel())){
+						title = new InlineLabel( "Ingenet - Recepci\u00F3n de Ficheros" );
 					}
 					
 					titlePanel.add(title);
@@ -198,7 +233,7 @@ public class SeresPrincipal extends Composite{
 	}
 		
 	public void reloadContentGrid(ContentGrid contentGrid) {
-		if(parent.OUTCOME_DELIVERY.equals(command)){
+		if(CommunicationTarget.OUTCOME_DELIVERY==command){
 			getAPI().getSeres().getOutcomeDelivery(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
@@ -210,7 +245,7 @@ public class SeresPrincipal extends Composite{
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
-		} else if(parent.OUTCOME_INVOICE.equals(command)){
+		} else if(CommunicationTarget.OUTCOME_INVOICE==command){
 			getAPI().getSeres().getOutcomeInvoice(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
@@ -222,7 +257,7 @@ public class SeresPrincipal extends Composite{
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
-		} else if(parent.INCOME_SALES.equals(command)){
+		} else if(CommunicationTarget.INCOME_SALES==command){
 			getAPI().getSeres().getIncomeSales(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
@@ -234,7 +269,7 @@ public class SeresPrincipal extends Composite{
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
-		} else if(parent.INCOME_INVOICE.equals(command)){
+		} else if(CommunicationTarget.INCOME_INVOICE==command){
 			getAPI().getSeres().getIncomeInvoice(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
 				
 				@Override
@@ -246,11 +281,17 @@ public class SeresPrincipal extends Composite{
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
-		} else if(parent.INGENET_DELIVERY.equals(command)){
-			getAPI().getSeres().getIngenetDelivery(getFilterMap(), new AsyncCallback<JSON<JsSeresFile>>() {
+		} else {
+			
+		}
+	}
+	
+	public void reloadContentGrid(ContentGridIngenet contentGrid) {
+		if(CommunicationTarget.INGENET_DELIVERY==command){
+			getAPI().getSeres().getIngenetDeliveryAttach(getFilterMap(), new AsyncCallback<JSON<JsAttachFile>>() {
 				
 				@Override
-				public void onSuccess(JSON<JsSeresFile> result) {
+				public void onSuccess(JSON<JsAttachFile> result) {
 					contentGrid.addAll(result.getData().toLinkedList());
 					contentGrid.dataGrid.redraw();
 				}
@@ -283,6 +324,10 @@ public class SeresPrincipal extends Composite{
 	public Button getRetrieveAll() {
 		return parent.getRetrieveAll();
 	}
+
+	public Button getProcessAll() {
+		return parent.getProcessAll();
+	}
 	
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
@@ -305,7 +350,7 @@ public class SeresPrincipal extends Composite{
 	}
 
 	public void consoleLog(String string) {
-		parent.consoleLog(string);
+		SeresMain.consoleLog(string);
 	}
 	
 }

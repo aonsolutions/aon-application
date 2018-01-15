@@ -7,7 +7,6 @@ import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -32,13 +31,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("employees")
 public interface EmployeesService extends RemoteService, CalendarService, EmployeeEventsService,
-		StatisticsService, GPSReportsService {
+		StatisticsService, GPSReportsService, AgreementService {
+	
 	Enterprise getEnterprise() throws IllegalArgumentException;
 
 	Enterprise[] getEnterprises() throws IllegalArgumentException;
-
-	List<Payment> getAvailablePayments(int employeeId)
-			throws IllegalArgumentException;
 
 	List<Deduction> getAvailableDeductions(int employeeId)
 			throws IllegalArgumentException;
@@ -79,20 +76,11 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 	SalaryDraft saveSalary(SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException;
 
-	AgreementDraft saveAgreementDraft(AgreementDraft agreementDraft)
-			throws IllegalArgumentException;
-
 	ContextDescriptor getContext(SalaryDraft salaryDraft)
-			throws IllegalArgumentException;
-
-	ContextDescriptor getContext(AgreementDraft agreementDraft, int levelId)
 			throws IllegalArgumentException;
 
 	List<Result> eval(String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException;
-
-	List<Result> eval(String expression, AgreementDraft agreementDraft,
-			int levelId) throws IllegalArgumentException, EvalException;
 
 	Double calculateIrpf(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
@@ -106,17 +94,10 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 	SalaryDraft calculateSalaryDraft4Dummies(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft)
-			throws IllegalArgumentException;
-
 	String getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException;
 
 	String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
-			throws IllegalArgumentException;
-
-	String getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
-			int levelId, Salary.Type type, int zoom)
 			throws IllegalArgumentException;
 
 	String getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime)
@@ -157,9 +138,6 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 	
 	ContextDescriptor getEmployeeEventsVariables(Integer employeeId,
 			Date startDate, Date endDate)
-			throws IllegalArgumentException;
-
-	SortedSet<Date> getChanges(Agreement agreement)
 			throws IllegalArgumentException;
 
 	Employee pasteContract(int workplaceId, int contractId, String document,

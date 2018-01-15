@@ -326,7 +326,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,0).setCuo(mod.getAmount(Mod303Key.CT_SA14))
 			,true)
 		// (1) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral
-		,CT_SA15(Mod303Key.CT_SA15,null,null,null,null,null
+		,CT_SA15(Mod303Key.CT_SA15,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?CT_SA15:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA15,ensureFarmerActivity(mod,0).getPor())
 			,mod -> ensureFarmerActivity(mod,0).setPor(mod.getAmount(Mod303Key.CT_SA15))
 			,true)
@@ -412,7 +412,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,2).setInd(mod.getAmount(Mod303Key.CT_SA33) / 10000)
 			,true)
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,CT_SA34(Mod303Key.CT_SA34,null,null,null,"(hasFarmerActivity(0))?round(CT_SA32*CT_SA33/10000):(0.0)",null
+		,CT_SA34(Mod303Key.CT_SA34,null,null,null,"(hasFarmerActivity(2))?round(CT_SA32*CT_SA33/10000):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA34,ensureFarmerActivity(mod,2).getCuo())
 			,mod -> ensureFarmerActivity(mod,2).setCuo(mod.getAmount(Mod303Key.CT_SA34))
 			,true)
@@ -422,7 +422,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,2).setPor(mod.getAmount(Mod303Key.CT_SA35))
 			,true)
 		// (3) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
-		,CT_SA36(Mod303Key.CT_SA36,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA34*CT_SA35/100):(0.0)",null
+		,CT_SA36(Mod303Key.CT_SA36,null,null,null,"(hasFarmerActivity(2) && !isLastPeriod())?round(CT_SA34*CT_SA35/100):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA36,ensureFarmerActivity(mod,2).getIng())
 			,mod -> ensureFarmerActivity(mod,2).setIng(mod.getAmount(Mod303Key.CT_SA36))
 			,true)

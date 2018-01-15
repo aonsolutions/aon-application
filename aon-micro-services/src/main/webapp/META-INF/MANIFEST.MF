@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Implementation-Title: AON MICRO SERVICES
+buildNumber: 
+Implementation-Version: 9.22-SNAPSHOT
+Built-By: rtrepiana
+Specification-Vendor: esferalia Networks S.A.
+Specification-Title: AON MICRO SERVICES
+Implementation-Vendor-Id: com.code.aon
+Implementation-Vendor: esferalia Networks S.A.
+buildDate: 10/01/2018
+dbVersion: 
+buildRevision: 44779
+Created-By: Apache Maven 3.5.2
+Build-Jdk: 1.8.0_144
+Specification-Version: 9.22-SNAPSHOT
+

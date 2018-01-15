@@ -49,7 +49,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1C;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1L;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1T;
-import com.esferalia.aon.file.seres.util.reader.udapa.UdapaSalesReader;
+import com.esferalia.aon.seres.reader.udapa.UdapaSalesReader;
 
 public class EdiSalesImporterHandler implements Serializable {
 	

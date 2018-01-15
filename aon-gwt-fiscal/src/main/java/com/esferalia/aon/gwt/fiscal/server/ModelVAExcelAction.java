@@ -22,16 +22,16 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public abstract class ModelVAExcelAction extends AbsExcelAction {
+public abstract class ModelVAExcelAction<M extends FiscalModel,K extends IFiscalModelKey> extends AbsExcelAction {
 
 	protected static final XSSFColor ARABA_BG = new XSSFColor(new java.awt.Color(163, 12, 81));
 	protected static final XSSFColor BIZKAIA_BG = new XSSFColor(new java.awt.Color(215, 0, 4));
@@ -60,9 +60,9 @@ public abstract class ModelVAExcelAction extends AbsExcelAction {
 	protected Font vatFont;
 	protected Font vatBoldFont;
 	
-	protected Mod303 model;
+	protected M model;
 	
-	public ModelVAExcelAction(Mod303 model) {
+	public ModelVAExcelAction(M model) {
 		this.model = model;
 	}
 	
@@ -249,7 +249,7 @@ public abstract class ModelVAExcelAction extends AbsExcelAction {
 		}
 	}
 	
-	public void accept(IModelScript<Mod303Key> ms) {
+	public void accept(IModelScript<K> ms) {
 		if (ms.paintHeaderBefore()) {
 			headerRow();
 		}
@@ -288,7 +288,7 @@ public abstract class ModelVAExcelAction extends AbsExcelAction {
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));			
 				cellCount = 2;
 			}
-			for (Mod303Key key : ms.getKeys()) {
+			for (K key : ms.getKeys()) {
 				if (key == null) {
 					Cell boxCell = addCell("");
 					style = workbook.createCellStyle();
@@ -339,5 +339,5 @@ public abstract class ModelVAExcelAction extends AbsExcelAction {
 	}
 	
 	protected abstract String getTitle();
-	protected abstract void fillParticularityCell(Cell cell ,CellStyle style,Mod303Key key);
+	protected abstract void fillParticularityCell(Cell cell ,CellStyle style,K key);
 }

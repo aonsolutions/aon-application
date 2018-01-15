@@ -342,7 +342,7 @@ public class Mod184Writer {
 
 	}
 	public static void fillWriter(Mod184 mod184, Writer writer) throws IOException {
-		if (mod184.getYear() == 2016 ) {
+		if (mod184.getYear() >= 2016 ) {
 			Mod184File2016.TYPE_1.fillPage(mod184, null, null, writer);
 			for (Mod184Income inc : mod184.getIncomes()) {
 				Mod184File2016.TYPE_2.fillPage(mod184, null, inc, writer);	
@@ -350,7 +350,7 @@ public class Mod184Writer {
 			for (Mod184Partner prt : mod184.getPartners()) {
 				Mod184File2016.TYPE_3.fillPage(mod184, prt, null, writer);	
 			}
-		} else if (mod184.getYear() == 2016 ) {
+		} else if (mod184.getYear() == 2015 ) {
 			Mod184File2015.TYPE_1.fillPage(mod184, null, null, writer);
 			for (Mod184Income inc : mod184.getIncomes()) {
 				Mod184File2015.TYPE_2.fillPage(mod184, null, inc, writer);	

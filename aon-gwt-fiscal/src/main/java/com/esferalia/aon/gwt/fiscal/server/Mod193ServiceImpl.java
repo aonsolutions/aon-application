@@ -49,4 +49,9 @@ public class Mod193ServiceImpl extends AonRemoteServiceServlet implements Model1
 	public Mod193 changeStatus(String domainName, Mod193 mod193, FiscalStatus newStatus) throws AonCoreException {
 		return FISCAL.changeStatusMod193(domainName, this.getUserLogin(), mod193, newStatus);
 	}
+
+	@Override
+	public Mod193 duplicateNextYear(String domainName, Integer domain, Integer id) {
+		return FISCAL.duplicateNextYearMod193(domainName, domain, this.getUserLogin(), id);
+	}
 }

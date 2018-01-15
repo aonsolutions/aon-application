@@ -104,8 +104,11 @@ public class Mod180DAO {
 		}
 		return getById(ctx, mod180.getId());
 	}
-
 	private static Mod180 insert(AONContext ctx, Mod180 mod180) {
+		return insert(ctx,mod180,true);
+	}
+
+	private static Mod180 insert(AONContext ctx, Mod180 mod180, boolean generateDetails) {
 		validate(ctx,mod180);
 		FsModel180Record record = ctx.getDslContext().insertInto(FS_MODEL180)
 			.set(FS_MODEL180.DOMAIN,mod180.getDomain())
@@ -132,7 +135,9 @@ public class Mod180DAO {
 		.returning(FS_MODEL180.ID)
 		.fetchOne();
 		mod180.setId(record.getId());
-		insertDetailsFromInvoice(ctx, mod180);
+		if (generateDetails) {
+			insertDetailsFromInvoice(ctx, mod180);
+		}
 		return mod180;
 	}
 
@@ -484,5 +489,19 @@ public class Mod180DAO {
 		} catch (Throwable t) {
 			throw new AonCoreException(t.getMessage());
 		}
+	}
+
+	public static Mod180 duplicateNextYear(AONContext ctx, int id) {
+		Mod180 mod180 = getById(ctx, id);
+		mod180.setYear( mod180.getYear() + 1 );
+		mod180.setId(null);
+		mod180 = insert(ctx, mod180, false);
+		Mod180 original = getById(ctx, id);
+		for (Mod180Detail detail : original.getDetails()) {
+			detail.setId(null);
+			detail.setMod180(mod180.getId());
+			saveDetail(ctx,mod180,detail);
+		}
+		return getById(ctx, mod180 .getId());
 	}
 }

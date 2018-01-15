@@ -1043,19 +1043,27 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Detalle 1": case "Detail 1":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				stock.getItem().setDetail(value.toString());
+			else if(type.equals(Cell.CELL_TYPE_NUMERIC))
 				stock.getItem().setDetail(toString(value));
 			break;
 		case "Detalle 2": case "Detail 2":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				stock.getItem().setDetail2(value.toString());
+			else if(type.equals(Cell.CELL_TYPE_NUMERIC))
 				stock.getItem().setDetail2(toString(value));
 			break;
 		case "Detalle 3": case "Detail 3":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(Cell.CELL_TYPE_STRING))
+				stock.getItem().setDetail3(value.toString());
+			else if(type.equals(Cell.CELL_TYPE_NUMERIC))
 				stock.getItem().setDetail3(toString(value));
 			break;
 		case "N\u00FAmero Serie": case "Serial Number":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(Cell.CELL_TYPE_STRING)) 
+				stock.getItem().setSerialNumber(value.toString());
+			else if(type.equals(Cell.CELL_TYPE_NUMERIC))
 				stock.getItem().setSerialNumber(toString(value));
 			break;
 		case "Formato":
