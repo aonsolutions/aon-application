@@ -487,7 +487,8 @@ public class WarehouseServlet extends HttpServlet{
     			map3.put(d.getCarrierPacking(), new LinkedList<>());
         	if(!map3.get(d.getCarrierPacking()).contains(d.getCustomer())) {
         		map3.get(d.getCarrierPacking()).add(d.getCustomer());
-    			map.get(d.getCarrierPacking()).put("customer", map.get(d.getCarrierPacking()).getJSONObject("customer").get("name") + "; " + d.getCustomerName());
+    			map.get(d.getCarrierPacking()).put("customer", map.get(d.getCarrierPacking()).get("customer").equals("-") ? 
+    					d.getCustomerName() : map.get(d.getCarrierPacking()).get("customer") + "; " + d.getCustomerName());
     			map.get(d.getCarrierPacking()).put("customer_array", map.get(d.getCarrierPacking()).getJSONArray("customer_array").put(ToJSON.objectToJSON(d.getCustomer(), d.getCustomerName())));
     			
         	}
