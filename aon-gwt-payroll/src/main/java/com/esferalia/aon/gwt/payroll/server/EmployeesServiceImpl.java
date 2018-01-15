@@ -1192,10 +1192,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			disableAutoCommit(conn);
-			SQLAgreementDraft.save(conn, agreementDraft, getDomainID(),
-					getParentDomainID());
+			SQLAgreementDraft.save(conn, agreementDraft, 
+					AonServletUtils.getDomainID(domain),
+					AonServletUtils.getParentDomainID(domain));
 			commit(conn);
 			return agreementDraft;
 		} catch (Throwable t) {
