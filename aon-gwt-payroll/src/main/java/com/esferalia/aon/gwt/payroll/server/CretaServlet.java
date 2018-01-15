@@ -113,8 +113,9 @@ public class CretaServlet extends HttpServlet
 	}
 	
 
-	protected Connection getConnection() throws SQLException {
-		return AonServletUtils.getConnection();
+	protected Connection getConnection(HttpServletRequest req) throws SQLException {
+		String domain = req.getServerName();
+		return AonServletUtils.getConnection(domain);
 	}
 
 	// ------------------------------------------------------------------------
@@ -124,7 +125,7 @@ public class CretaServlet extends HttpServlet
 	@Override
 	public void visitBases(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
-		Connection connection = getConnection();
+		Connection connection = getConnection(req);
 		resp.setContentType("text/html;");
 
 		boolean indicadorReftificacion = AonStringUtils.equalsIgnoreCase("on",
@@ -385,7 +386,7 @@ public class CretaServlet extends HttpServlet
 		
 		//@formatter:off
 		__onDocumentoCalculoLiquidacion(
-					getConnection(), 
+					getConnection(req), 
 					os, 
 					req.getParts().stream()
 					.map(part -> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL.class, part))
