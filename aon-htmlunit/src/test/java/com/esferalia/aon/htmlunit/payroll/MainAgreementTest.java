@@ -111,8 +111,6 @@ public class MainAgreementTest {
 			Assert.assertEquals(id, ((HtmlButton)getElementById(id)).isDisabled(), true );
 		}
 		
-		Assert.assertEquals(((HtmlSelect)getElementById("datesListBox")).isDisabled(), true );
-		
 		Assert.assertEquals(((HtmlInput)getElementById("descriptionTextBox")).isReadOnly(), true );
 		
 		
