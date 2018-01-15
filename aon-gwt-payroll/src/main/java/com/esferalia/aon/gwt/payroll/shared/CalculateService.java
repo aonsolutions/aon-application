@@ -9,6 +9,8 @@ public interface CalculateService {
 
 	static String EXTRA = "extra";
 
+	static String DOMAIN = "domain";
+
 	static String END_DATE = "endDate";
 	static String START_DATE = "startDate";
 	static String ISSUE_DATE = "issueDate";
