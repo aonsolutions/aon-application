@@ -1136,7 +1136,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				}
 				salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
 				initSalaryTableFrozenColsAndRows();
-			}
+				setReadOnly(/*object.isSystem() &&*/ !agreementDraftObject.isMine() );			}
 		});
 		hPanel.addStyleName(style.panelButtons());
 		hPanel.add(button);
@@ -1631,7 +1631,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		Set<Level> changedLevels = agreementDraftObject.getChangedLevels();
 
-		int cols = variables.size() + 3;
+		int cols = variables.size() + 2;
 		int size = levels.size() * cols;
 		List<IFocusableEditor> editors = new ArrayList<IFocusableEditor>(size);
 		for (int i = 0; i < size; i++)
@@ -1757,7 +1757,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		Set<Level> changedLevels = agreementDraftObject.getChangedLevels();
 
-		int cols = variables.size() + 3;
+		int cols = /*variables.size() +*/ 3;
 		int size = levels.size() * cols;
 		List<IFocusableEditor> editors = new ArrayList<IFocusableEditor>(size);
 		for (int i = 0; i < size; i++)
@@ -1792,18 +1792,20 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		row = 1;
 
 		for (Level level : levels) {
+
 			col = 1;
 			
 			int index = 0;
 			index = ((row - 1) * cols) + col;
 
-			CategoriesEditor categoriesEditor = dumpCategories(row, col++, level,
+			CategoriesEditor categoriesEditor = dumpCategories(row, col, level,
 					agreementDraftObject.getCategories(level));
 
 			editors.set(index, categoriesEditor);
 			categoriesEditor.hide(level.getId() == 0);
 			
-
+			col = 2;
+			
 			Button deleteButton = new Button();
 			deleteButton.setStyleName(AON.AON_ICON_DELETE);
 			deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
@@ -1816,7 +1818,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 			index = ((row - 1) * cols) + col;
 			editors.set(index, deleteEditor);
-			salaryTable.setWidget(row, col++, deleteButton);
+			salaryTable.setWidget(row, col, deleteButton);
 
 
 			if (isDraftLevel(level)) {
