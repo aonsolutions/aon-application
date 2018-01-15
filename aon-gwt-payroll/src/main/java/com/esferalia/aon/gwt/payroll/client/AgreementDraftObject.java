@@ -905,7 +905,7 @@ public class AgreementDraftObject {
 
 
 				// DIAS
-				add("DIAS_AﾑO");
+				add("DIAS_Aﾃ前");
 				add("DIAS_MES");
 				add("DIAS_NATURALES_MES");
 				add("DIAS_VACACIONES");
@@ -930,13 +930,13 @@ public class AgreementDraftObject {
 				add("DIAS_ERE");
 				
 				//ANTIGUEDAD
-				add("AﾑOS_ANTIGUEDAD");
+				add("Aﾃ前S_ANTIGUEDAD");
 				
 				
 				// FINIQUITO ?
 				add("DIAS_INDEMNIZACION");
 				add("CAUSA_INDEMNIZACION");
-				add("AﾑOS_TRABAJADOS");
+				add("Aﾃ前S_TRABAJADOS");
 
 				add("MESES_NOMINA");
 				add("MESES_PAGA");
@@ -976,7 +976,7 @@ public class AgreementDraftObject {
 				add("TARIFA_IT");
 				add("TARIFA_IMS");
 				add("CONTRATO_CORTA_DURACION");
-				add("AﾑOS_ANTIGUEDAD");
+				add("Aﾃ前S_ANTIGUEDAD");
 				add("COLECT_PECULIAR_COTIZACION");
 				add("COD_FIN_CONTRATO");
 				add("DESC_FIN_CONTRATO");

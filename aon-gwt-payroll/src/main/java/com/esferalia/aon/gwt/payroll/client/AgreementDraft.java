@@ -86,9 +86,11 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
@@ -97,6 +99,7 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -109,9 +112,13 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.ValueBoxBase;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
@@ -192,6 +199,22 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		@ClassName("text-error")
 		String textError();
+		
+		String selectButtonSalaryToggleButton();
+		
+		String marginToggleButton();
+		
+		String moreButton();
+		
+		String deleteButtonUp();
+		
+		String deleteButtonDown();
+		
+		String datePickerPanel();
+		
+		String panelButtons();
+		
+		String hide();
 
 	}
 
@@ -974,14 +997,29 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	Button deleteButton;
 
-	@UiField
-	ListBox datesListBox;
+//	@UiField
+//	ListBox datesListBox;
 
 	@UiField
 	FlexTable eventsTable;
 
 	@UiField
 	Widget eventsTableSpace;
+	
+//	@UiField
+//	Button categoryButton;
+	
+	@UiField
+	HorizontalPanel categoryButtonPanel;
+	
+	@UiField
+	HorizontalPanel salaryToggleButtonsPanel;
+	
+	@UiField
+	HorizontalPanel moreToggleButtonsPanel;
+	
+//	@UiField
+//	TabLayoutPanel salaryTabLayoutPanel;
 
 	@UiField
 	FlexTable salaryTable;
@@ -998,8 +1036,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	TextBox descriptionTextBox;
 
-	@UiField
-	MonthListBox draftMonthListBox;
+//	@UiField
+//	MonthListBox draftMonthListBox;
 
 	@UiField
 	ScrollPanel salaryTableScrollPane;
@@ -1052,7 +1090,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private Map<Event.Type, String[]> eventStyles;
 
 	private ContentAsistManager contentAssistManager;
-
+	
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
@@ -1071,10 +1109,199 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		contextProvider = new ContextProvider();
 		contentAssistManager = new ContentAsistManager();
-
+		
 		showDraft();
 	}
+	
+	private void initCategoryPanel() {
+		categoryButtonPanel.clear();
+		HorizontalPanel hPanel = new HorizontalPanel();
+		ToggleButton button = new ToggleButton("Categorias", "Variables");
+		button.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				clearSalaryTable();
+				salaryTableEditors.clear();
+				if(button.isDown()){
+					salaryToggleButtonsPanel.addStyleName(style.hide());
+					moreToggleButtonsPanel.addStyleName(style.hide());
+					hPanel.addStyleName(style.selectButtonSalaryToggleButton());
+					salaryTableEditors.addAll(dumpSalaryTableCategory());
+				}else{
+					salaryToggleButtonsPanel.removeStyleName(style.hide());
+					moreToggleButtonsPanel.removeStyleName(style.hide());
+					hPanel.removeStyleName(style.selectButtonSalaryToggleButton());
+					salaryTableEditors.addAll(dumpSalaryTable());
+				}
+				salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
+				initSalaryTableFrozenColsAndRows();
+			}
+		});
+		hPanel.addStyleName(style.panelButtons());
+		hPanel.add(button);
+		categoryButtonPanel.add(hPanel);
+		HTML html = new HTML("&nbsp");
+		categoryButtonPanel.add(html);
+		
+	}
 
+	private void initSalarytabs(Date draftStratDate, boolean readOnly) {
+		salaryToggleButtonsPanel.clear();
+		moreToggleButtonsPanel.clear();
+		salaryToggleButtonsPanel.removeStyleName(style.hide());
+		moreToggleButtonsPanel.removeStyleName(style.hide());
+		int startTab = 0;
+		
+		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
+		if (datesList.length != 0){
+			for(int i=0; i<datesList.length; i++){
+				Date date = datesList[i];
+				if (date.equals(draftStratDate)){
+					startTab = i;
+					startTab = startTab*2;
+				}
+				
+				HorizontalPanel hPanel = new HorizontalPanel();
+				ToggleButton button = new ToggleButton(date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900));
+				button.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						if(button.isDown()){
+							putAllToggleButtonsUp();
+							button.setDown(true);
+							int selectedButton = 0;
+							
+							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i++){
+								if(i%2 !=0){
+									continue;
+								}
+								HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+								if(button.equals(toggleButton)){
+									break;
+								}
+								selectedButton++;
+							}
+							
+						
+							Date month = datesList[selectedButton];
+							agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
+							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+							calculate();
+						
+						}else{
+							return;
+						}
+					}
+	
+					private void putAllToggleButtonsUp() {
+						for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+							HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+							ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+							toggleButton.setDown(false);
+						}	
+					}
+				});
+				
+				hPanel.add(button);
+				
+				if(!readOnly){
+					Button deleteButton = new Button("x");
+					deleteButton.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							int selectedButton = 0;
+							
+							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+								if(i%2 !=0){
+									continue;
+								}
+								HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+								if(button.equals(toggleButton)){
+									break;
+								}
+								selectedButton++;
+							}
+							
+							Date month = datesList[selectedButton];
+							agreementDraftObject.addDeleteDatesChanges(month);
+							Date newSelectMonth = null;
+							if(selectedButton==0)
+								newSelectMonth = datesList[selectedButton+1];
+							else
+								newSelectMonth = datesList[selectedButton-1];
+							
+							if(newSelectMonth == null)
+								newSelectMonth = new Date(0);
+							agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(newSelectMonth));
+							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(newSelectMonth));
+							calculate();
+						}	
+					});
+					
+					deleteButton.addStyleName(style.deleteButtonUp());
+					hPanel.add(deleteButton);
+				}
+				
+				hPanel.addStyleName(style.panelButtons());
+				salaryToggleButtonsPanel.add(hPanel);
+				HTML html = new HTML("&nbsp");
+				salaryToggleButtonsPanel.add(html);
+				
+			}
+		}
+		
+		//addMoreButton
+		if(!readOnly){
+			Button moreButton = addMoreButton();
+			moreToggleButtonsPanel.add(moreButton);
+		}
+		
+		
+		if (datesList.length != 0){
+			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(startTab);
+			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+			toggleButton.setDown(true);
+			if(!readOnly){
+				Button deleteButton = (Button) hPanel.getWidget(1);
+				deleteButton.addStyleName(style.deleteButtonDown());
+			}
+			hPanel.addStyleName(style.selectButtonSalaryToggleButton());
+		}
+	}
+
+	private Button addMoreButton() {
+		Button moreButton = new Button("+");
+		moreButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				PopupPanel popup = new PopupPanel(true); // auto-hide
+				DatePicker picker = new DatePicker();
+				picker.setValue(new Date());
+				picker.addValueChangeHandler(new ValueChangeHandler<Date>() {
+					@Override
+					public void onValueChange(ValueChangeEvent<Date> event) {
+						popup.hide();
+						Date month = event.getValue();
+						agreementDraftObject.addNewDatesWithChanges(DateUtils.getFirstDayOfMonth(month));
+						agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
+						agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+						calculate();
+					}
+				});
+				popup.setWidget(picker);
+				popup.setStyleName(style.datePickerPanel());
+				popup.showRelativeTo(moreButton);
+			}
+		});
+		moreButton.addStyleName(style.moreButton());
+		
+		return moreButton;
+	}
+	
 	@Override
 	public void onResize() {
 		if (salaryTableUpperLeftCorner != null) {
@@ -1094,7 +1321,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		this.agreementDraftObject.addListener(undoListener);
 
 		setDescription();
-
+		
 	}
 
 	@Override
@@ -1106,9 +1333,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
 
-		draftMonthListBox.setHighLightMonths(agreementDraftObject.getDatesWithChanges());
-		draftMonthListBox.setSelectedMonth(agreementDraftObject.getStartDate());
-		syncDatesListBox();
+		initCategoryPanel();
+		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
 		
 		loadAvailablePayments();
 
@@ -1119,17 +1345,19 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		salaryTableEditors.addAll(dumpSalaryTable());
 		salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
 		initSalaryTableFrozenColsAndRows();
-
+		
 		clearPaymentsTable();
 		paymentEditors.clear();
 		paymentEditors.addAll(dumpPayments());
-		paymentEditors.add(insertNewPaymentRow(paymentsTable.getRowCount()));
+		if(object.isMine())
+			paymentEditors.add(insertNewPaymentRow(paymentsTable.getRowCount()));
 
 		clearExtrasTable();
 		SortedSet<Payment> extraPayments = getAvailableExtraPayments();
 		extraEditors.clear();
 		extraEditors.addAll(dumpExtras(extraPayments));
-		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(), extraPayments));
+		if(object.isMine())
+			extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(), extraPayments));
 
 		clearEventsTable();
 		dumpEvents();
@@ -1138,7 +1366,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		setReadOnly(/*object.isSystem() &&*/ !object.isMine() );
 
 	}
-
 
 	// ------------------------------------------
 	// Handlers
@@ -1161,27 +1388,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		agreementDraftObject.save(this);
 	}
 
-	@UiHandler("datesListBox")
-	void onChangeDateListBox(ChangeEvent event) {
-		int index = datesListBox.getSelectedIndex();
-		String value = datesListBox.getValue(index);
-
-		if (CUSTOM.equals(value)) {
-		} else if (ALWAYS.equals(value)) {
-			agreementDraftObject.setDraftPeriod(getFirstDateWithChanges());
-		} else if (FROM_THIS_MONTH.equals(value)) {
-			agreementDraftObject.setDraftPeriod(null);
-		} else if (ONLY_THIS_YEAR.equals(value)) {
-			Date month = draftMonthListBox.getSelected();
-			Date firstDayOfYear = DateUtils.getFirstDayOfYear(month);
-			Date lastDayOfYear = DateUtils.getLastDayOfYear(month);
-			agreementDraftObject.setDraftPeriod(firstDayOfYear, lastDayOfYear);
-		} else if (ONLY_THIS_MONTH.equals(value)) {
-			agreementDraftObject.setDraftPeriod(null, null);
-		}
-
-	}
-
 	@UiHandler("fxButton")
 	void onFxClicked(MouseDownEvent event) {
 		FxDialog fxDialog = new FxDialog(contextProvider) {
@@ -1202,6 +1408,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiHandler("undoAllButton")
 	void onUndoAllClicked(MouseDownEvent event) {
 		agreementDraftObject.clearDrafts();
+		agreementDraftObject.clearNewDatesWithChanges();
+		agreementDraftObject.clearDeleteDatesWithChanges();
 		agreementDraftObject.calculate(AgreementDraft.this);
 	}
 
@@ -1218,14 +1426,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiHandler("draftScrollPane")
 	void onMainScroll(ScrollEvent event) {
 		moveSalaryTableFrozenColsAndRows();
-	}
-
-	@UiHandler("draftMonthListBox")
-	void onDraftMonthListBoxChanged(ChangeEvent event) {
-		Date month = draftMonthListBox.getSelectedMonth();
-		agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
-		agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
-		calculate();
 	}
 
 	@UiHandler("printPreviewButton")
@@ -1288,7 +1488,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		undoAllButton.setEnabled(!readOnly);
 		acceptButton.setEnabled(!readOnly);
 		deleteButton.setEnabled(!readOnly);
-		datesListBox.setEnabled(!readOnly);
 		
 		descriptionTextBox.setReadOnly(readOnly);
 
@@ -1421,15 +1620,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			}
 			col++;
 		}
-
-		salaryTable.setText(0, col, "CATEGORIAS");
-		cellFormatter.addStyleName(0, col, AON.AON_BOLD);
-		cellFormatter.addStyleName(0, col, AON.AON_TEXT_CENTER);
-		cellFormatter.addStyleName(0, col, AON.AON_INPUT_REQUIRED);
-		cellFormatter.addStyleName(0, col, "aon-width-all"); // fill remain
-																// space
-		col++;
-
+		
+		cellFormatter.addStyleName(0, col-1, "aon-width-all"); // fill remain
+		
 		// salaryTable.setHTML(0, col, "&nbsp;");
 		salaryTable.setWidget(0, col, getViewButton());
 
@@ -1491,14 +1684,125 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 				col++;
 			}
+			
+			int index = 0;
+			
+			Button deleteButton = new Button();
+			deleteButton.setStyleName(AON.AON_ICON_DELETE);
+			deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
-			int index = ((row - 1) * cols) + col;
+			LevelEditor deleteEditor = new LevelEditor(level);
+			deleteEditor.setDeleteButton(deleteButton);
+			
+
+			hide(deleteButton, level.getId() == 0);
+
+			index = ((row - 1) * cols) + col;
+			editors.set(index, deleteEditor);
+			salaryTable.setWidget(row, col++, deleteButton);
+
+
+			if (isDraftLevel(level)) {
+				salaryTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+				salaryTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+			}
+
+			row++;
+		}
+
+		// Set max width...
+		int offsetWidth = 1;
+		offsetWidth += cellFormatter.getElement(0, 0).getOffsetWidth();
+
+		// Asume that each column have 1.5 width of level column that has an
+		// input with size 5
+		offsetWidth += offsetWidth * 1.5 * (SALARY_TABLE_COLS - 1);
+		offsetWidth += cellFormatter.getElement(0, salaryTable.getCellCount(0) - 1).getOffsetWidth();
+
+		offsetWidth = 689;
+		salaryTableScrollPane.setWidth(offsetWidth + "px");
+		
+		return editors;
+	}
+
+	
+	private List<IFocusableEditor> dumpSalaryTableCategory() {
+
+		RowFormatter rowFormatter = salaryTable.getRowFormatter();
+		CellFormatter cellFormatter = salaryTable.getCellFormatter();
+
+		salaryTable.setText(0, 0, "NIVEL");
+		cellFormatter.addStyleName(0, 0, AON.AON_BOLD);
+		cellFormatter.addStyleName(0, 0, AON.AON_TEXT_CENTER);
+		cellFormatter.addStyleName(0, 0, AON.AON_INPUT_REQUIRED);
+
+		int col = 1;
+
+		SortedSet<String> variables = new TreeSet<String>();
+		variables.addAll(agreementDraftObject.getVariables());
+
+		salaryTable.setText(0, col, "CATEGORIAS");
+		cellFormatter.addStyleName(0, col, AON.AON_BOLD);
+		cellFormatter.addStyleName(0, col, AON.AON_TEXT_CENTER);
+		cellFormatter.addStyleName(0, col, AON.AON_INPUT_REQUIRED);
+		cellFormatter.addStyleName(0, col, "aon-width-all"); // fill remain
+																 //space
+		col++;
+		
+		// salaryTable.setHTML(0, col, "&nbsp;");
+		salaryTable.setWidget(0, col, getViewButton());
+
+		SortedSet<Level> levels = new TreeSet<Level>(new LevelComparator());
+		levels.addAll(agreementDraftObject.getLevels());
+
+		Set<Level> changedLevels = agreementDraftObject.getChangedLevels();
+
+		int cols = variables.size() + 3;
+		int size = levels.size() * cols;
+		List<IFocusableEditor> editors = new ArrayList<IFocusableEditor>(size);
+		for (int i = 0; i < size; i++)
+			editors.add(i, null);
+
+		// now level rows
+		int row = 1;
+		for (Level level : levels) {
+
+			LevelEditor levelEditor = new LevelEditor(level);
+			Widget levelWidget = createWidget4Level(level, levelEditor);
+
+			hide(levelWidget, level.getId() == 0);
+
+			salaryTable.setWidget(row, 0, levelWidget);
+
+			cellFormatter.addStyleName(row, 0, AON.AON_BOLD);
+
+			if (changedLevels.contains(level)) {
+				changedLevelsRows.add(row);
+				rowFormatter.addStyleName(row, style.highlight());
+			}
+
+			formatRow(level, row, rowFormatter);
+
+			int index = (row - 1) * cols;
+			editors.set(index, levelEditor);
+
+			row++;
+		}
+
+		row = 1;
+
+		for (Level level : levels) {
+			col = 1;
+			
+			int index = 0;
+			index = ((row - 1) * cols) + col;
 
 			CategoriesEditor categoriesEditor = dumpCategories(row, col++, level,
 					agreementDraftObject.getCategories(level));
 
 			editors.set(index, categoriesEditor);
 			categoriesEditor.hide(level.getId() == 0);
+			
 
 			Button deleteButton = new Button();
 			deleteButton.setStyleName(AON.AON_ICON_DELETE);
@@ -1530,14 +1834,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		// Asume that each column have 1.5 width of level column that has an
 		// input with size 5
 		offsetWidth += offsetWidth * 1.5 * (SALARY_TABLE_COLS - 1);
-
 		offsetWidth += cellFormatter.getElement(0, salaryTable.getCellCount(0) - 1).getOffsetWidth();
 
 		salaryTableScrollPane.setWidth(offsetWidth + "px");
 
 		return editors;
 	}
-
+	
+	
 	private void initSalaryTableFrozenColsAndRows() {
 
 		// Set max heigth...
@@ -1603,56 +1907,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				return payment;
 		}
 		return null;
-	}
-
-	private void syncDatesListBox() {
-
-		Date draftStartDate = agreementDraftObject.getDraftStartDate();
-		Date draftEndDate = agreementDraftObject.getDraftEndDate();
-
-		Date startDate = agreementDraftObject.getStartDate();
-
-		// clear selection.
-		datesListBox.setSelectedIndex(-1);
-
-		int alwaysIndex = 0;
-
-		for (int i = 0; i < datesListBox.getItemCount(); i++) {
-			String value = datesListBox.getValue(i);
-			String text = datesListBox.getItemText(i);
-			text = text.replaceAll(" \\([^\\)]*\\)", "");
-			if (ALWAYS.equals(value)) {
-				alwaysIndex = i;
-				DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
-				Date alwaysDate = getFirstDateWithChanges();
-				datesListBox.setItemText(i, text + " ( " + format.format(alwaysDate) + "... )");
-				if (alwaysDate.equals(draftStartDate) && draftEndDate == null) {
-					datesListBox.setSelectedIndex(i);
-				}
-
-			} else if (ONLY_THIS_YEAR.equals(value)) {
-				DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.YEAR);
-				datesListBox.setItemText(i, text + " ( " + format.format(startDate) + " )");
-				if (DateUtils.isFirstDayOfYear(draftStartDate) && DateUtils.isLastDayOfYear(draftEndDate)) {
-					datesListBox.setSelectedIndex(i);
-				}
-
-			} else if (FROM_THIS_MONTH.equals(value)) {
-				DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
-				datesListBox.setItemText(i, text + " ( " + format.format(startDate) + "... )");
-				if (draftStartDate.equals(startDate) && draftEndDate == null) {
-					datesListBox.setSelectedIndex(i);
-				}
-			}
-		}
-		// Window.alert(datesListBox.getSelectedIndex() + " " + draftStartDate +
-		// "..." + ( draftEndDate == null ? "" : draftEndDate ));
-
-		if (datesListBox.getSelectedIndex() == -1) {
-			datesListBox.setSelectedIndex(alwaysIndex);
-			agreementDraftObject.setDraftPeriod(getFirstDateWithChanges());
-		}
-
 	}
 
 	private Date getFirstDateWithChanges() {

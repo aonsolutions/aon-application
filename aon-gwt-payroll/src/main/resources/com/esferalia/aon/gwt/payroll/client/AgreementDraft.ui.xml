@@ -7,9 +7,18 @@
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.AgreementDraft.MyStyle'>
-	
+
+		@external .gwt-ToggleButton-down;
+		@external .gwt-ToggleButton-up;
+		@external .gwt-ToggleButton-down-hovering;
+		@external .gwt-ToggleButton-up-hovering;
+
 		.editor {
 			
+		}
+
+		.hide {
+			visibility: hidden;
 		}
 		
 		.label {
@@ -35,6 +44,10 @@
 			height: 20px;
 		}
 
+		.vertical-space2 {
+			height: 2px;
+		}
+
 		.horizontal-space {
 			width: 5px;
 		}
@@ -48,7 +61,103 @@
 		
 		.edit-rows .edit-cells {
 		}
-		
+
+		.gwt-ToggleButton-down{
+			border: none !important;
+			color: black !important;
+			font-weight: bold !important;
+			padding-bottom: 3px !important;
+			background: white !important;
+		}
+
+		.gwt-ToggleButton-up{
+			border: none !important;
+			border-bottom: none !important;
+			color: #ababab !important;
+			background: #e2e2e2 !important;
+		}
+
+		.gwt-ToggleButton-down-hovering{
+			border: none !important;
+			color: black !important;
+			font-weight: bold !important;
+			padding-bottom: 3px !important;
+			background: white !important;
+		}
+
+		.gwt-ToggleButton-up-hovering{
+			border: none !important;
+			border-bottom: none !important;
+			color: #ababab !important;
+			background: #e2e2e2 !important;
+		}
+
+		.selectButtonSalaryToggleButton{
+			border-top: 1px solid #ababab !important;
+			border-left: 1px solid #ababab !important;
+			border-right: 1px solid #ababab !important;
+	
+		}
+
+		.marginToggleButton{
+			margin-right: 2px;
+		}
+
+		.moreButton{
+			border: none !important;
+ 		   	border-bottom: none !important;
+ 		   	color: black !important;
+ 		   	font-weight: bold !important;
+    		width: 25px !important;
+    		height: 22px !important;
+    		background: #e2e2e2 !important;
+		}
+
+		.deleteButtonUp{
+			border: none !important;
+ 		   	border-bottom: none !important;
+ 		   	color: black !important;
+ 		   	font-weight: bold !important;
+    		width: 25px !important;
+    		height: 22px !important;
+    		background: #e2e2e2 !important;
+			padding-top: 2px !important;
+		}
+
+		.deleteButtonDown{
+			border: none !important;
+ 		   	border-bottom: none !important;
+ 		   	color: black !important;
+ 		   	font-weight: bold !important;
+    		width: 25px !important;
+    		height: 22px !important;
+    		background: white !important;
+			padding-top: 2px !important;
+		}
+
+		.categoryButton{
+			top: 46px;
+    		right: -88px;
+    		float: right;
+    		position: relative;
+			border: none;
+    		border-bottom: none;
+    		color: black;
+    		font-weight: bold;
+    		height: 22px;
+    		background: #e2e2e2;
+		}
+
+		.panelButtons{
+			vertical-align: top;
+    		background: #e2e2e2 !important;
+		}
+
+		.datePickerPanel{
+			border: none !important;
+    		box-shadow: none !important;
+		}
+
 		.edit-rows td, 
 		 .edit-cells td {
 			color: #000000 !important;			
@@ -187,17 +296,17 @@
 									<g:Button debugId='deleteButton' ui:field='deleteButton'
 										styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"
 										enabled="false" />
-									<g:ListBox debugId='datesListBox' ui:field='datesListBox' styleName="gwt-ListBox dates-list-box" >
+									<!-- g:ListBox debugId='datesListBox' ui:field='datesListBox' styleName="gwt-ListBox dates-list-box" >
 										<g:item value="{ALWAYS}">Para todo</g:item>
 										<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 										<g:item value="{ONLY_THIS_YEAR}">S&oacute;lo este a&ntilde;o</g:item>
-									</g:ListBox>
+									</g:ListBox -->
 									<g:CheckBox debugId='changesCheck' ui:field='changesCheck'
 										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 										text="Cambios" checked="true" visible="false" />
-									<aon:MonthListBox debugId='draftMonthListBox' ui:field='draftMonthListBox'
+									<!-- aon:MonthListBox debugId='draftMonthListBox' ui:field='draftMonthListBox'
 										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
-										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
+										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" / -->
 
 									<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'
 										styleName='aon-finding-toolbar-item {res.css.aonIconPdfPreview}'
@@ -256,11 +365,19 @@
 
 							<g:HTML styleName="{style.vertical-space}" />
 
+							<g:HorizontalPanel> 
+								<g:HorizontalPanel ui:field='categoryButtonPanel'/>
+								<g:HorizontalPanel ui:field='salaryToggleButtonsPanel'/>
+								<g:HorizontalPanel ui:field='moreToggleButtonsPanel'/> 
+							</g:HorizontalPanel>
+							
+							<g:HTML styleName="{style.vertical-space2}" />
+							
 							<g:ScrollPanel debugId='salaryTableScrollPane' ui:field='salaryTableScrollPane'>
 								<g:FlexTable debugId='salaryTable' ui:field='salaryTable'
-									styleName="aon-dataTable {style.edit-cells} " />
-							</g:ScrollPanel>
-
+									styleName="aon-dataTable {style.edit-cells} " height="100%" />
+							</g:ScrollPanel> 
+							
 							<g:HTML styleName="{style.vertical-space}" />
 
 							<g:FlexTable debugId='eventsTable' ui:field='eventsTable' styleName="aon-dataTable" />
