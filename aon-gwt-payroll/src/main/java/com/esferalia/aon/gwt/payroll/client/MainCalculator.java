@@ -97,8 +97,6 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		StringBuffer requestDataBuffer = new StringBuffer();
 	
 		requestDataBuffer
-			.append("&" + DOMAIN + "=" + Wnd.getCurrentDomainNameURL() );
-		requestDataBuffer
 			.append("&" + SALARY_TYPE + "=" + salaryType.name() );
 		
 		if ( extra != null ) 

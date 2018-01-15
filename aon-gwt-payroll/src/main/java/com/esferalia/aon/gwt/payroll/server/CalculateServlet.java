@@ -493,7 +493,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			throws ParseException, SQLException, IOException {
 		PrintStream os = null;
 		Salaries salaries = null;
-		String domain = getDomain(req);
+		String domain = req.getServerName();
 		Connection conn = AonServletUtils.getConnection(domain);
 		try {
 
@@ -687,9 +687,6 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		return StringUtils.isBlank(extra) ? null : Integer.parseInt(extra);
 	}
 
-	private static String getDomain(HttpServletRequest request) throws ParseException {
-		return getString(request, DOMAIN);
-	}
 
 	private static Date getEndDate(HttpServletRequest request) throws ParseException {
 		return getDate(request, END_DATE);
