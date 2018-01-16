@@ -292,7 +292,7 @@ public class Mod131Aeat2016Calculator  {
 			// En ning?n caso ser? aplicable el ?ndice corrector para empresas de peque?a 
 			// dimensi?n (b.1) a las actividades para las que est?n previstos los ?ndices 
 			// correctores especiales enumerados en las letras a.2), a.3), a.4) y a.5).
-			if (act.isLoc()) {
+			if (act.isLoc() && act.getRnm() > 0) {
 				if (AonMathUtils.round(act.getVeh()) <= 1.0) {
 					if (!act.isCap()) {
 						ic2 = 0.7; 
@@ -448,6 +448,9 @@ public class Mod131Aeat2016Calculator  {
 		
 		if (act.getPrc() > por) {
 			por = act.getPrc();
+		}
+		if ( net < 0) {
+			por = 0.0;
 		}
 		act.setPor(por);
 		
