@@ -27,6 +27,9 @@ public class FiscalModelBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		FiscalModel fiscalModel = (FiscalModel) evt.getTo();
+		if ( fiscalModel.getModel() == FiscalModelType.M303 && fiscalModel.getYear() > 2017) {
+			throw new ManagerBeanVetoListenerException("A partir del ejercicio 2018, utilice el nuevo programa de autoliquidación de IVA");
+		}
 		checkFiscalModel(fiscalModel);
 	}
 

@@ -24,6 +24,9 @@ public class Mod349BeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Mod349 mod349 = (Mod349) evt.getTo();
+		if ( mod349.getYear() > 2017) {
+			throw new ManagerBeanVetoListenerException("A partir del ejercicio 2018, utilice el nuevo programa de declaración recapitulativa de operaciones intracomunitarias.");
+		}
 		checkMod349(mod349);
 		if (mod349.isExtraDeclaration()) {
 			int last = getLastNumber(mod349);
