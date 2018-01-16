@@ -290,6 +290,7 @@ public class Mod3902015DAO {
 		IAE_06	 ("303-IAE06"),
 		IAD_06	 ("303-IAD06"),
 		D		 ("303-D"    ),
+		C79      ("303-79"   ),
 		C80      ("303-80"   ),
 		C81      ("303-81"   ),
 		C82      ("303-82"   ),
@@ -1693,9 +1694,11 @@ public class Mod3902015DAO {
 				}
 				if (m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK
 				 || m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT) {
-					mod390.setBox96( AonMathUtils.round(mod390.getBox96() + m303.getResult()));
+					if (m303.isEnrolledInDevolutionRegistry()) {
+						mod390.setBox96( AonMathUtils.round(mod390.getBox96() + (m303.getResult() * (-1))));
+					}
 					if (period == Period.M12 || period == Period.T4) {
-						mod390.setBox98( m303.getResult() );	
+						mod390.setBox98( m303.getResult() * (-1));	
 					} 
 				}
 				if (m303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE
