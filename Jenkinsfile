@@ -100,7 +100,7 @@ node {
    
       sh "sudo docker stop aon-application && sudo docker rm aon-application || echo 'No previous aon-application running'"
 
-      sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"   
+      sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"   
 
       sh "echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
@@ -122,8 +122,8 @@ node {
 
       sh "docker login -u rtrepiana -p aon945121010"
 
-      sh "docker push aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
-      sh "docker push aonsolutions/aon-micro-services:${pom.version}-$BUILD_NUMBER-tomcat9-jre8"
+      sh "docker push aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"
+      sh "docker push aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8"
 
       sh "aws ecs list-task-definitions --family-prefix SNAPSHOT > snapshot-task-definitions.json"
 
@@ -137,7 +137,7 @@ node {
 
       def last_snapshot_task_definition_json = readFile 'last-snapshot-task-definition.json'
 
-      def snapshot_container_definitions_json = getContainerDefinitions(last_snapshot_task_definition_json, "aonsolutions/aon-application:${pom.version}-${BUILD_NUMBER}-tomcat9-jre8")
+      def snapshot_container_definitions_json = getContainerDefinitions(last_snapshot_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre8")
 
       sh "aws ecs register-task-definition --family SNAPSHOT --container-definitions '${snapshot_container_definitions_json}' > snapshot-task-definition.json"
 	
@@ -160,7 +160,7 @@ node {
 
       def last_snapshot_services_task_definition_json = readFile 'last-snapshot-services-task-definition.json'
 
-      def snapshot_services_container_definitions_json = getContainerDefinitions(last_snapshot_services_task_definition_json, "aonsolutions/aon-micro-services:${pom.version}-${BUILD_NUMBER}-tomcat9-jre8")
+      def snapshot_services_container_definitions_json = getContainerDefinitions(last_snapshot_services_task_definition_json, "aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8")
 
       sh "aws ecs register-task-definition --family SNAPSHOT-SERVICES --container-definitions '${snapshot_services_container_definitions_json}' > snapshot-services-task-definition.json"
 	
