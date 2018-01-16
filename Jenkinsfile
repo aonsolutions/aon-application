@@ -170,6 +170,24 @@ node {
 
       sh "aws ecs update-service --cluster SNAPSHOT --service SNAPSHOT-SERVICES --task-definition ${snapshot_services_task_definition_arn}"
 
+
+      sh "aws ecs list-task-definitions --family-prefix RELEASE > release-task-definitions.json"
+
+      def release_task_definitions_json = readFile 'release-task-definitions.json'
+
+      def release_task_definitions_arns = getTaskDefinitionArns(release_task_definitions_json)
+
+      def last_release_task_definition_arn = release_task_definitions_arns[release_task_definitions_arns.size()-1]
+
+      sh "aws ecs describe-task-definition --task-definition ${last_release_task_definition_arn} > last-release-task-definition.json"
+
+      def last_release_task_definition_json = readFile 'last-release-task-definition.json'
+
+      def release_container_definitions_json = getContainerDefinitions(last_release_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre8")
+
+      sh "aws ecs register-task-definition --family RELEASE --container-definitions '${release_container_definitions_json}' > release-task-definition.json"
+
+
       }
 
       
