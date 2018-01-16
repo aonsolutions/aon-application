@@ -161,7 +161,7 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	private ContractData getPercentData(IrpfData irpf) throws ManagerBeanException {
 		List<ITransferObject> data = SEPEUtils.getInstance().getContractData(
 				irpf.getContract(), irpf.getStartDate(), irpf.getEndDate(),
-				ContextVariable.IRPF_PERCENT.name(), true);
+				ContextVariable.IRPF_PERCENT.getName(), true);
 		return data!=null && data.size()>0?(ContractData) data.get(0):null;
 	}
 	
