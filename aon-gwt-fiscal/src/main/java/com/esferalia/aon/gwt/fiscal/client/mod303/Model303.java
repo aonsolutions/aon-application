@@ -184,26 +184,20 @@ public class Model303 extends MainEntryPoint {
 		} else if (selected.isBizkaia()) {
 			if (selected.getYear() < 2017) {
 				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));	
-			} else if (!selected.isLastPeriod()) { 
+			} else { 
 				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));
-			} else {
-				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
 			}
 		} else if (selected.isAraba()) {
 			if (selected.getYear() < 2017) {
 				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));	
-			} else if (!selected.isLastPeriod()) { 
-				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));
 			} else {
-				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
+				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));
 			}
 		} else if (selected.isGipuzkoa()) {
 			if (selected.getYear() < 2017) {
 				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));	
-			} else if (!selected.isLastPeriod()) { 
-				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));
 			} else {
-				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
+				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));
 			}
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
