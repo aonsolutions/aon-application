@@ -617,9 +617,12 @@ public class Model3902015 extends DockLayoutPanel  {
 		InlineLabel  nameLabel = new InlineLabel();
 		nameLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
 		if (m390.isLegalEntity()) {
-			nameLabel.setText(m390.getName());
+			nameLabel.setText(AonStringUtils.defaultIfBlank(m390.getName(),""));
 		} else {
-			nameLabel.setText(m390.getName() + " " + m390.getFirstSurname() + " " + m390.getSecondSurname());
+			nameLabel.setText(
+					AonStringUtils.defaultIfBlank(m390.getName(),"") 
+					+ " " + AonStringUtils.defaultIfBlank(m390.getFirstSurname(),"") 
+					+ " " + AonStringUtils.defaultIfBlank(m390.getSecondSurname(),""));
 		}
 		cell01.add(nameLabel);
 		
