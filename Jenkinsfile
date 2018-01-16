@@ -85,8 +85,9 @@ node {
       stage 'Docker Build'
 
       // Run the docker build
-      sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ."
-      sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${pom.version}-$BUILD_NUMBER-tomcat9-jre8 ./aon-micro-services"
+      def rolling_version = new Date().format('yyyy.MM.dd-HH.mm.ss')
+      sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
+      sh "docker build --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 ./aon-micro-services"
 
       // Mark the Integration Tests 'stage'....
       stage 'Integration Tests'

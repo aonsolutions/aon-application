@@ -46,33 +46,11 @@
 								</aon:if>							
 							</aon:div>
 							<h:panelGrid styleClass="aon-margin-top" columnClasses="aon-version-label">
-								<aon:if test="#{customize.applicationVersion != null}" >						
+								<aon:if test="#{customize.buildDate != null}" >						
 									<aon:outputFormat style="color: #000;" value="#{bundle.aon_about_version}" >
-										<f:param value="#{customize.applicationVersion}" />
-									</aon:outputFormat>
-								</aon:if>					
-								<aon:if test="#{customize.buildDate != null}" >				
-									<aon:outputFormat style="color: #000;" value="#{bundle.aon_about_date}" >
 										<f:param value="#{customize.buildDate}" />
 									</aon:outputFormat>
-								</aon:if>
-								<aon:if test="#{customize.buildNumber != null}" >								
-									<aon:outputFormat style="color: #000;" value="#{bundle.aon_build}" >
-										<f:param value="#{customize.buildNumber}" />
-									</aon:outputFormat>
-								</aon:if>									
-								<aon:if test="#{customize.buildRevision != null}" >									
-									<aon:outputFormat style="color: #000;" value="#{bundle.aon_revision}" >
-										<f:param value="#{customize.buildRevision}" />
-									</aon:outputFormat>
-								</aon:if>									
-								<aon:outputFormat style="color: #000;" value="#{bundle.aon_db_version}"
-									rendered="#{dbUptodate.currentVersion != null}" >
-									<f:param value="#{dbUptodate.currentVersion}" />
-								</aon:outputFormat>
-								<aon:outputFormat style="color: #000;" value="#{bundle.aon_session_id}" >
-									<f:param value="#{aonConfiguration.sessionId}" />
-								</aon:outputFormat>									
+								</aon:if>					
 							</h:panelGrid>	
 							<aon:div styleClass="aon-footer-box">
 								<ui:include src="/com/code/aon/ui/resources/facelet/shared/trademark.xhtml" />

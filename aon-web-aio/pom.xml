@@ -11,7 +11,7 @@
   <name>AON WEB AIO</name>
   <description>AON WEB AIO</description>
   <properties>
-    <maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
+    <maven.build.timestamp.format>dd/MM/yyyy hh:mm:ss</maven.build.timestamp.format>
   </properties>
   <build>
     <finalName>aon-aio</finalName>
