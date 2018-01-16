@@ -116,6 +116,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box99")
 	void onChangeBox99(ChangeEvent event) {
+		if (box99.getValue() == null) box99.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -127,6 +128,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 
 	@UiHandler("box653")
 	void onChangeBox653(ChangeEvent event) {
+		if (box653.getValue() == null) box653.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -138,6 +140,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 
 	@UiHandler("box103")
 	void onChangeBox103(ChangeEvent event) {
+		if (box103.getValue() == null) box103.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -149,6 +152,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box104")
 	void onChangeBox104(ChangeEvent event) {
+		if (box104.getValue() == null) box104.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -160,6 +164,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box105")
 	void onChangeBox105(ChangeEvent event) {
+		if (box105.getValue() == null) box105.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -171,6 +176,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box110")
 	void onChangeBox110(ChangeEvent event) {
+		if (box110.getValue() == null) box110.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -182,6 +188,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box112")
 	void onChangeBox112(ChangeEvent event) {
+		if (box112.getValue() == null) box112.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -193,6 +200,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box100")
 	void onChangeBox100(ChangeEvent event) {
+		if (box100.getValue() == null) box100.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -204,6 +212,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 
 	@UiHandler("box101")
 	void onChangeBox101(ChangeEvent event) {
+		if (box101.getValue() == null) box101.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -215,6 +224,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box102")
 	void onChangeBox102(ChangeEvent event) {
+		if (box102.getValue() == null) box102.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -226,6 +236,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box227")
 	void onChangeBox227(ChangeEvent event) {
+		if (box227.getValue() == null) box227.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -237,6 +248,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box228")
 	void onChangeBox228(ChangeEvent event) {
+		if (box228.getValue() == null) box228.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -248,6 +260,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box106")
 	void onChangeBox106(ChangeEvent event) {
+		if (box106.getValue() == null) box106.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -259,6 +272,7 @@ public class Page08 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box107")
 	void onChangeBox107(ChangeEvent event) {
+		if (box107.getValue() == null) box107.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {

@@ -1000,6 +1000,7 @@ public class Mod390toAEATIVA2015 {
 	private static Administraciones getAdministraciones(Mod3902015 mod390) {
 		if (mod390.getBox87() > 0.0 && mod390.getBox87() < 100.0) {
 			Administraciones adm = new Administraciones();
+			adm.setRegCuotas(ensureBigDecimal(mod390.getBox658()));
 			adm.setComun(ensureBigDecimal(mod390.getBox87()));
 			if (mod390.getBox88()>0) {
 				adm.setArabaAlava(ensureBigDecimal(mod390.getBox88()));
@@ -1014,6 +1015,7 @@ public class Mod390toAEATIVA2015 {
 				adm.setNavarra(ensureBigDecimal(mod390.getBox91()));
 			}
 			adm.setSumResultados(ensureBigDecimal(mod390.getBox84()));
+			adm.setIvaAduana(ensureBigDecimal(mod390.getBox659()));
 			adm.setResTerrComun(ensureBigDecimal(mod390.getBox92()));
 			if (mod390.getBox93() != 0.0) {
 				adm.setComCuotasEjercicioAnteriorTerrComun(ensureBigDecimal(mod390.getBox93()));
@@ -1027,10 +1029,12 @@ public class Mod390toAEATIVA2015 {
 
 	private static LiqAnual getLiqAnual(Mod3902015 mod390) {
 		LiqAnual liq = new LiqAnual();
+		liq.setRegCuotas(ensureBigDecimal(mod390.getBox658()) );
 		liq.setSumResultados(ensureBigDecimal(mod390.getBox84()) );
 		if (mod390.getBox85() > 0) {
 			liq.setCompCuotasEjercicioAnterior(ensureBigDecimal(mod390.getBox85()));
 		}
+		liq.setIvaAduana(ensureBigDecimal(mod390.getBox659()));
 		liq.setResLiquidacion(ensureBigDecimal(mod390.getBox86()));
         return liq;
 	}
