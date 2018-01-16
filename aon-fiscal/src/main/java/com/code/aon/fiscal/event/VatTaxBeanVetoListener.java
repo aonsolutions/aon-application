@@ -24,6 +24,9 @@ public class VatTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		VatTax vatTax = (VatTax) evt.getTo();
+		if (vatTax.getYear()>2017) {
+			throw new ManagerBeanVetoListenerException("A partir del ejercicio 2018, utilice el nuevo programa de autoliquidación de IVA");
+		}
 		checkVatTax(vatTax);
 		if (vatTax.isExtraDeclaration()) {
 			vatTax.setNumber(getNextNumber(vatTax));
