@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Base.Model347BaseCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Declared2014.IModel347DeclaredCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -79,7 +80,9 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		FlexTable tab1 = new FlexTable();
 		tab1.getColumnFormatter().setWidth(0, "100px");
 		tab1.getColumnFormatter().setWidth(1, "120px");
-		tab1.getColumnFormatter().setWidth(2, "100px");
+		if (cbk.getMod347().getAdministration() == Administration.GIPUZKOA)
+			tab1.getColumnFormatter().setWidth(2, "1px");
+		else tab1.getColumnFormatter().setWidth(2, "100px");
 		tab1.getColumnFormatter().setWidth(3, "auto");
 		
 		tab1.setStyleName(AON.AON_CSS.aonWidthAll());
@@ -87,7 +90,10 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 
 		tab1.setWidget(0, 0, new MediumLabel(AON.MSG.document()));
 		tab1.setWidget(0, 1, new MediumLabel("NIF-IVA declarado"));
-		tab1.setWidget(0, 2, new MediumLabel(AON.MSG.representativeDocument()));
+		
+		if (cbk.getMod347().getAdministration() != Administration.GIPUZKOA)
+			tab1.setWidget(0, 2, new MediumLabel(AON.MSG.representativeDocument()));
+		
 		tab1.setWidget(0, 3, new MediumLabel(AON.MSG.fullName()));
 		
 		document.setValue(declared.getDocument());
@@ -132,21 +138,24 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 				document.setEnabled(AonStringUtils.isBlank(vatDocument.getText()));				
 			}
 			
-		});
-		
+		});		
 		tab1.setWidget(1, 1, vatDocument);
 		
-		DocumentTextBox representativeDocument = new DocumentTextBox();
-		representativeDocument.setValue(declared.getRepresentativeDocument());
-		representativeDocument.setMaxLength(9);
-		representativeDocument.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				declared.setRepresentativeDocument(representativeDocument.getValue());
-				callback.onValueChanged(declared);
-			}
-		});
-		tab1.setWidget(1, 2, representativeDocument);
+		if (cbk.getMod347().getAdministration() != Administration.GIPUZKOA) {
+			
+			DocumentTextBox representativeDocument = new DocumentTextBox();
+			representativeDocument.setValue(declared.getRepresentativeDocument());
+			representativeDocument.setMaxLength(9);
+			representativeDocument.addValueChangeHandler( new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					declared.setRepresentativeDocument(representativeDocument.getValue());
+					callback.onValueChanged(declared);
+				}
+			});
+			tab1.setWidget(1, 2, representativeDocument);
+		
+		}
 				
 		TextBox name = new TextBox();
 		name.setVisibleLength(40);
@@ -269,7 +278,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		tab3.setWidget(0, 2, accrual);
 		
 		CheckBox isp = new CheckBox("Op. ISP");
-		isp.setTitle("Operaci\u00F3n con inversi\u00F3n del sujeto pasivo");
+		isp.setTitle("Operaci\u00F3n con inversi\u00F3n del sujeto pasivo (solo destinatario de la operaci\u00F3n)");
 		isp.setValue(declared.isIsp());
 		isp.addClickHandler(new ClickHandler() {			
 			

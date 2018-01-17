@@ -94,7 +94,7 @@ public class Mod347Writer {
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getRepresentativeDocument(),9))    // NIF del representante legal
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getName(),40))	 			        // Apellidos y nombre o Razón Social del declarado
 		   ,(line, mod347, declared, asset) -> line.append("I") 													        // Tipo de Hoja		   
-		   ,(line, mod347, declared, asset) -> line.append(AonStringUtils.repeat(' ',23))								    // BLANCOS
+		   ,(line, mod347, declared, asset) -> line.append(AonStringUtils.repeat(' ',22))								    // BLANCOS
 		   ,(line, mod347, declared, asset) -> line.append(AonFiscalFileUtils.signedSpace(asset.getAmount(),16,2))          // Importe de la operación
 		   ,(line, mod180, declared, asset) -> line.append(AonFiscalFileUtils.unsigned(asset.getAssetLocation(),1,0))       // SITUACIÓN DEL INMUEBLE
 		   ,(line, mod180, declared, asset) -> line.append(AonFiscalFileUtils.text(asset.getCadasdralReference(),25))       // REFERENCIA CATASTRAL
