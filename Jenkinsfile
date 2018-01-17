@@ -81,12 +81,15 @@ node {
         sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -DskipTests=true -Dmaven.test.failure.ignore=true clean deploy"
 
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 ./aon-micro-services"
 
         stage 'Docker Publish'
 
         sh "docker login -u rtrepiana -p aon945121010"
 
         sh "docker push aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"
+        sh "docker push aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8"
+
         sh "aws ecs list-task-definitions --family-prefix SNAPSHOT > snapshot-task-definitions.json"
 
 	def snapshot_task_definitions_json = readFile 'snapshot-task-definitions.json'
