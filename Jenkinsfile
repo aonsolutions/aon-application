@@ -23,43 +23,48 @@ node {
     stage 'Build'
 
     // Run the maven build
-    sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -Dgwt.working=true -DSNAPSHOT clean deploy"
+    sh "echo yes | ${mvnHome}/bin/mvn  -Dmaven.test.failure.ignore=true -Drpm.release=false -Dgwt.working=true -DSNAPSHOT clean deploy"
 
     // Recording fingerprints of files to track usage
     fingerprint '**/target/*SNAPSHOT.jar'
 
-    // Docker
-    stage 'Docker Build'
+    echo "currentBuild.result = ${currentBuild.result}"
 
-    // Run the docker build
-    def rolling_version = new Date().format('yyyy.MM.dd-HH.mm.ss')
-    sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
-    sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 ./aon-micro-services"
+    if ( currentBuild.result != 'UNSTABLE' ) {
 
-    // Mark the Integration Tests 'stage'....
-    stage 'Integration Tests'
+    	// Docker
+    	stage 'Docker Build'
 
-    sh 'sudo mysql -e "DROP DATABASE IF EXISTS \\`test-aonsolutions-org\\`"'
+    	// Run the docker build
+    	def rolling_version = new Date().format('yyyy.MM.dd-HH.mm.ss')
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 ./aon-micro-services"
 
-    sh 'sudo mysql -e "GRANT ALL ON *.* TO \'dbuser\'@\'172.17.0.2\' IDENTIFIED BY \'serubd2000\';"'
+    	// Mark the Integration Tests 'stage'....
+    	stage 'Integration Tests'
 
-    sh "sudo mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql"
+    	sh 'sudo mysql -e "DROP DATABASE IF EXISTS \\`test-aonsolutions-org\\`"'
 
-    sh "sudo docker stop aon-application && sudo docker rm aon-application || echo 'No previous aon-application running'"
+    	sh 'sudo mysql -e "GRANT ALL ON *.* TO \'dbuser\'@\'172.17.0.2\' IDENTIFIED BY \'serubd2000\';"'
 
-    sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"
+    	sh "sudo mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql"
 
-    sh "echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
+    	sh "sudo docker stop aon-application && sudo docker rm aon-application || echo 'No previous aon-application running'"
 
-    sh "echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
+    	sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"
 
-    sleep 30
+    	sh "echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
-    // Run the maven integration tests
-    sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org  -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -f aon-htmlunit/pom.xml integration-test"
+    	sh "echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
-    // Recording test results
-    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+    	sleep 30
+
+    	// Run the maven integration tests
+    	sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org  -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -f aon-htmlunit/pom.xml integration-test"
+
+    	// Recording test results
+    	step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+    }
 
     echo "currentBuild.result = ${currentBuild.result}"
 
@@ -70,7 +75,7 @@ node {
     	rolling_version = new Date().format('yyyy.MM.dd-HH.mm.ss')
 
         sh "git tag ${rolling_version}"
-	sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git ${rolling_version}"
+	sh "git push https://j3nk1ns:aon945121010@github.com/aonsolutions/aon-application.git ${rolling_version}"
 
 	// Run the maven build
         sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -DskipTests=true -Dmaven.test.failure.ignore=true clean deploy"
