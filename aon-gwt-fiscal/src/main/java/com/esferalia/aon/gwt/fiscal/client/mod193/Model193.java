@@ -170,7 +170,7 @@ public class Model193 extends MainEntryPoint {
 
 	private void select(Mod193 selected, Integer selectedIndex) {
 		cleanErrorPanel();
-		if ( selected.isAEAT() ) {
+		if ( selected.getYear() > 2014 ) {
 			declarationContainer.setWidget( new Model193AEAT(selected,new Model193Callback(),selectedIndex));
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
