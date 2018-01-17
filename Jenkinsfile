@@ -76,7 +76,7 @@ node {
       stage 'Build'
    
       // Run the maven build
-      sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -Dmaven.test.failure.ignore=true -Dgwt.working=true -DSNAPSHOT clean deploy"
+      sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -Dmaven.test.failure.ignore=true clean deploy"
 
       // Recording fingerprints of files to track usage
       fingerprint '**/target/*SNAPSHOT.jar'
