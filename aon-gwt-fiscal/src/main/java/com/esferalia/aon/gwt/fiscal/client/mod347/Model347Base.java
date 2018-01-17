@@ -512,7 +512,7 @@ abstract class Model347Base extends DockLayoutPanel {
 		table.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
 		DocumentTextBox document = new DocumentTextBox();
 		document.setValue(getMod347().getDocument());
-		// FALTA - Modificar el NIF influye en las lineas, ya que los nif que empiezan
+		// Modificar el NIF influye en las lineas, ya que los nif que empiezan
 		// por "H", solo cumplimentan el importe total y no los trimestres, si se modifica
 	    // y se cambia de H a no H o viceversa, entonces no se traslada a las lineas automaticamente
 		// por que habria que cambiar todas las lineas, para quitar los trimestres y poner los totales
@@ -806,60 +806,62 @@ abstract class Model347Base extends DockLayoutPanel {
 		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod347().getAdministration()));
 		tab.setWidget(0, 0, title);
 		
-		// FALTA - Habilitar cuando esté disponible
+		int row = 1;
+
+		Label icon1 = new Label();
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod347().getAdministration()));
+		tab.setWidget(row, 0, icon1 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel p1 = new FlowPanel();
+		p1.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
+		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button1.addStyleName(AON.AON_CSS.aonBorderNone());
+		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button1.addStyleName(AON.AON_CSS.aonClickable());
+		button1.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (getMod347().isFinished() || getMod347().isSent()) {
+					submitForm(MODEL347_FILE);
+				} else {
+					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+				}
+			}
+		});
+		p1.add(button1);
+		tab.setWidget(row, 1, p1 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
-//		int row = 1;
-//
-//		Label icon1 = new Label();
-//		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod347().getAdministration()));
-//		tab.setWidget(row, 0, icon1 );
-//		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-//		FlowPanel p1 = new FlowPanel();
-//		p1.setStyleName(AON.AON_CSS.aonPadding2());
-//		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
-//		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
-//		button1.addStyleName(AON.AON_CSS.aonBorderNone());
-//		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
-//		button1.addStyleName(AON.AON_CSS.aonClickable());
-//		button1.addClickHandler( new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				if (getMod347().isFinished() || getMod347().isSent()) {
-//					submitForm(MODEL347_FILE);
-//				} else {
-//					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-//				}
-//			}
-//		});
-//		p1.add(button1);
-//		tab.setWidget(row, 1, p1 );
-//		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-//		
-//		if (mod347.getAdministration() == Administration.COMMON_TERRITORY) {
-//			row++;
-//			Label icon3 = new Label();
-//			icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod347().getAdministration()));
-//			tab.setWidget(row, 0, icon3);
-//			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-//			FlowPanel p3 = new FlowPanel();
-//			p3.setStyleName(AON.AON_CSS.aonPadding2());
-//			Button button3 = new Button("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
-//			button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
-//			button3.addStyleName(AON.AON_CSS.aonBorderNone());
-//			button3.addStyleName(AON.AON_CSS.aonEvenBackground());
-//			button3.addStyleName(AON.AON_CSS.aonClickable());
-//			button3.addClickHandler(new ClickHandler() {
-//				@Override
-//				public void onClick(ClickEvent event) {
-//					submitForm(MODEL347_PRINT);
-//				}
-//			});
-//			p3.add(button3);
-//			tab.setWidget(row, 1, p3);
-//			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-//		}
+		if (mod347.getAdministration() == Administration.COMMON_TERRITORY) {
+			row++;
+			Label icon3 = new Label();
+			icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod347().getAdministration()));
+			tab.setWidget(row, 0, icon3);
+			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+			FlowPanel p3 = new FlowPanel();
+			p3.setStyleName(AON.AON_CSS.aonPadding2());
+			Button button3 = new Button("Servicio de validaci\u00F3n y prueba (Borrador PDF) via Agencia Tributaria (a partir de los datos guardados).");
+			button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
+			button3.addStyleName(AON.AON_CSS.aonBorderNone());
+			button3.addStyleName(AON.AON_CSS.aonEvenBackground());
+			button3.addStyleName(AON.AON_CSS.aonClickable());
+			button3.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					// Servicio de validación y prueba, controlar ejercicio, solo a partir de 2014 (incluido)
+					if (getMod347().getYear() >= 2014) {
+						submitForm(MODEL347_PRINT);
+					} else {
+						getCallback().showError("Servicio de validaci\u00F3n y prueba no disponible para el ejercicio del modelo.");
+					}
+				}
+			});
+			p3.add(button3);
+			tab.setWidget(row, 1, p3);
+			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		}
 		
-		//row++;
 		panel.add(tab);
 		
 		return panel;

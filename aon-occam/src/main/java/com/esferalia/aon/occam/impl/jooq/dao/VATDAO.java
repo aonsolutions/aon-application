@@ -205,6 +205,9 @@ public class VATDAO  {
 				,INVOICE_TAX.DEDUCTIBLE_PERCENT
 				,INVOICE_TAX.DEDUCTIBLE_QUOTA
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
+				
+				,INVOICE.RETENTION_QUOTA
+				,INVOICE.REGISTRY
 				)
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -267,6 +270,9 @@ public class VATDAO  {
 				,INVOICE_TAX.DEDUCTIBLE_PERCENT
 				,INVOICE_TAX.DEDUCTIBLE_QUOTA
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
+				
+				,INVOICE.RETENTION_QUOTA
+				,INVOICE.REGISTRY
 				)
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -331,6 +337,9 @@ public class VATDAO  {
 			,INVOICE.TOTAL
 			,FINANCE_TRACKING.TYPE
 			,FINANCE_TRACKING.AMOUNT
+			
+			,INVOICE.RETENTION_QUOTA
+			,INVOICE.REGISTRY
 			)
 			.from(FINANCE_TRACKING)
 			.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
@@ -396,6 +405,9 @@ public class VATDAO  {
 			
 			,INVOICE.TOTAL
 			,FINANCE.AMOUNT
+			
+			,INVOICE.RETENTION_QUOTA
+			,INVOICE.REGISTRY
 			)
 			.from(FINANCE)
 			.join(INVOICE).on(INVOICE.ID.equal(FINANCE.INVOICE))
@@ -633,8 +645,7 @@ public class VATDAO  {
 				.setEpigraph(rec.getValue(IAE.EPIGRAPH))
 				.setVatRegime( VATRegime.safeValueOf( rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) ))
 				.setVatSurchargeRegime( AonEnumUtils.getBoolean(rec.getValue(ENTERPRISE_ACTIVITY.SURCHARGE) ) )		
-				.setDocumentNumber(FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE))
-						, rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 
+				.setDocumentNumber(FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)), rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 
 				.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
 				.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
 				.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
@@ -664,6 +675,8 @@ public class VATDAO  {
 				.setDeductibleQuota(getDeductibleQuota(rec))
 				
 				.setAmount347(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP ? ( rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) : rec.getValue(INVOICE_TAX.BASE))
+				.setHasRetention(rec.getValue(INVOICE.RETENTION_QUOTA) != 0)		
+				.setRegistry(rec.getValue(INVOICE.REGISTRY))
 			;
 		}
 	}

@@ -67,6 +67,8 @@ public class VatContext implements Serializable {
 	
 	private double amount347; // Importe que se declara en el modelo 347
 	
+	private boolean hasRetention;  // Indicará si la factura lleva retención (se utiliza al generar el 347) 
+	
 	public String getSiiStatus() {
 		return siiStatus;
 	}
@@ -444,6 +446,13 @@ public class VatContext implements Serializable {
 	public VatContext setAmount347(double amount347) {
 		this.amount347 = amount347;
 		return this;
+	}
+	public boolean hasRetention() {
+		return hasRetention;
+	}
+	public VatContext setHasRetention(boolean hasRetention) {
+		this.hasRetention = hasRetention;
+		return this;		
 	}
 	
 }
