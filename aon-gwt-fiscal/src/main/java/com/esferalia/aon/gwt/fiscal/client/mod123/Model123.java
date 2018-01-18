@@ -293,13 +293,18 @@ public class Model123 extends MainEntryPoint {
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
+	
+	public static native String getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
+	}-*/;
 
 	
 	class Mod123SelectionHandler implements SelectionChangeEvent.Handler {
 		@Override
 		public void onSelectionChange(SelectionChangeEvent event) {
 			Mod123 sel = table.getSelected();
-			SERVICE.getMod123(getCurrentDomainName(), getCurrentDomain(),
+			SERVICE.getMod123(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 					sel.getId(), new AsyncCallback<Mod123>() {
 						@Override
 						public void onSuccess(Mod123 selected) {
@@ -472,7 +477,7 @@ public class Model123 extends MainEntryPoint {
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		SERVICE.getMod123s(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod123s(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				new AsyncCallback<LinkedList<Mod123>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod123> result) {
@@ -504,7 +509,7 @@ public class Model123 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.markAsPending(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod123>() {
+		SERVICE.markAsPending(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						select(result);
@@ -525,7 +530,7 @@ public class Model123 extends MainEntryPoint {
 	void markAsSentButtonClick(ClickEvent event) {
 		markAsSentButton.setEnabled(false);
 		cleanErrorMessage();
-		SERVICE.markAsSent(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod123>() {
+		SERVICE.markAsSent(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						select(result);
@@ -544,7 +549,7 @@ public class Model123 extends MainEntryPoint {
 	void markAsFinishedButtonClick(ClickEvent event) {
 		markAsFinishedButton.setEnabled(false);
 		cleanErrorMessage();
-		SERVICE.initializeForFinish(getCurrentDomainName(),currentMod,
+		SERVICE.initializeForFinish(getCurrentDomainName(),getCurrentUser(), currentMod,
 				new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 m123) {
@@ -571,7 +576,7 @@ public class Model123 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.save(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod123>() {
+		SERVICE.save(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						select(result);
@@ -598,7 +603,7 @@ public class Model123 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.markAsFinished(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod123>() {
+		SERVICE.markAsFinished(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						select(result);
@@ -625,7 +630,7 @@ public class Model123 extends MainEntryPoint {
 
 			@Override
 			public void onAccept() {
-				SERVICE.delete(getCurrentDomainName(),currentMod, new AsyncCallback<Void>() {
+				SERVICE.delete(getCurrentDomainName(),getCurrentUser(), currentMod, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
@@ -652,7 +657,7 @@ public class Model123 extends MainEntryPoint {
 		newButton.setEnabled(false);
 		cleanErrorMessage();
 		
-		SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(),null,
+		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(),null,
 				new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 m123) {
@@ -675,7 +680,7 @@ public class Model123 extends MainEntryPoint {
 
 				@Override
 				public void onAccept() {
-					SERVICE.create(getCurrentDomainName(),getCurrentDomain(),currentMod,
+					SERVICE.create(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),currentMod,
 							new AsyncCallback<Mod123>() {
 								@Override
 								public void onSuccess(Mod123 m123) {
@@ -760,7 +765,7 @@ public class Model123 extends MainEntryPoint {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				currentMod.setComments(event.getValue());
 				styleCommentsButton();
-				SERVICE.saveComments(getCurrentDomainName(), currentMod, new AsyncCallback<Mod123>() {
+				SERVICE.saveComments(getCurrentDomainName(), getCurrentUser(), currentMod, new AsyncCallback<Mod123>() {
 					@Override
 					public void onSuccess(Mod123 result) {
 						toast.hide();

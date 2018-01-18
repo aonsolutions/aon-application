@@ -219,7 +219,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private List<Integer> getUserScopes() {
 		List<Integer> scopes = null;
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		AONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId);
+		AONContext ctx = AONContext.getAONContext(getDomainNameURL(), domainId, getCurrentUser());
 		try {
 			scopes = ctx
 					.getDslContext()
@@ -288,8 +288,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private void initializeModel() {
 		List<DomainData> domains = Collections.emptyList();
 		if (getParentDomain() != null) {
-			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),
-					domainId);
+			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
 			domains = ctx
 					.getDslContext()
 					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION,
@@ -312,8 +311,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	public int getDomainCount() {
 		if (getParentDomain() != null) {
-			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),
-					domainId);
+			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
 			int count = ctx.getDslContext().selectCount().from(DOMAIN)
 					.where(getDomainCondition()).fetchOne(0, int.class);
 			ctx.finalize();
@@ -491,7 +489,15 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public void setPageLimit(Integer pageLimit) {
 		this.pageLimit = pageLimit;
 	}
-
+	public String getCurrentUser() {
+		try {
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			return principal!=null?principal.getShortName():null;
+		} catch  (Throwable e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	public String getCurrentDomainURL() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			DomainData domainData = (DomainData) getModel().getRowData();
