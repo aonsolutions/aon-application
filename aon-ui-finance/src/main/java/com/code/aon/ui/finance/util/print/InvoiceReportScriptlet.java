@@ -3,8 +3,11 @@ package com.code.aon.ui.finance.util.print;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +47,20 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	 */
 	public static final String FIELD_ID = "id";
 	public static final String FIELD_ADDRESS = "address";
-		
+	
+	/**
+	 * REPORT TEMPLATE VARIABLES
+	 */
+	public static final String PAGE_NUMBER = "PAGE_NUMBER";
+	
+	/**
+	 * CALCULATED VALUES
+	 */
+	private int invoicePageNumber = -1;
+	private int currentInvoice = -1;
+	private int calculatedPageNumber = 0;
+	private Map<Integer, Integer> pagesPerInvoice = null;
+	private Map<Integer, Integer> invoicePage = null;
 	
 	
 	@Override
@@ -57,7 +73,37 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 		setParameter(PARAM_PRINT_DISCOUNT_PRICE_APPLIED, getPrintParamsController().getSaleInvoiceParams().isPrintDiscountPriceApplied());
 		setParameter(PARAM_INVOICE_FOOTER_TEXT, getPrintParamsController().getSaleInvoiceFooter().getText());
 	}
+	@Override
+	public void beforeReportInit() throws JRScriptletException {
+		super.beforeReportInit();
+		invoicePageNumber = -1;
+		currentInvoice = -1;
+		calculatedPageNumber = 0;
+		pagesPerInvoice = new HashMap<>();
+		invoicePage = new HashMap<>();
+	}
+	@Override
+	public void beforePageInit() throws JRScriptletException {
+		super.beforePageInit();
+		if(currentInvoice<0 || currentInvoice!=(int)getFieldValue(FIELD_ID)) {
+			currentInvoice = (int)getFieldValue(FIELD_ID);
+			invoicePageNumber = 0;
+		}
+		
+		invoicePageNumber++;
+		pagesPerInvoice.put(currentInvoice, invoicePageNumber);
+		
+		String _pageNum = String.valueOf(getVariableValue(PAGE_NUMBER));
+		Integer pageNum = NumberUtils.isNumber(_pageNum) ? Integer.valueOf(_pageNum) : 0;
+		invoicePage.put(pageNum, currentInvoice);
+	}
 	
+	public int getInvoicePageNumber() {
+		return invoicePageNumber;
+	}
+	public Integer consumeCurrentPageInvoiceTotal() {
+		return pagesPerInvoice.get(invoicePage.get(calculatedPageNumber++));
+	}
 	
 	public InputStream getBackgroundFile() {
 		return this.getSaleInvoiceBackgroundFile();
