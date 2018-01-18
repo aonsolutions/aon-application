@@ -519,10 +519,13 @@ public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusa
 		tab2.setWidget(11, 1, new MediumLabel(AON.MSG.cadasdralReference()));
 		tab2.getFlexCellFormatter().setColSpan(11, 1, 2);
 		
-		location.addItem( AON.MSG.buildingLocationValue(0) );
-		location.addItem( AON.MSG.buildingLocationValue(1) );	
-		location.addItem( AON.MSG.buildingLocationValue(2) );
-		location.addItem( AON.MSG.buildingLocationValue(3) );
+		location.addItem("-","");
+		location.addItem("1. Inmueble con referencia catastral situado en cualquier punto del territorio espa\u00F1ol, excepto Pa\u00EDs Vasco y Navarra.","1");
+		location.addItem("2. Inmueble situado en la Comunidad Aut\u00F3noma del Pa\u00EDs Vasco.","2");
+		location.addItem("3. Inmueble situado en la Comunidad Foral de Navarra.","3");
+		location.addItem("4. Inmueble en cualquiera de las situaciones anteriores pero sin referencia catastral.","4");
+		location.addItem("5. Inmueble situado en el extranjero.","5");
+		location.setWidth("200px");
 		if (income.getLocation() != null) {
 			try {
 				location.setSelectedIndex( Integer.parseInt(income.getLocation()) );
