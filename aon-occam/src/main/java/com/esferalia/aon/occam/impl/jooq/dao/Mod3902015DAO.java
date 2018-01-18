@@ -997,8 +997,11 @@ public class Mod3902015DAO {
 					detail.setKey(key);
 					detail.setPercent(vc.getPercentage());
 					double q = key.isSurcharge()?vc.getSurchargeQuota():vc.getQuota();
-					if ( mustApplyProrrata &&  key.isProrrataEnabled() ) {
-						q = AonMathUtils.round(q * prorrata);
+					if (key.isProrrataEnabled()) {
+						q = vc.getDeductibleQuota();
+						if ( mustApplyProrrata ) {
+							q = AonMathUtils.round(q * prorrata);
+						}
 					}
 					detail.setQuota( AonMathUtils.round(detail.getQuota()  + q));
 					detail.setTaxableBase( AonMathUtils.round( detail.getTaxableBase() + vc.getBase()));
