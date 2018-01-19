@@ -1,11 +1,7 @@
 package com.esferalia.aon.gwt.issues.client;
 
-import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
-import com.esferalia.aon.gwt.api.client.AonUrlApi;
-import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
-import com.esferalia.aon.gwt.api.client.incidence.JsGithub;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.google.gwt.core.client.GWT;
@@ -19,11 +15,9 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronList;
 import com.vaadin.polymer.paper.widget.PaperButton;
@@ -71,49 +65,13 @@ public class IssueList extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				JsIssue issue = issueList.getSelectedItem().cast();
-				if(issue != null && !issue.isDeleted()){
+				if(issue != null){
 					parent.contentDockLayoutPanel.removeFromParent();
 					AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
 					t.setVisibleRefreshButton(false).setVisibleFastFilterButton(false);
 					parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 					parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue, -1));
 					parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);				
-				} else if(issue.isDeleted()){
-					AonDialog2 d = new AonDialog2("Restaurar Tarea",new Label("Est\u00e1s seguro de restaurar la tarea #" + issue.getNumber()) ) {
-						
-						@Override protected void onCancel() {hide();}
-						
-						@Override
-						protected void onAccept() {
-							String request = "{\"state\":\""+ "restore" +"\"}";							
-							if(issue.isGithub()) {
-								String request1 = "{\"state\":\"open\"}";
-								incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
-								
-									@Override
-									public void onSuccess(JSON<JsGithub> github) {
-										API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
-										API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request1);
-									}	
-								
-									@Override
-									public void onFailure(Throwable caught) {}
-								});
-							}
-							incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
-								
-								@Override
-								public void onSuccess(JsIssue result) {
-									parent.updateIssueList(parent.issueFilter, false);
-								}
-								
-								@Override public void onFailure(Throwable caught) {}
-							});
-							hide();
-						}
-					};
-					d.getElement().getStyle().setWidth(255, Unit.PX);
-					d.center();
 				}
 			}
 		});

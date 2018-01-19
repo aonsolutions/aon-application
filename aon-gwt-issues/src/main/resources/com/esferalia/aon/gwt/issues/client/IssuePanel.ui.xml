@@ -75,7 +75,8 @@
 											<g:customCell>
 												<g:HTMLPanel height="100%" width="100%">
 													<div class="{issuesResources.css.buttonsIssues}">
-													    <p:PaperButton ui:field="faqButton" visible="true" style="background-color:blue;color:#fff;"> FAQ </p:PaperButton>
+														<p:PaperButton ui:field="restButton" visible="true" style="background-color:#bbb;color:#fff;"> Restaurar </p:PaperButton>
+														<p:PaperButton ui:field="faqButton" visible="true" style="background-color:blue;color:#fff;"> FAQ </p:PaperButton>
 														<p:PaperButton ui:field="duplicatedButton" visible="true" style="background-color:#f44336;color:#fff;"> Duplicar </p:PaperButton>
 														<p:PaperButton ui:field="desduplicatedButton" visible="true" style="background-color:#f44336;color:#fff;"> Liberar </p:PaperButton>
 														<p:PaperButton ui:field="closedButton" raised="true" style="background-color:black;color:#fff;"> Cerrar </p:PaperButton>
