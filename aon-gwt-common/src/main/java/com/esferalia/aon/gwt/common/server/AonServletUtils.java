@@ -101,6 +101,20 @@ public class AonServletUtils {
 		}
 	}
 
+	public static Integer getParentDomainID(Connection connection, Integer domain) throws SQLException {
+		try {
+			AONContext aonContext = new AONContext(connection);
+			return  aonContext.getDslContext()
+			.select()
+			.from(Domain.DOMAIN)
+			.where(Domain.DOMAIN.ID.eq(domain))
+			.fetchOne(Domain.DOMAIN.PARENT);
+		} catch (Exception e) {
+			throw new SQLException(e.getMessage(), e);
+		} finally {
+		}
+	}
+
 	public static void rollback(Connection conn) {
 		try {
 			conn.rollback();

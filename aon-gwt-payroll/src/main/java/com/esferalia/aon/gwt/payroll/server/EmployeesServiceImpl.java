@@ -1195,8 +1195,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			conn = AonServletUtils.getConnection(domain);
 			disableAutoCommit(conn);
 			SQLAgreementDraft.save(conn, agreementDraft, 
-					AonServletUtils.getDomainID(domain),
-					AonServletUtils.getParentDomainID(domain));
+					agreementDraft.getDomain() , //AonServletUtils.getDomainID(domain),
+					AonServletUtils.getParentDomainID(conn, agreementDraft.getDomain()));
 			commit(conn);
 			return agreementDraft;
 		} catch (Throwable t) {
