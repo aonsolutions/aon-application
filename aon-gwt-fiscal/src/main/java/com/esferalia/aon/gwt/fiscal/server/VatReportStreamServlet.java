@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.impl.jooq.dao.VATFormatter;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -89,6 +90,10 @@ public class VatReportStreamServlet extends HttpServlet {
 			Long service = (Long) jsonParams.get(IRequestParamsNames.SERVICE);
 			if (service != null) {
 				params.setService(service==1);
+			}
+			Long rect = (Long) jsonParams.get(IRequestParamsNames.RECTIFICATION);
+			if (rect!= null) {
+				params.setRectificationType( RectificationType.safeValueOf(rect.intValue()));
 			}
 			
 			String user = AonServletUtils.getLoggedUser();

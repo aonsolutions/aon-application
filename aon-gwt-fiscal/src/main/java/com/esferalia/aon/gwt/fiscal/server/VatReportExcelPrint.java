@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -67,8 +68,7 @@ public class VatReportExcelPrint extends HttpServlet {
 			}
 			Long type = (Long) jsonParams.get(IRequestParamsNames.TYPE);
 			if (type != null) {
-				int t = type.intValue();
-				params.setVatSummaryType( VatSummaryType.safeValueOf(t));
+				params.setVatSummaryType( VatSummaryType.safeValueOf(type.intValue()));
 			}
 			Long output = (Long) jsonParams.get(IRequestParamsNames.OUTPUT);
 			if (output != null) {
@@ -94,6 +94,11 @@ public class VatReportExcelPrint extends HttpServlet {
 			if (service != null) {
 				params.setService(service==1);
 			}
+			Long rectification = (Long) jsonParams.get(IRequestParamsNames.RECTIFICATION);
+			if (rectification != null) {
+				params.setRectificationType(RectificationType.safeValueOf( rectification.intValue() ));
+			}
+			
 			String user = AonServletUtils.getLoggedUser();
 			ExcelAction action = new ExcelAction( );
 			action.initialize("IVA");
