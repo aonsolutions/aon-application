@@ -17,7 +17,6 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -34,7 +33,8 @@ public class Mod347File extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			Mod347 mod347 = FISCAL.getMod347(domainName, domainId,AonServletUtils.getLoggedUser(), id);
-
+			mod347.setDomainName(domainName);
+			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
 			try {
@@ -57,7 +57,8 @@ public class Mod347File extends HttpServlet {
 				}
 			}
 			 
-			String fileName = AonFiscalFileUtils.getFileName(mod347);
+		    String fileName = "Mod347" + "_" + mod347.getYear() + "_" + sb.toString();			
+			
 			resp.setContentType(MimeType.TXT.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 			AonIOUtils.copy(in, resp.getOutputStream());

@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
-import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -68,7 +67,7 @@ public class Mod347Print extends HttpServlet {
 				}
 			}
 
-			String fileName = AonFiscalFileUtils.getFileName(mod347); 
+			String fileName = "Mod347" + "_" + mod347.getYear() + "_" + sb.toString();
 
 			downloadPDF(req, resp, fileName, content, Integer.toString(mod347.getYear()));
 

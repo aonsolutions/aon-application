@@ -849,11 +849,6 @@ abstract class Model347Base extends DockLayoutPanel {
 		tab.setWidget(row, 1, p1 );
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
-		// FALTA - Visualizar la presentacion, según las distintas administraciones 
-		// conforme lo vaya haciento
-		button1.setVisible(mod347.getAdministration() == Administration.COMMON_TERRITORY);
-		// -----
-		
 		if (mod347.getAdministration() == Administration.COMMON_TERRITORY) {
 			row++;
 			Label icon3 = new Label();

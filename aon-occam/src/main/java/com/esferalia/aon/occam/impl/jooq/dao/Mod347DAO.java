@@ -112,6 +112,7 @@ public class Mod347DAO {
 				.setModificationDate(record.getValue(FS_MOD347.MODIFICATION_DATE))
 				;
 		}
+		
 	}
 	
 	public static Mod347 initialize(AONContext ctx) {	
@@ -125,7 +126,7 @@ public class Mod347DAO {
 			year = year - 1;			
 		}
 		
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
+		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);		
 		
 		Mod347 mod347 = new Mod347();
 		mod347.setDomain(ctx.getDomainId());
@@ -452,7 +453,7 @@ public class Mod347DAO {
 	
 	private static void validateDeclared(AONContext ctx, Mod347Declared declared) {
 		
-		// FALTA - Comprobaciones que deban realizarse para las lineas declared
+		// Comprobaciones que deban realizarse para las lineas declared
 		
 	}
 		
@@ -590,7 +591,7 @@ public class Mod347DAO {
 	
 	private static void validateAsset(AONContext ctx, Mod347Asset asset) {
 		
-		// FALTA - Comprobaciones que deban realizarse para las lineas asset
+		// Comprobaciones que deban realizarse para las lineas asset
 		
 	}
 
