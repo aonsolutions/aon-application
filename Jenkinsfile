@@ -101,7 +101,7 @@ node {
 	def last_snapshot_db_up2date_task_definition_arn = snapshot_db_up2date_task_definitions_arns[snapshot_db_up2date_task_definitions_arns.size()-1]
 	sh "aws ecs describe-task-definition --task-definition ${last_snapshot_db_up2date_task_definition_arn} > last-snapshot-db-up2date-task-definition.json"
 	def last_snapshot_db_up2date_task_definition_json = readFile 'last-snapshot-db-up2date-task-definition.json'
-	def snapshot_db_up2date_container_definitions_json = getContainerDefinitions(last_snapshot_db_up2date_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre8")
+	def snapshot_db_up2date_container_definitions_json = getContainerDefinitions(last_snapshot_db_up2date_task_definition_json, "aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine")
 	sh "aws ecs register-task-definition --family SNAPSHOT-DB-UP2DATE --container-definitions '${snapshot_db_up2date_container_definitions_json}' > snapshot-db-up2date-task-definition.json"
 	def snapshot_db_up2date_task_definition_json = readFile 'snapshot-db-up2date-task-definition.json'
 	def snapshot_db_up2date_task_definition_arn = getTaskDefinitionArn(snapshot_db_up2date_task_definition_json)
