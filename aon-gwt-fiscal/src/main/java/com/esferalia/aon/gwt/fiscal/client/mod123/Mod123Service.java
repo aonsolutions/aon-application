@@ -10,7 +10,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("Mod123")
+@RemoteServiceRelativePath("ms/Mod123")
 public interface Mod123Service extends RemoteService {
 	
 	Mod123 getMod123(String domainName, String userLogin, int domain, int id) throws AonCoreException;

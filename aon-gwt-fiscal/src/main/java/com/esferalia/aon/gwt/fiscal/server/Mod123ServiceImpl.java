@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod123 Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod123" })
+@WebServlet(name = "Mod123 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod123" })
 public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implements Mod123Service {
 
 	@Override
