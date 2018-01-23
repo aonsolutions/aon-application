@@ -135,8 +135,10 @@ public class FinanceGenerator implements Serializable {
 		newFinance.setDueDate(finance.getDueDate());
 		newFinance.setPayMethod(finance.getPayMethod());
 		newFinance.setBankAccount(finance.getBankAccount());
+		newFinance.setBankAlias(finance.getBankAlias());
 		newFinance.setBic(finance.getBic());
 		newFinance.setFinanceStatus(FinanceStatus.PENDING);
+		newFinance.setRemarks(null);
 		newFinance.setSecurityLevel(finance.getSecurityLevel());
 		newFinance.setScope(finance.getScope());
 		newFinance.setManual(finance.isManual());
