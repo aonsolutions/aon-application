@@ -13,24 +13,21 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
-import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
+import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -45,7 +42,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -54,8 +50,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -65,13 +59,14 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class VatReport extends MainEntryPoint {
+public class IRPFReport extends MainEntryPoint {
 
-	private static final String VAT_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/VatReportExcelPrint";
-	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy"); 
-	
 	private static CommonServiceAsync commonService;
 	private static FiscalServiceAsync fiscalService;
+	
+	private String currentDomainName;
+	private int currentDomain;
+	private String currentUser;
 	
 	private AonConfiguration configuration;
 	private DockLayoutPanel dockLayoutPanel;
@@ -85,30 +80,15 @@ public class VatReport extends MainEntryPoint {
 	private DateBoxEx fromDate;
 	private DateBoxEx toDate;
 	private ListBox output;
-	private InvoiceTransactionListBox transaction;
 
-	private ListBox activity;
 	private AccountingRegistryBox registry;
-	private ListBox investment;
 	
-	private ListBox accrualRegime;
-	private ListBox farmerRegime;
-	private ListBox service;
-	private ListBox surcharge;
+	private WithholdingTypeListBox withholdingType;
+	private ListBox activity;
 	private ListBox rectificationType;
-
-	private VatParams params;	
 	
-	FormPanel diskForm;
-	Hidden vatParamsHidden;
-	Hidden domainIdHidden;
-	Hidden domainNameHidden;
+	private NumberFormat formatter;
 	
-	NumberFormat formatter;
-	
-	private int domain;
-	private int enterprise;
-
 	interface SafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
@@ -116,6 +96,10 @@ public class VatReport extends MainEntryPoint {
 
 	private static final SafeTemplate template = GWT.create(SafeTemplate.class);
 
+	public IRPFReport(String domainName, int domain, String user) {
+		
+	}
+	
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
@@ -182,32 +166,15 @@ public class VatReport extends MainEntryPoint {
 		period.setSelectedIndex(0);
 		fillDates();
 		output.setSelectedIndex(0);
-		transaction.setSelectedIndex(0);
+		withholdingType.setSelectedIndex(0);
 		
 		if (configuration != null && configuration.hasActivities()) {
 			activity.setSelectedIndex(0);
 		}
 		registry.setValue((AccountingRegistry) null,false);
-		
-		investment.setSelectedIndex(0);
-		accrualRegime.setSelectedIndex(0);
-		farmerRegime.setSelectedIndex(0);
-		service.setSelectedIndex(0);
-		surcharge.setSelectedIndex(0);
 		rectificationType.setSelectedIndex(0);
-		
 		onSearch();
 	}
-
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
 
 	private Widget getToolbarPanel() {
 		FlowPanel toolbarPanel = new FlowPanel();
@@ -220,7 +187,7 @@ public class VatReport extends MainEntryPoint {
 		FlowPanel titlePanel = new FlowPanel();
 		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
 		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label("Tabla I.V.A."));
+		toolbar.setWidget(0, 0, new Label("Tabla I.R.P.F."));
 		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
 		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
 		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
@@ -245,45 +212,9 @@ public class VatReport extends MainEntryPoint {
 		});
 		buttonContainer.add(clean);
 		
-		final Button excel = new Button();
-		excel.setText(AON.MSG.export());
-		excel.setTitle(AON.MSG.export());
-		excel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		excel.addStyleName(AON.AON_CSS.aonIconExcel());
-		excel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				submitForm(VAT_EXCEL_REPORT_PRINT);
-			}
-		});
-		buttonContainer.add(excel);
-
-		diskForm = new FormPanel("_blank");
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		FlowPanel formFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		vatParamsHidden = new Hidden("vatParams");
-		formFlowPanel.add(vatParamsHidden);
-		domainIdHidden = new Hidden("domainId");
-		formFlowPanel.add(domainIdHidden);
-		domainNameHidden = new Hidden("domainName");
-		formFlowPanel.add(domainNameHidden);
-		buttonContainer.add(diskForm);
-		
-		
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
 	}
-	
-	private void submitForm(String action) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		vatParamsHidden.setValue(JsonParams.convert(getWidgetParams()));
-		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-		domainNameHidden.setValue(getCurrentDomainName());
-		diskForm.submit();
-	}
-	
 	
 	private Widget getFilterPanel() {
 		year = new IntegerBox();
@@ -337,9 +268,9 @@ public class VatReport extends MainEntryPoint {
 			}
 		});
 		
-		transaction = new InvoiceTransactionListBox("-- Todas --");
-		transaction.setWidth("100px");
-		transaction.addChangeHandler(new ChangeHandler() {
+		withholdingType = new WithholdingTypeListBox("-- Todos --");
+		withholdingType.setWidth("100px");
+		withholdingType.addChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -375,71 +306,6 @@ public class VatReport extends MainEntryPoint {
 			
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
-				onSearch();
-			}
-		});
-		
-		investment = new ListBox();
-		investment.setWidth("100px");
-		investment.addItem("-- Todas --");
-		investment.addItem(AON.MSG.commonAsset());
-		investment.addItem(AON.MSG.investAsset());
-		investment.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch();
-			}
-		});
-		
-		accrualRegime = new ListBox();
-		accrualRegime.addItem("-- Todas --");
-		accrualRegime.addItem(AON.MSG.no());
-		accrualRegime.addItem(AON.MSG.yes());
-		accrualRegime.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch();
-			}
-		});
-
-		farmerRegime = new ListBox();
-		farmerRegime.addItem("-- Todas --");
-		farmerRegime.addItem(AON.MSG.no());
-		farmerRegime.addItem(AON.MSG.yes());
-		farmerRegime.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				transaction.setValue(InvoiceTransactionType.NATIONAL);
-				surcharge.setSelectedIndex(0);
-				onSearch();
-			}
-		});
-
-		service = new ListBox();
-		service.addItem("-- Todas --");
-		service.addItem(AON.MSG.no());
-		service.addItem(AON.MSG.yes());
-		service.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch();
-			}
-		});
-		
-		surcharge = new ListBox();
-		surcharge.addItem("-- Todas --");
-		surcharge.addItem(AON.MSG.no());
-		surcharge.addItem(AON.MSG.yes());
-		surcharge.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				transaction.setValue(InvoiceTransactionType.NATIONAL);
-				farmerRegime.setSelectedIndex(0);
 				onSearch();
 			}
 		});
@@ -506,15 +372,8 @@ public class VatReport extends MainEntryPoint {
 		outputLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
 		outputLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		firstRowPanel.add(outputLabel);
-		service.addStyleName(AON.AON_CSS.aonMarginRight());
+		toDate.addStyleName(AON.AON_CSS.aonMarginRight());
 		firstRowPanel.add(output);
-
-		Label transactionLabel = new InlineLabel(AON.MSG.transaction());
-		transactionLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
-		transactionLabel.addStyleName(AON.AON_CSS.aonFontSmall());
-		firstRowPanel.add(transactionLabel);
-		service.addStyleName(AON.AON_CSS.aonMarginRight());
-		firstRowPanel.add(transaction);
 
 		// ---------------------------------------------------------------- SECOND ROW
 		FlowPanel secondRowPanel = new FlowPanel();
@@ -533,26 +392,18 @@ public class VatReport extends MainEntryPoint {
 		thirdRowPanel.addStyleName(AON.AON_CSS.aonMarginTop5());
 		filterPanel.add(thirdRowPanel);
 		
-		Label investmentLabel = new InlineLabel(AON.MSG.investment());
-		investmentLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
-		investmentLabel.addStyleName(AON.AON_CSS.aonFontSmall());
-		thirdRowPanel.add(investmentLabel);
-		investment.addStyleName(AON.AON_CSS.aonMarginRight());
-		thirdRowPanel.add(investment);
-		
-		Label serviceLabel = new InlineLabel(AON.MSG.service());
-		serviceLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
-		serviceLabel.addStyleName(AON.AON_CSS.aonFontSmall());
-		thirdRowPanel.add(serviceLabel);
-		service.addStyleName(AON.AON_CSS.aonMarginRight());
-		thirdRowPanel.add(service);
+		Label withholdingTypeLabel = new InlineLabel(AON.MSG.withholdingType());
+		withholdingTypeLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		withholdingTypeLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+		thirdRowPanel.add(withholdingTypeLabel);
+		thirdRowPanel.add(withholdingType);
 
-		Label accrualLabel = new InlineLabel(AON.MSG.vatAccrualPaymentAbbr());
-		accrualLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
-		accrualLabel.addStyleName(AON.AON_CSS.aonFontSmall());
-		thirdRowPanel.add(accrualLabel);
-		accrualRegime.addStyleName(AON.AON_CSS.aonMarginRight());
-		thirdRowPanel.add(accrualRegime);
+		Label rectifiedLabel = new InlineLabel(AON.MSG.rectified());
+		rectifiedLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		rectifiedLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+		thirdRowPanel.add(rectifiedLabel);
+		rectificationType.addStyleName(AON.AON_CSS.aonMarginRight());
+		thirdRowPanel.add(rectificationType);
 
 		if (configuration != null && configuration.hasActivities()) {
 			InlineLabel activityLabel = new InlineLabel(AON.MSG.activity());
@@ -562,33 +413,6 @@ public class VatReport extends MainEntryPoint {
 			thirdRowPanel.add(activity);
 		}
 		
-		// ---------------------------------------------------------------- FOURTH ROW
-		FlowPanel fourthRowPanel = new FlowPanel();
-		fourthRowPanel.addStyleName(AON.AON_CSS.aonMarginTop5());
-		filterPanel.add(fourthRowPanel);
-
-		Label farmerLabel = new InlineLabel(AON.MSG.withholdingFarmer());
-		farmerLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
-		farmerLabel.addStyleName(AON.AON_CSS.aonFontSmall());
-		fourthRowPanel.add(farmerLabel);
-		farmerRegime.addStyleName(AON.AON_CSS.aonMarginRight());
-		fourthRowPanel.add(farmerRegime);
-
-		Label surchargeLabel = new InlineLabel(AON.MSG.surcharge());
-		surchargeLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
-		surchargeLabel.addStyleName(AON.AON_CSS.aonFontSmall());
-		fourthRowPanel.add(surchargeLabel);
-		surcharge.addStyleName(AON.AON_CSS.aonMarginRight());
-		fourthRowPanel.add(surcharge);
-		
-		Label rectifiedLabel = new InlineLabel(AON.MSG.rectified());
-		rectifiedLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
-		rectifiedLabel.addStyleName(AON.AON_CSS.aonFontSmall());
-		fourthRowPanel.add(rectifiedLabel);
-		rectificationType.addStyleName(AON.AON_CSS.aonMarginRight());
-		fourthRowPanel.add(rectificationType);
-		
-
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
 		scrollPanel.setWidget(tab);
@@ -620,8 +444,8 @@ public class VatReport extends MainEntryPoint {
 		}
 	}
 	
-	private VatParams getWidgetParams() {
-		VatParams params = new VatParams()
+	private IRPFParams getWidgetParams() {
+		IRPFParams params = new IRPFParams()
 			.setDomain(getCurrentDomain())
 			.setRegistry(registry.getId())
 			.setFromDate(fromDate.getValue())
@@ -630,42 +454,18 @@ public class VatReport extends MainEntryPoint {
 		if (configuration != null && configuration.hasActivities() && activity.getSelectedIndex() > 0) {
 			params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
 		}
-		if (transaction.getValue() != null) {
-			if (transaction.getValue() == InvoiceTransactionType.NATIONAL) {
-				params.setVatSummaryType(VatSummaryType.NATIONAL);
-				if (surcharge.getSelectedIndex() == 2) params.setVatSummaryType(VatSummaryType.SURCHARGE);
-				if (farmerRegime.getSelectedIndex() == 2) params.setVatSummaryType(VatSummaryType.FARMER);
-			}
-			if (transaction.getValue() == InvoiceTransactionType.INTRACOMMUNITY) params.setVatSummaryType(VatSummaryType.INTRACOMMUNITY);
-			if (transaction.getValue() == InvoiceTransactionType.EXTRACOMMUNITY) params.setVatSummaryType(VatSummaryType.EXTRACOMMUNITY);
-			if (transaction.getValue() == InvoiceTransactionType.CAN_CEU_MEL) params.setVatSummaryType(VatSummaryType.CAN_CEU_MEL);
-			if (transaction.getValue() == InvoiceTransactionType.OTHER_ISP) params.setVatSummaryType(VatSummaryType.OTHER_ISP);
-		}
-		
+		params.setWithholdingType(withholdingType.getValue());
 
 		if (output.getSelectedIndex() == 1) params.setOutput(false);
 		if (output.getSelectedIndex() == 2) params.setOutput(true);
 		
-		if (surcharge.getSelectedIndex() == 1) params.setSurcharge(false);
-		if (surcharge.getSelectedIndex() == 2) params.setSurcharge(true);
-
 		if (rectificationType.getSelectedIndex() > 0) {
 			params.setRectificationType(RectificationType.values()[rectificationType.getSelectedIndex() - 1]);	
 		}
-		
-		if (investment.getSelectedIndex() == 1) params.setInvestment(false);
-		if (investment.getSelectedIndex() == 2) params.setInvestment(true);
-		
-		if (accrualRegime.getSelectedIndex() == 1) params.setAccrualRegime(false);
-		if (accrualRegime.getSelectedIndex() == 2) params.setAccrualRegime(true);
-
-		if (service.getSelectedIndex() == 1) params.setService(false);
-		if (service.getSelectedIndex() == 2) params.setService(true);
-		
 		return params;
 	}
 
-	private void refreshAndSeeResults(VatParams params) {
+	private void refreshAndSeeResults(IRPFParams params) {
 		if (tabLayout.getSelectedIndex() == 0) {
 			tabLayout.setAnimationDuration(300);
 			tabLayout.selectTab(1,false);
@@ -673,35 +473,35 @@ public class VatReport extends MainEntryPoint {
 		refreshResults(params);
 	}
 	
-	private void refreshResults(VatParams params) {
+	private void refreshResults(IRPFParams params) {
 		resultsContent.clear();
-		resultsContent.setWidget(new VatReportPanel(getCurrentDomainName(), getCurrentDomain(), params, null, null));
+		resultsContent.setWidget(new IRPFReportPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), params, null, null));
 	}
-
-	private void refreshSummary(VatParams params) {
+	private void refreshSummary(IRPFParams params) {
+		
 		summaryContent.clear();
 		ScrollPanel scroll = new ScrollPanel();			
 		summaryContent.setWidget(scroll);
-		fiscalService.getVatSummaryContext(getCurrentDomainName(), getCurrentDomain(), params
-				, new AsyncCallback<LinkedList<VatSummaryContext>>() {
+		fiscalService.getIrpfBreakdownSummary(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), params 
+				, new AsyncCallback<LinkedList<IrpfBreakdown>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<VatSummaryContext> result) {
-				TreeMap<VatSummaryType,TreeMap<Double,Pair<VatSummaryContext, VatSummaryContext>>> map = 
-						new TreeMap<VatSummaryType,TreeMap<Double,Pair<VatSummaryContext, VatSummaryContext>>>();
-				for (VatSummaryContext vat : result){
-					TreeMap<Double,Pair<VatSummaryContext,VatSummaryContext>> block = map.get(vat.getSummaryType());
+			public void onSuccess(LinkedList<IrpfBreakdown> result) {
+				TreeMap<WithholdingType,TreeMap<Double,Pair<IrpfBreakdown, IrpfBreakdown>>> map = 
+						new TreeMap<WithholdingType,TreeMap<Double,Pair<IrpfBreakdown, IrpfBreakdown>>>();
+				for (IrpfBreakdown irpf : result){
+					TreeMap<Double,Pair<IrpfBreakdown,IrpfBreakdown>> block = map.get(irpf.getWithholdingType());
 					if (block == null) {
-						block = new TreeMap<Double, Pair<VatSummaryContext,VatSummaryContext>>();
-						map.put(vat.getSummaryType(), block);
+						block = new TreeMap<Double, Pair<IrpfBreakdown,IrpfBreakdown>>();
+						map.put(irpf.getWithholdingType(), block);
 					}
-					Pair<VatSummaryContext,VatSummaryContext> line = block.get(vat.getPercentage());
+					Pair<IrpfBreakdown,IrpfBreakdown> line = block.get(irpf.getPercent());
 					if (line == null) {
-						line = Pair.of(vat.isOutput()?vat:null, vat.isOutput()?null:vat);
+						line = Pair.of(irpf.isSales()?irpf:null, irpf.isSales()?null:irpf);
 					} else {
-						line = Pair.of(vat.isOutput()?vat:line.getLeft(), vat.isOutput()?line.getRight():vat);
+						line = Pair.of(irpf.isSales()?irpf:line.getLeft(), irpf.isSales()?line.getRight():irpf);
 					}
-					block.put(vat.getPercentage(), line);					
+					block.put(irpf.getPercent(), line);					
 				}
 				
 				FlexTable tab = new FlexTable();
@@ -725,17 +525,15 @@ public class VatReport extends MainEntryPoint {
 				tab.getColumnFormatter().setStyleName(8, AON.AON_CSS.aonWidth120());
 				
 				paintTableHeader(tab);
-				
+
 				double outputBase = 0;
 				double outputQuota = 0;
 				double inputBase = 0;
 				double inputQuota = 0;
 				double inputDeductibleQuota = 0;
 
-				double estimation = 0;
-
 				int row = 2;
-				for (VatSummaryType type :  map.keySet() ) {
+				for (WithholdingType type :  map.keySet() ) {
 					row = paintEmptyRow(tab,row);
 					
 					Label typeLabel = new Label(type.getDescription());
@@ -743,7 +541,7 @@ public class VatReport extends MainEntryPoint {
 						
 						@Override
 						public void onClick(ClickEvent event) {
-							refreshAndSeeResults(getWidgetParams().setVatSummaryType(type));
+							refreshAndSeeResults(getWidgetParams().setWithholdingType(type));
 						}
 					});
 					tab.setWidget(row,0, typeLabel);
@@ -765,7 +563,7 @@ public class VatReport extends MainEntryPoint {
 					double typeInputQuota = 0;
 					double typeInputDeductibleQuota = 0;
 
-					for (Pair<VatSummaryContext,VatSummaryContext> pair : map.get(type).values() ) {
+					for (Pair<IrpfBreakdown,IrpfBreakdown> pair : map.get(type).values() ) {
 						int col = first? 0 : -1;
 						first = false;
 						if (pair.getLeft() != null) {
@@ -774,8 +572,8 @@ public class VatReport extends MainEntryPoint {
 								@Override
 								public void onClick(ClickEvent event) {
 									refreshAndSeeResults(getWidgetParams()
-										.setVatSummaryType(type)
-										.setPercent(pair.getLeft().getPercentage())
+										.setWithholdingType(type)
+										.setPercent(pair.getLeft().getPercent())
 										.setOutput(true));
 								}
 							};
@@ -786,7 +584,7 @@ public class VatReport extends MainEntryPoint {
 							tab.getCellFormatter().addStyleName(row, (col+1), AON.AON_CSS.aonClickableBlock());
 							baseLabel.addClickHandler(leftClickHandler);
 							
-							Label percentLabel = addCell(tab, row, (col+2) , formatter.format( pair.getLeft().getPercentage()) );
+							Label percentLabel = addCell(tab, row, (col+2) , formatter.format( pair.getLeft().getPercent()) );
 							tab.getCellFormatter().addStyleName(row, (col+2), AON.AON_CSS.aonClickableBlock());
 							percentLabel.addClickHandler(leftClickHandler);
 							
@@ -809,8 +607,8 @@ public class VatReport extends MainEntryPoint {
 								@Override
 								public void onClick(ClickEvent event) {
 									refreshAndSeeResults(getWidgetParams()
-										.setVatSummaryType(type)
-										.setPercent(pair.getRight().getPercentage())
+										.setWithholdingType(type)
+										.setPercent(pair.getRight().getPercent())
 										.setOutput(false));
 								}
 							};
@@ -818,7 +616,7 @@ public class VatReport extends MainEntryPoint {
 							tab.getCellFormatter().addStyleName(row, (col+5), AON.AON_CSS.aonClickableBlock());
 							baseLabel.addClickHandler(rightClickHandler);
 							
-							Label percentLabel = addCell(tab, row, (col+6) , formatter.format( pair.getRight().getPercentage()) );
+							Label percentLabel = addCell(tab, row, (col+6) , formatter.format( pair.getRight().getPercent()) );
 							tab.getCellFormatter().addStyleName(row, (col+6), AON.AON_CSS.aonClickableBlock());
 							percentLabel.addClickHandler(rightClickHandler);
 							
@@ -839,19 +637,8 @@ public class VatReport extends MainEntryPoint {
 						++row;
 					}
 						
-					if (type == VatSummaryType.NATIONAL
-						|| type == VatSummaryType.SURCHARGE
-						|| type == VatSummaryType.FARMER) {
-							estimation = estimation + typeOutputQuota;	
-							estimation = estimation - typeInputDeductibleQuota;
-						}
-
 					row = paintTotal( tab, row,type,typeOutputBase,typeOutputQuota,typeInputBase,typeInputQuota,typeInputDeductibleQuota);					
 					
-					if (type != VatSummaryType.SURCHARGE) {
-						outputBase = outputBase + typeOutputBase;
-						inputBase = inputBase + typeInputBase;
-					}
 					outputQuota = outputQuota  + typeOutputQuota; 
 					inputQuota = inputQuota + typeInputQuota;
 					inputDeductibleQuota = inputDeductibleQuota + typeInputDeductibleQuota;
@@ -860,24 +647,111 @@ public class VatReport extends MainEntryPoint {
 				row = paintTotal( tab, row,null,outputBase,outputQuota,inputBase,inputQuota,inputDeductibleQuota);
 				row = paintEmptyRow(tab, row);
 				 
-				tab.setWidget(row, 0, new Label());
-				String est = "Estimaci\u00F3n: ";
-				if (estimation < 0  ) {
-					est = est + "A Compensar / Devolver: " + formatter.format( AonMathUtils.absRounded( estimation ) );
-					tab.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonColorGreen());
-				} else if (estimation > 0  ) { 
-					est = est + "A Ingresar: " + formatter.format( estimation );
-					tab.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonColorRed());
-				} else {
-					est = est + "Cero / Sin Actividad ";
-				}
-				tab.getFlexCellFormatter().setColSpan(row, 0, 9);
-				tab.getCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextCenter());
-				tab.getCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonFontMedium());
-				tab.getCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonSimpleBorder());
-				tab.getCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBold());
-				tab.setWidget(row, 0, new Label(est));
 				scroll.setWidget( tab );		
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));
+				error.setStyleName(AON.AON_CSS.aonMargin());
+				error.addStyleName(AON.AON_CSS.aonColorRed());
+				error.addStyleName(AON.AON_CSS.aonBold());
+				scroll.setWidget(error);
+			}
+			
+			private void paintTableHeader(FlexTable tab) {
+				Label outputLabel = new Label( AON.MSG.outputInvoices() );
+				tab.setWidget(0,1, outputLabel);
+				tab.getFlexCellFormatter().setColSpan(0, 1, 3);
+				tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextCenter());
+				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonFontBig());
+				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonSimpleBorder());
+				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonClickableBlock());
+				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonBackgroundDisabled());
+				outputLabel.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						IRPFParams params = getWidgetParams();
+						params.setOutput(true);
+						refreshAndSeeResults(params);
+					}
+				});
+				
+				Label inputLabel = new Label( AON.MSG.inputInvoices() );
+				tab.setWidget(0,3, inputLabel);
+				tab.getFlexCellFormatter().setColSpan(0, 3, 4);
+				tab.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonTextCenter());
+				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonFontBig());
+				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonSimpleBorder());
+				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonClickableBlock());
+				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonBackgroundDisabled());
+				inputLabel.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						IRPFParams params = getWidgetParams();
+						params.setOutput(false);
+						refreshAndSeeResults(params);
+					}
+				});
+	
+				Label outputBaseLabel = new Label( AON.MSG.taxableBase() );
+				tab.setWidget(1,1, outputBaseLabel);
+				tab.getCellFormatter().setStyleName(1, 1, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonTextRight());
+				tab.getCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonPaddingRight());
+				tab.getCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonBackgroundDisabled());
+				tab.getCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonSimpleBorder());
+				
+				Label outputPercentLabel = new Label( "%" );
+				tab.setWidget(1,2, outputPercentLabel);
+				tab.getCellFormatter().setStyleName(1, 2, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonTextCenter());
+				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonPaddingRight());
+				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonBackgroundDisabled());
+				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonSimpleBorder());
+	
+				Label outputQuotaLabel = new Label( AON.MSG.quota() );
+				tab.setWidget(1,3, outputQuotaLabel);
+				tab.getCellFormatter().setStyleName(1, 3, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(1, 3, AON.AON_CSS.aonTextRight());
+				tab.getCellFormatter().addStyleName(1, 3, AON.AON_CSS.aonPaddingRight());
+				tab.getCellFormatter().addStyleName(1, 3, AON.AON_CSS.aonBackgroundDisabled());
+				tab.getCellFormatter().addStyleName(1, 3, AON.AON_CSS.aonSimpleBorder());
+	
+				Label inputBaseLabel = new Label( AON.MSG.taxableBase() );
+				tab.setWidget(1,5, inputBaseLabel);
+				tab.getCellFormatter().setStyleName(1, 5, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(1, 5, AON.AON_CSS.aonTextRight());
+				tab.getCellFormatter().addStyleName(1, 5, AON.AON_CSS.aonPaddingRight());
+				tab.getCellFormatter().addStyleName(1, 5, AON.AON_CSS.aonBackgroundDisabled());
+				tab.getCellFormatter().addStyleName(1, 5, AON.AON_CSS.aonSimpleBorder());
+	
+				Label inputPercentLabel = new Label( "%" );
+				tab.setWidget(1,6, inputPercentLabel);
+				tab.getCellFormatter().setStyleName(1, 6, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(1, 6, AON.AON_CSS.aonTextRight());
+				tab.getCellFormatter().addStyleName(1, 6, AON.AON_CSS.aonPaddingRight());
+				tab.getCellFormatter().addStyleName(1, 6, AON.AON_CSS.aonBackgroundDisabled());
+				tab.getCellFormatter().addStyleName(1, 6, AON.AON_CSS.aonSimpleBorder());
+	
+				Label inputQuotaLabel = new Label( AON.MSG.quota() );
+				tab.setWidget(1,7, inputQuotaLabel);
+				tab.getCellFormatter().setStyleName(1, 7, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonTextCenter());
+				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonPaddingRight());
+				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonBackgroundDisabled());
+				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonSimpleBorder());
+
+				Label inputDeductibleQuotaLabel = new Label( AON.MSG.dedQuota() );
+				tab.setWidget(1,8, inputDeductibleQuotaLabel);
+				tab.getCellFormatter().setStyleName(1, 8, AON.AON_CSS.aonBold());
+				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonTextRight());
+				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonPaddingRight());
+				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonBackgroundDisabled());
+				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonSimpleBorder());
 			}
 			
 			private int paintEmptyRow(FlexTable tab, int row) {
@@ -886,15 +760,24 @@ public class VatReport extends MainEntryPoint {
 				tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonHeight5());
 				return ++row;
 			}
-
-			private int paintTotal(FlexTable tab, int row, VatSummaryType type,double typeOutputBase, double typeOutputQuota,
+			
+			private Label addCell(FlexTable tab, int row, int col, String text) {
+				Label label = new Label(text);
+				tab.setWidget(row, col, label);
+				tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
+				tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonPaddingRight());
+				tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonSimpleBorder());
+				return label;
+			}
+			
+			private int paintTotal(FlexTable tab, int row, WithholdingType type,double typeOutputBase, double typeOutputQuota,
 					double typeInputBase, double typeInputQuota, double typeInputDeductibleQuota) {
 				int col = type==null?1:0;
 				ClickHandler leftClickHandler = new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						refreshAndSeeResults(getWidgetParams().setVatSummaryType(type).setOutput(true));
+						refreshAndSeeResults(getWidgetParams().setWithholdingType(type).setOutput(true));
 					}
 				}; 
 				Label obl = addCell(tab, row, col+0 , formatter.format( typeOutputBase));
@@ -906,7 +789,7 @@ public class VatReport extends MainEntryPoint {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						refreshAndSeeResults(getWidgetParams().setVatSummaryType(type).setOutput(false));
+						refreshAndSeeResults(getWidgetParams().setWithholdingType(type).setOutput(false));
 					}
 				}; 
 				Label ibl = addCell(tab, row, col+4 , formatter.format( typeInputBase));
@@ -928,120 +811,7 @@ public class VatReport extends MainEntryPoint {
 				tab.getCellFormatter().addStyleName(row,col+7, AON.AON_CSS.aonBold());
 				return ++row;
 			}
-
-			private Label addCell(FlexTable tab, int row, int col, String text) {
-				Label label = new Label(text);
-				tab.setWidget(row, col, label);
-				tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
-				tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonSimpleBorder());
-				return label;
-			}
-
-			private void paintTableHeader(FlexTable tab) {
-				Label outputLabel = new Label( AON.MSG.outputInvoices() );
-				tab.setWidget(0,1, outputLabel);
-				tab.getFlexCellFormatter().setColSpan(0, 1, 3);
-				tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextCenter());
-				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonFontBig());
-				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonSimpleBorder());
-				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonClickableBlock());
-				tab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonBackgroundDisabled());
-				outputLabel.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						VatParams params = getWidgetParams();
-						params.setOutput(true);
-						refreshAndSeeResults(params);
-					}
-				});
-				
-				Label inputLabel = new Label( AON.MSG.inputInvoices() );
-				tab.setWidget(0,3, inputLabel);
-				tab.getFlexCellFormatter().setColSpan(0, 3, 4);
-				tab.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonTextCenter());
-				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonFontBig());
-				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonSimpleBorder());
-				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonClickableBlock());
-				tab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonBackgroundDisabled());
-				inputLabel.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						VatParams params = getWidgetParams();
-						params.setOutput(false);
-						refreshAndSeeResults(params);
-					}
-				});
-
-				Label outputBaseLabel = new Label( AON.MSG.taxableBase() );
-				tab.setWidget(1,1, outputBaseLabel);
-				tab.getCellFormatter().setStyleName(1, 1, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonTextRight());
-				tab.getCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonBackgroundDisabled());
-				tab.getCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonSimpleBorder());
-				
-				Label outputPercentLabel = new Label( "%" );
-				tab.setWidget(1,2, outputPercentLabel);
-				tab.getCellFormatter().setStyleName(1, 2, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonTextCenter());
-				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonBackgroundDisabled());
-				tab.getCellFormatter().addStyleName(1, 2, AON.AON_CSS.aonSimpleBorder());
-
-				Label outputQuotaLabel = new Label( AON.MSG.quota() );
-				tab.setWidget(1,3, outputQuotaLabel);
-				tab.getCellFormatter().setStyleName(1, 3, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 3, AON.AON_CSS.aonTextRight());
-				tab.getCellFormatter().addStyleName(1, 3, AON.AON_CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(1, 3, AON.AON_CSS.aonBackgroundDisabled());
-				tab.getCellFormatter().addStyleName(1, 3, AON.AON_CSS.aonSimpleBorder());
-
-				Label inputBaseLabel = new Label( AON.MSG.taxableBase() );
-				tab.setWidget(1,5, inputBaseLabel);
-				tab.getCellFormatter().setStyleName(1, 5, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 5, AON.AON_CSS.aonTextRight());
-				tab.getCellFormatter().addStyleName(1, 5, AON.AON_CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(1, 5, AON.AON_CSS.aonBackgroundDisabled());
-				tab.getCellFormatter().addStyleName(1, 5, AON.AON_CSS.aonSimpleBorder());
-
-				Label inputPercentLabel = new Label( "%" );
-				tab.setWidget(1,6, inputPercentLabel);
-				tab.getCellFormatter().setStyleName(1, 6, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 6, AON.AON_CSS.aonTextRight());
-				tab.getCellFormatter().addStyleName(1, 6, AON.AON_CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(1, 6, AON.AON_CSS.aonBackgroundDisabled());
-				tab.getCellFormatter().addStyleName(1, 6, AON.AON_CSS.aonSimpleBorder());
-
-				Label inputQuotaLabel = new Label( AON.MSG.quota() );
-				tab.setWidget(1,7, inputQuotaLabel);
-				tab.getCellFormatter().setStyleName(1, 7, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonTextCenter());
-				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonBackgroundDisabled());
-				tab.getCellFormatter().addStyleName(1, 7, AON.AON_CSS.aonSimpleBorder());
-				
-				Label inputDeductibleQuotaLabel = new Label( AON.MSG.dedQuota() );
-				tab.setWidget(1,8, inputDeductibleQuotaLabel);
-				tab.getCellFormatter().setStyleName(1, 8, AON.AON_CSS.aonBold());
-				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonTextRight());
-				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonBackgroundDisabled());
-				tab.getCellFormatter().addStyleName(1, 8, AON.AON_CSS.aonSimpleBorder());
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));
-				error.setStyleName(AON.AON_CSS.aonMargin());
-				error.addStyleName(AON.AON_CSS.aonColorRed());
-				error.addStyleName(AON.AON_CSS.aonBold());
-				scroll.setWidget(error);
-			}
+			
 		});		
 	}
 }

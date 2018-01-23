@@ -3,10 +3,9 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
@@ -23,13 +22,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
-public class VatReportPanel extends ScrollPanel{
+public class IRPFReportPanel extends ScrollPanel{
 	
-	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "VatReportStream");
-	private static final String LEGEND = "S (Servicio); I (Inversi\u00F3n); A (R\u00E9gimen agrario); R (Rectificativa); C (Criterio de caja)";
+	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "IRPFReportStream");
 	private static final String HEADER = AonStringUtils.rightPad("TIPO",5)
-			+ AonStringUtils.rightPad("TRAN",5)
-			+ "S I A R C "
+			+ AonStringUtils.rightPad("TIPO RET.",15)
 			+ AonStringUtils.rightPad("EPIGR.",8)
 			+ AonStringUtils.rightPad("N\u00BA DOCUMENTO",15)
 			+ AonStringUtils.rightPad("TITULAR FACTURA",31)
@@ -38,8 +35,6 @@ public class VatReportPanel extends ScrollPanel{
 			+ AonStringUtils.leftPad("BASE IMP.",15)		
 			+ AonStringUtils.leftPad("% IVA",8)
 			+ AonStringUtils.leftPad("CUOTA",15)
-			+ AonStringUtils.leftPad("% RE",8)
-			+ AonStringUtils.leftPad("CUOTA RE",15)
 			+ AonStringUtils.leftPad("% DED.",8)
 			+ AonStringUtils.leftPad("CUOTA DED.",15)
 			+ AonStringUtils.SPACE
@@ -47,7 +42,7 @@ public class VatReportPanel extends ScrollPanel{
 			+ AonStringUtils.repeat(" ", 2)
 			;
 
-	public VatReportPanel(String domainName, int domain, VatParams params, String title , String subtitle) {
+	public IRPFReportPanel(String domainName,String user, int domain, IRPFParams params, String title , String subtitle) {
 		setStyleName(AON.AON_CSS.aonScrollArea());
 		FlowPanel html = new FlowPanel( PreElement.TAG );
 		html.setStyleName(AON.AON_CSS.aonFixedFont());
@@ -70,7 +65,6 @@ public class VatReportPanel extends ScrollPanel{
 			private int loaded = 0;
 			private double sumBase = 0.0;
 			private double sumQuota = 0.0;
-			private double sumReQuota = 0.0;
 			private double sumDedQuota = 0.0;
 			
 			@Override
@@ -80,15 +74,14 @@ public class VatReportPanel extends ScrollPanel{
 				if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
 					String text = xhr.getResponseText();
 					try {
-						for (JsVatContext vat = read(text); text != null; vat = read(text)) {
+						for (JsIRPFBreakdown irpf = read(text); text != null; irpf = read(text)) {
 							if (html.getWidgetCount() == 0) {
 								addHeaderWidget(html, title, subtitle);		
 							}
-							html.add( getVatWidget(vat) );
-							sumBase = sumBase + vat.getBase();
-							sumQuota = sumQuota + vat.getQuota();
-							if (vat.isSurcharge()) sumReQuota = sumReQuota + vat.getSurchargeQuota();
-							if (!vat.isSales()) sumDedQuota = sumDedQuota + vat.getDeductibleQuota();
+							html.add( getIRPFWidget(irpf) );
+							sumBase = sumBase + irpf.getBase();
+							sumQuota = sumQuota + irpf.getQuota();
+							if (!irpf.isSales()) sumDedQuota = sumDedQuota + irpf.getDeductibleQuota();
 						}
 						
 					} catch (IndexOutOfBoundsException e) {
@@ -104,9 +97,7 @@ public class VatReportPanel extends ScrollPanel{
 							+ AonStringUtils.leftPad(" ",8)
 							+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(sumQuota),15)
 							+ AonStringUtils.leftPad(" ",8)
-							+ AonStringUtils.leftPad(AonMathUtils.isZero(sumReQuota)? " " : AON.CURRENCY_FORMAT.format(sumReQuota),15)
-							+ AonStringUtils.leftPad(" ",8)
-							+ AonStringUtils.leftPad(AonMathUtils.isZero(sumDedQuota)? " " : AON.CURRENCY_FORMAT.format(sumDedQuota),15)
+							+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(sumDedQuota),15)
 							+ AonStringUtils.repeat(" ", 28)
 							);
 						html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
@@ -116,7 +107,7 @@ public class VatReportPanel extends ScrollPanel{
 				}
 			}
 	
-			private JsVatContext read(String text) {
+			private JsIRPFBreakdown read(String text) {
 				for (int begin = loaded; begin < text.length(); begin++) {
 					if (text.charAt(begin) == '{') {
 						loaded = findEnd(text, begin + 1) + 1;
@@ -142,7 +133,7 @@ public class VatReportPanel extends ScrollPanel{
 		StringBuffer requestData = new StringBuffer();
 		requestData.append("&domainName=" + domainName  );
 		requestData.append("&domainId=" + domain );
-		requestData.append("&vatParams=" + JsonParams.convert( params ));
+		requestData.append("&irpfParams=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 
 		
@@ -159,7 +150,6 @@ public class VatReportPanel extends ScrollPanel{
 		if (AonStringUtils.isNotBlank(subtitle)) {
 			html.add(bold(new Label(AonStringUtils.center(subtitle, HEADER.length()))));
 		}
-		html.add(bold(new Label(AonStringUtils.rightPad("     " + LEGEND, HEADER.length()))));
 		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
 		html.add(bold(new Label(HEADER)));
 		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
@@ -172,47 +162,35 @@ public class VatReportPanel extends ScrollPanel{
 		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
 	}
 
-	private Widget getVatWidget(JsVatContext vat) {
-		InvoiceType invoiceType = InvoiceType.safeValueOf(vat.getInvoiceType());
-		InvoiceTransactionType transaction = InvoiceTransactionType.safeValueOf(vat.getTransaction());
-		String issueDate = AON.DATE_FORMAT.format(vat.getIssueDate());
-		String taxDate = AON.DATE_FORMAT.format(vat.getTaxDate());
+	private Widget getIRPFWidget(JsIRPFBreakdown irpf) {
+		InvoiceType invoiceType = InvoiceType.safeValueOf(irpf.getInvoiceType());
+		WithholdingType type = WithholdingType.safeValueOf(irpf.getWithholdingType());
+		String issueDate = AON.DATE_FORMAT.format(irpf.getIssueDate());
+		String taxDate = AON.DATE_FORMAT.format(irpf.getTaxDate());
 		HTML line = new HTML();
 		line.setStyleName(AON.AON_CSS.aonReportRow());
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.substring((invoiceType==null?null:invoiceType.getDescription()),0,4) ,5));
-		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.substring((transaction==null?null:transaction.getDescription()),0,4) ,5));
-		builder.appendEscaped( vat.isService()?"S":AonStringUtils.SPACE); 
-		builder.appendEscaped( AonStringUtils.SPACE);
-		builder.appendEscaped( vat.isInvestment()?"I":AonStringUtils.SPACE);
-		builder.appendEscaped( AonStringUtils.SPACE);
-		builder.appendEscaped( vat.isFarmerRegime()?"A":AonStringUtils.SPACE);
-		builder.appendEscaped( AonStringUtils.SPACE);
-		builder.appendEscaped( vat.isRectification()?"R":AonStringUtils.SPACE);
-		builder.appendEscaped( AonStringUtils.SPACE);
-		builder.appendEscaped( vat.isVatAccrualRegime()?"C":AonStringUtils.SPACE);
-		builder.appendEscaped( AonStringUtils.SPACE);
-		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getEpigraph(), AonStringUtils.SPACE),8));
-		builder.appendEscaped( AonStringUtils.rightPad(vat.getDocumentNumber(),15));
+		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.substring((type==null?null:type.getDescription()),0,14) ,15));
+		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(irpf.getEpigraph(), AonStringUtils.SPACE),8));
+		builder.appendEscaped( AonStringUtils.rightPad(irpf.getDocumentNumber(),15));
 		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate( 
-				  AonStringUtils.defaultIfBlank(vat.getRegistryDocument(), AonStringUtils.EMPTY) 
-				+ (AonStringUtils.isBlank(vat.getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
-				+ AonStringUtils.defaultIfBlank(vat.getRegistryName(), AonStringUtils.EMPTY)  
+				  AonStringUtils.defaultIfBlank(irpf.getRegistryDocument(), AonStringUtils.EMPTY) 
+				+ (AonStringUtils.isBlank(irpf.getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
+				+ AonStringUtils.defaultIfBlank(irpf.getName(), AonStringUtils.EMPTY)  
 				,29 ),30));
 		builder.appendEscaped( AonStringUtils.SPACE);
 		if (!AonStringUtils.equals( issueDate, taxDate)) builder.appendHtmlConstant("<span style=\"color: orange;\">");
 		builder.appendEscaped( AonStringUtils.rightPad(issueDate,11) );
 		if (!AonStringUtils.equals( issueDate, taxDate)) builder.appendHtmlConstant("</span>"); 
 		builder.appendEscaped( AonStringUtils.rightPad(taxDate,11) );
-		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(vat.getBase()),15));		
-		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(vat.getPercentage() ) + AonStringUtils.PERCENT,8)); 
-		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(vat.getQuota()),15));
-		builder.appendEscaped( AonStringUtils.leftPad(vat.isSurcharge()?AON.CURRENCY_FORMAT.format(vat.getSurchargePercent()) + AonStringUtils.PERCENT:AonStringUtils.SPACE,8));
-		builder.appendEscaped( AonStringUtils.leftPad(vat.isSurcharge()?AON.CURRENCY_FORMAT.format(vat.getSurchargeQuota()):AonStringUtils.SPACE,15));
-		builder.appendEscaped( AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:AON.CURRENCY_FORMAT.format(vat.getDeductiblePercent()) + AonStringUtils.PERCENT,8));
-		builder.appendEscaped( AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:AON.CURRENCY_FORMAT.format(vat.getDeductibleQuota()),15));
+		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(irpf.getBase()),15));		
+		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(irpf.getPercent() ) + AonStringUtils.PERCENT,8)); 
+		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(irpf.getQuota()),15));
+		builder.appendEscaped( AonStringUtils.leftPad(irpf.isSales()?AonStringUtils.SPACE:AON.CURRENCY_FORMAT.format(irpf.getDeductiblePercent()) + AonStringUtils.PERCENT,8));
+		builder.appendEscaped( AonStringUtils.leftPad(irpf.isSales()?AonStringUtils.SPACE:AON.CURRENCY_FORMAT.format(irpf.getDeductibleQuota()),15));
 		builder.appendEscaped( AonStringUtils.SPACE);
-		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getReferenceCode(),25),25)); 
+		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.abbreviate(irpf.getReferenceCode(),25),25)); 
 		builder.appendEscaped( AonStringUtils.repeat(" ", 2));
 		line.setHTML(builder.toSafeHtml());
 		return line;

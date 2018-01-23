@@ -8,6 +8,8 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
@@ -49,6 +51,9 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
 public interface IFiscal {
+	// 			        IRPF
+	public Stream<IrpfBreakdown> getIrpfBreakdownSummary(AONContext ctx, IRPFParams params);
+	public Stream<IrpfBreakdown> getIrpfBreakdown(AONContext ctx, IRPFParams params);
 	// 			        VAT
 	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, VatParams params);
 	public Stream<VatContext> getVatContext(AONContext ctx, VatParams params);

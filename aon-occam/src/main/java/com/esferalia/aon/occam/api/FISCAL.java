@@ -7,6 +7,8 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
@@ -2506,18 +2508,6 @@ public class FISCAL {
 					ctx.close();
 			}
 		}
-
-//		public static Mod347Detail getMod347Detail(String domainName, int domainId,
-//				String user, Integer id) {
-//			AONContext ctx = null;
-//			try {
-//				ctx = AONContext.getAONContext(domainName, domainId, user);
-//				return getFiscal().getMod347Detail(ctx, id);
-//			} finally {
-//				if (ctx != null)
-//					ctx.close();
-//			}
-//		}
 		
 		public static Mod347 saveComments(String domainName, String user, Mod347 mod347) {
 			AONContext ctx = null;
@@ -2552,4 +2542,25 @@ public class FISCAL {
 			}
 		}
 
+		public static Stream<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain,IRPFParams params) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domain, user);
+				return getFiscal().getIrpfBreakdownSummary(ctx, params);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+		public static Stream<IrpfBreakdown> getIrpfBreakdown(String domainName, String user, int domain,IRPFParams params) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domain, user);
+				return getFiscal().getIrpfBreakdown(ctx, params);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
 }

@@ -22,6 +22,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
@@ -324,6 +326,22 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<FinanceEntry>(asyncCallback));
 	}
 
+	// --------------------------------------------------------------- IRPF
+	@Override
+	public void getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params,
+			AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
+		AON.start();
+		fsa.getIrpfBreakdownSummary(domainName, user, domain, params,
+				new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
+	}
+
+	@Override
+	public void getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params,
+			AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
+		AON.start();
+		fsa.getIrpfBreakdown(domainName, user, domain, params,
+				new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
+	}
 
 
 

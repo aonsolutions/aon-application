@@ -10,6 +10,8 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
@@ -51,6 +53,7 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod123DAO;
@@ -1177,7 +1180,7 @@ public class FiscalImpl implements IFiscal {
 		return Mod2002016DAO.importMod2002015(ctx,mod200);
 	}
 	
-	
+	// ---------------------------------------------------- [VAT]
 	@Override
 	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, VatParams params) {
 		return VATDAO.getVatSummary(ctx, params.getFromDate()
@@ -1272,11 +1275,6 @@ public class FiscalImpl implements IFiscal {
 					configuration -> Mod347DAO.delete(ctx, mod347));
 		}
 
-//		@Override
-//		public Mod347Detail getMod347Detail(AONContext ctx, Integer id) {
-//			return Mod347DAO.getDetail(ctx, id);
-//		}
-		
 		@Override
 		public Mod347 saveCommentsMod347(AONContext ctx, Mod347 mod347) {
 			return ctx.getDslContext().transactionResult(
@@ -1292,4 +1290,21 @@ public class FiscalImpl implements IFiscal {
 			return Mod347DAO.getMod347Info(ctx, mod347, declared, infoKey);
 		}
 
+		// ---------------------------------------------------- [IRPF]
+		@Override
+		public Stream<IrpfBreakdown> getIrpfBreakdownSummary(AONContext ctx, IRPFParams params) {
+			return IRPFDAO.getIRPFSummary(ctx 
+					,params.getFromDate()
+					,params.getToDate()
+					,p -> FinanceUtils.getIRPFFilter(p, params))
+					.stream();
+		}
+		
+		@Override
+		public Stream<IrpfBreakdown> getIrpfBreakdown(AONContext ctx, IRPFParams params) {
+			return IRPFDAO.getIRPFBreakdown(ctx 
+					,params.getFromDate()
+					,params.getToDate()
+					,p -> FinanceUtils.getIRPFFilter(p, params));
+		}
 }

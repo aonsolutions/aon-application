@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
@@ -53,6 +55,15 @@ public interface FiscalService extends RemoteService {
 	Memory saveMemory(Memory memory) throws AonCoreException;
 	void deleteMemory(Memory memory) throws AonCoreException;
 	
+	// --------------------------------------------------------------- VAT
+	LinkedList<VatSummaryContext> getVatSummaryContext(String domainName, int domain,VatParams params) throws AonCoreException;
+	LinkedList<VatContext> getVatContext(String domainName, int domain,VatParams params) throws AonCoreException;
+	String getVatContextReport(String domainName, int domain,VatParams params) throws AonCoreException;
+
+	// --------------------------------------------------------------- IRPF
+	LinkedList<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params) throws AonCoreException;
+	LinkedList<IrpfBreakdown> getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params) throws AonCoreException;
+
 	// -------------------------------- ------------------------------- ACCOUNT PERIOD
 	LinkedList<AccountPeriod> getDomainPeriods(String domainName,int domain) throws AonCoreException;
 
@@ -74,12 +85,6 @@ public interface FiscalService extends RemoteService {
 		InvoiceRectificationData data) throws AonCoreException;
 	LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, Date from, Date to) throws AonCoreException;
 	String getSalaryFormatted(String domainName, int domain, Date from, Date to) throws AonCoreException;
-	
-	// --------------------------------------------------------------- VAT
-	LinkedList<VatSummaryContext> getVatSummaryContext(String domainName, int domain,VatParams params) throws AonCoreException;
-	LinkedList<VatContext> getVatContext(String domainName, int domain,VatParams params) throws AonCoreException;
-	String getVatContextReport(String domainName, int domain,VatParams params) throws AonCoreException;
-	
 	
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	AccountStatementReport getAccountStatement(String domainName,int domain, AccountStatementParams params) throws AonCoreException;	

@@ -23,9 +23,9 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.finance.Filters.VATFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
-import com.esferalia.aon.occam.api.model.finance.VATFilter;
-import com.esferalia.aon.occam.api.model.finance.VATProperties;
+import com.esferalia.aon.occam.api.model.finance.Properties.VATProperties;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;

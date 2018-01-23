@@ -1,11 +1,15 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
+import java.util.stream.Stream;
+
+import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -62,12 +66,12 @@ public class IRPFFormatter {
 		HashSet<String> docs = new HashSet<String>();
 		for (IrpfBreakdown br : list) {
 			String cont = " ";
-			cont=docs.add(br.getDocument())?"1":" ";
+			cont=docs.add(br.getRegistryDocument())?"1":" ";
 			sumBase += br.getBase();
 			sumQuota += br.getQuota();
 			buf.append(MessageFormat.format(DIV_MSG
 					 ,AonStringUtils.repeat(" ", 2)
-					+ AonStringUtils.rightPad(br.getDocument(),12)
+					+ AonStringUtils.rightPad(br.getRegistryDocument(),12)
 					+ AonStringUtils.rightPad(br.getName(),50)
 					+ AonStringUtils.rightPad(FMT.format(br.getIssueDate()),12)
 					+ AonStringUtils.leftPad( cont ,10)
@@ -120,11 +124,11 @@ public class IRPFFormatter {
 		double sumQuota = 0;
 		HashSet<String> docs = new HashSet<String>();
 		for (IrpfBreakdown br : list) {
-			docs.add(br.getDocument());
+			docs.add(br.getRegistryDocument());
 			buf.append(MessageFormat.format(DIV_MSG
 					 ,AonStringUtils.repeat(" ", 2)
 					+ AonStringUtils.rightPad(br.getDocumentNumber(),14)
-					+ AonStringUtils.rightPad(br.getDocument(),10)
+					+ AonStringUtils.rightPad(br.getRegistryDocument(),10)
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(br.getName(),29),30)
 					+ (AonDateUtils.isSameDay(br.getIssueDate(), br.getTaxDate())
 							?AonStringUtils.rightPad(FMT.format(br.getIssueDate()),12)
@@ -182,11 +186,11 @@ public class IRPFFormatter {
 		double sumPeriodQuota = 0;
 
 		for (IrpfBreakdown br : list) {
-			acumDocs.add(br.getDocument());
+			acumDocs.add(br.getRegistryDocument());
 			if (br.isInsidePeriod()) {
-				periodDocs.add(br.getDocument());
+				periodDocs.add(br.getRegistryDocument());
 			} else {
-				beforePeriodDocs.add(br.getDocument());
+				beforePeriodDocs.add(br.getRegistryDocument());
 			}
 			sumBase += br.getBase(); 
 			sumQuota += br.getQuota();
@@ -354,4 +358,50 @@ public class IRPFFormatter {
 		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 	}
 	
+	public static void formatInvoices(final PrintWriter out, Stream<IrpfBreakdown> stream, String title, String subtitle) {
+		out.print('[');
+		stream.forEach( vat -> writeToJSON(out,vat) );
+		out.print(']');
+		out.flush();
+	}
+	
+	private static void writeToJSON(final PrintWriter out,IrpfBreakdown irpf) {
+		out.print('{');
+		out.printf("\"invoice\":\"%d\"", irpf.getInvoice());
+		if (irpf.getActivity() != null) out.printf(",\"activity\":\"%d\"", irpf.getActivity());
+		if (AonStringUtils.isNotBlank( irpf.getActivityDescription())) out.printf(",\"activityDescription\":\"%s\"", irpf.getActivityDescription());
+		if (irpf.getIRPFRegime()!=null) out.printf(",\"regime\":\"%d\"",irpf.getIRPFRegime().ordinal());
+		if (AonStringUtils.isNotBlank( irpf.getEpigraph())) out.printf(",\"epigraph\":\"%s\"", irpf.getEpigraph());
+		out.printf(",\"documentNumber\":\"%s\"", irpf.getDocumentNumber());
+		out.printf(",\"referenceCode\":\"%s\"", irpf.getReferenceCode());
+		if (AonStringUtils.isNotBlank( irpf.getRegistryDocument())) out.printf(",\"registryDocument\":\"%s\"", irpf.getRegistryDocument());
+		if (irpf.getRegistryDocumentType()!=null) out.printf(",\"registryDocumentType\":\"%d\"", irpf.getRegistryDocumentType().ordinal());
+		if (irpf.getRegistryDocumentCountry()!=null) out.printf(",\"registryDocumentCountry\":\"%s\"", irpf.getRegistryDocumentCountry().getIso2());
+//		if (irpf.getRegistry() != null) out.printf(",\"registry\":\"%d\"", irpf.getRegistry());
+		out.printf("," + JSONObject.toString("name", irpf.getName()) );
+		out.printf(",\"issueDate\":\"%1$tY-%1$tm-%1$td\"", irpf.getIssueDate());
+		out.printf(",\"taxDate\":\"%1$tY-%1$tm-%1$td\"", irpf.getTaxDate());
+		out.printf(",\"insidePeriod\":%b", irpf.isInsidePeriod());
+		if (irpf.getInvoiceType()!=null) out.printf(",\"invoiceType\":\"%d\"", irpf.getInvoiceType().ordinal());
+//		if (irpf.getRectificationType()!=null) out.printf(",\"rectificationType\":\"%d\"", irpf.getRectificationType().ordinal());
+//		if (irpf.getRectificationInvoice() != null) out.printf(",\"rectificationInvoice\":\"%d\"", irpf.getRectificationInvoice());
+//		if (irpf.isService()) out.print(",\"service\":\"true\"");
+		if (irpf.getWithholdingType()!=null) out.printf(",\"withholdingType\":\"%d\"", irpf.getWithholdingType().ordinal());
+//		if (irpf.isInvestment() ) out.printf(",\"investment\":\"true\"");
+//		if (irpf.isVatAccrualRegime()) out.printf(",\"vatAccrualRegime\":\"true");
+//		if (irpf.getVatDeductionType()!=null) out.printf(",\"vatDeductionType\":\"%d\"", irpf.getVatDeductionType().ordinal());
+//		if (irpf.isFarmerRegime()) out.printf(",\"farmerRegime\":\"true\"");
+		out.printf(",\"base\":%s", Double.toString( irpf.getBase()));
+		out.printf(",\"percent\":%s", Double.toString( irpf.getPercent()));
+		out.printf(",\"quota\":%s", Double.toString( irpf.getQuota()));
+//		if (irpf.getInvestAsset() != null) out.printf(",\"investAsset\":\"%d\"", irpf.getInvestAsset());
+		out.printf(",\"deductiblePercent\":%s", Double.toString( irpf.getDeductiblePercent()));
+		out.printf(",\"deductibleQuota\":%s", Double.toString( irpf.getDeductibleQuota()));
+//		if (irpf.isSurcharge()) out.printf(",\"surcharge\":\"true\"");
+//		if (irpf.isSurcharge()) out.printf(",\"surchargePercent\":%s", Double.toString( irpf.getSurchargePercent()));
+//		if (irpf.isSurcharge()) out.printf(",\"surchargeQuota\":%s", Double.toString( irpf.getSurchargeQuota()));
+		out.print('}');
+		out.print(',');
+		out.flush();
+	}
 }

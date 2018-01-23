@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.SalaryEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.invoice.IRPFReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
@@ -57,7 +58,9 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
 	private static final String FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT = "InvoiceSeriesBreakdown";
+	
 	private static final String FS_VAT_REPORT_ENTRY_POINT = "VATReport";
+	private static final String FS_IRPF_REPORT_ENTRY_POINT = "IRPFReport";
 	
 	//
 	//    ================================================================== ACCOUNTING
@@ -353,6 +356,21 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_IRPF_REPORT_ENTRY_POINT)) {
+			GWT.runAsync(IRPFReport.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					IRPFReport irpfReport = new IRPFReport(getCurrentDomainName(),getCurrentDomain(),getCurrentUser());
+					irpfReport.onModuleLoad();
+				}
+				
+			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT)) {
 			GWT.runAsync(InvoiceSeriesBreakdown.class, new RunAsyncCallback() {
 
@@ -401,6 +419,20 @@ public class MainEntryPoint implements EntryPoint {
 		}
 
 	}
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
+	
+	public static native String getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
+	}-*/;
 
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
@@ -412,8 +444,7 @@ public class MainEntryPoint implements EntryPoint {
 	 * @return the value of the parameter, or <code>null</code> if it was not
 	 *         found.
 	 */
-	public static native String getParameter(String moduleName,
-			String parameterName) /*-{
+	public static native String getParameter(String moduleName, String parameterName) /*-{
 		var search = "/" + moduleName + ".nocache.js";
 		var scripts = $doc.getElementsByTagName("script");
 		for ( var i = 0; i < scripts.length; ++i) {

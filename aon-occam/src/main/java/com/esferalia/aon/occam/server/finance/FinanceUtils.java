@@ -3,7 +3,9 @@ package com.esferalia.aon.occam.server.finance;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.FinanceProperties;
-import com.esferalia.aon.occam.api.model.finance.VATProperties;
+import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
+import com.esferalia.aon.occam.api.model.finance.Properties.VATProperties;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
@@ -144,4 +146,54 @@ public class FinanceUtils {
 		return prop;
 	}
 
+	public static Filter getIRPFFilter(IRPFProperties p, IRPFParams params) {
+		Filter prop = p.getDomainProperty().eq(params.getDomain());
+		if(params.getInvoices() != null){
+			prop = prop.and(p.getInvoiceIdProperty().in(params.getInvoices()));
+		}
+		if (params.getRegistry()  != null && params.getRegistry().intValue() != 0 ) {
+			prop = prop.and(p.getRegistryProperty().eq(params.getRegistry()));
+		}
+		if (params.getActivity()  != null && params.getActivity().intValue() != 0 ) {
+			if (params.getActivity() < 0 ) {
+				prop = prop.and(p.getActivityProperty().isNull());
+			} else {
+				prop = prop.and(p.getActivityProperty().eq(params.getActivity()));
+			}
+		}
+		if (params.getAccrualRegime() != null) {
+			prop = prop.and(p.getAccrualRegimeProperty().eq( AonEnumUtils.getByte(params.getAccrualRegime())));
+		}
+		if (params.getInvestment() != null) {
+			prop = prop.and(p.getInvestmentProperty().eq( AonEnumUtils.getByte(params.getInvestment())));
+		}
+		if (params.getWithholdingType() != null) {
+			prop = prop.and(p.getWithholdingTypeProperty().eq( AonEnumUtils.getByte(params.getWithholdingType())));
+		}
+		if (params.getRectificationType() != null) {
+			prop = prop.and(p.getRectifiedProperty().eq( AonEnumUtils.getByte(params.getRectificationType())));
+		}
+		if (params.getService() != null) {
+			if ( params.getService() ) {
+				prop = prop.and(
+					p.getServiceProperty().eq((byte)1).or( p.getInvoiceTypeProperty().eq( InvoiceType.EXPENSES.value())) 
+						);
+			} else {
+				prop = prop.and(
+					p.getServiceProperty().ne((byte)1).and(p.getInvoiceTypeProperty().ne( InvoiceType.EXPENSES.value()))
+						);
+			}
+		}
+		if (params.getPercent() != null) {
+			prop = prop.and(p.getPercentProperty().eq( params.getPercent()));
+		}
+		if (params.getOutput() != null) {
+			if (params.getOutput()) {
+				prop = prop.and(p.getInvoiceTypeProperty().eq( InvoiceType.SALES.value()));
+			} else {
+				prop = prop.and(p.getInvoiceTypeProperty().in( INPUT_TYPES ));
+			}
+		}
+		return prop;
+	}
 }

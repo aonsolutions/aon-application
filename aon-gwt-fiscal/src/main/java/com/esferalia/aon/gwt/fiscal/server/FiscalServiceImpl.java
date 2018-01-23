@@ -30,6 +30,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
@@ -46,10 +48,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.VATFormatter;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@SuppressWarnings("serial")
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
 public class FiscalServiceImpl extends AonRemoteServiceServlet implements FiscalService {
 
+	private static final long serialVersionUID = -3045020929753519103L;
+	
 	@Override
 	public Double mathExpression(String expression) throws AonCoreException {
 		try {
@@ -277,7 +280,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return ACCOUNTING.getFinanceEntry(domainName, domain, this.getUserLogin(), accountEntry);		
 	};
 	
-	// --------------------------------------------------------------- ACCOUNT ENTRIES
+	// --------------------------------------------------------------- VAT
 	@Override
 	public LinkedList<VatContext> getVatContext(String domainName, int domain, VatParams params)
 			throws AonCoreException {
@@ -300,4 +303,17 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	// --------------------------------------------------------------- IRPF
+	@Override
+	public LinkedList<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain,
+			IRPFParams params) throws AonCoreException {
+		return FISCAL.getIrpfBreakdownSummary(domainName, user, domain, params)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	@Override
+	public LinkedList<IrpfBreakdown> getIrpfBreakdown(String domainName, String user, int domain,
+			IRPFParams params) throws AonCoreException {
+		return FISCAL.getIrpfBreakdown(domainName, user, domain, params)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
 }

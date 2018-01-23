@@ -83,8 +83,8 @@ public class Mod115DAO extends FiscalModelDAO {
 		if (!docs.containsKey(key)) {
 			docs.put(key, new HashSet<String>());
 		}
-		if (!docs.get(key).contains(br.getDocument())) {
-			docs.get(key).add(br.getDocument());
+		if (!docs.get(key).contains(br.getRegistryDocument())) {
+			docs.get(key).add(br.getRegistryDocument());
 			mod.ensureDetail(key).addAccumulatedAmount(1);
 		}
 		// Se suman los perceptores del periodo que se esta haciendo.
@@ -92,8 +92,8 @@ public class Mod115DAO extends FiscalModelDAO {
 			if (!pdocs.containsKey(key)) {
 				pdocs.put(key, new HashSet<String>());
 			}
-			if (!pdocs.get(key).contains(br.getDocument())) {
-				pdocs.get(key).add(br.getDocument());
+			if (!pdocs.get(key).contains(br.getRegistryDocument())) {
+				pdocs.get(key).add(br.getRegistryDocument());
 				mod.ensureDetail(key).addAmount(1);
 			}
 		}
@@ -396,7 +396,7 @@ public class Mod115DAO extends FiscalModelDAO {
 	private static void createFromInvoices(final AONContext ctx, final Mod115 mod115) {
 		final Map<Mod115Key,Set<String>> docs = new HashMap<Mod115Key,Set<String>>(); 
 		final Map<Mod115Key,Set<String>> pdocs = new HashMap<Mod115Key,Set<String>>(); 
-		IRPFDAO.getInvoiceDiffIrpfBreakdown(ctx, mod115)
+		IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod115)
 			.forEach(br -> {
 				for (Mod115KeyDAO key : Mod115KeyDAO.values()) {
 					if (key.acceptValue(mod115,br)) {
@@ -411,15 +411,6 @@ public class Mod115DAO extends FiscalModelDAO {
 					mod115.ensureDetail(keyString).addDeclaredAmount(amount);
 				}
 			});
-
-//		IRPFDAO.getInvoiceIrpfBreakdown(ctx, mod115)
-//				.forEach(br -> {
-//						for (Mod115KeyDAO key : Mod115KeyDAO.values()) {
-//							if (key.acceptValue(mod115,br)) {
-//								key.initialize(ctx, mod115, docs, br);
-//							};
-//						}
-//				});
 	}
 	
 	private static String getInvoicesInfo(AONContext ctx, final Mod115 mod115
@@ -430,7 +421,7 @@ public class Mod115DAO extends FiscalModelDAO {
 				+ " DEL " + mod115.getPeriod().getDescription()
 				+ " DE " + mod115.getYear();
 		return IRPFFormatter.formatInvoices(title,script.getLabel()
-			,IRPFDAO.getInvoiceIrpfBreakdown(ctx, mod115)
+			,IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod115)
 					.filter( br ->  keyDAO.acceptValue(mod115, br) )	
 					.collect(Collectors.toCollection(LinkedList::new))
 		);
@@ -445,9 +436,8 @@ public class Mod115DAO extends FiscalModelDAO {
 			,script.getLabel()
 			,script.getKeys()
 			,getEffectivePreviousModels(ctx,mod115)
-			//,getPreviousModels(ctx,mod115)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
-			,IRPFDAO.getInvoiceDiffIrpfBreakdown(ctx, mod115)
+			,IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod115)
 				.filter( br ->  keyDAO.acceptValue(mod115, br) )	
 				.collect(Collectors.toCollection(LinkedList::new))
 		);

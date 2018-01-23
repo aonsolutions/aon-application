@@ -1500,7 +1500,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		)
 		,C08 ( Mod131Key.C08.getValue() ,(mod -> mod.isAEAT()),null,null
 			,(ctx,mod) -> mod.putAmount(Mod131Key.C08, 
-					IRPFDAO.getSalesInvoiceIrpfBreakdown(ctx, mod)
+					IRPFDAO.getOutputInvoicesIrpfBreakdown(ctx, mod)
 						.mapToDouble(br -> br.getQuota())
 						.sum())
 			,null,null)
@@ -1957,7 +1957,7 @@ public class Mod131DAO extends FiscalModelDAO {
 				+ " DEL " + mod131.getPeriod().getDescription()
 				+ " DE " + mod131.getYear();
 		return IRPFFormatter.formatInvoices(title,script.getLabel()
-			,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod131)
+			,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod131)
 					.collect(Collectors.toCollection(LinkedList::new))
 		);
 	}
@@ -1973,7 +1973,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			,script.getKeys()
 			, getPreviousModels(ctx,mod131)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
-			,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod131)
+			,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod131)
 				.collect(Collectors.toCollection(LinkedList::new))
 		);
 	}
