@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-08T10:49:31 -->
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="delivery" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="9da43be8-210d-4796-a6a1-120b8f919192">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -968,7 +967,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 							<jr:detailCell height="18" rowSpan="1">
 								<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
 									<reportElement key="textField-6" x="0" y="0" width="80" height="12" uuid="d57f9082-e854-4c1e-9194-aaae6fe0ab22">
-										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0
+										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0
     || $F{price}.doubleValue()>0.0)
     && !$V{itemFormat}.getPackFormatTag().getName().equals(
         $V{itemFormat}.getPackUnitsTag().getName()))]]></printWhenExpression>
@@ -1012,7 +1011,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 							<jr:detailCell height="18" rowSpan="1">
 								<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
 									<reportElement key="textField-6" x="0" y="0" width="80" height="12" uuid="beb6e8b5-7d19-4bb8-ab45-82044cd19c11">
-										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
+										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
 									</reportElement>
 									<box rightPadding="2">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1051,7 +1050,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 							<jr:detailCell height="18" rowSpan="1">
 								<textField isStretchWithOverflow="true" pattern="#,##0.000#" isBlankWhenNull="true">
 									<reportElement key="textField-7" x="0" y="0" width="35" height="12" uuid="962ba7f2-ef00-4f74-8b13-920a97d0b7c9">
-										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0) && $P{valuated}.booleanValue())]]></printWhenExpression>
+										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0 || $F{price}.doubleValue()>0.0) && $P{valuated}.booleanValue())]]></printWhenExpression>
 									</reportElement>
 									<box rightPadding="2">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1088,7 +1087,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 							<jr:detailCell height="18" rowSpan="1">
 								<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
 									<reportElement key="textField-6" x="0" y="0" width="70" height="12" uuid="bd19cfc1-0e8a-4a66-9021-152df345e82e">
-										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
+										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
 									</reportElement>
 									<box rightPadding="2">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1126,7 +1125,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 							<jr:detailCell height="18" rowSpan="1">
 								<textField isStretchWithOverflow="true" pattern="#,##0.000#" isBlankWhenNull="true">
 									<reportElement key="textField-7" x="0" y="0" width="35" height="12" uuid="bc86e7ca-b5af-4b15-8cde-975b5b35fa12">
-										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0) && $P{valuated}.booleanValue())]]></printWhenExpression>
+										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0 || $F{price}.doubleValue()>0.0) && $P{valuated}.booleanValue())]]></printWhenExpression>
 									</reportElement>
 									<box rightPadding="2">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1166,7 +1165,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 								</box>
 								<textField pattern="#,##0.00##" isBlankWhenNull="true">
 									<reportElement key="textField-13" x="0" y="0" width="51" height="12" uuid="f869f0a6-8f5c-4bdf-9bf0-7f56f240d881">
-										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0) && $P{valuated}.booleanValue())]]></printWhenExpression>
+										<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0 || $F{price}.doubleValue()>0.0) && $P{valuated}.booleanValue())]]></printWhenExpression>
 									</reportElement>
 									<box rightPadding="2">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
