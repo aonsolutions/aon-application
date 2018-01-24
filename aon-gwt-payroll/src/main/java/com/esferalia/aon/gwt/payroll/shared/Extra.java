@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasId;
 
+@SuppressWarnings("serial")
 public class Extra implements Serializable, HasId<Integer>, HasDomain<Integer> {
 
 	private Integer id;
@@ -19,6 +20,12 @@ public class Extra implements Serializable, HasId<Integer>, HasDomain<Integer> {
 	
 	private String paymentDescription;
 	private String agreementDescription;
+	
+	private Payment payment;
+	
+	public Extra(){
+		super();
+	}
 
 	public Integer getId() {
 		return id;
@@ -83,6 +90,28 @@ public class Extra implements Serializable, HasId<Integer>, HasDomain<Integer> {
 	
 	public void setAgreementDescription(String agreementDescription) {
 		this.agreementDescription = agreementDescription;
+	}
+	
+	public Payment getPayment() {
+		return this.payment;
+	}
+	
+	public void setPayment(Payment payment) {
+		this.payment = payment;	
+	}
+	
+	public void setPayment(Integer id, String expression, String description, java.sql.Date startDate, 
+			Byte descriptionDecorable, String irpfExpression, String quoteExpression) {
+		this.payment = new Payment();
+		this.payment.setId(id);
+		this.payment.setExpression(expression);
+		this.payment.setDescription(description);
+		//this.payment.setType(getType(type, Payment.Type.class));
+		this.payment.setStartDate(startDate);
+		this.payment.setDescriptionTemplate(descriptionDecorable.toString());
+		this.payment.setIrpfExpression(irpfExpression);
+		this.payment.setQuoteExpression(quoteExpression);
+		
 	}
 	
 	@Override

@@ -25,16 +25,32 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.HttpException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.PaymentConcept;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONNull;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class AgreementDraftObject {
 
@@ -406,7 +422,7 @@ public class AgreementDraftObject {
 	public Variable getVariable(Level level, String var) {
 		return agreementDraft.getSalaryTable().get(level.getId(), var);
 	}
-
+	
 	public Set<String> getCategories(Level level) {
 		return agreementDraft.getCategoriesMap().get(level.getId());
 	}
@@ -1005,6 +1021,354 @@ public class AgreementDraftObject {
 
 	public void clearDeleteDatesWithChanges() {
 		this.deleteDatesChanges.clear();
+		
+	}
+	
+	public String generateJSONUpdate(){
+		//¿POR QUÉ SOLO ME TRAE LOS PAYMENTS DEL TRAMO EN EL QUE ESTOY? EL CALCULATE CAMBIA EL DRAFT ACORDE AL STARTDATE Y ENDDATE
+		JSONObject json = new JSONObject();
+		
+		json.put("id", createJSONValue(getId()));
+		json.put("domain", createJSONValue(getDraftDomain()));
+		json.put("calendar", createJSONValue(null));
+		json.put("description", createJSONValue(getDescription()));
+		
+		
+		// ----------------------------------------------------- payments --------------------------------------------------------
+		JSONArray paymentsArray = new JSONArray();
+		int indexPayments = 0;
+		
+		//ARRAY CON LOS IDS DE LOS PAYMENTS QUE PERTENECEN A EXTRA Y DEBERIAN SALTARSE EN LOS PAYMENTS NORMALES
+		//ACTUALMENTE NO SE UTILIZA POR QUE EL METODO getPayments() DEVUELVE TODOS MENOS LOS RELACIONADOS CON EXTRAS
+		ArrayList<Integer> paymentsExtra = new ArrayList<>();
+		Set<Extra> extrasToExclude = getExtras();
+		for(Extra extra : extrasToExclude){
+			paymentsExtra.add(extra.getPaymentId());
+		}
+
+		Set<Payment> payments = getPayments();
+		for(Payment payment : payments){
+			Payment paymentFinally = getPaymentFinally(payment);
+			
+			if(paymentsExtra.contains(paymentFinally.getId()))
+				continue;
+			
+			if(paymentFinally != null){
+				JSONObject paymentObj = new JSONObject();
+				paymentObj.put("id", createJSONValue(paymentFinally.getId()));
+				paymentObj.put("code", createJSONValue(paymentFinally.getName()));
+//				if(paymentFinally.getExpression()!= null)
+				paymentObj.put("expression", createJSONValue(paymentFinally.getExpression()));
+				paymentObj.put("description", createJSONValue(paymentFinally.getDescription()));
+				paymentObj.put("type", createJSONValue(paymentFinally.getType().getDescription()));
+				paymentObj.put("startDate", createJSONValue(paymentFinally.getStartDate()));
+				paymentObj.put("descriptionDecorable", createJSONValue(0));
+				paymentObj.put("irpfExpression", createJSONValue(paymentFinally.getIrpfExpression()));
+//				if(paymentFinally.getQuoteExpression() != null)
+				paymentObj.put("quoteExpression", createJSONValue(paymentFinally.getQuoteExpression()));
+			
+				PaymentConcept paymentPaymentConcept = paymentFinally.getConcept();
+				
+				if(paymentPaymentConcept != null){
+					JSONObject paymentPaymentConceptObj = new JSONObject();
+					paymentPaymentConceptObj.put("id", createJSONValue(paymentFinally.getConceptId()));
+					paymentPaymentConceptObj.put("domain", createJSONValue(paymentPaymentConcept.getDomain()));
+					paymentPaymentConceptObj.put("code", createJSONValue(paymentPaymentConcept.getCode()));
+					paymentPaymentConceptObj.put("description", createJSONValue(paymentPaymentConcept.getDescription()));
+					paymentPaymentConceptObj.put("type", createJSONValue(paymentPaymentConcept.getType()));
+					paymentPaymentConceptObj.put("descriptionDecorable", createJSONValue(paymentPaymentConcept.getDescription_decorable()));
+//					if(paymentPaymentConcept.getExpression() != null)
+					paymentPaymentConceptObj.put("expression", createJSONValue(paymentPaymentConcept.getExpression()));
+					paymentPaymentConceptObj.put("irpfExpression", createJSONValue(paymentPaymentConcept.getIrpf_expression()));
+//					if(paymentPaymentConcept.getQuote_expression() != null)
+					paymentPaymentConceptObj.put("quoteExpression", createJSONValue(paymentPaymentConcept.getQuote_expression()));
+					
+					paymentObj.put("__payConcept", paymentPaymentConceptObj);
+				}
+				
+				paymentsArray.set(indexPayments, paymentObj);
+				indexPayments++;
+			}	
+		}
+		
+		json.put("payments", paymentsArray);
+		
+		
+		// ----------------------------------------------------- extras ----------------------------------------------------------
+		JSONArray extrasArray = new JSONArray();
+		int indexExtras = 0;
+		
+		Set<Extra> extras = getExtras();
+		for(Extra extra : extras){
+//			Window.alert("StartDate :"+extra.getStartDate()+", EndDate :"+extra.getEndDate()+
+//						 ", IssueDate :"+extra.getIssueDate()+", paymentId :"+extra.getPaymentId());
+			
+			JSONObject extraObj = new JSONObject();
+			extraObj.put("start_date", createJSONValue(extra.getStartDate()));
+			extraObj.put("end_date", createJSONValue(extra.getEndDate()));
+			extraObj.put("issue_date", createJSONValue(extra.getIssueDate()));
+			
+			Integer extraPaymentId = extra.getPaymentId();			
+			Payment payment = extra.getPayment();
+			
+//			Window.alert("Payment :"+payment);
+//			if(payment != null){
+//				Window.alert("Payment Extra -> id :"+extraPaymentId+", expression :"+payment.getExpression()+", description :"+
+//						 payment.getDescription()+", type :"+payment.getType().getDescription()+", startDate :"+
+//						 payment.getStartDate()+", irpfExpression :"+payment.getIrpfExpression()+", quoteExpression :"
+//						 +payment.getQuoteExpression());
+//			}
+			
+			if(payment != null){ //payment.getId() != 0
+				JSONObject extraAgreementPayment = new JSONObject();
+				extraAgreementPayment.put("id", createJSONValue(extraPaymentId));
+				extraAgreementPayment.put("expression", createJSONValue(payment.getExpression()));
+				extraAgreementPayment.put("description", createJSONValue(payment.getDescription()));
+				//FALTA TYPE
+				//extraAgreementPayment.put("type", new JSONString(payment.getType().getDescription()));
+//				if(payment.getStartDate() != null)
+				extraAgreementPayment.put("startDate", createJSONValue(payment.getStartDate()));
+				extraAgreementPayment.put("descriptionDecorable", createJSONValue(0));
+				extraAgreementPayment.put("irpfExpression", createJSONValue(payment.getIrpfExpression()));
+				extraAgreementPayment.put("quoteExpression",createJSONValue(payment.getQuoteExpression()));
+				
+				Integer extraPaymentConceptId = payment.getConceptId();
+				PaymentConcept extraPaymentConcept = payment.getConcept();
+				
+//				Window.alert("Payment Concept :"+extraPaymentConceptId);
+//				if(extraPaymentConcept != null){
+//					Window.alert("Payment Extra -> id :"+extraPaymentConceptId+", domain :"+extraPaymentConcept.getDomain()
+//						+", code :"+extraPaymentConcept.getCode()+", expression :"+extraPaymentConcept.getExpression()
+//						+", description :"+extraPaymentConcept.getDescription()+", type :"+payment.getType().getDescription()
+//						+", decriptionDecorable :"+extraPaymentConcept.getDescription_decorable()
+//						+", irpfExpression :"+payment.getIrpfExpression()+", quoteExpression :"+payment.getQuoteExpression());
+//				}
+				
+				if(extraPaymentConcept != null){//extraPaymentConceptId !=0
+					JSONObject extraPaymentConceptObj = new JSONObject();
+					extraPaymentConceptObj.put("id", createJSONValue(extraPaymentConceptId));
+					extraPaymentConceptObj.put("domain", createJSONValue(extraPaymentConcept.getDomain()));
+					extraPaymentConceptObj.put("code", createJSONValue(extraPaymentConcept.getCode()));
+					extraPaymentConceptObj.put("description", createJSONValue(extraPaymentConcept.getDescription()));
+					extraPaymentConceptObj.put("type", createJSONValue(extraPaymentConcept.getType()));
+					extraPaymentConceptObj.put("descriptionDecorable", createJSONValue(extraPaymentConcept.getDescription_decorable()));
+					extraPaymentConceptObj.put("expression", createJSONValue(extraPaymentConcept.getExpression()));
+					extraPaymentConceptObj.put("irpfExpression", createJSONValue(extraPaymentConcept.getIrpf_expression()));
+					extraPaymentConceptObj.put("quoteExpression", createJSONValue(extraPaymentConcept.getQuote_expression()));
+					
+					extraAgreementPayment.put("__payConcept", extraPaymentConceptObj);
+				}
+				
+				extraObj.put("agreePayment", extraAgreementPayment);
+				extrasArray.set(indexExtras, extraObj);
+				indexExtras++;
+			}	
+		}
+		
+		json.put("extras", extrasArray); 
+		
+		
+		// ----------------------------------------------------- peridos ----------------------------------------------------------
+		JSONArray periodsArray = new JSONArray();
+		int indexPeriods = 0;
+	
+		Date[] periods = getDatesWithChanges().toArray(new Date[]{});
+		for(int i = 0; i<periods.length; i++){
+			Date startDate = periods[i];
+			Date endDate = null;
+			if(i<periods.length-1){
+				endDate = DateUtils.copyDateOnly(periods[i+1]);
+				DateUtils.deleteDays2Date(endDate, 1);
+			}
+			
+			JSONObject period = new JSONObject();
+			period.put("start_date", createJSONValue((startDate.getYear()+1900)+"-"+(startDate.getMonth()+1)+"-"+startDate.getDate()));
+			if(endDate == null){
+				period.put("end_date", createJSONValue(null));
+			}else{
+				period.put("end_date", createJSONValue((endDate.getYear()+1900)+"-"+(endDate.getMonth()+1)+"-"+endDate.getDate()));
+			}
+			
+			JSONArray levelsArray = new JSONArray();
+			int indexLevels = 0;
+		
+			Set<Level> levelsPeriod = getLevels();
+			for(Level level : levelsPeriod){
+				Level levelFinally = level;
+				JSONObject levelData = new JSONObject();
+				levelData.put("id", createJSONValue(levelFinally.getId()));
+				if(levelFinally.getId() == 0){
+					levelData.put("description", createJSONValue("0"));
+				}else{
+					levelFinally = getLevelFinally(level, agreementDraft.getDraftLevels());
+					levelData.put("description", createJSONValue(levelFinally.getDescription()));
+				}
+			
+				JSONObject datas = new JSONObject();
+				
+				Set<String> variables = getVariables();
+				for(String var : variables){
+					Variable varLevelFinally = getVarLevelFinally(levelFinally, var);
+					if(varLevelFinally != null){
+						datas.put(varLevelFinally.getName(), createJSONValue(varLevelFinally.getExpression()));
+					}
+				}
+				
+				levelData.put("datas", datas);
+				levelsArray.set(indexLevels, levelData);
+				indexLevels++;
+			}
+			
+			period.put("levels", levelsArray);
+			periodsArray.set(indexPeriods, period);
+			indexPeriods++;
+		}
+		
+		json.put("periods", periodsArray);
+		
+		
+		// ------------------------------------------------- levelsCategoy ------------------------------------------------
+		JSONArray levelsCategoryArray = new JSONArray();
+		int indexLevel = 0;
+		
+		Set<Level> levels = getLevels();
+		for(Level level : levels){
+			if(level.getId() != 0){
+				Level levelFinally = getLevelFinally(level, agreementDraft.getDraftLevels());
+				JSONObject levelCategory = new JSONObject();
+				levelCategory.put("id", createJSONValue(levelFinally.getId()));
+				levelCategory.put("description", createJSONValue(levelFinally.getDescription()));
+				
+				JSONArray categoriesArray = new JSONArray();
+				int indexCategory = 0;
+				
+				Set<String> categoriesFinally = getCategoriesFinally(levelFinally);
+				if(categoriesFinally != null){
+					for(String category : categoriesFinally){
+						categoriesArray.set(indexCategory, createJSONValue(category));
+						indexCategory++;
+					}
+				}
+				
+				levelCategory.put("categories", categoriesArray);
+				levelsCategoryArray.set(indexLevel, levelCategory);
+				indexLevel++;
+			}
+		}
+		
+		json.put("levelsCategory", levelsCategoryArray);
+		
+		agreement(json);
+		
+		return null;
+		
+	}
+
+
+	private JSONValue createJSONValue(Object object) {
+		if (object == null)
+			return JSONNull.getInstance();
+		if (object instanceof Number)
+			return new JSONNumber((Integer)object);
+		if (object instanceof String)
+			return new JSONString((String)object);
+		if (object instanceof Date){
+			Date date = (Date)object;
+			return new JSONString(date.toGMTString());
+		}
+		
+		return null;
+		
+	}
+
+
+	public static String AGREE_URL = URL.encode(GWT.getModuleBaseURL() + "sergio");
+
+	private void agreement(JSONObject json) {
+		Window.alert("GENERANDO SERVLET, CRUCEMOS LOS DEDOS!");
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", AGREE_URL);
+		xhr.setRequestHeader("Content-type", "application/json");
+		xhr.send(json.toString());
+	}
+
+	/**
+	 * Method to known if a Level Draft exists
+	 * @param level
+	 * @param draftLevels
+	 * @return Level with changes if exist or origal Level if not
+	 */
+	private Level getLevelFinally(Level level, Set<Level> draftLevels) {
+		for(Level levelDraft : draftLevels){
+			if(level.getId() == levelDraft.getId())
+				return levelDraft;
+		}
+		return level;
+	}
+	
+	/**
+	 * Method to known if a Category Draft exists
+	 * @param levelFinally
+	 * @return Set<String> Categories with changes if exist or origal Categories if not
+	 */
+	private Set<String> getCategoriesFinally(Level levelFinally) {
+		Set<String> categoriesDraft = agreementDraft.getDraftCategories().get(levelFinally.getId());
+		if(categoriesDraft != null)
+			return categoriesDraft;
+		else
+			return getCategories(levelFinally);
+	}
+	
+	private Variable getVarLevelFinally(Level level, String var) {
+		Variable varLevel = getVariable(level, var);
+		if(varLevel != null){
+			if(isDraftVariable(level, getVariable(level, var))){
+				SalaryTable draftSalaryTable = getDraftSalaryTable();
+				varLevel = draftSalaryTable.get(level.getId(), var);
+			}
+		}
+		
+		return varLevel;
+	}
+	
+	private Payment getPaymentFinally(Payment originalPayment) {
+		for(Payment payment : agreementDraft.getDraftPayments()){
+			if(payment.getId() == originalPayment.getId())
+				return payment;
+		}
+		return originalPayment;
+	}
+
+//	private Payment getPaymentExtra(Integer extraPaymentId) {
+//		for(Payment payment : agreementDraft.getDraftPayments()){
+//			Window.alert("DRAFT -> "+payment.getId()+" == "+extraPaymentId);
+//			if(payment.getId() == extraPaymentId)
+//				return payment;
+//		}
+//		
+//		for(Payment payment : getPayments()){
+//			Window.alert(payment.getId()+" == "+extraPaymentId);
+//			if(payment.getId() == extraPaymentId)
+//				return payment;
+//		}
+//		
+//		return null;
+//		
+//	}
+
+	private SalaryTable getDraftSalaryTable() {
+		return agreementDraft.getDraftSalaryTable();
+		
+	}
+
+	private int getLevelIndexArray(Integer id, JSONArray levelsCategoryArray) {
+		for(int i=0; i<levelsCategoryArray.size(); i++){
+			JSONObject levelCategory = levelsCategoryArray.get(i).isObject();
+			if(id == (int)levelCategory.get("id").isNumber().getValue()){
+				return i;
+			}
+		}
+		return -1;
 		
 	}
 }

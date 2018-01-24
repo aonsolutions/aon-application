@@ -50,6 +50,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.jooq.tables.AgreementData;
+import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
@@ -60,6 +61,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.salary.expression.Period;
+import com.google.gwt.user.client.Window;
 
 public class SQLAgreementDraft {
 
@@ -295,6 +297,18 @@ public class SQLAgreementDraft {
 
 				payment.setConceptId(getInteger(rs, SQLConstants.PAYMENT_CONCEPT
 						+ "." + PaymentConceptColumns.ID));
+				
+				payment.setConcept(
+						rs.getInt(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.ID),
+						getInteger(rs, SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.DOMAIN),
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "."+ PaymentConceptColumns.CODE),
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "."+ PaymentConceptColumns.DESCRIPTION),
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.TYPE),
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.DESCRIPTION_DECORABLE),
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "."+ PaymentConceptColumns.EXPRESSION),
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "."+ PaymentConceptColumns.IRPF_EXPRESSION),
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "."+ PaymentConceptColumns.QUOTE_EXPRESSION)
+				);
 
 				payments.add(payment);
 			}
@@ -608,13 +622,31 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
+		
 		try {
 
-			stmt = connection.prepareStatement("SELECT * " + " FROM "
-					+ SQLConstants.AGREEMENT_EXTRA + " WHERE "
-					+ AgreementExtraColumns.AGREEMENT + " = ? ");
+			// SELECT * FROM agreement_extra LEFT JOIN agreement_payment ON (agreement_extra.agreement_payment = agreement_payment.id) WHERE agreement_extra.agreement=1192;
+			String sql = "SELECT * " + " FROM "
+					+ SQLConstants.AGREEMENT_EXTRA +" LEFT JOIN "
+					+ SQLConstants.AGREEMENT_PAYMENT + " ON ("
+					+ SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT_PAYMENT + " = "
+					+ SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.ID + ") LEFT JOIN "
+					+ SQLConstants.PAYMENT_CONCEPT + " ON ("
+					+ SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.PAYMENT_CONCEPT + " = "
+					+ SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.ID + ")"
+					+ " WHERE "
+					+ SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT + " = ? ";
+			
+//			String sql = "SELECT * " + " FROM "
+//					+ SQLConstants.AGREEMENT_EXTRA + " WHERE "
+//					+ AgreementExtraColumns.AGREEMENT + " = ? ";
+			
+			stmt = connection.prepareStatement(sql);
 
 			stmt.setInt(1, agreementId);
+			
+			System.out.println(agreementId);
+			System.out.println(sql);
 
 			rs = stmt.executeQuery();
 
@@ -622,15 +654,57 @@ public class SQLAgreementDraft {
 
 			while (rs.next()) {
 				Extra extra = new Extra();
-				extra.setId(rs.getInt(AgreementExtraColumns.ID));
-				extra.setDomain(rs.getInt(AgreementExtraColumns.DOMAIN));
-				extra.setPaymentId(
-						rs.getInt(AgreementExtraColumns.AGREEMENT_PAYMENT));
-				extra.setStartDate(
-						rs.getString(AgreementExtraColumns.START_DATE));
-				extra.setEndDate(rs.getString(AgreementExtraColumns.END_DATE));
-				extra.setIssueDate(
-						rs.getString(AgreementExtraColumns.ISSUE_DATE));
+				extra.setId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.ID));
+				extra.setDomain(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.DOMAIN));
+				extra.setPaymentId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT_PAYMENT));
+				extra.setStartDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.START_DATE));
+				extra.setEndDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.END_DATE));
+				extra.setIssueDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.ISSUE_DATE));
+				
+//				System.out.println(
+//						"Payment Extra -> id :"+rs.getInt(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.ID)
+//						+ ", expression :"+ rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.EXPRESSION)
+//						+ ", description :"+rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.DESCRIPTION)
+//						+", startDate :"+rs.getDate(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.START_DATE)
+//						+ ", description_decorable :"+ rs.getByte(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.DESCRIPTION_DECORABLE)
+//						+ ", irpf_expression :"+rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.IRPF_EXPRESSION)
+//						+ ", quote_expression :"+rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.QUOTE_EXPRESSION)
+//				);
+				
+				Payment payment = new Payment();
+				payment.setId(rs.getInt(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.ID));
+				payment.setExpression(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.EXPRESSION));
+				payment.setDescription(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.DESCRIPTION));
+				payment.setStartDate(rs.getDate(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.START_DATE));
+				payment.setDescriptionTemplate(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.DESCRIPTION_DECORABLE));
+				payment.setIrpfExpression(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.IRPF_EXPRESSION));
+				payment.setQuoteExpression(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.QUOTE_EXPRESSION));
+				payment.setConceptId(rs.getInt(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.ID));
+				
+				payment.setConcept(
+						rs.getInt(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.ID),
+						rs.getInt(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.DOMAIN), 
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.CODE), 
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.DESCRIPTION), 
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.TYPE), 
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.DESCRIPTION_DECORABLE), 
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.EXPRESSION), 
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.IRPF_EXPRESSION), 
+						rs.getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.QUOTE_EXPRESSION)
+				);
+				
+				extra.setPayment(payment);
+				
+//				extra.setPayment(
+//						rs.getInt(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.ID),
+//						rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.EXPRESSION), 
+//						rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.DESCRIPTION), 
+//						rs.getDate(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.START_DATE),
+//						rs.getByte(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.DESCRIPTION_DECORABLE), 
+//						rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.IRPF_EXPRESSION),
+//						rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.QUOTE_EXPRESSION)
+//				);
+				
 				extras.add(extra);
 			}
 

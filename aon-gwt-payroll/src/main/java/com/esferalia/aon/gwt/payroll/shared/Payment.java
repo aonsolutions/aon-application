@@ -1,12 +1,13 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 
-public class Payment extends Item<Payment.Type> {
+public class Payment extends Item<Payment.Type> implements Serializable {
 
 	
 	Double irpf;
@@ -14,6 +15,12 @@ public class Payment extends Item<Payment.Type> {
 
 	String irpfExpression;
 	String quoteExpression;
+	
+	PaymentConcept paymentConcept;
+	
+	public Payment(){
+		super();
+	}
 	
 	
 
@@ -197,6 +204,18 @@ public class Payment extends Item<Payment.Type> {
 
 	public void setQuoteExpression(String quoteExpression) {
 		this.quoteExpression = quoteExpression;
+	}
+
+	public void setConcept(Integer id, Integer domain, String code, String description, String type, String description_decorable,
+			String expression, String irpf_expression, String quote_expression) {
+		
+		paymentConcept = new PaymentConcept(id, domain, code, description, type, description_decorable,
+				expression, irpf_expression, quote_expression);
+		
+	}
+	
+	public PaymentConcept getConcept(){
+		return paymentConcept;
 	}
 	
 

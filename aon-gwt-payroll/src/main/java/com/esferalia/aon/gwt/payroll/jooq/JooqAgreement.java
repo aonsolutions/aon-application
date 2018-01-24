@@ -33,8 +33,10 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record15;
 import org.jooq.Record4;
 import org.jooq.Record7;
+import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.Select;
@@ -347,31 +349,40 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 	public static List<Extra> getExtras(DSLContext dslContext, Condition ...conditions) throws SQLException {
 		
 		// @formatter:off
-		Cursor<Record7<Integer,Integer,String,String,String,String,String>> result =		
-			dslContext
-				.selectDistinct(
-				AGREEMENT_EXTRA.ID,
-				AGREEMENT_EXTRA.DOMAIN,
-				AGREEMENT_EXTRA.END_DATE,
-				AGREEMENT_EXTRA.START_DATE,
-				AGREEMENT_EXTRA.ISSUE_DATE,
-				AGREEMENT_PAYMENT.DESCRIPTION,
-				AGREEMENT.DESCRIPTION
-				)
-				.from(CONTRACT)
-				.join(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
-				//.join(AGREEMENT_LEVEL_CATEGORY).on(CONTRACT.AGREEMENT_LEVEL_CATEGORY.eq(AGREEMENT_LEVEL_CATEGORY.ID))
-				//.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
-				.join(AGREEMENT_EXTRA).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT_EXTRA.AGREEMENT))
-				.join(AGREEMENT_PAYMENT).on(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(AGREEMENT_PAYMENT.ID))
-				.join(AGREEMENT).on(AGREEMENT_PAYMENT.AGREEMENT.eq(AGREEMENT.ID))
-				.where(conditions)
-				.fetchLazy()
+		Cursor<Record15<Integer, Integer, String, String, String, String, String, Integer, String, String, 
+			Byte, java.sql.Date, Byte, String, String>> result = dslContext
+			.selectDistinct(
+			AGREEMENT_EXTRA.ID,
+			AGREEMENT_EXTRA.DOMAIN,
+			AGREEMENT_EXTRA.END_DATE,
+			AGREEMENT_EXTRA.START_DATE,
+			AGREEMENT_EXTRA.ISSUE_DATE,
+			AGREEMENT_PAYMENT.DESCRIPTION,
+			AGREEMENT.DESCRIPTION,
+			AGREEMENT_PAYMENT.ID,
+			AGREEMENT_PAYMENT.EXPRESSION,
+			AGREEMENT_PAYMENT.DESCRIPTION,
+			AGREEMENT_PAYMENT.TYPE,
+			AGREEMENT_PAYMENT.START_DATE,
+			AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE,
+			AGREEMENT_PAYMENT.IRPF_EXPRESSION,
+			AGREEMENT_PAYMENT.QUOTE_EXPRESSION
+			)
+			.from(CONTRACT)
+			.join(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+			//.join(AGREEMENT_LEVEL_CATEGORY).on(CONTRACT.AGREEMENT_LEVEL_CATEGORY.eq(AGREEMENT_LEVEL_CATEGORY.ID))
+			//.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+			.join(AGREEMENT_EXTRA).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT_EXTRA.AGREEMENT))
+			.join(AGREEMENT_PAYMENT).on(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(AGREEMENT_PAYMENT.ID))
+			.join(AGREEMENT).on(AGREEMENT_PAYMENT.AGREEMENT.eq(AGREEMENT.ID))
+			.where(conditions)
+			.fetchLazy()
 				;
 		// @formatter:on
 
 		List<Extra> extras = new LinkedList<Extra>();
-		for (Record7<Integer,Integer,String,String,String,String,String> record : result) {
+		for (Record15<Integer, Integer, String, String, String, String, String, Integer, String, String, Byte, 
+				java.sql.Date, Byte, String, String> record : result) {
 
 			Extra extra = new Extra();
 			extra.setId(record.getValue(AGREEMENT_EXTRA.ID)); 
@@ -382,6 +393,13 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 			extra.setAgreementDescription(record.getValue(AGREEMENT.DESCRIPTION)); 
 			extra.setPaymentDescription(record.getValue(AGREEMENT_PAYMENT.DESCRIPTION)); 
+			
+			extra.setPaymentId(record.getValue(AGREEMENT_PAYMENT.ID));
+			
+//			extra.setPayment(record.getValue(AGREEMENT_PAYMENT.ID), record.getValue(AGREEMENT_PAYMENT.EXPRESSION), 
+//					record.getValue(AGREEMENT_PAYMENT.DESCRIPTION),
+//					record.getValue(AGREEMENT_PAYMENT.START_DATE), record.getValue(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE),
+//					record.getValue(AGREEMENT_PAYMENT.IRPF_EXPRESSION), record.getValue(AGREEMENT_PAYMENT.QUOTE_EXPRESSION));
 
 			extras.add(extra);
 

@@ -1364,6 +1364,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		loadContentAssistManager();
 		
 		setReadOnly(/*object.isSystem() &&*/ !object.isMine() );
+		
+		Window.alert("Activar servlet!");
+		agreementDraftObject.generateJSONUpdate();
 
 	}
 
