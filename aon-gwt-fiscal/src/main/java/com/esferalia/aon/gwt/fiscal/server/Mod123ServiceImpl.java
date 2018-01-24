@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod123.Mod123Service;
+import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
@@ -13,9 +14,10 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 
-@SuppressWarnings("serial")
 @WebServlet(name = "Mod123 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod123" })
 public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implements Mod123Service {
+
+	private static final long serialVersionUID = 9086155747294281837L;
 
 	@Override
 	public Mod123 getMod123(String domainName,String userLogin, int domain,int id) throws AonCoreException {
@@ -88,4 +90,12 @@ public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		
 	}
 
+	@Override
+	public Double mathExpression(String expression) throws AonCoreException {
+		try {
+			return AONMVELUtils.mathExpression(expression);
+		} catch ( Throwable t) {
+			throw new AonCoreException(t);
+		}
+	}
 }

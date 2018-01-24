@@ -95,7 +95,12 @@ public class Mod123ServiceAsyncDecorator implements Mod123ServiceAsync {
 	public void getInfo(String domainName, String userLogin, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getInfo(domainName, userLogin, domain, mod123, script, infoKey,new AsyncCallbackWrapper<String>(callback));
-		
+	}
+
+	@Override
+	public void mathExpression(String expression, AsyncCallback<Double> callback) {
+		AON.start();
+		fsa.mathExpression(expression,new AsyncCallbackWrapper<Double>(callback));
 	}
 
 }

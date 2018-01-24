@@ -26,5 +26,6 @@ public interface Mod123Service extends RemoteService {
 	Mod123 initialize(String domainName, String userLogin, int domain, Mod123 mod123);
 	Mod123 create(String domainName, String userLogin, int domain, Mod123 mod123) throws AonCoreException;
 	String getInfo(String domainName, String userLogin, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	Double mathExpression(String expression) throws AonCoreException;
 
 }

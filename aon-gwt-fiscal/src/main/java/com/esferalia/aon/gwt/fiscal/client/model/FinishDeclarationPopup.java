@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.widget.CreditorBox;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -40,10 +40,10 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	
-	static CommonServiceAsync commonService;
+	static FiscalMSServiceAsync SERVICE;
 	static {
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+		FiscalMSServiceAsync serviceRaw = GWT.create(FiscalMSService.class);
+		SERVICE = new FiscalMSServiceAsyncDecorator(serviceRaw);
 	}
 
 	final protected FlexTable tab = new FlexTable();
@@ -101,7 +101,7 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 			tab.setWidget(row, 1, new Label( callback.getFiscalModel().getDeclarationType().getDescription() ));	
 			row++;
 		} else {
-			final CreditorBox creditorBox = new CreditorBox(callback.getDomainName(),callback.getDomain() );
+			final CreditorBox creditorBox = new CreditorBox(callback.getDomainName(),callback.getUser(),callback.getDomain() );
 			final IbanTextBox iban = new IbanTextBox( new EnterpriseSuggestOracle<T>(callback) );
 			
 			final ListBox listBox = new ListBox();
@@ -228,7 +228,7 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 		@Override
 		public void requestSuggestions(final Request request,
 				final Callback callback) {
-			commonService.getCompanyBanks (modelCallback.getDomainName(),modelCallback.getDomain(), 
+			SERVICE.getCompanyBanks (modelCallback.getDomainName(),modelCallback.getUser(),modelCallback.getDomain(), 
 					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {

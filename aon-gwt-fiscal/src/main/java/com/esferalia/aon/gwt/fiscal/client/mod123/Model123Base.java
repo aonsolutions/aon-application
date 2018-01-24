@@ -46,7 +46,7 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model123.FISCAL_SERVICE.mathExpression(expression,callback);
+			Model123.SERVICE.mathExpression(expression,callback);
 		}
 	}; 
 

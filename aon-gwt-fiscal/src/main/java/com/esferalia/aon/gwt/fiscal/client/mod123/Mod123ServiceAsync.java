@@ -23,4 +23,5 @@ public interface Mod123ServiceAsync {
 	void initialize(String domainName, String userLogin, int domain, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
 	void create(String domainName, String userLogin, int domain, Mod123 mod123, AsyncCallback<Mod123> callback);
 	void getInfo(String domainName, String userLogin, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
+	void mathExpression(String expression, AsyncCallback<Double> callback);
 }

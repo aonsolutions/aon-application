@@ -230,6 +230,11 @@ public class Model202 extends MainEntryPoint {
 		}
 
 		@Override
+		public String getUser() {
+			return getCurrentUser();
+		}
+
+		@Override
 		public int getDomain() {
 			return getCurrentDomain();
 		}

@@ -4,6 +4,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 
 public interface IFiscalModelCallback<T extends FiscalModel> {
 	String getDomainName();
+	String getUser();
 	int getDomain();
 	T getFiscalModel();
 
