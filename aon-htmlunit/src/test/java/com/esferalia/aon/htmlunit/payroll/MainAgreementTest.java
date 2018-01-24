@@ -87,7 +87,9 @@ public class MainAgreementTest {
 
 	@Test
 	public void TestEstatutoDeLosTrabajadores() throws Exception {
-		
+
+		wait4Id("estatuto_de_los_trabajadores");
+
 		HtmlDivision agreementTreeItem = 
 				(HtmlDivision)getElementById("estatuto_de_los_trabajadores");
 		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
@@ -165,6 +167,8 @@ public class MainAgreementTest {
 	@Test
 	public void TestStarsWarsAgreement() throws Exception {
 		
+		wait4Id("star_wars_agreement");
+
 		HtmlDivision agreementTreeItem = 
 				(HtmlDivision)getElementById("star_wars_agreement");
 		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
@@ -235,6 +239,8 @@ public class MainAgreementTest {
 	@Test
 	public void TestMensajesdeAyuda() throws Exception {
 		
+		wait4Id("mensajes_de_ayuda,_ejemplos");
+
 		HtmlDivision agreementTreeItem = 
 				(HtmlDivision)getElementById("mensajes_de_ayuda,_ejemplos");
 		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
