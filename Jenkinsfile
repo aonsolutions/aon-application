@@ -137,6 +137,15 @@ node {
 	sh "aws ecs update-service --cluster SNAPSHOT --service SNAPSHOT-SERVICES --task-definition ${snapshot_services_task_definition_arn}"
 
 
+        sh "aws ecs list-task-definitions --family-prefix RELEASE-DB-UP2DATE > release-db-up2date-task-definitions.json"
+        def release_db_up2date_task_definitions_json = readFile 'release-db-up2date-task-definitions.json'
+        def release_db_up2date_task_definitions_arns = getTaskDefinitionArns(release_db_up2date_task_definitions_json)
+        def last_release_db_up2date_task_definition_arn = release_db_up2date_task_definitions_arns[release_db_up2date_task_definitions_arns.size()-1]
+        sh "aws ecs describe-task-definition --task-definition ${last_release_db_up2date_task_definition_arn} > last-release-db-up2date-task-definition.json"
+        def last_release_db_up2date_task_definition_json = readFile 'last-release-db-up2date-task-definition.json'
+        def release_db_up2date_container_definitions_json = getContainerDefinitions(last_release_db_up2date_task_definition_json, "aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine")
+        sh "aws ecs register-task-definition --family RELEASE-DB-UP2DATE --container-definitions '${release_db_up2date_container_definitions_json}' > release-db-up2date-task-definition.json"
+	
 	sh "aws ecs list-task-definitions --family-prefix RELEASE > release-task-definitions.json"
 	def release_task_definitions_json = readFile 'release-task-definitions.json'
 	def release_task_definitions_arns = getTaskDefinitionArns(release_task_definitions_json)
