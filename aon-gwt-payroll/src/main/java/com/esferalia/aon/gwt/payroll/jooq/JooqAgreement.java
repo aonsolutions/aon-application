@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.hibernate.tool.hbm2x.pojo.EntityPOJOClass;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Cursor;
@@ -60,6 +61,10 @@ import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
+
+	private static final java.sql.Date SQL_FOREVER = (java.sql.Date) null;
+	private static final Date EPOCH = new Date(0);
+	private static final java.sql.Date SQL_EPOCH = new java.sql.Date(EPOCH.getTime());
 
 	public static void moveAgreement2ParentDomain(Connection conn,
 			Integer parentDomain, Integer id) throws SQLException {
@@ -111,8 +116,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		if (payment.getConceptId() != null && payment.getConceptId() < 0) {
 			updatePaymentConcept(dslContext, payment);
 			updateAgreementPayment(dslContext, payment.getId(),
-					payment.getSalaryType(), payment.getMonth(),
-					payment.getStartDate(), payment.getEndDate());
+					payment.getSalaryType(), 
+					payment.getMonth(),
+					EPOCH, 
+					null);
 		} else {
 			updateAgreementPayment(dslContext, payment);
 		}
@@ -193,8 +200,11 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			insertPaymentConcept(dslContext, domainId, paymentId, conceptId,
 					payment);
 			insertAgreementPayment(dslContext, domainId, agreementId,
-					conceptId, paymentId, payment.getSalaryType(),
-					payment.getMonth(), payment.getStartDate(),
+					conceptId, 
+					paymentId, 
+					payment.getSalaryType(),
+					payment.getMonth(), 
+					payment.getStartDate(),
 					payment.getEndDate());
 		} else {
 			insertAgreementPayment(dslContext, domainId, agreementId,
@@ -956,17 +966,14 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 						payment.getQuoteExpression())
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
 						(byte) payment.getSalaryType().ordinal())
-				.set(AGREEMENT_PAYMENT.START_DATE,
-						new java.sql.Date(payment.getStartDate().getTime()))
 				.set(AGREEMENT_PAYMENT.MONTH,
 						payment.getMonth() != null ? payment.getMonth()
 								.byteValue() : null)
 				.set(AGREEMENT_PAYMENT.TYPE,
 						payment.getType() != null ? (byte) payment.getType()
 								.ordinal() : null)
-				.set(AGREEMENT_PAYMENT.END_DATE,
-						payment.getEndDate() != null ? new java.sql.Date(
-								payment.getEndDate().getTime()) : null)
+				.set(AGREEMENT_PAYMENT.START_DATE,SQL_EPOCH)
+				.set(AGREEMENT_PAYMENT.END_DATE, SQL_FOREVER)
 				.where(AGREEMENT_PAYMENT.ID.eq(payment.getId())).execute();
 		// @formatter:on
 
@@ -987,11 +994,9 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal())
 				.set(AGREEMENT_PAYMENT.MONTH,
 						month != null ? month.byteValue() : null)
-				.set(AGREEMENT_PAYMENT.START_DATE,
-						new java.sql.Date(startDate.getTime()))
-				.set(AGREEMENT_PAYMENT.END_DATE,
-						endDate != null ? new java.sql.Date(endDate.getTime())
-								: null).execute();
+				.set(AGREEMENT_PAYMENT.START_DATE,SQL_EPOCH)
+				.set(AGREEMENT_PAYMENT.END_DATE,SQL_FOREVER)
+				.execute();
 		// @formatter:on
 
 	}

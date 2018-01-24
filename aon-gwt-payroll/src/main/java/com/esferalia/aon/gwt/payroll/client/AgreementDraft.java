@@ -1164,6 +1164,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				
 				HorizontalPanel hPanel = new HorizontalPanel();
 				ToggleButton button = new ToggleButton(date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900));
+				button.ensureDebugId("toggleButton_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(date));
 				button.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -1295,9 +1296,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				popup.setWidget(picker);
 				popup.setStyleName(style.datePickerPanel());
 				popup.showRelativeTo(moreButton);
+
+				popup.ensureDebugId("morePopupPanel");
+				picker.ensureDebugId("moreDatePicker");
 			}
 		});
 		moreButton.addStyleName(style.moreButton());
+		
+		moreButton.ensureDebugId("moreButton");
+		
 		
 		return moreButton;
 	}
@@ -2263,7 +2270,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			addStyle(paymentsTable, row, style.textWarn());
 		else if (isRemove(payment))
 			addStyle(paymentsTable, row, style.textWarn());
-
+		
+		editButton.ensureDebugId("edit-button-" + row );
+		deleteButton.ensureDebugId("delete-button-" + row );
+		expressionBox.ensureDebugId("expression-box" + row );
+		descriptionBox.ensureDebugId("description-box" + row );
+		salaryTypeListBox.ensureDebugId("salary-type-list-box" + row );
+		paymentTypeListBox.ensureDebugId("payment-type-list-box" + row );
+		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
+		
 		return paymentEditor;
 	}
 
@@ -2337,6 +2352,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		newButton.setStyleName(AON.AON_ICON_RESET);
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		paymentsTable.setWidget(row, 0, newButton);
+		newButton.ensureDebugId("button-new-payment");
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(Payment.Type.DEFAULT);
@@ -2349,12 +2365,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		descriptionSuggest.setAutoSelectEnabled(false);
 		descriptionSuggest.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionSuggest);
+		descriptionBox.ensureDebugId("description-box-new-payment");
 
 		TextBox expressionBox = new ExpressionBox();
 		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
 		paymentsTable.setWidget(row, 3, expressionBox);
+		expressionBox.ensureDebugId("amount-box-new-payment");
 
 		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(Salary.Type.class, 8);
 		salaryTypeListBox.setSelected(Salary.Type.SALARY);

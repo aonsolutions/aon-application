@@ -54,6 +54,7 @@ import java.util.Map;
 import org.apache.commons.lang.time.DateUtils;
 import org.jooq.Configuration;
 import org.jooq.InsertSetStep;
+import org.jooq.Record;
 import org.jooq.TransactionalCallable;
 import org.junit.After;
 import org.junit.Before;
@@ -459,6 +460,13 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
+	public static AgreementRecord getAgreement(AONContext aonContext, String description) {
+		return aonContext.getDslContext().select().from(AGREEMENT)
+				.where(AGREEMENT.DESCRIPTION.eq(description))
+				.fetchOneInto(AGREEMENT);
+
+	}
+
 	public static final AgreementLevelCategoryRecord newAgreementCategory(AONContext aonContext,
 			AgreementRecord agreement, String levelDescription, String categoryDescription) {
 		AgreementLevelRecord level = aonContext.getDslContext().insertInto(AGREEMENT_LEVEL)
@@ -562,6 +570,21 @@ public abstract class AbstractSQLTestCase {
 
 		return aonContext.getDslContext().select().from(AGREEMENT_EXTRA).where(AGREEMENT_EXTRA.AGREEMENT.eq(agreement))
 				.and(AGREEMENT_EXTRA.ISSUE_DATE.eq(issueDate)).fetchOneInto(AGREEMENT_EXTRA);
+	}
+
+	public static AgreementPaymentRecord [] getAgreementPayments(AONContext aonContext, int agreement) {
+
+		Record records [] = aonContext.getDslContext().select().from(AGREEMENT_PAYMENT).where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement))
+				.fetchArray();
+		AgreementPaymentRecord payments [] = new AgreementPaymentRecord [records.length];
+		for ( int i = 0; i < records.length; i++ )
+				payments[i] = (AgreementPaymentRecord)records[i];
+		return payments;
+	}
+	
+	public static PaymentConceptRecord getPaymentConcept(AONContext aonContext, int id) {
+		return aonContext.getDslContext().select().from(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.ID.eq(id))
+				.fetchOneInto(PAYMENT_CONCEPT);
 	}
 
 	public static void addPayments(AONContext aonContext, AgreementRecord agreement, Date startDate,
