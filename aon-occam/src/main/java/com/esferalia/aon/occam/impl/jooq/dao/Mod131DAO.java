@@ -1892,7 +1892,9 @@ public class Mod131DAO extends FiscalModelDAO {
 		for (Mod131KeyDAO key : Mod131KeyDAO.values()) {
 			key.initialize(ctx, mod);
 		}
-		
+		for (Mod131Activity activity : mod.getActivities()) {
+			calculateMod131Activity(ctx, activity);
+		}
 		return calculateMod131(ctx, mod);
 	}
 
