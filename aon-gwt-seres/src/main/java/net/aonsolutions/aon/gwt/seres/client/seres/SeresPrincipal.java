@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.gwt.seres.client.seres;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -128,10 +129,17 @@ public class SeresPrincipal extends Composite{
 		list.add("40");
 		getFilterMap().put("per_page", list);
 		
+		if(command!=null) { 
+			getFilterMap().put("seres",new LinkedList<>(Arrays.asList(new String[] {command.getValue()})));
+		} else {
+			getFilterMap().put("pending", new LinkedList<>(Arrays.asList(new String[] {"true"})));
+			getFilterMap().put("processed", new LinkedList<>(Arrays.asList(new String[] {"true"})));
+			getFilterMap().put("error", new LinkedList<>(Arrays.asList(new String[] {"true"})));
+		}
+		
 		filterPanel.setCheckVisible(command==CommunicationTarget.OUTCOME_DELIVERY
 				|| command==CommunicationTarget.OUTCOME_INVOICE
 				|| command==CommunicationTarget.INGENET_DELIVERY);
-		
 		
 		Widget content = null;
 		if (CommunicationTarget.OUTCOME_DELIVERY==command || CommunicationTarget.OUTCOME_INVOICE==command
@@ -147,6 +155,7 @@ public class SeresPrincipal extends Composite{
 			content = (createSummaryPanel());
 		}
 		getContent().setWidget(content);
+		closeFootPanel();
 
 	}
 	

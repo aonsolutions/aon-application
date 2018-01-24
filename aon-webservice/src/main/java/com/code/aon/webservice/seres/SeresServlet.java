@@ -1,6 +1,7 @@
 package com.code.aon.webservice.seres;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
+import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -212,7 +214,7 @@ public class SeresServlet extends HttpServlet {
 		
 		Supplier<Stream<Attach>> dataAttachStreamSupplier = () -> AON
 				.getAttachStream(domain.getName(), domain.getId(), login,
-						f -> dataAttachFilter(domain, filterMap, f)
+						f -> dataAttachAllFilter(domain, filterMap, f)
 								.and(f.getSourceTypeProperty().eq(DataAttachSource.INGENET.value())),
 						AttachType.DATA, false);
 		
@@ -311,7 +313,6 @@ public class SeresServlet extends HttpServlet {
 	private JSONArray getIngenetDeliveryAttach(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
-
 		if (req.getParameterMap().containsKey("seres")) {
 			AON.getAttachStream(domain.getName(), domain.getId(), login,
 					f -> dataAttachFilter(domain, filterMap, f)
@@ -493,14 +494,36 @@ public class SeresServlet extends HttpServlet {
 		return filter;
 	}
 	
-	private Filter dataAttachFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {
+	private Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
+		// TODO
+		return null;
+	}
+	
+	private Filter dataAttachAllFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
 		if (filterMap.containsKey(MSG.FROM)) {
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
 			filter = filter.and(f.getCreationDateTimeStampProperty().ge(AonDateUtils.toTimestamp(date)));
 		}
+		
 		fillPaginationFilter(filter, filterMap);
+		return filter;
+	}
+	
+	private Filter dataAttachFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {
+		Filter filter = dataAttachAllFilter(domain, filterMap, f);
+		
+		ArrayList<Byte> statuses = new ArrayList<>();
+		if (filterMap.containsKey("pending") && new Boolean(filterMap.get("pending")[0]))
+			statuses.add(DataAttachType.REQUEST.value());
+		if (filterMap.containsKey("processed") && new Boolean(filterMap.get("processed")[0]))
+			statuses.add(DataAttachType.RESPONSE_OK.value());
+		if (filterMap.containsKey("error") && new Boolean(filterMap.get("error")[0]))
+			statuses.add(DataAttachType.RESPONSE_ERROR.value());
+		if(statuses.size()>0)
+			filter = filter.and(f.getTypeProperty().in(statuses.toArray(new Byte[statuses.size()])));
+		
 		return filter;
 	}
 

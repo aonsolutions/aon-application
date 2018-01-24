@@ -95,9 +95,25 @@ public class FilterPanel extends Composite {
 		});
 		datePanel.add(from);
 		
-		CheckBox cb = new CheckBox("Pendiente");
-		if(parent.getFilterMap().containsKey("pending")){
-			cb.setValue(parent.getFilterMap().get("pending").get(0).equalsIgnoreCase("true"));
+		
+	    CheckBox pendingCheck = new CheckBox("Pendiente");
+	    CheckBox processedCheck = new CheckBox("Procesado");
+		CheckBox errorCheck = new CheckBox("Incorrecto");
+		
+		fillcheckbox(pendingCheck, "pending");
+		fillcheckbox(processedCheck, "processed");
+		fillcheckbox(errorCheck, "error");
+		
+		datePanel.add(pendingCheck);
+		datePanel.add(processedCheck);
+		datePanel.add(errorCheck);
+		
+		return datePanel;
+	}
+    
+    private void fillcheckbox(CheckBox cb, String key) {
+    	if(parent.getFilterMap().containsKey(key)){
+			cb.setValue(parent.getFilterMap().get(key).get(0).equalsIgnoreCase("true"));
 		}
 		cb.addClickHandler(new ClickHandler() {
 			
@@ -105,41 +121,9 @@ public class FilterPanel extends Composite {
 			public void onClick(ClickEvent event) {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(cb.getValue().toString());
-				onChange("pending", list);
+				onChange(key, list);
 			}
 		});
-		datePanel.add(cb);
-		
-		CheckBox cb2 = new CheckBox("Enviado");
-		if(parent.getFilterMap().containsKey("sent")){
-			cb2.setValue(parent.getFilterMap().get("sent").get(0).equalsIgnoreCase("true"));
-		}
-		cb2.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				LinkedList<String> list = new LinkedList<>();
-				list.add(cb2.getValue().toString());
-				onChange("sent", list);				
-			}
-		});
-		datePanel.add(cb2);
-		
-		CheckBox cb4 = new CheckBox("Incorrectas");
-		if(parent.getFilterMap().containsKey("error")){
-			cb4.setValue(parent.getFilterMap().get("error").get(0).equalsIgnoreCase("true"));
-		}
-		cb4.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				LinkedList<String> list = new LinkedList<>();
-				list.add(cb4.getValue().toString());
-				onChange("error", list);				
-			}
-		});
-		datePanel.add(cb4);
-		
-		return datePanel;
-	}
+    }
+    
 }
