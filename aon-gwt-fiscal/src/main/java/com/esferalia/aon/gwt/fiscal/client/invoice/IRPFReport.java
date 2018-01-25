@@ -97,9 +97,20 @@ public class IRPFReport extends MainEntryPoint {
 	private static final SafeTemplate template = GWT.create(SafeTemplate.class);
 
 	public IRPFReport(String domainName, int domain, String user) {
+		currentDomainName = domainName;
+		currentDomain = domain;
+		currentUser = user;
 		
 	}
-	
+	private int getDomain() {
+		return currentDomain;
+	}
+	private String getUser() {
+		return currentUser;
+	}
+	private String getDomainName() {
+		return currentDomainName;
+	}
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
@@ -118,8 +129,8 @@ public class IRPFReport extends MainEntryPoint {
 		formatter = NumberFormat.getDecimalFormat();
 		formatter.overrideFractionDigits(2, 2);
 		
-		commonService.getAonConfiguration(getCurrentDomainName(),
-				getCurrentDomain(),
+		commonService.getAonConfiguration(getDomainName(),
+				getDomain(),
 				new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {
@@ -300,7 +311,7 @@ public class IRPFReport extends MainEntryPoint {
 			});
 		}
 
-		registry = new AccountingRegistryBox(getCurrentDomainName(), getCurrentDomain());
+		registry = new AccountingRegistryBox(getDomainName(), getDomain());
 		registry.setRequired(false);
 		registry.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
 			
@@ -446,7 +457,7 @@ public class IRPFReport extends MainEntryPoint {
 	
 	private IRPFParams getWidgetParams() {
 		IRPFParams params = new IRPFParams()
-			.setDomain(getCurrentDomain())
+			.setDomain(getDomain())
 			.setRegistry(registry.getId())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
@@ -475,14 +486,14 @@ public class IRPFReport extends MainEntryPoint {
 	
 	private void refreshResults(IRPFParams params) {
 		resultsContent.clear();
-		resultsContent.setWidget(new IRPFReportPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), params, null, null));
+		resultsContent.setWidget(new IRPFReportPanel(getDomainName(), getUser(), getDomain(), params, null, null));
 	}
 	private void refreshSummary(IRPFParams params) {
 		
 		summaryContent.clear();
 		ScrollPanel scroll = new ScrollPanel();			
 		summaryContent.setWidget(scroll);
-		fiscalService.getIrpfBreakdownSummary(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), params 
+		fiscalService.getIrpfBreakdownSummary(getDomainName(), getUser(), getDomain(), params 
 				, new AsyncCallback<LinkedList<IrpfBreakdown>>() {
 			
 			@Override

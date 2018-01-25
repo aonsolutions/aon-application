@@ -295,6 +295,7 @@ public class IRPFDAO extends FiscalModelDAO {
 				}
 				sum.setBase( sum.getBase() + irpf.getBase()); 
 				sum.setQuota( sum.getQuota() + irpf.getQuota());
+				sum.setDeductibleQuota( sum.getDeductibleQuota() + irpf.getDeductibleQuota());				
 			});
 		return list;
 	}
