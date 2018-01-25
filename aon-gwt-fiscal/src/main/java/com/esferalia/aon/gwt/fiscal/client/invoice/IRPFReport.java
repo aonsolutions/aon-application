@@ -650,7 +650,9 @@ public class IRPFReport extends MainEntryPoint {
 						
 					row = paintTotal( tab, row,type,typeOutputBase,typeOutputQuota,typeInputBase,typeInputQuota,typeInputDeductibleQuota);					
 					
+					outputBase = outputBase + typeOutputBase;
 					outputQuota = outputQuota  + typeOutputQuota; 
+					inputBase = inputBase + typeInputBase;
 					inputQuota = inputQuota + typeInputQuota;
 					inputDeductibleQuota = inputDeductibleQuota + typeInputDeductibleQuota;
 				}
