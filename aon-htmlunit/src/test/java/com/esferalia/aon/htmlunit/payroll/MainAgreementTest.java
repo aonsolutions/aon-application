@@ -253,6 +253,32 @@ public class MainAgreementTest {
 		
 	}
 
+	@Test
+	public void TestPrintPreview() throws Exception {
+		
+		wait4Id("convenio_colectivo_de_oficinas_y_despachos_para_madrid");
+
+		HtmlDivision agreementTreeItem = 
+				(HtmlDivision)getElementById("convenio_colectivo_de_oficinas_y_despachos_para_madrid");
+		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		agreementTreeItem.click();
+		
+		wait4(htmlPage,
+				htmlPage -> "CONVENIO COLECTIVO DE OFICINAS Y DESPACHOS PARA MADRID".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
+		
+		wait4Id("printPreviewButton");
+		
+		getElementById("printPreviewButton").click();
+		
+		
+		wait4Id("printPreviewHTML");
+		
+		HtmlElement printPreviewHTML = getElementById("printPreviewHTML");
+		
+		wait4(htmlPage, htmlPage -> printPreviewHTML.getElementsByTagName(HtmlTable.TAG_NAME).size() > 0);
+		
+	}
+
 	protected <T extends DomElement> T getElementById(String id ) {
 		return (T)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id );
 	}

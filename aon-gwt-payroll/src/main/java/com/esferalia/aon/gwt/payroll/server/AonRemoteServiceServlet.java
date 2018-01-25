@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,10 +22,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.Domain;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
@@ -31,6 +35,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.bean.GWT;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.google.gwt.user.server.Base64Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -244,6 +250,54 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		
 		return ((Enterprise) tos.get(0)).getId();
 		
+	}
+
+	public static Enterprise getEnterprise(String domainName) throws SQLException {
+		Connection connection = null;
+		try {
+		
+			connection = AonServletUtils.getConnection(domainName);
+			AONContext aonContext = new AONContext(connection);
+			RegistryRecord record = 
+			aonContext.getDslContext()
+				.select()
+				.from(com.esferalia.aon.jooq.tables.Registry.REGISTRY)
+				.join(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE)
+				.on(com.esferalia.aon.jooq.tables.Registry.REGISTRY.ID.eq(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE.REGISTRY))
+				.join(com.esferalia.aon.jooq.tables.Domain.DOMAIN)
+				.on(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE.DOMAIN.eq(com.esferalia.aon.jooq.tables.Domain.DOMAIN.ID))
+				.where(com.esferalia.aon.jooq.tables.Domain.DOMAIN.NAME.eq(domainName))
+				.fetchOneInto(com.esferalia.aon.jooq.tables.Registry.REGISTRY);
+			
+			com.code.aon.registry.Registry registry = 
+					new com.code.aon.registry.Registry();
+			registry.setId(record.getId());
+			registry.setDomain(record.getDomain());
+			registry.setAlias(record.getAlias());
+			registry.setDocument(record.getDocument());
+			registry.setName(record.getName());
+			if ( record.getNationality() != null )
+				registry.setNationality(Country.obtainCountry(record.getNationality()));
+			if ( record.getDocumentCountry() != null )
+				registry.setDocumentCountry(Country.obtainCountry(record.getDocumentCountry()));
+			if ( record.getDocumentType() != null  && 
+				record.getDocumentType() >= 0 && 
+				record.getDocumentType() < DocumentType.values().length) 
+				registry.setDocumentType(DocumentType.values()[record.getDocumentType()]);
+
+			Enterprise enterprise = new Enterprise();
+			enterprise.setId(record.getId());
+			enterprise.setDomain(record.getDomain());
+			enterprise.setRegistry(registry);
+
+			return enterprise;
+		
+		} catch (Exception e) {
+			throw new SQLException(e.getMessage(), e);
+		} finally {
+			if ( connection != null )
+				connection.close();
+		}
 	}
 
 	/*
