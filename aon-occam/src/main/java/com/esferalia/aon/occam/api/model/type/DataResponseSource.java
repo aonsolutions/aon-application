@@ -14,7 +14,8 @@ public enum DataResponseSource implements Serializable{
 	SERES_DELIVERY,
 	SERES_INVOICE,
 	SERES_SALES,
-	INGENET;
+	INGENET,
+	INGENET_SALES;
 
 
 	public byte value() {
