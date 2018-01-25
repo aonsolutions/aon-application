@@ -33,7 +33,7 @@ public class IRPFReportPanel extends ScrollPanel{
 			+ AonStringUtils.rightPad("FECHA FAC.",11)
 			+ AonStringUtils.rightPad("FECHA IMP.",11)
 			+ AonStringUtils.leftPad("BASE IMP.",15)		
-			+ AonStringUtils.leftPad("% IVA",8)
+			+ AonStringUtils.leftPad("% IRPF",8)
 			+ AonStringUtils.leftPad("CUOTA",15)
 			+ AonStringUtils.leftPad("% DED.",8)
 			+ AonStringUtils.leftPad("CUOTA DED.",15)
