@@ -46,7 +46,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model111.FISCAL_SERVICE.mathExpression(expression,callback);
+			Model111.SERVICE.mathExpression(expression,callback);
 		}
 	}; 
 
@@ -246,7 +246,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						Model111.SERVICE.getInfo(Model111.getCurrentDomainName(),Model111.getCurrentDomain(),
+						Model111.SERVICE.getInfo(callback.getDomainName(),callback.getUser(), callback.getDomain(),
 							callback.getFiscalModel(),script, infoKey,new AsyncCallback<String>() {
 
 									@Override
@@ -271,7 +271,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 
 	@Override
 	public void calculateAndRefresh(final IFiscalModelCallback<Mod111> callback) {
-		Model111.SERVICE.calculate(Model111.getCurrentDomainName(),callback.getFiscalModel(),
+		Model111.SERVICE.calculate(callback.getDomainName(),callback.getUser(),callback.getFiscalModel(),
 				new AsyncCallback<Mod111>() {
 
 					@Override
