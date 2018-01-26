@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -329,6 +330,12 @@ public class Mod131Aeat2016Calculator  {
 		double ic4 = 0.0;
 		if (AonMathUtils.isZero(act.getIc2())) {
 			double tope = AonMathUtils.round(act.getMaxImport());
+			if (AonMathUtils.isZero(tope)) {
+				Epigraph epi = Modules2016.Epigraph.getEpigraph(act.getEpigraph());
+				if (epi != null) {
+					tope = epi.getLimExceso();
+				}
+			}
 			double baseIndice = act.getRnm();
 			if (AonMathUtils.round(act.getIc1()) != 0.0) {
 				baseIndice = AonMathUtils.round(baseIndice * act.getIc1());	
@@ -353,11 +360,11 @@ public class Mod131Aeat2016Calculator  {
 				if (AonMathUtils.round(act.getNue()) != 0.0) {
 					// Primero
 					if (act.getYear() == (int) act.getNue()) {
-						act.setIc5( act.isDis()?0.80:0.60 ); 
+						act.setIc5( act.isDis()?0.60:0.70 ); 
 					}
 					// Segundo
 					if (( act.getYear() - 1) == (int) act.getNue()) {
-						act.setIc5( act.isDis()?0.90:0.70);
+						act.setIc5( act.isDis()?0.80:0.90);
 					}
 				}
 			}
