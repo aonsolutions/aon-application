@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatData;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -1542,7 +1543,7 @@ public class SIIGipuzkoaBuilt {
 		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
 		contraparte.setNombreRazon(vat.getRegistryName());
 		if(vat.getRegistryDocumentCountry().equals(Country.ES)
-				&& (validateNif(vat.getRegistryDocument(), vat.getRegistryName()) || !vat.getInvoiceType().equals(InvoiceType.SALES))){
+				&& (validateNif(vat.getRegistryDocument(), vat.getRegistryName(), vat.getRegistryDocumentType()) || !vat.getInvoiceType().equals(InvoiceType.SALES))){
 			contraparte.setNIF(vat.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();
@@ -1559,7 +1560,7 @@ public class SIIGipuzkoaBuilt {
 		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
 		contraparte.setNombreRazon(vat.getRegistryName());
 		if(vat.getRegistryDocumentCountry().equals(Country.ES)
-				&& validateNif(vat.getRegistryDocument(), vat.getRegistryName())){
+				&& validateNif(vat.getRegistryDocument(), vat.getRegistryName(), vat.getRegistryDocumentType())){
 			contraparte.setNIF(vat.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();
@@ -1577,11 +1578,14 @@ public class SIIGipuzkoaBuilt {
 		return contraparte;
 	}
 	
-	public Boolean validateNif(String nif, String name) {
+	public Boolean validateNif(String nif, String name, DocumentType type) {
+		return !type.equals(DocumentType.NOT_CENSUSED);
+		/*
 		VNifV1Ent vnif = new VNifV1Ent();
 		vnif.setNif(nif);
 		vnif.setNombre(name);
-		return true; //NIFPost.getInstance(cert, pass).vnifV1(vnif);
+		return NIFPost.getInstance(cert, pass).vnifV1(vnif);
+		*/
 	}
 	
 	public static byte[] writeXml(JAXBContext ctx, Object object) throws JAXBException, IOException{		

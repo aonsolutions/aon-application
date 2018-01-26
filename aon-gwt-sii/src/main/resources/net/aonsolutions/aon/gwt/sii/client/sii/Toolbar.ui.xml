@@ -5,8 +5,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
-	<g:FlowPanel height="100%"
-			styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+	<g:FlowPanel styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
 		<g:HorizontalPanel >
 			<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
 				<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">

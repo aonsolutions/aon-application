@@ -13,7 +13,9 @@ public enum DocumentType implements IResourceable {
 	PASSPORT,
 	WORK_PERMIT,
 	COMMUNITY_CARD,
-	OTHER;
+	OTHER,
+	NOT_CENSUSED
+	;
 
     private static final String MSG_KEY_PREFIX = "aon_enum_document_type_";
 
