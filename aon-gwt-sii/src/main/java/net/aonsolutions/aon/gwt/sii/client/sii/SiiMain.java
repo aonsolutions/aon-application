@@ -646,6 +646,7 @@ public class SiiMain extends AonTemplate2{
 			@Override
 			protected void onAccept() {
 				hide();
+				content();
 			}
 		};
 		dialog.setAutoHideEnabled(false);
@@ -684,12 +685,9 @@ public class SiiMain extends AonTemplate2{
 							label.getElement().getStyle().setColor(color);
 							vp.add(label);
 						});
-						d.getAccept().setVisible(true);
-						/*
 						if(result.getData().length() < 1) {
 							d.getAccept().setVisible(true);
 						} else resultPanel(map, page + 1 , vp, sendMap, d);
-						*/
 					}
 					
 					@Override
