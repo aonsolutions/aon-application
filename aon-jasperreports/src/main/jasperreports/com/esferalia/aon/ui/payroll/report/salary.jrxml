@@ -160,7 +160,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="0700ea05-100f-4e07-bb60-b63aab92c3ea" style="label" x="49" y="54" width="227" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$F{salary}.getContract().getFullQuoteRegime()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[ReportUtils.getFullQuoteRegime($F{salary})]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
