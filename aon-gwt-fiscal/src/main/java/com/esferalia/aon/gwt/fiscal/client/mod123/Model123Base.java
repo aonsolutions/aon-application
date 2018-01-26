@@ -246,7 +246,7 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						Model123.SERVICE.getInfo(Model123.getCurrentDomainName(), Model123.getCurrentUser(), Model123.getCurrentDomain(),
+						Model123.SERVICE.getInfo(callback.getDomainName(), callback.getUser(), callback.getDomain(),
 							callback.getFiscalModel(),script, infoKey,new AsyncCallback<String>() {
 
 									@Override
@@ -271,7 +271,7 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 
 	@Override
 	public void calculateAndRefresh(final IFiscalModelCallback<Mod123> callback) {
-		Model123.SERVICE.calculate(Model123.getCurrentDomainName(), Model123.getCurrentUser(),callback.getFiscalModel(),
+		Model123.SERVICE.calculate(callback.getDomainName(), callback.getUser(),callback.getFiscalModel(),
 				new AsyncCallback<Mod123>() {
 
 					@Override
