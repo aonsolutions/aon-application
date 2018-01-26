@@ -305,7 +305,7 @@ public class Mod184Writer {
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getRepresentativeDocument(),9))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getName(),40))
 		   ,(wr, mod184,prt,inc) -> wr.append("S")
-		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getProvince(),2,0))
+		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getProvince()==0?99:prt.getProvince(),2,0))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getCountry(),2))
 		   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getPartType(),1,0))
 		   ,(wr, mod184,prt,inc) -> wr.append(prt.isMemberEndOfYear()?"X":" ")
