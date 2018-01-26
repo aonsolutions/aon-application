@@ -698,7 +698,7 @@ public class ConnectSaleInvoiceWriter {
 			if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
-				return deliveryDetail.getDelivery().getSeries() + "/" + deliveryDetail.getDelivery().getNumber();
+				return deliveryDetail.getDelivery().getReferenceCode();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());

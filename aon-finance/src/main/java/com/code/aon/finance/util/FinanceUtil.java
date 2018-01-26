@@ -1,5 +1,7 @@
 package com.code.aon.finance.util;
 
+import static com.code.aon.common.enumeration.AppParam.APP_DOCUMENT_NUMBER_LENGTH_PARAM;
+
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +35,9 @@ public class FinanceUtil {
 		if (!StringUtils.isEmpty(series)) {
 			documentNumber += series + "/";
 		}
-		documentNumber += StringUtils.leftPad(Integer.toString(number), 6, "0");
+		Integer size = AppParamUtil.getValueAsInteger(APP_DOCUMENT_NUMBER_LENGTH_PARAM);
+		size = size != null ? size : 6;
+		documentNumber += StringUtils.leftPad(Integer.toString(number), size, "0");
 		return documentNumber;
 	}
 

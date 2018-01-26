@@ -11,6 +11,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PA
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_VAT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PROJECT_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_DOCUMENT_NUMBER_LENGTH_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
 
 import java.util.regex.Matcher;
@@ -44,6 +45,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setPrintRecordData(companyController.obtainPrintRecordData());
 			companyController.setPrintLogo(companyController.obtainPrintLogo());
 			companyController.setPrintProject(companyController.obtainPrintProject());
+			companyController.setDocumentNumberLength(companyController.obtainDocumentNumberLength());
 			companyController.setPrintProductCode(companyController.obtainPrintProductCode());
 			companyController.setPrintProductVatPercent(companyController.obtainPrintProductVatPercent());
 			companyController.setSmartCard(companyController.obtainSmartCard());
@@ -86,6 +88,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		AppParamUtil.insertParameter(APP_PRINT_RECORD_DATA_PARAM, companyController.isPrintRecordData());
 		AppParamUtil.insertParameter(APP_PRINT_LOGO_PARAM, companyController.isPrintLogo());
 		AppParamUtil.insertParameter(APP_PRINT_PROJECT_PARAM, companyController.isPrintProject());
+		AppParamUtil.insertParameter(APP_DOCUMENT_NUMBER_LENGTH_PARAM, companyController.getDocumentNumberLength());
 		AppParamUtil.insertParameter(APP_PRINT_PRODUCT_CODE_PARAM, companyController.isPrintProductCode());
 		AppParamUtil.insertParameter(APP_PRINT_PRODUCT_VAT_PARAM, companyController.isPrintProductVatPercent());
 		AppParamUtil.insertParameter(APP_SMART_CARD_PARAM, companyController.isSmartCard());	

@@ -37,6 +37,26 @@
 						<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_general2.xhtml" />
 					</aon:panelGrid>
 				</h:panelGrid>
+				<h:panelGrid columns="1" columnClasses="aon-vertical-align-top, aon-vertical-align-top">
+					<aon:panelGrid columns="2" style="width:700px">
+						<aon:outputLabel for="Company_document_number_length"
+							value="#{bundle.company_print_document_number_length}" />
+						<aon:div id="Company_document_number_length-div" style="width:380px">
+							<aon:div style="display:inline-block;">
+								<rich:inputNumberSpinner id="Company_document_number_length"
+									value="#{company.documentNumberLength}"
+									minValue="1" maxValue="10" style="width:5px" size="3" >
+									<a4j:support event="onchange" reRender="Company_document_number_length-div" />
+								</rich:inputNumberSpinner>
+							</aon:div>
+							<aon:outputText styleClass="aon-margin-left"
+								value="#{bundle.aon_series}/" />
+							<c:forEach begin="1" end="#{empty company.documentNumberLength ? 6 : company.documentNumberLength}">
+							    <aon:outputText value="0" />
+							</c:forEach>
+						</aon:div>
+					</aon:panelGrid>
+				</h:panelGrid>
 			</aon:panel>
 			
 			<aon:panel id="SaleInvoice-params-panel">

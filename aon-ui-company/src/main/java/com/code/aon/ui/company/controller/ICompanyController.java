@@ -45,6 +45,9 @@ public interface ICompanyController extends IController {
 	
 	boolean isPrintProject();
 	void setPrintProject(boolean printReferenceCode);
+	
+	Integer getDocumentNumberLength();
+	void setDocumentNumberLength(Integer DocumentNumberLength);
 
 	boolean isSmartCard();
 	void setSmartCard(boolean smartCard);
@@ -70,6 +73,7 @@ public interface ICompanyController extends IController {
 	Tag obtainManufacturingOrderTemplateTag() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
 	boolean obtainPrintProject() throws ManagerBeanException;
+	Integer obtainDocumentNumberLength() throws ManagerBeanException;
 	boolean obtainPrintProductCode() throws ManagerBeanException;
 	boolean obtainPrintProductVatPercent() throws ManagerBeanException;
 	boolean obtainSmartCard() throws ManagerBeanException;
