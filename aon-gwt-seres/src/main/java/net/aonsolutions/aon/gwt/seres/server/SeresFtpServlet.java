@@ -43,7 +43,10 @@ import com.code.aon.registry.RegistryAddress;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.seres.ftp.FtpException;
@@ -331,23 +334,26 @@ public class SeresFtpServlet extends HttpServlet {
 			try {
 				RegistryAddress raddress = invoice.getRegistryAddress();
 				if (raddress != null && raddress.getId() != null) {
-					CustomerEdiSupport ediSuport = new CustomerEdiSupport();
+					CustomerEdiSupport ediSupport = new CustomerEdiSupport();
+					boolean isInvoicingMainAddress = false;
 					try {
 						Customer customer = (Customer) BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
-						ediSuport.init(customer);
+						ediSupport.init(customer);
+						RegistryNote rNote = searchCustomerNote(domain, loggedUser, invoice.getRegistry().getId(), IEdiSupport.SERES_INVOICING_MAIN_ADDRESS);
+						isInvoicingMainAddress = rNote!=null && new Boolean(rNote.getComments());
 					} catch (ManagerBeanException e) {
 						throw new AonCoreException(e.getMessage(), e);
 					}
 					
-					if(ediSuport.isEnabled()){
-						Map<String, String> ediCodes =  ediSuport.getEdiCodes(
+					if(ediSupport.isEnabled()){
+						Map<String, String> ediCodes =  ediSupport.getEdiCodes(
 								invoice.getRegistry(), invoice.getRegistryAddress());
 						
 						String customerEdiCabeceraCode = ediCodes.get(IEdiSupport.CABECERA);
 						String customerEdiPtoEntregaCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
 						String customerEdiFacturaCode = ediCodes.get(IEdiSupport.FACTURA);
 						
-						Tag packingTag = ediSuport.obtainPackingTagInvoice(
+						Tag packingTag = ediSupport.obtainPackingTagInvoice(
 								invoice.getRegistry(),
 								invoice.getRegistryAddress());
 						if(packingTag!=null && packingTag.getId()!=null){
@@ -360,7 +366,7 @@ public class SeresFtpServlet extends HttpServlet {
 							ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
 							Company company = getCompany(invoice.getDomain());
 							
-							output = writer.createFile(invoice, company, companyEdiCode,
+							output = writer.createFile(invoice, company, isInvoicingMainAddress, companyEdiCode,
 									customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode,
 									customerPackage);
 						} else {
@@ -393,6 +399,17 @@ public class SeresFtpServlet extends HttpServlet {
 				 throw new AonCoreException("No se han podido obtener los datos de empresa");
 			}
 			return null;
+		}
+		private RegistryNote searchCustomerNote(Domain domain, String loggedUser, Integer customerId, String key) {
+			List<RegistryNote> rNotes = AON.getRNoteList(
+					domain.getName(),
+					domain.getId(),
+					loggedUser,
+					f -> f.getNoteTypeProperty().eq(NoteType.FACTURAE.value())
+							.and(f.getRegistryProperty().eq(customerId))
+							.and(f.getDescriptionProperty().eq(key))
+							);
+			return rNotes!=null && rNotes.size()>0?rNotes.get(0):null;
 		}
 	}
 	

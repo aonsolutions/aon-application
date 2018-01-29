@@ -65,12 +65,12 @@ public class ConnectSaleInvoiceWriter {
 			.getLogger(ConnectSaleInvoiceWriter.class);
 
 
-	public FileOutput createFile(Invoice invoice, Company company, String companyEdiCode,
+	public FileOutput createFile(Invoice invoice, Company company, boolean invoicingMainAddress, String companyEdiCode,
 			String customerEdiCabeceraCode, String customerEdiPtoEntregaCode, String customerEdiFacturaCode,
 			String customerPackage)
 			throws FileNotFoundException, UnsupportedEncodingException {
 
-		RECTL rectl = createRECTLRecord(invoice, company, companyEdiCode, customerEdiCabeceraCode,
+		RECTL rectl = createRECTLRecord(invoice, company, invoicingMainAddress, companyEdiCode, customerEdiCabeceraCode,
 				customerEdiPtoEntregaCode, customerEdiFacturaCode, customerPackage);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
@@ -82,7 +82,7 @@ public class ConnectSaleInvoiceWriter {
 		return output;
 	}
 
-	private RECTL createRECTLRecord(Invoice invoice, Company company,
+	private RECTL createRECTLRecord(Invoice invoice, Company company, boolean invoicingMainAddress,
 			String companyEdiCode, String customerEdiCabeceraCode,
 			String customerEdiPtoEntregaCode, String customerEdiFacturaCode, String customerPackage) {
 
@@ -110,7 +110,7 @@ public class ConnectSaleInvoiceWriter {
 			LOGGER.error(e.getMessage());
 		}
 		try {
-			rectl.sincpList = createSINCPList(invoice, company, companyEdiCode,
+			rectl.sincpList = createSINCPList(invoice, company, invoicingMainAddress, companyEdiCode,
 					customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
@@ -208,14 +208,16 @@ public class ConnectSaleInvoiceWriter {
 		return sincc;
 	}
 	
-	private List<SINCP> createSINCPList(Invoice invoice, Company company,
-			String companyEdiCode, String customerEdiCabeceraCode,
-			String customerEdiPtoEntregaCode, String customerEdiFacturaCode) {
+	private List<SINCP> createSINCPList(Invoice invoice, Company company, boolean invoicingMainAddress,
+			String companyEdiCode, String customerEdiCabeceraCode, String customerEdiPtoEntregaCode,
+			String customerEdiFacturaCode) {
 		Registry customer = invoice.getRegistry();
 		RegistryAddress invoiceAddress = invoice.getRegistryAddress();
 		RegistryAddress companyAddress = null;
+		RegistryAddress customerMainAddress = null;
 		try {
 			companyAddress = company.getRegistry().getDefaultAddress();
+			customerMainAddress = invoice.getRegistry().getDefaultAddress();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -252,7 +254,7 @@ public class ConnectSaleInvoiceWriter {
 		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
 				customerEdiFacturaCode, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
-				customerEdiCabeceraCode, customer, invoiceAddress, null));
+				customerEdiCabeceraCode, customer, invoicingMainAddress?customerMainAddress:invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
 				companyEdiCode, company, companyAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PAGADOR__QUIEN_PAGA__PR,

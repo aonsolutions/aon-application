@@ -30,6 +30,7 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean seresAutoCommitDelivery;
+	private boolean seresInvoicingMainAddress;
 	
 	public boolean isSeresAutoCommitDelivery() {
 		return seresAutoCommitDelivery;
@@ -39,6 +40,14 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		this.seresAutoCommitDelivery = seresAutoCommitDelivery;
 	}
 	
+	public boolean isSeresInvoicingMainAddress() {
+		return seresInvoicingMainAddress;
+	}
+
+	public void setSeresInvoicingMainAddress(boolean seresInvoicingMainAddress) {
+		this.seresInvoicingMainAddress = seresInvoicingMainAddress;
+	}
+
 	public List<SelectItem> getPackingTypeTags() throws ManagerBeanException {
 		IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
 		Criteria criteria = new Criteria();
@@ -82,6 +91,15 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		autoCommitDelivery.setComments(String.valueOf(isSeresAutoCommitDelivery()));
 		saveRegistryNote(autoCommitDelivery);
 	}
+	
+	private void saveSeresInvoicingMainAddressParam(Customer customer) throws ManagerBeanException {
+		RegistryNote rNote = this.getRegistryNote(SERES_INVOICING_MAIN_ADDRESS, customer.getId());
+		if (rNote == null) {
+			rNote = getEmptyNote(customer.getRegistry(), SERES_INVOICING_MAIN_ADDRESS);
+		}
+		rNote.setComments(String.valueOf(isSeresInvoicingMainAddress()));
+		saveRegistryNote(rNote);
+	}
 
 	private void save(Customer customer) throws ManagerBeanException {
 		for (Integer addressId : this.getAddressCodes().keySet()) {
@@ -104,6 +122,7 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		if (isEnabled()) {
 			saveActiveParam(customer);
 			saveSeresAutoCommitDeliveryParam(customer);
+			saveSeresInvoicingMainAddressParam(customer);
 			save(customer);
 		} else {
 			onRemove(customer);
