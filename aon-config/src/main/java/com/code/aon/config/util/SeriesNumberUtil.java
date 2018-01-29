@@ -1,5 +1,7 @@
 package com.code.aon.config.util;
 
+import static com.code.aon.common.enumeration.AppParam.APP_DOCUMENT_NUMBER_LENGTH_PARAM;
+
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
@@ -82,6 +84,11 @@ public class SeriesNumberUtil {
 			}
 		}
 		return 1;
+	}
+	
+	public static int getNumberMinimumLength() {
+		Integer size = AppParamUtil.getValueAsInteger(APP_DOCUMENT_NUMBER_LENGTH_PARAM);
+		return size != null ? size : 6;
 	}
 
 }

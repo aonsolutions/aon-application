@@ -1,7 +1,5 @@
 package com.code.aon.finance.util;
 
-import static com.code.aon.common.enumeration.AppParam.APP_DOCUMENT_NUMBER_LENGTH_PARAM;
-
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +14,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -35,9 +34,7 @@ public class FinanceUtil {
 		if (!StringUtils.isEmpty(series)) {
 			documentNumber += series + "/";
 		}
-		Integer size = AppParamUtil.getValueAsInteger(APP_DOCUMENT_NUMBER_LENGTH_PARAM);
-		size = size != null ? size : 6;
-		documentNumber += StringUtils.leftPad(Integer.toString(number), size, "0");
+		documentNumber += StringUtils.leftPad(Integer.toString(number), SeriesNumberUtil.getNumberMinimumLength(), "0");
 		return documentNumber;
 	}
 

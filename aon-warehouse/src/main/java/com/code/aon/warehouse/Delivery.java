@@ -1,7 +1,5 @@
 package com.code.aon.warehouse;
 
-import static com.code.aon.common.enumeration.AppParam.APP_DOCUMENT_NUMBER_LENGTH_PARAM;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -33,7 +31,7 @@ import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -80,9 +78,7 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 	
     @Transient
     public String getReferenceCode() {
-    	Integer size = AppParamUtil.getValueAsInteger(APP_DOCUMENT_NUMBER_LENGTH_PARAM);
-		size = size != null ? size : 6;
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), size, "0");
+    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), SeriesNumberUtil.getNumberMinimumLength(), "0");
 		if (!StringUtils.isEmpty(getSeries())) {
 			referenceCode = getSeries() + "/" + referenceCode;
 		}

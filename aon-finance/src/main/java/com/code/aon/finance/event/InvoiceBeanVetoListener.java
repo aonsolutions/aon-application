@@ -1,7 +1,5 @@
 package com.code.aon.finance.event;
 
-import static com.code.aon.common.enumeration.AppParam.APP_DOCUMENT_NUMBER_LENGTH_PARAM;
-
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +24,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
-import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
@@ -57,7 +54,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		checkInvoice(invoice, company);
 		if (invoice.isSales()) {
 			checkNumber(invoice);
-			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), getNumberSize(), "0");
+			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), SeriesNumberUtil.getNumberMinimumLength(), "0");
 			if (!StringUtils.isBlank(invoice.getSeries())) {
 				referenceCode = invoice.getSeries() + "/" + referenceCode;
 			}
@@ -109,7 +106,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			checkInvoice(invoice, company);
 			if (invoice.isSales()) {
 				checkNumber(invoice);
-				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), getNumberSize(), "0");
+				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), SeriesNumberUtil.getNumberMinimumLength(), "0");
 				if (!StringUtils.isBlank(invoice.getSeries())) {
 					referenceCode = invoice.getSeries() + "/" + referenceCode;
 				}
@@ -156,11 +153,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		return null;
 	}
 	
-	private int getNumberSize() {
-		Integer size = AppParamUtil.getValueAsInteger(APP_DOCUMENT_NUMBER_LENGTH_PARAM);
-		return size != null ? size : 6;
-	}
-
 	private void checkInvoice(Invoice invoice, Company company) throws ManagerBeanVetoListenerException {
 		checkLimitDate(invoice);
 		checkInvoiceYear(invoice);
