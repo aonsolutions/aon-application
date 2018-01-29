@@ -316,6 +316,8 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 						}
 						retentionAccountEntryDetail.setCuenta( retentionAccount.getCode() );
 						retentionAccountEntryDetail.setDescripcionCuenta( retentionAccount.getDescription() );
+					} else {
+						retentionAccount = getLoaderUtils().ensureAccount( retentionAccountEntryDetail.getCuenta(), "IRFP" );
 					}
 					AccountEntryDetail retentionAed = (AccountEntryDetail) engine.get(params, retentionAccountEntryDetail);
 					if (retentionAed == null) {
