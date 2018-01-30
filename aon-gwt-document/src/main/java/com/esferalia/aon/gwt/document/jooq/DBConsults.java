@@ -270,6 +270,18 @@ public class DBConsults {
 		@Override
 		public FileInfo apply(Attach a){
 			FileInfo fi = new FileInfo();
+
+			if(a.getDomain() != null && a.getDomain().getId() != null)
+				fi.setDomainId(a.getDomain().getId());
+			if(a.getDomain() != null && a.getDomain().getName() != null)
+				fi.setDomain(a.getDomain().getName());
+			if(a.getDomain() !=null && a.getDomain().getDescription() != null)
+				fi.setDomainDescription(a.getDomain().getDescription());
+			if(a.getDomain() != null){
+				if(!a.getDomain().getId().equals(actualDomain))
+					fi.setIsParent(a.getDomain().getParentId() == null);	
+			}
+			
 			fi.setAonType("registry");
 			if (a.getId() != null) {
 				fi.setFileId(a.getId());
@@ -324,16 +336,7 @@ public class DBConsults {
 			
 			
 			fi.setIcon(getmType(fi));
-			if(a.getDomain() != null && a.getDomain().getId() != null)
-				fi.setDomainId(a.getDomain().getId());
-			if(a.getDomain() != null && a.getDomain().getName() != null)
-				fi.setDomain(a.getDomain().getName());
-			if(a.getDomain() !=null && a.getDomain().getDescription() != null)
-				fi.setDomainDescription(a.getDomain().getDescription());
-			if(a.getDomain() != null){
-				if(!a.getDomain().getId().equals(actualDomain))
-					fi.setIsParent(a.getDomain().getParentId() == null);	
-			}
+
 			if(a.getCreationUser() != null)
 				fi.setCreationUser(a.getCreationUser());
 			if(a.getCreationDate() != null){
