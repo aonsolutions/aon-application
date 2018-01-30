@@ -961,7 +961,7 @@ public class Mod347DAO {
 	}
 	
 	private static String getInvoicesInfo(AONContext ctx, Mod347 mod347, Mod347Declared declared) {
-		
+
 		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
 				+ FiscalModelUtils.getModelName(mod347) 
 				+ " DEL " + mod347.getPeriod().getDescription()
