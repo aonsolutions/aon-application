@@ -187,7 +187,7 @@ public class Model180Table extends SimpleLayoutPanel implements HasSelectionHand
 
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				Model180.SERVICE.getMod180s(Model180.getCurrentDomainName(), Model180.getCurrentDomain(),
+				Model180.SERVICE.getMod180s(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(),
 						new AsyncCallback<LinkedList<Mod180>>() {
 							@Override
 							public void onSuccess(LinkedList<Mod180> result) {

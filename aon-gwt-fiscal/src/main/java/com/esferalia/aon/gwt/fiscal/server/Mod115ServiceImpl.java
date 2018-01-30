@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Mod115Service;
 import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.occam.api.FISCAL;
@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Mod115 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod115" })
-public class Mod115ServiceImpl extends AonRemoteServiceServlet implements Mod115Service {
+public class Mod115ServiceImpl extends AonStatelessRemoteServiceServlet implements Mod115Service {
 	
 	private static final long serialVersionUID = -2628693172915571116L;
 

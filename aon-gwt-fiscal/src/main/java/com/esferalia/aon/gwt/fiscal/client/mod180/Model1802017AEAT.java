@@ -27,15 +27,15 @@ public class Model1802017AEAT extends Model180Base {
 		
 		paintDeclarationTab(tabPanel);
 		paintPerceptorsTab(tabPanel, selectedIndex);
-		paintAdministrationTab(tabPanel);
+		paintAdministrationTab(cbk,tabPanel);
 		
 		tabPanel.selectTab(PERCEPTORS_TAB, false);
 		
 	}
 
-	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model180Callback cbk, TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel());
+		panel.add(getAdministrationPanel(cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod180().getAdministration())));
 	}
