@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190.IModel190Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190.Model190Callback;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -45,9 +44,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model190Base extends DockLayoutPanel {
 
-	static final String MODEL190_PRINT = "/aon_gwt_fiscal/Model190Print";
-	private static final String MODEL190_CERTIFICATE_PRINT = "/aon_gwt_fiscal/Model190CertificatePrint";
-	static final String MODEL190_FILE = "/aon_gwt_fiscal/Model190File";
+	static final String MODEL190_PRINT = "/aon_gwt_fiscal/ms/Model190Print";
+	private static final String MODEL190_CERTIFICATE_PRINT = "/aon_gwt_fiscal/ms/Model190CertificatePrint";
+	static final String MODEL190_FILE = "/aon_gwt_fiscal/ms/Model190File";
 	
 	protected interface IModel190Detail extends IsWidget {
 		Integer getSelectedPerceptorIndex();
@@ -91,6 +90,18 @@ abstract class Model190Base extends DockLayoutPanel {
 		public void onNew() {
 			cbk.onNew();
 		}
+		@Override
+		public String getDomainName() {
+			return cbk.getDomainName();
+		}
+		@Override
+		public String getUser() {
+			return cbk.getUser();
+		}
+		@Override
+		public int getDomain() {
+			return cbk.getDomain();
+		}
 	}
 	
 	
@@ -119,6 +130,7 @@ abstract class Model190Base extends DockLayoutPanel {
 	protected Hidden mod190Hidden = new Hidden("mod190");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
+	protected Hidden userHidden = new Hidden("user");
 	
 	private IModel190Detail detailManager;
 	
@@ -126,7 +138,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		super(Unit.PX);
 		select( mod190 );
 		
-		addNorth(getToolbarPanel(), 25);
+		addNorth(getToolbarPanel(cbk), 25);
 		
 		SimplePanel modelPanel = new SimplePanel();
 		FiscalModelUtils.paintHeaderTable(modelPanel, this.mod190 );
@@ -134,7 +146,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		
 		ScrollPanel headerPanel = new ScrollPanel();
 		headerPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		headerPanel.setWidget( getDeclarationHeaderTable());
+		headerPanel.setWidget( getDeclarationHeaderTable(cbk));
 		addNorth(headerPanel, 45);
 		
 		this.callback = new Model190BaseCallback(cbk);
@@ -175,7 +187,7 @@ abstract class Model190Base extends DockLayoutPanel {
 	}
 
 	
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(Model190Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -229,7 +241,7 @@ abstract class Model190Base extends DockLayoutPanel {
 				popup.setGlassEnabled(true);
 				popup.setAnimationEnabled(true);
 				popup.center();
-				Model190.SERVICE.save(Model190.getCurrentDomainName(), Model190.getCurrentDomain(),
+				Model190.SERVICE.save(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(),
 						getMod190(), new AsyncCallback<Mod190>() {
 							@Override
 							public void onSuccess(Mod190 result) {
@@ -291,8 +303,7 @@ abstract class Model190Base extends DockLayoutPanel {
 
 					@Override
 					public void onAccept() {
-						Model190.SERVICE.delete(Model190.getCurrentDomainName(),
-								Model190.getCurrentDomain(), getMod190(), new AsyncCallback<Void>() {
+						Model190.SERVICE.delete(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(), getMod190(), new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
@@ -325,7 +336,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				Model190.SERVICE.changeStatus(Model190.getCurrentDomainName(), getMod190(), FiscalStatus.FINISHED, new AsyncCallback<Mod190>() {
+				Model190.SERVICE.changeStatus(cbk.getDomainName(), cbk.getUser(), getMod190(), FiscalStatus.FINISHED, new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 result) {
 						callback.onSelect(result , detailManager.getSelectedPerceptorIndex() );
@@ -350,7 +361,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				Model190.SERVICE.changeStatus(Model190.getCurrentDomainName(), getMod190(), FiscalStatus.SENT, new AsyncCallback<Mod190>() {
+				Model190.SERVICE.changeStatus(cbk.getDomainName(), cbk.getUser(), getMod190(), FiscalStatus.SENT, new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 result) {
 						callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
@@ -375,7 +386,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				Model190.SERVICE.changeStatus(Model190.getCurrentDomainName(), getMod190(), FiscalStatus.PENDING, new AsyncCallback<Mod190>() {
+				Model190.SERVICE.changeStatus(cbk.getDomainName(), cbk.getUser(), getMod190(), FiscalStatus.PENDING, new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 result) {
 						callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
@@ -409,7 +420,7 @@ abstract class Model190Base extends DockLayoutPanel {
 							
 					@Override
 					public void onAccept() {
-						Model190.SERVICE.duplicateNextYear(Model190.getCurrentDomainName(), Model190.getCurrentDomain(), 
+						Model190.SERVICE.duplicateNextYear(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(), 
 								mod190.getId(), new AsyncCallback<Mod190>() {
 							@Override
 							public void onSuccess(Mod190 result) {
@@ -450,6 +461,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		formFlowPanel.add(mod190Hidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);		
 		formContainer.add(diskForm);
 		toolbarPanel.add(formContainer);
 		
@@ -461,11 +473,12 @@ abstract class Model190Base extends DockLayoutPanel {
 		dialog.show(getMod190());
 	}
 	
-	protected void submitForm(String action) {
+	protected void submitForm(Model190Callback cbk, String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod190Hidden.setValue(String.valueOf(getMod190().getId()));
-		domainIdHidden.setValue(String.valueOf(Model190.getCurrentDomain()));
-		domainNameHidden.setValue(Model190.getCurrentDomainName());
+		domainIdHidden.setValue(String.valueOf(cbk.getDomain()));
+		domainNameHidden.setValue(cbk.getDomainName());
+		userHidden.setValue(cbk.getDomainName());
 		diskForm.submit();
 	}
 	
@@ -662,7 +675,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private Widget getDeclarationHeaderTable() {
+	private Widget getDeclarationHeaderTable(Model190Callback cbk) {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -729,7 +742,7 @@ abstract class Model190Base extends DockLayoutPanel {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						getMod190().setComments(event.getValue());
 						styleCommentsButton();
-						Model190.SERVICE.saveComments(Model303.getCurrentDomainName(), getMod190(), new AsyncCallback<Mod190>() {
+						Model190.SERVICE.saveComments(cbk.getDomainName(), cbk.getUser(), getMod190(), new AsyncCallback<Mod190>() {
 							@Override
 							public void onSuccess(Mod190 result) {
 								toast.hide();
@@ -803,7 +816,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		return panel;
 	}
 
-	protected FlowPanel getAdministrationPanel() {
+	protected FlowPanel getAdministrationPanel(Model190Callback cbk) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -843,7 +856,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod190().isFinished() || getMod190().isSent()) {
-					submitForm(MODEL190_FILE);
+					submitForm(cbk,MODEL190_FILE);
 				} else {
 					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
@@ -868,7 +881,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		button3.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				submitForm(MODEL190_PRINT);
+				submitForm(cbk,MODEL190_PRINT);
 			}
 		});
 		p3.add(button3);
@@ -908,7 +921,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod190().isFinished() || getMod190().isSent()) {
-					submitForm(MODEL190_CERTIFICATE_PRINT);
+					submitForm(cbk,MODEL190_CERTIFICATE_PRINT);
 				} else {
 					getCallback().showError("Para imprimir los certificados, debe finalizar la confecci\u00F3n del modelo.");
 				}

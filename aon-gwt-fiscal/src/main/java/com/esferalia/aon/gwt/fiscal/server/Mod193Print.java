@@ -25,14 +25,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.server.fiscal.format.Mod193Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod193 Print", urlPatterns = { "/aon_gwt_fiscal/Model193Print" })
+@WebServlet(name = "Mod193 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model193Print" })
 public class Mod193Print extends HttpServlet {
 
 	@Override
@@ -43,7 +42,8 @@ public class Mod193Print extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod193"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod193 mod193 = FISCAL.getMod193(domainName, domainId, AonServletUtils.getLoggedUser(),id);
+			String user = req.getParameter("user");
+			Mod193 mod193 = FISCAL.getMod193(domainName, domainId, user,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

@@ -55,8 +55,11 @@ public class Model193 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew();
-		
+		String getDomainName();
+		int getDomain();
+		String getUser();
 	}
+	
 	protected class Model193Callback implements IModel193Callback {
 		
 		@Override
@@ -83,6 +86,18 @@ public class Model193 extends MainEntryPoint {
 		public void showError(String msg) {
 			Model193.this.showErrorPanel(msg);
 		}
+		@Override
+		public int getDomain() {
+			return getCurrentDomain();
+		}
+		@Override
+		public String getDomainName() {
+			return getCurrentDomainName();
+		}
+		@Override
+		public String getUser() {
+			return getCurrentUser();	
+		};
 	};
 
 	@UiField
@@ -108,9 +123,6 @@ public class Model193 extends MainEntryPoint {
 	Panel formContainer;
 	SimplePanel headerPanel = new SimplePanel();
 	
-	private int domain;
-	private int enterprise;
-
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
@@ -137,19 +149,9 @@ public class Model193 extends MainEntryPoint {
 
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	
 	private void onSelectionChange(SelectionEvent<Mod193> event) {
 		Mod193 sel = event.getSelectedItem();
-		SERVICE.getMod193(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod193(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				sel.getId(), new AsyncCallback<Mod193>() {
 					@Override
 					public void onSuccess(Mod193 selected) {
@@ -179,7 +181,7 @@ public class Model193 extends MainEntryPoint {
 
 	private void newModel() {
 		cleanErrorPanel();
-		SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(), 2017,
+		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2017,
 				new AsyncCallback<Mod193>() {
 					@Override
 					public void onSuccess(Mod193 m193) {
@@ -222,14 +224,6 @@ public class Model193 extends MainEntryPoint {
 	private void openFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 		splitLayoutPanel.animate(500);
-	}
-	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
 	}
 	
 	private void cleanErrorPanel() {
@@ -292,7 +286,7 @@ public class Model193 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.save(getCurrentDomainName(),getCurrentDomain(),model,
+						SERVICE.save(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),model,
 								new AsyncCallback<Mod193>() {
 									@Override
 									public void onSuccess(Mod193 model) {

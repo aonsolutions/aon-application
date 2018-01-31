@@ -203,7 +203,7 @@ public class Model190Table extends SimpleLayoutPanel implements HasSelectionHand
 
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				Model190.SERVICE.getMod190s(Model190.getCurrentDomainName(), Model190.getCurrentDomain(),
+				Model190.SERVICE.getMod190s(cbk.getDomainName(),cbk.getUser(), cbk.getDomain(),
 						new AsyncCallback<LinkedList<Mod190>>() {
 							@Override
 							public void onSuccess(LinkedList<Mod190> result) {
