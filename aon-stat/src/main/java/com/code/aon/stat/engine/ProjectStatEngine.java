@@ -13,11 +13,13 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.stat.DailyTracking;
+import com.code.aon.stat.Delivery;
 import com.code.aon.stat.Invoice;
 import com.code.aon.stat.Offer;
 import com.code.aon.stat.PagedList;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 
 
 public class ProjectStatEngine implements Serializable {
@@ -52,6 +54,68 @@ public class ProjectStatEngine implements Serializable {
 			DatabaseUtil.closeQuietly(ps);
 		}
 		return CommonUtil.round(totalSales);
+	}
+	
+	public double getTotalIncome(Connection c, ProjectStatParams params) throws ManagerBeanException {
+		double totalIncome = 0d;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String select = "SELECT SUM(id.quantity * id.price) "
+					+ " FROM income i "
+					+ " INNER JOIN income_detail id ON id.income = i.id"
+					+ " WHERE "
+					+ DomainManager.getSQLWhereClause("i.domain")
+					+ " AND i.status = 0"
+					+ " AND id.project = ? "
+					+ " AND i.issue_time BETWEEN ? AND ?";
+			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_READ_ONLY);
+			ps.setInt(1, params.getProjectId() );
+			ps.setDate(2, new java.sql.Date( params.getFromDate().getTime()) );
+			ps.setDate(3, new java.sql.Date( params.getToDate().getTime()) );
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				totalIncome = rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+		}
+		return CommonUtil.round(totalIncome);
+	}
+	
+	public double getTotalDelivery(Connection c, ProjectStatParams params) throws ManagerBeanException {
+		double totalDelivery = 0d;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String select = "SELECT SUM(dd.quantity * dd.price) "
+					+ " FROM delivery d "
+					+ " INNER JOIN delivery_detail dd ON dd.delivery = d.id"
+					+ " WHERE "
+					+ DomainManager.getSQLWhereClause("d.domain")
+					+ " AND d.status = 0"
+					+ " AND d.project = ? "
+					+ " AND d.issue_time BETWEEN ? AND ?";
+			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_READ_ONLY);
+			ps.setInt(1, params.getProjectId() );
+			ps.setDate(2, new java.sql.Date( params.getFromDate().getTime()) );
+			ps.setDate(3, new java.sql.Date( params.getToDate().getTime()) );
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				totalDelivery = rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+		}
+		return CommonUtil.round(totalDelivery);
 	}
 	
 	public double getTotalInvoiceCosts(Connection c, ProjectStatParams params) throws ManagerBeanException {
@@ -266,6 +330,7 @@ public class ProjectStatEngine implements Serializable {
 			DatabaseUtil.closeQuietly(ps);
 		}
 	}
+	
 	public void fillCostInvoicePage(Connection c,PagedList<Invoice> page, ProjectStatParams params) throws ManagerBeanException {
 		page.setList( new LinkedList<Invoice>() );		
 		PreparedStatement ps = null;
@@ -322,6 +387,123 @@ public class ProjectStatEngine implements Serializable {
 			DatabaseUtil.closeQuietly(ps);
 		}
 	}
+
+	public void fillDeliveryPage(Connection c,PagedList<Delivery> page, ProjectStatParams params) throws ManagerBeanException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String select = "SELECT" 
+				+" d.id"
+				+",d.series"
+				+",d.number"
+				+",d.issue_time"
+				+",c.name"
+				+",SUM(dd.price * dd.quantity)"
+			+" FROM delivery d"
+			+" INNER JOIN delivery_detail dd ON dd.delivery = d.id"
+			+" INNER JOIN registry c ON c.id = d.customer"
+			+" WHERE " + DomainManager.getSQLWhereClause("d.domain")
+			+" AND d.status = 0"
+			+" AND d.project = ?"
+			+" AND d.issue_time BETWEEN ? AND ?"
+			+" GROUP BY d.id"
+			+" ORDER BY d.series,d.number"; 
+			ps =  c.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			ps.setInt(1, params.getProjectId() );
+			ps.setDate(2, new java.sql.Date( params.getFromDate().getTime()) );
+			ps.setDate(3, new java.sql.Date( params.getToDate().getTime()) );
+			rs = ps.executeQuery();
+			int i = 1;
+			page.setNextAvailable(false);
+ 			while (rs.next()) {
+				Integer id = rs.getInt(1);
+				Delivery delivery = new Delivery()
+						.setId(id)
+						.setType("Venta")
+						.setReference(rs.getString(2) + "/" + rs.getInt(3))
+						.setIssueDate(rs.getDate(4))
+						.setRegistryName(rs.getString(5))
+						.setTotal(rs.getDouble(6));
+				page.getList().add(delivery);
+				i++;
+			}
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+		}
+	}
+	
+	public void fillIncomePage(Connection c,PagedList<Delivery> page, ProjectStatParams params) throws ManagerBeanException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String select = "SELECT" 
+					+" i.id"
+					+",i.reference_code"
+					+",i.issue_time"
+					+",s.name"
+					+",SUM(id.price * id.quantity)"
+			+" FROM income i"
+			+" INNER JOIN income_detail id ON id.income = i.id"
+			+" INNER JOIN registry s ON s.id = i.supplier"
+			+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+			+" AND i.status = 0"
+			+" AND id.project = ?"
+			+" AND i.issue_time BETWEEN ? AND ?"
+			+" GROUP BY i.id"
+			+" ORDER BY i.reference_code";
+			ps =  c.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			ps.setInt(1, params.getProjectId() );
+			ps.setDate(2, new java.sql.Date( params.getFromDate().getTime()) );
+			ps.setDate(3, new java.sql.Date( params.getToDate().getTime()) );
+			rs = ps.executeQuery();
+			int i = 1;
+			page.setNextAvailable(false);
+			while (rs.next()) {
+				Integer id = rs.getInt(1);
+				Delivery income = new Delivery()
+						.setId(id)
+						.setType("Compra")
+						.setReference(rs.getString(2))
+						.setIssueDate(rs.getDate(3))
+						.setRegistryName(rs.getString(4))
+						.setTotal(rs.getDouble(5));
+				page.getList().add(income);
+				i++;
+			}
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+		}
+	}
+	
+	public String getLastProjectAlias(Connection c) throws ManagerBeanException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String select =
+					  "SELECT p.alias"
+					+ " FROM project p "
+					+" WHERE " + DomainManager.getSQLWhereClause("p.domain")
+					+" ORDER BY p.id DESC LIMIT 1";
+			ps =  c.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);		
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getString(1);
+			}
+			return "-";
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+		}
+	}
+	
 	public void fillDailyTrackingPage(Connection c,PagedList<DailyTracking> page, ProjectStatParams params) throws ManagerBeanException {
 		page.setList( new LinkedList<DailyTracking>() );		
 		PreparedStatement ps = null;

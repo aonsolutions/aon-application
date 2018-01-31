@@ -21,10 +21,13 @@
 		size="64" maxlength="64" />
 	
 	<aon:outputLabel for="Project_alias" value="#{bundle.aon_alias}" />
-	<aon:inputText id="Project_alias" 
-		value="#{controller.to.alias}"
-		size="32" maxlength="32" />
-
+	<aon:div>
+		<aon:inputText id="Project_alias" 
+			value="#{controller.to.alias}"
+			size="32" maxlength="32" />
+		<aon:outputLabel styleClass="aon-margin-left aon-italic"
+							value="#{controller.lastAlias}" />
+	</aon:div>
 	<aon:if test="#{!skipRegistryLookup}">  
 		<aon:outputLabel for="Registry_id" value="#{bundle.aon_holder}"/>
 		<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >

@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,6 +40,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.stat.DailyTracking;
+import com.code.aon.stat.Delivery;
 import com.code.aon.stat.Invoice;
 import com.code.aon.stat.Offer;
 import com.code.aon.stat.PagedList;
@@ -74,6 +76,7 @@ public class ProjectStatEngineController implements Serializable {
 	private PagedList<Offer> approvedOfferPage;
 	private PagedList<Invoice> saleInvoicePage;
 	private PagedList<Invoice> costInvoicePage;
+	private PagedList<Delivery> deliveryPage;
 	private PagedList<DailyTracking> dailyTrackingPage;
 	
 	private double totalOffered;
@@ -81,7 +84,8 @@ public class ProjectStatEngineController implements Serializable {
 	private double totalCosts;
 	private double totalInvoiceCosts;
 	private double totalDailyTracking;
-
+	private double totalIncome;
+	private double totalDelivery;
 
 	private String invoiceViewer;
 	private ProjectStatEngine engine;
@@ -160,6 +164,8 @@ public class ProjectStatEngineController implements Serializable {
 			this.totalOffered = getEngine().getTotalOffered(c, getParams());
 			this.totalInvoiceCosts = getEngine().getTotalInvoiceCosts(c, getParams());
 			this.totalSales = getEngine().getTotalSales(c, getParams());
+			this.totalIncome = getEngine().getTotalIncome(c, getParams());
+			this.totalDelivery = getEngine().getTotalDelivery(c, getParams());
 			this.totalDailyTracking = getEngine().getTotalDailyTracking(c, getParams());
 		} catch (AonConnectionException e) {
 			AonUtil.addErrorMessage(TOTAL_ERROR_MSG);
@@ -177,11 +183,11 @@ public class ProjectStatEngineController implements Serializable {
 	}
 
 	public double getTotalSales() {
-		return CommonUtil.round(this.totalSales);
+		return CommonUtil.round(this.totalSales) + getTotalDelivery();
 	}
 
 	public double getTotalCosts() {
-		totalCosts = CommonUtil.round(getTotalInvoiceCosts() + getTotalDailyTracking());
+		totalCosts = CommonUtil.round(getTotalInvoiceCosts() + getTotalDailyTracking() + getTotalIncome());
 		return CommonUtil.round(totalCosts);
 	}
 
@@ -191,6 +197,14 @@ public class ProjectStatEngineController implements Serializable {
 
 	public double getTotalDailyTracking() {
 		return CommonUtil.round(totalDailyTracking);
+	}
+	
+	public double getTotalIncome() {
+		return CommonUtil.round(totalIncome);
+	}
+	
+	public double getTotalDelivery() {
+		return CommonUtil.round(totalDelivery);
 	}
 
 	public double getTotalResult() {
@@ -435,6 +449,28 @@ public class ProjectStatEngineController implements Serializable {
 			}
 		}
 		return costInvoicePage;
+	}
+	
+	public PagedList<Delivery> getDeliveryPage() throws ManagerBeanException {
+		if (deliveryPage == null) {
+			deliveryPage = new PagedList<Delivery>();
+		}
+		if (deliveryPage.getList() == null) {
+		deliveryPage = new PagedList<Delivery>();
+			Connection c = null;
+			try {
+				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				deliveryPage.setList( new LinkedList<Delivery>() );	
+				ProjectStatParams params = getParams();
+				getEngine().fillIncomePage(c,deliveryPage, params);
+				getEngine().fillDeliveryPage(c,deliveryPage, params);
+			} catch (AonConnectionException e) {
+				throw new ManagerBeanException(e.getMessage(),e);
+			} finally {
+				DatabaseUtil.closeQuietly(c);
+			}
+		}
+		return deliveryPage;
 	}
 
 	public PagedList<Offer> getApprovedOfferPage() throws ManagerBeanException {
