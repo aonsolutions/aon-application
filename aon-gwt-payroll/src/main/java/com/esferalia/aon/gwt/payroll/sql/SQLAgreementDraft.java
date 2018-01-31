@@ -645,8 +645,8 @@ public class SQLAgreementDraft {
 
 			stmt.setInt(1, agreementId);
 			
-			System.out.println(agreementId);
-			System.out.println(sql);
+//			System.out.println(agreementId);
+//			System.out.println(sql);
 
 			rs = stmt.executeQuery();
 
@@ -676,10 +676,21 @@ public class SQLAgreementDraft {
 				payment.setExpression(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.EXPRESSION));
 				payment.setDescription(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.DESCRIPTION));
 				payment.setStartDate(rs.getDate(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.START_DATE));
+				payment.setEndDate(rs.getDate(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.END_DATE));
 				payment.setDescriptionTemplate(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.DESCRIPTION_DECORABLE));
 				payment.setIrpfExpression(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.IRPF_EXPRESSION));
 				payment.setQuoteExpression(rs.getString(SQLConstants.AGREEMENT_PAYMENT + "." + AgreementPaymentColumns.QUOTE_EXPRESSION));
 				payment.setConceptId(rs.getInt(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.ID));
+				Object paymentType = get(rs, AgreementPaymentColumns.TYPE,
+						PaymentConceptColumns.TYPE, Object.class);
+				payment.setType(getType(paymentType, Payment.Type.class));
+				// 'month' & 'salary' only at agreement's payment....
+				Integer month = getInteger(rs, AgreementPaymentColumns.MONTH);
+				payment.setMonth(month != null ? month.shortValue() : null);
+
+				Object salaryType = rs.getObject(SQLConstants.AGREEMENT_PAYMENT
+						+ "." + AgreementPaymentColumns.SALARY_TYPE);
+				payment.setSalaryType(getType(salaryType, Salary.Type.class));
 				
 				payment.setConcept(
 						rs.getInt(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.ID),

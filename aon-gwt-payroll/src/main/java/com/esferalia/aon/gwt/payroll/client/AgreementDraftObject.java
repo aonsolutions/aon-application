@@ -1057,15 +1057,27 @@ public class AgreementDraftObject {
 				JSONObject paymentObj = new JSONObject();
 				paymentObj.put("id", createJSONValue(paymentFinally.getId()));
 				paymentObj.put("code", createJSONValue(paymentFinally.getName()));
-//				if(paymentFinally.getExpression()!= null)
+				paymentObj.put("type", createJSONValue(paymentFinally.getType().getCode()));
 				paymentObj.put("expression", createJSONValue(paymentFinally.getExpression()));
-				paymentObj.put("description", createJSONValue(paymentFinally.getDescription()));
-				paymentObj.put("type", createJSONValue(paymentFinally.getType().getDescription()));
-				paymentObj.put("startDate", createJSONValue(paymentFinally.getStartDate()));
-				paymentObj.put("descriptionDecorable", createJSONValue(0));
-				paymentObj.put("irpfExpression", createJSONValue(paymentFinally.getIrpfExpression()));
-//				if(paymentFinally.getQuoteExpression() != null)
-				paymentObj.put("quoteExpression", createJSONValue(paymentFinally.getQuoteExpression()));
+				paymentObj.put("description", createJSONValue(paymentFinally.getDescription()));				
+				paymentObj.put("start_date", createJSONValue(paymentFinally.getStartDate()));
+//				Window.alert("End Date");
+//				Window.alert("End Date :"+paymentFinally.getEndDate());
+				paymentObj.put("end_date", createJSONValue(paymentFinally.getEndDate()));
+				if(paymentFinally.getMonth() != null){
+					int month = paymentFinally.getMonth().intValue();
+					paymentObj.put("month", createJSONValue(month));
+				}else{
+					paymentObj.put("month", JSONNull.getInstance());
+				}
+				if(paymentFinally.getSalaryType() != null){
+					paymentObj.put("salary_type", createJSONValue(paymentFinally.getSalaryType().ordinal()));
+				}else{
+					paymentObj.put("salary_type", createJSONValue(null));
+				}
+				paymentObj.put("description_decorable", createJSONValue(0));
+				paymentObj.put("irpf_expression", createJSONValue(paymentFinally.getIrpfExpression()));
+				paymentObj.put("quote_expression", createJSONValue(paymentFinally.getQuoteExpression()));
 			
 				PaymentConcept paymentPaymentConcept = paymentFinally.getConcept();
 				
@@ -1075,13 +1087,11 @@ public class AgreementDraftObject {
 					paymentPaymentConceptObj.put("domain", createJSONValue(paymentPaymentConcept.getDomain()));
 					paymentPaymentConceptObj.put("code", createJSONValue(paymentPaymentConcept.getCode()));
 					paymentPaymentConceptObj.put("description", createJSONValue(paymentPaymentConcept.getDescription()));
-					paymentPaymentConceptObj.put("type", createJSONValue(paymentPaymentConcept.getType()));
-					paymentPaymentConceptObj.put("descriptionDecorable", createJSONValue(paymentPaymentConcept.getDescription_decorable()));
-//					if(paymentPaymentConcept.getExpression() != null)
+					paymentPaymentConceptObj.put("type", createJSONValue(paserType(paymentPaymentConcept.getType())));
+					paymentPaymentConceptObj.put("description_decorable", createJSONValue(parseDescriptionDecorable(paymentPaymentConcept.getDescription_decorable())));
 					paymentPaymentConceptObj.put("expression", createJSONValue(paymentPaymentConcept.getExpression()));
-					paymentPaymentConceptObj.put("irpfExpression", createJSONValue(paymentPaymentConcept.getIrpf_expression()));
-//					if(paymentPaymentConcept.getQuote_expression() != null)
-					paymentPaymentConceptObj.put("quoteExpression", createJSONValue(paymentPaymentConcept.getQuote_expression()));
+					paymentPaymentConceptObj.put("irpf_expression", createJSONValue(paymentPaymentConcept.getIrpf_expression()));
+					paymentPaymentConceptObj.put("quote_expression", createJSONValue(paymentPaymentConcept.getQuote_expression()));
 					
 					paymentObj.put("__payConcept", paymentPaymentConceptObj);
 				}
@@ -1099,10 +1109,7 @@ public class AgreementDraftObject {
 		int indexExtras = 0;
 		
 		Set<Extra> extras = getExtras();
-		for(Extra extra : extras){
-//			Window.alert("StartDate :"+extra.getStartDate()+", EndDate :"+extra.getEndDate()+
-//						 ", IssueDate :"+extra.getIssueDate()+", paymentId :"+extra.getPaymentId());
-			
+		for(Extra extra : extras){			
 			JSONObject extraObj = new JSONObject();
 			extraObj.put("start_date", createJSONValue(extra.getStartDate()));
 			extraObj.put("end_date", createJSONValue(extra.getEndDate()));
@@ -1122,15 +1129,27 @@ public class AgreementDraftObject {
 			if(payment != null){ //payment.getId() != 0
 				JSONObject extraAgreementPayment = new JSONObject();
 				extraAgreementPayment.put("id", createJSONValue(extraPaymentId));
+				extraAgreementPayment.put("type", createJSONValue(payment.getType().getCode()));
 				extraAgreementPayment.put("expression", createJSONValue(payment.getExpression()));
 				extraAgreementPayment.put("description", createJSONValue(payment.getDescription()));
-				//FALTA TYPE
-				//extraAgreementPayment.put("type", new JSONString(payment.getType().getDescription()));
-//				if(payment.getStartDate() != null)
-				extraAgreementPayment.put("startDate", createJSONValue(payment.getStartDate()));
-				extraAgreementPayment.put("descriptionDecorable", createJSONValue(0));
-				extraAgreementPayment.put("irpfExpression", createJSONValue(payment.getIrpfExpression()));
-				extraAgreementPayment.put("quoteExpression",createJSONValue(payment.getQuoteExpression()));
+				extraAgreementPayment.put("start_date", createJSONValue(payment.getStartDate()));
+//				Window.alert("Extra End Date");
+//				Window.alert("Extra End Date :"+payment.getEndDate());
+				extraAgreementPayment.put("end_date", createJSONValue(payment.getEndDate()));
+				if(payment.getMonth() != null){
+					int month = payment.getMonth().intValue();
+					extraAgreementPayment.put("month", createJSONValue(month));
+				}else{
+					extraAgreementPayment.put("month", JSONNull.getInstance());
+				}
+				if(payment.getSalaryType() != null){		
+					extraAgreementPayment.put("salary_type", createJSONValue(payment.getSalaryType().ordinal()));
+				}else{
+					extraAgreementPayment.put("salary_type", createJSONValue(null));
+				}
+				extraAgreementPayment.put("description_decorable", createJSONValue(0));
+				extraAgreementPayment.put("irpf_expression", createJSONValue(payment.getIrpfExpression()));
+				extraAgreementPayment.put("quote_expression",createJSONValue(payment.getQuoteExpression()));
 				
 				Integer extraPaymentConceptId = payment.getConceptId();
 				PaymentConcept extraPaymentConcept = payment.getConcept();
@@ -1150,11 +1169,11 @@ public class AgreementDraftObject {
 					extraPaymentConceptObj.put("domain", createJSONValue(extraPaymentConcept.getDomain()));
 					extraPaymentConceptObj.put("code", createJSONValue(extraPaymentConcept.getCode()));
 					extraPaymentConceptObj.put("description", createJSONValue(extraPaymentConcept.getDescription()));
-					extraPaymentConceptObj.put("type", createJSONValue(extraPaymentConcept.getType()));
-					extraPaymentConceptObj.put("descriptionDecorable", createJSONValue(extraPaymentConcept.getDescription_decorable()));
+					extraPaymentConceptObj.put("type", createJSONValue(paserType(extraPaymentConcept.getType())));
+					extraPaymentConceptObj.put("description_decorable", createJSONValue(parseDescriptionDecorable(extraPaymentConcept.getDescription_decorable())));
 					extraPaymentConceptObj.put("expression", createJSONValue(extraPaymentConcept.getExpression()));
-					extraPaymentConceptObj.put("irpfExpression", createJSONValue(extraPaymentConcept.getIrpf_expression()));
-					extraPaymentConceptObj.put("quoteExpression", createJSONValue(extraPaymentConcept.getQuote_expression()));
+					extraPaymentConceptObj.put("irpf_expression", createJSONValue(extraPaymentConcept.getIrpf_expression()));
+					extraPaymentConceptObj.put("quote_expression", createJSONValue(extraPaymentConcept.getQuote_expression()));
 					
 					extraAgreementPayment.put("__payConcept", extraPaymentConceptObj);
 				}
@@ -1265,6 +1284,20 @@ public class AgreementDraftObject {
 	}
 
 
+	private Object parseDescriptionDecorable(String description_decorable) {
+		if(description_decorable != null)
+			return Integer.parseInt(description_decorable);
+		
+		return null;
+	}
+
+	private Object paserType(String type) {
+		if(type != null)
+			return Integer.parseInt(type);
+		
+		return null;
+	}
+
 	private JSONValue createJSONValue(Object object) {
 		if (object == null)
 			return JSONNull.getInstance();
@@ -1274,10 +1307,10 @@ public class AgreementDraftObject {
 			return new JSONString((String)object);
 		if (object instanceof Date){
 			Date date = (Date)object;
-			return new JSONString(date.toGMTString());
+			return new JSONString((date.getYear()+1900)+"-"+(date.getMonth()+1)+"-"+date.getDate());
 		}
 		
-		return null;
+		return JSONNull.getInstance();
 		
 	}
 
@@ -1285,7 +1318,7 @@ public class AgreementDraftObject {
 	public static String AGREE_URL = URL.encode(GWT.getModuleBaseURL() + "sergio");
 
 	private void agreement(JSONObject json) {
-		Window.alert("GENERANDO SERVLET, CRUCEMOS LOS DEDOS!");
+		//Window.alert("GENERANDO SERVLET, CRUCEMOS LOS DEDOS!");
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("POST", AGREE_URL);
 		xhr.setRequestHeader("Content-type", "application/json");
@@ -1338,23 +1371,6 @@ public class AgreementDraftObject {
 		}
 		return originalPayment;
 	}
-
-//	private Payment getPaymentExtra(Integer extraPaymentId) {
-//		for(Payment payment : agreementDraft.getDraftPayments()){
-//			Window.alert("DRAFT -> "+payment.getId()+" == "+extraPaymentId);
-//			if(payment.getId() == extraPaymentId)
-//				return payment;
-//		}
-//		
-//		for(Payment payment : getPayments()){
-//			Window.alert(payment.getId()+" == "+extraPaymentId);
-//			if(payment.getId() == extraPaymentId)
-//				return payment;
-//		}
-//		
-//		return null;
-//		
-//	}
 
 	private SalaryTable getDraftSalaryTable() {
 		return agreementDraft.getDraftSalaryTable();

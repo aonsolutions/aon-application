@@ -1364,9 +1364,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		loadContentAssistManager();
 		
 		setReadOnly(/*object.isSystem() &&*/ !object.isMine() );
-		
-		Window.alert("Activar servlet!");
-		agreementDraftObject.generateJSONUpdate();
 
 	}
 
@@ -1388,7 +1385,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	@UiHandler("acceptButton")
 	void onAcceptClick(ClickEvent event) {
-		agreementDraftObject.save(this);
+		//agreementDraftObject.save(this);
+		//Window.alert("Guardando con JSON.....");
+		agreementDraftObject.generateJSONUpdate();
 	}
 
 	@UiHandler("fxButton")
@@ -1478,12 +1477,16 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	public void setReadOnly(boolean readOnly) {
 		
 		
-		for ( IFocusableEditor editor: salaryTableEditors)
-			editor.setReadOnly(readOnly);
-		for ( PaymentEditor editor: paymentEditors)
-			editor.setReadOnly(readOnly);
-		for ( ExtraEditor editor: extraEditors)
-			editor.setReadOnly(readOnly);
+		for ( IFocusableEditor editor: salaryTableEditors){
+			if(editor != null)
+				editor.setReadOnly(readOnly);
+		}for ( PaymentEditor editor: paymentEditors){
+			if(editor != null)
+				editor.setReadOnly(readOnly);
+		}for ( ExtraEditor editor: extraEditors){
+			if(editor != null)
+				editor.setReadOnly(readOnly);
+		}
 		
 		fxButton.setEnabled(!readOnly);
 		undoButton.setEnabled(!readOnly);
@@ -3355,8 +3358,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private static void setReadOnly(Element el, boolean readOnly) {
 		NodeList<com.google.gwt.dom.client.Element> inputs = el.getElementsByTagName(InputElement.TAG);
-		for ( int i = 0; i < inputs.getLength(); i++) {
-			((InputElement)inputs.getItem(i)).setReadOnly(readOnly);
+		if(inputs != null){
+			for ( int i = 0; i < inputs.getLength(); i++) {
+				((InputElement)inputs.getItem(i)).setReadOnly(readOnly);
+			}
 		}
 		
 	}
