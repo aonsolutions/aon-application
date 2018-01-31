@@ -25,15 +25,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.server.fiscal.format.Mod184Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod184 Print", urlPatterns = { "/aon_gwt_fiscal/Model184Print" })
+@WebServlet(name = "Mod184 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model184Print" })
 public class Mod184Print extends HttpServlet {
+
+	private static final long serialVersionUID = -391231488847437476L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -42,8 +42,9 @@ public class Mod184Print extends HttpServlet {
 		try {
 			int id = Integer.parseInt(req.getParameter("mod184"));
 			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod184 mod184 = FISCAL.getMod184(domainName, domainId,AonServletUtils.getLoggedUser(), id);
+			Mod184 mod184 = FISCAL.getMod184(domainName, domainId, user, id);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
