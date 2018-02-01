@@ -135,6 +135,25 @@
 			padding-top: 2px !important;
 		}
 
+		.categoryStyleButtonUp{
+			font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+			font-weight: normal !important;
+    		border: none !important;
+    		height: 22px !important;
+    		border-bottom: none !important;
+    		color: #ababab !important;
+    		background: #e2e2e2 !important;
+		}
+
+		.categoryStyleButtonDown{
+			font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+			border: none !important;
+    		color: black !important;
+    		font-weight: bold !important;
+    		padding-bottom: 3px !important;
+   			background: white !important;
+		}
+
 		.categoryButton{
 			top: 46px;
     		right: -88px;

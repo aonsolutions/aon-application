@@ -53,7 +53,7 @@ public class AgreementServlet extends HttpServlet {
 //	    
 	    
 	   
-	    prueba2(data);
+//	    prueba2(data);
 	    
 	}
 	
