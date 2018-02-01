@@ -13,9 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
@@ -74,7 +71,6 @@ public class Model115 extends MainEntryPoint {
 	final static int NOTIFICATIONS_TAB = 0;
 	final static int INFORMATION_TAB = 1;
 
-	static FiscalServiceAsync FISCAL_SERVICE;
 	static Mod115ServiceAsync SERVICE;
 	
 	interface Model115Binder extends UiBinder<Widget, Model115> {
@@ -82,9 +78,9 @@ public class Model115 extends MainEntryPoint {
 	private static final Model115Binder MODEL_115_BINDER = GWT
 			.create(Model115Binder.class);
 	
-	private static final String MODEL115_PRINT = "/aon_gwt_fiscal/Model115Print";
-	private static final String MODEL115_FILE = "/aon_gwt_fiscal/Model115File";
-	private static final String MODEL115_PRINT_AEAT = "/aon_gwt_fiscal/Model115PrintAEAT";
+	private static final String MODEL115_PRINT = "/aon_gwt_fiscal/ms/Model115Print";
+	private static final String MODEL115_FILE = "/aon_gwt_fiscal/ms/Model115File";
+	private static final String MODEL115_PRINT_AEAT = "/aon_gwt_fiscal/ms/Model115PrintAEAT";
 
 	public static interface IMod115Declaration extends IsWidget {
 		LinkedList<Pair<String, String>> getInformationLinks();
@@ -119,8 +115,6 @@ public class Model115 extends MainEntryPoint {
 
 	@UiField(provided = true)
 	FiscalModelTable<Mod115> table;
-
-	private int domain;
 
 	@UiField
 	Button saveButton;
@@ -187,6 +181,7 @@ public class Model115 extends MainEntryPoint {
 	Hidden mod115Hidden;
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
+	Hidden userHidden;
 
 	private abstract class FiscalModelCallback implements IFiscalModelCallback<Mod115> {
 		
@@ -233,6 +228,11 @@ public class Model115 extends MainEntryPoint {
 		}
 
 		@Override
+		public String getUser() {
+			return getCurrentUser();
+		}
+
+		@Override
 		public int getDomain() {
 			return getCurrentDomain();
 		}
@@ -242,9 +242,6 @@ public class Model115 extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
-
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 
 		Mod115ServiceAsync serviceRaw = GWT.create(Mod115Service.class);
 		SERVICE = new Mod115ServiceAsyncDecorator(serviceRaw);
@@ -275,6 +272,8 @@ public class Model115 extends MainEntryPoint {
 		formFlowPanel.add(domainIdHidden);
 		domainNameHidden = new Hidden("domainName");
 		formFlowPanel.add(domainNameHidden);
+		userHidden = new Hidden("user");
+		formFlowPanel.add(userHidden);
 		formContainer.add(diskForm);
 		
 		replacedNumber.setVisibleLength(13);
@@ -284,22 +283,11 @@ public class Model115 extends MainEntryPoint {
 		root.add(ui);
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
-	
 	class Mod115SelectionHandler implements SelectionChangeEvent.Handler {
 		@Override
 		public void onSelectionChange(SelectionChangeEvent event) {
 			Mod115 sel = table.getSelected();
-			SERVICE.getMod115(getCurrentDomainName(), getCurrentDomain(),
+			SERVICE.getMod115(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 					sel.getId(), new AsyncCallback<Mod115>() {
 						@Override
 						public void onSuccess(Mod115 selected) {
@@ -414,7 +402,6 @@ public class Model115 extends MainEntryPoint {
 		replacedNumber.setEnabled(currentMod.isReplacedNumberAvailable());
 		
 		confidential.setValue(currentMod.isConfidential());
-		domain = currentMod.getDomain();
 		
 		styleCommentsButton();
 		
@@ -474,7 +461,7 @@ public class Model115 extends MainEntryPoint {
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		SERVICE.getMod115s(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod115s(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				new AsyncCallback<LinkedList<Mod115>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod115> result) {
@@ -506,7 +493,7 @@ public class Model115 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.markAsPending(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod115>() {
+		SERVICE.markAsPending(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod115>() {
 					@Override
 					public void onSuccess(Mod115 result) {
 						select(result);
@@ -527,7 +514,7 @@ public class Model115 extends MainEntryPoint {
 	void markAsSentButtonClick(ClickEvent event) {
 		markAsSentButton.setEnabled(false);
 		cleanErrorMessage();
-		SERVICE.markAsSent(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod115>() {
+		SERVICE.markAsSent(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod115>() {
 					@Override
 					public void onSuccess(Mod115 result) {
 						select(result);
@@ -546,7 +533,7 @@ public class Model115 extends MainEntryPoint {
 	void markAsFinishedButtonClick(ClickEvent event) {
 		markAsFinishedButton.setEnabled(false);
 		cleanErrorMessage();
-		SERVICE.initializeForFinish(getCurrentDomainName(),currentMod,
+		SERVICE.initializeForFinish(getCurrentDomainName(), getCurrentUser(),currentMod,
 				new AsyncCallback<Mod115>() {
 					@Override
 					public void onSuccess(Mod115 m115) {
@@ -573,7 +560,7 @@ public class Model115 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.save(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod115>() {
+		SERVICE.save(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod115>() {
 					@Override
 					public void onSuccess(Mod115 result) {
 						select(result);
@@ -600,7 +587,7 @@ public class Model115 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.markAsFinished(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod115>() {
+		SERVICE.markAsFinished(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod115>() {
 					@Override
 					public void onSuccess(Mod115 result) {
 						select(result);
@@ -627,7 +614,7 @@ public class Model115 extends MainEntryPoint {
 
 			@Override
 			public void onAccept() {
-				SERVICE.delete(getCurrentDomainName(),currentMod, new AsyncCallback<Void>() {
+				SERVICE.delete(getCurrentDomainName(), getCurrentUser(),currentMod, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
@@ -654,7 +641,7 @@ public class Model115 extends MainEntryPoint {
 		newButton.setEnabled(false);
 		cleanErrorMessage();
 		
-		SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(),null,
+		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),null,
 				new AsyncCallback<Mod115>() {
 					@Override
 					public void onSuccess(Mod115 m115) {
@@ -678,7 +665,7 @@ public class Model115 extends MainEntryPoint {
 
 					@Override
 					public void onAccept() {
-						SERVICE.create(getCurrentDomainName(),getCurrentDomain(),currentMod,
+						SERVICE.create(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),currentMod,
 								new AsyncCallback<Mod115>() {
 									@Override
 									public void onSuccess(Mod115 m115) {
@@ -763,7 +750,7 @@ public class Model115 extends MainEntryPoint {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				currentMod.setComments(event.getValue());
 				styleCommentsButton();
-				SERVICE.saveComments(getCurrentDomainName(), currentMod, new AsyncCallback<Mod115>() {
+				SERVICE.saveComments(getCurrentDomainName(), getCurrentUser(), currentMod, new AsyncCallback<Mod115>() {
 					@Override
 					public void onSuccess(Mod115 result) {
 						toast.hide();

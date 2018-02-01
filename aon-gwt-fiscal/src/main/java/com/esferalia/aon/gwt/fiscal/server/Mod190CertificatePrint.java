@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
@@ -36,9 +35,10 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod190 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/Model190CertificatePrint" })
+@WebServlet(name = "Mod190 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model190CertificatePrint" })
 public class Mod190CertificatePrint extends HttpServlet {
+	
+	private static final long serialVersionUID = -534949591948520519L;
 	
 	public final String REPORT_TEMPLATE_EMPLOYEE 		= "/com/code/aon/ui/fiscal/report/mod190_retentionCertificate_page1.jasper";
 	public final String REPORT_TEMPLATE_PROFESSIONAL 	= "/com/code/aon/ui/fiscal/report/mod190_retentionCertificate_page2.jasper";
@@ -52,8 +52,8 @@ public class Mod190CertificatePrint extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod190"));
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String domainName = req.getParameter("domainName");
-			Mod190 mod190 = FISCAL.getMod190(domainName, domainId,
-					AonServletUtils.getLoggedUser(),id);
+			String user = req.getParameter("user");
+			Mod190 mod190 = FISCAL.getMod190(domainName, domainId, user, id);
 
 			// Trabajadores
 			Map<String, RetentionCertificate> employeeCertificates = new HashMap<>();

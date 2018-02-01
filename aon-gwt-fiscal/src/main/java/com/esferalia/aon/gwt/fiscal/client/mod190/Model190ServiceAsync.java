@@ -9,14 +9,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface Model190ServiceAsync {
 
-	void getMod190s(String domainName, int domain, AsyncCallback<LinkedList<Mod190>> callback);
-	void getMod190(String domainName, int domain,Integer id, AsyncCallback<Mod190> callback);
-	void delete(String domainName, int domain,Mod190 mod190, AsyncCallback<Void> callback);
-	void save(String domainName, int domain,Mod190 mod190, AsyncCallback<Mod190> callback);
-	void getDetail(String domainName, int domain,Integer id, AsyncCallback<Mod190Detail> callback);
-	void initialize(String domainName, Integer domain, Integer year,AsyncCallback<Mod190> callback);
-	void changeStatus(String domainName, Mod190 mod190, FiscalStatus newStatus, AsyncCallback<Mod190> callback);
-	void saveComments(String domainName, Mod190 mod190, AsyncCallback<Mod190> callback);
-	void duplicateNextYear(String domainName, Integer domain, Integer id, AsyncCallback<Mod190> callback);
+	void getMod190s(String domainName, String user, int domain, AsyncCallback<LinkedList<Mod190>> callback);
+	void getMod190(String domainName, String user, int domain,Integer id, AsyncCallback<Mod190> callback);
+	void delete(String domainName, String user, int domain,Mod190 mod190, AsyncCallback<Void> callback);
+	void save(String domainName, String user, int domain,Mod190 mod190, AsyncCallback<Mod190> callback);
+	void getDetail(String domainName, String user, int domain,Integer id, AsyncCallback<Mod190Detail> callback);
+	void initialize(String domainName, String user, Integer domain, Integer year,AsyncCallback<Mod190> callback);
+	void changeStatus(String domainName, String user, Mod190 mod190, FiscalStatus newStatus, AsyncCallback<Mod190> callback);
+	void saveComments(String domainName, String user, Mod190 mod190, AsyncCallback<Mod190> callback);
+	void duplicateNextYear(String domainName, String user, Integer domain, Integer id, AsyncCallback<Mod190> callback);
 
 }

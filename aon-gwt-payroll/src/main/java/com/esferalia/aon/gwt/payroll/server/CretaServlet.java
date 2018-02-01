@@ -113,8 +113,9 @@ public class CretaServlet extends HttpServlet
 	}
 	
 
-	protected Connection getConnection() throws SQLException {
-		return AonServletUtils.getConnection();
+	protected Connection getConnection(HttpServletRequest req) throws SQLException {
+		String domain = req.getServerName();
+		return AonServletUtils.getConnection(domain);
 	}
 
 	// ------------------------------------------------------------------------
@@ -124,7 +125,7 @@ public class CretaServlet extends HttpServlet
 	@Override
 	public void visitBases(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
-		Connection connection = getConnection();
+		Connection connection = getConnection(req);
 		resp.setContentType("text/html;");
 
 		boolean indicadorReftificacion = AonStringUtils.equalsIgnoreCase("on",
@@ -385,7 +386,7 @@ public class CretaServlet extends HttpServlet
 		
 		//@formatter:off
 		__onDocumentoCalculoLiquidacion(
-					getConnection(), 
+					getConnection(req), 
 					os, 
 					req.getParts().stream()
 					.map(part -> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL.class, part))
@@ -1094,10 +1095,10 @@ public class CretaServlet extends HttpServlet
 	}
 
 	
-	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req){
-		String login = AonServletUtils.getRequestUser(req);
-		Integer domainId = AonServletUtils.getRequestDomain(req);
-		String domainName = AonServletUtils.getRequestDomainName(req);
+	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req) throws SQLException{
+		String login = ":-)" ; 
+		String domainName = req.getServerName();
+		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -30);
 		
@@ -1109,13 +1110,13 @@ public class CretaServlet extends HttpServlet
 		;
 	}
 
-	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req){
-		String login = AonServletUtils.getRequestUser(req);
-		Integer domainId = AonServletUtils.getRequestDomain(req);
-		String domainName = AonServletUtils.getRequestDomainName(req);
+	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req) throws SQLException{
+		String login = ":-)" ; 
+		String domainName = req.getServerName();
+		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -30);
-
+		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
 		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
@@ -1126,25 +1127,34 @@ public class CretaServlet extends HttpServlet
 	
 	private static void saveRespuesta(HttpServletRequest req,
 			net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta t) {
-		saveAttach(req, CRETA_RESPUESTA, t);
+		try {
+			saveAttach(req, CRETA_RESPUESTA, t);
+		} catch (SQLException e) {
+			//TODO: Log
+		}
 	}
 
 	private static void saveTrabajadoresYTramos(HttpServletRequest req,
 			net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t) {
-		saveAttach(req, CRETA_TRABAJADORES_Y_TRAMOS, t);
+		
+		try {
+			saveAttach(req, CRETA_TRABAJADORES_Y_TRAMOS, t);
+		} catch (SQLException e) {
+			// TODO: Log
+		}
 	}
 	
 	
-	private static <T> void saveAttach(HttpServletRequest req, RegistryAttachmentType type, T t) {
+	private static <T> void saveAttach(HttpServletRequest req, RegistryAttachmentType type, T t)   throws SQLException {
 
 		Date now = Calendar.getInstance().getTime();
 
 		byte data [] = marshall(t);
 		String md5 = AonFileUtils.getMD5Checksum(data);
 
-		String login = AonServletUtils.getRequestUser(req);
-		Integer domainId = AonServletUtils.getRequestDomain(req);
-		String domainName = AonServletUtils.getRequestDomainName(req);
+		String login = ":-)" ; 
+		String domainName = req.getServerName();
+		Integer domainId = AonServletUtils.getDomainID(domainName);
 
 		Attach attach = getAttach(domainName, domainId, login, type, md5);
 

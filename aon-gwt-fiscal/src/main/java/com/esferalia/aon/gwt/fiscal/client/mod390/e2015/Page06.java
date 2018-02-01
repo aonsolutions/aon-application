@@ -75,6 +75,7 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 	
 	@UiHandler("box658")
 	void onChangeBox658 (ChangeEvent event) {
+		if (box658.getValue() == null) box658.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -86,6 +87,7 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 
 	@UiHandler("box87")
 	void onChangeBox87 (ChangeEvent event) {
+		if (box87.getValue() == null) box87.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -95,8 +97,57 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 		});
 	}
 	
+	@UiHandler("box88")
+	void onChangeBox88 (ChangeEvent event) {
+		if (box88.getValue() == null) box88.setValue(0.0,false);
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				cbk.getMod390().setBox88(box88.getValue());
+				cbk.calculateAndRefresh();
+			}
+		});
+	}
+
+	@UiHandler("box89")
+	void onChangeBox89 (ChangeEvent event) {
+		if (box89.getValue() == null) box89.setValue(0.0,false);
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				cbk.getMod390().setBox89(box89.getValue());
+				cbk.calculateAndRefresh();
+			}
+		});
+	}
+
+	@UiHandler("box90")
+	void onChangeBox90 (ChangeEvent event) {
+		if (box90.getValue() == null) box90.setValue(0.0,false);
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				cbk.getMod390().setBox90(box90.getValue());
+				cbk.calculateAndRefresh();
+			}
+		});
+	}
+
+	@UiHandler("box91")
+	void onChangeBox91 (ChangeEvent event) {
+		if (box91.getValue() == null) box91.setValue(0.0,false);
+		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				cbk.getMod390().setBox91(box91.getValue());
+				cbk.calculateAndRefresh();
+			}
+		});
+	}
+
 	@UiHandler("box659")
 	void onChangeBox659 (ChangeEvent event) {
+		if (box659.getValue() == null) box659.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -108,6 +159,7 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 
 	@UiHandler("box93")
 	void onChangeBox93 (ChangeEvent event) {
+		if (box93.getValue() == null) box93.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -133,7 +185,6 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 
 	@Override
 	public void populate(Mod3902015 mod390) {
-		mod390.setBox658(box658.getValue());
 		mod390.setBox84(box84.getValue());
 		mod390.setBox87(box87.getValue());
 		mod390.setBox88(box88.getValue());
@@ -141,9 +192,12 @@ public class Page06 extends ResizeComposite implements RequiresResize , IMod3902
 		mod390.setBox90(box90.getValue());
 		mod390.setBox91(box91.getValue());
 		mod390.setBox92(box92.getValue());
-		mod390.setBox659(box659.getValue());
 		mod390.setBox93(box93.getValue());
 		mod390.setBox94(box94.getValue());
+		if (box87.getValue() != null && box87.getValue() > 0) {
+			mod390.setBox658(box658.getValue());
+			mod390.setBox659(box659.getValue());
+		}
 	}
 	
 	@Override

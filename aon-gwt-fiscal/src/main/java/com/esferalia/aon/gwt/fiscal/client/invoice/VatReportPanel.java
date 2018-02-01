@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
-import com.esferalia.aon.gwt.fiscal.shared.JsonVatParams;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -142,7 +142,7 @@ public class VatReportPanel extends ScrollPanel{
 		StringBuffer requestData = new StringBuffer();
 		requestData.append("&domainName=" + domainName  );
 		requestData.append("&domainId=" + domain );
-		requestData.append("&vatParams=" + JsonVatParams.convert( params ));
+		requestData.append("&vatParams=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 
 		
@@ -196,7 +196,7 @@ public class VatReportPanel extends ScrollPanel{
 		builder.appendEscaped( AonStringUtils.rightPad(vat.getDocumentNumber(),15));
 		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate( 
 				  AonStringUtils.defaultIfBlank(vat.getRegistryDocument(), AonStringUtils.EMPTY) 
-				+ (AonStringUtils.isBlank(vat.getDocumentNumber())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
+				+ (AonStringUtils.isBlank(vat.getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
 				+ AonStringUtils.defaultIfBlank(vat.getRegistryName(), AonStringUtils.EMPTY)  
 				,29 ),30));
 		builder.appendEscaped( AonStringUtils.SPACE);

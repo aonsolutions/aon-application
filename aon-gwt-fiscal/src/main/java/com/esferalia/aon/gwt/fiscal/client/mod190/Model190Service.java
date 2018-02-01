@@ -9,17 +9,17 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("Mod190")
+@RemoteServiceRelativePath("ms/Mod190")
 public interface Model190Service extends RemoteService {
 	
-	LinkedList<Mod190> getMod190s(String domainName, int domain) throws AonCoreException;
-	Mod190 getMod190(String domainName, int domain,Integer id) throws AonCoreException;
-	Mod190Detail getDetail(String domainName, int domain,Integer id) throws AonCoreException;
-	void delete(String domainName, int domain,Mod190 mod190) throws AonCoreException;
-	Mod190 save(String domainName, int domain,Mod190 mod190) throws AonCoreException;
-	Mod190 initialize(String domainName, Integer domain, Integer year);
-	Mod190 saveComments(String domainName, Mod190 mod190) throws AonCoreException;
-	Mod190 changeStatus(String domainName, Mod190 mod190, FiscalStatus newStatus) throws AonCoreException;
-	Mod190 duplicateNextYear(String domainName, Integer domain,Integer id) throws AonCoreException;
+	LinkedList<Mod190> getMod190s(String domainName, String user, int domain) throws AonCoreException;
+	Mod190 getMod190(String domainName, String user, int domain,Integer id) throws AonCoreException;
+	Mod190Detail getDetail(String domainName, String user, int domain,Integer id) throws AonCoreException;
+	void delete(String domainName, String user, int domain,Mod190 mod190) throws AonCoreException;
+	Mod190 save(String domainName, String user, int domain,Mod190 mod190) throws AonCoreException;
+	Mod190 initialize(String domainName, String user, Integer domain, Integer year);
+	Mod190 saveComments(String domainName, String user, Mod190 mod190) throws AonCoreException;
+	Mod190 changeStatus(String domainName, String user, Mod190 mod190, FiscalStatus newStatus) throws AonCoreException;
+	Mod190 duplicateNextYear(String domainName, String user, Integer domain,Integer id) throws AonCoreException;
 
 }

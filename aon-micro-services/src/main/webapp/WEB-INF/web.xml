@@ -28,6 +28,14 @@
 		<url-pattern>/aon_gwt_payroll/agreement</url-pattern>
 	</servlet-mapping>
 
-
+	<!-- Payroll calculate Servlet -->
+	<servlet>
+		<servlet-name>Caculate Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.payroll.server.CalculateServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Caculate Servlet</servlet-name>
+		<url-pattern>/aon_gwt_payroll/calculate</url-pattern>
+	</servlet-mapping>
 
 </web-app>

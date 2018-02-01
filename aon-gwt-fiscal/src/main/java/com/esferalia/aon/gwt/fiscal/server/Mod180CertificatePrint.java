@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -27,10 +26,11 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod180 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/Model180CertificatePrint" })
+@WebServlet(name = "Mod180 Certificate Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model180CertificatePrint" })
 public class Mod180CertificatePrint extends HttpServlet {
 	
+	private static final long serialVersionUID = 8021949595124772358L;
+
 	public final String REPORT_TEMPLATE 		= "/com/code/aon/ui/fiscal/report/mod180_retentionCertificate.jasper";
 	
 	public final String MESSAGES_RESOURCE_BUNDLE 		= "com.esferalia.aon.gwt.fiscal.client.FiscalMessages";
@@ -43,7 +43,8 @@ public class Mod180CertificatePrint extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod180"));
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String domainName = req.getParameter("domainName");
-			Mod180 mod180 = FISCAL.getMod180(domainName, domainId, AonServletUtils.getLoggedUser(),id);
+			String user = req.getParameter("user");
+			Mod180 mod180 = FISCAL.getMod180(domainName, domainId, user, id);
 
 			byte[] data = null;
 			if(mod180!=null){

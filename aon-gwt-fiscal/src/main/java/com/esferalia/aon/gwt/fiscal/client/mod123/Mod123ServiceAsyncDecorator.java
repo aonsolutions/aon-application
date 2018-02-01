@@ -19,104 +19,88 @@ public class Mod123ServiceAsyncDecorator implements Mod123ServiceAsync {
 	}
 
 	@Override
-	public void getMod123(String domainName, int domain, int id,
-			AsyncCallback<Mod123> callback) {
+	public void getMod123(String domainName, String userLogin, int domain, int id, AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.getMod123(domainName, domain, id, new AsyncCallbackWrapper<Mod123>(
-				callback));
+		fsa.getMod123(domainName, userLogin, domain, id, new AsyncCallbackWrapper<Mod123>(callback));
 	}
 
 	@Override
-	public void getMod123s(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod123>> callback) {
+	public void getMod123s(String domainName, String userLogin, int domain,AsyncCallback<LinkedList<Mod123>> callback) {
 		AON.start();
-		fsa.getMod123s(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<Mod123>>(callback));
+		fsa.getMod123s(domainName, userLogin, domain, new AsyncCallbackWrapper<LinkedList<Mod123>>(callback));
 	}
 
 	@Override
-	public void calculate(String domainName, Mod123 mod123,
-			AsyncCallback<Mod123> callback) {
+	public void calculate(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.calculate(domainName, mod123,
-				new AsyncCallbackWrapper<Mod123>(callback));
+		fsa.calculate(domainName, userLogin, mod123,new AsyncCallbackWrapper<Mod123>(callback));
 	}
 
 	@Override
-	public void save(String domainName, Mod123 mod123,
-			AsyncCallback<Mod123> callback) {
+	public void save(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.save(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
-				callback));
+		fsa.save(domainName, userLogin, mod123, new AsyncCallbackWrapper<Mod123>(callback));
 	}
 	
 	@Override
-	public void saveComments(String domainName, Mod123 mod123,
-			AsyncCallback<Mod123> callback) {
+	public void saveComments(String domainName, String userLogin, Mod123 mod123, AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.saveComments(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
-				callback));
+		fsa.saveComments(domainName, userLogin, mod123, new AsyncCallbackWrapper<Mod123>(callback));
 	}
 
 	@Override
-	public void initializeForFinish(String domainName, Mod123 mod123,
-			AsyncCallback<Mod123> callback) {
+	public void initializeForFinish(String domainName, String userLogin, Mod123 mod123, AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.initializeForFinish(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
-				callback));
+		fsa.initializeForFinish(domainName, userLogin, mod123, new AsyncCallbackWrapper<Mod123>(callback));
 	}
 	
 	@Override
-	public void markAsFinished(String domainName, Mod123 mod123,
-			AsyncCallback<Mod123> callback) {
+	public void markAsFinished(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.markAsFinished(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
-				callback));
+		fsa.markAsFinished(domainName, userLogin , mod123, new AsyncCallbackWrapper<Mod123>(callback));
 	}
 	
 	@Override
-	public void markAsSent(String domainName, Mod123 mod123, AsyncCallback<Mod123> callback) {
+	public void markAsSent(String domainName, String userLogin, Mod123 mod123, AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.markAsSent(domainName, mod123, new AsyncCallbackWrapper<Mod123>(callback));
+		fsa.markAsSent(domainName, userLogin, mod123, new AsyncCallbackWrapper<Mod123>(callback));
 	}
 
 	@Override
-	public void markAsPending(String domainName, Mod123 mod123,
-			AsyncCallback<Mod123> callback) {
+	public void markAsPending(String domainName, String userLogin, Mod123 mod123, AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.markAsPending(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
-				callback));
+		fsa.markAsPending(domainName, userLogin, mod123, new AsyncCallbackWrapper<Mod123>(callback));
 	}
 
 	@Override
-	public void initialize(String domainName, int currentDomain,
-			Mod123 mod123, AsyncCallback<Mod123> callback) {
+	public void initialize(String domainName, String userLogin, int currentDomain, Mod123 mod123, AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.initialize(domainName, currentDomain,mod123,new AsyncCallbackWrapper<Mod123>(callback));
-
-	}
-
-	@Override
-	public void create(String domainName, int currentDomain,
-			Mod123 mod123, AsyncCallback<Mod123> callback) {
-		AON.start();
-		fsa.create(domainName, currentDomain, mod123,new AsyncCallbackWrapper<Mod123>(callback));
+		fsa.initialize(domainName, userLogin, currentDomain,mod123,new AsyncCallbackWrapper<Mod123>(callback));
 
 	}
 
 	@Override
-	public void delete(String domainName, Mod123 mod123,
-			AsyncCallback<Void> callback) {
+	public void create(String domainName, String userLogin, int currentDomain, Mod123 mod123, AsyncCallback<Mod123> callback) {
 		AON.start();
-		fsa.delete(domainName, mod123, new AsyncCallbackWrapper<Void>(
-				callback));
+		fsa.create(domainName, userLogin, currentDomain, mod123,new AsyncCallbackWrapper<Mod123>(callback));
+
+	}
+
+	@Override
+	public void delete(String domainName, String userLogin, Mod123 mod123, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.delete(domainName, userLogin, mod123, new AsyncCallbackWrapper<Void>(callback));
 	}
 	@Override
-	public void getInfo(String domainName, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey,
-			AsyncCallback<String> callback) {
+	public void getInfo(String domainName, String userLogin, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
 		AON.start();
-		fsa.getInfo(domainName, domain, mod123, script, infoKey,new AsyncCallbackWrapper<String>(callback));
-		
+		fsa.getInfo(domainName, userLogin, domain, mod123, script, infoKey,new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void mathExpression(String expression, AsyncCallback<Double> callback) {
+		AON.start();
+		fsa.mathExpression(expression,new AsyncCallbackWrapper<Double>(callback));
 	}
 
 }

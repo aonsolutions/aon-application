@@ -235,7 +235,7 @@ public class printQualityList extends HttpServlet{
 			boldCell(libro, fila, style, 13, "Defectos");
 			boldCell(libro, fila, style, 14, "Lavado");
 			boldCell(libro, fila, style, 15, "Total Defectos");
-			boldCell(libro, fila, style, 16, "Merma");
+			boldCell(libro, fila, style, 16, "Descuento Aplicado");
 			
 			cont = 1;
 			
@@ -298,7 +298,9 @@ public class printQualityList extends HttpServlet{
 								? CleanAptitude.values()[Integer.parseInt(map.get(QualitySheetCode.UFQAC6.getName())) - 1].getName(): "");
 
 							Integer rowIndex = row.getRowNum() + 1;
-							String formula = "SUM(H" + rowIndex + ",J" + rowIndex + ",L" + rowIndex + ",M" + rowIndex + ")"; 
+							//String formula = "SUM(H" + rowIndex + ",J" + rowIndex + ",L" + rowIndex + ",M" + rowIndex + ")"; 
+							String formula = "SUM(I" + rowIndex + ",J" + rowIndex + ",K" + rowIndex + ",M" + rowIndex + ",N" + rowIndex +")"; 
+							
 							cellFormula(libro, row, style2, 15, formula);
 
 							cell(libro, row, style2, 16, merma);
@@ -332,7 +334,7 @@ public class printQualityList extends HttpServlet{
 			boldCell(libro, fila2, style, 16, "Tierra");
 			boldCell(libro, fila2, style, 17, "Defectos");
 			boldCell(libro, fila2, style, 18, "Lavado");
-			boldCell(libro, fila2, style, 19, "Merma");
+			boldCell(libro, fila2, style, 19, "Descuento Aplicado");
 			
 			cont = 1;
 			
@@ -460,7 +462,7 @@ public class printQualityList extends HttpServlet{
 		tA.addCell(boldCell("Defectos"));
 		tA.addCell(boldCell("Lavado"));
 		tA.addCell(boldCell("Total"));
-		tA.addCell(boldCell("Merma"));
+		tA.addCell(boldCell("Descuento Aplicado"));
 		
 		p.addCell(tA);
 		
@@ -568,7 +570,7 @@ public class printQualityList extends HttpServlet{
 		tB.addCell(boldCell("Tierra"));
 		tB.addCell(boldCell("Defectos"));
 		tB.addCell(boldCell("Lavado"));
-		tB.addCell(boldCell("Merma"));
+		tB.addCell(boldCell("Descuento Aplicado"));
 	
 		p.addCell(tB);
 

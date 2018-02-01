@@ -507,12 +507,14 @@ abstract class Model347Base extends DockLayoutPanel {
 		
 		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonPanelGridEven());
 		
+		int row = 0;
+		
 		// Documento
-		table.setWidget( 0, 0, new InlineLabel(AON.MSG.document()));
-		table.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
+		table.setWidget(row, 0, new InlineLabel(AON.MSG.document()));
+		table.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonPanelGridOdd());
 		DocumentTextBox document = new DocumentTextBox();
 		document.setValue(getMod347().getDocument());
-		// FALTA - Modificar el NIF influye en las lineas, ya que los nif que empiezan
+		// Modificar el NIF influye en las lineas, ya que los nif que empiezan
 		// por "H", solo cumplimentan el importe total y no los trimestres, si se modifica
 	    // y se cambia de H a no H o viceversa, entonces no se traslada a las lineas automaticamente
 		// por que habria que cambiar todas las lineas, para quitar los trimestres y poner los totales
@@ -526,12 +528,13 @@ abstract class Model347Base extends DockLayoutPanel {
 				markAsDirty();
 			}
 		});
-		table.setWidget(0, 1, document);
-		table.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
+		table.setWidget(row, 1, document);
+		table.getCellFormatter().setStyleName(row,1, AON.AON_CSS.aonPanelGridEven());
 		
 		// Nombre		
-		table.setWidget( 1, 0, new InlineLabel(AON.MSG.enterpriseName()));
-		table.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
+		row++;
+		table.setWidget(row, 0, new InlineLabel(AON.MSG.enterpriseName()));
+		table.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonPanelGridOdd());
 		TextBox name = new TextBox();
 		name.setStyleName(AON.AON_CSS.aonInputText());
 		name.setVisibleLength(45);
@@ -545,99 +548,112 @@ abstract class Model347Base extends DockLayoutPanel {
 				markAsDirty();
 			}
 		});
-		table.setWidget(1, 1, name);
-		table.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
+		table.setWidget(row, 1, name);
+		table.getCellFormatter().setStyleName(row,1, AON.AON_CSS.aonPanelGridEven());
 		
-		// Teléfono de contacto
-		table.setWidget( 2, 0, new InlineLabel(AON.MSG.contactPhone()));
-		table.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox contactPhone = new TextBox();
-		contactPhone.setStyleName(AON.AON_CSS.aonInputText());
-		contactPhone.setMaxLength(9);
-		contactPhone.setVisibleLength(10);
-		contactPhone.setValue(getMod347().getContactPhone());
-		contactPhone.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod347().setContactPhone(contactPhone.getValue());
-				markAsDirty();
-			}
-		});
-		table.setWidget(2, 1, contactPhone);
-		table.getCellFormatter().setStyleName(2,1, AON.AON_CSS.aonPanelGridEven());
+		// Datos persona de contacto (Todos excepto Gipuzkoa)
+		if (getMod347().getAdministration() != Administration.GIPUZKOA) {
 		
-		// Persona de contacto
-		table.setWidget( 3, 0, new InlineLabel(AON.MSG.contactPerson()));
-		table.getCellFormatter().setStyleName(3,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox contactPerson = new TextBox();
-		contactPerson.setStyleName(AON.AON_CSS.aonInputText());
-		contactPerson.setMaxLength(40);
-		contactPerson.setVisibleLength(30);
-		contactPerson.setValue(getMod347().getContactPerson());
-		contactPerson.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod347().setContactPerson(contactPerson.getValue());
-				markAsDirty();
-			}
-		});
-		table.setWidget(3, 1, contactPerson);
-		table.getCellFormatter().setStyleName(3,1, AON.AON_CSS.aonPanelGridEven());
-		
-		// Email persona de contacto
-		table.setWidget( 4, 0, new InlineLabel(AON.MSG.contactMail()));
-		table.getCellFormatter().setStyleName(4,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox contactMail = new TextBox();
-		contactMail.setStyleName(AON.AON_CSS.aonInputText());
-		contactMail.setMaxLength(50);
-		contactMail.setVisibleLength(50);
-		contactMail.setValue(getMod347().getContactMail());
-		contactMail.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod347().setContactMail(contactMail.getValue());
-				markAsDirty();
-			}
-		});
-		table.setWidget(4, 1, contactMail);
-		table.getCellFormatter().setStyleName(4,1, AON.AON_CSS.aonPanelGridEven());
-		
-		// Número declaración anterior 
-		table.setWidget( 5, 0, new InlineLabel(AON.MSG.previousDeclaration()));
-		table.getCellFormatter().setStyleName(5,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox replaced = new TextBox();
-		replaced.setStyleName(AON.AON_CSS.aonInputText());
-		replaced.setMaxLength(13);
-		replaced.setVisibleLength(13);
-		replaced.setEnabled(getMod347().isComplementary() || getMod347().isReplacement());
-		replaced.setValue(getMod347().getReplacedNumber());
-		replaced.addValueChangeHandler(new ValueChangeHandler<String>() {
+			// Teléfono de contacto
+			row++;
+			table.setWidget(row, 0, new InlineLabel(AON.MSG.contactPhone()));
+			table.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonPanelGridOdd());
+			TextBox contactPhone = new TextBox();
+			contactPhone.setStyleName(AON.AON_CSS.aonInputText());
+			contactPhone.setMaxLength(9);
+			contactPhone.setVisibleLength(10);
+			contactPhone.setValue(getMod347().getContactPhone());		
+			contactPhone.addValueChangeHandler( new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					getMod347().setContactPhone(contactPhone.getValue());
+					markAsDirty();
+				}
+			});
+			table.setWidget(row, 1, contactPhone);
+			table.getCellFormatter().setStyleName(row,1, AON.AON_CSS.aonPanelGridEven());
 			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod347().setReplacedNumber(replaced.getValue());
-				markAsDirty();
-			}
-		});
-		table.setWidget(5, 1, replaced);
-		table.getCellFormatter().setStyleName(5,1, AON.AON_CSS.aonPanelGridEven());
+			// Persona de contacto
+			row++;
+			table.setWidget(row, 0, new InlineLabel(AON.MSG.contactPerson()));
+			table.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonPanelGridOdd());
+			TextBox contactPerson = new TextBox();
+			contactPerson.setStyleName(AON.AON_CSS.aonInputText());
+			contactPerson.setMaxLength(40);
+			contactPerson.setVisibleLength(30);
+			contactPerson.setValue(getMod347().getContactPerson());		
+			contactPerson.addValueChangeHandler( new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					getMod347().setContactPerson(contactPerson.getValue());
+					markAsDirty();
+				}
+			});
+			table.setWidget(row, 1, contactPerson);
+			table.getCellFormatter().setStyleName(row,1, AON.AON_CSS.aonPanelGridEven());
+			
+			// Email persona de contacto
+			row++;
+			table.setWidget(row, 0, new InlineLabel(AON.MSG.contactMail()));
+			table.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonPanelGridOdd());
+			TextBox contactMail = new TextBox();
+			contactMail.setStyleName(AON.AON_CSS.aonInputText());
+			contactMail.setMaxLength(50);
+			contactMail.setVisibleLength(50);
+			contactMail.setValue(getMod347().getContactMail());
+			contactMail.addValueChangeHandler( new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					getMod347().setContactMail(contactMail.getValue());
+					markAsDirty();
+				}
+			});
+			table.setWidget(row, 1, contactMail);
+			table.getCellFormatter().setStyleName(row,1, AON.AON_CSS.aonPanelGridEven());
+		}
+		
+		// Número declaración anterior (Todos excepto Bizkaia y Gipuzkoa)
+		if (getMod347().getAdministration() != Administration.BIZKAIA && getMod347().getAdministration() != Administration.GIPUZKOA) {		
+			row++;
+			table.setWidget(row, 0, new InlineLabel(AON.MSG.previousDeclaration()));
+			table.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonPanelGridOdd());
+			TextBox replaced = new TextBox();
+			replaced.setStyleName(AON.AON_CSS.aonInputText());
+			replaced.setMaxLength(13);
+			replaced.setVisibleLength(13);
+			replaced.setValue(getMod347().getReplacedNumber());
+			replaced.setEnabled(((getMod347().isComplementary() && getMod347().getAdministration() != Administration.NAVARRA) || getMod347().isReplacement()) ); // Complementaria o sustitutiva (Navarra solo sustitutiva)
+			replaced.addValueChangeHandler(new ValueChangeHandler<String>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					getMod347().setReplacedNumber(replaced.getValue());
+					markAsDirty();
+				}
+			});
+			table.setWidget(row, 1, replaced);
+			table.getCellFormatter().setStyleName(row,1, AON.AON_CSS.aonPanelGridEven());
+		}
 	
-		// NIF Representante Legal
-		table.setWidget( 6, 0, new InlineLabel("NIF Representante Legal"));
-		table.getCellFormatter().setStyleName(6,0, AON.AON_CSS.aonPanelGridOdd());
-		DocumentTextBox representativeDocument = new DocumentTextBox();
-		representativeDocument.setValue(getMod347().getRepresentativeDocument());
-		representativeDocument.setMaxLength(9);
-		representativeDocument.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod347().setRepresentativeDocument(representativeDocument.getValue());
-				identificationLabelChanged();
-				markAsDirty();
-			}
-		});
-		table.setWidget(6, 1, representativeDocument);
-		table.getCellFormatter().setStyleName(6,1, AON.AON_CSS.aonPanelGridEven());
+		// NIF Representante Legal (Todos excepto Gipuzkoa)
+		if (getMod347().getAdministration() != Administration.GIPUZKOA) {
+			row++;
+			table.setWidget(row, 0, new InlineLabel("NIF Representante Legal"));
+			table.getCellFormatter().setStyleName(row,0, AON.AON_CSS.aonPanelGridOdd());
+			DocumentTextBox representativeDocument = new DocumentTextBox();
+			representativeDocument.setValue(getMod347().getRepresentativeDocument());
+			representativeDocument.setMaxLength(9);
+			representativeDocument.addValueChangeHandler( new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					getMod347().setRepresentativeDocument(representativeDocument.getValue());
+					identificationLabelChanged();
+					markAsDirty();
+				}
+			});
+			table.setWidget(row, 1, representativeDocument);
+			table.getCellFormatter().setStyleName(row,1, AON.AON_CSS.aonPanelGridEven());
+		}
 		
 		declarationScrollPanel.setWidget(table);
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
@@ -806,60 +822,62 @@ abstract class Model347Base extends DockLayoutPanel {
 		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod347().getAdministration()));
 		tab.setWidget(0, 0, title);
 		
-		// FALTA - Habilitar cuando esté disponible
+		int row = 1;
+
+		Label icon1 = new Label();
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod347().getAdministration()));
+		tab.setWidget(row, 0, icon1 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel p1 = new FlowPanel();
+		p1.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
+		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button1.addStyleName(AON.AON_CSS.aonBorderNone());
+		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button1.addStyleName(AON.AON_CSS.aonClickable());
+		button1.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (getMod347().isFinished() || getMod347().isSent()) {
+					submitForm(MODEL347_FILE);
+				} else {
+					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+				}
+			}
+		});
+		p1.add(button1);
+		tab.setWidget(row, 1, p1 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
-//		int row = 1;
-//
-//		Label icon1 = new Label();
-//		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod347().getAdministration()));
-//		tab.setWidget(row, 0, icon1 );
-//		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-//		FlowPanel p1 = new FlowPanel();
-//		p1.setStyleName(AON.AON_CSS.aonPadding2());
-//		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
-//		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
-//		button1.addStyleName(AON.AON_CSS.aonBorderNone());
-//		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
-//		button1.addStyleName(AON.AON_CSS.aonClickable());
-//		button1.addClickHandler( new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				if (getMod347().isFinished() || getMod347().isSent()) {
-//					submitForm(MODEL347_FILE);
-//				} else {
-//					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-//				}
-//			}
-//		});
-//		p1.add(button1);
-//		tab.setWidget(row, 1, p1 );
-//		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-//		
-//		if (mod347.getAdministration() == Administration.COMMON_TERRITORY) {
-//			row++;
-//			Label icon3 = new Label();
-//			icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod347().getAdministration()));
-//			tab.setWidget(row, 0, icon3);
-//			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-//			FlowPanel p3 = new FlowPanel();
-//			p3.setStyleName(AON.AON_CSS.aonPadding2());
-//			Button button3 = new Button("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
-//			button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
-//			button3.addStyleName(AON.AON_CSS.aonBorderNone());
-//			button3.addStyleName(AON.AON_CSS.aonEvenBackground());
-//			button3.addStyleName(AON.AON_CSS.aonClickable());
-//			button3.addClickHandler(new ClickHandler() {
-//				@Override
-//				public void onClick(ClickEvent event) {
-//					submitForm(MODEL347_PRINT);
-//				}
-//			});
-//			p3.add(button3);
-//			tab.setWidget(row, 1, p3);
-//			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-//		}
+		if (mod347.getAdministration() == Administration.COMMON_TERRITORY) {
+			row++;
+			Label icon3 = new Label();
+			icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod347().getAdministration()));
+			tab.setWidget(row, 0, icon3);
+			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+			FlowPanel p3 = new FlowPanel();
+			p3.setStyleName(AON.AON_CSS.aonPadding2());
+			Button button3 = new Button("Servicio de validaci\u00F3n y prueba (Borrador PDF) via Agencia Tributaria (a partir de los datos guardados).");
+			button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
+			button3.addStyleName(AON.AON_CSS.aonBorderNone());
+			button3.addStyleName(AON.AON_CSS.aonEvenBackground());
+			button3.addStyleName(AON.AON_CSS.aonClickable());
+			button3.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					// Servicio de validación y prueba, controlar ejercicio, solo a partir de 2014 (incluido)
+					if (getMod347().getYear() >= 2014) {
+						submitForm(MODEL347_PRINT);
+					} else {
+						getCallback().showError("Servicio de validaci\u00F3n y prueba no disponible para el ejercicio del modelo.");
+					}
+				}
+			});
+			p3.add(button3);
+			tab.setWidget(row, 1, p3);
+			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		}
 		
-		//row++;
 		panel.add(tab);
 		
 		return panel;

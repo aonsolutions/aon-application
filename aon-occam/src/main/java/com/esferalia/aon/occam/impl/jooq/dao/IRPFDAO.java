@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -13,11 +14,18 @@ import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.finance.Filters.IRPFFilter;
+import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -26,9 +34,38 @@ import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class IRPFDAO extends FiscalModelDAO {
 	
+	private static final IRPFPropertiesDAO IRPF_PROPERTIES = new IRPFPropertiesDAO();
+	private static class IRPFPropertiesDAO extends VATDAO implements IRPFProperties {
+
+		private Condition[] getConditions(IRPFFilter filter) {
+			if (filter == null) {
+				return new Condition[]{DSL.trueCondition()};
+			}
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null)
+				return new Condition[]{DSL.trueCondition()};
+
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getInvoiceIdProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);}
+		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.REGISTRY);}
+		@Override public Property<Byte> getInvoiceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
+		@Override public Property<Byte> getInvoiceTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TRANSACTION);}
+		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.ACTIVITY);}
+		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.INVESTMENT);}
+		@Override public Property<Byte> getServiceProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SERVICE);}
+		@Override public Property<Byte> getRectifiedProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.RECTIFICATION_TYPE);}
+		@Override public Property<Byte> getAccrualRegimeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Byte> getWithholdingTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE_TAX.WITHHOLDING_TYPE);}
+		@Override public Property<Double> getPercentProperty() {return new FilterDAO.PropertyDAO<Double>(INVOICE_TAX.PERCENTAGE);}
+		@Override public Property<Double> getSurchargePercentProperty() {return new FilterDAO.PropertyDAO<Double>(INVOICE_TAX.SURCHARGE);}
+	}
+
 	// -------------------------------------------------------------------- STREAM FUNCTIONS
 
 	// -------------------------------------------------------------------- SALARY
@@ -62,7 +99,7 @@ public class IRPFDAO extends FiscalModelDAO {
 				Date issueDate = rec.field(SALARY.ISSUE_DATE) != null ? rec.getValue(SALARY.ISSUE_DATE): null;
 				IrpfBreakdown br = new IrpfBreakdown()
 						.setFromSalary(true)
-						.setDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
+						.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
 						.setName(rec.field(SALARY.EMPLOYEE_NAME) != null ? rec.getValue(SALARY.EMPLOYEE_NAME) : null)
 						.setIssueDate(issueDate)
 						.setTaxDate(issueDate)
@@ -90,7 +127,7 @@ public class IRPFDAO extends FiscalModelDAO {
 						if (AonMathUtils.isNotZero(moneyBase) || AonMathUtils.isNotZero(moneyQuota)) {
 							br = new IrpfBreakdown()
 									.setFromSalary(true)
-									.setDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
+									.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
 									.setName(rec.field(SALARY.EMPLOYEE_NAME) != null ? rec.getValue(SALARY.EMPLOYEE_NAME) : null)
 									.setIssueDate(issueDate)
 									.setTaxDate(issueDate)
@@ -111,94 +148,116 @@ public class IRPFDAO extends FiscalModelDAO {
 
 	// -------------------------------------------------------------------- INVOICE
 
-	public static Stream<IrpfBreakdown> getSalesInvoiceIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
-		return getSalesInvoiceIrpfBreakdown(ctx, fm, false);
+	public static Stream<IrpfBreakdown> getOutputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		return getOutputInvoicesBreakdown(ctx, fm, false);
 	}
 	
-	public static Stream<IrpfBreakdown> getSalesInvoiceDiffIrpfBreakdown(final AONContext ctx, final  FiscalModel fm) {
-		return getSalesInvoiceIrpfBreakdown(ctx, fm, true);	
+	public static Stream<IrpfBreakdown> getOutputInvoicesDiffIrpfBreakdown(final AONContext ctx, final  FiscalModel fm) {
+		return getOutputInvoicesBreakdown(ctx, fm, true);	
 	}
 
-	private static Stream<IrpfBreakdown> getSalesInvoiceIrpfBreakdown(final AONContext ctx, final FiscalModel fm, final boolean diff) {
-		java.sql.Date dateFrom = diff
-				?AonDateUtils.toSql( AonDateUtils.getYearFirstDay(fm.getYear()))
-				:AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));
-		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
-		return 	ctx.getDslContext()
-			.select(INVOICE.ID
-					,INVOICE.TYPE,INVOICE.SERIES,INVOICE.NUMBER,INVOICE.REFERENCE_CODE
-					,INVOICE.ISSUE_DATE,INVOICE.TAX_DATE
-					,INVOICE.RDOCUMENT,INVOICE.RNAME
-					,INVOICE_TAX.WITHHOLDING_TYPE,ENTERPRISE_ACTIVITY.RETENTION_REGIME
-					,INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
-				.from(INVOICE)
-				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-				.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
-				.where(INVOICE.DOMAIN.equal(fm.getDomain()))
-					.and(INVOICE.TAX_DATE.between(dateFrom,dateTo))
-					.and(INVOICE.TYPE.equal(InvoiceType.SALES.value() ))
-					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
-				.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
-				.fetch()
-				.stream()
-				.map( new IrpfInvoiceBreakdown() )
+	private static Stream<IrpfBreakdown> getOutputInvoicesBreakdown(final AONContext ctx, final FiscalModel fm, final boolean diff) {
+		Date dateFrom = diff
+				?AonDateUtils.getYearFirstDay(fm.getYear())
+				:FiscalUtils.getPeriodStart(fm);
+		Date dateTo = FiscalUtils.getPeriodEnd(fm);
+		return getInvoicesIrpfBreakdown(ctx,fm.getDomain(),dateFrom,dateTo, p -> p.getInvoiceTypeProperty().eq(InvoiceType.SALES.value()))
 				.peek( br -> br.setInsidePeriod( FiscalUtils.isInPeriodRange(fm, br.getTaxDate() )));
 	}
 
-	public static Stream<IrpfBreakdown> getInvoiceIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
-		return getInvoiceIrpfBreakdown(ctx, fm, false);
+	public static Stream<IrpfBreakdown> getInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		return getInputInvoicesIrpfBreakdown(ctx, fm, false);
 	}
 	
-	public static Stream<IrpfBreakdown> getInvoiceDiffIrpfBreakdown(final AONContext ctx, final  FiscalModel fm) {
-		return getInvoiceIrpfBreakdown(ctx, fm, true);	
+	public static Stream<IrpfBreakdown> getInputInvoicesDiffIrpfBreakdown(final AONContext ctx, final  FiscalModel fm) {
+		return getInputInvoicesIrpfBreakdown(ctx, fm, true);	
 	}
 
-	private static Stream<IrpfBreakdown> getInvoiceIrpfBreakdown(final AONContext ctx, final FiscalModel fm, final boolean diff) {
-		java.sql.Date dateFrom = diff
-				?AonDateUtils.toSql( AonDateUtils.getYearFirstDay(fm.getYear()))
-				:AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));
-		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
-		return 	ctx.getDslContext()
-			.select(INVOICE.ID
-					,INVOICE.TYPE,INVOICE.SERIES,INVOICE.NUMBER,INVOICE.REFERENCE_CODE
-					,INVOICE.ISSUE_DATE,INVOICE.TAX_DATE
-					,INVOICE.RDOCUMENT,INVOICE.RNAME
-					,INVOICE_TAX.WITHHOLDING_TYPE,ENTERPRISE_ACTIVITY.RETENTION_REGIME
-					,INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
-				.from(INVOICE)
-				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-				.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
-				.where(INVOICE.DOMAIN.equal(fm.getDomain()))
-					.and(INVOICE.TAX_DATE.between(dateFrom,dateTo))
-					.and(INVOICE.TYPE.notEqual(InvoiceType.SALES.value() ))
-					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
-				.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
-				.fetch()
-				.stream()
-				.map( new IrpfInvoiceBreakdown() )
+	private static Stream<IrpfBreakdown> getInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm, final boolean diff) {
+		Date dateFrom = diff
+				?AonDateUtils.getYearFirstDay(fm.getYear())
+				:FiscalUtils.getPeriodStart(fm);
+		Date dateTo = FiscalUtils.getPeriodEnd(fm);
+		return getInvoicesIrpfBreakdown(ctx,fm.getDomain(),dateFrom,dateTo, p -> p.getInvoiceTypeProperty().ne(InvoiceType.SALES.value()))
 				.peek( br -> br.setInsidePeriod( FiscalUtils.isInPeriodRange(fm, br.getTaxDate() )));
 	}
-
+	
+	private static Stream<IrpfBreakdown> getInvoicesIrpfBreakdown(final AONContext ctx, int domain, Date dateFrom, Date dateTo, IRPFFilter filter) {
+		return 	ctx.getDslContext()
+				.select( INVOICE.ID
+						,INVOICE.TYPE
+						,INVOICE.SERIES
+						,INVOICE.NUMBER
+						,INVOICE.REFERENCE_CODE
+						,INVOICE.ISSUE_DATE
+						,INVOICE.TAX_DATE
+						
+						,INVOICE.RDOCUMENT
+						,INVOICE.RDOCUMENT_TYPE
+						,INVOICE.RDOCUMENT_COUNTRY
+						,INVOICE.RNAME
+						
+						,ENTERPRISE_ACTIVITY.ID
+						,ENTERPRISE_ACTIVITY.DESCRIPTION
+						,ENTERPRISE_ACTIVITY.RETENTION_REGIME
+						
+						,IAE.EPIGRAPH
+						
+						,INVOICE_TAX.WITHHOLDING_TYPE
+						,INVOICE_TAX.BASE
+						,INVOICE_TAX.PERCENTAGE
+						,INVOICE_TAX.QUOTA
+						,INVOICE_TAX.DEDUCTIBLE_PERCENT
+						,INVOICE_TAX.DEDUCTIBLE_QUOTA
+					)
+					.from(INVOICE)
+					.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+					.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+					.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
+					.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+					.where(IRPF_PROPERTIES.getConditions(filter))
+						.and(INVOICE.DOMAIN.equal(domain))
+						.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(dateFrom),AonDateUtils.toSql(dateTo)))
+						.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+					.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+					.fetch()
+					.stream()
+					.map( new IrpfInvoiceBreakdown() );		
+	}
+	
 	public static class IrpfInvoiceBreakdown implements Function<Record, IrpfBreakdown> {
 		@Override
 		public IrpfBreakdown apply(Record rec) {
 			double base = rec.getValue(INVOICE_TAX.BASE);
 			double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
 			double quota = rec.getValue(INVOICE_TAX.QUOTA);
+			double dedPercent = rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT);
 			if (AonMathUtils.isZero(quota)) {
 				quota =  AonMathUtils.round(base * percent / 100);
+			}
+			if (AonMathUtils.isZero(dedPercent)) dedPercent = 100;
+			double dedQuota = rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA);
+			if (AonMathUtils.isZero(dedQuota)) {
+				if (AonMathUtils.isZero(dedPercent) || dedPercent == 100) {
+					dedQuota = quota;
+				} else {
+					dedQuota = AonMathUtils.round(quota * dedPercent / 100);
+				}
 			}
 			Byte regime = rec.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME);
 			return new IrpfBreakdown()
 					.setFromSalary(false)
+					.setActivity(rec.getValue(ENTERPRISE_ACTIVITY.ID))
+					.setActivityDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
+					.setEpigraph(rec.getValue(IAE.EPIGRAPH))
 					.setInvoice(rec.getValue(INVOICE.ID))
 					.setInvoiceType(AonEnumUtils.enumValue(InvoiceType.class,rec.getValue(INVOICE.TYPE)))
 					.setSeries(rec.getValue(INVOICE.SERIES))
 					.setNumber(rec.getValue(INVOICE.NUMBER))
 					.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
-					.setDocument(rec.getValue(INVOICE.RDOCUMENT))
+					.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
+					.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
+					.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 					.setName(rec.getValue(INVOICE.RNAME))
 					.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
 					.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
@@ -207,8 +266,42 @@ public class IRPFDAO extends FiscalModelDAO {
 					.setBase(base)
 					.setPercent(percent)
 					.setQuota(quota)
+					.setDeductiblePercent(dedPercent)
+					.setDeductibleQuota(dedQuota)
 					;
 		}
+	}
+
+	public static LinkedList<IrpfBreakdown> getIRPFSummary(AONContext ctx, Date fromDate, Date toDate, IRPFFilter filter) {
+		LinkedList<IrpfBreakdown> list = new LinkedList<IrpfBreakdown>();
+		getInvoicesIrpfBreakdown(ctx, ctx.getDomainId(), fromDate, toDate, filter)
+			.forEach( irpf -> {
+				double percent = irpf.getPercent();
+				IrpfBreakdown sum = null;
+				for (IrpfBreakdown ite : list) {
+					if ( ite.getWithholdingType() == irpf.getWithholdingType()
+						&& ite.isSales() == irpf.isSales()
+						&& AonNumberUtils.equals(ite.getPercent(), percent)) {
+						sum = ite;
+						break;
+					}
+				}
+				if ( sum == null) {
+					sum = new IrpfBreakdown()
+						.setInvoiceType(irpf.getInvoiceType())
+						.setWithholdingType(irpf.getWithholdingType())
+						.setPercent(percent);
+					list.add(sum);
+				}
+				sum.setBase( sum.getBase() + irpf.getBase()); 
+				sum.setQuota( sum.getQuota() + irpf.getQuota());
+				sum.setDeductibleQuota( sum.getDeductibleQuota() + irpf.getDeductibleQuota());				
+			});
+		return list;
+	}
+
+	public static Stream<IrpfBreakdown> getIRPFBreakdown(AONContext ctx, Date fromDate, Date toDate, IRPFFilter filter) {
+		return getInvoicesIrpfBreakdown(ctx, ctx.getDomainId(), fromDate, toDate, filter);
 	}
 }
 

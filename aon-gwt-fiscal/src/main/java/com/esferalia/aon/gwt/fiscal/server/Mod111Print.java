@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.shared.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.FISCAL;
@@ -21,9 +20,10 @@ import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod111 Print", urlPatterns = { "/aon_gwt_fiscal/Model111Print" })
+@WebServlet(name = "Mod111 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model111Print" })
 public class Mod111Print extends HttpServlet {
+
+	private static final long serialVersionUID = 897424561687088844L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -33,7 +33,7 @@ public class Mod111Print extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod111"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = AonServletUtils.getLoggedUser();
+			String user = req.getParameter("user");
 			Mod111 mod111 = FISCAL.getMod111(domainName, domainId, user,id);
 
 			Mod111ExcelAction action = new Mod111ExcelAction(mod111);

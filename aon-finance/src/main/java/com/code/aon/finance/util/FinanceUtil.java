@@ -14,6 +14,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -33,7 +34,7 @@ public class FinanceUtil {
 		if (!StringUtils.isEmpty(series)) {
 			documentNumber += series + "/";
 		}
-		documentNumber += StringUtils.leftPad(Integer.toString(number), 6, "0");
+		documentNumber += StringUtils.leftPad(Integer.toString(number), SeriesNumberUtil.getNumberMinimumLength(), "0");
 		return documentNumber;
 	}
 

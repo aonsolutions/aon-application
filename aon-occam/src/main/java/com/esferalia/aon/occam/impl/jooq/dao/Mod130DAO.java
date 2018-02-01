@@ -144,7 +144,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			+"<li>Resultado: <b>@{C05}</b></li>")
 		,C06 (Mod130Key.C06 , (mod -> mod.isAEAT())
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C06, 
-					IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod)
+					IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod)
 					    .filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )					
 						.mapToDouble(br -> br.getQuota())
 						.sum())
@@ -166,7 +166,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			,"<li>2% de @{C08} igual <b>@{C09}</b></li>")
 		,C10 (Mod130Key.C10 , (mod -> mod.isAEAT())
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C10, 
-					IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod)
+					IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod)
 						.filter( i -> i.isFarmer())
 						.mapToDouble(br -> br.getQuota())
 						.sum())
@@ -514,7 +514,7 @@ public class Mod130DAO extends FiscalModelDAO {
 		{
 			// Llamada desde la casilla 10
 			return IRPFFormatter.formatInvoices(title,script.getLabel()
-			            ,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+			            ,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
 						 .filter(i -> i.isFarmer() == farmer)
 						 .collect(Collectors.toCollection(LinkedList::new))
 			);
@@ -523,7 +523,7 @@ public class Mod130DAO extends FiscalModelDAO {
 		{
 			// Llamada desde la casilla 06
 			return IRPFFormatter.formatInvoices(title,script.getLabel()
-					   ,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+					   ,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
 					    .filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
 						.collect(Collectors.toCollection(LinkedList::new))
 			);
@@ -546,7 +546,7 @@ public class Mod130DAO extends FiscalModelDAO {
 				,script.getKeys()
 				, getPreviousModels(ctx,mod130)
 				 	.collect(Collectors.toCollection(LinkedList::new))	
-				,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+				,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
 					.filter(i -> i.isFarmer() == farmer)
 					.collect(Collectors.toCollection(LinkedList::new))
 			);
@@ -559,7 +559,7 @@ public class Mod130DAO extends FiscalModelDAO {
 					,script.getKeys()
 					, getPreviousModels(ctx,mod130)
 					 	.collect(Collectors.toCollection(LinkedList::new))	
-					,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+					,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
 						.filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
 						.collect(Collectors.toCollection(LinkedList::new))
 			);			

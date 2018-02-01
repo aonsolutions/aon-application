@@ -54,7 +54,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		checkInvoice(invoice, company);
 		if (invoice.isSales()) {
 			checkNumber(invoice);
-			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), SeriesNumberUtil.getNumberMinimumLength(), "0");
 			if (!StringUtils.isBlank(invoice.getSeries())) {
 				referenceCode = invoice.getSeries() + "/" + referenceCode;
 			}
@@ -106,7 +106,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			checkInvoice(invoice, company);
 			if (invoice.isSales()) {
 				checkNumber(invoice);
-				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), SeriesNumberUtil.getNumberMinimumLength(), "0");
 				if (!StringUtils.isBlank(invoice.getSeries())) {
 					referenceCode = invoice.getSeries() + "/" + referenceCode;
 				}
@@ -152,7 +152,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 		return null;
 	}
-
+	
 	private void checkInvoice(Invoice invoice, Company company) throws ManagerBeanVetoListenerException {
 		checkLimitDate(invoice);
 		checkInvoiceYear(invoice);

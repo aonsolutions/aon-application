@@ -246,21 +246,15 @@ try {
 											</c:if>
 										</c:if>
 										<c:if test="${!customize.hideVersion}">
-											<c:if test="${customize.applicationVersion != null}">
+											<c:if test="${customize.buildDate != null}">
 												<div>
 													<%
 													String value = commonBundle.getString("aon_about_version");
 										    		MessageFormat mf = new MessageFormat( value );
-										    		out.print( mf.format(new Object[]{customize.getApplicationVersion()}) ); 
+										    		out.print( mf.format(new Object[]{customize.getBuildDate()}) ); 
 										    		%>
-										    		<c:if test="${customize.buildDate != null}">
-										    			 (<%= customize.getBuildDate() %>)
-										    		</c:if>
 									    		</div>
 											</c:if>
-											<div>
-												<%=commonBundle.getString("aon_about_db_version")%> <%= du.getCurrentVersion() %>
-								    		</div>
 								    	</c:if>
 									</div>
 								</c:if>

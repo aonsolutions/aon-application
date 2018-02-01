@@ -26,7 +26,12 @@
 		</f:facet>
 		
 		<aon:column breakBefore="true" styleClass="aon-editDataTable-textColumn" >
-			<aon:outputText value="#{address.fullAddress}" />
+			<aon:div>
+				<aon:outputText value="&#160;" title="#{bundle.aon_principal}"
+					rendered="#{address.mainAddress}"
+					styleClass="aon-icon-company aon-padding-right aon-margin-right" />
+				<aon:outputText value="#{address.fullAddress}" />
+			</aon:div>
 		</aon:column>
 	
 		<aon:column styleClass="aon-editDataTable-textColumn" >

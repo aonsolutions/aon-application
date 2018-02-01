@@ -39,6 +39,8 @@ import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.RegistryRelationship;
+import com.code.aon.registry.Relationship;
 import com.code.aon.registry.enumeration.RegistryItemStatus;
 import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.sales.SalesDetail;
@@ -63,12 +65,12 @@ public class ConnectSaleInvoiceWriter {
 			.getLogger(ConnectSaleInvoiceWriter.class);
 
 
-	public FileOutput createFile(Invoice invoice, Company company, String companyEdiCode,
+	public FileOutput createFile(Invoice invoice, Company company, boolean invoicingMainAddress, String companyEdiCode,
 			String customerEdiCabeceraCode, String customerEdiPtoEntregaCode, String customerEdiFacturaCode,
 			String customerPackage)
 			throws FileNotFoundException, UnsupportedEncodingException {
 
-		RECTL rectl = createRECTLRecord(invoice, company, companyEdiCode, customerEdiCabeceraCode,
+		RECTL rectl = createRECTLRecord(invoice, company, invoicingMainAddress, companyEdiCode, customerEdiCabeceraCode,
 				customerEdiPtoEntregaCode, customerEdiFacturaCode, customerPackage);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
@@ -80,7 +82,7 @@ public class ConnectSaleInvoiceWriter {
 		return output;
 	}
 
-	private RECTL createRECTLRecord(Invoice invoice, Company company,
+	private RECTL createRECTLRecord(Invoice invoice, Company company, boolean invoicingMainAddress,
 			String companyEdiCode, String customerEdiCabeceraCode,
 			String customerEdiPtoEntregaCode, String customerEdiFacturaCode, String customerPackage) {
 
@@ -108,7 +110,7 @@ public class ConnectSaleInvoiceWriter {
 			LOGGER.error(e.getMessage());
 		}
 		try {
-			rectl.sincpList = createSINCPList(invoice, company, companyEdiCode,
+			rectl.sincpList = createSINCPList(invoice, company, invoicingMainAddress, companyEdiCode,
 					customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
@@ -206,14 +208,16 @@ public class ConnectSaleInvoiceWriter {
 		return sincc;
 	}
 	
-	private List<SINCP> createSINCPList(Invoice invoice, Company company,
-			String companyEdiCode, String customerEdiCabeceraCode,
-			String customerEdiPtoEntregaCode, String customerEdiFacturaCode) {
+	private List<SINCP> createSINCPList(Invoice invoice, Company company, boolean invoicingMainAddress,
+			String companyEdiCode, String customerEdiCabeceraCode, String customerEdiPtoEntregaCode,
+			String customerEdiFacturaCode) {
 		Registry customer = invoice.getRegistry();
 		RegistryAddress invoiceAddress = invoice.getRegistryAddress();
 		RegistryAddress companyAddress = null;
+		RegistryAddress customerMainAddress = null;
 		try {
 			companyAddress = company.getRegistry().getDefaultAddress();
+			customerMainAddress = invoice.getRegistry().getDefaultAddress();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -229,6 +233,14 @@ public class ConnectSaleInvoiceWriter {
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}
+		 
+		RegistryRelationship rr = obtainReferenciaAdicional(company, customer);
+		String calificadorReferenciaAdicional = null;
+		String referenciaAdicional = null;
+		if(rr!=null && rr.getId()!=null) {
+			calificadorReferenciaAdicional = "API";
+			referenciaAdicional = rr.getComments();
+		}
 		
 		List<SINCP> list = new ArrayList<>();
 		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
@@ -240,9 +252,9 @@ public class ConnectSaleInvoiceWriter {
 		list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
 				customerEdiCabeceraCode, customer, invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
-				customerEdiFacturaCode, customer, invoiceAddress, null));
+				customerEdiFacturaCode, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
-				customerEdiCabeceraCode, customer, invoiceAddress, null));
+				customerEdiCabeceraCode, customer, invoicingMainAddress?customerMainAddress:invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
 				companyEdiCode, company, companyAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PAGADOR__QUIEN_PAGA__PR,
@@ -255,6 +267,42 @@ public class ConnectSaleInvoiceWriter {
 		return list;
 	}
 	
+	private RegistryRelationship obtainReferenciaAdicional(Company company, Registry customer) {
+		String type = "EDI_NUM_PROV";
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Relationship.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.RELATIONSHIP_DOMAIN),
+					company.getDomain());
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.RELATIONSHIP_DESCRIPTION),
+					type);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()) {
+				Relationship relationship = (Relationship) list.get(0);
+				bean = BeanManager.getManagerBean(RegistryRelationship.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(
+						bean.getFieldName(IEntityAlias.REGISTRY_RELATIONSHIP_REGISTRY_ID),
+						customer.getId());
+				criteria.addEqualExpression(
+						bean.getFieldName(IEntityAlias.REGISTRY_RELATIONSHIP_RELATED_REGISTRY_ID),
+						company.getRegistry().getId());
+				criteria.addEqualExpression(
+						bean.getFieldName(IEntityAlias.REGISTRY_RELATIONSHIP_RELATIONSHIP_ID),
+						relationship.getId());
+				list = bean.getList(criteria);	
+				if(!list.isEmpty()) {
+					return (RegistryRelationship) list.get(0);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return null;
+	}
+
 	private List<SINCT> createSINCTList(Invoice invoice, String companyEdiCode,
 			String customerEdiMainCode) {
 		List<SINCT> list = new ArrayList<>();
@@ -346,6 +394,11 @@ public class ConnectSaleInvoiceWriter {
 	 */
 	private SINCP createSINCPRecord(SINCP.SINCP_2 type, String ediCode, Registry registry,
 			RegistryAddress rAddress, RecordData recordData) {
+		return createSINCPRecord(type, ediCode, registry, rAddress, recordData, null, null);
+	}
+	
+	private SINCP createSINCPRecord(SINCP.SINCP_2 type, String ediCode, Registry registry,
+			RegistryAddress rAddress, RecordData recordData, String calificadorReferenciaAdicional, String referenciaAdicional) {
 		SINCP sincp = new SINCP();
 		sincp.setCalificadorDelInterlocutor(type.getValue());
 		sincp.setCodigoInterlocutor(ediCode);
@@ -378,8 +431,8 @@ public class ConnectSaleInvoiceWriter {
 		sincp.setNumeroDeCuentaBancaria_IBAN_(null);
 		sincp.setRegistroMercantilDelEmisor(getRecordDataValue(recordData));
 		sincp.setCapitalSocial(null);
-		sincp.setCalificadorReferenciaAdicional(null);
-		sincp.setReferenciaAdicional(null);
+		sincp.setCalificadorReferenciaAdicional(calificadorReferenciaAdicional);
+		sincp.setReferenciaAdicional(referenciaAdicional);
 		return sincp;
 	}
 	
@@ -647,7 +700,7 @@ public class ConnectSaleInvoiceWriter {
 			if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
-				return deliveryDetail.getDelivery().getSeries() + "/" + deliveryDetail.getDelivery().getNumber();
+				return deliveryDetail.getDelivery().getReferenceCode();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());

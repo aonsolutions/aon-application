@@ -91,6 +91,7 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.core.dbutils.DatabaseUtil;
@@ -784,7 +785,8 @@ public class DashboardController implements Serializable {
 		ResultSet rs = null;
 		Connection connection = null;
 		PreparedStatement stmt = null;
-		int lastYear=0;
+		Integer currentYear = AonDateUtils.getYear(new Date());
+		Boolean isCurrentYear = false;
 		try {
 
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
@@ -800,13 +802,15 @@ public class DashboardController implements Serializable {
 			while (rs.next()) {
 				list.add(new SelectItem(rs.getInt(1), Integer.toString(rs
 						.getInt(1))));
-				lastYear = rs.getInt(1);
+				if(currentYear.equals(rs.getInt(1)))
+					isCurrentYear = true;
 			}
-			/*
-			 *Si la empresa no tiene el año actual en registro, selecciono el ultimo.
-			 */
+			if(!isCurrentYear) 
+				list.add(new SelectItem(currentYear, currentYear.toString()));
+
 			if(getSalaryYear() == null) {
-				this.setSalaryYear(lastYear);
+				this.setSalaryYear(currentYear);
+				
 			}
 						
 
@@ -833,9 +837,9 @@ public class DashboardController implements Serializable {
 		ResultSet rs = null;
 		Connection connection = null;
 		PreparedStatement stmt = null;
-		int lastYear = 0;
+		Integer currentYear = AonDateUtils.getYear(new Date());
+		Boolean isCurrentYear = false;
 		try {
-
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT extract(year from "
 					+ ContractColumns.START_DATE + ") from "
@@ -849,13 +853,16 @@ public class DashboardController implements Serializable {
 			while (rs.next()) {
 				list.add(new SelectItem(rs.getInt(1), Integer.toString(rs
 						.getInt(1))));
-				lastYear = rs.getInt(1);
-			}
-			if(getContractYear() == null) {
-				this.setContractYear(lastYear);
+				if(currentYear.equals(rs.getInt(1)))
+					isCurrentYear = true;
 			}
 			
+			if(!isCurrentYear) 
+				list.add(new SelectItem(currentYear, currentYear.toString()));
 
+			if(getContractYear() == null) {
+				this.setContractYear(currentYear);		
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			// Nothing. Se mostrara array vacio.
@@ -1408,8 +1415,7 @@ public class DashboardController implements Serializable {
 		return salaries;
 	}
 
-	public void setSalaries(
-			Map<Integer, HashMap<String, DashboardPayrollPortal>> salaries) {
+	public void setSalaries(Map<Integer, HashMap<String, DashboardPayrollPortal>> salaries) {
 		this.salaries = salaries;
 	}
 

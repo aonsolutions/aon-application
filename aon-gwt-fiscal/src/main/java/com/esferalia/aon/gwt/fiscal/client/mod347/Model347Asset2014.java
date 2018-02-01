@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod347;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Base.IModel347Asset;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Base.Model347BaseCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -28,30 +29,63 @@ public class Model347Asset2014 extends DockLayoutPanel implements IModel347Asset
 		table.addSelectionHandler( new SelectionHandler<Mod347Asset>() {
 			
 			@Override
-			public void onSelection(SelectionEvent<Mod347Asset> event) {
-				Model3472014AssetPanel panel = new Model3472014AssetPanel(event.getSelectedItem(), new IModel347AssetCallback() {
-					
-					@Override
-					public void onValueChanged(Mod347Asset asset) {
-						if (!asset.isDirty()) {
-							asset.setDirty(true);
-							table.refresh();		
-						}
-					}
-					
-					@Override
-					public void onTableChanged(Mod347Asset asset) {
-						asset.setDirty(true);
-						table.refresh();
-					}
-				});
-				container.setWidget(panel);
+			public void onSelection(SelectionEvent<Mod347Asset> event) {				
 				
-				Scheduler.get().scheduleDeferred(new Command() {
-			        public void execute() {
-			        	panel.setFocus(true);
-			        }
-			    });		
+				if (callback.getMod347().getAdministration() == Administration.GIPUZKOA) {
+					// Gipuzkoa
+					Model3472014AssetPanelGipuzkoa panel = new Model3472014AssetPanelGipuzkoa(event.getSelectedItem(), new IModel347AssetCallback() {
+						
+						@Override
+						public void onValueChanged(Mod347Asset asset) {
+							if (!asset.isDirty()) {
+								asset.setDirty(true);
+								table.refresh();		
+							}
+						}
+						
+						@Override
+						public void onTableChanged(Mod347Asset asset) {
+							asset.setDirty(true);
+							table.refresh();
+						}
+					});				
+								
+					container.setWidget(panel);
+					
+					Scheduler.get().scheduleDeferred(new Command() {
+				        public void execute() {
+				        	panel.setFocus(true);
+				        }
+				    });
+						
+				}
+				else {	
+					// Resto de Administraciones
+					Model3472014AssetPanel panel = new Model3472014AssetPanel(event.getSelectedItem(), new IModel347AssetCallback() {
+						
+							@Override
+							public void onValueChanged(Mod347Asset asset) {
+								if (!asset.isDirty()) {
+									asset.setDirty(true);
+									table.refresh();		
+								}
+							}
+							
+							@Override
+							public void onTableChanged(Mod347Asset asset) {
+								asset.setDirty(true);
+								table.refresh();
+							}
+						});					
+									
+					container.setWidget(panel);
+					
+					Scheduler.get().scheduleDeferred(new Command() {
+				        public void execute() {
+				        	panel.setFocus(true);
+				        }
+				    });
+				}
 
 			}
 		});

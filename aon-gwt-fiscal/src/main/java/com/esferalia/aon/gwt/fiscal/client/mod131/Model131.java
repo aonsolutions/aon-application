@@ -234,6 +234,11 @@ public class Model131 extends MainEntryPoint {
 		}
 
 		@Override
+		public String getUser() {
+			return getCurrentUser();
+		}
+		
+		@Override
 		public int getDomain() {
 			return getCurrentDomain();
 		}
@@ -301,6 +306,11 @@ public class Model131 extends MainEntryPoint {
 	public static native String getCurrentDomainName()
 	/*-{
 		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native String getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
 	}-*/;
 
 	public static native int getCurrentDomain()

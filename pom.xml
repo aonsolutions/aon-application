@@ -187,7 +187,7 @@
 
 		<!-- WS MODULES -->
 		<module>aon-ws-gps</module>
-	    <module>aon-ws-dex</module>
+	    	<module>aon-ws-dex</module>
 
 		<!-- OTHER -->
 		<module>aon.python</module>
@@ -195,6 +195,7 @@
 		<module>aon-msm</module>
 		<module>aon-solutions-release</module>
 		<module>aon-common-resources</module>
+		<module>aon-db-up2date</module>
 		
 		
 	</modules>

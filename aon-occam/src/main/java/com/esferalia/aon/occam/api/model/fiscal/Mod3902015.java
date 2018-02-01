@@ -1267,7 +1267,7 @@ public class Mod3902015 extends Mod390  {
 
 	public void calculate() {
 		double k37Quota = 0;
-		if (!isSimplifiedRegime()) {
+//		if (!isSimplifiedRegime()) {
 			calculate(Mod3902015DetailKey.K09, K09_FORMULA);
 			Mod390Detail k13 = calculate(Mod3902015DetailKey.K13, K13_FORMULA);
 			calculate(Mod3902015DetailKey.K15, K15_FORMULA);
@@ -1283,15 +1283,15 @@ public class Mod3902015 extends Mod390  {
 			Mod390Detail k37 = ensure(Mod3902015DetailKey.K37);
 			k37Quota = AonMathUtils.round(k13.getQuota() - k36.getQuota());
 			k37.setQuota( k37Quota );
-		}
+//		}
 		if (isSimplifiedRegime()) {
-			box74 = AonMathUtils.round(getSimpRegime1().getBoxJ() + getSimpRegime2().getBoxJ());
+			box74 = AonMathUtils.round((getSimpRegime1()==null?0:getSimpRegime1().getBoxJ()) + (getSimpRegime2()==null?0:getSimpRegime2().getBoxJ()));
 			box75 = AonMathUtils.round(
-					getFarmerRegime1().getQuota()
-					+ getFarmerRegime2().getQuota()
-					+ getFarmerRegime3().getQuota()				
-					+ getFarmerRegime4().getQuota()				
-					+ getFarmerRegime5().getQuota()				
+					  (getFarmerRegime1()!=null?getFarmerRegime1().getQuota():0)
+					+ (getFarmerRegime2()!=null?getFarmerRegime2().getQuota():0)
+					+ (getFarmerRegime3()!=null?getFarmerRegime3().getQuota():0)
+					+ (getFarmerRegime4()!=null?getFarmerRegime4().getQuota():0)
+					+ (getFarmerRegime5()!=null?getFarmerRegime5().getQuota():0)
 					);
 			box79 = AonMathUtils.round(box74 + box75 + box76 + box77 + box78 );
 			box82 = AonMathUtils.round(box80 + box81);
@@ -1299,6 +1299,9 @@ public class Mod3902015 extends Mod390  {
 		} else {
 			box74 = 0;
 			box75 = 0;
+			box79 = 0;
+			box82 = 0;
+			box83 = 0;
 		}
 		box84 = AonMathUtils.round(k37Quota + box83);
 		box86 = AonMathUtils.round(box84 + box659 - box85);

@@ -27,7 +27,7 @@ public class CretaBasesServletTestImpl extends CretaServlet {
 	}
 	
 	@Override
-	protected Connection getConnection() throws SQLException {
+	protected Connection getConnection(HttpServletRequest req) throws SQLException {
 
 		// first of all load JDBC driver
 		try {

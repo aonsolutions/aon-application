@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184.IModel184Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184.Model184Callback;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -53,8 +52,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model184Base extends DockLayoutPanel {
 
-	static final String MODEL184_PRINT = "/aon_gwt_fiscal/Model184Print";
-	static final String MODEL184_FILE = "/aon_gwt_fiscal/Model184File";
+	static final String MODEL184_PRINT = "/aon_gwt_fiscal/ms/Model184Print";
+	static final String MODEL184_FILE = "/aon_gwt_fiscal/ms/Model184File";
 	
 	protected static class MediumLabel extends InlineLabel {
 		private MediumLabel(String label) {
@@ -115,6 +114,18 @@ abstract class Model184Base extends DockLayoutPanel {
 		public void onNew() {
 			cbk.onNew();
 		}
+		@Override
+		public String getDomainName() {
+			return cbk.getDomainName();
+		}
+		@Override
+		public String getUser() {
+			return cbk.getUser();
+		}
+		@Override
+		public int getDomain() {
+			return cbk.getDomain();
+		}
 	}
 	
 	
@@ -144,6 +155,7 @@ abstract class Model184Base extends DockLayoutPanel {
 	protected Hidden mod184Hidden = new Hidden("mod184");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
+	protected Hidden userHidden = new Hidden("user");
 	
 	private IModel184Income  incomeManager;
 	private IModel184Partner partnerManager;
@@ -152,7 +164,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		super(Unit.PX);
 		select( mod184 );
 		
-		addNorth(getToolbarPanel(), 25);
+		addNorth(getToolbarPanel(cbk), 25);
 		
 		SimplePanel modelPanel = new SimplePanel();
 		FiscalModelUtils.paintHeaderTable(modelPanel, this.mod184 );
@@ -160,7 +172,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		
 		ScrollPanel headerPanel = new ScrollPanel();
 		headerPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		headerPanel.setWidget( getDeclarationHeaderTable());
+		headerPanel.setWidget( getDeclarationHeaderTable(cbk));
 		addNorth(headerPanel, 45);
 		
 		this.callback = new Model184BaseCallback(cbk);
@@ -194,7 +206,7 @@ abstract class Model184Base extends DockLayoutPanel {
 	}
 
 	
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(Model184Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -248,7 +260,7 @@ abstract class Model184Base extends DockLayoutPanel {
 				popup.setGlassEnabled(true);
 				popup.setAnimationEnabled(true);
 				popup.center();
-				Model184.SERVICE.saveMod184(Model184.getCurrentDomainName(), Model184.getCurrentDomain(),
+				Model184.SERVICE.saveMod184(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(),
 						getMod184(), new AsyncCallback<Mod184>() {
 							@Override
 							public void onSuccess(Mod184 result) {
@@ -310,8 +322,8 @@ abstract class Model184Base extends DockLayoutPanel {
 
 					@Override
 					public void onAccept() {
-						Model184.SERVICE.deleteMod184(Model184.getCurrentDomainName(),
-								Model184.getCurrentDomain(), getMod184(), new AsyncCallback<Void>() {
+						Model184.SERVICE.deleteMod184(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(),
+								getMod184(), new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
@@ -344,7 +356,7 @@ abstract class Model184Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				Model184.SERVICE.changeStatusMod184(Model184.getCurrentDomainName(), getMod184(), FiscalStatus.FINISHED, new AsyncCallback<Mod184>() {
+				Model184.SERVICE.changeStatusMod184(cbk.getDomainName(), cbk.getUser(), getMod184(), FiscalStatus.FINISHED, new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 result) {
 						callback.onSelect(result , null, null, null );
@@ -369,7 +381,7 @@ abstract class Model184Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				Model184.SERVICE.changeStatusMod184(Model184.getCurrentDomainName(), getMod184(), FiscalStatus.SENT, new AsyncCallback<Mod184>() {
+				Model184.SERVICE.changeStatusMod184(cbk.getDomainName(), cbk.getUser(), getMod184(), FiscalStatus.SENT, new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 result) {
 						callback.onSelect(result , null, null , null);
@@ -394,7 +406,7 @@ abstract class Model184Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				Model184.SERVICE.changeStatusMod184(Model184.getCurrentDomainName(), getMod184(), FiscalStatus.PENDING, new AsyncCallback<Mod184>() {
+				Model184.SERVICE.changeStatusMod184(cbk.getDomainName(), cbk.getUser(), getMod184(), FiscalStatus.PENDING, new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 result) {
 						callback.onSelect(result , null, null , null);
@@ -428,7 +440,7 @@ abstract class Model184Base extends DockLayoutPanel {
 							
 					@Override
 					public void onAccept() {
-						Model184.SERVICE.duplicateNextYear(Model184.getCurrentDomainName(), Model184.getCurrentDomain(), 
+						Model184.SERVICE.duplicateNextYear(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(), 
 								mod184.getId(), new AsyncCallback<Mod184>() {
 							@Override
 							public void onSuccess(Mod184 result) {
@@ -469,6 +481,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		formFlowPanel.add(mod184Hidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
 		formContainer.add(diskForm);
 		toolbarPanel.add(formContainer);
 		
@@ -480,11 +493,12 @@ abstract class Model184Base extends DockLayoutPanel {
 		dialog.show(getMod184());
 	}
 	
-	protected void submitForm(String action) {
+	protected void submitForm(Model184Callback cbk, String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod184Hidden.setValue(String.valueOf(getMod184().getId()));
-		domainIdHidden.setValue(String.valueOf(Model184.getCurrentDomain()));
-		domainNameHidden.setValue(Model184.getCurrentDomainName());
+		domainIdHidden.setValue(String.valueOf(cbk.getDomain()));
+		domainNameHidden.setValue(cbk.getDomainName());
+		userHidden.setValue(cbk.getUser());
 		diskForm.submit();
 	}
 	
@@ -864,7 +878,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		entityScrollPanel.setWidget(tab);
 		tabPanel.add(entityScrollPanel, TAB_TEMPLATE.render(AON.MSG.entity(), AON.AON_CSS.aonIconModel()));
 	}
-	private Widget getDeclarationHeaderTable() {
+	private Widget getDeclarationHeaderTable(Model184Callback cbk) {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -931,7 +945,7 @@ abstract class Model184Base extends DockLayoutPanel {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						getMod184().setComments(event.getValue());
 						styleCommentsButton();
-						Model184.SERVICE.saveCommentsMod184(Model303.getCurrentDomainName(), getMod184(), new AsyncCallback<Mod184>() {
+						Model184.SERVICE.saveCommentsMod184(cbk.getDomainName(), cbk.getUser(), getMod184(), new AsyncCallback<Mod184>() {
 							@Override
 							public void onSuccess(Mod184 result) {
 								toast.hide();
@@ -1005,7 +1019,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		return panel;
 	}
 
-	protected FlowPanel getAdministrationPanel() {
+	protected FlowPanel getAdministrationPanel(Model184Callback cbk) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -1045,7 +1059,7 @@ abstract class Model184Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod184().isFinished() || getMod184().isSent()) {
-					submitForm(MODEL184_FILE);
+					submitForm(cbk,MODEL184_FILE);
 				} else {
 					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
@@ -1070,7 +1084,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		button3.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				submitForm(MODEL184_PRINT);
+				submitForm(cbk,MODEL184_PRINT);
 			}
 		});
 		p3.add(button3);

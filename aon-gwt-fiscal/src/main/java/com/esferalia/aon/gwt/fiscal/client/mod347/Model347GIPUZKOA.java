@@ -14,8 +14,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model347GIPUZKOA extends Model347Base {
 
-	//private static final int DECLARED_TAB = 1;
-
 	public Model347GIPUZKOA(Mod347 mod347, Model347Callback cbk, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex ) {
 		super(mod347, cbk);
 		
@@ -30,8 +28,7 @@ public class Model347GIPUZKOA extends Model347Base {
 		paintAssetsTab(tabPanel, selectedIndexAsset);
 		paintAdministrationTab(tabPanel);
 		addTabPanelSelectionHandler(tabPanel);
-		
-		//tabPanel.selectTab(DECLARED_TAB, false);
+
 		tabPanel.selectTab(tabPanelIndex, true);
 	}
 

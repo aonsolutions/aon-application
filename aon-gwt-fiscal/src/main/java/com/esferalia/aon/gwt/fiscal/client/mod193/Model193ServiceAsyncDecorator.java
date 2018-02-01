@@ -17,57 +17,50 @@ public class Model193ServiceAsyncDecorator implements Model193ServiceAsync {
 	}
 
 	@Override
-	public void getMod193s(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod193>> callback) {
+	public void getMod193s(String domainName, String user, int domain, AsyncCallback<LinkedList<Mod193>> callback) {
 		AON.start();
-		fsa.getMod193s(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<Mod193>>(callback));
+		fsa.getMod193s(domainName, user, domain, new AsyncCallbackWrapper<LinkedList<Mod193>>(callback));
 	}
 
 	@Override
-	public void getMod193(String domainName, int domain, Integer id,
-			AsyncCallback<Mod193> callback) {
+	public void getMod193(String domainName, String user, int domain, Integer id, AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.getMod193(domainName, domain, id, new AsyncCallbackWrapper<Mod193>(
-				callback));
+		fsa.getMod193(domainName, user, domain, id, new AsyncCallbackWrapper<Mod193>(callback));
 	}
 
 	@Override
-	public void delete(String domainName, int domain, Mod193 mod193,
-			AsyncCallback<Void> callback) {
+	public void delete(String domainName, String user, int domain, Mod193 mod193,AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.delete(domainName, domain, mod193,new AsyncCallbackWrapper<Void>(callback));
+		fsa.delete(domainName, user, domain, mod193,new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void save(String domainName, int domain, Mod193 mod193,
-			AsyncCallback<Mod193> callback) {
+	public void save(String domainName, String user, int domain, Mod193 mod193,AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.save(domainName, domain, mod193,new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.save(domainName, user, domain, mod193,new AsyncCallbackWrapper<Mod193>(callback));
 	}
 
 	@Override
-	public void initialize(String domainName, Integer domain,
-			Integer year, AsyncCallback<Mod193> callback) {
+	public void initialize(String domainName, String user, Integer domain, Integer year, AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.initialize(domainName, domain, year,				new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.initialize(domainName, user, domain, year, new AsyncCallbackWrapper<Mod193>(callback));
 	}
 
 	@Override
-	public void saveComments(String domainName, Mod193 mod193,AsyncCallback<Mod193> callback) {
+	public void saveComments(String domainName, String user, Mod193 mod193,AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.saveComments(domainName, mod193, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.saveComments(domainName, user, mod193, new AsyncCallbackWrapper<Mod193>(callback));
 	}
 
 	@Override
-	public void changeStatus(String domainName, Mod193 mod193, FiscalStatus newStatus,AsyncCallback<Mod193> callback) {
+	public void changeStatus(String domainName, String user, Mod193 mod193, FiscalStatus newStatus,AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.changeStatus(domainName, mod193, newStatus, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.changeStatus(domainName, user, mod193, newStatus, new AsyncCallbackWrapper<Mod193>(callback));
 	}
 
 	@Override
-	public void duplicateNextYear(String domainName, Integer domain, Integer id, AsyncCallback<Mod193> callback) {
+	public void duplicateNextYear(String domainName, String user, Integer domain, Integer id, AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.duplicateNextYear(domainName, domain, id, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.duplicateNextYear(domainName, user, domain, id, new AsyncCallbackWrapper<Mod193>(callback));
 	}
 }

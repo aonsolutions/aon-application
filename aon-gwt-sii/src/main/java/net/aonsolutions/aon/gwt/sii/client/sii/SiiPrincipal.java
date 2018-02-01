@@ -137,6 +137,10 @@ public class SiiPrincipal extends Composite{
 		return parent.getSendAll();
 	}
 	
+	public Button getSend() {
+		return parent.getSend();
+	}
+	
 	public Button getBaja() {
 		return parent.getBaja();
 	}

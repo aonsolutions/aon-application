@@ -2338,6 +2338,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Tipo de transacci\u00F3n")
 	String transactionType();
 
+	@DefaultMessage("Tipo de retenci\u00F3n")
+	String withholdingType();
+
 	@DefaultMessage("Transacci\u00F3n")
 	String transaction();
 

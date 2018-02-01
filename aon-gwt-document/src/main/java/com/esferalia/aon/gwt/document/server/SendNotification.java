@@ -43,11 +43,15 @@ public class SendNotification {
 		if(user.getDomain().equals(attach.getDomain().getParentId())) {
 			Company c = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(attach.getDomain().getId()));
 			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq((byte) 4)));
-			to.add(rm.getValue());
+			if(rm.getValue() != null) {
+				to.add(rm.getValue());
+			}
 		} else if(attach.getDomain().getParentId() != null) {
 			Company c = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(attach.getDomain().getParentId()));
 			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq((byte) 4)));
-			to.add(rm.getValue());
+			if(rm.getValue() != null) {
+				to.add(rm.getValue());
+			}
 		}
 		
 		users.stream().forEach(r -> {

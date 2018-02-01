@@ -20,7 +20,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.shared.JsonVatParams;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
@@ -278,7 +278,7 @@ public class VatReport extends MainEntryPoint {
 	
 	private void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		vatParamsHidden.setValue(JsonVatParams.convert(getWidgetParams()));
+		vatParamsHidden.setValue(JsonParams.convert(getWidgetParams()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
 		diskForm.submit();
@@ -337,7 +337,7 @@ public class VatReport extends MainEntryPoint {
 			}
 		});
 		
-		transaction = new InvoiceTransactionListBox();
+		transaction = new InvoiceTransactionListBox("-- Todas --");
 		transaction.setWidth("100px");
 		transaction.addChangeHandler(new ChangeHandler() {
 			

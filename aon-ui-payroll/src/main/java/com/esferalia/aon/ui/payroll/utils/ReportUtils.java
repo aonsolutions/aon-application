@@ -35,6 +35,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.model.Payment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -372,7 +373,18 @@ public class ReportUtils {
 	public static String ifEmpty(String a, String b) {
 		return a == null || a.isEmpty() ? b : a;
 	}
-
+	
+	public static String getFullQuoteRegime(Salary salary ) {
+		SSRegimeType ssRegime = SSRegimeType.GENERAL;
+		Byte ordinal =  salary.getSsRegime();
+		if ( ordinal != null && 
+				ordinal >= 0 && 
+				ordinal < SSRegimeType.values().length )
+			ssRegime = SSRegimeType.values()[ordinal];
+		
+		return ssRegime.getCode() + (salary.getCcc() != null ? salary.getCcc() : "" );
+	}
+	
 	private static class ChainedComparator<T> implements Comparator<T> {
 
 		private Comparator<T> simpleComparators[];

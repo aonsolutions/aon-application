@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.i18n.AonHubMessages;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -52,16 +53,21 @@ public class AON {
 	private static void show(int el) {
 
 		for (int i = 0; i < el; i++) {
-			Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[i])
-					.getStyle().setDisplay(Display.NONE);
+			Element element = Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[i]); 
+			if (element != null) {
+				element.getStyle().setDisplay(Display.NONE);
+			}
+		}
+		Element element = Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[el]);
+		if ( element != null) {
+			element.getStyle().clearDisplay();
 		}
 
-		Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[el])
-				.getStyle().clearDisplay();
-
 		for (int i = el + 1; i < CONNECTION_STATUS_ELEMENTS.length; i++) {
-			Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[i])
-					.getStyle().setDisplay(Display.NONE);
+			Element ele = Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[i]);
+			if (ele != null) {
+				ele.getStyle().setDisplay(Display.NONE);
+			}
 		}
 	}
 

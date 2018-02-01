@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -12,7 +14,13 @@ public class IrpfBreakdown implements Serializable{
 	
 	private static final long serialVersionUID = 8600299724576523607L;
 	
-	private String document;
+	private Integer activity;
+	private String activityDescription;
+	private String epigraph;
+	
+	private String registryDocument;
+	private DocumentType registryDocumentType;
+	private Country registryDocumentCountry;
 	private String name;
 	private Date issueDate;
 	private boolean fromSalary;
@@ -31,12 +39,50 @@ public class IrpfBreakdown implements Serializable{
 	private double base;
 	private double percent;
 	private double quota;
+	private double deductiblePercent;
+	private double deductibleQuota;
 	
-	public String getDocument() {
-		return document;
+	public Integer getActivity() {
+		return activity;
 	}
-	public IrpfBreakdown setDocument(String document) {
-		this.document = document;
+	public IrpfBreakdown setActivity(Integer activity) {
+		this.activity = activity;
+		return this;
+	}
+	public String getActivityDescription() {
+		return activityDescription;
+	}
+	public IrpfBreakdown setActivityDescription(String activityDescription) {
+		this.activityDescription = activityDescription;
+		return this;
+	}
+	public String getEpigraph() {
+		return epigraph;
+	}
+	public IrpfBreakdown setEpigraph(String epigraph) {
+		this.epigraph = epigraph;
+		return this;
+	}
+
+	public String getRegistryDocument() {
+		return registryDocument;
+	}
+	public IrpfBreakdown setRegistryDocument(String registryDocument) {
+		this.registryDocument = registryDocument;
+		return this;
+	}
+	public DocumentType getRegistryDocumentType() {
+		return registryDocumentType;
+	}
+	public IrpfBreakdown setRegistryDocumentType(DocumentType registryDocumentType) {
+		this.registryDocumentType = registryDocumentType;
+		return this;
+	}
+	public Country getRegistryDocumentCountry() {
+		return registryDocumentCountry;
+	}
+	public IrpfBreakdown setRegistryDocumentCountry(Country registryDocumentCountry) {
+		this.registryDocumentCountry = registryDocumentCountry;
 		return this;
 	}
 	public String getName() {
@@ -149,6 +195,20 @@ public class IrpfBreakdown implements Serializable{
 		this.quota = quota;
 		return this;
 	}
+	public double getDeductiblePercent() {
+		return deductiblePercent;
+	}
+	public IrpfBreakdown setDeductiblePercent(double deductiblePercent) {
+		this.deductiblePercent = deductiblePercent;
+		return this;
+	}
+	public double getDeductibleQuota() {
+		return deductibleQuota;
+	}
+	public IrpfBreakdown setDeductibleQuota(double deductibleQuota) {
+		this.deductibleQuota = deductibleQuota;
+		return this;
+	}
 	public boolean isInKind() {
 		return inKind;
 	}
@@ -197,6 +257,9 @@ public class IrpfBreakdown implements Serializable{
 	}
 	public boolean isNotObjectiveRegime() {
 		return !isObjectiveRegime();
+	}
+	public boolean isSales() {
+		return getInvoiceType() == InvoiceType.SALES;
 	}
 	
 }

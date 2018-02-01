@@ -103,7 +103,8 @@ public class IssuePanel extends Composite{
 	@UiField PaperIconButton githubButton;
 	@UiField PaperIconButton parkIssueButton;
 	@UiField PaperIconButton removeIssueButton;
-	
+
+	@UiField PaperButton restButton;
 	@UiField PaperButton faqButton;
 	@UiField PaperButton duplicatedButton;
 	@UiField PaperButton desduplicatedButton;
@@ -164,7 +165,7 @@ public class IssuePanel extends Composite{
 			closedButton.setVisible(false);
 			reopenButton.setVisible(true);
 			faqButton.setVisible(false);
-		}
+		} 
 		
 		incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
 			
@@ -239,6 +240,25 @@ public class IssuePanel extends Composite{
 			parkIssueButton.setVisible(true);
 			removeIssueButton.setVisible(Utils.isAdmin(parent.getAonData().getUser()));
 		} 
+		
+		if(issue.isDeleted()) {
+			restButton.setVisible(true);
+			faqButton.setVisible(false);
+			duplicatedButton.setVisible(false);
+			desduplicatedButton.setVisible(false);
+			closedButton.setVisible(false);
+			reopenButton.setVisible(false);
+			commentButton.setVisible(false);
+			principalButton.setVisible(false);
+			parkIssueButton.setVisible(false);
+			githubButton.setVisible(false);
+			priorityButton.setVisible(false);
+			workgroupButton.setVisible(false);
+			userButton.setVisible(false);
+			typeButton.setVisible(false);
+			tagButton.setVisible(false);
+			sendButton.setVisible(false);
+		} else restButton.setVisible(false);
 
 		initHeader(issue);
 		initLabels(issue);
@@ -502,7 +522,7 @@ public class IssuePanel extends Composite{
 	private void initLabels(JsIssue issue){
 		String notAssign = "Sin Asignar";
 		typeLabel.setText(issue.getType().getName());
-		typeDeleteButton.setVisible(!issue.isDuplicate() && !issue.isFaqItem());
+		typeDeleteButton.setVisible(!issue.isDuplicate() && !issue.isFaqItem() && !issue.isDeleted());
 		if(issue.getType().getColor() != null && !issue.getType().getColor().equals(""))
 			typeLabel.getElement().getStyle().setBackgroundColor("#"+issue.getType().getColor());
 		if(issue.getType().getName().equals(notAssign)) {
@@ -521,37 +541,38 @@ public class IssuePanel extends Composite{
 			if(label.getColor() != null && !label.getColor().equals(""))
 				l.getElement().getStyle().setBackgroundColor("#"+label.getColor());
 			hp.add(l);
-			PaperIconButton pib = new PaperIconButton();
-			pib.setIcon("close");
-			pib.setStyle("padding:3px !important;");
-			pib.setSize("22px", "22px");
-			pib.setTitle(labelsVPanel.getWidgetCount()+"");
-			pib.addClickHandler(new ClickHandler() {
+			if(!issue.isDuplicate() && !issue.isFaqItem() && !issue.isDeleted()){
+				PaperIconButton pib = new PaperIconButton();
+				pib.setIcon("close");
+				pib.setStyle("padding:3px !important;");
+				pib.setSize("22px", "22px");
+				pib.setTitle(labelsVPanel.getWidgetCount()+"");
+				pib.addClickHandler(new ClickHandler() {
 				
-				@Override
-				public void onClick(ClickEvent event) {
-					// TODO GITHUB!!!
-					incidence.deleteLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-						@Override public void onFailure(Throwable caught) {}
-						@Override public void onSuccess(JsLabel result) {
-							Integer index = Integer.parseInt(pib.getTitle());
-							labelsVPanel.remove(index);
-						}
-					});
-				}
-			});
-			pib.setVisible(!issue.isDuplicate() && !issue.isFaqItem());
-			hp.add(pib);
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO GITHUB!!!
+						incidence.deleteLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsLabel result) {
+								Integer index = Integer.parseInt(pib.getTitle());
+								labelsVPanel.remove(index);
+							}
+						});
+					}
+				});
+				hp.add(pib);
+			}
 			labelsVPanel.add(hp);
 		}
 		workgroupLabel.setText(issue.getWorkgroup().getLogin());
-		workgroupDeleteButton.setVisible(!issue.isDuplicate());
+		workgroupDeleteButton.setVisible(!issue.isDuplicate() && !issue.isDeleted());
 		if(issue.getWorkgroup().getLogin().equals(notAssign)) {
 			workgroupDeleteButton.setVisible(false);
 			workgroupLabel.getElement().getStyle().setBackgroundColor("#ddd");
 		}
 		userLabel.setText(issue.getAssignee().getLogin());
-		userDeleteButton.setVisible(!issue.isDuplicate());
+		userDeleteButton.setVisible(!issue.isDuplicate() && !issue.isDeleted());
 		if(issue.getAssignee().getLogin().equals(notAssign)) {
 			userDeleteButton.setVisible(false);
 			userLabel.getElement().getStyle().setBackgroundColor("#ddd");
@@ -576,7 +597,7 @@ public class IssuePanel extends Composite{
 				@Override public void onFailure(Throwable caught) {}
 			});
 		}
-		if(issue.isDuplicate() || issue.isFaqItem()) commentTextArea.setVisible(false);
+		if(issue.isDuplicate() || issue.isFaqItem() || issue.isDeleted()) commentTextArea.setVisible(false);
 		else commentTextArea.setVisible(true);
 	}
 	
@@ -1483,6 +1504,47 @@ public class IssuePanel extends Composite{
 		});
 	}
 
+	@UiHandler("restButton")
+	void onClickRestButton(ClickEvent event){
+		AonDialog2 d = new AonDialog2("Restaurar Tarea",new Label("Est\u00e1s seguro de restaurar la tarea #" + issue.getNumber()) ) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override
+			protected void onAccept() {
+				String request = "{\"state\":\""+ "restore" +"\"}";							
+				if(issue.isGithub()) {
+					String request1 = "{\"state\":\"open\"}";
+					incidence.getGithubConfiguration(new AsyncCallback<JSON<JsGithub>>() {
+					
+						@Override
+						public void onSuccess(JSON<JsGithub> github) {
+							API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+							API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request1);
+						}	
+					
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				}
+				incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+					
+					@Override
+					public void onSuccess(JsIssue result) {
+						parent.contentDockLayoutPanel.removeFromParent();
+						parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+						parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result, tabLayout.getSelectedIndex()));
+						parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);		
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+				hide();
+			}
+		};
+		d.getElement().getStyle().setWidth(255, Unit.PX);
+		d.center();	
+	}
 	
 	@UiHandler("faqButton")
 	void onClickFaqButton(ClickEvent event){

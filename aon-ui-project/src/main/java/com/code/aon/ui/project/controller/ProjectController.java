@@ -1,12 +1,17 @@
 package com.code.aon.ui.project.controller;
 
+import java.sql.Connection;
+
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.AonVersion;
 import com.code.aon.project.Project;
+import com.code.aon.stat.engine.ProjectStatEngine;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.stat.controller.ProjectStatEngineController;
 import com.code.aon.ui.util.AonUtil;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 
 public class ProjectController extends BasicController {
 	
@@ -50,4 +55,16 @@ public class ProjectController extends BasicController {
 		statController.setBackAction(IProjectConstants.PROJECT_FORM_PAGE);
 	}
 	
+	public String getLastAlias() {
+		Connection c = null;
+		String alias = " - ";
+		try {
+			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			ProjectStatEngine engine = new ProjectStatEngine();
+			alias = engine.getLastProjectAlias(c);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return isNevv() ? "(Último expediente: " + alias + ")" : "";
+	}
 }

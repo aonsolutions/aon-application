@@ -371,7 +371,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,1).setCuo(mod.getAmount(Mod303Key.CT_SA24))
 			,true)
 		// (2) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral
-		,CT_SA25(Mod303Key.CT_SA25,null,null,null,null,null
+		,CT_SA25(Mod303Key.CT_SA25,null,null,null,"(hasFarmerActivity(1) && !isLastPeriod())?CT_SA25:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA25,ensureFarmerActivity(mod,1).getPor())
 			,mod -> ensureFarmerActivity(mod,1).setPor(mod.getAmount(Mod303Key.CT_SA25))
 			,true)
@@ -417,7 +417,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,2).setCuo(mod.getAmount(Mod303Key.CT_SA34))
 			,true)
 		// (3) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral
-		,CT_SA35(Mod303Key.CT_SA35,null,null,null,null,null
+		,CT_SA35(Mod303Key.CT_SA35,null,null,null,"(hasFarmerActivity(2) && !isLastPeriod())?CT_SA35:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA35,ensureFarmerActivity(mod,2).getPor())
 			,mod -> ensureFarmerActivity(mod,2).setPor(mod.getAmount(Mod303Key.CT_SA35))
 			,true)
@@ -463,7 +463,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,3).setCuo(mod.getAmount(Mod303Key.CT_SA44))
 			,true)
 		// (4) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral
-		,CT_SA45(Mod303Key.CT_SA45,null,null,null,null,null
+		,CT_SA45(Mod303Key.CT_SA45,null,null,null,"(hasFarmerActivity(3) && !isLastPeriod())?CT_SA45:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA45,ensureFarmerActivity(mod,3).getPor())
 			,mod -> ensureFarmerActivity(mod,3).setPor(mod.getAmount(Mod303Key.CT_SA45))
 			,true)
@@ -687,7 +687,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setIng(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S121))
 			,true)
 		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
-		,CT_S12X(Mod303Key.CT_S12X,null,null,null,"isLastPeriod()?(CT_S117 * 1 / 100):0.0"
+		,CT_S12X(Mod303Key.CT_S12X,null,null,null,"isLastPeriod()?round(CT_S117 * 1 / 100):0.0"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S12X,ensureActivity(mod,0).getSopx())
 			,mod -> ensureActivity(mod,0).setSopx(mod.getAmount(Mod303Key.CT_S12X))
@@ -947,7 +947,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setIng(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S221))
 			,true)
 		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
-		,CT_S22X(Mod303Key.CT_S22X,null,null,null,"isLastPeriod()?(CT_S217 * 1 / 100):0.0"
+		,CT_S22X(Mod303Key.CT_S22X,null,null,null,"isLastPeriod()?round(CT_S217 * 1 / 100):0.0"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S22X,ensureActivity(mod,1).getSopx())
 			,mod -> ensureActivity(mod,1).setSopx(mod.getAmount(Mod303Key.CT_S22X))
@@ -1207,7 +1207,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setIng(mod.getAmount(Mod303Key.CT_S321))
 			,true)
 		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
-		,CT_S32X(Mod303Key.CT_S32X,null,null,null,"isLastPeriod()?(CT_S317 * 1 / 100):0.0"
+		,CT_S32X(Mod303Key.CT_S32X,null,null,null,"isLastPeriod()?round(CT_S317 * 1 / 100):0.0"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S32X,ensureActivity(mod,2).getSopx())
 			,mod -> ensureActivity(mod,2).setSopx(mod.getAmount(Mod303Key.CT_S32X))
@@ -1467,7 +1467,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setIng(mod.getAmount(Mod303Key.CT_S421))
 			,true)
 		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
-		,CT_S42X(Mod303Key.CT_S42X,null,null,null,"isLastPeriod()?(CT_S417 * 1 / 100):0.0"
+		,CT_S42X(Mod303Key.CT_S42X,null,null,null,"isLastPeriod()?round(CT_S417 * 1 / 100):0.0"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S42X,ensureActivity(mod,3).getSopx())
 			,mod -> ensureActivity(mod,3).setSopx(mod.getAmount(Mod303Key.CT_S42X))

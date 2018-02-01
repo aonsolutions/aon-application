@@ -49,6 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -861,7 +862,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
 
-		String html = getAgreementDraftReceiptHTML(agreementDraft, levelId,
+		String html = getAgreementDraftReceiptHTML(domain, agreementDraft, levelId,
 				type, parameters);
 
 		for (Entry<Object, Object> image : images.entrySet()) {
@@ -1192,10 +1193,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			disableAutoCommit(conn);
-			SQLAgreementDraft.save(conn, agreementDraft, getDomainID(),
-					getParentDomainID());
+			SQLAgreementDraft.save(conn, agreementDraft, 
+					agreementDraft.getDomain() , //AonServletUtils.getDomainID(domain),
+					AonServletUtils.getParentDomainID(conn, agreementDraft.getDomain()));
 			commit(conn);
 			return agreementDraft;
 		} catch (Throwable t) {
@@ -2120,6 +2122,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Deprecated
+	private String getSalaryReport(String domain, SalaryType salaryType)
+			throws ReportException {
+		Connection conn = null;
+		try {
+			conn = getConnection(domain);
+			int enterpriseId = AonServletUtils.getEnterpriseID(domain);
+			return PayrollServletUtils.getSalaryReport(conn, enterpriseId,
+					salaryType != null ? salaryType : SalaryType.SALARY);
+		} catch (SQLException e) {
+			throw new ReportException(e.getLocalizedMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
 	private String getSalaryReceiptHTML(Salary salary,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
@@ -2296,7 +2319,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private String getAgreementDraftReceiptHTML(final AgreementDraft draft,
+	private String getAgreementDraftReceiptHTML(String domain, final AgreementDraft draft,
 			final int levelId, Salary.Type type, Map<Object, Object> parameters)
 			throws IllegalArgumentException {
 
@@ -2320,16 +2343,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				@Override
 				public Collection getCollection(boolean arg0)
 						throws ManagerBeanException {
-					return Collections.singletonList(getSalary(draft, levelId));
+					return Collections.singletonList(getSalary(domain, draft, levelId));
 				}
 
 			};
 
 			reportManager.setCollectionProvider(provider);
+			reportManager.setBundle(ResourceBundle.getBundle("com.code.aon.common.i18n.messages"));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-			String salaryReport = getSalaryReport(toSalaryType(type));
+			String salaryReport = getSalaryReport(domain, toSalaryType(type));
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
@@ -3839,7 +3863,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static com.esferalia.aon.payroll.Salary getSalary(
+	private static com.esferalia.aon.payroll.Salary getSalary( String domain,
 			AgreementDraft draft, int levelId) {
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
@@ -3851,7 +3875,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection conn = null;
 		ISalaryCalculatorContext ctx;
 		try {
-			conn = getConnection();
+			conn = getConnection(domain);
 			ctx = getSalaryCalculatorContext(conn, draft, levelId);
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
@@ -3904,13 +3928,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			contract.setWorkPlace(workPlace);
 
 			try {
-				EnterpriseCCC enterpriseCCC = getDefaultHEnterpriseCCC();
+				EnterpriseCCC enterpriseCCC = null; //getDefaultHEnterpriseCCC();
 
 				com.code.aon.company.Enterprise enterprise = null;
 
 				if (enterpriseCCC == null) {
-					enterprise = getHEnterprise();
+					enterprise = getEnterprise(domain);
 					enterpriseCCC = new EnterpriseCCC();
+					enterpriseCCC.setCcc("");
 					EnterpriseActivity enterpriseActivity = new EnterpriseActivity();
 					enterpriseActivity.setEnterprise(enterprise);
 					enterpriseCCC.setActivity(enterpriseActivity);

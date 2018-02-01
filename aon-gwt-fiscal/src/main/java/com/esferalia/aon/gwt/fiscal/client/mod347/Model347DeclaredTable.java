@@ -96,9 +96,6 @@ public class Model347DeclaredTable extends SimpleLayoutPanel implements HasSelec
 					}
 					sb.appendHtmlConstant("font-size: 0.9em;height: auto;overflow: hidden; padding-right: 3px; text-transform: uppercase;width: auto;'>");
 					sb.appendEscaped(getValue(detail));
-//					if (detail.isDirty()) {
-//						sb.appendEscaped("*");
-//					}
 					sb.appendHtmlConstant("</div>");
 				} 
 				

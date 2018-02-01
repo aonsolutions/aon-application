@@ -48,17 +48,18 @@ public class Model180 extends MainEntryPoint {
 	private static final Model180Binder MODEL_180_BINDER = GWT.create(Model180Binder.class);
 
 	protected static interface IModel180Callback{
-
 		void onAccept(Mod180 mod180);
+		int getDomain();
+		String getUser();
+		String getDomainName();
 		void onCancel();
 		void onSelect(Mod180 mod180, Integer selectedIndex);
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew();
-		
 	}
+
 	protected class Model180Callback implements IModel180Callback {
-		
 		@Override
 		public void onAccept(Mod180 mod180) {
 			// 
@@ -82,6 +83,18 @@ public class Model180 extends MainEntryPoint {
 		@Override
 		public void showError(String msg) {
 			Model180.this.showErrorPanel(msg);
+		}
+		@Override
+		public String getDomainName() {
+			return getCurrentDomainName();
+		}
+		@Override
+		public String getUser() {
+			return getCurrentUser();
+		}
+		@Override
+		public int getDomain() {
+			return getCurrentDomain();
 		}
 	};
 
@@ -108,9 +121,6 @@ public class Model180 extends MainEntryPoint {
 	Panel formContainer;
 	SimplePanel headerPanel = new SimplePanel();
 	
-	private int domain;
-	private int enterprise;
-
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
@@ -137,19 +147,9 @@ public class Model180 extends MainEntryPoint {
 
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	
 	private void onSelectionChange(SelectionEvent<Mod180> event) {
 		Mod180 sel = event.getSelectedItem();
-		SERVICE.getMod180(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod180(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				sel.getId(), new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 selected) {
@@ -187,7 +187,7 @@ public class Model180 extends MainEntryPoint {
 
 	private void newModel() {
 		cleanErrorPanel();
-		SERVICE.initializeMod180(getCurrentDomainName(),getCurrentDomain(), 2017,
+		SERVICE.initializeMod180(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2017,
 				new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 m180) {
@@ -232,13 +232,13 @@ public class Model180 extends MainEntryPoint {
 		splitLayoutPanel.animate(500);
 	}
 	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
-	}
+//	private void showResultsPanel() {
+//		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
+//	}
+//
+//	private boolean isResultsPanelVisible() {
+//		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
+//	}
 	
 	private void cleanErrorPanel() {
 		SimpleLayoutPanel panel = new SimpleLayoutPanel();
@@ -303,7 +303,7 @@ public class Model180 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.saveMod180(getCurrentDomainName(),getCurrentDomain(),model,
+						SERVICE.saveMod180(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),model,
 								new AsyncCallback<Mod180>() {
 									@Override
 									public void onSuccess(Mod180 model) {

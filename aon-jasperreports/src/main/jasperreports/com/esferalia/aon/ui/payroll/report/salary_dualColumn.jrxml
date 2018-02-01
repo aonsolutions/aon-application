@@ -365,7 +365,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="8340bf20-1aa3-4fec-ac79-63c37c37ef78" style="label" x="48" y="73" width="226" height="13"/>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{salary}.getContract().getFullQuoteRegime()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ReportUtils.getFullQuoteRegime($F{salary})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

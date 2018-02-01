@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.gwt.seres.client.seres;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -94,17 +95,9 @@ public class SeresMain extends AonTemplate2{
 		list.add(Long.toString(date.getTime()));
 		filterMap.put("from",list);
 		
-		list = new LinkedList<>();
-		list.add("true");
-		filterMap.put("pending", list);
-		
-		list = new LinkedList<>();
-		list.add("false");
-		filterMap.put("sent", list);
-		
-		list = new LinkedList<>();
-		list.add("false");
-		filterMap.put("error", list);
+		filterMap.put("pending", new LinkedList<>(Arrays.asList(new String[] {"true"})));
+		filterMap.put("processed", new LinkedList<>(Arrays.asList(new String[] {"false"})));
+		filterMap.put("error", new LinkedList<>(Arrays.asList(new String[] {"true"})));
 		
 	}
 	
@@ -173,9 +166,10 @@ public class SeresMain extends AonTemplate2{
 		menuPanel.add(createMenuPanelButton("Albaranes", "Env\u00EDo de Albaranes", CommunicationTarget.OUTCOME_DELIVERY));
 		menuPanel.add(createMenuPanelButton("Facturas", "Env\u00EDo de Facturas", CommunicationTarget.OUTCOME_INVOICE));
 		
-		menuPanel.add(createMenuPanelLabel("SERES - Recepci\u00F3n de Ficheros"));
-		menuPanel.add(createMenuPanelButton("Pedidos", "Recepci\u00F3n de Pedidos", CommunicationTarget.INCOME_SALES, true, true));
-		menuPanel.add(createMenuPanelButton("Facturas", "Recepci\u00F3n de Facturas", CommunicationTarget.INCOME_INVOICE, true, true));
+		// TODO file retrieve options for sales and invoices
+//		menuPanel.add(createMenuPanelLabel("SERES - Recepci\u00F3n de Ficheros"));
+//		menuPanel.add(createMenuPanelButton("Pedidos", "Recepci\u00F3n de Pedidos", CommunicationTarget.INCOME_SALES, true, true));
+//		menuPanel.add(createMenuPanelButton("Facturas", "Recepci\u00F3n de Facturas", CommunicationTarget.INCOME_INVOICE, true, true));
 		
 		menuPanel.add(createMenuPanelLabel("Ingenet - Recepci\u00F3n de Ficheros"));
 		menuPanel.add(createMenuPanelButton("Albaranes", "Recepci\u00F3n de Albaranes Ingenet", CommunicationTarget.INGENET_DELIVERY));
@@ -230,17 +224,12 @@ public class SeresMain extends AonTemplate2{
 				cleanMenuPanelButtons();
 				button.addStyleName(AON.AON_CSS.aonBold());
 				cleanToolbarButtons();
-				LinkedList<String> list = new LinkedList<>();
-				if(action!=null)
-					list.add(action.getValue());
-				getFilterMap().put("seres",list);
+				initializeFilterMap();
+				
 				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
-				// TODO fp.setCheckVisible(true); 
-				fp.setCheckVisible(false);
 				fp.setTitle(title);
 				p.gridContent(action);
-				p.closeFootPanel();
 			}
 		});
 		return button;

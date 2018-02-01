@@ -553,23 +553,6 @@ public class SQLAgreementDraft {
 
 			// @formatter:off
 			stmt = connection.prepareStatement("SELECT "
-					+ AgreementPaymentColumns.START_DATE + " FROM "
-					+ SQLConstants.AGREEMENT_PAYMENT + " WHERE "
-					+ AgreementPaymentColumns.AGREEMENT + " = ? " + " AND "
-					+ AgreementPaymentColumns.DOMAIN + " IN ( " + in + " )"
-					+ " GROUP BY 1");
-			// @formatter:on
-			stmt.setInt(1, agreementId);
-			for (int i = 0; i < domainIds.length; i++)
-				stmt.setInt(2 + i, domainIds[i]);
-			rs = stmt.executeQuery();
-			while (rs.next())
-				months.add(rs.getDate(AgreementPaymentColumns.START_DATE));
-			rs.close();
-			stmt.close();
-
-			// @formatter:off
-			stmt = connection.prepareStatement("SELECT "
 					+ AgreementDataColumns.START_DATE + " FROM "
 					+ SQLConstants.AGREEMENT_DATA + " WHERE "
 					+ AgreementDataColumns.AGREEMENT + " = ? " + " AND "
@@ -1364,99 +1347,16 @@ public class SQLAgreementDraft {
 	private static void updatePayment(Connection conn, Integer domainId,
 			Integer agreementId, Payment payment) throws SQLException {
 
-		Period dbPeriod = getPaymentDBPeriod(conn, payment.getId());
-
-		Period newPeriod = new Period(payment.getStartDate(),
-				payment.getEndDate());
-
-		List<Period> subPeriods = dbPeriod.sub(newPeriod);
-
-		if (subPeriods.size() == 0) {
-			// New payment overrides completely previous payment. So we need
-			// only a single SQL UPADTE with new values.
-			JooqAgreement.updatePayment(conn, payment);
-			return;
-		}
-
-		Period firstPeriod = subPeriods.get(0);
-		if (firstPeriod.equals(dbPeriod)) {
-			// New payment doesn't override previous payment. So we need only
-			// a single SQL INSERT with new values.
-			JooqAgreement.insertPayment(conn, domainId, agreementId, payment);
-			return;
-		}
-
-		// Update previous payment with new limits.
-		updatePayment(conn, payment.getId(), firstPeriod);
-		// Insert new payment.
-		JooqAgreement.insertPayment(conn, domainId, agreementId, payment);
-
-		if (subPeriods.size() > 1)
-			copyPayment(conn, payment.getId(), subPeriods.get(1));
-
+		JooqAgreement.updatePayment(conn, payment);
 	}
 
 	private static void removePayment(Connection conn, Integer domainId,
 			Integer agreementId, Payment payment) throws SQLException {
 
-		Period dbPeriod = getPaymentDBPeriod(conn, payment.getId());
-
-		Period newPeriod = new Period(payment.getStartDate(),
-				payment.getEndDate());
-
-		List<Period> subPeriods = dbPeriod.sub(newPeriod);
-
-		if (subPeriods.size() == 0) {
-			// New payment overrides completely previous payment. So delete it.
-			JooqAgreement.removePayment(conn, payment);
-			return;
-		}
-
-		Period firstPeriod = subPeriods.get(0);
-		if (firstPeriod.equals(dbPeriod)) {
-			// New payment doesn't override previous payment. So nothing to do.
-			return;
-		}
-
-		// Update previous payment with new limits.
-		updatePayment(conn, payment.getId(), firstPeriod);
-
-		if (subPeriods.size() > 1)
-			copyPayment(conn, payment.getId(), subPeriods.get(1));
+		JooqAgreement.removePayment(conn, payment);
 
 	}
 
-	private static Period getPaymentDBPeriod(Connection conn, Integer paymentId)
-			throws SQLException {
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-		try {
-			// @formatter:off
-			stmt = conn.prepareStatement("SELECT "
-					+ AgreementPaymentColumns.START_DATE + ", "
-					+ AgreementPaymentColumns.END_DATE + " FROM "
-					+ SQLConstants.AGREEMENT_PAYMENT + " WHERE "
-					+ AgreementPaymentColumns.ID + " = ? ");
-			// @formatter:on
-
-			stmt.setInt(1, paymentId);
-
-			rs = stmt.executeQuery();
-
-			if (!rs.next())
-				return null;
-
-			return new Period(rs.getDate(AgreementPaymentColumns.START_DATE),
-					rs.getDate(AgreementPaymentColumns.END_DATE));
-
-		} finally {
-			if (rs != null)
-				rs.close();
-			if (stmt != null)
-				stmt.close();
-		}
-
-	}
 
 	private static List<DBVariable> getDBData(Connection conn, int agreementId,
 			Variable variable) throws SQLException {

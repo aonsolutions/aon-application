@@ -151,7 +151,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	public Document getAllFiles(Domain domain){
 		Domain actualDomain = AON.getDomain(domain.getName(), domain.getId(), getUser().getLogin());
 		Document docs  = DBConsults.getAllRattachNew(actualDomain, getUser(), domain.getName(), confidential);
-		docs.setDomain(domain.getName());		
+		docs.setDomain(actualDomain.getName());		
 		return docs;
 	}
 

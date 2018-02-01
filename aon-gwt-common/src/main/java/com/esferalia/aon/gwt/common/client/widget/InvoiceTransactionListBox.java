@@ -5,10 +5,14 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class InvoiceTransactionListBox extends ListBox {
-	
+
 	public InvoiceTransactionListBox() {
+		this("------");
+	}	
+	
+	public InvoiceTransactionListBox(String firstItemLabel) {
 		setWidth("120px");
-		addItem("","------");
+		addItem("------","");
 		for (InvoiceTransactionType d : InvoiceTransactionType.values()) {
 			addItem(d.getDescription());	
 		}

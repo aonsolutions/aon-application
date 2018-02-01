@@ -82,6 +82,11 @@
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
 						</aon:if>
 					</aon:panelTab>
+					<aon:panelTab id="deliveryTab" label="#{bundle.stat_alb_delivery_amount}">
+						<aon:if test="#{projectStat.selectedTab == 'deliveryTab'}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/deliveryList.xhtml" />
+						</aon:if>
+					</aon:panelTab>
 					<aon:panelTab id="dailyTrackingTab" label="#{bundle.tas_labour}">
 						<aon:if test="#{projectStat.selectedTab == 'dailyTrackingTab'}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/dailyTrackingList.xhtml" />

@@ -31,6 +31,7 @@ import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -77,7 +78,7 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 	
     @Transient
     public String getReferenceCode() {
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), SeriesNumberUtil.getNumberMinimumLength(), "0");
 		if (!StringUtils.isEmpty(getSeries())) {
 			referenceCode = getSeries() + "/" + referenceCode;
 		}

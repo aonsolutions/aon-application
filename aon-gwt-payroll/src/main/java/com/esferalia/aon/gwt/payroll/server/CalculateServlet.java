@@ -493,7 +493,8 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			throws ParseException, SQLException, IOException {
 		PrintStream os = null;
 		Salaries salaries = null;
-		Connection conn = AonServletUtils.getConnection();
+		String domain = req.getServerName();
+		Connection conn = AonServletUtils.getConnection(domain);
 		try {
 
 			resp.setContentType("application/json;charset=UTF-8");
@@ -686,6 +687,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		return StringUtils.isBlank(extra) ? null : Integer.parseInt(extra);
 	}
 
+
 	private static Date getEndDate(HttpServletRequest request) throws ParseException {
 		return getDate(request, END_DATE);
 	}
@@ -721,6 +723,10 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		String value = request.getParameter(name);
 		return StringUtils.isBlank(value) ? false : Boolean.parseBoolean(value);
 
+	}
+
+	private static String getString(HttpServletRequest request, String name) throws ParseException {
+		return request.getParameter(name);
 	}
 
 	private static boolean duplicate(HttpServletRequest request) throws ParseException {

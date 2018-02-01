@@ -498,8 +498,11 @@ public class Mod349DAO {
 		.collect(Collectors.groupingBy(VatContext::getInvoiceType,
 				   Collectors.groupingBy(VatContext::isService,
 				     Collectors.groupingBy(VatContext::getRegistryDocumentCountry,
-					   Collectors.groupingBy(VatContext::getRegistryDocument,
-					     Collectors.groupingBy(VatContext::getRegistryName, Collectors.summingDouble(VatContext::getBase) ))))))
+				    	// Collectors.groupingBy(VatContext::getRegistryDocument,
+        // Controlar posibles nulos en algunos de estos campos, no se puede agrupar por nulos				    		 
+					   Collectors.groupingBy( p -> AonStringUtils.isBlank(p.getRegistryDocument())?"":p.getRegistryDocument(), 
+					     //Collectors.groupingBy(VatContext::getRegistryName, Collectors.summingDouble(VatContext::getBase) ))))))
+							   Collectors.groupingBy( p -> AonStringUtils.isBlank(p.getRegistryName())?"":p.getRegistryName(), Collectors.summingDouble(VatContext::getBase) ))))))
 		
 		// Grabamos los datos en la tabla de lineas del modelo 349
 		.forEach( (invoiceType,b) -> {

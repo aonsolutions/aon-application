@@ -13,6 +13,14 @@
 				<ui:param name="toolbarTitle" value="#{bundle.fiscal_vat_tax_module2}" />
 				<ui:param name="controller" value="#{vatTax}" />
 			</ui:include>
+			<aon:div style="color:red; font-size: 1.2em; padding: 5px; text-align:center; border: solid red 1px; margin-bottom: 5px; margin-top: 5px; font-weight: bold;">
+				<aon:div>
+					<aon:outputLabel value="A partir del ejercicio 2018, utilice el nuevo módulo de IVA" />
+				</aon:div>
+				<aon:div>
+					<aon:outputLabel value="Los datos introducidos en este programa, no se tendrán en cuenta" />
+				</aon:div>
+			</aon:div>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{vatTax}" />

@@ -12,6 +12,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_VAT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PROJECT_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_DOCUMENT_NUMBER_LENGTH_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
@@ -132,6 +133,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printProductVatPercent;
 	
 	private boolean printProject;
+	
+	private Integer documentNumberLength;
 	
 	private FinancePaymentTemplate financePaymentTemplate;
 	
@@ -751,6 +754,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.printProject = printProject;
 	}
 	
+	public Integer getDocumentNumberLength() {
+		return documentNumberLength;
+	}
+
+	public void setDocumentNumberLength(Integer documentNumberLength) {
+		this.documentNumberLength = documentNumberLength;
+	}
+	
 	// TODO remove
 	@Deprecated
 	public boolean isPrintReferenceCode() {
@@ -922,6 +933,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public boolean obtainPrintProject() throws ManagerBeanException {
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_PROJECT_PARAM);
+	}
+	
+	public Integer obtainDocumentNumberLength() throws ManagerBeanException {
+		return AppParamUtil.getValueAsInteger(APP_DOCUMENT_NUMBER_LENGTH_PARAM);
 	}
 	
 	public boolean obtainPrintProductCode() throws ManagerBeanException {

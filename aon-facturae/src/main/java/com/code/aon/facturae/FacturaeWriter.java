@@ -701,18 +701,6 @@ public class FacturaeWriter {
 		return null;
 	}
 
-	private String getReferenceCode( InvoiceDetail detail ) {
-		try {
-			ITransferObject header = detail.getSourceTo();
-			if ( header != null ) {
-				return ((IHeaderObject)header).getReferenceCode();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-		return null;
-	}
-
 	private String getIssuerContractReference( InvoiceDetail detail, boolean purchaseReference ) {
 		if ( detail.getSource() == InvoiceSource.DELIVERY ) {
 			try {
@@ -760,8 +748,6 @@ public class FacturaeWriter {
 			} catch (ManagerBeanException e) {
 				LOGGER.error(e.getMessage(), e);
 			}			
-		} else {
-			return getReferenceCode(detail);	
 		}
 		return null;
 	}

@@ -78,7 +78,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		
 		FlexTable tab1 = new FlexTable();
 		tab1.getColumnFormatter().setWidth(0, "100px");
-		tab1.getColumnFormatter().setWidth(1, "120px");
+		tab1.getColumnFormatter().setWidth(1, "120px");		
 		tab1.getColumnFormatter().setWidth(2, "100px");
 		tab1.getColumnFormatter().setWidth(3, "auto");
 		
@@ -87,7 +87,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 
 		tab1.setWidget(0, 0, new MediumLabel(AON.MSG.document()));
 		tab1.setWidget(0, 1, new MediumLabel("NIF-IVA declarado"));
-		tab1.setWidget(0, 2, new MediumLabel(AON.MSG.representativeDocument()));
+		tab1.setWidget(0, 2, new MediumLabel(AON.MSG.representativeDocument()));		
 		tab1.setWidget(0, 3, new MediumLabel(AON.MSG.fullName()));
 		
 		document.setValue(declared.getDocument());
@@ -132,8 +132,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 				document.setEnabled(AonStringUtils.isBlank(vatDocument.getText()));				
 			}
 			
-		});
-		
+		});		
 		tab1.setWidget(1, 1, vatDocument);
 		
 		DocumentTextBox representativeDocument = new DocumentTextBox();
@@ -269,7 +268,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		tab3.setWidget(0, 2, accrual);
 		
 		CheckBox isp = new CheckBox("Op. ISP");
-		isp.setTitle("Operaci\u00F3n con inversi\u00F3n del sujeto pasivo");
+		isp.setTitle("Operaci\u00F3n con inversi\u00F3n del sujeto pasivo (solo destinatario de la operaci\u00F3n)");
 		isp.setValue(declared.isIsp());
 		isp.addClickHandler(new ClickHandler() {			
 			

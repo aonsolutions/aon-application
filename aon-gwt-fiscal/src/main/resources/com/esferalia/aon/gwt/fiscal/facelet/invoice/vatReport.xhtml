@@ -12,7 +12,7 @@
 	<aon:valueParam name="entryPoint" default="VatReport" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
-	
+	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
 <style>
 body {
 	margin: 0;
@@ -39,6 +39,9 @@ body {
             }
             function getCurrentDomainName() {
             	return "#{gwtDomainName}"
+            }
+            function getCurrentUser() {
+            	return "#{gwtUser}"
             }
             ]]>
     </script> 

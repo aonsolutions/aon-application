@@ -15,6 +15,15 @@
 				<ui:param name="controller" value="#{fiscalActivity}" />
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="color:red; font-size: 1.2em; padding: 5px; text-align:center; border: solid red 1px; margin-bottom: 5px; font-weight: bold;">
+					<aon:div>
+						<aon:outputLabel value="A partir del ejercicio 2018, las datos de actividades se introducen directamente en los modelos fiscales." />
+					</aon:div>
+					<aon:div>
+						<aon:outputLabel value="Los datos introducidos en este programa, no se tendrán en cuenta" />
+					</aon:div>
+				</aon:div>
+
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 					<ui:param name="controller" value="#{fiscalActivity}" />
 

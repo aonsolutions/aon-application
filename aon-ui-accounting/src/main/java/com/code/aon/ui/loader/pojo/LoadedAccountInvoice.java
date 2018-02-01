@@ -724,7 +724,11 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		detail.setCuentaIrpf(getCuentaIrpf());
 		details.add(detail);
 		
-		if (getBaseImponible2() != null) {
+		if ( getBaseImponible2() == null 
+		  || getIva2() == null 
+		  || (getBaseImponible2() == 0 && getIva2() == 0)) {
+			// Nothing
+		} else {
 			detail = new LoadedInvoiceDetail();
 			detail.setFactura(getId());
 			detail.setLinea(2);
@@ -742,7 +746,10 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 			detail.setCuentaIrpf(getCuentaIrpf());
 			details.add(detail);
 		}
-		if (getBaseImponible3() != null) {
+		if ( getBaseImponible3() == null || getIva3() == null 
+		  || (getBaseImponible3() == 0 && getIva3() == 0 )) {
+			// Nothing
+		} else {
 			detail = new LoadedInvoiceDetail();
 			detail.setFactura(getId());
 			detail.setLinea(3);
@@ -760,7 +767,10 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 			detail.setCuentaIrpf(getCuentaIrpf());
 			details.add(detail);
 		}
-		if (getBaseImponible4() != null) {
+		if ( getBaseImponible4() == null || getIva4() == null 
+		 || (getBaseImponible4() == 0 && getIva4() == 0 )) {
+			// Nothing
+		} else {
 			detail = new LoadedInvoiceDetail();
 			detail.setFactura(getId());
 			detail.setLinea(4);

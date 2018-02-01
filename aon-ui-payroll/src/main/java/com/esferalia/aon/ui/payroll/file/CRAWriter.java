@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
@@ -23,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.jooq.Record2;
 import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
@@ -35,10 +37,8 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.cra.CRA;
 import com.esferalia.aon.file.payroll.cra.data.CRE;
@@ -50,6 +50,9 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ss.T84;
 import com.esferalia.aon.payroll.util.PayrollUtils;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class CRAWriter {
 	
@@ -98,7 +101,10 @@ public class CRAWriter {
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			for (EnterpriseCCC ccc: cccs) {
-				DDE dde = createDDERecord(year, month, PayrollUtils.getInstance().getRegimeCode(ccc)+ccc.getCcc());
+
+				String salaryCCC = getSalarySelect(connection, ccc, startCal.getTime(), endCal.getTime() ).orElse( ccc.getCcc());
+				DDE dde = createDDERecord(year, month, PayrollUtils.getInstance().getRegimeCode(ccc)+salaryCCC);
+				
 				Result<Record5<Byte, Double, Double, String, Integer>> paymentsRecord = getSalaryPaymentSelect(connection, ccc, startCal.getTime(), endCal.getTime() );
 				TRB trb = null;
 				String previousType = "";
@@ -269,6 +275,22 @@ public class CRAWriter {
 					.and(SALARY.CONTRACT.in( ctx.select(CONTRACT.ID).from(CONTRACT).where(CONTRACT.ENTERPRISE_CCC.equal(ccc.getId())) ))
 					.orderBy(SALARY.SOCIAL_SECURITY_NUMBER, SALARY_PAYMENT.TYPE)
 					.fetch();
+			return record;
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+
+	private Optional<String> getSalarySelect(Connection connection, EnterpriseCCC ccc, Date startDate, Date endDate ) {
+		DSLContext ctx = null;
+		try {
+			ctx = DSL.using(connection, getDefaultSettings());
+			Optional<String> record = ctx.select(SALARY.CCC)
+					.from(SALARY)
+					.where(SALARY.END_DATE.between(toSqlDate(startDate)).and(toSqlDate(endDate)))
+					.and(SALARY.CONTRACT.in( ctx.select(CONTRACT.ID).from(CONTRACT).where(CONTRACT.ENTERPRISE_CCC.equal(ccc.getId())) ))
+					.limit(1)
+					.fetchOptional(SALARY.CCC);
 			return record;
 		} finally {
 			if (ctx != null) ctx.close();

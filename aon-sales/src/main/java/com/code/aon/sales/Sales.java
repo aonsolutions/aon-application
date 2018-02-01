@@ -29,6 +29,7 @@ import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
@@ -73,7 +74,7 @@ public class Sales extends SalesDB implements IHeaderObject, ICalculableContaine
 
     @Transient
     public String getReferenceCode() {
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), SeriesNumberUtil.getNumberMinimumLength(), "0");
     	if (!StringUtils.isEmpty(getSeries())) {
 			referenceCode = getSeries() + "/" + referenceCode;
 		}

@@ -293,7 +293,7 @@
 					<rightPen lineWidth="0.5" lineColor="#000000"/>
 				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{salary}.getContract().getFullQuoteRegime()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ReportUtils.getFullQuoteRegime($F{salary})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="8bdf5d66-9a9b-4412-8635-b7bd1d872f58" style="title" x="281" y="39" width="274" height="11"/>

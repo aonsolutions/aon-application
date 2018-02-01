@@ -64,8 +64,8 @@ public class Mod123DAO extends FiscalModelDAO {
 	}
 	
 	private static void addPerceptor(Mod123Key key,Mod123 mod,Set<String> docs,IrpfBreakdown br) {
-		if (!docs.contains(br.getDocument())) {
-			docs.add(br.getDocument());
+		if (!docs.contains(br.getRegistryDocument())) {
+			docs.add(br.getRegistryDocument());
 			mod.ensureDetail(key).addAmount(1);
 		}
 	}
@@ -313,7 +313,7 @@ public class Mod123DAO extends FiscalModelDAO {
 	// -------------------------------------------------------------------- INVOICES
 	private static void createFromInvoices(final AONContext ctx, final Mod123 mod123) {
 		final Set<String> docs = new HashSet<String>();
-		IRPFDAO.getInvoiceIrpfBreakdown(ctx, mod123)
+		IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod123)
 				.forEach(br -> {
 						for (Mod123KeyDAO key : Mod123KeyDAO.values()) {
 							if (key.acceptValue(mod123,br)) {
@@ -331,7 +331,7 @@ public class Mod123DAO extends FiscalModelDAO {
 				+ " DEL " + mod123.getPeriod().getDescription()
 				+ " DE " + mod123.getYear();
 		return IRPFFormatter.formatInvoices(title,script.getLabel()
-			,IRPFDAO.getInvoiceIrpfBreakdown(ctx, mod123)
+			,IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod123)
 					.filter( br ->  keyDAO.acceptValue(mod123, br) )	
 					.collect(Collectors.toCollection(LinkedList::new))
 		);
@@ -347,7 +347,7 @@ public class Mod123DAO extends FiscalModelDAO {
 			,script.getKeys()
 			, getPreviousModels(ctx,mod123)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
-			,IRPFDAO.getInvoiceDiffIrpfBreakdown(ctx, mod123)
+			,IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod123)
 				.filter( br ->  keyDAO.acceptValue(mod123, br) )	
 				.collect(Collectors.toCollection(LinkedList::new))
 		);

@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.file.edi;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.faces.event.AbortProcessingException;
@@ -226,6 +227,7 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 					&& invoice.getRegistryAddress().getId() != null) {
 				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
 						.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+				boolean isInvoicingMainAddress = false;
 				try {
 					Customer customer = (Customer) BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
 					ediSupport.onRecover(customer);
@@ -233,19 +235,18 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 						AonUtil.addErrorMessage("El cliente no tiene EDI habilitado");
 						throw new AbortProcessingException("El cliente no tiene EDI habilitado");
 					}
+					isInvoicingMainAddress = ediSupport.isSeresInvoicingMainAddress();
 				} catch (ManagerBeanException e) {
 					AonUtil.addErrorMessage(e.getMessage());
 					throw new AbortProcessingException(e.getMessage());
 				}
-				String customerEdiCabeceraCode = ediSupport.getEdiCodes(
-						invoice.getRegistry(), invoice.getRegistryAddress())
-						.get(IEdiSupport.CABECERA);
-				String customerEdiPtoEntregaCode = ediSupport.getEdiCodes(
-						invoice.getRegistry(), invoice.getRegistryAddress())
-						.get(IEdiSupport.PTO_ENTREGA);
-				String customerEdiFacturaCode = ediSupport.getEdiCodes(
-						invoice.getRegistry(), invoice.getRegistryAddress())
-						.get(IEdiSupport.FACTURA);
+				Map<String, String> ediCodes =  ediSupport.getEdiCodes(
+						invoice.getRegistry(), invoice.getRegistryAddress());
+				
+				String customerEdiCabeceraCode = ediCodes.get(IEdiSupport.CABECERA);
+				String customerEdiPtoEntregaCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
+				String customerEdiFacturaCode = ediCodes.get(IEdiSupport.FACTURA);
+				
 				
 				Tag packingTag = ediSupport.obtainPackingTag(
 						invoice.getRegistry(),
@@ -262,7 +263,7 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 				
 				// writer file
 				ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
-				output = writer.createFile(invoice, (Company)company.getTo(), companyEdiCode,
+				output = writer.createFile(invoice, (Company)company.getTo(), isInvoicingMainAddress, companyEdiCode,
 						customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode,
 						customerPackage);
 

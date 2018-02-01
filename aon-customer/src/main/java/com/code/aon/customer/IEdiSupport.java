@@ -5,6 +5,7 @@ public interface IEdiSupport {
 	
 	public String ACTIVE = "EDI_ACTIVE";
 	public String SERES_AUTO_COMMIT_DELIVERY = "SERES_AUTO_COMMIT_DELIVERY";
+	public String SERES_INVOICING_MAIN_ADDRESS = "SERES_INVOICING_MAIN_ADDRESS";
 	
 	public String CABECERA = "EDI_CABECERA";
 	public String PEDIDOS = "EDI_PEDIDOS";

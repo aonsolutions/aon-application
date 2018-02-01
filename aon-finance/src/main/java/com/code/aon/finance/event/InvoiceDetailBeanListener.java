@@ -306,7 +306,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			invoice.setRetentionQuota(retentionQuota);
 			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
 			if (!skipServiceProcess) {
-				invoice.setService(isServiceInvoice(invoice, taxableBase));	
+				invoice.setService(invoice.isExpense() || invoice.isUndeductible() || isServiceInvoice(invoice, taxableBase));	
 			}
 
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);

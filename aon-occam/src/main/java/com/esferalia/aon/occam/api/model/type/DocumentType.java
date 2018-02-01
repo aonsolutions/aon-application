@@ -11,6 +11,7 @@ public enum DocumentType implements Serializable {
 	,WORK_PERMIT("P.T.")
 	,COMMUNITY_CARD("T.C.")
 	,OTHER("Otr.")
+	,NOT_CENSUSED("No Censado")
 	;
 
 	private String description;

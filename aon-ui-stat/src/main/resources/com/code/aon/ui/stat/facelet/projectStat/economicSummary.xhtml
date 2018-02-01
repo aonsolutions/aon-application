@@ -67,6 +67,11 @@
 				<aon:outputText value="#{projectStat.totalDailyTracking}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
+				
+				<aon:outputText value="Albaranes de Compra" />
+				<aon:outputText value="#{projectStat.totalIncome}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
 			</aon:panelGrid>
 		</aon:div>
 

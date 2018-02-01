@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180.IModel180Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180.Model180Callback;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -45,9 +44,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model180Base extends DockLayoutPanel {
 
-	static final String MODEL180_PRINT = "/aon_gwt_fiscal/Model180Print";
-	private static final String MODEL180_CERTIFICATE_PRINT = "/aon_gwt_fiscal/Model180CertificatePrint";
-	static final String MODEL180_FILE = "/aon_gwt_fiscal/Model180File";
+	static final String MODEL180_PRINT = "/aon_gwt_fiscal/ms/Model180Print";
+	private static final String MODEL180_CERTIFICATE_PRINT = "/aon_gwt_fiscal/ms/Model180CertificatePrint";
+	static final String MODEL180_FILE = "/aon_gwt_fiscal/ms/Model180File";
 	
 	protected interface IModel180Detail extends IsWidget {
 		Integer getSelectedPerceptorIndex();
@@ -91,6 +90,18 @@ abstract class Model180Base extends DockLayoutPanel {
 		public void onNew() {
 			cbk.onNew();
 		}
+		@Override
+		public String getDomainName() {
+			return cbk.getDomainName();
+		}
+		@Override
+		public String getUser() {
+			return cbk.getUser();
+		}
+		@Override
+		public int getDomain() {
+			return cbk.getDomain();
+		}
 	}
 	
 	
@@ -119,6 +130,7 @@ abstract class Model180Base extends DockLayoutPanel {
 	protected Hidden mod180Hidden = new Hidden("mod180");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
+	protected Hidden userHidden = new Hidden("user");
 	
 	private IModel180Detail detailManager;
 	
@@ -126,7 +138,7 @@ abstract class Model180Base extends DockLayoutPanel {
 		super(Unit.PX);
 		select( mod180 );
 		
-		addNorth(getToolbarPanel(), 25);
+		addNorth(getToolbarPanel(cbk), 25);
 		
 		SimplePanel modelPanel = new SimplePanel();
 		FiscalModelUtils.paintHeaderTable(modelPanel, this.mod180 );
@@ -134,7 +146,7 @@ abstract class Model180Base extends DockLayoutPanel {
 		
 		ScrollPanel headerPanel = new ScrollPanel();
 		headerPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		headerPanel.setWidget( getDeclarationHeaderTable());
+		headerPanel.setWidget( getDeclarationHeaderTable(cbk));
 		addNorth(headerPanel, 45);
 		
 		this.callback = new Model180BaseCallback(cbk);
@@ -168,7 +180,7 @@ abstract class Model180Base extends DockLayoutPanel {
 	}
 
 	
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(Model180Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -222,7 +234,7 @@ abstract class Model180Base extends DockLayoutPanel {
 				popup.setGlassEnabled(true);
 				popup.setAnimationEnabled(true);
 				popup.center();
-				Model180.SERVICE.saveMod180(Model180.getCurrentDomainName(), Model180.getCurrentDomain(),
+				Model180.SERVICE.saveMod180(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(),
 						getMod180(), new AsyncCallback<Mod180>() {
 							@Override
 							public void onSuccess(Mod180 result) {
@@ -284,8 +296,7 @@ abstract class Model180Base extends DockLayoutPanel {
 
 					@Override
 					public void onAccept() {
-						Model180.SERVICE.deleteMod180(Model180.getCurrentDomainName(),
-								Model180.getCurrentDomain(), getMod180(), new AsyncCallback<Void>() {
+						Model180.SERVICE.deleteMod180(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(), getMod180(), new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
@@ -318,7 +329,7 @@ abstract class Model180Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				Model180.SERVICE.changeStatusMod180(Model180.getCurrentDomainName(), getMod180(), FiscalStatus.FINISHED, new AsyncCallback<Mod180>() {
+				Model180.SERVICE.changeStatusMod180(cbk.getDomainName(), cbk.getUser(), getMod180(), FiscalStatus.FINISHED, new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 result) {
 						callback.onSelect(result , detailManager.getSelectedPerceptorIndex() );
@@ -343,7 +354,7 @@ abstract class Model180Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				Model180.SERVICE.changeStatusMod180(Model180.getCurrentDomainName(), getMod180(), FiscalStatus.SENT, new AsyncCallback<Mod180>() {
+				Model180.SERVICE.changeStatusMod180(cbk.getDomainName(), cbk.getUser(), getMod180(), FiscalStatus.SENT, new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 result) {
 						callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
@@ -368,7 +379,7 @@ abstract class Model180Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				Model180.SERVICE.changeStatusMod180(Model180.getCurrentDomainName(), getMod180(), FiscalStatus.PENDING, new AsyncCallback<Mod180>() {
+				Model180.SERVICE.changeStatusMod180(cbk.getDomainName(), cbk.getUser(), getMod180(), FiscalStatus.PENDING, new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 result) {
 						callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
@@ -402,7 +413,7 @@ abstract class Model180Base extends DockLayoutPanel {
 							
 					@Override
 					public void onAccept() {
-						Model180.SERVICE.duplicateNextYear(Model180.getCurrentDomainName(), Model180.getCurrentDomain(), 
+						Model180.SERVICE.duplicateNextYear(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(), 
 								mod180.getId(), new AsyncCallback<Mod180>() {
 							@Override
 							public void onSuccess(Mod180 result) {
@@ -443,6 +454,7 @@ abstract class Model180Base extends DockLayoutPanel {
 		formFlowPanel.add(mod180Hidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
 		formContainer.add(diskForm);
 		toolbarPanel.add(formContainer);
 		
@@ -454,11 +466,12 @@ abstract class Model180Base extends DockLayoutPanel {
 		dialog.show(getMod180());
 	}
 	
-	protected void submitForm(String action) {
+	protected void submitForm(Model180Callback cbk, String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod180Hidden.setValue(String.valueOf(getMod180().getId()));
-		domainIdHidden.setValue(String.valueOf(Model180.getCurrentDomain()));
-		domainNameHidden.setValue(Model180.getCurrentDomainName());
+		domainNameHidden.setValue(cbk.getDomainName());
+		domainIdHidden.setValue(String.valueOf(cbk.getDomain()));
+		userHidden.setValue(cbk.getUser());
 		diskForm.submit();
 	}
 	
@@ -654,7 +667,7 @@ abstract class Model180Base extends DockLayoutPanel {
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private Widget getDeclarationHeaderTable() {
+	private Widget getDeclarationHeaderTable(Model180Callback cbk) {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -721,7 +734,7 @@ abstract class Model180Base extends DockLayoutPanel {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						getMod180().setComments(event.getValue());
 						styleCommentsButton();
-						Model180.SERVICE.saveCommentsMod180(Model303.getCurrentDomainName(), getMod180(), new AsyncCallback<Mod180>() {
+						Model180.SERVICE.saveCommentsMod180(cbk.getDomainName(), cbk.getUser(), getMod180(), new AsyncCallback<Mod180>() {
 							@Override
 							public void onSuccess(Mod180 result) {
 								toast.hide();
@@ -795,7 +808,7 @@ abstract class Model180Base extends DockLayoutPanel {
 		return panel;
 	}
 
-	protected FlowPanel getAdministrationPanel() {
+	protected FlowPanel getAdministrationPanel(Model180Callback cbk) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -835,7 +848,7 @@ abstract class Model180Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod180().isFinished() || getMod180().isSent()) {
-					submitForm(MODEL180_FILE);
+					submitForm(cbk, MODEL180_FILE);
 				} else {
 					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
@@ -860,7 +873,7 @@ abstract class Model180Base extends DockLayoutPanel {
 		button3.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				submitForm(MODEL180_PRINT);
+				submitForm(cbk,MODEL180_PRINT);
 			}
 		});
 		p3.add(button3);
@@ -900,7 +913,7 @@ abstract class Model180Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod180().isFinished() || getMod180().isSent()) {
-					submitForm(MODEL180_CERTIFICATE_PRINT);
+					submitForm(cbk,MODEL180_CERTIFICATE_PRINT);
 				} else {
 					getCallback().showError("Para imprimir los certificados, debe finalizar la confecci\u00F3n del modelo.");
 				}

@@ -64,31 +64,40 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_vatReport"
+											action="gwt_vatReport-deposit"
+											title="Panel de control de IVA">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="Panel de control de IVA" />												
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="vat_report"
 											action="vat_report_search"
 											actionListener="#{vatReport.onReset}"
 											value="#{bundle.finance_vat_report_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_vatReport"
-											action="gwt_vatReport-deposit"
-											title="Control IVA">
+										<aon:commandLink id="gwt_irpfReport-acc"
+											action="gwt_irpfReport-acc"
+											title="Panel de control de IRPF">
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
 												style="margin-left: 5px; padding-left: 20px;" 
-												value="Control IVA" />												
+												value="Panel de control de IRPF" />												
 										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="operation_report"
-											action="operationReport_search"
-											actionListener="#{operationReport.onReset}"
-											value="#{bundle.account_expenses_incomes_report}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="retention_report"
 											action="retention_report_search"
 											actionListener="#{retentionReport.onReset}"
 											value="#{bundle.fiscal_retention_report_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="operation_report"
+											action="operationReport_search"
+											actionListener="#{operationReport.onReset}"
+											value="#{bundle.account_expenses_incomes_report}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoice_report"

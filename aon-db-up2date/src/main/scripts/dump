@@ -1,0 +1,31 @@
+#!/bin/sh
+# The calc executable script.
+
+# Copyright (C) 2015, AON SOLUTIONS, S.L.U
+
+
+
+classpath=/usr/share/java/mysql-connector-java.jar
+classpath=$classpath:/usr/share/java/jooq.jar
+classpath=$classpath:/usr/share/java/aon-common.jar
+classpath=$classpath:/usr/share/java/aon-occam.jar
+classpath=$classpath:/usr/share/java/commons-cli.jar
+classpath=$classpath:/usr/share/java/aon-master-jooq.jar
+classpath=$classpath:/usr/share/java/apache-commons-lang.jar
+classpath=$classpath:/usr/share/java/apache-commons-logging.jar
+classpath=$classpath:/usr/share/java/slf4j/api.jar
+classpath=$classpath:/usr/share/java/slf4j/jcl.jar
+classpath=$classpath:/usr/share/java/antlr.jar
+classpath=$classpath:/usr/share/java/aon-ql.jar
+classpath=$classpath:/usr/share/java/aon-watson.jar
+classpath=$classpath:/usr/share/java/commons-math3.jar
+classpath=$classpath:/usr/share/java/aon-entity-common.jar
+classpath=$classpath:/usr/share/java/aon-entity.jar
+classpath=$classpath:/usr/share/java/aon-pool.jar
+classpath=$classpath:/usr/share/java/aon-dump.jar
+classpath=$classpath:/usr/share/java/aon.master.jooq.jar
+
+exec java -classpath $classpath net.aonsolutions.dump.Main ${@:1};
+
+
+

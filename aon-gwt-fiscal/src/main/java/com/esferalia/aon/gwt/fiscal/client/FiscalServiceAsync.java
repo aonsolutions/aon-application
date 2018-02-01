@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
@@ -114,5 +116,11 @@ public interface FiscalServiceAsync {
 			AsyncCallback<FinanceEntry> asyncCallback);
 	void save(String currentDomainName, int currentDomain, FinanceEntry financeEntry,
 			AsyncCallback<FinanceEntry> asyncCallback);
+
+	// --------------------------------------------------------------- IRPF
+	void getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params,
+			AsyncCallback<LinkedList<IrpfBreakdown>> callback);
+	void getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params,
+			AsyncCallback<LinkedList<IrpfBreakdown>> callback);
 
 }

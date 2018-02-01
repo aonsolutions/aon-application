@@ -51,6 +51,7 @@ public class Page05 extends ResizeComposite implements RequiresResize, IMod39020
 	
 	@UiHandler("box658")
 	void onChangeBox658 (ChangeEvent event) {
+		if (box658.getValue() == null) box658.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -62,6 +63,7 @@ public class Page05 extends ResizeComposite implements RequiresResize, IMod39020
 
 	@UiHandler("box659")
 	void onChangeBox659 (ChangeEvent event) {
+		if (box659.getValue() == null) box659.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -73,6 +75,7 @@ public class Page05 extends ResizeComposite implements RequiresResize, IMod39020
 
 	@UiHandler("box85")
 	void onChangeBox85 (ChangeEvent event) {
+		if (box85.getValue() == null) box85.setValue(0.0,false);
 		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
 			@Override
 			public void execute() {

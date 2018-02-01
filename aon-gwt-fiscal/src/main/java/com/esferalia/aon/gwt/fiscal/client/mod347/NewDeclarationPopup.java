@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347.Model347Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -58,6 +59,29 @@ public class NewDeclarationPopup extends CustomDialog {
 			@Override
 			public void onChange(ChangeEvent event) {
 				mod347.setAdministration( admonList.getValue() );
+								
+				complementary.setEnabled(true);
+				replacement.setEnabled(true);
+				
+			    // Gipuzkoa, no hay complementarias ni sustitutivas
+				if (mod347.getAdministration() == Administration.GIPUZKOA)
+				{
+					complementary.setEnabled(false);
+					complementary.setValue(false);
+					mod347.setComplementary(false);
+					replacement.setEnabled(false);
+					replacement.setValue(false);
+					mod347.setReplacement(false);
+				}
+				
+				// Bizkaia, no hay complementarias
+				if (mod347.getAdministration() == Administration.BIZKAIA)
+				{
+					complementary.setEnabled(false);
+					complementary.setValue(false);
+					mod347.setComplementary(false);
+				}
+				
 			}
 		});
 		tab.setWidget(row, 1, admonList);
@@ -77,10 +101,11 @@ public class NewDeclarationPopup extends CustomDialog {
 			}
 		});
 		tab.setWidget(row, 1,yearBox);
+				
+		// COMPLEMENTARIA		
 		row++;
-		
-		// COMPLEMENTARIA
 		complementary.setText(AON.MSG.complementary());
+		complementary.setEnabled(mod347.getAdministration()!=Administration.BIZKAIA && mod347.getAdministration()!=Administration.GIPUZKOA);  // Complementaria solo si no es Bizkaia, ni Gipuzkoa
 		complementary.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -95,10 +120,12 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, complementary);
-		row++;
+		
 		
 		// SUSTITUTIVA
+		row++;
 		replacement.setText(AON.MSG.replacement());
+		replacement.setEnabled(mod347.getAdministration()!=Administration.GIPUZKOA);  // Sustitutiva solo si no es Gipuzkoa
 		replacement.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -114,8 +141,6 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, replacement);
 		row++;
-		
-		// FALTA - Filtros para generar el modelo leyendo de las facturas, si se hace igual que estaba antes
 		
 		rootPanel.add(tab);
 		

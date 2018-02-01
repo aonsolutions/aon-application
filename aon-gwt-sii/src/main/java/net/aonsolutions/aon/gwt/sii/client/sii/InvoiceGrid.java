@@ -156,7 +156,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 							selFiles.add(f);
 						}
 					}
-					parent.getSendAll().setVisible(selFiles.size() > 0);
+					parent.getSend().setVisible(selFiles.size() > 0);
 					String sii = parent.getFilterMap().get("sii").get(0);
 					parent.getBaja().setVisible(selFiles.size() > 0 && !"cp_cobros_pagos".equals(sii)
 							&& !"cp_cobros".equals(sii) && !"cp_pagos".equals(sii));
@@ -348,7 +348,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	    public void onBrowserEvent(Context context, Element elem, NativeEvent event) {
 	        InputElement input = elem.getFirstChild().cast();
 	        Boolean isChecked = input.isChecked();
-	        parent.getSendAll().setVisible(isChecked);
+	        parent.getSend().setVisible(isChecked);
 	        parent.getBaja().setVisible(isChecked);
 	        for (JsInvoice element : provider.getList()) {
 	            selectionModel.setSelected(element, isChecked);

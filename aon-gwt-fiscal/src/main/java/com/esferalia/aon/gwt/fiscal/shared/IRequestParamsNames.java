@@ -16,6 +16,7 @@ public interface IRequestParamsNames {
 	String ACCRUAL_REGIME = "accrualRegime";
 	String INVESTMENT = "investment";
 	String SERVICE = "service";
+	String RECTIFICATION = "rectification";
 	
 	String DOMAIN_ID = "domainId";
 	String DOMAIN_NAME = "domainName";
