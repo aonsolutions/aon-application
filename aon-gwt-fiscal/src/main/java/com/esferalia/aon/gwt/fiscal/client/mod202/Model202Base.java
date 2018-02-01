@@ -46,7 +46,7 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model202.FISCAL_SERVICE.mathExpression(expression,callback);
+			Model202.SERVICE.mathExpression(expression,callback);
 		}
 	}; 
 
@@ -208,7 +208,7 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						Model202.SERVICE.getInfo(Model202.getCurrentDomainName(),Model202.getCurrentDomain(),
+						Model202.SERVICE.getInfo(callback.getDomainName(),callback.getUser(),callback.getDomain(),
 							callback.getFiscalModel(),script, infoKey,new AsyncCallback<String>() {
 
 									@Override
@@ -233,7 +233,7 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 
 	@Override
 	public void calculateAndRefresh(final IFiscalModelCallback<Mod202> callback) {
-		Model202.SERVICE.calculate(Model202.getCurrentDomainName(),callback.getFiscalModel(),
+		Model202.SERVICE.calculate(callback.getDomainName(),callback.getUser(),callback.getFiscalModel(),
 				new AsyncCallback<Mod202>() {
 
 					@Override

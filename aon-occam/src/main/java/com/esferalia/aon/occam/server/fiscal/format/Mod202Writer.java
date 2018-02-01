@@ -302,7 +302,7 @@ public class Mod202Writer {
 			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(13))
 			,(writer,mod202) -> writer.append("</T20202>")
 		})
-		,AEAT_2017_1 ( mod202 -> (mod202.isAEAT() && mod202.getYear() == 2017) ,new IPropertyFiller[] { 
+		,AEAT_2017_1 ( mod202 -> (mod202.isAEAT() && mod202.getYear() >= 2017) ,new IPropertyFiller[] { 
 			 (wr,mod) -> wr.append("<T")
 			,(wr,mod) -> wr.append("202")
 			,(wr,mod) -> wr.append("0")
