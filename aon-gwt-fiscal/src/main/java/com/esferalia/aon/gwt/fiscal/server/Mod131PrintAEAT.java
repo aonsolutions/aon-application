@@ -25,16 +25,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod131 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/Model131PrintAEAT" })
+@WebServlet(name = "Mod131 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model131PrintAEAT" })
 public class Mod131PrintAEAT extends HttpServlet {
+
+	private static final long serialVersionUID = -6382863064129841608L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -44,7 +44,7 @@ public class Mod131PrintAEAT extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod131"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = AonServletUtils.getLoggedUser();
+			String user = req.getParameter("user");
 			Mod131 mod131 = FISCAL.getMod131(domainName, domainId, user,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();

@@ -121,6 +121,9 @@ public class Model131Activity extends DockLayoutPanel {
 		void onAccept();
 		void onCancel();
 		void onRemove();
+		String getDomainName();
+		int getDomain();
+		String getUser();
 	}
 	
 	
@@ -507,7 +510,7 @@ public class Model131Activity extends DockLayoutPanel {
 	}
 	
 	private void calculate() {
-		Model131.SERVICE.calculateActivity(Model131.getCurrentDomainName(), Model131.getCurrentDomain()
+		Model131.SERVICE.calculateActivity( callback.getDomainName(), callback.getUser(), callback.getDomain()
 				, this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
 					
 					@Override
