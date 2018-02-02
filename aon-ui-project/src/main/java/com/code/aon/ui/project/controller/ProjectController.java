@@ -57,14 +57,14 @@ public class ProjectController extends BasicController {
 	
 	public String getLastAlias() {
 		Connection c = null;
-		String alias = " - ";
+		String alias = "";
 		try {
 			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			ProjectStatEngine engine = new ProjectStatEngine();
 			alias = engine.getLastProjectAlias(c);
 		}catch (Exception e) {
 			e.printStackTrace();
-		}
-		return isNevv() ? "(Último expediente: " + alias + ")" : "";
+		} 
+		return isNevv() && alias != null && !"".equals(alias) && " ".equals(alias)? "(Último expediente: " + alias + ")" : "";
 	}
 }

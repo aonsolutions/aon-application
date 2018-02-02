@@ -417,10 +417,11 @@ public class ProjectStatEngine implements Serializable {
 			page.setNextAvailable(false);
  			while (rs.next()) {
 				Integer id = rs.getInt(1);
+				String reference = rs.getString(2) != null ? rs.getString(2) + "/" + rs.getInt(3) : rs.getInt(3) + "";
 				Delivery delivery = new Delivery()
 						.setId(id)
 						.setType("Venta")
-						.setReference(rs.getString(2) + "/" + rs.getInt(3))
+						.setReference(reference)
 						.setIssueDate(rs.getDate(4))
 						.setRegistryName(rs.getString(5))
 						.setTotal(rs.getDouble(6));
