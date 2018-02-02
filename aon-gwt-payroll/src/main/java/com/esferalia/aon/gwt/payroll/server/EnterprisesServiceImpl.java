@@ -365,8 +365,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			connection = AonServletUtils.getConnection();
-			Integer domainID = getDomain();
-			JooqAgreement.updateAgreementId(connection, domainID, agreement);
+			JooqAgreement.trashRestoreAgreement(connection, agreement.getId(), true);
 		} catch(SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
