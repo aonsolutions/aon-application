@@ -77,6 +77,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
@@ -2094,8 +2095,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private void dumpEvent(int row, Event event) {
+		String styles[] = eventStyles.get(event.getType());
+
 		Button headButton = new Button();
-		headButton.setStyleName(AON.AON_ICON_EXCEPTION);
+		headButton.setStyleName(styles[0]);
 		headButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
 		eventsTable.setWidget(row, 0, headButton);
@@ -2104,7 +2107,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setWhiteSpace(WhiteSpace.NORMAL);
 		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setProperty("maxWidth", 55, Unit.EM);
 
-		String styles[] = eventStyles.get(event.getType());
 
 		eventsTable.setHTML(row, 2, "&nbsp;");
 
@@ -2490,8 +2492,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private void initEventsStyles(MyStyle myStyle) {
 		eventStyles = new HashMap<Event.Type, String[]>();
-		eventStyles.put(Event.Type.INFO, new String[] { "", "" });
-		eventStyles.put(Event.Type.DEBUG, new String[] { "", "" });
+		eventStyles.put(Event.Type.INFO, new String[] { "aon-icon-info", "" });
+		eventStyles.put(Event.Type.DEBUG, new String[] { "aon-icon-info", "" });
 		eventStyles.put(Event.Type.ERROR, new String[] { "aon-icon-exception", myStyle.textError() });
 		eventStyles.put(Event.Type.WARNING, new String[] { AON.AON_ICON_WARN, myStyle.textWarn() });
 	}
