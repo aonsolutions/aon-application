@@ -31,18 +31,19 @@
 			
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_id}" />
+					<aon:outputText value="#{bundle.aon_invoice_number}" />
 				</f:facet>
-				<aon:outputText value="#{to.item.product.code}" />
+				<aon:div>
+					<aon:outputText value="#{to.invoice.referenceCode}" />
+					<aon:commandLink id="invoice_link" immediate="true"
+						styleClass="aon-button-goto aon-margin-left" style="padding-right: 10px;"
+						value="&#160;" title="#{bundle.aon_go}"
+						rendered="#{not empty to.invoice.id}"
+						actionListener="#{productStat.onLoadInvoice}"
+						action="#{productStat.getInvoiceAction}" />
+				</aon:div>
 			</aon:column>
-	
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />
-			</aon:column>
-	
+			
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_quantity}" />
