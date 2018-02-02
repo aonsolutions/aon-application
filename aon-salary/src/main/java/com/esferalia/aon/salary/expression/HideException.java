@@ -6,4 +6,13 @@ public class HideException extends RemoveException {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	public HideException() {
+		super();
+	}
+
+	public HideException(String message) {
+		super(message);
+	}
+	
+
 }

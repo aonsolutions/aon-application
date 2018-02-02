@@ -1219,6 +1219,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			// paymentEnd, total);
 
 		} catch (HideException e) {
+			if (AonStringUtils.isNotBlank(e.getMessage()))
+				onCheckError(e.getMessage());
 			addResult(expressionContext, name, start, end, 0.00);
 		} catch (RemoveException e) {
 			onRemove(contractPayment);
