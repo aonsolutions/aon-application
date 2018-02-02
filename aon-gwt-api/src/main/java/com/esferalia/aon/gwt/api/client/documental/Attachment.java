@@ -13,10 +13,11 @@ public class Attachment extends Methods{
 	String domainName;
 	
 	
-	public Attachment(String url, String accesToken, String domainName, String userName) {
+	public Attachment(String url, String accesToken, String domainName, Integer domainId, String userName) {
 		this.url = url;
 		this.accessToken = accesToken;
 		this.domainName = domainName;
+		this.domainId = domainId;
 		this.userName = userName;
 		this.scheme = url.contains("https") ? "https" : "http";
 	}

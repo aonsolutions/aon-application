@@ -476,7 +476,8 @@ public class IssuePanel extends Composite{
 							
 								@Override
 								public void onSuccess(JSON<JsGithub> github) {
-									API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+									API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), 
+											parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 									API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request);
 								}
 							
@@ -893,7 +894,8 @@ public class IssuePanel extends Composite{
 			
 				@Override
 				public void onSuccess(JSON<JsGithub> github) {
-					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(),
+							parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 					API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request);
 				}
 				
@@ -940,7 +942,8 @@ public class IssuePanel extends Composite{
 			
 				@Override
 				public void onSuccess(JSON<JsGithub> github) {
-					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(),
+							parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 					API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request1);
 				}	
 			
@@ -975,7 +978,8 @@ public class IssuePanel extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsGithub> github) {
-				API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+				API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), 
+						parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 				API.getIncidence().createGithubIssue(github.getOneData(), request, new AsyncCallback<JsIssue>() {
 					
 					@Override
@@ -1033,7 +1037,8 @@ public class IssuePanel extends Composite{
 				
 						@Override
 						public void onSuccess(JSON<JsGithub> github) {
-							API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+							API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(),
+									parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 							API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request1);
 						}	
 				
@@ -1072,7 +1077,8 @@ public class IssuePanel extends Composite{
 			
 				@Override
 				public void onSuccess(JSON<JsGithub> github) {
-					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(),
+							parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 					API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request);
 				}	
 			
@@ -1519,7 +1525,8 @@ public class IssuePanel extends Composite{
 					
 						@Override
 						public void onSuccess(JSON<JsGithub> github) {
-							API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+							API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(),
+									parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 							API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request1);
 						}	
 					
@@ -1656,7 +1663,8 @@ public class IssuePanel extends Composite{
 			
 				@Override
 				public void onSuccess(JSON<JsGithub> github) {
-					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(),
+							parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 					API.getIncidence().createGithubComment(github.getOneData(), issue.getSourceId(), request);
 					// TODO GITHUB COMMENT !!!!
 				}	
@@ -1684,7 +1692,8 @@ public class IssuePanel extends Composite{
 			
 				@Override
 				public void onSuccess(JSON<JsGithub> github) {
-					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), parent.getAonData().getUser().getLogin());	
+					API API = new API(AonUrlApi.GITHUB.getUrl(), github.getOneData().getToken(), parent.getAonData().getDomain().getName(), 
+							parent.getAonData().getDomain().getId(), parent.getAonData().getUser().getLogin());	
 					API.getIncidence().editGithubIssue(github.getOneData(), issue.getSourceId(), request);
 				}	
 			

@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -43,7 +42,8 @@ public class SabbaticMain extends AonTemplate2{
 	public SabbaticMain(AonData aonData) {
 		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getUser().getLogin());
+				aonData.getDomain().getName(), aonData.getDomain().getId(),
+				aonData.getUser().getLogin());
 	}
 	
 	@Override

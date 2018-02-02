@@ -82,7 +82,8 @@ public class Documental implements EntryPoint {
 	public Documental(AonData aonData) {
 		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getUser().getLogin());
+				aonData.getDomain().getName(), aonData.getDomain().getId(),
+				aonData.getUser().getLogin());
 	}
 	
 	@Override

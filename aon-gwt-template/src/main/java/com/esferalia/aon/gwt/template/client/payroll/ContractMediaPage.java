@@ -22,7 +22,8 @@ public class ContractMediaPage extends AonTemplate2 {
 	public ContractMediaPage(AonData aonData) {
 		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-			aonData.getDomain().getName(), aonData.getUser().getLogin());	
+			aonData.getDomain().getName(), aonData.getDomain().getId(),
+			aonData.getUser().getLogin());	
 	}
 	
 	@Override

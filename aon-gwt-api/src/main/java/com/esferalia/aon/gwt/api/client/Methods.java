@@ -22,6 +22,7 @@ public class Methods {
 
 	protected String url;
 	protected String domainName;
+	protected Integer domainId;
 	protected String userName;
 	
 	public final String HTTP_GET = "GET";
@@ -65,6 +66,14 @@ public class Methods {
 		if (url.contains("?")) prefix = "&";
 		if (scheme != null && !scheme.equals("")) 
 			url += prefix + "scheme=" + scheme;
+		return addDomain(url);
+	}
+	
+	private String addDomain(String url) {
+		String prefix = "?";
+		if (url.contains("?")) prefix = "&";
+		if (domainId != null) 
+			url += prefix + "domain=" + domainId;
 		return url;
 	}
 	

@@ -37,12 +37,15 @@ public class FinanceServlet extends HttpServlet{
 		LOGGER.info("Finance Servlet - GET METHOD");
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
-		String userName = pathInfo[2];
-		String domainName = pathInfo[1];
-		String md5 = Utils.getMd5(userName+domainName);
+		
+		String domainName = req.getServerName();
+		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
+		String userName = req.getRemoteUser();
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+		
+		String md5 = Utils.getMd5(userName+domain.getName());
 		
 		if(accessToken.equals(md5)){
-			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 			if(pathInfo.length > 3){
 				Object object = new Object();
 				JSONObject meta = new JSONObject();

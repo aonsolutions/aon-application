@@ -97,7 +97,7 @@ public class UploadServlet extends HttpServlet{
                     	JSONObject json = new JSONObject();
                     	json.put("code", item.getName());
                     	json.put("date", new Date().toString());
-                    	json.put("source", DataResponseSource.INVOICE_SABBATIC.ordinal());
+                    	json.put("source", DataResponseSource.TEDI_INVOICE.ordinal());
                     	JSONArray array = new JSONArray();                    	
                     	JSONObject detail = new JSONObject();
                     	detail.put("variable", "status");

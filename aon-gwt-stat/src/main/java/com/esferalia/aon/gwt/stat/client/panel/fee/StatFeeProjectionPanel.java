@@ -34,7 +34,8 @@ public class StatFeeProjectionPanel extends StatPanel {
 			setPdfVisible(false);
 			setExcelText(AON.MSG.export());
 			this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-					aonData.getDomain().getName(), aonData.getUser().getLogin());
+					aonData.getDomain().getName(), aonData.getDomain().getId(),
+					aonData.getUser().getLogin());
 			searchContent();
 			content();
 			return null;
