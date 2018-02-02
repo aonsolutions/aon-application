@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,12 +30,15 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -131,7 +135,7 @@ public class PackingListMailServlet extends HttpServlet{
 					f -> f.getRegistryProperty().eq(carrierPacking.getCarrier())
 					.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 			}
-			sendEmail(domain, login, mailAccount.getId(),(to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "packing List", msg, scheme);
+			sendEmail(domain, login, mailAccount.getId(),(to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "packing List", msg, scheme, carrierPacking, "Empresa de Transporte");
 		} else if(MSG.REGISTRY.equalsIgnoreCase(type)){
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 				Stream<Purchase> stream = null;
@@ -165,7 +169,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(purchase.getSupplier())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "prueba packingList", msg, scheme);
+					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "prueba packingList", msg, scheme, carrierPacking, "Proveedor");
 				});
 			} else if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
 				Stream<Delivery> stream = null;
@@ -195,7 +199,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(delivery.getCustomer())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "prueba packingList", msg, scheme);
+					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "prueba packingList", msg, scheme, carrierPacking, "Cliente");
 				});
 			}
 		}
@@ -314,7 +318,7 @@ public class PackingListMailServlet extends HttpServlet{
 				+ "</div></div>";
 	}
 	
-	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String bcc, String issue, String message, String scheme){
+	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String bcc, String issue, String message, String scheme, CarrierPacking carrierPacking, String type){
 		try {
 			JSONObject json = new JSONObject();
 			json.put("mailAccountId", mailAccountId)
@@ -327,15 +331,15 @@ public class PackingListMailServlet extends HttpServlet{
 				.put("md5", "")
 				.put("bcc", bcc);
 			
-			sendPostHttpClient(domain.getName(),json, scheme);			
+			sendPostHttpClient(domain, login, json, scheme, carrierPacking, type);			
 		} catch (JSONException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
 	
-	protected void sendPostHttpClient(String domainName, JSONObject json, String scheme) {
+	protected void sendPostHttpClient(Domain domain, String login, JSONObject json, String scheme, CarrierPacking carrierPacking, String type) {
 		try{
-			String url = scheme + "://"+domainName+ "/send_email/";
+			String url = scheme + "://"+domain.getName()+ ":8080/aon-aio/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
@@ -344,7 +348,23 @@ public class PackingListMailServlet extends HttpServlet{
 			urlParameters.add(new BasicNameValuePair("details", json.toString()));
 			post.setEntity(new UrlEncodedFormEntity(urlParameters));
 			HttpResponse resp = client.execute(post);
-			System.out.println(resp);
+			
+			if(resp.getStatusLine().getStatusCode() == 200) {
+				DataResponse dr = new DataResponse()
+						.setDomain(json.getInt("domainId"))
+						.setCode("")
+						.setResponseDate(new Date())
+						.setSource(DataResponseSource.PACKING_LIST_NOTIFICATION)
+						.setSourceId(carrierPacking.getId());
+				dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
+				
+				AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, new DataResponseDetail()
+						.setDomain(domain.getId())
+						.setDataResponse(dr.getId())
+						.setDataVariable("type")
+						.setDataValue(type));
+				
+			}
 		} catch (IOException e){
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
