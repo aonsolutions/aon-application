@@ -16,6 +16,17 @@
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
 	</aon:column>
+	
+	<aon:column alias="Sales.deliveryDate"
+		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_delivery_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.deliveryDate}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
 
 	<aon:column alias="Sales.series,Sales.number"
 		styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-120">
