@@ -3252,7 +3252,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private void dumpEvent(int row, Event event) {
 		Button headButton = new Button();
-		headButton.setStyleName(event.getType() == Event.Type.INFO ? AON.AON_ICON_INFO: AON.AON_ICON_EXCEPTION);
+		
+		headButton.setStyleName(( event.getType() == Event.Type.INFO 
+				|| ( event.getMessage() != null && event.getMessage().contains("Solutions") ) ) 
+				? AON.AON_ICON_INFO: AON.AON_ICON_EXCEPTION);
 		headButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
 		eventsTable.setWidget(row, 0, headButton);
