@@ -28,7 +28,7 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 		breakDown.setAccount(obtainTaxAccount(breakDown.getTaxType(), invoice.getType(), invoiceDetail));
 		if (breakDown.isVat()) {
 			// Para que aparezca el IVA contrario en las contabilización de las facturas intracomunitarias y de ISP.
-			if (!invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP())) {
+			if (!invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP() || (!invoice.isNational() && invoice.isService()))) {
 				breakDown.setBalancingAccount(obtainTaxAccount(breakDown.getTaxType(), InvoiceType.SALES, invoiceDetail));
 			}
 		}
