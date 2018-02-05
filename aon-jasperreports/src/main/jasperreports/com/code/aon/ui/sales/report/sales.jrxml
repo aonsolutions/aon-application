@@ -164,7 +164,7 @@
 			<elementGroup/>
 			<elementGroup>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-73" x="355" y="30" width="63" height="13" uuid="01b0166c-b65d-4ab9-8e5e-d2d945deb9bf">
+					<reportElement key="textField-73" x="353" y="30" width="65" height="13" uuid="01b0166c-b65d-4ab9-8e5e-d2d945deb9bf">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -313,7 +313,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-74" positionType="FixRelativeToBottom" x="355" y="56" width="63" height="13" isRemoveLineWhenBlank="true" uuid="d0efde26-ff46-4346-ab46-47008558289e">
+				<reportElement key="textField-74" positionType="FixRelativeToBottom" x="353" y="56" width="65" height="13" isRemoveLineWhenBlank="true" uuid="d0efde26-ff46-4346-ab46-47008558289e">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -346,7 +346,7 @@
 				<textFieldExpression><![CDATA[$F{deliveryDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-74" x="355" y="43" width="63" height="13" isRemoveLineWhenBlank="true" uuid="e43189c2-2a9c-4d4b-8350-da017971ff5a">
+				<reportElement key="textField-74" x="353" y="43" width="65" height="13" isRemoveLineWhenBlank="true" uuid="e43189c2-2a9c-4d4b-8350-da017971ff5a">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -362,7 +362,7 @@
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-74" x="355" y="69" width="63" height="13" isRemoveLineWhenBlank="true" uuid="c7a7558a-593e-4222-9120-77a306e2ff31">
+				<reportElement key="textField-74" x="353" y="69" width="65" height="13" isRemoveLineWhenBlank="true" uuid="c7a7558a-593e-4222-9120-77a306e2ff31">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{purchaseReference}!=null && !$F{purchaseReference}.equals("")]]></printWhenExpression>
