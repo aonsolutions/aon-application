@@ -20,6 +20,7 @@ public class GWTApiTestCase extends GWTTestCase {
 	protected static String REPO_NAME = "repoPrueba";
 	protected static String ACCESS_TOKEN = "d8aa641723e106b5d7c2d79d3cad963e0eb6e92d";
 	protected static String DESCRIPTION = "Repositorio de prueba para metodos de TEST";
+	protected static Integer DOMAIN_ID = 1;
 	
 	public String getModuleName() {                               
 	    return "com.esferalia.aon.gwt.api.Api";
@@ -32,7 +33,7 @@ public class GWTApiTestCase extends GWTTestCase {
 		String r= "{\"name\":\""+ REPO_NAME + "\",\"description\":\""+ DESCRIPTION +"\""
 				+ ",\"private\":false,\"has_issues\":true,\"has_wiki\":false,\"has_downloads\":true}";
 
-		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME, DOMAIN_ID);		
 		i.createOrgRepository(r, new AsyncCallback<JsRepository>() {
 			
 			@Override
@@ -65,7 +66,7 @@ public class GWTApiTestCase extends GWTTestCase {
 	@Test
 	public void testGetOpenIssues() {
 		IssueFilter f = new IssueFilter().setState("open");
-		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME, DOMAIN_ID);		
 		i.getOrgIssues(f, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
@@ -87,7 +88,7 @@ public class GWTApiTestCase extends GWTTestCase {
 	@Test
 	public void testGetClosedIssues() {
 		IssueFilter f = new IssueFilter().setState("closed");
-		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME, DOMAIN_ID);		
 		i.getOrgIssues(f, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
@@ -109,7 +110,7 @@ public class GWTApiTestCase extends GWTTestCase {
 	@Test
 	public void testGetAllIssues() {
 		IssueFilter f = new IssueFilter().setState("all");
-		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME, DOMAIN_ID);		
 		i.getOrgIssues(f, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
@@ -134,7 +135,7 @@ public class GWTApiTestCase extends GWTTestCase {
 	public void testCreateIssue(String requestData) {
 		System.out.println("======== >>> Creando issue de prueba .....");
 
-		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME, DOMAIN_ID);		
 		i.createOrgIssue(requestData, new AsyncCallback<JsIssue>() {
 			
 			@Override

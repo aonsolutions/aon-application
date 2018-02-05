@@ -112,7 +112,7 @@ public class Issues implements EntryPoint {
 		me = this;
 			
 		incidence = new Incidence(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getUser().getLogin(), aonData.getUser().getLogin(), aonData.getDomain().getName());
+				aonData.getUser().getLogin(), aonData.getUser().getLogin(), aonData.getDomain().getName(), aonData.getDomain().getId());
 
 		createAonToolbar();
 		createFilterPanel(new FilterPanel(me, incidence));

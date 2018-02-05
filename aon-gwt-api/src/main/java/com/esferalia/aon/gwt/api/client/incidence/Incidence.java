@@ -32,23 +32,25 @@ public class Incidence extends Methods{
 		this.userName = userName;
 	}
 	
-	public Incidence(AonUrlApi url, String accesToken, String userName, String organizationName, String repositoryName) {
+	public Incidence(AonUrlApi url, String accesToken, String userName, String organizationName, String repositoryName, Integer domainId) {
 		this.url = url.getUrl();
 		this.userName = userName;
 		this.repositoryName = repositoryName;
 		this.domainName = repositoryName;
 		this.organizationName = organizationName;
 		this.accessToken = accesToken;
-		this.scheme = url.getUrl().contains("https") ? "https" : "http";;
+		this.domainId = domainId;
+		this.scheme = url.getUrl().contains("https") ? "https" : "http";
 	}
 	
-	public Incidence(String url, String accesToken, String userName, String organizationName, String repositoryName) {
+	public Incidence(String url, String accesToken, String userName, String organizationName, String repositoryName, Integer domainId) {
 		this.url = url;
 		this.userName = userName;
 		this.repositoryName = repositoryName;
 		this.domainName = repositoryName;
 		this.organizationName = organizationName;
 		this.accessToken = accesToken;
+		this.domainId = domainId;
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
