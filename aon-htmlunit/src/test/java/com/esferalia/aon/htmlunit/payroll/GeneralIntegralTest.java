@@ -374,6 +374,22 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestBasesSMIYIPREM() throws Exception {
+
+		open("smi_&_iprem");
+
+		wait4Id("salario,_minimo");
+
+		draft("SALARIO, MÍNIMO");
+		calculate(Calendar.JANUARY,2018);
+		assertText("totalPaymentLabel", 735.9);
+
+		draft("INDICADOR, PÚBLICO DE RENTA DE EFECTOS MÚLTIPLES");
+		calculate(Calendar.JANUARY,2018);
+		assertText("totalPaymentLabel", 537.84);
+	}
+	
+	@Test
 	public void TestBasesMaximasYMinimas() throws Exception {
 
 		open("bases_maximas_y_minimas");
@@ -387,6 +403,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2017);
 		assertValue("cgcBaseLabel", 3751.20);
 		assertValue("cgpBaseLabel", 3751.20);
+		calculate(Calendar.JANUARY,2018);
+		assertValue("cgcBaseLabel", 3751.20);
+		assertValue("cgpBaseLabel", 3751.20);
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 		calculate(Calendar.DECEMBER,2016);
@@ -395,7 +414,25 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2017);
 		assertValue("cgcBaseLabel", 1152.90);
 		assertValue("cgpBaseLabel",  825.60);
+		calculate(Calendar.JANUARY,2018);
+		assertValue("cgcBaseLabel", 1199.10);
+		assertValue("cgpBaseLabel",  858.60);
 		
+		draft("BASE, MÍNIMA ( GRUPO 02 )");
+		calculate(Calendar.JANUARY,2018);
+		assertValue("cgcBaseLabel", 994.20);
+		assertValue("cgpBaseLabel",  858.60);
+
+		draft("BASE, MÍNIMA ( GRUPO 03 )");
+		calculate(Calendar.JANUARY,2018);
+		assertValue("cgcBaseLabel", 864.90);
+		assertValue("cgpBaseLabel",  858.60);
+
+		draft("BASE, MÍNIMA ( GRUPO 04 )");
+		calculate(Calendar.JANUARY,2018);
+		assertValue("cgcBaseLabel", 858.60);
+		assertValue("cgpBaseLabel",  858.60);
+
 		// M : 2
 		// T : 4
 		// W : 2
@@ -436,8 +473,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.JANUARY,2017);
 		assertValue("cgcBaseLabel", 1152.90);
-		assertValue("cgpBaseLabel", 825.60);
+		assertValue("cgpBaseLabel",  825.60);
 
+		calculate(Calendar.JANUARY,2018);
+		assertValue("cgcBaseLabel", 1199.10);
+		assertValue("cgpBaseLabel",  858.60);
 	}
 
 	@Test
