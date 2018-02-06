@@ -25,6 +25,14 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.jooq.tables.Offer.OFFER;
+import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
+import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
+import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
+import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
+import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
+import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
 
 import java.util.function.Function;
 
@@ -36,7 +44,15 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.commission.Commission;
+import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
+import com.esferalia.aon.occam.api.model.commission.CommissionItem;
+import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
+import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
+import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.management.Offer;
+import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
@@ -52,7 +68,9 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -61,12 +79,14 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
+import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -180,7 +200,7 @@ public class FillerDAO {
 			supplier.setNationality(null); // TODO
 			supplier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
 			supplier.setType(r.getValue(REGISTRY.TYPE));
-			return supplier.setScope(r.getValue(CARRIER.SCOPE))
+			return supplier.setScope(r.getValue(SUPPLIER.SCOPE))
 					.setTariff(r.getValue(SUPPLIER.TARIFF))
 					.setAccount(r.getValue(SUPPLIER.ACCOUNT))
 					.setWithholding(r.getValue(SUPPLIER.WITHHOLDING).shortValue())
@@ -193,6 +213,35 @@ public class FillerDAO {
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
 					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(SUPPLIER.MODIFICATION_USER));				
+		}
+	}
+	
+	public static class TargetFiller implements Function<Record, Target> {
+		@Override
+		public Target apply(Record r) {
+			Target target = new Target();
+			target.setAlias(r.getValue(REGISTRY.ALIAS));
+			target.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
+			target.setDocument(r.getValue(REGISTRY.DOCUMENT));
+			target.setDocumentCountry(null); // TODO
+			target.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			target.setDomain(r.getValue(REGISTRY.DOMAIN));
+			target.setId(r.getValue(REGISTRY.ID));
+			target.setName(r.getValue(REGISTRY.NAME));
+			target.setNationality(null); // TODO
+			target.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			target.setType(r.getValue(REGISTRY.TYPE));
+			return target.setScope(r.getValue(TARGET.SCOPE))
+					.setAdvertising(r.getValue(TARGET.ADVERTISING).shortValue())
+					.setSurcharge(r.getValue(TARGET.SURCHARGE).shortValue())
+					.setTariff(r.getValue(TARGET.TARIFF))
+					.setWithholding(r.getValue(TARGET.WITHHOLDING).shortValue())
+					.setTransaction(r.getValue(TARGET.TRANSACTION).shortValue())
+					.setStatus(TargetStatus.values()[r.getValue(TARGET.STATUS)])
+					.setCreationDate(r.getValue(TARGET.CREATION_DATE))
+					.setCreationUser(r.getValue(TARGET.CREATION_USER))
+					.setModificationDate(r.getValue(TARGET.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(TARGET.MODIFICATION_USER));				
 		}
 	}
 	
@@ -797,4 +846,100 @@ public class FillerDAO {
 		}
 
 	}
+
+	// ---------- COMMISSION
+
+	public static class OfferDetailCommissionFiller implements Function<Record, OfferDetailCommission> {
+		
+		@Override
+		public OfferDetailCommission apply(Record r) {
+			Offer o = new Offer()
+					.setId(r.getValue(OFFER.ID))
+					.setDomain(r.getValue(OFFER.DOMAIN))
+					.setIssueDate(r.getValue(OFFER.ISSUE_DATE))
+					.setSeries(r.getValue(OFFER.SERIES))
+					.setNumber(r.getValue(OFFER.NUMBER))
+					.setVersion(r.getValue(OFFER.VERSION))
+					.setSeller(new Seller()
+							.setId(r.getValue(REGISTRY.ID))
+							.setRegistryName(r.getValue(REGISTRY.NAME)));
+			
+			
+			OfferDetail od = new OfferDetail()
+					.setDescription(r.getValue(OFFER_DETAIL.DESCRIPTION))
+					.setDiscountExpression(r.getValue(OFFER_DETAIL.DISCOUNT_EXPR))
+					.setDomain(r.getValue(OFFER_DETAIL.DOMAIN))
+					.setId(r.getValue(OFFER_DETAIL.ID))
+					.setItem(new Item().setId(r.getValue(OFFER_DETAIL.ITEM)))
+					.setOffer(o)
+					.setPrice(r.getValue(OFFER_DETAIL.PRICE))
+					.setQuantity(r.getValue(OFFER_DETAIL.QUANTITY))
+					.setStatus(OfferDetailStatus.values()[r.getValue(OFFER_DETAIL.STATUS)]);
+			
+			return new OfferDetailCommission()
+					.setId(r.getValue(OFFER_DETAIL_COMMISSION.ID))
+					.setDomain(r.getValue(OFFER_DETAIL_COMMISSION.DOMAIN))
+					.setOfferDetail(od)
+					.setStatus(OfferDetailCommissionStatus.values()[r.getValue(OFFER_DETAIL_COMMISSION.STATUS)])
+					.setPayDate(r.getValue(OFFER_DETAIL_COMMISSION.PAY_DATE))
+					.setCommission(r.getValue(OFFER_DETAIL_COMMISSION.COMMISSION))
+					.setAmount(r.getValue(OFFER_DETAIL_COMMISSION.AMOUNT));
+			
+		}
+	}
+	
+	public static class CommissionItemFiller implements Function<Record, CommissionItem> {
+		
+		@Override
+		public CommissionItem apply(Record r) {
+			return new CommissionItem()
+					.setId(r.getValue(COMMISSION_ITEM.ID))
+					.setDomain(r.getValue(COMMISSION_ITEM.DOMAIN))
+					.setCommission(r.getValue(COMMISSION_ITEM.COMMISSION))
+					.setItem(r.getValue(COMMISSION_ITEM.ITEM))
+					.setAmount(r.getValue(COMMISSION_ITEM.AMOUNT))
+					.setQuantity(r.getValue(COMMISSION_ITEM.QUANTITY))
+					.setRate(r.getValue(COMMISSION_ITEM.RATE));
+		}
+	}
+	
+	public static class CommissionCategoryFiller implements Function<Record, CommissionCategory> {
+		
+		@Override
+		public CommissionCategory apply(Record r) {
+			return new CommissionCategory()
+					.setId(r.getValue(COMMISSION_CATEGORY.ID))
+					.setDomain(r.getValue(COMMISSION_CATEGORY.DOMAIN))
+					.setCommission(r.getValue(COMMISSION_CATEGORY.COMMISSION))
+					.setCategory(r.getValue(COMMISSION_CATEGORY.CATEGORY))
+					.setQuantity(r .getValue(COMMISSION_CATEGORY.QUANTITY))
+					.setRate(r.getValue(COMMISSION_CATEGORY.RATE));
+		}
+	}
+	
+	public static class CommissionTypeCommissionFiller implements Function<Record, CommissionTypeCommission> {
+		
+		@Override
+		public CommissionTypeCommission apply(Record r) {
+			return new CommissionTypeCommission()
+					.setId(r.getValue(COMMISSION_TYPE_COMMISSION.ID))
+					.setDomain(r.getValue(COMMISSION_TYPE_COMMISSION.DOMAIN))
+					.setCommission(r.getValue(COMMISSION_TYPE_COMMISSION.COMMISSION))
+					.setCommissionType(r.getValue(COMMISSION_TYPE_COMMISSION.COMMISSION_TYPE));
+		}
+	}
+
+	public static class CommissionFiller implements Function<Record, Commission> {
+		
+		@Override
+		public Commission apply(Record r) {
+			return new Commission()
+					.setId(r.getValue(COMMISSION.ID))
+					.setDomain(r.getValue(COMMISSION.DOMAIN))
+					.setName(r.getValue(COMMISSION.NAME))
+					.setStartDate(r.getValue(COMMISSION.START_DATE))
+					.setEndDate(r.getValue(COMMISSION.END_DATE));
+		}
+	}
+
 }

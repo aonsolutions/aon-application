@@ -125,6 +125,9 @@ public class RegistryServlet extends HttpServlet{
 				case "supplier": // SUPPLIERS - PROVEEDORES
 					object = getSupplierList(domain, userName);
 					break;
+				case "target": // TARGETS
+					object = getTargetList(domain, userName);
+					break;
 				default:
 					break;
 				}
@@ -240,6 +243,17 @@ public class RegistryServlet extends HttpServlet{
     			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
    		.forEach(seller -> {
     			array.put(ToJSON.objectToJSON(seller.getId(), seller.getName()));
+    	});
+    	return array;    	
+    }
+    
+    private JSONArray getTargetList(Domain domain, String login){
+    	JSONArray array = new JSONArray();
+    	AON.getTargetStream(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
+   		.forEach(target -> {
+    			array.put(ToJSON.objectToJSON(target.getId(), target.getName()));
     	});
     	return array;    	
     }

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.registry;
+package com.esferalia.aon.occam.api.model.commission;
 
 import java.io.Serializable;
 

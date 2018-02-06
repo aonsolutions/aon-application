@@ -14,7 +14,7 @@ public class JsCommission extends JavaScriptObject {
 	
 	protected JsCommission() {}
 	
-	public final native String getId() /*-{
+	public final native Integer getId() /*-{
 		return this.type;
 	}-*/;
 	
@@ -42,27 +42,27 @@ public class JsCommission extends JavaScriptObject {
 		return this.quantity;
 	}-*/;
 	
-	public final native String gerPrice() /*-{
+	public final native String getPrice() /*-{
 		return this.price;
 	}-*/;
 	
-	public final native String gerDiscount() /*-{
+	public final native String getDiscount() /*-{
 		return this.discount;
 	}-*/;
 	
-	public final native String gerBase() /*-{
+	public final native Double getBase() /*-{
 		return this.base;
 	}-*/;
 	
-	public final native String gerPercentage() /*-{
+	public final native Double getPercentage() /*-{
 		return this.percentage;
 	}-*/;
 
-	public final native String gerAmount() /*-{
+	public final native Double getAmount() /*-{
 		return this.amount;
 	}-*/;
 	
-	public final native String gerStatus() /*-{
+	public final native String getStatus() /*-{
 		return this.status;
 	}-*/;
 	

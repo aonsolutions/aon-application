@@ -20,4 +20,9 @@ public interface OfferProperties {
 
 	Property<Byte> getConfidentialProperty();
 
+	Property<Integer> getSellerProperty();
+	
+	Property<Integer> getWorkplaceProperty();
+	
+	Property<String> getSeriesProperty();
 }

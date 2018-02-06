@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.api.client.commercial;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -19,9 +22,9 @@ public class Commission extends Methods{
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
-	public void getCalculatedCommission(/*HashMap<String, LinkedList<String>> filterMap, */AsyncCallback<JSON<JsCommission>> callback){
-		//String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "commission/calculated" /*+ filter*/, callback);
+	public void getCalculatedCommission(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommission>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "commission/calculated" + filter, callback);
 	}
 	
 	public void commissionCalculate(String requestData){

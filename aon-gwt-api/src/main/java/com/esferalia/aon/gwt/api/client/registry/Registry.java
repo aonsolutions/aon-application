@@ -32,4 +32,8 @@ public class Registry extends Methods{
 	public void getSellers(AsyncCallback<JSON<JsObject>> callback){
 		get(getUrl() + "registry/"+getDomainName()+"/"+getUserName()+"/seller/", callback);
 	}
+	
+	public void getTargets(AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "registry/"+getDomainName()+"/"+getUserName()+"/seller/", callback);
+	}
 }

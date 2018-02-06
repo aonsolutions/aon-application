@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
+import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -40,6 +41,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -243,6 +245,14 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.getSupplierStream(ctx, filter));
 	}
 
+	// -------------------- TARGET
+
+	@Override
+	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getTargetStream(ctx, filter));
+	}
+	
 	// -------------------- PERSON
 	
 	@Override
