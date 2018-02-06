@@ -1,0 +1,34 @@
+version: 0.2
+
+env:
+  variables:
+    JAVA_HOME: "/usr/lib/jvm/java-8-openjdk-amd64"
+  parameter-store:
+    LOGIN_PASSWORD: "aon945121010"
+
+phases:
+  install:
+    commands:
+      - echo Entered the install phase...
+      - apt-get update -y
+      - apt-get install -y maven
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+      - docker login –u rtrepiana –p $LOGIN_PASSWORD
+  build:
+    commands:
+      - echo Entered the build phase...
+      - echo Build started on `date`
+      - mvn install
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+      - echo Build completed on `date`
+artifacts:
+  files:
+  discard-paths: yes
+cache:
+  paths:
+    - '/root/.m2/**/*'
+
