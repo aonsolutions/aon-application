@@ -888,9 +888,9 @@ public class SiiMain extends AonTemplate2{
 			}
 		};
 		dialog.center();
-
 	}
 	
+	private Boolean isSendAllCancel = false;
 	private void resultPanel(HashMap<String, LinkedList<String>> sendMap) {
 		ScrollPanel sp = new ScrollPanel();
 		sp.setHeight("400px");
@@ -901,7 +901,9 @@ public class SiiMain extends AonTemplate2{
 			
 			@Override
 			protected void onCancel() {
-		
+				isSendAllCancel = true;
+				hide();
+				content();
 			}
 			
 			@Override
@@ -911,7 +913,6 @@ public class SiiMain extends AonTemplate2{
 			}
 		};
 		dialog.setAutoHideEnabled(false);
-		dialog.getCancel().setVisible(false);
 		dialog.getAccept().setVisible(false);
 		dialog.center();
 		HashMap<String , LinkedList<String>> map = getFilterMap();
@@ -931,8 +932,9 @@ public class SiiMain extends AonTemplate2{
 			@Override
 			public void onSuccess(JSON<JsInvoice> result) {
 				LinkedList<String> list = new LinkedList<>();
-				result.getData().stream().forEach(r -> list.add(r.getId() + ""));
+				list.add(result.getData().get(0).getId() + "");
 				sendMap.put("id", list);
+	
 				getAPI().getFinance().sendSii(sendMap, new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
@@ -946,9 +948,11 @@ public class SiiMain extends AonTemplate2{
 							label.getElement().getStyle().setColor(color);
 							vp.add(label);
 						});
-						if(result.getData().length() < 1) {
+						if(isSendAllCancel) {
+							isSendAllCancel = false;
+						} else if(result.getData().length() < 1) {
 							d.getAccept().setVisible(true);
-						} else resultPanel(map, page + 1 , vp, sendMap, d);
+						} else resultPanel(map, page, vp, sendMap, d);
 					}
 					
 					@Override
