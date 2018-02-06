@@ -3,8 +3,6 @@ version: 0.2
 env:
   variables:
     JAVA_HOME: "/usr/lib/jvm/java-8-openjdk-amd64"
-  parameter-store:
-    LOGIN_PASSWORD: "aon945121010"
 
 phases:
   install:
@@ -15,7 +13,7 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - docker login –u rtrepiana –p $LOGIN_PASSWORD
+      - docker login –u rtrepiana –p aon945121010
   build:
     commands:
       - echo Entered the build phase...
