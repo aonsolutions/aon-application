@@ -13,12 +13,12 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - docker login –u rtrepiana –p aon945121010
+      - docker run --name mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=serubd2000 -p 3306:3306 -d mariadb:10.0
   build:
     commands:
       - echo Entered the build phase...
       - echo Build started on `date`
-      - mvn install
+      - mvn -Dmaven.test.failure.ignore=true -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
   post_build:
     commands:
       - echo Entered the post_build phase...
