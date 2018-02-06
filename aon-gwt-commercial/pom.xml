@@ -161,7 +161,7 @@
 						<artifactId>gwt-maven-plugin</artifactId>
 						<configuration>
 							<draftCompile>true</draftCompile>
-							<module>com.esferalia.aon.gwt.commercial.WorkingCommercial</module>
+							<module>net.aonsolutions.aon.gwt.commercial.WorkingCommercial</module>
 						</configuration>
 					</plugin>
 				</plugins>
