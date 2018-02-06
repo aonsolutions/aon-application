@@ -339,7 +339,7 @@ public class PackingListMailServlet extends HttpServlet{
 	
 	protected void sendPostHttpClient(Domain domain, String login, JSONObject json, String scheme, CarrierPacking carrierPacking, String type) {
 		try{
-			String url = scheme + "://"+domain.getName()+ ":8080/aon-aio/send_email/";
+			String url = scheme + "://"+domain.getName()+ "/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
