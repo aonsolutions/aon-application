@@ -2,6 +2,14 @@ package com.esferalia.aon.occam.jooq.test;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
+import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
+import static com.esferalia.aon.jooq.tables.FsModel184.FS_MODEL184;
+import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
+import static com.esferalia.aon.jooq.tables.FsModel193.FS_MODEL193;
+import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
+import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
+import static com.esferalia.aon.jooq.tables.FsMod349.FS_MOD349;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
 import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
 
@@ -28,8 +36,6 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record8;
-import org.jooq.Select;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -67,39 +73,48 @@ public class FiscalModelsReport {
 	@Test
 	public void testMatrix() throws IOException {
 		final String ID 	= "ID";
+		final String DESCRIPTION 	= "DESCRIPTION";
 		final String NAME 	= "NAME";
 		final String OWNER 	= "OWNER";
 		final String MODEL 	= "MODEL";
 		final String ADMON 	= "ADMON";
+		final String YEAR = "YEAR";
 		final String PERIOD = "PERIOD";
 		final String STATUS = "STATUS";
 		final String COUNT 	= "COUNT";
+		Field<Byte> YEAR_PERIOD = DSL.inline( (byte) 16 ).as(PERIOD); 
+		
 		Domain PARENT = DOMAIN.as("PARENT");
 		InvoiceExcelAction action = new InvoiceExcelAction();
 		action.initialize("MODELOS FISCALES");
 		Field<Integer> count = DSL.count();
 		// Field<Integer> vatCount = DSL.count(FS_VAT_DECLARATION.ID);
 
-		Select<Record8<Integer,String,String,String,Byte,Byte,Byte,Integer>> s1 = 
+		CTX.select().from( 
 			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
 					, PARENT.NAME.as(NAME)
 					, PARENT.OWNER.as(OWNER)
 					, FS_MODEL.MODEL.as(MODEL)
 					, FS_MODEL.ADMINISTRATION.as(ADMON)
+					, FS_MODEL.YEAR.as(YEAR)
 					, FS_MODEL.PERIOD.as(PERIOD)
 					, FS_MODEL.STATUS.as(STATUS)
 					,count.as(COUNT))
 					.from(FS_MODEL)
 					.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL.DOMAIN))
 					.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
-					.where(FS_MODEL.YEAR.eq(2017))
-					.groupBy(PARENT.ID, FS_MODEL.MODEL, FS_MODEL.ADMINISTRATION, FS_MODEL.PERIOD, FS_MODEL.STATUS);
-		Select<Record8<Integer,String,String,String,Byte,Byte,Byte,Integer>> s2 = 
+					.where(FS_MODEL.YEAR.gt(2012))
+					.groupBy(PARENT.ID, FS_MODEL.MODEL, FS_MODEL.ADMINISTRATION, FS_MODEL.YEAR, FS_MODEL.PERIOD, FS_MODEL.STATUS)
+			.union
+			(
 			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
 					, PARENT.NAME.as(NAME)
 					, PARENT.OWNER.as(OWNER)
-					, DSL.inline("303").as(MODEL)
+					, DSL.inline("303 RG").as(MODEL)
 					, FS_VAT_DECLARATION.ADMINISTRATION.as(ADMON)
+					, FS_VAT.YEAR.as(YEAR)
 					, FS_VAT.PERIOD.as(PERIOD)
 					, FS_VAT_DECLARATION.STATUS.as(STATUS)
 					, count.as(COUNT))
@@ -107,27 +122,159 @@ public class FiscalModelsReport {
 				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_VAT_DECLARATION.DOMAIN))
 				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
 				.innerJoin(FS_VAT).on(FS_VAT.ID.equal(FS_VAT_DECLARATION.FS_VAT))
-				.where(FS_VAT.YEAR.eq(2017))
-				.groupBy(PARENT.ID, DSL.inline("303"), FS_VAT_DECLARATION.ADMINISTRATION, FS_VAT.PERIOD, FS_VAT_DECLARATION.STATUS); 
-		
-		System.out.println(
-				CTX.select().from(s1.union(s2))
-				.orderBy(1,4,5,6,7)				
-				.getSQL()
-				);
-		
-		
-		CTX.select().from(s1.union(s2))
-		.orderBy(1,4,5,6,7)
+				.where(FS_VAT.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("303 RG"), FS_VAT_DECLARATION.ADMINISTRATION, FS_VAT.YEAR, FS_VAT.PERIOD, FS_VAT_DECLARATION.STATUS)
+			).union
+			(
+			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
+					, PARENT.NAME.as(NAME)
+					, PARENT.OWNER.as(OWNER)
+					, DSL.inline("390").as(MODEL)
+					, FS_MODEL390.ADMINISTRATION.as(ADMON)
+					, FS_MODEL390.YEAR.as(YEAR)
+					, YEAR_PERIOD
+					, FS_MODEL390.STATUS.as(STATUS)
+					, count.as(COUNT))
+				.from(FS_MODEL390)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL390.DOMAIN))
+				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
+				.where(FS_MODEL390.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("390"), FS_MODEL390.ADMINISTRATION, FS_MODEL390.YEAR, YEAR_PERIOD, FS_MODEL390.STATUS)
+			).union
+			(
+			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
+					, PARENT.NAME.as(NAME)
+					, PARENT.OWNER.as(OWNER)
+					, DSL.inline("180").as(MODEL)
+					, FS_MODEL180.ADMINISTRATION.as(ADMON)
+					, FS_MODEL180.YEAR.as(YEAR)
+					, YEAR_PERIOD
+					, FS_MODEL180.STATUS.as(STATUS)
+					, count.as(COUNT))
+				.from(FS_MODEL180)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL180.DOMAIN))
+				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
+				.where(FS_MODEL180.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("180"), FS_MODEL180.ADMINISTRATION, FS_MODEL180.YEAR, YEAR_PERIOD, FS_MODEL180.STATUS)
+			).union
+			(
+			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
+					, PARENT.NAME.as(NAME)
+					, PARENT.OWNER.as(OWNER)
+					, DSL.inline("184").as(MODEL)
+					, FS_MODEL184.ADMINISTRATION.as(ADMON)
+					, FS_MODEL184.YEAR.as(YEAR)
+					, YEAR_PERIOD
+					, FS_MODEL184.STATUS.as(STATUS)
+					, count.as(COUNT))
+				.from(FS_MODEL184)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL184.DOMAIN))
+				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
+				.where(FS_MODEL184.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("184"), FS_MODEL184.ADMINISTRATION, FS_MODEL184.YEAR, YEAR_PERIOD, FS_MODEL184.STATUS)
+			).union
+			(
+			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
+					, PARENT.NAME.as(NAME)
+					, PARENT.OWNER.as(OWNER)
+					, DSL.inline("190").as(MODEL)
+					, FS_MODEL190.ADMINISTRATION.as(ADMON)
+					, FS_MODEL190.YEAR.as(YEAR)
+					, YEAR_PERIOD
+					, FS_MODEL190.STATUS.as(STATUS)
+					, count.as(COUNT))
+				.from(FS_MODEL190)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL190.DOMAIN))
+				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
+				.where(FS_MODEL190.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("190"), FS_MODEL190.ADMINISTRATION, FS_MODEL190.YEAR, YEAR_PERIOD, FS_MODEL190.STATUS)
+			).union
+			(
+			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
+					, PARENT.NAME.as(NAME)
+					, PARENT.OWNER.as(OWNER)
+					, DSL.inline("193").as(MODEL)
+					, FS_MODEL193.ADMINISTRATION.as(ADMON)
+					, FS_MODEL193.YEAR.as(YEAR)
+					, YEAR_PERIOD
+					, FS_MODEL193.STATUS.as(STATUS)
+					, count.as(COUNT))
+				.from(FS_MODEL193)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL193.DOMAIN))
+				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
+				.where(FS_MODEL193.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("193"), FS_MODEL193.ADMINISTRATION, FS_MODEL193.YEAR, YEAR_PERIOD, FS_MODEL193.STATUS)
+			).union
+			(
+			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
+					, PARENT.NAME.as(NAME)
+					, PARENT.OWNER.as(OWNER)
+					, DSL.inline("200").as(MODEL)
+					, FS_MODEL200.ADMINISTRATION.as(ADMON)
+					, FS_MODEL200.YEAR.as(YEAR)
+					, YEAR_PERIOD
+					, FS_MODEL200.STATUS.as(STATUS)
+					, count.as(COUNT))
+				.from(FS_MODEL200)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL200.DOMAIN))
+				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
+				.where(FS_MODEL200.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("200"), FS_MODEL200.ADMINISTRATION, FS_MODEL200.YEAR, YEAR_PERIOD, FS_MODEL200.STATUS)
+			).union
+			(
+			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
+					, PARENT.NAME.as(NAME)
+					, PARENT.OWNER.as(OWNER)
+					, DSL.inline("347").as(MODEL)
+					, FS_MOD347.ADMINISTRATION.as(ADMON)
+					, FS_MOD347.YEAR.as(YEAR)
+					, YEAR_PERIOD
+					, FS_MOD347.STATUS.as(STATUS)
+					, count.as(COUNT))
+				.from(FS_MOD347)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MOD347.DOMAIN))
+				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
+				.where(FS_MOD347.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("347"), FS_MOD347.ADMINISTRATION, FS_MOD347.YEAR, YEAR_PERIOD, FS_MOD347.STATUS)
+			).union
+			(
+			CTX.select(PARENT.ID.as(ID)	
+					, PARENT.DESCRIPTION.as(DESCRIPTION)	
+					, PARENT.NAME.as(NAME)	
+					, PARENT.OWNER.as(OWNER)
+					, DSL.inline("349").as(MODEL)
+					, FS_MOD349.ADMINISTRATION.as(ADMON)
+					, FS_MOD349.YEAR.as(YEAR)
+					, FS_MOD349.PERIOD.as(PERIOD)
+					, FS_MOD349.STATUS.as(STATUS)
+					, count.as(COUNT))
+				.from(FS_MOD349)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MOD349.DOMAIN))
+				.innerJoin(PARENT).on(PARENT.ID.equal(DOMAIN.PARENT))
+				.where(FS_MOD349.YEAR.gt(2012))
+				.groupBy(PARENT.ID, DSL.inline("349"), FS_MOD349.ADMINISTRATION, FS_MOD349.YEAR, FS_MOD349.PERIOD, FS_MOD349.STATUS)
+			)
+		)
+		.orderBy(1,7,5,6,8,9)
 			.stream()
 			.map(rec -> new Model()
+					.setDomainDescription((String) rec.getValue(DESCRIPTION))
 					.setDomainName((String) rec.getValue(NAME))
 					.setOwner((String) rec.getValue(OWNER))
 					.setModel((String) rec.getValue(MODEL))
 					.setAdministration(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class, (Byte) rec.getValue(ADMON)))
+					.setYear((Integer) rec.getValue(YEAR))
 					.setPeriod(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Period.class,(Byte) rec.getValue(PERIOD)))
 					.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,(Byte) rec.getValue(STATUS)))
 					.setCount((Integer) rec.getValue(COUNT)))
+			.filter( mod -> !"3O3".equals(mod.getModel()))
 			.forEach(action);
 		String fileName = "Modelos fiscales.xls";
 		FileOutputStream fos = new FileOutputStream("/home/ecastellano/FISCAL/" + fileName);
@@ -142,14 +289,23 @@ public class FiscalModelsReport {
 	}
 
 	private class Model {
+		private String domainDescription;
 		private String domainName;
 		private String owner;
 		private String model;
 		private Period period;
 		private Administration administration;
 		private FiscalStatus status;
+		private int year;
 		private int count;
 
+		public String getDomainDescription() {
+			return domainDescription;
+		}
+		public Model  setDomainDescription(String domainDescription) {
+			this.domainDescription = domainDescription;
+			return this;
+		}
 		public String getDomainName() {
 			return domainName;
 		}
@@ -204,7 +360,14 @@ public class FiscalModelsReport {
 			this.status = status;
 			return this;
 		}
-
+		private int getYear() {
+			return year;
+		}
+		public Model setYear(int year) {
+			this.year = year;
+			return this;
+		}
+		
 		public int getCount() {
 			return count;
 		}
@@ -312,11 +475,13 @@ public class FiscalModelsReport {
 			CellUtil.createCell(row, cellCount, "CREADOR DOMINIO", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 20*256);
 			CellUtil.createCell(row, cellCount, "MOD", headerCellStyle);
-			sheet.setColumnWidth(cellCount++, 4*256);
+			sheet.setColumnWidth(cellCount++, 5*256);
 			CellUtil.createCell(row, cellCount, "ADM", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 5*256);
+			CellUtil.createCell(row, cellCount, "AÑO", headerCellStyle);
+			sheet.setColumnWidth(cellCount++, 5*256);
 			
-			for (int i = 4; i < 55; i = (i+3) ) {
+			for (int i = 5; i < 55; i = (i+3) ) {
 				CellUtil.createCell(row, cellCount, "P", headerCellStyle);
 				sheet.setColumnWidth(cellCount++, 4*256);
 				CellUtil.createCell(row, cellCount, "F", headerCellStyle);
@@ -329,51 +494,58 @@ public class FiscalModelsReport {
 
 			
 			row = sheet.createRow(rowCount++);
-			CellUtil.createCell(row, 4, "ENE", headerCellStyle);
-			CellUtil.createCell(row, 6, "FEB", headerCellStyle);
-			CellUtil.createCell(row, 8, "MAR", headerCellStyle);
-			CellUtil.createCell(row, 10, "ABR", headerCellStyle);
-			CellUtil.createCell(row, 12, "MAY", headerCellStyle);
-			CellUtil.createCell(row, 14, "JUN", headerCellStyle);
-			CellUtil.createCell(row, 16, "JUL", headerCellStyle);
-			CellUtil.createCell(row, 18, "AGO", headerCellStyle);
-			CellUtil.createCell(row, 20, "SEP", headerCellStyle);
-			CellUtil.createCell(row, 22, "OCT", headerCellStyle);
-			CellUtil.createCell(row, 24, "NOV", headerCellStyle);
-			CellUtil.createCell(row, 26, "DIC", headerCellStyle);
-			CellUtil.createCell(row, 28, "1ºT", headerCellStyle);
-			CellUtil.createCell(row, 30, "2ºT", headerCellStyle);
-			CellUtil.createCell(row, 32, "3ºT", headerCellStyle);
-			CellUtil.createCell(row, 34, "4ºT", headerCellStyle);
-			CellUtil.createCell(row, 36, "ANU", headerCellStyle);
+			CellUtil.createCell(row, 5, "ENE", headerCellStyle);
+			CellUtil.createCell(row, 7, "FEB", headerCellStyle);
+			CellUtil.createCell(row, 9, "MAR", headerCellStyle);
+			CellUtil.createCell(row, 11, "ABR", headerCellStyle);
+			CellUtil.createCell(row, 13, "MAY", headerCellStyle);
+			CellUtil.createCell(row, 15, "JUN", headerCellStyle);
+			CellUtil.createCell(row, 17, "JUL", headerCellStyle);
+			CellUtil.createCell(row, 19, "AGO", headerCellStyle);
+			CellUtil.createCell(row, 21, "SEP", headerCellStyle);
+			CellUtil.createCell(row, 23, "OCT", headerCellStyle);
+			CellUtil.createCell(row, 25, "NOV", headerCellStyle);
+			CellUtil.createCell(row, 27, "DIC", headerCellStyle);
+			CellUtil.createCell(row, 29, "1ºT", headerCellStyle);
+			CellUtil.createCell(row, 31, "2ºT", headerCellStyle);
+			CellUtil.createCell(row, 33, "3ºT", headerCellStyle);
+			CellUtil.createCell(row, 35, "4ºT", headerCellStyle);
+			CellUtil.createCell(row, 37, "ANU", headerCellStyle);
 
 		}
 
 		String lastDomain = null;
 		String lastModel = null;
 		Administration lastAdmon = null;
+		int lastYear = -1;
 
 		@Override
 		public void accept(Model mod) {
+			String description = mod.getDomainDescription();
 			String domain = mod.getDomainName();
 			String model = mod.getModel();
+			int year = mod.getYear();
 			Administration admon = mod.getAdministration();
-			if (!AonStringUtils.equals(domain, lastDomain) || !AonStringUtils.equals(model, lastModel)
-					|| admon != lastAdmon) {
+			if (!AonStringUtils.equals(domain, lastDomain) 
+				|| !AonStringUtils.equals(model, lastModel)
+				|| year != lastYear
+				|| admon != lastAdmon) {
 
 				lastDomain = domain;
 				lastModel = model;
 				lastAdmon = admon;
+				lastYear = year;
 				row = sheet.createRow(rowCount++);
 				cellCount = 0;
-				addCell(domain);
-				addCell(AonStringUtils.abbreviate(mod.getOwner(),22));
-				addCell(model);
+				addCell(description);
+				addCell(mod.getOwner());
+				addCell("303".equals(model)?"303 RS":model);
 				addCell( AonStringUtils.upperCase( admon == Administration.COMMON_TERRITORY?"AEAT":AonStringUtils.substring(admon.getDescription(),0,4)));
+				addCell(mod.getYear());
 			}
 			int gap = 0;
 			if (mod.getStatus() == FiscalStatus.FINISHED || mod.getStatus() == FiscalStatus.SENT) gap = 1;
-			cellCount = (mod.getPeriod().ordinal() * 2) + gap + 4;
+			cellCount = (mod.getPeriod().ordinal() * 2) + gap + 5;
 			Cell cell = row.getCell(cellCount);
 			if (cell == null) {
 				addCell(mod.getCount());

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
@@ -93,16 +94,7 @@ public class FiscalModelDAO {
 	
 	public static Stream<FiscalModel> getPreviousModels(AONContext ctx,FiscalModel fiscalModel, boolean desc) {
 		ctx.checkRead();
-		return ctx.getDslContext()
-				.select(FS_MODEL.fields())
-				.select(FINANCE.fields())
-				.select(REGISTRY.fields())
-				.select(PAY_METHOD.fields())
-				.from(FS_MODEL)
-				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
-				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-				.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()))
+		return getModelSelect(ctx, fiscalModel)
 				.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
 				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
 				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
@@ -138,21 +130,25 @@ public class FiscalModelDAO {
 		return effectivePreviousModels.stream();
 	}
 	
+	private static SelectConditionStep<Record> getModelSelect(AONContext ctx, FiscalModel fiscalModel) {
+		return ctx.getDslContext()
+			.select(FS_MODEL.fields())
+			.select(FINANCE.fields())
+			.select(REGISTRY.fields())
+			.select(PAY_METHOD.fields())
+			.from(FS_MODEL)
+			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+			.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()));		
+	}
+	
 	public static Stream<FiscalModel> getLastPeriodModels(AONContext ctx,FiscalModel fiscalModel) {
 		ctx.checkRead();
 		if (fiscalModel.getPeriod() == Period.M01 || fiscalModel.getPeriod() == Period.T1) {
 			return Stream.empty();
 		}
-		return ctx.getDslContext()
-				.select(FS_MODEL.fields())
-				.select(FINANCE.fields())
-				.select(REGISTRY.fields())
-				.select(PAY_METHOD.fields())
-				.from(FS_MODEL)
-				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
-				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-				.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()))
+		return getModelSelect(ctx, fiscalModel)
 				.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
 				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
 				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
@@ -169,27 +165,18 @@ public class FiscalModelDAO {
 
 	public static Stream<FiscalModel> getSamePeriodModels(AONContext ctx,FiscalModel fiscalModel) {
 		ctx.checkRead();
-		return ctx.getDslContext()
-				.select(FS_MODEL.fields())
-				.select(FINANCE.fields())
-				.select(REGISTRY.fields())
-				.select(PAY_METHOD.fields())
-				.from(FS_MODEL)
-				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
-				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-				.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()))
-				.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
-				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
-				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
-				.and(FS_MODEL.PERIOD.eq(fiscalModel.getPeriod().getValue()))
-				.and(fiscalModel.getId()==null?DSL.trueCondition():FS_MODEL.ID.notEqual(fiscalModel.getId()))
-				.fetch()
-				.stream()
-				.map( record -> map(record))
-				.peek( model -> getModelDetails(ctx,model)
+		return getModelSelect(ctx, fiscalModel)
+			.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
+			.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
+			.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
+			.and(FS_MODEL.PERIOD.eq(fiscalModel.getPeriod().getValue()))
+			.and(fiscalModel.getId()==null?DSL.trueCondition():FS_MODEL.ID.notEqual(fiscalModel.getId()))
+			.fetch()
+			.stream()
+			.map( record -> map(record))
+			.peek( model -> getModelDetails(ctx,model)
 								.forEach( detail -> model.put( detail) )
-					 );
+				);
 	}
 
 	public static Stream<Record> getModelRecords(AONContext ctx,int domain, FiscalModelType model) {

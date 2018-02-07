@@ -1,10 +1,10 @@
-package com.esferalia.aon.occam.api.model.fiscal;
+package com.esferalia.aon.occam.api.model.fiscal.modules;
 
-import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.INFO;
-import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.IRPF_INFO;
-import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.MODULE;
-import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.MODULE_DETAIL;
-import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.VAT_INFO;
+import static com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfoType.INFO;
+import static com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfoType.IRPF_INFO;
+import static com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfoType.MODULE;
+import static com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfoType.MODULE_DETAIL;
+import static com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfoType.VAT_INFO;
 
 import java.io.Serializable;
 
@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.IntegerStringPair;
 
-public enum FiscalActivityInfoKey implements Serializable {
+public enum ModuleInfo implements Serializable {
 
 	A01 {
 		private IntegerStringPair[] CHOICES = new IntegerStringPair[]{
@@ -33,7 +33,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 	}
@@ -43,7 +43,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Comunidad, Sociedad Civil o Similar. Porcentaje de participaci\u00F3n.";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 		@Override
@@ -58,7 +58,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Actividad de Temporada. n\u00AA de dias de ejercicio en el a\u00F1o anterior.";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 		@Override
@@ -73,7 +73,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Nuevas actividades iniciadas a partir del 1 de enero del a\u00F1o anterior. A\u00F1o de inicio.";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 		@Override
@@ -97,7 +97,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 	} 
@@ -122,14 +122,14 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 
 		@Override
-		public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-			return super.accept(epigraph,fa) 
-				&& AonStringUtils.equals(fa.getEpigraph(),Epigraph.E____.getEpigraph());
+		public boolean accept(Epigraph epigraph) {
+			return super.accept(epigraph) 
+				&& Epigraph.E____ == epigraph;
 		}
 		@Override
 		public String getDefaultValue() {
@@ -153,19 +153,19 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 
 		@Override
-		public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-			return super.accept(epigraph,fa) 
-				&& (!AonStringUtils.equals( Epigraph.E_721_1.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_721_2.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_721_3.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
+		public boolean accept(Epigraph epigraph) {
+			return super.accept(epigraph) 
+				&& Epigraph.E_721_1 != epigraph
+				&& Epigraph.E_721_2 != epigraph
+				&& Epigraph.E_721_3 != epigraph
+				&& Epigraph.E_722A != epigraph
+				&& Epigraph.E_757 != epigraph
+				&& Epigraph.E____ != epigraph;
 		}
 	}
 	, A07{
@@ -175,14 +175,14 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00FAmero de veh\u00EDculos afectos de la actividad.";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 		@Override
-		public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-			return super.accept(epigraph,fa) 
-				&& (!AonStringUtils.equals( Epigraph.E_721_2.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
+		public boolean accept(Epigraph epigraph) {
+			return super.accept(epigraph) 
+				&& Epigraph.E_721_2 != epigraph
+				&& Epigraph.E____ != epigraph;
 		}
 	} 
 	, A08{
@@ -201,19 +201,19 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 
 		@Override
-		public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-			return super.accept(epigraph,fa) 
-				&& (!AonStringUtils.equals( Epigraph.E_721_1.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_721_2.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_721_3.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
+		public boolean accept(Epigraph epigraph) {
+			return super.accept(epigraph) 
+				&& Epigraph.E_721_1 != epigraph
+				&& Epigraph.E_721_2 != epigraph
+				&& Epigraph.E_721_3 != epigraph
+				&& Epigraph.E_722A != epigraph
+				&& Epigraph.E_757 != epigraph
+				&& Epigraph.E____ != epigraph;
 		}
 	}
 	, A09{
@@ -237,18 +237,18 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 
 		@Override
-		public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-			return super.accept(epigraph,fa) 
-				&& (!AonStringUtils.equals( Epigraph.E_721_1.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_721_3.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
+		public boolean accept(Epigraph epigraph) {
+			return super.accept(epigraph) 
+				&& Epigraph.E_721_1 != epigraph
+				&& Epigraph.E_721_3 != epigraph
+				&& Epigraph.E_722A != epigraph
+				&& Epigraph.E_757 != epigraph
+				&& Epigraph.E____ != epigraph;
 		}
 		@Override
 		public String getDefaultValue() {
@@ -262,18 +262,18 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00FAmero de empleados al inicio de ejercicio (o al inicio de la actividad).";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 		@Override
-		public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-			return super.accept(epigraph,fa) 
-				&& (!AonStringUtils.equals( Epigraph.E_721_1.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_721_2.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_721_3.getEpigraph(), fa.getEpigraph())
-				&& !AonStringUtils.equals( Epigraph.E_722A.getEpigraph(), fa.getEpigraph())
-					&& !AonStringUtils.equals( Epigraph.E_757.getEpigraph(), fa.getEpigraph())
-					&& !AonStringUtils.equals( Epigraph.E____.getEpigraph(), fa.getEpigraph()));
+		public boolean accept(Epigraph epigraph) {
+			return super.accept(epigraph) 
+				&& Epigraph.E_721_1 != epigraph
+				&& Epigraph.E_721_2 != epigraph
+				&& Epigraph.E_721_3 != epigraph
+				&& Epigraph.E_722A != epigraph
+				&& Epigraph.E_757 != epigraph
+				&& Epigraph.E____ != epigraph;
 		}
 	} 
 	
@@ -293,15 +293,15 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 
 		@Override
-		public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-			return super.accept(epigraph,fa) 
-				&& AonStringUtils.equals(fa.getEpigraph(),Epigraph.E_722A.getEpigraph())
-				|| AonStringUtils.equals(fa.getEpigraph(),Epigraph.E_757.getEpigraph());
+		public boolean accept(Epigraph epigraph) {
+			return super.accept(epigraph) 
+				&& (Epigraph.E_722A == epigraph  
+				 || Epigraph.E_757 == epigraph);
 		}
 	}
 	, C11{
@@ -320,15 +320,15 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 
 		@Override
-		public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-			return super.accept(epigraph,fa) 
-				&& AonStringUtils.equals(fa.getEpigraph(),Epigraph.E_722A.getEpigraph())
-				|| AonStringUtils.equals(fa.getEpigraph(),Epigraph.E_757.getEpigraph());
+		public boolean accept(Epigraph epigraph) {
+			return super.accept(epigraph) 
+				&& (Epigraph.E_722A == epigraph
+				 || Epigraph.E_757 == epigraph);
 		}
 	}
 	, A11{
@@ -348,7 +348,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 	}
@@ -368,7 +368,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return CHOICES;
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return INFO;
 		}
 	}
@@ -378,14 +378,14 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PERSONAL ASALARIADO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 		@Override
-		public FiscalActivityInfoKey[] getDetailKeys() {
-			return new FiscalActivityInfoKey[]{
-				 FiscalActivityInfoKey.M011,FiscalActivityInfoKey.M012
-				,FiscalActivityInfoKey.M013,FiscalActivityInfoKey.M014};
+		public ModuleInfo[] getDetailKeys() {
+			return new ModuleInfo[]{
+				 ModuleInfo.M011,ModuleInfo.M012
+				,ModuleInfo.M013,ModuleInfo.M014};
 		}
 	}
 	, M011 {
@@ -394,7 +394,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Mayores de 19 a\u00F1os";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 	}
@@ -404,7 +404,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Menores de 19 a\u00F1os y trabajadores con contratos de aprendizaje o formaci\u00F3n, que no sean discapacitados.";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 	}
@@ -414,7 +414,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Discapacitados con grado de minusval\u00EDa igual o superior al 33 por 100";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 	}
@@ -424,7 +424,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Horas anuales";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 		@Override
@@ -439,14 +439,14 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PERSONAL NO ASALARIADO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 		@Override
-		public FiscalActivityInfoKey[] getDetailKeys() {
-			return new FiscalActivityInfoKey[]{FiscalActivityInfoKey.M021
-				,FiscalActivityInfoKey.M022,FiscalActivityInfoKey.M023
-				,FiscalActivityInfoKey.M024,FiscalActivityInfoKey.M025};
+		public ModuleInfo[] getDetailKeys() {
+			return new ModuleInfo[]{ModuleInfo.M021
+				,ModuleInfo.M022,ModuleInfo.M023
+				,ModuleInfo.M024,ModuleInfo.M025};
 		}
 	}
 	, M021 {
@@ -455,7 +455,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Horas anuales del titular. (m\u00E1ximo 1.800 horas)";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 	}
@@ -465,7 +465,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Horas anuales del c\u00F3nyuge. (m\u00E1ximo 1.800 horas)";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 	}
@@ -475,7 +475,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Indique si el c\u00F3nyuge es discapacitado en grado igual o superior al 33%";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 	}
@@ -485,7 +485,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Horas anuales de los hijos menores de 18 a\u00F1os.";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 	}
@@ -495,7 +495,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Horas anuales de los hijos menores de 18 a\u00F1os con discapacidad en grado igual o superior al 33%";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE_DETAIL;
 		}
 	}
@@ -505,7 +505,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CONSUMO DE ENERGIA EL\u00C9CTRICA";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -515,7 +515,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "MESAS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -525,7 +525,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "LONGITUD DE BARRA";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -535,7 +535,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "M\u00C1QUINAS TIPO A";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -545,7 +545,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "M\u00C1QUINAS TIPO B";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -555,7 +555,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "POTENCIA EL\u00C9CTRICA";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -565,7 +565,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "SUPERFICIE DEL LOCAL";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -575,7 +575,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "SUPERFICIE LOCAL INDEPENDIENTE";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -585,7 +585,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "SUPERFICIE LOCAL NO INDEPENDIENTE";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -595,7 +595,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "DISTANCIA RECORRIDA";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -605,7 +605,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CARGA DE ELEMENTOS DE TRANSPORTE";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -615,7 +615,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "SUPERFICIE DEL HORNO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -625,7 +625,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PERSONAL ASALARIADO DE FABRICACI\u00D3N";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -635,7 +635,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "RESTO PERSONAL ASALARIADO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -645,7 +645,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "SUPERFICIE DEL LOCAL DE FABRICACI\u00D3N";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -655,7 +655,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "RESTO SUPERFICIE DEL LOCAL INDEPENDIENTE";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -665,7 +665,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "RESTO SUPERFICIE DEL LOCAL NO INDEPENDIENTE";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -675,7 +675,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00DAMERO DE PLAZAS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -685,7 +685,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00DAMERO DE ASIENTOS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -695,7 +695,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "NO SE USA";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -705,7 +705,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CARGA VEH\u00CDCULOS (TM)";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -715,7 +715,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "POTENCIA FISCAL DEL VEH\u00CDCULO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -725,7 +725,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00DAMERO DE VEH\u00CDCULOS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -735,7 +735,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PERSONAL EMPLEADO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -745,7 +745,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PERSONAL EMPLEADO DE REPARACI\u00D3N";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -755,7 +755,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "SUPERFICIE TALLER DE REPARACI\u00D3N";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -765,7 +765,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DE CARGA DE VEH\u00CDCULOS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -775,7 +775,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "POTENCIA INSTALADA";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -785,7 +785,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DEL HORNO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -795,7 +795,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "VOLUMEN DE LOS HORNOS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -805,7 +805,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DE PRODUCCI\u00D3N DE LOS HORNOS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -815,7 +815,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DE MOLIDO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -825,7 +825,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DE PRENSADO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -835,7 +835,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD CUBAS DE COAGULACI\u00D3N";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -845,7 +845,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "VOLUMEN DE BOMBOS DE TUESTE";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -855,7 +855,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DE DEP\u00D3SITOS Y CUBAS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -865,7 +865,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00DAMERO DE TELARES";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -875,7 +875,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "MAQUINARIA";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -885,7 +885,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00DAMERO DE M\u00C1QUINAS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -895,7 +895,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DE LOS BOMBOS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -905,7 +905,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00DAMERO DE M\u00C1QUINAS DE COSER";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -915,7 +915,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00DAMERO DE M\u00C1QUINAS DE ENCUADERNAR";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -925,7 +925,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "M\u00C1QUINA DE REVELAR";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -935,7 +935,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DE ALOJAMIENTO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -945,7 +945,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "SUPERFICIE DEL RECINTO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -955,7 +955,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD EN PLAZAS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -965,7 +965,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "SUPERFICIE DEL VIVERO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -975,7 +975,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "AFORO DEL LOCAL";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -985,7 +985,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "N\u00DAMERO DE MESAS Y APARATOS DE JUEGO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -995,7 +995,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "\u00CDNDICE DE RENDIMIENTO NETO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1005,7 +1005,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "ID. DE CUOTA DEVENGADA POR OPER.CORRIENTES";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1015,7 +1015,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "IMPORTE DE LAS COMISIONES POR LOTERIAS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1025,7 +1025,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PORCENTAJE CUOTA DEVENGADA OP. CORRIENTES";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1035,7 +1035,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PERSONAL EMPLEADO ASADO DE POLLOS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1045,7 +1045,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CAPACIDAD DEL ASADOR";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1055,7 +1055,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "IMPORTE TOTAL DE LAS COMISIONES";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1065,7 +1065,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PERSONAL EMPLEADO (RESIDUOS)";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1075,7 +1075,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "CARGA VEH\u00CDCULOS (RESIDUOS)";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1085,7 +1085,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "BATEAS";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1095,7 +1095,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "PERSONAL RECOGIDA MATERIAL FOTOGR\u00E1FICO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return MODULE;
 		}
 	}
@@ -1108,7 +1108,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "RENDIMIENTO NETO PREVIO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1118,7 +1118,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Incentivos al empleo";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1128,7 +1128,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Incentivos a la inversi\u00F3n";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1138,7 +1138,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "RENDIMIENTO NETO MINORADO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1150,11 +1150,11 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "\u00CDNDICES CORRECTORES";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 		@Override
-		public boolean accept(Epigraph epigraph, FiscalActivity fa) {
+		public boolean accept(Epigraph epigraph) {
 			return false;
 		}
 	}
@@ -1166,7 +1166,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "1. \u00CDndice corrector. Especiales";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1176,7 +1176,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "2. \u00CDndice corrector. Empresas de peque\u00F1a dimensi\u00F3n";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1187,7 +1187,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "3. \u00CDndice corrector. De temporada";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1197,7 +1197,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "4. \u00CDndice corrector. De exceso";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1207,7 +1207,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "5. \u00CDndice corrector. De inicio de nueva actividad";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1217,7 +1217,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "RENDIMIENTO A EFECTOS DE PAGOS FRACCIONADOS (i.R.P.F.)";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1227,7 +1227,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Reducci\u00F3n para actividades econ\u00F3micas realizadas en el t\u00E9rmino municipal de Lorca";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1237,7 +1237,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Rendimientos a efectos de pagos fraccionados despu\u00E9s de la reducci\u00F3n";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1247,7 +1247,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Porcentaje aplicable";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1257,7 +1257,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Resultado. Pago Trimestral de I.R.P.F.";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return IRPF_INFO;
 		}
 	}
@@ -1267,7 +1267,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "\u00CDndice corrector de temporada";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return VAT_INFO;
 		}
 	} 
@@ -1277,7 +1277,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Cuota anual devengada por operaciones corrientes";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return VAT_INFO;
 		}
 	} 
@@ -1287,7 +1287,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Reducci\u00F3n aplicable por actividades econ\u00F3micas realizadas en el t\u00E9rmino municipal de Lorca";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return VAT_INFO;
 		}
 	} 
@@ -1297,7 +1297,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Cuota anual por operaciones corrientes despu\u00E9s de las reducciones anteriores";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return VAT_INFO;
 		}
 	} 
@@ -1307,7 +1307,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "Porcentaje aplicable";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return VAT_INFO;
 		}
 	} 
@@ -1317,7 +1317,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 			return "INGRESO A CUENTA POR OPERACIONES CORRIENTES PREVIO";
 		}
 		@Override
-		public FiscalActivityInfoKeyType getType() {
+		public ModuleInfoType getType() {
 			return VAT_INFO;
 		}
 	} 
@@ -1338,17 +1338,17 @@ public enum FiscalActivityInfoKey implements Serializable {
 	public boolean isChoice() {
 		return getOptions() != null && getOptions().length > 0;
 	}
-	public boolean accept(Epigraph epigraph,FiscalActivity fa) {
-		return  getType() == FiscalActivityInfoKeyType.INFO 
-			|| (epigraph.hasIRPFModules() && getType() == FiscalActivityInfoKeyType.IRPF_INFO)
-			|| (epigraph.hasIRPFModules() && getType() == FiscalActivityInfoKeyType.IRPF_MODULE)
-			|| (epigraph.hasVATModules() && getType() == FiscalActivityInfoKeyType.VAT_INFO)
-			|| (epigraph.hasVATModules() && getType() == FiscalActivityInfoKeyType.VAT_MODULE);
+	public boolean accept(Epigraph epigraph) {
+		return  getType() == ModuleInfoType.INFO 
+			|| (epigraph.hasIRPFModules() && getType() == ModuleInfoType.IRPF_INFO)
+			|| (epigraph.hasIRPFModules() && getType() == ModuleInfoType.IRPF_MODULE)
+			|| (epigraph.hasVATModules() && getType() == ModuleInfoType.VAT_INFO)
+			|| (epigraph.hasVATModules() && getType() == ModuleInfoType.VAT_MODULE);
 	}
 	public String getDefaultValue() {
 		return AonStringUtils.ZERO;
 	}
-	public FiscalActivityInfoKey[] getDetailKeys() {
+	public ModuleInfo[] getDetailKeys() {
 		return null;
 	}
 	public boolean hasDetails() {
@@ -1356,13 +1356,13 @@ public enum FiscalActivityInfoKey implements Serializable {
 	}
 	
 	public abstract String getDescription();
-	public abstract FiscalActivityInfoKeyType getType();
+	public abstract ModuleInfoType getType();
 
 	
-	public static FiscalActivityInfoKey safeValueOf(String value) {
+	public static ModuleInfo safeValueOf(String value) {
 		if (value == null) return null;
 		try {
-			return FiscalActivityInfoKey.valueOf(value);	
+			return ModuleInfo.valueOf(value);	
 		} catch (IllegalArgumentException e) {
 			return null;
 		}

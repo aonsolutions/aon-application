@@ -54,7 +54,7 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.RangeChangeEvent.Handler;
 
-public class Model3032017AEAT extends Model303Base {
+public class Model3032018AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
 	
 	private static class Mod303ActivityProvidesKey implements ProvidesKey<Mod303Activity> {
@@ -81,7 +81,7 @@ public class Model3032017AEAT extends Model303Base {
 	private final static int RESULT_TAB = 4;
 	private final static int LAST_PERIOD_INFORMATION_TAB = 6;
 	
-	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
+	public Model3032018AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -346,7 +346,7 @@ public class Model3032017AEAT extends Model303Base {
 		list.add(new Pair<String, String>("Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G414.shtml"));
 		list.add(new Pair<String, String>("Predeclaraci\u00F3n via AEAT (Papel)"
-				,"https://www2.agenciatributaria.gob.es/wlpl/A303-PW17/index.zul?EDFI"));
+				,"https://www2.agenciatributaria.gob.es/wlpl/A303-PW18/index.zul?EDFI"));
 		return list;
 	}
 	
@@ -359,6 +359,13 @@ public class Model3032017AEAT extends Model303Base {
 		
 		paintCheck(Mod303Key.CM_002,table);	// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
 		
+		final ListBox a12 = new ListBox();
+		a12.setWidth("150px");
+		a12.addItem("(0) Para el mes de enero (01)", "0");
+		a12.addItem("(1) SI", "1");
+		a12.addItem("(2) NO", "2");
+		paintListBox(a12, Mod303Key.CT_A12, table);
+
 		paintA02(Mod303Key.CT_A02,table,tabPanel);	// ¿Tributa exclusivamente en régimen simplificado?
 		
 		paintCheck(Mod303Key.CT_A03,table);	// ¿Es autoliquidación conjunta?
@@ -455,7 +462,12 @@ public class Model3032017AEAT extends Model303Base {
 		paintCheck(Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
 		paintCheck(Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
 		
-		
+		final ListBox a13 = new ListBox();
+		a13.setWidth("150px");
+		a13.addItem("(0) Para el mes de enero (01)", "0");
+		a13.addItem("(1) SI", "1");
+		a13.addItem("(2) NO", "2");
+		paintListBox(a13, Mod303Key.CT_A13, table);
 		
 		container.add(addGroupPanel("", table));
 		

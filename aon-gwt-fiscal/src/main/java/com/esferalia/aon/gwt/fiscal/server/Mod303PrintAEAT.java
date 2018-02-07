@@ -25,16 +25,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod303 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/Model303PrintAEAT" })
+@WebServlet(name = "Mod303 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model303PrintAEAT" })
 public class Mod303PrintAEAT extends HttpServlet {
+ 	private static final long serialVersionUID = -8391437522744646639L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -44,7 +43,7 @@ public class Mod303PrintAEAT extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod303"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = AonServletUtils.getLoggedUser();
+			String user = req.getParameter("user");
 			Mod303 mod303 = FISCAL.getMod303(domainName, domainId, user,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -75,7 +74,8 @@ public class Mod303PrintAEAT extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 		
-		String urlParameters = "HID=IE73030A" 
+//		String urlParameters = "HID=IE73030A"
+		String urlParameters = "HID=IE83030A"
 				+ "&IDI=ES"
 				+ "&LEV=000000000000"
 				+"&FIC=" + encodedFile

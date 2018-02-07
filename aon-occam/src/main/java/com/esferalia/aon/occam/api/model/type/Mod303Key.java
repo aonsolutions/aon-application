@@ -33,6 +33,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_A09("303-CTA09",false,null,"Opci\u00F3n por la aplicaci\u00F3n de la prorrata especial (art\u00EDculo 103.Dos.1\u00BA LIVA)")
 	,CT_A10("303-CTA10",false,null,"Revocaci\u00F3n de la opci\u00F3n por la aplicaci\u00F3n de la prorrata especial (art\u00EDculo 103.Dos.1\u00BA LIVA)")
 	,CT_A11("303-CTA11",false,null,"Exonerados de la declaraci\u00F3n-resumen anual del IVA, modelo 390: \u00BFExiste volumen de operaciones (art. 121 LIVA)?")
+	,CT_A12("303-CTA12",false,null,"Sujeto pasivo que tributa exclusivamente a una Administraci\u00F3n tributaria Foral con IVA a la importaci\u00F3n liquidado por la Aduana pendiente de ingreso")
+	,CT_A13("303-CTA13",false,null,"\u00BFHa llevado voluntariamente los Libros registro del IVA a trav\u00E9s de la Sede electr\u00F3nica de la AEAT durante el ejercicio?")
 	
 	,CT_C01("303-CTC01",true ,"1","R\u00E9gimen general - Base imponible")
 	,CT_C02("303-CTC02",false,"2","R\u00E9gimen general - Tipo %")

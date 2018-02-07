@@ -151,6 +151,7 @@ public class Model3032017GIPUZKOA extends Model303Base {
 		formFlowPanel.add(mod303Hidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
 		formContainer.add(diskForm);
 		panel.add(formContainer);
 		

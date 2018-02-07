@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
@@ -417,6 +418,10 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			@Override
 			public void onChange(ChangeEvent event) {
 				act.setLor(lor.getSelectedIndex());
+				red.setEnabled(lor.getSelectedIndex() != 1);
+				if (lor.getSelectedIndex() != 1) {
+					red.setValue(0.0, true);	
+				}
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
 			}
 		});
@@ -518,7 +523,8 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 		table.setWidth("100%");
 		table.addStyleName(AON.AON_CSS.aonMarginBottom());
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().setWidth(1, "150px");
+		table.getColumnFormatter().setWidth(1, "20px");
+		table.getColumnFormatter().setWidth(2, "150px");
 		
 		int row = 0;
 		
@@ -526,11 +532,12 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 		table.setWidget(row, 0, new Label(AON.MSG.page6C()));
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.setWidget(row, 1, dev);
+		table.setWidget(row, 1, new BoxLabel("C"));
+		table.setWidget(row, 2, dev);
 		++row;
 		
+		red.setEnabled(act.getLor() != 1);
 		red.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				if (red.getValue() == null) red.setValue(0.0,false);
@@ -541,7 +548,8 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 		table.setWidget(row, 0, new Label(AON.MSG.reductions()));
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		table.setWidget(row, 1, red);
+		table.setWidget(row, 1, new BoxLabel("D"));
+		table.setWidget(row, 2, red);
 		++row;
 		
 		if (!lastPeriod) {
@@ -549,21 +557,24 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			table.setWidget(row, 0, new Label(AON.MSG.tempIndex()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, ind);
+			table.setWidget(row, 1, new BoxLabel("Z"));
+			table.setWidget(row, 2, ind);
 			++row;
 
 			por.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.incomePercent()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, por);
+			table.setWidget(row, 1, new BoxLabel("E"));
+			table.setWidget(row, 2, por);
 			++row;
 
 			ing.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.income()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, ing);
+			table.setWidget(row, 1, new BoxLabel("F"));
+			table.setWidget(row, 2, ing);
 			++row;
 		} else {
 			sopx.setEnabled(false);
@@ -571,7 +582,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			table.setWidget(row, 0, new Label(AON.MSG.devQuota1()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, sopx);
+			table.setWidget(row, 2, sopx);
 			++row;
 			
 			
@@ -588,35 +599,39 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			table.setWidget(row, 0, new Label(AON.MSG.sopQuotaRest()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, sopy);
+			table.setWidget(row, 2, sopy);
 			++row;
 			
 			sop.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.page6D()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, sop);
+			table.setWidget(row, 1, new BoxLabel("G"));
+			table.setWidget(row, 2, sop);
 			++row;
 			
 			ict.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.tempIndex()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, ict);
+			table.setWidget(row, 1, new BoxLabel("H"));
+			table.setWidget(row, 2, ict);
 			++row;
 
 			res.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.result()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, res);
+			table.setWidget(row, 1, new BoxLabel("I"));
+			table.setWidget(row, 2, res);
 			++row;
 			
 			pcm.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.page6G()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, pcm);
+			table.setWidget(row, 1, new BoxLabel("J"));
+			table.setWidget(row, 2, pcm);
 			++row;
 
 			dvc.addValueChangeHandler(new ValueChangeHandler<Double>() {
@@ -631,21 +646,24 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			table.setWidget(row, 0, new Label(AON.MSG.page6H()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, dvc);
+			table.setWidget(row, 1, new BoxLabel("K"));
+			table.setWidget(row, 2, dvc);
 			++row;
 			
 			cmn.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.page6I()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, cmn);
+			table.setWidget(row, 1, new BoxLabel("L"));
+			table.setWidget(row, 2, cmn);
 			++row;
 
 			cad.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.yearSimplifiedQuota()));
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.setWidget(row, 1, cad);
+			table.setWidget(row, 1, new BoxLabel("M"));
+			table.setWidget(row, 2, cad);
 			++row;
 		}
 		return table;

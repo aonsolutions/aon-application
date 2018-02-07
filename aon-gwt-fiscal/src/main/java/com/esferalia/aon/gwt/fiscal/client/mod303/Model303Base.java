@@ -68,32 +68,56 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		public Model303BaseCallback(IModel303Callback callback) {
 			this.callback = callback;
 		} 
-
+		@Override
 		public void onAccept(Mod303 mod303) {
 			this.callback.onAccept(mod303);
 		}
+		@Override
 		public void onCancel() {
 			this.callback.onCancel();
 		}
+		@Override
 		public void onNew() {
 			this.callback.onNew();
 		}
+		@Override
 		public void showBreakdownPanel(String htmlText) {
 			this.callback.showBreakdownPanel(htmlText);
 		}
+		@Override
 		public void cleanBreakdownPanel() {
 			this.callback.cleanBreakdownPanel();
 		}
+		@Override
 		public void cleanErrorPanel() {
 			this.callback.cleanErrorPanel();
 		}
+		@Override
 		public void showError(String msg) {
 			this.callback.showError(msg);
 		}
+		@Override
+		public String getDomainName() {
+			return this.callback.getDomainName();
+		}
+		@Override
+		public String getUser() {
+			return this.callback.getUser();
+		}
+
+		@Override
+		public int getDomain() {
+			return this.callback.getDomain();
+		}
+
+		@Override
+		public void onTransfer() {
+			this.callback.onTransfer();
+		}
 	};
 
-	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/Model303File";
-	private static final String MODEL303_PRINT = "/aon_gwt_fiscal/Model303Print";
+	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/ms/Model303File";
+	private static final String MODEL303_PRINT = "/aon_gwt_fiscal/ms/Model303Print";
 
 	protected static final boolean ENABLED = true;
 	protected static final boolean DISABLED = false;
@@ -131,11 +155,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected Hidden mod303Hidden = new Hidden("mod303");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
+	protected Hidden userHidden = new Hidden("user");
 
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model303.fiscalService.mathExpression(expression,callback);
+			Model303.SERVICE.mathExpression(expression,callback);
 		}
 	};
 	
@@ -473,7 +498,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						mod303.setComments(event.getValue());
 						styleCommentsButton();
-						Model303.mod303Service.saveComments(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
+						Model303.SERVICE.saveComments( callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 							@Override
 							public void onSuccess(Mod303 result) {
 								toast.hide();
@@ -782,7 +807,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					Model303.mod303Service.getInfo(Model303.getCurrentDomainName(),Model303.getCurrentDomain(),
+					Model303.SERVICE.getInfo(callback.getDomainName(), callback.getUser(), callback.getDomain(),
 							mod303,script, infoKey,new AsyncCallback<String>() {
 
 								@Override
@@ -815,7 +840,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	public void calculateAndRefresh(AsyncCallback<Mod303> cbk) {
-		Model303.mod303Service.calculate(Model303.getCurrentDomainName(),this.mod303,
+		Model303.SERVICE.calculate(callback.getDomainName(), callback.getUser(), this.mod303,
 				new AsyncCallback<Mod303>() {
 
 					@Override
@@ -896,7 +921,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.mod303Service.save(Model303.getCurrentDomainName(), this.mod303, new AsyncCallback<Mod303>() {
+		Model303.SERVICE.save(callback.getDomainName(), callback.getUser(), this.mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -921,7 +946,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 			@Override
 			public void onAccept() {
-				Model303.mod303Service.delete(Model303.getCurrentDomainName(),mod303, new AsyncCallback<Void>() {
+				Model303.SERVICE.delete(callback.getDomainName(), callback.getUser(),mod303, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						deleteButton.setEnabled(true);
@@ -946,7 +971,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private void onFinalize() {
 		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
-		Model303.mod303Service.initializeForFinish(Model303.getCurrentDomainName(),mod303,
+		Model303.SERVICE.initializeForFinish(callback.getDomainName(), callback.getUser(),mod303,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
@@ -987,7 +1012,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.mod303Service.markAsFinished(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
+		Model303.SERVICE.markAsFinished(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -1014,7 +1039,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.mod303Service.markAsPending(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
+		Model303.SERVICE.markAsPending(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -1035,7 +1060,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private void markAsSent() {
 		markAsSentButton.setEnabled(false);
 		callback.cleanErrorPanel();
-		Model303.mod303Service.markAsSent(Model303.getCurrentDomainName(), mod303, new AsyncCallback<Mod303>() {
+		Model303.SERVICE.markAsSent(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -1196,8 +1221,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
-		domainIdHidden.setValue(String.valueOf(Model303.getCurrentDomain()));
-		domainNameHidden.setValue(Model303.getCurrentDomainName());
+		domainIdHidden.setValue(String.valueOf(callback.getDomain()));
+		domainNameHidden.setValue(callback.getDomainName());
+		userHidden.setValue(callback.getUser());
 		diskForm.submit();
 	}
 

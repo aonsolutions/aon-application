@@ -21,7 +21,7 @@ import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class AEAT_2017_Declaration extends Mod303Declaration {
+public class AEAT_2018_Declaration extends Mod303Declaration {
 
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -32,7 +32,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		void populate(Mod303 mod);
 	}
 
-	protected AEAT_2017_Declaration() {
+	protected AEAT_2018_Declaration() {
 		
 	}
 	public static final double PERCENT1 = 4.0;
@@ -43,7 +43,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAEAT() && mod.getYear() < 2018;
+		return  mod.isAEAT() && mod.getYear() >= 2018;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -73,6 +73,8 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_A09(Mod303Key.CT_A09)
 		,CT_A10(Mod303Key.CT_A10)
 		,CT_A11(Mod303Key.CT_A11)
+		,CT_A12(Mod303Key.CT_A12,null,null,(ctx,mod) -> add(Mod303Key.CT_A12,mod,2),null,null,null,null,true)
+		,CT_A13(Mod303Key.CT_A13,null,null,(ctx,mod) -> add(Mod303Key.CT_A13,mod,2),null,null,null,null,true)
 		
 		// ---------------------------------------------------------
 		// ----------------------------------------- REGIMEN GENERAL

@@ -7,9 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.google.gwt.core.client.GWT;
@@ -40,8 +37,7 @@ public class Model303 extends MainEntryPoint {
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int INFORMATION_TAB = 1;
 
-	protected static FiscalServiceAsync fiscalService;
-	protected static Mod303ServiceAsync mod303Service;
+	protected static Mod303ServiceAsync SERVICE;
 	
 	interface Model303Binder extends UiBinder<Widget, Model303> {
 	}
@@ -68,7 +64,10 @@ public class Model303 extends MainEntryPoint {
 	Model303Table model303Table;
 
 	protected interface IModel303Callback {
-
+		public String getDomainName();
+		public String getUser();
+		public int getDomain();
+		
 		public void onAccept(Mod303 mod303);
 		public void onCancel();
 		public void onNew();
@@ -76,34 +75,54 @@ public class Model303 extends MainEntryPoint {
 		public void cleanBreakdownPanel();
 		public void cleanErrorPanel();
 		public void showError(String msg);
-
+		public void onTransfer();
 	};
 
 	protected class Model303Callback implements IModel303Callback{
 
+		@Override
 		public void onAccept(Mod303 mod303) {
 			// REDEFINE
 		}
+		@Override
 		public void onCancel() {
 			cancel();
 		}
+		@Override
 		public void onNew() {
 			Model303.this.onNew();
 		}
+		@Override
 		public void showBreakdownPanel(String htmlText) {
 			Model303.this.showBreakdownPanel(htmlText);
 		}
+		@Override
 		public void cleanBreakdownPanel() {
 			Model303.this.cleanBreakdownPanel();
 		}
+		@Override
 		public void cleanErrorPanel() {
 			Model303.this.cleanErrorPanel();
 		}
+		@Override
 		public void showError(String msg) {
 			Model303.this.showErrorPanel(msg);
 		}
+		@Override
 		public void onTransfer() {
 			Model303.this.onTransfer();
+		}
+		@Override
+		public String getDomainName() {
+			return getCurrentDomainName();
+		}
+		@Override
+		public String getUser() {
+			return getCurrentUser();
+		}
+		@Override
+		public int getDomain() {
+			return getCurrentDomain();
 		}
 
 	};
@@ -113,11 +132,8 @@ public class Model303 extends MainEntryPoint {
 	public void onModuleLoad() {
 		AON.ensureInjected();
 
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-
 		Mod303ServiceAsync mod303ServiceRaw = GWT.create(Mod303Service.class);
-		mod303Service = new Mod303ServiceAsyncDecorator(mod303ServiceRaw);
+		SERVICE = new Mod303ServiceAsyncDecorator(mod303ServiceRaw);
 
 		Widget ui = MODEL_303_BINDER.createAndBindUi(this);
 
@@ -147,19 +163,9 @@ public class Model303 extends MainEntryPoint {
 		root.add(ui);
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
 	private void onSelectionChange(SelectionEvent<Mod303> event) {
 		Mod303 sel = event.getSelectedItem();
-		mod303Service.getMod303(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				sel.getId(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 selected) {
@@ -180,7 +186,11 @@ public class Model303 extends MainEntryPoint {
 	private void select(Mod303 selected) {
 		cleanErrorPanel();
 		if (selected.isAEAT()) {
-			declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback()));
+			if (selected.getYear() < 2018) {
+				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback()));
+			} else {
+				declarationContainer.setWidget( new Model3032018AEAT(selected,new Model303Callback()));
+			}
 		} else if (selected.isBizkaia()) {
 			if (selected.getYear() < 2017) {
 				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));	
@@ -271,7 +281,7 @@ public class Model303 extends MainEntryPoint {
 			@Override
 			public void onClick(ClickEvent event) {
 				acceptButton.setEnabled(false);
-				mod303Service.importMod303(getCurrentDomainName(),getCurrentDomain(),
+				SERVICE.importMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 						new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void v) {
@@ -311,7 +321,7 @@ public class Model303 extends MainEntryPoint {
 
 	private void onNew() {
 		cleanErrorPanel();
-		mod303Service.initialize(getCurrentDomainName(),getCurrentDomain(),null,
+		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 m303) {
@@ -341,7 +351,7 @@ public class Model303 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						mod303Service.create(getCurrentDomainName(),getCurrentDomain(),mod303,
+						SERVICE.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
 								new AsyncCallback<Mod303>() {
 									@Override
 									public void onSuccess(Mod303 m303) {

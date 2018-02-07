@@ -70,7 +70,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			@Override
 			public void onChange(ChangeEvent event) {
 				mod303.setAdministration( admonList.getValue() );
-				Model303.mod303Service.declarationChanged(Model303.getCurrentDomainName(),Model303.getCurrentDomain(),mod303,
+				Model303.SERVICE.declarationChanged(callback.getDomainName(), callback.getUser(), callback.getDomain(),mod303,
 						new AsyncCallback<Mod303>() {
 							@Override
 							public void onSuccess(Mod303 result) {

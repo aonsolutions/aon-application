@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.IModel303Callback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
@@ -44,10 +44,10 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class FinishDeclarationPopup extends CustomDialog {
 	
-	static CommonServiceAsync commonService;
+	static FiscalMSServiceAsync SERVICE;
 	static {
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+		FiscalMSServiceAsync serviceRaw = GWT.create(FiscalMSService.class);
+		SERVICE = new FiscalMSServiceAsyncDecorator(serviceRaw);
 	}
 	
 	public static interface FinishDeclarationPopupCallback {
@@ -235,7 +235,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 		@Override
 		public void requestSuggestions(final Request request,
 				final Callback callback) {
-			commonService.getCompanyBanks (Model303.getCurrentDomainName(),Model303.getCurrentDomain(), 
+			SERVICE.getCompanyBanks (modelCallback.getDomainName(),modelCallback.getUser(),modelCallback.getDomain(), 
 					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {

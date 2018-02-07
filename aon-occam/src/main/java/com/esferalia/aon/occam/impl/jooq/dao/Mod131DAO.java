@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,10 +11,6 @@ import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -25,14 +20,12 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -1859,23 +1852,21 @@ public class Mod131DAO extends FiscalModelDAO {
 				detail.setExpression(key.getExpression());
 			}
 		}
-		mod.setActivities(
-				FiscalActivityDAO.getActivities(ctx, mod.getDomain())
-				.filter( fa -> fa.getYear() == mod.getYear() )
-				.map( new Mod131ActivityFiller() )
-				.filter( act -> act != null )
-				.peek( act -> act
-						.setYear(mod.getYear())
-						.setPeriod(mod.getPeriod())
-						.setDia((int) (AonDateUtils.getDaysBetweenDates(
-								 FiscalUtils.getPeriodStart(mod)
-								,FiscalUtils.getPeriodEnd(mod)) + 1))
-					)
-				.collect(Collectors.toCollection(LinkedList::new))
-			);
-		if (mod.getActivities() == null) {
-			mod.setActivities(new LinkedList<Mod131Activity>() ); 	
+		FiscalModel previousModel = getMod131s(ctx, mod.getDomain())
+			.findFirst()
+			.orElse(null);
+		mod.setActivities(new LinkedList<Mod131Activity>() );
+		if (previousModel != null) {
+			Mod131 previous = (Mod131) previousModel;
+			for (Mod131Activity prevAct : previous.getActivities()) {
+				if (previousModel.getYear() != mod.getYear()) {
+					// Chequear si los módulos han cambiado.
+					// TODO
+				}
+				mod.getActivities().add(prevAct);
+			}
 		}
+		
 		for (int i = 0 ; i < 5 ; i++) {
 			if (i >= mod.getActivities().size()) {
 				mod.getActivities().add(new Mod131Activity()
@@ -2002,85 +1993,5 @@ public class Mod131DAO extends FiscalModelDAO {
 		return mod;
 	}
 	
-	
-	private static class Mod131ActivityFiller implements Function<FiscalActivity, Mod131Activity> {
-		@Override
-		public Mod131Activity apply(FiscalActivity fa) {
-			if (!fa.hasIRPFModules()) return null;
-			String epi1 = AonStringUtils.trim(AonStringUtils.substringBefore(
-					 fa.getEpigraph(),AonStringUtils.HYPHEN));
-			Epigraph epigraph = Epigraph.getEpigraph(epi1);
-			Mod131Activity act = new Mod131Activity()
-					.setEpi( epigraph )
-					.setEpigraph( epigraph == null?fa.getEpigraph():epigraph.getEpigraph())
-					.setDescription(epigraph == null?fa.getDescription():epigraph.getDescription())
-					.setMaxImport(epigraph == null?Double.MAX_VALUE:epigraph.getLimExceso())
-					.setDis( fa.getDoubleValue(FiscalActivityInfoKey.A13) == 1)
-					.setCom( fa.getDoubleValue(FiscalActivityInfoKey.A02))
-					.setTem( (int) fa.getDoubleValue(FiscalActivityInfoKey.A03))
-					.setNue( (int) fa.getDoubleValue(FiscalActivityInfoKey.A04))
-					.setCeu( fa.getDoubleValue(FiscalActivityInfoKey.A05) == 1)
-					.setLoc( fa.getDoubleValue(FiscalActivityInfoKey.A06) == 1)
-					.setVeh( (int) fa.getDoubleValue(FiscalActivityInfoKey.A07))
-					.setCap( fa.getDoubleValue(FiscalActivityInfoKey.A08) == 1)
-					.setBat( (int) fa.getDoubleValue(FiscalActivityInfoKey.B06))
-					.setTns( fa.getDoubleValue(FiscalActivityInfoKey.C10) == 1)
-					.setTss( fa.getDoubleValue(FiscalActivityInfoKey.C11) == 1)
-					.setMun( (int) fa.getDoubleValue(FiscalActivityInfoKey.A09))
-					.setEmp( (int) (int) fa.getDoubleValue(FiscalActivityInfoKey.A10))
-					.setLor( (int) fa.getDoubleValue(FiscalActivityInfoKey.A11))
-					.setRnp( fa.getDoubleValue(FiscalActivityInfoKey.I01))
-					.setIem( fa.getDoubleValue(FiscalActivityInfoKey.I02))
-					.setIin( fa.getDoubleValue(FiscalActivityInfoKey.I03))
-					.setRnm( fa.getDoubleValue(FiscalActivityInfoKey.I04))
-					.setIc1( fa.getDoubleValue(FiscalActivityInfoKey.I06))
-					.setIc2( fa.getDoubleValue(FiscalActivityInfoKey.I07))
-					.setIc3( fa.getDoubleValue(FiscalActivityInfoKey.I08))
-					.setIc4( fa.getDoubleValue(FiscalActivityInfoKey.I09))
-					.setIc5( fa.getDoubleValue(FiscalActivityInfoKey.I10))
-					.setRpf( fa.getDoubleValue(FiscalActivityInfoKey.I11))
-					.setRlo( fa.getDoubleValue(FiscalActivityInfoKey.I12))
-					.setRdr( fa.getDoubleValue(FiscalActivityInfoKey.I13))
-					.setPor( fa.getDoubleValue(FiscalActivityInfoKey.I14))
-					.setNet( fa.getDoubleValue(FiscalActivityInfoKey.I13))
-					.setPrc( fa.getDoubleValue(FiscalActivityInfoKey.I14))
-					.setRes( fa.getDoubleValue(FiscalActivityInfoKey.I15))
-			;
-			act.setModules(new LinkedList<Mod131ActivityModule>());
-			for (FiscalActivityInfo info : fa.getMap().get(FiscalActivityInfoKeyType.IRPF_MODULE.ordinal()).values()) {
-				Mod131ActivityModule module = new Mod131ActivityModule()
-						.setDescription(info.getInfoKey().getDescription())
-						.setValue( AonNumberUtils.todouble( info.getValue()) )
-						.setUnit( info.getUnit() ) 
-						.setFactor( info.getFactor() )
-						.setResult( info.getBase() )
-						.setSalariedStaff(false)
-						.setNoSalariedStaff(false);
-				// PERSONAL Asalariado.
-				if (info.getInfoKey() == FiscalActivityInfoKey.M01) {
-					module.setSalariedStaff(true);
-					module.setMay19Hours(fa.getDoubleValue(FiscalActivityInfoKey.M011));
-					module.setMen19Hours(fa.getDoubleValue(FiscalActivityInfoKey.M012)); 	
-					module.setDisHours(fa.getDoubleValue(FiscalActivityInfoKey.M013)); 		
-					module.setYearHours(fa.getDoubleValue(FiscalActivityInfoKey.M014));
-				} else if (info.getInfoKey() == FiscalActivityInfoKey.M02) {
-					module.setNoSalariedStaff(true);
-					module.setOwnerHours(fa.getDoubleValue(FiscalActivityInfoKey.M021)); 		
-					module.setSpouseHours(fa.getDoubleValue(FiscalActivityInfoKey.M022));
-					module.setSpouseDis(AonMathUtils.isNotZero(fa.getDoubleValue(FiscalActivityInfoKey.M023)));
-					module.setChildMen18Hours(fa.getDoubleValue(FiscalActivityInfoKey.M024)); 
-					module.setChildDisHours(fa.getDoubleValue(FiscalActivityInfoKey.M025)); 	
-				} else if (info.getInfoKey() == FiscalActivityInfoKey.M15) {
-					module.setSalariedStaff(true);
-				} else if (info.getInfoKey() == FiscalActivityInfoKey.M16) {
-					module.setSalariedStaff(true);
-				}
-				act.getModules().add( module );
-			}
-			return act;
-		}
-	}
-
-
 	// --------------------------------------------------- KEY INTITIALIZATION
 }

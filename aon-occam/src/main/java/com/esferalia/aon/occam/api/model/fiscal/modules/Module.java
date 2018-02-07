@@ -2,18 +2,16 @@ package com.esferalia.aon.occam.api.model.fiscal.modules;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
-
 public class Module implements Serializable {
 
 	private static final long serialVersionUID = 2899951335919767090L;
 	
 	private int line;
-	private FiscalActivityInfoKey key;
+	private ModuleInfo key;
 	private String unit;
 	private double amount;
 
-	public Module(int line, FiscalActivityInfoKey key, String unit, double amount) {
+	public Module(int line, ModuleInfo key, String unit, double amount) {
 		this.line = line;
 		this.key = key;
 		this.unit = unit;
@@ -24,7 +22,7 @@ public class Module implements Serializable {
 		return line;
 	}
 
-	public FiscalActivityInfoKey getKey() {
+	public ModuleInfo getKey() {
 		return key;
 	}
 
@@ -37,11 +35,11 @@ public class Module implements Serializable {
 	}
 	
 	public boolean isSalariedStaff() {
-		return getKey() == FiscalActivityInfoKey.M01
-			|| getKey() == FiscalActivityInfoKey.M15
-			|| getKey() == FiscalActivityInfoKey.M16;
+		return getKey() == ModuleInfo.M01
+			|| getKey() == ModuleInfo.M15
+			|| getKey() == ModuleInfo.M16;
 	}
 	public boolean isNoSalariedStaff() {
-		return getKey() == FiscalActivityInfoKey.M02;
+		return getKey() == ModuleInfo.M02;
 	}
 }

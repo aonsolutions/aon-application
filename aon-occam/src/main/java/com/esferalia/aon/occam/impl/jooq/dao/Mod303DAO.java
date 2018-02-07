@@ -222,7 +222,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		if (dec.hasSimplifiedRegime()) {
 			dec.initializeSimplifiedRegime(ctx, mod303);
 		}
-
+		
 		// Primera inicialización.		
 		for (IMod303KeyDAO key : dec.getKeys()) {
 			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
@@ -233,7 +233,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		// INTIALIZATION VIA BREAKDOWN		
 		Mod303DAO.getVatBreakdown(ctx,mod303)
 			.forEach( vat -> dec.initialize(ctx, mod303, vat) );
-		
+
 		if (!mod303.isDiffCalculationDisabled()) {
 			getModelsForDiference(ctx, mod303)
 //			getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
@@ -262,7 +262,6 @@ public class Mod303DAO extends FiscalModelDAO {
 				det.setAccumulatedAmount(AonMathUtils.round(det.getAccumulatedAmount() * mod303.getProratePercent() / 100));
 			}
 		}
-
 		for (FiscalModelDetail detail : mod303.getMap().values()) {
 			IMod303KeyDAO key = dec.safeValueOf(mod303, detail.getType());
 			if (key != null && key.getKey().isDiffEnabled()) {
