@@ -324,11 +324,9 @@ public class ReposServlet extends HttpServlet{
 					Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) != null ?
 							AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
 						
-					Registry registry = new Registry();
 					Customer customer = new Customer();
 					
 					if(!faq) {
-						registry = AON.getRegistryFD(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
 						customer = AON.getCustomer(domain.getName(), domain.getId(), userName, f-> f.getDomainProperty().eq(domain.getId())
 								.and(f.getNameProperty().eq(json.getString(MSG.ENTERPRISE))));
 					}
@@ -354,7 +352,7 @@ public class ReposServlet extends HttpServlet{
 					Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
 					Boolean principal = DB.isPrincipal(domain, userName, task);
 					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(),
-							registry, principal, url).toJSON();
+							customer, principal, url).toJSON();
 				}
 				break;
 			case MSG.TAG:
