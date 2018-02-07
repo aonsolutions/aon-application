@@ -11,10 +11,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Warehouse extends Methods{
 
-	public Warehouse(String url, String accesToken, String domainName, String userName) {
+	public Warehouse(String url, String accesToken, String domainName, Integer domainId, String userName) {
 		this.url = url;
 		this.accessToken = accesToken;
 		this.domainName = domainName;
+		this.domainId = domainId;
 		this.userName = userName;
 		this.scheme = url.contains("https") ? "https" : "http";
 	}

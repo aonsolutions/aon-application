@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-30T14:09:03 -->
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sales" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="07319e62-1473-4e6e-8b2f-6f4fb8544c3b">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -39,6 +38,7 @@
 	<field name="bic" class="java.lang.String"/>
 	<field name="numberOfPayments" class="java.lang.Integer"/>
 	<field name="issueDate" class="java.util.Date"/>
+	<field name="deliveryDate" class="java.util.Date"/>
 	<field name="scope" class="com.code.aon.config.Scope"/>
 	<field name="workPlace" class="com.code.aon.company.WorkPlace"/>
 	<field name="securityLevel" class="com.code.aon.common.enumeration.SecurityLevel"/>
@@ -164,20 +164,11 @@
 			<elementGroup/>
 			<elementGroup>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-74" x="396" y="50" width="59" height="13" isRemoveLineWhenBlank="true" uuid="e43189c2-2a9c-4d4b-8350-da017971ff5a"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-73" x="396" y="37" width="59" height="13" uuid="01b0166c-b65d-4ab9-8e5e-d2d945deb9bf"/>
+					<reportElement key="textField-73" x="353" y="30" width="65" height="13" uuid="01b0166c-b65d-4ab9-8e5e-d2d945deb9bf">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -190,7 +181,11 @@
 					<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-					<reportElement key="textField-77" x="455" y="50" width="80" height="13" isRemoveLineWhenBlank="true" uuid="56f026f6-e817-4dda-a1c4-0e63b77d84fc"/>
+					<reportElement key="textField-77" x="418" y="43" width="117" height="13" isRemoveLineWhenBlank="true" uuid="56f026f6-e817-4dda-a1c4-0e63b77d84fc">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -203,7 +198,10 @@
 					<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField-76" x="455" y="37" width="80" height="13" uuid="eba5b9d4-9c27-46da-98d5-3fb7b68b54a8"/>
+					<reportElement key="textField-76" x="418" y="30" width="117" height="13" uuid="eba5b9d4-9c27-46da-98d5-3fb7b68b54a8">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -315,7 +313,58 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-74" x="396" y="63" width="59" height="13" isRemoveLineWhenBlank="true" uuid="d0efde26-ff46-4346-ab46-47008558289e">
+				<reportElement key="textField-74" positionType="FixRelativeToBottom" x="353" y="56" width="65" height="13" isRemoveLineWhenBlank="true" uuid="d0efde26-ff46-4346-ab46-47008558289e">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Entrega:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-77" x="418" y="56" width="117" height="13" isRemoveLineWhenBlank="true" uuid="aab87056-f005-4932-bff1-7f23ad9c653a">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deliveryDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-74" x="353" y="43" width="65" height="13" isRemoveLineWhenBlank="true" uuid="e43189c2-2a9c-4d4b-8350-da017971ff5a">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-74" x="353" y="69" width="65" height="13" isRemoveLineWhenBlank="true" uuid="c7a7558a-593e-4222-9120-77a306e2ff31">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{purchaseReference}!=null && !$F{purchaseReference}.equals("")]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -329,8 +378,11 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{sales_purchase_reference} + ":"]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-77" x="455" y="63" width="80" height="13" isRemoveLineWhenBlank="true" uuid="aab87056-f005-4932-bff1-7f23ad9c653a">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-77" x="418" y="69" width="117" height="13" isRemoveLineWhenBlank="true" uuid="a2af6c49-2cf8-4f88-ad63-f191a5650511">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{purchaseReference}!=null && !$F{purchaseReference}.equals("")]]></printWhenExpression>
 				</reportElement>
 				<box>

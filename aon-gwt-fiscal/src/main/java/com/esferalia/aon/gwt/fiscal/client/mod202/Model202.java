@@ -13,9 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
@@ -74,7 +71,6 @@ public class Model202 extends MainEntryPoint {
 	final static int NOTIFICATIONS_TAB = 0;
 	final static int INFORMATION_TAB = 1;
 
-	static FiscalServiceAsync FISCAL_SERVICE;
 	static Mod202ServiceAsync SERVICE;
 	
 	interface Model202Binder extends UiBinder<Widget, Model202> {
@@ -82,9 +78,9 @@ public class Model202 extends MainEntryPoint {
 	private static final Model202Binder MODEL_202_BINDER = GWT
 			.create(Model202Binder.class);
 	
-	private static final String MODEL202_PRINT = "/aon_gwt_fiscal/Model202Print";
-	private static final String MODEL202_FILE = "/aon_gwt_fiscal/Model202File";
-	private static final String MODEL202_PRINT_AEAT = "/aon_gwt_fiscal/Model202PrintAEAT";
+	private static final String MODEL202_PRINT = "/aon_gwt_fiscal/ms/Model202Print";
+	private static final String MODEL202_FILE = "/aon_gwt_fiscal/ms/Model202File";
+//	private static final String MODEL202_PRINT_AEAT = "/aon_gwt_fiscal/ms/Model202PrintAEAT";
 
 	public static interface IMod202Declaration extends IsWidget {
 		LinkedList<Pair<String, String>> getInformationLinks();
@@ -119,8 +115,6 @@ public class Model202 extends MainEntryPoint {
 
 	@UiField(provided = true)
 	FiscalModelTable<Mod202> table;
-
-	private int domain;
 
 	@UiField
 	Button saveButton;
@@ -183,6 +177,7 @@ public class Model202 extends MainEntryPoint {
 	Hidden mod202Hidden;
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
+	Hidden userHidden;
 	
 	private abstract class FiscalModelCallback implements IFiscalModelCallback<Mod202> {
 		
@@ -246,9 +241,6 @@ public class Model202 extends MainEntryPoint {
 	public void onModuleLoad() {
 		AON.ensureInjected();
 
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-
 		Mod202ServiceAsync serviceRaw = GWT.create(Mod202Service.class);
 		SERVICE = new Mod202ServiceAsyncDecorator(serviceRaw);
 
@@ -278,6 +270,8 @@ public class Model202 extends MainEntryPoint {
 		formFlowPanel.add(domainIdHidden);
 		domainNameHidden = new Hidden("domainName");
 		formFlowPanel.add(domainNameHidden);
+		userHidden = new Hidden("user");
+		formFlowPanel.add(userHidden);
 		formContainer.add(diskForm);
 		
 		replacedNumber.setVisibleLength(13);
@@ -287,22 +281,11 @@ public class Model202 extends MainEntryPoint {
 		root.add(ui);
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
-	
 	class Mod202SelectionHandler implements SelectionChangeEvent.Handler {
 		@Override
 		public void onSelectionChange(SelectionChangeEvent event) {
 			Mod202 sel = table.getSelected();
-			SERVICE.getMod202(getCurrentDomainName(), getCurrentDomain(),
+			SERVICE.getMod202(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 					sel.getId(), new AsyncCallback<Mod202>() {
 						@Override
 						public void onSuccess(Mod202 selected) {
@@ -417,7 +400,6 @@ public class Model202 extends MainEntryPoint {
 		replacedNumber.setEnabled(currentMod.isReplacedNumberAvailable());
 		
 		confidential.setValue(currentMod.isConfidential());
-		domain = currentMod.getDomain();
 		
 		styleCommentsButton();
 		
@@ -489,7 +471,7 @@ public class Model202 extends MainEntryPoint {
 
 	@UiHandler("table")
 	void onTableRangeChange(RangeChangeEvent event) {
-		SERVICE.getMod202s(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod202s(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				new AsyncCallback<LinkedList<Mod202>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod202> result) {
@@ -521,7 +503,7 @@ public class Model202 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.markAsPending(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod202>() {
+		SERVICE.markAsPending(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 result) {
 						select(result);
@@ -542,7 +524,7 @@ public class Model202 extends MainEntryPoint {
 	void markAsSentButtonClick(ClickEvent event) {
 		markAsSentButton.setEnabled(false);
 		cleanErrorMessage();
-		SERVICE.markAsSent(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod202>() {
+		SERVICE.markAsSent(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 result) {
 						select(result);
@@ -561,7 +543,7 @@ public class Model202 extends MainEntryPoint {
 	void markAsFinishedButtonClick(ClickEvent event) {
 		markAsFinishedButton.setEnabled(false);
 		cleanErrorMessage();
-		SERVICE.initializeForFinish(getCurrentDomainName(),currentMod,
+		SERVICE.initializeForFinish(getCurrentDomainName(), getCurrentUser(),currentMod,
 				new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 m202) {
@@ -588,7 +570,7 @@ public class Model202 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.save(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod202>() {
+		SERVICE.save(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 result) {
 						select(result);
@@ -618,7 +600,7 @@ public class Model202 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		SERVICE.markAsFinished(getCurrentDomainName(), this.currentMod, new AsyncCallback<Mod202>() {
+		SERVICE.markAsFinished(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 result) {
 						select(result);
@@ -645,7 +627,7 @@ public class Model202 extends MainEntryPoint {
 
 			@Override
 			public void onAccept() {
-				SERVICE.delete(getCurrentDomainName(),currentMod, new AsyncCallback<Void>() {
+				SERVICE.delete(getCurrentDomainName(), getCurrentUser(),currentMod, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
@@ -672,7 +654,7 @@ public class Model202 extends MainEntryPoint {
 		newButton.setEnabled(false);
 		cleanErrorMessage();
 		
-		SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(),null,
+		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),null,
 				new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 m202) {
@@ -699,7 +681,7 @@ public class Model202 extends MainEntryPoint {
 
 					@Override
 					public void onAccept() {
-						SERVICE.create(getCurrentDomainName(),getCurrentDomain(),currentMod,
+						SERVICE.create(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),currentMod,
 								new AsyncCallback<Mod202>() {
 									@Override
 									public void onSuccess(Mod202 m202) {
@@ -784,7 +766,7 @@ public class Model202 extends MainEntryPoint {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				currentMod.setComments(event.getValue());
 				styleCommentsButton();
-				SERVICE.saveComments(getCurrentDomainName(), currentMod, new AsyncCallback<Mod202>() {
+				SERVICE.saveComments(getCurrentDomainName(), getCurrentUser(), currentMod, new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 result) {
 						toast.hide();
@@ -867,6 +849,7 @@ public class Model202 extends MainEntryPoint {
 		mod202Hidden.setValue(String.valueOf(currentMod.getId()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
+		userHidden.setValue(getCurrentUser());
 		diskForm.submit();
 	}
 

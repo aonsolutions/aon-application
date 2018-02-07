@@ -35,7 +35,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "CommonServlet", urlPatterns = {"/common/*",
-												   "/aon_gwt_aio/common/*"})
+												   "/aon_gwt_aio/common/*",
+												   "/aon_gwt_commercial/common/*"})
 public class CommonServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(CommonServlet.class.getName());
@@ -43,43 +44,45 @@ public class CommonServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Common Servlet - GET METHOD");
+		
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
-		String[] pathInfo = req.getPathInfo().split("/");
-		String userName = pathInfo[2];
-		String domainName = pathInfo[1]; 
-		String md5 = Utils.getMd5(userName+domainName);
+		
+		String domainName = req.getServerName();
+		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
+		String userName = req.getRemoteUser();
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+	
+		String md5 = Utils.getMd5(userName+domain.getName());
+	
+		Object object = new Object();
+		JSONObject meta = new JSONObject();
 		
 		if(accessToken.equals(md5)){
-			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
-			if(pathInfo.length > 3){
-				Object object = new Object();
-				JSONObject meta = new JSONObject();
-				switch (pathInfo[3]) {
-				case MSG.WORKPLACE:
-					object = getWorkplaceList(domain, userName);
-					break;
-				case MSG.MAIL_ACCOUNT: 
-					object = getMailAccountList(domain, userName);
-					break;
-				case MSG.SIGNATURE: 
-					object = getSignatureList(domain, userName);
-					break;
-				case MSG.APP_PARAM: 
-					String param = req.getParameter("param");
-					JSONArray array = new JSONArray();
-					AON.getApplicationParameterStream(domain.getName(), domain.getId(), userName, f -> 
-						f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().like(param+"%")))
-					.forEach(app -> array.put(ToJSON.applicationParameterToJSON(app)));
-					object = array;
-					break;
-				case MSG.DATA_RESPONSE: 
-					object = getDataResponseList(domain, userName, req.getParameterMap());
-					break;
-				default:
-					break;
-				}
-				Utils.giveBack(req, resp, object, meta);
+			switch (req.getPathInfo()) {
+			case "/" + MSG.WORKPLACE:
+				object = getWorkplaceList(domain, userName);
+				break;
+			case "/" + MSG.MAIL_ACCOUNT: 
+				object = getMailAccountList(domain, userName);
+				break;
+			case "/" + MSG.SIGNATURE: 
+				object = getSignatureList(domain, userName);
+				break;
+			case "/" + MSG.APP_PARAM: 
+				String param = req.getParameter("param");
+				JSONArray array = new JSONArray();
+				AON.getApplicationParameterStream(domain.getName(), domain.getId(), userName, f -> 
+					f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().like(param+"%")))
+				.forEach(app -> array.put(ToJSON.applicationParameterToJSON(app)));
+				object = array;
+				break;
+			case "/" + MSG.DATA_RESPONSE: 
+				object = getDataResponseList(domain, userName, req.getParameterMap());
+				break;
+			default:
+				break;
 			}
+			Utils.giveBack(req, resp, object, meta);
 		}
 	}
 	
@@ -125,8 +128,29 @@ public class CommonServlet extends HttpServlet{
 			os.close();
 		}
 	}
+	
+	private JSONArray getDataResponseList2(Domain domain, String login, Map<String,String[]> map) {
+		JSONArray array = new JSONArray();
+		DataResponseSource source1 = DataResponseSource.QUALITY;
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login, source1,
+				f -> map.containsKey("filter2") ? dataResponseFilter2(domain, map, f) : dataResponseFilter(domain, map, f))
+		.sorted((dr1, dr2) -> dr2.getResponseDate().compareTo(dr1.getResponseDate()))
+		.forEach(dr -> {
+			JSONObject json = ToJSON.dataResponseToJSON(dr);
+			JSONArray jsarray = new JSONArray(); 
+			AON.getDataResponseDetailStream(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(dr.getId())).forEach(r -> {
+				jsarray.put(ToJSON.dataResponseDetailToJSON(r));
+			});
+			json.put("detail", jsarray);
+			array.put(json);			
+		});
+		return array;
+	}
 
 	private JSONArray getDataResponseList(Domain domain, String login, Map<String,String[]> map){
+		if(map.containsKey("filter2")) {
+			return getDataResponseList2(domain, login, map);
+		}
 		JSONArray array = new JSONArray();
 		DataResponseSource source1 = DataResponseSource.QUALITY;
 		AON.getDataResponseStream(domain.getName(), domain.getId(), login, source1,
@@ -194,6 +218,66 @@ public class CommonServlet extends HttpServlet{
 			for(Integer i = 1; i < filterMap.get("source").length ; i++){
 				fsourceValue = fsourceValue.or(f.getDetailVariableProperty().eq("source").and(f.getDetailValueProperty().like(filterMap.get("source")[i] + "@%")));
 			}
+			filter = filter.and(fsourceValue);
+		}
+		
+		if(filterMap.containsKey("type")){
+			Filter ftypeValue = f.getDetailVariableProperty().eq("type").and(f.getDetailValueProperty().eq(filterMap.get("type")[0]));				
+			for(Integer i = 1; i < filterMap.get("type").length ; i++){
+				ftypeValue = ftypeValue.or(f.getDetailVariableProperty().eq("type").and(f.getDetailValueProperty().like(filterMap.get("type")[i])));
+			}
+			filter = filter.and(ftypeValue);
+		}
+		if(filterMap.containsKey("per_page")){
+			String per_page = filterMap.get("per_page")[0];
+			Integer perPage = Integer.parseInt(per_page);
+			filter.perPage(perPage);
+		}
+		if(filterMap.containsKey("page")){
+			String page_str = filterMap.get("page")[0];
+			Integer page = Integer.parseInt(page_str);
+			filter.page(page);
+		}
+		return filter;
+	}
+	
+	public static Filter dataResponseFilter2(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey("from")){
+			String from = filterMap.get(MSG.FROM)[0];
+			Date d = new Date(Long.parseLong(from));
+			Filter fDate = f.getIssueDateProperty().ge(AonDateUtils.toSql(d));
+			filter = filter.and(fDate);
+		}
+		
+		if(filterMap.containsKey("to")){
+			String to = filterMap.get(MSG.TO)[0];
+			Date d = new Date(Long.parseLong(to));
+			Filter fDate = f.getIssueDateProperty().le(AonDateUtils.toSql(d));
+			filter = filter.and(fDate);
+		}
+		
+		if(filterMap.containsKey(MSG.NUMBER)){
+			Filter fnumber = f.getNumberProperty().eq(filterMap.get(MSG.NUMBER)[0]);
+			for(Integer i = 1; i < filterMap.get(MSG.NUMBER).length ; i++){
+				fnumber = fnumber.or(f.getNumberProperty().eq(filterMap.get(MSG.NUMBER)[i]));
+			}
+			filter = filter.and(fnumber);
+		} 
+		
+		if(filterMap.containsKey("code")){
+			Filter fcode = f.getNumberProperty().like("%" + filterMap.get("code")[0] + "%");
+			filter = filter.and(fcode);
+		} 
+		
+		if(filterMap.containsKey("source")){
+			Filter fsourceValue = f.getSourceProperty().eq((byte) Integer.parseInt(filterMap.get("source")[0]));	
+			filter = filter.and(fsourceValue);
+		}
+		
+		if(filterMap.containsKey("source_id")){
+			Filter fsourceValue = f.getSourceIdProperty().eq(Integer.parseInt(filterMap.get("source_id")[0]));	
 			filter = filter.and(fsourceValue);
 		}
 		

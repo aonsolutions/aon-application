@@ -31,6 +31,17 @@
 					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="mail" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Notificaciones Enviadas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:ScrollPanel ui:field="notificationPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
+			</g:tab>
+			
 		<!--
 			<g:tab>
 				<g:customHeader>

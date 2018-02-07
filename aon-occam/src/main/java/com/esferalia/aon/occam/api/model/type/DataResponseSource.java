@@ -10,12 +10,12 @@ public enum DataResponseSource implements Serializable{
 	SII,
 	SII_INVOICE,
 	SII_FINANCE,
-	INVOICE_SABBATIC,
+	TEDI_INVOICE,
 	SERES_DELIVERY,
 	SERES_INVOICE,
 	SERES_SALES,
 	INGENET,
-	INGENET_SALES;
+	PACKING_LIST_NOTIFICATION;
 
 
 	public byte value() {

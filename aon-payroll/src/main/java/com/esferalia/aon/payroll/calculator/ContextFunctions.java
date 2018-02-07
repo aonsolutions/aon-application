@@ -32,6 +32,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.FullHideException;
 import com.esferalia.aon.salary.expression.HideException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -91,6 +92,10 @@ public class ContextFunctions {
 
 	public static void hide() throws HideException {
 		throw new HideException();
+	}
+
+	public static void hide(String msg) throws HideException {
+		throw new FullHideException(msg);
 	}
 
 	public static void remove() throws RemoveException {

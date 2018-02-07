@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
@@ -25,7 +26,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "RegistryServlet", urlPatterns = { "/registry/*",
-													  "/aon_gwt_aio/registry/*"})
+													  "/aon_gwt_aio/registry/*",
+													  "/aon_gwt_commercial/registry/*"})
 public class RegistryServlet extends HttpServlet{
 			
 	@Override
@@ -33,12 +35,15 @@ public class RegistryServlet extends HttpServlet{
 		System.out.println("GET METHOD");
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
-		String userName = pathInfo[2];
-		String domainName = pathInfo[1]; 
-		String md5 = Utils.getMd5(userName+domainName);
+
+		String domainName = req.getServerName();
+		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
+		String userName = req.getRemoteUser();
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+		
+		String md5 = Utils.getMd5(userName+domain.getName());
 		
 		if(accessToken.equals(md5)){
-			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 			if(pathInfo.length > 3){
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
@@ -119,6 +124,9 @@ public class RegistryServlet extends HttpServlet{
 					break;
 				case "supplier": // SUPPLIERS - PROVEEDORES
 					object = getSupplierList(domain, userName);
+					break;
+				case "target": // TARGETS
+					object = getTargetList(domain, userName);
 					break;
 				default:
 					break;
@@ -235,6 +243,17 @@ public class RegistryServlet extends HttpServlet{
     			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
    		.forEach(seller -> {
     			array.put(ToJSON.objectToJSON(seller.getId(), seller.getName()));
+    	});
+    	return array;    	
+    }
+    
+    private JSONArray getTargetList(Domain domain, String login){
+    	JSONArray array = new JSONArray();
+    	AON.getTargetStream(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
+   		.forEach(target -> {
+    			array.put(ToJSON.objectToJSON(target.getId(), target.getName()));
     	});
     	return array;    	
     }

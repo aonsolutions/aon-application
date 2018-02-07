@@ -694,6 +694,16 @@ public interface Properties {
 		Property<Integer> getAccountProperty();
 	}
 
+	public interface TargetProperties extends RegistryProperties, AuditProperties{
+		Property<Integer> getTariffProperty();
+		Property<Byte> getAdvertisingProperty();
+		Property<Byte> getSurchargeProperty();
+		Property<Byte> getWithholdingProperty();
+		Property<Byte> getTransactionProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getScopeProperty();
+	}
+
 	public interface PurchaseProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -1030,5 +1040,57 @@ public interface Properties {
 		Property<Double> getActualQuantityProperty();
 		Property<Double> getRealQuantityProperty();
 		Property<Double> getCostProperty();
+	}
+	
+	public interface CommissionProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+	}
+	
+	public interface CommissionTypeCommissionProperties extends CommissionProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getCommissionTypeProperty();
+		Property<Integer> getCommissionProperty();
+	}
+	
+	public interface CommissionItemProperties extends CommissionProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getCommissionProperty();
+		Property<Integer> getItemProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getAmountProperty();
+		Property<Double> getRateProperty();
+	}
+	
+	public interface CommissionCategoryProperties extends CommissionProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getCommissionProperty();
+		Property<Integer> getCategoryProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getRateProperty();
+	}
+	
+	public interface OfferDetailCommissionProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Double> getCommissionProperty();
+		Property<Integer> getOfferDetailProperty();
+		Property<Double> getAmountProperty();
+		Property<Date> getPayDateProperty();
+		
+		Property<Date> getDateProperty();
+		Property<String> getSerieProperty();
+		Property<Integer> getNumberProperty();	
+		Property<Integer> getSupplierProperty();
+		Property<Integer> getTargetProperty();
+		Property<Integer> getSellerProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getStatusProperty();	
 	}
 }

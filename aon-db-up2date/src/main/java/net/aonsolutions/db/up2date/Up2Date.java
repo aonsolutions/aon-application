@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.irpf.Irpf2018Update.IRPF2018UPDATE;
+import static net.aonsolutions.db.up2date.payroll.AgreementUpdate.AGREEMENTUPDATE;
+import static net.aonsolutions.db.up2date.tgss.Bases2018Update.BASES2018UPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,7 +25,9 @@ public class Up2Date {
 	
 
     private static Update [] UPDATES  = {
-    		IRPF2018UPDATE
+    		//IRPF2018UPDATE,
+    		AGREEMENTUPDATE,
+    		BASES2018UPDATE
     }; 
 	
 	
@@ -102,30 +105,30 @@ public class Up2Date {
 			
 			for ( String database : databases ) {
 				
-				System.out.print(String.format("Updating database `%s`..." ,database  ));
+				System.out.print(String.format("Updating database  `%s`" ,database  ));
 				
 				statement.executeQuery(String.format("USE `%s`", database));
 				
 				for ( Update update : UPDATES ) {
 					try {
 						update.upgrade(connection);
+						System.out.println("Success." );
 					} catch ( Throwable t) {
-						System.err.println("Oops, something went wrong, " + t.getLocalizedMessage());
+						System.out.println("Error: " + t.getLocalizedMessage());
 					}
 				}
 
-				System.out.println("Success." );
 				
 			}
 			
 		} catch (ParseException e) {
 			// oops, somthing went wrong
-			System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
+			System.out.println("Error: " + e.getLocalizedMessage());
 			new HelpFormatter().printHelp(Up2Date.class.getSimpleName(), options);
-		} catch (SQLException e) {
-			System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
+		} catch (SQLException e) { 
+			System.out.println("Error: " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
+			System.out.println("Error: " + e.getLocalizedMessage());
 		} finally {
 			try {
 				if ( databasesRs != null )

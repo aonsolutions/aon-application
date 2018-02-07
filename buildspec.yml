@@ -1,0 +1,32 @@
+version: 0.2
+
+env:
+  variables:
+    JAVA_HOME: "/usr/lib/jvm/java-8-openjdk-amd64"
+
+phases:
+  install:
+    commands:
+      - echo Entered the install phase...
+      - apt-get update -y
+      - apt-get install -y maven
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+      - docker run --name mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=serubd2000 -p 3306:3306 -d mariadb:10.0
+  build:
+    commands:
+      - echo Entered the build phase...
+      - echo Build started on `date`
+      - mvn -Dmaven.test.failure.ignore=true -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+      - echo Build completed on `date`
+artifacts:
+  files:
+  discard-paths: yes
+cache:
+  paths:
+    - '/root/.m2/**/*'
+

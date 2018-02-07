@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Context;
@@ -24,10 +23,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod140DAO;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod140 File download", urlPatterns = { "/aon_gwt_fiscal/Model140File" })
+@WebServlet(name = "Mod140 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model140File" })
 public class Mod140File extends HttpServlet {
 	
+	private static final long serialVersionUID = 5944684076606387207L;
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
@@ -36,6 +35,7 @@ public class Mod140File extends HttpServlet {
 		AONContext ctx = null;
 		try {
 			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String epigraph = req.getParameter("epigraph");
 			String fromDateParam = req.getParameter("fromDate");
@@ -49,7 +49,7 @@ public class Mod140File extends HttpServlet {
 				toDate = DATE_FORMAT.parse(toDateParam);
 			}
 					
-			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			Company company = CompanyDAO.getCompany(ctx, domainId);
 
 			Mod140Context m140ctx = new Mod140Context();

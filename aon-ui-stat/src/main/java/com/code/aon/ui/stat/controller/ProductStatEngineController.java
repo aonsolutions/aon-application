@@ -16,6 +16,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
@@ -26,7 +27,9 @@ import com.code.aon.ql.Projection;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -100,6 +103,40 @@ public class ProductStatEngineController implements Serializable {
 		} catch (ManagerBeanException e1) {
 			LOGGER.error(e1.getMessage(), e1);
 		}
+	}
+	
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		InvoiceDetail detail = (InvoiceDetail) latestShipmentsState.getModel().getRowData();
+		if (detail != null && detail.getId() != null) {
+			Invoice invoice = detail.getInvoice();
+			String beanName = null; 
+			if(invoice.getType()==InvoiceType.SALES)
+				beanName = IStatConstants.SALES_INVOICE_CONTROLLER_NAME;
+			else if(invoice.getType()==InvoiceType.PURCHASE)
+				beanName = IStatConstants.PURCHASE_INVOICE_CONTROLLER_NAME;
+			else if(invoice.getType()==InvoiceType.EXPENSES)
+				beanName = IStatConstants.EXPENSE_INVOICE_CONTROLLER_NAME;
+			else if(invoice.getType()==InvoiceType.UNDEDUCTIBLE)
+				beanName = IStatConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(beanName);
+			invoiceController.onLoad(event, invoice.getId(), IStatConstants.PRODUCT_STATS_ACTION, null);
+		}
+	}
+	
+	public String getInvoiceAction() throws ManagerBeanException {
+		InvoiceDetail detail = (InvoiceDetail) latestShipmentsState.getModel().getRowData();
+		if (detail != null && detail.getId() != null) {
+			Invoice invoice = detail.getInvoice();
+			if(invoice.getType()==InvoiceType.SALES)
+				return IStatConstants.SALES_INVOICE_FORM;
+			else if(invoice.getType()==InvoiceType.PURCHASE)
+				return IStatConstants.PURCHASE_INVOICE_FORM;
+			else if(invoice.getType()==InvoiceType.EXPENSES)
+				return IStatConstants.EXPENSE_INVOICE_FORM;
+			else if(invoice.getType()==InvoiceType.UNDEDUCTIBLE)
+				return IStatConstants.UNDEDUCTIBLE_INVOICE_FORM;
+		}
+		return null;
 	}
 	
 	public void getProductData(){

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 

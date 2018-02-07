@@ -21,6 +21,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-finding-toolbar-item-group")
 	String aonFindingToolbarItemGroup();
+	
+	@ClassName("aon-finding-toolbar-item-group-1")
+	String aonFindingToolbarItemGroup1();
 
 	@ClassName("aon-finding-toolbar-item")
 	String aonFindingToolbarItem();
@@ -242,6 +245,9 @@ public interface AonCSS extends CssResource {
 	
 	@ClassName("aon-icon-save")
 	String aonIconSave();
+	
+	@ClassName("aon-icon-rubber")
+	String aonIconRubber();
 
 	@ClassName("aon-icon-europe")
 	String aonIconEurope();

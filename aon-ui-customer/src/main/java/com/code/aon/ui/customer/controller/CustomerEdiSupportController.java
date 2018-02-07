@@ -62,6 +62,12 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 
 	public void onRecover(Customer customer) throws ManagerBeanException {
 		init(customer);
+		
+		RegistryNote autoCommit = this.getRegistryNote(SERES_AUTO_COMMIT_DELIVERY, customer.getId());
+		seresAutoCommitDelivery = autoCommit != null && new Boolean(autoCommit.getComments());
+		
+		RegistryNote mainInvoicingAddress = this.getRegistryNote(SERES_INVOICING_MAIN_ADDRESS, customer.getId());
+		seresInvoicingMainAddress = mainInvoicingAddress != null && new Boolean(mainInvoicingAddress.getComments());
 	}
 
 	private void clear(Customer customer) {

@@ -9,9 +9,8 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" styleName="{aonResources.css.aonSelector}">
-		<g:north size="30"> 
-			<g:FlowPanel ui:field="toolbarPanel" height="100%"
-				styleName="aon-finding-title-toolbar aon-width-all {aonResources.css.aonNoPrint}">
+		<g:north size="23"> 
+			<g:FlowPanel ui:field="toolbarPanel" styleName="aon-finding-title-toolbar aon-width-all {aonResources.css.aonNoPrint}">
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-title">
 						<g:HTMLPanel styleName="aon-finding-title-internal">
@@ -24,7 +23,7 @@
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HorizontalPanel styleName="aon-finding-toolbar">
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group-1">
 							<g:SuggestBox ui:field="enterpriseSuggest"/>
 						</g:HTMLPanel>
 					</g:HorizontalPanel>

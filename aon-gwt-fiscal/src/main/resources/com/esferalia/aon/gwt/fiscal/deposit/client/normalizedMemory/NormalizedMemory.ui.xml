@@ -67,9 +67,8 @@
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel">
-		<g:north size="26">
-			<g:FlowPanel ui:field="toolbarPanel" height="100%"
-				styleName="aon-finding-title-toolbar aon-width-all">
+		<g:north size="23">
+			<g:FlowPanel ui:field="toolbarPanel" styleName="aon-finding-title-toolbar aon-width-all">
 				<g:HorizontalPanel >
 					<g:HTMLPanel styleName="aon-finding-title">
 						<g:HTMLPanel styleName="aon-finding-title-internal">

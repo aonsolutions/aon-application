@@ -142,7 +142,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		}
 
 		double total = getPriceStrategy().getTotalPrice(invoice, invoice);
-		boolean ignoreTaxFree = !invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP());
+		boolean ignoreTaxFree = !invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP() || (!invoice.isNational() && invoice.isService()));
 		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice, ignoreTaxFree);
 		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice);
 		Map<Account, Double> taxQuotas = obtainTaxQuotasPerAccount(taxBreakDownList, invoice, ignoreTaxFree);

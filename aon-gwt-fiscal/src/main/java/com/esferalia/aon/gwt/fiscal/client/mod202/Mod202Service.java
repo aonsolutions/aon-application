@@ -10,21 +10,22 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("Mod202")
+@RemoteServiceRelativePath("ms/Mod202")
 public interface Mod202Service extends RemoteService {
 
-	Mod202 getMod202(String domainName, int domain, int id) throws AonCoreException;
-	LinkedList<Mod202> getMod202s(String domainName, int domain) throws AonCoreException;
-	Mod202 calculate(String domainName, Mod202 mod202) throws AonCoreException;
-	Mod202 save(String domainName, Mod202 mod202) throws AonCoreException;
-	void delete(String domainName, Mod202 mod202) throws AonCoreException;
-	Mod202 initialize(String domainName, int domain, Mod202 mod202) throws AonCoreException;
-	Mod202 saveComments(String domainName, Mod202 mod202) throws AonCoreException;
-	Mod202 initializeForFinish(String domainName, Mod202 mod202) throws AonCoreException;
-	Mod202 markAsFinished(String domainName, Mod202 mod202) throws AonCoreException;
-	Mod202 markAsSent(String domainName, Mod202 mod202) throws AonCoreException;
-	Mod202 markAsPending(String domainName, Mod202 mod202) throws AonCoreException;
-	Mod202 create(String domainName, int domain, Mod202 mod202) throws AonCoreException;
-	String getInfo(String domainName, int domain, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	Mod202 getMod202(String domainName,String user, int domain, int id) throws AonCoreException;
+	LinkedList<Mod202> getMod202s(String domainName,String user, int domain) throws AonCoreException;
+	Mod202 calculate(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	Mod202 save(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	void delete(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	Mod202 initialize(String domainName,String user, int domain, Mod202 mod202) throws AonCoreException;
+	Mod202 saveComments(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	Mod202 initializeForFinish(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	Mod202 markAsFinished(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	Mod202 markAsSent(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	Mod202 markAsPending(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	Mod202 create(String domainName,String user, int domain, Mod202 mod202) throws AonCoreException;
+	String getInfo(String domainName,String user, int domain, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	Double mathExpression(String expression) throws AonCoreException;
 
 }

@@ -7,6 +7,10 @@ import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
+import com.esferalia.aon.occam.api.model.Properties.CommissionCategoryProperties;
+import com.esferalia.aon.occam.api.model.Properties.CommissionItemProperties;
+import com.esferalia.aon.occam.api.model.Properties.CommissionProperties;
+import com.esferalia.aon.occam.api.model.Properties.CommissionTypeCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
@@ -27,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
+import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
@@ -52,6 +57,7 @@ import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TagProperties;
+import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
@@ -314,6 +320,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface TargetFilter{
+		Filter filter(TargetProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface RegistryFilter{
 		Filter filter(RegistryProperties properties);
 	}
@@ -411,5 +422,30 @@ public interface Filter {
 	@FunctionalInterface
 	public interface InventoryDetailFilter{
 		Filter filter(InventoryDetailProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface CommissionFilter{
+		Filter filter(CommissionProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface CommissionTypeCommissionFilter{
+		Filter filter(CommissionTypeCommissionProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface CommissionItemFilter{
+		Filter filter(CommissionItemProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface CommissionCategoryFilter{
+		Filter filter(CommissionCategoryProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface OfferDetailCommissionFilter{
+		Filter filter(OfferDetailCommissionProperties properties);
 	}
 }

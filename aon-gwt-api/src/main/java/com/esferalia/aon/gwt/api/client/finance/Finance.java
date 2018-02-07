@@ -17,10 +17,11 @@ public class Finance extends Methods{
 
 	final IApiAsync impl = GWT.create(IApi.class);
 
-	public Finance(String url, String accesToken, String domainName, String userName) {
+	public Finance(String url, String accesToken, String domainName, Integer domainId, String userName) {
 		this.url = url;
 		this.accessToken = accesToken;
 		this.domainName = domainName;
+		this.domainId = domainId;
 		this.userName = userName;
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
@@ -77,5 +78,15 @@ public class Finance extends Methods{
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
+	}
+	
+	// ---------- SERIES
+	
+	public void getInvoiceSeries(AsyncCallback<JSON<JsObject>> callback){	
+		get(getUrl() + "series/"+getDomainName()+"/"+getUserName()+"/invoice", callback);
+	}
+	
+	public void getOfferSeries(AsyncCallback<JSON<JsObject>> callback){	
+		get(getUrl() + "series/"+getDomainName()+"/"+getUserName()+"/offer", callback);
 	}
 }

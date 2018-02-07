@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-03T15:11:09 -->
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="688163e4-9f2f-471f-a4ea-83d3db2b5215">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -1573,7 +1572,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 								<bottomPen lineWidth="0.0"/>
 								<rightPen lineWidth="0.0"/>
 							</box>
-							<textField pattern="#,##0.00##" isBlankWhenNull="true">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
 								<reportElement key="textField-16" x="0" y="0" width="80" height="15" uuid="66d4941e-cb5e-4915-9fb0-96303375a880"/>
 								<box rightPadding="5">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1584,7 +1583,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{base}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($F{base}.doubleValue())]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

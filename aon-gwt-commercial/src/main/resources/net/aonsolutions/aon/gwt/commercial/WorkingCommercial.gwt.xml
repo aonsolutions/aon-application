@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='aon_gwt_commercial' >
+	<inherits name="com.google.gwt.user.Debug"/>
+	<inherits name='net.aonsolutions.aon.gwt.commercial.Commercial' />
+	<set-property name="locale" value="es_ES"/> 
+	<set-property name="user.agent" value="gecko1_8" />	
+	<extend-property name="user.agent" values="safari" />
+	<extend-property name="user.agent" values="ie9" />
+</module>

@@ -21,9 +21,10 @@ import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod131 File download", urlPatterns = { "/aon_gwt_fiscal/Model131File" })
+@WebServlet(name = "Mod131 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model131File" })
 public class Mod131File extends HttpServlet {
+
+	private static final long serialVersionUID = -5117010320151373028L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -32,7 +33,7 @@ public class Mod131File extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod131"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = AonServletUtils.getLoggedUser(); 
+			String user = req.getParameter("user"); 
 			Mod131 mod131 = FISCAL.getMod131(domainName, domainId, user ,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();

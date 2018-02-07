@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 
 import java.sql.Connection;
@@ -24,6 +23,8 @@ import org.mvel2.CompileException;
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Event.Type;
@@ -34,28 +35,23 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -67,15 +63,16 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
-import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.FullHideException;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class EmployeesServiceHelper {
 
@@ -392,8 +389,7 @@ public class EmployeesServiceHelper {
 			return true;
 
 		return parents.stream()
-				.filter(parent -> parent.getConceptId()
-						.equals(payment.getConceptId())
+				.filter(parent -> AonUtils.equals(parent.getConceptId(),payment.getConceptId())
 						&& parent.getDomain().equals(payment.getDomain()))
 				.findAny().isPresent();
 	}
@@ -431,11 +427,13 @@ public class EmployeesServiceHelper {
 		
 		Set<Event> events = new HashSet<Event>();
 		
+		List<Payment> hide = new ArrayList<Payment>();
+
 		ExpressionContext agreementDataCtx = agreementCtxFactory.getSystemExpressionContext();
 		for ( Payment payment: payments ) {
 			try {
 				agreementDataCtx.eval(payment.getExpression(), start, end);
-			} catch ( CheckException e ) {
+			}catch ( CheckException e ) {
 				events.add(
 				new PaymentEvent()
 				.setPayment(payment)
@@ -447,10 +445,20 @@ public class EmployeesServiceHelper {
 				.setPayment(payment)
 				.setType(Type.ERROR)
 				.setMessage(e.getMessage()));
+			}catch ( FullHideException e ) {
+				events.add(
+				new Event()
+				.setType(Type.INFO)
+				.setMessage(e.getMessage()));
+				hide.add(payment);
 			}
 			catch (ExpressionException e) {
 			}
 		}
+		
+		// TODO: Make this outside please
+		for ( Payment payment: hide )
+			payments.remove(payment);
 		
 		return events;
 	}

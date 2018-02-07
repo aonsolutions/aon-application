@@ -10,19 +10,19 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface Mod202ServiceAsync {
 	
-	void getMod202(String domainName, int domain, int id,AsyncCallback<Mod202> callback);
-	void getMod202s(String domainName, int domain,AsyncCallback<LinkedList<Mod202>> callback);
-	void calculate(String domainName, Mod202 mod202,AsyncCallback<Mod202> callback);
-	void delete(String currentDomainName, Mod202 treeObject,AsyncCallback<Void> callback);
-	void save(String domainName, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
-	void initialize(String domainName, int domain, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
-	void saveComments(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
-	void initializeForFinish(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
-	void markAsFinished(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
-	void markAsSent(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
-	void markAsPending(String domainName, Mod202 mod202, AsyncCallback<Mod202> callback);
-	void create(String domainName, int domain, Mod202 mod202, AsyncCallback<Mod202> callback);
-	void getInfo(String domainName, int domain, Mod202 mod202, IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
-	
+	void getMod202(String domainName,String user, int domain, int id,AsyncCallback<Mod202> callback);
+	void getMod202s(String domainName,String user, int domain,AsyncCallback<LinkedList<Mod202>> callback);
+	void calculate(String domainName,String user, Mod202 mod202,AsyncCallback<Mod202> callback);
+	void delete(String domainName,String user, Mod202 treeObject,AsyncCallback<Void> callback);
+	void save(String domainName,String user, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
+	void initialize(String domainName,String user, int domain, Mod202 mod202,AsyncCallback<Mod202> asyncCallback);
+	void saveComments(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void initializeForFinish(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void markAsFinished(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void markAsSent(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void markAsPending(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void create(String domainName,String user, int domain, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void getInfo(String domainName,String user, int domain, Mod202 mod202, IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
+	void mathExpression(String expression, AsyncCallback<Double> callback);
 
 }

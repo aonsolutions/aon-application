@@ -1147,6 +1147,11 @@ input[type="checkbox"]:focus + label {
 	background-position: left center;
 }
 
+@sprite .aon-icon-rubber{
+	width: auto;
+	gwt-image: 'aonIconRubber';
+}
+
 @sprite .aon-icon-view {
 	float: right;
 	gwt-image: 'view';
@@ -1437,6 +1442,10 @@ input:disabled+label {
 
 .aon-finding-toolbar-item-group {
 	padding: 3px 0;
+}
+
+.aon-finding-toolbar-item-group-1 {
+	padding: 1px 0;
 }
 
 .aon-finding-toolbar-item {

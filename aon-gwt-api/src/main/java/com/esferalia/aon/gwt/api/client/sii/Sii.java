@@ -14,10 +14,11 @@ public class Sii extends Methods{
 
 	final IApiAsync impl = GWT.create(IApi.class);
 
-	public Sii(String url, String accesToken, String domainName, String userName) {
+	public Sii(String url, String accesToken, String domainName, Integer domainId, String userName) {
 		this.url = url;
 		this.accessToken = accesToken;
 		this.domainName = domainName;
+		this.domainId = domainId;
 		this.userName = userName;
 		this.scheme = url.contains("https") ? "https" : "http";
 	}

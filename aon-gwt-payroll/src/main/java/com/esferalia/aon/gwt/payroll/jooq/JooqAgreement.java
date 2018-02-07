@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.Keys.FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.Keys.FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.Keys.FK_CONTRACT_AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
@@ -23,15 +26,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
-import org.hibernate.tool.hbm2x.pojo.EntityPOJOClass;
+import org.hibernate.cfg.FkSecondPass;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
 import org.jooq.InsertSetMoreStep;
-import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record15;
@@ -40,7 +43,6 @@ import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
-import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
@@ -48,10 +50,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.jooq.tables.AgreementExtra;
-import com.esferalia.aon.jooq.tables.AppParam;
-import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.EnterpriseData;
+import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -59,6 +58,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -498,7 +498,246 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
-	public static void updateAgreementId(Connection conn, Integer domainId,
+	public static void trashRestoreAgreement(Connection conn, Integer agreementId, boolean delete) {
+		Statement fkStmt = null;
+		try { 
+			fkStmt = conn.createStatement();
+			fkStmt.execute(SET_FOREIGN_KEY_CHECKS_0);
+	
+			DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL,
+					getDefaultSettings());
+			
+			Integer oldId =agreementId;
+			Integer newId =agreementId*-1;
+			
+			Optional<AgreementRecord> mirrorAgreement = 
+			dslContext
+			.select()
+			.from(AGREEMENT)
+			.where(AGREEMENT.ID.eq(newId))
+			.fetchOptionalInto(AGREEMENT);
+			mirrorAgreement
+			.ifPresent(a -> 
+				a.delete());
+			dslContext
+			.select()
+			.from(AGREEMENT)
+			.where(AGREEMENT.ID.eq(oldId))
+			.fetchOptionalInto(AGREEMENT)
+			.ifPresent(a ->  {
+				if ( delete )
+					a.delete();
+				AgreementRecord copy = a.copy(); 
+				copy.setId(newId) ; 
+				copy.insert(); });
+			
+			mirrorAgreement.ifPresent(a -> { 
+				AgreementRecord copy = a.copy(); 
+				copy.setId(oldId) ; 
+				copy.insert(); });
+			
+			// payments
+			Result<AgreementPaymentRecord> mirrorPayments = 
+					dslContext.select()
+					.from(AGREEMENT_PAYMENT)
+					.where(AGREEMENT_PAYMENT.AGREEMENT.eq(newId))
+					.fetchInto(AGREEMENT_PAYMENT);
+			mirrorPayments.forEach(p -> p.delete() );
+			dslContext.select()
+			.from(AGREEMENT_PAYMENT)
+			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(oldId))
+			.fetchInto(AGREEMENT_PAYMENT)
+			.forEach( p -> {
+				if ( delete )
+					p.delete();
+				AgreementPaymentRecord copy = p.copy();
+				copy.setAgreement(newId);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+			mirrorPayments.forEach(p -> {
+				AgreementPaymentRecord copy = p.copy();
+				copy.setAgreement(oldId);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+			
+			// extras
+			Result<AgreementExtraRecord> mirrorExtras = 
+					dslContext.select()
+					.from(AGREEMENT_EXTRA)
+					.where(AGREEMENT_EXTRA.AGREEMENT.eq(newId))
+					.fetchInto(AGREEMENT_EXTRA);
+			mirrorExtras.forEach(p -> p.delete() );
+			dslContext.select()
+			.from(AGREEMENT_EXTRA)
+			.where(AGREEMENT_EXTRA.AGREEMENT.eq(oldId))
+			.fetchInto(AGREEMENT_EXTRA)
+			.forEach( p -> {
+				if ( delete )
+					p.delete();
+				AgreementExtraRecord copy = p.copy();
+				copy.setAgreement(newId);
+				copy.setAgreementPayment(p.getAgreementPayment()*-1);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+			mirrorExtras.forEach(p -> {
+				AgreementExtraRecord copy = p.copy();
+				copy.setAgreement(oldId);
+				copy.setAgreementPayment(p.getAgreementPayment()*-1);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+
+			// datas
+			Result<AgreementDataRecord> mirrorDatas = 
+					dslContext.select()
+					.from(AGREEMENT_DATA)
+					.where(AGREEMENT_DATA.AGREEMENT.eq(newId))
+					.fetchInto(AGREEMENT_DATA);
+			mirrorDatas.forEach(p -> p.delete() );
+			dslContext.select()
+			.from(AGREEMENT_DATA)
+			.where(AGREEMENT_DATA.AGREEMENT.eq(oldId))
+			.fetchInto(AGREEMENT_DATA)
+			.forEach( p -> {
+				if ( delete )
+					p.delete();
+				AgreementDataRecord copy = p.copy();
+				copy.setAgreement(newId);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+			mirrorDatas.forEach(p -> {
+				AgreementDataRecord copy = p.copy();
+				copy.setAgreement(oldId);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+
+			// contracts
+			dslContext.select()
+			.from(CONTRACT)
+			.join(AGREEMENT_LEVEL).onKey(FK_CONTRACT_AGREEMENT_LEVEL)
+			.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldId))
+			.and(CONTRACT.AGREEMENT_LEVEL.notIn(DSL.select(AGREEMENT_LEVEL.ID.mul(-1)).from(AGREEMENT_LEVEL).where(AGREEMENT_LEVEL.AGREEMENT.eq(newId))))
+			.fetchInto(CONTRACT)
+			.forEach( c -> {
+				c.setAgreementLevel(c.getAgreementLevel()*-1);
+				c.update();
+			});
+
+			// categories
+			Result<AgreementLevelCategoryRecord> mirrorCategories = 
+					dslContext.select()
+					.from(AGREEMENT_LEVEL_CATEGORY)
+					.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.AGREEMENT.eq(newId))
+					.fetchInto(AGREEMENT_LEVEL_CATEGORY);
+			mirrorCategories.forEach(p -> p.delete() );
+			dslContext.select()
+			.from(AGREEMENT_LEVEL_CATEGORY)
+			.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL)
+			.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldId))
+			.fetchInto(AGREEMENT_LEVEL_CATEGORY)
+			.forEach( p -> {
+				if ( delete )
+					p.delete();
+				AgreementLevelCategoryRecord copy = p.copy();
+				copy.setAgreementLevel(p.getAgreementLevel()*-1);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+			mirrorCategories.forEach(p -> {
+				AgreementLevelCategoryRecord copy = p.copy();
+				copy.setAgreementLevel(p.getAgreementLevel()*-1);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+
+			// level datas
+			Result<AgreementLevelDataRecord> mirrorLDatas = 
+					dslContext.select()
+					.from(AGREEMENT_LEVEL_DATA)
+					.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.AGREEMENT.eq(newId))
+					.fetchInto(AGREEMENT_LEVEL_DATA);
+			mirrorLDatas.forEach(p -> p.delete() );
+			dslContext.select()
+			.from(AGREEMENT_LEVEL_DATA)
+			.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL)
+			.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldId))
+			.fetchInto(AGREEMENT_LEVEL_DATA)
+			.forEach( p -> {
+				if ( delete )
+					p.delete();
+				AgreementLevelDataRecord copy = p.copy();
+				copy.setAgreementLevel(p.getAgreementLevel()*-1);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+			mirrorLDatas.forEach(p -> {
+				AgreementLevelDataRecord copy = p.copy();
+				copy.setAgreementLevel(p.getAgreementLevel()*-1);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+
+			// levels
+			Result<AgreementLevelRecord> mirrorLevels = 
+					dslContext.select()
+					.from(AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.AGREEMENT.eq(newId))
+					.fetchInto(AGREEMENT_LEVEL);
+			mirrorLevels.forEach(p -> p.delete() );
+			dslContext.select()
+			.from(AGREEMENT_LEVEL)
+			.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldId))
+			.fetchInto(AGREEMENT_LEVEL)
+			.forEach( p -> {
+				if ( delete )
+					p.delete();
+				AgreementLevelRecord copy = p.copy();
+				copy.setAgreement(newId);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+			mirrorLevels.forEach(p -> {
+				AgreementLevelRecord copy = p.copy();
+				copy.setAgreement(oldId);
+				copy.setId(p.getId()*-1);
+				copy.insert();
+			});
+			
+			// workplace
+			dslContext.select()
+			.from(PAYROLL_WORKPLACE)
+			.where(PAYROLL_WORKPLACE.AGREEMENT.eq(oldId))
+			.and(PAYROLL_WORKPLACE.AGREEMENT.notIn(DSL.select(AGREEMENT.ID).from(AGREEMENT) ))
+			.fetchInto(PAYROLL_WORKPLACE)
+			.forEach( w -> {
+				w.setAgreement(w.getAgreement()*-1);
+				w.update();
+			});
+
+		}
+		catch ( SQLException e ) {
+			
+		} finally {
+			try {
+				if ( fkStmt == null )
+					return;
+				
+				fkStmt.execute(SET_FOREIGN_KEY_CHECKS_1);
+				fkStmt.close();
+			} catch ( SQLException e ) {
+				
+			}
+		}
+	}
+
+	public static void updateAgreementId2delete(Connection conn, Integer domainId,
 			Agreement agreement) {
 
 		try {

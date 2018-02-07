@@ -17,13 +17,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -50,9 +47,6 @@ public class Model140 extends MainEntryPoint {
 	@UiField
 	Panel formContainer;
 
-	private int domain;
-	private int enterprise;
-
 	@UiField
 	FormPanel diskForm;
 	@UiField
@@ -70,6 +64,8 @@ public class Model140 extends MainEntryPoint {
 	Hidden domainId;
 	@UiField
 	Hidden domainName;
+	@UiField
+	Hidden user;
 
 	@Override
 	public void onModuleLoad() {
@@ -86,6 +82,7 @@ public class Model140 extends MainEntryPoint {
 		toDate.getTextBox().setName("toDate");
 		domainId.setName("domainId");
 		domainName.setName("domainName");
+		user.setName("user");
 		
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
@@ -93,26 +90,17 @@ public class Model140 extends MainEntryPoint {
 		root.add(ui);
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
 	// -------------------------------------------------------------- UiHandler
 
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
 		diskForm.setMethod(FormPanel.METHOD_POST);
-		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/Model140File");
+		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model140File");
 		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
 		
 		domainId.setValue(String.valueOf(getCurrentDomain()));
 		domainName.setValue(getCurrentDomainName());
+		user.setValue(getCurrentUser());
 		diskForm.submit();
 	}
 
@@ -128,34 +116,4 @@ public class Model140 extends MainEntryPoint {
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
-	}
-	
-	private void cleanErrorMessage() {
-		closeFootPanel();
-	}
-
-	private void showErrorMessage(String msg) {
-		showResultsPanel();
-		addErrorMessage(msg);
-	}
-
-	private void addErrorMessage(String msg) {
-		SimplePanel panel = new SimplePanel();
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		panel.add(label);
-		resultsPanel.setWidget(panel);
-	}
 }

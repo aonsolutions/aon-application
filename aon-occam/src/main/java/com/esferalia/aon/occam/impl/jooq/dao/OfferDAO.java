@@ -14,7 +14,6 @@ import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.Date;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -49,41 +48,18 @@ public class OfferDAO {
 
 			return new Condition[] { filterDAO.getCondition() };
 		}
+		
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.DOMAIN);}
+		@Override public Property<Date> getStartIssueDateProperty() {return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);}
+		@Override public Property<Date> getEndIssueDateProperty() {return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(OFFER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.SCOPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(OFFER.SECURITY_LEVEL);}
 
-		@Override
-		public Property<Integer> getIdProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(OFFER.ID);
-		}
-
-		@Override
-		public Property<Integer> getDomainProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(OFFER.DOMAIN);
-		}
-
-		@Override
-		public Property<Date> getStartIssueDateProperty() {
-			return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);
-		}
-
-		@Override
-		public Property<Date> getEndIssueDateProperty() {
-			return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);
-		}
-
-		@Override
-		public Property<Byte> getStatusProperty() {
-			return new FilterDAO.PropertyDAO<Byte>(OFFER.STATUS);
-		}
-
-		@Override
-		public Property<Integer> getScopeProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(OFFER.SCOPE);
-		}
-
-		@Override
-		public Property<Byte> getConfidentialProperty() {
-			return new FilterDAO.PropertyDAO<Byte>(OFFER.SECURITY_LEVEL);
-		}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SELLER);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(OFFER.WORKPLACE);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SERIES);}
 	}
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
@@ -123,6 +99,7 @@ public class OfferDAO {
 				,ITEM.DETAIL2
 				,ITEM.DETAIL3
 				,ITEM.DESCRIPTION
+				,OFFER_DETAIL.ID
 				,OFFER_DETAIL.DESCRIPTION
 				,OFFER_DETAIL.QUANTITY
 				,OFFER_DETAIL.PRICE
@@ -153,12 +130,13 @@ public class OfferDAO {
 			.stream()
 			.map(new FullOfferDetailFiller());
 	}
-	
+		
 	private static class FullOfferDetailFiller  implements Function<Record,OfferDetail> {
 
 		@Override
 		public OfferDetail apply(Record record) {
 			return new OfferDetail()
+				.setId(record.getValue(OFFER_DETAIL.ID))
 				.setOffer(new Offer()
 					.setId(record.getValue(OFFER.ID))
 					.setDomain(record.getValue(OFFER.DOMAIN))

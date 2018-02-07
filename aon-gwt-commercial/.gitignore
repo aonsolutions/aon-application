@@ -1,0 +1,6 @@
+/.settings/
+/target/
+/.project
+/.classpath
+/war/
+/gwt-unitCache/

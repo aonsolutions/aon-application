@@ -153,6 +153,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		invoice.setInvestment( loaded.isInvestment() );
 		invoice.setTransaction(loaded.getInvoiceTransactionType());
 		invoice.setVatAccrualPayment(loaded.isVatAccrualPayment());
+		invoice.setService(invoice.getType() == InvoiceType.EXPENSES || invoice.getType() == InvoiceType.UNDEDUCTIBLE);
 		invoice.setComments(loaded.getComentario());
 		Date now = new Date();
 		invoice.setRemarks("Importada de fichero " + params.getDateFormatter().format(now) + " - " + params.getTimeFormatter().format(now));

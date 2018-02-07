@@ -78,6 +78,7 @@
 					</div>
 					<g:Hidden ui:field="domainId"/>
 					<g:Hidden ui:field="domainName"/>
+					<g:Hidden ui:field="user"/>
 				</g:HTMLPanel>
 			</g:FormPanel>
 		</g:center>

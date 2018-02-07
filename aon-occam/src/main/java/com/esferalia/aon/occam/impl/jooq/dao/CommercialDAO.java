@@ -2,9 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.CommercialActivity.COMMERCIAL_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
-import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -13,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.Record13;
 
 import com.esferalia.aon.jooq.tables.records.CommercialActivityRecord;
 import com.esferalia.aon.jooq.tables.records.CommercialTrackingRecord;
@@ -25,10 +21,6 @@ import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CommercialActivityProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommercialTrackingProperties;
-import com.esferalia.aon.occam.api.model.registry.CommissionType;
-import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 
 public class CommercialDAO {
 

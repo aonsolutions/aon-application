@@ -39,6 +39,10 @@ import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
@@ -57,6 +61,7 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
+import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -82,6 +87,7 @@ import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
+import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
@@ -104,6 +110,11 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.commission.Commission;
+import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
+import com.esferalia.aon.occam.api.model.commission.CommissionItem;
+import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
+import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -151,6 +162,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -179,6 +191,7 @@ import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
+import com.esferalia.aon.occam.impl.jooq.CommissionImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
@@ -204,6 +217,10 @@ public class AON {
 
 	private static ICommon getCommon() {
 		return new CommonImpl();
+	}
+	
+	private static ICommission getCommission() {
+		return new CommissionImpl();
 	}
 
 	//	private static IAccounting getAccounting() {
@@ -2947,6 +2964,33 @@ public class AON {
 	}
 	
 	
+	// ------------------ TARGET 
+	
+	public static Stream<Target> getTargetStream(String domainName, Integer domainId, String login, TargetFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getTargetStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Target> getTargetList(String domainName, Integer domainId, String login, TargetFilter filter) {
+		return getTargetStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, TargetFilter filter) {
+		return getTargetStream(domainName, domainId, login, filter)
+				.findFirst();
+	}
+	
+	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, Integer id) {
+		return getTarget(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
+	
+	
 	// ------------------ CARRIER 
 	
 	public static Stream<Carrier> getCarrierStream(String domainName, Integer domainId, String login, CarrierFilter filter) {
@@ -4734,5 +4778,88 @@ public class AON {
 		}
 	}
 
+	// ------------------------------------- COMMISSION
+
+	public static Stream<Commission> getCommissionStream(String domainName, Integer domainId, String login, CommissionFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().getCommissionStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<CommissionTypeCommission> getCommissionTypeCommissionStream(String domainName, Integer domainId, String login, CommissionTypeCommissionFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().getCommissionTypeCommissionStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<CommissionItem> getCommissionItemStream(String domainName, Integer domainId, String login, CommissionItemFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().getCommissionItemStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<CommissionCategory> getCommissionCategoryStream(String domainName, Integer domainId, String login, CommissionCategoryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().getCommissionCategoryStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<OfferDetailCommission> getOfferDetailCommissionStream(String domainName, Integer domainId, String login, OfferDetailCommissionFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().getOfferDetailCommissionStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static OfferDetailCommission getOfferDetailCommission(String domainName, Integer domainId, String login, OfferDetailCommissionFilter filter) {
+		return getOfferDetailCommissionStream(domainName, domainId, login, filter).findFirst().orElse(null);
+	}
+	
+	public static OfferDetailCommission insertOfferDetailCommission(String domainName, Integer domainId, String login, OfferDetailCommission odc) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().insertOfferDetailCommission(ctx, odc);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static OfferDetailCommission updateOfferDetailCommission(String domainName, Integer domainId, String login, OfferDetailCommission odc) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().updateOfferDetailCommission(ctx, odc);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	
 }

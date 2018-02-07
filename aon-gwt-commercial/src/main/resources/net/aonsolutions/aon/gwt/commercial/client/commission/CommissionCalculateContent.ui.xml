@@ -1,0 +1,85 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
+	<g:HTMLPanel styleName="aon-margin-top10 aon-margin-left10 aon-margin-right10" >
+		<table class="{aonResources.css.aonPanelGrid}">
+			<tr>
+				<td class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="Comercial"/>
+				</td>
+				<td  class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel ui:field="commercialPanel">
+					
+					</g:HorizontalPanel>
+				</td>
+			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="{msg.period}"/>
+				</td>
+				<td class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel ui:field="periodPanel">
+					
+					</g:HorizontalPanel>
+				</td>
+			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="{msg.series}"/>
+				</td>
+				<td class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel ui:field="seriesPanel">
+					
+					</g:HorizontalPanel>
+				</td>
+			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="{msg.number}"/>
+				</td>
+				<td class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel ui:field="numberPanel">
+					
+					</g:HorizontalPanel>
+				</td>
+			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="{msg.customer}"/>
+				</td>
+				<td class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel ui:field="customerPanel">
+					
+					</g:HorizontalPanel>
+				</td>
+			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="{msg.confidential}"/>
+				</td>
+				<td class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel ui:field="confidentialPanel">
+						
+					</g:HorizontalPanel>
+				</td>
+			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="{msg.workplace}"/>
+				</td>
+				<td class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel ui:field="workplacePanel">
+					
+					</g:HorizontalPanel>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel> 
+
+</ui:UiBinder>

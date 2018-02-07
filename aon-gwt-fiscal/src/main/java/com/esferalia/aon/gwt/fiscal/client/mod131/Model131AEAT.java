@@ -63,7 +63,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model131.FISCAL_SERVICE.mathExpression(expression,callback);
+			Model131.SERVICE.mathExpression(expression,callback);
 		}
 	}; 
 
@@ -224,7 +224,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						Model131.SERVICE.getInfo(Model131.getCurrentDomainName(),Model131.getCurrentDomain(),
+						Model131.SERVICE.getInfo(callback.getDomainName(),callback.getUser(),callback.getDomain(),
 							callback.getFiscalModel(), script, infoKey,new AsyncCallback<String>() {
 
 									@Override
@@ -249,7 +249,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 
 	@Override
 	public void calculateAndRefresh(final IFiscalModelCallback<Mod131> callback) {
-		Model131.SERVICE.calculate(Model131.getCurrentDomainName(),callback.getFiscalModel(),
+		Model131.SERVICE.calculate(callback.getDomainName(),callback.getUser(),callback.getFiscalModel(),
 				new AsyncCallback<Mod131>() {
 
 					@Override
@@ -354,6 +354,21 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 						}
 						calculateAndRefresh(callback);
 						table.redraw();
+					}
+
+					@Override
+					public String getDomainName() {
+						return callback.getDomainName();
+					}
+
+					@Override
+					public int getDomain() {
+						return callback.getDomain();
+					}
+
+					@Override
+					public String getUser() {
+						return callback.getUser();
 					}
 				};
 				Model131Activity actPanel = new Model131Activity(activityCallback);

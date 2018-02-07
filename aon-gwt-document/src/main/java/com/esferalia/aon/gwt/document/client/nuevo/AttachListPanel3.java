@@ -31,7 +31,7 @@ public class AttachListPanel3 extends Composite {
     
     public AttachListPanel3() {    
         initWidget(binder.createAndBindUi(this));
-        Incidence i = new Incidence("http://zuremoto.aibanez.net/", "amigo", "aaa", "zuremoto.aibanez.net", "zuremoto.aibanez.net");
+        Incidence i = new Incidence("http://zuremoto.aibanez.net/", "amigo", "aaa", "zuremoto.aibanez.net", "zuremoto.aibanez.net", 1);
         i.getOrderOptions(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override

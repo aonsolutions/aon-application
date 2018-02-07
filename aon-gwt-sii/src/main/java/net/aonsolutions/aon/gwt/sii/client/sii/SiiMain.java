@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -60,7 +61,8 @@ public class SiiMain extends AonTemplate2{
 	public SiiMain(AonData aonData) {
 		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getUser().getLogin());
+				aonData.getDomain().getName(), aonData.getDomain().getId(),
+				aonData.getUser().getLogin());
 	}
 	
 	@Override
@@ -189,6 +191,73 @@ public class SiiMain extends AonTemplate2{
 		Button facturasEmitidasButton = new Button("Facturas Emitidas");
 		facturasEmitidasButton.setStyleName("aon-editDataTable-button");
 		facturasEmitidasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		
+		Button feGeneralButton = new Button("Generales");
+		feGeneralButton.setStyleName("aon-editDataTable-button");
+		feGeneralButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		feGeneralButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+
+		Button feSimpleButton = new Button("Simplificadas");
+		feSimpleButton.setStyleName("aon-editDataTable-button");
+		feSimpleButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		feSimpleButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+
+		Button feRectButton = new Button("Rectificativas");
+		feRectButton.setStyleName("aon-editDataTable-button");
+		feRectButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		feRectButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		
+		Button feIntraButton = new Button("Intracomunitarias");
+		feIntraButton.setStyleName("aon-editDataTable-button");
+		feIntraButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		feIntraButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+
+		Button facturasRecibidasButton = new Button("Facturas Recibidas");
+		facturasRecibidasButton.setStyleName("aon-editDataTable-button");
+		facturasRecibidasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		
+		Button frComprasButton = new Button("Compras");
+		frComprasButton.setStyleName("aon-editDataTable-button");
+		frComprasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		frComprasButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		
+		Button frGastosButton = new Button("Gastos");
+		frGastosButton.setStyleName("aon-editDataTable-button");
+		frGastosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		frGastosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+
+		Button frRectButton = new Button("Rectificativas");
+		frRectButton.setStyleName("aon-editDataTable-button");
+		frRectButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		frRectButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		
+		Button frIntraButton = new Button("Intracomunitarias");
+		frIntraButton.setStyleName("aon-editDataTable-button");
+		frIntraButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		frIntraButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+
+		Button bienesInversionButton = new Button("Bienes de Inversion");
+		bienesInversionButton.setStyleName("aon-editDataTable-button");
+		bienesInversionButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+	
+		Button operacionesIntracomunitariasButton = new Button("Operaciones Intracomunitarias");
+		operacionesIntracomunitariasButton.setStyleName("aon-editDataTable-button");
+		operacionesIntracomunitariasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+			
+		Button operacionesCobrosPagosButton = new Button("Operaciones Cobros/Pagos");
+		operacionesCobrosPagosButton.setStyleName("aon-editDataTable-button");
+		operacionesCobrosPagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		
+		Button cobrosButton = new Button("Cobros");
+		cobrosButton.setStyleName("aon-editDataTable-button");
+		cobrosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		cobrosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		
+		Button pagosButton = new Button("Pagos");
+		pagosButton.setStyleName("aon-editDataTable-button");
+		pagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		pagosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		
 		facturasEmitidasButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -202,14 +271,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(facturasEmitidasButton);
 		
-		Button feGeneralButton = new Button("Generales");
-		feGeneralButton.setStyleName("aon-editDataTable-button");
-		feGeneralButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		feGeneralButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		feGeneralButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -223,14 +303,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas - Generales");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(feGeneralButton);
 		
-		Button feSimpleButton = new Button("Simplificadas");
-		feSimpleButton.setStyleName("aon-editDataTable-button");
-		feSimpleButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		feSimpleButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		feSimpleButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -244,14 +335,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas - Simplificadas");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(feSimpleButton);
 		
-		Button feRectButton = new Button("Rectificativas");
-		feRectButton.setStyleName("aon-editDataTable-button");
-		feRectButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		feRectButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		feRectButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -265,14 +367,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas - Rectificativas");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(feRectButton);
 		
-		Button feIntraButton = new Button("Intracomunitarias");
-		feIntraButton.setStyleName("aon-editDataTable-button");
-		feIntraButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		feIntraButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		feIntraButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -286,13 +399,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Emitidas - Intracomunitarias");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(feIntraButton);
 		
-		Button facturasRecibidasButton = new Button("Facturas Recibidas");
-		facturasRecibidasButton.setStyleName("aon-editDataTable-button");
-		facturasRecibidasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		facturasRecibidasButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				sendAll.setVisible(true);
@@ -306,14 +431,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(facturasRecibidasButton);
 		
-		Button frComprasButton = new Button("Compras");
-		frComprasButton.setStyleName("aon-editDataTable-button");
-		frComprasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		frComprasButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		frComprasButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -327,14 +463,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas - Compras");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(frComprasButton);
 		
-		Button frGastosButton = new Button("Gastos");
-		frGastosButton.setStyleName("aon-editDataTable-button");
-		frGastosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		frGastosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		frGastosButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				sendAll.setVisible(true);
@@ -348,14 +495,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas - Gastos");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(frGastosButton);
 		
-		Button frRectButton = new Button("Rectificativas");
-		frRectButton.setStyleName("aon-editDataTable-button");
-		frRectButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		frRectButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		frRectButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -369,14 +527,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas - Rectificativas");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(frRectButton);
 		
-		Button frIntraButton = new Button("Intracomunitarias");
-		frIntraButton.setStyleName("aon-editDataTable-button");
-		frIntraButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		frIntraButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		frIntraButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				sendAll.setVisible(true);
@@ -390,13 +559,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Facturas Recibidas - Intracomunitarias");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(frIntraButton);
-
-		Button bienesInversionButton = new Button("Bienes de Inversion");
-		bienesInversionButton.setStyleName("aon-editDataTable-button");
-		bienesInversionButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		
 		bienesInversionButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				sendAll.setVisible(true);
@@ -410,13 +591,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Bienes de Inversion");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(bienesInversionButton);
-	
-		Button operacionesIntracomunitariasButton = new Button("Operaciones Intracomunitarias");
-		operacionesIntracomunitariasButton.setStyleName("aon-editDataTable-button");
-		operacionesIntracomunitariasButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		
 		operacionesIntracomunitariasButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				sendAll.setVisible(true);
@@ -430,13 +623,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(true);
 				fp.setTitle("Operaciones Intracomunitarias");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(operacionesIntracomunitariasButton);
 		
-		Button operacionesCobrosPagosButton = new Button("Operaciones Cobros/Pagos");
-		operacionesCobrosPagosButton.setStyleName("aon-editDataTable-button");
-		operacionesCobrosPagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		operacionesCobrosPagosButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				sendAll.setVisible(true);
@@ -450,14 +655,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(false);
 				fp.setTitle("Operaciones Cobros/Pagos");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(operacionesCobrosPagosButton);
 		
-		Button cobrosButton = new Button("Cobros");
-		cobrosButton.setStyleName("aon-editDataTable-button");
-		cobrosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		cobrosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		cobrosButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -471,14 +687,25 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(false);
 				fp.setTitle("Operaciones Cobros");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 			}
 		});
-		menuPanel.add(cobrosButton);
 		
-		Button pagosButton = new Button("Pagos");
-		pagosButton.setStyleName("aon-editDataTable-button");
-		pagosButton.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		pagosButton.getElement().getStyle().setPaddingLeft(50, Unit.PX);
 		pagosButton.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				sendAll.setVisible(true);
@@ -492,13 +719,47 @@ public class SiiMain extends AonTemplate2{
 				fp.setCheckVisible(false);
 				fp.setTitle("Operaciones Pagos");
 				p.gridContent();
+				
+				facturasEmitidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feGeneralButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feSimpleButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				feIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				facturasRecibidasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frComprasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frGastosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frRectButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				frIntraButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				bienesInversionButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesIntracomunitariasButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				operacionesCobrosPagosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				cobrosButton.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+				pagosButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+
+				
 			}
 		});
+		
+		menuPanel.add(facturasEmitidasButton);
+		menuPanel.add(feGeneralButton);
+		menuPanel.add(feSimpleButton);
+		menuPanel.add(feRectButton);
+		menuPanel.add(feIntraButton);
+		menuPanel.add(facturasRecibidasButton);
+		menuPanel.add(frComprasButton);
+		menuPanel.add(frGastosButton);
+		menuPanel.add(frRectButton);
+		menuPanel.add(frIntraButton);
+		menuPanel.add(bienesInversionButton);
+		menuPanel.add(operacionesIntracomunitariasButton);
+		menuPanel.add(operacionesCobrosPagosButton);
+		menuPanel.add(cobrosButton);
 		menuPanel.add(pagosButton);
 		
 		setWestContent(menuPanel);
 	}
 	
+
 	private void content() {
 		setContent(new SiiPrincipal(this));
 	}
@@ -627,9 +888,9 @@ public class SiiMain extends AonTemplate2{
 			}
 		};
 		dialog.center();
-
 	}
 	
+	private Boolean isSendAllCancel = false;
 	private void resultPanel(HashMap<String, LinkedList<String>> sendMap) {
 		ScrollPanel sp = new ScrollPanel();
 		sp.setHeight("400px");
@@ -640,7 +901,9 @@ public class SiiMain extends AonTemplate2{
 			
 			@Override
 			protected void onCancel() {
-		
+				isSendAllCancel = true;
+				hide();
+				content();
 			}
 			
 			@Override
@@ -650,7 +913,6 @@ public class SiiMain extends AonTemplate2{
 			}
 		};
 		dialog.setAutoHideEnabled(false);
-		dialog.getCancel().setVisible(false);
 		dialog.getAccept().setVisible(false);
 		dialog.center();
 		HashMap<String , LinkedList<String>> map = getFilterMap();
@@ -670,8 +932,9 @@ public class SiiMain extends AonTemplate2{
 			@Override
 			public void onSuccess(JSON<JsInvoice> result) {
 				LinkedList<String> list = new LinkedList<>();
-				result.getData().stream().forEach(r -> list.add(r.getId() + ""));
+				list.add(result.getData().get(0).getId() + "");
 				sendMap.put("id", list);
+	
 				getAPI().getFinance().sendSii(sendMap, new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
@@ -685,9 +948,11 @@ public class SiiMain extends AonTemplate2{
 							label.getElement().getStyle().setColor(color);
 							vp.add(label);
 						});
-						if(result.getData().length() < 1) {
+						if(isSendAllCancel) {
+							isSendAllCancel = false;
+						} else if(result.getData().length() < 1) {
 							d.getAccept().setVisible(true);
-						} else resultPanel(map, page + 1 , vp, sendMap, d);
+						} else resultPanel(map, page, vp, sendMap, d);
 					}
 					
 					@Override

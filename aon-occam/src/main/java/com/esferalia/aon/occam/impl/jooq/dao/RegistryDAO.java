@@ -24,6 +24,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Target.TARGET;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -59,16 +60,17 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
+import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
+import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
-import com.esferalia.aon.occam.api.model.registry.CommissionType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -83,6 +85,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
@@ -99,6 +102,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RNoteFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RecordDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.SupplierFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.TargetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
@@ -111,6 +115,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RecordDataPropertiesD
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistrySellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -147,6 +152,8 @@ public class RegistryDAO {
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
 	private static final RPayMethodPropertiesDAO RPAYMETHOD_PROPERTIES = new RPayMethodPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
+	private static final TargetPropertiesDAO TARGET_PROPERTIES = new TargetPropertiesDAO();
+
 	private static final CategoryPropertiesDAO CATEGORY_PROPERTIES = new CategoryPropertiesDAO();
 	private static final PersonPropertiesDAO PERSON_PROPERTIES = new PersonPropertiesDAO();
 	
@@ -902,7 +909,16 @@ public class RegistryDAO {
 			,filter).fetch().stream().map(new SupplierFiller());
 	}
 	
-	// ------------------- SUPPLIER
+	// ------------------- TARGET
+
+	public static Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter){
+		return TARGET_PROPERTIES.build(ctx.getDslContext().select()
+					.from(TARGET).join(SCOPE).on(TARGET.SCOPE.eq(SCOPE.ID))
+					.join(REGISTRY).on(REGISTRY.ID.eq(TARGET.REGISTRY))
+			,filter).fetch().stream().map(new TargetFiller());
+	}
+	
+	// ------------------- PERSON
 
 	public static Stream<Person> getPersonStream(AONContext ctx, PersonFilter filter){
 		return PERSON_PROPERTIES.build(ctx.getDslContext().select()
