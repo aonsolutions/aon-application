@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 9.14.0
-# Created by: girazu
-# Creation Date: 17/11/2017 14:30
+# Version: 9.23.0
+# Created by: anderibz
+# Creation Date: 07/02/2018 11:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5808,6 +5808,26 @@ CREATE TABLE `invoice_detail_account` (
   CONSTRAINT `FK_INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables asociadas a Lineas de Facturas';
 
+
+#
+# Structure for the `invoice_detail_commission` table : 
+#
+
+CREATE TABLE `invoice_detail_commission` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `invoice_detail` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador de la Linea de Factura',
+  `commission` double DEFAULT '0' COMMENT 'Porcentaje de Comision',
+  `amount` double DEFAULT '0' COMMENT 'Importe de la Comision',
+  `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de la Comision',
+  `pay_date` date DEFAULT NULL COMMENT 'Fecha de liquidacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_INVOICE_DETAIL_COMMISSION_INVOICE_DETAIL` (`invoice_detail`),
+  KEY `IDX_INVOICE_DETAIL_COMMISSION_DOMAIN` (`domain`),
+  CONSTRAINT `FK_INVOICE_DETAIL_COMMISSION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_INVOICE_DETAIL_COMMISSION_INVOICE_DETAIL` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones asociadas a Lineas de Facturas';
+
 #
 # Structure for the `invoice_tax` table : 
 #
@@ -8486,7 +8506,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('9.15.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('9.23.0');
 
 COMMIT;
 
