@@ -140,12 +140,6 @@
     </dependency>
     <dependency>
       <groupId>es.aeat</groupId>
-      <artifactId>ModRet2013</artifactId>
-      <scope>compile</scope>
-      <version>1.00</version>
-    </dependency>
-    <dependency>
-      <groupId>es.aeat</groupId>
       <artifactId>PRET-RW13_shared</artifactId>
       <scope>compile</scope>
       <version>1.00</version>
