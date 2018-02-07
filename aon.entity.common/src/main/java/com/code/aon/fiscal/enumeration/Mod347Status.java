@@ -12,7 +12,12 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum Mod347Status implements IResourceable {
 	
 	PENDING,
-	FINISHED;
+	FINISHED,
+	BATCHED, 
+	BLOCKED,
+	SENT,
+	MISSING
+	;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_mod347_status_";
