@@ -201,6 +201,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		@ClassName("text-error")
 		String textError();
 		
+		String categoryStyleButtonUp();
+		
+		String categoryStyleButtonDown();
+		
 		String selectButtonSalaryToggleButton();
 		
 		String marginToggleButton();
@@ -1114,31 +1118,55 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		showDraft();
 	}
 	
-	private void initCategoryPanel() {
+	private void initCategoryPanel(boolean readOnly) {
 		categoryButtonPanel.clear();
 		HorizontalPanel hPanel = new HorizontalPanel();
-		ToggleButton button = new ToggleButton("Categorias", "Variables");
+//		ToggleButton button = new ToggleButton("Categorias", "Variables");
+		Button button = new Button("Categorias");
 		button.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				putAllSalaryToggleButtonsUp();
+				button.removeStyleName(style.categoryStyleButtonUp());
+				button.addStyleName(style.categoryStyleButtonDown());
 				clearSalaryTable();
 				salaryTableEditors.clear();
-				if(button.isDown()){
-					salaryToggleButtonsPanel.addStyleName(style.hide());
-					moreToggleButtonsPanel.addStyleName(style.hide());
-					hPanel.addStyleName(style.selectButtonSalaryToggleButton());
-					salaryTableEditors.addAll(dumpSalaryTableCategory());
-				}else{
-					salaryToggleButtonsPanel.removeStyleName(style.hide());
-					moreToggleButtonsPanel.removeStyleName(style.hide());
-					hPanel.removeStyleName(style.selectButtonSalaryToggleButton());
-					salaryTableEditors.addAll(dumpSalaryTable());
-				}
+//				if(button.isDown()){
+				//salaryToggleButtonsPanel.addStyleName(style.hide());
+				moreToggleButtonsPanel.addStyleName(style.hide());
+				hPanel.addStyleName(style.selectButtonSalaryToggleButton());
+				salaryTableEditors.addAll(dumpSalaryTableCategory());
+//				}
+//				else{
+//					//salaryToggleButtonsPanel.removeStyleName(style.hide());
+//					moreToggleButtonsPanel.removeStyleName(style.hide());
+//					hPanel.removeStyleName(style.selectButtonSalaryToggleButton());
+//					salaryTableEditors.addAll(dumpSalaryTable());
+//				}
 				salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
 				initSalaryTableFrozenColsAndRows();
-				setReadOnly(/*object.isSystem() &&*/ !agreementDraftObject.isMine() );			}
+				setReadOnly(/*object.isSystem() &&*/ !agreementDraftObject.isMine() );			
+			}
+
+			private void putAllSalaryToggleButtonsUp() {
+				for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+					HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+					ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+					if(!readOnly){
+						Button deleteButton = (Button) hPanel.getWidget(1);
+						deleteButton.removeStyleName(style.deleteButtonDown());
+						deleteButton.addStyleName(style.deleteButtonUp());
+					}
+					toggleButton.setDown(false);
+					hPanel.removeStyleName(style.selectButtonSalaryToggleButton());
+				}
+			}
+			
 		});
+		
+		button.removeStyleName(style.categoryStyleButtonDown());
+		button.addStyleName(style.categoryStyleButtonUp());
 		hPanel.addStyleName(style.panelButtons());
 		hPanel.add(button);
 		categoryButtonPanel.add(hPanel);
@@ -1170,6 +1198,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					
 					@Override
 					public void onClick(ClickEvent event) {
+//						changeCategoryStyleButton();
 						if(button.isDown()){
 							putAllToggleButtonsUp();
 							button.setDown(true);
@@ -1198,6 +1227,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						}
 					}
 	
+					private void changeCategoryStyleButton() {
+						HorizontalPanel hPanel = (HorizontalPanel)categoryButtonPanel.getWidget(0);
+						Button categoryButton = (Button)hPanel.getWidget(0);
+						categoryButton.removeStyleName(style.categoryStyleButtonDown());
+						categoryButton.addStyleName(style.categoryStyleButtonUp());
+						
+					}
+
 					private void putAllToggleButtonsUp() {
 						for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
 							HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
@@ -1341,7 +1378,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
 
-		initCategoryPanel();
+		initCategoryPanel(/*object.isSystem() &&*/ !object.isMine());
 		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
 		
 		loadAvailablePayments();
