@@ -196,9 +196,9 @@ public class Mod131Aeat2016Calculator  {
 				//	Madrid y Barcelona							  1,00
 				//	Municipios de m?s de 100.000 habitantes		  0,95
 				//	Resto de municipios							  0,80
-				if (AonMathUtils.round(mun) == 7.0) {
+				if (AonMathUtils.round(mun) == 6.0) {
 					ic1 = 1.0;
-				} else if (AonMathUtils.round(mun) == 6.0) {
+				} else if (AonMathUtils.round(mun) == 5.0) {
 					ic1 = 0.95;
 				} else {
 					ic1 = 0.80;
