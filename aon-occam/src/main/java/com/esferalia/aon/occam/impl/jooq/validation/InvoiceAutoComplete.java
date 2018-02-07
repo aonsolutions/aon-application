@@ -127,7 +127,7 @@ public class InvoiceAutoComplete {
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> ENSURE_REGISTRY_DATA = (inv,ctx) -> {
 		if (AonStringUtils.isBlank(inv.getRegistryName()) || AonStringUtils.isBlank(inv.getRegistryDocument())) {
-			Registry registry = RegistryDAO.getRegistry(ctx.getContext(), inv.getRegistry());
+			Registry registry = RegistryDAO.getRegistry(ctx.getContext(), f-> f.getIdProperty().eq(inv.getRegistry()));
 			if (AonStringUtils.isBlank(inv.getRegistryName())) inv.setRegistryName(registry.getName());
 			if (AonStringUtils.isBlank(inv.getRegistryDocument())) {
 				inv.setRegistryDocumentType(registry.getDocumentType());

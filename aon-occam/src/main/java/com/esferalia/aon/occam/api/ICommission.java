@@ -6,11 +6,13 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 
 public interface ICommission {
@@ -22,5 +24,9 @@ public interface ICommission {
 	
 	public Stream<OfferDetailCommission> getOfferDetailCommissionStream(AONContext ctx, OfferDetailCommissionFilter filter);
 	public OfferDetailCommission insertOfferDetailCommission(AONContext ctx, OfferDetailCommission odc);
-	public OfferDetailCommission updateOfferDetailCommission(AONContext ctx, OfferDetailCommission odc);		
+	public OfferDetailCommission updateOfferDetailCommission(AONContext ctx, OfferDetailCommission odc);	
+	
+ 	public Stream<InvoiceDetailCommission> getInvoiceDetailCommissionStream(AONContext ctx, InvoiceDetailCommissionFilter filter);
+	public InvoiceDetailCommission insertInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc);
+	public InvoiceDetailCommission updateInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc);	
 }

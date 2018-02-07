@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
@@ -49,11 +50,7 @@ public interface IRegistry {
 	
 	public Stream<Creditor> getBasicCreditors(AONContext ctx, CreditorFilter filter);
 	
-	
-	public Registry getRegistry(AONContext ctx, String name);
-	public Registry getRegistry(AONContext ctx, Integer domainId, String name);
-	public Registry getRegistry(AONContext ctx, Integer id);
-
+	public Registry getRegistry(AONContext ctx, RegistryFilter filter);
 	
 	public Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter);
 	public Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter);

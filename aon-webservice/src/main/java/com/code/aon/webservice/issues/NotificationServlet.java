@@ -393,7 +393,7 @@ public class NotificationServlet extends HttpServlet{
 		
 		if(send) return ""; 
 		
-		Registry r = AON.getRegistry(domain.getName(), domain.getId(), login, name);
+		Registry r = AON.getRegistry(domain.getName(), domain.getId(), login, f -> f.getNameProperty().eq(name).and(f.getDomainProperty().eq(domain.getId())));
 		LinkedList<RegistryMedia> l = AON.getRMediaList(domain.getName(), domain.getId(), login,
 				f -> f.getRegistryProperty().eq(r.getId()).and(f.getMediaProperty().eq((byte)4)));
 		

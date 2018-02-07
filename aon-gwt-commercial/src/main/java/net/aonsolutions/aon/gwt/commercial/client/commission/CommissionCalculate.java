@@ -1,21 +1,17 @@
 package net.aonsolutions.aon.gwt.commercial.client.commission;
 
 import com.esferalia.aon.gwt.api.client.API;
-import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.commercial.JsCommission;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,6 +22,16 @@ public class CommissionCalculate extends AonTemplate2{
 	private AonData aonData;
 	private API API;
 	private CommissionCalculate me = this;
+	
+	private String type = "offer";
+	
+	public Boolean isOffer() {
+		return "offer".equalsIgnoreCase(type);
+	}
+	
+	public Boolean isInvoice() {
+		return "invoice".equalsIgnoreCase(type);
+	}
 
 	public CommissionCalculate(AonData aonData) {
 		this.aonData = aonData;
@@ -67,9 +73,12 @@ public class CommissionCalculate extends AonTemplate2{
 				if(ccc.getConfidential() != null) json.put("confidential", new JSONNumber(ccc.getConfidential() ? 1 : 0));
 				if(ccc.getWorkplace() != null) json.put("workplace", new JSONNumber(ccc.getWorkplace()));
 				String requestData = JsonUtils.stringify(json.getJavaScriptObject());
-
-				getAPI().getCommission().commissionCalculate(requestData);
 				
+				if(isOffer()) {
+					getAPI().getCommission().offerCommissionCalculate(requestData);
+				} else if(isInvoice()) {
+					getAPI().getCommission().invoiceCommissionCalculate(requestData);
+				}
 				content(new CommissionCalculatePrincipal(me));
 			}
 		};

@@ -8,22 +8,19 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.impl.jooq.dao.CommissionDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 
 public class CommissionImpl implements ICommission {
 
-	@Override
-	public Stream<OfferDetailCommission> getOfferDetailCommissionStream(AONContext ctx, OfferDetailCommissionFilter filter) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> CommissionDAO.getOfferDetailCommissionStream(ctx, filter));
-	}
+	
 
 	@Override
 	public Stream<Commission> getCommissionStream(AONContext ctx, CommissionFilter filter) {
@@ -49,6 +46,16 @@ public class CommissionImpl implements ICommission {
 				configuration -> CommissionDAO.getCommissionItemStream(ctx, filter));
 	}
 
+	/*
+	 *		OFFER DETAIL COMMISSION
+	 */
+	
+	@Override
+	public Stream<OfferDetailCommission> getOfferDetailCommissionStream(AONContext ctx, OfferDetailCommissionFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CommissionDAO.getOfferDetailCommissionStream(ctx, filter));
+	}
+	
 	@Override
 	public OfferDetailCommission insertOfferDetailCommission(AONContext ctx, OfferDetailCommission odc) {
 		return ctx.getDslContext().transactionResult(configuration -> CommissionDAO.insertOfferDetailCommission(ctx, odc));
@@ -57,5 +64,26 @@ public class CommissionImpl implements ICommission {
 	@Override
 	public OfferDetailCommission updateOfferDetailCommission(AONContext ctx, OfferDetailCommission odc) {
 		return ctx.getDslContext().transactionResult(configuration -> CommissionDAO.updateOfferDetailCommission(ctx, odc));
+	}
+	
+
+	/*
+	 *		INVOICE DETAIL COMMISSION
+	 */
+	
+	@Override
+	public Stream<InvoiceDetailCommission> getInvoiceDetailCommissionStream(AONContext ctx, InvoiceDetailCommissionFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CommissionDAO.getInvoiceDetailCommissionStream(ctx, filter));
+	}
+	
+	@Override
+	public InvoiceDetailCommission insertInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc) {
+		return ctx.getDslContext().transactionResult(configuration -> CommissionDAO.insertInvoiceDetailCommission(ctx, idc));
+	}
+
+	@Override
+	public InvoiceDetailCommission updateInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc) {
+		return ctx.getDslContext().transactionResult(configuration -> CommissionDAO.updateInvoiceDetailCommission(ctx, idc));
 	}
 }

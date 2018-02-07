@@ -23,11 +23,11 @@ import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
-import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
+import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
@@ -110,6 +111,7 @@ import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
+import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
@@ -149,29 +151,30 @@ public class PropertiesDAO {
 
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);}
-		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty(){return new FilterDAO.PropertyDAO<Integer>(INVOICE.REGISTRY);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ID);}
+		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.REGISTRY);}
 		@Override public Property<java.util.Date> getStartIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
 		@Override public Property<java.util.Date> getEndIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.SCOPE);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SECURITY_LEVEL);}
-		@Override public Property<Byte> getRectificationTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.RECTIFICATION_TYPE);}
-		@Override public Property<Integer> getRectificationInvoiceProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.RECTIFICATION_INVOICE);}
-		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.WORKPLACE);}
-		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.SELLER);}
-		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PRODUCT);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.ITEM);}
-		@Override public Property<Integer> getProductCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PCATEGORY.ID);}
-		@Override public Property<Integer> getProductBrandProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.BRAND);}
-		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}	
-		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.TYPE);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TRANSACTION);}
-		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.INVESTMENT);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TYPE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SCOPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SECURITY_LEVEL);}
+		@Override public Property<Byte> getRectificationTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.RECTIFICATION_TYPE);}
+		@Override public Property<Integer> getRectificationInvoiceProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.RECTIFICATION_INVOICE);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.WORKPLACE);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.SELLER);}
+		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PRODUCT);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.ITEM);}
+		@Override public Property<Integer> getProductCategoryProperty() {return new FilterDAO.PropertyDAO<>(PCATEGORY.ID);}
+		@Override public Property<Integer> getProductBrandProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.BRAND);}
+		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CODE);}	
+		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.TYPE);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TRANSACTION);}
+		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.INVESTMENT);}
 		@Override public Property<java.util.Date> getTaxDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
-		@Override public Property<Integer> getPosShiftroperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.POS_SHIFT);}
-		@Override public Property<Byte> getVatAccrualPayment() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Integer> getPosShiftroperty() {return new FilterDAO.PropertyDAO<>(INVOICE.POS_SHIFT);}
+		@Override public Property<Byte> getVatAccrualPayment() {return new FilterDAO.PropertyDAO<>(INVOICE.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SERIES);}
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
@@ -1153,6 +1156,36 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SELLER);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(OFFER.TYPE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(OFFER.STATUS);}
+		
+	}
+	
+	protected static class InvoiceDetailCommissionPropertiesDAO implements InvoiceDetailCommissionProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, InvoiceDetailCommissionFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(InvoiceDetailCommissionFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.DOMAIN);}
+		@Override public Property<Double> getCommissionProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.COMMISSION);}
+		@Override public Property<Integer> getInvoiceDetailProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL);}
+		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.AMOUNT);}
+		@Override public Property<Date> getPayDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.PAY_DATE);}
+		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ISSUE_DATE);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SERIES);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.NUMBER);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.REGISTRY);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SELLER);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TYPE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
 		
 	}
 	

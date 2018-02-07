@@ -29,8 +29,12 @@ import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferProperties;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -58,8 +62,16 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		String userName = req.getRemoteUser();
 	
 		Domain domain = AON.getDomain(domainName, domainId, userName);
-		
-		calculate(domain, userName);
+		switch (req.getPathInfo()) {
+		case "/offer":
+			offerCalculate(domain, userName);
+			break;
+		case "/invoice":
+			invoiceCalculate(domain, userName);
+			break;
+		default:
+			break;
+		}
 	}
 	
 	public JSONObject getRequestJSON(HttpServletRequest req){
@@ -174,7 +186,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		this.workplace = workplace;
 	}
 
-	public void calculate(Domain domain, String login) {
+	public void offerCalculate(Domain domain, String login) {
 		getOfferDetailStream(domain, login).forEach(od -> {
 			OfferDetailCommission odc = AON.getOfferDetailCommission(domain.getName(), domain.getId(), login, f -> f.getOfferDetailProperty().eq(od.getId()));
 			if(odc != null && odc.getAmount().equals(1.2)) {
@@ -192,6 +204,45 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 			}
 		});
 	}
+	
+	public void invoiceCalculate(Domain domain, String login) {
+		getInvoiceDetailStream(domain, login).forEach(id -> {
+			InvoiceDetailCommission idc = AON.getInvoiceDetailCommission(domain.getName(), domain.getId(), login, f -> f.getInvoiceDetailProperty().eq(id.getId()));
+			if(idc != null && idc.getAmount().equals(1.2)) {
+				System.out.println(idc);
+			}
+			if(idc != null && InvoiceDetailCommissionStatus.PENDING.equals(idc.getStatus())) {
+				double commission = getCommission(domain, login, id);
+				double amount = CommonUtil.round(getBasePrice(id) * commission / 100);
+				
+				idc.setCommission(commission);
+				idc.setAmount(amount);
+				
+				if(idc.getId() != null) AON.updateInvoiceDetailCommission(domain.getName(), domain.getId(), login, idc);
+				else  AON.insertInvoiceDetailCommission(domain.getName(), domain.getId(), login, idc);
+			}
+		});
+	}
+	
+	private Stream<InvoiceDetail> getInvoiceDetailStream(Domain domain, String login){
+		return AON.getInvoiceDetails(domain.getName(), domain.getId(), login, f -> invoiceDetailFilter(domain, f));
+	}
+	
+	public Filter invoiceDetailFilter(Domain domain, InvoiceProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(getSeller() != null) {
+			filter = filter.and(f.getSellerProperty().eq(getSeller()));
+		}
+		if(getWorkplace() != null) {
+			filter = filter.and(f.getWorkplaceProperty().eq(getWorkplace()));			
+		}
+		if(getSeries() != null) {
+			filter = filter.and(f.getSeriesProperty().eq(getSeries()));
+		}
+		
+		return filter;
+    }
 	
 	private Stream<com.esferalia.aon.occam.api.model.management.OfferDetail> getOfferDetailStream(Domain domain, String login){
 		return AON.getOfferDetails(domain.getName(), domain.getId(), login, f -> offerDetailFilter(domain, f));
@@ -252,11 +303,63 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		return commission;
 	}
 	
+	public double getCommission(Domain domain, String login, InvoiceDetail id) {
+		Double commission = 0.0;
+		if(id != null && id.getInvoice() != null && id.getInvoice().getSeller() != null) {
+			Seller seller = AON.getSeller(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(id.getInvoice().getSeller()));			
+			CommissionType commissionType = seller.getCommissionType();
+	
+			if (commissionType != null && commissionType.getId() != null) {
+				commission = commissionType.getRate();
+				Date date = id.getInvoice().getIssueDate();
+				LinkedList<CommissionTypeCommission> ctcList = AON.getCommissionTypeCommissionStream(domain.getName(), domain.getId(), login,
+					f -> f.getCommissionTypeProperty().eq(commissionType.getId())
+					.and(f.getStartDateProperty().le(AonDateUtils.toSql(date)))
+					.and(f.getEndDateProperty().ge(AonDateUtils.toSql(date)).or(f.getEndDateProperty().isNull())))
+					.collect(Collectors.toCollection(LinkedList::new));
+				
+				for(CommissionTypeCommission ctc : ctcList) {
+					LinkedList<CommissionItem> ciList = AON.getCommissionItemStream(domain.getName(), domain.getId(), login,
+						f -> f.getCommissionProperty().eq(ctc.getCommission())
+						.and(f.getItemProperty().eq(id.getItem().getId()))
+						.and(f.getQuantityProperty().le(id.getQuantity())))
+						.collect(Collectors.toCollection(LinkedList::new));
+					for(CommissionItem ci : ciList) {
+						return ci.getRate();
+					}
+				
+					LinkedList<CommissionCategory> ccList = AON.getCommissionCategoryStream(domain.getName(), domain.getId(), login,
+						f -> f.getCommissionProperty().eq(ctc.getCommission())
+						.and(f.getCategoryProperty().eq(id.getItem().getProduct().getCategory()))
+						.and(f.getQuantityProperty().le(id.getQuantity())))
+						.collect(Collectors.toCollection(LinkedList::new));
+					for(CommissionCategory cc : ccList) {
+						return cc.getRate();
+					}
+				}
+			}
+		}
+		return commission;
+	}
+	
 	public double getBasePrice(OfferDetail od) {
 		double price = 0;
 		price = od.getPrice();
 		price = price * od.getQuantity();
 		DiscountExpression de = new DiscountExpression(od.getDiscountExpression());
+		if (de.getDiscounts() != null) {
+			for (int i = 0;i<de.getDiscounts().length;i++) {
+				price = price * ( 1 - de.getDiscounts()[i] /100);
+			}
+		}
+		return CommonUtil.round(price, 4);
+	}
+	
+	public double getBasePrice(InvoiceDetail id) {
+		double price = 0;
+		price = id.getPrice();
+		price = price * id.getQuantity();
+		DiscountExpression de = new DiscountExpression(id.getDiscountExpression());
 		if (de.getDiscounts() != null) {
 			for (int i = 0;i<de.getDiscounts().length;i++) {
 				price = price * ( 1 - de.getDiscounts()[i] /100);

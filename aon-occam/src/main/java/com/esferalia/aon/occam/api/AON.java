@@ -59,6 +59,7 @@ import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
@@ -114,6 +115,7 @@ import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -1853,23 +1855,12 @@ public class AON {
 				ctx.close();
 		}
 	}
-		
-	public static Registry getRegistry(String domainName, Integer domainId, String login, String name){
+
+	public static Registry getRegistry(String domainName, Integer domainId, String login, RegistryFilter filter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRegistry(ctx, name);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Registry getRegistryFD(String domainName, Integer domainId, String login, String name){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRegistry(ctx, domainId, name);
+			return getRegistry().getRegistry(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1877,14 +1868,7 @@ public class AON {
 	}
 	
 	public static Registry getRegistry(String domainName, Integer domainId, String login, Integer id){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRegistry(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		return getRegistry(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
 	public static NotificationInfo getNotificationInfo(String domainName, Integer domainId, String login){
@@ -4824,6 +4808,10 @@ public class AON {
 		}
 	}
 	
+	/*
+	 * 		OFFER DETAIL COMMISSION
+	 */
+	
 	public static Stream<OfferDetailCommission> getOfferDetailCommissionStream(String domainName, Integer domainId, String login, OfferDetailCommissionFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -4855,6 +4843,48 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommission().updateOfferDetailCommission(ctx, odc);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	
+	/*
+	 * 		INVOICE DETAIL COMMISSION
+	 */
+	
+	public static Stream<InvoiceDetailCommission> getInvoiceDetailCommissionStream(String domainName, Integer domainId, String login, InvoiceDetailCommissionFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().getInvoiceDetailCommissionStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static InvoiceDetailCommission getInvoiceDetailCommission(String domainName, Integer domainId, String login, InvoiceDetailCommissionFilter filter) {
+		return getInvoiceDetailCommissionStream(domainName, domainId, login, filter).findFirst().orElse(null);
+	}
+	
+	public static InvoiceDetailCommission insertInvoiceDetailCommission(String domainName, Integer domainId, String login, InvoiceDetailCommission idc) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().insertInvoiceDetailCommission(ctx, idc);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static InvoiceDetailCommission updateInvoiceDetailCommission(String domainName, Integer domainId, String login, InvoiceDetailCommission idc) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().updateInvoiceDetailCommission(ctx, idc);
 		} finally {
 			if (ctx != null)
 				ctx.close();

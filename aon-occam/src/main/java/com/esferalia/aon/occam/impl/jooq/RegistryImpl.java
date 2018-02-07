@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
@@ -77,21 +78,9 @@ public class RegistryImpl implements IRegistry{
 	}
 
 	@Override
-	public Registry getRegistry(AONContext ctx, String name) {
+	public Registry getRegistry(AONContext ctx, RegistryFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.getRegistry(ctx, name));
-	}
-	
-	@Override
-	public Registry getRegistry(AONContext ctx, Integer domainId, String name) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.getRegistry(ctx, domainId, name));
-	}
-	
-	@Override
-	public Registry getRegistry(AONContext ctx, Integer id) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.getRegistry(ctx, id));
+				configuration -> RegistryDAO.getRegistry(ctx, filter));
 	}
 	
 	// ------------------------------------- RMEDIA

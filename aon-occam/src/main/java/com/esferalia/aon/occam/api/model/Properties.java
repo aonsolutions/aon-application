@@ -1093,4 +1093,21 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<Byte> getStatusProperty();	
 	}
+	
+	public interface InvoiceDetailCommissionProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Double> getCommissionProperty();
+		Property<Integer> getInvoiceDetailProperty();
+		Property<Double> getAmountProperty();
+		Property<Date> getPayDateProperty();
+		
+		Property<Date> getDateProperty();
+		Property<String> getSeriesProperty();
+		Property<Integer> getNumberProperty();	
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getSellerProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getStatusProperty();	
+	}
 }

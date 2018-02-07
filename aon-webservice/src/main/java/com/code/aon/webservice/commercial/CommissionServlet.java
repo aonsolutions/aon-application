@@ -18,6 +18,7 @@ import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -42,8 +43,11 @@ public class CommissionServlet extends HttpServlet{
 		JSONObject meta = new JSONObject();
 		
 		switch (req.getPathInfo()) {
-		case "/calculated":
-			object = getCalculatedCommission(domain, userName, req.getParameterMap());
+		case "/calculated/offer":
+			object = getOfferCalculatedCommission(domain, userName, req.getParameterMap());
+			break;
+		case "/calculated/invoice":
+			object = getInvoiceCalculatedCommission(domain, userName, req.getParameterMap());
 			break;
 		default:
 			break;
@@ -56,10 +60,10 @@ public class CommissionServlet extends HttpServlet{
 		LOGGER.info("Common Servlet - POST METHOD");
 	}
 	
-	private Object getCalculatedCommission(Domain domain, String userName,  Map<String,String[]> filterMap){
+	private Object getOfferCalculatedCommission(Domain domain, String userName,  Map<String,String[]> filterMap){
 		JSONArray array = new JSONArray();
 		AON.getOfferDetailCommissionStream(domain.getName(), domain.getId(), userName, 
-				f -> calculatedCommissionFilter(domain, filterMap, f))
+				f -> offerCalculatedCommissionFilter(domain, filterMap, f))
 		.forEach(r -> {
 			JSONObject json = new JSONObject();
 			json.put("id", r.getId());
@@ -83,7 +87,7 @@ public class CommissionServlet extends HttpServlet{
 		return array;
 	}
 	
-	public static Filter calculatedCommissionFilter(Domain domain, Map<String, String[]> filterMap, OfferDetailCommissionProperties f) {
+	public static Filter offerCalculatedCommissionFilter(Domain domain, Map<String, String[]> filterMap, OfferDetailCommissionProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 	
 		if(filterMap.containsKey("from")){
@@ -106,21 +110,12 @@ public class CommissionServlet extends HttpServlet{
 			filter = filter.and(fSerie);
 		}
 		
-		if(filterMap.containsKey("series")){
-			String serie = filterMap.get(MSG.SERIES)[0];			
-			Filter fSerie = f.getSerieProperty().eq(serie);
-			filter = filter.and(fSerie);
-		}
-		
-		
 		if(filterMap.containsKey("number_from")){
 			try { 
 				Integer n = Integer.parseInt(filterMap.get("number_from")[0]);
 				Filter fnumber = f.getNumberProperty().ge(n);
 				filter = filter.and(fnumber);
-			} catch (Exception e) {
-			
-			}
+			} catch (Exception e) {}
 		} 
 		
 		if(filterMap.containsKey("number_to")){
@@ -128,9 +123,7 @@ public class CommissionServlet extends HttpServlet{
 				Integer n = Integer.parseInt(filterMap.get("number_to")[0]);
 				Filter fnumber = f.getNumberProperty().le(n);
 				filter = filter.and(fnumber);
-			} catch (Exception e) {
-		
-			}
+			} catch (Exception e) {}
 		} 
 		
 		if(filterMap.containsKey("type")){
@@ -138,9 +131,7 @@ public class CommissionServlet extends HttpServlet{
 				Integer n = Integer.parseInt(filterMap.get("type")[0]);
 				Filter ftype = f.getTypeProperty().eq(n.byteValue());
 				filter = filter.and(ftype);
-			} catch (Exception e) {
-				
-			}
+			} catch (Exception e) {}
 		} 
 		
 		if(filterMap.containsKey("seller")){
@@ -148,9 +139,7 @@ public class CommissionServlet extends HttpServlet{
 				Integer n = Integer.parseInt(filterMap.get("seller")[0]);
 				Filter fseller= f.getSellerProperty().eq(n);
 				filter = filter.and(fseller);
-			}catch (Exception e) {
-			
-			}
+			}catch (Exception e) {}
 		} 
 		
 		if(filterMap.containsKey("target")){
@@ -158,25 +147,112 @@ public class CommissionServlet extends HttpServlet{
 				Integer n = Integer.parseInt(filterMap.get("target")[0]);
 				Filter ftarget = f.getTargetProperty().eq(n);
 				filter = filter.and(ftarget);
-			}catch (Exception e) {
-		
-			}
+			}catch (Exception e) {}
 		} 
-		
 
 		if(filterMap.containsKey("supplier")){
 			try {
 				Integer n = Integer.parseInt(filterMap.get("supplier")[0]);
 				Filter fsupplier= f.getSupplierProperty().eq(n);
 				filter = filter.and(fsupplier);
-			} catch (Exception e) {
-			
-			}
+			} catch (Exception e) {}
 		}
 
 		return filter;
 	}
 
+	private Object getInvoiceCalculatedCommission(Domain domain, String userName,  Map<String,String[]> filterMap){
+		JSONArray array = new JSONArray();
+		AON.getInvoiceDetailCommissionStream(domain.getName(), domain.getId(), userName, 
+				f -> invoiceCalculatedCommissionFilter(domain, filterMap, f))
+		.forEach(r -> {
+			JSONObject json = new JSONObject();
+			json.put("id", r.getId());
+			json.put("date", r.getInvoiceDetail().getInvoice().getIssueDate());
+			json.put("seller", r.getInvoiceDetail().getInvoice().getSellerName());	
+			Double p = r.getInvoiceDetail().getPrice()* r.getInvoiceDetail().getQuantity();
+			Double discount = Double.parseDouble(r.getInvoiceDetail().getDiscountExpression());
+			json.put("base", p - (p*discount/100));
+			json.put("amount", r.getAmount());
+			json.put("percentage", r.getCommission());
+			json.put("status", r.getStatus().getName());
+			json.put("product", r.getInvoiceDetail().getDescription());
+			
+			String series = r.getInvoiceDetail().getInvoice().getSeries();
+			Integer number = r.getInvoiceDetail().getInvoice().getNumber();
+					 
+			json.put("description", series + "/" + ceros(number.toString(),6));
+			array.put(json);
+		});
+		return array;
+	}
+	
+	public static Filter invoiceCalculatedCommissionFilter(Domain domain, Map<String, String[]> filterMap, InvoiceDetailCommissionProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+	
+		if(filterMap.containsKey("from")){
+			String from = filterMap.get(MSG.FROM)[0];
+			Date d = new Date(Long.parseLong(from));
+			Filter fDate = f.getDateProperty().ge(AonDateUtils.toSql(d));
+			filter = filter.and(fDate);
+		}
+		
+		if(filterMap.containsKey("to")){
+			String to = filterMap.get(MSG.TO)[0];
+			Date d = new Date(Long.parseLong(to));
+			Filter fDate = f.getDateProperty().le(AonDateUtils.toSql(d));
+			filter = filter.and(fDate);
+		}
+		
+		if(filterMap.containsKey("series")){
+			String serie = filterMap.get(MSG.SERIES)[0];			
+			Filter fSerie = f.getSeriesProperty().eq(serie);
+			filter = filter.and(fSerie);
+		}	
+		
+		if(filterMap.containsKey("number_from")){
+			try { 
+				Integer n = Integer.parseInt(filterMap.get("number_from")[0]);
+				Filter fnumber = f.getNumberProperty().ge(n);
+				filter = filter.and(fnumber);
+			} catch (Exception e) {}
+		} 
+		
+		if(filterMap.containsKey("number_to")){
+			try {
+				Integer n = Integer.parseInt(filterMap.get("number_to")[0]);
+				Filter fnumber = f.getNumberProperty().le(n);
+				filter = filter.and(fnumber);
+			} catch (Exception e) {}
+		} 
+		
+		if(filterMap.containsKey("type")){
+			try {
+				Integer n = Integer.parseInt(filterMap.get("type")[0]);
+				Filter ftype = f.getTypeProperty().eq(n.byteValue());
+				filter = filter.and(ftype);
+			} catch (Exception e) {}
+		} 
+		
+		if(filterMap.containsKey("seller")){
+			try {
+				Integer n = Integer.parseInt(filterMap.get("seller")[0]);
+				Filter fseller= f.getSellerProperty().eq(n);
+				filter = filter.and(fseller);
+			}catch (Exception e) {}
+		} 
+		
+		if(filterMap.containsKey("registry")){
+			try {
+				Integer n = Integer.parseInt(filterMap.get("registry")[0]);
+				Filter fregistry= f.getRegistryProperty().eq(n);
+				filter = filter.and(fregistry);
+			} catch (Exception e) {}
+		}
+
+		return filter;
+	}
+	
 	private String ceros(String str, Integer ceros) {
 		if(ceros > str.length()) {
 			String sc = "";

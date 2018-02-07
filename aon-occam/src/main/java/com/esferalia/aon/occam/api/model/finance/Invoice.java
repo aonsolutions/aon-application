@@ -64,6 +64,7 @@ public class Invoice implements Serializable, HasAudit {
 	private double total;
 	private Integer posShift;
 	private Integer seller;
+	private String sellerName;
 	
 	private String comments;
 	private String remarks;
@@ -392,6 +393,13 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setSeller(Integer seller) {
 		this.seller = seller;
+		return this;
+	}
+	public String getSellerName() {
+		return sellerName;
+	}
+	public Invoice setSellerName(String sellerName) {
+		this.sellerName = sellerName;
 		return this;
 	}
 	public Integer getPosShift() {

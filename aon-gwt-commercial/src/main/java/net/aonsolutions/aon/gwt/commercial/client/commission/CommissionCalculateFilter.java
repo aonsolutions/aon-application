@@ -194,43 +194,43 @@ public class CommissionCalculateFilter extends Composite {
 		
 		FlowPanel fpanel2 = new FlowPanel(); 
 		fpanel2.getElement().getStyle().setMarginTop(1, Unit.EM);
-/*
- * 				FOR INVOICE
- * 
-		parent.getAPI().getRegistry().getCustomers(new AsyncCallback<JSON<JsObject>>() {
+		
+		if(parent.isInvoice()) {
+			parent.getAPI().getRegistry().getCustomers(new AsyncCallback<JSON<JsObject>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsObject> r) {
-				InlineLabel customerLabel = new InlineLabel("Cliente");
-				customerLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-				customerLabel.setWidth("20px");
-				fpanel2.add(customerLabel);
+				@Override
+				public void onSuccess(JSON<JsObject> r) {
+					InlineLabel customerLabel = new InlineLabel("Cliente");
+					customerLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+					customerLabel.setWidth("20px");
+					fpanel2.add(customerLabel);
 				
-				AonSuggestOracleMap oracle = new AonSuggestOracleMap();
-				r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
-				SuggestBox sb = new SuggestBox(oracle);		
-				sb.setStyleName(AON.AON_CSS.aonInputText());
-				sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
-				sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
-				sb.getElement().getStyle().setBorderColor("#dedede");	
-				sb.addValueChangeHandler(new ValueChangeHandler<String>() {
+					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
+					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
+					SuggestBox sb = new SuggestBox(oracle);		
+					sb.setStyleName(AON.AON_CSS.aonInputText());
+					sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
+					sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+					sb.getElement().getStyle().setBorderColor("#dedede");	
+					sb.addValueChangeHandler(new ValueChangeHandler<String>() {
 					
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						LinkedList<String> list = new LinkedList<>();
-						list.add(oracle.getMap().get(sb.getValue()) + "");
-						CommissionCalculateFilter.this.onChange("customer", list);	
-					}
-				});
-				fpanel2.add(sb);
-			}
+						@Override
+						public void onValueChange(ValueChangeEvent<String> event) {
+							LinkedList<String> list = new LinkedList<>();
+							list.add(oracle.getMap().get(sb.getValue()) + "");
+							CommissionCalculateFilter.this.onChange("registry", list);	
+						}
+					});
+					fpanel2.add(sb);
+				}
 			
-			@Override
-			public void onFailure(Throwable caught) {
+				@Override
+				public void onFailure(Throwable caught) {
 				
-			}
-		});	
-*/
+				}
+			});	
+		}
+		
 		parent.getAPI().getRegistry().getSellers(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
@@ -267,72 +267,71 @@ public class CommissionCalculateFilter extends Composite {
 			}
 		});	
 		
-		parent.getAPI().getRegistry().getSuppliers(new AsyncCallback<JSON<JsObject>>() {
+		if(parent.isOffer()) {
+			parent.getAPI().getRegistry().getSuppliers(new AsyncCallback<JSON<JsObject>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsObject> r) {
+				@Override
+				public void onSuccess(JSON<JsObject> r) {
+					InlineLabel supplierLabel = new InlineLabel("Proveedor");
+					supplierLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+					supplierLabel.setWidth("20px");
+					fpanel2.add(supplierLabel);
 				
-				InlineLabel supplierLabel = new InlineLabel("Proveedor");
-				supplierLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-				supplierLabel.setWidth("20px");
-				fpanel2.add(supplierLabel);
-				
-				AonSuggestOracleMap oracle = new AonSuggestOracleMap();
-				r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
-				SuggestBox sb = new SuggestBox(oracle);		
-				sb.setStyleName(AON.AON_CSS.aonInputText());
-				sb.setStyleName(AON.AON_CSS.aonInputText());
-				sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
-				sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
-				sb.getElement().getStyle().setBorderColor("#dedede");	
-				sb.addValueChangeHandler(new ValueChangeHandler<String>() {
+					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
+					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
+					SuggestBox sb = new SuggestBox(oracle);		
+					sb.setStyleName(AON.AON_CSS.aonInputText());
+					sb.setStyleName(AON.AON_CSS.aonInputText());
+					sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
+					sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+					sb.getElement().getStyle().setBorderColor("#dedede");	
+					sb.addValueChangeHandler(new ValueChangeHandler<String>() {
 					
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						LinkedList<String> list = new LinkedList<>();
-						list.add(oracle.getMap().get(sb.getValue()) + "");
-						CommissionCalculateFilter.this.onChange("supplier", list);
-					}
-				});
-				fpanel2.add(sb);
-			}
+						@Override
+						public void onValueChange(ValueChangeEvent<String> event) {
+							LinkedList<String> list = new LinkedList<>();
+							list.add(oracle.getMap().get(sb.getValue()) + "");
+							CommissionCalculateFilter.this.onChange("supplier", list);
+						}
+					});
+					fpanel2.add(sb);
+				}
 			
-			@Override public void onFailure(Throwable caught) {}
-		});	
+				@Override public void onFailure(Throwable caught) {}
+			});		
 		
-		parent.getAPI().getRegistry().getTargets(new AsyncCallback<JSON<JsObject>>() {
+			parent.getAPI().getRegistry().getTargets(new AsyncCallback<JSON<JsObject>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsObject> r) {
-				
-				InlineLabel targetLabel = new InlineLabel("Cliente Potencial");
-				targetLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-				targetLabel.setWidth("20px");
-				fpanel2.add(targetLabel);
-				
-				AonSuggestOracleMap oracle = new AonSuggestOracleMap();
-				r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
-				SuggestBox sb = new SuggestBox(oracle);		
-				sb.setStyleName(AON.AON_CSS.aonInputText());
-				sb.setStyleName(AON.AON_CSS.aonInputText());
-				sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
-				sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
-				sb.getElement().getStyle().setBorderColor("#dedede");	
-				sb.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onSuccess(JSON<JsObject> r) {				
+					InlineLabel targetLabel = new InlineLabel("Cliente Potencial");
+					targetLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+					targetLabel.setWidth("20px");
+					fpanel2.add(targetLabel);
 					
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						LinkedList<String> list = new LinkedList<>();
-						list.add(oracle.getMap().get(sb.getValue()) + "");
-						CommissionCalculateFilter.this.onChange("target", list);
-					}
-				});
-				fpanel2.add(sb);
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});	
-	
+					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
+					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
+					SuggestBox sb = new SuggestBox(oracle);
+					sb.setStyleName(AON.AON_CSS.aonInputText());
+					sb.setStyleName(AON.AON_CSS.aonInputText());
+					sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
+					sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+					sb.getElement().getStyle().setBorderColor("#dedede");
+					sb.addValueChangeHandler(new ValueChangeHandler<String>() {
+						
+						@Override
+						public void onValueChange(ValueChangeEvent<String> event) {
+							LinkedList<String> list = new LinkedList<>();
+							list.add(oracle.getMap().get(sb.getValue()) + "");
+							CommissionCalculateFilter.this.onChange("target", list);
+						}	
+					});
+					fpanel2.add(sb);
+				}	
+				
+				@Override public void onFailure(Throwable caught) {}
+			});	
+		}
 		
 		// Type	
     	InlineLabel typeLabel = new InlineLabel("Tipo");

@@ -33,6 +33,9 @@ import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
 import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
 import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
 
 import java.util.function.Function;
 
@@ -48,8 +51,12 @@ import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -885,6 +892,41 @@ public class FillerDAO {
 					.setCommission(r.getValue(OFFER_DETAIL_COMMISSION.COMMISSION))
 					.setAmount(r.getValue(OFFER_DETAIL_COMMISSION.AMOUNT));
 			
+		}
+	}
+	
+	public static class InvoiceDetailCommissionFiller implements Function<Record, InvoiceDetailCommission> {
+		
+		@Override
+		public InvoiceDetailCommission apply(Record r) {
+			Invoice i = new Invoice()
+					.setId(r.getValue(INVOICE.ID))
+					.setDomain(r.getValue(INVOICE.DOMAIN))
+					.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+					.setSeries(r.getValue(INVOICE.SERIES))
+					.setNumber(r.getValue(INVOICE.NUMBER))
+					.setSeller(r.getValue(REGISTRY.ID))
+					.setSellerName(r.getValue(REGISTRY.NAME));
+			
+			
+			InvoiceDetail id = new InvoiceDetail()
+					.setDescription(r.getValue(INVOICE_DETAIL.DESCRIPTION))
+					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
+					.setDomain(r.getValue(INVOICE_DETAIL.DOMAIN))
+					.setId(r.getValue(INVOICE_DETAIL.ID))
+					.setItem(new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
+					.setInvoice(i)
+					.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
+					.setQuantity(r.getValue(INVOICE_DETAIL.QUANTITY));
+			
+			return new InvoiceDetailCommission()
+					.setId(r.getValue(INVOICE_DETAIL_COMMISSION.ID))
+					.setDomain(r.getValue(INVOICE_DETAIL_COMMISSION.DOMAIN))
+					.setInvoiceDetail(id)
+					.setStatus(InvoiceDetailCommissionStatus.values()[r.getValue(INVOICE_DETAIL_COMMISSION.STATUS)])
+					.setPayDate(r.getValue(INVOICE_DETAIL_COMMISSION.PAY_DATE))
+					.setCommission(r.getValue(INVOICE_DETAIL_COMMISSION.COMMISSION))
+					.setAmount(r.getValue(INVOICE_DETAIL_COMMISSION.AMOUNT));
 		}
 	}
 	

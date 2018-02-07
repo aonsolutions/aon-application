@@ -483,7 +483,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	
 	private Registry obtainRegistry(AONContext ctx, Integer id){
 		if(id!=null){
-			return RegistryDAO.getRegistry(ctx, id);
+			return RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(id));
 		}
 		return null;
 	}

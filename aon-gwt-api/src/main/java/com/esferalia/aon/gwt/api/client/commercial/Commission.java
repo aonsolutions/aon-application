@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Commission extends Methods{
@@ -22,14 +21,22 @@ public class Commission extends Methods{
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
-	public void getCalculatedCommission(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommission>> callback){
+	public void getOfferCalculatedCommission(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommission>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "commission/calculated" + filter, callback);
+		get(getUrl() + "commission/calculated/offer" + filter, callback);
 	}
 	
-	public void commissionCalculate(String requestData){
-		Window.alert(requestData);
-		post(getUrl()+ "commission_calculation", requestData);
+	public void getInvoiceCalculatedCommission(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommission>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "commission/calculated/invoice" + filter, callback);
+	}
+	
+	public void offerCommissionCalculate(String requestData){
+		post(getUrl()+ "commission_calculation/offer", requestData);
+	}
+	
+	public void invoiceCommissionCalculate(String requestData){
+		post(getUrl()+ "commission_calculation/invoice", requestData);
 	}
 	
 }

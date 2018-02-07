@@ -63,7 +63,7 @@ public class IngenetSalesManager {
 		
 		ctx.getDslContext().transaction(
 				configuration -> {
-					Integer customerId = RegistryDAO.getRegistry(ctx, sales.getCustomer().getId()).getId();
+					Integer customerId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCustomer().getId())).getId();
 					if (sales.getCustomer() != null
 							&& customerId==null) {
 						createRegistry(ctx, domainId, sales.getCustomer()
@@ -71,7 +71,7 @@ public class IngenetSalesManager {
 						SalesDAO.createCustomer(ctx, domainId, sales
 								.getCustomer().getId(), scopeId);
 					}
-					Integer sellerId = RegistryDAO.getRegistry(ctx, sales.getSeller().getId()).getId();
+					Integer sellerId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getSeller().getId())).getId();
 					if (sales.getSeller() != null
 							&& sales.getSeller().getId() != null
 							&& sellerId==null) {
@@ -80,7 +80,7 @@ public class IngenetSalesManager {
 						SalesDAO.createSeller(ctx, domainId, sales.getSeller()
 								.getId(), scopeId);
 					}
-					Integer carrierId = RegistryDAO.getRegistry(ctx, sales.getCarrier().getId()).getId();
+					Integer carrierId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCarrier().getId())).getId();
 					if (sales.getCarrier() != null
 							&& sales.getCarrier().getId() != null
 							&& carrierId==null) {
@@ -225,14 +225,14 @@ public class IngenetSalesManager {
 		long addressCount = RegistryDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(raddress.getId())).count();
 		if (raddress != null && raddress.getId() != null
 				&& addressCount<=0 ) {
-			Integer registryId = RegistryDAO.getRegistry(ctx, raddress.getRegistry().getId()).getId();
+			Integer registryId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(raddress.getRegistry().getId())).getId();
 			if (registryId==null) {
 				createRegistry(ctx, domain, raddress.getRegistry());	
 			}
 			createRegistryAddress(ctx, domain, raddress);
 		}
 		Customer customer = wp.getCustomer();
-		Integer customerId = RegistryDAO.getRegistry(ctx, customer.getRegistry().getId()).getId();
+		Integer customerId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(customer.getRegistry().getId())).getId();
 		if (customer != null && customer.getId() != null
 				&& customerId==null ) {
 			createRegistry(ctx, domain, customer.getRegistry());

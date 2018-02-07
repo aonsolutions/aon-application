@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
@@ -112,6 +113,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RNotePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RPayMethodPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RecordDataPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistrySellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO;
@@ -153,7 +155,7 @@ public class RegistryDAO {
 	private static final RPayMethodPropertiesDAO RPAYMETHOD_PROPERTIES = new RPayMethodPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
 	private static final TargetPropertiesDAO TARGET_PROPERTIES = new TargetPropertiesDAO();
-
+	private static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
 	private static final CategoryPropertiesDAO CATEGORY_PROPERTIES = new CategoryPropertiesDAO();
 	private static final PersonPropertiesDAO PERSON_PROPERTIES = new PersonPropertiesDAO();
 	
@@ -220,26 +222,10 @@ public class RegistryDAO {
 				.fetchInto(CATEGORY).stream().map(new FullCategoryFiller());
 	}
 	
-	public static Registry getRegistry(AONContext ctx, String name){
-		return ctx.getDslContext().select().from(REGISTRY).where(REGISTRY.NAME.eq(name)).fetchInto(REGISTRY)
-			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
-	}
 	
-	public static Registry getRegistry2(AONContext ctx, String document){
+	public static Registry getRegistry(AONContext ctx, RegistryFilter filter){
 		return ctx.getDslContext().select().from(REGISTRY)
-				.where(REGISTRY.DOMAIN.eq(ctx.getDomainId()))
-				.and(REGISTRY.DOCUMENT.eq(document)).fetchInto(REGISTRY)
-				.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
-	}
-	
-	public static Registry getRegistry(AONContext ctx, Integer domainId, String name){
-		return ctx.getDslContext().select().from(REGISTRY).where(REGISTRY.NAME.eq(name))
-				.and(REGISTRY.DOMAIN.eq(domainId)).fetchInto(REGISTRY)
-			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
-	}
-	
-	public static Registry getRegistry(AONContext ctx, Integer id){
-		return ctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(id)).fetchInto(REGISTRY)
+				.where(REGISTRY_PROPERTIES.getConditions(filter)).fetch()
 			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
 	

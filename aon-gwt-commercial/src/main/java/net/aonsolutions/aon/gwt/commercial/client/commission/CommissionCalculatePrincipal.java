@@ -7,12 +7,9 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.commercial.JsCommission;
-import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -37,6 +34,15 @@ public class CommissionCalculatePrincipal extends Composite{
 	private CommissionCalculate parent;
 	private HashMap<String, LinkedList<String>> filterMap;
 	private CommissionCalculatePrincipal me;
+	
+	
+	public Boolean isOffer() {
+		return parent.isOffer();
+	}
+	
+	public Boolean isInvoice() {
+		return parent.isInvoice();
+	}
 	
 	public API getAPI() {
 		return parent.getAPI();
@@ -74,19 +80,29 @@ public class CommissionCalculatePrincipal extends Composite{
 		list2.add("40");
 		getFilterMap().put("per_page", list2);
 		
-		getAPI().getCommission().getCalculatedCommission(getFilterMap(),new AsyncCallback<JSON<JsCommission>>() {
+		if(isOffer()) {
+			getAPI().getCommission().getOfferCalculatedCommission(getFilterMap(),new AsyncCallback<JSON<JsCommission>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsCommission> result) {
-				CommissionCalculateGrid grid = new CommissionCalculateGrid(parent, result.getData().toLinkedList());
-				content.setWidget(grid);
-			}
+				@Override
+				public void onSuccess(JSON<JsCommission> result) {
+					CommissionCalculateGrid grid = new CommissionCalculateGrid(parent, result.getData().toLinkedList());
+					content.setWidget(grid);
+				}
 			
-			@Override
-			public void onFailure(Throwable caught) {
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else if(isInvoice()){
+			getAPI().getCommission().getInvoiceCalculatedCommission(getFilterMap(),new AsyncCallback<JSON<JsCommission>>() {
 				
-			}
-		});
+				@Override
+				public void onSuccess(JSON<JsCommission> result) {
+					CommissionCalculateGrid grid = new CommissionCalculateGrid(parent, result.getData().toLinkedList());
+					content.setWidget(grid);
+				}
+			
+				@Override public void onFailure(Throwable caught) {}
+			});
+		}
 	}
 	
 	public void southContent(){
