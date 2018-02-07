@@ -222,13 +222,13 @@ public class Mod131Aeat2016Calculator  {
 			//		De 50.001 hasta 100.000 habitantes		0,90
 			//		M?s de 100.000 habitantes				1,00
 			act.setIndiceEmpresasPequenaDimensionAplicable(false);
-			if (AonMathUtils.round(mun) == 1.0) {
+			if (AonMathUtils.round(mun) == 0.0) {
 				ic1 = 0.75;
-			} else if (AonMathUtils.round(mun) == 2.0 || AonMathUtils.round(mun) == 3.0) {
+			} else if (AonMathUtils.round(mun) == 1.0 || AonMathUtils.round(mun) == 2.0) {
 				ic1 = 0.80;
-			} else if (AonMathUtils.round(mun) == 4.0) {
+			} else if (AonMathUtils.round(mun) == 3.0) {
 				ic1 = 0.85;
-			} else if (AonMathUtils.round(mun) == 5.0) {
+			} else if (AonMathUtils.round(mun) == 4.0) {
 				ic1 = 0.90;
 			} else {
 				ic1 = 1.00;
