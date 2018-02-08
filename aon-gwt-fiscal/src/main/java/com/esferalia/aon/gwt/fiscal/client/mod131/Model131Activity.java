@@ -130,8 +130,7 @@ public class Model131Activity extends DockLayoutPanel {
 	private IMod131ActivityCallback callback;
 	
 	interface Model131ActivityBinder extends UiBinder<Widget, Model131Activity> {}
-	private static final Model131ActivityBinder BINDER = 
-			GWT.create(Model131ActivityBinder.class);
+	private static final Model131ActivityBinder BINDER = GWT.create(Model131ActivityBinder.class);
 
 	public Model131Activity(final IMod131ActivityCallback callback) {
 		super(Unit.PX);
@@ -444,6 +443,8 @@ public class Model131Activity extends DockLayoutPanel {
 	void onFieldChange(ChangeEvent event) {
 		if (com.getValue() == null) com.setValue(0.0,false); 
 		if (tem.getValue() == null) tem.setValue(0,false);
+		if (tem.getValue() < 0) tem.setValue(0,false);
+		if (tem.getValue() > 180) tem.setValue(180,false);
 		if (nue.getValue() == null) nue.setValue(0,false);
 		if (veh.getValue() == null) veh.setValue(0,false);
 		if (emp.getValue() == null) emp.setValue(0,false);
