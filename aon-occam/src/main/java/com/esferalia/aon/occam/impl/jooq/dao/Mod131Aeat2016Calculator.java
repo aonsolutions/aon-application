@@ -358,14 +358,29 @@ public class Mod131Aeat2016Calculator  {
 		if (AonMathUtils.isZero(act.getIc3())) {
 			if (act.isLoc()) {
 				if (AonMathUtils.round(act.getNue()) != 0.0) {
-					// Primero
-					if (act.getYear() == (int) act.getNue()) {
-						act.setIc5( act.isDis()?0.60:0.70 ); 
+					
+					if (!act.isDis()) { 	// No discapacitado
+						if (act.getYear() == (int) act.getNue()) { // Primer año
+							act.setIc5( 0.80 ); 
+						}
+						if (( act.getYear() - 1) == (int) act.getNue()) { // Segundo año
+							act.setIc5( 0.90 ); 
+						}
+					} else {	// Discapacitado
+						if (act.getYear() == (int) act.getNue()) {	// Primer año
+							act.setIc5( 0.60 ); 
+						}
+						if (( act.getYear() - 1) == (int) act.getNue()) {	// Segundo año
+							act.setIc5( 0.70 ); 
+						}
 					}
-					// Segundo
-					if (( act.getYear() - 1) == (int) act.getNue()) {
-						act.setIc5( act.isDis()?0.80:0.90);
-					}
+//					if (act.getYear() == (int) act.getNue()) {
+//						act.setIc5( act.isDis()?0.60:0.70 ); 
+//					}
+//					// Segundo
+//					if (( act.getYear() - 1) == (int) act.getNue()) {
+//						act.setIc5( act.isDis()?0.80:0.90);
+//					}
 				}
 			}
 		}

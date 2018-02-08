@@ -1860,6 +1860,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			Mod131 previous = (Mod131) previousModel;
 			for (Mod131Activity prevAct : previous.getActivities()) {
 				if (previousModel.getYear() != mod.getYear()) {
+					prevAct.setYear(mod.getYear());
 					// Chequear si los módulos han cambiado.
 					// TODO
 				}
