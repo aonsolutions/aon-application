@@ -1134,7 +1134,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				salaryTableEditors.clear();
 //				if(button.isDown()){
 				//salaryToggleButtonsPanel.addStyleName(style.hide());
-				moreToggleButtonsPanel.addStyleName(style.hide());
+//				moreToggleButtonsPanel.addStyleName(style.hide());
 				hPanel.addStyleName(style.selectButtonSalaryToggleButton());
 				salaryTableEditors.addAll(dumpSalaryTableCategory());
 //				}
@@ -1179,7 +1179,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		salaryToggleButtonsPanel.clear();
 		moreToggleButtonsPanel.clear();
 		salaryToggleButtonsPanel.removeStyleName(style.hide());
-		moreToggleButtonsPanel.removeStyleName(style.hide());
+//		moreToggleButtonsPanel.removeStyleName(style.hide());
 		int startTab = 0;
 		
 		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
