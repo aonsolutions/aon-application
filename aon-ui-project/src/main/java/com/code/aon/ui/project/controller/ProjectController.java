@@ -65,6 +65,6 @@ public class ProjectController extends BasicController {
 		}catch (Exception e) {
 			e.printStackTrace();
 		} 
-		return isNevv() && alias != null && !"".equals(alias) && " ".equals(alias)? "(Último expediente: " + alias + ")" : "";
+		return isNevv() && alias != null && !"".equals(alias) && !" ".equals(alias)? "(Último expediente: " + alias + ")" : "";
 	}
 }
