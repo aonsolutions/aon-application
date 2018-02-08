@@ -572,6 +572,8 @@ public class ContextFunctions {
 			MethodStub removeStub = new MethodStub(remove);
 
 			context.setVariable(ContextVariable.HIDE, removeStub, startDate, endDate);
+			
+			context.setVariable("PARENT", removeStub, startDate, endDate);
 
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
