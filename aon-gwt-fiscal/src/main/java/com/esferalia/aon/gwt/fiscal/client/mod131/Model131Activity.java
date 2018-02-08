@@ -155,13 +155,13 @@ public class Model131Activity extends DockLayoutPanel {
 		lor.setWidth("150px");
 		
 		bat.addItem("-");
-		bat.addItem("Una batea y ningún barco");
+		bat.addItem("Una batea y ning\u00FAn barco");
 		bat.addItem("Una batea y un barco de menos de 15 TRB");
 		bat.addItem("Una batea y un barco de 15 a 30 TRB");
-		bat.addItem("Una batea y un barco de más de 30 TRB");
-		bat.addItem("Dos bateas y ningún barco");
+		bat.addItem("Una batea y un barco de m\u00E1s de 30 TRB");
+		bat.addItem("Dos bateas y ning\u00FAn barco");
 		bat.addItem("Dos bateas y un barco de menos de 15 TRB");
-		bat.addItem("Otros: número de bateas, barcos o TRB distintos de los anteriores");
+		bat.addItem("Otros: n\u00FAmero de bateas, barcos o TRB distintos de los anteriores");
 		bat.setWidth("150px");
 				
 		this.callback = callback;
