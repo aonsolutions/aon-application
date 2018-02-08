@@ -605,11 +605,13 @@ public class SecurityDAO {
 				.from(DOMAIN)
 				.where(DOMAIN.ID.eq(domain))
 				.and(DOMAIN.ENABLEHEREDITY.eq((byte) 1))
+				.and(DOMAIN.PARENT.isNotNull())
 				.fetch()
 				.stream()
-				.map( rec -> rec.getValue(DOMAIN.PARENT))
+				.map(rec -> rec.getValue(DOMAIN.PARENT))
 				.findFirst()
-				.orElse( null );
+				.orElse( null )
+				;
 		return parentDomain == null 
 				? new Integer[]{domain}
 				: new Integer[]{domain,parentDomain};

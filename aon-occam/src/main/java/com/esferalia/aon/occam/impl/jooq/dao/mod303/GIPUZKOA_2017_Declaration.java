@@ -3,11 +3,11 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
-import com.esferalia.aon.watson.server.AonObjectUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -223,26 +223,71 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 
 		// Cuotas a compensar de períodos anteriores en el Territorio Histórico de Álava	
 		,GP_C029(Mod303Key.GP_C029,null,null,
-				(ctx,mod) -> {
+			(ctx,mod) -> {
+				if (mod.isFirstPeriod()) {
+					// Primer periodo. Se busca la cuota a compensar del último periodo del ejercicio anterior.
 					add( Mod303Key.GP_C029, mod, 
-						Mod303DAO.getLastPeriodModels(ctx, mod)
-						.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
-						.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
-						.findFirst()
-						.orElse(0.0));						
+							Mod390HFDAO.getMod390HFs( ctx,ctx.getDomainId() )
+							.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
+							.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
+							.filter(fm ->  fm.isToCompensate())
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.GP_C042)))
+							.findFirst()
+							.orElse(0.0));						
+				} else {
+					// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
+					add( Mod303Key.GP_C029, mod, 
+							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
+							.filter(m303 -> m303.getYear() == mod.getYear() )
+							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
+							.filter(fm ->  fm.isToCompensate())
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
+							.findFirst()
+							.orElse(0.0));						
 				}
-				,null
-				,"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
-				+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
-				+"@code{cm04Key='"+ Mod303Key.CM_004.getValue() +"';}"
-				+"@code{compensateValue='"+ FiscalModelDeclarationType.COMPENSATE.getValue() +"';}"
-				+"@foreach{fm : lastPeriodModels}"
-					+"@if{ fm.getDescription(cm04Key) == compensateValue}"
-						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
+			}
+			,null
+			,
+			 "@if{ mod.isFirstPeriod() }"
+				+"@code{c042Key='"+ Mod390Key.GP_C042.getValue() +"';}"
+				+"<li>Declaraciones del modelo 390 del ejercicio anterior:<ul style=\"padding-left: 20px;\">" 
+				+"@foreach{fm : hf390models}"
+					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.getAdministration() == mod.getAdministration() }"
+						+"<li>Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [042] --> @{fm.getAmount(c042Key)}</li>"
 					+"@end{}"
 				+"@end{}"
 				+"</ul></li>"
-				+"<li>Resultado: <b>@{GP_C029}</b></li>"
+			+"@else{}"
+				+"@code{c035Key='"+ Mod303Key.GP_C035.getValue() +"';}"
+				+"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
+				+"@foreach{fm : lastPeriodModels}" 
+					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
+						+"<li>Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c035Key)}</li>"
+					+"@end{}"
+				+"@end{}"
+				+"</ul></li>"
+			+"@end{}"
+			+"<li>Resultado (Cuotas a compensar de periodos anteriores): <b>@{GP_C029}</b></li>"
+//				(ctx,mod) -> {
+//					add( Mod303Key.GP_C029, mod, 
+//						Mod303DAO.getLastPeriodModels(ctx, mod)
+//						.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
+//						.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
+//						.findFirst()
+//						.orElse(0.0));						
+//				}
+//				,null
+//				,"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
+//				+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
+//				+"@code{cm04Key='"+ Mod303Key.CM_004.getValue() +"';}"
+//				+"@code{compensateValue='"+ FiscalModelDeclarationType.COMPENSATE.getValue() +"';}"
+//				+"@foreach{fm : lastPeriodModels}"
+//					+"@if{ fm.getDescription(cm04Key) == compensateValue}"
+//						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
+//					+"@end{}"
+//				+"@end{}"
+//				+"</ul></li>"
+//				+"<li>Resultado: <b>@{GP_C029}</b></li>"
 			)
 
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	

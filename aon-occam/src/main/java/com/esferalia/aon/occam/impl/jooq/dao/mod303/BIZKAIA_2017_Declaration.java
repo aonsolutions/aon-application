@@ -6,11 +6,12 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
-import com.esferalia.aon.watson.server.AonObjectUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -226,25 +227,50 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 		// Cuota a compensar de periodos anteriores
 		,BZ_C034	(Mod303Key.BZ_C034,null,null,
 			(ctx,mod) -> {
-				add( Mod303Key.BZ_C034, mod, 
-					Mod303DAO.getLastPeriodModels(ctx, mod)
-					.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
-					.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.BZ_C036) * (-1)))
-					.findFirst()
-					.orElse(0.0));						
+				if (mod.isFirstPeriod()) {
+					// Primer periodo. Se busca la cuota a compensar del último periodo del ejercicio anterior.
+					add( Mod303Key.BZ_C034, mod, 
+							Mod390HFDAO.getMod390HFs( ctx,ctx.getDomainId() )
+							.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
+							.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
+							.filter(fm ->  fm.isToCompensate())
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.BZ_C110) * (-1)))
+							.findFirst()
+							.orElse(0.0));						
+				} else {
+					// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
+					add( Mod303Key.BZ_C034, mod, 
+							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
+							.filter(m303 -> m303.getYear() == mod.getYear() )
+							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
+							.filter(fm ->  fm.isToCompensate())
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.BZ_C038)))
+							.findFirst()
+							.orElse(0.0));						
+				}
 			}
 			,null
-			,"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
-			+"@code{c36Key='"+ Mod303Key.BZ_C036.getValue() +"';}"
-			+"@code{cm04Key='"+ Mod303Key.CM_004.getValue() +"';}"
-			+"@code{compensateValue='"+ FiscalModelDeclarationType.COMPENSATE.getValue() +"';}"
-			+"@foreach{fm : lastPeriodModels}"
-				+"@if{ fm.getDescription(cm04Key) == compensateValue}"
-					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [036] --> @{fm.getAmount(c36Key)}</li>"
+			,
+			 "@if{ mod.isFirstPeriod() }"
+				+"@code{c110Key='"+ Mod390Key.BZ_C110.getValue() +"';}"
+				+"<li>Declaraciones del modelo 390 del ejercicio anterior:<ul style=\"padding-left: 20px;\">" 
+				+"@foreach{fm : hf390models}"
+					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.getAdministration() == mod.getAdministration() }"
+						+"<li>Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [110] --> @{fm.getAmount(c110Key)}</li>"
+					+"@end{}"
 				+"@end{}"
+				+"</ul></li>"
+			+"@else{}"
+				+"@code{c038Key='"+ Mod303Key.BZ_C038.getValue() +"';}"
+				+"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
+				+"@foreach{fm : lastPeriodModels}" 
+					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
+						+"<li>Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [038] --> @{fm.getAmount(c038Key)}</li>"
+					+"@end{}"
+				+"@end{}"
+				+"</ul></li>"
 			+"@end{}"
-			+"</ul></li>"
-			+"<li>Resultado: <b>@{BZ_C034}</b></li>"
+			+"<li>Resultado (Cuotas a compensar de periodos anteriores): <b>@{BZ_C034}</b></li>"
 		)
 
 		// Resultado de la regularizaci\u00F3n anual

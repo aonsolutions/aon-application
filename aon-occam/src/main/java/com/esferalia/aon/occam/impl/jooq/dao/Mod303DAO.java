@@ -316,8 +316,15 @@ public class Mod303DAO extends FiscalModelDAO {
 	private static String getComputeKey(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		Mod303MVELContext mvelCtx = getMvelContext( dec, mod303 );
+		mvelCtx.put("mod", mod303);
 		mvelCtx.put("periodModels", getSamePeriodModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
 		mvelCtx.put("lastPeriodModels", getLastPeriodModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
+		mvelCtx.put("models", getMod303s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+		
+		if (!mod303.isAEAT() && mod303.isFirstPeriod()) {
+			mvelCtx.put("hf390models", Mod390HFDAO.getMod390HFs(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+		}
+		
 		return getCompute(ctx, mod303, script,mvelCtx);
 	}
 	

@@ -11,13 +11,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
-import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -1613,21 +1611,49 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 		// Cuotas a compensar de periodos anteriores
 		,CT_C67(Mod303Key.CT_C67,null,null,
 			(ctx,mod) -> {
-				add( Mod303Key.CT_C67, mod, 
-					Mod303DAO.getLastPeriodModels(ctx, mod)
-					.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
-					.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
-					.findFirst()
-					.orElse(0.0));						
+				if (mod.isFirstPeriod()) {
+					// Primer periodo. Se busca la cuota a compensar del último periodo del ejercicio anterior.
+					add( Mod303Key.CT_C67, mod, 
+							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
+							.filter(m303 -> m303.getYear() ==  (mod.getYear() - 1) )
+							.filter(m303 -> m303.isLastPeriod() ) 
+							.filter(fm ->  fm.isToCompensate())
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
+							.findFirst()
+							.orElse(0.0));						
+				} else {
+					// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
+					add( Mod303Key.CT_C67, mod, 
+							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
+							.filter(m303 -> m303.getYear() == mod.getYear() )
+							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
+							.filter(fm ->  fm.isToCompensate())
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
+							.findFirst()
+							.orElse(0.0));						
+				}
 			}
 			,null
-			,"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
-			+"@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
-			+"@foreach{fm : lastPeriodModels}" 
-				+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
+			,
+			 "@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
+			+"@if{ mod.isFirstPeriod() }"
+				+"<li>Declaraciones del \u00FAltimo periodo del ejercicio anterior:<ul style=\"padding-left: 20px;\">" 
+				+"@foreach{fm : models}"
+					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.isLastPeriod() && fm.getAdministration() == mod.getAdministration() }"
+						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
+					+"@end{}"
+				+"@end{}"
+				+"</ul></li>"
+			+"@else{}"
+				+"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
+				+"@foreach{fm : lastPeriodModels}" 
+					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
+						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
+					+"@end{}"
+				+"@end{}"
+				+"</ul></li>"
 			+"@end{}"
-			+"</ul></li>"
-			+"<li>Resultado: <b>@{CT_C70}</b></li>"
+			+"<li>Resultado (Cuotas a compensar de periodos anteriores): <b>@{CT_C67}</b></li>"
 		)
 		
 		// Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administración del Estado 

@@ -28,6 +28,9 @@ public interface IFiscalModel extends Serializable {
 	String getSurname();
 	String getFullName();
 	
+	public default boolean isFirstPeriod() {
+		return getPeriod() != null && getPeriod().isFirstPeriod();
+	}
 	public default boolean isLastPeriod() {
 		return getPeriod() != null && getPeriod().isLastPeriod();
 	}
