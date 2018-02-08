@@ -82,7 +82,10 @@ public enum Module implements IResourceable {
 	CALL_CENTER( "call_center" ),
 	
     /** FINANCE_PORTAL. */
-	FINANCE_PORTAL( "finance_portal" );
+	FINANCE_PORTAL( "finance_portal" ),
+
+    /** AON_FINANCE. */
+	AON_FINANCE( "aonFinance" );
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_module_";
