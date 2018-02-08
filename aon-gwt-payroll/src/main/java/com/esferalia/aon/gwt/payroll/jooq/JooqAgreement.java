@@ -375,6 +375,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.join(AGREEMENT_PAYMENT).on(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(AGREEMENT_PAYMENT.ID))
 				.join(AGREEMENT).on(AGREEMENT_PAYMENT.AGREEMENT.eq(AGREEMENT.ID))
 				.where(conditions)
+				.orderBy(AGREEMENT_EXTRA.START_DATE)
 				.fetchLazy()
 				;
 		// @formatter:on

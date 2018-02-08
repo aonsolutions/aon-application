@@ -743,6 +743,27 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.MAY);
 		assertText("prorationBaseLabel", 1027.65 / 12.00 * 2.00 );
 		
+		draft("EXTRA, FIN DE CONTRATO");
+
+		calculate(Calendar.FEBRUARY, 2018);
+		double prorationBase = getText("prorationBaseLabel");
+		calculate(Calendar.MARCH, 2018);
+		prorationBase += getText("prorationBaseLabel");
+		calculate(Calendar.APRIL, 2018);
+		prorationBase += getText("prorationBaseLabel");
+		
+		calendar = Calendar.getInstance();
+		calendar.set(2018, Calendar.JULY, 15);
+		issueDate = calendar.getTime();
+		calendar.set(2018, Calendar.APRIL, 8);
+		endDate = calendar.getTime();
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "");
+		assertValue("cgpBaseLabel", "");
+		assertValue("totalPaymentsLabel", prorationBase);
+		
+		
+
 	}
 
 	public void TestNomina() throws Exception {
