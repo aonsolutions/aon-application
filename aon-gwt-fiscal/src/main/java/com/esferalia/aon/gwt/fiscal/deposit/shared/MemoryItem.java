@@ -80,6 +80,13 @@ public class MemoryItem {
 	}
 	
 	public String getApartadoName(Integer year, Integer pos){
+		if(year > 2016) return "Apartado " + (pos + 1) + ": " + apartadosName.get(2016)[pos];
 		return "Apartado " + (pos + 1) + ": " + apartadosName.get(year)[pos];
 	}
+
+	public String getApartadoName2(Integer year, Integer pos){
+		if(year > 2016) return apartadosName.get(2016)[pos];
+		return apartadosName.get(year)[pos];
+	}
 }
+

@@ -92,13 +92,14 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 							public void onSuccess(Vector<MemoryFiles> result) {
 								isMemory = result.get(0).getBool();
 								isMa = result.get(1).getBool();
-								
 								items();			
 								setState(true);
 								normalizedMemory = new NormalizedMemory(ddtn, deposit);
 								normalizedMemory.paintHeaderTable("Cuentas Anuales", d2Deposit.getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit.getYear().toString());
 								normalizedMemory.setPagesPanel(deposit.getGenericContent(ddtn), true);
-								deposit.setContent(normalizedMemory);							}
+								deposit.setContent(normalizedMemory);							
+							}
+							
 							@Override
 							public void onFailure(Throwable caught) {}
 						});
@@ -253,7 +254,6 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
     		this.addItem(ar);
     	}
  
-    	
     	TreeNode<Enterprise> bs = new TreeNode<Enterprise>() {
 			
 			@Override
@@ -671,7 +671,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 	
 	public TreeNode<Enterprise> getTreeNode(Integer pos){
 		Integer year = getD2Deposit().getYear();
-		switch (MemoryItem.getInstance().apartadosName.get(year)[pos]) {
+		switch (MemoryItem.getInstance().getApartadoName2(year, pos)) {
 		case MemoryItem.ACTIVIDAD_EMPRESA:
 			return getActividadEmpresa(MemoryItem.getInstance().getApartadoName(year, pos));
 		case MemoryItem.BASES_PRESENTACION:
