@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferProperties;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "CommissionCalculationServlet", urlPatterns = {"/commission_calculation/*",
@@ -73,7 +74,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 			break;
 		}
 	}
-	
+    
 	public JSONObject getRequestJSON(HttpServletRequest req){
 		String line = "";
 		StringBuilder bld = new StringBuilder();
@@ -106,7 +107,8 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 			setToNumber(json.opt("toNumber") != null ? json.optInt("toNumber") : null);
 			setSeries(json.opt("series") != null ? json.optString("series") : null);
 			setWorkplace(json.opt("workplace") != null ? json.optInt("workplace") : null);
-			setTarget(json.opt("targer") != null ? json.optInt("target") : null);
+			setTarget(json.opt("target") != null ? json.optInt("target") : null);
+			setCustomer(json.opt("customer") != null ? json.optInt("customer") : null);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -129,7 +131,8 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	private Boolean confidential;
 	
 	private Integer target;
-		
+	private Integer customer;
+	
 	public Integer getSeller() {
 		return seller;
 	}
@@ -185,12 +188,22 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	public void setWorkplace(Integer workplace) {
 		this.workplace = workplace;
 	}
+	
+	public Integer getCustomer() {
+		return customer;
+	}
+	public void setCustomer(Integer customer) {
+		this.customer= customer;
+	}
 
 	public void offerCalculate(Domain domain, String login) {
 		getOfferDetailStream(domain, login).forEach(od -> {
 			OfferDetailCommission odc = AON.getOfferDetailCommission(domain.getName(), domain.getId(), login, f -> f.getOfferDetailProperty().eq(od.getId()));
-			if(odc != null && odc.getAmount().equals(1.2)) {
-				System.out.println(odc);
+			if(odc == null) {
+				odc = new OfferDetailCommission()
+					.setDomain(domain.getId())
+					.setOfferDetail(od)
+					.setStatus(OfferDetailCommissionStatus.PENDING);
 			}
 			if(odc != null && OfferDetailCommissionStatus.PENDING.equals(odc.getStatus())) {
 				double commission = getCommission(domain, login, od);
@@ -208,9 +221,13 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	public void invoiceCalculate(Domain domain, String login) {
 		getInvoiceDetailStream(domain, login).forEach(id -> {
 			InvoiceDetailCommission idc = AON.getInvoiceDetailCommission(domain.getName(), domain.getId(), login, f -> f.getInvoiceDetailProperty().eq(id.getId()));
-			if(idc != null && idc.getAmount().equals(1.2)) {
-				System.out.println(idc);
+			if(idc == null) {
+				idc = new InvoiceDetailCommission()
+					.setDomain(domain.getId())
+					.setInvoiceDetail(id)
+					.setStatus(InvoiceDetailCommissionStatus.PENDING);
 			}
+			
 			if(idc != null && InvoiceDetailCommissionStatus.PENDING.equals(idc.getStatus())) {
 				double commission = getCommission(domain, login, id);
 				double amount = CommonUtil.round(getBasePrice(id) * commission / 100);
@@ -229,7 +246,8 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	}
 	
 	public Filter invoiceDetailFilter(Domain domain, InvoiceProperties f) {
-		Filter filter = f.getDomainProperty().eq(domain.getId());
+		Filter filter = f.getDomainProperty().eq(domain.getId())
+				.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
 		
 		if(getSeller() != null) {
 			filter = filter.and(f.getSellerProperty().eq(getSeller()));
@@ -240,6 +258,23 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		if(getSeries() != null) {
 			filter = filter.and(f.getSeriesProperty().eq(getSeries()));
 		}
+		if(getFromDate() != null) {
+			filter = filter.and(f.getStartIssueDateProperty().ge(getFromDate()));
+		}
+		if(getToDate() != null) {
+			filter = filter.and(f.getStartIssueDateProperty().le(getToDate()));
+		}
+		if(getFromNumber() != null) {
+			filter = filter.and(f.getNumberProperty().ge(getFromNumber()));
+		}
+		if(getToNumber() != null) {
+			filter = filter.and(f.getNumberProperty().ge(getToNumber()));
+		}
+		if(getCustomer() != null) {
+			filter = filter.and(f.getRegistryProperty().eq(getCustomer()));
+		}
+		
+		// TODO CONFIDENTIAL
 		
 		return filter;
     }
@@ -260,6 +295,23 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		if(getSeries() != null) {
 			filter = filter.and(f.getSeriesProperty().eq(getSeries()));
 		}
+		if(getFromDate() != null) {
+			filter = filter.and(f.getStartIssueDateProperty().ge(getFromDate()));
+		}
+		if(getToDate() != null) {
+			filter = filter.and(f.getStartIssueDateProperty().le(getToDate()));
+		}
+		if(getFromNumber() != null) {
+			filter = filter.and(f.getNumberProperty().ge(getFromNumber()));
+		}
+		if(getToNumber() != null) {
+			filter = filter.and(f.getNumberProperty().ge(getToNumber()));
+		}
+		if(getTarget() != null) {
+			filter = filter.and(f.getTargetProperty().eq(getTarget()));
+		}
+		
+		// TODO CONFIDENTIAL
 		
 		return filter;
     }
@@ -268,8 +320,8 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		Double commission = 0.0;
 		if(od != null && od.getOffer() != null && od.getOffer().getSeller() != null) {
 			Seller seller = AON.getSeller(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(od.getOffer().getSeller().getId()));			
-			CommissionType commissionType = seller.getCommissionType();
-	
+			CommissionType commissionType = AON.getCommissionTypeStream(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(seller.getCommissionType().getId()))
+					.findFirst().orElse(null); 	
 			if (commissionType != null && commissionType.getId() != null) {
 				commission = commissionType.getRate();
 				Date date = od.getOffer().getIssueDate();
@@ -305,9 +357,10 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	
 	public double getCommission(Domain domain, String login, InvoiceDetail id) {
 		Double commission = 0.0;
-		if(id != null && id.getInvoice() != null && id.getInvoice().getSeller() != null) {
-			Seller seller = AON.getSeller(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(id.getInvoice().getSeller()));			
-			CommissionType commissionType = seller.getCommissionType();
+		if(id != null && id.getSeller() != null) {
+			Seller seller = AON.getSeller(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(id.getSeller().getId()));			
+			CommissionType commissionType = AON.getCommissionTypeStream(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(seller.getCommissionType().getId()))
+					.findFirst().orElse(null); 
 	
 			if (commissionType != null && commissionType.getId() != null) {
 				commission = commissionType.getRate();
@@ -343,9 +396,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	}
 	
 	public double getBasePrice(OfferDetail od) {
-		double price = 0;
-		price = od.getPrice();
-		price = price * od.getQuantity();
+		Double price = od.getPrice() * od.getQuantity();
 		DiscountExpression de = new DiscountExpression(od.getDiscountExpression());
 		if (de.getDiscounts() != null) {
 			for (int i = 0;i<de.getDiscounts().length;i++) {
@@ -356,9 +407,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	}
 	
 	public double getBasePrice(InvoiceDetail id) {
-		double price = 0;
-		price = id.getPrice();
-		price = price * id.getQuantity();
+		Double price = (id.getPrice() + id.getTaxes()) * id.getQuantity();
 		DiscountExpression de = new DiscountExpression(id.getDiscountExpression());
 		if (de.getDiscounts() != null) {
 			for (int i = 0;i<de.getDiscounts().length;i++) {

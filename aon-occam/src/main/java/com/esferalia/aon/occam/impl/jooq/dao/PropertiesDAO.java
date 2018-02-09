@@ -43,6 +43,7 @@ import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -61,6 +62,7 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
@@ -99,6 +101,7 @@ import com.esferalia.aon.occam.api.model.Properties.CommissionCategoryProperties
 import com.esferalia.aon.occam.api.model.Properties.CommissionItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeCommissionProperties;
+import com.esferalia.aon.occam.api.model.Properties.CommissionTypeProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
@@ -175,6 +178,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getPosShiftroperty() {return new FilterDAO.PropertyDAO<>(INVOICE.POS_SHIFT);}
 		@Override public Property<Byte> getVatAccrualPayment() {return new FilterDAO.PropertyDAO<>(INVOICE.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SERIES);}
+ 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.NUMBER);}
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
@@ -1126,6 +1130,27 @@ public class PropertiesDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.NAME);}
 		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.START_DATE);}
 		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.END_DATE);}
+	}
+	
+	protected static class CommissionTypePropertiesDAO implements CommissionTypeProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, CommissionTypeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(CommissionTypeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_TYPE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_TYPE.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_TYPE.NAME);}
+		@Override public Property<Double> getRateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_TYPE.RATE);}
+
 	}
 	
 	protected static class OfferDetailCommissionPropertiesDAO implements OfferDetailCommissionProperties{

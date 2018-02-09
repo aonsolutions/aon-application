@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
@@ -114,6 +115,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
+import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
@@ -4783,6 +4785,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommission().getCommissionStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Stream<CommissionType> getCommissionTypeStream(String domainName, Integer domainId, String login, CommissionTypeFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommission().getCommissionTypeStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

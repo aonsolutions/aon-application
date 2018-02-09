@@ -25,4 +25,6 @@ public interface OfferProperties {
 	Property<Integer> getWorkplaceProperty();
 	
 	Property<String> getSeriesProperty();
+	Property<Integer> getNumberProperty();
+	Property<Integer> getTargetProperty();
 }

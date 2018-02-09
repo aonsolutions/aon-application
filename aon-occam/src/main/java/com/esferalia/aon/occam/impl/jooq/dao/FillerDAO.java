@@ -36,6 +36,7 @@ import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
+import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 
 import java.util.function.Function;
 
@@ -50,6 +51,7 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
+import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommissionStatus;
@@ -981,6 +983,18 @@ public class FillerDAO {
 					.setName(r.getValue(COMMISSION.NAME))
 					.setStartDate(r.getValue(COMMISSION.START_DATE))
 					.setEndDate(r.getValue(COMMISSION.END_DATE));
+		}
+	}
+	
+	public static class CommissionTypeFiller implements Function<Record, CommissionType> {
+		
+		@Override
+		public CommissionType apply(Record r) {
+			return new CommissionType()
+					.setId(r.getValue(COMMISSION_TYPE.ID))
+					.setDomain(r.getValue(COMMISSION_TYPE.DOMAIN))
+					.setName(r.getValue(COMMISSION_TYPE.NAME))
+					.setRate(r.getValue(COMMISSION_TYPE.RATE));
 		}
 	}
 

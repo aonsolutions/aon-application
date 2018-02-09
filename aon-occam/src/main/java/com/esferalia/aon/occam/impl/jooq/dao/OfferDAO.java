@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.OfferProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -60,6 +61,8 @@ public class OfferDAO {
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SELLER);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(OFFER.WORKPLACE);}
 		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SERIES);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(OFFER.NUMBER);}
+		@Override public Property<Integer> getTargetProperty() {return new FilterDAO.PropertyDAO<>(OFFER.TARGET);}
 	}
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
@@ -105,6 +108,7 @@ public class OfferDAO {
 				,OFFER_DETAIL.PRICE
 				,OFFER_DETAIL.DISCOUNT_EXPR
 				,WORKPLACE.DESCRIPTION
+				, PRODUCT.CATEGORY
 			)
 			.from(OFFER)
 			.join(OFFER_DETAIL).on(OFFER_DETAIL.OFFER.equal(OFFER.ID))
@@ -181,6 +185,7 @@ public class OfferDAO {
 					: new Item()
 						.setId(record.getValue(OFFER_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
+						.setProduct(new Product().setCategory(record.getValue(PRODUCT.CATEGORY)))
 						.setProductId( record.getValue( PRODUCT.ID ) )
 						.setName( record.getValue( PRODUCT.NAME ) )
 						.setCode(record.getValue( PRODUCT.CODE ) )

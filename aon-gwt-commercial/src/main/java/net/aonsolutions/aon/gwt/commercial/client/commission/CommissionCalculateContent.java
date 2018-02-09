@@ -10,13 +10,18 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -43,17 +48,6 @@ public class CommissionCalculateContent extends Composite {
 	
 	CommissionCalculate parent;
 	
-	private Integer seller;
-	private Integer workplace;
-	private String series;
-	private Date fromDate;
-	private Date toDate;
-	private Integer fromNumber;
-	private Integer toNumber;
-	private Boolean confidential;
-	private Integer target;
-	
-	
 	public CommissionCalculateContent(CommissionCalculate parent) {
 		this.parent = parent;
 		initWidget(binder.createAndBindUi(this));
@@ -79,7 +73,8 @@ public class CommissionCalculateContent extends Composite {
 					
 					@Override
 					public void onSelection(SelectionEvent<Suggestion> event) {
-						Window.alert(oracle.getMap().get(sb.getValue()) + "");
+						String a = oracle.getMap().get(sb.getValue()) + "";
+						parent.getCalcJson().put("seller", new JSONNumber(Integer.parseInt(a)));
 					}
 				});
 				commercialPanel.add(sb);
@@ -100,6 +95,13 @@ public class CommissionCalculateContent extends Composite {
 		DateBoxEx fromDate = new DateBoxEx();
 		fromDate.setStyleName(AON.AON_CSS.aonInputText());
 		fromDate.setWidth("75px");
+		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				parent.getCalcJson().put("from_date", new JSONString(fromDate.getValue().toString()));
+			}
+		});	
 		
 		Label to = new Label(AON.MSG.to());
 		to.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -109,6 +111,13 @@ public class CommissionCalculateContent extends Composite {
 		DateBoxEx toDate = new DateBoxEx();
 		toDate.setStyleName(AON.AON_CSS.aonInputText());
 		toDate.setWidth("75px");
+		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				parent.getCalcJson().put("to_date", new JSONString(toDate.getValue().toString()));
+			}
+		});
 		
 		periodPanel.add(from);
 		periodPanel.add(fromDate);
@@ -131,6 +140,13 @@ public class CommissionCalculateContent extends Composite {
 		
 			}
 		});		
+		lb.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				parent.getCalcJson().put("series", new JSONString(lb.getSelectedItemText()));
+			}
+		});
 		seriesPanel.add(lb);
 	}
 
@@ -143,6 +159,13 @@ public class CommissionCalculateContent extends Composite {
 		fromNumber.setStyleName(AON.AON_CSS.aonInputText());
 		fromNumber.getElement().getStyle().setPaddingRight(10, Unit.PX);
 		fromNumber.setWidth("50px");
+		fromNumber.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				parent.getCalcJson().put("from_number", new JSONNumber(fromNumber.getValue()));
+			}
+		});
 
 		Label to = new Label(AON.MSG.to());
 		to.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -152,6 +175,13 @@ public class CommissionCalculateContent extends Composite {
 		DoubleBox toNumber = new DoubleBox();
 		toNumber.setStyleName(AON.AON_CSS.aonInputText());
 		toNumber.setWidth("50px");
+		toNumber.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				parent.getCalcJson().put("to_number", new JSONNumber(toNumber.getValue()));
+			}
+		});
 		
 		numberPanel.add(from);
 		numberPanel.add(fromNumber);
@@ -160,30 +190,51 @@ public class CommissionCalculateContent extends Composite {
 	}
 
 	private void buildCustomerPanel() {
-		parent.getAPI().getRegistry().getCustomers(new AsyncCallback<JSON<JsObject>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsObject> r) {
-				AonSuggestOracleMap oracle = new AonSuggestOracleMap();
-				r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
-				SuggestBox sb = new SuggestBox(oracle);		
-				sb.addSelectionHandler(new SelectionHandler<AonSuggestOracle.Suggestion>() {
-					
-					@Override
-					public void onSelection(SelectionEvent<Suggestion> event) {
-						Window.alert(oracle.getMap().get(sb.getValue()) + "");
-					}
-				});
-				sb.setStyleName(AON.AON_CSS.aonInputText());
-				customerPanel.add(sb);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+		if(parent.isOffer()) {
+			parent.getAPI().getRegistry().getTargets(new AsyncCallback<JSON<JsObject>>() {
 				
-			}
-		});	
+				@Override
+				public void onSuccess(JSON<JsObject> r) {
+					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
+					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
+					SuggestBox sb = new SuggestBox(oracle);		
+					sb.addSelectionHandler(new SelectionHandler<AonSuggestOracle.Suggestion>() {
+					
+						@Override
+						public void onSelection(SelectionEvent<Suggestion> event) {
+							String a = oracle.getMap().get(sb.getValue()) + "";
+							parent.getCalcJson().put("target", new JSONNumber(Integer.parseInt(a)));
+						}
+					});
+					sb.setStyleName(AON.AON_CSS.aonInputText());
+					customerPanel.add(sb);
+				}
+			
+				@Override public void onFailure(Throwable caught) {}
+			});	
+		} else {
+			parent.getAPI().getRegistry().getCustomers(new AsyncCallback<JSON<JsObject>>() {
+			
+				@Override
+				public void onSuccess(JSON<JsObject> r) {
+					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
+					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
+					SuggestBox sb = new SuggestBox(oracle);		
+					sb.addSelectionHandler(new SelectionHandler<AonSuggestOracle.Suggestion>() {
+					
+						@Override
+						public void onSelection(SelectionEvent<Suggestion> event) {
+							String a = oracle.getMap().get(sb.getValue()) + "";
+							parent.getCalcJson().put("customer", new JSONNumber(Integer.parseInt(a)));
+						}
+					});
+					sb.setStyleName(AON.AON_CSS.aonInputText());
+					customerPanel.add(sb);
+				}
+			
+				@Override public void onFailure(Throwable caught) {}
+			});	
+		}
 	}
 
 	private void buildConfidentialPanel() {
@@ -195,6 +246,7 @@ public class CommissionCalculateContent extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				no.setValue(!yes.getValue());
+				parent.getCalcJson().put("confidential", new JSONNumber(1));
 			}
 		});
 		
@@ -203,6 +255,7 @@ public class CommissionCalculateContent extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				yes.setValue(!no.getValue());
+				parent.getCalcJson().put("confidential", new JSONNumber(0));
 			}
 		});
 
@@ -225,78 +278,14 @@ public class CommissionCalculateContent extends Composite {
 		
 			}
 		});		
+		lb.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				Integer wp = Integer.parseInt(lb.getSelectedValue());
+				parent.getCalcJson().put("workplace", new JSONNumber(wp)); 
+			}
+		});
 		workplacePanel.add(lb);
-	}
-
-	public Integer getSeller() {
-		return seller;
-	}
-
-	public void setSeller(Integer seller) {
-		this.seller = seller;
-	}
-
-	public Integer getWorkplace() {
-		return workplace;
-	}
-
-	public void setWorkplace(Integer workplace) {
-		this.workplace = workplace;
-	}
-
-	public String getSeries() {
-		return series;
-	}
-
-	public void setSeries(String series) {
-		this.series = series;
-	}
-
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public Integer getFromNumber() {
-		return fromNumber;
-	}
-
-	public void setFromNumber(Integer fromNumber) {
-		this.fromNumber = fromNumber;
-	}
-
-	public Integer getToNumber() {
-		return toNumber;
-	}
-
-	public void setToNumber(Integer toNumber) {
-		this.toNumber = toNumber;
-	}
-
-	public Boolean getConfidential() {
-		return confidential;
-	}
-
-	public void setConfidential(Boolean confidential) {
-		this.confidential = confidential;
-	}
-
-	public Integer getTarget() {
-		return target;
-	}
-
-	public void setTarget(Integer target) {
-		this.target = target;
 	}
 }

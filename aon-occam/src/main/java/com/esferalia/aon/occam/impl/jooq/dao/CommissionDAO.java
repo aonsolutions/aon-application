@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
+import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
 import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
 import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
@@ -19,11 +20,13 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
+import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
@@ -31,12 +34,14 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CommissionCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CommissionFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CommissionItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CommissionTypeCommissionFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CommissionTypeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.InvoiceDetailCommissionFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.OfferDetailCommissionFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CommissionCategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CommissionItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CommissionPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CommissionTypeCommissionPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CommissionTypePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoiceDetailCommissionPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.OfferDetailCommissionPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -46,6 +51,7 @@ public class CommissionDAO {
 	private static final OfferDetailCommissionPropertiesDAO OFFER_DETAIL_COMMISSION_PROPERTIES = new OfferDetailCommissionPropertiesDAO();
 	private static final InvoiceDetailCommissionPropertiesDAO INVOICE_DETAIL_COMMISSION_PROPERTIES = new InvoiceDetailCommissionPropertiesDAO();
 	private static final CommissionPropertiesDAO COMMISSION_PROPERTIES = new CommissionPropertiesDAO();
+	private static final CommissionTypePropertiesDAO COMMISSION_TYPE_PROPERTIES = new CommissionTypePropertiesDAO();
 	private static final CommissionItemPropertiesDAO COMMISSION_ITEM_PROPERTIES = new CommissionItemPropertiesDAO();
 	private static final CommissionCategoryPropertiesDAO COMMISSION_CATEGORY_PROPERTIES = new CommissionCategoryPropertiesDAO();
 	private static final CommissionTypeCommissionPropertiesDAO COMMISSION_TYPE_COMMISSION_PROPERTIES = new CommissionTypeCommissionPropertiesDAO();
@@ -56,6 +62,14 @@ public class CommissionDAO {
 				.from(COMMISSION)
 				.where(COMMISSION_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new CommissionFiller());
+	}
+	
+	public static Stream<CommissionType> getCommissionTypeStream(AONContext ctx, CommissionTypeFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext().select()
+				.from(COMMISSION_TYPE)
+				.where(COMMISSION_TYPE_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new CommissionTypeFiller());
 	}
 	
 	public static Stream<CommissionItem> getCommissionItemStream(AONContext ctx, CommissionItemFilter filter) {
@@ -139,15 +153,16 @@ public class CommissionDAO {
 	}
 	
 	public static InvoiceDetailCommission insertInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc) {
-		return ctx.getDslContext().insertInto(INVOICE_DETAIL_COMMISSION)
+		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL_COMMISSION)
 				.set(INVOICE_DETAIL_COMMISSION.DOMAIN, idc.getDomain())
 				.set(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL, idc.getInvoiceDetail().getId())
 				.set(INVOICE_DETAIL_COMMISSION.AMOUNT, idc.getAmount())
 				.set(INVOICE_DETAIL_COMMISSION.COMMISSION, idc.getCommission())
-				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, AonDateUtils.toSql(idc.getPayDate()))
+				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, idc.getPayDate() != null ? AonDateUtils.toSql(idc.getPayDate()) : null)
 				.set(INVOICE_DETAIL_COMMISSION.STATUS, idc.getStatus().value())
-				.returning().fetch().stream().map(new InvoiceDetailCommissionFiller())
-				.findFirst().orElse(null);
+				.execute();
+				
+		return getInvoiceDetailCommissionStream(ctx, f -> f.getIdProperty().eq(id)).findFirst().orElse(new InvoiceDetailCommission());
 	}
 	
 	public static InvoiceDetailCommission updateInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc) {
@@ -156,7 +171,7 @@ public class CommissionDAO {
 				.set(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL, idc.getInvoiceDetail().getId())
 				.set(INVOICE_DETAIL_COMMISSION.AMOUNT, idc.getAmount())
 				.set(INVOICE_DETAIL_COMMISSION.COMMISSION, idc.getCommission())
-				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, AonDateUtils.toSql(idc.getPayDate()))
+				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, idc.getPayDate() != null ? AonDateUtils.toSql(idc.getPayDate()) : null)
 				.set(INVOICE_DETAIL_COMMISSION.STATUS, idc.getStatus().value())
 				.where(INVOICE_DETAIL_COMMISSION.ID.eq(idc.getId()))
 				.returning().fetch().stream().map(new InvoiceDetailCommissionFiller())

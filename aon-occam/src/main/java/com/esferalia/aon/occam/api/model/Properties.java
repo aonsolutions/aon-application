@@ -1050,6 +1050,13 @@ public interface Properties {
 		Property<Date> getEndDateProperty();
 	}
 	
+	public interface CommissionTypeProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Double> getRateProperty();
+	}
+	
 	public interface CommissionTypeCommissionProperties extends CommissionProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

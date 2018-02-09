@@ -280,6 +280,14 @@ public class Methods {
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
+	
+	public Integer getDomainId() {
+		return domainId;
+	}
+
+	public void setDomainId(Integer domainId) {
+		this.domainId = domainId;
+	}
 
 	public String getUserName() {
 		return userName;

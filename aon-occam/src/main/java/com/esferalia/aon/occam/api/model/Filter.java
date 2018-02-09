@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Properties.CommissionCategoryProperties
 import com.esferalia.aon.occam.api.model.Properties.CommissionItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeCommissionProperties;
+import com.esferalia.aon.occam.api.model.Properties.CommissionTypeProperties;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
@@ -429,6 +430,12 @@ public interface Filter {
 	public interface CommissionFilter{
 		Filter filter(CommissionProperties properties);
 	}
+	
+	@FunctionalInterface
+	public interface CommissionTypeFilter{
+		Filter filter(CommissionTypeProperties properties);
+	}
+	
 	
 	@FunctionalInterface
 	public interface CommissionTypeCommissionFilter{

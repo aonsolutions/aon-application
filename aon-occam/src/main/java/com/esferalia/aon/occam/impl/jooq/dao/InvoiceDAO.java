@@ -348,6 +348,8 @@ public class InvoiceDAO {
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
 				,SCOPE.DESCRIPTION
+				, INVOICE_DETAIL.ID
+				,PRODUCT.CATEGORY
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -535,6 +537,7 @@ public class InvoiceDAO {
 		@Override
 		public InvoiceDetail apply(Record record) {
 			return new InvoiceDetail()
+				.setId(record.getValue(INVOICE_DETAIL.ID))
 				.setInvoice(new Invoice()
 					.setId(record.getValue(INVOICE.ID))
 					.setDomain(record.getValue(INVOICE.DOMAIN))
@@ -577,6 +580,7 @@ public class InvoiceDAO {
 						.setId(record.getValue(INVOICE_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
 						.setProductId( record.getValue( PRODUCT.ID ) )
+						.setProduct(new Product().setCategory(record.getValue(PRODUCT.CATEGORY)))
 						.setName( record.getValue( PRODUCT.NAME ) )
 						.setCode(record.getValue( PRODUCT.CODE ) )
 						.setDetail(record.getValue( ITEM.DETAIL ))
