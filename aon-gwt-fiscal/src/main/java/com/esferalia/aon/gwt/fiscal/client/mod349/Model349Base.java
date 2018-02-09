@@ -887,9 +887,8 @@ abstract class Model349Base extends DockLayoutPanel {
 			button3.addClickHandler( new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					// Servicio de validación y prueba, controlar ejercicio, solo a
-					// partir de 2014 (incluido) y el ultimo disponible 2017
-					if (getMod349().getYear() >= 2014 && getMod349().getYear() <= 2017) {
+					// Servicio de validación y prueba, controlar ejercicio, solo a partir de 2014 (incluido)
+					if (getMod349().getYear() >= 2014) {
 						submitForm(MODEL349_PRINT);
 					} else {
 						getCallback().showError("Servicio de validaci\u00F3n y prueba no disponible para el ejercicio del modelo.");

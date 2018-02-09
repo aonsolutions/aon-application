@@ -48,8 +48,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model347Base extends DockLayoutPanel {
 
-	static final String MODEL347_PRINT = "/aon_gwt_fiscal/Model347Print";
+	static final String MODEL347_PRINT_AEAT = "/aon_gwt_fiscal/Model347PrintAEAT";
 	static final String MODEL347_FILE = "/aon_gwt_fiscal/Model347File";
+	static final String MODEL347_PRINT = "/aon_gwt_fiscal/Model347Print";
 	
 	protected static class MediumLabel extends InlineLabel {
 		private MediumLabel(String label) {
@@ -133,6 +134,7 @@ abstract class Model347Base extends DockLayoutPanel {
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
 	protected final Button auditButton = new Button();
+	protected final Button printButton = new Button();
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	protected Hidden mod347Hidden = new Hidden("mod347");
@@ -400,6 +402,35 @@ abstract class Model347Base extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(markAsPendingButton);
+		
+		printButton.setText(AON.MSG.draft());
+		printButton.setTitle(printButton.getText());
+		printButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		printButton.addStyleName(AON.AON_CSS.aonIconExcel());
+		printButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if (isDirty()) {
+					new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+							, new ConfirmDialogCallback() {
+							
+							@Override
+							public void onAccept() {
+								submitForm(MODEL347_PRINT);
+							}
+			
+							@Override
+							public void onCancel() {
+								// Nothing
+							}
+						});
+				} else {
+					submitForm(MODEL347_PRINT);
+				}
+			}
+		});
+		buttonContainer.add(printButton);
 		
 		auditButton.setText(AON.MSG.audit());
 		auditButton.setTitle(auditButton.getText());
@@ -867,7 +898,7 @@ abstract class Model347Base extends DockLayoutPanel {
 				public void onClick(ClickEvent event) {
 					// Servicio de validación y prueba, controlar ejercicio, solo a partir de 2014 (incluido)
 					if (getMod347().getYear() >= 2014) {
-						submitForm(MODEL347_PRINT);
+						submitForm(MODEL347_PRINT_AEAT);
 					} else {
 						getCallback().showError("Servicio de validaci\u00F3n y prueba no disponible para el ejercicio del modelo.");
 					}

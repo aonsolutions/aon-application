@@ -183,7 +183,9 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				declared.setProvince(Province.getByName(province.getSelectedValue()));
+				//declared.setProvince(Province.getByName(province.getSelectedValue()));
+				//province.getSelectedIndex()
+				declared.setProvince( Province.safeValueOf(province.getSelectedIndex()) );				                                    
 				callback.onValueChanged(declared);
 			}
 		});

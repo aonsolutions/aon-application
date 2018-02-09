@@ -27,24 +27,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.fiscal.Mod349;
-import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.Mod349Writer;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347;
+import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod349 Print", urlPatterns = { "/aon_gwt_fiscal/Model349Print" })
-public class Mod349Print extends HttpServlet {
+@WebServlet(name = "Mod347 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/Model347PrintAEAT" })
+public class Mod347PrintAEAT extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("mod349"));
+			int id = Integer.parseInt(req.getParameter("mod347"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod349 mod349 = FISCAL.getMod349(domainName, domainId,AonServletUtils.getLoggedUser(), id);
+			Mod347 mod347 = FISCAL.getMod347(domainName, domainId,AonServletUtils.getLoggedUser(), id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -54,10 +53,10 @@ public class Mod349Print extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod349Writer.fillWriter(mod349, writer);
+			Mod347Writer.fillWriter(mod347, writer);
 			byte[] content = output.toByteArray();
 			
-			String s = mod349.getName();
+			String s = mod347.getName();
 			StringBuilder sb = new StringBuilder();
 			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
 				sb.append("_");
@@ -68,9 +67,9 @@ public class Mod349Print extends HttpServlet {
 				}
 			}
 
-			String fileName = AonFiscalFileUtils.getFileName(mod349); 
+			String fileName = "Mod347" + "_" + mod347.getYear() + "_" + sb.toString();
 
-			downloadPDF(req, resp, fileName, content, Integer.toString(mod349.getYear()));
+			downloadPDF(req, resp, fileName, content, Integer.toString(mod347.getYear()));
 
 		} catch (Throwable e) {
 			throw new ServletException(e);
@@ -86,32 +85,30 @@ public class Mod349Print extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		// El servicio de validacion se añadió en el ejercicio 2014
+		// Solo a partir del 2014
 		String prg = "";
-		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
 		if (year == "2014")
-			prg = "PTLINK1S";
-		else if (year == "2015")
 			prg = "PTLINK5L";
-		else if (year == "2016")
+		else if (year == "2015")
 			prg = "PTLINK9V";
-		else if (year == "2017")
+		else if (year == "2016")
 			prg = "PTLINKG2";
-		else {
-			// A partir de 2018 prg es vacio y cambia la url de llamada
-			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
-		}
 		
 		String urlParameters = 
-				"HID=INV"+year.substring(3)+"349"+ year=="2014"?"":"A" +  // Cambia para cada ejercicio
+				"HID=IE"+year.substring(3)+"347A" +  // Cambia para cada ejercicio
 				"&IDI=ES" +
 				"&LEV=000000000000" +						
 				"&FIC="	+ encodedFile + 
 				"&RUT=" + 
-				"&PRG=" + prg + // Cambia para cada ejercicio
+				"&PRG=" + prg +
 				"&FIN=" + 
 				"&EJF=" + year +
-				"&MOD=349";
+				"&MOD=347";
+		
+		String request = "";
+		if (year == "2014" || year == "2015")
+			request = "https://www6.aeat.es/es13/l/zi22zilk0022";
+		else request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 		
 		URL url = new URL(request);
 

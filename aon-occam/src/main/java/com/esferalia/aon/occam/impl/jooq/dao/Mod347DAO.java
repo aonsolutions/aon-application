@@ -377,6 +377,9 @@ public class Mod347DAO {
 			if (declared.isDeleted()) {
 				deleteDeclared(ctx, declared);
 			} else {
+				// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, así
+				// que hago que siempre que se guarde, se ponga el dominio en las lineas
+				declared.setDomain(mod347.getDomain());
 				updateDeclared(ctx, declared);
 			}
 		}
@@ -420,7 +423,10 @@ public class Mod347DAO {
 
 	private static void updateDeclared(AONContext ctx, Mod347Declared declared) {
 		validateDeclared(ctx, declared);
-		ctx.getDslContext().update(FS_MOD347_DETAIL)
+		ctx.getDslContext().update(FS_MOD347_DETAIL)		
+			// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, así
+			// que hago que siempre que se guarde, se ponga el dominio en las lineas
+			.set(FS_MOD347_DETAIL.DOMAIN,declared.getDomain())
 			.set(FS_MOD347_DETAIL.TYPE, Mod347Key.safeValue(declared.getType()))
 			.set(FS_MOD347_DETAIL.DOCUMENT, declared.getDocument())
 			.set(FS_MOD347_DETAIL.REPRESENTATIVE_DOCUMENT, declared.getRepresentativeDocument())
@@ -644,6 +650,7 @@ public class Mod347DAO {
 					if (declared == null) {
 						
 						declared = new Mod347Declared();
+						declared.setDomain(mod347.getDomain());
 						declared.setMod347(mod347.getId());
 
 						String document = vat.getRegistryDocument();
