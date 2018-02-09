@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
+import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
+import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
@@ -8,9 +10,13 @@ import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
+import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
+import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
+import static com.esferalia.aon.jooq.tables.Sales.SALES;
+import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
@@ -19,10 +25,14 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,16 +40,23 @@ import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.SelectField;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
+import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.stat.IStatFilterItemVisitor;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -57,7 +74,14 @@ import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
+import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO.SalesPropertiesDAO;
 import com.esferalia.aon.watson.AonDayOfWeek;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -953,6 +977,142 @@ public class StatDAO {
 					// ---------------
 					.collect(Collectors.toCollection(LinkedList::new))
 				);
+	}
+
+	
+	/*
+	 * PRODUCT STATS
+	 */
+	public static final String PRODUCT_CONSUMED = "Consumo";
+	public static final String PRODUCT_STOCK = "Stock";
+	public static final String PRODUCT_PENDING_PURCHASES = "Recibir";
+	public static final String PRODUCT_PENDING_SALES = "Servir";
+	
+	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
+	private static final DeliveryPropertiesDAO DELIVERY_PROPERTIES = new DeliveryPropertiesDAO();
+	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	private static final SalesPropertiesDAO SALES_PROPERTIES = new SalesPropertiesDAO();
+	private static final PurchasePropertiesDAO PURCHASE_PROPERTIES = new PurchasePropertiesDAO();
+	
+	public static StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter,
+			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
+			SalesFilter salesFilter, PurchaseFilter purchaseFilter) {
+		
+		Map<Integer, Double> consumed = getConsumedProduct(ctx, productFilter, invoiceFilter, deliveryFilter);
+		Map<Integer, Double> pendingSales = getPendingSalesProduct(ctx, productFilter, salesFilter);
+		Map<Integer, Double> pendingPurchases = getPendingPurchasesProduct(ctx, productFilter, purchaseFilter);
+		Map<Integer, Double> stock = getProductStock(ctx, productFilter);
+		
+		final StatData<Integer, String, Double> stat = new StatData<>();
+		for(Integer productId: consumed.keySet()) {
+			stat.put(productId, PRODUCT_CONSUMED, consumed.get(productId));
+			stat.put(productId, PRODUCT_STOCK, stock.get(productId));
+			stat.put(productId, PRODUCT_PENDING_PURCHASES, pendingPurchases.get(productId));
+			stat.put(productId, PRODUCT_PENDING_SALES, pendingSales.get(productId));
+		}
+		
+		return stat;
+	}
+
+	private static Map<Integer, Double> getConsumedProduct(AONContext ctx, ProductFilter productFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter) {
+		Collection<Condition> invoiceConditions = new ArrayList<Condition>();
+		invoiceConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFilter)));
+		invoiceConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> invoiceSelect = ctx.getDslContext()
+			.select(ITEM.PRODUCT, DSL.sum(INVOICE_DETAIL.QUANTITY).as(INVOICE_DETAIL.QUANTITY))
+			.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.join(ITEM).on(INVOICE_DETAIL.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+			.where(invoiceConditions)
+			.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
+			.groupBy(ITEM.PRODUCT)
+			.orderBy(ITEM.PRODUCT);
+		
+		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
+		deliveryConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
+		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> deliverySelect = ctx.getDslContext()
+			.select(ITEM.PRODUCT, DSL.sum(DELIVERY_DETAIL.QUANTITY).as(DELIVERY_DETAIL.QUANTITY))
+			.from(DELIVERY)
+				.join(DELIVERY_DETAIL).on(DELIVERY.ID.equal(DELIVERY_DETAIL.DELIVERY))
+				.join(ITEM).on(DELIVERY_DETAIL.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+			.where(deliveryConditions)
+			.groupBy(ITEM.PRODUCT)
+			.orderBy(ITEM.PRODUCT);
+		
+		Map<Integer, Double> map = new HashMap<>();
+		invoiceSelect
+			.union(deliverySelect)
+			.forEach(record -> {
+				Integer key = record.get(ITEM.PRODUCT);
+				Double value = record.value2().doubleValue();
+				if(!map.containsKey(key))
+					map.put(key, 0.0);
+				map.put(key, map.get(key)+value);
+			});
+		return map;
+	}
+	
+	private static Map<Integer, Double> getPendingSalesProduct(AONContext ctx, ProductFilter productFilter, SalesFilter salesFilter) {
+		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		whereConditions.addAll(Arrays.asList(SALES_PROPERTIES.getConditions(salesFilter)));
+		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		
+		Map<Integer, Double> map = new HashMap<>();
+		ctx.getDslContext()
+			.select(ITEM.PRODUCT, DSL.sum(SALES_DETAIL.QUANTITY).as(SALES_DETAIL.QUANTITY))
+			.from(SALES)
+				.join(SALES_DETAIL).on(SALES.ID.equal(SALES_DETAIL.SALES))
+				.join(ITEM).on(SALES_DETAIL.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+			.where(whereConditions)
+			.and(SALES_DETAIL.STATUS.ne(SalesDetailStatus.SETTLED.value()))
+			.groupBy(ITEM.PRODUCT)
+			.orderBy(ITEM.PRODUCT)
+			.forEach(record -> {
+				Integer key = record.get(ITEM.PRODUCT);
+				Double value = record.value2().doubleValue();
+				if(!map.containsKey(key))
+					map.put(key, 0.0);
+				map.put(key, map.get(key)+value);
+			});
+		return map;
+	}
+	
+	private static Map<Integer, Double> getPendingPurchasesProduct(AONContext ctx, ProductFilter productFilter, PurchaseFilter purchaseFilter) {
+		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		whereConditions.addAll(Arrays.asList(PURCHASE_PROPERTIES.getConditions(purchaseFilter)));
+		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		
+		Map<Integer, Double> map = new HashMap<>();
+		ctx.getDslContext()
+			.select(ITEM.PRODUCT, DSL.sum(PURCHASE_DETAIL.QUANTITY).as(PURCHASE_DETAIL.QUANTITY))
+			.from(PURCHASE)
+				.join(PURCHASE_DETAIL).on(PURCHASE.ID.equal(PURCHASE_DETAIL.PURCHASE))
+				.join(ITEM).on(PURCHASE_DETAIL.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+			.where(whereConditions)
+			.and(PURCHASE_DETAIL.STATUS.ne(PurchaseDetailStatus.SETTLED.value()))
+			.groupBy(ITEM.PRODUCT)
+			.orderBy(ITEM.PRODUCT)
+			.forEach(record -> {
+				Integer key = record.get(ITEM.PRODUCT);
+				Double value = record.value2().doubleValue();
+				if(!map.containsKey(key))
+					map.put(key, 0.0);
+				map.put(key, map.get(key)+value);
+			});
+		return map;
+	}
+	
+	private static Map<Integer, Double> getProductStock(AONContext ctx, ProductFilter productFilter) {
+		Map<Integer, Double> map = new HashMap<>();
+		
+		// TODO method::getProductStock
+		
+		return map;
 	}
 	
 }

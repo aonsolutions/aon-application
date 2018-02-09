@@ -60,6 +60,12 @@
 			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/warehouse/elaboration.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_stockForecast</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/warehouse/stockForecast.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- AON GWT UDAPA -->
 	

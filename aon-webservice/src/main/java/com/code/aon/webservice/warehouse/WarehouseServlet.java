@@ -33,15 +33,22 @@ import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
+import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -125,6 +132,8 @@ public class WarehouseServlet extends HttpServlet{
 							}
 						}
 					} else object = getElaborationList(domain, userName, req.getParameterMap());
+				} else if("stock_forecast".equals(pathInfo[3])){
+					object = getStockForecast(domain, userName, req.getParameterMap());
 				} else if(MSG.WAREHOUSE.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						object = DBWarehouse.getWarehouse(domain, userName, Integer.parseInt(pathInfo[4]));
@@ -599,6 +608,10 @@ public class WarehouseServlet extends HttpServlet{
 			filter = filter.and(fRegistry);
 		}
 		
+		if(filterMap.containsKey(MSG.CUSTOMER)){
+			filter = filter.and(f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(MSG.CUSTOMER)[0])));
+		}
+		
 		if(filterMap.containsKey(MSG.SERIES)){
 			filter = filter.and(f.getSeriesProperty().like("%" + filterMap.get(MSG.SERIES)[0] + "%"));
 		}
@@ -623,10 +636,17 @@ public class WarehouseServlet extends HttpServlet{
 			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.ISSUE_DATE)[0])));
 			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(date)));
 		}
+		if(filterMap.containsKey(MSG.FROM)){
+			filter = filter.and(f.getIssueTimeProperty().ge(new java.sql.Timestamp(Long.parseLong(filterMap.get(MSG.FROM)[0]))));
+		}
+		if(filterMap.containsKey(MSG.TO)){
+			filter = filter.and(f.getIssueTimeProperty().le(new java.sql.Timestamp(Long.parseLong(filterMap.get(MSG.TO)[0]))));
+		}
 		
 		if(filterMap.containsKey(MSG.NOT_CARRIER_PACKING)){
 			filter = filter.and(f.getCarrierPackingProperty().isNull());
 		}
+		
 		return filter;
     }
     
@@ -772,6 +792,110 @@ public class WarehouseServlet extends HttpServlet{
 		return filter;
     }
     
+    /*
+     * StockForecast
+     */
+    private JSONArray getStockForecast(Domain domain,String login, Map<String, String[]> filterMap){
+    	JSONArray array = new JSONArray();
+    	if(filterMap.containsKey(MSG.FROM) && filterMap.containsKey(MSG.TO)) {
+    		StatData<Integer, String, Double> stat = AON.getProductStat(domain.getName(), domain.getId(), login,
+    				f -> productFilter(domain, filterMap, f),
+					f -> invoiceFilter(domain, filterMap, f),
+					f -> deliveryFilter(domain, filterMap, f),
+					f -> salesFilter(domain, filterMap, f),
+					f -> purchaseFilter(domain, filterMap, f));
+        	
+    		Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
+        	Map<Integer, Product> productMap = new HashMap<>();
+        	AON.getProductStream(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(productIds)).forEach(product -> {
+        		productMap.put(product.getId(), product);
+        	});
+    		
+        	for(Integer productId: productIds) {
+    			if(stat.getMap().containsKey(productId)){
+    				Product product = productMap.get(productId);
+    				Double quantity = new Double(stat.get(productId, StatDAO.PRODUCT_CONSUMED));
+    				// TODO property::accumulation
+    				Double accumulation = new Double(-1);
+    				// TODO property::stock
+    				Double stock = stat.get(productId, StatDAO.PRODUCT_STOCK)!=null?stat.get(productId, StatDAO.PRODUCT_STOCK):-1;
+    				Double pendingPurchases = stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES):0;
+    				Double pendingSales = stat.get(productId, StatDAO.PRODUCT_PENDING_SALES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_SALES):0;
+    				// TODO property::proposal
+    				Double proposal = new Double(-1);
+    				array.put(
+    						new JSONObject()
+    						.put(MSG.ID, productId)
+    						.put(MSG.DOMAIN, product.getDomain())
+    						.put("product_name", product.getCode()+" / "+product.getName())
+    						.put(MSG.QUANTITY, quantity)
+    						.put("accumulation", accumulation)
+    						.put("stock", stock)
+    						.put("pending_purchases", pendingPurchases)
+    						.put("pending_sales", pendingSales)
+    						.put("proposal", proposal)
+    						);    			
+    			}
+    		}
+    	}
+    	return array;
+    }
+    
+	private Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		filter.page(1).perPage(1000);
+		if(filterMap.containsKey("category")){
+			filter = filter.and(f.getCategoryProperty().eq(Integer.parseInt(filterMap.get("category")[0])));
+		}
+		if(filterMap.containsKey("product")){
+			filter = filter.and(f.getIdProperty().eq(Integer.parseInt(filterMap.get("product")[0])));
+		}
+		
+		// TODO property::stockDays
+		
+		return filter;
+    }
+	private Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		filter.page(1).perPage(1000);
+		if(filterMap.containsKey(MSG.FROM)){
+			filter = filter.and(f.getStartIssueDateProperty().ge(new java.sql.Date(Long.parseLong(filterMap.get(MSG.FROM)[0]))));
+		}
+		if(filterMap.containsKey(MSG.TO)){
+			filter = filter.and(f.getEndIssueDateProperty().le(new java.sql.Date(Long.parseLong(filterMap.get(MSG.TO)[0]))));
+		}
+		if(filterMap.containsKey(MSG.CUSTOMER)){
+			filter = filter.and(f.getRegistryProperty().eq(Integer.parseInt(filterMap.get(MSG.CUSTOMER)[0])));
+		}
+		return filter;
+	}
+	private Filter salesFilter(Domain domain, Map<String, String[]> filterMap, SalesProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		filter.page(1).perPage(1000);		
+		if(filterMap.containsKey(MSG.FROM)){
+			filter = filter.and(f.getIssueDateProperty().ge(new java.sql.Date(Long.parseLong(filterMap.get(MSG.FROM)[0]))));
+		}
+		if(filterMap.containsKey(MSG.TO)){
+			filter = filter.and(f.getIssueDateProperty().le(new java.sql.Date(Long.parseLong(filterMap.get(MSG.TO)[0]))));
+		}
+		if(filterMap.containsKey(MSG.CUSTOMER)){
+			filter = filter.and(f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(MSG.CUSTOMER)[0])));
+		}
+		return filter;
+    }
+	private Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		filter.page(1).perPage(1000);
+		if(filterMap.containsKey(MSG.FROM)){
+			filter = filter.and(f.getIssueDateProperty().ge(new java.sql.Date(Long.parseLong(filterMap.get(MSG.FROM)[0]))));
+		}
+		if(filterMap.containsKey(MSG.TO)){
+			filter = filter.and(f.getIssueDateProperty().le(new java.sql.Date(Long.parseLong(filterMap.get(MSG.TO)[0]))));
+		}
+		return filter;
+    }
+
+	
     private Double total = 0.0;
 
     private JSONObject updateReceptionQuantity(Domain domain, String login, JSONObject json) {

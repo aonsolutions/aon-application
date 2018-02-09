@@ -270,6 +270,12 @@ public class Warehouse extends Methods{
 		});
 	}
 	
+	/* STOCK FORECAST */
+	public void getStockForecast(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockForecast>> callback) {
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/stock_forecast" + filter, callback);
+	}
+	
 	/* WAREHOUSE */
 	public void getWarehouseList(AsyncCallback<JSON<JsObject>> callback){ 
 		// Se usa en elaboration cambia la clase JavaScript, por lo mas es igual a getWarehouses(callback)!

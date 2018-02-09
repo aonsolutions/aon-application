@@ -2616,6 +2616,20 @@ public class AON {
 				ctx.close();
 		}		
 	}
+	
+	public static StatData<Integer, String, Double> getProductStat(String domainName, Integer domainId, String login, ProductFilter productFilter,
+			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter, PurchaseFilter purchaseFilter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,login);
+			return getStats().getProductStat(ctx, productFilter, invoiceFilter,
+					deliveryFilter, salesFilter, purchaseFilter);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}		
+	}
+	
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************

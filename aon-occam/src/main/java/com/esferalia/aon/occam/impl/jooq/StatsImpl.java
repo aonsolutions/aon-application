@@ -4,7 +4,12 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IStats;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
+import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
@@ -29,6 +34,13 @@ public class StatsImpl implements IStats {
 	@Override
 	public Stream<Task> getStatTaskStream(AONContext ctx, StatParams params) {
 		return StatDAO.getStatTaskStream(ctx, params);
+	}
+
+	@Override
+	public StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter,
+			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter,
+			PurchaseFilter purchaseFilter) {
+		return StatDAO.getProductStat(ctx, productFilter, invoiceFilter, deliveryFilter, salesFilter, purchaseFilter);
 	}
 
 
