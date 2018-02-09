@@ -381,7 +381,6 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 		
 		AgreementRecord agreement = getAgreement(aonContext, draft.getDescription());
 		
-		// insert new payment 
 		AgreementPaymentRecord paymentRecords [] = getAgreementPayments(aonContext, agreement.getId());
 		for ( AgreementPaymentRecord paymentRecord: paymentRecords ) {
 			Assert.assertEquals( epoch.getTime(), paymentRecord.getStartDate());
@@ -400,4 +399,57 @@ public class SQLAgreementDraftTestCase extends AbstractSQLTestCase {
 	}
 	
 
+	@Test
+	public void testsPaymentsIII() throws SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date startDate = getFirstDayOfYear(getToday());
+
+		DomainRecord domain = newDomain(aonContext);
+		
+		
+		PaymentConceptRecord salaioBase = addConcept(aonContext, "SALARIO_BASE");
+		
+		AgreementDraft draft = new AgreementDraft();
+		draft.setId(-1);
+		draft.setDescription("NEW AGREEMENT (" + System.currentTimeMillis() + ")");
+		
+		com.esferalia.aon.gwt.payroll.shared.Payment draftPayment = new com.esferalia.aon.gwt.payroll.shared.Payment();
+		draftPayment.setId(-1);
+		draftPayment.setType(Type.CRA_0001);
+		draftPayment.setConceptId(salaioBase.getId());
+		draftPayment.setName("SALARIO_BASE");
+		draftPayment.setDescription("SALARIO BASE");
+		draftPayment.setExpression("1000.00 * DIAS_TRABAJADOS / DIAS_MES");
+		draftPayment.setIrpfExpression("_P");
+		draftPayment.setQuoteExpression("_P");
+		draftPayment.setStartDate(startDate);
+		draftPayment.setSalaryType(com.esferalia.aon.gwt.payroll.shared.Salary.Type.SALARY);
+		draft.addDraftPayment(draftPayment);
+		
+		SQLAgreementDraft.save(connection, draft, domain.getId(), null);
+		
+		Calendar epoch = Calendar.getInstance();
+		epoch.setTimeInMillis(0);
+		epoch.set(Calendar.HOUR_OF_DAY, 0);
+		
+		AgreementRecord agreement = getAgreement(aonContext, draft.getDescription());
+		
+		AgreementPaymentRecord paymentRecords [] = getAgreementPayments(aonContext, agreement.getId());
+		for ( AgreementPaymentRecord paymentRecord: paymentRecords ) {
+			Assert.assertEquals( epoch.getTime(), paymentRecord.getStartDate());
+			Assert.assertNull(paymentRecord.getEndDate());
+			Assert.assertEquals("1000.00 * DIAS_TRABAJADOS / DIAS_MES", paymentRecord.getExpression());
+
+			PaymentConceptRecord conceptRecord = getPaymentConcept(aonContext, paymentRecord.getPaymentConcept());
+			Assert.assertEquals("SALARIO_BASE", conceptRecord.getCode());
+
+			
+		}
+		Assert.assertEquals(1, paymentRecords.length);
+		
+	}
+	
 }

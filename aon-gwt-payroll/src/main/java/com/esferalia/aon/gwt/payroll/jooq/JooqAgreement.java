@@ -1175,17 +1175,14 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 						payment.getQuoteExpression())
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
 						(byte) payment.getSalaryType().ordinal())
-				.set(AGREEMENT_PAYMENT.START_DATE,
-						new java.sql.Date(payment.getStartDate().getTime()))
+				.set(AGREEMENT_PAYMENT.START_DATE,SQL_EPOCH)
 				.set(AGREEMENT_PAYMENT.MONTH,
 						payment.getMonth() != null ? payment.getMonth()
 								.byteValue() : null)
 				.set(AGREEMENT_PAYMENT.TYPE,
 						payment.getType() != null ? (byte) payment.getType()
 								.ordinal() : null)
-				.set(AGREEMENT_PAYMENT.END_DATE,
-						payment.getEndDate() != null ? new java.sql.Date(
-								payment.getEndDate().getTime()) : null)
+				.set(AGREEMENT_PAYMENT.END_DATE,SQL_FOREVER)
 				.execute();
 		// @formatter:on
 
