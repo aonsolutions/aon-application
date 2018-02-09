@@ -816,13 +816,13 @@ public class WarehouseServlet extends HttpServlet{
     				Product product = productMap.get(productId);
     				Double quantity = new Double(stat.get(productId, StatDAO.PRODUCT_CONSUMED));
     				// TODO property::accumulation
-    				Double accumulation = new Double(-1);
+    				Double accumulation = null;
     				// TODO property::stock
-    				Double stock = stat.get(productId, StatDAO.PRODUCT_STOCK)!=null?stat.get(productId, StatDAO.PRODUCT_STOCK):-1;
-    				Double pendingPurchases = stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES):0;
-    				Double pendingSales = stat.get(productId, StatDAO.PRODUCT_PENDING_SALES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_SALES):0;
+    				Double stock = stat.get(productId, StatDAO.PRODUCT_STOCK)!=null?stat.get(productId, StatDAO.PRODUCT_STOCK):null;
+    				Double pendingPurchases = stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES):0.0;
+    				Double pendingSales = stat.get(productId, StatDAO.PRODUCT_PENDING_SALES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_SALES):0.0;
     				// TODO property::proposal
-    				Double proposal = new Double(-1);
+    				Double proposal = null;
     				array.put(
     						new JSONObject()
     						.put(MSG.ID, productId)
