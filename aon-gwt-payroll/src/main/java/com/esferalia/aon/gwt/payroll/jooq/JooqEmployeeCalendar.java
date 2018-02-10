@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -27,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.client.Quartet;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.google.gwt.user.client.Window;
 
 public class JooqEmployeeCalendar {
 
@@ -62,27 +64,52 @@ public class JooqEmployeeCalendar {
 		Boolean fullTimeJourney = false;
 		
 		// ------------------------------------------------------ JORNADA COMPLETA -------------------------------------------------------
-				 	
-		String journeyTypeEmployee = dslContext
+		
+		String journeyTypeEmployee = "";
+		Record1<String> journeyType = dslContext
 				  .select(CONTRACT_DATA.EXPRESSION)
 				  .from(CONTRACT_DATA)
 				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
-				  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+				  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
 				  .orderBy(CONTRACT_DATA.START_DATE.desc())
 				  .limit(1)
-				  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+				  .fetchOne();
 		
-		if(journeyTypeEmployee == null)
+		if(journeyType != null){
+			journeyTypeEmployee = journeyType.get(CONTRACT_DATA.EXPRESSION);
+		}else{
 			journeyTypeEmployee = dslContext
 			  .select(CONTRACT_DATA.EXPRESSION)
 			  .from(CONTRACT_DATA)
 			  .where(CONTRACT_DATA.CONTRACT.eq(contract))
-			  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
+			  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
 			  .orderBy(CONTRACT_DATA.START_DATE.desc())
 			  .limit(1)
 			  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+		}
 		
+//		String journeyTypeEmployee = dslContext
+//				  .select(CONTRACT_DATA.EXPRESSION)
+//				  .from(CONTRACT_DATA)
+//				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+//				  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+//				  .orderBy(CONTRACT_DATA.START_DATE.desc())
+//				  .limit(1)
+//				  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+//		
+//		if(journeyTypeEmployee == null)
+//			journeyTypeEmployee = dslContext
+//			  .select(CONTRACT_DATA.EXPRESSION)
+//			  .from(CONTRACT_DATA)
+//			  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+//			  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
+//			  .orderBy(CONTRACT_DATA.START_DATE.desc())
+//			  .limit(1)
+//			  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
+		
+		System.out.println("CONTRAC_DATA JOURNEY INFO BD :"+journeyTypeEmployee);
 		fullTimeJourney = isFullTimeJourney(journeyTypeEmployee);
+		System.out.println("JORNADA COMPLETA BD :"+fullTimeJourney);
 		
 		// ---------------------------------------------- HORAS SEMANALES ---------------------------------------------------------
 		
@@ -135,25 +162,36 @@ public class JooqEmployeeCalendar {
 		
 		if(!fullTimeJourney){
 			
-			String listDaysOfWeek [] = {"HORAS_LUNES", "HORAS_MARTES", "HORAS_MIERCOLES", "HORAS_JUEVES", "HORAS_VIERNES",
-					 "HORAS_SABADO", "HORAS_DOMINGO"}; 
-	
-			ArrayList<String> listDefinedDays = new ArrayList<String>();
-			for(Record r: contractHoursEmployeeInfo){
-				listDefinedDays.add(r.get(CONTRACT_DATA.NAME));
-			}
+			if(contractHoursEmployeeInfo.isEmpty()){
+				contractNonWorkingDaysList.add((byte) 0);
+				contractNonWorkingDaysList.add((byte) 0);
+				contractNonWorkingDaysList.add((byte) 0);
+				contractNonWorkingDaysList.add((byte) 0);
+				contractNonWorkingDaysList.add((byte) 0);
+				contractNonWorkingDaysList.add((byte) 1);
+				contractNonWorkingDaysList.add((byte) 1);
+			}else{
 			
-			for (int i=0; i<7; i++){
-				String dayOfWeek = listDaysOfWeek[i];
-				ArrayList<String> values = getValueDayOfWeek(contractHoursEmployeeInfo, dayOfWeek);
-				if (!listDefinedDays.contains(dayOfWeek)){
-					contractNonWorkingDaysList.add((byte) 1);
-				}else if (values.size() > 1){
-					contractNonWorkingDaysList.add((byte) 0);
-				}else if (null == values || values.isEmpty() || "-1.0".equals(values.get(0))){
-					contractNonWorkingDaysList.add((byte) 1);
-				}else{
-					contractNonWorkingDaysList.add((byte) 0);
+				String listDaysOfWeek [] = {"HORAS_LUNES", "HORAS_MARTES", "HORAS_MIERCOLES", "HORAS_JUEVES", "HORAS_VIERNES",
+						 "HORAS_SABADO", "HORAS_DOMINGO"}; 
+		
+				ArrayList<String> listDefinedDays = new ArrayList<String>();
+				for(Record r: contractHoursEmployeeInfo){
+					listDefinedDays.add(r.get(CONTRACT_DATA.NAME));
+				}
+				
+				for (int i=0; i<7; i++){
+					String dayOfWeek = listDaysOfWeek[i];
+					ArrayList<String> values = getValueDayOfWeek(contractHoursEmployeeInfo, dayOfWeek);
+					if (!listDefinedDays.contains(dayOfWeek)){
+						contractNonWorkingDaysList.add((byte) 1);
+					}else if (values.size() > 1){
+						contractNonWorkingDaysList.add((byte) 0);
+					}else if (/*null == values ||*/ values.isEmpty() || "-1.0".equals(values.get(0))){
+						contractNonWorkingDaysList.add((byte) 1);
+					}else{
+						contractNonWorkingDaysList.add((byte) 0);
+					}
 				}
 			}
 		}
@@ -216,6 +254,9 @@ public class JooqEmployeeCalendar {
 															.where(CALENDAR.ID.eq(calendar))
 															.fetch();
 				
+				if(nonWorkingDays != null)
+					contractNonWorkingDaysList.clear();
+					
 				for(Record r: nonWorkingDays){
 					contractNonWorkingDaysList.add(r.get(CALENDAR.MONDAY));
 					contractNonWorkingDaysList.add(r.get(CALENDAR.TUESDAY));
@@ -274,6 +315,9 @@ public class JooqEmployeeCalendar {
 	// -------------- AUX METHODS GET EMPLOYEE INFO ------------
 	
 	private static ArrayList<String> getValueDayOfWeek(Result<Record> contractHoursEmployeeInfo, String dayOfWeek) {
+//		if(contractHoursEmployeeInfo.isEmpty())
+//			return null;
+		
 		ArrayList<String> result = new ArrayList<String>();
 		for(Record r: contractHoursEmployeeInfo){
 			if(dayOfWeek.equals(r.get(CONTRACT_DATA.NAME))){
@@ -285,7 +329,7 @@ public class JooqEmployeeCalendar {
 
 	private static Boolean isFullTimeJourney(String tipoJornadaInfoEmpleado) {
 		if ('1' == tipoJornadaInfoEmpleado.charAt(1) || '4' == tipoJornadaInfoEmpleado.charAt(1)
-				|| "false" == tipoJornadaInfoEmpleado)
+				|| "true" == tipoJornadaInfoEmpleado)
 			return true;
 		else
 			return false;
