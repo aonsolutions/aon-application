@@ -53,7 +53,7 @@ public class FilterPanel extends Composite {
 	
 	DateBoxEx fromDate;
 	DateBoxEx toDate;
-	IntegerBox stockDaysInput;
+	IntegerBox accumulationDaysInput;
 	PaperButton categoryButton;
 	PaperButton productButton;
 	PaperButton customerButton;
@@ -93,13 +93,12 @@ public class FilterPanel extends Composite {
 		
 		fromDate = createDateBox("from");
 		toDate = createDateBox("to");
-		stockDaysInput = createIntegerBox("stock_days");
+		accumulationDaysInput = createIntegerBox("accumulation_days");
 		categoryButton = filterButton(AON.MSG.category());
 		productButton = filterButton(AON.MSG.product());
 		customerButton = filterButton(AON.MSG.customer());
 		
 		// ------------------ DISABLED FIELDS
-		stockDaysInput.setEnabled(false);
 		categoryButton.setDisabled(true);
 		productButton.setDisabled(true);
 		customerButton.setDisabled(true);
@@ -154,7 +153,7 @@ public class FilterPanel extends Composite {
 		
 		FlowPanel fpanel = new FlowPanel();
 		fpanel.add(stockDaysLabel);
-		fpanel.add(stockDaysInput);
+		fpanel.add(accumulationDaysInput);
 		fpanel.add(categoryButton);
 		fpanel.add(productButton);
 		fpanel.add(customerButton);
@@ -178,7 +177,7 @@ public class FilterPanel extends Composite {
 		return dateBox;
 	}
 	
-	private IntegerBox createIntegerBox(String string) {
+	private IntegerBox createIntegerBox(String key) {
 		final IntegerBox input = new IntegerBox();
 		input.setWidth("20px");
 		input.addValueChangeHandler(new ValueChangeHandler<Integer>() {

@@ -177,6 +177,25 @@ public class GridPanel extends Composite {
 			}
 		});
 		
+		/** Consumo por dia**/
+		Column<JsStockForecast,Number> dailyQuantityColumn = new Column<JsStockForecast, Number>(new NumberCell(numberFormat)) {
+			
+			@Override
+			public Number getValue(JsStockForecast object) {
+				return object.getDailyQuantity()!=null ? object.getDailyQuantity() : null;
+			}
+		};
+		
+		dailyQuantityColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
+		dailyQuantityColumn.setSortable(true); 
+		sortHandler.setComparator(dailyQuantityColumn,new Comparator<JsStockForecast>() {
+			
+			@Override
+			public int compare(JsStockForecast o1, JsStockForecast o2) {
+				return o1.getDailyQuantity().compareTo(o2.getDailyQuantity());
+			}
+		});
+		
 		/** Acopio **/
 		Column<JsStockForecast,Number> accumulationColumn = new Column<JsStockForecast, Number>(new NumberCell(numberFormat)) {
 			
@@ -275,19 +294,21 @@ public class GridPanel extends Composite {
 		
 		dataGrid.addColumn(nameColumn, AON.MSG.product());
 		dataGrid.addColumn(quantityColumn, "Consumo");
+		dataGrid.addColumn(dailyQuantityColumn, "Consumo/Dia");
 		dataGrid.addColumn(accumulationColumn, "Acopio");
 		dataGrid.addColumn(stockColumn, "Stock");
 		dataGrid.addColumn(pendingPurchasesColumn, "Pte.Recibir");
 		dataGrid.addColumn(pendingSalesColumn, "Pte.Servir");
 		dataGrid.addColumn(proposalColumn, "Propuesta");
 		
-		dataGrid.setColumnWidth(nameColumn, 40, Unit.PCT);
-		dataGrid.setColumnWidth(quantityColumn, 10, Unit.PCT);
-		dataGrid.setColumnWidth(accumulationColumn, 10, Unit.PCT);
-		dataGrid.setColumnWidth(stockColumn, 10, Unit.PCT);
-		dataGrid.setColumnWidth(pendingPurchasesColumn, 10, Unit.PCT);
-		dataGrid.setColumnWidth(pendingSalesColumn, 10, Unit.PCT);
-		dataGrid.setColumnWidth(proposalColumn, 10, Unit.PCT);
+		dataGrid.setColumnWidth(nameColumn, 100, Unit.PCT);
+		dataGrid.setColumnWidth(quantityColumn, 100, Unit.PX);
+		dataGrid.setColumnWidth(dailyQuantityColumn, 100, Unit.PX);
+		dataGrid.setColumnWidth(accumulationColumn, 100, Unit.PX);
+		dataGrid.setColumnWidth(stockColumn, 100, Unit.PX);
+		dataGrid.setColumnWidth(pendingPurchasesColumn, 100, Unit.PX);
+		dataGrid.setColumnWidth(pendingSalesColumn, 100, Unit.PX);
+		dataGrid.setColumnWidth(proposalColumn, 100, Unit.PX);
 		
 	}
 }

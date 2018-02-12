@@ -798,6 +798,14 @@ public class WarehouseServlet extends HttpServlet{
     private JSONArray getStockForecast(Domain domain,String login, Map<String, String[]> filterMap){
     	JSONArray array = new JSONArray();
     	if(filterMap.containsKey(MSG.FROM) && filterMap.containsKey(MSG.TO)) {
+    		Date from = new Date(Long.parseLong(filterMap.get(MSG.FROM)[0]));
+    		Date to = new Date(Long.parseLong(filterMap.get(MSG.TO)[0]));
+    		long daysCount = AonDateUtils.getDaysBetweenDates(from, to);
+    		Integer accumulationDays = 1;
+    		if(filterMap.containsKey(MSG.FROM) && filterMap.containsKey("accumulation_days")) {
+    			accumulationDays = Integer.parseInt(filterMap.get("accumulation_days")[0]);	
+    		}
+    		
     		StatData<Integer, String, Double> stat = AON.getProductStat(domain.getName(), domain.getId(), login,
     				f -> productFilter(domain, filterMap, f),
 					f -> invoiceFilter(domain, filterMap, f),
@@ -815,20 +823,19 @@ public class WarehouseServlet extends HttpServlet{
     			if(stat.getMap().containsKey(productId)){
     				Product product = productMap.get(productId);
     				Double quantity = new Double(stat.get(productId, StatDAO.PRODUCT_CONSUMED));
-    				// TODO property::accumulation
-    				Double accumulation = null;
-    				// TODO property::stock
-    				Double stock = stat.get(productId, StatDAO.PRODUCT_STOCK)!=null?stat.get(productId, StatDAO.PRODUCT_STOCK):null;
+    				Double dailyQuantity = quantity / daysCount;
+    				Double accumulation = dailyQuantity * accumulationDays;
+    				Double stock = stat.get(productId, StatDAO.PRODUCT_STOCK)!=null?stat.get(productId, StatDAO.PRODUCT_STOCK):0.0;
     				Double pendingPurchases = stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES):0.0;
     				Double pendingSales = stat.get(productId, StatDAO.PRODUCT_PENDING_SALES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_SALES):0.0;
-    				// TODO property::proposal
-    				Double proposal = null;
+    				Double proposal = accumulation - stock - pendingPurchases + pendingSales;
     				array.put(
     						new JSONObject()
     						.put(MSG.ID, productId)
     						.put(MSG.DOMAIN, product.getDomain())
     						.put("product_name", product.getCode()+" / "+product.getName())
     						.put(MSG.QUANTITY, quantity)
+    						.put("daily_quantity", dailyQuantity)
     						.put("accumulation", accumulation)
     						.put("stock", stock)
     						.put("pending_purchases", pendingPurchases)
@@ -850,8 +857,6 @@ public class WarehouseServlet extends HttpServlet{
 		if(filterMap.containsKey("product")){
 			filter = filter.and(f.getIdProperty().eq(Integer.parseInt(filterMap.get("product")[0])));
 		}
-		
-		// TODO property::stockDays
 		
 		return filter;
     }

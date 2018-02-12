@@ -31,6 +31,10 @@ public class JsStockForecast extends JavaScriptObject {
 												return this.quantity;
 												}-*/;
 
+	public final native Double getDailyQuantity() /*-{
+													return this.daily_quantity;
+													}-*/;
+	
 	public final native Double getAccumulation() /*-{
 													return this.accumulation;
 													}-*/;
