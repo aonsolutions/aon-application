@@ -1,5 +1,6 @@
 package com.code.aon.webservice.commercial;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,6 +21,10 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
+import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommissionStatus;
+import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
+import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
@@ -33,7 +38,6 @@ public class CommissionServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Common Servlet - GET METHOD");
-		
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		String userName = req.getRemoteUser();
@@ -58,6 +62,31 @@ public class CommissionServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Common Servlet - POST METHOD");
+
+		JSONObject json = Utils.getRequestJSON(req);
+
+		String domainName = req.getServerName();
+		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
+		String userName = req.getRemoteUser();
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+		
+		Object object = new Object();
+		switch (req.getPathInfo()) {
+		case "/calculated/offer":
+			object = updateOfferCalculatedCommission(domain, userName, json);
+			break;
+		case "/calculated/invoice":
+			object = updateInvoiceCalculatedCommission(domain, userName, json);
+			break;
+		default:
+			break;
+		}
+		resp.setContentType("application/json;charset=UTF-8");
+		Utils.addCorsHeader(resp);
+		PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+		os.println(object.toString());
+		os.flush();
+		os.close();
 	}
 	
 	private Object getOfferCalculatedCommission(Domain domain, String userName,  Map<String,String[]> filterMap){
@@ -85,6 +114,81 @@ public class CommissionServlet extends HttpServlet{
 			array.put(json);
 		});
 		return array;
+	}
+	
+	public Object updateOfferCalculatedCommission(Domain domain, String userName, JSONObject json) {
+		Integer id = json.getInt("id");
+		OfferDetailCommission odc = AON.getOfferDetailCommission(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
+		if(json.opt("amount") != null) {
+			odc.setAmount(json.getDouble("amount"));
+		}
+		
+		if(json.opt("percentage") != null) {
+			odc.setCommission(json.getDouble("percentage"));
+		}
+		
+		if(json.opt("status") != null) {
+			odc.setStatus(OfferDetailCommissionStatus.values()[json.getInt("status")]);
+		}
+
+		AON.updateOfferDetailCommission(domain.getName(), domain.getId(), userName, odc);
+		
+		JSONObject odcJson = new JSONObject();
+		odcJson.put("id", odc.getId());
+		odcJson.put("date", odc.getOfferDetail().getOffer().getIssueDate());
+		odcJson.put("seller", odc.getOfferDetail().getOffer().getSeller().getRegistryName());	
+		Double p = odc.getOfferDetail().getPrice()* odc.getOfferDetail().getQuantity();
+		Double discount = Double.parseDouble(odc.getOfferDetail().getDiscountExpression());
+		odcJson.put("base", p - (p*discount/100));
+		odcJson.put("amount", odc.getAmount());
+		odcJson.put("percentage", odc.getCommission());
+		odcJson.put("status", odc.getStatus().getName());
+		odcJson.put("product", odc.getOfferDetail().getDescription());
+		
+		String series = odc.getOfferDetail().getOffer().getSeries();
+		Integer number = odc.getOfferDetail().getOffer().getNumber();
+		Integer version = odc.getOfferDetail().getOffer().getVersion();
+		 
+		odcJson.put("description", series + "/" + ceros(number.toString(),6) + "/" + version);
+		
+		return odcJson;
+	}
+	
+	public Object updateInvoiceCalculatedCommission(Domain domain, String userName, JSONObject json) {
+		Integer id = json.getInt("id");
+		InvoiceDetailCommission idc = AON.getInvoiceDetailCommission(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
+		if(json.opt("amount") != null) {
+			idc.setAmount(json.getDouble("amount"));
+		}
+		
+		if(json.opt("percentage") != null) {
+			idc.setCommission(json.getDouble("percentage"));
+		}
+		
+		if(json.opt("status") != null) {
+			idc.setStatus(InvoiceDetailCommissionStatus.values()[json.getInt("status")]);
+		}
+
+		AON.updateInvoiceDetailCommission(domain.getName(), domain.getId(), userName, idc);
+		
+		JSONObject idcJson = new JSONObject();
+		idcJson.put("id", idc.getId());
+		idcJson.put("date", idc.getInvoiceDetail().getInvoice().getIssueDate());
+		idcJson.put("seller", idc.getInvoiceDetail().getInvoice().getSellerName());	
+		Double p = idc.getInvoiceDetail().getPrice()* idc.getInvoiceDetail().getQuantity();
+		Double discount = Double.parseDouble(idc.getInvoiceDetail().getDiscountExpression());
+		idcJson.put("base", p - (p*discount/100));
+		idcJson.put("amount", idc.getAmount());
+		idcJson.put("percentage", idc.getCommission());
+		idcJson.put("status", idc.getStatus().getName());
+		idcJson.put("product", idc.getInvoiceDetail().getDescription());
+		
+		String series = idc.getInvoiceDetail().getInvoice().getSeries();
+		Integer number = idc.getInvoiceDetail().getInvoice().getNumber();
+		 
+		idcJson.put("description", series + "/" + ceros(number.toString(),6));
+		
+		return idcJson;
 	}
 	
 	public static Filter offerCalculatedCommissionFilter(Domain domain, Map<String, String[]> filterMap, OfferDetailCommissionProperties f) {

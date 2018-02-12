@@ -1,20 +1,25 @@
 package net.aonsolutions.aon.gwt.commercial.client.commission;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.commercial.JsCommission;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.google.gwt.cell.client.EditTextCell;
+import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -225,14 +230,19 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 		dataGrid.setColumnWidth(baseColumn, 30, Unit.PCT);
 		
 		/** PORCENTAJE / PERCENTAGE **/
-		Column<JsCommission, String> percentageColumn = new Column<JsCommission, String>(new TextCell()) {
-
+		Column<JsCommission, String> percentageColumn = new Column<JsCommission, String>(new TextInputCell()) {
+			
+			@Override
+			public void render(Context context, JsCommission object, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<input type=\"text\" value=\""+ object.getPercentage()+ "\" class=\"aon-inputText\" style=\"width:60px\"></input>");
+			}
+			
 			@Override
 			public String getValue(JsCommission object) {
 				return object.getPercentage() + "";
 			}
-		
 		};
+
 		percentageColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		percentageColumn.setSortable(true); 
 		sortHandler.setComparator(percentageColumn,new Comparator<JsCommission>() {
@@ -244,18 +254,33 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 		});
 		dataGrid.getColumnSortList().push(percentageColumn);
 		dataGrid.addColumn(percentageColumn, "PORCENTAJE");
+		percentageColumn.setFieldUpdater(new FieldUpdater<JsCommission, String>() {
+	          @Override
+	          public void update(int index, JsCommission object, String value) {
+	        	  String requestData = "{\"id\":" + object.getId() 
+	        	  					+ ",\"percentage\":"+value +"}";
+	        	  if(parent.isOffer()) {
+	        		  parent.getAPI().getCommission().updateOfferCommissionCalculate(requestData);
+	        	  } else {
+	        		  parent.getAPI().getCommission().updateInvoiceCommissionCalculate(requestData);
+	        	  }
+	          }
+	    });
 		dataGrid.setColumnWidth(percentageColumn, 25, Unit.PCT);
 		
 	    
 		/** IMPORTE / AMOUNT **/
-		
-		Column<JsCommission, String> amountColumn = new Column<JsCommission, String>(new EditTextCell()) {
-
+		Column<JsCommission, String> amountColumn = new Column<JsCommission, String>(new TextInputCell()) {
+			
+			@Override
+			public void render(Context context, JsCommission object, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<input type=\"text\" value=\""+ object.getAmount()+ "\" class=\"aon-inputText\" style=\"width:60px\" size=\"{2}\"></input>");
+			}
+			
 			@Override
 			public String getValue(JsCommission object) {
 				return object.getAmount() + "";
 			}
-		
 		};
 		amountColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		amountColumn.setSortable(true);
@@ -272,13 +297,24 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 		amountColumn.setFieldUpdater(new FieldUpdater<JsCommission, String>() {
 	          @Override
 	          public void update(int index, JsCommission object, String value) {
-	            // Called when the user changes the value.
+	        	  String requestData = "{\"id\":" + object.getId() 
+					+ ",\"amount\":"+value +"}";
+	        	  if(parent.isOffer()) {
+	        		  parent.getAPI().getCommission().updateOfferCommissionCalculate(requestData);
+	        	  } else {
+	        		  parent.getAPI().getCommission().updateInvoiceCommissionCalculate(requestData);
+	        	  }
 	          }
 	    });
 		dataGrid.setColumnWidth(amountColumn, 20, Unit.PCT);
 		
 		/** ESTADO / STATUS **/
-		Column<JsCommission, String> statusColumn = new Column<JsCommission, String>(new TextCell()) {
+		
+	    List<String> statusList = new ArrayList<String>();
+	    for (OfferDetailCommissionStatus status : OfferDetailCommissionStatus.values()) {
+	    	statusList.add(status.getName());
+	    }
+		Column<JsCommission, String> statusColumn = new Column<JsCommission, String>(new SelectionCell(statusList)) {
 
 			@Override
 			public String getValue(JsCommission object) {
@@ -297,6 +333,22 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 		});
 		dataGrid.getColumnSortList().push(statusColumn);
 		dataGrid.addColumn(statusColumn, "ESTADO");
-		dataGrid.setColumnWidth(statusColumn, 20, Unit.PCT);
+		statusColumn.setFieldUpdater(new FieldUpdater<JsCommission, String>() {
+	      @Override
+	      public void update(int index, JsCommission object, String value) {
+	        for (OfferDetailCommissionStatus status : OfferDetailCommissionStatus.values()) {
+	          if (status.getName().equals(value)) {
+	        	  String requestData = "{\"id\":" + object.getId() 
+					+ ",\"status\":"+ status.value()+"}";
+	        	  if(parent.isOffer()) {
+	        		  parent.getAPI().getCommission().updateOfferCommissionCalculate(requestData);
+	        	  } else {
+	        		  parent.getAPI().getCommission().updateInvoiceCommissionCalculate(requestData);
+	        	  } 
+	          }
+	        }
+	      }
+	    });
+		dataGrid.setColumnWidth(statusColumn, 25, Unit.PCT);
 	}
 }

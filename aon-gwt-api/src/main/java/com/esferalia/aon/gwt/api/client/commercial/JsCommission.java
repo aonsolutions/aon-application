@@ -15,7 +15,7 @@ public class JsCommission extends JavaScriptObject {
 	protected JsCommission() {}
 	
 	public final native Integer getId() /*-{
-		return this.type;
+		return this.id;
 	}-*/;
 	
 	public final native String getType() /*-{

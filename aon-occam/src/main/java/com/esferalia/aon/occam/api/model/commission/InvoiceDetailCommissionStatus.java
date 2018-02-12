@@ -5,7 +5,7 @@ import java.io.Serializable;
 public enum InvoiceDetailCommissionStatus implements Serializable {
 
 	PENDING("Pendiente"),
-	BLOCKED("Bolqueado"),
+	BLOCKED("Bloqueado"),
 	PAID("Pagado");
 
 	String name;

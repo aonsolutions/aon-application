@@ -31,6 +31,14 @@ public class Commission extends Methods{
 		get(getUrl() + "commission/calculated/invoice" + filter, callback);
 	}
 	
+	public void updateOfferCommissionCalculate(String requestData){
+		post(getUrl()+ "commission/calculated/offer", requestData);
+	}
+	
+	public void updateInvoiceCommissionCalculate(String requestData){
+		post(getUrl()+ "commission/calculated/invoice", requestData);
+	}
+	
 	public void offerCommissionCalculate(String requestData){
 		post(getUrl()+ "commission_calculation/offer", requestData);
 	}
