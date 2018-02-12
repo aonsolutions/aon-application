@@ -25,9 +25,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -254,29 +251,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getSalaryFormatted(domainName,domain, from, to,
 				new AsyncCallbackWrapper<String>(callback));
-	}
-	// --------------------------------------------------------------- VAT
-	@Override
-	public void getVatContext(String domainName, int domain, VatParams params,
-			AsyncCallback<LinkedList<VatContext>> callback) {
-		AON.start();
-		fsa.getVatContext(domainName, domain, params, 
-				new AsyncCallbackWrapper<LinkedList<VatContext>>(callback));
-		
-	}
-	@Override
-	public void getVatContextReport(String domainName, int domain, VatParams params,
-			AsyncCallback<String> callback) {
-		AON.start();
-		fsa.getVatContextReport(domainName, domain, params, 
-				new AsyncCallbackWrapper<String>(callback));
-		
-	}
-	@Override
-	public void getVatSummaryContext(String domainName, int domain, VatParams params,
-			AsyncCallback<LinkedList<VatSummaryContext>> callback) {
-		fsa.getVatSummaryContext(domainName, domain, params, 
-				new AsyncCallbackWrapper<LinkedList<VatSummaryContext>>(callback));
 	}
 
 	// --------------------------------------------------------------- ACCOUNT

@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
@@ -23,10 +22,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.VATFormatter;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Vat Report Stream", urlPatterns = { "/aon_gwt_fiscal/VatReportStream" })
+@WebServlet(name = "Vat Report Stream", urlPatterns = { "/aon_gwt_fiscal/roms/VatReportStream" })
 public class VatReportStreamServlet extends HttpServlet {
 
+	private static final long serialVersionUID = -6662360372576864159L;
 	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
@@ -36,6 +35,7 @@ public class VatReportStreamServlet extends HttpServlet {
 		try {
 			String vatParams = req.getParameter("vatParams");
 			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			VatParams params = new VatParams();
 			JSONParser parser = new JSONParser();
@@ -95,8 +95,6 @@ public class VatReportStreamServlet extends HttpServlet {
 			if (rect!= null) {
 				params.setRectificationType( RectificationType.safeValueOf(rect.intValue()));
 			}
-			
-			String user = AonServletUtils.getLoggedUser();
 			
 			resp.setContentType(MimeType.HTML.getName());
 			VATFormatter.formatInvoices(resp.getWriter()

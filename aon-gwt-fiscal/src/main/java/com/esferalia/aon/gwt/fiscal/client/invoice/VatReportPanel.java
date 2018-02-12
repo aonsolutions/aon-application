@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -25,7 +26,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class VatReportPanel extends ScrollPanel{
 	
-	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "VatReportStream");
+	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/VatReportStream");
 	private static final String LEGEND = "S (Servicio); I (Inversi\u00F3n); A (R\u00E9gimen agrario); R (Rectificativa); C (Criterio de caja)";
 	private static final String HEADER = AonStringUtils.rightPad("TIPO",5)
 			+ AonStringUtils.rightPad("TRAN",5)
@@ -47,7 +48,7 @@ public class VatReportPanel extends ScrollPanel{
 			+ AonStringUtils.repeat(" ", 2)
 			;
 
-	public VatReportPanel(String domainName, int domain, VatParams params, String title , String subtitle) {
+	public VatReportPanel(String domainName, String user, int domain, VatParams params, String title , String subtitle) {
 		setStyleName(AON.AON_CSS.aonScrollArea());
 		FlowPanel html = new FlowPanel( PreElement.TAG );
 		html.setStyleName(AON.AON_CSS.aonFixedFont());
@@ -142,6 +143,7 @@ public class VatReportPanel extends ScrollPanel{
 		StringBuffer requestData = new StringBuffer();
 		requestData.append("&domainName=" + domainName  );
 		requestData.append("&domainId=" + domain );
+		requestData.append("&user=" + user );
 		requestData.append("&vatParams=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 
@@ -175,6 +177,12 @@ public class VatReportPanel extends ScrollPanel{
 	private Widget getVatWidget(JsVatContext vat) {
 		InvoiceType invoiceType = InvoiceType.safeValueOf(vat.getInvoiceType());
 		InvoiceTransactionType transaction = InvoiceTransactionType.safeValueOf(vat.getTransaction());
+		String documentCountry = (vat.getRegistryDocumentCountry() == null)?AonStringUtils.EMPTY:vat.getRegistryDocumentCountry();
+		if (Country.ES.getIso2().equals(vat.getRegistryDocumentCountry())) {
+			documentCountry = AonStringUtils.EMPTY;
+		} else {
+			documentCountry += AonStringUtils.SLASH; 
+		}
 		String issueDate = AON.DATE_FORMAT.format(vat.getIssueDate());
 		String taxDate = AON.DATE_FORMAT.format(vat.getTaxDate());
 		HTML line = new HTML();
@@ -194,8 +202,9 @@ public class VatReportPanel extends ScrollPanel{
 		builder.appendEscaped( AonStringUtils.SPACE);
 		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getEpigraph(), AonStringUtils.SPACE),8));
 		builder.appendEscaped( AonStringUtils.rightPad(vat.getDocumentNumber(),15));
-		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate( 
-				  AonStringUtils.defaultIfBlank(vat.getRegistryDocument(), AonStringUtils.EMPTY) 
+		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(
+				  documentCountry
+				+ AonStringUtils.defaultIfBlank(vat.getRegistryDocument(), AonStringUtils.EMPTY) 
 				+ (AonStringUtils.isBlank(vat.getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
 				+ AonStringUtils.defaultIfBlank(vat.getRegistryName(), AonStringUtils.EMPTY)  
 				,29 ),30));

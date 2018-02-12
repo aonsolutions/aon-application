@@ -23,9 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -55,11 +52,6 @@ public interface FiscalService extends RemoteService {
 	Memory saveMemory(Memory memory) throws AonCoreException;
 	void deleteMemory(Memory memory) throws AonCoreException;
 	
-	// --------------------------------------------------------------- VAT
-	LinkedList<VatSummaryContext> getVatSummaryContext(String domainName, int domain,VatParams params) throws AonCoreException;
-	LinkedList<VatContext> getVatContext(String domainName, int domain,VatParams params) throws AonCoreException;
-	String getVatContextReport(String domainName, int domain,VatParams params) throws AonCoreException;
-
 	// --------------------------------------------------------------- IRPF
 	LinkedList<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params) throws AonCoreException;
 	LinkedList<IrpfBreakdown> getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params) throws AonCoreException;

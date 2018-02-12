@@ -57,7 +57,7 @@ public class JsVatContext extends JavaScriptObject {
 	public final native int getRegistryDocumentType() /*-{
 		return this.registryDocumentType;
 	}-*/;
-	public final native int getRegistryDocumentCountry() /*-{
+	public final native String getRegistryDocumentCountry() /*-{
 		return this.registryDocumentCountry;
 	}-*/;
 	public final native int getRegistr() /*-{

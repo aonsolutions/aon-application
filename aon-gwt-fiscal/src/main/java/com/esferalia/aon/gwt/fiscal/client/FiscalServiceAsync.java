@@ -23,9 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -93,12 +90,6 @@ public interface FiscalServiceAsync {
 	void getSalaryEntries(String domainName, int domain, Date from, Date to,
 			AsyncCallback<LinkedList<SalaryEntry>> callback);
 	void getSalaryFormatted(String domainName, int domain, Date from, Date to, AsyncCallback<String> callback);
-
-	// --------------------------------------------------------------- VAT
-	void getVatSummaryContext(String domainName, int domain, VatParams params,
-			AsyncCallback<LinkedList<VatSummaryContext>> callback);
-	void getVatContext(String domainName, int domain, VatParams params, AsyncCallback<LinkedList<VatContext>> callback);
-	void getVatContextReport(String domainName, int domain, VatParams params, AsyncCallback<String> callback);
 
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	void getAccountStatement(String domainName, int domain, 

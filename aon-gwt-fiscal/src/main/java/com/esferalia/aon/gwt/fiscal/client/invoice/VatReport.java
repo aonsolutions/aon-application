@@ -6,9 +6,6 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -16,9 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -45,7 +39,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -67,11 +60,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class VatReport extends MainEntryPoint {
 
-	private static final String VAT_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/VatReportExcelPrint";
-	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy"); 
+	private static final String VAT_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/VatReportExcelPrint";
 	
-	private static CommonServiceAsync commonService;
-	private static FiscalServiceAsync fiscalService;
+	private static VATServiceAsync SERVICE;
 	
 	private AonConfiguration configuration;
 	private DockLayoutPanel dockLayoutPanel;
@@ -97,18 +88,14 @@ public class VatReport extends MainEntryPoint {
 	private ListBox surcharge;
 	private ListBox rectificationType;
 
-	private VatParams params;	
-	
 	FormPanel diskForm;
 	Hidden vatParamsHidden;
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
+	Hidden userHidden;
 	
 	NumberFormat formatter;
 	
-	private int domain;
-	private int enterprise;
-
 	interface SafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
@@ -120,11 +107,8 @@ public class VatReport extends MainEntryPoint {
 	public void onModuleLoad() {
 		AON.ensureInjected();
 		
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-		
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		VATServiceAsync serviceRaw = GWT.create(VATService.class);
+		SERVICE = new VATServiceAsyncDecorator(serviceRaw);
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
@@ -134,7 +118,7 @@ public class VatReport extends MainEntryPoint {
 		formatter = NumberFormat.getDecimalFormat();
 		formatter.overrideFractionDigits(2, 2);
 		
-		commonService.getAonConfiguration(getCurrentDomainName(),
+		SERVICE.getAonConfiguration(getCurrentDomainName(),getCurrentUser(),
 				getCurrentDomain(),
 				new AsyncCallback<AonConfiguration>() {
 					@Override
@@ -199,16 +183,6 @@ public class VatReport extends MainEntryPoint {
 		onSearch();
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
 	private Widget getToolbarPanel() {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
@@ -269,6 +243,8 @@ public class VatReport extends MainEntryPoint {
 		formFlowPanel.add(domainIdHidden);
 		domainNameHidden = new Hidden("domainName");
 		formFlowPanel.add(domainNameHidden);
+		userHidden = new Hidden("user");
+		formFlowPanel.add(userHidden);
 		buttonContainer.add(diskForm);
 		
 		
@@ -281,6 +257,7 @@ public class VatReport extends MainEntryPoint {
 		vatParamsHidden.setValue(JsonParams.convert(getWidgetParams()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
+		userHidden.setValue(getCurrentUser());
 		diskForm.submit();
 	}
 	
@@ -675,14 +652,15 @@ public class VatReport extends MainEntryPoint {
 	
 	private void refreshResults(VatParams params) {
 		resultsContent.clear();
-		resultsContent.setWidget(new VatReportPanel(getCurrentDomainName(), getCurrentDomain(), params, null, null));
+		resultsContent.setWidget(new VatReportPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), params, null, null));
 	}
 
 	private void refreshSummary(VatParams params) {
 		summaryContent.clear();
 		ScrollPanel scroll = new ScrollPanel();			
 		summaryContent.setWidget(scroll);
-		fiscalService.getVatSummaryContext(getCurrentDomainName(), getCurrentDomain(), params
+		SERVICE.getVatSummaryContext(getCurrentDomainName(),getCurrentUser()
+				, getCurrentDomain(), params
 				, new AsyncCallback<LinkedList<VatSummaryContext>>() {
 			
 			@Override

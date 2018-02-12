@@ -16,7 +16,6 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.FISCAL;
@@ -27,10 +26,11 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "VatReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/VatReportExcelPrint" })
+@WebServlet(name = "VatReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/roms/VatReportExcelPrint" })
 public class VatReportExcelPrint extends HttpServlet {
 
+	private static final long serialVersionUID = 2782900860290220524L;
+	
 	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
@@ -40,6 +40,7 @@ public class VatReportExcelPrint extends HttpServlet {
 		try {
 			String vatParams = req.getParameter("vatParams");
 			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			VatParams params = new VatParams();
 			JSONParser parser = new JSONParser();
@@ -99,7 +100,6 @@ public class VatReportExcelPrint extends HttpServlet {
 				params.setRectificationType(RectificationType.safeValueOf( rectification.intValue() ));
 			}
 			
-			String user = AonServletUtils.getLoggedUser();
 			ExcelAction action = new ExcelAction( );
 			action.initialize("IVA");
 			FISCAL.getVatContext(domainName, domainId, user, params)
@@ -153,6 +153,9 @@ public class VatReportExcelPrint extends HttpServlet {
 
 			CellUtil.createCell(row, cellCount, "FACTURA", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 15 * 256);
+
+			CellUtil.createCell(row, cellCount, "PAIS", headerCellStyle);
+			sheet.setColumnWidth(cellCount++, 5 * 256);
 
 			CellUtil.createCell(row, cellCount, "DOCUMENTO", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 15 * 256);
@@ -208,6 +211,7 @@ public class VatReportExcelPrint extends HttpServlet {
 			alignCenter(addCell(vat.isVatAccrualRegime()?"SI":AonStringUtils.EMPTY));
 			addCell(AonStringUtils.defaultIfBlank(vat.getEpigraph(), AonStringUtils.EMPTY));
 			addCell(vat.getDocumentNumber());
+			addCell(vat.getRegistryDocumentCountry());
 			addCell(vat.getRegistryDocument());
 			addCell(vat.getRegistryName());
 			addCell(vat.getIssueDate());

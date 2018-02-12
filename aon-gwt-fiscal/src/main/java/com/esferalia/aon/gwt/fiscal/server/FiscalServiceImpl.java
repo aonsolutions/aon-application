@@ -33,9 +33,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
@@ -44,8 +41,6 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
-import com.esferalia.aon.occam.impl.jooq.dao.VATFormatter;
-import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
@@ -279,29 +274,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public FinanceEntry getFinanceEntry(String domainName, int domain, Integer accountEntry) {
 		return ACCOUNTING.getFinanceEntry(domainName, domain, this.getUserLogin(), accountEntry);		
 	};
-	
-	// --------------------------------------------------------------- VAT
-	@Override
-	public LinkedList<VatContext> getVatContext(String domainName, int domain, VatParams params)
-			throws AonCoreException {
-		return FISCAL.getVatContext(domainName, domain, this.getUserLogin(), params)
-			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	@Override
-	public String getVatContextReport(String domainName, int domain, VatParams params)
-			throws AonCoreException {
-		return VATFormatter.formatInvoices("LISTADO IVA", FiscalUtils.toString(params), 
-			FISCAL.getVatContext(domainName, domain, this.getUserLogin(), params)
-				.collect(Collectors.toCollection(LinkedList::new)));
-	}
-
-	@Override
-	public LinkedList<VatSummaryContext> getVatSummaryContext(String domainName, int domain, VatParams params)
-			throws AonCoreException {
-		return FISCAL.getVatSummaryContext(domainName, domain, this.getUserLogin(), params)
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
 	
 	// --------------------------------------------------------------- IRPF
 	@Override
