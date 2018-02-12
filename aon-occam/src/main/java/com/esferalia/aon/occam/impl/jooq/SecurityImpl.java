@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ISecurity;
@@ -9,6 +10,7 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
+import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -34,6 +36,11 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public Scope getScope(AONContext ctx, Integer scopeId) {
 		return SecurityDAO.getScope(ctx, scopeId);
+	}
+	
+	@Override
+	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter) {
+		return SecurityDAO.getScopeStream(ctx, filter);
 	}
 
 	// ------------------ SIGNATURE

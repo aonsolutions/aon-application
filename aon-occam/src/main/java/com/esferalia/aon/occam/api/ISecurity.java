@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
+import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -16,6 +18,7 @@ public interface ISecurity {
 	public User getUser(AONContext ctx, Integer userId);
 	public Integer[] getUserScopes(AONContext ctx, Integer userId);
 	public Scope getScope(AONContext ctx, Integer scopeId);
+	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter);
 	
 	// SIGNATURE
 	public Signature getSignature(AONContext ctx, Integer signatureId);

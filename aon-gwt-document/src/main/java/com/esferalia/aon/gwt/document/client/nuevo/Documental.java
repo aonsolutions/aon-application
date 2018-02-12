@@ -6,6 +6,8 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.Attachment;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
+import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
@@ -15,6 +17,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -23,6 +27,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
@@ -54,7 +59,7 @@ public class Documental implements EntryPoint {
 	@UiField HTMLPanel configurationPanel;
 	@UiField DockLayoutPanel contentDockLayoutPanel;
 	@UiField HTMLPanel searchContent;
-	@UiField HTMLPanel content;
+	@UiField SimpleLayoutPanel content;
 	
 	private API API;
 	private AonData aonData;
@@ -86,6 +91,15 @@ public class Documental implements EntryPoint {
 				aonData.getUser().getLogin());
 	}
 	
+	/*
+	 * Operaciones por ficehero
+	 *  Editar - Ambito | Categoria | Etiquetas | Fecha | Confidencia? - icon = create
+	 *  Borrar - preguntar para borrar definitivamente - icon = delete
+	 *  Compartir - Lote | Drive 
+	 *  Descargar  icon = file-download
+	 *  Informacion
+	 */
+	
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
@@ -101,6 +115,7 @@ public class Documental implements EntryPoint {
 				AonComboBoxElement.SRC,
 				AonIconsElement.SRC,
 				"aon-icons/aon-documental-icons.html",
+				"aon-icons/aon-icons.html",
 				"iron-icons/maps-icons.html"
 		));
 		
@@ -161,12 +176,47 @@ public class Documental implements EntryPoint {
 		AonComboBox categoryBox = new AonComboBox();
 		categoryBox.setLabel("Categor\u00eda");
 		categoryBox.setWidth("100%");
+		categoryBox.setItemLabelPath("name");
+		categoryBox.setItemValuePath("name");
+		getAPI().getAttachment().getCategories(new AsyncCallback<JSON<JsLabel>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				categoryBox.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
 		AonComboBox tagBox = new AonComboBox();
 		tagBox.setWidth("100%");
 		tagBox.setLabel("Etiqueta");
+		tagBox.setItemLabelPath("name");
+		tagBox.setItemValuePath("name");
+		getAPI().getAttachment().getTags(new AsyncCallback<JSON<JsLabel>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				tagBox.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
 		AonComboBox scopeBox = new AonComboBox();
 		scopeBox.setWidth("100%");
 		scopeBox.setLabel("\u00c1mbito");
+		scopeBox.setItemLabelPath("name");
+		scopeBox.setItemValuePath("name");
+		getAPI().getAttachment().getScopes(new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsObject> result) {
+				scopeBox.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 		
 		HorizontalPanel hp = new HorizontalPanel();
 		Label confidentialLabel = new Label("Confidencial");
@@ -191,9 +241,9 @@ public class Documental implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-			//	JsObject category = (JsObject) categoryBox.getSelectedItem();
-			//	JsObject tag = (JsObject) tagBox.getSelectedItem();
-			//	JsObject scope = (JsObject) scopeBox.getSelectedItem();
+				JsObject category = (JsObject) categoryBox.getSelectedItem();
+				JsObject tag = (JsObject) tagBox.getSelectedItem();
+				JsObject scope = (JsObject) scopeBox.getSelectedItem();
 				for(Integer i = vp.getWidgetCount() - 1 ; i >= 0; i--){
 					vp.getWidget(i).removeFromParent();
 				}
@@ -201,9 +251,9 @@ public class Documental implements EntryPoint {
 				String dataRequest = "?domain_name="+ aonData.getDomain().getName() 
 						+ "&domain_id="+ aonData.getDomain().getId()
 						+ "&login="+ "system"
-				//		+ "&category="+ category.getId()
-				//		+ "&tag=" + tag.getId()
-				//		+ "&scope=" + scope.getId()
+						+ "&category="+ category.getId()
+						+ "&tag=" + tag.getId()
+						+ "&scope=" + scope.getId()
 						+ "&confidential=" + confidential.getChecked();
 				upload.setTarget(GWT.getModuleBaseURL() + "uploadDocumental"+ dataRequest);
 				ScrollPanel scroll = new ScrollPanel();
@@ -212,10 +262,20 @@ public class Documental implements EntryPoint {
 				this.getAccept().setVisible(false);
 				this.getCancel().setVisible(false);
 				this.getClose().setVisible(true);
+				this.getClose().addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						createAttachListPanel();
+					}
+				});
 				vp.add(scroll);
 			}
 		};
 		dialog.setAutoHideEnabled(true);
+		dialog.addAutoHidePartner(categoryBox.getElementById("overlay"));
+		dialog.addAutoHidePartner(tagBox.getElementById("overlay"));
+		dialog.addAutoHidePartner(scopeBox.getElementById("overlay"));
 		dialog.getElement().getStyle().setWidth(310, Unit.PX);
 		dialog.center();
 	}
@@ -229,7 +289,7 @@ public class Documental implements EntryPoint {
 				
 			@Override
 			public void onSuccess(JSON<JsAttach> result) {
-				content.add(new AttachListPanel2(me, result.getData()));
+				content.setWidget(new AttachListPanel(me, result.getData()));
 			}
 				
 			@Override public void onFailure(Throwable caught) {}

@@ -43,13 +43,13 @@ public class UploadServlet extends HttpServlet{
 		String domain_id = req.getParameter("domain_id");
 		Integer domainId = Integer.parseInt(domain_id);
 		String login = req.getParameter("login");
-/*		String categoryStr = req.getParameter("category");
+		String categoryStr = req.getParameter("category");
 		Integer category = Integer.parseInt(categoryStr);
 		String tagStr = req.getParameter("tag");
 		Integer tag = Integer.parseInt(tagStr);
 		String scopeStr = req.getParameter("scope");
 		Integer scope = Integer.parseInt(scopeStr);
-*/		Boolean confidential = "true".equalsIgnoreCase(req.getParameter("confidential"));
+		Boolean confidential = "true".equalsIgnoreCase(req.getParameter("confidential"));
 
 		
 		  // checks if the request actually contains upload file
@@ -104,13 +104,14 @@ public class UploadServlet extends HttpServlet{
                     			.setMimeType(MimeType.get(item.getContentType()))
                     			.setDomain(new Domain().setId(domainId).setName(domainName))
                     			.setType(RegistryAttachmentType.CORPORATE_IDENTITY.value())
-                //    			.setCategory(category)
+                    			.setCategory(category)
                     			.setDate(new Date())
-                //    			.setScope(scope)
+                    			.setScope(scope)
                     			.setConfidential(confidential)
                     			.setDparentId(Long.toString(item.getSize()));
-                    	AON.insertAttach(domainName, domainId, login, attach);
+                    	Integer attachId = AON.insertAttach(domainName, domainId, login, attach);
                     	
+                    	AON.insertRegistryAttachTag(domainName, domainId, login, attachId, tag);
                     	
                     	// TODO INSERT TAGS !!!!!
                     	// TODO RESPONSE JsAttachment!!!! (json)

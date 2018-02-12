@@ -241,6 +241,12 @@ public interface Properties {
 		Property<String> getSubdomainsuffixProperty();
 		Property<Byte> getTypeProperty();
 	}
+	
+	public interface ScopeProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+	}
 
 	public interface MailAccountProperties{
 		Property<Integer> getIdProperty();

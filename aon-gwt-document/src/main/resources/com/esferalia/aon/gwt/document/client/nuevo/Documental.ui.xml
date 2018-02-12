@@ -39,7 +39,7 @@
 				<g:HTMLPanel ui:field="searchContent"/>
 			</g:north>
 			<g:center>
-				<g:HTMLPanel ui:field="content"/>	
+				<g:SimpleLayoutPanel ui:field="content"/>	
 			</g:center>
 		</g:DockLayoutPanel>
 	</g:center>

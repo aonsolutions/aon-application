@@ -44,6 +44,7 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -89,6 +90,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
+import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
@@ -127,6 +129,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryPayMethodProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
+import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
@@ -1287,5 +1290,25 @@ public class PropertiesDAO {
 		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_CATEGORY.QUANTITY);}
 		@Override public Property<Double> getRateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_CATEGORY.RATE);}
 	}
+	
+	protected static class ScopePropertiesDAO implements ScopeProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, ScopeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ScopeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
 
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.DESCRIPTION);}
+	}
+
+	
 }

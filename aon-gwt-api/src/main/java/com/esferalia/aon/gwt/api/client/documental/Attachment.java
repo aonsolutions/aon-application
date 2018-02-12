@@ -3,7 +3,9 @@ package com.esferalia.aon.gwt.api.client.documental;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Attachment extends Methods{
@@ -27,27 +29,46 @@ public class Attachment extends Methods{
 	}
 	
 	public void getAttachList( AsyncCallback<JSON<JsAttach>> callback){
-		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/files", callback);
+		get(url + "attachment/files", callback);
 	}
 	
 	public void getCertificates( AsyncCallback<JSON<JsAttach>> callback){
-		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/certificates", callback);
+		get(url + "attachment/certificates", callback);
 	}
 	
 	public void getCategories(AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "attachment/"+ getDomainName()+"/"+getUserName()+"/category",callback);
+		get(url + "attachment/category",callback);
 	}	
 	
 	public void getTags(AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "attachment/"+ getDomainName()+"/"+getUserName()+"/tag",callback);
+		get(url + "attachment/tag",callback);
+	}	
+
+	public void getScopes(AsyncCallback<JSON<JsObject>> callback){
+		get(url + "attachment/scope",callback);
 	}	
 
 	public void getQualityImages(Integer id,AsyncCallback<JSON<JsAttach>> callback){
-		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/quality?id="+id, callback);
+		get(url + "attachment/quality?id="+id, callback);
 	}
 	
 	public void removeAttach(String requestData,AsyncCallback<JSON<JsAttach>> callback){
 		post(url + "attachment/" + getDomainName() + "/" + getUserName() + "/remove", requestData, callback);
+	}
+	
+	// -------------------- DOWNLOAD
+	
+	public void download(String id){	
+		String str ="domain="+ getDomainId() + "&id=" + id;
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_attachment/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	//---------------------- Métodos Get & Set

@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
+import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
@@ -149,6 +150,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface DomainFilter{
 		Filter filter(DomainProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ScopeFilter{
+		Filter filter(ScopeProperties properties);
 	}
 	
 	@FunctionalInterface

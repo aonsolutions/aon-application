@@ -31,9 +31,11 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -44,10 +46,28 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 public class ToJSON {
 	
 	public static JSONObject attachToJSON(Attach attach){	
+		String icon = "aon-documental:file";
+		if(attach.getMimeType().getName().contains("image")) {
+			icon = "aon-documental:image";
+		} else if(MimeType.MS_WORD.equals(attach.getMimeType()) || MimeType.MS_WORD_2007.equals(attach.getMimeType())) {
+			icon = "aon-documental:word";
+		} else if(MimeType.MS_EXCEL.equals(attach.getMimeType()) || MimeType.MS_EXCEL_2007.equals(attach.getMimeType())) {
+			icon = "aon-documental:excel";
+		} else if(MimeType.MS_POWER_POINT.equals(attach.getMimeType()) || MimeType.MS_POWER_POINT_2007.equals(attach.getMimeType())) {
+			icon = "aon-documental:powerpoint";
+		} else if(MimeType.PDF.equals(attach.getMimeType())) {
+			icon = "aon-documental:pdf";
+		} else if(attach.getMimeType().getName().contains("audio")) {
+			icon = "aon-documental:audio";
+		} else if(attach.getMimeType().getName().contains("video")) {
+			icon = "aon-documental:video";
+		}  
+
 		return new JSONObject()
 			.put("id", attach.getId())
 			.put("domain", attach.getDomain().getId())
-			.put("title", attach.getDescription());
+			.put("title", attach.getDescription())
+			.put("icon", icon);
 	}
 	
 	public static JSONObject categoryToJSON(Category category){	
@@ -69,6 +89,13 @@ public class ToJSON {
 			.put("name", tag.getName())
 			.put("type", tag.getType())
 			.put("color", tag.getColor());
+	}
+	
+	public static JSONObject scopeToJSON(Scope scope){	
+		return new JSONObject()
+			.put("id",scope.getId())
+			.put("domain", scope.getDomain())
+			.put("name", scope.getDescription());
 	}
 	
 	public static JSONObject applicationParameterToJSON(ApplicationParameter appParam){	

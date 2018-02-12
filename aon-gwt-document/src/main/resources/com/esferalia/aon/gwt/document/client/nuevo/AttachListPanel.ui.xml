@@ -2,28 +2,65 @@
 <!DOCTYPE html [
     <!ENTITY nbsp "&#160;"> 
 ]>
-<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"	
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" 
+	xmlns:b="http://java.sun.com/jstl/core"	
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
 	xmlns:v='urn:import:com.vaadin.polymer.vaadin.widget'
-	xmlns:a="urn:import:com.esferalia.aon.gwt.issues.client"
 	>
 
     <ui:style>
    
     </ui:style>
 
-	<g:HTMLPanel>
-	
-        <v:VaadinGrid ui:field="grid" addStyleNames="grid">
-          <table>
-            <colgroup>
-              <col name="name" header-text="Name" width="150" />
-            </colgroup>
-          </table>
-        </v:VaadinGrid>
+<g:HTMLPanel addStyleNames="iron-list-doc"> 
 
-    </g:HTMLPanel>
+	<style is="custom-style">
+			
+            .iron-list-doc iron-list {
+                background-color:#fff;
+                padding-bottom: 0px;
+                margin:10px;
+                border-top: 1px solid #ddd;
+            }
+            .iron-list-doc .item {
+				@apply --layout-horizontal;
+        		padding: 10px;
+        		background-color: white;
+        		border: 1px solid #ddd;
+       	 		border-top:0px;
+       	 		cursor:pointer;
+            }
+            
+            .iron-list-doc .pad {
+            	padding-left: 30px;
+                display: inline-block;
+                @apply(--layout-flex);
+                @apply(--layout-vertical);
+            }
+            .iron-list-doc .primary {
+                font-size: 16px;
+                font-weight: 400;
+            }
+    </style>
+       <i:IronList ui:field="grid" as="item" addStyleNames="fit" selectionEnabled="true">
+            <template>
+                <div>
+                    <div class="item">
+                    	<iron-icon style="position:absolute;" icon="[[item.icon]]"/>
+                        <div class="pad">
+                            <div class="primary">	
+                           		[[item.title]]                      
+                            </div>
+                        </div>
+						<paper-icon-button icon="file-download" alt="[[item.id]]" onclick="download(this.alt)"></paper-icon-button>
+						<paper-icon-button icon="create" alt="[[item.id]]" onclick="edit(this.alt)"></paper-icon-button>
+                        <paper-icon-button icon="delete" alt="[[item.id]]" onclick="remove(this.alt)"></paper-icon-button>
+                    </div>
+        		</div>
+        	</template>
+  		</i:IronList>
+  	</g:HTMLPanel>
 </ui:UiBinder>

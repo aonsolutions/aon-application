@@ -33,39 +33,41 @@ public class DocumentalServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Documental Servlet - GET METHOD");
 	
+		String domainName = req.getServerName();
+		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
-		String[] pathInfo = req.getPathInfo().split("/");
-		String userName = pathInfo[2];
-		String domainName = pathInfo[1]; 
-		String md5 = Utils.getMd5(userName+domainName);
-		if(accessToken.equals(md5)){
-			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		String userName = req.getRemoteUser();
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+	
+		Object object = new Object();
+		JSONObject meta = new JSONObject();
 
-			if(pathInfo.length > 3){
-				Object object = new Object();
-				JSONObject meta = new JSONObject();
-				switch (pathInfo[3]) {
-				case "files":
-					object = getAttachJSON(domain, userName);
-					break;
-				case "certificates":
-					object = getCertificateAttachJSON(domain, userName);
-					break;
-				case "quality":
-					object = getQualityImagesJSON(domain, userName, req.getParameter(MSG.ID));
-					break;
-				case "category":
-					object = getCategoryJSON(domain, userName);
-					break;
-				case "tag":
-					object = getTagJSON(domain, userName);
-					break;
-				default:
-						break;
-				}
-				
-				Utils.giveBack(req, resp, object, meta);
-			}
+		String md5 = Utils.getMd5(userName+domain.getName());
+		if(accessToken.equals(md5)){
+			switch (req.getPathInfo()) {
+			case "/files":
+				object = getAttachJSON(domain, userName);
+				break;
+			case "/certificates":
+				object = getCertificateAttachJSON(domain, userName);
+				break;
+			case "/quality":
+				object = getQualityImagesJSON(domain, userName, req.getParameter(MSG.ID));
+				break;
+			case "/category":
+				object = getCategoryJSON(domain, userName);
+				break;
+			case "/tag":
+				object = getTagJSON(domain, userName);
+				break;
+			case "/scope":
+				object = getScopeJSON(domain, userName);
+				break;
+			default:
+				break;
+			}				
+			
+			Utils.giveBack(req, resp, object, meta);
 		}
 	}
 	
@@ -164,6 +166,13 @@ public class DocumentalServlet extends HttpServlet{
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getTypeProperty().eq(TagType.RATTACH.value())
 			)).forEach(a -> array.put(ToJSON.tagToJSON(a)));
+		return array;
+	}
+	
+	private JSONArray getScopeJSON(Domain domain, String login) {
+		JSONArray array = new JSONArray();
+		AON.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()))
+		.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
 		return array;
 	}
 }

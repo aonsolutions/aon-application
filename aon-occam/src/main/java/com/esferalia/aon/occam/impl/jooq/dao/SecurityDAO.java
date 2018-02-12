@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -35,7 +36,6 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.ContactRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
-import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Contact;
@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
@@ -53,12 +54,14 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
 	
+	private static final ScopePropertiesDAO SCOPE_PROPERTIES = new ScopePropertiesDAO();
 	private static final SignaturePropertiesDAO SIGNATURE_PROPERTIES = new SignaturePropertiesDAO();
 	protected static class SignaturePropertiesDAO implements SignatureProperties {
 		protected Condition[] getConditions(SignatureFilter filter) {
@@ -306,7 +309,7 @@ public class SecurityDAO {
 			.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
 			.fetchInto(SCOPE)
 			.stream()
-			.map(new FullScopeFiller())
+			.map(new ScopeFiller())
 			.collect(Collectors.toCollection(LinkedList::new))
 			;
 	}
@@ -317,23 +320,29 @@ public class SecurityDAO {
 			.where(SCOPE.DOMAIN.eq(ctx.getDomainId()))
 			.fetchInto(SCOPE)
 			.stream()
-			.map(new FullScopeFiller())
+			.map(new ScopeFiller())
 			.collect(Collectors.toCollection(LinkedList::new))
 			;
 	}
 	public static Scope getScope(AONContext ctx, Integer scopeId){
 		return ctx.getDslContext().select().from(SCOPE)
 				.where(SCOPE.ID.eq(scopeId)).limit(1).fetchInto(SCOPE)
-				.stream().map(new FullScopeFiller()).findFirst().orElse(new Scope());
+				.stream().map(new ScopeFiller()).findFirst().orElse(new Scope());
 	}
 	
-	private static class FullScopeFiller implements Function<ScopeRecord, Scope> {
+	public static Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter){
+		return ctx.getDslContext().select().from(SCOPE)
+				.where(SCOPE_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new ScopeFiller());
+	}
+	
+	private static class ScopeFiller implements Function<Record, Scope> {
 		@Override
-		public Scope apply(ScopeRecord r) {
+		public Scope apply(Record r) {
 			return new Scope()
-					.setDescription(r.getDescription())
-					.setDomain(r.getDomain())
-					.setId(r.getId());
+				.setId(r.getValue(SCOPE.ID))
+				.setDomain(r.getValue(SCOPE.DOMAIN))
+				.setDescription(r.getValue(SCOPE.DESCRIPTION));
 		}
 	}
 

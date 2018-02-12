@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,6 +15,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -35,9 +37,9 @@ public class DocumentsConfigurationPanel extends Composite {
     @UiField HTMLPanel panel;
     
     @UiField IronSelector menuSelector;
-    @UiField PaperItem allFilesPaper;
-    @UiField PaperItem systemPaper;
-    @UiField PaperItem lotePaper;
+//    @UiField PaperItem allFilesPaper;
+//    @UiField PaperItem systemPaper;
+//    @UiField PaperItem lotePaper;
     
     @UiField Button categoryButton;
     @UiField IronCollapse categoryCollapse;
@@ -54,11 +56,18 @@ public class DocumentsConfigurationPanel extends Composite {
     public DocumentsConfigurationPanel(Documental parent) {
     	this.parent = parent;
     	initWidget(binder.createAndBindUi(this));
-   		
+    	createMenu();
         createCategory();
         createTag();
     }
-
+    
+    
+    private void createMenu() {
+		menuSelector.add(buildMenu("Todos los Archivos", "attachment"));
+		menuSelector.add(buildMenu("Mensajes de Sistema", "mail"));
+		menuSelector.add(buildMenu("Lote", "mail"));
+    }
+    
     private void createCategory() {
     	parent.getAPI().getAttachment().getCategories(new AsyncCallback<JSON<JsLabel>>() {
 			
@@ -159,6 +168,24 @@ public class DocumentsConfigurationPanel extends Composite {
 				
 			}
 		};
+    }
+    
+    private PaperItem buildMenu(String title, String icon) {
+    	PaperItem item = new PaperItem();
+    	item.getElement().getStyle().setCursor(Cursor.POINTER);
+		IronIcon ii = new IronIcon();
+		ii.setIcon(icon);
+			
+		item.add(ii);
+		item.add(new Label(title));
+		item.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.alert(title);
+			}
+		});
+		return item;
     }
     
     private void load(AonJsArray<JsLabel> data, IronSelector selector, IronCollapse collapse,
