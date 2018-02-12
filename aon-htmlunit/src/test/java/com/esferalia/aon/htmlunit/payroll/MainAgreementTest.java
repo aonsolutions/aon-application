@@ -226,6 +226,8 @@ public class MainAgreementTest {
 		
 		LOGGER.warning("Wait4: " + String.format("toggleButton_01_%1$tm_%1$tY", calendar.getTime() ));
 		wait4Id(String.format("toggleButton_01_%1$tm_%1$tY", calendar.getTime() ) );
+
+		getElementById(String.format("deleteButton_01_%1$tm_%1$tY", calendar.getTime() ) ).click();
 		 
 		wait4Value("description-box1", "[1]PLUS PELIGROSIDAD");
 		wait4Value("expression-box1", "666.00 * DIAS_TRABAJADOS / DIAS_MES");
