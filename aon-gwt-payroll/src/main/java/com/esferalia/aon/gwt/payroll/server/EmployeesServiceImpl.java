@@ -466,6 +466,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return JooqEmployeeCalendar.getEmployeeHour(connection, contract);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
 		}
 	}
 	
@@ -478,6 +486,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			JooqEmployeeCalendar.setEmployeeHour(connection, contract, updateInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		}finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
 		}
 		
 	}
@@ -1068,6 +1084,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException | ExpressionException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 
@@ -1078,13 +1100,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<Variable> getVariables(SalaryDraft salaryDraft, Date startDate,
 			Date endDate, String[] names) throws IllegalArgumentException {
+		Connection connection = null; 
 		try {
 			initFacesContext();
 			salaryDraft.setStartDate(startDate);
 			salaryDraft.setEndDate(endDate);
-
+			connection = getConnection();
 			SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = getSalaryCalculatorContext(
-					getConnection(), salaryDraft, null);
+					connection, salaryDraft, null);
 
 			Map<String, boolean[]> defined = EmployeesServiceHelper
 					.getDefinedMap(ctx);
@@ -1158,6 +1181,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 
@@ -4757,8 +4786,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection();
 			return JooqEmployeeEvents.getEmployeeEvents(connection, contract, employeeContractVariables);
+			
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+				releaseFacesContext();
+			}
 		}
 	}
 
@@ -4771,6 +4809,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			JooqEmployeeEvents.setEmployeeEvents(connection, contract, updateInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+				releaseFacesContext();
+			}
 		}
 		
 	}

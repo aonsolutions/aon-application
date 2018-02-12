@@ -124,117 +124,123 @@ public class CretaServlet extends HttpServlet
 
 	@Override
 	public void visitBases(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-
-		Connection connection = getConnection(req);
-		resp.setContentType("text/html;");
-
-		boolean indicadorReftificacion = AonStringUtils.equalsIgnoreCase("on",
-				req.getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION.name()));
-
-		String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
-
-		List<String> defaultsList = new ArrayList<String>();
-		defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=1"));
-
-		String paramDefaults[] = req.getParameterValues(CretaService.Parameter.DEFAULTS.name());
-		if (paramDefaults != null && paramDefaults.length > 0)
-			defaultsList.addAll(Arrays.asList(paramDefaults));
-
-		String defaults[] = defaultsList.toArray(new String[defaultsList.size()]);
-		
-		CustomizeBasesCallback customBasesCb = new CustomizeBasesCallback()
-				.setReftificationMark(indicadorReftificacion)
-				;
-
-		InfoPickerBasesCallback pickerBasesCb = new InfoPickerBasesCallback();
-
-		PrintWriter os = resp.getWriter();
-
-		os.println("{");
-
-		List<InputStream> respuestasIss = new ArrayList<InputStream>();
-		List<InputStream> trabajadoresYTramosIss = new ArrayList<InputStream>();
-		
+		Connection connection = null;
 		try {
-			for (Part part : req.getParts()) {
-				try {
-					CretaService.File file = CretaService.File.valueOf(part.getName());
-					if (file == CretaService.File.TRABAJADORES_TRAMOS)
-						trabajadoresYTramosIss.add(part.getInputStream());
-					else if (file == CretaService.File.RESPUESTA)
-						respuestasIss.add(part.getInputStream());
-				} catch (IllegalArgumentException e) {
+			connection = getConnection(req);
+			
+			resp.setContentType("text/html;");
 	
+			boolean indicadorReftificacion = AonStringUtils.equalsIgnoreCase("on",
+					req.getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION.name()));
+	
+			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
+	
+			List<String> defaultsList = new ArrayList<String>();
+			defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=1"));
+	
+			String paramDefaults[] = req.getParameterValues(CretaService.Parameter.DEFAULTS.name());
+			if (paramDefaults != null && paramDefaults.length > 0)
+				defaultsList.addAll(Arrays.asList(paramDefaults));
+	
+			String defaults[] = defaultsList.toArray(new String[defaultsList.size()]);
+			
+			CustomizeBasesCallback customBasesCb = new CustomizeBasesCallback()
+					.setReftificationMark(indicadorReftificacion)
+					;
+	
+			InfoPickerBasesCallback pickerBasesCb = new InfoPickerBasesCallback();
+	
+			PrintWriter os = resp.getWriter();
+	
+			os.println("{");
+	
+			List<InputStream> respuestasIss = new ArrayList<InputStream>();
+			List<InputStream> trabajadoresYTramosIss = new ArrayList<InputStream>();
+			
+			try {
+				for (Part part : req.getParts()) {
+					try {
+						CretaService.File file = CretaService.File.valueOf(part.getName());
+						if (file == CretaService.File.TRABAJADORES_TRAMOS)
+							trabajadoresYTramosIss.add(part.getInputStream());
+						else if (file == CretaService.File.RESPUESTA)
+							respuestasIss.add(part.getInputStream());
+					} catch (IllegalArgumentException e) {
+		
+					}
 				}
 			}
-		}
-		catch ( ServletException e ) { 
-			//if this request is not of type multipart/form-data
-			trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
-		}
-		
-		try {
-			os.printf("\"full_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
-					trabajadoresYTramosIss, respuestasIss, customBasesCb, pickerBasesCb));
-		} catch (EmptyBasesException e) {
-			os.printf("\"full_bases\":\"\",\r\n");
-		}
-
-		respuestasIss.clear();
-		trabajadoresYTramosIss.clear();
-		try {
-			for (Part part : req.getParts()) {
-				try {
-					CretaService.File file = CretaService.File.valueOf(part.getName());
-					if (file == CretaService.File.TRABAJADORES_TRAMOS)
-						trabajadoresYTramosIss.add(part.getInputStream());
-					else if (file == CretaService.File.RESPUESTA)
-						respuestasIss.add(part.getInputStream());
-				} catch (IllegalArgumentException e) {
+			catch ( ServletException e ) { 
+				//if this request is not of type multipart/form-data
+				trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
+			}
+			
+			try {
+				os.printf("\"full_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
+						trabajadoresYTramosIss, respuestasIss, customBasesCb, pickerBasesCb));
+			} catch (EmptyBasesException e) {
+				os.printf("\"full_bases\":\"\",\r\n");
+			}
 	
+			respuestasIss.clear();
+			trabajadoresYTramosIss.clear();
+			try {
+				for (Part part : req.getParts()) {
+					try {
+						CretaService.File file = CretaService.File.valueOf(part.getName());
+						if (file == CretaService.File.TRABAJADORES_TRAMOS)
+							trabajadoresYTramosIss.add(part.getInputStream());
+						else if (file == CretaService.File.RESPUESTA)
+							respuestasIss.add(part.getInputStream());
+					} catch (IllegalArgumentException e) {
+		
+					}
 				}
 			}
-		}
-		catch ( ServletException e ) { 
-			//if this request is not of type multipart/form-data
-			trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
-		}
-
-		NoSkippedCallback skippedCallback = new NoSkippedCallback();
-		NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
-			@Override
-			public void noDiffs(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
-				super.noDiffs(liquidacion);
-				pickerBasesCb.noDiffs(liquidacion);
+			catch ( ServletException e ) { 
+				//if this request is not of type multipart/form-data
+				trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 			}
-		};
-		
-		try {
-			os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true, true, true, nafs, defaults,
-					trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, skippedCallback));
-		} catch (EmptyBasesException e) {
-			os.printf("\"draft_request\":\"%s\",\r\n",
-					generateBorrador(e.getAutorizado(), noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
-							noDiffsBasesCb.getTipos(), noDiffsBasesCb.getAceptarBasesAnteriores(),
-							noDiffsBasesCb.getCCCs()));
-		} catch (NoneSkippedException e) {
-//			os.printf("\"diff_bases\":null,\r\n");
+	
+			NoSkippedCallback skippedCallback = new NoSkippedCallback();
+			NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
+				@Override
+				public void noDiffs(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
+					super.noDiffs(liquidacion);
+					pickerBasesCb.noDiffs(liquidacion);
+				}
+			};
+			
+			try {
+				os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true, true, true, nafs, defaults,
+						trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, skippedCallback));
+			} catch (EmptyBasesException e) {
+				os.printf("\"draft_request\":\"%s\",\r\n",
+						generateBorrador(e.getAutorizado(), noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
+								noDiffsBasesCb.getTipos(), noDiffsBasesCb.getAceptarBasesAnteriores(),
+								noDiffsBasesCb.getCCCs()));
+			} catch (NoneSkippedException e) {
+	//			os.printf("\"diff_bases\":null,\r\n");
+			}
+	
+			os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
+	
+			os.printf("\"unknown\":%s,\r\n", toJSON(pickerBasesCb.unknown));
+	
+			os.printf("\"warnings\":%s,\r\n", toJSON(pickerBasesCb.warnings));
+	
+			os.printf("\"messages\":[],\r\n");
+	
+			os.printf("\"rectifying\":%b\r\n", indicadorReftificacion );
+	
+			os.println("}");
+	
+			os.flush();
+			os.close();
+		} finally {
+			if ( connection != null )
+				connection.close();
 		}
-
-		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
-
-		os.printf("\"unknown\":%s,\r\n", toJSON(pickerBasesCb.unknown));
-
-		os.printf("\"warnings\":%s,\r\n", toJSON(pickerBasesCb.warnings));
-
-		os.printf("\"messages\":[],\r\n");
-
-		os.printf("\"rectifying\":%b\r\n", indicadorReftificacion );
-
-		os.println("}");
-
-		os.flush();
-		os.close();
 
 	}
 
@@ -375,32 +381,39 @@ public class CretaServlet extends HttpServlet
 	
 	@Override
 	public void visitDocumentoCalculoLiquidacion(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-		PrintWriter os = resp.getWriter();
 		
+		Connection connection = null;
 		
-
-		os.println("<html>");
-		os.println("<body>");
-		os.println("<script>");
-		
-		
-		//@formatter:off
-		__onDocumentoCalculoLiquidacion(
-					getConnection(req), 
-					os, 
-					req.getParts().stream()
-					.map(part -> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL.class, part))
-					.filter(optional -> optional.isPresent())
-					.map(optional -> optional.get())
-		);
-		//@formatter:on
-		
-		os.println("</script>");
-		os.println("</body>");
-		os.println("</html>");
-
-		os.flush();
-		os.close();
+		try {
+			connection = getConnection(req);
+			
+			PrintWriter os = resp.getWriter();
+	
+			os.println("<html>");
+			os.println("<body>");
+			os.println("<script>");
+			
+			//@formatter:off
+			__onDocumentoCalculoLiquidacion(
+						connection, 
+						os, 
+						req.getParts().stream()
+						.map(part -> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.dcl.DCL.class, part))
+						.filter(optional -> optional.isPresent())
+						.map(optional -> optional.get())
+			);
+			//@formatter:on
+			
+			os.println("</script>");
+			os.println("</body>");
+			os.println("</html>");
+	
+			os.flush();
+			os.close();
+		} finally {
+			if ( connection != null )
+				connection.close();
+		}
 		
 	}
 
