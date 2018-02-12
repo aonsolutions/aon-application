@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -548,7 +550,7 @@ public class AgreementDraftObject {
 	// ------------------------------------------
 
 	public void save(final CalculateCallback callback) {
-
+		
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), agreementDraft);
 		// TODO: Clean Database data.
 		
@@ -702,6 +704,19 @@ public class AgreementDraftObject {
 				});
 	}
 
+	public void clearDeleteDatesWithChanges() {
+		this.deleteDatesChanges.clear();
+		
+	}
+	
+	public void cleanDeleteDate(Date date) {
+		cleanDeleteDate(date, getEndDate(date));
+	}
+
+	public void strechDate(Date date) {
+		strechDate(date, getEndDate(date));
+	}
+
 	private void syncShowVariables(AgreementDraft agreementDraft,
 			ContextDescriptor systemContext) {
 		Set<String> systemVars = systemContext.getVariables();
@@ -798,6 +813,70 @@ public class AgreementDraftObject {
 		return categories;
 	}
 	
+	private void cleanDeleteDates() {
+		for ( Date date : deleteDatesChanges )
+			cleanDeleteDate(date, getEndDate(date));
+	}
+	
+	private void cleanDeleteDate(Date startDate, Date endDate) {
+		for ( String name: getVariables() ) {
+			for ( Level level: getLevels() ) {
+				Variable var = getVariable(level, name);
+				if ( var == null )
+					continue;
+				var.setExpression(""); // DELETE
+				var.setStartDate(startDate);
+				var.setEndDate(endDate);
+				addDraftVariable(level, var);
+			}
+		}
+	}
+	private void strechDate(Date startDate, Date endDate) {
+		for ( String name: getVariables() ) {
+			for ( Level level: getLevels() ) {
+				Variable var = getVariable(level, name);
+				if ( var == null )
+					continue;
+				var.setStartDate(startDate);
+				var.setEndDate(endDate);
+				addDraftVariable(level, var);
+			}
+		}
+	}
+	
+	private Date getEndDate(Date startDate) {
+		Iterator<Date> datesIt = getDatesWithChanges().iterator();
+		while  ( datesIt.hasNext() ) {
+			Date date = datesIt.next();
+			if ( !date.equals(startDate ))
+				continue;
+				
+			if ( !datesIt.hasNext() ) 
+				return null;
+			
+			Date endDate = CalendarUtil.copyDate(datesIt.next());
+			CalendarUtil.addDaysToDate(endDate, -1);
+			return endDate;
+			
+		}
+		return null; // Really an Exception ?
+	}
+
+	private Date getPrevDate(Date startDate) {
+		Iterator<Date> datesIt = getDatesWithChanges().iterator();
+		Date prev  = null;
+		while  ( datesIt.hasNext() ) {
+			Date date = datesIt.next();
+			if ( date.equals(startDate ))
+				return prev;
+			
+			prev = date;
+			
+		}
+		return null; // Really an Exception ?
+	}
+	
+	
 	
 	// -------------------------------------------------------------------------
 	private static Variable getVariable(String name, List<Variable> list) {
@@ -838,15 +917,12 @@ public class AgreementDraftObject {
 
 	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
 			AgreementDraft draft) {
-
-		setStartAndEndDates(draftStartDate, draftEndDate,
-				draft.getDraftPayments());
-		setStartAndEndDates(draftStartDate, draftEndDate,
-				draft.getDraftSalaryTable().getAllVariables());
-
+		
 		setDateDrafts(draftStartDate, draftEndDate, draft);
 	}
 
+	
+	
 	private static <T extends HasStartAndEndDate> void setStartAndEndDates(
 			Date draftStartDate, Date draftEndDate, Collection<T> items) {
 		for (T item : items) {
@@ -1002,9 +1078,6 @@ public class AgreementDraftObject {
 			}
 		};
 	}
+	
 
-	public void clearDeleteDatesWithChanges() {
-		this.deleteDatesChanges.clear();
-		
-	}
 }

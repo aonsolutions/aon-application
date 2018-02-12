@@ -8,11 +8,12 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.login;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.wait4;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 
-import org.apache.xpath.operations.Div;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -24,7 +25,6 @@ import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
@@ -45,6 +45,10 @@ public class MainAgreementTest {
 	private static WebClient webClient;
 	private static HtmlPage htmlPage;
 	
+	private static String url;
+	private static String user;
+	private static String password;
+	
 	@BeforeClass
 	public static void setUp() throws Exception {
 		LOGGER.setLevel(Level.WARNING);
@@ -58,9 +62,9 @@ public class MainAgreementTest {
 				
 			}
 		});
-		String url = System.getProperty(INTEGRATION_PAYROLL_URL);
-		String user = System.getProperty(INTEGRATION_BASE_USER);
-		String password = System.getProperty(INTEGRATION_BASE_PASSWORD);
+		url = System.getProperty(INTEGRATION_PAYROLL_URL);
+		user = System.getProperty(INTEGRATION_BASE_USER);
+		password = System.getProperty(INTEGRATION_BASE_PASSWORD);
 		htmlPage = login(webClient, url, user, password);
 
 		// Payroll Menu
@@ -279,6 +283,172 @@ public class MainAgreementTest {
 		
 	}
 
+
+	@Test
+	public void TestSalaryTable() throws Exception {
+		
+		wait4Id("star_wars_agreement");
+
+		HtmlDivision agreementTreeItem = 
+				(HtmlDivision)getElementById("star_wars_agreement");
+		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		agreementTreeItem.click();
+		
+		wait4(htmlPage,
+				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
+		
+		// New Tab for 01/01/2018
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 2018);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		newPrevSalaryDataTab(calendar.getTime());
+		
+		wait4Id("textBox_SALARIO_MENSUAL_I");
+		
+		setValue("textBox_SALARIO_MENSUAL_I", "666 + 0.66" );
+		wait4Value("textBox_SALARIO_MENSUAL_I", "666.66");
+		
+		
+		getElementById("acceptButton").click();
+		
+		wait4NoClass("textBox_SALARIO_MENSUAL_I", "aon-icon-changed");
+		
+		HtmlTable salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		
+		getElementById("deleteButton_01_01_2018").click();
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+
+		getElementById("acceptButton").click();
+		System.out.println(getElementById("acceptButton").asXml());
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size());
+		
+		htmlPage = webClient.getPage(url);
+		// Payroll Menu
+		HtmlAnchor menuPayrollAnchor = htmlPage
+				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		htmlPage = menuPayrollAnchor.click();
+		// MainAgreement
+		HtmlAnchor gwtAgreementAnchor = htmlPage
+				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
+		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
+		htmlPage = gwtAgreementAnchor.click();
+		wait4Id("star_wars_agreement");
+		agreementTreeItem = 
+				(HtmlDivision)getElementById("star_wars_agreement");
+		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		agreementTreeItem.click();
+		wait4(htmlPage,
+				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
+		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+	
+		// 01-01-2018
+		newPrevSalaryDataTab(calendar.getTime());
+		wait4Id("textBox_SALARIO_MENSUAL_I");
+		HtmlInput htmlInput = getElementById("textBox_SALARIO_MENSUAL_I");
+		String value = htmlInput.getValueAttribute();
+		Assert.assertNotNull(value);
+		Assert.assertNotEquals(value.trim(), "");
+		
+		setValue("textBox_SALARIO_MENSUAL_I", "888 + 0.88" );
+		wait4Value("textBox_SALARIO_MENSUAL_I", "888.88");
+//		getElementById("acceptButton").click();
+//		wait4NoClass("textBox_SALARIO_MENSUAL_I", "aon-icon-changed");
+//		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+//		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		
+		// 01-01-2019
+		calendar.add(Calendar.YEAR, 1);
+		newNextSalaryDataTab(calendar.getTime());
+		wait4Id("textBox_SALARIO_MENSUAL_I");
+		htmlInput = getElementById("textBox_SALARIO_MENSUAL_I");
+		value = htmlInput.getValueAttribute();
+		Assert.assertNotNull(value);
+		Assert.assertNotEquals(value.trim(), "");
+		
+		setValue("textBox_SALARIO_MENSUAL_I", "999 + 0.99" );
+		wait4Value("textBox_SALARIO_MENSUAL_I", "999.99");
+		getElementById("acceptButton").click();
+		wait4NoClass("textBox_SALARIO_MENSUAL_I", "aon-icon-changed");
+		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(6, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		
+		getElementById("deleteButton_01_01_2018").click();
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+
+		getElementById("acceptButton").click();
+		System.out.println(getElementById("acceptButton").asXml());
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size());
+		
+		htmlPage = webClient.getPage(url);
+		// Payroll Menu
+		menuPayrollAnchor = htmlPage
+				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		htmlPage = menuPayrollAnchor.click();
+		// MainAgreement
+		gwtAgreementAnchor = htmlPage
+				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
+		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
+		htmlPage = gwtAgreementAnchor.click();
+		wait4Id("star_wars_agreement");
+		agreementTreeItem = 
+				(HtmlDivision)getElementById("star_wars_agreement");
+		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		agreementTreeItem.click();
+		wait4(htmlPage,
+				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
+		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		
+		// 01-01-2018
+		calendar.add(Calendar.YEAR, -1);
+		newPrevSalaryDataTab(calendar.getTime());
+		wait4Id("textBox_SALARIO_MENSUAL_I");
+		htmlInput = getElementById("textBox_SALARIO_MENSUAL_I");
+		value = htmlInput.getValueAttribute();
+		Assert.assertNotNull(value);
+		Assert.assertNotEquals(value.trim(), "");
+		
+		getElementById("deleteButton_01_01_2018").click();
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		getElementById("deleteButton_01_01_2019").click();
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		
+		getElementById("acceptButton").click();
+		System.out.println(getElementById("acceptButton").asXml());
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size());
+		
+		htmlPage = webClient.getPage(url);
+		// Payroll Menu
+		menuPayrollAnchor = htmlPage
+				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
+		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
+		htmlPage = menuPayrollAnchor.click();
+		// MainAgreement
+		gwtAgreementAnchor = htmlPage
+				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
+		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
+		htmlPage = gwtAgreementAnchor.click();
+		wait4Id("star_wars_agreement");
+		agreementTreeItem = 
+				(HtmlDivision)getElementById("star_wars_agreement");
+		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		agreementTreeItem.click();
+		wait4(htmlPage,
+				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
+		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		
+
+	}
+
+
+	// ------------------------------------------------------------------------
+	
 	protected <T extends DomElement> T getElementById(String id ) {
 		return (T)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id );
 	}
@@ -319,4 +489,77 @@ public class MainAgreementTest {
 				htmlPage -> !htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getAttribute("class").contains(clazz));
 	}
 	
+	protected void newPrevSalaryDataTab (Date date) throws IOException, InterruptedException {
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		
+		int months = -1;
+		for ( ; calendar.getTime().after(date); months++)
+			calendar.add(Calendar.MONTH, -1);
+		
+		getElementById("moreButton").click();
+		wait4Id("moreDatePicker");
+		HtmlElement moreDatePicker = getElementById("moreDatePicker");
+		
+		HtmlTable datePickerMonthSelector = moreDatePicker.getOneHtmlElementByAttribute(HtmlTable.TAG_NAME, "class", "datePickerMonthSelector") ;
+		DomElement previousButton = datePickerMonthSelector.getRow(0).getCell(0).getFirstElementChild();
+		DomElement datePickerMonth = datePickerMonthSelector.getRow(0).getCell(1);
+		
+		for ( int i = 0; i < months; i++ ) {
+			String actualMonth = datePickerMonth.getTextContent();
+			previousButton.fireEvent(MouseEvent.TYPE_MOUSE_OVER);
+			previousButton.click();
+			wait4(htmlPage, htmlPage ->  !datePickerMonth.getTextContent().equals(actualMonth) );
+		}
+		LOGGER.warning("Prev Month : " + datePickerMonth.getTextContent());
+		
+		String day = String.valueOf(date.getDate());
+		for ( HtmlElement datePickerDay : moreDatePicker.getElementsByAttribute(HtmlDivision.TAG_NAME, "class", "datePickerDay ") ) {
+			if ( day.equals(datePickerDay.getTextContent())) {
+				datePickerDay.fireEvent(MouseEvent.TYPE_MOUSE_OVER);
+				datePickerDay.click();
+				break;
+			}
+		}
+		wait4NoId("moreDatePicker");
+		
+	}
+	
+	protected void newNextSalaryDataTab (Date date) throws IOException, InterruptedException {
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+		
+		int months = 0;
+		for ( ; calendar.getTime().before(date); months++)
+			calendar.add(Calendar.MONTH, +1);
+		
+		getElementById("moreButton").click();
+		wait4Id("moreDatePicker");
+		HtmlElement moreDatePicker = getElementById("moreDatePicker");
+		
+		HtmlTable datePickerMonthSelector = moreDatePicker.getOneHtmlElementByAttribute(HtmlTable.TAG_NAME, "class", "datePickerMonthSelector") ;
+		DomElement nextButton = datePickerMonthSelector.getRow(0).getCell(2).getFirstElementChild();
+		DomElement datePickerMonth = datePickerMonthSelector.getRow(0).getCell(1);
+		
+		for ( int i = 0; i < months; i++ ) {
+			String actualMonth = datePickerMonth.getTextContent();
+			nextButton.fireEvent(MouseEvent.TYPE_MOUSE_OVER);
+			nextButton.click();
+			wait4(htmlPage, htmlPage ->  !datePickerMonth.getTextContent().equals(actualMonth) );
+		}
+		LOGGER.warning("Next Month : " + datePickerMonth.getTextContent() + " for " + date );
+		
+		String day = String.valueOf(date.getDate());
+		for ( HtmlElement datePickerDay : moreDatePicker.getElementsByAttribute(HtmlDivision.TAG_NAME, "class", "datePickerDay ") ) {
+			if ( day.equals(datePickerDay.getTextContent())) {
+				datePickerDay.fireEvent(MouseEvent.TYPE_MOUSE_OVER);
+				datePickerDay.click();
+				break;
+			}
+		}
+		wait4NoId("moreDatePicker");
+		
+	}
 }

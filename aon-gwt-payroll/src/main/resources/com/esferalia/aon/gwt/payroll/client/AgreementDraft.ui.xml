@@ -385,9 +385,9 @@
 							<g:HTML styleName="{style.vertical-space}" />
 
 							<g:HorizontalPanel> 
-								<g:HorizontalPanel ui:field='categoryButtonPanel'/>
-								<g:HorizontalPanel ui:field='salaryToggleButtonsPanel'/>
-								<g:HorizontalPanel ui:field='moreToggleButtonsPanel'/> 
+								<g:HorizontalPanel debugId='categoryButtonPanel' ui:field='categoryButtonPanel'/>
+								<g:HorizontalPanel debugId='salaryToggleButtonsPanel' ui:field='salaryToggleButtonsPanel'/>
+								<g:HorizontalPanel debugId='moreToggleButtonsPanel' ui:field='moreToggleButtonsPanel'/> 
 							</g:HorizontalPanel>
 							
 							<g:HTML styleName="{style.vertical-space2}" />

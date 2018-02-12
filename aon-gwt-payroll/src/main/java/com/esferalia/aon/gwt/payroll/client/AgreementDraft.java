@@ -41,6 +41,7 @@ import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -75,9 +76,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
@@ -87,11 +86,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
@@ -100,7 +97,6 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -113,13 +109,10 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.ValueBoxBase;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
@@ -653,6 +646,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 					var.setExpression(event.getValue());
 					// TODO: Check syntax????
+					Period draftPeriod = getCurrentDraftPeriod();
+					var.setEndDate(draftPeriod.getEnd());
+					var.setStartDate(draftPeriod.getStart());
 					AgreementDraft.this.agreementDraftObject.addDraftVariable(level, var);
 					AgreementDraft.this.calculate(getNextFocusCallback());
 				}
@@ -1185,13 +1181,19 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
 		if (datesList.length != 0){
 			for(int i=0; i<datesList.length; i++){
+				
 				Date date = datesList[i];
+				Date _endDate =  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : null;
+				
+				
 				if (date.equals(draftStratDate)){
 					startTab = i;
 					startTab = startTab*2;
 				}
 				
 				HorizontalPanel hPanel = new HorizontalPanel();
+				hPanel.ensureDebugId("panel_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(date));
+
 				ToggleButton button = new ToggleButton(date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900));
 				button.ensureDebugId("toggleButton_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(date));
 				button.addClickHandler(new ClickHandler() {
@@ -1218,8 +1220,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 							
 						
 							Date month = datesList[selectedButton];
-							agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
+							agreementDraftObject.setStartDate(month);
 							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+							
 							calculate();
 						
 						}else{
@@ -1248,6 +1251,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				
 				if(!readOnly){
 					Button deleteButton = new Button("x");
+					deleteButton.ensureDebugId("deleteButton_" +DateTimeFormat.getFormat("dd_MM_yyyy").format(date) );
 					deleteButton.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
@@ -1268,16 +1272,36 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 							Date month = datesList[selectedButton];
 							agreementDraftObject.addDeleteDatesChanges(month);
 							Date newSelectMonth = null;
-							if(selectedButton==0)
+							if(selectedButton==0) {
 								newSelectMonth = datesList[selectedButton+1];
-							else
+								agreementDraftObject.cleanDeleteDate(month);
+							}
+							else {
 								newSelectMonth = datesList[selectedButton-1];
+							}
 							
 							if(newSelectMonth == null)
 								newSelectMonth = new Date(0);
-							agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(newSelectMonth));
+							
+							int finalSelectedButton = selectedButton;
+							Date finalnewSelectMonth = newSelectMonth;
+							
+							agreementDraftObject.setStartDate(newSelectMonth);
 							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(newSelectMonth));
-							calculate();
+							calculate( new CalculateCallback() {
+
+								@Override
+								public void onCalculateSucces(AgreementDraftObject object) {
+									if ( finalSelectedButton > 0 )
+										agreementDraftObject.strechDate(finalnewSelectMonth);
+								}
+								
+								@Override
+								public void onCalculateFailure(Throwable throwable) {
+								}
+
+							});
+							
 						}	
 					});
 					
@@ -1325,8 +1349,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					public void onValueChange(ValueChangeEvent<Date> event) {
 						popup.hide();
 						Date month = event.getValue();
-						agreementDraftObject.addNewDatesWithChanges(DateUtils.getFirstDayOfMonth(month));
-						agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
+						agreementDraftObject.addNewDatesWithChanges(month);
+						agreementDraftObject.setStartDate(month);
 						agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
 						calculate();
 					}
@@ -1498,7 +1522,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiHandler("previewMonthListBox")
 	void onPreviewMonthListBoxChanged(ChangeEvent event) {
 		Date month = previewMonthListBox.getSelectedMonth();
-		agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
+		agreementDraftObject.setStartDate(month);
 		agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
 		calculate(new CalculateCallback() {
 
@@ -2042,6 +2066,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			expressionTextBox.addStyleName(AON.AON_ICON_EXCEPTION);
 			expressionTextBox.getElement().getStyle().setTextIndent(17, Unit.PX);
 		}
+		
+		expressionTextBox.ensureDebugId("textBox_" + var.getName()+ "_" + level.getDescription() );
 
 		return variableEditor;
 	}
@@ -2061,6 +2087,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		VariableEditor variableEditor = new VariableEditor(level, variable);
 
 		variableEditor.setExpressionTextBox(expressionTextBox);
+
+		expressionTextBox.ensureDebugId("textBox_" + name + "_" + level.getDescription());
 
 		return variableEditor;
 	}
@@ -3397,6 +3425,21 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			}
 		}
 		
+	}
+	
+	private Period getCurrentDraftPeriod() {
+		Date startDate = agreementDraftObject.getStartDate();
+		SortedSet<Date> dates = agreementDraftObject.getDatesWithChanges();
+		Iterator<Date> datesIt = dates.iterator();
+		while ( datesIt.hasNext() ) {
+			Date date = datesIt.next();
+			
+			if ( date.equals(startDate ))  
+				return new Period(date, datesIt.hasNext() ? DateUtils.getPrevDay(datesIt.next()): null );
+			
+		}
+		
+		throw new IndexOutOfBoundsException();
 	}
 	
 	
