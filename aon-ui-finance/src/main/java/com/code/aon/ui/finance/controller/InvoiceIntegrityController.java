@@ -42,16 +42,29 @@ public class InvoiceIntegrityController extends DataScrollerState {
 		"UPDATE finance set rdocument = ?,rdocument_type=?,rdocument_country=?,rname=? WHERE invoice = ?";
 		
 	private String MAIN_STMT =
-	"select count(*) count,r.id id,r.document rd ,r.document_type rdt ,r.document_country rdc,r.name rn"
-	+" FROM invoice i, registry r"
-	+" WHERE " + DomainManager.getStaticSQLWhereClause("i.domain")
-	+" AND i.issue_date BETWEEN ? AND ?"
-	+" AND i.registry = r.id"
-	+" AND (r.document != i.rdocument"
-	+" OR r.document_type != i.rdocument_type"
-	+" OR r.document_country != i.rdocument_country"
-	+" OR r.name != i.rname)"
-	+" GROUP BY id,rd,rdt,rdc,rn";
+		"select count(*) count,r.id id,r.document rd ,r.document_type rdt ,r.document_country rdc,r.name rn"
+		+" FROM invoice i, registry r"
+		+" WHERE " + DomainManager.getStaticSQLWhereClause("i.domain")
+		+" AND i.issue_date BETWEEN ? AND ?"
+		+" AND i.registry = r.id"
+		+" AND ("
+		+" (r.document IS NULL AND i.rdocument IS NOT NULL)"
+		+" OR (r.document IS NOT NULL AND i.rdocument IS NULL)"
+		+" OR (r.document != i.rdocument)"
+		
+		+" OR (r.document_type IS NULL AND i.rdocument_type IS NOT NULL)"
+		+" OR (r.document_type IS NOT NULL AND i.rdocument_type IS NULL)"
+		+" OR (r.document_type != i.rdocument_type)"
+		
+		+" OR (r.document_country IS NOT NULL AND i.rdocument_country IS NULL)"
+		+" OR (r.document_country IS NULL AND i.rdocument_country IS NOT NULL)"
+		+" OR (r.document_country != i.rdocument_country)"
+		
+		+" OR (r.name IS NOT NULL AND i.rname IS NULL)"
+		+" OR (r.name IS NULL AND i.rname IS NOT NULL)"
+		+" OR (r.name != i.rname)"
+		+")"
+		+" GROUP BY id,rd,rdt,rdc,rn";
 
 	private String STMT =
 		"select r.id id,r.document rd ,r.document_type rdt ,r.document_country rdc,r.name rn"
@@ -60,10 +73,23 @@ public class InvoiceIntegrityController extends DataScrollerState {
 		+" WHERE i.registry = ?"
 		+" AND i.issue_date BETWEEN ? AND ?"
 		+" AND i.registry = r.id"
-		+" AND (r.document != i.rdocument"
-		+" OR r.document_type != i.rdocument_type"
-		+" OR r.document_country != i.rdocument_country"
-		+" OR r.name != i.rname)";
+		+" AND ("
+		+" (r.document IS NULL AND i.rdocument IS NOT NULL)"
+		+" OR (r.document IS NOT NULL AND i.rdocument IS NULL)"
+		+" OR (r.document != i.rdocument)"
+		
+		+" OR (r.document_type IS NULL AND i.rdocument_type IS NOT NULL)"
+		+" OR (r.document_type IS NOT NULL AND i.rdocument_type IS NULL)"
+		+" OR (r.document_type != i.rdocument_type)"
+		
+		+" OR (r.document_country IS NOT NULL AND i.rdocument_country IS NULL)"
+		+" OR (r.document_country IS NULL AND i.rdocument_country IS NOT NULL)"
+		+" OR (r.document_country != i.rdocument_country)"
+		
+		+" OR (r.name IS NOT NULL AND i.rname IS NULL)"
+		+" OR (r.name IS NULL AND i.rname IS NOT NULL)"
+		+" OR (r.name != i.rname)"
+		+")";
 		
 
 	public Date getStartDate() {
