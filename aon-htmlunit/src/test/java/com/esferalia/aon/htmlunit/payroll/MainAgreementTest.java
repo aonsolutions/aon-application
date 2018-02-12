@@ -446,6 +446,24 @@ public class MainAgreementTest {
 
 	}
 
+	@Test
+	public void TestExtras() throws Exception {
+		
+		wait4Id("pagas_extras_anulaes,_semestrales_y_trimestreales");
+
+		HtmlDivision agreementTreeItem = 
+				(HtmlDivision)getElementById("pagas_extras_anulaes,_semestrales_y_trimestreales");
+		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
+		agreementTreeItem.click();
+		
+		wait4(htmlPage,
+				htmlPage -> "PAGAS EXTRAS ANULAES, SEMESTRALES Y TRIMESTREALES".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
+		
+		for ( int i = 1; i < 8; i++ ) {
+			Assert.assertTrue(((HtmlInput) getElementById("endDateBox" + i)).getValueAttribute().endsWith("2018"));
+			Assert.assertTrue(((HtmlInput) getElementById("startDateBox" + i)).getValueAttribute().endsWith("2018"));
+		}
+	}
 
 	// ------------------------------------------------------------------------
 	

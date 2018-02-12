@@ -119,6 +119,7 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class AgreementDraft extends ResizeComposite implements CalculateCallback {
 
+	private static final Date TODAY = new Date();
 	static int SALARY_TABLE_COLS = 8;
 	static int SALARY_TABLE_LINES = 7;
 	static int VARIABLE_TEXTBOX_SIZE = 10;
@@ -1343,7 +1344,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			public void onClick(ClickEvent event) {
 				PopupPanel popup = new PopupPanel(true); // auto-hide
 				DatePicker picker = new DatePicker();
-				picker.setValue(new Date());
+				picker.setValue(TODAY);
 				picker.addValueChangeHandler(new ValueChangeHandler<Date>() {
 					@Override
 					public void onValueChange(ValueChangeEvent<Date> event) {
@@ -2203,6 +2204,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			startDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
 			startDateBox.setText(extra.getStartDate());
 		}
+		startDateBox.ensureDebugId("startDateBox" + row);
+		
+		
 		Button startButton = new Button();
 
 		extrasTable.setWidget(row, 1, newExtraDatePanel(startDateBox, startButton));
@@ -2218,6 +2222,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			endDateBox.setTitle("La fecha final de devengo '" + extra.getEndDate() + "' no es correcta.");
 			endDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
 		}
+		endDateBox.ensureDebugId("endDateBox" + row);
+		
 		Button endButton = new Button();
 
 		extrasTable.setWidget(row, 2, newExtraDatePanel(endDateBox, endButton));
@@ -2233,6 +2239,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			issueDateBox.setTitle("La fecha de cobro '" + extra.getIssueDate() + "' no es correcta.");
 			issueDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
 		}
+		issueDateBox.ensureDebugId("issueDateBox" + row);
+		
 		Button issueButton = new Button();
 
 		extrasTable.setWidget(row, 3, newExtraDatePanel(issueDateBox, issueButton));
@@ -2687,11 +2695,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private Date parseExtraDate(String text) {
-		return parseExtraDate(text, CalendarUtil.copyDate(agreementDraftObject.getStartDate()));
+		return parseExtraDate(text, CalendarUtil.copyDate(TODAY));
 	}
 
 	private String formatExtraDate(Date extraDate) {
-		return formatExtraDate(extraDate, agreementDraftObject.getStartDate());
+		return formatExtraDate(extraDate, TODAY);
 	}
 
 	// ------------------------------------------------------------------------
