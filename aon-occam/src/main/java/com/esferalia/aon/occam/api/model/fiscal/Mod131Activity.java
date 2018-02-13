@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -11,7 +11,7 @@ public class Mod131Activity implements Serializable {
 
 	private static final long serialVersionUID = 1503338850244122274L;
 
-	private Epigraph epi;
+	private IEpigraph epi;
 	private String epigraph;
 	private String description;
 	
@@ -60,10 +60,10 @@ public class Mod131Activity implements Serializable {
 	
 	private LinkedList<Mod131ActivityModule> modules;
 	
-	public Epigraph getEpi() {
+	public IEpigraph getEpi() {
 		return epi;
 	}
-	public Mod131Activity setEpi(Epigraph epi) {
+	public Mod131Activity setEpi(IEpigraph epi) {
 		this.epi = epi;
 		return this;
 	}

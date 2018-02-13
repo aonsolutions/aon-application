@@ -4,10 +4,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.Epigraph2016Panel;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -114,7 +114,7 @@ public class Model131Activity extends DockLayoutPanel {
 	@UiField DoubleBox por;
 	@UiField DoubleBox res;
 	
-	final Epigraph2016Panel epigraphPanel = new Epigraph2016Panel(new Epigraph2016PanelCallback());
+	final EpigraphPanel epigraphPanel = new EpigraphPanel( new EpigraphPanelCallback(), null);
 
 	public static interface IMod131ActivityCallback {
 		Mod131Activity getActivity();
@@ -269,7 +269,7 @@ public class Model131Activity extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				epigraphPanel.onShow();
+				epigraphPanel.onShow( callback.getActivity().getYear() );
 				
 			}
 		});
@@ -278,9 +278,9 @@ public class Model131Activity extends DockLayoutPanel {
 		return headerPanel;
 	}
 	
-	private class Epigraph2016PanelCallback implements Epigraph2016Panel.SelectionCallBack {
+	private class EpigraphPanelCallback implements EpigraphPanel.SelectionCallBack {
 		@Override
-		public void onSelect(final Epigraph selected) {
+		public void onSelect(final IEpigraph selected) {
 			if (AonStringUtils.isNotBlank( callback.getActivity().getEpigraph())) {
 				ConfirmDialog dialog = new ConfirmDialog();
 				dialog.confirm(AON.MSG.newEpigrapSelected(), new ConfirmDialogCallback() {
@@ -301,7 +301,7 @@ public class Model131Activity extends DockLayoutPanel {
 		@Override
 		public void onClose() {}
 		
-		private void accept(final Epigraph selected) {
+		private void accept(final IEpigraph selected) {
 			Model131Activity.this.tab.setVisible(true);
 			callback.getActivity().initialize();
 			callback.getActivity().setEpi(selected);

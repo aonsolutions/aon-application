@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -1859,12 +1860,18 @@ public class Mod131DAO extends FiscalModelDAO {
 		if (previousModel != null) {
 			Mod131 previous = (Mod131) previousModel;
 			for (Mod131Activity prevAct : previous.getActivities()) {
+				boolean addActivity = true;
 				if (previousModel.getYear() != mod.getYear()) {
 					prevAct.setYear(mod.getYear());
-					// Chequear si los módulos han cambiado.
-					// TODO
+					if (mod.getYear() > 2017) {
+						if (Epigraph.getEpigraph(prevAct.getEpigraph()) == null) {
+							addActivity = false;
+						}
+					}
 				}
-				mod.getActivities().add(prevAct);
+				if (addActivity) {
+					mod.getActivities().add(prevAct);
+				}
 			}
 		}
 		

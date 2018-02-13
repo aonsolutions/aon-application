@@ -1539,5 +1539,16 @@ public class Modules2016 {
 		}
 	}
 	
-	
+public static void main(String[] args) {
+	for (Epigraph e : Epigraph.values()){
+		System.out.print("\"");
+		System.out.print(e.getEpigraph());
+		System.out.print("\",\"");
+		if (e.hasIRPFModules()) System.out.print("IRPF");
+		System.out.print("\",\"");
+		if (e.hasVATModules()) System.out.print("IVA");
+		System.out.print("\"");
+		System.out.println();
+	}
+}	
 }

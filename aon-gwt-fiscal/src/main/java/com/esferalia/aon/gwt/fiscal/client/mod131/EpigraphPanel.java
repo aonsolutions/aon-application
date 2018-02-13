@@ -1,10 +1,12 @@
-package com.esferalia.aon.gwt.common.client.widget;
+package com.esferalia.aon.gwt.fiscal.client.mod131;
 
-import java.util.Arrays;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiField;
@@ -18,34 +20,31 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class Epigraph2016Panel extends CustomDialog {
+public class EpigraphPanel extends CustomDialog {
 
 	public interface SelectionCallBack {
-		void onSelect(Epigraph cnae);
+		void onSelect(IEpigraph cnae);
 		void onClose();
 	}
 
 
-	private static final ProvidesKey<Epigraph> CNAE_PROVIDES_KEY = new ProvidesKey<Epigraph>() {
+	private static final ProvidesKey<IEpigraph> CNAE_PROVIDES_KEY = new ProvidesKey<IEpigraph>() {
 		@Override
-		public Object getKey(Epigraph item) {
+		public Object getKey(IEpigraph item) {
 			return item.getEpigraph();
 		}
 	};
 	
 	private SelectionCallBack callback;
 
-	private NoSelectionModel<Epigraph> model;
+	private NoSelectionModel<IEpigraph> model;
 
 	@UiField(provided = true)
-	CellTable<Epigraph> table;
+	CellTable<IEpigraph> table;
 
-	public Epigraph2016Panel(SelectionCallBack callback) {
-		this();
+	public EpigraphPanel(SelectionCallBack callback, Integer year) {
 		this.callback = callback;
-	}
 
-	public Epigraph2016Panel() {
 		setVisible(false);
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
@@ -60,14 +59,14 @@ public class Epigraph2016Panel extends CustomDialog {
 		AON.AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 
-		table = new CellTable<Epigraph>(1, tableStyle, CNAE_PROVIDES_KEY);
+		table = new CellTable<IEpigraph>(1, tableStyle, CNAE_PROVIDES_KEY);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
 		addCodeColumn();
 		addDescriptionColumn();
 
-		model = new NoSelectionModel<Epigraph>(CNAE_PROVIDES_KEY);
+		model = new NoSelectionModel<IEpigraph>(CNAE_PROVIDES_KEY);
 		model.addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -91,10 +90,25 @@ public class Epigraph2016Panel extends CustomDialog {
 		callback.onClose();
 	}
 
-	public void onShow() {
+	public void onShow( int year) {
 		if (table.getRowCount() == 0) {
-			table.setRowData( Arrays.asList(Epigraph.values()) );
-			table.setRowCount(Epigraph.values().length, true);
+			LinkedList<IEpigraph> epigraphs = new LinkedList<IEpigraph>();
+			if (year < 2018) {
+				for (com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph epigraph 
+					: com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph.values()) {
+					if (epigraph.hasIRPFModules()) {
+						epigraphs.add(epigraph);
+					}
+				}
+			} else {
+				for (Epigraph epigraph : Epigraph.values()) {
+					if (epigraph.hasIRPFModules()) {
+						epigraphs.add(epigraph);
+					}
+				}
+			}
+			table.setRowData( epigraphs );
+			table.setRowCount(epigraphs.size(), true);
 			center();
 			show();
 		} else {
@@ -104,10 +118,10 @@ public class Epigraph2016Panel extends CustomDialog {
 	}
 
 	private void addCodeColumn() {
-		final TextColumn<Epigraph> codeColumn = new TextColumn<Epigraph>() {
+		final TextColumn<IEpigraph> codeColumn = new TextColumn<IEpigraph>() {
 			@Override
-			public String getValue(Epigraph cnae) {
-				return cnae.getEpigraph();
+			public String getValue(IEpigraph epi) {
+				return epi.getEpigraph();
 			}
 		};
 		table.addColumn(codeColumn, AON.MSG.code());
@@ -116,10 +130,10 @@ public class Epigraph2016Panel extends CustomDialog {
 	}
 
 	private void addDescriptionColumn() {
-		final TextColumn<Epigraph> titleColumn = new TextColumn<Epigraph>() {
+		final TextColumn<IEpigraph> titleColumn = new TextColumn<IEpigraph>() {
 			@Override
-			public String getValue(Epigraph cnae) {
-				return cnae.getDescription();
+			public String getValue(IEpigraph epi) {
+				return epi.getDescription();
 			}
 		};
 		table.addColumn(titleColumn, AON.MSG.description());
