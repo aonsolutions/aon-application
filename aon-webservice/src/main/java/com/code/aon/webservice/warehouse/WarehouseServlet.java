@@ -610,7 +610,8 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		
 		if(filterMap.containsKey(MSG.CUSTOMER)){
-			filter = filter.and(f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(MSG.CUSTOMER)[0])));
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.CUSTOMER)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getCustomerProperty().in(ids));
 		}
 		
 		if(filterMap.containsKey(MSG.SERIES)){
@@ -888,7 +889,8 @@ public class WarehouseServlet extends HttpServlet{
 			filter = filter.and(f.getIssueDateProperty().le(new java.sql.Date(Long.parseLong(filterMap.get(MSG.TO)[0]))));
 		}
 		if(filterMap.containsKey(MSG.CUSTOMER)){
-			filter = filter.and(f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(MSG.CUSTOMER)[0])));
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.CUSTOMER)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getCustomerProperty().in(ids));
 		}
 		return filter;
     }

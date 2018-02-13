@@ -45,5 +45,9 @@ public class Product extends Methods{
 		post(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/item", requestData, callback);
 	}
 	
+	public void getProductList(AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() + "/product/", callback);
+	}
+	
 	
 }

@@ -100,10 +100,6 @@ public class FilterPanel extends Composite {
 		productButton = filterButton(AON.MSG.product());
 		customerButton = filterButton(AON.MSG.customer());
 		
-		// ------------------ DISABLED FIELDS
-//		categoryButton.setDisabled(true);
-		productButton.setDisabled(true);
-		customerButton.setDisabled(true);
 		
 
 		// ------------------ CATEGORY LIST
@@ -130,7 +126,17 @@ public class FilterPanel extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO productButton.ClickHandler:onClick
+				parent.getAPI().getProduct().getProductList(new AsyncCallback<JSON<JsObject>>() {
+
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(productButton, result, AON.MSG.product());
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
 			}
 		});
 		
@@ -139,7 +145,17 @@ public class FilterPanel extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO customerButton.ClickHandler:onClick
+				parent.getAPI().getRegistry().getCustomers(new AsyncCallback<JSON<JsObject>>() {
+
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(customerButton, result, AON.MSG.customer());
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
 			}
 		});
 		
@@ -195,7 +211,6 @@ public class FilterPanel extends Composite {
 	
 	private void onChangeFilter(String key, LinkedList<String> value) {
     	parent.getFilterMap().put(key, value);
-//		parent.loadContent();
 	}
 
 	private PaperButton filterButton(String title) {
@@ -261,7 +276,6 @@ public class FilterPanel extends Composite {
 						parent.getFilterMap().get(key).remove(js.getId() + "");
 					}
 				}
-//				reloadContent();
 			}
 		};
 		sw.show();

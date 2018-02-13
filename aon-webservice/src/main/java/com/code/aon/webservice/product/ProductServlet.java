@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ProductServlet", urlPatterns = { "/product/*",
@@ -60,6 +61,9 @@ public class ProductServlet extends HttpServlet{
 					} else {
 						object = getElaborableItemList(domain, userName, req.getParameterMap());
 					}
+					break;
+				case MSG.PRODUCT:
+					object = getProductList(domain, userName);
 					break;
 				default:
 					break;
@@ -104,6 +108,20 @@ public class ProductServlet extends HttpServlet{
     
     private Object getItem(Domain domain, String userName, int id) {
     	return ToJSON.itemToJSON(AON.getItem(domain.getName(), domain.getId(), userName, id));
+    }
+    
+    private JSONArray getProductList(Domain domain, String login){
+    	JSONArray array = new JSONArray();
+    	AON.getProductList(domain.getName(), domain.getId(), login,
+    			f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getStatusProperty().eq(ProductStatus.ACTIVE.value())))
+    		.forEach(product -> {
+				JSONObject json = new JSONObject();
+				json.put("id", product.getId());
+				json.put("name", product.getName());
+				array.put(json);
+    	});
+    	return array;    	
     }
     
     private JSONArray getElaborableItemList(Domain domain, String login, Map<String, String[]> map){
