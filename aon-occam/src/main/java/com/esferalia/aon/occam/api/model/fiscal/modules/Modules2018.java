@@ -6,17 +6,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Modules2018 {
 
-//"Servicios de cría, guarda y engorde de ganado."
-//"Otros trabajos, servicios y actividades accesorios realizados por agricultores o ganaderos que estén excluidos o no incluidos en el régimen especial de la agricultura, ganadería y pesca del Impuesto sobre el Valor Añadido."
-//"Otros trabajos, servicios y actividades accesorios realizados por titulares de actividades forestales que estén excluidos o no incluidos en el régimen especial de la agricultura, ganadería y pesca del Impuesto sobre el Valor Añadido."
-//"Aprovechamientos que correspondan al cedente en las actividades agrícolas desarrolladas en régimen de aparcería."
-//"Aprovechamientos que correspondan al cedente en las actividades forestales desarrolladas en régimen de aparcería."
-//"Procesos de transformación, elaboración o manufactura de productos naturales, vegetales o animales, que requieran el alta en un epígrafe correspondiente a actividades industriales en las Tarifas del Impuesto sobre Actividades Económicas y  se realicen por los titulares de las explotaciones de las cuales se obtengan directamente dichos productos naturales."
-	
 	public enum FarmerIRPF {
 		 A01 (0.13,0.23,"Agr\u00EDcola dedicada a la obtenci\u00F3n de remolacha azucarera y ganadera de explotaci\u00F3n de ganado porcino de carne, de ganado bovino de carne, de ganado ovino de carne, de ganado caprino de carne, avicultura y cunicultura.")
 		,A02 (0.13,0.23,"Forestal con un \"per\u00EDodo medio de corta\" superior a 30 a\u00F1os.")
-		,A03 (0.12,0.33,"Ganadera de explotación de ganado bovino de leche.")
+		,A03 (0.12,0.33,"Ganadera de explotaci\u00F3n de ganado bovino de leche.")
 		,A04 (0.26,0.36,"Agr\u00EDcola dedicada a la obtenci\u00F3n de cereales, c\u00EDtricos, frutos secos, hort\u00EDcultura, leguminosas, uva para vino de mesa sin denominaci\u00F3n de origen, productos del olivo y hongos para el consumo humano y ganadera de explotaci\u00F3n de ganado porcino de cr\u00EDa, de ganado bovino de cr\u00EDa, de ganado ovino de leche, de ganado caprino de leche y apicultura.")
 		,A05 (0.26,0.36,"Forestal con un \"per\u00EDodo medio de corta\" igual o inferior a 30 a\u00F1os.")
 		,A06 (0.32,0.42,"Agr\u00EDcola dedicada a la obtenci\u00F3n de arroz, uva para vino de mesa con denominaci\u00F3n de origen, y oleaginosas, ganadera de explotaci\u00F3n de ganado bovino de leche y otras actividades ganaderas no comprendidas expresamente en otros apartados y forestal dedicada a la extracci\u00F3n de resina.")
@@ -382,7 +375,7 @@ public class Modules2018 {
 				,new Module[]{
 						new Module(1,ModuleInfo.M58,"Euro",0.21)}
 				)
-		,E_647_2 ("647.2","Comercio al por menor de cualquier clase de productos alimenticios y bebidas en régimen de autoservicio o mixto en establecimientos cuya sala de ventas tenga una superficie inferior a 400 metros cuadrados."
+		,E_647_2 ("647.2","Comercio al por menor de cualquier clase de productos alimenticios y bebidas en r\u00E9gimen de autoservicio o mixto en establecimientos cuya sala de ventas tenga una superficie inferior a 400 metros cuadrados."
 				,0.0
 				,75
 				,4
@@ -395,7 +388,7 @@ public class Modules2018 {
 				,new Module[]{
 					new Module(1,ModuleInfo.M58,"Euro",0.21)}
 				)
-		,E_647_3 ("647.3","Comercio al por menor de cualquier clase de productos alimenticios y bebidas en régimen de autoservicio o mixto en establecimientos cuya sala de ventas tenga una superficie inferior a 400 metros cuadrados."
+		,E_647_3 ("647.3","Comercio al por menor de cualquier clase de productos alimenticios y bebidas en r\u00E9gimen de autoservicio o mixto en establecimientos cuya sala de ventas tenga una superficie inferior a 400 metros cuadrados."
 				,0.0
 				,75
 				,4
@@ -481,7 +474,7 @@ public class Modules2018 {
 					,new Module(4,ModuleInfo.M03,"100 Kwh",52.27)}
 				,null
 				)
-		,E_652_2 ("652.2","Comercio al por menor de productos de droguería, perfumería y cosmética, limpieza, pinturas, barnices, disolventes, papeles y otros productos para la decoración y de productos químicos, y de artículos para la higiene y el aseo personal."
+		,E_652_2 ("652.2","Comercio al por menor de productos de droguer\u00EDa, perfumer\u00EDa y cosm\u00E9tica, limpieza, pinturas, barnices, disolventes, papeles y otros productos para la decoraci\u00F3n y de productos qu\u00EDmicos, y de art\u00EDculos para la higiene y el aseo personal."
 				,0.0
 				,75
 				,4
@@ -495,7 +488,7 @@ public class Modules2018 {
 				,new Module[]{
 					new Module(1,ModuleInfo.M58,"Euro",0.21)}
 				)
-		,E_652_3 ("652.3","Comercio al por menor de productos de droguería, perfumería y cosmética, limpieza, pinturas, barnices, disolventes, papeles y otros productos para la decoración y de productos químicos, y de artículos para la higiene y el aseo personal."
+		,E_652_3 ("652.3","Comercio al por menor de productos de droguer\u00EDa, perfumer\u00EDa y cosm\u00E9tica, limpieza, pinturas, barnices, disolventes, papeles y otros productos para la decoraci\u00F3n y de productos qu\u00EDmicos, y de art\u00EDculos para la higiene y el aseo personal."
 				,0.0
 				,75
 				,4
@@ -648,7 +641,7 @@ public class Modules2018 {
 				,null
 				)
 
-		,E_659_3 ("659.3","Comercio al por menor de aparatos e instrumentos médicos, ortopédicos, ópticos y fotográficos."
+		,E_659_3 ("659.3","Comercio al por menor de aparatos e instrumentos m\u00E9dicos, ortop\u00E9dicos, \u00F3pticos y fotogr\u00E1ficos."
 				,4.0
 				,13
 				,3
@@ -712,7 +705,7 @@ public class Modules2018 {
 					,new Module(3,ModuleInfo.M24,"CVF",258.24)}
 				,null
 				)
-		,E_662_2 ("662.2","Comercio al por menor de toda clase de artículos, incluyendo alimentación y bebidas, en establecimientos distintos de los especificados en el grupo 661 y en el epígrafe 662.1."
+		,E_662_2 ("662.2","Comercio al por menor de toda clase de art\u00EDculos, incluyendo alimentaci\u00F3n y bebidas, en establecimientos distintos de los especificados en el grupo 661 y en el ep\u00EDgrafe 662.1."
 				,0.0
 				,75
 				,3

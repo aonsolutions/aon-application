@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity.IMod303ActivityCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2018.IMod303ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
 import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEAT390nfoScript;
 import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATAdditionalDataScript;
@@ -655,7 +655,7 @@ public class Model3032018AEAT extends Model303Base {
 						return event.getSelectedItem();
 					}
 				};
-				Model303AEATActivity actPanel = new Model303AEATActivity(activityCallback, getCallback().getMod303().isLastPeriod());
+				Model303AEATActivity2018 actPanel = new Model303AEATActivity2018(activityCallback, getCallback().getMod303().isLastPeriod());
 				actPanel.addValueChangeHandler(new ValueChangeHandler<Mod303Activity>() {
 					
 					@Override

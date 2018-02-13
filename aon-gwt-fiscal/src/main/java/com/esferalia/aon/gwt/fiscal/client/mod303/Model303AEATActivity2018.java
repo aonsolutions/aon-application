@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model303AEATActivity extends DockLayoutPanel implements HasValueChangeHandlers<Mod303Activity> {
+public class Model303AEATActivity2018 extends DockLayoutPanel implements HasValueChangeHandlers<Mod303Activity> {
 
 	private boolean lastPeriod;
 	
@@ -113,7 +113,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 		void onRemove();
 	}
 	
-	public Model303AEATActivity(final IMod303ActivityCallback callback, boolean lastPeriod) {
+	public Model303AEATActivity2018(final IMod303ActivityCallback callback, boolean lastPeriod) {
 		super(Unit.PX);
 		this.lastPeriod = lastPeriod;
 		setStyleName(AON.AON_CSS.aonSelector());
@@ -247,7 +247,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonWidthAuto());
 		tab.setWidget(0, 2, epigraphLabel);
 		
-		final Model303AEATActivity2016Panel epigraphPanel = new Model303AEATActivity2016Panel(new Model303AEATActivity2016Panel.SelectionCallBack() {
+		final Model303AEATActivity2018Panel epigraphPanel = new Model303AEATActivity2018Panel(new Model303AEATActivity2018Panel.SelectionCallBack() {
 			
 			@Override
 			public void onSelect(Epigraph selected) {
@@ -288,7 +288,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 						.setSalariedStaff(mod.isSalariedStaff())
 						.setNoSalariedStaff(mod.isNoSalariedStaff()));
 				}
-				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, callback.getActivity());
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, callback.getActivity());
 			}
 		});
 		
@@ -389,7 +389,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				if (tem.getValue() == null) tem.setValue(0,false);
 				act.setTem(tem.getValue());
-				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, act);
 			}
 		});
 		table.setWidget(row, 0, new Label(AON.MSG.irpfActivityTem()));
@@ -404,7 +404,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				if (emp.getValue() == null) emp.setValue(0,false);
 				act.setEmp(emp.getValue());
-				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, act);
 			}
 		});
 		table.setWidget(row, 0, new Label(AON.MSG.irpfActivityEmp()));
@@ -422,7 +422,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 				if (lor.getSelectedIndex() != 1) {
 					red.setValue(0.0, true);	
 				}
-				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, act);
 			}
 		});
 		table.setWidget(row, 0, new Label(AON.MSG.irpfActivityLor()));
@@ -437,7 +437,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				if (dia.getValue() == null) dia.setValue(0,false);
 				act.setDia(dia.getValue());
-				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, act);
 			}
 		});
 		table.setWidget(row, 0, new Label(AON.MSG.irpfActivityDiaTrim()));
@@ -503,7 +503,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				if (value.getValue() == null) value.setValue(0.0,false);
 				act.getModules().get(index).setValue(value.getValue());
-				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, act);
 			}
 		});
 		table.setWidget(row, 1, value);
@@ -542,7 +542,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				if (red.getValue() == null) red.setValue(0.0,false);
 				act.setRed(red.getValue());
-				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, act);
 			}
 		});
 		table.setWidget(row, 0, new Label(AON.MSG.reductions()));
@@ -593,7 +593,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					if (sopy.getValue() == null) sopy.setValue(0.0,false);
 					act.setSopy(sopy.getValue());
-					ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+					ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, act);
 				}
 			});
 			table.setWidget(row, 0, new Label(AON.MSG.sopQuotaRest()));
@@ -640,7 +640,7 @@ public class Model303AEATActivity extends DockLayoutPanel implements HasValueCha
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					if (dvc.getValue() == null) dvc.setValue(0.0,false);
 					act.setDvc(dvc.getValue());
-					ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity.this, act);
+					ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, act);
 				}
 			});
 			table.setWidget(row, 0, new Label(AON.MSG.page6H()));
