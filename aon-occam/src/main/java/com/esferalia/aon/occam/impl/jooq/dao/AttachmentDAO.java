@@ -698,7 +698,7 @@ public class AttachmentDAO {
 							.setDparentId(r.getDparentId())
 							.setDriveId(r.getDriveId())
 							.setId(r.getId())
-							.setMimeType(r.getMimetype()!= null ? MimeType.values()[r.getMimetype()] : null)
+							.setMimeType(r.getMimetype()!= null ? MimeType.values()[r.getMimetype()] : MimeType.OCTECT_STREAM)
 							.setModificationDate(r.getModificationDate())
 							.setModificationUser(r.getModificationUser())
 							.setScope(r.getScope())
@@ -723,7 +723,7 @@ public class AttachmentDAO {
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setMimeType(r.getMimetype() != null ? MimeType.values()[r.getMimetype()] :  MimeType.OCTECT_STREAM)
 							.setScope(r.getScope())
 							.setType(r.getType());
 		}
@@ -745,7 +745,7 @@ public class AttachmentDAO {
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setMimeType(r.getMimetype() != null ? MimeType.values()[r.getMimetype()] :  MimeType.OCTECT_STREAM)
 							.setType(r.getType());		
 		}
 	}
@@ -765,7 +765,7 @@ public class AttachmentDAO {
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setMimeType(r.getMimetype() != null ? MimeType.values()[r.getMimetype()] :  MimeType.OCTECT_STREAM)
 							.setType(r.getType());		
 		}
 	}
@@ -785,7 +785,7 @@ public class AttachmentDAO {
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()]);		
+							.setMimeType(r.getMimetype() != null ? MimeType.values()[r.getMimetype()] :  MimeType.OCTECT_STREAM);		
 		}
 	}
 	
@@ -804,7 +804,7 @@ public class AttachmentDAO {
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setMimeType(r.getMimetype() != null ? MimeType.values()[r.getMimetype()] :  MimeType.OCTECT_STREAM)
 							.setScope(r.getScope())
 							.setSourceBatch(r.getSourceBatch())
 							.setSourceType(r.getSourceType())
@@ -828,7 +828,7 @@ public class AttachmentDAO {
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setMimeType(r.getMimetype() != null ? MimeType.values()[r.getMimetype()] :  MimeType.OCTECT_STREAM)
 							.setType(r.getAttachType())
 							.setCreationDate(r.getCreationDate())
 							.setCreationUser(r.getCreationUser())
@@ -853,7 +853,7 @@ public class AttachmentDAO {
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
-							.setMimeType(MimeType.values()[r.getMimetype()])
+							.setMimeType(r.getMimetype() != null ? MimeType.values()[r.getMimetype()] :  MimeType.OCTECT_STREAM)
 							.setScope(r.getScope())
 							.setSourceBatch(r.getSourceBatch())
 							.setSourceType(r.getSourceType());		
@@ -869,7 +869,7 @@ public class AttachmentDAO {
 							.setDomain(new Domain().setId(r.getValue(DATA_ATTACH.DOMAIN)))
 							.setDriveId(r.getValue(DATA_ATTACH.DRIVE_ID))
 							.setId(r.getValue(DATA_ATTACH.ID))
-							.setMimeType(MimeType.values()[r.getValue(DATA_ATTACH.MIMETYPE)])
+							.setMimeType(r.getValue(DATA_ATTACH.MIMETYPE) != null ? MimeType.values()[r.getValue(DATA_ATTACH.MIMETYPE)] : MimeType.OCTECT_STREAM)
 							.setSourceBatch(r.getValue(DATA_ATTACH.SOURCE_ID))
 							.setSourceType(r.getValue(DATA_ATTACH.SOURCE))
 							.setType(r.getValue(DATA_ATTACH.TYPE))
