@@ -127,9 +127,10 @@ public class DailyTrackingController extends BasicController {
 	}
 	
 	public List<SelectItem> getProjects() throws ManagerBeanException {
-		if (projects == null) {
-			projects = new LinkedList<SelectItem>();
-		}
+		DailyTracking dt = (DailyTracking) this.getTo();
+		if(dt.getRegistry() != null) {
+			loadProjects(dt.getRegistry().getId());
+		} else loadProjects(null);
 		return projects;
 	}
 
@@ -140,6 +141,10 @@ public class DailyTrackingController extends BasicController {
 	}
 	
 	public List<SelectItem> getActivityTypes() throws ManagerBeanException {
+		DailyTracking dt = (DailyTracking) this.getTo();
+		if(dt.getProject().getProjectType() != null) {
+			loadActivityTypes(dt.getProject().getProjectType().getId());
+		} else loadActivityTypes(null);
 		return activityTypes;
 	}
 	public void loadActivityTypes(Integer projectTypeId) throws ManagerBeanException {

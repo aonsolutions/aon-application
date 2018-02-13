@@ -17,6 +17,14 @@
 				<ui:param name="controller" value="#{dailyTracking}" />
 
 				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="#{dailyTracking.beanName}Toolbar-search" 
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}" reRender="#{searchButtonReRender}"
+						rendered="#{dailyTracking.nevv}" immediate="true"
+						action="#{searchAction}" actionListener="#{dailyTracking.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}" />
+					
 					<aon:selectBooleanCheckbox id="monitor" value="#{dailyTracking.monitor}"
 						rendered="#{aonRole.taskMonitor}">
 						<a4j:support event="onclick" ajaxSingle="true" reRender="dailyTrackingForm" />
