@@ -23,11 +23,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.ValueBox;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -99,7 +101,7 @@ public class FilterPanel extends Composite {
 		customerButton = filterButton(AON.MSG.customer());
 		
 		// ------------------ DISABLED FIELDS
-		categoryButton.setDisabled(true);
+//		categoryButton.setDisabled(true);
 		productButton.setDisabled(true);
 		customerButton.setDisabled(true);
 		
@@ -109,18 +111,17 @@ public class FilterPanel extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO categoryButton.ClickHandler:onClick
-//				parent.getAPI().getWarehouse().getElaborationStatuses(new AsyncCallback<JSON<JsObject>>() {
-//
-//					@Override
-//					public void onSuccess(JSON<JsObject> result) {
-//						ButtonClick(statusButton, result, AON.MSG.status());
-//					}
-//
-//					@Override
-//					public void onFailure(Throwable caught) {
-//					}
-//				});
+				parent.getAPI().getProduct().getProductCategories(new AsyncCallback<JSON<JsObject>>() {
+
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						ButtonClick(categoryButton, result, AON.MSG.category());
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
 			}
 		});
 		
@@ -215,13 +216,10 @@ public class FilterPanel extends Composite {
 
 	@UiHandler("cleanButton")
 	void cleanButton(ClickEvent event) {
-//		HashMap<String, LinkedList<String>> map = new HashMap<>();
-		LinkedList<String> to = new LinkedList<>();
-		to.add(Long.toString(new Date().getTime()));
-//		map.put("to", to);
-//		parent.setFilterMap(map);
 		parent.getFilterMap().clear();
-		parent.getFilterMap().put("to", to);
+		fromDate.setValue(null);
+		toDate.setValue(null);
+		((ValueBox<Integer>)accumulationDaysInput).setValue(null);
 		reloadContent();
 	}
 	
@@ -236,14 +234,12 @@ public class FilterPanel extends Composite {
 	private String key;
 
 	private void ButtonClick(PaperButton pb, JSON<JsObject> result, String label) {
-		if (AON.MSG.series().equals(label)) {
-			key = "series";
-		} else if (AON.MSG.carrier().equals(label)) {
-			key = "carrier";
-		} else if (AON.MSG.type().equals(label)) {
-			key = "type";
-		} else if (AON.MSG.status().equals(label)) {
-			key = "status";
+		if (AON.MSG.category().equals(label)) {
+			key = "category";
+		} else if (AON.MSG.product().equals(label)) {
+			key = "product";
+		} else if (AON.MSG.customer().equals(label)) {
+			key = "customer";
 		}
 		LinkedList<String> filterList = parent.getFilterMap().containsKey(key)
 				? parent.getFilterMap().get(key) : new LinkedList<>();
@@ -265,7 +261,7 @@ public class FilterPanel extends Composite {
 						parent.getFilterMap().get(key).remove(js.getId() + "");
 					}
 				}
-				reloadContent();
+//				reloadContent();
 			}
 		};
 		sw.show();

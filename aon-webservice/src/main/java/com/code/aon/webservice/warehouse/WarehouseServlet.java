@@ -2,6 +2,7 @@ package com.code.aon.webservice.warehouse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -851,11 +852,13 @@ public class WarehouseServlet extends HttpServlet{
 	private Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter.page(1).perPage(1000);
-		if(filterMap.containsKey("category")){
-			filter = filter.and(f.getCategoryProperty().eq(Integer.parseInt(filterMap.get("category")[0])));
+		if(filterMap.containsKey(MSG.CATEGORY)){
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.CATEGORY)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);			
+			filter = filter.and(f.getCategoryProperty().in(ids));
 		}
-		if(filterMap.containsKey("product")){
-			filter = filter.and(f.getIdProperty().eq(Integer.parseInt(filterMap.get("product")[0])));
+		if(filterMap.containsKey(MSG.PRODUCT)){
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.PRODUCT)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(ids));
 		}
 		
 		return filter;
@@ -870,7 +873,8 @@ public class WarehouseServlet extends HttpServlet{
 			filter = filter.and(f.getEndIssueDateProperty().le(new java.sql.Date(Long.parseLong(filterMap.get(MSG.TO)[0]))));
 		}
 		if(filterMap.containsKey(MSG.CUSTOMER)){
-			filter = filter.and(f.getRegistryProperty().eq(Integer.parseInt(filterMap.get(MSG.CUSTOMER)[0])));
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.CUSTOMER)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getRegistryProperty().in(ids));
 		}
 		return filter;
 	}

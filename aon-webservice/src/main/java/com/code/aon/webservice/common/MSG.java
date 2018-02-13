@@ -19,6 +19,7 @@ public class MSG {
 	public static final String CARRIER = "carrier";
 	public static final String CARRIER_PACKING = "carrier_packing";
 	public static final String CARRIER_REFERENCE = "carrier_reference";
+	public static final String CATEGORY = "category";
 	public static final String COMMENT = "comment";
 	public static final String COMMENTS = "comments";
 	public static final String CONFIDENTIAL = "confidential";
@@ -88,7 +89,8 @@ public class MSG {
 	public static final String PRICE = "price";
 	public static final String PRIORITY = "priority"; 
 	public static final String PRIORITIES = "priorities"; 
-	public static final String PROJECT = "project"; 
+	public static final String PRODUCT = "product";
+	public static final String PROJECT = "project";
 	public static final String PURCHASE = "purchase";
 	public static final String PURCHASE_DETAIL = "purchase_detail";
 	public static final String PYMNT_DAYS = "pymnt_days";
