@@ -7,6 +7,25 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<aon:outputLabel for="Project_projectType" value="#{bundle.project_project_type}"/>
+	<aon:div>
+		<aon:selectOneMenu id="Project_projectType"
+			value="#{controller.to.projectType}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{projectCollections.projectTypes}" />
+			<a4j:support event="onchange" reRender="Project_last_alias" ajaxSingle="true" />
+		</aon:selectOneMenu>
+
+		<aon:if test="#{controller.to.extended}">
+			<aon:outputLabel value="#{bundle.aon_source}:" styleClass="aon-margin-left aon-margin-right aon-italic" />
+			<aon:outputText value="#{bundle.tas_project_tas}" styleClass="aon-bold"
+				rendered="#{controller.to.tas}" />
+			<aon:outputText value="#{bundle.commercial_operation_module}" styleClass="aon-bold"
+				rendered="#{controller.to.commercial}" />
+			<aon:outputText value="#{bundle.aon_reservation} - #{bundle.aon_module_hotel}" styleClass="aon-bold"
+				rendered="#{controller.to.reservation}" />
+		</aon:if>
+	</aon:div>
 
 	<aon:if test="#{!controller.nevv}">  
 		<aon:outputLabel value="#{bundle.aon_id}" />
@@ -25,7 +44,7 @@
 		<aon:inputText id="Project_alias" 
 			value="#{controller.to.alias}"
 			size="32" maxlength="32" />
-		<aon:outputLabel styleClass="aon-margin-left aon-italic"
+		<aon:outputLabel id="Project_last_alias" styleClass="aon-margin-left aon-italic"
 							value="#{project.lastAlias}" />
 	</aon:div>
 	<aon:if test="#{!skipRegistryLookup}">  
@@ -43,25 +62,6 @@
 		timeZone="#{timeZoneController.timeZone}"
 		popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
-	
-	<aon:outputLabel for="Project_projectType" value="#{bundle.project_project_type}"/>
-	<aon:div>
-		<aon:selectOneMenu id="Project_projectType"
-			value="#{controller.to.projectType}">
-			<f:selectItem itemLabel="-" value="#{null}"/>
-			<f:selectItems value="#{projectCollections.projectTypes}" />
-		</aon:selectOneMenu>
-
-		<aon:if test="#{controller.to.extended}">
-			<aon:outputLabel value="#{bundle.aon_source}:" styleClass="aon-margin-left aon-margin-right aon-italic" />
-			<aon:outputText value="#{bundle.tas_project_tas}" styleClass="aon-bold"
-				rendered="#{controller.to.tas}" />
-			<aon:outputText value="#{bundle.commercial_operation_module}" styleClass="aon-bold"
-				rendered="#{controller.to.commercial}" />
-			<aon:outputText value="#{bundle.aon_reservation} - #{bundle.aon_module_hotel}" styleClass="aon-bold"
-				rendered="#{controller.to.reservation}" />
-		</aon:if>
-	</aon:div>
 
 	<aon:if test="#{!controller.nevv}">  
 		<aon:outputLabel for="Project_status" value="#{bundle.aon_status}" />

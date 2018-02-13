@@ -61,7 +61,9 @@ public class ProjectController extends BasicController {
 		try {
 			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			ProjectStatEngine engine = new ProjectStatEngine();
-			alias = engine.getLastProjectAlias(c);
+			Project p = (Project) getTo();
+			Integer pt = p.getProjectType() != null ? p.getProjectType().getId() : null;
+			alias = engine.getLastProjectAlias(c, pt);
 		}catch (Exception e) {
 			e.printStackTrace();
 		} 

@@ -482,7 +482,7 @@ public class ProjectStatEngine implements Serializable {
 		}
 	}
 	
-	public String getLastProjectAlias(Connection c) throws ManagerBeanException {
+	public String getLastProjectAlias(Connection c, Integer projectType) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -490,13 +490,14 @@ public class ProjectStatEngine implements Serializable {
 					  "SELECT p.alias"
 					+ " FROM project p "
 					+" WHERE " + DomainManager.getSQLWhereClause("p.domain")
+					+ (projectType != null ?  ("AND project_type = " + projectType) : "AND project_type is null")
 					+" ORDER BY p.id DESC LIMIT 1";
 			ps =  c.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);		
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				return rs.getString(1);
-			}
-			return "-";
+			} 
+			return null;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(),e);
 		} finally {
