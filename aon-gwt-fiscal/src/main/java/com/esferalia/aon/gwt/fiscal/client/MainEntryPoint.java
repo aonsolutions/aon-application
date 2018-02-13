@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
-import com.esferalia.aon.gwt.fiscal.client.accounting.SalaryEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.invoice.IRPFReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
@@ -66,7 +65,6 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== ACCOUNTING
 	//
 	private static final String ACC_ACCOUNT_ENTRY_ENTRY_POINT = "AccountEntryModule";
-	private static final String ACC_SALARY_ENTRY_ENTRY_POINT = "SalaryEntryModule";
 	
 	@Override
 	public void onModuleLoad() {
@@ -398,21 +396,6 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					AccountEntryModule accountEntryModule = new AccountEntryModule();
 					accountEntryModule.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(ACC_SALARY_ENTRY_ENTRY_POINT)) {
-			GWT.runAsync(SalaryEntryModule.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					SalaryEntryModule salaryEntryModule = new SalaryEntryModule();
-					salaryEntryModule.onModuleLoad();
 				}
 				
 			});

@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
@@ -34,7 +33,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
@@ -165,16 +163,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), ae);
 	}
 	@Override
-	public LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,
-			int domain, Date from, Date to ) {
-		return ACCOUNTING.getAccountEntries(domainName, domain, this.getUserLogin(), 
-				p -> p.getDomainProperty().eq(domain)
-					.and(p.getEntryDateProperty().between(from, to))
-					.and(p.getEntryTypeProperty().eq((byte) AccountEntryType.SALARY.ordinal()))
-				, 0, 1000);
-	}
-
-	@Override
 	public LinkedList<SalaryEntry> getSalaryEntries(String domainName,
 			int domain, Date from, Date to ) {
 		return ACCOUNTING.getSalaryEntries(domainName, domain, this.getUserLogin(),from,to);
@@ -228,26 +216,25 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), invoice);
 	}
 
-	@Override
-	public LinkedList<AccountEntry> insertSalaryAccountEntries(
-			String domainName, int domain, Date from, Date to, String concept,
-			Integer registryBank) {
-		List<Integer> ids = ACCOUNTING.insertSalaryEntries(domainName, domain,
-				this.getUserLogin() , from, to, concept, registryBank);
-		final Integer[] arr = ids.toArray(new Integer[ids.size()]);  
-		return ACCOUNTING.getAccountEntries(domainName, domain, this.getUserLogin()
-				, p -> p.getIdProperty().in(arr)
-						.and(p.getDomainProperty().eq(domain) )
-				, 0, 100);
-	}
-
-	@Override
-	public LinkedList<AccountEntry> previewSalaryAccountEntries(
-			String domainName, int domain, Date from, Date to, String concept,
-			Integer registryBank) {
-		return ACCOUNTING.previewSalaryEntries(domainName, domain,
-				this.getUserLogin() , from, to, concept, registryBank);
-	}
+//	@Override
+//	public LinkedList<AccountEntry> insertSalaryAccountEntries(
+//			String domainName, int domain, Date from, Date to, String concept,
+//			Integer registryBank) {
+//		List<Integer> ids = ACCOUNTING.insertSalaryEntries(domainName, domain,
+//				this.getUserLogin() , from, to, concept, registryBank);
+//		final Integer[] arr = ids.toArray(new Integer[ids.size()]);  
+//		return ACCOUNTING.getAccountEntries(domainName, domain, this.getUserLogin()
+//				, p -> p.getIdProperty().in(arr)
+//						.and(p.getDomainProperty().eq(domain) )
+//				, 0, 100);
+//	}
+//	@Override
+//	public LinkedList<AccountEntry> previewSalaryAccountEntries(
+//			String domainName, int domain, Date from, Date to, String concept,
+//			Integer registryBank) {
+//		return ACCOUNTING.previewSalaryEntries(domainName, domain,
+//				this.getUserLogin() , from, to, concept, registryBank);
+//	}
 
 	@Override
 	public AccountStatementReport getAccountStatement(String domainName,

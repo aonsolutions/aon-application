@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -261,19 +260,18 @@ public class ACCOUNTING {
 	 * @return
 	 * @return El apunte contable grabado.
 	 */
-	public static List<Integer> insertSalaryEntries(String domainName,
-			int domain, String user, Date from, Date to, String concept,
-			Integer registryBank) {
-		return getAccounting().insertSalaryEntries(domainName, domain, user,
-				from, to, concept, registryBank);
-	}
-
-	public static LinkedList<AccountEntry> previewSalaryEntries(String domainName,
-			int domain, String user, Date from, Date to, String concept,
-			Integer registryBank) {
-		return getAccounting().previewSalaryEntries(domainName, domain, user,
-				from, to, concept, registryBank);
-	}
+//	public static List<Integer> insertSalaryEntries(String domainName,
+//			int domain, String user, Date from, Date to, String concept,
+//			Integer registryBank) {
+//		return getAccounting().insertSalaryEntries(domainName, domain, user,
+//				from, to, concept, registryBank);
+//	}
+//	public static LinkedList<AccountEntry> previewSalaryEntries(String domainName,
+//			int domain, String user, Date from, Date to, String concept,
+//			Integer registryBank) {
+//		return getAccounting().previewSalaryEntries(domainName, domain, user,
+//				from, to, concept, registryBank);
+//	}
 
 	// ------------------------------ ACCOUNT STATEMENT
 	public static AccountStatementReport getAccountStatement(String domainName,

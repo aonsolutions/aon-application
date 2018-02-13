@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Account;
@@ -17,7 +16,6 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -59,11 +57,6 @@ public interface IAccounting {
 	public boolean existsAnyEntry(AONContext ctx,Integer period, AccountEntryType accountEntryType);
 	public Integer save(AONContext ctx,AccountEntry ae);
 	public void delete(AONContext ctx,Integer id);
-	public AccountEntry getAccountEntry(AONContext ctx,SalaryAccountEntry sae) throws AonCoreException;
-	public LinkedList<AccountEntry> previewSalaryEntries(String domainName, int domain,String user,
-			Date from, Date to, String concept, Integer registryBank);
-	public List<Integer> insertSalaryEntries(String domainName, int domain,String user,
-			Date from, Date to, String concept, Integer registryBank);
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice getAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId);
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);

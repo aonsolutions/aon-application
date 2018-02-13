@@ -65,14 +65,6 @@ public interface FiscalServiceAsync {
 			AsyncCallback<AccountEntry> callback);
 	void save(String domainName, int domain, AccountEntry ae,
 			AsyncCallback<AccountEntry> callback);
-	void insertSalaryAccountEntries(String domainName, int domain, Date from,
-			Date to, String concept, Integer registryBank,
-			AsyncCallback<LinkedList<AccountEntry>> callback);
-	void previewSalaryAccountEntries(String domainName, int domain, Date from,
-			Date to, String concept, Integer registryBank,
-			AsyncCallback<LinkedList<AccountEntry>> callback);
-	void getSalaryAccountEntries(String domainName, int domain,Date from, Date to,
-			AsyncCallback<LinkedList<AccountEntry>> callback);
 	void deleteAccountEntry(String domainName, int domain, Integer id,
 			AsyncCallback<Void> callback);
 	void initializeInvoice(String domainName, int domain,AccountingRegistry registry, Integer activity, Date issueDate,

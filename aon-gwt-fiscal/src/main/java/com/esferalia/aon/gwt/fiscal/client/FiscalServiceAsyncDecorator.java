@@ -154,34 +154,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 
 	@Override
-	public void previewSalaryAccountEntries(String domainName, int domain,
-			Date from, Date to, String concept, Integer registryBank,
-			AsyncCallback<LinkedList<AccountEntry>> callback) {
-		AON.start();
-		fsa.previewSalaryAccountEntries(domainName, domain, from, to, concept,
-				registryBank,
-				new AsyncCallbackWrapper<LinkedList<AccountEntry>>(callback));
-	}
-
-	@Override
-	public void insertSalaryAccountEntries(String domainName, int domain,
-			Date from, Date to, String concept, Integer registryBank,
-			AsyncCallback<LinkedList<AccountEntry>> callback) {
-		AON.start();
-		fsa.insertSalaryAccountEntries(domainName, domain, from, to, concept,
-				registryBank,
-				new AsyncCallbackWrapper<LinkedList<AccountEntry>>(callback));
-	}
-
-	@Override
-	public void getSalaryAccountEntries(String domainName, int domain,
-			Date from, Date to, AsyncCallback<LinkedList<AccountEntry>> callback) {
-		AON.start();
-		fsa.getSalaryAccountEntries(domainName, domain, from, to,
-				new AsyncCallbackWrapper<LinkedList<AccountEntry>>(callback));
-	}
-
-	@Override
 	public void deleteAccountEntry(String domainName, int domain, Integer id,
 			AsyncCallback<Void> callback) {
 		AON.start();

@@ -4,9 +4,7 @@ import static com.esferalia.aon.jooq.Keys.FK_SALARY_BONUS_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_COST_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DATA_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DEDUCTION_SALARY;
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
@@ -14,12 +12,10 @@ import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.watson.util.AonDateUtils.compare;
 import static com.esferalia.aon.watson.util.AonDateUtils.max;
 import static com.esferalia.aon.watson.util.AonDateUtils.min;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,13 +24,10 @@ import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Cursor;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.TableField;
-import org.jooq.impl.DSL;
 import org.jooq.lambda.Seq;
 
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
@@ -43,23 +36,14 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
-import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
-import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLine;
-import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLineType;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDAO {
-
-	private static final String DEFAULT_SALARY_CONCEPT = "NÓMINAS";
 
 	// TODO ARRRGGGGGHHH!!!
 	private static final Byte DEDUCTION_ADVANCE = 7;
@@ -169,125 +153,6 @@ public class SalaryDAO {
 		return map.values().stream();
 	}
 	
-	@Deprecated
-	public static Stream<SalaryAccountEntry> getSalaryEntries(AONContext ctx,
-			Integer enterprise, Date from, Date to, String concept,
-			Integer registryBank) {
-		ctx.checkRead();
-		if (enterprise == null)
-			throw new AonCoreException(AonError.EMPTY_ENTERPRISE.getMessage());
-		if (from == null)
-			throw new AonCoreException(AonError.EMPTY_DATE_FROM.getMessage());
-		if (to == null)
-			throw new AonCoreException(AonError.EMPTY_DATE_TO.getMessage());
-		Field<BigDecimal> sueldosYSalarios = DSL.sum(SALARY.IRPF_BASE);
-		Field<BigDecimal> totalIRPF = DSL.sum(SALARY.TOTAL_IRPF);
-		Field<BigDecimal> segSocEmployee = DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
-		Field<BigDecimal> segSocCompany = DSL.sum(SALARY.TOTAL_ENTERPRISE);
-		Field<BigDecimal> totalLiquid = DSL.sum(SALARY.TOTAL_LIQUID);
-
-		AggregateFunction<BigDecimal> salaryPaymentAmountSum = DSL
-				.sum(SALARY_PAYMENT.AMOUNT);
-		// DIETAS
-		Field<BigDecimal> dietas = 
-				DSL.sum(DSL.select(salaryPaymentAmountSum).from(SALARY_PAYMENT)
-						.where(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
-						.and(SALARY_PAYMENT.TYPE.between((byte) 42, (byte) 50))
-						.asField());
-
-		// INDEMNIZACIONES
-		Field<BigDecimal> indemnizaciones = 
-				DSL.sum(DSL.select(salaryPaymentAmountSum).from(SALARY_PAYMENT)
-						.where(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
-						.and(SALARY_PAYMENT.TYPE.between((byte) 51, (byte) 54))
-						.asField());
-
-		AggregateFunction<BigDecimal> salaryDeductionAmountSum = DSL.sum(DSL
-				.round(SALARY_DEDUCTION.AMOUNT, 2));
-		// OTRAS DEDUCCIONES
-		Field<BigDecimal> otherDeductions = 
-				DSL.sum(DSL.select(salaryDeductionAmountSum)
-						.from(SALARY_DEDUCTION)
-						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
-						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_TYPE_OTHER))
-						.asField());
-		// DEDUCCIONES EN ESPECIE
-		Field<BigDecimal> inKindDeductions = 
-				DSL.sum(DSL.select(salaryPaymentAmountSum)
-						.from(SALARY_PAYMENT)
-						.where(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
-						.and(SALARY_PAYMENT.TYPE.between((byte) 13, (byte) 26))
-						.asField());
-//				DSL.sum(DSL.select(salaryDeductionAmountSum)
-//						.from(SALARY_DEDUCTION)
-//						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
-//						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_IN_KIND))
-//						.asField());
-		// DEDUCCIONES de ANTICIPOS
-		Field<BigDecimal> advanceDeductions = 
-				DSL.sum(DSL.select(salaryDeductionAmountSum)
-						.from(SALARY_DEDUCTION)
-						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
-						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_ADVANCE))
-						.asField());
-
-		AggregateFunction<BigDecimal> salaryEmbargoAmountSum = DSL
-				.sum(SALARY_EMBARGO.AMOUNT);
-		// DIETAS
-		Field<BigDecimal> seize = 
-				DSL.sum(DSL.select(salaryEmbargoAmountSum).from(SALARY_EMBARGO)
-						.where(SALARY_EMBARGO.SALARY.equal(SALARY.ID))
-						.asField());
-
-		// Se busca la cuenta asociada al registryBank pasado en caso de no ser nulo.
-		Integer account = null;
-		if (registryBank != null) {
-			Record record = ctx.getDslContext()
-				.select(RBANK.ACCOUNT)
-				.from(RBANK)
-				.where(RBANK.ID.eq(registryBank))
-				.fetchOne();
-			account = record.getValue(RBANK.ACCOUNT);
-		}
-		final Integer accountId = (registryBank == null)?null:account;
-		
-		return ctx.getDslContext()
-			.select(SALARY.ISSUE_DATE,sueldosYSalarios, totalIRPF, segSocEmployee,
-				segSocCompany, totalLiquid, dietas, indemnizaciones,
-				otherDeductions, inKindDeductions, advanceDeductions,
-				seize)
-			.from(SALARY)
-			.join(CONTRACT)
-			.on(SALARY.CONTRACT.equal(CONTRACT.ID))
-			.join(WORKPLACE)
-			.on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
-			.where(WORKPLACE.ENTERPRISE.equal(enterprise))
-			.and(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)))
-			.groupBy(SALARY.ISSUE_DATE)
-			.fetch()
-			.stream()
-			.map(record -> new SalaryAccountEntry()
-				.setDate(record.getValue(SALARY.ISSUE_DATE))
-				.setSecurityLevel(SecurityLevel.OFFICIAL)
-				.setConcept((AonStringUtils.isNotEmpty(concept)) ? concept : DEFAULT_SALARY_CONCEPT)
-				.setRegistryBank(registryBank)
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.SALARY, null, record.getValue(sueldosYSalarios)))
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.RETENTION, null, record.getValue(totalIRPF)))
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.EMPLOYEE_SOC_INS, null,record.getValue(segSocEmployee)))
-				.addLine(registryBank==null?
-					 new SalaryAccountEntryLine(SalaryAccountEntryLineType.DEFAULT_PENDING_SALARY,null, record.getValue(totalLiquid))
-					:new SalaryAccountEntryLine(SalaryAccountEntryLineType.BANK_ACCOUNT,accountId, record.getValue(totalLiquid))
-				)
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.COMPANY_SOC_INS, null,record.getValue(segSocCompany)))
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.ALLOWANCE, null, record.getValue(dietas)))
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.COMPENSATION, null, record.getValue(indemnizaciones)))
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.DED_ADVANCE_PAYMENT,null, record.getValue(advanceDeductions)))
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.DED_IN_KIND, null, record.getValue(inKindDeductions)))
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.DED_OTHER, null, record.getValue(otherDeductions)))
-				.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.DED_SEIZE, null, record.getValue(seize)))
-				);
-	}
-
 	public static Stream<Salary> getSalaries(AONContext ctx,
 			SalaryFilter filter, Supplier<Salary> supplier) {
 

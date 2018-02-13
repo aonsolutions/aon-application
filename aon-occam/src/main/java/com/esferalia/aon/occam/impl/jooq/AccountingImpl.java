@@ -3,17 +3,13 @@ package com.esferalia.aon.occam.impl.jooq;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAccounting;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
-import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountFilter;
@@ -21,12 +17,9 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -36,14 +29,12 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO.AccountEntryOrder;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -51,12 +42,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryFormatter;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
-import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingImpl implements IAccounting {
 
@@ -183,101 +170,6 @@ public class AccountingImpl implements IAccounting {
 		} );		
 	}
 	
-	@Override
-	public AccountEntry getAccountEntry(AONContext ctx, SalaryAccountEntry sae) {
-		Objects.requireNonNull(sae);
-		AccountEntry ae = new AccountEntry();
-		ae.setDomain(ctx.getDomainId());
-		ae.setEntryDate(sae.getDate());
-		ae.setSecurityLevel(sae.getSecurityLevel());
-		ae.setEntryType(AccountEntryType.SALARY);
-		AccountPeriod period = AccountPeriodDAO.fetchOne(ctx, sae.getDate());
-		if (period == null)
-			throw new AonCoreException(
-					AonError.ACCOUNT_PERIOD_UNKOWN_FOR_DATE.format(sae.getDate())
-					);
-		if (period.getStatus() == AccountPeriodStatus.INACTIVE) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(period.getName()));
-		else if (period.getStatus() == AccountPeriodStatus.OPERATING) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(period.getName()));
-		else if (period.getStatus() == AccountPeriodStatus.CLOSED) 
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(period.getName()));
-		if (sae.getLines() == null || sae.getLines().size() == 0) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_LINES.getMessage());
-		}
-		ae.setPeriod(period.getId());
-		sae.getLines()
-			.stream()
-			.forEach( line -> {
-				if (AonMathUtils.isNotZero(line.getAmount())) {
-					AccountEntryDetail aed = new AccountEntryDetail();
-					if (line.getAccount() != null) {
-						aed.setAccount( line.getAccount() );
-					} else {
-						if (line.getType() != null && line.getType().getParam() != null) {
-							ApplicationParameter param = AON.fetchApplicationParameter(ctx, line.getType().getParam());
-							if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
-								Integer accountId = AonNumberUtils.toInteger(param.getValue());
-								Account account = AccountDAO.get(ctx, accountId);
-								if (account == null) {
-									throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_ACCOUNT.format(line.getType(),line.getAmount(),line.getType().getParam() )
-											+ " Id: " + accountId);		
-								}
-								aed.setAccount( account.getId() );
-								aed.setAccountCode(account.getCode());
-								aed.setAccountDescription(account.getDescription());
-							}
-						}
-						if (aed.getAccount() == null)
-							throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_ACCOUNT.format(line.getType(),line.getAmount(),line.getType().getParam() ));				
-					}
-					aed.setConcept( sae.getConcept() );
-					line.getType().visitFillAccountEntry(aed,sae,line);
-					ae.addDetail( aed );
-				}
-			});
-		return ae;
-	}
-	
-	@Override
-	public LinkedList<AccountEntry> previewSalaryEntries(String domainName, int domain, String user,
-			Date from, Date to, String concept, Integer registryBank) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			final AONContext ctxDup = ctx;	
-			Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
-			return ctx.getDslContext().transactionResult( configuration ->
-				SalaryDAO.getSalaryEntries(ctxDup, company.getId(),from, to ,concept, registryBank)
-					.map( sae -> getAccountEntry(ctxDup, sae))
-					.collect(Collectors.toCollection(LinkedList::new))
-			 );		
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	@Override
-	public List<Integer> insertSalaryEntries(String domainName, int domain, String user,
-			Date from, Date to, String concept, Integer registryBank) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			final AONContext ctxDup = ctx;	
-			Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
-			return ctx.getDslContext().transactionResult( configuration ->
-				SalaryDAO.getSalaryEntries(ctxDup, company.getId(),from, to ,concept, registryBank)
-					.map( sae -> getAccountEntry(ctxDup, sae))
-					.map( ae -> save(ctxDup, ae))
-					.collect(Collectors.toList())
-			 );		
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	@Override
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry) {
 		return AccountingInvoiceDAO.getAccountingInvoice(ctx, accountEntry);
