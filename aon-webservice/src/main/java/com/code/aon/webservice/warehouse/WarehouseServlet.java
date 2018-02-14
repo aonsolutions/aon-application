@@ -809,7 +809,7 @@ public class WarehouseServlet extends HttpServlet{
     		}
     		
     		StatData<Integer, String, Double> stat = AON.getProductStat(domain.getName(), domain.getId(), login,
-    				f -> productFilter(domain, filterMap, f),
+    				f -> productInventoriableFilter(domain, filterMap, f),
 					f -> invoiceFilter(domain, filterMap, f),
 					f -> deliveryFilter(domain, filterMap, f),
 					f -> salesFilter(domain, filterMap, f),
@@ -850,7 +850,12 @@ public class WarehouseServlet extends HttpServlet{
     	return array;
     }
     
-	private Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+    private Filter productInventoriableFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+    	Filter filter = productFilter(domain, filterMap, f);
+    	filter = filter.and(f.getInventoriableProperty().eq((byte)1));
+    	return filter;
+    }
+    private Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter.page(1).perPage(1000);
 		if(filterMap.containsKey(MSG.CATEGORY)){
@@ -861,7 +866,6 @@ public class WarehouseServlet extends HttpServlet{
 			Integer[] ids = Arrays.stream(filterMap.get(MSG.PRODUCT)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
 			filter = filter.and(f.getIdProperty().in(ids));
 		}
-		
 		return filter;
     }
 	private Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {

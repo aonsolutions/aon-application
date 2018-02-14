@@ -72,6 +72,7 @@ import com.esferalia.aon.occam.api.model.stat.task.ITaskChartTypeVisitor;
 import com.esferalia.aon.occam.api.model.stat.task.TaskChartType;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
@@ -1015,20 +1016,6 @@ public class StatDAO {
 	}
 
 	private static Map<Integer, Double> getConsumedProduct(AONContext ctx, ProductFilter productFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter) {
-		Collection<Condition> invoiceConditions = new ArrayList<Condition>();
-		invoiceConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFilter)));
-		invoiceConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
-		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> invoiceSelect = ctx.getDslContext()
-			.select(ITEM.PRODUCT, DSL.sum(INVOICE_DETAIL.QUANTITY).as(INVOICE_DETAIL.QUANTITY))
-			.from(INVOICE)
-				.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-				.join(ITEM).on(INVOICE_DETAIL.ITEM.equal(ITEM.ID))
-				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
-			.where(invoiceConditions)
-			.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
-			.groupBy(ITEM.PRODUCT)
-			.orderBy(ITEM.PRODUCT);
-		
 		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
 		deliveryConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
 		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
@@ -1042,9 +1029,24 @@ public class StatDAO {
 			.groupBy(ITEM.PRODUCT)
 			.orderBy(ITEM.PRODUCT);
 		
+		Collection<Condition> invoiceConditions = new ArrayList<Condition>();
+		invoiceConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFilter)));
+		invoiceConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> invoiceSelect = ctx.getDslContext()
+				.select(ITEM.PRODUCT, DSL.sum(INVOICE_DETAIL.QUANTITY).as(INVOICE_DETAIL.QUANTITY))
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.join(ITEM).on(INVOICE_DETAIL.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+				.where(invoiceConditions)
+				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
+				.and(INVOICE_DETAIL.SOURCE.ne(InvoiceSource.DELIVERY.value()))
+				.groupBy(ITEM.PRODUCT)
+				.orderBy(ITEM.PRODUCT);
+		
 		Map<Integer, Double> map = new HashMap<>();
-		invoiceSelect
-			.union(deliverySelect)
+		deliverySelect
+			.union(invoiceSelect)
 			.forEach(record -> {
 				Integer key = record.get(ITEM.PRODUCT);
 				Double value = record.value2().doubleValue();
