@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Base.Model347BaseCallb
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Declared2014.IModel347DeclaredCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -21,6 +22,8 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -367,21 +370,22 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		
 		panel.add(tab4);
 		
-		// Importe de las operaciones (1T, 2T, 3T, 4T, Total Anual)
+		// Importe de las operaciones (1T, 2T, 3T, 4T, Total Anual, Botón info)
 		
 		FlexTable tab5 = new FlexTable();
 		tab5.getColumnFormatter().setWidth(0, "120px");
 		tab5.getColumnFormatter().setWidth(1, "120px");
 		tab5.getColumnFormatter().setWidth(2, "120px");
 		tab5.getColumnFormatter().setWidth(3, "120px");		
-		tab5.getColumnFormatter().setWidth(4, "auto");
+		tab5.getColumnFormatter().setWidth(4, "120px");
+		tab5.getColumnFormatter().setWidth(5, "auto");
 		
 		tab5.setStyleName(AON.AON_CSS.aonWidthAll());
 		tab5.addStyleName(AON.AON_CSS.aonNowrap());
 		
 		tab5.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
 		tab5.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
-		tab5.getFlexCellFormatter().setColSpan(0, 0, 5);
+		tab5.getFlexCellFormatter().setColSpan(0, 0, 6);
 		tab5.setWidget(0, 0, new InlineLabel("Importe de las operaciones"));
 		
 		tab5.setWidget(1, 0, new MediumLabel("Trimestre 1"));
@@ -469,7 +473,40 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		});
 		tab5.setWidget(2, 4, amount);
 		
+		Button button = new Button("");
+		button.setTitle(FiscalModelKeyInfo.INVOICE.getLabel());
+		button.setStyleName(AON.AON_CSS.aonIconCommandButton());
+		button.addStyleName(AON.AON_CSS.aonIconInvoice());
+		button.setTabIndex(-2); // NO FOCUS
+		button.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				Model347.SERVICE.getInfo(Model347.getCurrentDomainName(),Model347.getCurrentDomain(),
+						   cbk.getMod347(), declared, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								cbk.showError(AON.MSG.errorMessage());
+							}
+
+							@Override
+							public void onSuccess(String result) {
+								cbk.showBreakdownPanel(result);
+							}
+					
+						}
+					);	
+			}
+		});
+		
+		tab5.setWidget(2, 5, button);
+		
 		panel.add(tab5);
+		
+		// Vaciar y cerrar el panel de informacion de desglose 
+		cbk.cleanBreakdownPanel();
 		
 		// Importe percibido por transmisiones de inmuebles sujetas a IVA (1T, 2T, 3T, 4T, Total Anual)
 		

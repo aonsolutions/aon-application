@@ -2541,7 +2541,18 @@ public class FISCAL {
 					ctx.close();
 			}
 		}
-
+		
+		public static Mod347 duplicateNextYearMod347(String domainName, Integer domain, String userLogin, Integer id) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domain,userLogin);
+				return getFiscal().duplicateNextYearMod347(ctx, id);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+		
 		public static Stream<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain,IRPFParams params) {
 			AONContext ctx = null;
 			try {

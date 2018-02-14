@@ -43,11 +43,6 @@ public class Mod347ServiceImpl extends AonRemoteServiceServlet implements Model3
 		return FISCAL.getMod347(domainName, domain, this.getUserLogin(), id);
 	}
 
-//	@Override
-//	public Mod347Detail getMod347Detail(String domainName, int domain, Integer id) {
-//		return FISCAL.getMod347Detail(domainName, domain, this.getUserLogin(), id);
-//	}
-
 	@Override
 	public Mod347 saveCommentsMod347(String domainName, Mod347 mod347) {
 		return FISCAL.saveComments(domainName, this.getUserLogin(), mod347);
@@ -63,6 +58,11 @@ public class Mod347ServiceImpl extends AonRemoteServiceServlet implements Model3
 			throws AonCoreException {
 		return FISCAL.getMod347Info(domainName, domain, this.getUserLogin(), mod347, declared, infoKey);
 		
+	}
+	
+	@Override
+	public Mod347 duplicateNextYear(String domainName, Integer domain, Integer id) {
+		return FISCAL.duplicateNextYearMod347(domainName, domain, this.getUserLogin(), id);
 	}
 
 }

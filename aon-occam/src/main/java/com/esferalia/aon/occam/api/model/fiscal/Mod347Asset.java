@@ -12,10 +12,10 @@ public class Mod347Asset implements Serializable {
 	
 	private String document;
 	private String representativeDocument;
-	private Integer registry;  // FALTA - La tabla ya contenía el campo registry, pero se usará ??
+	private Integer registry;  // La tabla ya contenía el campo registry, pero no se usa
 	private String name;
 	private double amount;
-	private String assetLocation;  // FALTA - Así o enumerado con situación del inmueble ??
+	private String assetLocation;  
 	private String cadasdralReference;
 	private String assetStreetType;
 	private String assetStreet;

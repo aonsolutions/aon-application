@@ -15,10 +15,10 @@ public interface Model347ServiceAsync {
 	void saveMod347(String domainName, int domain, Mod347 mod347, AsyncCallback<Mod347> callback);
 	void getMod347s(String domainName, int domain, AsyncCallback<LinkedList<Mod347>> callback);
 	void getMod347(String domainName, int domain, Integer id, AsyncCallback<Mod347> callback);
-//	void getMod347Detail(String domainName, int domain, Integer id, AsyncCallback<Mod347Detail> callback);
 	void initializeMod347(String domainName, Integer domain, AsyncCallback<Mod347> callback);
 	void saveCommentsMod347(String domainName, Mod347 mod347,AsyncCallback<Mod347> asyncCallback);
 	void changeStatusMod347(String domainName, Mod347 mod347, FiscalStatus newStatus, AsyncCallback<Mod347> callback);
 	void getInfo(String domainName, int domain, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
+	void duplicateNextYear(String domainName, Integer domain, Integer id, AsyncCallback<Mod347> callback);
 
 }

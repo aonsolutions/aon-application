@@ -59,13 +59,6 @@ public class Model347ServiceAsyncDecorator implements Model347ServiceAsync {
 				new AsyncCallbackWrapper<Mod347>(callback));
 	}
 
-//	@Override
-//	public void getMod347Detail(String domainName, int domainId, Integer id,
-//			AsyncCallback<Mod347Detail> callback) {
-//		AON.start();
-//		fsa.getMod347Detail(domainName, domainId, id,new AsyncCallbackWrapper<Mod347Detail>(callback));
-//	}
-	
 	@Override
 	public void saveCommentsMod347(String domainName, Mod347 mod347,
 			AsyncCallback<Mod347> callback) {
@@ -87,6 +80,12 @@ public class Model347ServiceAsyncDecorator implements Model347ServiceAsync {
 			AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getInfo(domainName, domain, mod347, declared, infoKey, new AsyncCallbackWrapper<String>(callback));		
+	}
+	
+	@Override
+	public void duplicateNextYear(String domainName, Integer domain, Integer id, AsyncCallback<Mod347> callback) {
+		AON.start();
+		fsa.duplicateNextYear(domainName, domain, id, new AsyncCallbackWrapper<Mod347>(callback));
 	}
 
 }

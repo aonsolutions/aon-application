@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -197,6 +199,10 @@ public class Mod347DAO {
 	}
 
 	private static Mod347 insert(AONContext ctx, Mod347 mod347) {
+		return insert(ctx,mod347,true);
+	}
+	
+	private static Mod347 insert(AONContext ctx, Mod347 mod347, boolean generateDetails) {
 		validate(ctx,mod347);
 		FsMod347Record record = ctx.getDslContext().insertInto(FS_MOD347)
 			.set(FS_MOD347.DOMAIN,mod347.getDomain())
@@ -220,7 +226,9 @@ public class Mod347DAO {
 		.returning(FS_MOD347.ID)
 		.fetchOne();
 		mod347.setId(record.getId());
-		insertDetailsFromInvoice(ctx, mod347); // Se rellena el modelo leyendo de las facturas
+		if (generateDetails) {
+			insertDetailsFromInvoice(ctx, mod347); // Se rellena el modelo leyendo de las facturas
+		}
 		return mod347;
 	}
 
@@ -953,7 +961,7 @@ public class Mod347DAO {
 			.orElse(0);
 	}
 	
-	// FALTA --------------- INVOICES INFO --------------- 
+	// --------------- INVOICES INFO --------------- 
 	
 	public static String getMod347Info(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) {
 		
@@ -970,12 +978,83 @@ public class Mod347DAO {
 	private static String getInvoicesInfo(AONContext ctx, Mod347 mod347, Mod347Declared declared) {
 
 		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod347) 
-				+ " DEL " + mod347.getPeriod().getDescription()
+				+ FiscalModelUtils.getModelName(mod347)
 				+ " DE " + mod347.getYear();
 		
-		return title;
+		String subtitle =  "Clave "+ (Mod347Key.safeValue(declared.getType()) == null ? "" : declared.getType().getValue()) +
+				" - " + (AonStringUtils.isNotBlank(declared.getOperatorNif()) ? declared.getOperatorNif() : (declared.getDocument() == null ? "" : declared.getDocument())) +
+				" - " + (declared.getName() == null ? "" : declared.getName());				
+		
+		return Mod347Formatter.formatInvoices347(title
+				,subtitle
+				,getVatBreakdown(ctx, mod347, declared).collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
 		
 	}
+	
+	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod347 mod347, final Mod347Declared declared) {
+		
+		// Tipo de Facturas según la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
+		final InvoiceType invoiceType1;
+		final InvoiceType invoiceType2;
+		
+		// Tipo de transaccion según si está marcado o no ISP (solo compras)
+		final InvoiceTransactionType invoiceTransaction1;
+		final InvoiceTransactionType invoiceTransaction2;
+		
+		if (declared.getType() == Mod347Key.A) {       // Adquisiciones de bienes y servicios superiores a 3.005,06 euros (Compras y Gastos)
+			invoiceType1 = InvoiceType.PURCHASE;
+			invoiceType2 = InvoiceType.EXPENSES;			
+			invoiceTransaction1 = declared.isIsp() ? InvoiceTransactionType.OTHER_ISP : InvoiceTransactionType.NATIONAL;
+			invoiceTransaction2 = null;
+	    }
+	    else if (declared.getType() == Mod347Key.B) {  // Entregas de bienes y prestaciones de servicios superiores a 3.005,06 euros (Ventas)
+	    	invoiceType1 = InvoiceType.SALES;
+	    	invoiceType2 = null;
+	    	invoiceTransaction1 = InvoiceTransactionType.NATIONAL;
+	    	invoiceTransaction2 = InvoiceTransactionType.OTHER_ISP;
+	    }
+	    else {
+	    	invoiceType1 = null;
+	    	invoiceType2 = null;
+	    	invoiceTransaction1 = null;
+			invoiceTransaction2 = null;
+	    }
+		
+		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
+		Date toDate = AonDateUtils.getYearLastDay(mod347.getYear());
+		
+		return VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
+		    .filter( vat -> (!vat.hasRetention()) &&                                                                         // Facturas sin retención
+		    		        (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2) &&  // Nacional o ISP 
+		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
+		                    (AonStringUtils.equals(vat.getRegistryDocument(),declared.getDocument()))  &&                    // NIF
+		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    
+		                    );  
+		
+	}
+	
+	// --------------- DUPLICAR MODELO ---------------
+	
+	public static Mod347 duplicateNextYear(AONContext ctx, int id) {
+		
+		Mod347 mod347 = getById(ctx, id);
+		mod347.setYear( mod347.getYear() + 1 );
+		mod347.setId(null);
+		mod347 = save(ctx, mod347);
+		Mod347 original = getById(ctx, id);
+		for (Mod347Declared declared : original.getDeclared()) {
+			declared.setId(null);
+			declared.setMod347(mod347.getId());
+			mod347.getDeclared().add(declared);
+		}
+		for (Mod347Asset asset : original.getAssets()) {
+			asset.setId(null);
+			asset.setMod347(mod347.getId());
+			mod347.getAssets().add(asset);
+		}
+		return save(ctx, mod347);		
+	
+	}
+	
 	
 }

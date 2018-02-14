@@ -16,7 +16,7 @@ public class Mod347Declared implements Serializable {
 	
 	private String document;
 	private String representativeDocument;
-	private Integer registry;  // FALTA - La tabla ya contenía el campo registry, pero se usará ??
+	private Integer registry;  // La tabla ya contenía el campo registry, no se usa
 	private String name;
 	private Province province;  
 	private Country country;

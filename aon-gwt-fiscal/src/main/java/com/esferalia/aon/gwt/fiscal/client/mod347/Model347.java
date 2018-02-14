@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
-import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -19,6 +19,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -62,7 +63,8 @@ public class Model347 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew();
-		
+		void showBreakdownPanel(String htmlText);
+		void cleanBreakdownPanel();		
 	}
 	protected class Model347Callback implements IModel347Callback {
 		
@@ -90,6 +92,17 @@ public class Model347 extends MainEntryPoint {
 		public void showError(String msg) {
 			Model347.this.showErrorPanel(msg);
 		}
+		
+		@Override
+		public void showBreakdownPanel(String htmlText) {
+			Model347.this.showBreakdownPanel(htmlText);
+		}
+		
+		@Override
+		public void cleanBreakdownPanel() {
+			Model347.this.cleanBreakdownPanel();
+		}
+	
 	};
 
 	@UiField
@@ -115,8 +128,8 @@ public class Model347 extends MainEntryPoint {
 	Panel formContainer;
 	SimplePanel headerPanel = new SimplePanel();
 	
-	private int domain;
-	private int enterprise;
+//	private int domain;
+//	private int enterprise;
 
 	@Override
 	public void onModuleLoad() {
@@ -239,14 +252,6 @@ public class Model347 extends MainEntryPoint {
 		splitLayoutPanel.animate(500);
 	}
 	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
-	}
-	
 	private void cleanErrorPanel() {
 		SimpleLayoutPanel panel = new SimpleLayoutPanel();
 		notificationsPanel.setWidget(panel);
@@ -293,6 +298,15 @@ public class Model347 extends MainEntryPoint {
 		if (w != null) {
 			breakdownPanel.remove( breakdownPanel.getWidget() ); 
 		}
+		closeFootPanel();
+	}
+	
+	private void showBreakdownPanel(String htmlText) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(BREAKDOWN_TAB);
+		HTMLPanel panel = new HTMLPanel(htmlText);
+		breakdownPanel.setWidget(panel);
+		breakdownPanel.scrollToTop();
 	}
 	
 	private void showNewDeclarationPopup(Mod347 model) {
