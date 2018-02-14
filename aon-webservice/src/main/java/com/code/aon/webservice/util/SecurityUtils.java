@@ -3,6 +3,7 @@ package com.code.aon.webservice.util;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 import org.json.JSONObject;
 
@@ -31,7 +32,10 @@ public class SecurityUtils {
 		String[] parameters = decode(value.getBytes()).split("&");
 		for(String parameter : parameters){
 			String[] values = parameter.split("=");
-			map.put(values[0], new String[]{values[1]});
+			if(!map.containsKey(values[0]))
+				map.put(values[0], new String[0]);
+			Stream<String> stream = Stream.of(map.get(values[0]), new String[] { values[1] }).flatMap(Stream::of);
+			map.put(values[0], stream.toArray(String[]::new));
 		}
 		return map;
 	}

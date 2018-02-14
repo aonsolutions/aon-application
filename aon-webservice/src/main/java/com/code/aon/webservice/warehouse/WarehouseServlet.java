@@ -600,7 +600,7 @@ public class WarehouseServlet extends HttpServlet{
 		return filter;
     }
     
-    private Filter deliveryFilter(Domain domain, Map<String, String[]> filterMap, DeliveryProperties f) {
+    private static Filter deliveryFilter(Domain domain, Map<String, String[]> filterMap, DeliveryProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 			
 		if(filterMap.containsKey(MSG.REGISTRY)){
@@ -808,12 +808,7 @@ public class WarehouseServlet extends HttpServlet{
     			accumulationDays = Integer.parseInt(filterMap.get("accumulation_days")[0]);	
     		}
     		
-    		StatData<Integer, String, Double> stat = AON.getProductStat(domain.getName(), domain.getId(), login,
-    				f -> productInventoriableFilter(domain, filterMap, f),
-					f -> invoiceFilter(domain, filterMap, f),
-					f -> deliveryFilter(domain, filterMap, f),
-					f -> salesFilter(domain, filterMap, f),
-					f -> purchaseFilter(domain, filterMap, f));
+    		StatData<Integer, String, Double> stat = getStockForecastStatData(domain, login, filterMap);
         	
     		Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
         	Map<Integer, Product> productMap = new HashMap<>();
@@ -850,12 +845,22 @@ public class WarehouseServlet extends HttpServlet{
     	return array;
     }
     
-    private Filter productInventoriableFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+    protected static StatData<Integer, String, Double> getStockForecastStatData(Domain domain,String login, Map<String, String[]> filterMap){
+    	StatData<Integer, String, Double> stat = AON.getProductStat(domain.getName(), domain.getId(), login,
+				f -> productInventoriableFilter(domain, filterMap, f),
+				f -> invoiceFilter(domain, filterMap, f),
+				f -> deliveryFilter(domain, filterMap, f),
+				f -> salesFilter(domain, filterMap, f),
+				f -> purchaseFilter(domain, filterMap, f));
+    	return stat;
+    }
+    
+    private static Filter productInventoriableFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
     	Filter filter = productFilter(domain, filterMap, f);
     	filter = filter.and(f.getInventoriableProperty().eq((byte)1));
     	return filter;
     }
-    private Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+    private static Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter.page(1).perPage(1000);
 		if(filterMap.containsKey(MSG.CATEGORY)){
@@ -868,7 +873,7 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		return filter;
     }
-	private Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
+	private static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter.page(1).perPage(1000);
 		if(filterMap.containsKey(MSG.FROM)){
@@ -883,7 +888,7 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		return filter;
 	}
-	private Filter salesFilter(Domain domain, Map<String, String[]> filterMap, SalesProperties f) {
+	private static Filter salesFilter(Domain domain, Map<String, String[]> filterMap, SalesProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter.page(1).perPage(1000);		
 		if(filterMap.containsKey(MSG.FROM)){
@@ -898,7 +903,7 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		return filter;
     }
-	private Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseProperties f) {
+	private static Filter purchaseFilter(Domain domain, Map<String, String[]> filterMap, PurchaseProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		filter.page(1).perPage(1000);
 		if(filterMap.containsKey(MSG.FROM)){

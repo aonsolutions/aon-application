@@ -275,6 +275,19 @@ public class Warehouse extends Methods{
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/stock_forecast" + filter, callback);
 	}
+	public void downloadStockForecast(HashMap<String, LinkedList<String>> filterMap){
+		String filter = filterMap.size() > 0 ? getFilter(filterMap) : "";
+		String str = filter + "&domain="+ getDomainName() + "&login="+getUserName() + "";
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_stockForecast/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
 	
 	/* WAREHOUSE */
 	public void getWarehouseList(AsyncCallback<JSON<JsObject>> callback){ 

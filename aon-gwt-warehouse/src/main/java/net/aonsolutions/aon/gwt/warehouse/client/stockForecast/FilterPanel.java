@@ -240,12 +240,15 @@ public class FilterPanel extends Composite {
 	
 	@UiHandler("searchButton")
 	void searchButton(ClickEvent event) {
-		if(fromDate.getValue()==null || toDate.getValue()==null) {
+		Date from = fromDate.getValue(), to = toDate.getValue();
+		if(from==null || to==null)
 			Window.alert("Se deben indicar, al menos, las fechas DESDE y HASTA");
-		} else
+		else if(from.after(to))
+			Window.alert("La fecha DESDE no puede ser posterior a la fecha HASTA");
+		else
 			reloadContent();
 	}
-
+	
 	private String key;
 
 	private void ButtonClick(PaperButton pb, JSON<JsObject> result, String label) {

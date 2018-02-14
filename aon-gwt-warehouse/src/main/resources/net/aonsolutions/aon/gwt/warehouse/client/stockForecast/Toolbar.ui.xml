@@ -35,8 +35,8 @@
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}" />
 					<g:Button ui:field="remove" text="{msg.deleteAction}"
 						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-					<g:Button ui:field="download" text="{msg.print}"
-						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
+					<g:Button ui:field="download" text="{msg.download}"
+						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" />
 
 					<p:PaperIconButton ui:field="backward" noink="true"
 						visible="false"

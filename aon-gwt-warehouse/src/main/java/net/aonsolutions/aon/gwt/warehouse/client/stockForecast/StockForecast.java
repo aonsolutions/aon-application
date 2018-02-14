@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.api.client.warehouse.JsStockForecast;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
@@ -27,7 +26,6 @@ public class StockForecast extends AonTemplate2 {
 	private StockForecast me = this;
 
 	public StockForecast(AonData aonData) {
-//		filterMap = new HashMap<>();
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(), aonData.getDomain().getName(),
 				aonData.getDomain().getId(), aonData.getUser().getLogin());
 	}
@@ -98,8 +96,7 @@ public class StockForecast extends AonTemplate2 {
 
 			@Override
 			protected void download() {
-				// TODO method::download()
-				Window.alert("En desarrollo...");
+				downloadStockforecast();
 			}
 			
 			@Override
@@ -116,10 +113,10 @@ public class StockForecast extends AonTemplate2 {
 		toolbar.reset.setVisible(false);
 		toolbar.accept.setVisible(false);
 		toolbar.remove.setVisible(false);
-		toolbar.download.setVisible(false);
+		toolbar.download.setVisible(true);
 		toolbar.setBackwardVisible(false);
 		toolbar.setForwardVisible(false);
-		toolbar.title.setText("Prevision de acopio segun consumo");
+		toolbar.title.setText("Aprovisionamiento segun consumo");
 		toolbar.subtitle.setText("Listado");
 		setToolbar(toolbar);
 	}
@@ -127,7 +124,14 @@ public class StockForecast extends AonTemplate2 {
 	public void loadContent() {
 		setContent(new Main(this, filterMap));
 	}
-
+	
+	private void downloadStockforecast() {
+//		consoleLog("StockForecast/" + getFilter(getFilterMap()));
+		HashMap<String, LinkedList<String>> map = ((Main)getContent().getWidget()).getFilterMap();
+//		consoleLog("Main         /" + getFilter(map));
+		getAPI().getWarehouse().downloadStockForecast(map);
+	}
+	
 	
 	public HashMap<String, LinkedList<String>> getFilterMap() {
 		if(filterMap==null) {
@@ -143,6 +147,10 @@ public class StockForecast extends AonTemplate2 {
 	public API getAPI() {
 		return API;
 	}
-	
+
+	public static native void consoleLog( String message) 
+	/*-{
+	    console.log( message );
+	}-*/;
 	
 }

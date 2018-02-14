@@ -111,16 +111,6 @@ public class Main extends Composite {
 	}
 	
 	
-//	public ElaborationPanel getElaborationPanel() {
-//		ElaborationPanel panel = (ElaborationPanel) northContent.getWidget();
-//		return panel;
-//	}
-//	
-//	public FooterPanel getFooterPanel() {
-//		FooterPanel panel = (FooterPanel) southContent.getWidget();
-//		return panel;
-//	}
-	
 	public void changeSouthContentSize(Double value) {
 		contentSplitLayoutPanel.setWidgetSize(southContent, value);	
 	}
@@ -134,9 +124,7 @@ public class Main extends Composite {
 	}
 
 	public void refreshSelect() {
-//		 ElaborationSelect cps = (ElaborationSelect)
-//		 content.getWidget();
-//		 cps.refresh();
+		
 	}
 		
 }
