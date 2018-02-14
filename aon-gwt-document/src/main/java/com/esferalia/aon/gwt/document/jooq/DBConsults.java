@@ -92,7 +92,7 @@ public class DBConsults {
 		}
 		System.out.println(serverName);
 		System.out.println(domain.getName());
-		if(domain.getParentId() != null && domain.isEnableHeredity() && domain.getName().equals(serverName)){
+		if(domain.getParentId() != null && domain.getName().equals(serverName)){
 			Integer[] userScopeArray = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 			//Todos los archivos del dominio padre con los ambitos del user (incluidos los archivos con scope nulo).
 			LinkedList<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
