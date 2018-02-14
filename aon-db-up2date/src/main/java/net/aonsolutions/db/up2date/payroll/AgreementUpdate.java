@@ -85,9 +85,10 @@ public class AgreementUpdate implements Update {
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
 		dslContext.transaction( (config) -> {
-			move2Trash(dslContext);
-			checkTrash(dslContext);
-			fixUpPayments(dslContext);
+			//move2Trash(dslContext);
+			//checkTrash(dslContext);
+			//fixUpPayments(dslContext);
+			cleanWarnPayments(dslContext);
 		});
 	}
 
@@ -405,6 +406,40 @@ public class AgreementUpdate implements Update {
 	
 	}
 	
+	protected void cleanWarnPayments(DSLContext dslContext) {
+		
+		
+		Cursor<Record1<Integer>> agreements = 
+		dslContext
+		.select(AGREEMENT.ID)
+		.from(AGREEMENT)
+		.join(AGREEMENT_PAYMENT).onKey(FK_AGREEMENT_PAYMENT_AGREEMENT)
+		.where(AGREEMENT.ID.gt(0))
+		.and(AGREEMENT_PAYMENT.START_DATE.eq(EPOCH))
+		.and(AGREEMENT_PAYMENT.END_DATE.isNull())
+		.groupBy(AGREEMENT.ID)
+		.fetchLazy();
+		;
+		
+		while ( agreements.hasNext() ) {
+			Record1<Integer> record = agreements.fetchOne();
+			
+			Integer agreement = record.get(AGREEMENT.ID);
+			
+			dslContext
+			.delete(AGREEMENT_PAYMENT)
+			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement))
+			.and(AGREEMENT_PAYMENT.EXPRESSION.eq(WARNNING))
+			.execute()
+			;
+			
+		}
+		
+		
+		
+	
+	}
+
 	private Integer getExtraCounterPart(AgreementPaymentRecord extraPayment, AgreementPaymentRecord agreementPayments[] ) {
 		
 		AgreementPaymentRecord sameMonthPayments [] =

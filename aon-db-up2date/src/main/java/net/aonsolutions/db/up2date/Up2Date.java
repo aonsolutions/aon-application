@@ -1,7 +1,7 @@
 package net.aonsolutions.db.up2date;
 
 import static net.aonsolutions.db.up2date.payroll.AgreementUpdate.AGREEMENTUPDATE;
-import static net.aonsolutions.db.up2date.tgss.Bases2018Update.BASES2018UPDATE;
+import static net.aonsolutions.db.up2date.payroll.Issue1760Update.ISSUE1760UPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,7 +27,8 @@ public class Up2Date {
     private static Update [] UPDATES  = {
     		//IRPF2018UPDATE,
     		AGREEMENTUPDATE,
-    		BASES2018UPDATE
+    		//BASES2018UPDATE,
+    		ISSUE1760UPDATE
     }; 
 	
 	
