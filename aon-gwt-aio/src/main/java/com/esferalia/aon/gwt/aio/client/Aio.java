@@ -95,7 +95,7 @@ public class Aio implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					documents = new Documents();
+					documents = new Documents(aonData);
 					documents.onModuleLoad();
 					// NUEVO DOCUMENTAL CON POLYMEROS
 					//documental = new Documental(aonData);

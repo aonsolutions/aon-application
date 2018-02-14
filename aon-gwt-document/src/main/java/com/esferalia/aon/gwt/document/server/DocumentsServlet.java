@@ -73,12 +73,14 @@ import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -149,6 +151,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	}
 	
 	public Document getAllFiles(Domain domain){
+		
 		Domain actualDomain = AON.getDomain(domain.getName(), domain.getId(), getUser().getLogin());
 		Document docs  = DBConsults.getAllRattachNew(actualDomain, getUser(), domain.getName(), confidential);
 		docs.setDomain(actualDomain.getName());		
@@ -403,8 +406,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			else conf = 0;
 			fileInfo.setSecurityLevel(conf);
 			if(fi.getDomain() != null && !fi.getDomain().equals("")){
-				Integer domainId = DBConsults.getDomainId(domainAux, getUser(), fi.getDomain());
-				domainAux = DBConsults.getDomain(new Domain().setName(fi.getDomain()).setId(domainId), getUser());
+				domainAux = AON.getDomain(domain.getName(), domain.getId(), getUserLogin(), filter -> filter.getNameProperty().eq(fi.getDomain()));
 			}
 			fileInfo.setDomainId(domainAux.getId());
 			fileInfo.setSize((Integer) f.getSize());
@@ -1391,4 +1393,14 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		return  DBConsults.getSystemFiles(domain, getUser());
 	}
 	
+	
+	public Boolean isBeta(Domain domain) {
+		ApplicationParameter appParam = AON.getApplicationParamenter(domain.getName(), domain.getId(), getUserLogin(),AppParam.AON_BETA_ENABLED);
+		return (appParam!=null && new Boolean(appParam.getValue()));
+	}
+	
+	public Boolean isAlpha(Domain domain) {
+		ApplicationParameter appParam = AON.getApplicationParamenter(domain.getName(), domain.getId(), getUserLogin(),AppParam.AON_ALPHA_ENABLED);
+		return (appParam!=null && new Boolean(appParam.getValue()));
+	}
 }

@@ -141,6 +141,9 @@
 							<g:Button ui:field="lotePaper" text="Lote" styleName="aon-editDataTable-button">
 							
 							</g:Button>
+							<g:Button ui:field="betaVersion" text="Versión Alpha" styleName="aon-editDataTable-button">
+							
+							</g:Button>
 										    			
 							<g:HorizontalPanel>
 								<g:DisclosurePanel ui:field="dpanel" styleName="gwt-DisclosurePanel">

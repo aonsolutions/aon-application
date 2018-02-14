@@ -295,4 +295,8 @@ public class Documental implements EntryPoint {
 			@Override public void onFailure(Throwable caught) {}
 		});   
 	}
+	
+	public void remove() {
+		dockLayoutPanel.removeFromParent();
+	}
 }

@@ -176,6 +176,9 @@ public enum AppParam {
 	,AON_ADHOC_EXTENSION
 	
 	,QUALITY_PFONDO
+	
+	,AON_BETA_ENABLED
+	,AON_ALPHA_ENABLED
 	;
 	
 	public String getValue() {

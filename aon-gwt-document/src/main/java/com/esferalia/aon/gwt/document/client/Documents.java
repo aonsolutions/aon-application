@@ -11,7 +11,9 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.document.client.css.AonGwtDocumentResources;
+import com.esferalia.aon.gwt.document.client.nuevo.Documental;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Dialog;
 import com.esferalia.aon.gwt.document.shared.DisclosureImages;
@@ -579,7 +581,8 @@ public class Documents implements EntryPoint {
 		Style dataGridStyle();
 	}
 	
-	public Documents() {
+	public Documents(AonData aonData) {
+		this.aonData = aonData;
 		init();
 		searchDomain = docs.getDomain();
 	}
@@ -593,6 +596,7 @@ public class Documents implements EntryPoint {
 	@UiField Button allFilesPaper;
 	@UiField Button systemPaper;
 	@UiField Button lotePaper;
+	@UiField Button betaVersion;
 	
 	@UiField(provided = true) HorizontalPanel prueba2;
 	@UiField SimplePanel sp;
@@ -628,6 +632,8 @@ public class Documents implements EntryPoint {
 	Boolean systemMessage;
 	Vector<FileInfo> selFiles;
 	ShowMorePager showMorePager;
+	AonData aonData;
+	Documental documental;
 	
 	private void init() {
 		initializeCargando();
@@ -971,6 +977,17 @@ public class Documents implements EntryPoint {
 		allFilesPaper.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		systemPaper.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		lotePaper.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		betaVersion.addStyleName(AON.AON_CSS.aonDocumentalTitle());
+		idoc.isAlpha(getDomain(), new AsyncCallback<Boolean>() {
+			
+			@Override
+			public void onSuccess(Boolean result) {
+				// TODO
+				betaVersion.setVisible(false); //result);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 		
 		allFilesPaper.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
@@ -981,6 +998,12 @@ public class Documents implements EntryPoint {
 		lotePaper.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				loteClickAction();
+			}
+		});
+		
+		betaVersion.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {
+				betaClickAction();
 			}
 		});
 		
@@ -1535,7 +1558,6 @@ public class Documents implements EntryPoint {
 				@Override
 				protected void onNext() {}
 			};
-
 		}
 		else{
 		Dialog d = new Dialog("new","Nuevo Archivo","Cancelar",true,"Guardar",true,son);
@@ -1685,8 +1707,9 @@ public class Documents implements EntryPoint {
 									while(index < docs.getFilter().size() && docs.getFilter().get(index).getIsParent()){
 										index++;
 									}
-									
-									if(docs.getFilter().size() == 0 || result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
+							
+									Boolean bool = docs.getFilter().size() == 0 && "".equals(enterpriseSearchBox.getText()) && result.get(0).getDomain().equals(getDomain().getName());
+									if(bool || result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
 										
 										aux = new Vector<FileInfo>();
 										for (FileInfo f : docs.getEfiles()) {
@@ -3856,6 +3879,13 @@ public class Documents implements EntryPoint {
 		dataGrid.redraw();
 	}
 	
+	private void betaClickAction() {
+		splitLayoutPanel.removeFromParent();
+		documental = new Documental(aonData);
+		documental.onModuleLoad();
+	}
+	
+	
 	private void systemClickAction() {
 		newFile.setVisible(false);
 		sConvenios.setVisible(false);
@@ -4003,6 +4033,9 @@ public class Documents implements EntryPoint {
 	
 	public void remove() {
 		splitLayoutPanel.removeFromParent();
+		if(documental != null) {
+			documental.remove();
+		}
 	}
 
 	

@@ -107,5 +107,9 @@ public interface IDocument extends RemoteService{
 	public LinkedList<FileInfo> decompress(Domain domain, FileInfo fileInfo);
 	
 	public LinkedList<FileInfo> getSystemFiles(Domain domain);
+	
+	public Boolean isAlpha(Domain domain);
+	
+	public Boolean isBeta(Domain domain);
 
 }

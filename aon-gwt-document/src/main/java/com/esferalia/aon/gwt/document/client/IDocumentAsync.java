@@ -105,5 +105,9 @@ public interface IDocumentAsync {
 	void decompress(Domain domain, FileInfo fileInfo, AsyncCallback<LinkedList<FileInfo>> callback);
 
 	void getSystemFiles(Domain domain, AsyncCallback<LinkedList<FileInfo>> callback);
-	
+
+	void isAlpha(Domain domain, AsyncCallback<Boolean> callback);
+
+	void isBeta(Domain domain, AsyncCallback<Boolean> callback);
+
 }

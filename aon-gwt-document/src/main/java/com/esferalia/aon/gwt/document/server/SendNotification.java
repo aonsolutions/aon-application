@@ -58,7 +58,10 @@ public class SendNotification {
 			if(!user.getId().equals(r.getId())) {
 				if(attach.getScope() != null ) {
 					Integer[] scpArr = AON.getUserScopes(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), r.getId());
-					LinkedList<Integer> l = new LinkedList<>(Arrays.asList(scpArr));
+					LinkedList<Integer> l = new LinkedList<>();
+					if(scpArr != null) {
+						l = new LinkedList<>(Arrays.asList(scpArr));
+					} 
 					if(l.contains(attach.getScope())) {
 						MailAccount ma = AON.getMailAccount(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), f -> f.getUserIdProperty().eq(r.getId())
 								.and(f.getDomainProperty().eq(attach.getDomain().getId()).or(f.getDomainProperty().eq(attach.getDomain().getParentId()))));
