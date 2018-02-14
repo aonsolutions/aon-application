@@ -5,7 +5,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.commercial.JsCommission;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.google.gwt.cell.client.Cell.Context;
@@ -29,6 +31,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -58,10 +61,10 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 	
 	@UiField(provided = true) CustomDataGrid<JsCommission> dataGrid; 
 	
-	CommissionCalculate parent;
+	CommissionCalculatePrincipal parent;
 	Integer cont = 0;
 
-	public CommissionCalculateGrid(CommissionCalculate parent, LinkedList<JsCommission> list) {
+	public CommissionCalculateGrid(CommissionCalculatePrincipal parent, LinkedList<JsCommission> list) {
 
 		this.parent = parent;
 		dataGrid = new CustomDataGrid<JsCommission>(Integer.MAX_VALUE, resources, JsCommission.PROVIDES_KEY);
@@ -71,7 +74,23 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 			@Override
 			public void onScroll(ScrollEvent event) {
 				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
-
+					Integer page = 2;
+					if(parent.getFilterMap().containsKey("page")){
+						page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
+					}
+					LinkedList<String> list = new LinkedList<>();
+					list.add(page +"");
+					parent.getFilterMap().put("page", list);
+					parent.getAPI().getCommission().getInvoiceCalculatedCommission(parent.getFilterMap(), new AsyncCallback<JSON<JsCommission>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsCommission> result) {
+							dataProvider.getList().addAll(result.getData().toLinkedList());
+							dataGrid.redraw();
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});	
 				}
 			}
 		});
@@ -160,7 +179,29 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 		});
 		dataGrid.getColumnSortList().push(commercialColumn);
 		dataGrid.addColumn(commercialColumn, "COMERCIAL");
-		dataGrid.setColumnWidth(commercialColumn, 40, Unit.PCT);
+		dataGrid.setColumnWidth(commercialColumn, 35, Unit.PCT);
+		
+		/** FECHA / DATE **/
+		Column<JsCommission, String> dateColumn = new Column<JsCommission, String>(new TextCell()) {
+
+			@Override
+			public String getValue(JsCommission object) {
+				return object.getDate();
+			}
+		
+		};
+		dateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		dateColumn.setSortable(true); 
+		sortHandler.setComparator(dateColumn,new Comparator<JsCommission>() {
+			
+			@Override
+			public int compare(JsCommission o1, JsCommission o2) {
+				return o1.getDate().compareTo(o2.getDate());
+			}
+		});
+		dataGrid.getColumnSortList().push(dateColumn);
+		dataGrid.addColumn(dateColumn, "FECHA");
+		dataGrid.setColumnWidth(dateColumn, 20, Unit.PCT);
 
 		
 		/** PRESUPUESTO / OFFER **/
@@ -182,8 +223,8 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 			}
 		});
 		dataGrid.getColumnSortList().push(offerColumn);
-		dataGrid.addColumn(offerColumn, "PRESUPUESTO");
-		dataGrid.setColumnWidth(offerColumn, 25, Unit.PCT);
+		dataGrid.addColumn(offerColumn, "FACTURA");
+		dataGrid.setColumnWidth(offerColumn, 20, Unit.PCT);
 		
 		/** PRODUCTO / PRODUCT **/
 		Column<JsCommission, String> productColumn = new Column<JsCommission, String>(new TextCell()) {
@@ -204,8 +245,8 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 			}
 		});
 		dataGrid.getColumnSortList().push(productColumn);
-		dataGrid.addColumn(productColumn, "PRODUCT");
-		dataGrid.setColumnWidth(productColumn, 40, Unit.PCT);
+		dataGrid.addColumn(productColumn, "PRODUCTO");
+		dataGrid.setColumnWidth(productColumn, 35, Unit.PCT);
 		
 		/** BASE IMPONIBLE / TAXABLE BASE **/
 		Column<JsCommission, String> baseColumn = new Column<JsCommission, String>(new TextCell()) {
@@ -226,15 +267,15 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 			}
 		});
 		dataGrid.getColumnSortList().push(baseColumn);
-		dataGrid.addColumn(baseColumn, "BASE IMPONIBLE");
-		dataGrid.setColumnWidth(baseColumn, 30, Unit.PCT);
+		dataGrid.addColumn(baseColumn, "BASE");
+		dataGrid.setColumnWidth(baseColumn, 15, Unit.PCT);
 		
 		/** PORCENTAJE / PERCENTAGE **/
 		Column<JsCommission, String> percentageColumn = new Column<JsCommission, String>(new TextInputCell()) {
 			
 			@Override
 			public void render(Context context, JsCommission object, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<input type=\"text\" value=\""+ object.getPercentage()+ "\" class=\"aon-inputText\" style=\"width:60px\"></input>");
+				sb.appendHtmlConstant("<input type=\"text\" value=\""+ object.getPercentage()+ "\" class=\"aon-inputText\" style=\"width:45px\"></input>");
 			}
 			
 			@Override
@@ -253,7 +294,7 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 			}
 		});
 		dataGrid.getColumnSortList().push(percentageColumn);
-		dataGrid.addColumn(percentageColumn, "PORCENTAJE");
+		dataGrid.addColumn(percentageColumn, "% COM.");
 		percentageColumn.setFieldUpdater(new FieldUpdater<JsCommission, String>() {
 	          @Override
 	          public void update(int index, JsCommission object, String value) {
@@ -266,7 +307,7 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 	        	  }
 	          }
 	    });
-		dataGrid.setColumnWidth(percentageColumn, 25, Unit.PCT);
+		dataGrid.setColumnWidth(percentageColumn, 15, Unit.PCT);
 		
 	    
 		/** IMPORTE / AMOUNT **/
@@ -274,7 +315,7 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 			
 			@Override
 			public void render(Context context, JsCommission object, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<input type=\"text\" value=\""+ object.getAmount()+ "\" class=\"aon-inputText\" style=\"width:60px\" size=\"{2}\"></input>");
+				sb.appendHtmlConstant("<input type=\"text\" value=\""+ object.getAmount()+ "\" class=\"aon-inputText\" style=\"width:50px\" size=\"{2}\"></input>");
 			}
 			
 			@Override
@@ -292,7 +333,7 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 			}
 		});
 		dataGrid.getColumnSortList().push(amountColumn);
-		dataGrid.addColumn(amountColumn, "IMPORTE");
+		dataGrid.addColumn(amountColumn, "COM.");
 
 		amountColumn.setFieldUpdater(new FieldUpdater<JsCommission, String>() {
 	          @Override
@@ -306,7 +347,7 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 	        	  }
 	          }
 	    });
-		dataGrid.setColumnWidth(amountColumn, 20, Unit.PCT);
+		dataGrid.setColumnWidth(amountColumn, 15, Unit.PCT);
 		
 		/** ESTADO / STATUS **/
 		

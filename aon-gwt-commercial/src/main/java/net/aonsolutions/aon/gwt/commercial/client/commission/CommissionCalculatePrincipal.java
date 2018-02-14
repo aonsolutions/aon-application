@@ -85,7 +85,7 @@ public class CommissionCalculatePrincipal extends Composite{
 			
 				@Override
 				public void onSuccess(JSON<JsCommission> result) {
-					CommissionCalculateGrid grid = new CommissionCalculateGrid(parent, result.getData().toLinkedList());
+					CommissionCalculateGrid grid = new CommissionCalculateGrid(me, result.getData().toLinkedList());
 					content.setWidget(grid);
 				}
 			
@@ -96,7 +96,7 @@ public class CommissionCalculatePrincipal extends Composite{
 				
 				@Override
 				public void onSuccess(JSON<JsCommission> result) {
-					CommissionCalculateGrid grid = new CommissionCalculateGrid(parent, result.getData().toLinkedList());
+					CommissionCalculateGrid grid = new CommissionCalculateGrid(me, result.getData().toLinkedList());
 					content.setWidget(grid);
 				}
 			

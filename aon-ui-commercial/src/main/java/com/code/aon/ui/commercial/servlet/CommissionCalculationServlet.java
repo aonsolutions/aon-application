@@ -101,14 +101,14 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 		try {
 			setSeller(json.opt("seller") != null ? json.optInt("seller") : null);
 			setConfidential(json.opt("confidential") != null ? json.optInt("confidential") == 1 : false);
-			setFromDate(json.opt("from_date") != null ? AonDateUtils.dateTimeParse(json.getString("from_date")) : null);
-			setToDate(json.opt("to_date") != null ? AonDateUtils.dateTimeParse(json.getString("to_date")) : null);
+			setFromDate(json.opt("from_date") != null ? new Date(json.getString("from_date")) : null);
+			setToDate(json.opt("to_date") != null ? new Date(json.getString("to_date")) : null);
 			setFromNumber(json.opt("from_number") != null ? json.optInt("from_number") : null);
-			setToNumber(json.opt("toNumber") != null ? json.optInt("toNumber") : null);
+			setToNumber(json.opt("to_number") != null ? json.optInt("to_number") : null);
 			setSeries(json.opt("series") != null ? json.optString("series") : null);
 			setWorkplace(json.opt("workplace") != null ? json.optInt("workplace") : null);
 			setTarget(json.opt("target") != null ? json.optInt("target") : null);
-			setCustomer(json.opt("customer") != null ? json.optInt("customer") : null);
+			setCustomer(json.opt("registry") != null ? json.optInt("registry") : null);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -242,7 +242,8 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 	}
 	
 	private Stream<InvoiceDetail> getInvoiceDetailStream(Domain domain, String login){
-		return AON.getInvoiceDetails(domain.getName(), domain.getId(), login, f -> invoiceDetailFilter(domain, f));
+		Stream<InvoiceDetail> strm = AON.getInvoiceDetails(domain.getName(), domain.getId(), login, f -> invoiceDetailFilter(domain, f));
+		return strm;
 	}
 	
 	public Filter invoiceDetailFilter(Domain domain, InvoiceProperties f) {

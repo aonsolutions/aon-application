@@ -143,12 +143,11 @@ public class CommissionDAO {
 	
 	public static Stream<InvoiceDetailCommission> getInvoiceDetailCommissionStream(AONContext ctx, InvoiceDetailCommissionFilter filter) {
 		ctx.checkRead();
-		return ctx.getDslContext().select()
+		return INVOICE_DETAIL_COMMISSION_PROPERTIES.build(ctx.getDslContext().select()
 				.from(INVOICE_DETAIL_COMMISSION)
 				.join(INVOICE_DETAIL).on(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
 				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
-				.leftOuterJoin(REGISTRY).on(INVOICE.SELLER.eq(REGISTRY.ID))
-				.where(INVOICE_DETAIL_COMMISSION_PROPERTIES.getConditions(filter))
+				.leftOuterJoin(REGISTRY).on(INVOICE.SELLER.eq(REGISTRY.ID)), filter)
 				.fetch().stream().map(new InvoiceDetailCommissionFiller());
 	}
 	

@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "CommissionServlet", urlPatterns = {"/commission/*",
@@ -101,9 +102,9 @@ public class CommissionServlet extends HttpServlet{
 			json.put("seller", r.getOfferDetail().getOffer().getSeller().getRegistryName());	
 			Double p = r.getOfferDetail().getPrice()* r.getOfferDetail().getQuantity();
 			Double discount = Double.parseDouble(r.getOfferDetail().getDiscountExpression());
-			json.put("base", p - (p*discount/100));
-			json.put("amount", r.getAmount());
-			json.put("percentage", r.getCommission());
+			json.put("base", AonMathUtils.round(p - (p*discount/100)));
+			json.put("amount", AonMathUtils.round(r.getAmount()));
+			json.put("percentage", AonMathUtils.round(r.getCommission()));
 			json.put("status", r.getStatus().getName());
 			json.put("product", r.getOfferDetail().getDescription());
 			
@@ -140,9 +141,9 @@ public class CommissionServlet extends HttpServlet{
 		odcJson.put("seller", odc.getOfferDetail().getOffer().getSeller().getRegistryName());	
 		Double p = odc.getOfferDetail().getPrice()* odc.getOfferDetail().getQuantity();
 		Double discount = Double.parseDouble(odc.getOfferDetail().getDiscountExpression());
-		odcJson.put("base", p - (p*discount/100));
-		odcJson.put("amount", odc.getAmount());
-		odcJson.put("percentage", odc.getCommission());
+		odcJson.put("base", AonMathUtils.round(p - (p*discount/100)));
+		odcJson.put("amount", AonMathUtils.round(odc.getAmount()));
+		odcJson.put("percentage", AonMathUtils.round(odc.getCommission()));
 		odcJson.put("status", odc.getStatus().getName());
 		odcJson.put("product", odc.getOfferDetail().getDescription());
 		
@@ -178,9 +179,9 @@ public class CommissionServlet extends HttpServlet{
 		idcJson.put("seller", idc.getInvoiceDetail().getInvoice().getSellerName());	
 		Double p = idc.getInvoiceDetail().getPrice()* idc.getInvoiceDetail().getQuantity();
 		Double discount = Double.parseDouble(idc.getInvoiceDetail().getDiscountExpression());
-		idcJson.put("base", p - (p*discount/100));
-		idcJson.put("amount", idc.getAmount());
-		idcJson.put("percentage", idc.getCommission());
+		idcJson.put("base", AonMathUtils.round(p - (p*discount/100)));
+		idcJson.put("amount", AonMathUtils.round(idc.getAmount()));
+		idcJson.put("percentage", AonMathUtils.round(idc.getCommission()));
 		idcJson.put("status", idc.getStatus().getName());
 		idcJson.put("product", idc.getInvoiceDetail().getDescription());
 		
@@ -287,13 +288,13 @@ public class CommissionServlet extends HttpServlet{
 		.forEach(r -> {
 			JSONObject json = new JSONObject();
 			json.put("id", r.getId());
-			json.put("date", r.getInvoiceDetail().getInvoice().getIssueDate());
+			json.put("date", AonDateUtils.simpleFormat(r.getInvoiceDetail().getInvoice().getIssueDate()));
 			json.put("seller", r.getInvoiceDetail().getInvoice().getSellerName());	
 			Double p = r.getInvoiceDetail().getPrice()* r.getInvoiceDetail().getQuantity();
 			Double discount = Double.parseDouble(r.getInvoiceDetail().getDiscountExpression());
-			json.put("base", p - (p*discount/100));
-			json.put("amount", r.getAmount());
-			json.put("percentage", r.getCommission());
+			json.put("base", AonMathUtils.round(p - (p*discount/100)));
+			json.put("amount", AonMathUtils.round(r.getAmount()));
+			json.put("percentage", AonMathUtils.round(r.getCommission()));
 			json.put("status", r.getStatus().getName());
 			json.put("product", r.getInvoiceDetail().getDescription());
 			

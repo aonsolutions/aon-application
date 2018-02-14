@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONObject;
@@ -90,36 +89,14 @@ public class CommissionCalculate extends AonTemplate2{
 	
 		VerticalPanel menuPanel = new VerticalPanel();
 
-		Button commissionCalculate = new Button("C\u00e1lculo de Comisiones");
-		commissionCalculate.setStyleName("aon-editDataTable-button");
-		commissionCalculate.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		commissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-		
-		Button offerCommissionCalculate = new Button("Presupuestos");
-		offerCommissionCalculate.setStyleName("aon-editDataTable-button");
-		offerCommissionCalculate.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		offerCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		offerCommissionCalculate.getElement().getStyle().setPaddingLeft(30, Unit.PX);
-
-		Button invoiceCommissionCalculate = new Button("Facturas");
+		Button invoiceCommissionCalculate = new Button("C\u00e1lculo de Comisiones");
 		invoiceCommissionCalculate.setStyleName("aon-editDataTable-button");
 		invoiceCommissionCalculate.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		invoiceCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-		invoiceCommissionCalculate.getElement().getStyle().setPaddingLeft(30, Unit.PX);
+		invoiceCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		
-		Button commissionCalculateGrid = new Button("Control de Comisiones Calculadas");
-		commissionCalculateGrid.setStyleName("aon-editDataTable-button");
-		commissionCalculateGrid.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		
-		Button offerCommissionCalculateGrid = new Button("Presupuestos");
-		offerCommissionCalculateGrid.setStyleName("aon-editDataTable-button");
-		offerCommissionCalculateGrid.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		offerCommissionCalculateGrid.getElement().getStyle().setPaddingLeft(30, Unit.PX);
-
-		Button invoiceCommissionCalculateGrid = new Button("Facturas");
+		Button invoiceCommissionCalculateGrid = new Button("Control de Comisiones Calculadas");
 		invoiceCommissionCalculateGrid.setStyleName("aon-editDataTable-button");
 		invoiceCommissionCalculateGrid.addStyleName(AON.AON_CSS.aonDocumentalTitle());
-		invoiceCommissionCalculateGrid.getElement().getStyle().setPaddingLeft(30, Unit.PX);
 		
 		Button commissionType = new Button("Tipos de Comisi\u00f3n");
 		commissionType.setStyleName("aon-editDataTable-button");
@@ -129,28 +106,9 @@ public class CommissionCalculate extends AonTemplate2{
 		commissionSection.setStyleName("aon-editDataTable-button");
 		commissionSection.addStyleName(AON.AON_CSS.aonDocumentalTitle());
 		
-		offerCommissionCalculate.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {
-				offerCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				invoiceCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				invoiceCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				commissionType.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				commissionSection.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				
-				CommissionCalculateToolbar toolbar = (CommissionCalculateToolbar) getToolbar().getWidget();
-				toolbar.setCleanVisible(true);
-				toolbar.setCalculateVisible(true);
-				type = "offer";
-				content();
-			}
-		});
-		
 		invoiceCommissionCalculate.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				invoiceCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				offerCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				invoiceCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				commissionType.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				commissionSection.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
@@ -163,28 +121,9 @@ public class CommissionCalculate extends AonTemplate2{
 			}
 		});
 		
-		offerCommissionCalculateGrid.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {	
-				invoiceCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				invoiceCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				commissionType.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				commissionSection.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				
-				CommissionCalculateToolbar toolbar = (CommissionCalculateToolbar) getToolbar().getWidget();
-				toolbar.setCleanVisible(false);
-				toolbar.setCalculateVisible(false);
-				type = "offer";
-				content(new CommissionCalculatePrincipal(me));
-			}
-		});
-		
 		invoiceCommissionCalculateGrid.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				invoiceCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				invoiceCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 				commissionType.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				commissionSection.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
@@ -200,8 +139,6 @@ public class CommissionCalculate extends AonTemplate2{
 		commissionType.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				invoiceCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);		
-				offerCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				invoiceCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				commissionType.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 				commissionSection.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
@@ -211,22 +148,16 @@ public class CommissionCalculate extends AonTemplate2{
 		commissionSection.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {	
 				invoiceCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculate.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
-				offerCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				invoiceCommissionCalculateGrid.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				commissionType.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				commissionSection.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 			}
 		});
 		
-		menuPanel.add(commissionCalculate);
-		menuPanel.add(offerCommissionCalculate);
 		menuPanel.add(invoiceCommissionCalculate);
-		menuPanel.add(commissionCalculateGrid);
-		menuPanel.add(offerCommissionCalculateGrid);
 		menuPanel.add(invoiceCommissionCalculateGrid);
-		menuPanel.add(commissionType);
-		menuPanel.add(commissionSection);
+	//	menuPanel.add(commissionType);
+	//	menuPanel.add(commissionSection);
 		
 		setWestContent(menuPanel);
 	}
