@@ -300,9 +300,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	private void executeExcelFee(final Domain domain, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient){
 		Vector<FeeInfo> fees = new Vector<FeeInfo>();
 		
-		sellers = DBFee.getSellers(domain, getUser().getLogin());
-		workplaces = DBFee.getWorkplaceList(domain, getUser());
-		invoicingGroupList = DBFee.getInvoicingGroupList(domain, getUser());
+		sellers = DBFee.getInstance().getSellers(domain, getUser().getLogin());
+		workplaces = DBFee.getInstance().getWorkplaceList(domain, getUser());
+		invoicingGroupList = DBFee.getInstance().getInvoicingGroupList(domain, getUser());
 
 		feeBool = true;
 		/* LAMBDA java 1.8 */
@@ -410,7 +410,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
-			error = DBFee.insertFee(domain,fees,ai, getUser().getLogin());
+			error = DBFee.getInstance().insertFee(domain,fees,ai, getUser().getLogin());
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -441,7 +441,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		switch (template) {
 		case "Cliente": case "Client":
 			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
-				Customer customer = DBFee.getCustomer(domain, username, cell.getStringCellValue(), ignoreInactiveCliente);
+				Customer customer = DBFee.getInstance().getCustomer(domain, username, cell.getStringCellValue(), ignoreInactiveCliente);
 				if(customer != null){
 					fee.setClient(cell.getStringCellValue());
 					fee.setClientId(customer.getId());
@@ -605,9 +605,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break;
 		case "Expediente": case "Record":  //BD
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				Project project = DBFee.getProject(domain, toString(value), fee.getClientId(), getUser().getLogin());
+				Project project = DBFee.getInstance().getProject(domain, toString(value), fee.getClientId(), getUser().getLogin());
 				if(project == null && fee.getClientId() != null){
-					project = new Project().setId(DBFee.insertProject(domain, getUser(), toString(value), fee.getClientId()));
+					project = new Project().setId(DBFee.getInstance().insertProject(domain, getUser(), toString(value), fee.getClientId()));
 				}
 				if(project != null){
 					fee.setProject(cell.getStringCellValue());		
@@ -2528,7 +2528,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public List<Seller> getSellerList(Domain domain){
-		return DBFee.getSellers(domain, getUser().getLogin());
+		return DBFee.getInstance().getSellers(domain, getUser().getLogin());
 	}
 	
 	public LinkedList<String> getProductRoles(Domain domain) {

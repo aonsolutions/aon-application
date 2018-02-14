@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -40,33 +41,37 @@ import com.esferalia.aon.occam.api.model.type.SellerStatus;
 
 public class DBFee {
 
-	static Integer domainIdFee;
-	public static Error insertFee(Domain domain, Vector<FeeInfo> fees, AuditInfo ai, String login){
+	public static DBFee getInstance() {
+		return new DBFee();
+	}
+				
+	public Error insertFee(Domain domain, Vector<FeeInfo> fees, AuditInfo ai, String login){
 		Error error = new Error();
 		error.setError(true);
 		Vector<String> verror = new Vector<String>();
 		verror.add("");
 		error.setTextError(verror);
 		AONContext ctx = null;
+		
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			Vector<String> v = new Vector<String>();
 			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = ctx.getDslContext().insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
 			
-			domainIdFee = domain.getId();
 			AONContext sctx = ctx;
+			HashMap<Integer, Short> lineMap = new HashMap<>();
 			fees.stream().forEach(s ->{	
 				if(s.getProduct() != null){
 					Result<Record1< Integer>> data = sctx.getDslContext().select(ITEM.ID)
 						.from(ITEM)
-						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainIdFee)).fetch();
+						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId())).fetch();
 					if(data.isEmpty()){
 
 						data = sctx.getDslContext().select(ITEM.ID)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
-										.and(PRODUCT.DOMAIN.eq(domainIdFee)).fetch();
+										.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 					if(data.size()>1){
 						Condition detail = ITEM.DETAIL.eq(s.getDetail());
@@ -87,34 +92,25 @@ public class DBFee {
 									.and(detail)
 									.and(detail2)
 									.and(detail3)
-									.and(PRODUCT.DOMAIN.eq(domainIdFee)).fetch();
+									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
-
-
 					if(!data.isEmpty()){
-
-						Integer confidential;
-						if (s.getConfidential()) confidential = 1;
-						else confidential = 0;
-						
-	
-						Integer itemId = data.get(0).value1();
-						
-						
+						Integer confidential = s.getConfidential() ? 1 : 0;	
+						Integer itemId = data.get(0).value1();	
 						if(s.getEndDate() != null ) new java.sql.Date(s.getEndDate().getTime());
 						
-						Short line;
+						Short line = 0;
 						if(s.getLine() == null){
-							Result<Record1<Short>> n = sctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
-								.from(CUSTOMER_FEE)
-								.where(CUSTOMER_FEE.DOMAIN.eq(domain.getId()).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))).fetch();
-							
-							if(n.isEmpty() || n.get(0).value1()==null) line = 1;
-							else line = n.get(0).value1(); //get max number (domain, customer)
-							line++;
-						}
-						else{
-
+							if(lineMap.containsKey(s.getClientId())) {
+								line = (short) (lineMap.get(s.getClientId()) + 1);
+							}else {
+								Result<Record1<Short>> n = sctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
+										.from(CUSTOMER_FEE)
+										.where(CUSTOMER_FEE.DOMAIN.eq(domain.getId()).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))).fetch();
+								line = (n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1);
+							}
+							lineMap.put(s.getClientId(), line);
+						} else{
 							line = s.getLine().shortValue();
 							sctx.getDslContext().update(CUSTOMER_FEE).set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.add(1))
 									.where(CUSTOMER_FEE.DOMAIN.eq(domain.getId())).and(CUSTOMER_FEE.CUSTOMER.eq(s.getClientId()))
@@ -130,7 +126,7 @@ public class DBFee {
 						Date endDate = null;
 						if(s.getEndDate() != null) endDate =  new java.sql.Date(s.getEndDate().getTime());
 						
-						customerFeeInsertQuery.values(domainIdFee, s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), endDate, new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
+						customerFeeInsertQuery.values(domain.getId(), s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), endDate, new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
@@ -152,7 +148,7 @@ public class DBFee {
 		}
 	}
 	
-	public static Customer getCustomer(Domain domain, String login, String client, Boolean ignoreInactiveClient){
+	public Customer getCustomer(Domain domain, String login, String client, Boolean ignoreInactiveClient){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -222,7 +218,7 @@ public class DBFee {
 		}
 	}
 	
-	public static Vector<Customer> getCustomers(Domain domain, String login) {
+	public Vector<Customer> getCustomers(Domain domain, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -257,7 +253,7 @@ public class DBFee {
 	
 	
 	
-	public static List<Seller> getSellers(Domain domain,  String login){
+	public List<Seller> getSellers(Domain domain,  String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -283,19 +279,19 @@ public class DBFee {
 		}
 	}
 
-	public static LinkedList<Project> getProjectList(Domain domain, String login){
+	public LinkedList<Project> getProjectList(Domain domain, String login){
 		return AON.getProjectList(domain.getName(), domain.getId(), login,
 				filter -> filter.getDomainProperty().eq(domain.getId()));
 	}
 	
-	public static Project getProject(Domain domain,String str, Integer customer, String login){
+	public Project getProject(Domain domain,String str, Integer customer, String login){
 		return AON.getProject(domain.getName(), domain.getId(), login,
 				filter -> filter.getDomainProperty().eq(domain.getId())
 				.and(filter.getRegistryProperty().eq(customer))
 				.and(filter.getAliasProperty().eq(str).or(filter.getNameProperty().eq(str))));
 	}
 	
-	public static Integer insertProject(Domain domain, User user, String name, Integer customer){
+	public Integer insertProject(Domain domain, User user, String name, Integer customer){
 		Project project = getProjectDefault()
 				.setDomain(domain.getId())
 				.setName(name)
@@ -303,18 +299,18 @@ public class DBFee {
 		return AON.insertProject(domain.getName(), domain.getId(), user.getLogin(), project);
 	}
 	
-	public static LinkedList<Workplace> getWorkplaceList(Domain domain, User user){
+	public LinkedList<Workplace> getWorkplaceList(Domain domain, User user){
 		return AON.getWorkplaceList(domain.getName(), domain.getId(), user.getLogin(),
 				filter -> filter.getDomainProperty().eq(domain.getId()));
 	}
 	
-	public static LinkedList<InvoicingGroup> getInvoicingGroupList(Domain domain, User user){
+	public LinkedList<InvoicingGroup> getInvoicingGroupList(Domain domain, User user){
 		return AON.getInvoicingGroupList(domain.getName(), domain.getId(), user.getLogin(),
 				filter -> filter.getDomainProperty().eq(domain.getId()));
 	}
 	
 	
-	private static Project getProjectDefault() {
+	private Project getProjectDefault() {
 		return new Project()
 				.setActive(true)
 				.setAlias("")
