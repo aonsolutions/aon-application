@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
@@ -40,18 +41,18 @@ public class CommissionServlet extends HttpServlet{
 		LOGGER.info("Common Servlet - GET METHOD");
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		String userName = req.getRemoteUser();
-		Domain domain = AON.getDomain(domainName, domainId, userName);
+		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
+		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
 	
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 		
 		switch (req.getPathInfo()) {
 		case "/calculated/offer":
-			object = getOfferCalculatedCommission(domain, userName, req.getParameterMap());
+			object = getOfferCalculatedCommission(domain, user.getLogin(), req.getParameterMap());
 			break;
 		case "/calculated/invoice":
-			object = getInvoiceCalculatedCommission(domain, userName, req.getParameterMap());
+			object = getInvoiceCalculatedCommission(domain, user.getLogin(), req.getParameterMap());
 			break;
 		default:
 			break;
@@ -67,16 +68,16 @@ public class CommissionServlet extends HttpServlet{
 
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		String userName = req.getRemoteUser();
-		Domain domain = AON.getDomain(domainName, domainId, userName);
+		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
+		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
 		
 		Object object = new Object();
 		switch (req.getPathInfo()) {
 		case "/calculated/offer":
-			object = updateOfferCalculatedCommission(domain, userName, json);
+			object = updateOfferCalculatedCommission(domain, user.getLogin(), json);
 			break;
 		case "/calculated/invoice":
-			object = updateInvoiceCalculatedCommission(domain, userName, json);
+			object = updateInvoiceCalculatedCommission(domain, user.getLogin(), json);
 			break;
 		default:
 			break;
@@ -261,6 +262,20 @@ public class CommissionServlet extends HttpServlet{
 				filter = filter.and(fsupplier);
 			} catch (Exception e) {}
 		}
+		
+		if(filterMap.containsKey("page")) {
+			try {
+				Integer page = Integer.parseInt(filterMap.get("page")[0]); 
+				filter = filter.page(page);
+			} catch (Exception e) {}
+		}
+		
+		if(filterMap.containsKey("per_page")) {
+			try {
+				Integer per_page = Integer.parseInt(filterMap.get("per_page")[0]); 
+				filter = filter.page(per_page);
+			} catch (Exception e) {}
+		}
 
 		return filter;
 	}
@@ -352,8 +367,22 @@ public class CommissionServlet extends HttpServlet{
 				Filter fregistry= f.getRegistryProperty().eq(n);
 				filter = filter.and(fregistry);
 			} catch (Exception e) {}
+		} 
+		
+		if(filterMap.containsKey("page")) {
+			try {
+				Integer page = Integer.parseInt(filterMap.get("page")[0]); 
+				filter = filter.page(page);
+			} catch (Exception e) {}
 		}
-
+		
+		if(filterMap.containsKey("per_page")) {
+			try {
+				Integer per_page = Integer.parseInt(filterMap.get("per_page")[0]); 
+				filter = filter.perPage(per_page);
+			} catch (Exception e) {}
+		}
+		
 		return filter;
 	}
 	

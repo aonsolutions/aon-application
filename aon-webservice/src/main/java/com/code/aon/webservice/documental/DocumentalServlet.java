@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
@@ -36,32 +37,32 @@ public class DocumentalServlet extends HttpServlet{
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
-		String userName = req.getRemoteUser();
-		Domain domain = AON.getDomain(domainName, domainId, userName);
+		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
+		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
 	
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 
-		String md5 = Utils.getMd5(userName+domain.getName());
+		String md5 = Utils.getMd5(user.getLogin()+domain.getName());
 		if(accessToken.equals(md5)){
 			switch (req.getPathInfo()) {
 			case "/files":
-				object = getAttachJSON(domain, userName);
+				object = getAttachJSON(domain, user.getLogin());
 				break;
 			case "/certificates":
-				object = getCertificateAttachJSON(domain, userName);
+				object = getCertificateAttachJSON(domain, user.getLogin());
 				break;
 			case "/quality":
-				object = getQualityImagesJSON(domain, userName, req.getParameter(MSG.ID));
+				object = getQualityImagesJSON(domain, user.getLogin(), req.getParameter(MSG.ID));
 				break;
 			case "/category":
-				object = getCategoryJSON(domain, userName);
+				object = getCategoryJSON(domain, user.getLogin());
 				break;
 			case "/tag":
-				object = getTagJSON(domain, userName);
+				object = getTagJSON(domain, user.getLogin());
 				break;
 			case "/scope":
-				object = getScopeJSON(domain, userName);
+				object = getScopeJSON(domain, user.getLogin());
 				break;
 			default:
 				break;

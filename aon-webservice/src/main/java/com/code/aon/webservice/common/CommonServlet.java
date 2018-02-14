@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -49,10 +50,10 @@ public class CommonServlet extends HttpServlet{
 		
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		String userName = req.getRemoteUser();
-		Domain domain = AON.getDomain(domainName, domainId, userName);
-	
-		String md5 = Utils.getMd5(userName+domain.getName());
+		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
+		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
+		
+		String md5 = Utils.getMd5(user.getLogin()+domain.getName());
 	
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
@@ -60,24 +61,24 @@ public class CommonServlet extends HttpServlet{
 		if(accessToken.equals(md5)){
 			switch (req.getPathInfo()) {
 			case "/" + MSG.WORKPLACE:
-				object = getWorkplaceList(domain, userName);
+				object = getWorkplaceList(domain, user.getLogin());
 				break;
 			case "/" + MSG.MAIL_ACCOUNT: 
-				object = getMailAccountList(domain, userName);
+				object = getMailAccountList(domain, user.getLogin());
 				break;
 			case "/" + MSG.SIGNATURE: 
-				object = getSignatureList(domain, userName);
+				object = getSignatureList(domain, user.getLogin());
 				break;
 			case "/" + MSG.APP_PARAM: 
 				String param = req.getParameter("param");
 				JSONArray array = new JSONArray();
-				AON.getApplicationParameterStream(domain.getName(), domain.getId(), userName, f -> 
+				AON.getApplicationParameterStream(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().like(param+"%")))
 				.forEach(app -> array.put(ToJSON.applicationParameterToJSON(app)));
 				object = array;
 				break;
 			case "/" + MSG.DATA_RESPONSE: 
-				object = getDataResponseList(domain, userName, req.getParameterMap());
+				object = getDataResponseList(domain, user.getLogin(), req.getParameterMap());
 				break;
 			default:
 				break;
