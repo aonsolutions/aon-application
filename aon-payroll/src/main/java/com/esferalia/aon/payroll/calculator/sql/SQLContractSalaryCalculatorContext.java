@@ -716,11 +716,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return 0.00;
 		}
 		
-		@Override
-		public Collection<IContractPayment> getContractPayments() throws AonException {
-			Collection<IContractPayment> payments =  super.getContractPayments();
-			return new FilterCollection<IContractPayment>( p -> p.getType() != PaymentType.CRA_0055 , payments);
-		}
+//		@Override
+//		public Collection<IContractPayment> getContractPayments() throws AonException {
+//			Collection<IContractPayment> payments =  super.getContractPayments();
+//			return new FilterCollection<IContractPayment>( p -> p.getType() != PaymentType.CRA_0055 , payments);
+//		}
 
 		@Override
 		public Object guarantee(double guarentee, int start, int end) throws ExpressionException {
