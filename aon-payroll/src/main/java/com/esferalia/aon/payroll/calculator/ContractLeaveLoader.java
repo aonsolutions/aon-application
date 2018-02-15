@@ -494,24 +494,25 @@ public class ContractLeaveLoader {
 
 	protected double getAdjustDays(ExpressionContext ctx, Period p, long days) {
 
+		try {
+			;
+			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
+				return days;
+		} catch (Exception e) {
+		}
+
 //		try {
-//			;
-//			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
+//			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
+//			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
 //				return days;
 //		} catch (Exception e) {
 //		}
-		try {
-			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
-			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
-				return days;
-		} catch (Exception e) {
-		}
-		try {
-			Number paternityFactor =  ctx.getVariable(MATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
-			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
-				return days;
-		} catch (Exception e) {
-		}
+//		try {
+//			Number paternityFactor =  ctx.getVariable(MATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
+//			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
+//				return days;
+//		} catch (Exception e) {
+//		}
 
 		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
 
