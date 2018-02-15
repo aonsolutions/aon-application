@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -960,6 +961,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 	}
 
+	@Ignore("Comming soon")
 	@Test
 	public void testBRPartialTimeII() throws ExpressionException, SQLException,
 			SalaryException {
