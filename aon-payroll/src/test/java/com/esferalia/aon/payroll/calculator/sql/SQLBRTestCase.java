@@ -6,6 +6,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
@@ -25,6 +27,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import junit.framework.Assert;
 
@@ -954,6 +957,82 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		br = (3000.00 * 1.10 * ( 2.00/8.00 + 3.00/8.00 + 4.00/8.00) ) / (marchDays+ februaryDays+ januaryDays);
 		ctx.getExpressionContext().setVariable("TODAY", startDate, startDate, endDate);
+		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+	}
+
+	@Test
+	public void testBRPartialTimeII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date startDate = getFirstDayOfYear(getToday());
+		ContractRecord contract = newContract(aonContext, 
+				startDate,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								ContractCode.C501.getValue()));
+					}
+				}, new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+				new String[] {}, 
+				null);
+
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				null, 
+				new HashMap<String, String>() {
+					{
+						put(MONDAY_HOURS.getName(), format("%f", 3.72));
+						put(TUESDAY_HOURS.getName(), format("%f", 3.72));
+						put(WEDNESDAY_HOURS.getName(), format("%f", 3.72));
+						put(THURSDAY_HOURS.getName(), format("%f", 3.71));
+						put(FRIDAY_HOURS.getName(), format("%f", 3.71));
+						put(SATURDAY_HOURS.getName(), format("%f", 3.71));
+						put(SUNDAY_HOURS.getName(), format("%f", 3.71));
+					}
+				}
+				);
+		
+		Date startIt = add(add(startDate, MONTH, 1), DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+
+		//@formatter:off
+		
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		Assert.assertEquals(30, ctx.getExpressionContext().eval("DIAS_COTIZADOS", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+
+		double br = (3000.00 * (26.00 /40.00) ) / 30.00;
+		
+		
+		
+		
+		startDate = add(startDate, MONTH,1);
+		endDate = getLastDayOfMonth(startDate);
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		
+		Assert.assertEquals(30, 
+				ctx.getExpressionContext()
+				.eval("DIAS_COTIZADOS", startDate, endDate, Double.class)
+				.stream().collect(Collectors.summingDouble(d->d.getValue())), 
+				DELTA);
+		
+		ctx.getExpressionContext().setVariable("TODAY", startIt, startDate, endDate);
 		Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 	}
 

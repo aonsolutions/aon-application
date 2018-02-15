@@ -143,6 +143,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.DelegateCollection;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
@@ -198,6 +199,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -712,6 +714,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		@Override
 		public double getIrpf() {
 			return 0.00;
+		}
+		
+		@Override
+		public Collection<IContractPayment> getContractPayments() throws AonException {
+			Collection<IContractPayment> payments =  super.getContractPayments();
+			return new FilterCollection<IContractPayment>( p -> p.getType() != PaymentType.CRA_0055 , payments);
 		}
 
 		@Override
@@ -2709,8 +2717,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		double quoteDys = ctx.getExpressionContext()
 				.getVariable(QUOTE_DAYS, ctx.getStartDate(), ctx.getEndDate(), Number.class).doubleValue();
-
-		double monthDays = ctx.getExpressionContext()
+		
+		double monthDays = 0;
+		monthDays = ctx.getExpressionContext()
 				.getVariable(MONTH_DAYS, ctx.getStartDate(), ctx.getEndDate(), Number.class).doubleValue();
 
 		double totalPayment = salary.getTotalPayment();
