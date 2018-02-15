@@ -1691,8 +1691,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			col++;
 		}
 		
-		cellFormatter.addStyleName(0, col-1, "aon-width-all"); // fill remain
+		//Columna vacia para el ancho
+		salaryTable.setWidget(0, col, new Label());
+		cellFormatter.addStyleName(0, col, "aon-width-all"); // fill remain
+		col++;
 		
+		//cellFormatter.addStyleName(0, col-1, "aon-width-all"); // fill remain
 		// salaryTable.setHTML(0, col, "&nbsp;");
 		salaryTable.setWidget(0, col, getViewButton());
 
@@ -1769,6 +1773,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 			index = ((row - 1) * cols) + col;
 			editors.set(index, deleteEditor);
+			salaryTable.setWidget(row, col++, new Label());
 			salaryTable.setWidget(row, col++, deleteButton);
 
 
@@ -2139,7 +2144,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		salaryTable.setWidget(row, 0, descriptionTextBox);
 
 		int col;
-		int cols = salaryTable.getCellCount(row - 1);
+		//int cols = salaryTable.getCellCount(row - 1);
+		int cols = salaryTable.getCellCount(row - 2);
 		for (col = 1; col < cols - 2; col++)
 			salaryTable.setWidget(row, col, newHiddenTextBox(VARIABLE_TEXTBOX_SIZE));
 
