@@ -178,7 +178,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private void checkInvoiceYear(Invoice invoice) throws ManagerBeanVetoListenerException {
 		int thisYear = CommonUtil.getYear(new Date());
 		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
-		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
+		if (invoiceYear < (thisYear-9) || invoiceYear > (thisYear+1)) {
 			throw new ManagerBeanVetoListenerException("El Año de la Factura no es correcto.");
 		}
 	}
