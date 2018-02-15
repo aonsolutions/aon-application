@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
+import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -302,6 +303,8 @@ public class CommissionServlet extends HttpServlet{
 			Integer number = r.getInvoiceDetail().getInvoice().getNumber();
 					 
 			json.put("description", series + "/" + ceros(number.toString(),6));
+			json.put("invoice", ToJSON.invoiceToJSON(r.getInvoiceDetail().getInvoice()));
+
 			array.put(json);
 		});
 		return array;

@@ -7,11 +7,15 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.commercial.JsCommission;
-import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.ActionCell.Delegate;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.TextInputCell;
@@ -32,6 +36,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -44,6 +49,8 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
+
+import net.aonsolutions.aon.gwt.commercial.client.AonDialog;
 
 public class CommissionCalculateGrid extends ResizeComposite implements RequiresResize {
 
@@ -204,27 +211,39 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 		dataGrid.setColumnWidth(dateColumn, 20, Unit.PCT);
 
 		
-		/** PRESUPUESTO / OFFER **/
-		Column<JsCommission, String> offerColumn = new Column<JsCommission, String>(new TextCell()) {
+		/** FACTURA / INVOICE **/
+		
+		List<HasCell<JsCommission, ?>> cellsInvoice = new LinkedList<HasCell<JsCommission, ?>>();
+	    
+		cellsInvoice.add(new ActionHasCell("info", new Delegate<JsCommission>() {
+	    	
+	        @Override
+	        public void execute(JsCommission object) {
+	        	invoiceInfo(object);
+	        }
+	    }));
+		
+		CompositeCell<JsCommission> cellInvoice = new CompositeCell<JsCommission>(cellsInvoice);
+		
+		Column<JsCommission,JsCommission> invoiceColumn = 	new Column<JsCommission, JsCommission>(cellInvoice){
 
 			@Override
-			public String getValue(JsCommission object) {
-				return object.getDescription();
+			public JsCommission getValue(JsCommission object) {
+				return object;
 			}
-		
-		};
-		offerColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		offerColumn.setSortable(true); 
-		sortHandler.setComparator(offerColumn,new Comparator<JsCommission>() {
+		};		
+		invoiceColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		invoiceColumn.setSortable(true); 
+		sortHandler.setComparator(invoiceColumn,new Comparator<JsCommission>() {
 			
 			@Override
 			public int compare(JsCommission o1, JsCommission o2) {
 				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
-		dataGrid.getColumnSortList().push(offerColumn);
-		dataGrid.addColumn(offerColumn, "FACTURA");
-		dataGrid.setColumnWidth(offerColumn, 20, Unit.PCT);
+		dataGrid.getColumnSortList().push(invoiceColumn);
+		dataGrid.addColumn(invoiceColumn, "FACTURA");
+		dataGrid.setColumnWidth(invoiceColumn, 25, Unit.PCT);
 		
 		/** PRODUCTO / PRODUCT **/
 		Column<JsCommission, String> productColumn = new Column<JsCommission, String>(new TextCell()) {
@@ -392,4 +411,80 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 	    });
 		dataGrid.setColumnWidth(statusColumn, 25, Unit.PCT);
 	}
+	
+	private class ActionHasCell implements HasCell<JsCommission, JsCommission> {
+	    private ActionCell<JsCommission> cell;
+	    String s;
+	    
+	    public ActionHasCell(String text, Delegate<JsCommission> delegate) {
+	    	s = text;
+	        cell = new ActionCell<JsCommission>(text, delegate){
+	        	String text = s;
+	        	@Override
+	        	public void render(com.google.gwt.cell.client.Cell.Context context,
+	        			JsCommission value, SafeHtmlBuilder sb) {
+	        
+	        		String v = value.getDescription();
+	        		sb.appendHtmlConstant(v + "<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\" style=\"margin-left: 5px;position: absolute;\">");
+	        		sb.appendHtmlConstant("</button>");        		
+	        	}
+	        };
+	        
+	    }
+
+		@Override
+		public JsCommission getValue(JsCommission object) {
+			return object;
+		}
+
+
+		@Override
+		public Cell<JsCommission> getCell() {
+			return cell;
+		}
+
+		@Override
+		public FieldUpdater<JsCommission, JsCommission> getFieldUpdater() {
+			return null;
+		}
+	}
+	
+	private void invoiceInfo(JsCommission js){
+		FlexTable grid = new FlexTable();
+		grid.setStyleName("aon-panelGrid");
+
+		
+		grid.setWidget(0, 0, new Label("Cliente"));
+		grid.setWidget(0, 1, new Label(js.getInvoice().getRegistryName()));
+
+		for (int i = 0; i < grid.getRowCount(); i++) {
+			for (int j = 0; j < grid.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					grid.getCellFormatter().setStyleName(i, j, "aon-panelGrid-odd");
+				} else {
+					grid.getCellFormatter().setStyleName(i, j, "aon-panelGrid-even");
+				}   
+			}
+		}	
+
+		AonDialog dialog = new AonDialog("Informaci\u00f3n Factura", grid) {
+					
+			@Override 
+			protected void onCancel() {
+				hide();
+			}
+				
+			@Override 
+			protected void onAccept() {
+				hide();
+			}
+		};
+
+		dialog.getAccept().setVisible(false);
+		dialog.getCancel().setVisible(false);
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
+	}
+
 }

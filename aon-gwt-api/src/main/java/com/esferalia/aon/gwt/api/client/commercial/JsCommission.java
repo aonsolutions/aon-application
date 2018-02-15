@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.commercial;
 
+import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -30,6 +31,9 @@ public class JsCommission extends JavaScriptObject {
 		return this.seller;
 	}-*/;
 	
+	public final native JsInvoice getInvoice() /*-{
+		return this.invoice;
+	}-*/;
 	public final native String getDescription() /*-{
 		return this.description;
 	}-*/;
@@ -64,6 +68,10 @@ public class JsCommission extends JavaScriptObject {
 	
 	public final native String getStatus() /*-{
 		return this.status;
+	}-*/;
+	
+	public final native Integer getCustomer() /*-{
+		return this.customer;
 	}-*/;
 	
 	

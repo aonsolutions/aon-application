@@ -24,6 +24,7 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
@@ -80,6 +81,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -87,11 +89,14 @@ import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
@@ -106,6 +111,7 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class FillerDAO {
 
@@ -902,13 +908,43 @@ public class FillerDAO {
 		@Override
 		public InvoiceDetailCommission apply(Record r) {
 			Invoice i = new Invoice()
-					.setId(r.getValue(INVOICE.ID))
-					.setDomain(r.getValue(INVOICE.DOMAIN))
-					.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
-					.setSeries(r.getValue(INVOICE.SERIES))
-					.setNumber(r.getValue(INVOICE.NUMBER))
-					.setSeller(r.getValue(REGISTRY.ID))
-					.setSellerName(r.getValue(REGISTRY.NAME));
+				.setId(r.getValue(INVOICE.ID))
+				.setDomain(r.getValue(INVOICE.DOMAIN))
+				.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getValue(INVOICE.TYPE)))
+				.setSeries(r.getValue(INVOICE.SERIES))
+				.setNumber(r.getValue(INVOICE.NUMBER))
+				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,r.getValue(INVOICE.SECURITY_LEVEL)))
+				.setRegistry(r.getValue(INVOICE.REGISTRY))
+				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getValue(INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(r.getValue(INVOICE.RNAME))
+				.setScope(new Scope().setId(r.getValue(INVOICE.SCOPE)))
+				.setActivity(r.getValue(INVOICE.ACTIVITY))	
+				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
+				.setProject(r.getValue(INVOICE.PROJECT))
+				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	
+				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
+				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,r.getValue(INVOICE.TRANSACTION)))
+				.setRecorded(r.getValue(INVOICE.STATUS) == 1 )	
+				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
+				.setWithholding(r.getValue(INVOICE.WITHHOLDING) == 1 )	
+				.setWithholdingFarmer(r.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
+				.setVatAccrualPayment(r.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
+				.setInvestment(r.getValue(INVOICE.INVESTMENT) == 1 )	
+				.setService(r.getValue(INVOICE.SERVICE) == 1 )	
+				.setAdvance(r.getValue(INVOICE.ADVANCE) == 1 )	
+				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
+				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
+				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
+				.setTotal(r.getValue(INVOICE.TOTAL))	
+				.setComments(r.getValue(INVOICE.COMMENTS))
+				.setStatus(r.getValue(INVOICE.STATUS))
+				.setSeller(r.getValue(REGISTRY.ID))
+				.setSellerName(r.getValue(REGISTRY.NAME));
 			
 			
 			InvoiceDetail id = new InvoiceDetail()
