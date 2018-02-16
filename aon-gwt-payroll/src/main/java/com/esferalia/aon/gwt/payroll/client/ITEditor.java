@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.client.ITDataObject.CallculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.BarLabelStyle;
@@ -568,7 +569,10 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				end = DateUtils.before(end, endYear);
 
 				if (dataObject.getDataIts(contractId).size() > 0) {
-					addLeaveRows(employee, contractId, start, end);
+					addLeaveRows(employee, 
+							contractId, 
+							start, 
+							end);
 
 				} else {
 
@@ -578,11 +582,18 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 					 * Wrapper.
 					 */
 
-					data.addRow(employee.getFullname(), ACTIVE, start, end,
-							employee.getStartDate(), employee.getEndDate(),
+					data.addRow(employee.getFullname(), 
+							ACTIVE, 
+							start, 
+							end,
+							employee.getStartDate(), 
+							employee.getEndDate(),
 							employee.getDocument(),
-							employee.getSocialSecurity(), contractId,
-							contractId, -1, new ITDataPerson());
+							employee.getSocialSecurity(), 
+							contractId,
+							contractId, 
+							-1, 
+							new ITDataPerson());
 				}
 
 				finalizado = true;
@@ -617,26 +628,52 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			leaveEnd = DateUtils.before(leaveEndAux, endYear);
 
 			int contractLeaveId = itDataPerson.getContractLeaveId();
+			
+			// skip previous IT
+			if ( start.before(leaveStart))
+				data.addRow(employee.getFullname(), 
+						ACTIVE, 
+						start, 
+						leaveStart,
+						employee.getStartDate(), 
+						employee.getEndDate(),
+						employee.getDocument(), 
+						employee.getSocialSecurity(),
+						contractId, 
+						contractId, 
+						-1, 
+						new ITDataPerson());
 
-			data.addRow(employee.getFullname(), ACTIVE, start, leaveStart,
-					employee.getStartDate(), employee.getEndDate(),
-					employee.getDocument(), employee.getSocialSecurity(),
-					contractId, contractId, -1, new ITDataPerson());
-
-			data.addRow(employee.getFullname(), type.getDescription(),
-					leaveStart, leaveEnd, itDataPerson.getLeaveStartDate(),
-					itDataPerson.getLeaveEndDate(), employee.getDocument(),
-					employee.getSocialSecurity(), contractId, contractLeaveId,
-					itDataPerson.getDischarge_cause(), itDataPerson);
+			data.addRow(employee.getFullname(), 
+					type.getDescription(),
+					leaveStart, 
+					leaveEnd, 
+					itDataPerson.getLeaveStartDate(),
+					itDataPerson.getLeaveEndDate(), 
+					employee.getDocument(),
+					employee.getSocialSecurity(), 
+					contractId, 
+					contractLeaveId,
+					itDataPerson.getDischarge_cause(), 
+					itDataPerson);
 
 			start = leaveEnd;
 
 		}
 		if (DateUtils.equals(start, end) == false) {
-			data.addRow(employee.getFullname(), ACTIVE, start, end,
-					employee.getStartDate(), employee.getEndDate(),
-					employee.getDocument(), employee.getSocialSecurity(),
-					contractId, contractId, -1, new ITDataPerson());
+			data.addRow(
+					employee.getFullname(), 
+					ACTIVE, 
+					start, 
+					end,
+					employee.getStartDate(), 
+					employee.getEndDate(),
+					employee.getDocument(), 
+					employee.getSocialSecurity(),
+					contractId, 
+					contractId, 
+					-1, 
+					new ITDataPerson());
 		}
 
 	}
