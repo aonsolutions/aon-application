@@ -2976,7 +2976,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return br;
 
 		// No salaries are present.
-		return calculateBr(date);
+		return calculateBr(date.before(contractStartDate) ? contractStartDate: date);
 	}
 
 	public Object calculateBr(Date date) throws ExpressionException, SQLException, SalaryException {

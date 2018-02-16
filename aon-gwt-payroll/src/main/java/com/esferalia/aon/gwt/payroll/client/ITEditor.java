@@ -300,12 +300,6 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			if(getEndDateBoxError() == false)
 				initStyles();			
 			
-			if( DateUtils.compare(startDate, startContract) < 0 || DateUtils.compare(startDate, endContract) > 0){
-				tooltip.startLeaveDateBox.setStyleName(AON.AON_ICON_ERROR, true);
-				tooltip.startLeaveDateBox.setTitle(OUT_PERIOD);
-				tooltip.acceptButton.setEnabled(false);
-				return;				
-			}			
 			
 			boolean correct = dataObject.isCorrectStartDateLeave(contractId,
 					leaveId, startDate);
@@ -316,6 +310,13 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				tooltip.acceptButton.setEnabled(false);
 				return;
 			}	
+
+			if( DateUtils.compare(startDate, startContract) < 0 || DateUtils.compare(startDate, endContract) > 0){
+				tooltip.startLeaveDateBox.setStyleName(AON.AON_ICON_WARN, true);
+				tooltip.startLeaveDateBox.setTitle(OUT_PERIOD);
+				//tooltip.acceptButton.setEnabled(false);
+				//return;				
+			}			
 			
 			initStyles();
 		}
