@@ -252,8 +252,9 @@ public interface ICommonMessages {
 	String EXTERNAL_TIRANT = "aon_external_tirant";
 	String EXTERNAL_DEH_ONLINE = "aon_external_dehOnline";
 	String REMOVE_DOMAIN_ERROR = "admin_remove_domain_error";
-	String AON_ONE = "aon_module_aonOne";
-	String AON_AIO = "admin_domain_aonAIO";
+	String AON_AIO = "admin_domain_myAON";
+	String AON_ONE = "admin_domain_aonSMB";
+	String AON_FINANCE = "aon_module_management";
 	String PAYER_DOMAIN = "admin_domain_payer";
 	String DOMAIN_EXPIRATION_ERROR = "admin_domain_expiration_error";
 	

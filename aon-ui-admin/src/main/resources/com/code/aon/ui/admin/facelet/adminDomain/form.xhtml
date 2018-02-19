@@ -282,9 +282,10 @@
 							<aon:if test="#{adminDomain.to.type == 'ENTERPRISE'}">
 								<aon:selectOneRadio id="Domain_aonOne"
 									styleClass="aon-margin-right" 
-									value="#{adminDomain.bookingInfo.aonOne}" >
-									<f:selectItem itemLabel="#{bundle.admin_domain_aonAIO}" itemValue="#{false}" />
-									<f:selectItem itemLabel="#{bundle.aon_module_aonOne}" itemValue="#{true}" />
+									value="#{adminDomain.bookingInfo.aonMode}" >
+									<f:selectItem itemLabel="#{bundle.admin_domain_myAON}" itemValue="#{0}" />
+									<f:selectItem itemLabel="#{bundle.admin_domain_aonSMB}" itemValue="#{1}" />
+									<f:selectItem itemLabel="#{bundle.aon_module_management}" itemValue="#{2}" />
 									<a4j:support event="onchange" ajaxSingle="true"
 										actionListener="#{adminDomain.bookingInfo.onAonOneChanged}"
 										reRender="adminDomainToolbar,bookedModulesDiv" />

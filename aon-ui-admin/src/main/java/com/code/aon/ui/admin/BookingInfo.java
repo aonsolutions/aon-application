@@ -140,6 +140,9 @@ public class BookingInfo implements Serializable {
 		if ( isAonOne() ) {
 			updateAonOneModules();
 		}
+		if ( isAonFinance() ) {
+			updateAonFinanceModules();
+		}
 		if ( this.aioInfo.isChecked() ) {
 			this.aioInfo.register();
 		} else {
@@ -170,7 +173,7 @@ public class BookingInfo implements Serializable {
 	}		
 	
 	public boolean isShowDisplayModules() {
-		if ( ((getDomain().getType() == DomainType.CONSULTANCY) && getDomain().isDomainManagement()) || isAonOne() ) {
+		if ( ((getDomain().getType() == DomainType.CONSULTANCY) && getDomain().isDomainManagement()) || isAonOne() || isAonFinance() ) {
 			return false;
 		}
 		return true;
@@ -253,6 +256,14 @@ public class BookingInfo implements Serializable {
 		aonOneModule.setChecked(true);		
 	}
 	
+	private void updateAonFinanceModules() {
+		for( DomainModuleInfo dmi : aioInfo.getApplicationModules() ) {
+			dmi.setChecked(false);	
+		}
+		DomainModuleInfo aonFinanceModule = aioInfo.getModuleInfo(Module.AON_FINANCE);
+		aonFinanceModule.setChecked(true);		
+	}
+	
 	private List<DomainModuleInfo> calculateBookingModules() {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
 		list.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
@@ -282,6 +293,9 @@ public class BookingInfo implements Serializable {
 				DomainModuleInfo aonOne = aioInfo.getModuleInfo(Module.AON_ONE);
 				list.add(aonOne);
 				aonOne.setRendered(false);
+				DomainModuleInfo aonFinance = aioInfo.getModuleInfo(Module.AON_FINANCE);
+				list.add(aonFinance);
+				aonFinance.setRendered(false);
 				break;
 			case GARAGE:
 				DomainModuleInfo garage = aioInfo.getModuleInfo(Module.GARAGE); 
@@ -308,16 +322,35 @@ public class BookingInfo implements Serializable {
 		return list;
 	}
 	
+	public int getAonMode() {
+		DomainModuleInfo aonOne =  aioInfo.getModuleInfo(Module.AON_ONE);
+		if ((getDomain().getType() == DomainType.ENTERPRISE) && aonOne.isChecked()) {
+			return 1;
+		}
+		DomainModuleInfo aonFinance =  aioInfo.getModuleInfo(Module.AON_FINANCE);
+		if ((getDomain().getType() == DomainType.ENTERPRISE) && aonFinance.isChecked()) {
+			return 2;
+		}
+		return 0;
+	}
+
+	public void setAonMode( int value) {
+		DomainModuleInfo aonOne =  aioInfo.getModuleInfo(Module.AON_ONE);
+		aonOne.setChecked(value == 1);
+		DomainModuleInfo aonFinance =  aioInfo.getModuleInfo(Module.AON_FINANCE);
+		aonFinance.setChecked(value == 2);
+	}
+	
 	public boolean isAonOne() {
 		DomainModuleInfo aonOne =  aioInfo.getModuleInfo(Module.AON_ONE);
 		return (getDomain().getType() == DomainType.ENTERPRISE) && aonOne.isChecked();
 	}
 
-	public void setAonOne( boolean value) {
-		DomainModuleInfo aonOne =  aioInfo.getModuleInfo(Module.AON_ONE);
-		aonOne.setChecked(value);
+	public boolean isAonFinance() {
+		DomainModuleInfo aonFinance =  aioInfo.getModuleInfo(Module.AON_FINANCE);
+		return (getDomain().getType() == DomainType.ENTERPRISE) && aonFinance.isChecked();
 	}
-	
+
 	private List<DomainModuleInfo> calculateDisplayModules() throws ManagerBeanException {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
 		list.add(aioInfo.getModuleInfo(Module.CRM));
@@ -374,7 +407,10 @@ public class BookingInfo implements Serializable {
 	}
 		
 	private void updateEnterpriseModules() throws ManagerBeanException {
-		if (isAonOne()) {
+		if (isAonFinance()) {
+			this.bookingModules.clear();
+			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_FINANCE));
+		} else if (isAonOne()) {
 			this.bookingModules.clear();
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
 			this.bookingModules.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
@@ -401,7 +437,7 @@ public class BookingInfo implements Serializable {
 					payroll.setDisabled(!parentUser);
 				}
 			}			
-			if (! this.displayModules.contains(this.documental) ) {
+			if (!this.displayModules.contains(this.documental) ) {
 				this.displayModules.add(this.documental);
 			}
 		}

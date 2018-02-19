@@ -492,7 +492,9 @@ public class DomainController extends BasicController {
 
 		String booking = String.valueOf(di.getBookingModules().size());
 		if ( di.getType() == DomainType.ENTERPRISE ) {
-			booking = AonUtil.getMessage( di.getBookingModules().contains(Module.AON_ONE) ? ICommonMessages.AON_ONE : ICommonMessages.AON_AIO ); 
+			boolean isAonOne = di.getBookingModules().contains(Module.AON_ONE);
+			boolean isAonFinance = !isAonOne && di.getBookingModules().contains(Module.AON_FINANCE);
+			booking = AonUtil.getMessage( isAonOne ? ICommonMessages.AON_ONE : isAonFinance ? ICommonMessages.AON_FINANCE : ICommonMessages.AON_AIO ); 
 		}
 		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_5, multiDomain, booking) );
 		if (! di.getBookingModules().isEmpty() && (di.getType() != DomainType.ENTERPRISE) ) {
@@ -886,7 +888,7 @@ public class DomainController extends BasicController {
 		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
 		int number = duc.getNumberOfActiveUsers();
 		if ( number < 1 ) {
-			if ( (getDomain().getType()==DomainType.OFFICE) || getBookingInfo().isAonOne() ) {
+			if ( (getDomain().getType()==DomainType.OFFICE) || getBookingInfo().isAonFinance() ) {
 				number = 0;
 			} else {
 				number = 1;

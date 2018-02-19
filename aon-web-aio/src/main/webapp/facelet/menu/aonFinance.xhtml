@@ -340,20 +340,20 @@
 											action="account_list-financePortal"
 											value="#{bundle.account_module}" />
 									</aon:div>
-								</aon:if>
-								<aon:if test="#{aonRole.config}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="globalConfiguration-financePortal"
-											action="globalConfig_form-financePortal"
-											actionListener="#{globalConfig.onInit}"
-											value="#{bundle.admin_global_configuration}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="aonLoader-financePortal"
-											action="aonLoader_form-financePortal"
-											actionListener="#{aonLoader.onStart}"
-											value="#{bundle.aon_loader_module}" />
-									</aon:div>										
+									<aon:if test="#{aonRole.config}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="globalConfiguration-financePortal"
+												action="globalConfig_form-financePortal"
+												actionListener="#{globalConfig.onInit}"
+												value="#{bundle.admin_global_configuration}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="aonLoader-financePortal"
+												action="aonLoader_form-financePortal"
+												actionListener="#{aonLoader.onStart}"
+												value="#{bundle.aon_loader_module}" />
+										</aon:div>										
+									</aon:if>
 								</aon:if>
 								<aon:if test="#{aonRole.ESignature and company.EInvoice and certificate.certificateCount > 0}">
 									<aon:div styleClass="aon-direct-access-list-element">
