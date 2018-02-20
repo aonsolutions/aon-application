@@ -415,9 +415,10 @@ public class EmployeeEventsDraftObject {
 							Date startDate = DateUtils.copyDateOnly(quarter.getStartDate());
 							Date endDate = null;
 							if(null != quarter.getEndDate())
-								DateUtils.copyDateOnly(quarter.getEndDate());
+								endDate = DateUtils.copyDateOnly(quarter.getEndDate());
 							Double value = Double.parseDouble(quarter.getExpression());
 							EmployeeEventsVariable var = new EmployeeEventsVariable(startDate, endDate, value);
+							//Window.alert("BD -> "+varName+" = "+value+", stratDate :"+startDate+", endDate :"+endDate);
 							varList.add(var);
 						}
 						sortListByStartDate(varList);
@@ -475,6 +476,7 @@ public class EmployeeEventsDraftObject {
 		for(Entry<String, ArrayList<EmployeeEventsVariable>> entry : updateMap.entrySet()){
 			String varName = entry.getKey();
 			for(EmployeeEventsVariable eVar : updateMap.get(varName)){
+				//Window.alert("UPDATE -> "+varName + " = "+ eVar.getValue() +", StartDate :"+eVar.getStartDate()+", endDate :"+eVar.getEndDate());
 				Quartet<java.sql.Date, java.sql.Date, String, String> quarterInfo = new Quartet<java.sql.Date, java.sql.Date, String, String>();
 				java.sql.Date startDate = new java.sql.Date(eVar.getStartDate().getTime());
 				java.sql.Date endDate = new java.sql.Date(eVar.getEndDate().getTime());

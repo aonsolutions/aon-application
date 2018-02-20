@@ -3,9 +3,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:s="urn:import:com.google.gwt.dom.builder.shared" 
-	xmlns:i="urn:import:com.vaadin.polymer.iron.widget"
-	xmlns:p="urn:import:com.vaadin.polymer.paper.widget" 
+	xmlns:s="urn:import:com.google.gwt.dom.builder.shared"
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 	<ui:with field='res'
@@ -17,34 +15,32 @@
 		/* ESTILOS TABLA */
 
 		.tableStyle {
-		border-collapse: collapse;
-		cursor: pointer;
-		margin-left: 0.8em;
-		width: 99%;
+			border-collapse: collapse;
+			cursor: pointer;
+			margin-left: 0.8em;
+			width: 99%;
 		}
 
 		.tableStyle tr {
-		text-align: center;
-		border-bottom: 1px solid #ddd;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
+			text-align: center;
+			border-bottom: 1px solid #ddd;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.firstHeadStyle {
-		width: 16em;
-		font-weight: bold;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
-		padding: 3px;
+			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+			padding: 3px;
 		}
 
 		.firstHeadStyleHide {
-		/* width:16em; */
-		padding-bottom: 15px;
-		visibility: hidden;
-		font-weight: bold;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
+			padding-bottom: 15px;
+			visibility: hidden;
+			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.cabeceraStyle {
@@ -63,79 +59,85 @@
 		}
 
 		.oddRowStyle {
-		background-color: #eee;
+			background-color: #eee;
 		}
 
 		.ocultarFila{
-		display: none;
+			display: none;
 		}
 
 		.noselect {
-		-webkit-touch-callout: none; /* iOS Safari */
-		-webkit-user-select: none; /* Safari */
-		-khtml-user-select: none; /* Konqueror HTML */
-		-moz-user-select: none; /* Firefox */
-		-ms-user-select: none; /* Internet Explorer/Edge */
-		user-select: none; /* Non-prefixed version, currently supported by Chrome and
-		Opera */
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /* Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 		}
 
 		.scrollStyle {
-		position: absolute !important;
-		right: 5px !important;
-		bottom: 50px !important;
+			position: absolute !important;
+			right: 5px !important;
+			bottom: 50px !important;
 		}
 
 		.scrollStyle1 {
-		top: 50px !important;
+			top: 50px !important;
 		}
 
 		/* ESTILOS CELDA TABLA */
 
+		.calendarPosition{
+			margin-left: 150px;
+		}
+
 		.cellFormat{
-		/* width: 40px; */
-		/* margin-left: 8px; */
-		text-align: center;
-		border: none;
-		cursor: pointer;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
+			width: 20px;
+			/* margin-left: 8px; */
+			text-align: center;
+			border: none;
+			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.cellOddFormat{
-		background-color: #eee;
-		/* width: 40px; */
-		/* margin-left: 8px; */
-		text-align: center;
-		border: none;
-		cursor: pointer;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
+			background-color: #eee;
+			width: 20px;
+			/*margin-left: 8px;*/
+			text-align: center;
+			border: none;
+			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.isSelectedCell{
-		background-color: #166ef3 !important;
-		color: #ffffff !important;
-		border-radius: 9px !important;
-		/* width: 40px; */
-		/* margin-left: 8px; */
-		text-align: center;
-		border: none;
-		cursor: pointer;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
+			background-color: #166ef3 !important;
+			color: #ffffff !important;
+			border-radius: 9px !important;
+			width: 20px;
+			/* margin-left: 8px; */
+			text-align: center;
+			border: none;
+			cursor: pointer;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.onChange {
-		background-color: rgba(255, 255, 0, 0.38);
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
+			border: none !important;
+    		text-align: center !important;
+			width: 20px;
+			background-color: rgba(255, 255, 0, 0.38);
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.setBlockVariableStyle{
-		color: #aaa;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
+			color: #aaa;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		/* ESTILOS CAMBIO DE AÑO */
@@ -145,11 +147,11 @@
 		}
 
 		.year {
-		font-size: 30px;
-		color: #FF704D;
-		padding-left: 8px;
-		padding-right: 8px;
-		padding-top: 2px;
+			font-size: 30px;
+			color: #FF704D;
+			padding-left: 8px;
+			padding-right: 8px;
+			padding-top: 2px;
 		}
 
 		.optionButtons{
@@ -262,28 +264,12 @@
 
 			<g:HTMLPanel>
 
-				<!-- DIALOG PARA SELECCIONAR QUE VARIABLES SE MUESTRAN -->
-				<p:PaperDialog ui:field="showVariablesDialog" modal="true"
-					entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
-					withBackdrop="true">
-					<a:CustomDialogBar ui:field="customDialogBarShowVariables"
-						styleName="{style.marginTopCloseDialog}" caption="Variables mostradas" />
-					<!-- p:PaperDialogScrollable ui:field="showVariablesContent"/ -->
-					<g:HTMLPanel ui:field="showVariablesContent"></g:HTMLPanel>
-					<HTMLPanel class="buttons">
-						<p:PaperButton ui:field="showVariablesDialogCancel"
-							attributes="dialog-dismiss">Cancel</p:PaperButton>
-						<p:PaperButton ui:field="showVariablesDialogOk"
-							attributes="dialog-confirm">OK</p:PaperButton>
-					</HTMLPanel>
-				</p:PaperDialog>
-
 				<!-- PANEL CAMBIO DE AÑO -->
 				<g:HorizontalPanel styleName="{style.paddingHorizontalPanel}">
 					<g:Button
 						styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous"
 						ui:field="lastYearButton" />
-					<g:Label styleName="{style.year}" ui:field="yearLabel">2017</g:Label>
+					<g:Label styleName="{style.year}" ui:field="yearLabel"></g:Label>
 					<g:Button
 						styleName="{style.optionButtons} {style.optionButtonsRight} aon-icon-next"
 						ui:field="nextYearButton" />
@@ -294,50 +280,9 @@
 					<!-- DataGrid. -->
 					<g:center>
 						<g:ScrollPanel styleName="{style.scrollStyle}">
-							<g:Grid ui:field="eventsGrid" styleName="{style.tableStyle} {style.noselect}">
-								<!-- PARTE OCULTA PARA REDIMENSIONAR LA TABLA -->
-								<g:row>
-									<g:customCell styleName="{style.firstHeadStyleHide}">
-										<g:Label></g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>ENERO</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>FEBRERO</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>MARZO</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>ABRIL</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>MAYO</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>JUNIO</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>JULIO</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>AGOSTO</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>SEPTIEMBRE</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>OCTUBRE</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>NOVIEMBRE</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.cabeceraStyle}">
-										<g:Label>DICIEMBRE</g:Label>
-									</g:customCell>
-								</g:row>
-							</g:Grid>
+							<g:FlexTable ui:field="eventsGrid" styleName="{style.tableStyle} {style.noselect}">
+								<!-- AQUI SE CONSTRUYE LA TABLA VACIA. -->
+							</g:FlexTable>
 						</g:ScrollPanel>
 					</g:center>
 				</g:DockLayoutPanel>
