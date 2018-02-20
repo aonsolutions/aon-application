@@ -58,6 +58,8 @@ node {
 
     	sh "echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
+    	sh "echo 127.0.0.1 home-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
+
     	sh "echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
     	sleep 30
