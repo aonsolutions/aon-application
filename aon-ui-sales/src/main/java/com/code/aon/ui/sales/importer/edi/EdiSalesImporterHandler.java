@@ -508,6 +508,7 @@ public class EdiSalesImporterHandler implements Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_CODE), itemCustomerCode);
 			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), customer.getRegistry().getId());
+			criteria.addOrder(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
 			List<ITransferObject> list = itemBean.getList(criteria);
 			if(list!=null && !list.isEmpty()){
 				return (RegistryItem) list.get(0);

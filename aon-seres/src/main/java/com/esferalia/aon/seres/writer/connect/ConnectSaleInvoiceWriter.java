@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -740,9 +742,15 @@ public class ConnectSaleInvoiceWriter {
 			criteria.addEqualExpression(
 					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS),
 					RegistryItemStatus.ACTIVE);
+			criteria.addOrder(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY),
+					true);
 			List<RegistryItem> rItemList = bean.getList(criteria).stream()
 					.map(to -> ((RegistryItem) to)).collect(Collectors.toList());
-
+			
+			Comparator<RegistryItem> nullPriorLast = Comparator.comparing(RegistryItem::getPriority,Comparator.nullsLast(Integer::compareTo));
+			Collections.sort(rItemList, nullPriorLast);
+			
 			if (rItemList != null && !rItemList.isEmpty()) {
 				return rItemList.get(0);
 			}
