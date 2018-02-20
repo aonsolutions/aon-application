@@ -2715,12 +2715,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		calculator.setSalaryBuilder(salaryBuilder);
 		Salary salary = calculator.calculate(ctx);
 
-		double quoteDys = ctx.getExpressionContext()
-				.getVariable(QUOTE_DAYS, ctx.getStartDate(), ctx.getEndDate(), Number.class).doubleValue();
+		double quoteDys = 
+				getContexVariable(ctx.getExpressionContext(), new Period(ctx.getStartDate(), ctx.getEndDate()), ContextVariable.QUOTE_DAYS);
 		
 		double monthDays = 0;
-		monthDays = ctx.getExpressionContext()
-				.getVariable(MONTH_DAYS, ctx.getStartDate(), ctx.getEndDate(), Number.class).doubleValue();
+		monthDays = getContexVariable(ctx.getExpressionContext(), new Period(ctx.getStartDate(), ctx.getEndDate()), MONTH_DAYS);
+				
 
 		double totalPayment = salary.getTotalPayment();
 		double extraPayProration = salary.getExtraPayProration();
@@ -2998,8 +2998,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					}
 				};
 			}.calculate(ctx);
-			return salary.getCommonBase() / ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(),
+			Object br =  salary.getCommonBase() / ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(),
 					ctx.getEndDate(), Double.class);
+			return br;
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw t;
@@ -3842,12 +3843,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
+
 	private double getContexVariable(ExpressionContext ctx, Period p, ContextVariable var) {
-		ITimedVariable<?> agreementHours = ctx.getVariable(var, p.getStart(), p.getEnd());
-		if (agreementHours == null)
+		ITimedVariable<?> timedVariable = ctx.getVariable(var, p.getStart(), p.getEnd());
+		if (timedVariable == null)
 			throw new ExpressionExceptionWrapper(new UndefinedContextVariablesException(var));
 		try {
-			return ((Number) agreementHours.getValue(p)).doubleValue();
+			return ((Number) timedVariable.getValue(p)).doubleValue();
 		} catch (ExpressionExceptionWrapper e) {
 		}
 
@@ -4080,6 +4082,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 	}
 	
+	protected  void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+		ResultSet rs = null;
+		try {
+			cleaveStmt.setInt(1, getId());
+			rs = cleaveStmt.executeQuery();
+			leaveLoader.clear();
+			while (rs.next()) {
+				loadLeaveContractFactor(rs, ctx);
+				leaveLoader.loadContractLeave(rs, ctx);
+				onContractLeaveLoaded(rs, ctx);
+			}
+
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+		}
+	}
+	
+
+
 	private DayType getDayType ( Calendar day ) {
 		ICalendar calendar = getCalendar();
 		return calendar.getDayType(day);
@@ -4108,26 +4131,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 	}
-
-	private void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
-		ResultSet rs = null;
-		try {
-			cleaveStmt.setInt(1, getId());
-			rs = cleaveStmt.executeQuery();
-			leaveLoader.clear();
-			while (rs.next()) {
-				loadLeaveContractFactor(rs, ctx);
-				leaveLoader.loadContractLeave(rs, ctx);
-				onContractLeaveLoaded(rs, ctx);
-			}
-
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-		}
-	}
-	
 
 	private void initSystemCosts() throws SQLException {
 		ResultSet rs = null;

@@ -72,6 +72,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	public SQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Date chargeDate, Criteria criteria, Criteria paymentsCriteria) throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate, chargeDate, criteria, paymentsCriteria);
+		
 		initNoHolidaysStmt();
 	}
 
@@ -216,6 +217,11 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	@Override
 	protected void loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
 		super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
+	}
+	
+	@Override
+	protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+		// NOOP
 	}
 	
 	
