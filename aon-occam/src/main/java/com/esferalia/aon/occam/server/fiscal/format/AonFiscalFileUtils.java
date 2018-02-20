@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -210,6 +211,7 @@ public class AonFiscalFileUtils {
 		}
 		return text(changeInvalidCharacters(name),size);
 	}
+	
 	public static String getMod202Period(Period period) {
 		 if (period == Period.T1) {
 			 return "1P"; 
@@ -231,9 +233,10 @@ public class AonFiscalFileUtils {
 						,AonStringUtils.EMPTY); 
 		name = changeInvalidCharacters(name);
 		name = name.replaceAll("[^a-zA-Z0-9.-]", "_");
+		
 		return  "Mod" + FiscalModelUtils.getModelName(fs) 
 				+ "_" + fs.getYear() 
-				+ "_" + fs.getPeriod().getName() 
+				+ "_" + ( fs.getModel() == FiscalModelType.M202 ? getMod202Period(fs.getPeriod()) : fs.getPeriod().getName()) 
 				+ AonStringUtils.prependIfMissing(name , "_");
 	}
 	

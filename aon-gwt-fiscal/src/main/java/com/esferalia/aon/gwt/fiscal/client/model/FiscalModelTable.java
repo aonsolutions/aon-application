@@ -80,7 +80,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		final TextColumn<FM> documentColumn = new TextColumn<FM>() {
 			@Override
 			public String getValue(FM model) {
-				return model.getPeriod().getDescription();
+				return FiscalModelUtils.getPeriodDescription(model);
 			}
 		};
 		this.addColumn(documentColumn, AON.MSG.period());

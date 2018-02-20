@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Anchor;
@@ -103,6 +104,22 @@ public class FiscalModelUtils {
 		return AonStringUtils.isNotBlank(name)?name:fm.getModel().getName();
 	}
 	
+	public static String getPeriodDescription(IFiscalModel fm) {
+		String description = "";
+		if (fm.getPeriod() != null) {
+			if (fm.getModel() == FiscalModelType.M202) {
+				if (fm.getPeriod() == Period.T1)
+					description = "1\u00BA Per.";
+				if (fm.getPeriod() == Period.T2) 
+					description = "2\u00BA Per.";
+				if (fm.getPeriod() == Period.T3) 
+					description = "3\u00BA Per.";				
+			}
+			else description = fm.getPeriod().getDescription();			
+		}		
+		return description;
+	}
+	
 	public static void paintHeaderTable(SimplePanel headerPanel, IFiscalModel fm) {
 		Administration admon = (fm == null?Administration.COMMON_TERRITORY:fm.getAdministration());
 		headerPanel.clear();
@@ -138,7 +155,7 @@ public class FiscalModelUtils {
 		headerTable.getFlexCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonFiscalModelTableHeaderModel());
 		headerTable.getFlexCellFormatter().addStyleName(0, 3, getAdministrationBG(admon));
 		
-		headerTable.setWidget(1, 0, new Label(fm.getPeriod().getDescription()));
+		headerTable.setWidget(1, 0, new Label(getPeriodDescription(fm)));
 		headerTable.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalModelTableHeaderModel());
 		headerTable.getFlexCellFormatter().addStyleName(1, 0, getAdministrationBG(admon));
 

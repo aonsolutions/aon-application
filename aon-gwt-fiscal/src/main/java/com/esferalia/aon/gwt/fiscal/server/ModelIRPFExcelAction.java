@@ -23,9 +23,11 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -161,9 +163,21 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 
 		CellUtil.createCell(row, 7, FiscalModelUtils.getModelName(model),headerCellStyle);
 		row = sheet.createRow(rowCount++);
-		CellUtil.createCell(row, 7, AonNumberUtils.toString(model.getYear()), headerCellStyle);
+		CellUtil.createCell(row, 7, AonNumberUtils.toString(model.getYear()), headerCellStyle);		
 		row = sheet.createRow(rowCount++);
-		CellUtil.createCell(row, 7, model.getPeriod().getDescription(), headerCellStyle);
+		
+		String description = "";
+		if (model.getModel() == FiscalModelType.M202) {
+			 if (model.getPeriod() == Period.T1)
+					description = "1\u00BA Periodo";
+				if (model.getPeriod() == Period.T2) 
+					description = "2\u00BA Periodo";
+				if (model.getPeriod() == Period.T3) 
+					description = "3\u00BA Periodo";
+		}
+		else description = model.getPeriod().getDescription();
+		
+		CellUtil.createCell(row, 7, description, headerCellStyle);
 		sheet.addMergedRegion(new CellRangeAddress(0, 2, 1, 6));
 
 		row = sheet.createRow(rowCount++);

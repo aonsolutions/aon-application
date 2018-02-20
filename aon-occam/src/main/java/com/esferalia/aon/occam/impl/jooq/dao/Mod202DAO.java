@@ -328,6 +328,21 @@ public class Mod202DAO extends FiscalModelDAO {
 					}
 				}
 			}
+			else if (mod.getYear() == 2018) {
+					if (mod.getPeriod() == Period.T1) {
+						Mod2002016 soci2016 = Mod2002016DAO.getByYear(ctx, 2016);
+						if (soci2016 != null) {
+							return soci2016.getVariable(Mod2002016Key.BN599).getValue();
+						}
+					} else {
+						// FALTA - Cuando esté disponible Modelo 200 2017
+//						Mod2002017 soci2017 = Mod2002017DAO.getByYear(ctx, 2017);
+//						if (soci2017 != null) {
+//							return soci2017.getVariable(Mod2002017Key.BN599).getValue();
+//						}						
+					}
+				}
+				
 		}
 		return 0.0;
 	}
