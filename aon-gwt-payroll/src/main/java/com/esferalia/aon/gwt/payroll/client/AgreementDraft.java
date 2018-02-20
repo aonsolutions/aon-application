@@ -689,7 +689,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		TextBox expressionBox;
 		ValueBoxBase<String> descriptionBox;
 		TypeListBox<Payment.Type> typeListBox;
-		TypeListBox<Salary.Type> salaryTypeListBox;
 
 		PaymentEditor(Payment payment) {
 			this.payment = payment;
@@ -717,8 +716,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				descriptionBox.setReadOnly(readOnly);
 			if ( this.typeListBox != null )
 				AgreementDraft.this.setReadOnly(typeListBox, readOnly);
-			if ( this.salaryTypeListBox != null )
-				AgreementDraft.this.setReadOnly(salaryTypeListBox, readOnly);
 			
 		}
 
@@ -793,27 +790,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			});
 		}
 
-		void setSalaryTypeListBox(TypeListBox<Salary.Type> listBox) {
-			this.salaryTypeListBox = listBox;
-			this.salaryTypeListBox.addChangeHandler(new ChangeHandler() {
-				@Override
-				public void onChange(ChangeEvent event) {
-					payment.setSalaryType(PaymentEditor.this.salaryTypeListBox.getSelected());
-					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate(getSalaryTypeFocusCallback());
-				}
-			});
-			this.salaryTypeListBox.addBlurHandler(new BlurHandler() {
-				@Override
-				public void onBlur(BlurEvent event) {
-					PaymentEditor editor = getNextPaymentEditorFor(payment.getId());
-					if (editor != null) {
-						editor.typeListBox.setFocus(true);
-					}
-				}
-			});
-		}
-
 		void setExpressionTextBox(TextBox textBox) {
 			this.expressionBox = textBox;
 			this.expressionBox.addFocusHandler(new FocusHandler() {
@@ -836,7 +812,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				public void onValueChange(ValueChangeEvent<String> event) {
 					payment.setExpression(event.getValue());
 					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate(getSalaryTypeFocusCallback());
+					AgreementDraft.this.calculate(getExpressionFocusCallback());
 				}
 			});
 		}
@@ -901,19 +877,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 				}
 			});
-		}
-
-		CalculateCallback getSalaryTypeFocusCallback() {
-			return new SuccessCalculateCallback() {
-				private int paymentId = payment.getId();
-
-				@Override
-				public void onCalculateSucces(AgreementDraftObject object) {
-					PaymentEditor editor = getPaymentEditorFor(paymentId);
-					if (editor != null)
-						editor.salaryTypeListBox.setFocus(true);
-				}
-			};
 		}
 
 		CalculateCallback getDescriptionFocusCallback() {
@@ -1659,6 +1622,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		for (Payment payment : payments) {
 			editors.add(dumpPayment(payment, row++));
 		}
+		
+		
 		return editors;
 	}
 
@@ -2322,15 +2287,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		paymentsTable.setWidget(row, 3, expressionBox);
 		contentAssistManager.addValueBox(expressionBox);
 
-		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(Salary.Type.class, 8);
-		salaryTypeListBox.setSelected(payment.getSalaryType());
-		paymentsTable.setWidget(row, 4, salaryTypeListBox);
-
 		Button deleteButton = new Button();
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		paymentsTable.setWidget(row, 5, deleteButton);
-		paymentsTable.getCellFormatter().addStyleName(row, 5, AON.AON_TEXT_RIGHT);
+		paymentsTable.setWidget(row, 4, deleteButton);
+		paymentsTable.getCellFormatter().addStyleName(row, 4, AON.AON_TEXT_RIGHT);
 		formatPaymentRow(row);
 
 		PaymentEditor paymentEditor = new PaymentEditor(payment);
@@ -2338,7 +2299,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		paymentEditor.setDeleteButton(deleteButton);
 		paymentEditor.setExpressionTextBox(expressionBox);
 		paymentEditor.setDescriptionTextBox(descriptionBox);
-		paymentEditor.setSalaryTypeListBox(salaryTypeListBox);
 		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
 
 		if (isDraftPayment(payment)) {
@@ -2357,7 +2317,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		deleteButton.ensureDebugId("delete-button-" + row );
 		expressionBox.ensureDebugId("expression-box" + row );
 		descriptionBox.ensureDebugId("description-box" + row );
-		salaryTypeListBox.ensureDebugId("salary-type-list-box" + row );
 		paymentTypeListBox.ensureDebugId("payment-type-list-box" + row );
 		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
 		
@@ -2456,11 +2415,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		paymentsTable.setWidget(row, 3, expressionBox);
 		expressionBox.ensureDebugId("amount-box-new-payment");
 
-		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(Salary.Type.class, 8);
-		salaryTypeListBox.setSelected(Salary.Type.SALARY);
-		paymentsTable.setWidget(row, 4, salaryTypeListBox);
-
-		paymentsTable.insertCell(row, 5);
+		paymentsTable.insertCell(row, 4);
 
 		formatPaymentRow(row);
 		Payment payment = agreementDraftObject.newDraftPayment();
@@ -2481,15 +2436,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					this.descriptionBox.setVisible(!readOnly);
 				if ( this.typeListBox != null )
 					this.typeListBox.setVisible(!readOnly);
-				if ( this.salaryTypeListBox != null )
-					this.salaryTypeListBox.setVisible(!readOnly);
 			}
 		};
 		paymentEditor.setEditButton(newButton);
 		paymentEditor.setExpressionTextBox(expressionBox);
-		paymentEditor.setSalaryTypeListBox(salaryTypeListBox);
-		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
-		// paymentEditor.setDescriptionTextBox(descriptionBox);
 		paymentEditor.setDescriptionSuggestBox(descriptionSuggest);
 
 		return paymentEditor;
@@ -2510,9 +2460,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private void formatPaymentRow(int row) {
 		paymentsTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
 		paymentsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
-		paymentsTable.getCellFormatter().getElement(row, 4).getStyle().setPropertyPx("borderRightWidth", 0);
-		if (paymentsTable.getCellCount(row) > 5)
-			paymentsTable.getCellFormatter().getElement(row, 5).getStyle().setPropertyPx("borderLeftWidth", 0);
+		paymentsTable.getCellFormatter().getElement(row, 3).getStyle().setPropertyPx("borderRightWidth", 0);
+		if (paymentsTable.getCellCount(row) > 4)
+			paymentsTable.getCellFormatter().getElement(row, 4).getStyle().setPropertyPx("borderLeftWidth", 0);
 
 		paymentsTable.getRowFormatter().addStyleName(row,
 				row % 2 == 0 ? AON.AON_DATA_TABLE_ROW_ODD : AON.AON_DATA_TABLE_ROW_EVEN);
@@ -2552,21 +2502,23 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		paymentsTable.getFlexCellFormatter().setColSpan(0, 0, 2);
 		paymentsTable.setText(0, 1, "CONCEPTO");
 		paymentsTable.setText(0, 2, "DEVENGO");
-		paymentsTable.setText(0, 3, "RECIBO");
-		paymentsTable.getFlexCellFormatter().setColSpan(0, 3, 2);
+		paymentsTable.getFlexCellFormatter().setColSpan(0, 2, 2);
+		//paymentsTable.setText(0, 3, "RECIBO");
+		//paymentsTable.getFlexCellFormatter().setColSpan(0, 3, 2);
 
 		paymentsTable.getRowFormatter().addStyleName(0, AON.AON_DATA_TABLE_ROW_ODD);
 		for (int i = 0; i < paymentsTable.getCellCount(0); i++) {
 			paymentsTable.getCellFormatter().addStyleName(0, i, AON.AON_BOLD);
 			paymentsTable.getCellFormatter().addStyleName(0, i, AON.AON_TEXT_CENTER);
 		}
-
+		
 		paymentsTable.getColumnFormatter().setWidth(0, "2%");
 		paymentsTable.getColumnFormatter().setWidth(1, "12%"); // TIPO
 		// 2 ...
-		paymentsTable.getColumnFormatter().setWidth(3, "18%"); // DEVENGO
-		paymentsTable.getColumnFormatter().setWidth(4, "12%"); // RECIBO
-		paymentsTable.getColumnFormatter().setWidth(5, "2%");
+		paymentsTable.getColumnFormatter().setWidth(3, "26%"); // DEVENGO
+		//paymentsTable.getColumnFormatter().setWidth(4, "12%"); // RECIBO
+		// 4..
+		paymentsTable.getColumnFormatter().setWidth(4, "2%");
 
 	}
 
@@ -2686,7 +2638,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		SortedSet<Payment> payments = new TreeSet<Payment>(new ItemComparator());
 		for (Payment payment : agreementDraftObject.getPayments())
-			if (payment.getSalaryType() == Salary.Type.EXTRA && !extraIds.contains(payment.getId()))
+			if ( (payment.getType() == Payment.Type.CRA_0004
+				|| payment.getType() == Payment.Type.CRA_0005)
+				&& !extraIds.contains(payment.getId()))
 				payments.add(payment);
 
 		return payments;

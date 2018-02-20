@@ -17,6 +17,8 @@ import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PRORATION;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -57,6 +59,8 @@ import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
@@ -240,17 +244,32 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.update(AGREEMENT_PAYMENT)
 				.set(AGREEMENT_PAYMENT.MONTH,
 						getExtraMonth(extra.getIssueDate()))
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
+						(byte) SalaryType.EXTRA.ordinal())
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,
+						String.format("%s()",PRORATION))
 				.where(AGREEMENT_PAYMENT.ID.eq(extra.getPaymentId())).execute();
 		// @formatter:on
 	}
 
-	public static void updateExtra(Connection conn, Extra extra)
+	public static void updateExtra(Connection conn, Integer agreementId, Extra extra)
 			throws SQLException {
-		updateExtra(DSL.using(conn, getDefaultSettings()), extra);
+		updateExtra(DSL.using(conn, getDefaultSettings()), agreementId, extra);
 	}
 
-	public static void updateExtra(DSLContext dslContext, Extra extra)
+	public static void updateExtra(DSLContext dslContext, Integer agreementId, Extra extra)
 			throws SQLException {
+
+		// @formatter:off
+		dslContext
+				.update(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
+						(byte) SalaryType.SALARY.ordinal())
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,ALL)
+				.where(AGREEMENT_PAYMENT.ID.eq(extra.getPaymentId()))
+				.and(AGREEMENT_PAYMENT.ID.notIn(DSL.select(AGREEMENT_EXTRA.AGREEMENT_PAYMENT).from(AGREEMENT_EXTRA).where(AGREEMENT_EXTRA.AGREEMENT.eq(agreementId))))
+				.execute();
+		// @formatter:on
 
 		// @formatter:off
 		dslContext.update(AGREEMENT_EXTRA)
@@ -269,21 +288,36 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.update(AGREEMENT_PAYMENT)
 				.set(AGREEMENT_PAYMENT.MONTH,
 						getExtraMonth(extra.getIssueDate()))
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
+						(byte) SalaryType.EXTRA.ordinal())
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,
+						String.format("%s()",PRORATION))
 				.where(AGREEMENT_PAYMENT.ID.eq(extra.getPaymentId())).execute();
 		// @formatter:on
 
 	}
 
-	public static void removeExtra(Connection conn, Integer extraId)
+	public static void removeExtra(Connection conn, Integer agreementId, Extra extra)
 			throws SQLException {
-		removeExtra(DSL.using(conn, getDefaultSettings()), extraId);
+		removeExtra(DSL.using(conn, getDefaultSettings()), agreementId, extra);
 	}
 
-	public static void removeExtra(DSLContext dslContext, Integer extraId)
+	public static void removeExtra(DSLContext dslContext, Integer agreementId, Extra extra)
 			throws SQLException {
 		// @formatter:off
 		dslContext.delete(AGREEMENT_EXTRA)
-				.where(AGREEMENT_EXTRA.ID.eq(extraId)).execute();
+				.where(AGREEMENT_EXTRA.ID.eq(extra.getId())).execute();
+		// @formatter:on
+
+		// @formatter:off
+		dslContext
+				.update(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
+						(byte) SalaryType.SALARY.ordinal())
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,ALL)
+				.where(AGREEMENT_PAYMENT.ID.eq(extra.getPaymentId()))
+				.and(AGREEMENT_PAYMENT.ID.notIn(DSL.select(AGREEMENT_EXTRA.AGREEMENT_PAYMENT).from(AGREEMENT_EXTRA).where(AGREEMENT_EXTRA.AGREEMENT.eq(agreementId))))
+				.execute();
 		// @formatter:on
 	}
 

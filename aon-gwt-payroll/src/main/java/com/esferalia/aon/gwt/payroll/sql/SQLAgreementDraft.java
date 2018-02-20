@@ -774,9 +774,9 @@ public class SQLAgreementDraft {
 				}
 			} else {
 				if (!isRemove(extra)) {
-					JooqAgreement.updateExtra(conn, extra);
+					JooqAgreement.updateExtra(conn, draft.getId(), extra);
 				} else {
-					JooqAgreement.removeExtra(conn, extra.getId());
+					JooqAgreement.removeExtra(conn, draft.getId(), extra);
 				}
 			}
 
