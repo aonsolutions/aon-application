@@ -3,7 +3,7 @@
 	<property name="ireport.zoom" value="1.1269722013523664"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="80"/>
-	<style name="label" isDefault="true" vAlign="Middle" fontName="Nimbus Sans L" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="label" isDefault="true" vAlign="Middle" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<style name="title" style="label" fontSize="9" isBold="true"/>
 	<style name="VALUE" style="label" fontSize="8"/>
 	<style name="label_box" style="label">
