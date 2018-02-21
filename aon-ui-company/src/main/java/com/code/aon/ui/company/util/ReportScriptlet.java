@@ -3,8 +3,11 @@ package com.code.aon.ui.company.util;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.PrintParametersController;
 import com.code.aon.ui.company.controller.RegistryInfo;
@@ -40,6 +44,11 @@ public class ReportScriptlet extends JRDefaultScriptlet implements Serializable 
 	
 	/**
 	 * REPORT TEMPLATE PARAMETERS
+	 */
+	public static final String PARAM_REPORT_RESOURCE_BUNDLE = "REPORT_RESOURCE_BUNDLE";
+	
+	/**
+	 * REPORT CUSTOM PARAMETERS
 	 */
 	public static final String PARAM_COMPANY = "company";
 	public static final String PARAM_PRINT_HEADER = "printHeader";
@@ -305,4 +314,23 @@ public class ReportScriptlet extends JRDefaultScriptlet implements Serializable 
 		return AppParamUtil.getValueAsBoolean(AppParam.APP_PRINT_PROJECT_PARAM);
 	}
 	
+	
+	/*
+	 * BUNDLE MESSAGES 
+	 */
+	protected String getMessage(String key) {
+		return getMessage(key, null);
+	}
+	protected String getMessage(String key, Object[] arguments) {
+		ResourceBundle bundle = null;
+		try {
+			bundle = (ResourceBundle) super.getParameterValue(PARAM_REPORT_RESOURCE_BUNDLE);
+		} catch (JRScriptletException e) {
+			bundle = ResourceBundle.getBundle(ICommonMessages.BUNDLE_RESOURCE, new Locale("es", "ES"));
+		}		
+		String message = bundle.getString(key);
+		MessageFormat messageFormat = new MessageFormat( message );
+		return messageFormat.format(arguments);
+	}
+
 }

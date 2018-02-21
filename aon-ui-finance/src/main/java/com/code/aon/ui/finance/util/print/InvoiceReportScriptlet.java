@@ -22,7 +22,6 @@ import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RecordData;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.util.ReportScriptlet;
-import com.code.aon.ui.util.AonUtil;
 
 import net.sf.jasperreports.engine.JRScriptletException;
 
@@ -33,7 +32,7 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceReportScriptlet.class.getName());
 	
 	/**
-	 * REPORT TEMPLATE PARAMETERS
+	 * REPORT CUSTOM PARAMETERS
 	 */
 	public static  final String PARAM_PRINT_NAME = "printName";
 	public static  final String PARAM_PRINT_NIF = "printNif";
@@ -164,26 +163,26 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 					}
 					if(StringUtils.isNotBlank(recordData.getVolume())){
 						builder.append(builder.length()>0?", ":"");
-						builder.append(AonUtil.getMessage("registry_rd_volume") + " ");
+						builder.append(getMessage("registry_rd_volume") + " ");
 						builder.append(recordData.getVolume());
 					}
 					if(StringUtils.isNotBlank(recordData.getSection())){
 						builder.append(builder.length()>0?", ":"");
-						builder.append(AonUtil.getMessage("registry_rd_section") + " ");
+						builder.append(getMessage("registry_rd_section") + " ");
 						builder.append(recordData.getSection());
 					}
 					if(StringUtils.isNotBlank(recordData.getPage())){
 						builder.append(builder.length()>0?", ":"");
-						builder.append(AonUtil.getMessage("registry_rd_page") + " ");
+						builder.append(getMessage("registry_rd_page") + " ");
 						builder.append(recordData.getPage());
 					}
 					if(StringUtils.isNotBlank(recordData.getSheet())){
 						builder.append(builder.length()>0?", ":"");
-						builder.append(AonUtil.getMessage("registry_rd_sheet") + " ");
+						builder.append(getMessage("registry_rd_sheet") + " ");
 						builder.append(recordData.getSheet());
 					}
 					if(recordData.getRecordDate()!=null){
-						builder.append(", " + AonUtil.getMessage("registry_rd_record_date") + " ");
+						builder.append(", " + getMessage("registry_rd_record_date") + " ");
 						builder.append(new SimpleDateFormat("dd/MM/yyyy").format(recordData.getRecordDate()));
 					}
 				}
@@ -194,7 +193,7 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 		}
 		if(getPrintNif()!=null && getPrintNif()==printOption){
 			builder.append(builder.length()>0?", ":"");
-			builder.append(AonUtil.getMessage(ICommonMessages.COMPANY_DOCUMENT)).append(": ");
+			builder.append(getMessage(ICommonMessages.COMPANY_DOCUMENT)).append(": ");
 			builder.append(getCompany().getDocumentCountry()).append("-");
 			builder.append(getCompany().getDocument());
 		}
