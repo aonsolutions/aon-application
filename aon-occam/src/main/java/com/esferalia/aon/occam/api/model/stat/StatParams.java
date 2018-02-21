@@ -13,6 +13,7 @@ public class StatParams implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 8321751053437854437L;
 
+	private int domain;
 	private Date from;
 	private Date to;
 	private boolean viewAmounts;
@@ -27,6 +28,17 @@ public class StatParams implements Serializable, Cloneable {
 	private LinkedList<StatFilterItem> filterItems; 
 	private HashMap<String, String[]> filterMap;
 	
+
+	
+	public int getDomain() {
+		return domain;
+	}
+
+	public StatParams setDomain(int domain) {
+		this.domain = domain;
+		return this;
+	}
+
 	public Date getFrom() {
 		return from;
 	}
@@ -45,7 +57,7 @@ public class StatParams implements Serializable, Cloneable {
 		return this;
 	}
 
-	public boolean mustViewAmounts() {
+	public boolean isViewAmounts() {
 		return viewAmounts;
 	}
 	public StatParams setViewAmounts(boolean viewAmounts) {
@@ -136,7 +148,7 @@ public class StatParams implements Serializable, Cloneable {
 			}
 			return (sales && other) || (!sales && !other);
 		}
-		return false;
+		return true;
 	}
 
 	public void clean() {

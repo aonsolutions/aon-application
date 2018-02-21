@@ -24,11 +24,11 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@SuppressWarnings("serial")
 @WebServlet(name = "Invoice Report (excel)", urlPatterns = { "/aon_gwt_fiscal/InvoiceReport",
 															 "/aon_gwt_aio/InvoiceReport" })
 public class InvoiceReportServlet extends HttpServlet {
 	
+	private static final long serialVersionUID = -6480050528094260796L;
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
@@ -92,6 +92,17 @@ public class InvoiceReportServlet extends HttpServlet {
 			Integer[] ids = new Integer[categoryList.size()];
 			final Integer[] categories = categoryList.toArray(ids);
 			
+			String brandIds = req.getParameter( IRequestParamsNames.BRAND_IDS);
+			List<Integer> brandList = new LinkedList<Integer>();
+			if (!AonStringUtils.isBlank(brandIds)) {
+				for (String id: AonStringUtils.split(brandIds, ',') ) {
+					brandList.add(AonNumberUtils.toInteger(id));		
+				}
+			}
+			ids = new Integer[brandList.size()];
+			final Integer[] brands = categoryList.toArray(ids);
+
+			
 			String workplaceIds = req.getParameter( IRequestParamsNames.WORKPLACE_IDS);
 			List<Integer> workplaceList = new LinkedList<Integer>();
 			if (!AonStringUtils.isBlank(workplaceIds)) {
@@ -124,6 +135,7 @@ public class InvoiceReportServlet extends HttpServlet {
 							.and(p.getStartIssueDateProperty().ge(fromDate))
 							.and(p.getEndIssueDateProperty().le(toDate))
 							.and(categories.length==0?p.getIdProperty().isNotNull():p.getProductCategoryProperty().in(categories))
+							.and(brands.length==0?p.getIdProperty().isNotNull():p.getProductBrandProperty().in(brands))
 							.and(seller.length==0?p.getIdProperty().isNotNull():p.getSellerProperty().in(seller))
 							.and(workplaces.length==0?p.getIdProperty().isNotNull():p.getWorkplaceProperty().in(workplaces))
 							;

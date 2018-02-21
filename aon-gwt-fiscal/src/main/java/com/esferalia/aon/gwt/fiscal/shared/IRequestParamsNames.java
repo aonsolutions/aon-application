@@ -43,6 +43,7 @@ public interface IRequestParamsNames {
 	
 	String INVOICE_TYPES = "invoiceTypes";
 	String CATEGORY_IDS = "categoryIds";
+	String BRAND_IDS = "brandIds";
 	String WORKPLACE_IDS = "workplaceIds";
 	String SELLER_IDS = "sellerIds";
 

@@ -100,6 +100,9 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 	    
 	    CellUtil.createCell(row, cellCount, "Categoría", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 20*256);		    
+
+	    CellUtil.createCell(row, cellCount, "Marca", headerCellStyle);
+	    sheet.setColumnWidth(cellCount++, 20*256);		    
 	    
 	    CellUtil.createCell(row, cellCount, "Descripción", headerCellStyle);
 	    sheet.setColumnWidth(cellCount++, 60*256);		    
@@ -170,6 +173,7 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		 
 		addCell( detail.getItem()!= null ? detail.getItem().getCode() : null );
 		addCell( detail.getItem()!= null ? detail.getItem().getCategory()  : null );
+		addCell( detail.getItem()!= null ? detail.getItem().getBrand()  : null );
 		addCell( AonStringUtils.abbreviate(detail.getDescription(), 60) ) ;
 		addCell( detail.getQuantity() );
 		addCell( detail.getPrice() );

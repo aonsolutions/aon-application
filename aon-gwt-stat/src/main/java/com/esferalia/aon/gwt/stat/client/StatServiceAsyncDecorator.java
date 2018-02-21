@@ -15,24 +15,24 @@ public class StatServiceAsyncDecorator implements StatServiceAsync {
 	}
 
 	@Override
-	public void createStatParams(String domainName, int domain, AsyncCallback<StatParams> callback) {
+	public void createStatParams(String domainName, String user, int domain, AsyncCallback<StatParams> callback) {
 		AON.start();
-		fsa.createStatParams(domainName, domain
+		fsa.createStatParams(domainName, user, domain
 			, new AsyncCallbackWrapper<StatParams>(callback));
 	}
 
 	@Override
-	public void getStatData(String domainName,Integer domainId,StatParams params,
+	public void getStatData(String domainName, String user,Integer domainId,StatParams params,
 			AsyncCallback<StatData<String, String, Double>> callback) {
 		AON.start();
-		fsa.getStatData(domainName,domainId,params
+		fsa.getStatData(domainName,user,domainId,params
 			, new AsyncCallbackWrapper<StatData<String, String, Double>>(callback));
 	}
 
 	@Override
-	public void getInvoicesReport(String domainName, int domain, StatParams params, AsyncCallback<String> callback) {
+	public void getInvoicesReport(String domainName, String user, int domain, StatParams params, AsyncCallback<String> callback) {
 		AON.start();
-		fsa.getInvoicesReport(domainName,domain,params
+		fsa.getInvoicesReport(domainName,user,domain,params
 			, new AsyncCallbackWrapper<String>(callback));
 		
 	}

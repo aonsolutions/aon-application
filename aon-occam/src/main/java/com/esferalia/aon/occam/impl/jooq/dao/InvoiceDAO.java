@@ -16,6 +16,7 @@ import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -325,6 +326,7 @@ public class InvoiceDAO {
 				
 				,INVOICE_DETAIL.ITEM
 				,PCATEGORY.NAME
+				,BRAND.NAME
 				,PRODUCT.ID
 				,PRODUCT.NAME
 				,PRODUCT.CODE
@@ -364,6 +366,7 @@ public class InvoiceDAO {
 			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(BRAND).on(PRODUCT.BRAND.equal(BRAND.ID))
 			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
 			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
@@ -581,6 +584,7 @@ public class InvoiceDAO {
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
 						.setProductId( record.getValue( PRODUCT.ID ) )
 						.setProduct(new Product().setCategory(record.getValue(PRODUCT.CATEGORY)))
+						.setBrand(record.getValue(BRAND.NAME))
 						.setName( record.getValue( PRODUCT.NAME ) )
 						.setCode(record.getValue( PRODUCT.CODE ) )
 						.setDetail(record.getValue( ITEM.DETAIL ))

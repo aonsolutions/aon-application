@@ -18,6 +18,7 @@
 	<aon:valueParam name="subEntryPoint" default="" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
+	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
 
 	<aon:if test="#{gwt.entryPoint != entryPoint }">
 		<aon:form id="entryPointForm" style="display:none">
@@ -67,7 +68,9 @@
         function getCurrentDomainName() {
         	return "#{gwtDomainName}"
         }
-     
+        function getCurrentUser() {
+        	return "#{gwtUser}";
+        }
         function getSubEntryPoint() {
         	return "#{subEntryPoint}"
         }

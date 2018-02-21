@@ -23,15 +23,23 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="toolbarPanel" styleName="{aonResources.css.aonFindingToolbar}">
 						<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
-							<g:Button ui:field='back'
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" 
-								text="Volver" />
-							<g:Button ui:field='excel'
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
-								text="{msg.export}" />
-							<g:Button ui:field='invoices'
+							<g:Button ui:field="data"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconInvoice}" 
-								text="{msg.invoiceReport}" />
+								text="Ver datos gráfico" />
+							<g:Button ui:field="excelTable"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
+								text="Exportar datos gráfico" />
+							<g:Button ui:field="invoices"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconInvoice}" 
+								text="Ver facturas" />
+							<g:Button ui:field="excel"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
+								text="Exportar facturas" />
+<!-- 								
+							<g:Button ui:field="pdf"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdf}" 
+								text="Imprimir" />
+ -->
 							<g:SimplePanel ui:field="excelFormContainer"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>

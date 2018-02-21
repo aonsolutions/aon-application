@@ -76,6 +76,17 @@ public class StatFilterItem implements Serializable {
 		public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
 			filterItemVisitor.visit(statFilterItemVisitor,item);
 		}
+		
+		public static StatFilterType safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		public static StatFilterType safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= StatFilterType.values().length) return null;
+			return StatFilterType.values()[i];
+		}
+		
 	}
 
 	private static final long serialVersionUID = 8321751053437854437L;

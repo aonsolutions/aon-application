@@ -12,7 +12,7 @@
 	<aon:valueParam name="entryPoint" default="StatControlPanel" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
-	
+	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
 <style>
 body {
 	margin: 0;
@@ -42,7 +42,10 @@ body {
             	return #{gwtDomain};
             }
             function getCurrentDomainName() {
-            	return "#{gwtDomainName}"
+            	return "#{gwtDomainName}";
+            }
+            function getCurrentUser() {
+            	return "#{gwtUser}";
             }
             ]]>
     </script> 

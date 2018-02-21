@@ -71,6 +71,21 @@ public class MainEntryPoint implements EntryPoint {
 		onModuleLoad(entryPoint);
 	}
 
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
+	
+	public static native String getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
+	}-*/;
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 

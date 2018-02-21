@@ -50,10 +50,26 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 
 	public StatParams params;
 
+	private String domainName;
+	public int domain;
+	public String user;
+
+		
+	
 	public StatFilter() {
 		super();
 		addStyleName(AON.AON_CSS.aonPanelGridSearch());
 		setHeight("100%");
+	}
+	
+	public String getDomainName() {
+		return getCurrentDomainName();
+	}
+	public int getDomain() {
+		return getCurrentDomain();
+	}
+	public String getUser() {
+		return getCurrentUser();
 	}
 
 	public StatParams getParams() {
@@ -149,7 +165,7 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		row++;
 		
 		tab.setWidget(row, 0, new MediumLabel(AON.MSG.titular()));
-		InvoiceRegistryBox titular = new InvoiceRegistryBox(getCurrentDomainName(),getCurrentDomain() );
+		InvoiceRegistryBox titular = new InvoiceRegistryBox(getDomainName(),getDomain() );
 		titular.setRequired(false);
 		titular.addSelectionHandler(new  SelectionHandler<InvoiceRegistry>() {
 			
@@ -168,7 +184,7 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		row++;
 		
 		tab.setWidget(row, 0, new MediumLabel(AON.MSG.product()));
-		InvoiceProductBox product = new InvoiceProductBox(getCurrentDomainName(),getCurrentDomain() );
+		InvoiceProductBox product = new InvoiceProductBox(getDomainName(),getDomain() );
 		product.setRequired(false);
 		product.addSelectionHandler(new  SelectionHandler<Product>() {
 
@@ -244,7 +260,7 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		StatServiceAsync serviceRaw = GWT.create(StatService.class);
 		STAT_SERVICE = new StatServiceAsyncDecorator(serviceRaw);
 
-		STAT_SERVICE.createStatParams(getCurrentDomainName(), getCurrentDomain(),
+		STAT_SERVICE.createStatParams(getDomainName(),getUser(), getDomain(),
 			new AsyncCallback<StatParams>() {
 
 				@Override
@@ -260,8 +276,12 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 				}
 		});
 	}
-	
 
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<StatParams> handler) {
+		return super.addHandler(handler, ValueChangeEvent.getType()); 
+	}
+	
 	public static native String getCurrentDomainName()
 	/*-{
 		return $wnd.getCurrentDomainName();
@@ -271,10 +291,9 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
-
-	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<StatParams> handler) {
-		return super.addHandler(handler, ValueChangeEvent.getType()); 
-	}
 	
+	public static native String getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
+	}-*/;
 }

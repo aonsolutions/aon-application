@@ -33,4 +33,14 @@ public enum StatType implements Serializable {
 	public Byte value() {
 		return (byte) this.ordinal();
 	}
+
+	public static StatType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static StatType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= StatType.values().length) return null;
+		return StatType.values()[i];
+	}
 }

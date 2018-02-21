@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.stat.client.panel;
 
 import java.util.LinkedHashMap;
-import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -14,9 +13,10 @@ import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
 import com.esferalia.aon.gwt.stat.client.panel.GeoChartWrapper.DisplayMode;
 import com.esferalia.aon.gwt.stat.client.util.StatUtils;
+import com.esferalia.aon.gwt.stat.shared.JsonParams;
+import com.esferalia.aon.occam.api.model.stat.IStatFilterItemVisitor;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
-import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.stat.invoice.IInvoiceChartTypeVisitor;
 import com.esferalia.aon.occam.api.model.stat.invoice.InvoiceChartType;
@@ -80,9 +80,13 @@ public class StatControlPanel extends MainEntryPoint {
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 	@UiField
-	Button back;
+	Button data;
+	@UiField
+	Button excelTable;
 	@UiField
 	Button excel;
+//	@UiField
+//	Button pdf;
 	@UiField
 	Button invoices;
 	@UiField
@@ -103,12 +107,17 @@ public class StatControlPanel extends MainEntryPoint {
 	FormPanel diskForm;
 	Hidden invoiceTypes;
 	Hidden categoryIds;
+	Hidden brandIds;
 	Hidden workplaceIds;
 	Hidden sellerIds;
+	Hidden segmentIds;
+	Hidden productTagIds;
 	Hidden fromDate;
 	Hidden toDate;
 	Hidden domainId;
 	Hidden domainName;
+	Hidden user;
+	Hidden statParams;
 	
 	private StatChartTypeVisitor statChartTypeVisitor;
 	private static final ScrollPanel ERROR_PANEL = new ScrollPanel();
@@ -135,14 +144,14 @@ public class StatControlPanel extends MainEntryPoint {
 		ERROR_PANEL.add(tab);
 	}
 
-	private Stack<Widget> stack = new Stack<Widget>();
-	
 	final private AsyncCallback<Widget> coreChartCallback = new AsyncCallback<Widget>() {
 		
 		@Override
 		public void onSuccess(final Widget chart) {
 			content.setWidget(chart);
-			stack.push(chart);
+			if ( tabLayout.getSelectedIndex() == INVOICES_TAB && !isFootPanelClosed()) {
+				onInvoicesButtonClick(null);
+			}
 		}
 
 		@Override
@@ -157,25 +166,30 @@ public class StatControlPanel extends MainEntryPoint {
 	public void onModuleLoad() {
 		StatServiceAsync serviceRaw = GWT.create(StatService.class);
 		statService = new StatServiceAsyncDecorator(serviceRaw);
-		
+	
 		AON.ensureInjected();
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		Widget ui = INVOICE_STAT_BINDER.createAndBindUi(this);
+		
+		content.getElement().setId("content");
 
 		diskForm = new FormPanel("_blank");
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
-		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/InvoiceReport");
 		FlowPanel formFlowPanel = new FlowPanel();
 		diskForm.add(formFlowPanel);
 		invoiceTypes = new Hidden("invoiceTypes");
 		formFlowPanel.add(invoiceTypes);
 		categoryIds = new Hidden("categoryIds");
 		formFlowPanel.add(categoryIds);
+		brandIds = new Hidden("brandIds");
+		formFlowPanel.add(brandIds);
 		workplaceIds = new Hidden("workplaceIds");
 		formFlowPanel.add(workplaceIds);
 		sellerIds = new Hidden("sellerIds");
 		formFlowPanel.add(sellerIds);
+		productTagIds = new Hidden("productTagIds");
+		formFlowPanel.add(productTagIds);
+		segmentIds = new Hidden("segmentIds");
+		formFlowPanel.add(segmentIds);
 		fromDate = new Hidden("fromDate");
 		formFlowPanel.add(fromDate);
 		toDate = new Hidden("toDate");
@@ -184,8 +198,11 @@ public class StatControlPanel extends MainEntryPoint {
 		formFlowPanel.add(domainId);
 		domainName = new Hidden("domainName");
 		formFlowPanel.add(domainName);
+		user = new Hidden("user");
+		formFlowPanel.add(user);
+		statParams = new Hidden("statParams");
+		formFlowPanel.add(statParams);
 		toolbarPanel.add(diskForm);
-
 		root.add(ui);
 		
 		
@@ -227,29 +244,40 @@ public class StatControlPanel extends MainEntryPoint {
 		
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
+	@UiHandler("data")
+	void onDataButtonClick(ClickEvent event) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(INFORMATION_TAB);
+	}
 
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
-	@UiHandler("back")
-	void onBackButtonClick(ClickEvent event) {
-		if (stack.size() > 0 ) {
-			content.setWidget(stack.pop());
-		}
+	@UiHandler("excelTable")
+	void onExcelTableButtonClick(ClickEvent event) {
+		prepareSubmit();
+		statParams.setValue( JsonParams.convert( filter.getParams() ) );
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
+		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_stat/StatTableExcel");
+		diskForm.submit();
 	}
 
 	@UiHandler("excel")
 	void onExcelButtonClick(ClickEvent event) {
+		prepareSubmit();
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
+		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/InvoiceReport");
+		diskForm.submit();
+	}
+	
+	private void prepareSubmit() {
 		invoiceTypes.setValue("");
+		categoryIds.setValue("");
 		categoryIds.setValue("");
 		workplaceIds.setValue("");
 		sellerIds.setValue("");
+		segmentIds.setValue("");
+		productTagIds.setValue("");
+		brandIds.setValue("");
 		fromDate.setValue("");
 		toDate.setValue("");
 		domainId.setValue("");
@@ -261,33 +289,97 @@ public class StatControlPanel extends MainEntryPoint {
 		if ( filter.getParams().getTo() != null) {
 			toDate.setValue(DATE_FORMAT.format(filter.getParams().getTo()));
 		}
+		
+		IStatFilterItemVisitor visitor = new IStatFilterItemVisitor() {
+
+			@Override
+			public void visitInvoiceTypeCondition(StatFilterItem item) {
+				 if (AonStringUtils.isNotBlank(invoiceTypes.getValue())) {
+					 invoiceTypes.setValue(invoiceTypes.getValue() + ",");
+				 }
+				 invoiceTypes.setValue(invoiceTypes.getValue() + InvoiceType.valueOf(item.getId()).ordinal());
+			}
+
+			@Override
+			public void visitWorkplaceCondition(StatFilterItem item) {
+				 if (AonStringUtils.isNotBlank(workplaceIds.getValue())) {
+					 workplaceIds.setValue(workplaceIds.getValue() + ",");
+				 }
+				 workplaceIds.setValue(workplaceIds.getValue() + AonNumberUtils.toInteger(item.getId()));
+			}
+
+			@Override
+			public void visitSellerCondition(StatFilterItem item) {
+				 if (AonStringUtils.isNotBlank(sellerIds.getValue())) {
+					 sellerIds.setValue(sellerIds.getValue() + ",");
+				 }
+				 sellerIds.setValue(sellerIds.getValue() + AonNumberUtils.toInteger(item.getId()));
+			}
+
+			@Override
+			public void visitProductCategoryCondition(StatFilterItem item) {
+				 if (AonStringUtils.isNotBlank(categoryIds.getValue())) {
+					 categoryIds.setValue(categoryIds.getValue() + ",");
+				 }
+				 categoryIds.setValue(categoryIds.getValue() + AonNumberUtils.toInteger(item.getId()));
+			}
+
+			@Override
+			public void visitProductBrandCondition(StatFilterItem item) {
+				if (AonStringUtils.isNotBlank(brandIds.getValue())) {
+					brandIds.setValue(brandIds.getValue() + ",");
+				}
+				brandIds.setValue(brandIds.getValue() + AonNumberUtils.toInteger(item.getId()));
+			}
+
+			@Override
+			public void visitProductTagCondition(StatFilterItem item) {
+				if (AonStringUtils.isNotBlank(productTagIds.getValue())) {
+					productTagIds.setValue(productTagIds.getValue() + ",");
+				}
+				productTagIds.setValue(productTagIds.getValue() + AonNumberUtils.toInteger(item.getId()));
+			}
+
+			@Override
+			public void visitSegmentCondition(StatFilterItem item) {
+				if (AonStringUtils.isNotBlank(segmentIds.getValue())) {
+					segmentIds.setValue(segmentIds.getValue() + ",");
+				}
+				segmentIds.setValue(segmentIds.getValue() + AonNumberUtils.toInteger(item.getId()));
+			}
+
+			
+		};
+		
+		
 		for (StatFilterItem item : filter.getParams().getFilterItems()) {
 			 if (item.isSelected()) {
-				 Hidden f = null;
-				 Integer id = null;
-				 if (item.getType() == StatFilterType.INVOICE_TYPE) {
-					 f = invoiceTypes;
-					 InvoiceType type = InvoiceType.valueOf(item.getId());
-					 id = type.ordinal();
-				 } else if (item.getType() == StatFilterType.PRODUCT_CATEGORY) {
-					 f = categoryIds;
-					 id = AonNumberUtils.toInteger(item.getId());
-				 } else if (item.getType() == StatFilterType.WORKPLACE) {
-					 f = workplaceIds;
-					 id = AonNumberUtils.toInteger(item.getId());
-				 } else if (item.getType() == StatFilterType.SELLER) {
-					 f = sellerIds;
-					 id = AonNumberUtils.toInteger(item.getId());					 
-				 }
-				 if (AonStringUtils.isNotBlank(f.getValue())) {
-					 f.setValue(f.getValue() + ",");
-				 }
-				 f.setValue(f.getValue() + id);
+				 item.getType().visit(visitor, item);
+//				 Hidden f = null;
+//				 Integer id = null;
+//				 if (item.getType() == StatFilterType.INVOICE_TYPE) {
+//					 f = invoiceTypes;
+//					 InvoiceType type = InvoiceType.valueOf(item.getId());
+//					 id = type.ordinal();
+//				 } else if (item.getType() == StatFilterType.PRODUCT_CATEGORY) {
+//					 f = categoryIds;
+//					 id = AonNumberUtils.toInteger(item.getId());
+//				 } else if (item.getType() == StatFilterType.WORKPLACE) {
+//					 f = workplaceIds;
+//					 id = AonNumberUtils.toInteger(item.getId());
+//				 } else if (item.getType() == StatFilterType.SELLER) {
+//					 f = sellerIds;
+//					 id = AonNumberUtils.toInteger(item.getId());					 
+//				 }
+//				 if (AonStringUtils.isNotBlank(f.getValue())) {
+//					 f.setValue(f.getValue() + ",");
+//				 }
+//				 f.setValue(f.getValue() + id);
 			 }
 		}
+		user.setValue(getCurrentUser());
 		domainName.setValue(getCurrentDomainName());
 		domainId.setValue(String.valueOf(getCurrentDomain()));
-		diskForm.submit();
 	}
 	
 	@UiHandler("invoices")
@@ -300,7 +392,7 @@ public class StatControlPanel extends MainEntryPoint {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		statService.getInvoicesReport(getCurrentDomainName(), getCurrentDomain(), filter.getParams()
+		statService.getInvoicesReport(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams()
 			, new AsyncCallback<String>() {
 
 			@Override
@@ -327,10 +419,10 @@ public class StatControlPanel extends MainEntryPoint {
 	
 	protected void paintChart() {
 		excel.setEnabled(false);
+		excelTable.setEnabled(false);
 		InvoiceChartType.values()[filter.getParams().getChartType()].visit(statChartTypeVisitor);
-		back.setEnabled(stack.size() > 0);
 	}
-
+	
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
 		closeFootPanel();
@@ -355,6 +447,9 @@ public class StatControlPanel extends MainEntryPoint {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
 			openFootPanel();
 		}
+	}
+	private boolean isFootPanelClosed() {
+		return (splitLayoutPanel.getWidgetSize(footPanel) <= 50);
 	}
 	
 	private void showInfoPanel(String htmlText) {
@@ -407,7 +502,7 @@ public class StatControlPanel extends MainEntryPoint {
 		protected DataTable getGeoDataTable(StatData<String, String, Double> result, String columnLabel) {
 			DataTable dataTable = DataTable.create();
 			dataTable.addColumn(ColumnType.STRING, columnLabel);
-			dataTable.addColumn(ColumnType.NUMBER, filter.getParams().mustViewAmounts()? "Caontidad" : "Importe");
+			dataTable.addColumn(ColumnType.NUMBER, filter.getParams().isViewAmounts()? "Caontidad" : "Importe");
 			int rowIndex = 0;
 			LinkedHashMap<String, Double> map = result.getMap().get("CHART");
 			for (String col : map.keySet()) {
@@ -444,13 +539,14 @@ public class StatControlPanel extends MainEntryPoint {
 			RawDataTable table =  new RawDataTable(dataTable);
 			south.setWidget(table);
 			excel.setEnabled(true);
+			excelTable.setEnabled(true);
 			final ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 			return chart;
 		}
 
 		@Override
 		public void visitInvoiceTypeByYearComboChart() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -471,7 +567,7 @@ public class StatControlPanel extends MainEntryPoint {
 		
 		@Override
 		public void visitInvoiceTypeByMonthsComboChart() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -492,7 +588,7 @@ public class StatControlPanel extends MainEntryPoint {
 		
 		@Override
 		public void visitInvoiceTypeByWeeksComboChart() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -514,7 +610,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitInvoiceTypeByDaysComboChart() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(),
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -536,7 +632,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceTitular() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -558,6 +654,7 @@ public class StatControlPanel extends MainEntryPoint {
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
+						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
@@ -574,7 +671,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceTitularAddress() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -596,6 +693,7 @@ public class StatControlPanel extends MainEntryPoint {
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
+						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
@@ -612,7 +710,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceCategory() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -635,6 +733,7 @@ public class StatControlPanel extends MainEntryPoint {
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
 							excel.setEnabled(true);
+							excelTable.setEnabled(true);
 							ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 							coreChartCallback.onSuccess(chart);
 						} else {
@@ -653,6 +752,7 @@ public class StatControlPanel extends MainEntryPoint {
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
 							excel.setEnabled(true);
+							excelTable.setEnabled(true);
 							final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 							coreChartCallback.onSuccess(chart);
 						}
@@ -669,7 +769,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcProductBrand() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -692,6 +792,7 @@ public class StatControlPanel extends MainEntryPoint {
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
 							excel.setEnabled(true);
+							excelTable.setEnabled(true);
 							ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 							coreChartCallback.onSuccess(chart);
 						} else {
@@ -710,6 +811,7 @@ public class StatControlPanel extends MainEntryPoint {
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
 							excel.setEnabled(true);
+							excelTable.setEnabled(true);
 							final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 							coreChartCallback.onSuccess(chart);
 						}
@@ -726,7 +828,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceProduct() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -748,6 +850,7 @@ public class StatControlPanel extends MainEntryPoint {
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
+						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
@@ -763,7 +866,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceWorkplace() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -785,6 +888,7 @@ public class StatControlPanel extends MainEntryPoint {
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
+						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
@@ -799,7 +903,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitAbcInvoiceSeller() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -821,6 +925,7 @@ public class StatControlPanel extends MainEntryPoint {
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
+						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
@@ -836,7 +941,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 		@Override
 		public void visitGeoProvince() {
-			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
 					new AsyncCallback<StatData<String, String, Double>>() {
 
 				@Override
@@ -853,6 +958,7 @@ public class StatControlPanel extends MainEntryPoint {
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
 						excel.setEnabled(true);
+						excelTable.setEnabled(true);
 						final ResizableGeoChart chart = new ResizableGeoChart(dataTable,options);
 						coreChartCallback.onSuccess(chart);
 					}
@@ -867,5 +973,22 @@ public class StatControlPanel extends MainEntryPoint {
 		}
 
 	}
-
+	
+/*
+	@UiHandler("pdf")
+	void onPDFButtonClick(ClickEvent event) {
+		takeScreenShot();
+	}
+*/
+	
+//	public static native void takeScreenShot()
+//	/*-{
+//		$wnd.doTakeScreenshot(
+//			$doc.getElementById("content"),
+//			$doc.getElementById("pdfIframe")
+//		);		
+//	}-*/;
+	
+	
 }
+

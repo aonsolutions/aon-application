@@ -6,12 +6,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface StatServiceAsync {
 	
-	void createStatParams(String domainName, int domain,
-			AsyncCallback<StatParams> callback);
-
-	void getStatData(String domainName, Integer domainId, StatParams params,
+	void createStatParams(String domainName, String user, int domain,AsyncCallback<StatParams> callback);
+	void getStatData(String domainName, String user, Integer domainId, StatParams params,
 			AsyncCallback<StatData<String, String, Double>> callback);
-
-	void getInvoicesReport(String domainName, int domain, StatParams params, AsyncCallback<String> callback);
+	void getInvoicesReport(String domainName, String user, int domain, StatParams params, AsyncCallback<String> callback);
 
 }

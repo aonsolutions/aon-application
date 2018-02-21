@@ -102,6 +102,7 @@ public class StatDAO {
 	
 	public static StatParams createStatParams(AONContext ctx) {
 		StatParams params = new StatParams();
+		params.setDomain(ctx.getDomainId());
 		params.setChartType(InvoiceChartType.INVOICE_TYPE_BY_MONTHS_COMBO_CHART.value());
 		// Se entra con fecha hasta igual a hoy y fecha desde trece meses menos.
 		Date today = new Date();
@@ -216,7 +217,7 @@ public class StatDAO {
 	}
 	
 	private static AggregateFunction<BigDecimal> getInvoiceSelectField(final StatParams params) {
-		return params.mustViewAmounts()
+		return params.isViewAmounts()
 				?DSL.sum(INVOICE_DETAIL.QUANTITY)
 				:DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
 	}
