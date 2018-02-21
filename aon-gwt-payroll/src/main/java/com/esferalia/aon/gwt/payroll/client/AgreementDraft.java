@@ -714,8 +714,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				this.expressionBox.setReadOnly(readOnly);
 			if ( this.descriptionBox != null )
 				descriptionBox.setReadOnly(readOnly);
-			if ( this.typeListBox != null )
-				AgreementDraft.this.setReadOnly(typeListBox, readOnly);
+			//if ( this.typeListBox != null  )
+			//	AgreementDraft.this.setReadOnly(typeListBox, readOnly);
 			
 		}
 
@@ -2271,27 +2271,26 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(payment.getType());
-		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		descriptionBox.setText(payment.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
-		paymentsTable.setWidget(row, 2, descriptionBox);
+		paymentsTable.setWidget(row, 1, descriptionBox);
 
 		TextBox expressionBox = new ExpressionBox();
 		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.setText(payment.getExpression());
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
-		paymentsTable.setWidget(row, 3, expressionBox);
+		paymentsTable.setWidget(row, 2, expressionBox);
 		contentAssistManager.addValueBox(expressionBox);
 
 		Button deleteButton = new Button();
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		paymentsTable.setWidget(row, 4, deleteButton);
-		paymentsTable.getCellFormatter().addStyleName(row, 4, AON.AON_TEXT_RIGHT);
+		paymentsTable.setWidget(row, 3, deleteButton);
+		paymentsTable.getCellFormatter().addStyleName(row, 3, AON.AON_TEXT_RIGHT);
 		formatPaymentRow(row);
 
 		PaymentEditor paymentEditor = new PaymentEditor(payment);
@@ -2397,7 +2396,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(Payment.Type.DEFAULT);
-		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
@@ -2405,17 +2403,17 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				paymentSuggestionDisplay);
 		descriptionSuggest.setAutoSelectEnabled(false);
 		descriptionSuggest.getElement().getStyle().setWidth(98, Unit.PCT);
-		paymentsTable.setWidget(row, 2, descriptionSuggest);
+		paymentsTable.setWidget(row, 1, descriptionSuggest);
 		descriptionBox.ensureDebugId("description-box-new-payment");
 
 		TextBox expressionBox = new ExpressionBox();
 		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
-		paymentsTable.setWidget(row, 3, expressionBox);
+		paymentsTable.setWidget(row, 2, expressionBox);
 		expressionBox.ensureDebugId("amount-box-new-payment");
 
-		paymentsTable.insertCell(row, 4);
+		paymentsTable.insertCell(row, 3);
 
 		formatPaymentRow(row);
 		Payment payment = agreementDraftObject.newDraftPayment();
@@ -2460,9 +2458,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private void formatPaymentRow(int row) {
 		paymentsTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
 		paymentsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
-		paymentsTable.getCellFormatter().getElement(row, 3).getStyle().setPropertyPx("borderRightWidth", 0);
-		if (paymentsTable.getCellCount(row) > 4)
-			paymentsTable.getCellFormatter().getElement(row, 4).getStyle().setPropertyPx("borderLeftWidth", 0);
+		paymentsTable.getCellFormatter().getElement(row, 2).getStyle().setPropertyPx("borderRightWidth", 0);
+		if (paymentsTable.getCellCount(row) > 3)
+			paymentsTable.getCellFormatter().getElement(row, 3).getStyle().setPropertyPx("borderLeftWidth", 0);
 
 		paymentsTable.getRowFormatter().addStyleName(row,
 				row % 2 == 0 ? AON.AON_DATA_TABLE_ROW_ODD : AON.AON_DATA_TABLE_ROW_EVEN);
@@ -2498,13 +2496,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private void initPaymentsTable() {
 
-		paymentsTable.setText(0, 0, "TIPO");
+		paymentsTable.setText(0, 0, "CONCEPTO");
 		paymentsTable.getFlexCellFormatter().setColSpan(0, 0, 2);
-		paymentsTable.setText(0, 1, "CONCEPTO");
-		paymentsTable.setText(0, 2, "DEVENGO");
-		paymentsTable.getFlexCellFormatter().setColSpan(0, 2, 2);
-		//paymentsTable.setText(0, 3, "RECIBO");
-		//paymentsTable.getFlexCellFormatter().setColSpan(0, 3, 2);
+		paymentsTable.setText(0, 1, "DEVENGO");
+		paymentsTable.getFlexCellFormatter().setColSpan(0, 1, 2);
 
 		paymentsTable.getRowFormatter().addStyleName(0, AON.AON_DATA_TABLE_ROW_ODD);
 		for (int i = 0; i < paymentsTable.getCellCount(0); i++) {
@@ -2512,13 +2507,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			paymentsTable.getCellFormatter().addStyleName(0, i, AON.AON_TEXT_CENTER);
 		}
 		
-		paymentsTable.getColumnFormatter().setWidth(0, "2%");
-		paymentsTable.getColumnFormatter().setWidth(1, "12%"); // TIPO
-		// 2 ...
-		paymentsTable.getColumnFormatter().setWidth(3, "26%"); // DEVENGO
-		//paymentsTable.getColumnFormatter().setWidth(4, "12%"); // RECIBO
-		// 4..
-		paymentsTable.getColumnFormatter().setWidth(4, "2%");
+		paymentsTable.getColumnFormatter().setWidth(0, "2%");	// RESET
+		//1.. 													// CONCEPTO
+		paymentsTable.getColumnFormatter().setWidth(2, "38%"); 	// DEVENGO
+		paymentsTable.getColumnFormatter().setWidth(3, "2%");	// DELETE
 
 	}
 
