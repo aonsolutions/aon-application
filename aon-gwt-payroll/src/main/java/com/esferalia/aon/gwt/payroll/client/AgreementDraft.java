@@ -850,7 +850,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					payment.setQuoteExpression(concept.getQuoteExpression());
 
 					if (concept.getExpression() != null) {
-						payment.setExpression(concept.getExpression());
+						
+						payment.setExpression(getExpression4Payment(concept));
+						
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 						AgreementDraft.this.calculate(getExpressionFocusCallback());
 					} else {
@@ -3422,5 +3424,16 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			((InputElement)inputs.getItem(i)).setReadOnly(readOnly);
 		}
 		
+	}
+	
+	private static String getExpression4Payment(Payment concept) {
+		String expression = concept.getExpression();
+		
+		Payment.Type type = concept.getType(); 
+		if ( type == Payment.Type.CRA_0055 
+			|| type ==  Payment.Type.CRA_0056 ) 
+			expression = expression.replaceAll("REMOVE", "HIDE");
+		
+		return expression;
 	}
 }
