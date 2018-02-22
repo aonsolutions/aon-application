@@ -161,9 +161,18 @@ public class DeliveryCreator implements Serializable {
 				
 				deliveryList = new LinkedList<>();
 				processDelivery(albaranes.getDATOSALBARANES(), deliveryList, true);
+				if(albaranes.getERRORES()!=null)
+					errorList.addAll(albaranes.getERRORES().getERRORES());
+				albaranes.getDATOSALBARANES().forEach(albaran -> {
+					if(albaran.getERRORES()!=null)
+						errorList.addAll(albaran.getERRORES().getERRORES());
+				});
 				
 				
 				test = "S".equals(albaranes.getPRUEBA());
+				if (test)
+					warningList.add("Los datos han sido enviados en MODO DE PRUEBAS, no se guardarán.");
+				
 				if (!test && (errorList == null || errorList.size() <= 0)) {
 					errorList.clear();
 					warningList.clear();
@@ -178,6 +187,9 @@ public class DeliveryCreator implements Serializable {
 				errorList.add("No se han encontrado datos de albaranes");
 			}
 		}
+		
+		errorList.removeIf(error->error==null);
+		warningList.removeIf(warn->warn==null);
 		
 	}
 	
@@ -801,7 +813,7 @@ public class DeliveryCreator implements Serializable {
 			product.setVat(obtainDefaultVat(ctx));
 			product.setCreationUser(ctx.getUser());
 			product.setCreationDate(new Date());
-			ProductDAO.insert(ctx, product);
+			ProductDAO.insertProduct(ctx, product);
 			product = ProductDAO
 					.getProductStream(
 							ctx,
@@ -1077,6 +1089,7 @@ public class DeliveryCreator implements Serializable {
 			}
 			description = description.replaceAll("(.+),\\s*$", "$1");
 			description = (attach.getDescription()!=null?attach.getDescription()+", ":"") + description;
+			description = description.length()>63?description.substring(0, 63):description;
 			
 			attach.setSourceBatch(response.getId());
 			attach.setDescription(description);

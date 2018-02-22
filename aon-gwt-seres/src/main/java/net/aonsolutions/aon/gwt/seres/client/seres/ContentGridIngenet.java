@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.seres.JsAttachFile;
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
@@ -38,7 +37,6 @@ import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -356,13 +354,8 @@ public class ContentGridIngenet extends ResizeComposite implements RequiresResiz
 		LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
 		map.put("id_list", list);
 		selFiles.clear();
-//		parent.gridContent();
 		parent.parent.cleanToolbarButtons();
-		
-		FlowPanel panel = new FlowPanel();
-		panel.add(new Label("Procesando datos"));
-		AonToast toast = new AonToast();
-		toast.show(AON.MSG.information(), panel);
+		parent.closeFootPanel();
 		
 		getAPI().getSeres().processIngenetAttach(map, new AsyncCallback<JSON<JsObject>>() {
 			@Override
@@ -380,11 +373,9 @@ public class ContentGridIngenet extends ResizeComposite implements RequiresResiz
 					vp.add(label);
 				});
 				parent.errorPanel.setWidget(vp);
+				parent.gridContent();
 				parent.tabLayout.selectTab(0);
 				parent.openFootPanel();
-				
-//				selFiles.clear();
-				parent.gridContent();
 			}
 			
 			@Override
