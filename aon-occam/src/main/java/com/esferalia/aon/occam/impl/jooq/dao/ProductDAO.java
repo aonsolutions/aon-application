@@ -54,8 +54,6 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
-import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 
 
@@ -342,7 +340,7 @@ public class ProductDAO {
 						p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(), p.getManufactured(),p.getComposition(),
 						p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), ctx.getUser(), now,
 						ctx.getUser(), now, p.getKind() != null ? p.getKind() : 0, p.getPackagedValue())
-				.returning().fetch().stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery());
+				.execute();
 		});
 	}
 	
