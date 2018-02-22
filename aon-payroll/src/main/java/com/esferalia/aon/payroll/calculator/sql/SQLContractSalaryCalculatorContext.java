@@ -2676,6 +2676,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				throw new CheckException(
 						"Imposible calcular el salario regulador de la indemnizaci\u00F3n por despido");
 			}
+			
+			@Override
+			protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+			}
 
 			@Override
 			public Collection<IContractBonus> getContractBonus() throws AonException {
