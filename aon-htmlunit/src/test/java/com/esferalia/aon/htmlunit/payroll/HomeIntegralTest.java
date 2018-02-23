@@ -53,6 +53,11 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 387.29);
 		assertValue("cgcBaseLabel", 387.29);
 	
+		draft("TRAMO, 3 (DOS PERCEPCIONES)");
+		calculate(Calendar.MAY, 2018);
+		assertValue("cgpBaseLabel", 387.29);
+		assertValue("cgcBaseLabel", 387.29);
+
 		draft("TRAMO, 4");
 		calculate(Calendar.MAY, 2018);
 		assertValue("cgpBaseLabel", 497.08);

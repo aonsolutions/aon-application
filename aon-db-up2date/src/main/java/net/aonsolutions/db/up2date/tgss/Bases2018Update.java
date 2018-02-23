@@ -250,7 +250,7 @@ public class Bases2018Update implements Update {
 		+"[637.40,606.86], "
 		+"[746.90,716.65], "
 		+"[858.60,858.60], "
-		+"[Double.MAX_VALUE,896.94] ] if $[0] >= BASE_CGC )[0][1]" )
+		+"[Double.MAX_VALUE,896.94] ] if $[0] >= BASE_CGC_BRUTA )[0][1]" )
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
 		;

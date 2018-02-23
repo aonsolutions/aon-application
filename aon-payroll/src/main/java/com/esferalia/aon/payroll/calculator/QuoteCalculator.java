@@ -458,6 +458,7 @@ public abstract class QuoteCalculator {
 				@Override
 				public void visitOther(PaymentType type) {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
+					
 					quotesImpl.addAll(limit(
 							CGC_BASE, 
 							CGC_BASE_RAW,
@@ -823,16 +824,7 @@ public abstract class QuoteCalculator {
 				try {
 					throw e.getExpressionException();
 				} catch ( DeferredExpressionException de){
-					try  {
-						limits.addAll(expressionContext.eval(de.getExpression().getExpression(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
-					} catch ( UndefinedVariablesException undefinedE ) {
-						// This is a mess, but better here than in 'system' variables. 
-						// Available variable is 'CGC_BASE_RAW' no 'CGC_BASE', 
-						// very complicated to explain .
-						String expression = undefinedE.getExpression();
-						expression = expression.replaceAll(CGC_BASE.getName(), CGC_BASE_RAW.getName());
-						limits.addAll(expressionContext.eval(expression, var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
-					}
+					limits.addAll(expressionContext.eval(de.getExpression().getExpression(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 				} catch ( Throwable t ){
 					limits.addAll(expressionContext.eval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 				}

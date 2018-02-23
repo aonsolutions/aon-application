@@ -1,6 +1,6 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.payroll.Remove2HideUpdate.REMOVE2HIDEUPDATE;
+import static net.aonsolutions.db.up2date.tgss.HomeBasesUpdate.HOMEBASESUPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,7 +28,8 @@ public class Up2Date {
     		//AGREEMENTUPDATE,
     		//BASES2018UPDATE,
     		//ISSUE1760UPDATE
-    		REMOVE2HIDEUPDATE
+    		//REMOVE2HIDEUPDATE
+    		HOMEBASESUPDATE
     }; 
 	
 	
