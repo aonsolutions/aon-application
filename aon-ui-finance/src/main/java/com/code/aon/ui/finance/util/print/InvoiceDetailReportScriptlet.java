@@ -100,8 +100,8 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 		}		
 	}
 
-	private String obtainReferenceCode(InvoiceDetail invoiceDetail) throws JRScriptletException{
-		StringBuilder builder = new StringBuilder();
+	public Sales obtainSales(Integer detailId) throws JRScriptletException{
+		InvoiceDetail invoiceDetail = obtainInvoiceDetail(detailId);
 		try {
 			Sales sales = null;
 			if(invoiceDetail.getSourceTo() instanceof Delivery){
@@ -114,32 +114,42 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 				sales = (Sales) invoiceDetail.getSourceTo();
 			}
 			
-			if(sales!=null){
-				builder.append("N. pedido: ");
-				builder.append(sales.getReferenceCode());
-				if(StringUtils.isNotBlank(sales.getPurchaseReference())){
-					builder.append(" / Su referencia: ");
-					builder.append(sales.getPurchaseReference());
-				}
-			}
+			return sales;
 		} catch (ManagerBeanException e) {
 			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
 			LOGGER.error(msg,e);
 			throw new JRScriptletException(msg, e);
 		}
+	}
+	
+	private String obtainReferenceCode(InvoiceDetail invoiceDetail) throws JRScriptletException{
+		StringBuilder builder = new StringBuilder();
+		Sales sales = obtainSales(invoiceDetail.getId());
+		if(sales!=null){
+			builder.append("N. pedido: ");
+			builder.append(sales.getReferenceCode());
+			if(StringUtils.isNotBlank(sales.getPurchaseReference())){
+				builder.append(" / Su referencia: ");
+				builder.append(sales.getPurchaseReference());
+			}
+		}
 		return builder.toString();
 	}
 
-	private InvoiceDetail obtainInvoiceDetail() throws JRScriptletException{
+	private InvoiceDetail obtainInvoiceDetail(Integer id) throws JRScriptletException {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			InvoiceDetail invoiceDetail = (InvoiceDetail) invoiceDetailBean.get((Integer)super.getFieldValue(FIELD_ID));
+			InvoiceDetail invoiceDetail = (InvoiceDetail) invoiceDetailBean.get(id);
 			return invoiceDetail;
 		} catch (ManagerBeanException e) {
 			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
 			LOGGER.error(msg);
 			throw new JRScriptletException(msg, e);
 		}
+	}
+	
+	private InvoiceDetail obtainInvoiceDetail() throws JRScriptletException {
+		return obtainInvoiceDetail((Integer)super.getFieldValue(FIELD_ID));
 	}
 	
 }
