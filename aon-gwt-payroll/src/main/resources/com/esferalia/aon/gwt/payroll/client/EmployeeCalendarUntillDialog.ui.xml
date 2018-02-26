@@ -1,0 +1,53 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+    <ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarUntillDialog.MyStyle">
+
+		.paddingLabelStyle{
+			padding-left: 7px;
+    		padding-top: 2px;
+		}
+
+		.paddingBlocks{
+			padding-bottom: 15px;
+			padding-top: 10px;
+		}
+
+		.form {
+			padding: 10px;
+		}
+
+		.closeButton {
+			position: relative;
+    		left: 60px;
+			border: 1px solid #bbb;
+			border-radius: 3px;
+			cursor: pointer;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:VerticalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Label styleName="{style.paddingLabelStyle}">Fecha fin:</g:Label>
+		    	<a:DateBoxEx ui:field="endDateBox"></a:DateBoxEx>
+		    </g:HorizontalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
+		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">OK</g:Button>
+		    </g:HorizontalPanel>
+		</g:VerticalPanel>
+			
+	</g:HTMLPanel>
+
+</ui:UiBinder>

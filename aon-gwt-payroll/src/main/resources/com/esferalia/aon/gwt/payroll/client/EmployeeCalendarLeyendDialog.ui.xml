@@ -1,0 +1,117 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+
+    <ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarLeyendDialog.MyStyle">
+
+		.typeButtonUpperMenuStyle{
+			height: 15px;
+			padding-right: 15px;
+    		border-radius: 50px;
+		}
+
+		.typeButtonUpperMenuStyle2{
+			height: 15px;
+			padding-right: 15px;
+		}
+
+		.paddingLabels{
+			padding-left: 5px;
+    		padding-right: 5px;
+		}
+
+		.paddingBlocks{
+			padding-bottom: 15px;
+		}
+
+		.noWorkingColor{
+			background-color: salmon;
+		}
+
+		.holidayColor{
+			background-color: green;
+		}
+
+		.strikeColor{
+			background-color: #a09c13;
+    	}
+
+		.ereColor{
+			background-color: #b91257;
+		}
+
+		.sundayColor{
+			background-color: rgba(114, 194, 250, 1);
+		}
+
+		.dropColor{
+			background-color: #733969;
+		}
+
+		.suspensionColor{
+			background-color: #b74b17;
+		}
+
+		.itColor{
+			background-color: rgba(255, 0, 0, 0.72);
+		}
+
+		.reductionColor{
+			background-color: #065b69;
+		}
+
+		.form {
+			padding: 10px;
+		}
+
+		.closeButton {
+			position: relative;
+    		left: 250px;
+			border: 1px solid #bbb;
+			border-radius: 3px;
+			cursor: pointer;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:VerticalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Label styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}"/>
+		    	<g:Label styleName="{style.paddingLabels}">No Laborables</g:Label>
+			    <g:Label styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}"/>
+			    <g:Label styleName="{style.paddingLabels}">Vacaciones</g:Label>
+			    <g:Label styleName="{style.typeButtonUpperMenuStyle} {style.strikeColor}"/>
+			    <g:Label styleName="{style.paddingLabels}">Huelga</g:Label>
+			    <g:Label styleName="{style.typeButtonUpperMenuStyle} {style.ereColor}"/>
+			    <g:Label styleName="{style.paddingLabels}">ERE</g:Label> 
+		    </g:HorizontalPanel> 
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		        <g:Label styleName="{style.typeButtonUpperMenuStyle2} {style.sundayColor}"/>
+			    <g:Label styleName="{style.paddingLabels}">Festivos</g:Label>
+			    <g:Label styleName="{style.typeButtonUpperMenuStyle2} {style.dropColor}"/>
+			    <g:Label styleName="{style.paddingLabels}">Ausencia</g:Label>
+			    <g:Label styleName="{style.typeButtonUpperMenuStyle2} {style.suspensionColor}"/>
+			    <g:Label styleName="{style.paddingLabels}">Suspensión</g:Label>
+			    <g:Label styleName="{style.typeButtonUpperMenuStyle2} {style.itColor}"/>
+			    <g:Label styleName="{style.paddingLabels}">Baja IT</g:Label>
+		    </g:HorizontalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		        <g:Label styleName="{style.typeButtonUpperMenuStyle2} {style.reductionColor}"/>
+			    <g:Label styleName="{style.paddingLabels}">Reducción</g:Label>
+		    </g:HorizontalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
+		    </g:HorizontalPanel>
+		</g:VerticalPanel>
+			
+	</g:HTMLPanel>
+
+</ui:UiBinder>

@@ -44,18 +44,10 @@
 		}
 
 		.cabeceraStyle {
-		width: 5.5em;
-		font-weight: bold;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
-		}
-
-		.cabeceraStyleHide {
-		width: 5.5em;
-		visibility:hidden;
-		font-weight: bold;
-		font-family: Arial, Helvetica, sans-serif !important;
-		font-size: 11px !important;
+			width: 5.5em;
+			font-weight: bold;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
 		}
 
 		.oddRowStyle {
@@ -79,10 +71,6 @@
 			position: absolute !important;
 			right: 5px !important;
 			bottom: 50px !important;
-		}
-
-		.scrollStyle1 {
-			top: 50px !important;
 		}
 
 		/* ESTILOS CELDA TABLA */
@@ -143,7 +131,7 @@
 		/* ESTILOS CAMBIO DE AÑO */
 
 		.paddingHorizontalPanel{
-		padding-bottom: 30px;
+			padding-bottom: 30px;
 		}
 
 		.year {
@@ -155,39 +143,25 @@
 		}
 
 		.optionButtons{
-		width: 30px;
-		height: 25px;
-		cursor: pointer;
-		border: none;
+			width: 30px;
+			height: 25px;
+			cursor: pointer;
+			border: none;
 		}
 
 		.optionButtonsLeft {
-		margin-top: 8px;
-		margin-left: 18px;
+			margin-top: 8px;
+			margin-left: 18px;
 		}
 
 		.optionButtonsRight {
-		margin-top: 8px;
+			margin-top: 8px;
 		}
 
-		/* ESTILO PAPER DAILOG */
-
-		.marginTopCloseDialog{
-		margin-top: 1px !important;
-		padding-left: 0px;
-		padding-right: 0px;
-		}
-
-		.paddingLeftShowVaribalesDialog{
-		padding-left: 5px;
-		}
-
-		.marginTopShowVariablesDialog{
-		margin-top: 10px !important;
-		}
+		/* ESTILO DAILOG */
 
 		.showVariablesStyle{
-		padding: 3px;
+			padding: 3px;
 		}		
 
 	</ui:style>

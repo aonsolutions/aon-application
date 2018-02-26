@@ -1,0 +1,69 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+
+    <ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendPercentDialog.MyStyle">
+
+		.paddingTypePercentStyle{
+			padding-right: 7px;
+    		padding-top: 4px;
+		}
+
+		.paddingPercentStyle{
+			padding-left: 7px;
+    		padding-top: 4px;
+		}
+		
+		.widthDoubleBox{
+			width: 55px;
+		}
+
+		.messageStyle{
+			font: 11px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+		}
+
+		.paddingBlocks{
+			padding-bottom: 15px;
+			padding-top: 10px;
+		}
+
+		.form {
+			padding: 10px;
+		}
+
+		.closeButton {
+			position: relative;
+    		left: 90px;
+			border: 1px solid #bbb;
+			border-radius: 3px;
+			cursor: pointer;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:VerticalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Label ui:field="typePercent" styleName="{style.paddingTypePercentStyle}"></g:Label>
+		    	<g:DoubleBox ui:field="percentBox" styleName="{style.widthDoubleBox}"></g:DoubleBox>
+		    	<g:Label styleName="{style.paddingPercentStyle}">%</g:Label>
+		    </g:HorizontalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}"> 
+		    	<g:Label styleName="{style.messageStyle}">* La parte decimal se sepera con ','</g:Label>
+		    </g:HorizontalPanel>
+		   	<g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
+		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">OK</g:Button>
+		    </g:HorizontalPanel>
+		</g:VerticalPanel>
+			
+	</g:HTMLPanel>
+
+</ui:UiBinder>

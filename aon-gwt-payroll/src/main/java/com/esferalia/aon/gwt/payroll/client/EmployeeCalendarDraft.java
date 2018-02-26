@@ -1,16 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialogBar;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayTypeVisitor;
@@ -30,20 +26,14 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
-import com.vaadin.polymer.iron.widget.IronLabel;
-import com.vaadin.polymer.paper.widget.PaperButton;
-import com.vaadin.polymer.paper.widget.PaperDialog;
-import com.vaadin.polymer.paper.widget.PaperIconButton;
 
 public class EmployeeCalendarDraft extends Composite implements ContextMenuHandler {
 
@@ -259,49 +249,35 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
+		String borderButtonUpperMenuStyle();
+		String imagenButtonUpperMenuStyle();
+		String paddingEraseButtonUpperMenuStyle();
+		String paddingLeyendButtonUpperMenuStyle();
 		String doubleBoxStyle();
-
 		String doubleBoxLargeStyle();
-
 		String doubleBoxDisableStyle();
-
 		String doubleBoxDisableStyle2();
-		
 		String isSelectedStyle();
-		
 		String nonWorkingStyle();
-		
 		String sundayStyle();
-
 		String holidayStyle();
-		
 		String ereStyle();
-
 		String strikeStyle();
-		
 		String reductionStyle();
-		
 		String dropStyle();
-		
 		String suspensionStyle();
-		
 		String itStyle();
-		
 		String cellStyle();
-
 		String ocultarHorasStyle();
-		
-		String ocultarDivStyle();
-		
 		String onChange();
-		
-		String setOutOfContractStyle();	
-		
-		String fechaDialogZIndex();
-		
-		String  pointer();
+		String setOutOfContractStyle();
+		String pointer();
 	}
 
+	
+	@UiField
+	HorizontalPanel upperRightMenu;
+	
 	@UiField
 	Grid calendarGrid;
 	
@@ -336,18 +312,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	MenuItem selectAllSundaysMenuItem;
 	
 	@UiField
-	PaperDialog dialogUntill;
-	
-	@UiField
-	CustomDialogBar customDialogBarUntill;
-	
-	@UiField
-	DateBoxEx endDateBoxDialogUntill;
-	
-	@UiField
-	PaperButton dialogUntillOk;
-	
-	@UiField
 	MenuItem hourMenuItem;
 	
 	@UiField
@@ -378,170 +342,29 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	Button nextYearButton;
 
 	@UiField
-	PaperButton nonWorkingDayButton;
+	Button nonWorkingDayButton;
 
 	@UiField
-	PaperButton festiveDayButton;
-	
-	@UiField
-	PaperButton dropDayButton;
-	
-	@UiField
-	PaperDialog dropDialog;
-	
-	@UiField
-	ListBox dropMenu;
-	
-	@UiField
-	PaperButton dropDialogOk;
-	
-	@UiField
-	PaperButton strikeDayButton;
+	Button strikeDayButton;
 
 	@UiField
-	PaperDialog strikeDialog;
+	Button ereDayButton;
 	
 	@UiField
-	DoubleBox strikePercentBox;
-	
-	@UiField
-	PaperButton strikeDialogOk;
-	
-	@UiField
-	PaperButton ereDayButton;
-	
-	@UiField
-	PaperDialog ereDialog;
-	
-	@UiField
-	DoubleBox erePercentBox;
-	
-	@UiField
-	PaperButton ereDialogOk;
+	Button holidayDayButton;
 
 	@UiField
-	PaperButton reductionDayButton;
-
-	@UiField
-	PaperButton holidayDayButton;
-
-	@UiField
-	PaperButton suspensionDayButton;
+	Button eraseEventButton;
 	
 	@UiField
-	PaperIconButton leyendButton;
+	Label hourLabelUpperMenu;
 	
 	@UiField
-	PaperDialog dialogLeyend;
+	Button extraHoursButton;
 	
 	@UiField
-	CustomDialogBar customDialogBarLeyend;
-
-	@UiField
-	PaperButton dialogLeyendOk;
-	
-	@UiField
-	PaperIconButton eraseEventButton;
-	
-	@UiField
-	IronLabel extraHoursButtonBlock;
-	
-	@UiField
-	PaperIconButton extraHoursButton;
-	
-	@UiField
-	PaperDialog extraHoursDialog;
-	
-	@UiField
-	PaperIconButton expandMonthsBtn;
-	
-	@UiField
-	DoubleBox extraHoursBox;
-	
-	@UiField
-	PaperButton extraHoursDialogOk;
-	
-	@UiField
-	PaperIconButton hourButton;
-	
-	@UiField
-	PaperDialog hourDialog;
-	
-	@UiField
-	CustomDialogBar customDialogBarHour;
-	
-	@UiField
-	PaperButton hourDialogOk;
-	
-	@UiField
-	PaperIconButton expandHourBtnL;
-	
-	@UiField
-	PaperIconButton expandHourBtnM;
-	
-	@UiField
-	PaperIconButton expandHourBtnX;
-	
-	@UiField
-	PaperIconButton expandHourBtnJ;
-	
-	@UiField
-	PaperIconButton expandHourBtnV;
-	
-	@UiField
-	PaperIconButton expandHourBtnS;
-	
-	@UiField
-	PaperIconButton expandHourBtnD;
-	
-	@UiField
-	IronLabel hourButtonBlock;
-	
-	@UiField
-	HTMLPanel mondayBlock;
-	
-	@UiField
-	HTMLPanel tuesdayBlock;
-	
-	@UiField
-	HTMLPanel wendsdayBlock;
-	
-	@UiField
-	HTMLPanel thursdayBlock;
-	
-	@UiField
-	HTMLPanel fridayBlock;
-	
-	@UiField
-	HTMLPanel saturdayBlock;
-	
-	@UiField
-	HTMLPanel sundayBlock;
-
-	@UiField(provided = true)
-	SuggestBox monthOpt;
-	
-	@UiField(provided = true)
-	SuggestBox mondayOpt;
-	
-	@UiField(provided = true)
-	SuggestBox tuesdayOpt;
-	
-	@UiField(provided = true)
-	SuggestBox wendsdayOpt;
-	
-	@UiField(provided = true)
-	SuggestBox thursdayOpt;
-	
-	@UiField(provided = true)
-	SuggestBox fridayOpt;
-	
-	@UiField(provided = true)
-	SuggestBox saturdayOpt;
-	
-	@UiField(provided = true)
-	SuggestBox sundayOpt;
-	
+	Button hourButton;
+		
 	@UiField
 	Label totalHours;
 	
@@ -549,15 +372,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	ScrollPanel scrollInfo;
 	
 // ------------------------------------------------------------ VARIABLES DE LA CLASE ----------------------------------------------------
-	
-	private final static int MONDAY = 0;
-	private final static int TUESDAY = 1;
-	private final static int WEDNESDAY = 2;
-	private final static int THURSDAY = 3;
-	private final static int FRIDAY = 4;
-	private final static int SATURDAY = 5;
-	private final static int SUNDAY = 6;
-	
+		
 	private OrderedMultiSelectionModel<Date> selectedDates = new OrderedMultiSelectionModel<Date>();
 	
 	private int oldHourSelected = 0;
@@ -569,10 +384,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private final CalendarTypeCell cells[][] = new CalendarTypeCell[25][38];
 	private final CalendarTypeDayCell cellsType[][] = new CalendarTypeDayCell[25][38];
 	private final Date cellsDates[][] = new Date[25][38];
-	
-	private final SuggestBox suggestOpts[] = new SuggestBox[7];
-	private final HTMLPanel divDays[] = new HTMLPanel[7];
-	
+		
 	private double listOldHours[] = new double[7];
 	
 	private EmployeeCalendarDraftObjectData calendarEmployeeInfo;
@@ -583,83 +395,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	public EmployeeCalendarDraft() {
 		
-		//Inicializamos todos los SuggestBox para insertar horas nuevas
-		ArrayList<String> suggestHours = new ArrayList<String>();
-		MultiWordSuggestOracle oracleL = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleM = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleX = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleJ = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleV = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleS = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleD = new MultiWordSuggestOracle();
-		suggestHours.add("2");
-		suggestHours.add("4");
-		suggestHours.add("6");
-		suggestHours.add("8");
-		oracleL.setDefaultSuggestionsFromText(suggestHours);
-		oracleM.setDefaultSuggestionsFromText(suggestHours);
-		oracleX.setDefaultSuggestionsFromText(suggestHours);
-		oracleJ.setDefaultSuggestionsFromText(suggestHours);
-		oracleV.setDefaultSuggestionsFromText(suggestHours);
-		oracleS.setDefaultSuggestionsFromText(suggestHours);
-		oracleD.setDefaultSuggestionsFromText(suggestHours);
-		
-		suggestOpts[MONDAY] = new SuggestBox(oracleL);
-		suggestOpts[TUESDAY] = new SuggestBox(oracleM);
-		suggestOpts[WEDNESDAY] = new SuggestBox(oracleX);
-		suggestOpts[THURSDAY] = new SuggestBox(oracleJ);
-		suggestOpts[FRIDAY] = new SuggestBox(oracleV);
-		suggestOpts[SATURDAY] = new SuggestBox(oracleS);
-		suggestOpts[SUNDAY] = new SuggestBox(oracleD);
-		
-		this.mondayOpt = suggestOpts[MONDAY];
-		this.tuesdayOpt = suggestOpts[TUESDAY];
-		this.wendsdayOpt = suggestOpts[WEDNESDAY];
-		this.thursdayOpt = suggestOpts[THURSDAY];
-		this.fridayOpt = suggestOpts[FRIDAY];
-		this.saturdayOpt = suggestOpts[SATURDAY];
-		this.sundayOpt = suggestOpts[SUNDAY];
-		
-		ArrayList<String> suggestMonths = new ArrayList<String>();
-		MultiWordSuggestOracle oracleMonths = new MultiWordSuggestOracle();
-		suggestMonths.add("Enero");
-		suggestMonths.add("Febrero");
-		suggestMonths.add("Marzo");
-		suggestMonths.add("Abril");
-		suggestMonths.add("Mayo");
-		suggestMonths.add("Junio");
-		suggestMonths.add("Julio");
-		suggestMonths.add("Agosto");
-		suggestMonths.add("Septiembre");
-		suggestMonths.add("Octubre");
-		suggestMonths.add("Noviembre");
-		suggestMonths.add("Diciembre");
-		oracleMonths.setDefaultSuggestionsFromText(suggestMonths);
-		monthOpt = new SuggestBox(oracleMonths);
-		
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		calendarGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
-		divDays[0] = mondayBlock;
-		divDays[1] = tuesdayBlock;
-		divDays[2] = wendsdayBlock;
-		divDays[3] = thursdayBlock;
-		divDays[4] = fridayBlock;
-		divDays[5] = saturdayBlock;
-		divDays[6] = sundayBlock;
-		
+		initializeUpperMenu();
 		initializeCellsCalendar();
 		initializeCellsTypeCalendar();
 		
-		//Gestion tipo de ausencia
-		dropMenu.addItem("No remunerado");
-		dropMenu.addItem("Remunerado");
-		
 		//Gestion boton horas
 		hourMenuItem.setEnabled(false);
-		hourButton.setDisabled(true);
+		hourButton.setEnabled(false);
 		
 		nonWorkingDayMenuItem.setScheduledCommand(new Command() {
 			
@@ -682,7 +429,17 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				strikeDialog.open();	
+				EmployeeCalendPercentDialog strikeDialog = new EmployeeCalendPercentDialog("Porcentaje Huelga") {
+					
+					@Override
+					protected void onAccept() {
+						double cs = this.getPercentValue();
+						addStrikeDay(cs);
+					}
+				};
+				strikeDialog.setLabelText("Porcentaje Huelga:");
+				strikeDialog.show();
+				strikeDialog.center();	
 			}
 			
 		});
@@ -691,19 +448,21 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				ereDialog.open();
+				EmployeeCalendPercentDialog ereDialog = new EmployeeCalendPercentDialog("Porcentaje ERE") {
+					
+					@Override
+					protected void onAccept() {
+						double ce = this.getPercentValue();
+						addEreDay(ce);
+						
+					}
+				};
+				ereDialog.setLabelText("Porcentaje ERE:");
+				ereDialog.show();
+				ereDialog.center();
 			}
 			
 		});
-		
-//		diaAusencia.setScheduledCommand(new Command() {
-//			
-//			@Override
-//			public void execute() {
-//				dropDialog.open();
-//			}
-//			
-//		});
 		
 		eraseEventMenuItem.setScheduledCommand(new Command() {
 			
@@ -739,7 +498,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					DateUtils.addDays2Date(startDate, 1);
 				}
 				paintAllDates(selectedDates.getSelectedList());
-				hourButton.setDisabled(false);
+				hourButton.setEnabled(true);
 			}
 			
 		});
@@ -748,9 +507,25 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				dialogUntill.open();
-				addDates();
-				
+				EmployeeCalendarUntillDialog untillDialog = new EmployeeCalendarUntillDialog("Seleccion hasta") {
+					
+					@Override
+					protected void onAccept() {
+						if(selectedDates.getSelectedList().size() == 1){
+							Date startDate = DateUtils.copyDateOnly(selectedDates.getSelectedList().get(0));
+							Date endDate = DateUtils.copyDateOnly(this.getSelectedDate());
+							while (startDate.before(endDate) || startDate.equals(endDate)) {
+								selectedDates.setSelected(DateUtils.copyDateOnly(startDate), true);
+								DateUtils.addDays2Date(startDate, 1);
+							}
+						}
+						paintSelectedDates(selectedDates.getSelectedList());
+						
+					}
+				};
+				untillDialog.setDefaultDate(new Date());
+				untillDialog.show();
+				untillDialog.center();
 			}
 		});
 		
@@ -779,7 +554,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					DateUtils.addDays2Date(startDate, 1);
 				}
 				paintAllDates(selectedDates.getSelectedList());
-				hourButton.setDisabled(false);
+				hourButton.setEnabled(true);
 			}
 		});
 		
@@ -808,16 +583,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					DateUtils.addDays2Date(startDate, 1);
 				}
 				paintAllDates(selectedDates.getSelectedList());
-				hourButton.setDisabled(false);
-			}
-		});
-		
-		endDateBoxDialogUntill.getTextBox().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				endDateBoxDialogUntill.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
-				
+				hourButton.setEnabled(true);
 			}
 		});
 	
@@ -826,8 +592,29 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			@Override
 			public void execute() {
 				if(!selectedDates.getSelectedList().isEmpty()){
-					hourDialog.open();
-					checkShowingUpDays();
+					EmployeeCalendarHoursDialog hourDialog = new EmployeeCalendarHoursDialog("Horas", selectedDates, calendarEmployeeInfo) {
+						
+						@Override
+						protected void onAccept() {
+							listOldHours = getListOldHours();
+							
+							updateHours(this.getMondayHours(), 
+										this.getTuesdayHours(), 
+										this.getWednesdayHours(), 
+										this.getThursdayHours(), 
+										this.getFridayHours(), 
+										this.getSaturdayHours(), 
+										this.getSundayHours());
+							
+							hourMenuItem.setEnabled(false);
+							hourButton.setEnabled(false);
+							selectedDates.clear();
+							changeYear(0);
+							
+						}
+					};
+					hourDialog.show();
+					hourDialog.center();
 				}
 			}
 		});
@@ -846,10 +633,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 		});		
 		
-		customDialogBarHour.addCloseHandler(()->{hourDialog.close();});
-		customDialogBarUntill.addCloseHandler(()->{dialogUntill.close();});
-		customDialogBarLeyend.addCloseHandler(()->{dialogLeyend.close();});
-		
 		//#ifndef env.SNAPSHOT
 		saveButton.setVisible(false);
 		//#endif
@@ -860,17 +643,61 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
 	
-	@UiHandler("dialogUntillOk")
-	public void onOkuntillDialogClick(ClickEvent event) {
-		if(selectedDates.getSelectedList().size() == 1){
-			Date startDate = DateUtils.copyDateOnly(selectedDates.getSelectedList().get(0));
-			Date endDate = DateUtils.copyDateOnly(endDateBoxDialogUntill.getValue());
-			while (startDate.before(endDate) || startDate.equals(endDate)) {
-				selectedDates.setSelected(DateUtils.copyDateOnly(startDate), true);
-				DateUtils.addDays2Date(startDate, 1);
+	private void initializeUpperMenu() {
+		Image help = new Image();
+		help.setUrl("aonResource/9.23-SNAPSHOT/images/aon-main-menu/aon-icon-help.png");
+		help.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog() {
+					
+					@Override
+					protected void onAccept() {
+					}
+				};
+				leyendDialog.show();
+				leyendDialog.center();
 			}
-		}
-		paintSelectedDates(selectedDates.getSelectedList());
+		});
+		upperRightMenu.add(help);
+		Label leyendLabel = new Label("Leyenda");
+		leyendLabel.setStyleName(style.paddingLeyendButtonUpperMenuStyle());
+		upperRightMenu.add(leyendLabel);
+		
+		extraHoursButton.setStyleName("aon-icon-time");
+		extraHoursButton.addStyleName(style.borderButtonUpperMenuStyle());
+		extraHoursButton.addStyleName(style.imagenButtonUpperMenuStyle());
+		extraHoursButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				EmployeeCalendarExtraDialog extraDialog = new EmployeeCalendarExtraDialog("Horas extras") {
+					
+					@Override
+					protected void onAccept() {
+						String month = this.getSelectedMonth();
+						Integer intMonth = calculateIntByMonth(month);
+						Integer intYear = Integer.parseInt(yearLabel.getText())- 1900;
+						Double extraHourMonth = this.getExtraHours();
+						calendarEmployeeInfo.setExtraHourByMonth(extraHourMonth, intMonth, intYear);
+						hourMenuItem.setEnabled(false);
+						hourButton.setEnabled(false);
+						selectedDates.clear();
+						changeYear(0);
+					}
+				};
+				extraDialog.show();
+				extraDialog.center();
+			}
+		});
+		extraHoursButton.setVisible(false);
+		hourButton.setStyleName("aon-icon-time");
+		hourButton.addStyleName(style.borderButtonUpperMenuStyle());
+		hourButton.addStyleName(style.imagenButtonUpperMenuStyle());
+		eraseEventButton.setStyleName("aon-icon-close2");
+		eraseEventButton.addStyleName(style.borderButtonUpperMenuStyle());
+		eraseEventButton.addStyleName(style.imagenButtonUpperMenuStyle());
+		eraseEventButton.addStyleName(style.paddingEraseButtonUpperMenuStyle());
 	}
 	
 	@UiHandler("calendarGrid")
@@ -879,7 +706,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		event.preventDefault();
 		
 		hourMenuItem.setEnabled(true);
-		hourButton.setDisabled(false);
+		hourButton.setEnabled(true);
 		
 		int row = calendarGrid.getCellForEvent(event).getRowIndex();
 		int col = calendarGrid.getCellForEvent(event).getCellIndex();
@@ -922,19 +749,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 		
 		//Pulsacion una sola celda	
-		} else { 
-//			for (Date date : selectedDates.getSelectedList()) {
-//				int posicion = calculateDatePosition(date);
-//				if(posicion != -1){
-//					int colSelect = calculatePositionCol(posicion);
-//					int filSelect = calculatePositionRow(posicion);
-//					cells[filSelect][colSelect].unSelect(filSelect, colSelect);
-//			
-//				}
-//			}
-//			
-//			selectedDates.clear();
-			
+		} else { 			
 			cleanCalendarSelectedDates();
 			
 			cells[calculatePositionRow(oldHourSelected)][calculatePositionCol(oldHourSelected)]
@@ -968,70 +783,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		selectedDates.clear();	
 	}
-
-	@UiHandler("hourDialogOk")
-	public void onConfirmDialogClick(ClickEvent event) {
-		double mondayHour = Double.parseDouble(suggestOpts[MONDAY].getValue());
-		double tuesdayHour = Double.parseDouble(suggestOpts[TUESDAY].getValue());
-		double wendsdayHour = Double.parseDouble(suggestOpts[WEDNESDAY].getValue());
-		double thursdayHour = Double.parseDouble(suggestOpts[THURSDAY].getValue());
-		double fridayHour = Double.parseDouble(suggestOpts[FRIDAY].getValue());
-		double saturdayHour = Double.parseDouble(suggestOpts[SATURDAY].getValue());
-		double sundayHour = Double.parseDouble(suggestOpts[SUNDAY].getValue());
 		
-		updateHours(mondayHour, tuesdayHour, wendsdayHour, thursdayHour, fridayHour, saturdayHour, sundayHour);
-		hourDialog.close();
-		hourMenuItem.setEnabled(false);
-		hourButton.setDisabled(true);
-		selectedDates.clear();
-		changeYear(0);
-	}
-	
-	@UiHandler("dialogLeyendOk")
-	public void onConfirmInfoDialogClick(ClickEvent event) {
-		dialogLeyend.close();
-	}
-	
-	@UiHandler("expandMonthsBtn")
-	public void onExpandMonthsClick(ClickEvent event) {
-		monthOpt.showSuggestionList();	
-	}
-	
-	@UiHandler("expandHourBtnL")
-	public void onExpandHourLClick(ClickEvent event) {
-		suggestOpts[MONDAY].showSuggestionList();	
-	}
-	
-	@UiHandler("expandHourBtnM")
-	public void onExpandHourMClick(ClickEvent event) {
-		suggestOpts[TUESDAY].showSuggestionList();	
-	}
-	
-	@UiHandler("expandHourBtnX")
-	public void onExpandHourXClick(ClickEvent event) {
-		suggestOpts[WEDNESDAY].showSuggestionList();	
-	}
-	
-	@UiHandler("expandHourBtnJ")
-	public void onExpandHourJClick(ClickEvent event) {
-		suggestOpts[THURSDAY].showSuggestionList();	
-	}
-	
-	@UiHandler("expandHourBtnV")
-	public void onExpandHourVClick(ClickEvent event) {
-		suggestOpts[FRIDAY].showSuggestionList();	
-	}
-	
-	@UiHandler("expandHourBtnS")
-	public void onExpandHourSClick(ClickEvent event) {
-		suggestOpts[SATURDAY].showSuggestionList();	
-	}
-	
-	@UiHandler("expandHourBtnD")
-	public void onExpandHourDClick(ClickEvent event) {
-		suggestOpts[SUNDAY].showSuggestionList();	
-	}
-	
 	@UiHandler("calendarGrid")
 	public void onDragStart(DragStartEvent event) {
 		//TODO: ver como hacer el drag con el raton en vez de con shift
@@ -1047,11 +799,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		addNoWorkingDay();	
 	}
 
-	@UiHandler("festiveDayButton")
-	public void onDiaFestivoClick(ClickEvent event) {
-		//addFreeDay();	
-	}
-
 	@UiHandler("holidayDayButton")
 	public void onVacacionesClick(ClickEvent event) {
 		addHolidays();
@@ -1059,89 +806,65 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("strikeDayButton")
 	public void onStrikeClick(ClickEvent event) {
-		//strikeDialog.open();
-		addStrikeDay(0);
-	}
-	
-	@UiHandler("strikeDialogOk")
-	public void onDialogStrikeClick(ClickEvent event) {
-		double cs = Double.parseDouble(strikePercentBox.getText());
-		//Window.alert("Porcentaje Huelga :"+cs);
-		strikeDialog.close();
-		addStrikeDay(cs);
+		EmployeeCalendPercentDialog strikeDialog = new EmployeeCalendPercentDialog("Porcentaje Huelga") {
+			
+			@Override
+			protected void onAccept() {
+				double cs = this.getPercentValue();
+				addStrikeDay(cs);
+			}
+		};
+		strikeDialog.setLabelText("Porcentaje Huelga:");
+		strikeDialog.show();
+		strikeDialog.center();
 	}
 	
 	@UiHandler("ereDayButton")
 	public void onEreClick(ClickEvent event) {
-		ereDialog.open();
+		EmployeeCalendPercentDialog ereDialog = new EmployeeCalendPercentDialog("Porcentaje ERE") {
+			
+			@Override
+			protected void onAccept() {
+				double ce = this.getPercentValue();
+				//Window.alert("Porcentaje ERE :"+ce);
+				addEreDay(ce);
+				
+			}
+		};
+		ereDialog.setLabelText("Porcentaje ERE:");
+		ereDialog.show();
+		ereDialog.center();
 	}
-	
-	@UiHandler("ereDialogOk")
-	public void onDialogEreaClick(ClickEvent event) {
-		double ce = Double.parseDouble(erePercentBox.getText());
-		ereDialog.close();
-		addEreDay(ce);
-	}
-	
-	@UiHandler("dropDayButton")
-	public void onDiaAusenciaClick(ClickEvent event) {
-		//dropDialog.open();
-	}
-
-	@UiHandler("dropDialogOk")
-	public void ondropDialogClick(ClickEvent event) {
-		//TODO: mirar que hacer con el tipo de ausencia
-		//dropMenu.getSelectedItemText();
-		dropDialog.close();	
-		addDropDay();
-	}
-	
-	
-	@UiHandler("reductionDayButton")
-	public void onReduccionClick(ClickEvent event) {
-		//aplicarEstilosDiasSeleccionadios(DayType.REDUCTIONDAY);
-	}
-
-	@UiHandler("suspensionDayButton")
-	public void onSuspensionClick(ClickEvent event) {
-		//aplicarEstilosDiasSeleccionadios(DayType.SUSPENSIONDAY);
-	}
-	
+		
 	@UiHandler("hourButton")
 	public void onHourClick(ClickEvent event) {
-		if(!selectedDates.getSelectedList().isEmpty()){	
-			hourDialog.open();
-			checkShowingUpDays();
+		if(!selectedDates.getSelectedList().isEmpty()){
+			EmployeeCalendarHoursDialog hourDialog = new EmployeeCalendarHoursDialog("Horas", selectedDates, calendarEmployeeInfo) {
+				
+				@Override
+				protected void onAccept() {
+					listOldHours = getListOldHours();
+					
+					updateHours(this.getMondayHours(), 
+								this.getTuesdayHours(), 
+								this.getWednesdayHours(), 
+								this.getThursdayHours(), 
+								this.getFridayHours(), 
+								this.getSaturdayHours(), 
+								this.getSundayHours());
+					
+					hourMenuItem.setEnabled(false);
+					hourButton.setEnabled(false);
+					selectedDates.clear();
+					changeYear(0);
+					
+				}
+			};
+			hourDialog.show();
+			hourDialog.center();
 		}
 	}
-	
-	@UiHandler("extraHoursButton")
-	public void onExtraHoursClick(ClickEvent event) {
-		extraHoursDialog.open();
-	}
-	
-	@UiHandler("extraHoursDialogOk")
-	public void onExtraHoursOKClick(ClickEvent event) {
-		String month = monthOpt.getValue();
-		Integer intMonth = calculateIntByMonth(month);
-		Integer intYear = Integer.parseInt(yearLabel.getText())- 1900;
-		Double extraHourMonth = extraHoursBox.getValue();
-		calendarEmployeeInfo.setExtraHourByMonth(extraHourMonth, intMonth, intYear);
-		monthOpt.setText("");
-		extraHoursBox.setText("");
-		extraHoursDialog.close();
-		hourMenuItem.setEnabled(false);
-		hourButton.setDisabled(true);
-		selectedDates.clear();
-		changeYear(0);
-	}
-	
-	@UiHandler("leyendButton")
-	public void oninfoClick(ClickEvent event) {
-		dialogLeyend.open();
-		dialogLeyend.setPositionTarget("center");
-	}
-	
+		
 	@UiHandler("lastYearButton")
 	public void onLastYearClick(ClickEvent event) {
 		changeYear(-1);
@@ -1267,13 +990,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			totalHours.setText("Horas Mensuales");
 		}
 		
+		if(this.fullTimeJourney)
+			hourLabelUpperMenu.setText("Horas Extras");
+		else{
+			hourLabelUpperMenu.setText("Horas");
+		}
+		
 		
 		cleanStyleChanges();
 		cleanCalendar();
 		initializeCellsCalendar();
 		initializeCellsTypeCalendar();
 		showCalendarWidget(this.year);
-//		cleanStyleChanges();
 		
 		if (this.showHours){
 			showHourMenuItem.setStyleName("aon-MenuItemCheckYes", showHours);
@@ -1285,19 +1013,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		if(this.fullTimeJourney){
 			hourMenuItem.setVisible(false);
-			hourButtonBlock.setVisible(false);
-			extraHoursButtonBlock.setVisible(true);
+			hourButton.setVisible(false);
+			extraHoursButton.setVisible(true);
 			viewMenuItem.setVisible(false);
 		}else{
 			hourMenuItem.setVisible(true);
-			hourButtonBlock.setVisible(true);
-			extraHoursButtonBlock.setVisible(false);
+			hourButton.setVisible(true);
+			extraHoursButton.setVisible(false);
 			viewMenuItem.setVisible(true);
 		}
 		
 		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
 		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
-		//paintMadeExtraHoursChanges(calendarEmployeeInfo.getChangesExtraHours());
 				
 	}
 	
@@ -1858,45 +1585,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			Integer pos = calculateDatePosition(date);
 			if(cellsType[calculatePositionRow(pos)][calculatePositionCol(pos)].getType().equals(DayType.NOWORKINGDAY))
 				calendarEmployeeInfo.setTypeByDay(date, DayType.NOTYPEDAY);
-			//TODO:
 		}
-	}
-
-	private void checkShowingUpDays() {
-		//Ocultar todos los dias
-		for (int i=0; i<7; i++)
-			divDays[i].addStyleName(style.ocultarDivStyle());
-		
-		//Gestionar los dias seleccionados (mostrar y actualizar valor)
-		for (int i = 0; i < 7; i++){
-			final int c =i; 
-			try{
-				
-				Double minValue = Double.MIN_VALUE;
-				int days [] = {1,2,3,4,5,6,0};
-				
-				@SuppressWarnings("deprecation")
-				Double value = selectedDates.getSelectedList().stream()
-						.filter(d -> d.getDay() == days[c])
-						.map(d-> calendarEmployeeInfo.getHourByDay(d))
-						.peek(p -> divDays[c].removeStyleName(style.ocultarDivStyle()))
-						.collect(Collectors.reducing(Double.MIN_VALUE,(h1,h2) -> minValue.equals(h1) || h2.equals(h1) ? h2: null ))
-						;
-
-				
-				if(value != null && value != Double.MAX_VALUE){
-					suggestOpts[c].setValue(value+"");
-					listOldHours[c] = value;
-				}else{
-					suggestOpts[c].setValue("");
-					listOldHours[c] = -1;
-				}
-				
-			} catch (Exception e) {
-				Window.alert("Fallo!"+", "+c + "," + e.getMessage());
-			}
-		}
-
 	}
 	
 	private void hideHours() {
@@ -2070,11 +1759,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 			}	
 	}
-	
-	private void addDates() {
-		//Date endDate = fechaMax(selectedDates.getSelectedList());
-		this.endDateBoxDialogUntill.setValue(new Date());
-	}
 
 	@SuppressWarnings("deprecation")
 	private Integer calculateDatePosition(Date date){
@@ -2168,7 +1852,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			setWorkingStyles(selectedDates.getSelectedList());
 		
 		hourMenuItem.setEnabled(false);
-		hourButton.setDisabled(true);
+		hourButton.setEnabled(false);
 		selectedDates.clear();
 		changeYear(0);
 	}
@@ -2220,21 +1904,36 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) huelga", new Command() {
 				@Override
 				public void execute() {
-					strikeDialog.open();
+					EmployeeCalendPercentDialog strikeDialog = new EmployeeCalendPercentDialog("Porcentaje Huelga") {
+						
+						@Override
+						protected void onAccept() {
+							double cs = this.getPercentValue();
+							addStrikeDay(cs);
+						}
+					};
+					strikeDialog.setLabelText("Porcentaje Huelga:");
+					strikeDialog.show();
+					strikeDialog.center();
 				}
 			});
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) ERE", new Command() {
 				@Override
 				public void execute() {
-					ereDialog.open();
+					EmployeeCalendPercentDialog ereDialog = new EmployeeCalendPercentDialog("Porcentaje ERE") {
+						
+						@Override
+						protected void onAccept() {
+							double ce = this.getPercentValue();
+							addEreDay(ce);
+							
+						}
+					};
+					ereDialog.setLabelText("Porcentaje ERE:");
+					ereDialog.show();
+					ereDialog.center();
 				}
 			});
-//			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) Ausencia", new Command() {
-//				@Override
-//				public void execute() {
-//					addDropDay();
-//				}
-//			});
 			menu.addSeparator();
 			menu.addItem("Borrar evento(s)", new Command() {
 				@Override

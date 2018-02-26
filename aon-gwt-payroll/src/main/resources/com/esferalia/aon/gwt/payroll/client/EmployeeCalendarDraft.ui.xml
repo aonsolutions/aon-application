@@ -1,8 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:i="urn:import:com.vaadin.polymer.iron.widget"
-	xmlns:p="urn:import:com.vaadin.polymer.paper.widget" 
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 	<ui:with field='res'
@@ -10,6 +8,63 @@
 
 	<ui:style
 		type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraft.MyStyle">
+		
+		.upperMenuStyle{
+			padding-left: 15px;
+    		padding-bottom: 3px;
+    		padding-right: 3px;
+    		padding-top: 15px;
+		}
+
+		.upperRightMenuStyle{
+			right: 10px;
+    		position: absolute;
+		}
+
+		.paddingLabels{
+			padding-left: 3px;
+    		padding-right: 15px;
+		}
+
+		.borderButtonUpperMenuStyle{
+			border: none;
+		}
+
+		.imagenButtonUpperMenuStyle{
+			height: 17px;
+		}
+
+		.paddingEraseButtonUpperMenuStyle{
+			padding-left: 7px;
+    		padding-right: 16px;
+		}
+
+		.paddingLeyendButtonUpperMenuStyle{
+			padding-left: 7px;
+		}
+
+		.typeButtonUpperMenuStyle{
+			height: 15px;
+			padding-right: 5px;
+    		border-radius: 50px;
+		}
+
+		.noWorkingColor{
+			background-color: salmon;
+		}
+
+		.holidayColor{
+			background-color: green;
+		}
+
+		.strikeColor{
+			background-color: #a09c13;
+    	}
+
+		.ereColor{
+			background-color: #b91257;
+		}
+
 		.tableStyle {
 			border-collapse: collapse;
 			margin-left: 0.8em;
@@ -29,20 +84,6 @@
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
 			margin: 6px;
-		}
-		
-		.labelDiasStyle {
-			padding-left: 15px;
-			padding-bottom: 3px;
-			padding-right: 3px;
-			padding-top: 15px;
-		}
-		
-		.labelDiasStyle2 {
-			padding-left: 15px;
-			padding-bottom: 3px;
-			padding-top: 5px;
-			padding-right: 85px;
 		}
 		
 		.doubleBoxStyle {
@@ -145,10 +186,6 @@
 			padding: 3px;
 		}
 		
-		.cellStyle1 {
-			padding: 0.1px;
-		}
-		
 		.year {
 			font-size: 30px;
 			color: #FF704D;
@@ -173,20 +210,6 @@
 			margin-top: 8px;
 		}
 		
-		.expandButtonStyle {
-			margin-top: 0px;
-		}
-		
-		.iconLeyendStyle {
-			position: absolute;
-			right: 115px;
-		}
-		
-		.iconEraseStyle {
-			position: absolute;
-			right: 25px;
-		}
-		
 		.mesesImparesStyle {
 			background-color: #eee;
 		}
@@ -207,77 +230,6 @@
 			-ms-user-select: none; /* Internet Explorer/Edge */
 			user-select: none; /* Non-prefixed version, currently
 				                                  supported by Chrome and Opera */
-		}
-		
-		.scrollBody {
-			overflow-y: scroll;
-		}
-		
-		.dialogBoxStyle {
-			width: 230px;
-			outline: none;
-			position: absolute;
-			box-sizing: border-box;
-			left: 283px;
-			top: 80px;
-			max-width: 100%;
-			max-height: 100%;
-			padding: 0px;
-			margin-top: 0px;
-		}
-		
-		.suggestBoxStyle {
-			width: 30%;
-			margin-left: 5px;
-			margin-top: 0px;
-			font-size: 1em;
-		}
-
-		.suggestMonthBoxStyle {
-			margin-left: 52px;
-			margin-top: 0px;
-			font-size: 1em;
-		}
-		
-		.labelHourStyle {
-			margin-top: 0px;
-		}
-		
-		.labelHourStyleL {
-			padding-right: 26px;
-		}
-		
-		.labelHourStyleM {
-			padding-right: 19px;
-		}
-		
-		.labelHourStyleX {
-			padding-right: 2px;
-		}
-		
-		.labelHourStyleJ {
-			padding-right: 19px;
-		}
-		
-		.labelHourStyleV {
-			padding-right: 16px;
-		}
-		
-		.labelHourStyleS {
-			padding-right: 16px;
-		}
-		
-		.labelHourStyleD {
-			padding-right: 7px;
-		}
-		
-		.ocultarDivStyle {
-			display: none;
-		}
-		
-		.divWidthStyle {
-			margin-top: 1px;
-			padding-bottom: 5px;
 		}
 		
 		.onChange {
@@ -311,43 +263,6 @@
 			top: 100px;
 			bottom: 0;
 			width: 100%;
-		}
-		
-		.dialogLeyendLabel {
-			padding-left: 0px;
-			padding-bottom: 0px;
-			padding-right: 0px;
-		}
-		
-		.okDialogLeyendButton {
-			margin-top: 0px;
-			margin-bottom: 0px;
-			margin-left: 0px;
-			margin-right: 8px;
-		}
-		
-		.fechaDialogZIndex {
-			z-index: 105;
-		}
-		
-		.dateBoxMarginDialogHour{
-			margin-left: 15px;
-		}
-		
-		.marginTopCloseDialog{
-			margin-top: 0px !important;
-			padding-left: 0px !important;
-			padding-right: 0px !important;
-			padding-top: 0px !important;
-			padding-bottom: 5px !important;
-		}
-
-		.dropType{
-			margin-left:15px;
-		}
-	
-		.widthDoubleEre{
-			width: 55px;
 		}
 		
 		.pointer{
@@ -427,230 +342,8 @@
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<g:HTMLPanel>
-				
-			    <!-- Dialogo para seleccionar que tipo de ausencia va a tener -->
-			    <p:PaperDialog ui:field="dropDialog" styleName="{style.dialogBoxStyle}"
-					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
-					withBackdrop="true">
-					<a:CustomDialogBar ui:field="customDialogBarDrop" styleName="{style.marginTopCloseDialog}" caption="Tipo ausencia:"/>
-					<g:HTMLPanel ui:field="confirmDropContent"></g:HTMLPanel>
-					<HTMLPanel>
-					    <i:IronLabel>Tipo:</i:IronLabel>
-				        <g:ListBox styleName="{style.dropType}" ui:field="dropMenu"/>
-			        </HTMLPanel>
-			        <HTMLPanel class="buttons">
-						<p:PaperButton ui:field="dialogDropCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
-						<p:PaperButton ui:field="dropDialogOk" attributes="dialog-confirm">OK</p:PaperButton>
-					</HTMLPanel>
-			    </p:PaperDialog>  
+			<g:HTMLPanel>  
 			    
-			    <!-- Dialogo para seleccionar el porcetaje de ERE que va a tener -->
-			    <p:PaperDialog ui:field="ereDialog" styleName="{style.dialogBoxStyle}"
-					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
-					withBackdrop="true">
-					<a:CustomDialogBar ui:field="customDialogBarEre" styleName="{style.marginTopCloseDialog}" caption="Porcentaje ERE:"/>
-					<g:HTMLPanel ui:field="confirmErepContent"></g:HTMLPanel>
-					<HTMLPanel>
-					    <i:IronLabel>Porcentaje ERE:</i:IronLabel>
-					    <g:DoubleBox ui:field="erePercentBox" styleName="{style.widthDoubleEre}"></g:DoubleBox>
-					    <i:IronLabel>%</i:IronLabel>
-			        </HTMLPanel>
-			        <HTMLPanel class="buttons">
-						<p:PaperButton ui:field="dialogEreCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
-						<p:PaperButton ui:field="ereDialogOk" attributes="dialog-confirm">OK</p:PaperButton>
-					</HTMLPanel>
-			    </p:PaperDialog>
-			    
-			    <!-- Dialogo para seleccionar el porcetaje de ERE que va a tener -->
-			    <p:PaperDialog ui:field="strikeDialog" styleName="{style.dialogBoxStyle}"
-					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
-					withBackdrop="true">
-					<a:CustomDialogBar ui:field="customDialogBarStrike" styleName="{style.marginTopCloseDialog}" caption="Porcentaje Huelga:"/>
-					<g:HTMLPanel ui:field="confirmStrikeContent"></g:HTMLPanel>
-					<HTMLPanel>
-					    <i:IronLabel>Porcentaje Huelga:</i:IronLabel>
-					    <g:DoubleBox ui:field="strikePercentBox" styleName="{style.widthDoubleEre}"></g:DoubleBox>
-					    <i:IronLabel>%</i:IronLabel>
-			        </HTMLPanel>
-			        <HTMLPanel class="buttons">
-						<p:PaperButton ui:field="dialogStrikeCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
-						<p:PaperButton ui:field="strikeDialogOk" attributes="dialog-confirm">OK</p:PaperButton>
-					</HTMLPanel>
-			    </p:PaperDialog>
-			    
-				<!-- Dialogo para seleccionar fecha hasta... -->
-				<p:PaperDialog ui:field="dialogUntill" styleName="{style.dialogBoxStyle}"
-					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
-					withBackdrop="true">
-					<a:CustomDialogBar ui:field="customDialogBarUntill" styleName="{style.marginTopCloseDialog}" caption="Hasta:"/>
-					<g:HTMLPanel ui:field="confirmUntillContent"></g:HTMLPanel>
-					<g:HTMLPanel>
-						<i:IronLabel>
-							Fecha final:
-							<a:DateBoxEx ui:field="endDateBoxDialogUntill" styleName="{style.dateBoxMarginDialogHour}"></a:DateBoxEx>
-						</i:IronLabel>
-					</g:HTMLPanel>
-					<hr />
-					<HTMLPanel class="buttons">
-						<p:PaperButton ui:field="dialogUntillCancel"
-							attributes="dialog-dismiss" styleName="{style.okDialogLeyendButton}">Cancel</p:PaperButton>
-						<p:PaperButton ui:field="dialogUntillOk" attributes="dialog-confirm"
-										styleName="{style.okDialogLeyendButton}">OK</p:PaperButton>
-					</HTMLPanel>
-				</p:PaperDialog>
-				
-				<!-- DIALOG PARA AÑADIR HORAS EXTRAS -->
-			    <p:PaperDialog ui:field="extraHoursDialog" modal="true" entryAnimation="scale-up-animation" 
-			        exitAnimation="fade-out-animation" withBackdrop="true">
-					<a:CustomDialogBar ui:field="customDialogBarExtraHours" styleName="{style.marginTopCloseDialog}" 
-					    caption="Horas extras"/>
-					<g:HTMLPanel ui:field="extraHoursContent"></g:HTMLPanel>
-					<g:HTMLPanel>
-					    <i:IronLabel>Mes :</i:IronLabel>
-					    <g:SuggestBox ui:field="monthOpt" styleName="{style.suggestMonthBoxStyle}"/>
-					    <p:PaperIconButton icon="icons:expand-more"
-							styleName="{style.optionButtons} {style.expandButtonStyle}"
-							ui:field="expandMonthsBtn" />
-					</g:HTMLPanel>
-			        <g:HTMLPanel>
-					    <i:IronLabel>Horas extras :</i:IronLabel>
-					    <g:DoubleBox ui:field="extraHoursBox"/>
-			        </g:HTMLPanel>
-			        <HTMLPanel class="buttons">
-						<p:PaperButton ui:field="extraHoursDialogCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
-						<p:PaperButton ui:field="extraHoursDialogOk" attributes="dialog-confirm">OK</p:PaperButton>
-					</HTMLPanel>
-			    </p:PaperDialog>
-
-				<!-- Dialogo para seleccionar las horas que se le va a asignar a cada dia de la semana -->
-				<p:PaperDialog ui:field="hourDialog" styleName="{style.dialogBoxStyle}"
-					modal="true" entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
-					withBackdrop="true">
-					<a:CustomDialogBar ui:field="customDialogBarHour" styleName="{style.marginTopCloseDialog}" caption="Horas"/>
-					<g:HTMLPanel ui:field="confirmContent"></g:HTMLPanel>
-					<g:HTMLPanel ui:field="mondayBlock" styleName="{style.divWidthStyle}">
-						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleL}">Lunes:</i:IronLabel>
-						<g:SuggestBox ui:field="mondayOpt" styleName="{style.suggestBoxStyle}" />
-						<p:PaperIconButton icon="icons:expand-more"
-							styleName="{style.optionButtons} {style.expandButtonStyle}"
-							ui:field="expandHourBtnL" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="tuesdayBlock" styleName="{style.divWidthStyle}">
-						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleM}">Martes:</i:IronLabel>
-						<g:SuggestBox ui:field="tuesdayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-						<p:PaperIconButton icon="icons:expand-more"
-							styleName="{style.optionButtons} {style.expandButtonStyle}"
-							ui:field="expandHourBtnM" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="wendsdayBlock" styleName="{style.divWidthStyle}">
-						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleX}">Miércoles:</i:IronLabel>
-						<g:SuggestBox ui:field="wendsdayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-						<p:PaperIconButton icon="icons:expand-more"
-							styleName="{style.optionButtons} {style.expandButtonStyle}"
-							ui:field="expandHourBtnX" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="thursdayBlock" styleName="{style.divWidthStyle}">
-						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleJ}">Jueves:</i:IronLabel>
-						<g:SuggestBox ui:field="thursdayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-						<p:PaperIconButton icon="icons:expand-more"
-							styleName="{style.optionButtons} {style.expandButtonStyle}"
-							ui:field="expandHourBtnJ" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="fridayBlock" styleName="{style.divWidthStyle}">
-						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleV}">Viernes:</i:IronLabel>
-						<g:SuggestBox ui:field="fridayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-						<p:PaperIconButton icon="icons:expand-more"
-							styleName="{style.optionButtons} {style.expandButtonStyle}"
-							ui:field="expandHourBtnV" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="saturdayBlock" styleName="{style.divWidthStyle}">
-						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleS}">Sábado:</i:IronLabel>
-						<g:SuggestBox ui:field="saturdayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-						<p:PaperIconButton icon="icons:expand-more"
-							styleName="{style.optionButtons} {style.expandButtonStyle}"
-							ui:field="expandHourBtnS" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="sundayBlock" styleName="{style.divWidthStyle}">
-						<i:IronLabel styleName="{style.labelHourStyle} {style.labelHourStyleD}">Domingo:</i:IronLabel>
-						<g:SuggestBox ui:field="sundayOpt" styleName="{style.suggestBoxStyle}"></g:SuggestBox>
-						<p:PaperIconButton icon="icons:expand-more"
-							styleName="{style.optionButtons} {style.expandButtonStyle}"
-							ui:field="expandHourBtnD" />
-					</g:HTMLPanel>
-					<HTMLPanel class="buttons">
-						<p:PaperButton ui:field="dialogCancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
-						<p:PaperButton ui:field="hourDialogOk" attributes="dialog-confirm">OK</p:PaperButton>
-					</HTMLPanel>
-				</p:PaperDialog>
-
-				<!-- Dialogo informativo para mostrar la leyenda -->
-				<p:PaperDialog ui:field="dialogLeyend" modal="true"
-					entryAnimation="scale-up-animation" exitAnimation="fade-out-animation"
-					withBackdrop="true">
-					<a:CustomDialogBar ui:field="customDialogBarLeyend" styleName="{style.marginTopCloseDialog}" caption="Leyenda"/>
-					<g:HTMLPanel>
-					    <i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle} {style.nonWorkingStyle} {style.dialogLeyendLabel}"></p:PaperButton>
-							No Laborables
-						</i:IronLabel>
-						<i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle} {style.holidayStyle} {style.dialogLeyendLabel}"></p:PaperButton>
-							Vacaciones
-						</i:IronLabel>
-						<i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle} {style.strikeStyle} {style.dialogLeyendLabel}"></p:PaperButton>
-							Huelga
-						</i:IronLabel>
-						<i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle} {style.ereStyle} {style.dialogLeyendLabel}"></p:PaperButton>
-							ERE
-						</i:IronLabel>
-					</g:HTMLPanel>
-					<g:HTMLPanel>
-					    <i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle} {style.sundayStyle} {style.dialogLeyendLabel}"
-								ui:field="festiveDayButton"></p:PaperButton>
-							Festivos
-						</i:IronLabel>
-					    <i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle} {style.dropStyle} {style.dialogLeyendLabel}"
-								ui:field="dropDayButton"></p:PaperButton>
-							Ausencia
-						</i:IronLabel>
-						<i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle1} {style.suspensionStyle} {style.dialogLeyendLabel}"
-								ui:field="suspensionDayButton"></p:PaperButton>
-							Suspensión
-						</i:IronLabel>
-						<i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle1} {style.itStyle} {style.dialogLeyendLabel}"
-								ui:field="diaBajaITButton"></p:PaperButton>
-							Baja IT
-						</i:IronLabel>
-						<i:IronLabel>
-							<p:PaperButton
-								styleName="{style.cellStyle1} {style.reductionStyle} 
-									{style.dialogLeyendLabel} "
-								ui:field="reductionDayButton"></p:PaperButton>
-							Reducción
-						</i:IronLabel>
-					</g:HTMLPanel>
-					<hr />
-					<HTMLPanel class="buttons">
-						<p:PaperButton ui:field="dialogLeyendOk" attributes="dialog-confirm"
-							focused="true" styleName="{style.okDialogLeyendButton}">OK</p:PaperButton>
-					</HTMLPanel>
-				</p:PaperDialog>
-
 				<g:HorizontalPanel>
 					<g:Button
 						styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous"
@@ -661,61 +354,28 @@
 						ui:field="nextYearButton" />
 				</g:HorizontalPanel>
 
-				<style is="custom-style">
-					paper-button {
-					--paper-button: {
-					min-width: 15px;
-					min-height: 15px;
-					margin-bottom: 1em;
-					margin-left: 1em;
-					margin-top: 1em;
-					}
-					}
-				</style>
-
-				<g:HorizontalPanel>
-					<g:Label styleName="{style.labelDiasStyle}">
-						Dias seleccionables:
-					</g:Label>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.nonWorkingStyle}"
-							ui:field="nonWorkingDayButton"></p:PaperButton>
-						No Laborables
-					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.holidayStyle}"
-							ui:field="holidayDayButton"></p:PaperButton>
-						Vacaciones
-					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.strikeStyle}"
-							ui:field="strikeDayButton"></p:PaperButton>
-						Huelga
-					</i:IronLabel>
-					<i:IronLabel>
-						<p:PaperButton styleName="{style.cellStyle} {style.ereStyle}"
-							ui:field="ereDayButton"></p:PaperButton>
-						ERE
-					</i:IronLabel>
-					<i:IronLabel ui:field="hourButtonBlock">
-						<p:PaperIconButton icon="icons:alarm" ui:field="hourButton"
-							disabled="true" />
-						Horas
-					</i:IronLabel>
-					<i:IronLabel ui:field="extraHoursButtonBlock">
-						<p:PaperIconButton icon="icons:alarm" ui:field="extraHoursButton"/>
-						Horas extras
-					</i:IronLabel>
-					<i:IronLabel styleName="{style.iconLeyendStyle}">
-						<p:PaperIconButton icon="icons:info-outline"
-							ui:field="leyendButton" />
-						Leyenda
-					</i:IronLabel>
-					<i:IronLabel styleName="{style.iconEraseStyle}">
-						<p:PaperIconButton icon="icons:clear" ui:field="eraseEventButton" />
-						Limpiar
-					</i:IronLabel>
+				<g:HorizontalPanel styleName="{style.upperMenuStyle}">
+					<g:Label styleName="{style.paddingLabels}">Dias seleccionables:</g:Label>
+					<g:HorizontalPanel>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton"/>
+						<g:Label styleName="{style.paddingLabels}">No Laborables</g:Label>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}" ui:field="holidayDayButton"/>
+						<g:Label styleName="{style.paddingLabels}">Vacaciones</g:Label>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.strikeColor}" ui:field="strikeDayButton"/>
+						<g:Label styleName="{style.paddingLabels}">Huelga</g:Label>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.ereColor}" ui:field="ereDayButton"/>
+						<g:Label styleName="{style.paddingLabels}">ERE</g:Label>
+						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle}" ui:field="hourButton"/>
+						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle}" ui:field="extraHoursButton"/>
+						<g:Label styleName="{style.paddingLabels}" ui:field="hourLabelUpperMenu"/>
+						<!--g:Label styleName="{style.paddingLabels}" ui:field="extraHoursButtonBlock">Horas extras</g:Label-->
+					</g:HorizontalPanel>
+					<g:HorizontalPanel styleName="{style.upperRightMenuStyle}" ui:field="upperRightMenu">
+						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.paddingEraseButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle}" ui:field="eraseEventButton"/>
+						<g:Label styleName="{style.paddingLabels}">Limpiar</g:Label>
+					</g:HorizontalPanel>
 				</g:HorizontalPanel>
+				
 				<g:ScrollPanel ui:field="scrollInfo" styleName="{style.scrollStyle}">
 					<g:Grid ui:field="calendarGrid" width="95%"
 						styleName="{style.tableStyle} {style.noselect}">
