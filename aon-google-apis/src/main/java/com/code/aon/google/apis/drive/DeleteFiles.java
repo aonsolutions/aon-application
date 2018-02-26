@@ -179,9 +179,21 @@ public class DeleteFiles {
 		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, getUser());
 		if (g.getClientId() != null) {
 			Drive drive = DriveUtils.serviceInitialize(g);
-			FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", id.toString());
-			File f = fl.getItems().get(0);
-			deleteFile(drive, f, domain);
+			for (String type : types) {
+				if(type.equals("all")) {
+					FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", id.toString());
+					for (File f : fl.getItems()) {
+						deleteFile(drive, f, domain);
+					}
+				} else {
+					String keys[] = {"aontype","fileId"};
+					String values[] = {type, id.toString()};
+					FileList fl = SearchFiles.searchFilesProperties(drive, keys, values);
+					for (File f : fl.getItems()) {
+						deleteFile(drive, f, domain);
+					}
+				}
+			}
 		}
 	}
 
