@@ -1227,8 +1227,7 @@ public class SalaryDraft extends ResizeComposite
 			item.setExpression(dialog.getPaymentExpression());
 			item.setIrpfExpression(dialog.getIrpfExpression());
 			item.setQuoteExpression(dialog.getQuoteExpression());
-			if (item.getMonth() == null && item.getSalaryType() == Salary.Type.EXTRA)
-				item.setSalaryType(Salary.Type.SALARY);
+			item.setSalaryType(Salary.Type.SALARY);
 			salaryDraftObject.addDraftPayment(item);
 			salaryDraftObject.calculate(SalaryDraft.this);
 			item.setDescriptionTemplate(dialog.getDescription());
@@ -3826,7 +3825,12 @@ public class SalaryDraft extends ResizeComposite
 		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 		InlineLabel amountLabel = new InlineLabel();
 		amountLabel.setText(format(deduction.getAmount()));
-		amountLabel.ensureDebugId(deduction.getType().name().toLowerCase());
+		// very ugly !!!!
+		boolean isCost = false;
+		for ( String style: iconStyles ) 
+			isCost |= AON.AON_ICON_COST.equals(style);
+		
+		amountLabel.ensureDebugId(deduction.getType().name().toLowerCase() + ( isCost ? "_cost"  : "" ) );
 
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(deduction.getDbAmount()));

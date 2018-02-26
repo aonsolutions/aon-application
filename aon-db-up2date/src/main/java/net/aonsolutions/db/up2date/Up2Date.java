@@ -1,6 +1,6 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.tgss.HomeBasesUpdate.HOMEBASESUPDATE;
+import static net.aonsolutions.db.up2date.tgss.TrainingBases2018Update.TRAININGBASES2018UPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,7 +29,8 @@ public class Up2Date {
     		//BASES2018UPDATE,
     		//ISSUE1760UPDATE
     		//REMOVE2HIDEUPDATE
-    		HOMEBASESUPDATE
+    		//HOMEBASESUPDATE
+    		TRAININGBASES2018UPDATE
     }; 
 	
 	
