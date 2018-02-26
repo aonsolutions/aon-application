@@ -597,7 +597,10 @@ abstract class Model347Base extends DockLayoutPanel {
 	    // y se cambia de H a no H o viceversa, entonces no se traslada a las lineas automaticamente
 		// por que habria que cambiar todas las lineas, para quitar los trimestres y poner los totales
 		// o viceversa, creo que es mejor no dejarlo modificar por lo que conlleva
-		document.setEnabled(false);
+		// Febrero 2018 - Dejo que se pueda modificar, porque esta habiendo muchos problemas
+		// cuando el NIF o demas datos generales, o bien no estaban creados antes, o se genero 
+		// el modelo con el modelo viejo
+		//document.setEnabled(false);
 		document.addValueChangeHandler( new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
