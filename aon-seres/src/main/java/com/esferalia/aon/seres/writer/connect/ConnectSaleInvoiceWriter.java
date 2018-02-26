@@ -523,7 +523,7 @@ public class ConnectSaleInvoiceWriter {
 		RegistryItem rItem = obtainCustomerItem(item.getProduct(), customerId);
 		String productCode = null;
 		try {
-			productCode = rItem!=null?rItem.getCode():item.getProduct().getBaseItem().getBarcode();
+			productCode = rItem!=null?rItem.getEdiSalesCode():item.getProduct().getBaseItem().getBarcode();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -742,14 +742,8 @@ public class ConnectSaleInvoiceWriter {
 			criteria.addEqualExpression(
 					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS),
 					RegistryItemStatus.ACTIVE);
-			criteria.addOrder(
-					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY),
-					true);
 			List<RegistryItem> rItemList = bean.getList(criteria).stream()
 					.map(to -> ((RegistryItem) to)).collect(Collectors.toList());
-			
-			Comparator<RegistryItem> nullPriorLast = Comparator.comparing(RegistryItem::getPriority,Comparator.nullsLast(Integer::compareTo));
-			Collections.sort(rItemList, nullPriorLast);
 			
 			if (rItemList != null && !rItemList.isEmpty()) {
 				return rItemList.get(0);

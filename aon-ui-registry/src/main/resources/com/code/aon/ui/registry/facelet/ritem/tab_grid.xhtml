@@ -46,21 +46,23 @@
 			</aon:if>
 
 			<aon:if test="#{controller.saleType or controller.purchaseType}">
-				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
-					<f:facet name="header">
-						<aon:outputLabel for="RegistryItem_Priority" value="#{bundle.aon_priority}" />
-					</f:facet>
-					<aon:outputText value="#{to.priority}"
-						rendered="#{formList}" />
-					<aon:inputText id="RegistryItem_Priority" 
-						value="#{controller.to.priority}" rendered="#{formEdit}"
-						required="#{controller.purchaseType}" size="2" maxlength="3" />
-					<f:facet name="footer">
-						<aon:inputText id="RegistryItem_Priority-New" 
-							value="#{controller.to.priority}" rendered="#{formNew}"
-							required="#{controller.purchaseType}" size="2" maxlength="3" />
-					</f:facet>
-				</aon:column>
+				<aon:if test="#{controller.purchaseType}">
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+						<f:facet name="header">
+							<aon:outputLabel for="RegistryItem_Priority" value="#{bundle.aon_priority}" />
+						</f:facet>
+						<aon:outputText value="#{to.priority}"
+							rendered="#{formList}" />
+						<aon:inputText id="RegistryItem_Priority" 
+							value="#{controller.to.priority}" rendered="#{formEdit}"
+							required="true" size="2" maxlength="3" />
+						<f:facet name="footer">
+							<aon:inputText id="RegistryItem_Priority-New" 
+								value="#{controller.to.priority}" rendered="#{formNew}"
+								required="true" size="2" maxlength="3" />
+						</f:facet>
+					</aon:column>
+				</aon:if>
 
 				<aon:if test="#{controller.masterItem}">
 					<aon:if test="#{controller.saleType}">
@@ -137,6 +139,24 @@
 							size="15" maxlength="15" />
 					</f:facet>
 				</aon:column>
+				
+				<aon:if test="#{company.ediSupportEnabled and controller.saleType}">
+					<aon:column	styleClass="aon-editDataTable-textColumn aon-width-150 aon-nowrap"
+						alias="RegistryItem.ediSalesCode">
+						<f:facet name="header">
+							<aon:outputLabel for="RegistryItem_EdiSalesCode" value="#{bundle.product_item_customer_ediSalesCode}" />
+						</f:facet>
+						<aon:outputText value="#{to.ediSalesCode}" rendered="#{formList}" />
+						<aon:inputText id="RegistryItem_EdiSalesCode"
+							value="#{controller.to.ediSalesCode}" rendered="#{formEdit}" 
+							size="15" maxlength="15" />
+						<f:facet name="footer">
+							<aon:inputText id="RegistryItem_EdiSalesCode-New"
+								value="#{controller.to.ediSalesCode}" rendered="#{formNew}"
+								size="15" maxlength="15" />
+						</f:facet>
+					</aon:column>
+				</aon:if>
 
 				<aon:column	styleClass="aon-editDataTable-numberColumn aon-width-80 aon-nowrap">
 					<f:facet name="header">
