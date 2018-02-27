@@ -522,13 +522,8 @@ public class ConnectSaleInvoiceWriter {
 		Integer customerId = detail.getInvoice().getRegistry().getId();
 		RegistryItem rItem = obtainCustomerItem(item.getProduct(), customerId);
 		String productCode = null;
-		if (rItem==null)
-			productCode = rItem.getEdiSalesCode()!=null?rItem.getEdiSalesCode():rItem.getCode();
-		try {
-			productCode = rItem!=null?rItem.getEdiSalesCode():item.getProduct().getBaseItem().getBarcode();
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage());
-		}
+		if (rItem!=null)
+			productCode = StringUtils.isNotBlank(rItem.getEdiSalesCode())?rItem.getEdiSalesCode():rItem.getCode();
 		try {
 			if (productCode==null)
 				productCode = item.getProduct().getBaseItem().getBarcode();
