@@ -25,7 +25,8 @@ import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "DocumentalServlet", urlPatterns = { "/aon_gwt_aio/attachment/*" })
+@WebServlet(name = "DocumentalServlet", urlPatterns = { "/aon_gwt_aio/attachment/*",
+														"/aon_gwt_fiscal/attachment/*"})
 public class DocumentalServlet extends HttpServlet{
 	
 	private static final Logger LOGGER  = Logger.getLogger(DocumentalServlet.class.getName());

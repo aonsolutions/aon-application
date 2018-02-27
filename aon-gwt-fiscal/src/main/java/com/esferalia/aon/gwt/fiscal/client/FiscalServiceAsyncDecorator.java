@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
@@ -287,6 +288,13 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getIrpfBreakdown(domainName, user, domain, params,
 				new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
+	}
+
+	// --------------------------------------------------------------- GWT API INFO
+	
+	@Override
+	public void getAonData(String domainName, Integer domainId, AsyncCallback<AonData> callback) {
+		
 	}
 
 

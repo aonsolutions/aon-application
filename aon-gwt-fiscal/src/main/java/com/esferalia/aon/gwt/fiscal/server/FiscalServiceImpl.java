@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -7,6 +9,8 @@ import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
@@ -20,6 +24,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
@@ -33,6 +38,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
@@ -274,5 +280,39 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			IRPFParams params) throws AonCoreException {
 		return FISCAL.getIrpfBreakdown(domainName, user, domain, params)
 				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	// --------------------------------------------------------------- GWT API INFO
+	
+	public String getLoggedUser() {
+		return AonServletUtils.getLoggedUser();
+	}
+	
+	public AonData getAonData(String domainName, Integer domainId){
+		Domain domain = AON.getDomain(domainName, domainId, getLoggedUser());
+		User user = AON.getUser(domain.getName(), domain.getId(), getLoggedUser());
+		Integer operator = AON.getTaskHolder(domain.getName(), domainId, getLoggedUser(), 
+				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
+		return new AonData().setUser(user)
+				.setMd5(getMd5(user.getLogin()+domain.getName()))
+				.setDomain(domain)
+				.setUserOperator(operator);
+	}
+	
+	public String getMd5(String str){
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+	    md.update(str.getBytes());
+	    byte byteData[] = md.digest();
+	    //convert the byte to hex format method 1
+        StringBuffer sb = new StringBuffer();
+	    for (int i = 0; i < byteData.length; i++) {
+	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+	    }       
+        return sb.toString();
 	}
 }

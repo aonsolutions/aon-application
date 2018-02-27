@@ -33,6 +33,7 @@
 
 	<!-- Specify the app entry point class. -->
 	<inherits name="com.esferalia.aon.gwt.common.Common" />
+	<inherits name="com.esferalia.aon.gwt.api.Api" />
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 	
 	<!-- Include GWTUpload library -->

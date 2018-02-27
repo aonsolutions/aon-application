@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
@@ -84,5 +85,9 @@ public interface FiscalService extends RemoteService {
 			int limit) throws AonCoreException;
 	FinanceEntry getFinanceEntry(String domainName, int domain, Integer accountEntry) throws AonCoreException;
 	FinanceEntry save(String currentDomainName, int currentDomain, FinanceEntry financeEntry) throws AonCoreException;
+	
+	// --------------------------------------------------------------- GWT API INFO
+
+	AonData getAonData(String domainName, Integer domainId);
 	
 }

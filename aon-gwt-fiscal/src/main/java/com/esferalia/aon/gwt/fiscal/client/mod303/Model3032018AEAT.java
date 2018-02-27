@@ -8,7 +8,10 @@ import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel.SelectionCallBac
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2018.IMod303ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
@@ -27,6 +30,7 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -56,6 +60,7 @@ import com.google.gwt.view.client.RangeChangeEvent.Handler;
 
 public class Model3032018AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
+	private static final String VALIDATE_SEND_ACTION = "/aon_gwt_fiscal/ms/Model303SendAEAT";
 	
 	private static class Mod303ActivityProvidesKey implements ProvidesKey<Mod303Activity> {
 		@Override
@@ -80,6 +85,9 @@ public class Model3032018AEAT extends Model303Base {
 	private final static int SIMPLIFIED_REGIME_TAB = 3;
 	private final static int RESULT_TAB = 4;
 	private final static int LAST_PERIOD_INFORMATION_TAB = 6;
+
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+
 	
 	public Model3032018AEAT(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
@@ -245,6 +253,10 @@ public class Model3032018AEAT extends Model303Base {
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
+		formFlowPanel.add(nameHidden);
+		formFlowPanel.add(documentHidden);
+		formFlowPanel.add(certHidden);
+		formFlowPanel.add(passHidden);
 		formContainer.add(diskForm);
 		panel.add(formContainer);
 		
@@ -329,6 +341,58 @@ public class Model3032018AEAT extends Model303Base {
 		});
 		p2.add(button2);
 		tab.setWidget(row, 1, p2 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+		
+		// CON FIRMA NO CRIPTOGRAFICA
+		Label icon3 = new Label();
+		icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod303().getAdministration()));
+		tab.setWidget(row, 0, icon3 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel p3 = new FlowPanel();
+		p3.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button3 = new Button("Presentaci\u00F3n via Agencia Tributaria con firma no criptogr\u00e1fica (a partir de los datos guardados).");
+		button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button3.addStyleName(AON.AON_CSS.aonBorderNone());
+		button3.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button3.addStyleName(AON.AON_CSS.aonClickable());
+		button3.addStyleName("aon-icon-beta-text");
+		button3.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+		button3.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				impl.getAonData(getCallback().getDomainName(), getCallback().getDomain(), new AsyncCallback<AonData>() {
+					@Override
+					public void onSuccess(AonData result) {
+						CertificationPopup certPopup = new CertificationPopup(result, getMod303().getName(), getMod303().getDocument()) {
+							
+							@Override
+							protected void onCancel() {
+								
+							}
+							
+							@Override
+							protected void onAccept() {
+								if (getMod303().isFinished() || getMod303().isSent()) {
+									submitForm(VALIDATE_SEND_ACTION, getCert(), getPass(), getName(), getDocument());
+								} else {
+									getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+								}	
+							}
+						};
+						certPopup.center();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+			
+					}
+				});
+			}
+		});
+		p3.add(button3);
+		tab.setWidget(row, 1, p3 );
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 

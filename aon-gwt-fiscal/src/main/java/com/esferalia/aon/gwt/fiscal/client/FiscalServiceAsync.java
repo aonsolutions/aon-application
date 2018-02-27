@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
@@ -105,5 +106,9 @@ public interface FiscalServiceAsync {
 			AsyncCallback<LinkedList<IrpfBreakdown>> callback);
 	void getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params,
 			AsyncCallback<LinkedList<IrpfBreakdown>> callback);
+	
+	// --------------------------------------------------------------- GWT API INFO
+
+	void getAonData(String domainName, Integer domainId, AsyncCallback<AonData> callback);
 
 }

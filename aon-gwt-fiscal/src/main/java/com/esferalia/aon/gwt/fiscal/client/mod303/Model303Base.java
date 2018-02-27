@@ -156,6 +156,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+	protected Hidden certHidden = new Hidden("cert");
+	protected Hidden passHidden = new Hidden("pass");
+	protected Hidden nameHidden = new Hidden("name");
+	protected Hidden documentHidden = new Hidden("document");
 
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
@@ -1224,6 +1228,19 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		domainIdHidden.setValue(String.valueOf(callback.getDomain()));
 		domainNameHidden.setValue(callback.getDomainName());
 		userHidden.setValue(callback.getUser());
+		diskForm.submit();
+	}
+	
+	protected void submitForm(String action, String cert, String pass, String document, String name) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
+		domainIdHidden.setValue(String.valueOf(callback.getDomain()));
+		domainNameHidden.setValue(callback.getDomainName());
+		userHidden.setValue(callback.getUser());
+		certHidden.setValue(cert);
+		passHidden.setValue(pass);
+		nameHidden.setValue(name);
+		documentHidden.setValue(document);
 		diskForm.submit();
 	}
 
