@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -69,142 +70,165 @@ public class Mod123DAO extends FiscalModelDAO {
 			mod.ensureDetail(key).addAmount(1);
 		}
 	}
+	
+	private static void addBase(Mod123Key key,Mod123 mod,IrpfBreakdown br) {
+		Mod123KeyDAO keyDAO = Mod123KeyDAO.safeValueOf(mod, key.getValue());
+		if (keyDAO.isDiffEnabled()) {
+			mod.ensureDetail(key).addAccumulatedAmount(br.getBase());	
+		} else {
+			mod.ensureDetail(key).addAmount(br.getBase());
+		}
+	}
+	
+	private static void addQuota(Mod123Key key,Mod123 mod,IrpfBreakdown br) {
+		Mod123KeyDAO keyDAO = Mod123KeyDAO.safeValueOf(mod, key.getValue());
+		if (keyDAO.isDiffEnabled()) {
+			mod.ensureDetail(key).addAccumulatedAmount(br.getQuota());	
+		} else {
+			mod.ensureDetail(key).addAmount(br.getQuota());
+		}
+	}
 
 	private static enum Mod123KeyDAO {
 		// *************************************************************************
 		// *************************************************************** ALAVA ***
 		// *************************************************************************
-		 AR_907(Mod123Key.AR_907, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
-		,AR_908(Mod123Key.AR_908, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
-		,AR_909(Mod123Key.AR_909, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
-		,AR_C01(Mod123Key.AR_C01
+		 AR_907(Mod123Key.AR_907, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
+		,AR_908(Mod123Key.AR_908, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
+		,AR_909(Mod123Key.AR_909, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
+		,AR_C01(Mod123Key.AR_C01, false
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.AR_C01,mod,docs,br)
 			,null)
-		,AR_C02(Mod123Key.AR_C02
+		,AR_C02(Mod123Key.AR_C02, true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isMovableCapital()
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.AR_C02).addAmount(br.getBase())
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.AR_C02,mod,br)
 			,null)
-		,AR_C03(Mod123Key.AR_C03
+		,AR_C03(Mod123Key.AR_C03, true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isMovableCapital()
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.AR_C03).addAmount(br.getQuota())
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.AR_C03,mod,br)
 			,null)
-		,AR_C04(Mod123Key.AR_C04, (mod -> mod.isAraba()),null,null,null)
-		,AR_C05(Mod123Key.AR_C05, (mod -> mod.isAraba()),null,null,null)
-		,AR_C06(Mod123Key.AR_C06, (mod -> mod.isAraba()),null,null,"AR_C03+AR_C05")
-		,AR_C07(Mod123Key.AR_C07, (mod -> mod.isAraba()),null,null,null)
-		,AR_C08(Mod123Key.AR_C08, (mod -> mod.isAraba()),null,null,null)
-		,AR_C09(Mod123Key.AR_C09, (mod -> mod.isAraba()),null,null,null)
-		,AR_C10(Mod123Key.AR_C10, (mod -> mod.isAraba()),null,null,"AR_C06-AR_C07+AR_C08+AR_C09")
-		,AR_TIP(Mod123Key.AR_TIP
+		,AR_C04(Mod123Key.AR_C04, false, (mod -> mod.isAraba()),null,null,null)
+		,AR_C05(Mod123Key.AR_C05, false, (mod -> mod.isAraba()),null,null,null)
+		,AR_C06(Mod123Key.AR_C06, false, (mod -> mod.isAraba()),null,null,"AR_C03+AR_C05")
+		,AR_C07(Mod123Key.AR_C07, false, (mod -> mod.isAraba()),null,null,null)
+		,AR_C08(Mod123Key.AR_C08, false, (mod -> mod.isAraba()),null,null,null)
+		,AR_C09(Mod123Key.AR_C09, false, (mod -> mod.isAraba()),null,null,null)
+		,AR_C10(Mod123Key.AR_C10, false, (mod -> mod.isAraba()),null,null,"AR_C06-AR_C07+AR_C08+AR_C09")
+		,AR_TIP(Mod123Key.AR_TIP, false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
 			, null,null,null)
 		// *************************************************************************
 		// ************************************************************* BIZKAIA ***
 		// *************************************************************************
-		,BZ_C01(Mod123Key.BZ_C01
+		,BZ_C01(Mod123Key.BZ_C01, false
 			, (mod -> mod.isBizkaia())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.BZ_C01,mod,docs,br)
 			,null)
-		,BZ_C02(Mod123Key.BZ_C02
+		,BZ_C02(Mod123Key.BZ_C02, true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) -> br.isMovableCapital()
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.BZ_C02).addAmount(br.getBase())
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.BZ_C02,mod,br)
 			,null)
-		,BZ_C03(Mod123Key.BZ_C03
+		,BZ_C03(Mod123Key.BZ_C03, true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) -> br.isMovableCapital()
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.BZ_C03).addAmount(br.getQuota())
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.BZ_C03,mod,br)
 			,null)
-		,BZ_C04(Mod123Key.BZ_C04, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C05(Mod123Key.BZ_C05, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C06(Mod123Key.BZ_C06, (mod -> mod.isBizkaia()),null,null,"BZ_C03+BZ_C05")
-		,BZ_TIP (Mod123Key.BZ_TIP , (mod -> mod.isBizkaia()), null,null,null)
+		,BZ_C04(Mod123Key.BZ_C04, false, (mod -> mod.isBizkaia()),null,null,null)
+		,BZ_C05(Mod123Key.BZ_C05, false, (mod -> mod.isBizkaia()),null,null,null)
+		,BZ_C06(Mod123Key.BZ_C06, false, (mod -> mod.isBizkaia()),null,null,"BZ_C03+BZ_C05")
+		,BZ_TIP (Mod123Key.BZ_TIP, false , (mod -> mod.isBizkaia()), null,null,null)
 		
 		// *************************************************************************
 		// **************************************************** COMMON TERRITORY ***
 		// *************************************************************************
-		,CT_C01(Mod123Key.CT_C01
+		,CT_C01(Mod123Key.CT_C01, false
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.CT_C01,mod,docs,br)
 			,null)
-		,CT_C02(Mod123Key.CT_C02
+		,CT_C02(Mod123Key.CT_C02, true
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isMovableCapital()
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.CT_C02).addAmount(br.getBase())
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.CT_C02,mod,br)
 			,null)
-		,CT_C03(Mod123Key.CT_C03
+		,CT_C03(Mod123Key.CT_C03, true
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isMovableCapital()
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.CT_C03).addAmount(br.getQuota())
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.CT_C03,mod,br)
 			,null)
-		,CT_C04(Mod123Key.CT_C04, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C05(Mod123Key.CT_C05, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C06(Mod123Key.CT_C06, (mod -> mod.isAEAT()),null,null, "CT_C03+CT_C05" )
-		,CT_C07(Mod123Key.CT_C07, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C08(Mod123Key.CT_C08, (mod -> mod.isAEAT()),null,null, "CT_C06-CT_C07" )
-		,CT_TIP (Mod123Key.CT_TIP , (mod -> mod.isAEAT()), null,null,null)
+		,CT_C04(Mod123Key.CT_C04, false, (mod -> mod.isAEAT()),null,null,null)
+		,CT_C05(Mod123Key.CT_C05, false, (mod -> mod.isAEAT()),null,null,null)
+		,CT_C06(Mod123Key.CT_C06, false, (mod -> mod.isAEAT()),null,null, "CT_C03+CT_C05" )
+		,CT_C07(Mod123Key.CT_C07, false, (mod -> mod.isAEAT()),null,null,null)
+		,CT_C08(Mod123Key.CT_C08, false, (mod -> mod.isAEAT()),null,null, "CT_C06-CT_C07" )
+		,CT_TIP (Mod123Key.CT_TIP, false , (mod -> mod.isAEAT()), null,null,null)
 		
 		// *************************************************************************
 		// ************************************************************ GIPUZKOA ***
 		// *************************************************************************
-		,GP_C01(Mod123Key.GP_C01
+		,GP_C01(Mod123Key.GP_C01, false
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.GP_C01,mod,docs,br)
 			,null)
-		,GP_C02(Mod123Key.GP_C02
+		,GP_C02(Mod123Key.GP_C02, true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isMovableCapital()
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.GP_C02).addAmount(br.getBase())
+			, (ctx,mod,docs,br) -> addBase(Mod123Key.GP_C02,mod,br)
 			,null)
-		,GP_C03(Mod123Key.GP_C03
+		,GP_C03(Mod123Key.GP_C03, true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isMovableCapital()
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.GP_C03).addAmount(br.getQuota())
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.GP_C03,mod,br)
 			,null)
-		,GP_C04(Mod123Key.GP_C04, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C05(Mod123Key.GP_C05, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C06(Mod123Key.GP_C06, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C07(Mod123Key.GP_C07, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C08(Mod123Key.GP_C08, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C09(Mod123Key.GP_C09, (mod -> mod.isGipuzkoa()),null,null,"GP_C03+GP_C06+GP_C08")
-		,GP_TIP (Mod123Key.GP_TIP , (mod -> mod.isGipuzkoa()), null,null,null)
+		,GP_C04(Mod123Key.GP_C04, false, (mod -> mod.isGipuzkoa()),null,null,null)
+		,GP_C05(Mod123Key.GP_C05, false, (mod -> mod.isGipuzkoa()),null,null,null)
+		,GP_C06(Mod123Key.GP_C06, false, (mod -> mod.isGipuzkoa()),null,null,null)
+		,GP_C07(Mod123Key.GP_C07, false, (mod -> mod.isGipuzkoa()),null,null,null)
+		,GP_C08(Mod123Key.GP_C08, false, (mod -> mod.isGipuzkoa()),null,null,null)
+		,GP_C09(Mod123Key.GP_C09, false, (mod -> mod.isGipuzkoa()),null,null,"GP_C03+GP_C06+GP_C08")
+		,GP_TIP (Mod123Key.GP_TIP, false , (mod -> mod.isGipuzkoa()), null,null,null)
 		
 		// *************************************************************************
 		// ************************************************************* NAVARRA ***
 		// *************************************************************************
-		,NF_A1(Mod123Key.NF_C01
+		,NF_A1(Mod123Key.NF_C01, true
 			, (mod -> mod.isNavarra())
 			, (mod,br) -> (br.isMovableCapital()) 
-			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod123Key.NF_C01).addAmount(br.getQuota())
+			, (ctx,mod,docs,br) -> addQuota(Mod123Key.NF_C01,mod,br)
 			,null)
-		,NF_TIP (Mod123Key.NF_TIP , (mod -> mod.isNavarra()), null,null,null)
+		,NF_TIP (Mod123Key.NF_TIP, false , (mod -> mod.isNavarra()), null,null,null)
 		;
 		
 		private Mod123Key key;
+		private boolean diffEnabled;
 		private IModelAccepter acceptModel;
 		private IValueAccepter acceptValue;
 		private IValueIntializer initializer;
 		private String expression;
 
-		private Mod123KeyDAO(Mod123Key key, IModelAccepter acceptModel, IValueAccepter acceptValue
+		private Mod123KeyDAO(Mod123Key key, boolean diffEnabled, IModelAccepter acceptModel, IValueAccepter acceptValue
 				,IValueIntializer initializer,String expression) {
 			this.key = key;
 			this.acceptModel =  acceptModel;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.expression =  expression;
+			this.diffEnabled = diffEnabled;
 		}
 		
 		
 		public Mod123Key getKey() {
 			return key;
+		}
+		public boolean isDiffEnabled() {
+			return diffEnabled;
 		}
 		public boolean acceptModel(Mod123 mod) {
 			return  (acceptModel.accept(mod));
@@ -286,6 +310,11 @@ public class Mod123DAO extends FiscalModelDAO {
 			mod123.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod123);
+		
+		// Cálculo por diferencia.
+		String diff = AppParamDAO.fetchValue(ctx, AppParam.FS_MOD303_BY_DIFFERENCE_DISABLED);
+		mod123.setDiffCalculationDisabled(AonStringUtils.equals(diff, AonStringUtils.ONE));
+				
 		return mod123;
 	}
 	
@@ -296,7 +325,16 @@ public class Mod123DAO extends FiscalModelDAO {
 				detail.setExpression(key.getExpression());
 			}
 		}
+		
 		createFromInvoices(ctx,mod123);
+		
+		for (FiscalModelDetail detail : mod123.getMap().values()) {
+			Mod123KeyDAO key = Mod123KeyDAO.safeValueOf(mod123, detail.getType());
+			if (key != null && key.isDiffEnabled()) {
+				detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
+				detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
+			}
+		}
 		return calculateMod123(ctx, mod123);
 	}
 
@@ -313,14 +351,38 @@ public class Mod123DAO extends FiscalModelDAO {
 	// -------------------------------------------------------------------- INVOICES
 	private static void createFromInvoices(final AONContext ctx, final Mod123 mod123) {
 		final Set<String> docs = new HashSet<String>();
-		IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod123)
-				.forEach(br -> {
-						for (Mod123KeyDAO key : Mod123KeyDAO.values()) {
-							if (key.acceptValue(mod123,br)) {
-								key.initialize(ctx, mod123, docs, br);
-							};
-						}
-				});
+		if (mod123.isDiffCalculationDisabled()) {
+			// Cálculo por diferencias NO 
+			// Es como se estaba calculando hasta ahora, solo se leía el periodo que se declara
+			IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod123)
+			.forEach(br -> {
+					for (Mod123KeyDAO key : Mod123KeyDAO.values()) {
+						if (key.acceptValue(mod123,br)) {
+							key.initialize(ctx, mod123, docs, br);
+						};
+					}
+			});			
+		}
+		else {
+			// Cálculo por diferencias SI
+			IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod123)
+					.forEach(br -> {
+							for (Mod123KeyDAO key : Mod123KeyDAO.values()) {
+								if (key.acceptValue(mod123,br)) {
+									key.initialize(ctx, mod123, docs, br);
+								};
+							}
+					});
+			// Calcular lo declarado hasta ahora
+			getEffectivePreviousModels(ctx, mod123)
+			.forEach(mod -> {
+				for (String keyString : mod.getMap().keySet()) {
+					double amount = mod.getAmount(keyString);
+					mod123.ensureDetail(keyString).addDeclaredAmount(amount);
+				}
+			});
+			
+		}
 	}
 	
 	private static String getInvoicesInfo(AONContext ctx, final Mod123 mod123
@@ -345,7 +407,8 @@ public class Mod123DAO extends FiscalModelDAO {
 		return IRPFFormatter.formatDiffInvoices(title
 			,script.getLabel()
 			,script.getKeys()
-			, getPreviousModels(ctx,mod123)
+			//, getPreviousModels(ctx,mod123)
+			,getEffectivePreviousModels(ctx, mod123)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
 			,IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod123)
 				.filter( br ->  keyDAO.acceptValue(mod123, br) )	

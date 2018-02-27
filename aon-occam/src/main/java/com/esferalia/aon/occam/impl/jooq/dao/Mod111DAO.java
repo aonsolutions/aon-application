@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -659,6 +660,11 @@ public class Mod111DAO extends FiscalModelDAO {
 			mod111.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod111);
+		
+		// Cálculo por diferencia.
+		String diff = AppParamDAO.fetchValue(ctx, AppParam.FS_MOD303_BY_DIFFERENCE_DISABLED);
+		mod111.setDiffCalculationDisabled(AonStringUtils.equals(diff, AonStringUtils.ONE));
+		
 		return mod111;
 	}
 	
@@ -698,18 +704,37 @@ public class Mod111DAO extends FiscalModelDAO {
 	// -------------------------------------------------------------------- SALARIES
 	private static void createFromSalary(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new HashMap<Mod111Key,Set<String>>(); 
-		final Map<Mod111Key,Set<String>> pdocs = new HashMap<Mod111Key,Set<String>>(); 
-		IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
-			.forEach(
-					br -> {
-						System.out.println( br.getBase() +  " / " + br.getQuota());
-						for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
-							if (key.acceptValue(mod111,br)) {
-								key.initialize(ctx, mod111, docs, pdocs, br);
-							};
-						}
-						
-					});
+		final Map<Mod111Key,Set<String>> pdocs = new HashMap<Mod111Key,Set<String>>();
+		
+		if (mod111.isDiffCalculationDisabled()) {
+			// Cálculo por diferencias NO
+			IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111)
+				.forEach(
+						br -> {
+							System.out.println( br.getBase() +  " / " + br.getQuota());
+							for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
+								if (key.acceptValue(mod111,br)) {
+									key.initialize(ctx, mod111, docs, pdocs, br);
+								};
+							}
+							
+						});			
+		}
+		else {
+			// Cálculo por diferencias SI
+			IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
+				.forEach(
+						br -> {
+							System.out.println( br.getBase() +  " / " + br.getQuota());
+							for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
+								if (key.acceptValue(mod111,br)) {
+									key.initialize(ctx, mod111, docs, pdocs, br);
+								};
+							}
+							
+						});
+		}
+		
 	}
 
 	private static String getSalaryInKindInfo(AONContext ctx, final Mod111 mod111
@@ -819,23 +844,38 @@ public class Mod111DAO extends FiscalModelDAO {
 	// -------------------------------------------------------------------- INVOICES
 	private static void createFromInvoices(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new HashMap<Mod111Key,Set<String>>(); 
-		final Map<Mod111Key,Set<String>> pdocs = new HashMap<Mod111Key,Set<String>>(); 
-		IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod111)
-				.forEach(br -> {
-						for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
-							if (key.acceptValue(mod111,br)) {
-								key.initialize(ctx, mod111, docs, pdocs, br);
-							};
-						}
-				});
-		
-		getEffectivePreviousModels(ctx, mod111)
-			.forEach(mod -> {
-				for (String keyString : mod.getMap().keySet()) {
-					double amount = mod.getAmount(keyString);
-					mod111.ensureDetail(keyString).addDeclaredAmount(amount);
-				}
+		final Map<Mod111Key,Set<String>> pdocs = new HashMap<Mod111Key,Set<String>>();
+				
+		if (mod111.isDiffCalculationDisabled()) {
+			// Cálculo por diferencias NO
+			IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111)
+			.forEach(br -> {
+					for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
+						if (key.acceptValue(mod111,br)) {
+							key.initialize(ctx, mod111, docs, pdocs, br);
+						};
+					}
+			});		
+		}
+		else {
+            // Cálculo por diferencias SI
+			IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod111)
+			.forEach(br -> {
+					for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
+						if (key.acceptValue(mod111,br)) {
+							key.initialize(ctx, mod111, docs, pdocs, br);
+						};
+					}
 			});
+		
+			getEffectivePreviousModels(ctx, mod111)
+				.forEach(mod -> {
+					for (String keyString : mod.getMap().keySet()) {
+						double amount = mod.getAmount(keyString);
+						mod111.ensureDetail(keyString).addDeclaredAmount(amount);
+					}
+				});
+		}
 	}
 	
 	private static String getInvoicesInfo(AONContext ctx, final Mod111 mod111

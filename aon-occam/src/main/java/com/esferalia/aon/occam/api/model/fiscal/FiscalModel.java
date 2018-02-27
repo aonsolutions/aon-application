@@ -558,4 +558,19 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 			}
 		}
 	}
+	
+	public boolean isDiffCalculationAvailable() {
+		// REDEFINE
+		return false;
+	}
+	
+	public boolean isDiffCalculationDisabled() {
+		// REDEFINE
+		return false;
+	}
+	
+	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		// REDEFINE
+	}
+	
 }

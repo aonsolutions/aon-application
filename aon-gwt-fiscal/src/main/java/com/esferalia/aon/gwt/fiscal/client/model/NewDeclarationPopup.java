@@ -32,6 +32,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	final protected TextBox previous = new TextBox();
 	final protected CheckBox replacement = new CheckBox();
 	final protected CheckBox complementary = new CheckBox();
+	final protected CheckBox diffCalculation = new CheckBox();
 		
 	protected int row = 0;
 	protected IFiscalModelCallback<T> callback;
@@ -160,8 +161,9 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private void paintVariablePanel() {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		FlowPanel decPanel = new FlowPanel();
+		decPanel.add(getDiffCalculationPanel());		
 		decPanel.add(getComplementaryPanel());
-		decPanel.add(getReplacementPanel());
+		decPanel.add(getReplacementPanel());		
 		tab.setWidget(row, 0, decPanel);
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, getPreviousNumberPanel());
@@ -170,7 +172,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	
 	private FlowPanel getReplacementPanel() {
 		FlowPanel replPanel = new FlowPanel();
-		replPanel.setStyleName(AON.AON_CSS.aonTextCenter());
+		//replPanel.setStyleName(AON.AON_CSS.aonTextCenter());
 		replacement.setText(AON.MSG.replacement());
 		replacement.addClickHandler(new ClickHandler() {
 			
@@ -192,7 +194,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 
 	private Widget getComplementaryPanel() {
 		FlowPanel compPanel = new FlowPanel();
-		compPanel.setStyleName(AON.AON_CSS.aonTextCenter());
+		//compPanel.setStyleName(AON.AON_CSS.aonTextCenter());
 		complementary.setText(AON.MSG.complementary());
 		complementary.addClickHandler(new ClickHandler() {
 			
@@ -209,6 +211,23 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		});
 		complementary.setVisible(callback.getFiscalModel().isComplementaryDeclarationAvailable());
 		compPanel.add(complementary);
+		return compPanel;
+	}
+	
+	private Widget getDiffCalculationPanel() {
+		FlowPanel compPanel = new FlowPanel();
+		//compPanel.setStyleName(AON.AON_CSS.aonTextCenter());
+		diffCalculation.setText(AON.MSG.diffCalculation());
+		diffCalculation.setValue(!callback.getFiscalModel().isDiffCalculationDisabled());
+		diffCalculation.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.getFiscalModel().setDiffCalculationDisabled(!diffCalculation.getValue());				
+			}
+		});
+		diffCalculation.setVisible(callback.getFiscalModel().isDiffCalculationAvailable());
+		compPanel.add(diffCalculation);
 		return compPanel;
 	}
 	

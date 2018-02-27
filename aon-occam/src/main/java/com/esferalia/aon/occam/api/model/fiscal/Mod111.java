@@ -67,4 +67,21 @@ public class Mod111 extends FiscalModel implements Serializable {
 			setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
 		}
 	}
+	
+	@Override
+	public boolean isDiffCalculationAvailable() {
+		// Disponible poder elegir si se cálcula por diferencia
+		return true;
+	}
+	
+	@Override
+	public boolean isDiffCalculationDisabled() {
+		return getAmount(Mod111Key.CM_001) == 1;
+	}
+
+	@Override
+	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		ensureDetail(Mod111Key.CM_001).setAmount(diffCalculationDisabled?1:0);
+	}
+	
 }

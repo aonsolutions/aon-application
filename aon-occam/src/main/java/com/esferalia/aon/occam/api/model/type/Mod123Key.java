@@ -5,8 +5,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Mod123Key implements IFiscalModelKey {
 	
+	 CM_001("123-CM-01", 1,null)  // Cálculo por diferencias 0-Deshabilitado 1-Habilitado
+	
 	// ---------------------------------------------------------------- ALAVA
-	 AR_907("123-AR-907", 907,Administration.ALAVA)
+	,AR_907("123-AR-907", 907,Administration.ALAVA)
 	,AR_908("123-AR-908", 908,Administration.ALAVA)
 	,AR_909("123-AR-909", 909,Administration.ALAVA)
 	,AR_C01("123-01" 	,   1,Administration.ALAVA)

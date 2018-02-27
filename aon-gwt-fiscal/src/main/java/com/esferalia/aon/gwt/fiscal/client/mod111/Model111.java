@@ -147,6 +147,8 @@ public class Model111 extends MainEntryPoint {
 	@UiField
 	InlineLabel surnameLabel;
 	@UiField
+	Label diffLabel;
+	@UiField
 	InlineLabel dirtyLabel;
 	@UiField
 	Label statusLabel;
@@ -462,7 +464,17 @@ public class Model111 extends MainEntryPoint {
 	}
 	
 	private void styleDirtyLabel() {
-		dirtyLabel.setText(isDirty()?"[CAMBIOS]":"");
+		// Indicar que el modelo ha sido generado por diferencias
+		if (currentMod.isDiffCalculationDisabled()) {
+			diffLabel.setText("");
+			diffLabel.setTitle("");
+		}
+		else {
+			diffLabel.setText("[DIF.]");
+			diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
+		}
+		// Indicar si el modelo se ha modificado
+		dirtyLabel.setText(isDirty()?"[CAMBIOS]":"");				
 	}
 
 	private void styleStatusLabel() {

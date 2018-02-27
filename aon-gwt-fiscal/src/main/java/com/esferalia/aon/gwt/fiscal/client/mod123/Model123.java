@@ -147,6 +147,8 @@ public class Model123 extends MainEntryPoint {
 	@UiField
 	InlineLabel surnameLabel;
 	@UiField
+	Label diffLabel;
+	@UiField
 	InlineLabel dirtyLabel;
 	@UiField
 	Label statusLabel;
@@ -449,6 +451,16 @@ public class Model123 extends MainEntryPoint {
 	}
 	
 	private void styleDirtyLabel() {
+		// Indicar que el modelo ha sido generado por diferencias
+		if (currentMod.isDiffCalculationDisabled()) {
+			diffLabel.setText("");
+			diffLabel.setTitle("");
+		}
+		else {
+			diffLabel.setText("[DIF.]");
+			diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
+		}
+		// Indicar si el modelo se ha modificado
 		dirtyLabel.setText(isDirty()?"[CAMBIOS]":"");
 	}
 

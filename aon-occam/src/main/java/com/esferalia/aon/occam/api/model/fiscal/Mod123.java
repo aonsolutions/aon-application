@@ -67,5 +67,28 @@ public class Mod123 extends FiscalModel implements Serializable {
 			setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
 		}
 	}
+	
+	@Override
+	public boolean isDiffCalculationAvailable() {
+		// Disponible poder elegir si se cálcula por diferencia
+		return true;
+	}
+	
+	// Hasta ahora se estaban calculando todos los 123 sin diferencias, 
+	// por eso se graba ahora 1 si esta habilitado y 0 si no lo está
+	// al contrario de como se hace en otros modelos
+	
+	@Override
+	public boolean isDiffCalculationDisabled() {
+		//return getAmount(Mod123Key.CM_001) == 1;
+		return getAmount(Mod123Key.CM_001) == 0;
+	}
+
+	@Override
+	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		//ensureDetail(Mod123Key.CM_001).setAmount(diffCalculationDisabled?1:0);
+		ensureDetail(Mod123Key.CM_001).setAmount(diffCalculationDisabled?0:1);
+	}
+
 
 }
