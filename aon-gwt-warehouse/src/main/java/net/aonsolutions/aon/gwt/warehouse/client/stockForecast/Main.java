@@ -46,8 +46,6 @@ public class Main extends Composite {
 		this.parent = parent;
 		if(filterMap==null){
 			filterMap = new HashMap<>();
-			LinkedList<String> status = new LinkedList<>();
-//			status.add(ElaborationStatus.PENDING.ordinal() + "");
 		}
 		this.filterMap = filterMap;
 		
@@ -58,10 +56,6 @@ public class Main extends Composite {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = parent;
 		filterMap = new HashMap<>();
-		LinkedList<String> status = new LinkedList<>();
-//		status.add(ElaborationStatus.PENDING.ordinal() + "");
-		filterMap.put("status", status);
-//		parent.setFilterMap(filterMap);
 		
 		load();
 	}
@@ -105,9 +99,7 @@ public class Main extends Composite {
 	}
 
 	public void loadSouthContent() {
-//		FooterPanel fp = new FooterPanel(this);
-//		southContent.setWidget(fp);
-//		fp.hideFooterPanel();		
+		
 	}
 	
 	

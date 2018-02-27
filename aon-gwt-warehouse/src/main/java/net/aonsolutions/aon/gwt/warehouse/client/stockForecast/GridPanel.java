@@ -83,14 +83,7 @@ public class GridPanel extends Composite {
 		DefaultKeyboardSelectionHandler<JsStockForecast> selHandler = new DefaultKeyboardSelectionHandler<JsStockForecast>(dataGrid){
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsStockForecast> event) {
-//				if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
-//					Integer relRow = event.getIndex() - dataGrid.getPageStart();
-//				    Integer subrow = event.getContext().getSubIndex();
-//				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
-//				    JsStockForecast object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-//				    
-//				    parent.onSelectElaboration(object);
-//				}		
+				
 			}
 		};
 		
@@ -294,7 +287,7 @@ public class GridPanel extends Composite {
 		
 		dataGrid.addColumn(nameColumn, AON.MSG.product());
 		dataGrid.addColumn(quantityColumn, "Consumo");
-		dataGrid.addColumn(dailyQuantityColumn, "Consumo/Dia");
+		dataGrid.addColumn(dailyQuantityColumn, "Cns./D\u00EDa");
 		dataGrid.addColumn(accumulationColumn, "Acopio");
 		dataGrid.addColumn(stockColumn, "Stock");
 		dataGrid.addColumn(pendingPurchasesColumn, "Pte.Recibir");

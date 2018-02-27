@@ -102,15 +102,6 @@
 											value="#{bundle.warehouse_manufacturing_order}" />
 									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_stockForecast"
-										action="gwt_stockForecast"
-										title="#{bundle.warehouse_stockForecast}">
-										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-											style="margin-left: 5px; padding-left: 20px;"
-											value="#{bundle.warehouse_stockForecast}" />
-									</aon:commandLink>
-								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
@@ -221,6 +212,15 @@
 										action="itemTagPrint_search-warehouse"
 										actionListener="#{itemTagPrint.onEditSearch}"
 										value="#{bundle.product_tag_print_module}"/>	
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_stockForecast"
+										action="gwt_stockForecast"
+										title="#{bundle.warehouse_stockForecast}">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="#{bundle.warehouse_stockForecast}" />
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>									
