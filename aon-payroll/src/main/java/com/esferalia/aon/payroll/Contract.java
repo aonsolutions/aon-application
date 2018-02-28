@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +11,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
@@ -24,7 +22,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ContractDB;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.esferalia.aon.salary.SalaryException;
@@ -83,14 +81,14 @@ public class Contract extends ContractDB {
 	
 	@Transient
 	@Deprecated
-	public ISalaryCalculatorContext getSalaryCalculatorContext(int year, Month month, SalaryType salaryType) throws SalaryException {
-		ISalaryCalculatorContext ctx = new ContractSalaryCalculatorContext(this,year, month,salaryType);
+	public IContractSalaryCalculatorContext getSalaryCalculatorContext(int year, Month month, SalaryType salaryType) throws SalaryException {
+		ContractSalaryCalculatorContext ctx = new ContractSalaryCalculatorContext(this,year, month,salaryType);
 		return ctx;
 	}
 	
 	@Transient
-	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startdate, Date endDate , SalaryType salaryType) throws SalaryException {
-		ISalaryCalculatorContext ctx = new ContractSalaryCalculatorContext(this,startdate, endDate,salaryType);
+	public IContractSalaryCalculatorContext getSalaryCalculatorContext(Date startdate, Date endDate , SalaryType salaryType) throws SalaryException {
+		ContractSalaryCalculatorContext ctx = new ContractSalaryCalculatorContext(this,startdate, endDate,salaryType);
 		return ctx;
 	}
 

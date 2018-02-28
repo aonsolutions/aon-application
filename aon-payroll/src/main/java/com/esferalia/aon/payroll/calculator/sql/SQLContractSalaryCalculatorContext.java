@@ -2159,7 +2159,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
-		ISalaryCalculatorContext ctx = null;
+		IContractSalaryCalculatorContext ctx = null;
 		try {
 			ctx = getNoItCalculatorContext(connection, startDate, getEnd(), issueDate, contractCriteria, start - 1,
 					end - 1);
@@ -2213,7 +2213,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public double value(double solve) {
 
 				try {
-					ISalaryCalculatorContext ctx = getLiquidCalculatorContext(connection, start, end, issueDate,
+					IContractSalaryCalculatorContext ctx = getLiquidCalculatorContext(connection, start, end, issueDate,
 							contractCriteria, solve, liquid);
 					ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 					calculator.setSalaryBuilder(new SalaryBuilder());
@@ -2260,7 +2260,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public double value(double x) {
 
 				try {
-					ISalaryCalculatorContext ctx = getPaymentCalculatorContext(connection, start, end, end,
+					IContractSalaryCalculatorContext ctx = getPaymentCalculatorContext(connection, start, end, end,
 							contractCriteria, x);
 					ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 					calculator.setSalaryBuilder(new SalaryBuilder());
@@ -2293,7 +2293,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-	protected ISalaryCalculatorContext getLiquidCalculatorContext(Connection conn, Date startDate, Date endDate,
+	protected IContractSalaryCalculatorContext getLiquidCalculatorContext(Connection conn, Date startDate, Date endDate,
 			Date issueDate, Criteria criteria, final double solve, final double liquid) {
 		SQLContractSalaryCalculatorContext ctx;
 		try {
@@ -2417,7 +2417,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-	protected ISalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate, Date endDate,
+	protected IContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate, Date endDate,
 			Date issueDate, Criteria criteria, final double x) {
 		SQLContractSalaryCalculatorContext ctx;
 		try {

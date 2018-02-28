@@ -54,7 +54,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
-import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -71,6 +70,7 @@ import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -594,7 +594,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		try {
 			Contract contract = (Contract) getTo();
 
-			ISalaryCalculatorContext ctx;
+			IContractSalaryCalculatorContext ctx;
 			if ( getSalaryType() == SalaryType.DELAY ){
 				Date startDraftDate = 
 						getStartDraftDate(year, month);

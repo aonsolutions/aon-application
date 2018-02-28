@@ -613,7 +613,7 @@ public class EmployeesServiceHelper {
 			}
 
 			@Override
-			protected ISalaryCalculatorContext getPaymentCalculatorContext(
+			protected IContractSalaryCalculatorContext getPaymentCalculatorContext(
 					Connection conn, Date startDate, Date endDate,
 					Date issueDate, Criteria criteria, final double x) {
 				try {
@@ -709,7 +709,7 @@ public class EmployeesServiceHelper {
 			}
 
 			@Override
-			protected ISalaryCalculatorContext getLiquidCalculatorContext(
+			protected IContractSalaryCalculatorContext getLiquidCalculatorContext(
 					Connection conn, Date startDate, Date endDate,
 					Date issueDate, Criteria criteria, final double solve,
 					final double liquid) {

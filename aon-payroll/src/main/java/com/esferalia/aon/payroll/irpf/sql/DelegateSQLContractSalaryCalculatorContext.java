@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.irpf.sql;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -24,6 +25,11 @@ implements ISQLContractSalaryCalculatorContext {
 	@Override
 	public void close() throws SQLException {
 		ctx.close();
+	}
+
+	@Override
+	public Connection getConnection() {
+		return ctx.getConnection();
 	}
 
 	@Override

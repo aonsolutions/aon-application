@@ -24,7 +24,7 @@ public class ContractSalaryCalculator4Dummies<T extends ISalary> extends Contrac
 	private IContractSalaryCalculatorContext.IListener listener;
 	
 	@Override
-	public T calculate(ISalaryCalculatorContext ctx) throws SalaryException {
+	public T calculate(IContractSalaryCalculatorContext ctx) throws SalaryException {
 		listener = ((IContractSalaryCalculatorContext) ctx).getListener();
 		
 		((IContractSalaryCalculatorContext) ctx).setListener(this);

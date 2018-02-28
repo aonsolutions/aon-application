@@ -20,6 +20,8 @@ public interface ISQLContractSalaryCalculatorContext extends
 
 	void close() throws SQLException;
 
+	Connection getConnection();
+
 	Date getDate(String table, String column);
 
 	String getString(String table, String column);

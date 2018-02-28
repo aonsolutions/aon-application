@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jooq.DSLContext;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
@@ -55,10 +55,10 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+//import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -66,6 +66,7 @@ import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -150,7 +151,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -199,7 +200,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -219,6 +220,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
 				new HashMap<String,String>(){
+					private static final long serialVersionUID = 1L;
+
 			{
 				put(CGC_BASE_MIN.getName(), "(1000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
 			}
@@ -251,7 +254,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -303,7 +306,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		ISalaryCalculator<Salary, ISQLContractSalaryCalculatorContext> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -346,7 +349,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		ISalaryCalculator<Salary, ISQLContractSalaryCalculatorContext> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -402,7 +405,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder() {
 			private int zeros = 0;
@@ -450,7 +453,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -489,7 +492,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -531,7 +534,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -575,7 +578,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -620,7 +623,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -665,7 +668,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -708,7 +711,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -790,7 +793,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -906,7 +909,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1018,7 +1021,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1077,7 +1080,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
@@ -1094,7 +1097,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
@@ -1180,7 +1183,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1239,7 +1242,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
@@ -1256,7 +1259,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
@@ -1349,7 +1352,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1452,7 +1455,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1546,7 +1549,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1578,7 +1581,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
@@ -1593,7 +1596,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
@@ -1664,7 +1667,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1697,7 +1700,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			
 			ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
-			calculator = new ContractSalaryCalculator<Salary>();
+			calculator = new SmartContractSalaryCalculator<Salary>();
 	
 			calculator.setSalaryBuilder(new SalaryBuilder());
 			salary = calculator.calculate(ctx);
@@ -1715,7 +1718,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
@@ -1804,7 +1807,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1897,7 +1900,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -1985,7 +1988,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -2073,7 +2076,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		
 		//ctx.getExpressionContext().eval(ContextVariable.DIRECT_PAY_START.getName(), startDate, endDate);
 
@@ -2202,7 +2205,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() + ", " +  p.getQuote() );
 
@@ -2274,7 +2277,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		Assert.assertEquals( 1001.00, salary.getCommonBase(), DELTA );
 		
@@ -2353,7 +2356,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		Assert.assertEquals( 1001.00, salary.getCommonBase(), DELTA );
 		
@@ -2432,7 +2435,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
@@ -2509,7 +2512,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		Assert.assertEquals( 1002.00, salary.getCommonBase(), DELTA );
 		
@@ -2589,7 +2592,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		Assert.assertEquals( 1002.00, salary.getCommonBase(), DELTA );
 		
@@ -2632,9 +2635,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
-		calculator.setListener( new ContractSalaryCalculator.Listener() {
+		calculator.setListener( new SmartContractSalaryCalculator.Listener() {
 			@Override
 			public void onCheckError(IContractPayment payment, String message) {
 				if ( "666.00".equals(payment.getExpression()) )
@@ -2697,7 +2700,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder(){
 			@Override
@@ -2723,7 +2726,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder(){
 			@Override
@@ -2785,7 +2788,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -2796,7 +2799,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		// Cret@ 
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		calculator.setSalaryBuilder(jooqSalaryBuilder);
@@ -2854,7 +2857,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				getLastDayOfMonth(startITDate), 
 				getLastDayOfMonth(startITDate), 
 				contract);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new SmartContractSalaryCalculator<Salary>();
 
 		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		calculator.setSalaryBuilder(jooqSalaryBuilder);
@@ -2976,7 +2979,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -3040,7 +3043,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					}
 
 				});
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -3097,7 +3100,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -3152,13 +3155,13 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(0.75 * 66.66 * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(66.66 * 30.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(0.75 * 66.66 * /*30.00*/ get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -3201,7 +3204,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, endDate, contract);
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 			
-			new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+			new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 			jooqSalaryBuilder.execute();
 			startDate = add(startDate, MONTH, 1);
 		}
@@ -3219,12 +3222,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 		double br = 1750.00 / 30.00;
-		Assert.assertEquals(0.75 * br * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.75 * br * /*30.00*/ get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(br * 30.00, salary.getCommonBase(), DELTA);
 	}
 
@@ -3235,6 +3238,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		AONContext aonContext = new AONContext(connection);
 		
 		//@formatter:off
+		Date contractStart = add( getLastDayOfMonth(getToday()), DAY_OF_MONTH, -9 );
 		ContractRecord contract = newContract(aonContext,
 				add( getLastDayOfMonth(getToday()), DAY_OF_MONTH, -9 ),
 				new HashMap<String,String>(){
@@ -3268,7 +3272,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
@@ -3276,7 +3280,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//Assert.assertEquals(66.66 * 10.00, salary.getCommonBase(), DELTA);
 		long quoteDays = Math.round(salary.getCommonBase() / 66.66); //Double.parseDouble(salary.getSalaryData(QUOTE_DAYS.toString()));
 		System.out.println("DIAS COTIZADOS : " + quoteDays );
-		Assert.assertEquals(0.75 * 66.66 * 10 , salary.getTotalPayment(), DELTA);
+		//System.out.println("NICIO CONTRATO : " + get(contractStart, DAY_OF_MONTH) );
+		Assert.assertEquals(0.75 * 66.66 * /*(30.00 - get(contractStart, DAY_OF_MONTH) + 1 )*/ 10 , salary.getTotalPayment(), DELTA);
 	}
 	
 	@Test
@@ -3319,13 +3324,453 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(0.75 * 1750.00/30.00 * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.75 * 1750.00/30.00 * /*30.00*/ get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(1750.00/30.00 * 30.00, salary.getCommonBase(), DELTA);
 	}
 	
+	@Test
+	public void testITWithConstantI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startContract = add(getFirstDayOfMonth(getToday()), MONTH, -2 );
+		//@formatter:off
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				"250.00" ,
+				"1500.00"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				"TRACE('DIAS_ENFERMEDAD_COMUN_16_20 = %d\r\n',DIAS_ENFERMEDAD_COMUN_16_20); REMOVE()",
+				"0.00"
+				);
+		//@formatter:on
+
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+		
+		Date brEndDate = add(getFirstDayOfMonth(startITDate), DAY_OF_MONTH,-1);
+		Date brStartDate = getFirstDayOfMonth(brEndDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, brStartDate, brEndDate, brEndDate, contract);
+		JooqSalaryBuilder<Salary> builder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(builder).calculate(ctx);
+		builder.execute();
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(); 
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+	}
+	
+	@Test
+	public void testITWithConstantII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startContract = add(getFirstDayOfMonth(getToday()), MONTH, -2 );
+		//@formatter:off
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				}, 
+				new String[] {
+				}, 
+				null);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord paga = addConcept(aonContext, "PAGA");
+		PaymentConceptRecord antiguedad = addConcept(aonContext, "ANTIGUEDAD");
+		addPayment(aonContext, contract, startContract, null, salarioBase, "SALARIO BASE", "1500.00", "_P", "_P", PaymentType.CRA_0001);
+		addPayment(aonContext, contract, startContract, null, paga, "PAGA EXTRA", "100.00", "_P", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, startContract, null, paga, "PAGA EXTRA", "100.00", "_P", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, startContract, null, antiguedad, "ANTIGÜEDAD", "50.00", "_P", "_P", PaymentType.CRA_0001);
+		
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				"TRACE('DIAS_ENFERMEDAD_COMUN_16_20 = %d\r\n',DIAS_ENFERMEDAD_COMUN_16_20); REMOVE()",
+				"0.00"
+				);
+		//@formatter:on
+
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+		
+		Date brEndDate = add(getFirstDayOfMonth(startITDate), DAY_OF_MONTH,-1);
+		Date brStartDate = getFirstDayOfMonth(brEndDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, brStartDate, brEndDate, brEndDate, contract);
+		JooqSalaryBuilder<Salary> builder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(builder).calculate(ctx);
+		builder.execute();
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(); 
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+	}
+
+
+	@Test
+	public void testITWithConstantIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord antiguedad = addConcept(aonContext, "ANTIGUEDAD");
+
+		Date startContract = add(getFirstDayOfMonth(getToday()), MONTH, -2 );
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "SALARIO_BASE + ANTIGUEDAD";
+						this.month = Month.DECEMBER;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "SALARIO_BASE + ANTIGUEDAD";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				});
+		AgreementRecord agreement = 
+				getAgreement(aonContext, category.getAgreementLevel());
+		
+		addPayment(aonContext, agreement, startContract, new Payment() {
+			{
+				this.expression = "1450.00";
+				this.concept = salarioBase.getId();
+			}
+		});
+		addPayment(aonContext, agreement, startContract, new Payment() {
+			{
+				this.expression = "50.00";
+				this.concept = antiguedad.getId();
+			}
+		});
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				}, 
+				new String[] {
+				}, 
+				category);
+		//@formatter:off
+
+		
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				"TRACE('DIAS_ENFERMEDAD_COMUN_16_20 = %d\r\n',DIAS_ENFERMEDAD_COMUN_16_20); REMOVE()",
+				"0.00"
+				);
+		//@formatter:on
+
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+		
+		Date brEndDate = add(getFirstDayOfMonth(startITDate), DAY_OF_MONTH,-1);
+		Date brStartDate = getFirstDayOfMonth(brEndDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, brStartDate, brEndDate, brEndDate, contract);
+		JooqSalaryBuilder<Salary> builder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(builder).calculate(ctx);
+		builder.execute();
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(); 
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		int activeDays =  get(startITDate, DAY_OF_MONTH) -1 ;
+		Assert.assertEquals(1500.00 / 30 * activeDays 
+							+ 1750.00/30.00 * ( get(endDate, DAY_OF_MONTH) - activeDays ) , 
+							
+							salary.getTotalPayment(), DELTA);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+	}
+	
+	@Ignore("BRUTO it's no yet 'SMART' supported")
+	@Test
+	public void testITWithConstantIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startContract = add(getFirstDayOfMonth(getToday()), MONTH, -2 );
+		//@formatter:off
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				}, 
+				new String[] {
+				}, 
+				null);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord plus = addConcept(aonContext, "PLUS");
+		PaymentConceptRecord antiguedad = addConcept(aonContext, "ANTIGUEDAD");
+		addPayment(aonContext, contract, startContract, null, salarioBase, "SALARIO BASE", "1100.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
+		addPayment(aonContext, contract, startContract, null, antiguedad, "ANTIGÜEDAD", "50.00 * DIAS_TRABAJADOS / DIAS_MES" , "_P", "_P", PaymentType.CRA_0001);
+		addPayment(aonContext, contract, startContract, null, plus, "PLUS", "BRUTO(1750.00)", "_P", "_P", PaymentType.CRA_0001);
+		
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+		
+		Date brEndDate = add(getFirstDayOfMonth(startITDate), DAY_OF_MONTH,-1);
+		Date brStartDate = getFirstDayOfMonth(brEndDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, brStartDate, brEndDate, brEndDate, contract);
+		JooqSalaryBuilder<Salary> builder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(builder).calculate(ctx);
+		builder.execute();
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(); 
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+	}
 }

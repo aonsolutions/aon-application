@@ -307,6 +307,11 @@ public class SQLExtraSalaryCalculatorContext implements
 			throws ExpressionException, SQLException, SalaryException {
 		return ctx.liquid(liquid, start, end);
 	}
+	
+	@Override
+	public Connection getConnection() {
+		return ctx.getConnection();
+	}
 	// ------------------------------------------------------------------------
 	
 	

@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -23,6 +24,11 @@ public class DelegateSQLContractSalaryCalculatorContext<T extends ISQLContractSa
 	@Override
 	public void close() throws SQLException {
 		ctx.close();
+	}
+
+	@Override
+	public Connection getConnection() {
+		return ctx.getConnection();
 	}
 
 	@Override
@@ -60,5 +66,6 @@ public class DelegateSQLContractSalaryCalculatorContext<T extends ISQLContractSa
 	public boolean next() throws SQLException, ExpressionException {
 		return ctx.next();
 	}
+	
 
 }

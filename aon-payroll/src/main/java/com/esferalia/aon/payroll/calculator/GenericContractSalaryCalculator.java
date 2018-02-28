@@ -322,7 +322,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	@Override
-	public T calculate(ISalaryCalculatorContext ctx) throws SalaryException {
+	public T calculate(C ctx) throws SalaryException {
 		IContractSalaryCalculatorContext contractSalaryCalculatorContext = (IContractSalaryCalculatorContext) ctx;
 
 		Date start = ctx.getStartDate();
@@ -996,7 +996,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			if (contractPayment.getType() != PaymentType.CRA_0008
 					&& contractPayment.getType() != PaymentType.CRA_0055
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
-					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() > 0.00)
+					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
 				try {
 					results = fixItResults(contractPayment, results, leavePeriods, start, end, expressionContext);

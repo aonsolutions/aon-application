@@ -99,7 +99,7 @@ public class ContractSalaryCalculatorContext extends
 	// ------------------------------------------
 	@Override
 	public ISalary getSalary() throws SalaryException {
-		ISalaryCalculator<Salary, ISalaryCalculatorContext> sc = new ContractSalaryCalculator<Salary>();
+		ISalaryCalculator<Salary, IContractSalaryCalculatorContext> sc = new ContractSalaryCalculator<Salary>();
 		sc.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = sc.calculate(this.ctx);
 		return salary;
