@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
@@ -60,7 +61,6 @@ import com.google.gwt.view.client.RangeChangeEvent.Handler;
 
 public class Model3032018AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
-	private static final String VALIDATE_SEND_ACTION = "/aon_gwt_fiscal/ms/Model303SendAEAT";
 	
 	private static class Mod303ActivityProvidesKey implements ProvidesKey<Mod303Activity> {
 		@Override
@@ -250,6 +250,7 @@ public class Model3032018AEAT extends Model303Base {
 		FlowPanel formFlowPanel = new FlowPanel();
 		diskForm.add(formFlowPanel);
 		formFlowPanel.add(mod303Hidden);
+		formFlowPanel.add(modHidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
@@ -375,7 +376,7 @@ public class Model3032018AEAT extends Model303Base {
 							@Override
 							protected void onAccept() {
 								if (getMod303().isFinished() || getMod303().isSent()) {
-									submitForm(VALIDATE_SEND_ACTION, getCert(), getPass(), getName(), getDocument());
+									submitForm(VALIDATE_PRINT_ACTION, getCert(), getPass(), getName(), getDocument());
 								} else {
 									getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 								}	

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.mod303;
+package com.esferalia.aon.gwt.fiscal.client;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;

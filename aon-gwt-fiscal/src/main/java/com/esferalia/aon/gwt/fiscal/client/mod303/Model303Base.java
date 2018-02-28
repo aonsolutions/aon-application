@@ -153,6 +153,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	protected Hidden mod303Hidden = new Hidden("mod303");
+	protected Hidden modHidden = new Hidden("mod");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
@@ -1225,15 +1226,21 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
+		modHidden.setValue(String.valueOf(getMod303().getId()));
 		domainIdHidden.setValue(String.valueOf(callback.getDomain()));
 		domainNameHidden.setValue(callback.getDomainName());
 		userHidden.setValue(callback.getUser());
+		certHidden.setValue(null);
+		passHidden.setValue(null);
+		nameHidden.setValue(null);
+		documentHidden.setValue(null);
 		diskForm.submit();
 	}
 	
 	protected void submitForm(String action, String cert, String pass, String document, String name) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
+		modHidden.setValue(String.valueOf(getMod303().getId()));
 		domainIdHidden.setValue(String.valueOf(callback.getDomain()));
 		domainNameHidden.setValue(callback.getDomainName());
 		userHidden.setValue(callback.getUser());

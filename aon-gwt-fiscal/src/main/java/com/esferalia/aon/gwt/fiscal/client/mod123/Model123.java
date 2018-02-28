@@ -11,8 +11,12 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
@@ -73,6 +77,8 @@ public class Model123 extends MainEntryPoint {
 
 //	static FiscalServiceAsync FISCAL_SERVICE;
 	static Mod123ServiceAsync SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+
 	
 	interface Model123Binder extends UiBinder<Widget, Model123> {
 	}
@@ -138,6 +144,8 @@ public class Model123 extends MainEntryPoint {
 	@UiField
 	Button printViaAeatButton;
 	@UiField
+	Button sendViaAeatButton;
+	@UiField
 	Button auditButton;
 	
 	@UiField
@@ -181,10 +189,15 @@ public class Model123 extends MainEntryPoint {
 	ScrollPanel infoContainer;
 
 	FormPanel diskForm;
-	Hidden mod123Hidden;
-	Hidden domainIdHidden;
-	Hidden domainNameHidden;
-	Hidden userHidden;
+	Hidden mod123Hidden = new Hidden("mod123");
+	Hidden modHidden = new Hidden("mod");
+	Hidden domainIdHidden = new Hidden("domainId");
+	Hidden domainNameHidden = new Hidden("domainName");
+	Hidden userHidden = new Hidden("user");
+	Hidden certHidden = new Hidden("cert");
+	Hidden passHidden = new Hidden("pass");
+	Hidden nameHidden = new Hidden("name");
+	Hidden documentHidden = new Hidden("document");
 
 	private abstract class FiscalModelCallback implements IFiscalModelCallback<Mod123> {
 		
@@ -269,14 +282,15 @@ public class Model123 extends MainEntryPoint {
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		FlowPanel formFlowPanel = new FlowPanel();
 		diskForm.add(formFlowPanel);
-		mod123Hidden = new Hidden("mod123");
 		formFlowPanel.add(mod123Hidden);
-		domainIdHidden = new Hidden("domainId");
+		formFlowPanel.add(modHidden);
 		formFlowPanel.add(domainIdHidden);
-		domainNameHidden = new Hidden("domainName");
 		formFlowPanel.add(domainNameHidden);
-		userHidden = new Hidden("user");
 		formFlowPanel.add(userHidden);
+		formFlowPanel.add(certHidden);
+		formFlowPanel.add(passHidden);
+		formFlowPanel.add(nameHidden);
+		formFlowPanel.add(documentHidden);
 		formContainer.add(diskForm);
 		
 		replacedNumber.setVisibleLength(13);
@@ -348,6 +362,9 @@ public class Model123 extends MainEntryPoint {
 							);
 		printViaAeatButton.setVisible(!currentMod.isNew() && currentMod.isAEAT() 
 				&& (currentMod.isFinished() || currentMod.isSent()));
+	//	sendViaAeatButton.setVisible(!currentMod.isNew() && currentMod.isAEAT() 
+	//			&& (currentMod.isFinished() || currentMod.isSent()));
+		sendViaAeatButton.setVisible(false);
 	}
 	
 	private void toolbarForTable() {
@@ -367,6 +384,7 @@ public class Model123 extends MainEntryPoint {
 		markAsFinishedButton.setVisible(false);
 		generateFileButton.setVisible(false);
 		printViaAeatButton.setVisible(false);
+		sendViaAeatButton.setVisible(false);
 	}
 	
 	private void select(Mod123 selected) {
@@ -839,9 +857,28 @@ public class Model123 extends MainEntryPoint {
 	private void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod123Hidden.setValue(String.valueOf(currentMod.getId()));
+		modHidden.setValue(String.valueOf(currentMod.getId()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
 		userHidden.setValue(getCurrentUser());
+		certHidden.setValue(null);
+		passHidden.setValue(null);
+		documentHidden.setValue(null);
+		nameHidden.setValue(null);
+		diskForm.submit();
+	}
+	
+	protected void submitForm(String action, String cert, String pass, String document, String name) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		mod123Hidden.setValue(String.valueOf(currentMod.getId()));
+		modHidden.setValue(String.valueOf(currentMod.getId()));
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
+		userHidden.setValue(getCurrentUser());
+		certHidden.setValue(cert);
+		passHidden.setValue(pass);
+		documentHidden.setValue(document);
+		nameHidden.setValue(name);
 		diskForm.submit();
 	}
 
@@ -867,6 +904,34 @@ public class Model123 extends MainEntryPoint {
 			});
 	}
 
+	@UiHandler("sendViaAeatButton")
+	void onSendViaAeatButtonClick(ClickEvent event) {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
+			@Override
+			public void onSuccess(AonData result) {
+				
+				CertificationPopup certPopup = new CertificationPopup(result, currentMod.getName(), currentMod.getDocument()) {
+					
+					@Override
+					protected void onCancel() {
+						
+					}
+					
+					@Override
+					protected void onAccept() {
+						submitForm(MODEL123_PRINT_AEAT, getCert(), getPass(), getName(), getDocument());
+					}
+				};
+				certPopup.center();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+	
+			}
+		});
+	}
+	
 	@UiHandler("confidential")
 	void onConfidentialClick(ClickEvent event) {
 		currentMod.setConfidential(confidential.getValue());

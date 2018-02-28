@@ -1,24 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,7 +21,6 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "Mod115 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model115PrintAEAT" })
 public class Mod115PrintAEAT extends HttpServlet {
@@ -38,14 +29,10 @@ public class Mod115PrintAEAT extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
 		try {
-			int id = Integer.parseInt(req.getParameter("mod115"));
-			String domainName = req.getParameter("domainName");
-			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = req.getParameter("user");
-			Mod115 mod115 = FISCAL.getMod115(domainName, domainId, user,id);
-
+			ModPrintAEAT print = new ModPrintAEAT(req);
+			Mod115 mod115 = FISCAL.getMod115(print.getDomainName(), print.getDomainId(), print.getUser(),print.getId());
+			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
 			try {
@@ -57,24 +44,28 @@ public class Mod115PrintAEAT extends HttpServlet {
 			Mod115Writer.fillWriter(mod115, writer);
 			
 			String fileName = AonFiscalFileUtils.getFileName(mod115); 
-			downloadPDF(req, resp, mod115, fileName, output.toByteArray());
-
+			downloadPDF(req, resp, mod115, fileName, output.toByteArray(), print);		
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}
-
 	}
-
+	
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			Mod115 mod115,String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-		String fileString = new String(content);
-		fileString = fileString.replace("'", " ");
-		fileString = fileString.replace("&", " ");
-		fileString = fileString.replace("\n", "");
-		fileString = fileString.replace("\r", "");
-		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
+			Mod115 mod115,String fileName, byte[] content, ModPrintAEAT print) throws IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, CertificateException, UnrecoverableKeyException {
+		String urlParameters = print.isCert()
+				? getCertUrlParameters(mod115, print.getEncodedFile(content), print.getName(), print.getDocument())
+				: getUrlParameters(mod115, print.getEncodedFile(content));
 		
-		String urlParameters = "HID=IE71150A" 
+		String request = print.isCert() 
+				? "https://www6.aeat.es/wlpl/PFTW-PICW/PresBasica"
+				// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
+				: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
+
+		print.download(resp, request, urlParameters);
+	}
+	
+	private String getUrlParameters(Mod115 mod115, String encodedFile) {
+		return "HID=IE71150A" 
 				+"&IDI=ES"
 				+"&LEV=000000000000"
 				+"&FIC=" + encodedFile
@@ -83,46 +74,40 @@ public class Mod115PrintAEAT extends HttpServlet {
 				+"&FIN=" 
 				+"&EJF=" + mod115.getYear() 
 				+"&MOD=115";
-		// Validacion e impresion
-		String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
-				
-		URL url = new URL(request);
-
-		SSLContext ctx = SSLContext.getInstance("TLS");
-		ctx.init(new KeyManager[0],
-				new TrustManager[] { new DefaultTrustManager() },
-				new SecureRandom());
-		SSLContext.setDefault(ctx);
-
-		HttpsURLConnection connection = (HttpsURLConnection) url
-				.openConnection();
-		connection.setHostnameVerifier(new HostnameVerifier() {
-			@Override
-			public boolean verify(String arg0, SSLSession arg1) {
-				return true;
-			}
-		});
-		connection.setDoOutput(true);
-		connection.setDoInput(true);
-		connection.setInstanceFollowRedirects(false);
-		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
-		connection.setRequestProperty("charset", "ISO-8859-1");
-		connection.setRequestProperty("Content-Length",
-				"" + Integer.toString(urlParameters.getBytes().length));
-		connection.setUseCaches(false);
-
-		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-		wr.writeBytes(urlParameters);
-		wr.flush();
-		wr.close();
-
-		DataInputStream input = new DataInputStream(connection.getInputStream());
-		
-		AonIOUtils.copy(input, resp.getOutputStream());
-		resp.flushBuffer();
-		connection.disconnect();
 	}
 	
+	private String getCertUrlParameters(Mod115 mod115, String encodedFile, String name, String document) {
+		return "HID=IE71150A"
+				+ "&FIRNIF=" + name
+				+ "&FIRNOMBRE=" + document
+				+ "&TIA=" + mod115.getDeclarationType().getValue()
+				+ "&NDC=" + mod115.getDocument()
+				+ "&NRC=" + "" // Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
+				+ "&ING=" + "" // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
+				+ "&NRR=" + ""
+				+ "&ICO=" + ""
+				+ "&NR1=" + ""
+				+ "&IN1=" + ""
+				+ "&NR2=" + ""
+				+ "&IN2=" + ""
+				+ "&NR3=" + ""
+				+ "&IN3=" + ""
+				+ "&NR4=" + ""
+				+ "&IN4=" + ""
+				+ "&NR5=" + ""
+				+ "&IN5=" + ""
+				+ "&NR6=" + ""
+				+ "&IN6=" + ""
+				+ "&NR7=" + ""
+				+ "&IN7=" + ""
+				+ "&CMN=" + ""
+				+ "&LOT=" + "0"
+				+ "&IDI=" + "ES"
+				+ "&LEV=" + "000000000000"
+				+ "&F01=" + encodedFile
+				+ "&PUN=" + "00000000"
+				+ "&TXT=" + ""
+				+ "&FIR=" + "FirmaBasica"
+				+ "&FIN=" + "F";
+	}
 }
