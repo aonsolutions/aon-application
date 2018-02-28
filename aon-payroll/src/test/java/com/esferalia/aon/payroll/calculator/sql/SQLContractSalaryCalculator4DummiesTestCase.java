@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator4Dummies;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -73,7 +74,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		ISalary salary = calculator.calculate(ctx);
@@ -116,8 +117,8 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary> calculator = 
-				new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator4Dummies<Salary> calculator = 
+				new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		Salary salary = calculator.calculate(ctx);
@@ -167,8 +168,8 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary> calculator = 
-				new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator4Dummies<Salary> calculator = 
+				new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		Salary salary = calculator.calculate(ctx);
@@ -221,7 +222,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		ISalary salary = calculator.calculate(ctx);
@@ -271,7 +272,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		Salary salary = calculator.calculate(ctx);
@@ -319,8 +320,8 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary> calculator = 
-				new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator4Dummies<Salary> calculator = 
+				new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		Salary salary = calculator.calculate(ctx);		
@@ -371,7 +372,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		ISalary salary = calculator.calculate(ctx);
@@ -422,7 +423,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		Salary salary = calculator.calculate(ctx);
@@ -485,7 +486,7 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		Salary salary = calculator.calculate(ctx);

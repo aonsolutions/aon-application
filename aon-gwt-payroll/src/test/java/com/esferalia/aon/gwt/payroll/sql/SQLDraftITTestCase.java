@@ -34,6 +34,7 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator4Dummies;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
@@ -190,7 +191,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 		// Cret@ 
 		ctx = EmployeesServiceHelper.getSalaryCalculatorContext(connection,
 				draft, null);
-		calculator = new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
+		calculator = new ContractSalaryCalculator4Dummies<Salary>();
 
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		calculator.setSalaryBuilder(jooqSalaryBuilder);

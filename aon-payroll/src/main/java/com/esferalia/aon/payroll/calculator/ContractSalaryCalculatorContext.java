@@ -24,6 +24,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.OutOfDateException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
@@ -98,7 +99,7 @@ public class ContractSalaryCalculatorContext extends
 	// ------------------------------------------
 	@Override
 	public ISalary getSalary() throws SalaryException {
-		ISalaryCalculator<Salary> sc = new ContractSalaryCalculator<Salary>();
+		ISalaryCalculator<Salary, ISalaryCalculatorContext> sc = new ContractSalaryCalculator<Salary>();
 		sc.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = sc.calculate(this.ctx);
 		return salary;

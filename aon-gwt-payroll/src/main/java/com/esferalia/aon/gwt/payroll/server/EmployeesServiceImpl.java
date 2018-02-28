@@ -152,6 +152,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator4Dummies;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
@@ -1001,7 +1002,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
-			calculate(salaryDraft, new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<ISalary>());
+			calculate(salaryDraft, new ContractSalaryCalculator4Dummies<ISalary>());
 			return salaryDraft;
 		} finally {
 			releaseFacesContext();
