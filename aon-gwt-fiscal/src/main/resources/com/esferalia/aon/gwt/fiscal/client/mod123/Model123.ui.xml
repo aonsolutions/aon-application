@@ -92,8 +92,8 @@
 											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}">
 												<g:Button ui:field="printViaAeatButton" text="{msg.printViaAeat}"
 													styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconAeat}" />
-												<g:Button ui:field="sendViaAeatButton" text=""
-													styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconAeat}" />	
+												<g:Button ui:field="sendViaAeatButton" text="" title="Certificado"
+													styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconAeatSigned}" />	
 											</td>
 											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonTextRight}">
 												<g:Button ui:field="commentsButton" text="{msg.comments}" 

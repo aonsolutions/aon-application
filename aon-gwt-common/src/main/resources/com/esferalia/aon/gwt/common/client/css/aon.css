@@ -896,6 +896,15 @@ input[type="checkbox"]:focus + label {
 	background-position: center left;
 }
 
+@sprite .aon-icon-aeat-signed {
+	gwt-image: "aonAeatSigned";
+	width: auto;
+	background-color: transparent;
+	background-attachment: scroll;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
 @sprite .aon-icon-lock {
 	gwt-image: "aonIconLock";
 	width: auto;

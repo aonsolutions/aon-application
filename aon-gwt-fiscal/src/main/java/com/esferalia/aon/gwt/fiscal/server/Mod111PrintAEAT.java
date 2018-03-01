@@ -57,7 +57,7 @@ public class Mod111PrintAEAT extends HttpServlet {
 				: getUrlParameters(mod111, print.getEncodedFile(content));
 		
 		String request = print.isCert() 
-				? "https://www6.aeat.es/wlpl/PFTW-PICW/PresBasica"
+				? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica"
 				// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
 				: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
 

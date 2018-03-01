@@ -57,7 +57,7 @@ public class Mod303PrintAEAT extends HttpServlet {
 				: getUrlParameters(mod303, print.getEncodedFile(content));
 	
 		String request = print.isCert() 
-				? "https://www6.aeat.es/wlpl/PFTW-PICW/PresBasica"
+				? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica"
 				// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
 				: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
 
@@ -70,8 +70,8 @@ public class Mod303PrintAEAT extends HttpServlet {
 				+ "&LEV=000000000000"
 				+"&FIC=" + encodedFile
 				+"&RUT="
-				+"&FIN=" 
-				+"&EJF=" + mod303.getYear() 
+				+"&FIN="
+				+"&EJF=" + mod303.getYear()
 				+"&MOD=303";
 	}
 	

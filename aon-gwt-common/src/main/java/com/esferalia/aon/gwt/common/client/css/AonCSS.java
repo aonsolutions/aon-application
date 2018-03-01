@@ -501,6 +501,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-icon-aeat")
 	String aonIconAeat();
+	
+	@ClassName("aon-icon-aeat-signed")
+	String aonIconAeatSigned();
 
 	@ClassName("aon-icon-aeat-bw")
 	String aonIconAeatBW();

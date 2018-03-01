@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -361,9 +362,9 @@ public class Model115 extends MainEntryPoint {
 							);
 		printViaAeatButton.setVisible(!currentMod.isNew() && currentMod.isAEAT() 
 				&& (currentMod.isFinished() || currentMod.isSent()));
-	//	sendViaAeatButton.setVisible(!currentMod.isNew() && currentMod.isAEAT() 
-	//			&& (currentMod.isFinished() || currentMod.isSent()));
-		sendViaAeatButton.setVisible(false);
+		sendViaAeatButton.setVisible(!currentMod.isNew() && currentMod.isAEAT() 
+				&& (currentMod.isFinished() || currentMod.isSent()));
+		sendViaAeatButton.getElement().getStyle().setPosition(Position.FIXED);
 	}
 	
 	private void toolbarForTable() {

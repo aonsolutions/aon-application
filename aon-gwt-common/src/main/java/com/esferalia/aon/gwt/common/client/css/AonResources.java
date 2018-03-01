@@ -145,6 +145,8 @@ public interface AonResources extends ClientBundle, Images {
 	ImageResource aonAeatHeaderImage();
 	@Source("images/aon-aeat.png")
 	ImageResource aonAeat();
+	@Source("images/aon-aeat-signed.png")
+	ImageResource aonAeatSigned();
 	@Source("images/aon-aeat-bw.png")
 	ImageResource aonAeatBW();
 	
