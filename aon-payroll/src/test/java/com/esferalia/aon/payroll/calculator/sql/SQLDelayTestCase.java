@@ -458,7 +458,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			.forEach( delay -> 
 				{
 					Double cgcBase = delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.summingDouble(expression-> Double.parseDouble(expression)));
-					Assert.assertEquals(100.00, cgcBase);
+					Assert.assertEquals(100.00, cgcBase, DELTA);
 					
 					List<ContextData> cgcBases = delay.getContextData().get(ContextVariable.CGC_BASE.getName());
 					Assert.assertEquals(13, cgcBases.size());
