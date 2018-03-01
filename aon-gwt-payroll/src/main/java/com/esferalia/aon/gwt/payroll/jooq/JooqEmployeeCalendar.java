@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.client.Quartet;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.google.gwt.user.client.Window;
 
 public class JooqEmployeeCalendar {
 
@@ -54,6 +53,8 @@ public class JooqEmployeeCalendar {
 	private static EmployeeCalendarData getEmployeeInformation(DSLContext dslContext, Integer contract) throws IllegalArgumentException {
 
 		EmployeeCalendarData employeeInfoCalendar;
+		
+		System.out.println("Contract :"+contract);
 		
 		ArrayList<Quartet<Date, Date, String, String>> contractHoursList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractExtraHoursList = new ArrayList<Quartet<Date, Date, String, String>>();
@@ -107,9 +108,9 @@ public class JooqEmployeeCalendar {
 //			  .limit(1)
 //			  .fetchOne().get(CONTRACT_DATA.EXPRESSION);
 		
-		System.out.println("CONTRAC_DATA JOURNEY INFO BD :"+journeyTypeEmployee);
+		//System.out.println("CONTRAC_DATA JOURNEY INFO BD :"+journeyTypeEmployee);
 		fullTimeJourney = isFullTimeJourney(journeyTypeEmployee);
-		System.out.println("JORNADA COMPLETA BD :"+fullTimeJourney);
+		//System.out.println("JORNADA COMPLETA BD :"+fullTimeJourney);
 		
 		// ---------------------------------------------- HORAS SEMANALES ---------------------------------------------------------
 		
@@ -134,6 +135,8 @@ public class JooqEmployeeCalendar {
 			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
 			.setName(r.get(CONTRACT_DATA.NAME))
 			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+			
+			//System.out.println(r.get(CONTRACT_DATA.NAME)+" : "+r.get(CONTRACT_DATA.EXPRESSION));
 			
 			contractHoursList.add(quarterEmployeeHourInfo);
 		}
@@ -187,7 +190,8 @@ public class JooqEmployeeCalendar {
 						contractNonWorkingDaysList.add((byte) 1);
 					}else if (values.size() > 1){
 						contractNonWorkingDaysList.add((byte) 0);
-					}else if (/*null == values ||*/ values.isEmpty() || "-1.0".equals(values.get(0))){
+					//}else if (/*null == values ||*/ values.isEmpty() || "-1.0".equals(values.get(0))){
+					}else if (/*null == values ||*/ values.isEmpty() || values.get(0) == null){
 						contractNonWorkingDaysList.add((byte) 1);
 					}else{
 						contractNonWorkingDaysList.add((byte) 0);
@@ -381,6 +385,9 @@ public class JooqEmployeeCalendar {
 						endDateHour = DateUtils.copyDateOnly(entry.getKey());
 				}
 				
+				System.out.println("StartDate :"+startDateHour+", endDate :"+endDateHour);
+				System.out.println("UPDATE HOURS MAP SIZE :"+updateHoursMap.size());
+				
 				for (int i=0; i<7; i++){
 					java.util.Date  date = DateUtils.copyDateOnly(startDateHour);
 					DateUtils.addDays2Date(date, i);
@@ -390,19 +397,51 @@ public class JooqEmployeeCalendar {
 					java.util.Date auxstartDateHour = DateUtils.copyDateOnly(date);
 					Double startHour = updateHoursMap.get(auxstartDateHour);
 					
+//					if(null == startHour){
+//						System.out.println("FALLO");
+//					}
+					
 					while (date.before(endDateHour) && updateHoursMap.containsKey(date)){
-						if(!startHour.equals(updateHoursMap.get(date))){
+						Double actualDateHour = updateHoursMap.get(date);
+						if((startHour == null && actualDateHour != null) || (startHour != null && actualDateHour == null)){
+							
 							Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
 							Date sqlendDateHour = new Date(date.getTime());
-							
-							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+							if(startHour == null)
+								dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 									CONTRACT_DATA.END_DATE)
-									.values(domain, dayOfWeek, contract, Double.toString(startHour), 
+									.values(domain, dayOfWeek, contract, null, 
 											sqlstartDateHour, sqlendDateHour).execute();
-						
+							else
+								dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+										CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+										CONTRACT_DATA.END_DATE)
+										.values(domain, dayOfWeek, contract, Double.toString(startHour), 
+												sqlstartDateHour, sqlendDateHour).execute();
+							
 							startHour = updateHoursMap.get(date);
 							auxstartDateHour = DateUtils.copyDateOnly(date);
+							
+							DateUtils.addDays2Date(date, 7);
+							continue;
+							
+						}else if(startHour != null && actualDateHour != null){
+							
+							if(startHour.doubleValue() != actualDateHour.doubleValue()){
+							
+								Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
+								Date sqlendDateHour = new Date(date.getTime());
+								
+								dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+											CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+											CONTRACT_DATA.END_DATE)
+											.values(domain, dayOfWeek, contract, Double.toString(startHour), 
+													sqlstartDateHour, sqlendDateHour).execute();
+							
+								startHour = updateHoursMap.get(date);
+								auxstartDateHour = DateUtils.copyDateOnly(date);
+							}
 						}
 						
 						DateUtils.addDays2Date(date, 7);
@@ -416,11 +455,18 @@ public class JooqEmployeeCalendar {
 					else
 						sqlendDateHour = new Date(realEndDate.getTime());
 					
-					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+					if(startHour == null)
+						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 							CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 							CONTRACT_DATA.END_DATE)
-							.values(domain, dayOfWeek, contract, Double.toString(startHour),
+							.values(domain, dayOfWeek, contract, null,
 									sqlstartDateHour, sqlendDateHour).execute();
+					else
+						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+								CONTRACT_DATA.END_DATE)
+								.values(domain, dayOfWeek, contract, Double.toString(startHour),
+										sqlstartDateHour, sqlendDateHour).execute();
 	
 				}
 			}

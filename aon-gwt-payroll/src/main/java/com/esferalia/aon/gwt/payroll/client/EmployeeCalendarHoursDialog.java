@@ -114,7 +114,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 
 	private final SuggestBox suggestOpts[] = new SuggestBox[7];
 	private final HorizontalPanel blockDays[] = new HorizontalPanel[7];
-	private double listOldHours[] = new double[7];
+	private Double listOldHours[] = new Double[7];
 	private OrderedMultiSelectionModel<Date> selectedDates;
 	private EmployeeCalendarDraftObjectData calendarEmployeeInfo;
 	
@@ -248,47 +248,89 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 					suggestOpts[c].setValue(value+"");
 					listOldHours[c] = value;
 				}else{
-					suggestOpts[c].setValue("");
-					listOldHours[c] = -1;
+					suggestOpts[c].setValue("null");
+					listOldHours[c] = null;
 				}
 				
 			} catch (Exception e) {
-				Window.alert("Fallo!"+", "+c + "," + e.getMessage());
+				//Window.alert("Fallo!"+", "+c + "," + e.getMessage());
 			}
 		}
 	}
 
 	protected abstract void onAccept();
 	
-	public double[] getListOldHours() {
+	public Double[] getListOldHours() {
 		return listOldHours;
 	}
 	
-	public double getMondayHours(){
-		return Double.parseDouble(mondayHoursOpt.getValue());
+	public Double getMondayHours(){
+		Double hour = null;
+		try{
+			hour = Double.parseDouble(mondayHoursOpt.getValue());
+		}catch (NumberFormatException e) {
+			
+		}
+		return hour;
 	}
 	
-	public double getTuesdayHours(){
-		return Double.parseDouble(tuesdayHoursOpt.getValue());
+	public Double getTuesdayHours(){
+		Double hour = null;
+		try{
+			hour = Double.parseDouble(tuesdayHoursOpt.getValue());
+		}catch (NumberFormatException e) {
+			
+		}
+		return hour;
 	}
 	
-	public double getWednesdayHours(){
-		return Double.parseDouble(wednesdayHoursOpt.getValue());
+	public Double getWednesdayHours(){
+		Double hour = null;
+		try{
+			hour = Double.parseDouble(wednesdayHoursOpt.getValue());
+		}catch (NumberFormatException e) {
+			
+		}
+		return hour;
 	}
 	
-	public double getThursdayHours(){
-		return Double.parseDouble(thursdayHoursOpt.getValue());
+	public Double getThursdayHours(){
+		Double hour = null;
+		try{
+			hour = Double.parseDouble(thursdayHoursOpt.getValue());
+		}catch (NumberFormatException e) {
+			
+		}
+		return hour;
 	}
 	
-	public double getFridayHours(){
-		return Double.parseDouble(fridayHoursOpt.getValue());
+	public Double getFridayHours(){
+		Double hour = null;
+		try{
+			hour = Double.parseDouble(fridayHoursOpt.getValue());
+		}catch (NumberFormatException e) {
+			
+		}
+		return hour;
 	}
 	
-	public double getSaturdayHours(){
-		return Double.parseDouble(saturdayHoursOpt.getValue());
+	public Double getSaturdayHours(){
+		Double hour = null;
+		try{
+			hour = Double.parseDouble(saturdayHoursOpt.getValue());
+		}catch (NumberFormatException e) {
+			
+		}
+		return hour;
 	}
 	
-	public double getSundayHours(){
-		return Double.parseDouble(sundayHoursOpt.getValue());
+	public Double getSundayHours(){
+		Double hour = null;
+		try{
+			hour = Double.parseDouble(sundayHoursOpt.getValue());
+		}catch (NumberFormatException e) {
+			
+		}
+		return hour;
 	}
 }

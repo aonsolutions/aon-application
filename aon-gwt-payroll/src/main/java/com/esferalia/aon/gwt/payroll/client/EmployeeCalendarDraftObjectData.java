@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -435,12 +436,12 @@ public class EmployeeCalendarDraftObjectData {
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	}
 	
-	public double getHourByDay (Date day){
+	public Double getHourByDay (Date day){
 		Double hourDayDraft = draftMapDaysHour.get(day);
 		if (hourDayDraft != null)
 			return hourDayDraft;
 		else
-			return mapDaysHour.getOrDefault(day, (double) 0);
+			return mapDaysHour.getOrDefault(day, null);
 	}
 	
 	public void setHourByDay (Date day, Double hour){
@@ -476,7 +477,7 @@ public class EmployeeCalendarDraftObjectData {
 	
 	// ----------- SET SPECIAL DAYS -----------
 	
-	public void setNonWorkingDays(List<Date> nonWorkingDays, DayType nonWorkingType, double hour) {
+	public void setNonWorkingDays(List<Date> nonWorkingDays, DayType nonWorkingType, Double hour) {
 		List<Undoable> undos = new ArrayList<Undoable>();
 		for (Date day : nonWorkingDays){
 			DayType oldType = draftMapDaysType.put(day, nonWorkingType);
@@ -540,12 +541,19 @@ public class EmployeeCalendarDraftObjectData {
 	public ArrayList<StringVariable> getVariablesListCE(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		
+		if ( draftMapDaysCoefficientEre.isEmpty() )
+			return variablesList;
+		
 		List<Date> orderedDraftDatesCE = draftMapDaysCoefficientEre.keySet().stream().collect(Collectors.toList());
 		Collections.sort(orderedDraftDatesCE);
 		
 		CalendarVariable var = null;
 		Date dateBefore = null;
 		String name = "COEFICIENTE_ERE";
+		
+		if(null == endDate)
+			endDate = DateUtils.copyDateOnly(orderedDraftDatesCE.get(orderedDraftDatesCE.size() - 1));
 		
 		for(Date date : orderedDraftDatesCE){
 			
@@ -563,6 +571,7 @@ public class EmployeeCalendarDraftObjectData {
 					variablesList.add(var);
 				}	
 				
+				dateBefore = new Date();
 				dateBefore = DateUtils.copyDateOnly(date);
 				
 				var = new CalendarVariable();
@@ -585,6 +594,10 @@ public class EmployeeCalendarDraftObjectData {
 	public ArrayList<StringVariable> getVariablesListStrike(Date startDate, Date endDate) {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
+		
+		if ( draftMapDaysCoefficientStrike.isEmpty() )
+			return variablesList;
+		
 		List<Date> orderedDraftDatesCS = draftMapDaysCoefficientStrike.keySet().stream().collect(Collectors.toList());
 		Collections.sort(orderedDraftDatesCS);
 		
@@ -592,6 +605,9 @@ public class EmployeeCalendarDraftObjectData {
 		Date dateBefore = null;
 		String name = "DIAS_HUELGA";
 		Integer contStrikeDays = 0;
+		
+		if(null == endDate)
+			endDate = DateUtils.copyDateOnly(orderedDraftDatesCS.get(orderedDraftDatesCS.size() - 1));
 		
 		for(Date date : orderedDraftDatesCS){
 			
@@ -626,7 +642,6 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		if(var != null){
-			//Window.alert(var.getName()+", StartDate :"+var.getStartDate()+", EndDate :"+var.getEndDate()+", Exp :"+var.getExpression());
 			variablesList.add(var);
 		}
 		
@@ -638,12 +653,20 @@ public class EmployeeCalendarDraftObjectData {
 
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
 		List<Date> orderedDraftDatesHolidays = getHolidaysDates();
+		
+		if(orderedDraftDatesHolidays.isEmpty())
+			return variablesList;
+		
 		Collections.sort(orderedDraftDatesHolidays);
 		
 		CalendarVariable var = null;
 		Date dateBefore = null;
 		String name = "DIAS_VACACIONES";
 		Integer contHolidayDays = 0;
+		
+		if(null == endDate)
+			endDate = DateUtils.copyDateOnly(orderedDraftDatesHolidays.get(orderedDraftDatesHolidays.size() - 1));
+		
 		
 		for(Date date : orderedDraftDatesHolidays){
 			
@@ -678,8 +701,6 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		if(var != null){
-			//Window.alert("HOLIDAY = Name :"+var.getName()+", StartDate :"+ var.getStartDate()+", EndDate :"+ var.getEndDate()+", Exp :"+var.getExpression());
-			
 			variablesList.add(var);	
 		}
 		
@@ -689,7 +710,12 @@ public class EmployeeCalendarDraftObjectData {
 	public ArrayList<StringVariable> getVariablesListExtraHours(Date draftStartDate, Date draftEndDate) {
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
 		
+		if(draftMapExtraHours.isEmpty())
+			return variablesList;
+		
 		CalendarVariable var = null;
+		if(null == draftEndDate)
+			draftEndDate = DateUtils.copyDateOnly(DateUtils.getLastDayOfMonth(draftStartDate));
 		
 		for (Entry<Date, Double> e : draftMapExtraHours.entrySet()){					
 			if(!e.getKey().equals(draftStartDate))
@@ -705,7 +731,6 @@ public class EmployeeCalendarDraftObjectData {
 			
 			variablesList.add(var);
 			
-			//Window.alert("CALENDAR = Name :"+var.getName()+", StartDate :"+ var.getStartDate()+", EndDate :"+ var.getEndDate()+", Exp :"+var.getExpression());
 		}
 		
 		return variablesList;
@@ -720,11 +745,11 @@ public class EmployeeCalendarDraftObjectData {
 			return variablesList;
 		
 		Date lastDraftDate = new Date(0);
-		for ( Date date : draftMapDaysHour.keySet() )
-			if ( date.after(lastDraftDate) )
+		for (Date date : draftMapDaysHour.keySet())
+			if (date.after(lastDraftDate))
 				lastDraftDate = DateUtils.copyDateOnly(date);
 		
-		if ( startDate.after(lastDraftDate))
+		if (startDate.after(lastDraftDate))
 			return variablesList;
 		
 		if ( endDate == null )
@@ -736,22 +761,29 @@ public class EmployeeCalendarDraftObjectData {
 			
 			Date date = DateUtils.copyDateOnly(startDate);
 			DateUtils.addDays2Date(date, day);
-			String name = calculateDayOfWeek (date.getDay());
+			String name = calculateDayOfWeek(date.getDay());
 			
 			CalendarVariable var = null ;
-			for(Date start = startDate ;
-				date.compareTo(endDate) <= 0 ;
-				start = DateUtils.addDays2Date(date, 7) ){
+			for(Date start = startDate ; date.compareTo(endDate) <= 0 ; start = DateUtils.addDays2Date(date, 7) ){
 				
-				if ( !draftMapDaysHour.containsKey(date) ){
+				if (!draftMapDaysHour.containsKey(date)){
 					var = null;
 					continue;
 				}
 				
 				Double hours = draftMapDaysHour.get(date);
-				if ( var != null && var.getValue().equals(Double.toString(hours))) {
-					var.setEndDate(DateUtils.copyDateOnly(date));
-					continue;
+				if(null == hours){
+					if ( var != null && var.getValue() == null) {
+						DateUtils.resetTime(date); //Para no pasarnos al siguiente mes
+						var.setEndDate(DateUtils.copyDateOnly(date));
+						continue;
+					}
+				}else{
+					if ( var != null && var.getValue().equals(Double.toString(hours))) {
+						DateUtils.resetTime(date); //Para no pasarnos al siguiente mes
+						var.setEndDate(DateUtils.copyDateOnly(date));
+						continue;
+					}
 				}
 				
 				var = new CalendarVariable();
@@ -759,21 +791,32 @@ public class EmployeeCalendarDraftObjectData {
 				var.setValue(hours);
 				var.setImplicit(false);
 				var.setScope(Scope.SALARY); // DRAFT
-				var.setExpression(Double.toString(hours));
+				if(null == hours)
+					var.setExpression(null);
+				else
+					var.setExpression(Double.toString(hours));
+				DateUtils.resetTime(date); //Para no pasarnos al siguiente mes
 				var.setEndDate(DateUtils.copyDateOnly(date));
 				var.setStartDate(DateUtils.copyDateOnly(start));
+				
 				queue.addLast(var);
 				
 			}
 			
-			if ( var != null )
+			if ( var != null ){
+				DateUtils.resetTime(endDate); //Para no pasarnos al siguiente mes
 				var.setEndDate(endDate);
+			}
 			
 			variablesList.addAll(queue);
 			
 		}
 		
 		editDatesVariablesList(variablesList, startDate, endDate);
+		
+		//TODO: SI LO GUARDAS DESDE EL BORRADOR LO GUARDA PARA UN DIA MAS QUE LA FECHA FIN
+//		for(StringVariable var : variablesList)
+//			Window.alert(var.getName()+" = "+var.getExpression()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
 		
 		return variablesList;
 	}
@@ -890,8 +933,16 @@ public class EmployeeCalendarDraftObjectData {
 					
 					DateUtils.addDays2Date(endDate, 1);
 					
-					Double hour = Double.parseDouble(quarterHours.getExpression());
+					Double hour = null;
+					try{
+						hour = Double.parseDouble(quarterHours.getExpression());
+					}catch (NumberFormatException e) {
+						
+					}
+					
 					String stringHourDay = quarterHours.getName();
+					
+					//Window.alert(stringHourDay+" : "+hour);
 					
 					@SuppressWarnings("deprecation")
 					int initialDay = startDate.getDay();
@@ -912,7 +963,8 @@ public class EmployeeCalendarDraftObjectData {
 						DateUtils.resetTime(date);
 						mapDaysHour.put(date, hour);
 						
-						if(-1 == hour){
+						//if(-1 == hour){
+						if(null == hour){
 							Date dateType = DateUtils.copyDateOnly(auxDate);
 							mapDaysType.put(dateType, DayType.NOWORKINGDAY);
 						}else{

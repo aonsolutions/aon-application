@@ -21,7 +21,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -385,7 +384,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private final CalendarTypeDayCell cellsType[][] = new CalendarTypeDayCell[25][38];
 	private final Date cellsDates[][] = new Date[25][38];
 		
-	private double listOldHours[] = new double[7];
+	private Double listOldHours[] = new Double[7];
 	
 	private EmployeeCalendarDraftObjectData calendarEmployeeInfo;
 	private Integer startEmployeeContract;
@@ -1134,7 +1133,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				TextBox textHour = new TextBox();
 				DoubleBox doubleHour = new DoubleBox();
 				
-				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+				//if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay) == null){
 					textHour.setValue("-");
 				}else{
 					doubleHour.setEnabled(false);
@@ -1145,7 +1145,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					doubleHour.setEnabled(false);
 				}
 				
-				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+				//if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==null){
 					int hourRow = row + 1;
 					if (hourRow % 4 == 0)
 						textHour.setStyleName(style.doubleBoxDisableStyle2());
@@ -1169,7 +1170,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				labelDay.addStyleName(style.pointer());
 				calendarGrid.setWidget(row, i, labelDay);
 				
-				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+				//if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+				if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==null){
 					calendarGrid.setWidget(row + 1, i, textHour);
 				}else{
 					calendarGrid.setWidget(row + 1, i, doubleHour);
@@ -1179,7 +1181,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				cells[row][i] = new DayCell();
 				cells[row + 1][i] = new HourCell();
 				
-				if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+				//if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+				if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==null){
 					calendarGrid.getCellFormatter().addStyleName(row+1, i, style.setOutOfContractStyle());
 					calendarGrid.getWidget(row+1, i).addStyleName(style.setOutOfContractStyle());
 				}
@@ -1214,7 +1217,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			TextBox textHour = new TextBox();
 			DoubleBox doubleHour = new DoubleBox();
 			
-			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+			//if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==null){
 				textHour.setValue("-");
 			}else{
 				doubleHour.setEnabled(false);
@@ -1225,7 +1229,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				doubleHour.setEnabled(false);
 			}
 			
-			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+			//if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==null){
 				int hourRow = row + 1;
 				if (hourRow % 4 == 0)
 					textHour.setStyleName(style.doubleBoxDisableStyle2());
@@ -1247,7 +1252,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			calendarGrid.setWidget(row, 7 + actualDayOfWeek, labelDay);
 			
-			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+			//if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+			if (DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==null){
 				calendarGrid.setWidget(row + 1, 7 + actualDayOfWeek, textHour);
 			}else{
 				calendarGrid.setWidget(row + 1, 7 + actualDayOfWeek, doubleHour);
@@ -1257,7 +1263,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			cells[row][7 + actualDayOfWeek] = new DayCell();
 			cells[row + 1][7 + actualDayOfWeek] = new HourCell();
 			
-			if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+			//if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==-1.0){
+			if (DayType.BAJAIT == dayType || DayType.NOWORKINGDAY == dayType || calendarEmployeeInfo.getHourByDay(actualDay)==null){
 				calendarGrid.getCellFormatter().addStyleName(row+1, 7 + actualDayOfWeek, style.setOutOfContractStyle());
 				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).addStyleName(style.setOutOfContractStyle());
 			}
@@ -1304,8 +1311,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		labelDay.setText(Double.toString(monthExtraHoursRound));
 		labelDay.setStyleName(style.cellStyle());
 		calendarGrid.setWidget(row, 38, labelDay);
-		cells[row][38] = new NoneCell();
-		
+		cells[row][38] = new NoneCell();	
 	}
 
 	private void setMonthHours(int row, double monthHours) {
@@ -1324,8 +1330,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		resultado = (resultado-parteEntera)*Math.pow(10, decimalNum);
 		resultado = Math.round(resultado);
 		resultado = (resultado/Math.pow(10, decimalNum))+parteEntera;
-		return resultado;
-		
+		return resultado;	
 	}
 
 	/**
@@ -1517,8 +1522,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				row == 19 || row == 21 || row == 23;
 	}
 	
-	private void updateHours(double mondayHour, double tuesdayHour, double wendsdayHour, double thursdayHour, double fridayHour, 
-			double saturdayHour, double sundayHour) {
+	private void updateHours(Double mondayHour, Double tuesdayHour, Double wendsdayHour, Double thursdayHour, Double fridayHour, 
+			Double saturdayHour, Double sundayHour) {
 
 		if(selectedDates.getSelectedList().size() == 1){
 			for (Date date : selectedDates.getSelectedList()) {
@@ -1577,11 +1582,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		selectedDates.getSelectedList().clear();
 	}
 	
-	private void checkNonWorkingDay(Date date, double hora) {
-		if(hora == Double.parseDouble("-1")){
+	private void checkNonWorkingDay(Date date, Double hora) {
+		//if(hora == Double.parseDouble("-1")){
+		if(hora == null){
 			calendarEmployeeInfo.setTypeByDay(date, DayType.NOWORKINGDAY);
 		}
-		if(hora != Double.parseDouble("-1")){
+		//if(hora != Double.parseDouble("-1")){
+		if(hora != null){
 			Integer pos = calculateDatePosition(date);
 			if(cellsType[calculatePositionRow(pos)][calculatePositionCol(pos)].getType().equals(DayType.NOWORKINGDAY))
 				calendarEmployeeInfo.setTypeByDay(date, DayType.NOTYPEDAY);
@@ -1657,7 +1664,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		return date.getDay() == 0 || date.getDay() == 6;
 	}
 
-	private void applyNonWorkingDayTypeSelectedDates(double hour, DayType nonWorkingDay) {
+	private void applyNonWorkingDayTypeSelectedDates(Double hour, DayType nonWorkingDay) {
 		cleanStyles(selectedDates.getSelectedList());
 		List<Date> nonWorkingDatesList = new LinkedList<Date>();
 		
@@ -1835,7 +1842,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		applyDayTypeSelectedDates(DayType.HOLIDAY);
 	}
 	private void addNoWorkingDay() {
-		applyNonWorkingDayTypeSelectedDates(-1.00, DayType.NOWORKINGDAY);
+		//applyNonWorkingDayTypeSelectedDates(-1.00, DayType.NOWORKINGDAY);
+		applyNonWorkingDayTypeSelectedDates(null, DayType.NOWORKINGDAY);
 	}
 	private void addStrikeDay(double cs) {
 		applyStrikeDayTypeSelectedDates(cs, DayType.STRIKEDAY);
@@ -1874,7 +1882,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, col).removeStyleName(style.nonWorkingStyle());
 				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 				Double hour = calendarEmployeeInfo.getHourByDay(date);
-				if (-1 == hour)
+				//if (-1 == hour)
+				if (null == hour)
 					hour = 0.0;
 				compositeH.put(date, hour);
 				compositeT.put(date, DayType.NOTYPEDAY);
