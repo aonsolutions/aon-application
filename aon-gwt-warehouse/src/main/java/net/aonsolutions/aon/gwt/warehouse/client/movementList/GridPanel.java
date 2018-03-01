@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.warehouse.client.stockForecast;
+package net.aonsolutions.aon.gwt.warehouse.client.movementList;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -52,11 +52,11 @@ public class GridPanel extends Composite {
 	@UiField(provided = true)
 	CustomDataGrid<JsStockStat> dataGrid; 
 	
-	StockForecast parent;
+	MovementList parent;
 	API API;
 	Integer cont = 0;
 	
-	public GridPanel(StockForecast parent, LinkedList<JsStockStat> linkedList) {
+	public GridPanel(MovementList parent, LinkedList<JsStockStat> linkedList) {
 		this.parent = parent;
 		this.API = parent.getAPI(); 
 		
@@ -131,7 +131,7 @@ public class GridPanel extends Composite {
 		NumberFormat numberFormat = NumberFormat.getDecimalFormat().overrideFractionDigits(2);
 		
 		/** Product **/
-		Column<JsStockStat, String> nameColumn = new Column<JsStockStat, String>(new TextCell()) {
+		Column<JsStockStat, String> productColumn = new Column<JsStockStat, String>(new TextCell()) {
 
 			@Override
 			public String getValue(JsStockStat object) {
@@ -139,9 +139,9 @@ public class GridPanel extends Composite {
 			}
 		
 		};
-		nameColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		nameColumn.setSortable(true); 
-		sortHandler.setComparator(nameColumn,new Comparator<JsStockStat>() {
+		productColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		productColumn.setSortable(true); 
+		sortHandler.setComparator(productColumn,new Comparator<JsStockStat>() {
 			
 			@Override
 			public int compare(JsStockStat o1, JsStockStat o2) {
@@ -151,7 +151,26 @@ public class GridPanel extends Composite {
 			}
 		});
 		
-		/** Consumo **/
+		/** Entradas **/
+		Column<JsStockStat,Number> inputsColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
+			
+			@Override
+			public Number getValue(JsStockStat object) {
+				return object.getInputs()!=null ? object.getInputs() : null;
+			}
+		};
+		
+		inputsColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
+		inputsColumn.setSortable(true); 
+		sortHandler.setComparator(inputsColumn,new Comparator<JsStockStat>() {
+			
+			@Override
+			public int compare(JsStockStat o1, JsStockStat o2) {
+				return o1.getInputs().compareTo(o2.getInputs());
+			}
+		});
+		
+		/** Salidas **/
 		Column<JsStockStat,Number> outputsColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
 			
 			@Override
@@ -170,138 +189,42 @@ public class GridPanel extends Composite {
 			}
 		});
 		
-		/** Consumo por dia**/
-		Column<JsStockStat,Number> dailyOutputsColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
+		/** Saldo **/
+		Column<JsStockStat,Number> balanceColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
 			
 			@Override
 			public Number getValue(JsStockStat object) {
-				return object.getDailyOutputs()!=null ? object.getDailyOutputs() : null;
+				return object.getBalance()!=null ? object.getBalance() : null;
 			}
 		};
 		
-		dailyOutputsColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-		dailyOutputsColumn.setSortable(true); 
-		sortHandler.setComparator(dailyOutputsColumn,new Comparator<JsStockStat>() {
+		balanceColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
+		balanceColumn.setSortable(true); 
+		sortHandler.setComparator(balanceColumn,new Comparator<JsStockStat>() {
 			
 			@Override
 			public int compare(JsStockStat o1, JsStockStat o2) {
-				return o1.getDailyOutputs().compareTo(o2.getDailyOutputs());
+				return o1.getBalance().compareTo(o2.getBalance());
 			}
 		});
 		
-		/** Acopio **/
-		Column<JsStockStat,Number> accumulationColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
-			
-			@Override
-			public Number getValue(JsStockStat object) {
-				return object.getAccumulation()!=null ? object.getAccumulation() : null;
-			}
-		};
-		
-		accumulationColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-		accumulationColumn.setSortable(true); 
-		sortHandler.setComparator(accumulationColumn,new Comparator<JsStockStat>() {
-			
-			@Override
-			public int compare(JsStockStat o1, JsStockStat o2) {
-				return o1.getAccumulation().compareTo(o2.getAccumulation());
-			}
-		});
-		
-		/** Stock **/
-		Column<JsStockStat,Number> stockColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
-			
-			@Override
-			public Number getValue(JsStockStat object) {
-				return object.getStock()!=null ? object.getStock() : null;
-			}
-		};
-		
-		stockColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-		stockColumn.setSortable(true); 
-		sortHandler.setComparator(stockColumn,new Comparator<JsStockStat>() {
-			
-			@Override
-			public int compare(JsStockStat o1, JsStockStat o2) {
-				return o1.getStock().compareTo(o2.getStock());
-			}
-		});
-		
-		/** Pendiente de recibir **/
-		Column<JsStockStat,Number> pendingPurchasesColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
-			
-			@Override
-			public Number getValue(JsStockStat object) {
-				return object.getPendingPurchases()!=null ? object.getPendingPurchases() : null;
-			}
-		};
-		
-		pendingPurchasesColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-		pendingPurchasesColumn.setSortable(true); 
-		sortHandler.setComparator(pendingPurchasesColumn,new Comparator<JsStockStat>() {
-			
-			@Override
-			public int compare(JsStockStat o1, JsStockStat o2) {
-				return o1.getPendingPurchases().compareTo(o2.getPendingPurchases());
-			}
-		});
-		
-		/** Pendiente de servir **/
-		Column<JsStockStat,Number> pendingSalesColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
-			
-			@Override
-			public Number getValue(JsStockStat object) {
-				return object.getPendingSales()!=null ? object.getPendingSales() : null;
-			}
-		};
-		
-		pendingSalesColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-		pendingSalesColumn.setSortable(true); 
-		sortHandler.setComparator(pendingSalesColumn,new Comparator<JsStockStat>() {
-			
-			@Override
-			public int compare(JsStockStat o1, JsStockStat o2) {
-				return o1.getPendingSales().compareTo(o2.getPendingSales());
-			}
-		});
-		
-		/** Propuesta **/
-		Column<JsStockStat,Number> proposalColumn = new Column<JsStockStat, Number>(new NumberCell(numberFormat)) {
-			
-			@Override
-			public Number getValue(JsStockStat object) {
-				return object.getProposal()!=null ? object.getProposal() : null;
-			}
-		};
-		
-		proposalColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-		proposalColumn.setSortable(true); 
-		sortHandler.setComparator(proposalColumn,new Comparator<JsStockStat>() {
-			
-			@Override
-			public int compare(JsStockStat o1, JsStockStat o2) {
-				return o1.getProposal().compareTo(o2.getProposal());
-			}
-		});
 	
+		// TODO
+//		Producto
+//		Entradas
+//		Salidas
+//		Saldo
+//		Detalle
 		
-		dataGrid.addColumn(nameColumn, AON.MSG.product());
-		dataGrid.addColumn(outputsColumn, "Consumo");
-		dataGrid.addColumn(dailyOutputsColumn, "Cns./D\u00EDa");
-		dataGrid.addColumn(accumulationColumn, "Acopio");
-		dataGrid.addColumn(stockColumn, "Stock");
-		dataGrid.addColumn(pendingPurchasesColumn, "Pte.Recibir");
-		dataGrid.addColumn(pendingSalesColumn, "Pte.Servir");
-		dataGrid.addColumn(proposalColumn, "Propuesta");
+		dataGrid.addColumn(productColumn, AON.MSG.product());
+		dataGrid.addColumn(inputsColumn, "Entradas");
+		dataGrid.addColumn(outputsColumn, "Salidas");
+		dataGrid.addColumn(balanceColumn, "Saldo");
 		
-		dataGrid.setColumnWidth(nameColumn, 100, Unit.PCT);
+		dataGrid.setColumnWidth(productColumn, 100, Unit.PCT);
+		dataGrid.setColumnWidth(inputsColumn, 100, Unit.PX);
 		dataGrid.setColumnWidth(outputsColumn, 100, Unit.PX);
-		dataGrid.setColumnWidth(dailyOutputsColumn, 100, Unit.PX);
-		dataGrid.setColumnWidth(accumulationColumn, 100, Unit.PX);
-		dataGrid.setColumnWidth(stockColumn, 100, Unit.PX);
-		dataGrid.setColumnWidth(pendingPurchasesColumn, 100, Unit.PX);
-		dataGrid.setColumnWidth(pendingSalesColumn, 100, Unit.PX);
-		dataGrid.setColumnWidth(proposalColumn, 100, Unit.PX);
+		dataGrid.setColumnWidth(balanceColumn, 100, Unit.PX);
 		
 	}
 }

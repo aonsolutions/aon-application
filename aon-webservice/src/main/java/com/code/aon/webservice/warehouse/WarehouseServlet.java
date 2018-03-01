@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.ElaborationProperties;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
@@ -135,6 +136,8 @@ public class WarehouseServlet extends HttpServlet{
 					} else object = getElaborationList(domain, userName, req.getParameterMap());
 				} else if("stock_forecast".equals(pathInfo[3])){
 					object = getStockForecast(domain, userName, req.getParameterMap());
+				} else if("movements_list".equals(pathInfo[3])){
+					object = getMovementsList(domain, userName, req.getParameterMap());
 				} else if(MSG.WAREHOUSE.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						object = DBWarehouse.getWarehouse(domain, userName, Integer.parseInt(pathInfo[4]));
@@ -819,9 +822,9 @@ public class WarehouseServlet extends HttpServlet{
         	for(Integer productId: productIds) {
     			if(stat.getMap().containsKey(productId)){
     				Product product = productMap.get(productId);
-    				Double quantity = new Double(stat.get(productId, StatDAO.PRODUCT_CONSUMED));
-    				Double dailyQuantity = quantity / daysCount;
-    				Double accumulation = dailyQuantity * accumulationDays;
+    				Double outputs = new Double(stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
+    				Double dailyOutputs = outputs / daysCount;
+    				Double accumulation = dailyOutputs * accumulationDays;
     				Double stock = stat.get(productId, StatDAO.PRODUCT_STOCK)!=null?stat.get(productId, StatDAO.PRODUCT_STOCK):0.0;
     				Double pendingPurchases = stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_PURCHASES):0.0;
     				Double pendingSales = stat.get(productId, StatDAO.PRODUCT_PENDING_SALES)!=null?stat.get(productId, StatDAO.PRODUCT_PENDING_SALES):0.0;
@@ -831,8 +834,8 @@ public class WarehouseServlet extends HttpServlet{
     						.put(MSG.ID, productId)
     						.put(MSG.DOMAIN, product.getDomain())
     						.put("product_name", product.getCode()+" / "+product.getName())
-    						.put(MSG.QUANTITY, quantity)
-    						.put("daily_quantity", dailyQuantity)
+    						.put("outputs", outputs)
+    						.put("daily_outputs", dailyOutputs)
     						.put("accumulation", accumulation)
     						.put("stock", stock)
     						.put("pending_purchases", pendingPurchases)
@@ -914,8 +917,69 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		return filter;
     }
+	
+	/*
+     * MovementsList
+     */
+    private JSONArray getMovementsList(Domain domain,String login, Map<String, String[]> filterMap){
+    	JSONArray array = new JSONArray();
+    	if(filterMap.containsKey(MSG.FROM) && filterMap.containsKey(MSG.TO)) {
+    		StatData<Integer, String, Double> stat = getMovementsListStatData(domain, login, filterMap);
+        	
+    		Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
+        	Map<Integer, Product> productMap = new HashMap<>();
+        	AON.getProductStream(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(productIds)).forEach(product -> {
+        		productMap.put(product.getId(), product);
+        	});
+    		
+        	for(Integer productId: productIds) {
+    			if(stat.getMap().containsKey(productId)){
+    				Product product = productMap.get(productId);
+    				Double inputs = (stat.get(productId, StatDAO.PRODUCT_INPUTS));
+    				Double outputs = (stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
+    				inputs = inputs==null?0.0:inputs;
+    				outputs = outputs==null?0.0:outputs;
+    				Double balance = outputs - inputs;
+    				array.put(
+    						new JSONObject()
+    						.put(MSG.ID, productId)
+    						.put(MSG.DOMAIN, product.getDomain())
+    						.put("product_name", product.getCode()+" / "+product.getName())
+    						.put("inputs", inputs)
+    						.put("outputs", outputs)
+    						.put("balance", balance)
+    						);    			
+    			}
+    		}
+    	}
+    	return array;
+    }
+    protected static StatData<Integer, String, Double> getMovementsListStatData(Domain domain,String login, Map<String, String[]> filterMap){
+    	StatData<Integer, String, Double> stat = AON.getProductMovements(domain.getName(), domain.getId(), login,
+				f -> productInventoriableFilter(domain, filterMap, f),
+				f -> invoiceFilter(domain, filterMap, f),
+				f -> deliveryFilter(domain, filterMap, f),
+				f -> incomeFilter(domain, filterMap, f));
+    	return stat;
+    }
+    
+    private static Filter incomeFilter(Domain domain, Map<String, String[]> filterMap, IncomeProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		filter.page(1).perPage(1000);
+		if(filterMap.containsKey(MSG.FROM)){
+			filter = filter.and(f.getIssueTimeProperty().ge(new java.sql.Date(Long.parseLong(filterMap.get(MSG.FROM)[0]))));
+		}
+		if(filterMap.containsKey(MSG.TO)){
+			filter = filter.and(f.getIssueTimeProperty().le(new java.sql.Date(Long.parseLong(filterMap.get(MSG.TO)[0]))));
+		}
+		return filter;
+    }
 
 	
+    
+    /*
+     * 
+     */
     private Double total = 0.0;
 
     private JSONObject updateReceptionQuantity(Domain domain, String login, JSONObject json) {

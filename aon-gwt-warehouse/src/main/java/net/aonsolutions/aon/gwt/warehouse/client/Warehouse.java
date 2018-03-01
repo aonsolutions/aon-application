@@ -5,6 +5,7 @@ import com.google.gwt.core.client.EntryPoint;
 
 import net.aonsolutions.aon.gwt.warehouse.client.carrier_packing.CarrierPacking;
 import net.aonsolutions.aon.gwt.warehouse.client.elaboration.Elaboration;
+import net.aonsolutions.aon.gwt.warehouse.client.movementList.MovementList;
 import net.aonsolutions.aon.gwt.warehouse.client.stockForecast.StockForecast;
 
 public class Warehouse implements EntryPoint {
@@ -20,6 +21,8 @@ public class Warehouse implements EntryPoint {
 	private static final String ELABORATION_ENTRY_POINT = "elaboration";
 	
 	private static final String STOCK_FORECAST_ENTRY_POINT = "stockForecast";
+	
+	private static final String MOVEMENT_LIST_ENTRY_POINT = "movementList";
 
 	AonData aonData;
 
@@ -39,6 +42,8 @@ public class Warehouse implements EntryPoint {
 			new Elaboration(aonData).onModuleLoad();
 		} else if (STOCK_FORECAST_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
 			new StockForecast(aonData).onModuleLoad();
+		} else if (MOVEMENT_LIST_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
+			new MovementList(aonData).onModuleLoad();
 		}
 	}
 	

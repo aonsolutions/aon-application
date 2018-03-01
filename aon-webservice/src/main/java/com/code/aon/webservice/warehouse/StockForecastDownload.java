@@ -176,7 +176,7 @@ public class StockForecastDownload extends HttpServlet {
 			if(stat.getMap().containsKey(productId)){
 				Product product = productMap.get(productId);
 				String productName = product.getCode()+" / "+product.getName();
-				Double quantity = new Double(stat.get(productId, StatDAO.PRODUCT_CONSUMED));
+				Double quantity = new Double(stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
 				Double dailyQuantity = quantity / daysCount;
 				Double accumulation = dailyQuantity * accumulationDays;
 				Double stock = stat.get(productId, StatDAO.PRODUCT_STOCK)!=null?stat.get(productId, StatDAO.PRODUCT_STOCK):0.0;

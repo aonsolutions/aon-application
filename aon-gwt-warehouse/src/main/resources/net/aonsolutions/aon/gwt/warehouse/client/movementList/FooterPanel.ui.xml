@@ -1,0 +1,82 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg" />
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources" />
+	<ui:with
+		type="com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources"
+		field="issuesResources" />
+
+	<aon:MinimizePanel ui:field="footerPanel"
+		styleName="{aonResources.css.aonSelector}">
+		<g:TabLayoutPanel ui:field="tabPanel" barHeight="26"
+			barUnit="PX" width="100%">
+			<!-- 
+			DETALLE
+			ALBARANES COMPRA
+			ALBARANES VENTA
+			FACTURAS COMPRA
+			FACTURAS VENTA
+			TRASPASOS entre ALMACENENES (signo positivo/negativo)
+			ELABORACIONES o el DETALLE (según sea entrada o salida)
+			 -->
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="receipt"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Pedidos pendientes"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="pendingOrderPanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
+			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="receipt"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Origen"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="sourcePanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
+			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="speaker-notes"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Comentarios"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:ScrollPanel ui:field="commentsPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
+			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="speaker-notes"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Observaciones"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:ScrollPanel ui:field="remarksPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
+			</g:tab>
+		</g:TabLayoutPanel>
+	</aon:MinimizePanel>
+
+</ui:UiBinder>

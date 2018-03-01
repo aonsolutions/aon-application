@@ -4,6 +4,8 @@ import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Income.INCOME;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
@@ -49,6 +51,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
@@ -80,6 +83,7 @@ import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO.SalesPropertiesDAO;
@@ -985,13 +989,15 @@ public class StatDAO {
 	/*
 	 * PRODUCT STATS
 	 */
-	public static final String PRODUCT_CONSUMED = "Consumo";
+	public static final String PRODUCT_OUTPUTS = "Salidas";
+	public static final String PRODUCT_INPUTS = "Entradas";
 	public static final String PRODUCT_STOCK = "Stock";
 	public static final String PRODUCT_PENDING_PURCHASES = "Recibir";
 	public static final String PRODUCT_PENDING_SALES = "Servir";
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	private static final DeliveryPropertiesDAO DELIVERY_PROPERTIES = new DeliveryPropertiesDAO();
+	private static final IncomePropertiesDAO INCOME_PROPERTIES = new IncomePropertiesDAO();
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
 	private static final SalesPropertiesDAO SALES_PROPERTIES = new SalesPropertiesDAO();
 	private static final PurchasePropertiesDAO PURCHASE_PROPERTIES = new PurchasePropertiesDAO();
@@ -1000,14 +1006,14 @@ public class StatDAO {
 			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
 			SalesFilter salesFilter, PurchaseFilter purchaseFilter) {
 		
-		Map<Integer, Double> consumed = getConsumedProduct(ctx, productFilter, invoiceFilter, deliveryFilter);
+		Map<Integer, Double> outputs = getOutputsProduct(ctx, productFilter, invoiceFilter, deliveryFilter);
 		Map<Integer, Double> pendingSales = getPendingSalesProduct(ctx, productFilter, salesFilter);
 		Map<Integer, Double> pendingPurchases = getPendingPurchasesProduct(ctx, productFilter, purchaseFilter);
 		Map<Integer, Double> stock = getProductStock(ctx, productFilter);
 		
 		final StatData<Integer, String, Double> stat = new StatData<>();
-		for(Integer productId: consumed.keySet()) {
-			stat.put(productId, PRODUCT_CONSUMED, consumed.get(productId));
+		for(Integer productId: outputs.keySet()) {
+			stat.put(productId, PRODUCT_OUTPUTS, outputs.get(productId));
 			stat.put(productId, PRODUCT_STOCK, stock.get(productId));
 			stat.put(productId, PRODUCT_PENDING_PURCHASES, pendingPurchases.get(productId));
 			stat.put(productId, PRODUCT_PENDING_SALES, pendingSales.get(productId));
@@ -1015,8 +1021,23 @@ public class StatDAO {
 		
 		return stat;
 	}
+	
+	public static StatData<Integer, String, Double> getWarehouseMovementsStat(AONContext ctx, ProductFilter productFilter,
+			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, IncomeFilter incomeFilter) {
+		
+		Map<Integer, Double> outputs = getOutputsProduct(ctx, productFilter, invoiceFilter, deliveryFilter);
+		Map<Integer, Double> inputs = getInputsProduct(ctx, productFilter, invoiceFilter, incomeFilter);
+		
+		final StatData<Integer, String, Double> stat = new StatData<>();
+		for(Integer productId: outputs.keySet())
+			stat.put(productId, PRODUCT_OUTPUTS, outputs.get(productId));
+		for(Integer productId: inputs.keySet())
+			stat.put(productId, PRODUCT_INPUTS, inputs.get(productId));
+		
+		return stat;
+	}
 
-	private static Map<Integer, Double> getConsumedProduct(AONContext ctx, ProductFilter productFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter) {
+	private static Map<Integer, Double> getOutputsProduct(AONContext ctx, ProductFilter productFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter) {
 		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
 		deliveryConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
 		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
@@ -1042,6 +1063,48 @@ public class StatDAO {
 				.where(invoiceConditions)
 				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
 				.and(INVOICE_DETAIL.SOURCE.ne(InvoiceSource.DELIVERY.value()))
+				.groupBy(ITEM.PRODUCT)
+				.orderBy(ITEM.PRODUCT);
+		
+		Map<Integer, Double> map = new HashMap<>();
+		deliverySelect
+			.union(invoiceSelect)
+			.forEach(record -> {
+				Integer key = record.get(ITEM.PRODUCT);
+				Double value = record.value2().doubleValue();
+				if(!map.containsKey(key))
+					map.put(key, 0.0);
+				map.put(key, map.get(key)+value);
+			});
+		return map;
+	}
+	
+	private static Map<Integer, Double> getInputsProduct(AONContext ctx, ProductFilter productFilter, InvoiceFilter invoiceFilter, IncomeFilter incomeFilter) {
+		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
+		deliveryConditions.addAll(Arrays.asList(INCOME_PROPERTIES.getConditions(incomeFilter)));
+		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> deliverySelect = ctx.getDslContext()
+			.select(ITEM.PRODUCT, DSL.sum(INCOME_DETAIL.QUANTITY).as(INCOME_DETAIL.QUANTITY))
+			.from(INCOME)
+				.join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
+				.join(ITEM).on(INCOME_DETAIL.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+			.where(deliveryConditions)
+			.groupBy(ITEM.PRODUCT)
+			.orderBy(ITEM.PRODUCT);
+		
+		Collection<Condition> invoiceConditions = new ArrayList<Condition>();
+		invoiceConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(invoiceFilter)));
+		invoiceConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> invoiceSelect = ctx.getDslContext()
+				.select(ITEM.PRODUCT, DSL.sum(INVOICE_DETAIL.QUANTITY).as(INVOICE_DETAIL.QUANTITY))
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
+				.join(ITEM).on(INVOICE_DETAIL.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+				.where(invoiceConditions)
+				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
+				.and(INVOICE_DETAIL.SOURCE.ne(InvoiceSource.INCOME.value()))
 				.groupBy(ITEM.PRODUCT)
 				.orderBy(ITEM.PRODUCT);
 		

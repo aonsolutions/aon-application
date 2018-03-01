@@ -271,7 +271,7 @@ public class Warehouse extends Methods{
 	}
 	
 	/* STOCK FORECAST */
-	public void getStockForecast(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockForecast>> callback) {
+	public void getStockForecast(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/stock_forecast" + filter, callback);
 	}
@@ -287,6 +287,11 @@ public class Warehouse extends Methods{
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
+	}
+	/* MOVEMENTS LISTSTOCK FORECAST */
+	public void getMovementsList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements_list" + filter, callback);
 	}
 	
 	/* WAREHOUSE */

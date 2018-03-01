@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.warehouse.client.stockForecast;
+package net.aonsolutions.aon.gwt.warehouse.client.movementList;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 
 public class Main extends Composite {
 
@@ -33,7 +34,7 @@ public class Main extends Composite {
 	@UiField
 	SimpleLayoutPanel southContent;
 	
-	private StockForecast parent;
+	private MovementList parent;
 	private HashMap<String, LinkedList<String>> filterMap;
 	
 	public API getAPI() {
@@ -41,7 +42,7 @@ public class Main extends Composite {
 	}
 	
 
-	public Main(StockForecast parent, HashMap<String, LinkedList<String>> filterMap) {
+	public Main(MovementList parent, HashMap<String, LinkedList<String>> filterMap) {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = parent;
 		if(filterMap==null){
@@ -52,7 +53,7 @@ public class Main extends Composite {
 		load();
 	}
 	
-	public Main(StockForecast parent) {
+	public Main(MovementList parent) {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = parent;
 		filterMap = new HashMap<>();
@@ -85,7 +86,7 @@ public class Main extends Composite {
 		list.add("40");
 		getFilterMap().put("per_page", list);
 		
-		getAPI().getWarehouse().getStockForecast(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
+		getAPI().getWarehouse().getMovementsList(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
 
 			@Override
 			public void onSuccess(JSON<JsStockStat> result) {
@@ -99,7 +100,9 @@ public class Main extends Composite {
 	}
 
 	public void loadSouthContent() {
-		
+		FooterPanel fp = new FooterPanel(this);
+		southContent.setWidget(fp);
+		fp.hideFooterPanel();
 	}
 	
 	

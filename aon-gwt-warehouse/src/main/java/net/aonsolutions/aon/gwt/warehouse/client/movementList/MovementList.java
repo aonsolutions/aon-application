@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.warehouse.client.stockForecast;
+package net.aonsolutions.aon.gwt.warehouse.client.movementList;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,13 +19,13 @@ import com.vaadin.polymer.paper.PaperRadioButtonElement;
 
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 
-public class StockForecast extends AonTemplate2 {
+public class MovementList extends AonTemplate2 {
 
 	protected API API;
 	private HashMap<String, LinkedList<String>> filterMap;
-	private StockForecast me = this;
+	private MovementList me = this;
 
-	public StockForecast(AonData aonData) {
+	public MovementList(AonData aonData) {
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(), aonData.getDomain().getName(),
 				aonData.getDomain().getId(), aonData.getUser().getLogin());
 	}
@@ -65,7 +65,7 @@ public class StockForecast extends AonTemplate2 {
 				list.add("1");
 				filterMap.put("per_page", list);
 				
-				getAPI().getWarehouse().getStockForecast(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
+				getAPI().getWarehouse().getMovementsList(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
 
 					@Override
 					public void onSuccess(JSON<JsStockStat> result) {
@@ -96,7 +96,6 @@ public class StockForecast extends AonTemplate2 {
 
 			@Override
 			protected void download() {
-				downloadStockforecast();
 			}
 			
 			@Override
@@ -113,23 +112,16 @@ public class StockForecast extends AonTemplate2 {
 		toolbar.reset.setVisible(false);
 		toolbar.accept.setVisible(false);
 		toolbar.remove.setVisible(false);
-		toolbar.download.setVisible(true);
+		toolbar.download.setVisible(false);
 		toolbar.setBackwardVisible(false);
 		toolbar.setForwardVisible(false);
-		toolbar.title.setText("Aprovisionamiento segun consumo");
+		toolbar.title.setText("Listado de movimientos");
 		toolbar.subtitle.setText("Listado");
 		setToolbar(toolbar);
 	}
 
 	public void loadContent() {
 		setContent(new Main(this, filterMap));
-	}
-	
-	private void downloadStockforecast() {
-//		consoleLog("StockForecast/" + getFilter(getFilterMap()));
-		HashMap<String, LinkedList<String>> map = ((Main)getContent().getWidget()).getFilterMap();
-//		consoleLog("Main         /" + getFilter(map));
-		getAPI().getWarehouse().downloadStockForecast(map);
 	}
 	
 	

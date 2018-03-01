@@ -2644,6 +2644,19 @@ public class AON {
 		}		
 	}
 	
+	public static StatData<Integer, String, Double> getProductMovements(String domainName, Integer domainId, String login, ProductFilter productFilter,
+			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, IncomeFilter incomeFilter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,login);
+			return getStats().getProductMovements(ctx, productFilter, invoiceFilter,
+					deliveryFilter, incomeFilter);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}		
+	}
+	
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************

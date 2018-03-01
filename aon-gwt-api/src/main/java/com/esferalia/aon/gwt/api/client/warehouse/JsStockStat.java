@@ -3,14 +3,14 @@ package com.esferalia.aon.gwt.api.client.warehouse;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
-public class JsStockForecast extends JavaScriptObject {
+public class JsStockStat extends JavaScriptObject {
 
-	protected JsStockForecast() {
+	protected JsStockStat() {
 	}
 
-	public static final ProvidesKey<JsStockForecast> PROVIDES_KEY = new ProvidesKey<JsStockForecast>() {
+	public static final ProvidesKey<JsStockStat> PROVIDES_KEY = new ProvidesKey<JsStockStat>() {
 		@Override
-		public Object getKey(JsStockForecast js) {
+		public Object getKey(JsStockStat js) {
 			return js == null ? null : js.getId();
 		}
 	};
@@ -26,13 +26,21 @@ public class JsStockForecast extends JavaScriptObject {
 	public final native String getProductName() /*-{
 												return this.product_name;
 												}-*/;
-
-	public final native Double getQuantity() /*-{
-												return this.quantity;
-												}-*/;
-
-	public final native Double getDailyQuantity() /*-{
-													return this.daily_quantity;
+	
+	public final native Double getInputs() /*-{
+											return this.inputs;
+											}-*/;
+	
+	public final native Double getOutputs() /*-{
+											return this.outputs;
+											}-*/;
+	
+	public final native Double getBalance() /*-{
+											return this.balance;
+											}-*/;
+	
+	public final native Double getDailyOutputs() /*-{
+													return this.daily_outputs;
 													}-*/;
 	
 	public final native Double getAccumulation() /*-{
