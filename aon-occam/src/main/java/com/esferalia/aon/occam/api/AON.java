@@ -2632,11 +2632,11 @@ public class AON {
 	}
 	
 	public static StatData<Integer, String, Double> getProductStat(String domainName, Integer domainId, String login, ProductFilter productFilter,
-			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter, PurchaseFilter purchaseFilter){
+			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter, PurchaseFilter purchaseFilter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName,domainId,login);
-			return getStats().getProductStat(ctx, productFilter, invoiceFilter,
+			return getStats().getProductStat(ctx, productFilter, itemFilter, invoiceFilter,
 					deliveryFilter, salesFilter, purchaseFilter);
 		} finally {
 			if (ctx != null) 
@@ -2645,11 +2645,11 @@ public class AON {
 	}
 	
 	public static StatData<Integer, String, Double> getProductMovements(String domainName, Integer domainId, String login, ProductFilter productFilter,
-			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, IncomeFilter incomeFilter){
+			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, IncomeFilter incomeFilter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName,domainId,login);
-			return getStats().getProductMovements(ctx, productFilter, invoiceFilter,
+			return getStats().getProductMovements(ctx, productFilter, itemFilter, invoiceFilter,
 					deliveryFilter, incomeFilter);
 		} finally {
 			if (ctx != null) 

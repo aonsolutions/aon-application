@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IStats;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
@@ -39,15 +40,18 @@ public class StatsImpl implements IStats {
 
 	@Override
 	public StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter,
-			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter,
+			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter,
 			PurchaseFilter purchaseFilter) {
-		return StatDAO.getProductStat(ctx, productFilter, invoiceFilter, deliveryFilter, salesFilter, purchaseFilter);
+		return StatDAO.getProductStat(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter, salesFilter,
+				purchaseFilter);
 	}
 
 	@Override
 	public StatData<Integer, String, Double> getProductMovements(AONContext ctx, ProductFilter productFilter,
-			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, IncomeFilter incomeFilter) {
-		return StatDAO.getWarehouseMovementsStat(ctx, productFilter, invoiceFilter, deliveryFilter, incomeFilter);
+			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
+			IncomeFilter incomeFilter) {
+		return StatDAO.getWarehouseMovementsStat(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter,
+				incomeFilter);
 	}
 
 

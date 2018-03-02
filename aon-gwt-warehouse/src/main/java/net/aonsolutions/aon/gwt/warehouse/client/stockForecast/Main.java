@@ -6,12 +6,15 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.warehouse.JsStockStat;
+import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -78,6 +81,10 @@ public class Main extends Composite {
 	}
 
 	public void loadContent() {
+		final AonToast toast = new AonToast();
+		final InlineLabel label =  new InlineLabel("...");
+		toast.show("Cargando ...", label);
+		
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
 		getFilterMap().put("page", list);
@@ -90,10 +97,13 @@ public class Main extends Composite {
 			@Override
 			public void onSuccess(JSON<JsStockStat> result) {
 				content.setWidget(new GridPanel(parent, result.getData().toLinkedList()));
+				toast.hide();
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
+				toast.hide();
+				Window.alert("No se han podido recuperar los datos.");
 			}
 		});
 	}

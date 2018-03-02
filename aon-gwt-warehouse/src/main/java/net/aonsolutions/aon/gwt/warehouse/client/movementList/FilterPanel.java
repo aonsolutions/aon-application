@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.ValueBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -55,7 +55,7 @@ public class FilterPanel extends Composite {
 	
 	DateBoxEx fromDate;
 	DateBoxEx toDate;
-//	IntegerBox serialNumberInput; // TODO serialNumberInput
+	TextBox serialNumberInput;
 	PaperButton categoryButton;
 	PaperButton productButton;
 	
@@ -86,7 +86,7 @@ public class FilterPanel extends Composite {
 		endLabel.setWidth("20px");
 		
 		// ------------------ STOCK DAYS
-		InlineLabel serialNumberLabel = new InlineLabel("Lote/nº Serie");
+		InlineLabel serialNumberLabel = new InlineLabel("Lote/n\u00B0 Serie");
 		serialNumberLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		serialNumberLabel.setWidth("20px");
 
@@ -94,7 +94,7 @@ public class FilterPanel extends Composite {
 		
 		fromDate = createDateBox("from");
 		toDate = createDateBox("to");
-//		accumulationDaysInput = createIntegerBox("accumulation_days");
+		serialNumberInput = createTextBox("serial_number");
 		categoryButton = filterButton(AON.MSG.category());
 		productButton = filterButton(AON.MSG.product());
 		
@@ -147,8 +147,8 @@ public class FilterPanel extends Composite {
 		panel.add(datePanel);
 		
 		FlowPanel fpanel = new FlowPanel();
-//		fpanel.add(serialNumberLabel);
-//		fpanel.add(serialNumberInput);
+		fpanel.add(serialNumberLabel);
+		fpanel.add(serialNumberInput);
 		fpanel.add(categoryButton);
 		fpanel.add(productButton);
 		panel.add(fpanel);
@@ -180,6 +180,21 @@ public class FilterPanel extends Composite {
 				LinkedList<String> list = new LinkedList<>();
 				if(input.getValue()!=null)
 					list.add(Long.toString(input.getValue()));
+				onChangeFilter(key, list);
+			}
+		});
+		return input;
+	}
+	
+	private TextBox createTextBox(String key) {
+		final TextBox input = new TextBox();
+		input.setWidth("100px");
+		input.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				LinkedList<String> list = new LinkedList<>();
+				if(input.getValue()!=null)
+					list.add(input.getValue());
 				onChangeFilter(key, list);
 			}
 		});
@@ -233,8 +248,6 @@ public class FilterPanel extends Composite {
 			key = "category";
 		} else if (AON.MSG.product().equals(label)) {
 			key = "product";
-		} else if (AON.MSG.customer().equals(label)) {
-			key = "customer";
 		}
 		LinkedList<String> filterList = parent.getFilterMap().containsKey(key)
 				? parent.getFilterMap().get(key) : new LinkedList<>();

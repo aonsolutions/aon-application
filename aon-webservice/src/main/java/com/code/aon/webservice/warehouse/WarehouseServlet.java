@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
+import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
@@ -851,6 +852,7 @@ public class WarehouseServlet extends HttpServlet{
     protected static StatData<Integer, String, Double> getStockForecastStatData(Domain domain,String login, Map<String, String[]> filterMap){
     	StatData<Integer, String, Double> stat = AON.getProductStat(domain.getName(), domain.getId(), login,
 				f -> productInventoriableFilter(domain, filterMap, f),
+				f -> itemFilter(domain, filterMap, f),
 				f -> invoiceFilter(domain, filterMap, f),
 				f -> deliveryFilter(domain, filterMap, f),
 				f -> salesFilter(domain, filterMap, f),
@@ -873,6 +875,13 @@ public class WarehouseServlet extends HttpServlet{
 		if(filterMap.containsKey(MSG.PRODUCT)){
 			Integer[] ids = Arrays.stream(filterMap.get(MSG.PRODUCT)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
 			filter = filter.and(f.getIdProperty().in(ids));
+		}
+		return filter;
+    }
+    private static Filter itemFilter(Domain domain, Map<String, String[]> filterMap, ItemProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		if(filterMap.containsKey("serial_number")){
+			filter = filter.and(f.getSerialNumberProperty().like("%"+filterMap.get("serial_number")[0]+"%"));
 		}
 		return filter;
     }
@@ -957,6 +966,7 @@ public class WarehouseServlet extends HttpServlet{
     protected static StatData<Integer, String, Double> getMovementsListStatData(Domain domain,String login, Map<String, String[]> filterMap){
     	StatData<Integer, String, Double> stat = AON.getProductMovements(domain.getName(), domain.getId(), login,
 				f -> productInventoriableFilter(domain, filterMap, f),
+				f -> itemFilter(domain, filterMap, f),
 				f -> invoiceFilter(domain, filterMap, f),
 				f -> deliveryFilter(domain, filterMap, f),
 				f -> incomeFilter(domain, filterMap, f));
