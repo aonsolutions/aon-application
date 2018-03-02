@@ -3358,29 +3358,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 
-		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				"TRACE('DIAS_ENFERMEDAD_COMUN_16_20 = %d\r\n',DIAS_ENFERMEDAD_COMUN_16_20); REMOVE()",
-				"0.00"
-				);
-		//@formatter:on
+		addPrestITs(aonContext, contract);
 
 
 		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
@@ -3429,6 +3407,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
 		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
 	}
+
+
 	
 	@Test
 	public void testITWithConstantII() throws ExpressionException, SQLException,
@@ -3461,30 +3441,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		//@formatter:on
 		
-		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				"TRACE('DIAS_ENFERMEDAD_COMUN_16_20 = %d\r\n',DIAS_ENFERMEDAD_COMUN_16_20); REMOVE()",
-				"0.00"
-				);
-		//@formatter:on
-
+		addPrestITs(aonContext, contract);
 
 		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
@@ -3599,30 +3556,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		//@formatter:on
 		
-		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				"TRACE('DIAS_ENFERMEDAD_COMUN_16_20 = %d\r\n',DIAS_ENFERMEDAD_COMUN_16_20); REMOVE()",
-				"0.00"
-				);
-		//@formatter:on
-
+		addPrestITs(aonContext, contract);
 
 		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
@@ -3706,25 +3640,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		//@formatter:on
 		
-		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		addPayment(aonContext, contract, prestIT, 
-				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
-				);
-		//@formatter:on
+		addPrestITs(aonContext, contract);
 
 
 		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
@@ -3772,5 +3688,104 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
 		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+	}
+
+	@Test
+	public void testITWithConstantVI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startContract = add(getFirstDayOfMonth(getToday()), MONTH, -2 );
+		//@formatter:off
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				}, 
+				new String[] {
+				}, 
+				null);
+		addPayment(aonContext, contract, startContract, null, "SALARIO BASE", "1500.00", "_P", "_P", PaymentType.CRA_0001, SalaryType.SALARY);
+		addPayment(aonContext, contract, startContract, null, "PAGA EXTRA", "100.00", "_P", "_P", PaymentType.CRA_0004, SalaryType.SALARY);
+		addPayment(aonContext, contract, startContract, null, "PAGA EXTRA", "100.00", "_P", "_P", PaymentType.CRA_0004, SalaryType.SALARY);
+		addPayment(aonContext, contract, startContract, null, "ANTIGÜEDAD", "50.00", "_P", "_P", PaymentType.CRA_0001, SalaryType.SALARY);
+		
+		//@formatter:on
+		
+		addPrestITs(aonContext, contract);
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+		
+		Date brEndDate = add(getFirstDayOfMonth(startITDate), DAY_OF_MONTH,-1);
+		Date brStartDate = getFirstDayOfMonth(brEndDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, brStartDate, brEndDate, brEndDate, contract);
+		JooqSalaryBuilder<Salary> builder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(builder).calculate(ctx);
+		builder.execute();
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(); 
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+	}
+
+
+	protected PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		return prestIT;
 	}
 }

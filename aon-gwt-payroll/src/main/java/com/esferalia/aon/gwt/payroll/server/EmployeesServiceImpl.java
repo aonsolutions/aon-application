@@ -151,12 +151,12 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator4Dummies;
+import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.A3Line;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.FTELine;
@@ -978,7 +978,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
-			calculate(salaryDraft, new ContractSalaryCalculator<ISalary>());
+			calculate(salaryDraft, new SmartContractSalaryCalculator<ISalary>());
 			return salaryDraft;
 		} finally {
 			releaseFacesContext();
@@ -990,7 +990,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
-			calculate(salaryDraft, new ContractSalaryCalculator<ISalary>(), sections);
+			calculate(salaryDraft, new SmartContractSalaryCalculator<ISalary>(), sections);
 			return salaryDraft;
 		} finally {
 			releaseFacesContext();
@@ -1002,7 +1002,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
-			calculate(salaryDraft, new ContractSalaryCalculator4Dummies<ISalary>());
+			calculate(salaryDraft, new SmartContractSalaryCalculator<ISalary>());
 			return salaryDraft;
 		} finally {
 			releaseFacesContext();
@@ -3248,7 +3248,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static void calculate(SalaryDraft draft, ContractSalaryCalculator<ISalary> salaryCalculator) {
+	private static void calculate(SalaryDraft draft, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> salaryCalculator) {
 
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		try {
@@ -3270,7 +3270,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static void calculate(SalaryDraft draft, ContractSalaryCalculator<ISalary> salaryCalculator, Date sections []) {
+	private static void calculate(SalaryDraft draft, GenericContractSalaryCalculator<ISalary, ISQLContractSalaryCalculatorContext> salaryCalculator, Date sections []) {
 
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		CollectSalaryBuilder<ISalary> collectSalaryBuilder = new CollectSalaryBuilder<ISalary>();		
@@ -3481,7 +3481,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
 				salaryDraftBuilder, roundSalaryBuilder);
-		ContractSalaryCalculator<ISalary> salaryCalculator = new ContractSalaryCalculator<ISalary>();
+		SmartContractSalaryCalculator<ISalary> salaryCalculator = new SmartContractSalaryCalculator<ISalary>();
 
 		boolean autocommit = false;
 		try {
@@ -3522,7 +3522,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			conn.setAutoCommit(false);
 
 			CollectSalaryBuilder<ISalary> collectSalaryBuilder = new CollectSalaryBuilder<ISalary>();		
-			ContractSalaryCalculator<ISalary> salaryCalculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> salaryCalculator = new SmartContractSalaryCalculator<ISalary>();
 			for ( Date section : sections ) {
 				draft.setEndDate(AonDateUtils.add(section, Calendar.DAY_OF_MONTH, -1));
 				calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
@@ -3582,13 +3582,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	private static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
-			SalaryDraft draft, T salaryBuilder, L draftBuilder, ContractSalaryCalculator<ISalary> calculator) {
+			SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
 
 		calculator.setSalaryBuilder(salaryBuilder);
 		calculator.setListener(draftBuilder);
 
 		Connection conn = null;
-		IContractSalaryCalculatorContext ctx;
+		ISQLContractSalaryCalculatorContext ctx;
 		try {
 			conn = getConnection();
 			ctx = getSalaryCalculatorContext(conn, draft, draftBuilder);
@@ -3849,12 +3849,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
 
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> calculator = 
+				new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>();
 
 		calculator.setSalaryBuilder(salaryBuilder);
 
 		Connection conn = null;
-		ISalaryCalculatorContext ctx;
+		ISQLContractSalaryCalculatorContext ctx;
 		try {
 			conn = getConnection();
 			ctx = getSalaryCalculatorContext(conn, draft, null);
@@ -3898,12 +3899,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
 
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> calculator = 
+				new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>();
 
 		calculator.setSalaryBuilder(salaryBuilder);
 
 		Connection conn = null;
-		ISalaryCalculatorContext ctx;
+		ISQLContractSalaryCalculatorContext ctx;
 		try {
 			conn = getConnection(domain);
 			ctx = getSalaryCalculatorContext(conn, draft, levelId);
@@ -4222,7 +4224,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				});
 	}
 
-	private static IContractSalaryCalculatorContext getSalaryCalculatorContext(
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(
 			final Connection conn, final AgreementDraft draft, int levelId)
 			throws ExpressionException, SQLException {
 		
@@ -4233,7 +4235,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
 	}
 
-	private static IContractSalaryCalculatorContext getSalaryCalculatorContext(
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(
 			final Connection conn, final AgreementDraft draft, int levelId, Map<String, Object> data)
 			throws ExpressionException, SQLException {
 		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
@@ -4291,7 +4293,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return draftCtx;
 	}
 
-	private static IContractSalaryCalculatorContext getSalaryCalculatorContextImpl(
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContextImpl(
 			Connection conn, final AgreementDraft draft, int levelId, Map<String,Object> data)
 			throws ExpressionException, SQLException {
 
@@ -4309,13 +4311,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static ISalary getSalary(SalaryPreview draft) {
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
 
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> calculator = 
+				new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>();
 
 		calculator.setSalaryBuilder(salaryBuilder);
 
 		Connection conn = null;
 
-		IContractSalaryCalculatorContext ctx;
+		ISQLContractSalaryCalculatorContext ctx;
 		try {
 			conn = getConnection();
 			ctx = getSQLContractSalaryCalculatorContext(conn, draft);

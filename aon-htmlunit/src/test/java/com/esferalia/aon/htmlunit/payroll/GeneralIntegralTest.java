@@ -23,6 +23,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
@@ -998,6 +999,60 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalLiquidLabel", 0.00);
 		
 	}
+
+	@Test
+	public void TestSonny() throws Exception {
+
+		if (!isDisplayed("constantes,_i"))
+			open("sonny");
+
+		wait4Id("constantes,_i");
+
+		draft("CONSTANTES, I");
+		
+		calculate(Calendar.MARCH, 2018);
+		Double cgcBase = getValue("cgcBaseLabel");
+		Double totalPayment = getValue("totalPaymentsLabel");
+		Assert.assertEquals(cgcBase, totalPayment);
+
+		calculate(Calendar.APRIL, 2018);
+		Double sonnyCgcBase = getValue("cgcBaseLabel");
+		Double sonnytotalPayment = getValue("totalPaymentsLabel");
+		Assert.assertEquals(cgcBase, sonnyCgcBase);
+		Assert.assertEquals(totalPayment, sonnytotalPayment);
+		HtmlTable eventsTable = getElementById("eventsTable");
+		Assert.assertEquals(0, eventsTable.getRowCount());
+		
+		
+		draft("CONSTANTES, II (PAGAS)");
+		
+		calculate(Calendar.MARCH, 2018);
+		cgcBase = getValue("cgcBaseLabel");
+		totalPayment = getValue("totalPaymentsLabel");
+
+		calculate(Calendar.APRIL, 2018);
+		sonnyCgcBase = getValue("cgcBaseLabel");
+		sonnytotalPayment = getValue("totalPaymentsLabel");
+		Assert.assertEquals(cgcBase, sonnyCgcBase);
+		//Assert.assertEquals(totalPayment, sonnytotalPayment);
+		eventsTable = getElementById("eventsTable");
+		Assert.assertEquals(0, eventsTable.getRowCount());
+		
+		draft("CONSTANTES, III (BONO)");
+		
+		calculate(Calendar.MARCH, 2018);
+		cgcBase = getValue("cgcBaseLabel");
+		totalPayment = getValue("totalPaymentsLabel");
+
+		calculate(Calendar.APRIL, 2018);
+		sonnyCgcBase = getValue("cgcBaseLabel");
+		sonnytotalPayment = getValue("totalPaymentsLabel");
+		Assert.assertEquals(cgcBase, sonnyCgcBase);
+		//Assert.assertEquals(totalPayment, sonnytotalPayment);
+		eventsTable = getElementById("eventsTable");
+		Assert.assertEquals(0, eventsTable.getRowCount());
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{

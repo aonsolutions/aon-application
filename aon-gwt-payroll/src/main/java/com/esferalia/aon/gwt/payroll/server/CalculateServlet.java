@@ -5,8 +5,8 @@ import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PERSON_REGISTRY;
 
 import java.io.IOException;
@@ -49,10 +49,10 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
@@ -79,7 +79,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	}
 
-	private static class CalculatorListener extends ContractSalaryCalculator.Listener{
+	private static class CalculatorListener extends SmartContractSalaryCalculator.Listener{
 		
 		List<String> errors = new ArrayList<String>();
 		
@@ -592,7 +592,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 		try {
 
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 
 			calculator.setSalaryBuilder(salaryBuilder);
 //			calculator.setListener();
