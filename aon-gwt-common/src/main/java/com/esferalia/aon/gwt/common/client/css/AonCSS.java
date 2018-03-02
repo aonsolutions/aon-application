@@ -872,6 +872,22 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-icon-point-yellow")
 	String aonIconPointYellow();
+	
+	@ClassName("aon-bg-missing")
+	String aonBgMissing();
+	
+	@ClassName("aon-bg-blocked")
+	String aonBgBlocked();
+	
+	@ClassName("aon-bg-sent")
+	String aonBgSent();
+	
+	@ClassName("aon-bg-finished")
+	String aonBgFinished();
+	
+	@ClassName("aon-bg-pending")
+	String aonBgPending();
+	
 
 	@ClassName("aon-icon-loupe")
 	String aonIconLoupe();

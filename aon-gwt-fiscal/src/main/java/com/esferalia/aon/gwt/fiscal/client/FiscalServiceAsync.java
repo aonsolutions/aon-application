@@ -19,8 +19,6 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
@@ -33,14 +31,6 @@ public interface FiscalServiceAsync {
 	
 	// -------------------------------------------------------------- PARAMS
 	void getFiscalParameters(String domainName,int domain,AsyncCallback<FiscalParameters> callback);
-
-	// ------------------------------------------------------ FISCAL PANEL
-	void getFiscalPanel(String currentDomainName,int currentDomain,int year,
-			AsyncCallback<FiscalModelMatrix> asyncCallback);
-	void getAllModels(String domainName, int domain, 
-			AsyncCallback<LinkedList<IFiscalModel>> callback);
-	void getAllModels(String domainName, int domain, int year,
-			AsyncCallback<LinkedList<IFiscalModel>> callback);
 
 	// -------------------------------------------------------------- ACTIVITIES
 	void getActivities(int activityGroup,

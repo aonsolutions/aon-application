@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.IRPFReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
+import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115;
 import com.esferalia.aon.gwt.fiscal.client.mod123.Model123;
@@ -51,7 +52,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD349_ENTRY_POINT = "Model349";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
 	private static final String FS_MOD390_HF_ENTRY_POINT = "Model390HF";
-	
+	private static final String FS_MODEL_MATRIX_ENTRY_POINT = "ModelMatrix";
 	//	
 	//    ================================================================== FINANCE
 	//
@@ -323,6 +324,20 @@ public class MainEntryPoint implements EntryPoint {
 					model390HF.onModuleLoad();
 				}
 				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_MODEL_MATRIX_ENTRY_POINT)) {
+			GWT.runAsync(ModelMatrix.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					ModelMatrix modelMatrix = new ModelMatrix();
+					modelMatrix.onModuleLoad();
+				}
 			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_INVOICE_REPORT_ENTRY_POINT)) {
 			GWT.runAsync(InvoiceReport.class, new RunAsyncCallback() {

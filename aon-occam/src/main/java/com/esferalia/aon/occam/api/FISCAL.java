@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -62,40 +62,13 @@ public class FISCAL {
 	// ********************************************
 
 	// -------------------------- FISCAL PANEL
-	public static FiscalModelMatrix getFiscalPanel(String domainName,
-			int domain, int year, String login) {
+	public static LinkedList<IFiscalModel> getFiscalPanel(String domainName,
+			int domain, FiscalMatrixParams params, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, login);
 			User user = AON.getUser(domainName, domain, login);
-			return getFiscal().getFiscalPanel(ctx, domain, year, user.getId());
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	// -------------------------- FISCAL PANEL
-	public static LinkedList<IFiscalModel> getAllModels(String domainName,
-			int domain, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, login);
-			User user = AON.getUser(domainName, domain, login);
-			return getFiscal().getAllModels(ctx, domain, user.getId());
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static LinkedList<IFiscalModel> getAllModels(String domainName,
-			int domain, int year, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, login);
-			User user = AON.getUser(domainName, domain, login);
-			return getFiscal().getAllModels(ctx, domain, year, user.getId());
+			return getFiscal().getFiscalPanel(ctx, domain, params, user.getId());
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -197,6 +197,8 @@ public class FiscalModelUtils {
 			return AON.AON_CSS.aonIconGipuzkoa();
 		} else if (adm == Administration.NAVARRA) {
 			return AON.AON_CSS.aonIconNavarra();
+		} else if (adm == Administration.UNKNOWN) {
+			return AON.AON_CSS.aonIconQuestion();
 		} 
 		return AON.AON_CSS.aonIconAeat();
 	}
@@ -210,6 +212,8 @@ public class FiscalModelUtils {
 			return AON.AON_CSS.aonIconGipuzkoaBW();
 		} else if (adm == Administration.NAVARRA) {
 			return AON.AON_CSS.aonIconNavarraBW();
+		} else if (adm == Administration.UNKNOWN) {
+			return AON.AON_CSS.aonIconQuestion();
 		} 
 		return AON.AON_CSS.aonIconAeatBW();
 	}
@@ -223,6 +227,8 @@ public class FiscalModelUtils {
 			return AON.AON_RESOURCES.aonIconGipuzkoa();
 		} else if (adm ==Administration.NAVARRA) {
 			return AON.AON_RESOURCES.aonIconNavarra();
+		} else if (adm == Administration.UNKNOWN) {
+			return AON.AON_RESOURCES.aonIconQuestion();
 		} 
 		return AON.AON_RESOURCES.aonAeat();
 	}
@@ -270,6 +276,7 @@ public class FiscalModelUtils {
 		if (status == FiscalStatus.BATCHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
 		if (status == FiscalStatus.SENT) return AON.AON_RESOURCES.aonIconPointGreen();
 		if (status == FiscalStatus.BLOCKED) return AON.AON_RESOURCES.aonIconPointRed();
+		if (status  == FiscalStatus.MISSING)	return AON.AON_RESOURCES.aonIconQuestion();
 		return AON.AON_RESOURCES.aonIconPointOrange();
 	}
 	
@@ -278,10 +285,26 @@ public class FiscalModelUtils {
 		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonIconPointLightGreen();
 		if (status  == FiscalStatus.BLOCKED )	return AON.AON_CSS.aonIconPointRed();
 		if (status  == FiscalStatus.SENT )		return AON.AON_CSS.aonIconPointGreen();
+		if (status  == FiscalStatus.MISSING)	return AON.AON_CSS.aonIconQuestion();
 		return AON.AON_CSS.aonIconPointOrange();
 	}
 	
-
+//	private static String getStatusBckColor(FiscalStatus status) {
+//		if (status == FiscalStatus.FINISHED)	return AON.AON_CSS.aonIconPointLightGreen();
+//		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonIconPointLightGreen();
+//		if (status  == FiscalStatus.BLOCKED )	return AON.AON_CSS.aonIconPointRed();
+//		if (status  == FiscalStatus.SENT )		return AON.AON_CSS.aonIconPointGreen();
+//		return AON.AON_CSS.aonIconPointOrange();
+//	}
+	
+	public static String gettStatusBckColor(FiscalStatus status) {
+		if (status == FiscalStatus.FINISHED)	return AON.AON_CSS.aonBgFinished();
+		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonBgFinished();
+		if (status  == FiscalStatus.BLOCKED )	return AON.AON_CSS.aonBgBlocked();
+		if (status  == FiscalStatus.SENT )		return AON.AON_CSS.aonBgSent();
+		if (status  == FiscalStatus.MISSING )	return AON.AON_CSS.aonBgMissing();
+		return AON.AON_CSS.aonBgPending();
+	}
 }
 
 

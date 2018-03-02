@@ -166,14 +166,10 @@ public class AppParamDAO {
 				.fetch()
 				.forEach(
 						rec -> {
-							if (AonStringUtils.isNotBlank(rec
-									.getValue(APP_PARAM.VALUE))) {
-								FiscalParamsItem item = FiscalParamsItem
-										.getItemByName(rec
-												.getValue(APP_PARAM.NAME));
+							if (AonStringUtils.isNotBlank(rec.getValue(APP_PARAM.VALUE))) {
+								FiscalParamsItem item = FiscalParamsItem.getItemByName(rec.getValue(APP_PARAM.NAME));
 								if (item != null) {
-									item.fill(params,
-											rec.getValue(APP_PARAM.VALUE));
+									item.fill(params,rec.getValue(APP_PARAM.VALUE));
 								}
 							}
 						});

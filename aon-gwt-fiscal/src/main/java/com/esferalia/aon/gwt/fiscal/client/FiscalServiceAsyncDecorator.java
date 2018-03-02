@@ -21,8 +21,6 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
@@ -52,31 +50,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getFiscalParameters(domainName, domain,
 				new AsyncCallbackWrapper<FiscalParameters>(callback));
-	}
-
-	// ------------------------------------------------------- FISCAL PANEL
-	@Override
-	public void getFiscalPanel(String domainName, int domain, int year,
-			AsyncCallback<FiscalModelMatrix> callback) {
-		AON.start();
-		fsa.getFiscalPanel(domainName, domain, year,
-				new AsyncCallbackWrapper<FiscalModelMatrix>(callback));
-	}
-
-	@Override
-	public void getAllModels(String domainName, int domain,
-			AsyncCallback<LinkedList<IFiscalModel>> callback) {
-		AON.start();
-		fsa.getAllModels(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<IFiscalModel>>(callback));
-	}
-
-	@Override
-	public void getAllModels(String domainName, int domain, int year,
-			AsyncCallback<LinkedList<IFiscalModel>> callback) {
-		AON.start();
-		fsa.getAllModels(domainName, domain, year,
-				new AsyncCallbackWrapper<LinkedList<IFiscalModel>>(callback));
 	}
 
 	// -------------------------------------------------------------- ACTIVITIES

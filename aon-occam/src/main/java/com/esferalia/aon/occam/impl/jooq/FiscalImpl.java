@@ -5,8 +5,8 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFiscal;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -83,17 +83,8 @@ import com.esferalia.aon.occam.server.finance.FinanceUtils;
 public class FiscalImpl implements IFiscal {
 
 	// -------------------------------------------------- FISCAL PANEL
-	public FiscalModelMatrix getFiscalPanel(AONContext ctx,int domain,int year,int user){
-		return FiscalMatrixDAO.getModelsPanel(ctx, domain, year, user);
-	}
-	@Override
-	public LinkedList<IFiscalModel> getAllModels(AONContext ctx, int domain,int user) {
-		return FiscalMatrixDAO.getAllModels(ctx, domain, user);
-	}
-	@Override
-	public LinkedList<IFiscalModel> getAllModels(AONContext ctx, int domain,
-			int year, int user) {
-		return FiscalMatrixDAO.getAllModels(ctx, domain, year, user);
+	public LinkedList<IFiscalModel> getFiscalPanel(AONContext ctx,int domain,FiscalMatrixParams params,int user){
+		return FiscalMatrixDAO.getModelsPanel(ctx, domain, params, user);
 	}
 
 	// --------------------------------------------- [FISCAL MODELS]

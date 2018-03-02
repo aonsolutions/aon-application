@@ -1875,6 +1875,22 @@ input:disabled+label {
 	width: auto !important;
 }
 
+.aon-bg-missing {
+	background-color: #FFC2B2;
+}
+.aon-bg-blocked {
+	background-color: #ff8080;
+}
+.aon-bg-sent {
+	background-color: #3EC946;
+}
+.aon-bg-finished {
+	background-color: #b8dc6f;
+}
+.aon-bg-pending {
+	background-color: orange;
+}
+
 @sprite .aon-icon-info {
 	gwt-image: "aonIconInfo";
 	width: auto;

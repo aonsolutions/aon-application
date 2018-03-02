@@ -410,6 +410,12 @@ public class FiscalModelDAO {
 		fm.setContactCellular( params.getContactCellular() );
 		fm.setContactEmail( params.getContactMail() );
 	}
+
+	public static FiscalModel fullMap(AONContext ctx, Record record) {
+		FiscalModel fm = map(record);
+		getModelDetails(ctx, fm);
+		return fm;
+	}
 	
 	public static FiscalModel map(Record record) {
 		FiscalModelType type = FiscalModelType.safeValueOf( record.getValue(FS_MODEL.MODEL));

@@ -3,8 +3,8 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -59,9 +59,7 @@ public interface IFiscal {
 	public Stream<VatContext> getVatContext(AONContext ctx, VatParams params);
 	
 	// 			        FISCAL PANEL
-	public FiscalModelMatrix getFiscalPanel(AONContext ctx,int domain,int year,int user);
-	public LinkedList<IFiscalModel> getAllModels(AONContext ctx,int domain,int user);
-	public LinkedList<IFiscalModel> getAllModels(AONContext ctx,int domain,int year,int user);
+	public LinkedList<IFiscalModel> getFiscalPanel(AONContext ctx,int domain,FiscalMatrixParams params,int user);
 	
 	// 			   FISCAL MODEL
 	public FiscalModel save(AONContext ctx, FiscalModel fm);

@@ -54,7 +54,6 @@
 			<from-outcome>gwt_mod140</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod140.xhtml</to-view-id>
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>gwt_mod180</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod180.xhtml</to-view-id>
@@ -99,7 +98,10 @@
 			<from-outcome>gwt_mod390HF</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/mod390HF.xhtml</to-view-id>
 		</navigation-case>
-		
+		<navigation-case>
+			<from-outcome>gwt_modelMatrix</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/model/modelMatrix.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 	
