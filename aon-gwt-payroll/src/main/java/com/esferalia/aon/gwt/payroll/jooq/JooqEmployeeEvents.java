@@ -108,6 +108,8 @@ public class JooqEmployeeEvents {
 				.or(CONTRACT_DATA.NAME.eq("DIAS_MANUTENCION_EXTRANJERO"))
 				.or(CONTRACT_DATA.NAME.eq("KMS"))
 				.or(CONTRACT_DATA.NAME.eq("DIAS_VACACIONES"))
+				.or(CONTRACT_DATA.NAME.eq("IMPORTE_HORA_EXTRA"))
+				.or(CONTRACT_DATA.NAME.eq("VENTAS"))
 				.or(CONTRACT_DATA.NAME.eq("HORAS_EXTRAS_FZA"))
 				)
 		   .execute();
