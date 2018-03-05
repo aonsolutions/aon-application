@@ -259,13 +259,9 @@
 									</aon:div>	
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_sii-aonFinance"
-												action="gwt_sii-aonFinance"
-												title="SII - Suministro Inmediato de Información">
-												<aon:outputText
-													styleClass="aon-fiscal-link-label aon-icon-new-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="SII - Suministro Inmediato de Información" />
-										</aon:commandLink>
+											action="gwt_sii-aonFinance"
+											title="SII - Suministro Inmediato de Información"
+											value="SII - Suministro Inmediato de Información" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -367,11 +363,8 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_invoiceStats-aonFinance"
 											action="gwt_invoiceStat-aonFinance"
-											title="Estad&#237;sticas">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Estad&#237;sticas" />												
-										</aon:commandLink>
+											title="#{bundle.aon_role_statistics}"
+											value="#{bundle.aon_role_statistics}" />												
 									</aon:div>
 								</aon:if>
 							</aon:div>
@@ -381,5 +374,6 @@
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>
+
 	</ui:define>
 </ui:composition>
