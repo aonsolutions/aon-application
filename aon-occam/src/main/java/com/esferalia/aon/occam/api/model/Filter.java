@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
@@ -467,4 +469,15 @@ public interface Filter {
 	public interface InvoiceDetailCommissionFilter{
 		Filter filter(InvoiceDetailCommissionProperties properties);
 	}
+	
+	@FunctionalInterface
+	public interface AccountEntryFilter{
+		Filter filter(AccountEntryProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface AccountEntryDetailFilter{
+		Filter filter(AccountEntryDetailProperties properties);
+	}
+	
 }

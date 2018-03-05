@@ -39,13 +39,13 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
 import com.esferalia.aon.occam.api.model.AutoConcept;
+import com.esferalia.aon.occam.api.model.Filter.AccountEntryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
-import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailFilter;
-import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailProperties;
-import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
-import com.esferalia.aon.occam.api.model.accounting.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
@@ -692,6 +692,9 @@ public class AccountEntryDAO {
 		@Override public Property<Double> getDebitProperty() {return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.DEBIT);}
 		@Override public Property<Double> getCreditProperty() {return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.CREDIT);}
 		@Override public Property<String> getDocumentNumber() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);}
+		@Override public Property<Integer> getBalancingAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT);}
+		@Override public Property<String> getBalancingAccountCodeProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.CODE);}
+		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.DESCRIPTION);}
 	}
 }
 

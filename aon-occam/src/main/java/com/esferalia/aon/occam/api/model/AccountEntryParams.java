@@ -25,6 +25,7 @@ public class AccountEntryParams implements Serializable{
 	private Double credit;
 	private String concept;
 	private String document;
+	private Integer balancingAccount;
 	
 	private int order;
 	
@@ -110,6 +111,13 @@ public class AccountEntryParams implements Serializable{
 	}
 	public AccountEntryParams setDocument(String document) {
 		this.document = document;
+		return this;
+	}
+	public Integer getBalancingAccount() {
+		return balancingAccount;
+	}
+	public AccountEntryParams setBalancingAccount(Integer balancingAccount) {
+		this.balancingAccount = balancingAccount;
 		return this;
 	}
 	

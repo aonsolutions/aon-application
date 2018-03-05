@@ -2,15 +2,14 @@ package com.esferalia.aon.occam.server.accounting;
 
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailProperties;
-import com.esferalia.aon.occam.api.model.accounting.AccountEntryProperties;
+import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryUtils {
 
-	public static Filter getFilter(AccountEntryProperties p,
-			AccountEntryParams params) {
+	public static Filter getFilter(AccountEntryProperties p, AccountEntryParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
 		if (params.getPeriod()  != null && params.getPeriod().intValue() != 0 ) {
 			prop = prop.and(p.getAccountPeriodProperty().eq(params.getPeriod()));
@@ -47,7 +46,10 @@ public class AccountEntryUtils {
 		Filter prop = getFilter(p, params);
 
 		if (params.getAccount() != null) {
-			prop = prop.and(p.getAccountProperty().eq(params.getAccount()));
+			prop = prop.and(
+				p.getAccountProperty().eq(params.getAccount())
+					.or(p.getBalancingAccountProperty().eq(params.getAccount()))
+				);
 		}
 		if (AonStringUtils.isNotEmpty(params.getConcept())) {
 			prop = prop.and(p.getConceptProperty().like(

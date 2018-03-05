@@ -487,6 +487,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			.setJournal(journal.getValue())
 			.setActivity(activityId)
 			.setAccount(account.getId())
+			.setBalancingAccount(account.getId())
 			.setDebit(debit.getValue())
 			.setCredit(credit.getValue())
 			.setConcept(concept.getValue())

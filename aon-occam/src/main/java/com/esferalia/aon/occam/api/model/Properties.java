@@ -1123,4 +1123,33 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<Byte> getStatusProperty();	
 	}
+	
+	public interface AccountEntryProperties {
+		
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getAccountPeriodProperty();
+		Property<java.util.Date> getEntryDateProperty();
+		Property<Byte> getEntryTypeProperty();
+		Property<Integer> getJournalProperty();
+		Property<Integer> getActivityProperty();
+		Property<Byte> getConfidentialProperty();
+
+	}
+
+	public interface AccountEntryDetailProperties extends  AccountEntryProperties {
+		
+		Property<Integer> getAccountProperty();
+		Property<String> getAccountCodeProperty();
+		Property<String> getAccountDescriptionProperty();
+		Property<String> getConceptProperty();
+		Property<Double> getDebitProperty();
+		Property<Double> getCreditProperty();
+		Property<String> getDocumentNumber();
+		Property<Integer> getBalancingAccountProperty();
+		Property<String> getBalancingAccountCodeProperty();
+		Property<String> getBalancingAccountDescriptionProperty();
+
+	}
+	
 }
