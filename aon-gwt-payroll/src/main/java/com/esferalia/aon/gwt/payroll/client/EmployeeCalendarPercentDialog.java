@@ -10,11 +10,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class EmployeeCalendPercentDialog extends CustomDialog {
+public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 
-	interface Binder extends UiBinder<Widget, EmployeeCalendPercentDialog> {
+	interface Binder extends UiBinder<Widget, EmployeeCalendarPercentDialog> {
 
 	}
 
@@ -31,18 +32,25 @@ public abstract class EmployeeCalendPercentDialog extends CustomDialog {
 	Label typePercent;
 	
 	@UiField
-	DoubleBox percentBox;
+	TextBox percentBox;
+	
+	@UiField
+	Label messageLabel;
 	
 	@UiField
 	Button cancelButton;
 	
 	@UiField
 	Button acceptButton;
+	
+	Double journeyHours;
 
-	public EmployeeCalendPercentDialog(String caption) {
+	public EmployeeCalendarPercentDialog(String caption, String hoursContract) {
 		setCaption(caption);
 		
-		setWidget(binder.createAndBindUi(this));		
+		setWidget(binder.createAndBindUi(this));	
+		
+		messageLabel.setText("Horas Jornada = "+hoursContract);
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -60,12 +68,18 @@ public abstract class EmployeeCalendPercentDialog extends CustomDialog {
 			}
 		});	
 		
+		this.journeyHours = Double.parseDouble(hoursContract);
+		
 	}
 
 	protected abstract void onAccept();
 	
 	public double getPercentValue() {
-		return percentBox.getValue();
+		Double hoursStrike = Double.parseDouble(percentBox.getValue());
+		if(hoursStrike >= this.journeyHours)
+			return 1.00;
+		
+		return hoursStrike/this.journeyHours;
 	}
 	
 	public void setLabelText(String label){

@@ -13,6 +13,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
@@ -505,10 +506,14 @@ public class JooqEmployeeCalendar {
 		   .and(CONTRACT_DATA.NAME.in(
 				  ContextVariable.ERE_DAYS.getName()
 				  ,ContextVariable.STRIKE_DAYS.getName()
-				  ,ContextVariable.HOLIDAYS.getName()))
+				  ,ContextVariable.HOLIDAYS.getName()
+				  ,ContextVariable.ERE_FACTOR.getName()
+				  ,ContextVariable.STRIKE_FACTOR.getName()))
 		   .execute();
 		
 		HashMap<java.util.Date, DayType> updateDaysTypeMap = updateInfo.getDaysTypeMap();
+		Map<java.util.Date, Double> strikeDaysValues = updateInfo.getMapDaysCoefficientStrike();
+		Map<java.util.Date, Double> ereDaysValues = updateInfo.getMapDaysCoefficientEre();
 		
 		java.util.Date startDateType = new java.util.Date();
 		java.util.Date endDateType = new java.util.Date();
@@ -540,6 +545,22 @@ public class JooqEmployeeCalendar {
 						java.util.Date javaEndDateType = DateUtils.copyDateOnly(dateType);
 						DateUtils.addDays2Date(javaEndDateType, -1);
 						Date sqlEndDateType = new Date(javaEndDateType.getTime());
+						
+						if(dayType.equals("DIAS_HUELGA")){
+							String coeficiente = strikeDaysValues.get(auxStartDateType).toString();
+							 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+										CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+										CONTRACT_DATA.END_DATE)
+										.values(domain, "COEFICIENTE_HUELGA", contract, coeficiente, 
+												sqlStartDateType, sqlEndDateType).execute();
+						}else if(dayType.equals("DIAS_ERE")){
+							String coeficiente = ereDaysValues.get(auxStartDateType).toString();
+							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+									CONTRACT_DATA.END_DATE)
+									.values(domain, "COEFICIENTE_ERE", contract, coeficiente, 
+											sqlStartDateType, sqlEndDateType).execute();
+						}
 						
 						String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
 								DateUtils.copyDateOnly(javaEndDateType));

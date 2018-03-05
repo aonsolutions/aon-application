@@ -8,7 +8,7 @@
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
     
     
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendPercentDialog.MyStyle">
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarPercentDialog.MyStyle">
 
 		.paddingTypePercentStyle{
 			padding-right: 7px;
@@ -25,7 +25,8 @@
 		}
 
 		.messageStyle{
-			font: 11px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+			padding-right: 70px;
+			font: 13px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 		}
 
 		.paddingBlocks{
@@ -52,11 +53,10 @@
 		<g:VerticalPanel>
 		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
 		    	<g:Label ui:field="typePercent" styleName="{style.paddingTypePercentStyle}"></g:Label>
-		    	<g:DoubleBox ui:field="percentBox" styleName="{style.widthDoubleBox}"></g:DoubleBox>
-		    	<g:Label styleName="{style.paddingPercentStyle}">%</g:Label>
+		    	<g:TextBox ui:field="percentBox" styleName="{style.widthDoubleBox}"></g:TextBox>
 		    </g:HorizontalPanel>
 		    <g:HorizontalPanel styleName="{style.paddingBlocks}"> 
-		    	<g:Label styleName="{style.messageStyle}">* La parte decimal se sepera con ','</g:Label>
+		    	<g:Label ui:field="messageLabel" styleName="{style.messageStyle}"></g:Label>
 		    </g:HorizontalPanel>
 		   	<g:HorizontalPanel styleName="{style.paddingBlocks}">
 		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>

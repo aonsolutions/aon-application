@@ -428,15 +428,30 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				EmployeeCalendPercentDialog strikeDialog = new EmployeeCalendPercentDialog("Porcentaje Huelga") {
-					
-					@Override
-					protected void onAccept() {
-						double cs = this.getPercentValue();
-						addStrikeDay(cs);
-					}
-				};
-				strikeDialog.setLabelText("Porcentaje Huelga:");
+				EmployeeCalendarPercentDialog strikeDialog;
+				if(fullTimeJourney){
+					strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", "8") {
+						
+						@Override
+						protected void onAccept() {
+							double cs = this.getPercentValue();
+							addStrikeDay(cs);
+						}
+					};
+				}
+				else{
+					Date date = selectedDates.getSelectedList().get(0);
+					Double hours = calendarEmployeeInfo.getHourByDay(date);
+					strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
+						
+						@Override
+						protected void onAccept() {
+							double cs = this.getPercentValue();
+							addStrikeDay(cs);
+						}
+					};
+				}
+				strikeDialog.setLabelText("Horas Huelga:");
 				strikeDialog.show();
 				strikeDialog.center();	
 			}
@@ -447,16 +462,29 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			
 			@Override
 			public void execute() {
-				EmployeeCalendPercentDialog ereDialog = new EmployeeCalendPercentDialog("Porcentaje ERE") {
-					
-					@Override
-					protected void onAccept() {
-						double ce = this.getPercentValue();
-						addEreDay(ce);
+				EmployeeCalendarPercentDialog ereDialog;
+				if(fullTimeJourney){
+					ereDialog = new EmployeeCalendarPercentDialog("Horas ERE", "8") {
 						
-					}
-				};
-				ereDialog.setLabelText("Porcentaje ERE:");
+						@Override
+						protected void onAccept() {
+							double cs = this.getPercentValue();
+							addEreDay(cs);
+						}
+					};
+				}else{
+					Date date = selectedDates.getSelectedList().get(0);
+					Double hours = calendarEmployeeInfo.getHourByDay(date);
+					ereDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
+						
+						@Override
+						protected void onAccept() {
+							double cs = this.getPercentValue();
+							addEreDay(cs);
+						}
+					};
+				}
+				ereDialog.setLabelText("Horas ERE:");
 				ereDialog.show();
 				ereDialog.center();
 			}
@@ -805,32 +833,59 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("strikeDayButton")
 	public void onStrikeClick(ClickEvent event) {
-		EmployeeCalendPercentDialog strikeDialog = new EmployeeCalendPercentDialog("Porcentaje Huelga") {
-			
-			@Override
-			protected void onAccept() {
-				double cs = this.getPercentValue();
-				addStrikeDay(cs);
-			}
-		};
-		strikeDialog.setLabelText("Porcentaje Huelga:");
+		EmployeeCalendarPercentDialog strikeDialog;
+		if(fullTimeJourney){
+			strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", "8") {
+				
+				@Override
+				protected void onAccept() {
+					double cs = this.getPercentValue();
+					addStrikeDay(cs);
+				}
+			};
+		}
+		else{
+			Date date = selectedDates.getSelectedList().get(0);
+			Double hours = calendarEmployeeInfo.getHourByDay(date);
+			strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
+				
+				@Override
+				protected void onAccept() {
+					double cs = this.getPercentValue();
+					addStrikeDay(cs);
+				}
+			};
+		}
+		strikeDialog.setLabelText("Horas Huelga:");
 		strikeDialog.show();
-		strikeDialog.center();
+		strikeDialog.center();	
 	}
 	
 	@UiHandler("ereDayButton")
 	public void onEreClick(ClickEvent event) {
-		EmployeeCalendPercentDialog ereDialog = new EmployeeCalendPercentDialog("Porcentaje ERE") {
-			
-			@Override
-			protected void onAccept() {
-				double ce = this.getPercentValue();
-				//Window.alert("Porcentaje ERE :"+ce);
-				addEreDay(ce);
+		EmployeeCalendarPercentDialog ereDialog;
+		if(fullTimeJourney){
+			ereDialog = new EmployeeCalendarPercentDialog("Horas ERE", "8") {
 				
-			}
-		};
-		ereDialog.setLabelText("Porcentaje ERE:");
+				@Override
+				protected void onAccept() {
+					double cs = this.getPercentValue();
+					addEreDay(cs);
+				}
+			};
+		}else{
+			Date date = selectedDates.getSelectedList().get(0);
+			Double hours = calendarEmployeeInfo.getHourByDay(date);
+			ereDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
+				
+				@Override
+				protected void onAccept() {
+					double cs = this.getPercentValue();
+					addEreDay(cs);
+				}
+			};
+		}
+		ereDialog.setLabelText("Horas ERE:");
 		ereDialog.show();
 		ereDialog.center();
 	}
@@ -1913,32 +1968,60 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) huelga", new Command() {
 				@Override
 				public void execute() {
-					EmployeeCalendPercentDialog strikeDialog = new EmployeeCalendPercentDialog("Porcentaje Huelga") {
-						
-						@Override
-						protected void onAccept() {
-							double cs = this.getPercentValue();
-							addStrikeDay(cs);
-						}
-					};
-					strikeDialog.setLabelText("Porcentaje Huelga:");
+					EmployeeCalendarPercentDialog strikeDialog;
+					if(fullTimeJourney){
+						strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", "8") {
+							
+							@Override
+							protected void onAccept() {
+								double cs = this.getPercentValue();
+								addStrikeDay(cs);
+							}
+						};
+					}
+					else{
+						Date date = selectedDates.getSelectedList().get(0);
+						Double hours = calendarEmployeeInfo.getHourByDay(date);
+						strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
+							
+							@Override
+							protected void onAccept() {
+								double cs = this.getPercentValue();
+								addStrikeDay(cs);
+							}
+						};
+					}
+					strikeDialog.setLabelText("Horas Huelga:");
 					strikeDialog.show();
-					strikeDialog.center();
+					strikeDialog.center();	
 				}
 			});
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) ERE", new Command() {
 				@Override
 				public void execute() {
-					EmployeeCalendPercentDialog ereDialog = new EmployeeCalendPercentDialog("Porcentaje ERE") {
-						
-						@Override
-						protected void onAccept() {
-							double ce = this.getPercentValue();
-							addEreDay(ce);
+					EmployeeCalendarPercentDialog ereDialog;
+					if(fullTimeJourney){
+						ereDialog = new EmployeeCalendarPercentDialog("Horas ERE", "8") {
 							
-						}
-					};
-					ereDialog.setLabelText("Porcentaje ERE:");
+							@Override
+							protected void onAccept() {
+								double cs = this.getPercentValue();
+								addEreDay(cs);
+							}
+						};
+					}else{
+						Date date = selectedDates.getSelectedList().get(0);
+						Double hours = calendarEmployeeInfo.getHourByDay(date);
+						ereDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
+							
+							@Override
+							protected void onAccept() {
+								double cs = this.getPercentValue();
+								addEreDay(cs);
+							}
+						};
+					}
+					ereDialog.setLabelText("Horas ERE:");
 					ereDialog.show();
 					ereDialog.center();
 				}

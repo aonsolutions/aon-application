@@ -1105,6 +1105,8 @@ public class EmployeeCalendarDraftObjectData {
 		updateInfo.setMonthExtraHoursList(createUpdateExtraHoursList(mapExtraHours, draftMapExtraHours));
 		updateInfo.setDaysTypeMap(createUpdateTypesMap(mapDaysType, draftMapDaysType));
 		updateInfo.setFullTimeEmployee(this.fullTimeEmployee);
+		updateInfo.setStrikeDaysValues(this.draftMapDaysCoefficientStrike);
+		updateInfo.setEreDaysValues(this.draftMapDaysCoefficientEre);
 		
 		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
 
