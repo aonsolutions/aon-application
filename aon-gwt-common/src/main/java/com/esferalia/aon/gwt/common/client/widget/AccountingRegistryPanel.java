@@ -630,6 +630,8 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 						for (GeoZone geozone : config.getGeozones()) {
 							if (AonStringUtils.equals(geozone.getCode(),code)) {
 								provinceBox.setSelectedIndex(i);
+								int g = AonNumberUtils.toint(provinceBox.getSelectedValue());
+								reg.setGeozone(g==Integer.MIN_VALUE?null:g);
 							}
 							i++;
 						}
