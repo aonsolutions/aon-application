@@ -991,6 +991,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		}
 		@Override
 		public void setFocusOnPayDate() {
+			payDate.getTextBox().selectAll();
 			payDate.setFocus(true);
 		}
 		@Override
