@@ -19,7 +19,7 @@ public class DomainControllerListener extends ControllerAdapter {
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainController dc = (DomainController) event.getController();
-		try {		
+		try {
 			dc.getBookingInfo().save();
 			dc.updateDomainApplication();
 			dc.saveOEM();

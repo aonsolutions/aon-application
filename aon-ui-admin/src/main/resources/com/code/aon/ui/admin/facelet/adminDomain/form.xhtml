@@ -26,11 +26,6 @@
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />						
 					</aon:if>						
-					<aon:commandButton id="displayModules"
-						value="#{bundle.admin_modules_display}"
-						rendered="#{adminDomain.bookingInfo.showDisplayModules}"
-						action="adminDomain_displayModules"
-						styleClass="aon-finding-toolbar-item aon-icon-config" />
 					<aon:commandButton id="domainHistory" 
 						rendered="#{adminDomain.historyState.model.rowCount &gt; 1}"
 						action="adminDomain_history"
@@ -222,7 +217,7 @@
 						<aon:outputText value="#{bundle.admin_capabilities}"/>
 					</aon:div>
 				</aon:div>
-				<aon:panelGrid columns="2" >
+				<aon:panelGrid id="Domain_capabilities" columns="2" >
 					<aon:outputLabel for="Domain_maxDefinedUsers"
 						value="#{bundle.admin_domain_maxDefinedUsers}" />
 					<aon:div>
@@ -280,16 +275,16 @@
 						<h:panelGrid id="bookedModulesDiv" columns="2"
 							cellpadding="0" cellspacing="0">
 							<aon:if test="#{adminDomain.to.type == 'ENTERPRISE'}">
-								<aon:selectOneRadio id="Domain_aonOne"
+								<aon:selectOneRadio id="Domain_booked"
 									styleClass="aon-margin-right" 
-									value="#{adminDomain.bookingInfo.aonMode}" >
+									value="#{adminDomain.bookingInfo.aonMode}">
 									<f:selectItem itemLabel="#{bundle.admin_domain_myAON}" itemValue="#{0}" />
 									<f:selectItem itemLabel="#{bundle.admin_domain_aonSMB}" itemValue="#{1}" />
 									<f:selectItem itemLabel="#{bundle.aon_module_management}" itemValue="#{2}" />
 									<a4j:support event="onchange" ajaxSingle="true"
 										actionListener="#{adminDomain.bookingInfo.onAonOneChanged}"
-										reRender="adminDomainToolbar,bookedModulesDiv" />
-								</aon:selectOneRadio>		
+										reRender="Domain_capabilities" />
+								</aon:selectOneRadio>
 							</aon:if>
 							<aon:panelGroup>
 								<a4j:repeat var="appModule"
@@ -301,13 +296,26 @@
 											rendered="#{appModule.module == 'DOCUMENT'}"
 											actionListener="#{adminDomain.bookingInfo.onDocumentalChanged}"
 											reRender="Domain_maxTotalDocumentSize" />
-									</aon:selectBooleanCheckbox>								
+									</aon:selectBooleanCheckbox>
 									<aon:outputText styleClass="aon-italic aon-margin-right"
 										style="#{(appModule.disabled)?'color: graytext;':''}"
 										value="#{appModule.description}" />
 								</a4j:repeat>
 							</aon:panelGroup>
 						</h:panelGrid>	
+
+						<aon:outputLabel value="#{bundle.admin_myAON_modules}" 
+							rendered="#{adminDomain.bookingInfo.showDisplayModules}"/>
+						<aon:panelGroup rendered="#{adminDomain.bookingInfo.showDisplayModules}">
+							<a4j:region>
+								<a4j:repeat var="appModule"
+									value="#{adminDomain.bookingInfo.displayModules}" >
+										<aon:selectBooleanCheckbox value="#{appModule.checked}" />
+										<aon:outputText styleClass="aon-italic"
+											value="#{appModule.description}" />
+								</a4j:repeat>
+							</a4j:region>
+						</aon:panelGroup>
 					</aon:if>
 
 					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">

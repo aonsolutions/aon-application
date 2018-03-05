@@ -132,6 +132,9 @@ public class BookingInfo implements Serializable {
 	}
 	
 	public void save() throws ManagerBeanException {
+		if (!aioInfo.getModuleInfo(Module.AON_ONE).isChecked() && aioInfo.getModuleInfo(Module.AON_FINANCE).isChecked()) {
+			onSaveDisplayModules(null);
+		}
 		if (aioInfo.getModuleInfo(Module.FINANCE_PORTAL).isChecked() && !aioInfo.getModuleInfo(Module.PAYROLL_PORTAL).isChecked()) {
 			aioInfo.getModuleInfo(Module.PAYROLL_PORTAL).setChecked(true);
 		}
