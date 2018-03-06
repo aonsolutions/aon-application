@@ -21,6 +21,7 @@ import org.jooq.Result;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -66,6 +67,34 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 	}
 	
+	private static class ALLContractPayment extends DelegateContractPayment{
+		
+		private ALLContractPayment(IContractPayment contractPayment) {
+			super(contractPayment);
+		}
+		
+		@Override
+		public String getQuoteExpression() {
+			return ContextVariable.ALL;
+		
+		}
+		
+	}
+	
+	private static class PRORATIONContractPayment extends DelegateContractPayment{
+		
+		private PRORATIONContractPayment(IContractPayment contractPayment) {
+			super(contractPayment);
+		}
+		
+		@Override
+		public String getQuoteExpression() {
+			return String.format("%s()",ContextVariable.PRORATION);
+		
+		}
+		
+	}
+
 	private class SmartQuoteCalculator extends QuoteCalculator {
 		
 		private QuoteCalculator delegate;
@@ -120,14 +149,29 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 		public List<ITimedResult<Double>> quote(IContractPayment payment, Date start, Date end, double amount)
 				throws AonException {
+
+			PaymentType type =  payment.getType();
 			
-			if ( payment.getType() == PaymentType.CRA_0055 		//MEJORAS DE LA PRESTACIÓN ECONÓMICA POR IT 
-				|| payment.getType() == PaymentType.CRA_0056 	//MEJORAS DE LA PRESTACIÓN  DISTINTAS A LAS DE IT  (maternidad, paternidad, riesgo.. y lactancia )
-			) {
+			if ( type == null ) {
+				return delegate.quote(payment, start, end, amount);
+			}
+
+			if ( !type.isBBCCIncluded() 
+				&& type.isBBCCExcluded() ) {
 				return Collections.emptyList();
-			} // not quote, also included in 'BASE REGULADORA'
+			}
+
+			if (payment.getMonth() != null 
+				&&( type == PaymentType.CRA_0004 
+				|| type == PaymentType.CRA_0005)) {
+				return delegate.quote(new PRORATIONContractPayment(payment), start, end, amount);
+			}
 			
-			
+			if ( type.isBBCCIncluded() 
+				&& !type.isBBCCExcluded() ) {
+				return delegate.quote(new ALLContractPayment(payment), start, end, amount);
+			}
+
 			return delegate.quote(payment, start, end, amount);
 		}
 		
