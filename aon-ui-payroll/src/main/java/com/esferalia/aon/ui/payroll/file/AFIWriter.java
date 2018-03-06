@@ -15,6 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.faces.event.AbortProcessingException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -48,6 +50,8 @@ import com.esferalia.aon.file.payroll.afi.data.RZS;
 import com.esferalia.aon.file.payroll.afi.data.TRA;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatchDetail;
+import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
@@ -57,6 +61,8 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T21;
+import com.esferalia.aon.payroll.enumeration.ss.T41;
+import com.esferalia.aon.payroll.enumeration.ss.T7;
 import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -227,7 +233,13 @@ public class AFIWriter implements Serializable {
 		ipf += StringUtils.isBlank(pais)?"   ":pais; 
 		ipf += doc;
 		tra.setIpf(ipf);
-		FAB fab = createFABRecord(detail);
+		FAB fab = null;
+		if(detail.getActionType()==AfiActionType.MA || detail.getActionType()==AfiActionType.MB){
+			fab = createFABRecord(detail);
+		} else if(detail.getActionType()==AfiActionType.MHU){
+			createFABStrikeRecord(detail, true);
+			createFABStrikeRecord(detail, false);
+		}
 		tra.setAyn(createAYNRecord(detail.getContract()));
 		tra.setFab(fab);
 		tra.setFct(createFCTRecord(detail));
@@ -256,6 +268,9 @@ public class AFIWriter implements Serializable {
 		} else if(detail.getActionType()==AfiActionType.MB && detail.getLeaveType()!=null){
 			fab.setSituacion(autoComplete(detail.getLeaveType()==null?"":detail.getLeaveType().getValue(), 2, "0", true));
 			fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getContract().getEndDate())));
+		} else if(detail.getActionType()==AfiActionType.MHU){
+			// TODO accion huelga
+			
 		}
 		
 		
@@ -302,6 +317,8 @@ public class AFIWriter implements Serializable {
 		} else {
 			fab.setSexo(1);
 		}
+		
+		
 		// TODO TipoInactividad
 		fab.setTipoInactividad(null);
 		// TODO ExclusionDesempleo
@@ -327,6 +344,21 @@ public class AFIWriter implements Serializable {
 		
 		return fab;
 	}
+	
+	private FAB createFABStrikeRecord(ContractBatchDetail detail, boolean isFirstDay) throws  ManagerBeanException {
+		FAB fab = new FAB();	
+		fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getRealDate())));
+		if(isFirstDay) {			
+			Double strikeFactor = obtainStrikeFactor(detail.getContract(), detail.getRealDate());
+			if(strikeFactor<1.0)
+				fab.setTipoInactividad(T41.T41_3.getCode());
+			else
+				fab.setTipoInactividad(T41.T41_2.getCode());
+			fab.setCoeficienteActividadHuelgaParcialEre((int)(strikeFactor*1000));
+		}
+		return fab;
+	}
+	
 	
 
 	private FCT createFCTRecord(ContractBatchDetail detail) {
@@ -466,6 +498,25 @@ public class AFIWriter implements Serializable {
 	private ContractCode getContractCode(Contract contract) {
 		String tc2 = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.TC2.getName());
 		return ContractCode.getContractCodeByValue(tc2);
+	}
+	
+	private Double obtainStrikeFactor(Contract contract, Date date) {
+		Double strikeFactor = 0.0;
+		try {
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.STRIKE_FACTOR.getName());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
+			
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list!=null && !list.isEmpty())
+				strikeFactor = Double.valueOf(((ContractData)list.get(0)).getExpression());	
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		return strikeFactor;
 	}
 	
 	private boolean isAfiTestEnvironmentActive() {

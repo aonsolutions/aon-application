@@ -26,7 +26,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatchDetail;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.enumeration.AfiActionType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class ContractListController extends BasicController implements BatchListController {
@@ -39,12 +41,8 @@ public class ContractListController extends BasicController implements BatchList
 	
 	private Person person;
 	private Enterprise enterprise;
-	private Date startDateFrom;
-	private Date startDateTo;
-	private Date endDateFrom;
-	private Date endDateTo;
-	private Date modificationDateFrom;
-	private Date modificationDateTo;
+	private Date dateFrom;
+	private Date dateTo;
 	
 	private List<ITransferObject> pendingList;
 	private BatchListCheckHandler checkHandler;
@@ -68,54 +66,22 @@ public class ContractListController extends BasicController implements BatchList
 		this.checkHandler = checkHandler;
 	}
 
-	public Date getStartDateFrom() {
-		return startDateFrom;
+	public Date getDateFrom() {
+		return dateFrom;
 	}
 
-	public void setStartDateFrom(Date startDateFrom) {
-		this.startDateFrom = startDateFrom;
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
 	}
 
-	public Date getStartDateTo() {
-		return startDateTo;
+	public Date getDateTo() {
+		return dateTo;
 	}
 
-	public void setStartDateTo(Date startDateTo) {
-		this.startDateTo = startDateTo;
+	public void setDateTo(Date dateTo) {
+		this.dateTo = dateTo;
 	}
-
-	public Date getEndDateFrom() {
-		return endDateFrom;
-	}
-
-	public void setEndDateFrom(Date endDateFrom) {
-		this.endDateFrom = endDateFrom;
-	}
-
-	public Date getEndDateTo() {
-		return endDateTo;
-	}
-
-	public void setEndDateTo(Date endDateTo) {
-		this.endDateTo = endDateTo;
-	}
-
-	public Date getModificationDateFrom() {
-		return modificationDateFrom;
-	}
-
-	public void setModificationDateFrom(Date modificationDateFrom) {
-		this.modificationDateFrom = modificationDateFrom;
-	}
-
-	public Date getModificationDateTo() {
-		return modificationDateTo;
-	}
-
-	public void setModificationDateTo(Date modificationDateTo) {
-		this.modificationDateTo = modificationDateTo;
-	}
-
+	
 	public Person getPerson() {
 		return person;
 	}
@@ -136,11 +102,8 @@ public class ContractListController extends BasicController implements BatchList
 		try {
 			setEnterprise( (Enterprise) BeanManager.getManagerBean(Enterprise.class).createNewTo() );
 			setPerson( (Person) BeanManager.getManagerBean(Person.class).createNewTo() );
-			setStartDateFrom(new Date());
+			setDateFrom(new Date());
 //			setStartDateTo(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())+30));
-			setEndDateFrom(new Date());
-//			setEndDateTo(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())+30));
-			setModificationDateFrom(new Date());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> error on init ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -201,6 +164,14 @@ public class ContractListController extends BasicController implements BatchList
 		});
 	}
 	
+	private void addPendingList(Contract contract, AfiActionType action, Date date) {
+		ContractBatchDetail detail = new ContractBatchDetail();
+		detail.setActionType(action);
+		detail.setContract(contract);
+		detail.setRealDate(date);
+		pendingList.add(detail);
+	}
+	
 	/**
 	 * MA - Alta sucesiva
 	 */
@@ -210,11 +181,11 @@ public class ContractListController extends BasicController implements BatchList
 			completeContractCriteria(criteria);
 			
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			if(getStartDateFrom()!=null){
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), getStartDateFrom());
+			if(getDateFrom()!=null){
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), getDateFrom());
 			}
-			if(getStartDateTo()!=null){
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), getStartDateTo());
+			if(getDateTo()!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), getDateTo());
 			}
 			
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
@@ -239,11 +210,11 @@ public class ContractListController extends BasicController implements BatchList
 			completeContractCriteria(criteria);
 			
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			if(getEndDateFrom()!=null){
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateFrom());
+			if(getDateFrom()!=null){
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), getDateFrom());
 			}
-			if(getEndDateTo()!=null){
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateTo());
+			if(getDateTo()!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), getDateTo());
 			}
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
@@ -304,7 +275,39 @@ public class ContractListController extends BasicController implements BatchList
 	 * MHU - Mecanización de HUelga
 	 */
 	private void searchMHU(){
-		// TODO
+		try {
+			Criteria criteria = new Criteria();
+			
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.STRIKE_FACTOR.getName());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
+			if(getDateFrom()!=null){
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), getDateFrom());
+			}
+			if(getDateTo()!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), getDateTo());
+			}
+			
+//			List<Contract> list = bean.getList(criteria).stream().map(to -> {
+//				ContractData data = (ContractData) to;
+//				Contract contract = data.getContract();
+//				// TODO searchMHU::FechaReal
+//				return contract;
+//			})
+//					.collect(Collectors.toList());
+//			addPendingList(list, AfiActionType.MHU);
+			
+			bean.getList(criteria).forEach(to -> {
+				ContractData data = (ContractData) to;
+				addPendingList(data.getContract(), AfiActionType.MHU, data.getStartDate());
+			});
+			
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSearch exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		
 	}
 
 }
