@@ -83,11 +83,20 @@ public class Payment extends Item<Payment.Type> {
 			String description = DESCRIPTIONS.get(this);
 			return description != null ? StringUtils.leftPad(getCode() , 4, '0') + " " + description : null;
 		}
-
+		
 		public int getCode() {
 			return this.ordinal();
 		}
 		
+		public boolean isBBCCIncluded() {
+			return BBCC_INCLUDED.getOrDefault(this, true);
+		}
+
+		public boolean isBBCCExcluded() {
+			return BBCC_EXCLUDED.getOrDefault(this, false);
+		}
+
+
 		@Override
 		public String toString() {
 			return getDescription();
@@ -152,6 +161,131 @@ public class Payment extends Item<Payment.Type> {
 				put(CRA_0054, "INDEMNIZACIONES POR DESPIDO O CESE");
 				put(CRA_0055, "MEJORAS PREST.SS.INCAPACIDAD TEMPORAL");
 				put(CRA_0056, "MEJORAS PREST.SS.\u2260INCAPACIDAD TEMPORAL");
+			}
+		};
+		//@formatter:on
+
+		static Map<Type, Boolean> BBCC_INCLUDED = new HashMap<Type, Boolean>() {
+			{
+				put(CRA_0001, true);
+				put(CRA_0002, true);
+				put(CRA_0003, true);
+				put(CRA_0004, true);
+				put(CRA_0005, true);
+				put(CRA_0006, true);
+				put(CRA_0007, true);
+				put(CRA_0008, true);
+				put(CRA_0009, true);
+				put(CRA_0010, true);
+				put(CRA_0011, true);
+				put(CRA_0012, true);
+				put(CRA_0013, true);
+				put(CRA_0014, true);
+				put(CRA_0015, true);
+				put(CRA_0016, true);
+				put(CRA_0017, true);
+				put(CRA_0018, true);
+				put(CRA_0019, true);
+				put(CRA_0020, true);
+				put(CRA_0021, true);
+				put(CRA_0022, true);
+				put(CRA_0023, true);
+				put(CRA_0024, true);
+				put(CRA_0025, true);
+				put(CRA_0026, true);
+				put(CRA_0027, true);
+				put(CRA_0028, true);
+				put(CRA_0029, true);
+				put(CRA_0030, true);
+				put(CRA_0031, true);
+				put(CRA_0032, true);
+				put(CRA_0033, true);
+				put(CRA_0034, true);
+				put(CRA_0035, false);
+				put(CRA_0036, true);
+				put(CRA_0037, true);
+				put(CRA_0038, true);
+				put(CRA_0039, true);
+				put(CRA_0040, true);
+				put(CRA_0041, true);
+				put(CRA_0042, true);
+				put(CRA_0043, true);
+				put(CRA_0044, true);
+				put(CRA_0045, true);
+				put(CRA_0046, true);
+				put(CRA_0047, true);
+				put(CRA_0048, true);
+				put(CRA_0049, false);
+				put(CRA_0050, true);
+				put(CRA_0051, true);
+				put(CRA_0052, true);
+				put(CRA_0053, true);
+				put(CRA_0054, true);
+				put(CRA_0055, false);
+				put(CRA_0056, true);
+			}
+		};
+		//@formatter:on
+
+		//@formatter:off
+		static Map<Type, Boolean> BBCC_EXCLUDED = new HashMap<Type, Boolean>() {
+			{
+				put(CRA_0001, false);
+				put(CRA_0002, false);
+				put(CRA_0003, false);
+				put(CRA_0004, false);
+				put(CRA_0005, false);
+				put(CRA_0006, false);
+				put(CRA_0007, false);
+				put(CRA_0008, false);
+				put(CRA_0009, false);
+				put(CRA_0010, false);
+				put(CRA_0011, false);
+				put(CRA_0012, false);
+				put(CRA_0013, false);
+				put(CRA_0014, true);
+				put(CRA_0015, true);
+				put(CRA_0016, false);
+				put(CRA_0017, false);
+				put(CRA_0018, false);
+				put(CRA_0019, true);
+				put(CRA_0020, true);
+				put(CRA_0021, false);
+				put(CRA_0022, false);
+				put(CRA_0023, false);
+				put(CRA_0024, false);
+				put(CRA_0025, false);
+				put(CRA_0026, false);
+				put(CRA_0027, false);
+				put(CRA_0028, false);
+				put(CRA_0029, true);
+				put(CRA_0030, false);
+				put(CRA_0031, false);
+				put(CRA_0032, false);
+				put(CRA_0033, false);
+				put(CRA_0034, false);
+				put(CRA_0035, true);
+				put(CRA_0036, false);
+				put(CRA_0037, false);
+				put(CRA_0038, false);
+				put(CRA_0039, false);
+				put(CRA_0040, false);
+				put(CRA_0041, false);
+				put(CRA_0042, true);
+				put(CRA_0043, true);
+				put(CRA_0044, true);
+				put(CRA_0045, true);
+				put(CRA_0046, true);
+				put(CRA_0047, true);
+				put(CRA_0048, true);
+				put(CRA_0049, true);
+				put(CRA_0050, true);
+				put(CRA_0051, true);
+				put(CRA_0052, true);
+				put(CRA_0053, true);
+				put(CRA_0054, true);
+				put(CRA_0055, true);
+				put(CRA_0056, false);
 			}
 		};
 		//@formatter:on

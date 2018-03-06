@@ -7,154 +7,160 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum PaymentType implements IResourceable{
 	
-	CRA_0000,
-	CRA_0001,
-	CRA_0002{
+	CRA_0000(true,false),
+	CRA_0001(true,false),
+	CRA_0002(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) {
 			visitor.visitNonStructuralHours(this);
 		}
 	},
-	CRA_0003 {
+	CRA_0003(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) {
 			visitor.visitStructuralHours(this);
 		}
 	},
-	CRA_0004,
-	CRA_0005,
-	CRA_0006,
-	CRA_0007,
-	CRA_0008,
-	CRA_0009,
-	CRA_0010,
-	CRA_0011,
-	CRA_0012,
-	CRA_0013{
+	CRA_0004(true,false),
+	CRA_0005(true,false),
+	CRA_0006(true,false),
+	CRA_0007(true,false),
+	CRA_0008(true,false),
+	CRA_0009(true,false),
+	CRA_0010(true,false),
+	CRA_0011(true,false),
+	CRA_0012(true,false),
+	CRA_0013(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0014{
+	CRA_0014(true,true){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0015{
+	CRA_0015(true,true){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0016{
+	CRA_0016(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0017{
+	CRA_0017(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0018{
+	CRA_0018(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0019{
+	CRA_0019(true,true){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0020{
+	CRA_0020(true,true){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0021{
+	CRA_0021(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0022{
+	CRA_0022(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0023{
+	CRA_0023(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0024{
+	CRA_0024(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0025{
+	CRA_0025(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0026{
+	CRA_0026(true,false){
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
 			visitor.visitSalaryInKind(this); 
 		}
 	},
-	CRA_0027,
-	CRA_0028,
-	CRA_0029,
-	CRA_0030,
-	CRA_0031,
-	CRA_0032,
-	CRA_0033,
-	CRA_0034,
-	CRA_0035,
-	CRA_0036,
-	CRA_0037,
-	CRA_0038,
-	CRA_0039,
-	CRA_0040,
-	CRA_0041,
-	CRA_0042,
-	CRA_0043,
-	CRA_0044,
-	CRA_0045,
-	CRA_0046,
-	CRA_0047,
-	CRA_0048,
-	CRA_0049,
-	CRA_0050,
-	CRA_0051,
-	CRA_0052,
-	CRA_0053,
-	CRA_0054,
-	CRA_0055,
-	CRA_0056;
+	CRA_0027(true,false),
+	CRA_0028(true,false),
+	CRA_0029(true,true),
+	CRA_0030(true,false),
+	CRA_0031(true,false),
+	CRA_0032(true,false),
+	CRA_0033(true,false),
+	CRA_0034(true,false),
+	CRA_0035(false,true), // 
+	CRA_0036(true,false),
+	CRA_0037(true,false),
+	CRA_0038(true,false),
+	CRA_0039(true,false),
+	CRA_0040(true,false),
+	CRA_0041(true,false),
+	CRA_0042(true,true),
+	CRA_0043(true,true),
+	CRA_0044(true,true),
+	CRA_0045(true,true),
+	CRA_0046(true,true),
+	CRA_0047(true,true),
+	CRA_0048(true,true),
+	CRA_0049(false,true),
+	CRA_0050(true,true),
+	CRA_0051(true,true),
+	CRA_0052(true,true),
+	CRA_0053(true,true),
+	CRA_0054(true,true),
+	CRA_0055(false,true),
+	CRA_0056(true,false);
 	
-	private boolean inBBC;
-	private boolean outBBC;
+	private boolean bBCCIncluded;
+	private boolean bBCCExcluded;
 	
-	private PaymentType() {
-		this(true, true);
-	}
 
-	private PaymentType(boolean inBBC, boolean outBBC) {
-		this.inBBC = inBBC;
-		this.outBBC = outBBC;
+	private PaymentType(boolean bBCCIncluded, boolean bBCCExcluded) {
+		this.bBCCIncluded = bBCCIncluded;
+		this.bBCCExcluded = bBCCExcluded;
+	}
+	
+	
+	public boolean isBBCCExcluded() {
+		return bBCCExcluded;
+	}
+	
+	public boolean isBBCCIncluded() {
+		return bBCCIncluded;
 	}
 	
 	
