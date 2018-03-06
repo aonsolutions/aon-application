@@ -156,9 +156,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(payment, start, end, amount);
 			}
 
+
 			if ( !type.isBBCCIncluded() 
 				&& type.isBBCCExcluded() ) {
 				return Collections.emptyList();
+			}
+
+			if ( type == PaymentType.CRA_0000 	// TODO: This must be the only one check 
+				|| ContextVariable.PREST_IT.equals(payment.getName()) 
+				|| ContextVariable.MATERNITY.getName().equals(payment.getName())
+				|| ContextVariable.DIRECT_PAY.getName().equals(payment.getName())) {
+					return delegate.quote(payment, start, end, amount);
 			}
 
 			if (payment.getMonth() != null 
