@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
-import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_DAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
@@ -11,7 +10,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_START;
@@ -35,19 +33,16 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
@@ -118,18 +113,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.solvers.BisectionSolver;
-import org.apache.commons.math3.analysis.solvers.BrentSolver;
-import org.apache.commons.math3.analysis.solvers.IllinoisSolver;
-import org.apache.commons.math3.analysis.solvers.MullerSolver;
-import org.apache.commons.math3.analysis.solvers.MullerSolver2;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
-import org.hibernate.event.def.OnLockVisitor;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
@@ -143,7 +131,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.payroll.DelegateCollection;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
@@ -169,8 +156,8 @@ import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.OnlyPaymentContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
-import com.esferalia.aon.payroll.calculator.UndefinedTotalPaymentException;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -179,11 +166,8 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
-import com.esferalia.aon.payroll.sql.AbstractSQL;
-import com.esferalia.aon.payroll.sql.AbstractSQL.ContractData;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
@@ -199,14 +183,12 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
-import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -219,16 +201,13 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
-import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
-import com.google.api.client.repackaged.com.google.common.base.Throwables;
 
 public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCalculatorContext
 		implements IContractSalaryCalculatorContext, NotFoundHandler, ISQLContractSalaryCalculatorContext {
@@ -2988,7 +2967,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		ISQLContractSalaryCalculatorContext ctx = (ISQLContractSalaryCalculatorContext) getNoItSalary(connection, date,
 				SalaryType.SALARY, contractId);
 		try {
-			Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()) {
+			Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
 				@Override
 				protected void resolvePayment(IContractPayment contractPayment, Date start, Date end, Date issueDate,
 						ExpressionContext expressionContext,
@@ -3010,6 +2989,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			throw t;
 		}
 	}
+	
 	
 
 	public Object br(Date start, Date end) throws ExpressionException, SalaryException, SQLException {

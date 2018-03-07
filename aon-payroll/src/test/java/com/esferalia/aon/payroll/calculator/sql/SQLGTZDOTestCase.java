@@ -35,6 +35,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -1315,7 +1316,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 					{
 						this.expression = "P_0 + P_1 + P_2";
 						this.month = Month.DECEMBER;
-						this.start = "01/12";
+						this.start = "01/01";
 						this.end = "31/12";
 						this.issue = "15/12";
 					}
@@ -1372,7 +1373,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() + ", " + p.getQuote()) ;
@@ -1381,7 +1382,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
 		double itDays = monthDays - workedDays;
 		
-		double br = ((1750.00 + 1750.00 * 0.10) + (1750.00 + 1750.00 * 0.10)/12 + (1750.00 + 1750.00 * 0.10)/12)/ monthDays ;
+		double br = ((1750.00 + 1750.00 * 0.10) + (1750.00 + 1750.00 * 0.10)/12 + (1750.00 + 1750.00 * 0.10)/12 )/ monthDays ;
 		
 		System.out.println("BR = " + br );
 		
@@ -2651,7 +2652,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				new Extra() {
 					{
 						this.expression = "GARANTIZADO + SALARIO_BASE";
-						this.quoteExpression = "SALARIO_BASE/12";
+//						this.quoteExpression = "SALARIO_BASE/12";
+						this.quoteExpression = "PRORRATEAR()";
 						this.month = Month.DECEMBER;
 						this.start = "01/07";
 						this.end = "31/12";
@@ -2661,7 +2663,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				new Extra() {
 					{
 						this.expression = "GARANTIZADO + SALARIO_BASE ";
-						this.quoteExpression = "SALARIO_BASE/12";
+						this.quoteExpression = "PRORRATEAR()";
 						this.month = Month.JULY;
 						this.start = "01/01";
 						this.end = "30/06";
@@ -2786,6 +2788,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 	
 	}
+
 
 
 	// ----------------------------------------------------------------------------------

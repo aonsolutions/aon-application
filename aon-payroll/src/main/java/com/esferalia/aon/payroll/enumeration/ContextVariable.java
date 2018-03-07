@@ -147,7 +147,7 @@ public enum ContextVariable implements IResourceable{
 	CATEGORY("CATEGORIA", VariableType.STRING, false),
 	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN, false),
 	OCCUPATION("OCUPACION", VariableType.OCCUPATION_DROP, false),
-	//GUARANTEED("GARANTIZADO", VariableType.DOUBLE, false),
+//	GUARANTEED("GARANTIZADO", VariableType.DOUBLE, false),
 	IRREGULAR("IRREGULAR", VariableType.BOOLEAN, false),
 	FULL_TIME("TIEMPO_COMPLETO", VariableType.BOOLEAN, false),
 	IRPF_PERCENT("PORCENTAJE_IRPF", VariableType.DOUBLE, false),
@@ -292,6 +292,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";
 	public static final String BASE_SALARY = "SALARIO_BASE";
+	public static final String GUARENTEED = "GARANTIZADO";
 	public static final String GUARENTEE_IT = "GARANTIZADO_IT";
 	
 	public static final String PAYMENT_VARIABLE = "CONCEPTO";

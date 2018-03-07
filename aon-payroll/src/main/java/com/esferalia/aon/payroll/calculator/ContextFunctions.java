@@ -2,7 +2,9 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CHECK;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INPUT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SECTION;
@@ -440,7 +442,14 @@ public class ContextFunctions {
 
 	public static Double proration(ExpressionContext context, Double amount) {
 		
+		Number guarenteed = ExpressionContext.getCurrentBindings().get(GUARENTEED, v -> (Number)v , 0.00);
+		amount -= guarenteed.doubleValue();
+		
+		if ( amount <= 0.00 )
+			return 0.00;
+
 		Object payment = ExpressionContext.getCurrentBindings().get(PAYMENT_VARIABLE);
+		
 
 		if ( payment == null )
 			return amount / 12.00;
