@@ -740,9 +740,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("EXTRA, REDEFINIDAS");
 		calculate(Calendar.JANUARY);
-		assertText("prorationBaseLabel", 1027.65 / 12.00 * 2.00 );
+		assertText("prorationBaseLabel", ( 1027.65 / 6 ) / 12.00 * 2.00 );
 		calculate(Calendar.MAY);
-		assertText("prorationBaseLabel", 1027.65 / 12.00 * 2.00 );
+		assertText("prorationBaseLabel", ( 1027.65 / 6 ) / 12.00 * 2.00 );
 		
 		draft("EXTRA, FIN DE CONTRATO");
 
