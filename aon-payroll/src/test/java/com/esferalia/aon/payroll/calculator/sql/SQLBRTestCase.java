@@ -100,7 +100,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 					{
 						this.expression = "P_0 + P_1 + P_2";
 						this.month = Month.DECEMBER;
-						this.start = "01/12";
+						this.start = "01/01";
 						this.end = "31/12";
 						this.issue = "15/12";
 					}
@@ -177,7 +177,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 					{
 						this.expression = "P_0 + P_1 + P_2";
 						this.month = Month.DECEMBER;
-						this.start = "01/12";
+						this.start = "01/01";
 						this.end = "31/12";
 						this.issue = "15/12";
 					}
