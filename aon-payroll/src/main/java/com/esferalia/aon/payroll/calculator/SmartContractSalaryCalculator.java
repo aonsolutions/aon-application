@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
@@ -95,6 +96,25 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 	}
 
+	private static class GUARENTEEDContractPayment extends DelegateContractPayment{
+		
+		private GUARENTEEDContractPayment(IContractPayment contractPayment) {
+			super(contractPayment);
+		}
+		
+		@Override
+		public PaymentType getType() {
+			return PaymentType.CRA_0055;
+		}
+		
+		@Override
+		public String getQuoteExpression() {
+			return "0.00";
+		
+		}
+		
+	}
+
 	private class SmartQuoteCalculator extends QuoteCalculator {
 		
 		private QuoteCalculator delegate;
@@ -161,6 +181,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				&& type.isBBCCExcluded() ) {
 				return Collections.emptyList();
 			}
+			
+			if ( AonStringUtils.equals(GUARENTEED, payment.getName())) {
+				return delegate.quote(new GUARENTEEDContractPayment(payment), start, end, amount);
+			}
 
 			if ( type == PaymentType.CRA_0000 	// TODO: This must be the only one check 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
@@ -168,6 +192,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				|| ContextVariable.DIRECT_PAY.getName().equals(payment.getName())) {
 					return delegate.quote(payment, start, end, amount);
 			}
+
 
 			if (payment.getMonth() != null 
 				&&( type == PaymentType.CRA_0004 

@@ -34,7 +34,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
@@ -100,7 +99,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 				
@@ -167,7 +166,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 		
@@ -235,7 +234,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -309,7 +308,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -383,7 +382,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -452,7 +451,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -526,7 +525,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -601,7 +600,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -621,7 +620,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -697,7 +696,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -715,7 +714,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -792,7 +791,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -812,7 +811,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -889,7 +888,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -910,7 +909,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -976,7 +975,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -1059,7 +1058,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
@@ -1126,7 +1125,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -1196,7 +1195,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -1285,7 +1284,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		double workedDays = get(startIt, DATE) -1 ;
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
@@ -1474,7 +1473,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		double workedDays = get(startIt, DATE) -1 ;
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
@@ -1566,7 +1565,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		double workedDays = get(startIt, DATE) -1 ;
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
@@ -1657,7 +1656,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		double workedDays = get(startIt, DATE) -1 ;
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
@@ -1722,7 +1721,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -1798,7 +1797,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -1871,7 +1870,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -1952,7 +1951,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -2024,7 +2023,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		//ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -2093,7 +2092,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		//ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -2156,7 +2155,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -2220,7 +2219,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -2286,7 +2285,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println("" +  get(startDate, Calendar.MONTH) + " "+  p.getExpression() + " = " + p.getAmount());
 				
@@ -2305,7 +2304,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		System.out.println("");
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println("" +  get(startDate, Calendar.MONTH) + " "+  p.getExpression() + " = " + p.getAmount());
@@ -2324,7 +2323,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		System.out.println("");
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println("" +  get(startDate, Calendar.MONTH) + " "+  p.getExpression() + " = " + p.getAmount());
@@ -2400,7 +2399,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -2462,7 +2461,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount());
 				
@@ -2558,7 +2557,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
@@ -2566,7 +2565,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder(){
 			@Override
 			public void addPayment(Double amount, Double quote, Double tax, String description,
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
@@ -2594,7 +2593,11 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println("-->" + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 
@@ -2605,7 +2608,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder(){
 			@Override
 			public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
 					IPayment payment, Map<String, ITimedVariable<?>> context) {
@@ -2620,7 +2623,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(),Calendar.YEAR), getLastDayOfYear(getToday()));
 		ExpressionContext expressionContext = ctx.getExpressionContext();
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder(){
 			@Override
 			public void addPayment(Double amount, Double quote, Double tax, String description,
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
@@ -2710,7 +2713,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
-		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
@@ -2718,12 +2721,12 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 
 		extra = getExtra(aonContext, agreement.getId(), "15/07");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 
 		Date startIt = add(getToday(), Calendar.MONTH, 1);
@@ -2742,7 +2745,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 
@@ -2753,7 +2756,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder(){
 			@Override
 			public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
 					IPayment payment, Map<String, ITimedVariable<?>> context) {
@@ -2769,12 +2772,12 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		extra = getExtra(aonContext, agreement.getId(), "15/07");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 
 		extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
-		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder(){
 			@Override
 			public void addPayment(Double amount, Double quote, Double tax, String description,
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
