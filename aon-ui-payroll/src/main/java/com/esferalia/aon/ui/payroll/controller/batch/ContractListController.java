@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.controller.batch;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -155,15 +154,6 @@ public class ContractListController extends BasicController implements BatchList
 		}
 	}
 	
-	private void addPendingList(List<Contract> list, AfiActionType action) {
-		list.forEach(contract -> {
-			ContractBatchDetail detail = new ContractBatchDetail();
-			detail.setActionType(action);
-			detail.setContract(contract);
-			pendingList.add(detail);
-		});
-	}
-	
 	private void addPendingList(Contract contract, AfiActionType action, Date date) {
 		ContractBatchDetail detail = new ContractBatchDetail();
 		detail.setActionType(action);
@@ -181,6 +171,7 @@ public class ContractListController extends BasicController implements BatchList
 			completeContractCriteria(criteria);
 			
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE));
 			if(getDateFrom()!=null){
 				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), getDateFrom());
 			}
@@ -192,8 +183,10 @@ public class ContractListController extends BasicController implements BatchList
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));
 			
-			List<Contract> list = bean.getList(criteria).stream().map(to -> (Contract)to).collect(Collectors.toList());
-			addPendingList(list, AfiActionType.MA);
+			bean.getList(criteria).forEach(to -> {
+				Contract contract = (Contract) to;
+				addPendingList(contract, AfiActionType.MA, contract.getStartDate());
+			});
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -210,6 +203,7 @@ public class ContractListController extends BasicController implements BatchList
 			completeContractCriteria(criteria);
 			
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE));
 			if(getDateFrom()!=null){
 				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), getDateFrom());
 			}
@@ -220,8 +214,10 @@ public class ContractListController extends BasicController implements BatchList
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));
 			
-			List<Contract> list = bean.getList(criteria).stream().map(to -> (Contract)to).collect(Collectors.toList());
-			addPendingList(list, AfiActionType.MB);
+			bean.getList(criteria).forEach(to -> {
+				Contract contract = (Contract) to;
+				addPendingList(contract, AfiActionType.MB, contract.getEndDate());
+			});
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -277,7 +273,6 @@ public class ContractListController extends BasicController implements BatchList
 	private void searchMHU(){
 		try {
 			Criteria criteria = new Criteria();
-			
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.STRIKE_FACTOR.getName());
 			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
@@ -287,27 +282,15 @@ public class ContractListController extends BasicController implements BatchList
 			if(getDateTo()!=null){
 				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), getDateTo());
 			}
-			
-//			List<Contract> list = bean.getList(criteria).stream().map(to -> {
-//				ContractData data = (ContractData) to;
-//				Contract contract = data.getContract();
-//				// TODO searchMHU::FechaReal
-//				return contract;
-//			})
-//					.collect(Collectors.toList());
-//			addPendingList(list, AfiActionType.MHU);
-			
 			bean.getList(criteria).forEach(to -> {
 				ContractData data = (ContractData) to;
 				addPendingList(data.getContract(), AfiActionType.MHU, data.getStartDate());
 			});
-			
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		
 	}
 
 }

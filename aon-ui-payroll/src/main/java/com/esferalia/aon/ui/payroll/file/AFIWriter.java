@@ -15,8 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.faces.event.AbortProcessingException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -30,11 +28,9 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.person.enumeration.Gender;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
@@ -51,7 +47,6 @@ import com.esferalia.aon.file.payroll.afi.data.TRA;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
@@ -62,11 +57,13 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T21;
 import com.esferalia.aon.payroll.enumeration.ss.T41;
-import com.esferalia.aon.payroll.enumeration.ss.T7;
 import com.esferalia.aon.payroll.util.PayrollUtils;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class AFIWriter implements Serializable {
 	
@@ -145,8 +142,7 @@ public class AFIWriter implements Serializable {
 				emp = createEMPrecord(previousCcc, list);
 				eti.getEmpresas().add(emp);
 			}
-			TRA tra = createTRARecord(detail);
-			emp.getTrabajadores().add(tra);
+			fillTRARecords(emp, detail);
 		}
 		setEti( eti );
 		createETFRecord( eti );
@@ -214,7 +210,31 @@ public class AFIWriter implements Serializable {
 		return rzs;
 	}
 	
-	private TRA createTRARecord(ContractBatchDetail detail) throws ManagerBeanException {
+	private void fillTRARecords(EMP emp, ContractBatchDetail detail) {
+		if(detail.getActionType()==AfiActionType.MA || detail.getActionType()==AfiActionType.MB){
+			TRA tra = createTRARecord(detail);
+			tra.setFab( createFABRecord(detail) );
+			emp.getTrabajadores().add(tra);
+		} else if(detail.getActionType()==AfiActionType.MHU){
+			TRA tra = null;
+			
+			/*
+			 *  segmento TRA para inicio huelga
+			 */
+			tra = createTRARecord(detail);
+			tra.setFab( createFABStrikeRecord(detail, true) );
+			emp.getTrabajadores().add(tra);
+			
+			/*
+			 *  segmento TRA para fin huelga
+			 */
+			tra = createTRARecord(detail);
+			tra.setFab( createFABStrikeRecord(detail, false) );
+			emp.getTrabajadores().add(tra);
+		}
+	}
+	
+	private TRA createTRARecord(ContractBatchDetail detail) {
 		TRA tra = new TRA();
 		tra.setNumeroAfiliacion( detail.getContract().getPerson().getSocialSecurityNumber() ); 
 		String tipo;
@@ -233,15 +253,7 @@ public class AFIWriter implements Serializable {
 		ipf += StringUtils.isBlank(pais)?"   ":pais; 
 		ipf += doc;
 		tra.setIpf(ipf);
-		FAB fab = null;
-		if(detail.getActionType()==AfiActionType.MA || detail.getActionType()==AfiActionType.MB){
-			fab = createFABRecord(detail);
-		} else if(detail.getActionType()==AfiActionType.MHU){
-			createFABStrikeRecord(detail, true);
-			createFABStrikeRecord(detail, false);
-		}
 		tra.setAyn(createAYNRecord(detail.getContract()));
-		tra.setFab(fab);
 		tra.setFct(createFCTRecord(detail));
 		return tra;
 	}
@@ -257,9 +269,8 @@ public class AFIWriter implements Serializable {
 		return ayn;
 	}
 
-	private FAB createFABRecord(ContractBatchDetail detail) throws  ManagerBeanException{
+	private FAB createFABRecord(ContractBatchDetail detail) {
 		FAB fab = new FAB();
-		
 		fab.setAccion(autoComplete(detail.getActionType()==null?AfiActionType.MA.getValue():detail.getActionType().getValue(), 3, " ", false));
 		
 		if(detail.getActionType()==AfiActionType.MA){
@@ -268,11 +279,7 @@ public class AFIWriter implements Serializable {
 		} else if(detail.getActionType()==AfiActionType.MB && detail.getLeaveType()!=null){
 			fab.setSituacion(autoComplete(detail.getLeaveType()==null?"":detail.getLeaveType().getValue(), 2, "0", true));
 			fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getContract().getEndDate())));
-		} else if(detail.getActionType()==AfiActionType.MHU){
-			// TODO accion huelga
-			
 		}
-		
 		
 		Integer quoteGroup = getQuoteGroup(detail.getContract());
 		if(quoteGroup!=null){
@@ -345,8 +352,9 @@ public class AFIWriter implements Serializable {
 		return fab;
 	}
 	
-	private FAB createFABStrikeRecord(ContractBatchDetail detail, boolean isFirstDay) throws  ManagerBeanException {
-		FAB fab = new FAB();	
+	private FAB createFABStrikeRecord(ContractBatchDetail detail, boolean isFirstDay) {
+		FAB fab = new FAB();
+		fab.setAccion(autoComplete(detail.getActionType().getValue(), 3, " ", false));
 		fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getRealDate())));
 		if(isFirstDay) {			
 			Double strikeFactor = obtainStrikeFactor(detail.getContract(), detail.getRealDate());

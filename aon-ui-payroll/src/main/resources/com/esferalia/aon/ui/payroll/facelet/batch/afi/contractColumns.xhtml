@@ -17,6 +17,17 @@
 			value="#{to.actionType}"/>
 	</aon:column>
 	
+	<aon:column alias="ContractBatchDetail.realDate"
+		styleClass="aon-editDataTable-textColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.realDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+	</aon:column>
+	
 	<aon:if test="#{showEnterpriseColumn}">		
 		<aon:column alias="ContractBatchDetail.contract.workPlace.enterprise.registry.name"
 			styleClass="aon-editDataTable-textColumn">
@@ -32,7 +43,7 @@
 	<aon:column alias="ContractBatchDetail.contract.person.registry.name,ContractBatchDetail.contract.person.firstSurname,ContractBatchDetail.contract.person.secondSurname"
 		styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.registry_person}" />
+			<aon:outputText value="#{bundle.payroll_contract}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
 			<aon:outputText value="#{to.contract.person.registry.fullName}"/>
@@ -90,7 +101,7 @@
 		</f:facet>
 		<aon:outputText value="#{to.leaveType}"
 			rendered="#{to.actionType.value!='MA'}" /> 
-		<rich:inplaceSelect rendered="#{controllerList.checkHandler.rowChecked and to.actionType.value!='MA' and empty to.id}" 
+		<rich:inplaceSelect rendered="#{controllerList.checkHandler.rowChecked and to.actionType.value=='MB' and empty to.id}" 
 		 	id="contract-leaveType"
 		 	value="#{to.leaveType}"
 		 	listHeight="250px" listWidth="250px"

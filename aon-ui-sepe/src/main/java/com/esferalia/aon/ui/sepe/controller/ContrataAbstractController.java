@@ -485,16 +485,22 @@ public abstract class ContrataAbstractController implements IContrataController 
 //		return 0;
 //	}
 	private ContrataBatch obtainBatch(Contract contract){
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
-		Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
+		AONContext ctx = null;
 		try {
-			if(result.size()>0){
-				IManagerBean bean = BeanManager.getManagerBean(ContrataBatch.class);
-				return (ContrataBatch) bean.get(result.get(0).value1());
+			ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
+			Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
+			try {
+				if(result.size()>0){
+					IManagerBean bean = BeanManager.getManagerBean(ContrataBatch.class);
+					return (ContrataBatch) bean.get(result.get(0).value1());
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
 			}
-		} catch (ManagerBeanException e) {
-			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 		return null;
 	}

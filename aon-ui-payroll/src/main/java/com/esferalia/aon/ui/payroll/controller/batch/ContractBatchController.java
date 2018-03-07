@@ -92,6 +92,7 @@ public class ContractBatchController extends BasicController {
             contractBean.update(detail.getContract());
             ContractBatchDetail contractBatchDetail = new ContractBatchDetail();
             contractBatchDetail.setActionType(detail.getActionType());
+            contractBatchDetail.setRealDate(detail.getRealDate());
             contractBatchDetail.setLeaveType(detail.getLeaveType());
 			contractBatchDetail.setContract(detail.getContract());
 			contractBatchDetail.setContractBatch((ContractBatch) getTo());
@@ -342,6 +343,7 @@ public class ContractBatchController extends BasicController {
 				newDetail.setActionType(detail.getActionType());
 				newDetail.setLeaveType(detail.getLeaveType());
 				newDetail.setContract(detail.getContract());
+				newDetail.setRealDate(detail.getRealDate());
 				selectedList.add(newDetail);
 			}
 	        listController.getCheckHandler().clearCheckedList();
