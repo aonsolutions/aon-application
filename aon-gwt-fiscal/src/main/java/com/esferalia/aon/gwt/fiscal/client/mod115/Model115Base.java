@@ -242,6 +242,11 @@ public abstract class Model115Base extends SimplePanel implements IMod115Declara
 				if 	(infoKey == FiscalModelKeyInfo.DIFF_SALARY) button.addStyleName(AON.AON_CSS.aonIconDiff());
 				if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
 				
+				// Botones info diferencia, solo si el modelo se creo por diferencias
+				if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE || infoKey == FiscalModelKeyInfo.DIFF_SALARY) {
+					button.setVisible(!callback.getFiscalModel().isDiffCalculationDisabled());				
+				}
+				
 				button.addClickHandler(new ClickHandler() {
 					
 					@Override

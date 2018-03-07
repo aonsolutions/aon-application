@@ -5,8 +5,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Mod115Key implements IFiscalModelKey {
 
+	CM_001("115-CM-01", 1, null)  // Deshabilitado el cálculo por diferencias (0-Habilitado, 1-Deshabilitado)
+
 	// ---------------------------------------------------------------- ALAVA
-	 AR_907("115-AR-907", 907,Administration.ALAVA)
+	,AR_907("115-AR-907", 907,Administration.ALAVA)
 	,AR_908("115-AR-908", 908,Administration.ALAVA)
 	,AR_909("115-AR-909", 909,Administration.ALAVA)
 	,AR_C01("115-01" 	,   1,Administration.ALAVA)

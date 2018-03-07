@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -356,6 +357,11 @@ public class Mod115DAO extends FiscalModelDAO {
 			mod115.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod115);
+		
+		// Cálculo por diferencia.
+		String diff = AppParamDAO.fetchValue(ctx, AppParam.FS_MOD303_BY_DIFFERENCE_DISABLED);
+		mod115.setDiffCalculationDisabled(AonStringUtils.equals(diff, AonStringUtils.ONE));
+				
 		return mod115;
 	}
 	
@@ -395,22 +401,36 @@ public class Mod115DAO extends FiscalModelDAO {
 	// -------------------------------------------------------------------- INVOICES
 	private static void createFromInvoices(final AONContext ctx, final Mod115 mod115) {
 		final Map<Mod115Key,Set<String>> docs = new HashMap<Mod115Key,Set<String>>(); 
-		final Map<Mod115Key,Set<String>> pdocs = new HashMap<Mod115Key,Set<String>>(); 
-		IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod115)
+		final Map<Mod115Key,Set<String>> pdocs = new HashMap<Mod115Key,Set<String>>();
+		
+		if (mod115.isDiffCalculationDisabled()) {
+			// Cálculo por diferencias NO
+			IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod115)
 			.forEach(br -> {
-				for (Mod115KeyDAO key : Mod115KeyDAO.values()) {
-					if (key.acceptValue(mod115,br)) {
-						key.initialize(ctx, mod115, docs, pdocs, br);
-					};
-				}
-		});
-		getEffectivePreviousModels(ctx, mod115)
-			.forEach(mod -> {
-				for (String keyString : mod.getMap().keySet()) {
-					double amount = mod.getAmount(keyString);
-					mod115.ensureDetail(keyString).addDeclaredAmount(amount);
-				}
+					for (Mod115KeyDAO key : Mod115KeyDAO.values()) {
+						if (key.acceptValue(mod115,br)) {
+							key.initialize(ctx, mod115, docs, pdocs, br);
+						};
+					}
 			});
+		} else {
+			// Cálculo por diferencias SI
+			IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod115)
+				.forEach(br -> {
+					for (Mod115KeyDAO key : Mod115KeyDAO.values()) {
+						if (key.acceptValue(mod115,br)) {
+							key.initialize(ctx, mod115, docs, pdocs, br);
+						};
+					}
+			});
+			getEffectivePreviousModels(ctx, mod115)
+				.forEach(mod -> {
+					for (String keyString : mod.getMap().keySet()) {
+						double amount = mod.getAmount(keyString);
+						mod115.ensureDetail(keyString).addDeclaredAmount(amount);
+					}
+				});
+		}
 	}
 	
 	private static String getInvoicesInfo(AONContext ctx, final Mod115 mod115
