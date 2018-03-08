@@ -492,7 +492,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					//Borrar selecciones anteriores
 					eraseSelectedPositions();
 					selectPosition(eventCell.getRow(), eventCell.getColumn());
-					addValueSelectedPositions(Double.parseDouble(eventCell.getText()));
+					if(eventCell.getText() == "" || eventCell.getText() == "-"){
+						addValueSelectedPositions(null);
+						eventCell.setText("-");
+					}else
+						addValueSelectedPositions(Double.parseDouble(eventCell.getText()));
 					eraseSelectedPositions();
 					eventCell.addStyleName(style.onChange());	
 				}

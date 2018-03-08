@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -359,6 +360,7 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariablesDB.add("DIAS_ERE");
 				employeeContractVariablesDB.add("HORAS_EXTRAS");
 				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
+				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
 
 				for (String varName : context.getVariables()){
 					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
@@ -371,8 +373,17 @@ public class EmployeeEventsDraftObject {
 						Date startDate = var.getStartDate();
 						Date endDate = var.getEndDate();
 						Double value = Double.valueOf(var.getValue());
-						EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
-						varList.add(eVar);
+						if(startDate.getMonth() == endDate.getMonth()){
+							EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
+							varList.add(eVar);
+						}else{
+							for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
+								Date auxStartDate = new Date(startDate.getYear(), i, 1);
+								Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
+								EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+								varList.add(eVar);
+							}
+						}
 					}
 					sortListByStartDate(varList);
 					
@@ -417,15 +428,114 @@ public class EmployeeEventsDraftObject {
 							if(null != quarter.getEndDate())
 								endDate = DateUtils.copyDateOnly(quarter.getEndDate());
 							Double value = Double.parseDouble(quarter.getExpression());
-							EmployeeEventsVariable var = new EmployeeEventsVariable(startDate, endDate, value);
-							//Window.alert("BD -> "+varName+" = "+value+", stratDate :"+startDate+", endDate :"+endDate);
-							varList.add(var);
+//							EmployeeEventsVariable var = new EmployeeEventsVariable(startDate, endDate, value);
+//							varList.add(var);
+							if(startDate.getMonth() == endDate.getMonth()){
+								EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
+								varList.add(eVar);
+							}else{
+								for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
+									Date auxStartDate = new Date(startDate.getYear(), i, 1);
+									Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
+									EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+									varList.add(eVar);
+								}
+							}
 						}
 						sortListByStartDate(varList);
 					}	
 					mapEventsVar.put(varName, varList);
 				}
+				
+				modifyMapEventsVar();
+				
+				//IMPRIMIR VARIABLES
+//				for(String name : mapEventsVar.keySet()){
+//					for(EmployeeEventsVariable var: mapEventsVar.get(name)){
+//						Window.alert(name+" = "+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+//					}
+//				}
+				
 				success.accept(result);
+			}
+
+			private void modifyMapEventsVar() {
+				for (String varName: mapEventsVar.keySet()){
+					ArrayList<EmployeeEventsVariable> eventVarList = mapEventsVar.get(varName);
+					if(varName.contains("DIAS")){
+						ArrayList<EmployeeEventsVariable> newEventVarList = groupDays(varName, eventVarList);
+						mapEventsVar.put(varName, newEventVarList);
+					}else{
+						ArrayList<EmployeeEventsVariable> newEventVarList = checkDuplicateMonths(eventVarList);
+						mapEventsVar.put(varName, newEventVarList);
+					}	
+				}
+			}
+
+			private ArrayList<EmployeeEventsVariable> checkDuplicateMonths(ArrayList<EmployeeEventsVariable> eventVarList) {
+				ArrayList<EmployeeEventsVariable> newEventsList = new ArrayList<>();
+				int i = 0;
+				while(i < eventVarList.size()){
+					if(i+1 < eventVarList.size()){
+						if(eventVarList.get(i).getStartDate().getMonth() == eventVarList.get(i+1).getStartDate().getMonth()){
+							newEventsList.add(eventVarList.get(i+1));
+							i+=2;
+						}else{
+							newEventsList.add(eventVarList.get(i));
+							i++;
+						}
+					}else{
+						newEventsList.add(eventVarList.get(i));
+						i++;
+					}		
+				}
+				
+				return newEventsList;
+			}
+
+			private ArrayList<EmployeeEventsVariable> groupDays(String varName, ArrayList<EmployeeEventsVariable> eventVarList) {
+				Double days = 0.00;
+				ArrayList<EmployeeEventsVariable> newEventsList = new ArrayList<>();
+				int i = 0;
+				while(i < eventVarList.size()){
+					if(i+1 < eventVarList.size()){
+						if(eventVarList.get(i).getStartDate().getMonth() == eventVarList.get(i+1).getStartDate().getMonth()){
+							days += eventVarList.get(i).getValue();
+							i++;
+						}else{
+							EmployeeEventsVariable eVar;
+							if(days == 0)
+								 eVar = new EmployeeEventsVariable(
+									DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
+									DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
+									eventVarList.get(i).getValue());
+							else{
+								eVar = new EmployeeEventsVariable(
+										DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
+										DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
+										days);
+								days = 0.00;
+							}
+							newEventsList.add(eVar);
+							i++;
+						}
+					}else{
+						if(days != 0){
+							days += eventVarList.get(i).getValue();
+							EmployeeEventsVariable eVar = new EmployeeEventsVariable(
+									DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
+									DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
+									days);
+							days = 0.00;
+							newEventsList.add(eVar);
+							i++;
+						}else{
+							newEventsList.add(eventVarList.get(i));
+							i++;
+						}
+					}		
+				}
+				return newEventsList;
 			}
 		});
 	}
@@ -480,7 +590,11 @@ public class EmployeeEventsDraftObject {
 				Quartet<java.sql.Date, java.sql.Date, String, String> quarterInfo = new Quartet<java.sql.Date, java.sql.Date, String, String>();
 				java.sql.Date startDate = new java.sql.Date(eVar.getStartDate().getTime());
 				java.sql.Date endDate = new java.sql.Date(eVar.getEndDate().getTime());
-				String value = Double.toString(eVar.getValue());
+				String value = "";
+				if(null == eVar.getValue())
+					value = null;
+				else
+					value = Double.toString(eVar.getValue());
 				quarterInfo.setName(varName).setStartDate(startDate).setEndDate(endDate).setExpression(value);
 				updateList.add(quarterInfo);
 			}

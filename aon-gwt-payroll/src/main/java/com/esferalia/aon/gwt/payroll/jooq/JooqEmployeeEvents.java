@@ -93,12 +93,12 @@ public class JooqEmployeeEvents {
 		   .where(CONTRACT_DATA.CONTRACT.eq(contract))
 		   .and(CONTRACT_DATA.NAME.in(
 				   ContextVariable.WORKED_DAYS.getName()
-				  ,ContextVariable.ERE_DAYS.getName()
-				  ,ContextVariable.STRIKE_DAYS.getName()
+//				  ,ContextVariable.ERE_DAYS.getName()
+//				  ,ContextVariable.STRIKE_DAYS.getName()
 				  ,ContextVariable.LEAVE_DAYS.getName()
 				  ,ContextVariable.WORKED_HOURS.getName()
 				  ,ContextVariable.REAL_DAYS.getName()
-				  ,ContextVariable.HOLIDAYS.getName()
+//				  ,ContextVariable.HOLIDAYS.getName()
 				  ,ContextVariable.EXTRA_HOURS.getName())
 				.or(CONTRACT_DATA.NAME.eq("DIAS_EFECTIVOS"))
 				.or(CONTRACT_DATA.NAME.eq("HORAS_COMPLEMENTARIAS"))
@@ -115,14 +115,20 @@ public class JooqEmployeeEvents {
 		   .execute();
 		
 		List<Quartet<Date, Date, String, String>> updateList = updateInfo.getVariableEventsList();
+		ArrayList<String> varNotToUpdate = new ArrayList<>();
+		varNotToUpdate.add("DIAS_ERE");
+		varNotToUpdate.add("DIAS_HUELGA");
+		varNotToUpdate.add("DIAS_VACACIONES");
 		
 		for (Quartet<Date, Date, String, String> quartet : updateList){
 			
-			dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
-					CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-					.values(domain, quartet.getName(), contract, quartet.getExpression(), 
-							quartet.getStartDate(), quartet.getEndDate())
-					.execute();
+			if(!varNotToUpdate.contains(quartet.getName()))
+				if(null != quartet.getExpression())
+					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
+							CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(domain, quartet.getName(), contract, quartet.getExpression(), 
+									quartet.getStartDate(), quartet.getEndDate())
+							.execute();
 		}
 		
 	}
