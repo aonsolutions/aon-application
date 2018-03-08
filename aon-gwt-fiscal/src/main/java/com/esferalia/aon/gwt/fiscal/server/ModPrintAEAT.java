@@ -1,12 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -14,6 +18,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Date;
+import java.util.Iterator;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -22,14 +28,27 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 
@@ -45,29 +64,37 @@ public class ModPrintAEAT{
 	String pass;
 	String name;
 	String document;
-	
+
+	byte[] data;
 	public ModPrintAEAT(HttpServletRequest req) {
-		this.id = Integer.parseInt(req.getParameter("mod"));
-		this.domainName = req.getParameter("domainName");
-		this.domainId = Integer.parseInt(req.getParameter("domainId"));
-		this.user = req.getParameter("user");	
-		if(req.getParameter("cert") != null && !req.getParameter("cert").isEmpty()) {
-			Integer c = Integer.parseInt(req.getParameter("cert"));
-			Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
+		try {
+			JSONObject json = getRequestJSON(req);
+		
+			this.id = json.getInt("mod");
+			this.domainName = json.getString("domainName");
+			this.domainId = json.getInt("domainId");
+			this.user = json.getString("user");	
+			if(json.opt("cert") != null) {
+				Integer c = json.getInt("cert");
+				Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
 					.and(f.getIdProperty().eq(c))
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
-			if(attach.getData() == null){
-				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
-				Drive drive = AonDrive.getInstace().serviceInitialize(g);
-				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+				if(attach.getData() == null){
+					DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
+					Drive drive = AonDrive.getInstace().serviceInitialize(g);
+					attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+				}
+				this.cert = attach.getData();
+				this.pass = json.getString("pass");
+				this.name = json.getString("name");
+				this.document = json.getString("document");
 			}
-			this.cert = attach.getData();
-			this.pass = req.getParameter("pass");
-			this.name = req.getParameter("name");
-			this.document = req.getParameter("document");
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 	}
 
+	
 	public Integer getId() {
 		return id;
 	}
@@ -164,11 +191,194 @@ public class ModPrintAEAT{
 		wr.close();
 
 		DataInputStream input = new DataInputStream(connection.getInputStream());
-		
 		AonIOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();
 		connection.disconnect();
 	}
+	
+	public JSONObject send(HttpServletRequest req, String request, String urlParameters) throws IOException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, JSONException, ScriptException {
+		URL url = new URL(request);
+   		
+		SSLContext ctx = SSLContext.getInstance("TLS");
+		ctx.init(isCert() ? getKeyManagers(cert, pass) : new KeyManager[0],
+				new TrustManager[] { new DefaultTrustManager() },
+				new SecureRandom());
+		SSLContext.setDefault(ctx);
+
+		HttpsURLConnection connection = (HttpsURLConnection) url
+				.openConnection();
+		connection.setHostnameVerifier(new HostnameVerifier() {
+			@Override
+			public boolean verify(String arg0, SSLSession arg1) {
+				return true;
+			}
+		});
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setInstanceFollowRedirects(false);
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type",
+				"application/x-www-form-urlencoded");
+		connection.setRequestProperty("charset", "ISO-8859-1");
+		connection.setRequestProperty("Content-Length",
+				"" + Integer.toString(urlParameters.getBytes().length));
+		connection.setUseCaches(false);
+		
+		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+		wr.writeBytes(urlParameters);
+		wr.flush();
+		wr.close();
+		JSONObject json = new JSONObject();
+		
+		if(MimeType.PDF.getName().equals(connection.getContentType())) {
+			data = AonIOUtils.toByteArray(connection.getInputStream());
+			json.put("CEL", "CEL");
+		} else {
+			ScriptEngineManager manager = new ScriptEngineManager();
+			ScriptEngine engine = manager.getEngineByName("js");
+			String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+			String[] scripts = html.split("<script type=\"text/javascript\">");
+			
+			for(String h : html.split("\n")) {
+				System.out.println(h);
+			}
+			
+			if(isCert() && html.contains("var CEL")) {
+				String[] vars = scripts[3].split("\n");
+				for(String h : vars) {
+					if(h.contains("var")) {
+						Integer x = h.indexOf("var");
+						Integer a = h.indexOf("=");
+						Integer z = h.lastIndexOf(";");
+						String key = h.substring(x + 4, a);				
+					
+						String value =h.substring(a + 1, z).contains("&amp;") 
+							? engine.eval(h.substring(a + 1, z).replace("&amp;", "").replace(";", "")).toString() 
+							: engine.eval(h.substring(a + 1, z)).toString(); 
+					
+						if(!value.isEmpty()) {
+							json.put(key, value);
+						}
+					}
+				}
+				String[] urls = scripts[4].split("\n");
+			
+				for(Integer i = 0 ; i < urls.length; i++) {
+					if(urls[i].contains("ENR") && urls[i].contains(json.getString("ENR"))) {
+						Integer a = urls[i+1].indexOf("=");
+						Integer z = urls[i+1].indexOf(";");
+						data = getUrlFile(engine.eval(urls[i+1].substring(a + 1, z)).toString());
+					}
+				}
+			} else{
+				String[] html2 = scripts[4].split("\n");
+				for(String h : html2) {
+					if(h.contains("var")) {
+						Integer x = h.indexOf("var");
+						Integer a = h.indexOf("=");
+						Integer z = h.indexOf(";");
+						String key = h.substring(x + 4, a);
+						String value = engine.eval(h.substring(a + 1, z)).toString();
+					
+						if(!value.isEmpty()) {
+							json.put(key, value);
+						}
+					}
+				}
+			}
+		}
+		return json;
+	}
+	
+	public JSONObject saveHistory(DataResponseSource source, DataAttachSource attachSource, JSONObject json) throws IOException, JSONException {
+		Boolean ok = json.opt("CEL")!= null;
+		DataResponse dr = new DataResponse()
+				.setSource(source)
+				.setSourceId(getId())
+				.setCode(ok ? "Presentación Correcta": "Presentación Fallida")
+				.setDomain(getDomainId())
+				.setResponseDate(new Date());
+		dr = AON.insertDataResponse(getDomainName(), getDomainId(), getUser(), dr);
+		for (Iterator<String> keys = json.keys(); keys.hasNext(); ) {
+		    String key = keys.next();
+		    DataResponseDetail drd = new DataResponseDetail()
+		    		.setDomain(getDomainId())
+		    		.setDataResponse(dr.getId())
+		    		.setDataVariable(key)
+		    		.setDataValue(json.getString(key));
+		    AON.insertDataResponseDetail(getDomainName(), getDomainId(), getUser(), drd);
+		}
+		if(ok) {
+			if(data != null) {
+				Integer attachId = AON.insertAttach(getDomainName(), getDomainId(), getUser(), new Attach()
+					.setSourceType(attachSource.value())
+					.setSourceBatch(getId())
+					.setType(DataAttachType.RESPONSE_OK.value())
+					.setAttachModule(dr.getId())
+					.setAttachType(AttachType.DATA)
+					.setDomain(new Domain().setName(getDomainName()).setId(getDomainId()))
+					.setData(data)
+					.setMimeType(MimeType.PDF)
+					.setDescription(isCert() ? "Presentacion AEAT" : "Validacion AEAT"));
+				json.put("data", attachId);
+			}
+		}
+		return json;
+	}
+	
+	public JSONObject getRequestJSON(HttpServletRequest req) throws JSONException{
+		String line = "";
+		StringBuilder bld = new StringBuilder();
+		try {
+			while((line = req.getReader().readLine()) != null){
+				bld.append(" " + line);
+			}
+		} catch (IOException e) {
+		}
+		String s = checkString(bld.toString());
+		if(s == null || "".equals(s)){
+			s = "{}";
+		}
+		return new JSONObject(s);
+	}
+	
+	public String checkString(String str){
+		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
+	}
+	
+	public void giveBack(HttpServletRequest req, HttpServletResponse resp,
+			Object object, JSONObject meta) {
+		try {
+			String js = req.getParameter("callback");
+			if(js != null){
+				resp.setContentType("application/javascript; charset=utf-8");     
+				PrintWriter out = resp.getWriter();
+				out.print(js + "({" +"\"meta\":"+ meta +", \"data\":" + object +"});");
+				out.flush();
+			} else {
+				resp.setContentType("application/json");
+				PrintWriter out = resp.getWriter();
+				out.print(object);
+				out.flush();
+			}
+		} catch (IOException e) {
+
+		}
+	}
+	
+	public String readFullyAsString(InputStream inputStream, String encoding) throws IOException {
+        return readFully(inputStream).toString(encoding);
+    }
+
+    private ByteArrayOutputStream readFully(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length = 0;
+        while ((length = inputStream.read(buffer)) != -1) {
+            baos.write(buffer, 0, length);
+        }
+        return baos;
+    }
 	
 	private KeyManager[] getKeyManagers(byte[] cert, String pass) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException{
 		ByteArrayInputStream key = new ByteArrayInputStream(cert);
@@ -177,5 +387,29 @@ public class ModPrintAEAT{
     	KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
    		kmf.init(keyStore, pass.toCharArray());
    		return kmf.getKeyManagers();
+	}
+	
+	public byte[] getUrlFile(String pdfUrl) throws IOException {
+		URL url = new URL(pdfUrl);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		InputStream is = null;
+		byte[] b = null; 
+		try {
+		  is = url.openStream ();
+		  byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+		  int n;
+
+		  while ( (n = is.read(byteChunk)) > 0 ) {
+		    baos.write(byteChunk, 0, n);
+		  }
+		  b = baos.toByteArray();
+		} catch (IOException e) {
+		  System.err.printf ("Failed while reading bytes from %s: %s", url.toExternalForm(), e.getMessage());
+		  e.printStackTrace ();
+		  // Perform any other exception handling that's appropriate.
+		} finally {
+		  if (is != null) { is.close(); }
+		}	
+		return b;
 	}
 }

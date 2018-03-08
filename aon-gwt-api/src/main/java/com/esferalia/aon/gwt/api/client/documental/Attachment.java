@@ -59,7 +59,7 @@ public class Attachment extends Methods{
 	// -------------------- DOWNLOAD
 	
 	public void download(String id){	
-		String str ="domain="+ getDomainId() + "&id=" + id;
+		String str ="domain="+ getDomainId() + "&id=" + id + "&attach_type=registry";
 		impl.base(str, new AsyncCallback<String>() {
 			
 			@Override

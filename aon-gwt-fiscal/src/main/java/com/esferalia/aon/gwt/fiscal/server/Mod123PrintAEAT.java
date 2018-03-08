@@ -5,11 +5,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,8 +12,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer;
 
@@ -49,18 +49,42 @@ public class Mod123PrintAEAT extends HttpServlet {
 			throw new ServletException(e);
 		}
 	}
-
+	
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			Mod123 mod123,String fileName, byte[] content, ModPrintAEAT print) throws IOException, KeyManagementException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, CertificateException {
-		String urlParameters = print.isCert()
+			Mod123 mod123,String fileName, byte[] content, ModPrintAEAT print) throws JSONException {
+		try {
+			String urlParameters = print.isCert() 
 				? getCertUrlParameters(mod123, print.getEncodedFile(content), print.getName(), print.getDocument())
 				: getUrlParameters(mod123, print.getEncodedFile(content));
-		
-		String request = print.isCert() 
+	
+			String request = print.isCert() 
 				? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica"
 				// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
 				: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
-		print.download(resp, request, urlParameters);
+		
+			JSONObject json = print.send(req, request, urlParameters);
+			json = saveHistory(mod123, json, print);
+			print.giveBack(req, resp, json, new JSONObject());
+		}catch (Exception e) {
+			e.printStackTrace();
+			JSONObject json =  new JSONObject();
+			if("keystore password was incorrect".equals(e.getMessage())) {
+				json.put("E00", "La contraseña del certificado es incorrecta");
+			} else {
+				json.put("E00", "Ha ocurrido un error inesperado");
+			}
+			print.giveBack(req, resp, json, new JSONObject());
+		}	
+	}
+	
+	private JSONObject saveHistory(Mod123 mod123, JSONObject json, ModPrintAEAT print) throws IOException, JSONException {
+		Boolean ok = json.opt("CEL")!= null;
+		json = print.saveHistory(DataResponseSource.MOD111, DataAttachSource.MOD111, json);
+		if(print.isCert() && ok) {
+			mod123.setNumber(json.getString("JUS"));
+			FISCAL.markAsSent(print.getDomainName(), print.getUser(), mod123);
+		}
+		return json;
 	}
 	
 	private String getUrlParameters(Mod123 mod123, String encodedFile) {

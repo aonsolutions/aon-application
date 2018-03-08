@@ -24,4 +24,6 @@ public interface Mod115ServiceAsync {
 	void create(String domainName, String user, int domain, Mod115 mod115, AsyncCallback<Mod115> callback);
 	void getInfo(String domainName, String user, int domain, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void mathExpression(String expression, AsyncCallback<Double> callback );
+	void validationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);
+	void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);
 }

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
+import java.util.ArrayList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
@@ -10,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -74,7 +77,9 @@ public class Model303 extends MainEntryPoint {
 		public void showBreakdownPanel(String htmlText);
 		public void cleanBreakdownPanel();
 		public void cleanErrorPanel();
+		public void showOk(String msg, ClickHandler handler);
 		public void showError(String msg);
+		public void showErrors(ArrayList<String> msg);
 		public void onTransfer();
 	};
 
@@ -105,8 +110,16 @@ public class Model303 extends MainEntryPoint {
 			Model303.this.cleanErrorPanel();
 		}
 		@Override
+		public void showOk(String msg, ClickHandler handler) {
+			Model303.this.showOkPanel(msg, handler);
+		}
+		@Override
 		public void showError(String msg) {
 			Model303.this.showErrorPanel(msg);
+		}
+		@Override
+		public void showErrors(ArrayList<String> msg) {
+			Model303.this.showErrorsPanel(msg);
 		}
 		@Override
 		public void onTransfer() {
@@ -437,6 +450,72 @@ public class Model303 extends MainEntryPoint {
 		tab.setWidget(0, 1, label);
 		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
 		
+		panel.add(tab);
+		resultsPanel.setWidget(panel);
+	}
+
+	private void showOkPanel(String msg, ClickHandler handler) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(NOTIFICATIONS_TAB);
+		ScrollPanel panel = new ScrollPanel();
+		FlexTable tab = new FlexTable();
+		tab.setWidth("95%");
+		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.getColumnFormatter().setWidth(0, "20px");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		tab.getColumnFormatter().setWidth(2, "20px");
+
+		InlineLabel icon = new InlineLabel("");
+		icon.setStyleName(AON.AON_CSS.aonIconPointGreen());
+		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		tab.setWidget(0, 0, icon);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		
+		InlineLabel label = new InlineLabel(msg);
+		label.addStyleName(AON.AON_CSS.aonColorGreen());
+		label.addStyleName(AON.AON_CSS.aonBold());
+		tab.setWidget(0, 1, label);
+		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+		
+		Button save = new Button("");
+		save.setStyleName("aon-icon-mail-save");
+		save.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		save.getElement().getStyle().setPaddingTop(16, Unit.PX);
+		save.addClickHandler(handler);
+		tab.setWidget(0, 2, save);
+		tab.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridEven());
+		
+		panel.add(tab);
+		resultsPanel.setWidget(panel);
+	}
+	
+	private void showErrorsPanel(ArrayList<String> msg) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(NOTIFICATIONS_TAB);
+		ScrollPanel panel = new ScrollPanel();
+		FlexTable tab = new FlexTable();
+		tab.setWidth("95%");
+		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.getColumnFormatter().setWidth(0, "20px");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		
+		for(Integer i = 0 ; i < msg.size(); i++) {
+			InlineLabel icon = new InlineLabel("");
+			icon.setStyleName(AON.AON_CSS.aonIconPointRed());
+			icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			tab.setWidget(i, 0, icon);
+			tab.getCellFormatter().setStyleName(i, 0, AON.AON_CSS.aonPanelGridEven());
+		
+			InlineLabel label = new InlineLabel(msg.get(i));
+			label.addStyleName(AON.AON_CSS.aonColorRed());
+			label.addStyleName(AON.AON_CSS.aonBold());
+			tab.setWidget(i, 1, label);
+			tab.getCellFormatter().setStyleName(i, 1, AON.AON_CSS.aonPanelGridEven());
+		}
 		panel.add(tab);
 		resultsPanel.setWidget(panel);
 	}

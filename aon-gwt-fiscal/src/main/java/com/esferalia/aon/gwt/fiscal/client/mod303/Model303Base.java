@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
@@ -13,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.IModel303Callback;
@@ -29,6 +32,8 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -36,6 +41,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -93,8 +101,16 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			this.callback.cleanErrorPanel();
 		}
 		@Override
+		public void showOk(String msg, ClickHandler handler) {
+			this.callback.showOk(msg, handler);
+		}
+		@Override
 		public void showError(String msg) {
 			this.callback.showError(msg);
+		}
+		@Override
+		public void showErrors(ArrayList<String> msg) {
+			this.callback.showErrors(msg);
 		}
 		@Override
 		public String getDomainName() {
@@ -114,6 +130,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		public void onTransfer() {
 			this.callback.onTransfer();
 		}
+
 	};
 
 	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/ms/Model303File";
@@ -150,7 +167,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
 	protected final Button auditButton = new Button();
-	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	protected Hidden mod303Hidden = new Hidden("mod303");
 	protected Hidden modHidden = new Hidden("mod");
@@ -1222,7 +1238,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		panel.add(tab);
 		return panel;
 	}
-
+	
 	protected void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
@@ -1236,21 +1252,73 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		documentHidden.setValue(null);
 		diskForm.submit();
 	}
-	
-	protected void submitForm(String action, String cert, String pass, String document, String name) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
-		modHidden.setValue(String.valueOf(getMod303().getId()));
-		domainIdHidden.setValue(String.valueOf(callback.getDomain()));
-		domainNameHidden.setValue(callback.getDomainName());
-		userHidden.setValue(callback.getUser());
-		certHidden.setValue(cert);
-		passHidden.setValue(pass);
-		nameHidden.setValue(name);
-		documentHidden.setValue(document);
-		diskForm.submit();
-	}
 
+	protected void submitAEAT(String action) {
+		API API = new API(GWT.getModuleBaseURL(), "",
+				getCallback().getDomainName(), getCallback().getDomain(),
+				getCallback().getUser());
+		
+		String url = GWT.getHostPageBaseURL() + action;
+		JSONObject json = new JSONObject();
+		json.put("mod", new JSONNumber(getMod303().getId()));
+		json.put("domainId", new JSONNumber(getCallback().getDomain()));
+		json.put("domainName", new JSONString(getCallback().getDomainName()));
+		json.put("user", new JSONString(getCallback().getUser()));
+
+		submit(API, url, json);
+	}
+	
+	protected void submitAEAT(String action, String cert, String pass, String document, String name, AonData aonData) {
+		API API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
+				aonData.getDomain().getName(), aonData.getDomain().getId(),
+				aonData.getUser().getLogin());
+		
+		String url = GWT.getHostPageBaseURL() + action;
+		JSONObject json = new JSONObject();
+		json.put("mod", new JSONNumber(getMod303().getId()));
+		json.put("domainId", new JSONNumber(getCallback().getDomain()));
+		json.put("domainName", new JSONString(getCallback().getDomainName()));
+		json.put("user", new JSONString(getCallback().getUser()));
+		json.put("cert", new JSONNumber(Integer.parseInt(cert)));
+		json.put("pass", new JSONString(pass));
+		json.put("name", new JSONString(name));
+		json.put("document", new JSONString(document));
+		
+		submit(API, url, json);		
+	}
+	
+	private void submit(API API, String url, JSONObject json) {
+		String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+		
+		API.getFiscal().send2AEAT(url, requestData, new AsyncCallback<JavaScriptObject>() {
+			
+			@Override
+			public void onSuccess(JavaScriptObject result) {
+				JSONObject js = new JSONObject(result);
+				if(js.containsKey("CEL")) {
+					ClickHandler handler = new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							API.getFiscal().download(js.get("data") +"");
+						}
+					};
+					getCallback().showOk("La petici\u00f3n se ha realizado correctamente.", handler);
+				}else { 
+					Integer i = 0; 
+					ArrayList<String> arr = new ArrayList<>();
+					while(js.containsKey("E" + (i > 9 ? i : "0" + i))) {
+						arr.add(js.get("E" + (i > 9 ? i : "0" + i)).toString());
+						i++;
+					}
+				
+					getCallback().showErrors(arr);
+				}
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});	
+	}
+	
 	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
 	
 }

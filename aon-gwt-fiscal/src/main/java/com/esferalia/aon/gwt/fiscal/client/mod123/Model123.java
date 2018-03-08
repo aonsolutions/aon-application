@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.mod123;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
@@ -30,13 +32,20 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -195,10 +204,6 @@ public class Model123 extends MainEntryPoint {
 	Hidden domainIdHidden = new Hidden("domainId");
 	Hidden domainNameHidden = new Hidden("domainName");
 	Hidden userHidden = new Hidden("user");
-	Hidden certHidden = new Hidden("cert");
-	Hidden passHidden = new Hidden("pass");
-	Hidden nameHidden = new Hidden("name");
-	Hidden documentHidden = new Hidden("document");
 
 	private abstract class FiscalModelCallback implements IFiscalModelCallback<Mod123> {
 		
@@ -288,10 +293,6 @@ public class Model123 extends MainEntryPoint {
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
-		formFlowPanel.add(certHidden);
-		formFlowPanel.add(passHidden);
-		formFlowPanel.add(nameHidden);
-		formFlowPanel.add(documentHidden);
 		formContainer.add(diskForm);
 		
 		replacedNumber.setVisibleLength(13);
@@ -862,25 +863,72 @@ public class Model123 extends MainEntryPoint {
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
 		userHidden.setValue(getCurrentUser());
-		certHidden.setValue(null);
-		passHidden.setValue(null);
-		documentHidden.setValue(null);
-		nameHidden.setValue(null);
 		diskForm.submit();
 	}
+
+	protected void submitAEAT(String action) {
+		API API = new API(GWT.getModuleBaseURL(), "",
+				getCurrentDomainName(), getCurrentDomain(),
+				getCurrentUser());
+		
+		String url = GWT.getHostPageBaseURL() + action;
+		JSONObject json = new JSONObject();
+		json.put("mod", new JSONNumber(currentMod.getId()));
+		json.put("domainId", new JSONNumber(getCurrentDomain()));
+		json.put("domainName", new JSONString(getCurrentDomainName()));
+		json.put("user", new JSONString(getCurrentUser()));
+
+		submit(API, url, json);
+	}
 	
-	protected void submitForm(String action, String cert, String pass, String document, String name) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod123Hidden.setValue(String.valueOf(currentMod.getId()));
-		modHidden.setValue(String.valueOf(currentMod.getId()));
-		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-		domainNameHidden.setValue(getCurrentDomainName());
-		userHidden.setValue(getCurrentUser());
-		certHidden.setValue(cert);
-		passHidden.setValue(pass);
-		documentHidden.setValue(document);
-		nameHidden.setValue(name);
-		diskForm.submit();
+	protected void submitAEAT(String action, String cert, String pass, String document, String name, AonData aonData) {
+		API API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
+				aonData.getDomain().getName(), aonData.getDomain().getId(),
+				aonData.getUser().getLogin());
+		
+		String url = GWT.getHostPageBaseURL() + action;
+		JSONObject json = new JSONObject();
+		json.put("mod", new JSONNumber(currentMod.getId()));
+		json.put("domainId", new JSONNumber(getCurrentDomain()));
+		json.put("domainName", new JSONString(getCurrentDomainName()));
+		json.put("user", new JSONString(getCurrentUser()));
+		json.put("cert", new JSONNumber(Integer.parseInt(cert)));
+		json.put("pass", new JSONString(pass));
+		json.put("name", new JSONString(name));
+		json.put("document", new JSONString(document));
+		
+		submit(API, url, json);		
+	}
+	
+	private void submit(API API, String url, JSONObject json) {
+		String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+		
+		API.getFiscal().send2AEAT(url, requestData, new AsyncCallback<JavaScriptObject>() {
+			
+			@Override
+			public void onSuccess(JavaScriptObject result) {
+				JSONObject js = new JSONObject(result);
+				if(js.containsKey("CEL")) {
+					ClickHandler handler = new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							API.getFiscal().download(js.get("data") +"");
+						}
+					};
+					showOkPanel("La petici\u00f3n se ha realizado correctamente.", handler);
+				}else { 
+					Integer i = 0; 
+					ArrayList<String> arr = new ArrayList<>();
+					while(js.containsKey("E" + (i > 9 ? i : "0" + i))) {
+						arr.add(js.get("E" + (i > 9 ? i : "0" + i)).toString());
+						i++;
+					}
+					showErrorsPanel(arr);
+				}
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});	
 	}
 
 	@UiHandler("printViaAeatButton")
@@ -895,7 +943,7 @@ public class Model123 extends MainEntryPoint {
 				
 				@Override
 				public void onAccept() {
-					submitForm(MODEL123_PRINT_AEAT);
+					submitAEAT(MODEL123_PRINT_AEAT);
 				}
 
 				@Override
@@ -920,7 +968,7 @@ public class Model123 extends MainEntryPoint {
 					
 					@Override
 					protected void onAccept() {
-						submitForm(MODEL123_PRINT_AEAT, getCert(), getPass(), getName(), getDocument());
+						submitAEAT(MODEL123_PRINT_AEAT, getCert(), getPass(), getName(), getDocument(), result);
 					}
 				};
 				certPopup.center();
@@ -976,6 +1024,72 @@ public class Model123 extends MainEntryPoint {
 		SimpleLayoutPanel panel = new SimpleLayoutPanel();
 		resultsPanel.setWidget(panel);
 		closeFootPanel();
+	}
+	
+	private void showOkPanel(String msg, ClickHandler handler) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(NOTIFICATIONS_TAB);
+		ScrollPanel panel = new ScrollPanel();
+		FlexTable tab = new FlexTable();
+		tab.setWidth("95%");
+		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.getColumnFormatter().setWidth(0, "20px");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		tab.getColumnFormatter().setWidth(2, "20px");
+
+		InlineLabel icon = new InlineLabel("");
+		icon.setStyleName(AON.AON_CSS.aonIconPointGreen());
+		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		tab.setWidget(0, 0, icon);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		
+		InlineLabel label = new InlineLabel(msg);
+		label.addStyleName(AON.AON_CSS.aonColorGreen());
+		label.addStyleName(AON.AON_CSS.aonBold());
+		tab.setWidget(0, 1, label);
+		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+		
+		Button save = new Button("");
+		save.setStyleName("aon-icon-mail-save");
+		save.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		save.getElement().getStyle().setPaddingTop(16, Unit.PX);
+		save.addClickHandler(handler);
+		tab.setWidget(0, 2, save);
+		tab.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridEven());
+		
+		panel.add(tab);
+		resultsPanel.setWidget(panel);
+	}
+	
+	private void showErrorsPanel(ArrayList<String> msg) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(NOTIFICATIONS_TAB);
+		ScrollPanel panel = new ScrollPanel();
+		FlexTable tab = new FlexTable();
+		tab.setWidth("95%");
+		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.getColumnFormatter().setWidth(0, "20px");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		
+		for(Integer i = 0 ; i < msg.size(); i++) {
+			InlineLabel icon = new InlineLabel("");
+			icon.setStyleName(AON.AON_CSS.aonIconPointRed());
+			icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			tab.setWidget(i, 0, icon);
+			tab.getCellFormatter().setStyleName(i, 0, AON.AON_CSS.aonPanelGridEven());
+		
+			InlineLabel label = new InlineLabel(msg.get(i));
+			label.addStyleName(AON.AON_CSS.aonColorRed());
+			label.addStyleName(AON.AON_CSS.aonBold());
+			tab.setWidget(i, 1, label);
+			tab.getCellFormatter().setStyleName(i, 1, AON.AON_CSS.aonPanelGridEven());
+		}
+		panel.add(tab);
+		resultsPanel.setWidget(panel);
 	}
 
 	private void showErrorMessage(String msg) {

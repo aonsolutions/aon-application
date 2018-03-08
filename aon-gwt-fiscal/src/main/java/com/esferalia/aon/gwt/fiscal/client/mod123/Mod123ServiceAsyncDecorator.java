@@ -103,4 +103,14 @@ public class Mod123ServiceAsyncDecorator implements Mod123ServiceAsync {
 		fsa.mathExpression(expression,new AsyncCallbackWrapper<Double>(callback));
 	}
 
+	@Override
+	public void validationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback) {
+
+	}
+
+	@Override
+	public void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback) {
+		
+	}
+
 }

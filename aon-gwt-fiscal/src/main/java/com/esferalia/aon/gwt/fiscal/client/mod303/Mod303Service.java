@@ -33,5 +33,6 @@ public interface Mod303Service extends RemoteService {
 
 	Double mathExpression(String expression) throws AonCoreException;
 	
-
+	Integer validationFile(String domainName, Integer domainId, String user, Integer id);
+	Integer presentationFile(String domainName, Integer domainId, String user, Integer id);
 }

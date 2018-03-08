@@ -18,7 +18,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 
-@WebServlet(name = "DownloadAttachment", urlPatterns = {"/aon_gwt_aio/download_attachment/*"})
+@WebServlet(name = "DownloadAttachment", urlPatterns = {"/aon_gwt_aio/download_attachment/*",
+														"/aon_gwt_fiscal/download_attachment/*"})
 public class DownloadAttachmentServlet extends HttpServlet {
 
 	/**
@@ -33,11 +34,12 @@ public class DownloadAttachmentServlet extends HttpServlet {
 		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
 		Integer domainId = Integer.parseInt(parameters.get("domain"));
 		Integer id = Integer.parseInt(parameters.get("id"));
+		String attachType = parameters.get("attach_type");
 		String domainName = req.getServerName();
 		String userName = req.getRemoteUser();
 		Domain domain = AON.getDomain(domainName, domainId, userName);
 		
-		Attach attach = AON.getAttach(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id), AttachType.REGISTRY, true);
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id), AttachType.getAttachType(attachType), true);
 		if(attach.getDriveId() != null) {
 			// TODO DOWNLOAD FROM GOOGLE DRIVE
 			// attach.setData(data)

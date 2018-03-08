@@ -15,7 +15,13 @@ public enum DataResponseSource implements Serializable{
 	SERES_INVOICE,
 	SERES_SALES,
 	INGENET,
-	PACKING_LIST_NOTIFICATION;
+	PACKING_LIST_NOTIFICATION,
+	MOD303,
+	MOD111,
+	MOD115,
+	MOD123,
+	MOD390
+	;
 
 
 	public byte value() {

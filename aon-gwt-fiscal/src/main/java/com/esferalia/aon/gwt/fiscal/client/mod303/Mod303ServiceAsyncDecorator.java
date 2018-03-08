@@ -115,4 +115,14 @@ public class Mod303ServiceAsyncDecorator implements Mod303ServiceAsync {
 		AON.start();
 		fsa.mathExpression(expression,new AsyncCallbackWrapper<Double>(callback));
 	}
+
+	@Override
+	public void validationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback) {
+	
+	}
+
+	@Override
+	public void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback) {
+		
+	}
 }

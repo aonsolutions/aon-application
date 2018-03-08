@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.api.client.commercial.Commission;
 import com.esferalia.aon.gwt.api.client.common.Common;
 import com.esferalia.aon.gwt.api.client.documental.Attachment;
 import com.esferalia.aon.gwt.api.client.finance.Finance;
+import com.esferalia.aon.gwt.api.client.fiscal.Fiscal;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.payroll.Payroll;
 import com.esferalia.aon.gwt.api.client.product.Product;
@@ -75,5 +76,9 @@ public class API {
 	
 	public Commission getCommission() {
 		return new Commission(url, accessToken, domainId);
+	}
+	
+	public Fiscal getFiscal() {
+		return new Fiscal(url, accessToken, domainId);
 	}
 }

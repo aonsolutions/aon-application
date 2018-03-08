@@ -341,6 +341,6 @@ public class AttachPropertiesDAO {
 		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return new FilterDAO.PropertyDAO<Integer>(DATA_ATTACH.SOURCE_ID);}
 		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DATA_ATTACH.SOURCE);}
-		@Override public Property<String> getDescriptionProperty() {return null;}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(DATA_ATTACH.DESCRIPTION);}
 	}
 }

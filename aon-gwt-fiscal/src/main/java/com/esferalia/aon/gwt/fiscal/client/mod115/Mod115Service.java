@@ -28,4 +28,6 @@ public interface Mod115Service extends RemoteService {
 	String getInfo(String domainName, String user, int domain, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	Double mathExpression(String expression) throws AonCoreException;
 
+	Integer validationFile(String domainName, Integer domainId, String user, Integer id);
+	Integer presentationFile(String domainName, Integer domainId, String user, Integer id);
 }

@@ -12,7 +12,13 @@ public enum DataAttachSource implements Serializable {
 	DELIVERY,
 	SII,
 	SERES,
-	INGENET;
+	INGENET,
+	MOD303,
+	MOD111,
+	MOD115,
+	MOD123,
+	MOD390
+	;
 
 	public byte value() {
 		return (byte) this.ordinal();
