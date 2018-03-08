@@ -80,7 +80,7 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if ( ds.getType() == DomainType.HOTEL ) {
 			enabledModules.add(Module.HOTEL);
 		}
-		if ( addExtraModules ) {
+		if ( addExtraModules) {
 			enabledModules.add(Module.CRM);
 			enabledModules.add(Module.MANAGEMENT);
 			enabledModules.add(Module.TREASURY);
@@ -93,7 +93,7 @@ public class VisibilityManager extends BasicVisibilityManager {
 			}
 		}
 		if ( addConfiguration ) {
-			enabledModules.add(Module.CONFIGURATION);	
+			enabledModules.add(Module.CONFIGURATION);
 		}
 		if ( (user != null) && (DomainType.ENTERPRISE == ds.getType()) &&
 			(parentDomainId != null) && (ObjectUtils.equals(user.getDomain(), domainId)) ) {
@@ -106,6 +106,23 @@ public class VisibilityManager extends BasicVisibilityManager {
 		}
 		if (parentDomainId == null || enabledModules.contains(Module.MANAGEMENT) || enabledModules.contains(Module.AON_ONE) || enabledModules.contains(Module.AON_FINANCE)) {
 			enabledModules.remove(Module.FINANCE_PORTAL);
+		}
+		if (ds.isEnabledGoToParent() && ds.isConsultancyDomain() && DomainType.OFFICE != ds.getType()) {
+			enabledModules.remove(Module.CRM);
+			enabledModules.remove(Module.MANAGEMENT);
+			enabledModules.remove(Module.TREASURY);
+			enabledModules.remove(Module.WAREHOUSE);
+			enabledModules.remove(Module.GROUPWARE);
+			enabledModules.remove(Module.POS);
+			enabledModules.remove(Module.AON_ONE);
+			enabledModules.remove(Module.CALL_CENTER);
+			enabledModules.remove(Module.ACADEMY);
+			enabledModules.remove(Module.GARAGE);
+			enabledModules.remove(Module.HOTEL);
+			enabledModules.remove(Module.PAYROLL_PORTAL);
+			if (!enabledModules.contains(Module.AON_FINANCE)) {
+				enabledModules.add(Module.AON_FINANCE);
+			}
 		}
 		return enabledModules;
 	}
