@@ -1,5 +1,6 @@
 package net.aonsolutions.db.up2date;
 
+import static net.aonsolutions.db.up2date.tgss.HomePercentageUpdate.HOMEPERCENTAGEUPDATE;
 import static net.aonsolutions.db.up2date.tgss.TrainingBases2018Update.TRAININGBASES2018UPDATE;
 
 import java.sql.Connection;
@@ -19,6 +20,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.tgss.HomePercentageUpdate;
+
 public class Up2Date {
 	
 	
@@ -27,10 +30,11 @@ public class Up2Date {
     		//IRPF2018UPDATE,
     		//AGREEMENTUPDATE,
     		//BASES2018UPDATE,
-    		//ISSUE1760UPDATE
-    		//REMOVE2HIDEUPDATE
-    		//HOMEBASESUPDATE
-    		TRAININGBASES2018UPDATE
+    		//ISSUE1760UPDATE,
+    		//REMOVE2HIDEUPDATE,
+    		//HOMEBASESUPDATE,
+    		//TRAININGBASES2018UPDATE,
+    		HOMEPERCENTAGEUPDATE
     }; 
 	
 	
