@@ -630,7 +630,11 @@ public class ExpressionContext {
 		clear();
 		super.finalize();
 	}
-
+	
+	protected List<PeriodMap> getBindingsNew(Set<String> vars, Date start, Date end) throws UndefinedVariablesException {
+		return variables.getBindingsNew(vars, start, end);
+	}
+	
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------

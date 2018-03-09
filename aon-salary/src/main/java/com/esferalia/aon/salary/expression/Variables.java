@@ -428,9 +428,37 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			}
 			List<Period> intersectedPeriods = Period.intersect(periods,
 					varPeriods);
+
 			if (intersectedPeriods.size() > 0) {
 				periods = intersectedPeriods;
 			}
+		}
+
+		for (Period period : periods) {
+			list.add(new PeriodMap(period));
+		}
+
+		return list;
+	}
+
+	public List<PeriodMap> getBindingsNew(Set<String> vars, Date start, Date end){
+		List<PeriodMap> list = new LinkedList<PeriodMap>();
+
+		List<Period> periods = new LinkedList<Period>();
+		periods.add(new Period(start, end));
+
+		for (String var : vars) {
+			List<Period> varPeriods = getPeriods(var);
+			if (varPeriods == null)
+				continue;
+
+			List<Period> intersectedPeriods = Period.intersect(periods,
+					varPeriods);
+			
+			if (intersectedPeriods.size() == 0)
+				return Collections.emptyList();
+
+			periods = intersectedPeriods;
 		}
 
 		for (Period period : periods) {

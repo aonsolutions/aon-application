@@ -23,6 +23,8 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
+import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -94,6 +96,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return ctx;
 	}
 
+	@Override
+	protected Object onAllGuarantee(Double guarenteed, Double totalPayment) throws UndefinedContextVariablesException {
+		return Math.max(0.00, guarenteed - 0.00);
+	}
+
+	@Override
 	protected Object onGuarantee(List<ITimedResult<Double>> guarenteeResults) {
 		double guarantee = 0.00;
 		for( ITimedResult<Double> guarenteeResult: guarenteeResults) {

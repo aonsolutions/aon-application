@@ -106,6 +106,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
@@ -205,6 +206,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
+import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -398,7 +400,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		public <T> List<ITimedResult<T>> eval(String script, Date start, Date end, Class<T> toType)
 				throws ExpressionException, UndefinedVariablesException {
 			try {
-				script = zeroGuarantee(script);
+				script = zeroGuarantee(script, start, end);
 				return super.eval(script, start, end, toType);
 			} catch (UndefinedVariablesException e) {
 
@@ -409,9 +411,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		// --------------------------------------------------------------------
-		protected String zeroGuarantee(String script) {
+		protected String zeroGuarantee(String script, Date start, Date end ) {
 			if (script == null)
 				return null;
+			
+			if ( !script.contains(GUARANTEE))
+				return script;
+			
+			Set<String> inputs = getVarNames(script);
+			try {
+				List<PeriodMap> bindingsList = getBindingsNew(inputs, start, end);
+				if ( bindingsList.size() > 0 )
+					return script;
+			} catch (UndefinedVariablesException e) {
+			}
+
 			return script.replaceAll(String.format("%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*", GUARANTEE),
 					String.format("%s(0", GUARANTEE));
 
@@ -705,7 +719,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		public Object guarantee(double guarentee, int start, int end) throws ExpressionException {
 			if (this.start == start && this.end == end) {
 				Period period = getCurrentBindings().getPeriod();
-				TimedResult<Double> result = new TimedResult<Double>(guarentee, period, Collections.emptyMap());
+				TimedResult<Double> result = new TimedResult<Double>(guarentee, period, getCurrentBindings().getRead());
 				guarentees.add(result);
 				// if ( --guaranteed == 0 )
 				if (period.getEnd().equals(getGuaranteeEnd()))
@@ -723,7 +737,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				NotFoundHandler notFoundHandler) {
 			return new ContractExpressionContext(expressionContext, notFoundHandler) {
 				@Override
-				protected String zeroGuarantee(String script) {
+				protected String zeroGuarantee(String script, Date start,Date end) {
 					return script;
 				}
 			};
@@ -2118,7 +2132,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public Object guarantee(double guarentee, int start, int end) throws ExpressionException {
 
-		Period guaranteePeriod = new Period(getCurrentBindings().getPeriod().getStart(),
+		Period guaranteePeriod = new Period(
+				getCurrentBindings().getPeriod().getStart(),
 				getCurrentBindings().getPeriod().getEnd());
 
 		if (leaveLoader.isEmpty())
@@ -2126,9 +2141,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		Double totalPayment = getVariable(ContextVariable.TOTAL_PAYMENT, Double.class);
 		// Assert all PREST_IT payments have been calculated.
-		//Double prestIts = getVariable(PREST_IT, Double.class);
-		//if (prestIts == null && totalPayment == null)
-		//	throw new UndefinedVariablesException(PREST_IT);
+		// Double prestIts = getVariable(PREST_IT, Double.class);
+		// if (prestIts == null && totalPayment == null)
+		//  throw new UndefinedVariablesException(PREST_IT);
 		if ( totalPayment == null )
 			for ( Leave leave : leaveLoader.getLeaves() )
 				if ( !hasVariable(PREST_IT, leave.getStart(), leave.getEnd()) )
@@ -2152,9 +2167,30 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			calculator.calculate(ctx);
 		} catch (GuarenteeException e) {
-
+			
 			List<ITimedResult<Double>> guarenteeResults = e.getGuarentees(guaranteePeriod);
+			
+			if ( guarenteeResults.size() == 1 
+					&& AonUtils.equals(guarentee, guarenteeResults.get(0).getValue()))
+				return onConstantGuarantee(guarenteeResults.get(0).getValue(), totalPayment);
+			
+			double guarenteed = 0.00;
+			long guarenteeDays = 0;
+			for ( ITimedResult<Double> r : guarenteeResults ) {
+				guarenteed += r.getValue();
+				guarenteeDays += days(r.getPeriod());
+			}
+			
+			long allDays = days(contractStartDate, contractEndDate);
 
+			// all salary days guaranteed, easier.
+			if ( allDays == guarenteeDays ) 
+				return onAllGuarantee(guarenteed, totalPayment);
+
+			for ( Period p : getPeriods(WORKED_DAYS.getName()))
+				guarenteeDays += days(p);
+
+			
 			return onGuarantee(guarenteeResults);
 
 		} catch (SalaryException e) {
@@ -2164,13 +2200,38 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 		return 0.00;
 	}
+	
+
+
+	protected Object onAllGuarantee(Double guarenteed, Double totalPayment) throws UndefinedContextVariablesException {
+		if ( totalPayment == null )
+			throw new UndefinedContextVariablesException(ContextVariable.TOTAL_PAYMENT); 
+		return Math.max(0.00, guarenteed - totalPayment);
+	}
+
+	protected Object onConstantGuarantee(Double constant, Double totalPayment) throws UndefinedContextVariablesException {
+		if ( totalPayment == null )
+			throw new UndefinedContextVariablesException(ContextVariable.TOTAL_PAYMENT); 
+		return Math.max(0.00, constant - totalPayment);
+	}
 
 	protected Object onGuarantee(List<ITimedResult<Double>> guarenteeResults) {
 		double guarantee = 0.00;
 		for (ITimedResult<Double> guarenteeResult : guarenteeResults) {
-			double prestIt = getDayDoubleVariable(PREST_IT, guarenteeResult.getPeriod().getStart(),
-					guarenteeResult.getPeriod().getEnd());
-			guarantee += guarenteeResult.getValue() - prestIt;
+			
+			Period period = guarenteeResult.getPeriod();
+			Date start = period.getStart();
+			Date end = period.getEnd();
+			double value = guarenteeResult.getValue();
+			
+//			double br = getDoubleVariable(REGULATORY_BASE.getName(), start, end);
+//			double days = days(period);
+//			double all = br * days;
+//			double coefficient = value / all;
+			
+			double prestIt = getDayDoubleVariable(PREST_IT, start,end);
+			
+			guarantee += value - prestIt;
 		}
 
 		return guarantee;
