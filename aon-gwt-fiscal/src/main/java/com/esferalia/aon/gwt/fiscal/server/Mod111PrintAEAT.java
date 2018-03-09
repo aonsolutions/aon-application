@@ -5,10 +5,15 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
+import javax.script.ScriptException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,20 +24,23 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
-import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer;
 
 @WebServlet(name = "Mod111 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model111PrintAEAT" })
-public class Mod111PrintAEAT extends HttpServlet {
+public class Mod111PrintAEAT extends ModPrintAEAT {
 
-	private static final long serialVersionUID = 5957868823133583048L;
+	private static final long serialVersionUID = 1340640917105582917L;
 
+	public Mod111PrintAEAT() {
+		super();
+	}
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			ModPrintAEAT print = new ModPrintAEAT(req);
-			Mod111 mod111 = FISCAL.getMod111(print.getDomainName(), print.getDomainId(), print.getUser(),print.getId());
+			init(req);
+			Mod111 mod111 = FISCAL.getMod111(getDomainName(), getDomainId(), getUser(),getId());
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -43,51 +51,27 @@ public class Mod111PrintAEAT extends HttpServlet {
 			}
 			PrintWriter writer = new PrintWriter(wr);
 			Mod111Writer.fillWriter(mod111, writer);
-			String fileName = AonFiscalFileUtils.getFileName(mod111); 
-			downloadPDF(req, resp, mod111, fileName, output.toByteArray(), print);
+
+			send(req, resp, mod111, output.toByteArray());
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}
 	}
 	
 
-	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			Mod111 mod111,String fileName, byte[] content, ModPrintAEAT print) throws JSONException {
-		try {
-			String urlParameters = print.isCert() 
-				? getCertUrlParameters(mod111, print.getEncodedFile(content), print.getName(), print.getDocument())
-				: getUrlParameters(mod111, print.getEncodedFile(content));
+	private void send(HttpServletRequest req, HttpServletResponse resp, Mod111 mod111, byte[] content) throws JSONException, KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, ScriptException {
+		String urlParameters = isCert() 
+			? getCertUrlParameters(mod111, getEncodedFile(content), getName(), getDocument())
+			: getUrlParameters(mod111, getEncodedFile(content));
 	
-			String request = print.isCert() 
-				? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica"
-				// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
-				: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
+		String request = isCert() 
+			? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica"
+			// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
+			: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
 		
-			JSONObject json = print.send(req, request, urlParameters);
-			json = saveHistory(mod111, json, print);
-			print.giveBack(req, resp, json, new JSONObject());
-		}catch (Exception e) {
-			e.printStackTrace();
-			JSONObject json =  new JSONObject();
-			if("keystore password was incorrect".equals(e.getMessage())) {
-				json.put("E00", "La contraseña del certificado es incorrecta");
-			} else {
-				json.put("E00", "Ha ocurrido un error inesperado");
-			}
-			print.giveBack(req, resp, json, new JSONObject());
-		}	
+		download(resp, request, urlParameters);
 	}
 
-	private JSONObject saveHistory(Mod111 mod111, JSONObject json, ModPrintAEAT print) throws IOException, JSONException {
-		Boolean ok = json.opt("CEL")!= null;
-		json = print.saveHistory(DataResponseSource.MOD111, DataAttachSource.MOD111, json);
-		if(print.isCert() && ok) {
-			mod111.setNumber(json.getString("JUS"));
-			FISCAL.markAsSent(print.getDomainName(), print.getUser(), mod111);
-		}
-		return json;
-	}
-	
 	private String getUrlParameters(Mod111 mod111, String encodedFile) {
 		return "HID=IE7111VA" 
 				+"&IDI=ES"
@@ -132,5 +116,22 @@ public class Mod111PrintAEAT extends HttpServlet {
 				+ "&TXT=" + ""
 				+ "&FIR=" + "FirmaBasica"
 				+ "&FIN=" + "F";
+	}
+	
+	@Override
+	protected DataResponseSource getDataResponseSource() {
+		return DataResponseSource.MOD111;
+	}
+
+	@Override
+	protected DataAttachSource getDataAttachSource() {
+		return DataAttachSource.MOD111;
+	}
+
+	@Override
+	protected void updateMod(JSONObject json) throws JSONException {
+		Mod111 mod111 = FISCAL.getMod111(getDomainName(), getDomainId(), getUser(), getId());
+		mod111.setNumber(json.getString("JUS"));
+		FISCAL.markAsSent(getDomainName(), getUser(), mod111);
 	}
 }

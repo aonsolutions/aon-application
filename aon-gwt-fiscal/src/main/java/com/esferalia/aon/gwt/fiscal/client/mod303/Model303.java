@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
-import java.util.ArrayList;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
@@ -9,10 +7,12 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -39,8 +39,10 @@ public class Model303 extends MainEntryPoint {
 
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int INFORMATION_TAB = 1;
+	private final static int AEAT_TAB = 2;
 
 	protected static Mod303ServiceAsync SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	interface Model303Binder extends UiBinder<Widget, Model303> {
 	}
@@ -64,8 +66,16 @@ public class Model303 extends MainEntryPoint {
 	@UiField
 	ScrollPanel breakdownPanel;
 	
+	@UiField
+	SimpleLayoutPanel aeatPanel;
+	
+	AonData aonData;
 	Model303Table model303Table;
 
+	public AonData getAonData() {
+		return aonData;
+	}
+	
 	protected interface IModel303Callback {
 		public String getDomainName();
 		public String getUser();
@@ -75,11 +85,10 @@ public class Model303 extends MainEntryPoint {
 		public void onCancel();
 		public void onNew();
 		public void showBreakdownPanel(String htmlText);
+		public void showVisorAEAT();
 		public void cleanBreakdownPanel();
 		public void cleanErrorPanel();
-		public void showOk(String msg, ClickHandler handler);
 		public void showError(String msg);
-		public void showErrors(ArrayList<String> msg);
 		public void onTransfer();
 	};
 
@@ -98,6 +107,10 @@ public class Model303 extends MainEntryPoint {
 			Model303.this.onNew();
 		}
 		@Override
+		public void showVisorAEAT() {
+			Model303.this.showVisorAEAT();
+		}
+		@Override
 		public void showBreakdownPanel(String htmlText) {
 			Model303.this.showBreakdownPanel(htmlText);
 		}
@@ -109,18 +122,12 @@ public class Model303 extends MainEntryPoint {
 		public void cleanErrorPanel() {
 			Model303.this.cleanErrorPanel();
 		}
-		@Override
-		public void showOk(String msg, ClickHandler handler) {
-			Model303.this.showOkPanel(msg, handler);
-		}
+	
 		@Override
 		public void showError(String msg) {
 			Model303.this.showErrorPanel(msg);
 		}
-		@Override
-		public void showErrors(ArrayList<String> msg) {
-			Model303.this.showErrorsPanel(msg);
-		}
+		
 		@Override
 		public void onTransfer() {
 			Model303.this.onTransfer();
@@ -143,13 +150,31 @@ public class Model303 extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
+
+			@Override public void onFailure(Throwable caught) {}
+
+			@Override
+			public void onSuccess(AonData aonData) {
+				onModuleLoad(aonData);
+			}
+		});
+	}
+	
+	public void onModuleLoad(AonData aonData) {
+		this.aonData = aonData;
 		AON.ensureInjected();
 
 		Mod303ServiceAsync mod303ServiceRaw = GWT.create(Mod303Service.class);
 		SERVICE = new Mod303ServiceAsyncDecorator(mod303ServiceRaw);
 
 		Widget ui = MODEL_303_BINDER.createAndBindUi(this);
-
+		
+		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
+		html.setWidth("100%");
+		html.setHeight("100%");
+		aeatPanel.setWidget(html);
+		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -200,27 +225,27 @@ public class Model303 extends MainEntryPoint {
 		cleanErrorPanel();
 		if (selected.isAEAT()) {
 			if (selected.getYear() < 2018) {
-				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback()));
+				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback(), getAonData()));
 			} else {
-				declarationContainer.setWidget( new Model3032018AEAT(selected,new Model303Callback()));
+				declarationContainer.setWidget( new Model3032018AEAT(selected,new Model303Callback(), getAonData()));
 			}
 		} else if (selected.isBizkaia()) {
 			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));	
+				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getAonData()));	
 			} else { 
-				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback()));
+				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getAonData()));
 			}
 		} else if (selected.isAraba()) {
 			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));	
+				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback(), getAonData()));	
 			} else {
-				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback()));
+				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback(), getAonData()));
 			}
 		} else if (selected.isGipuzkoa()) {
 			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));	
+				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getAonData()));	
 			} else {
-				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback()));
+				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getAonData()));
 			}
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
@@ -426,6 +451,11 @@ public class Model303 extends MainEntryPoint {
 		closeFootPanel();
 	}
 
+	private void showVisorAEAT() {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(AEAT_TAB);		
+	}
+	
 	private void showErrorPanel(String msg) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
@@ -450,72 +480,6 @@ public class Model303 extends MainEntryPoint {
 		tab.setWidget(0, 1, label);
 		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
 		
-		panel.add(tab);
-		resultsPanel.setWidget(panel);
-	}
-
-	private void showOkPanel(String msg, ClickHandler handler) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		tab.getColumnFormatter().setWidth(2, "20px");
-
-		InlineLabel icon = new InlineLabel("");
-		icon.setStyleName(AON.AON_CSS.aonIconPointGreen());
-		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		tab.setWidget(0, 0, icon);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		
-		InlineLabel label = new InlineLabel(msg);
-		label.addStyleName(AON.AON_CSS.aonColorGreen());
-		label.addStyleName(AON.AON_CSS.aonBold());
-		tab.setWidget(0, 1, label);
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		Button save = new Button("");
-		save.setStyleName("aon-icon-mail-save");
-		save.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		save.getElement().getStyle().setPaddingTop(16, Unit.PX);
-		save.addClickHandler(handler);
-		tab.setWidget(0, 2, save);
-		tab.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridEven());
-		
-		panel.add(tab);
-		resultsPanel.setWidget(panel);
-	}
-	
-	private void showErrorsPanel(ArrayList<String> msg) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		
-		for(Integer i = 0 ; i < msg.size(); i++) {
-			InlineLabel icon = new InlineLabel("");
-			icon.setStyleName(AON.AON_CSS.aonIconPointRed());
-			icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			tab.setWidget(i, 0, icon);
-			tab.getCellFormatter().setStyleName(i, 0, AON.AON_CSS.aonPanelGridEven());
-		
-			InlineLabel label = new InlineLabel(msg.get(i));
-			label.addStyleName(AON.AON_CSS.aonColorRed());
-			label.addStyleName(AON.AON_CSS.aonBold());
-			tab.setWidget(i, 1, label);
-			tab.getCellFormatter().setStyleName(i, 1, AON.AON_CSS.aonPanelGridEven());
-		}
 		panel.add(tab);
 		resultsPanel.setWidget(panel);
 	}

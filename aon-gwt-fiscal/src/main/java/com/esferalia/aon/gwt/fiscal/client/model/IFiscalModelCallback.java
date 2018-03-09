@@ -17,6 +17,7 @@ public interface IFiscalModelCallback<T extends FiscalModel> {
 	void onCancel();
 	
 	void showErrorMsg(String msg);
+	void showVisorAEAT();
 	void showInfoPanel(String text);
 	
 }

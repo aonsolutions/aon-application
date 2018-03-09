@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel.SelectionCallBac
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2016.IMod303ActivityCallback;
@@ -81,8 +82,8 @@ public class Model3032017AEAT extends Model303Base {
 	private final static int RESULT_TAB = 4;
 	private final static int LAST_PERIOD_INFORMATION_TAB = 6;
 	
-	public Model3032017AEAT(Mod303 mod303,Model303Callback callback) {
-		super(mod303,callback);
+	public Model3032017AEAT(Mod303 mod303,Model303Callback callback, AonData aonData) {
+		super(mod303,callback, aonData);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());

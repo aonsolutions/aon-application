@@ -2,10 +2,14 @@ package com.esferalia.aon.gwt.fiscal.client.mod115;
 
 import java.util.EnumMap;
 
+import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115.IMod115Declaration;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
@@ -18,6 +22,8 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -27,6 +33,8 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -40,9 +48,34 @@ public abstract class Model115Base extends SimplePanel implements IMod115Declara
 	private static final int MAX_LABEL_LENGTH = 100;
 	private static final int COL_NUMBER = 8;
 	
+	protected static final String MODEL115_PRINT = "/aon_gwt_fiscal/ms/Model115Print";
+	protected static final String MODEL115_FILE = "/aon_gwt_fiscal/ms/Model115File";
+	protected static final String MODEL115_PRINT_AEAT = "/aon_gwt_fiscal/ms/Model115PrintAEAT";
+	
+	private Mod115 model;
+	private API API;
 	private FlexTable table;
+	IFiscalModelCallback<Mod115> callback;
 	private EnumMap<Mod115Key,DoubleBox> fieldsMap;
 
+	protected FormPanel diskForm = new FormPanel("_blank");
+	protected FormPanel aeatForm = new FormPanel("aeatForm");
+	
+	protected Hidden mod115Hidden = new Hidden("mod115");
+	protected Hidden modHidden = new Hidden("mod");
+	protected Hidden domainIdHidden = new Hidden("domainId");
+	protected Hidden domainNameHidden = new Hidden("domainName");
+	protected Hidden userHidden = new Hidden("user");
+	
+	protected Hidden modAeatHidden = new Hidden("mod");
+	protected Hidden domainIdAeatHidden = new Hidden("domainId");
+	protected Hidden domainNameAeatHidden = new Hidden("domainName");
+	protected Hidden userAeatHidden = new Hidden("user");
+	protected Hidden certAeatHidden = new Hidden("cert");
+	protected Hidden passAeatHidden = new Hidden("pass");
+	protected Hidden nameAeatHidden = new Hidden("name");
+	protected Hidden documentAeatHidden = new Hidden("document");
+	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
@@ -50,7 +83,12 @@ public abstract class Model115Base extends SimplePanel implements IMod115Declara
 		}
 	}; 
 
-	public Model115Base(final IFiscalModelCallback<Mod115> callback) {
+	public Model115Base(final IFiscalModelCallback<Mod115> callback, AonData aonData) {
+		this.callback = callback;
+		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
+				aonData.getDomain().getName(), aonData.getDomain().getId(),
+				aonData.getUser().getLogin());
+		this.model = callback.getFiscalModel();
 		fieldsMap = new EnumMap<>(Mod115Key.class);
 		table = new FlexTable();
 		paintDeclaration(callback);
@@ -62,6 +100,17 @@ public abstract class Model115Base extends SimplePanel implements IMod115Declara
 	}
 	protected EnumMap<Mod115Key, DoubleBox> getFieldsMap() {
 		return fieldsMap;
+	}
+	public Mod115 getModel() {
+		return model;
+	}
+	
+	public IFiscalModelCallback<Mod115> getCallback() {
+		return callback;
+	}
+
+	public API getAPI() {
+		return API;
 	}
 	
 	protected void paintDeclaration(final IFiscalModelCallback<Mod115> callback) {
@@ -308,6 +357,95 @@ public abstract class Model115Base extends SimplePanel implements IMod115Declara
 		a.addStyleName(FiscalModelUtils.getAdministrationIcon(mod115.getAdministration()));
 		p.add(a);
 		return p;
+	}
+	
+	public void printButtonClick() {
+		if (getCallback().isDirty()) {
+			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+				, new ConfirmDialogCallback() {
+				
+				@Override
+				public void onAccept() {
+					submitForm(MODEL115_PRINT);
+				}
+
+				@Override
+				public void onCancel() {
+					// Nothing
+				}
+			});
+		} else {
+			submitForm(MODEL115_PRINT);
+		}	
+	}
+	
+	protected void submitForm(String action) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		mod115Hidden.setValue(String.valueOf(getModel().getId()));
+		domainIdHidden.setValue(String.valueOf(getCallback().getDomain()));
+		domainNameHidden.setValue(getCallback().getDomainName());
+		userHidden.setValue(getCallback().getUser());
+		diskForm.submit();
+	}
+
+	protected void submitAEAT(String action) {
+		submitAEAT(action, null, null, null, null);
+	}
+	
+	protected void submitAEAT(String action, String cert, String pass, String document, String name) {
+		aeatForm.setAction(GWT.getHostPageBaseURL() + action);
+		modAeatHidden.setValue(String.valueOf(getModel().getId()));
+		domainIdAeatHidden.setValue(String.valueOf(getCallback().getDomain()));
+		domainNameAeatHidden.setValue(getCallback().getDomainName());
+		userAeatHidden.setValue(getCallback().getUser());
+		certAeatHidden.setValue(cert);
+		passAeatHidden.setValue(pass);
+		nameAeatHidden.setValue(name);
+		documentAeatHidden.setValue(document);
+		aeatForm.submit();
+	}
+	
+	protected FlowPanel getInformationPanel() {
+		FlowPanel panel = new FlowPanel();
+		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.addStyleName(AON.AON_CSS.aonWidthAll());
+		panel.addStyleName(AON.AON_CSS.aonMarginTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		 
+		FlexTable tab = new FlexTable();
+		tab.getColumnFormatter().setWidth(0, "30px");
+		tab.getColumnFormatter().setWidth(1
+				, "auto");
+		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
+		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		Label title = new Label("Informaci\u00F3n \u00FAtil para la confecci\u00F3n del modelo");
+		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getModel().getAdministration()));
+		tab.setWidget(0, 0, title);
+		
+		int row = 1;
+		for (Pair<String, String> pair : getInformationLinks()) {
+			Label icon = new Label();
+			icon.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+			tab.setWidget(row, 0, icon );
+			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+
+			FlowPanel p = new FlowPanel();
+			p.setStyleName(AON.AON_CSS.aonPadding2());
+			Anchor a = new Anchor(pair.getLeft(),pair.getRight(), "_blank");
+			a.setStyleName(AON.AON_CSS.aonPaddingLeft());
+			p.add(a);
+			tab.setWidget(row, 1, p );
+			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+			row++;
+		}
+		panel.add(tab);
+		return panel;
 	}
 	
 }

@@ -195,6 +195,11 @@ public class Model130 extends MainEntryPoint {
 		public void showInfoPanel(String htmlText) {
 			Model130.this.showInfoPanel(htmlText);
 		}
+
+		@Override
+		public void showVisorAEAT() {
+			
+		}
 		
 		@Override
 		public boolean isFinished() {

@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import java.util.LinkedList;
 
-import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel.SelectionCallBack;
@@ -12,8 +11,6 @@ import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2018.IMod303ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
@@ -87,12 +84,11 @@ public class Model3032018AEAT extends Model303Base {
 	private final static int RESULT_TAB = 4;
 	private final static int LAST_PERIOD_INFORMATION_TAB = 6;
 
-	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	final Mod303ServiceAsync MOD303Service = GWT.create(Mod303Service.class);
 
 	
-	public Model3032018AEAT(Mod303 mod303,Model303Callback callback) {
-		super(mod303,callback);
+	public Model3032018AEAT(Mod303 mod303,Model303Callback callback, AonData aonData) {
+		super(mod303,callback, aonData);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
@@ -245,48 +241,43 @@ public class Model3032018AEAT extends Model303Base {
 	}
 
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {	
-		impl.getAonData(getCallback().getDomainName(), getCallback().getDomain(), new AsyncCallback<AonData>() {
-			@Override
-			public void onSuccess(AonData result) {
-
-				FlowPanel panel = new FlowPanel();
+		FlowPanel panel = new FlowPanel();
 				
-				FlowPanel formContainer = new FlowPanel();
-				diskForm.setMethod(FormPanel.METHOD_POST);
-				FlowPanel formFlowPanel = new FlowPanel();
-				diskForm.add(formFlowPanel);
-				formFlowPanel.add(mod303Hidden);
-				formFlowPanel.add(modHidden);
-				formFlowPanel.add(domainIdHidden);
-				formFlowPanel.add(domainNameHidden);
-				formFlowPanel.add(userHidden);
-				formFlowPanel.add(nameHidden);
-				formFlowPanel.add(documentHidden);
-				formFlowPanel.add(certHidden);
-				formFlowPanel.add(passHidden);
-				formContainer.add(diskForm);
-
-				panel.add(formContainer);
-	
-				FlowPanel administrationPanel = getAdministrationPanel(result); 
-				panel.add(administrationPanel);
-				FlowPanel informationPanel = getInformationPanel();
-				panel.add(informationPanel);
-				tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
-			}
-	
-			@Override
-			public void onFailure(Throwable caught) {
+		FlowPanel formContainer = new FlowPanel();
+		aeatForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		FlowPanel aeatFormFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		aeatForm.add(aeatFormFlowPanel);
 				
-			}	
-		});
+		formFlowPanel.add(mod303Hidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
+				
+		aeatFormFlowPanel.add(modAeatHidden);
+		aeatFormFlowPanel.add(domainIdAeatHidden);
+		aeatFormFlowPanel.add(domainNameAeatHidden);
+		aeatFormFlowPanel.add(userAeatHidden);
+		aeatFormFlowPanel.add(nameAeatHidden);
+		aeatFormFlowPanel.add(documentAeatHidden);
+		aeatFormFlowPanel.add(certAeatHidden);
+		aeatFormFlowPanel.add(passAeatHidden);
+			
+		formContainer.add(diskForm);
+		formContainer.add(aeatForm);
+
+		panel.add(formContainer);
+	
+		FlowPanel administrationPanel = getAdministrationPanel(); 
+		panel.add(administrationPanel);
+		FlowPanel informationPanel = getInformationPanel();
+		panel.add(informationPanel);
+		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
 	}
-	
-	protected FlowPanel getAdministrationPanel(AonData aonData) {
-		API API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getDomain().getId(),
-				aonData.getUser().getLogin());
 		
+	protected FlowPanel getAdministrationPanel() {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -355,6 +346,7 @@ public class Model3032018AEAT extends Model303Base {
 			public void onClick(ClickEvent event) {
 				if (getMod303().isFinished() || getMod303().isSent()) {
 					submitAEAT(VALIDATE_PRINT_ACTION);
+					getCallback().showVisorAEAT();
 				} else {
 					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
@@ -363,31 +355,8 @@ public class Model3032018AEAT extends Model303Base {
 		p2.add(button2);
 		tab.setWidget(row, 1, p2 );
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.getFlexCellFormatter().setColSpan(2, 1, 2);
 		
-		MOD303Service.validationFile(getCallback().getDomainName(), getCallback().getDomain(), getCallback().getUser(), getMod303().getId(), new AsyncCallback<Integer>() {
-
-			@Override public void onFailure(Throwable caught) {}
-
-			@Override
-			public void onSuccess(Integer result) {
-				if(result > 0) { 
-					Button download1 = new Button();
-					download1.setStyleName("aon-icon-mail-save");
-					download1.addStyleName(AON.AON_CSS.aonIconCommandButton());
-					download1.getElement().getStyle().setPaddingTop(16, Unit.PX);
-					download1.addClickHandler(new ClickHandler() {
-					
-						@Override
-						public void onClick(ClickEvent event) {
-							API.getFiscal().download(result +"");
-						}
-					});
-					
-					tab.setWidget(2, 2, download1 );
-					tab.getCellFormatter().setStyleName(2, 2, AON.AON_CSS.aonPanelGridEven());
-				} else tab.getFlexCellFormatter().setColSpan(2, 1, 2);
-			}
-		});
 		row++;
 		
 		// CON FIRMA NO CRIPTOGRAFICA
@@ -407,7 +376,7 @@ public class Model3032018AEAT extends Model303Base {
 		button3.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {		
-				CertificationPopup certPopup = new CertificationPopup(aonData, getMod303().getName(), getMod303().getDocument()) {
+				CertificationPopup certPopup = new CertificationPopup(getAPI(), getMod303().getName(), getMod303().getDocument()) {
 							
 					@Override
 					protected void onCancel() {
@@ -417,7 +386,8 @@ public class Model3032018AEAT extends Model303Base {
 					@Override
 					protected void onAccept() {
 						if (getMod303().isFinished() || getMod303().isSent()) {
-							submitAEAT(VALIDATE_PRINT_ACTION, getCert(), getPass(), getName(), getDocument(), aonData);
+							submitAEAT(VALIDATE_PRINT_ACTION, getCert(), getPass(), getName(), getDocument());
+							getCallback().showVisorAEAT();
 						} else {
 							getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 						}	
@@ -445,7 +415,7 @@ public class Model3032018AEAT extends Model303Base {
 						
 						@Override
 						public void onClick(ClickEvent event) {
-							API.getFiscal().download(result +"");
+							getAPI().getFiscal().download(result +"");
 						}
 					});
 					tab.setWidget(3, 2, download2 );

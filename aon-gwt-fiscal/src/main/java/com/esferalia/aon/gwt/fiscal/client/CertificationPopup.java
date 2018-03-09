@@ -5,8 +5,6 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,10 +18,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public abstract class CertificationPopup extends CustomDialog {
+	
+	API API;
 	public API getAPI() {
-		return new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-			aonData.getDomain().getName(), aonData.getDomain().getId(),
-			aonData.getUser().getLogin());
+		return API;
 	}
 	
 	protected abstract void onAccept();
@@ -59,9 +57,8 @@ public abstract class CertificationPopup extends CustomDialog {
 		return tb.getValue();
 	}
 	
-	AonData aonData = new AonData();
-	public CertificationPopup(AonData aonData, String name, String document) {
-		this.aonData = aonData;
+	public CertificationPopup(API API, String name, String document) {
+		this.API = API;
 		setCaption("Certificado Digital");
 		setGlassEnabled(true);
 		setAnimationEnabled(true);

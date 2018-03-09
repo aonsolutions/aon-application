@@ -29,6 +29,14 @@
 						</g:customHeader>
 						<g:ScrollPanel ui:field="breakdownPanel" styleName="{aonResources.css.aonTextCenter}"/>
 					</g:tab>
+					<g:tab>
+						<g:customHeader>
+							<g:Label
+								styleName="{aonResources.css.aonIconAeat} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+								text="Visor AEAT" />
+						</g:customHeader>
+						<g:SimpleLayoutPanel ui:field="aeatPanel" styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>
 		</g:south>

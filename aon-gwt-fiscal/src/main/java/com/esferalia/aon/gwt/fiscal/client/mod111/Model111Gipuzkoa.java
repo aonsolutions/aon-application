@@ -2,15 +2,17 @@ package com.esferalia.aon.gwt.fiscal.client.mod111;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.watson.util.Pair;
 
 public class Model111Gipuzkoa extends Model110Gipuzkoa {
 
-	public Model111Gipuzkoa(IFiscalModelCallback<Mod111> callback) {
-		super(callback);
+	public Model111Gipuzkoa(IFiscalModelCallback<Mod111> callback, AonData aonData) {
+		super(callback, aonData);
 	}
+	
 	@Override
 	public LinkedList<Pair<String, String>> getInformationLinks() {
 		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();

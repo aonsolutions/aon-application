@@ -31,6 +31,7 @@ import javax.net.ssl.TrustManager;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -54,7 +55,10 @@ import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
-public class ModPrintAEAT{
+public abstract class ModPrintAEAT extends HttpServlet{
+
+	private static final long serialVersionUID = -3800066351932431787L;
+
 	Integer id;
 	String domainName;
 	Integer domainId;
@@ -64,36 +68,32 @@ public class ModPrintAEAT{
 	String pass;
 	String name;
 	String document;
-
-	byte[] data;
-	public ModPrintAEAT(HttpServletRequest req) {
-		try {
-			JSONObject json = getRequestJSON(req);
-		
-			this.id = json.getInt("mod");
-			this.domainName = json.getString("domainName");
-			this.domainId = json.getInt("domainId");
-			this.user = json.getString("user");	
-			if(json.opt("cert") != null) {
-				Integer c = json.getInt("cert");
-				Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
+	
+	public ModPrintAEAT() {
+	
+	}
+	
+	protected void init(HttpServletRequest req) {
+		this.id = Integer.parseInt(req.getParameter("mod"));
+		this.domainName = req.getParameter("domainName");
+		this.domainId = Integer.parseInt(req.getParameter("domainId"));
+		this.user = req.getParameter("user");	
+		if(req.getParameter("cert") != null && !req.getParameter("cert").isEmpty()) {
+			Integer c = Integer.parseInt(req.getParameter("cert"));
+			Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
 					.and(f.getIdProperty().eq(c))
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
-				if(attach.getData() == null){
-					DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
-					Drive drive = AonDrive.getInstace().serviceInitialize(g);
-					attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
-				}
-				this.cert = attach.getData();
-				this.pass = json.getString("pass");
-				this.name = json.getString("name");
-				this.document = json.getString("document");
+			if(attach.getData() == null){
+				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
+				Drive drive = AonDrive.getInstace().serviceInitialize(g);
+				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+			this.cert = attach.getData();
+			this.pass = req.getParameter("pass");
+			this.name = req.getParameter("name");
+			this.document = req.getParameter("document");
 		}
 	}
-
 	
 	public Integer getId() {
 		return id;
@@ -157,7 +157,7 @@ public class ModPrintAEAT{
 		return URLEncoder.encode(fileString, "ISO-8859-1");
 	}	
 	
-	protected void download(HttpServletResponse resp, String request, String urlParameters) throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException {
+	protected void download(HttpServletResponse resp, String request, String urlParameters) throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException, JSONException, ScriptException {
 		URL url = new URL(request);
    		
 		SSLContext ctx = SSLContext.getInstance("TLS");
@@ -189,100 +189,67 @@ public class ModPrintAEAT{
 		wr.writeBytes(urlParameters);
 		wr.flush();
 		wr.close();
-
-		DataInputStream input = new DataInputStream(connection.getInputStream());
-		AonIOUtils.copy(input, resp.getOutputStream());
+		
+		if(isCert()) {
+			String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+			JSONObject json = parseHTML(html);
+			
+			ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
+			AonIOUtils.copy(input, resp.getOutputStream());	
+		} else {
+			DataInputStream input = new DataInputStream(connection.getInputStream());
+			AonIOUtils.copy(input, resp.getOutputStream());
+		} 
+		
 		resp.flushBuffer();
 		connection.disconnect();
 	}
 	
-	public JSONObject send(HttpServletRequest req, String request, String urlParameters) throws IOException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, JSONException, ScriptException {
-		URL url = new URL(request);
-   		
-		SSLContext ctx = SSLContext.getInstance("TLS");
-		ctx.init(isCert() ? getKeyManagers(cert, pass) : new KeyManager[0],
-				new TrustManager[] { new DefaultTrustManager() },
-				new SecureRandom());
-		SSLContext.setDefault(ctx);
-
-		HttpsURLConnection connection = (HttpsURLConnection) url
-				.openConnection();
-		connection.setHostnameVerifier(new HostnameVerifier() {
-			@Override
-			public boolean verify(String arg0, SSLSession arg1) {
-				return true;
-			}
-		});
-		connection.setDoOutput(true);
-		connection.setDoInput(true);
-		connection.setInstanceFollowRedirects(false);
-		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
-		connection.setRequestProperty("charset", "ISO-8859-1");
-		connection.setRequestProperty("Content-Length",
-				"" + Integer.toString(urlParameters.getBytes().length));
-		connection.setUseCaches(false);
-		
-		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-		wr.writeBytes(urlParameters);
-		wr.flush();
-		wr.close();
+	public JSONObject parseHTML(String html) throws JSONException, ScriptException, IOException {
+		ScriptEngineManager manager = new ScriptEngineManager();
+		ScriptEngine engine = manager.getEngineByName("js");
 		JSONObject json = new JSONObject();
-		
-		if(MimeType.PDF.getName().equals(connection.getContentType())) {
-			data = AonIOUtils.toByteArray(connection.getInputStream());
-			json.put("CEL", "CEL");
-		} else {
-			ScriptEngineManager manager = new ScriptEngineManager();
-			ScriptEngine engine = manager.getEngineByName("js");
-			String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
-			String[] scripts = html.split("<script type=\"text/javascript\">");
+		String[] scripts = html.split("<script type=\"text/javascript\">");
 			
-			for(String h : html.split("\n")) {
-				System.out.println(h);
+		if(isCert() && html.contains("var CEL") && scripts.length > 4) {
+			String[] vars = scripts[3].split("\n");
+			for(String h : vars) {
+				if(h.contains("var")) {
+					Integer x = h.indexOf("var");
+					Integer a = h.indexOf("=");
+					Integer z = h.lastIndexOf(";");
+					String key = h.substring(x + 4, a);				
+				
+					String value =h.substring(a + 1, z).contains("&amp;") 
+						? engine.eval(h.substring(a + 1, z).replace("&amp;", "").replace(";", "")).toString() 
+						: engine.eval(h.substring(a + 1, z)).toString(); 
+				
+					if(!value.isEmpty()) {
+						json.put(key, value);
+					}
+				}
 			}
-			
-			if(isCert() && html.contains("var CEL")) {
-				String[] vars = scripts[3].split("\n");
-				for(String h : vars) {
-					if(h.contains("var")) {
-						Integer x = h.indexOf("var");
-						Integer a = h.indexOf("=");
-						Integer z = h.lastIndexOf(";");
-						String key = h.substring(x + 4, a);				
-					
-						String value =h.substring(a + 1, z).contains("&amp;") 
-							? engine.eval(h.substring(a + 1, z).replace("&amp;", "").replace(";", "")).toString() 
-							: engine.eval(h.substring(a + 1, z)).toString(); 
-					
-						if(!value.isEmpty()) {
-							json.put(key, value);
-						}
-					}
+			String[] urls = scripts[4].split("\n");
+		
+			for(Integer i = 0 ; i < urls.length; i++) {
+				if(urls[i].contains("ENR") && urls[i].contains(json.getString("ENR"))) {
+					Integer a = urls[i+1].indexOf("=");
+					Integer z = urls[i+1].indexOf(";");
+					json.put("url", getUrlFile(engine.eval(urls[i+1].substring(a + 1, z)).toString()));
 				}
-				String[] urls = scripts[4].split("\n");
-			
-				for(Integer i = 0 ; i < urls.length; i++) {
-					if(urls[i].contains("ENR") && urls[i].contains(json.getString("ENR"))) {
-						Integer a = urls[i+1].indexOf("=");
-						Integer z = urls[i+1].indexOf(";");
-						data = getUrlFile(engine.eval(urls[i+1].substring(a + 1, z)).toString());
-					}
-				}
-			} else{
-				String[] html2 = scripts[4].split("\n");
-				for(String h : html2) {
-					if(h.contains("var")) {
-						Integer x = h.indexOf("var");
-						Integer a = h.indexOf("=");
-						Integer z = h.indexOf(";");
-						String key = h.substring(x + 4, a);
-						String value = engine.eval(h.substring(a + 1, z)).toString();
-					
-						if(!value.isEmpty()) {
-							json.put(key, value);
-						}
+			}
+		} else if(scripts.length > 4){
+			String[] html2 = scripts[4].split("\n");
+			for(String h : html2) {
+				if(h.contains("var")) {
+					Integer x = h.indexOf("var");
+					Integer a = h.indexOf("=");
+					Integer z = h.indexOf(";");
+					String key = h.substring(x + 4, a);
+					String value = engine.eval(h.substring(a + 1, z)).toString();
+				
+					if(!value.isEmpty()) {
+						json.put(key, value);
 					}
 				}
 			}
@@ -290,12 +257,12 @@ public class ModPrintAEAT{
 		return json;
 	}
 	
-	public JSONObject saveHistory(DataResponseSource source, DataAttachSource attachSource, JSONObject json) throws IOException, JSONException {
+	public void saveHistory(JSONObject json) throws IOException, JSONException {
 		Boolean ok = json.opt("CEL")!= null;
 		DataResponse dr = new DataResponse()
-				.setSource(source)
+				.setSource(getDataResponseSource())
 				.setSourceId(getId())
-				.setCode(ok ? "Presentación Correcta": "Presentación Fallida")
+				.setCode(isCert() ? (ok ? "Presentación Correcta": "Presentación Fallida"):(ok ? "Validacion Correcta": "Validacion Fallida"))
 				.setDomain(getDomainId())
 				.setResponseDate(new Date());
 		dr = AON.insertDataResponse(getDomainName(), getDomainId(), getUser(), dr);
@@ -308,22 +275,20 @@ public class ModPrintAEAT{
 		    		.setDataValue(json.getString(key));
 		    AON.insertDataResponseDetail(getDomainName(), getDomainId(), getUser(), drd);
 		}
-		if(ok) {
-			if(data != null) {
-				Integer attachId = AON.insertAttach(getDomainName(), getDomainId(), getUser(), new Attach()
-					.setSourceType(attachSource.value())
-					.setSourceBatch(getId())
-					.setType(DataAttachType.RESPONSE_OK.value())
-					.setAttachModule(dr.getId())
-					.setAttachType(AttachType.DATA)
-					.setDomain(new Domain().setName(getDomainName()).setId(getDomainId()))
-					.setData(data)
-					.setMimeType(MimeType.PDF)
-					.setDescription(isCert() ? "Presentacion AEAT" : "Validacion AEAT"));
-				json.put("data", attachId);
-			}
+		if(ok && json.opt("url") != null) {
+			Integer attachId = AON.insertAttach(getDomainName(), getDomainId(), getUser(), new Attach()
+				.setSourceType(getDataAttachSource().value())
+				.setSourceBatch(getId())
+				.setType(DataAttachType.RESPONSE_OK.value())
+				.setAttachModule(dr.getId())
+				.setAttachType(AttachType.DATA)
+				.setDomain(new Domain().setName(getDomainName()).setId(getDomainId()))
+				.setData(getUrlFile(json.get("url").toString()))
+				.setMimeType(MimeType.PDF)
+				.setDescription("Presentacion AEAT"));
+			json.put("data", attachId);
 		}
-		return json;
+		updateMod(json);
 	}
 	
 	public JSONObject getRequestJSON(HttpServletRequest req) throws JSONException{
@@ -412,4 +377,9 @@ public class ModPrintAEAT{
 		}	
 		return b;
 	}
+	
+	protected abstract DataResponseSource getDataResponseSource();
+	protected abstract DataAttachSource getDataAttachSource();
+	protected abstract void updateMod(JSONObject json) throws JSONException;
+
 }

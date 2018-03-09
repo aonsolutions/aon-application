@@ -88,12 +88,6 @@
 											<td class="{aonResources.css.aonPanelGridEven}">
 												<g:CheckBox ui:field="confidential" text="{msg.confidential}"/>
 											</td>
-											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}">
-												<g:Button ui:field="printViaAeatButton" text="{msg.printViaAeat}"
-													styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconAeat}" />
-												<g:Button ui:field="sendViaAeatButton" text="" title="Certificado"
-													styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconAeatSigned}" />
-											</td>
 											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonTextRight}">
 												<g:Button ui:field="commentsButton" text="{msg.comments}" 
 													styleName="{aonResources.css.aonIconCommandButton}"/>
@@ -109,9 +103,6 @@
 												<g:Label ui:field="diffLabel" />
 												<g:InlineLabel ui:field="dirtyLabel" 
 													styleName="{aonResources.css.aonColorRed}"/>
-											</td>
-											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}">
-												<g:Button ui:field="generateFileButton" text="{msg.generateFile}" />
 											</td>
 											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonTextCenter}">
 												<g:Label ui:field="statusLabel" />
@@ -175,6 +166,14 @@
 										text="{msg.informationBreakdown}" />
 								</g:customHeader>
 								<g:ScrollPanel ui:field="informationPanel" styleName="{aonResources.css.aonTextCenter}"/>
+							</g:tab>
+							<g:tab>
+								<g:customHeader>
+									<g:Label
+										styleName="{aonResources.css.aonIconAeat} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+										text="Visor AEAT" />
+								</g:customHeader>
+								<g:SimpleLayoutPanel ui:field="aeatPanel" styleName="{aonResources.css.aonTextCenter}" />
 							</g:tab>
 						</g:TabLayoutPanel>
 					</aon:MinimizePanel>

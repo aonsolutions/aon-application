@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017GIPUZKOAAdditionalDataScript;
@@ -25,8 +26,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model3032017GIPUZKOA extends Model303Base {
 	
-	public Model3032017GIPUZKOA(Mod303 mod303,Model303Callback callback) {
-		super(mod303,callback);
+	public Model3032017GIPUZKOA(Mod303 mod303,Model303Callback callback, AonData aonData) {
+		super(mod303,callback, aonData);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();

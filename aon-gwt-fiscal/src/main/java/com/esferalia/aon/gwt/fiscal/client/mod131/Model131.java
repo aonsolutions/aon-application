@@ -197,6 +197,11 @@ public class Model131 extends MainEntryPoint {
 		}
 		
 		@Override
+		public void showVisorAEAT() {
+			
+		}
+		
+		@Override
 		public boolean isFinished() {
 			return (currentMod.getStatus() == FiscalStatus.FINISHED);
 		}
