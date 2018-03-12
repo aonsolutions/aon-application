@@ -186,7 +186,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(new GUARENTEEDContractPayment(payment), start, end, amount);
 			}
 
-			if ( type == PaymentType.CRA_0000 	// TODO: This must be the only one check 
+			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENgit statusSIONES Y SIST. ALTERNATIVOS 					
+				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
 				|| ContextVariable.MATERNITY.getName().equals(payment.getName())
 				|| ContextVariable.DIRECT_PAY.getName().equals(payment.getName())) {
