@@ -754,7 +754,10 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 											<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 										</textElement>
 										<textFieldExpression><![CDATA[$R{aon_invoice_sales} + ": " 
-+ $P{invoiceDateilReportScriptlet_SCRIPTLET}.obtainSales($F{id}).getReferenceCode()]]></textFieldExpression>
++ $P{invoiceDateilReportScriptlet_SCRIPTLET}.obtainSales($F{id}).getReferenceCode()
++ ($P{invoiceDateilReportScriptlet_SCRIPTLET}.obtainSales($F{id}).getPurchaseReference()!=null
+	?", "+$R{sales_purchase_reference} + ": " + $P{invoiceDateilReportScriptlet_SCRIPTLET}.obtainSales($F{id}).getPurchaseReference()
+	:"")]]></textFieldExpression>
 									</textField>
 								</jr:cell>
 							</jr:groupHeader>
