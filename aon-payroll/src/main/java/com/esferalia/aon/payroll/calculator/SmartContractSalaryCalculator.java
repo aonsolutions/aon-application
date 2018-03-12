@@ -188,6 +188,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENgit statusSIONES Y SIST. ALTERNATIVOS 					
 				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
+				|| ContextVariable.ERE.getName().equals(payment.getName()) 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
 				|| ContextVariable.MATERNITY.getName().equals(payment.getName())
 				|| ContextVariable.DIRECT_PAY.getName().equals(payment.getName())) {
