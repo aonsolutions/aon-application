@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
@@ -76,14 +77,21 @@ public class GridPanel extends Composite {
 	
 		initWidget(binder.createAndBindUi(this));
 
-		load(linkedList);				
+		load(linkedList);
 	}	
 	
 	private void load(LinkedList<JsStockStat> linkedList) {
 		DefaultKeyboardSelectionHandler<JsStockStat> selHandler = new DefaultKeyboardSelectionHandler<JsStockStat>(dataGrid){
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsStockStat> event) {
-				
+				if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
+					Integer relRow = event.getIndex() - dataGrid.getPageStart();
+				    Integer subrow = event.getContext().getSubIndex();
+				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
+				    JsStockStat object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+					
+				    parent.getMainContent().loadSouthContent(object);
+				}
 			}
 		};
 		
@@ -207,14 +215,6 @@ public class GridPanel extends Composite {
 				return o1.getBalance().compareTo(o2.getBalance());
 			}
 		});
-		
-	
-		// TODO
-//		Producto
-//		Entradas
-//		Salidas
-//		Saldo
-//		Detalle
 		
 		dataGrid.addColumn(productColumn, AON.MSG.product());
 		dataGrid.addColumn(inputsColumn, "Entradas");

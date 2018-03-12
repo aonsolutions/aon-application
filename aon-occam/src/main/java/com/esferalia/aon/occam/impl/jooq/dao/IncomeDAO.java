@@ -11,6 +11,9 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -27,6 +30,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -38,6 +42,7 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeRegistryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomeDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -47,6 +52,7 @@ public class IncomeDAO {
 	
 	private static final IncomePropertiesDAO INCOME_PROPERTIES = new IncomePropertiesDAO();	
 	private static final IncomeDetailPropertiesDAO INCOME_DETAIL_PROPERTIES = new IncomeDetailPropertiesDAO();
+	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
 	
 	public static Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter){
 		return INCOME_PROPERTIES.build(ctx.getDslContext().select()
@@ -312,6 +318,26 @@ public class IncomeDAO {
 			.fetch();
 	}
 	
+	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, ProductFilter productFilter) {
+		ctx.checkRead();
+		
+		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		whereConditions.addAll(Arrays.asList(INCOME_PROPERTIES.getConditions(incomeFilter)));
+		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+
+		return ctx.getDslContext()
+			.select()
+			.from(INCOME)
+			.join(INCOME_DETAIL).on(INCOME_DETAIL.INCOME.equal(INCOME.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(INCOME.SUPPLIER))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INCOME_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.where(whereConditions)
+			.orderBy(INCOME.ISSUE_TIME,INCOME.REFERENCE_CODE,INCOME_DETAIL.LINE)
+			.fetch().stream().map(new FullIncomeDetailSupplierProductFiller());
+	}
+	
 	public static Stream<IncomeDetail> getIncomeDetails(AONContext ctx, IncomeFilter filter) {
 		return getFullIncomes(ctx, filter)
 			.stream()
@@ -346,6 +372,51 @@ public class IncomeDAO {
 
 					)
 				.setProject( new Project().setName(record.getValue( PROJECT.NAME )))
+				.setLine(record.getValue(INCOME_DETAIL.LINE))
+				.setDescription(record.getValue( INCOME_DETAIL.DESCRIPTION ))
+				.setQuantity(record.getValue(INCOME_DETAIL.QUANTITY))
+				.setPrice(record.getValue(INCOME_DETAIL.PRICE))
+				.setDiscountExpression(record.getValue(INCOME_DETAIL.DISCOUNT_EXPR))
+				.setItem((record.getValue(INCOME_DETAIL.ITEM) == null)
+					? null
+					: new Item()
+						.setId(record.getValue(INCOME_DETAIL.ITEM))
+						.setCategory( record.getValue( PCATEGORY.NAME ) )
+						.setProductId( record.getValue( PRODUCT.ID ) )
+						.setName( record.getValue( PRODUCT.NAME ) )
+						.setCode(record.getValue( PRODUCT.CODE ) )
+						.setDetail(record.getValue( ITEM.DETAIL ))
+						.setDetail2(record.getValue( ITEM.DETAIL2 ))
+						.setDetail3(record.getValue( ITEM.DETAIL3 ))
+						.setDescription(record.getValue( ITEM.DESCRIPTION )))
+				.setPurchaseDetail(record.getValue(INCOME_DETAIL.PURCHASE_DETAIL));
+		}
+	}
+	
+	private static class FullIncomeDetailSupplierProductFiller implements Function<Record,IncomeDetail> {
+
+		@Override
+		public IncomeDetail apply(Record record) {
+			Supplier supplier = new Supplier();
+			supplier.setDocument(record.getValue(REGISTRY.DOCUMENT));
+			supplier.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
+									record.getValue(REGISTRY.DOCUMENT_TYPE)));
+			supplier.setDocumentCountry(Country.safeValueOf(record
+									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
+			supplier.setName(record.getValue(REGISTRY.NAME));
+			supplier.setId(record.getValue(REGISTRY.ID));
+			
+			return new IncomeDetail()
+				.setIncome(new Income()
+					.setId(record.getValue(INCOME.ID))
+					.setAddress(record.getValue(INCOME.ADDRESS))
+					.setDomain(record.getValue(INCOME.DOMAIN))
+					.setStatus(AonEnumUtils.enumValue(IncomeStatus.class,
+									record.getValue(INCOME.STATUS)))
+					.setReferenceCode(record.getValue(INCOME.REFERENCE_CODE))
+					.setIssueDate(record.getValue(INCOME.ISSUE_TIME))
+					.setSupplier2(supplier)
+					)
 				.setLine(record.getValue(INCOME_DETAIL.LINE))
 				.setDescription(record.getValue( INCOME_DETAIL.DESCRIPTION ))
 				.setQuantity(record.getValue(INCOME_DETAIL.QUANTITY))

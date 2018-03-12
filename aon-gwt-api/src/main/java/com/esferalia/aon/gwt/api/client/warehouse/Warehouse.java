@@ -116,6 +116,11 @@ public class Warehouse extends Methods{
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/"+id + "/detail" , callback);
 	}
 	
+	public void getDeliveryMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDeliveryDetail>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/movements" + filter, callback);
+	}
+	
 	public void updateDelivery(Integer id, String requestData, AsyncCallback<JsOrder> callback){
 		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData, callback);
 	}
@@ -127,6 +132,11 @@ public class Warehouse extends Methods{
 	public void getIncomes(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/income" + filter, callback);
+	}
+	
+	public void getIncomeMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsIncomeDetail>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/income/movements" + filter, callback);
 	}
 
 	public void getDetails(Integer id, String orderType, AsyncCallback<JSON<JsOrderDetail>> callback){

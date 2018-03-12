@@ -15,26 +15,18 @@
 		styleName="{aonResources.css.aonSelector}">
 		<g:TabLayoutPanel ui:field="tabPanel" barHeight="26"
 			barUnit="PX" width="100%">
-			<!-- 
-			DETALLE
-			ALBARANES COMPRA
-			ALBARANES VENTA
-			FACTURAS COMPRA
-			FACTURAS VENTA
-			TRASPASOS entre ALMACENENES (signo positivo/negativo)
-			ELABORACIONES o el DETALLE (según sea entrada o salida)
-			 -->
+			
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Pedidos pendientes"
+						<g:InlineLabel text="Detalle"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="pendingOrderPanel"
+					<g:ScrollPanel ui:field="itemPanel"
 						styleName="{aonResources.css.aonTextCenter}" />
 				</g:HTMLPanel>
 			</g:tab>
@@ -43,39 +35,86 @@
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Origen"
+						<g:InlineLabel text="Albs. compra"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="sourcePanel"
+					<g:ScrollPanel ui:field="incomePanel"
 						styleName="{aonResources.css.aonTextCenter}" />
 				</g:HTMLPanel>
 			</g:tab>
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
-						<i:IronIcon icon="speaker-notes"
+						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Comentarios"
+						<g:InlineLabel text="Albs. venta"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:ScrollPanel ui:field="commentsPanel"
-					styleName="{aonResources.css.aonTextCenter}" />
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="deliveryPanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
 			</g:tab>
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
-						<i:IronIcon icon="speaker-notes"
+						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Observaciones"
+						<g:InlineLabel text="Fras. compra"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:ScrollPanel ui:field="remarksPanel"
-					styleName="{aonResources.css.aonTextCenter}" />
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="purchaseInvoicePanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
 			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="receipt"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Fras. venta"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="saleInvoicePanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
+			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="receipt"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Traspasos almacen"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="warehouseTransferPanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
+			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="receipt"
+							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Elaboraciones"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:HTMLPanel>
+					<g:ScrollPanel ui:field="elaborationPanel"
+						styleName="{aonResources.css.aonTextCenter}" />
+				</g:HTMLPanel>
+			</g:tab>
+			
 		</g:TabLayoutPanel>
 	</aon:MinimizePanel>
 

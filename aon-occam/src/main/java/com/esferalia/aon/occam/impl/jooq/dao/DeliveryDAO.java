@@ -15,10 +15,14 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Result;
 
@@ -26,6 +30,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -38,6 +43,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PDeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RDeliveryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -48,6 +54,7 @@ public class DeliveryDAO {
 	
 	private static final DeliveryDetailPropertiesDAO DELIVERY_DETAIL_PROPERTIES = new DeliveryDetailPropertiesDAO();
 	private static final DeliveryPropertiesDAO DELIVERY_PROPERTIES = new DeliveryPropertiesDAO();
+	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
 
 	// -------------------- DELIVERY
 	
@@ -199,6 +206,26 @@ public class DeliveryDAO {
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
 				.returning().fetch().stream().map(new DeliveryDetailFiller()).findFirst().orElse(new DeliveryDetail());
+	}
+	
+	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, ProductFilter productFilter) {
+		ctx.checkRead();
+		
+		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		whereConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
+		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+
+		return ctx.getDslContext()
+			.select()
+			.from(DELIVERY)
+			.join(DELIVERY_DETAIL).on(DELIVERY_DETAIL.DELIVERY.equal(DELIVERY.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(DELIVERY.CUSTOMER))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(DELIVERY_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.where(whereConditions)
+			.orderBy(DELIVERY.ISSUE_TIME,DELIVERY.SERIES,DELIVERY.NUMBER,DELIVERY_DETAIL.LINE)
+			.fetch().stream().map(new FullDeliveryDetailSupplierItemFiller());
 	}
 	
 	public static DeliveryDetail updateDeliveryDetail(AONContext ctx, DeliveryDetail deliveryDetail, DeliveryDetailFilter filter) {
@@ -353,6 +380,54 @@ public class DeliveryDAO {
 						.setDescription(record.getValue( ITEM.DESCRIPTION )))
 				.setSalesDetail(record.getValue(DELIVERY_DETAIL.SALES_DETAIL))
 				.setPurchaseReference(record.getValue(SALES.PURCHASE_REFERENCE))
+				;
+		}
+	}
+	
+	private static class FullDeliveryDetailSupplierItemFiller implements Function<Record,DeliveryDetail> {
+
+		@Override
+		public DeliveryDetail apply(Record record) {
+			Customer customer = new Customer();
+			customer.setDocument(record.getValue(REGISTRY.DOCUMENT));
+			customer.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
+									record.getValue(REGISTRY.DOCUMENT_TYPE)));
+			customer.setDocumentCountry(Country.safeValueOf(record
+									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
+			customer.setName(record.getValue(REGISTRY.NAME));
+			customer.setId(record.getValue(REGISTRY.ID));
+			
+			Item item = (record.getValue(DELIVERY_DETAIL.ITEM) == null)
+					? null
+					: new Item()
+						.setId(record.getValue(DELIVERY_DETAIL.ITEM))
+						.setCategory( record.getValue( PCATEGORY.NAME ) )
+						.setProductId( record.getValue( PRODUCT.ID ) )
+						.setName( record.getValue( PRODUCT.NAME ) )
+						.setCode(record.getValue( PRODUCT.CODE ) )
+						.setDetail(record.getValue( ITEM.DETAIL ))
+						.setDetail2(record.getValue( ITEM.DETAIL2 ))
+						.setDetail3(record.getValue( ITEM.DETAIL3 ))
+						.setDescription(record.getValue( ITEM.DESCRIPTION ));
+			
+			return new DeliveryDetail()
+				.setDelivery(new Delivery()
+					.setId(record.getValue(DELIVERY.ID))
+					.setAddress(record.getValue(DELIVERY.ADDRESS))
+					.setDomain(record.getValue(DELIVERY.DOMAIN))
+					.setSeries(record.getValue(DELIVERY.SERIES))
+					.setNumber(record.getValue(DELIVERY.NUMBER))
+					.setStatus(AonEnumUtils.enumValue(DeliveryStatus.class,
+							record.getValue(DELIVERY.STATUS)))
+					.setIssueTime(record.getValue(DELIVERY.ISSUE_TIME))
+					.setCustomer2(customer)
+					)
+				.setLine(record.getValue(DELIVERY_DETAIL.LINE))
+				.setDescription(record.getValue( DELIVERY_DETAIL.DESCRIPTION ))
+				.setQuantity(record.getValue(DELIVERY_DETAIL.QUANTITY))
+				.setPrice(record.getValue(DELIVERY_DETAIL.PRICE))
+				.setDiscountExpression(record.getValue(DELIVERY_DETAIL.DISCOUNT_EXPR))
+				.setItem(item)
 				;
 		}
 	}

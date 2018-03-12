@@ -1,5 +1,6 @@
 package com.code.aon.webservice.warehouse.jooq;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -61,7 +63,7 @@ public class DBIncome {
     	return incomeToJSON(income);
     }
 
-	public static JSONArray getIncomeDetails(Domain domain,String login, Map<String, String[]> map){
+    public static JSONArray getIncomeDetails(Domain domain,String login, Map<String, String[]> map){
 		JSONArray array = new JSONArray();
 		if(map.containsKey("quality")) {
 			Integer[] ids = AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY, f -> f.getDomainProperty().eq(domain.getId()).and(f.getSourceIdProperty().isNotNull()))
@@ -72,6 +74,13 @@ public class DBIncome {
 			.forEach(detail -> array.put(incomeDetailToJSON(detail)));
 		} else AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> incomeDetailFilter(domain, map, f))
 			.forEach(detail -> array.put(incomeDetailToJSON(detail)));
+		return array;
+	}
+    
+    public static JSONArray getIncomeMovements(Domain domain,String login, Map<String, String[]> map){
+		JSONArray array = new JSONArray();
+		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> incomeFilter(domain, map, f), f -> productFilter(domain, map, f))
+			.forEach(detail -> array.put(incomeDetailFullToJSON(detail)));
 		return array;
 	}
     
@@ -108,6 +117,16 @@ public class DBIncome {
     
 	public static Filter incomeFilter(Domain domain, Map<String, String[]> filterMap, IncomeProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.FROM)){
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toSql(date)));
+		}
+
+		if(filterMap.containsKey(MSG.TO)){
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.TO)[0])));
+			filter = filter.and(f.getIssueTimeProperty().le(AonDateUtils.toSql(date)));
+		}
 		
 		if(filterMap.containsKey(MSG.SUPPLIER)){
 			Filter fsupplier = f.getSupplierProperty().eq(Integer.parseInt(filterMap.get(MSG.SUPPLIER)[0])); 
@@ -150,6 +169,21 @@ public class DBIncome {
 			.map(i -> i.getId()).toArray(Integer[]::new);
 			Filter fcarrierPacking = f.getIncomeProperty().in(array); 
 			filter = filter.and(fcarrierPacking);
+		}
+		
+		return filter;
+	}
+	
+	public static Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.PRODUCT)){
+			filter = filter.and(f.getIdProperty().eq(Integer.parseInt(filterMap.get(MSG.PRODUCT)[0])));
+		}
+		
+		if(filterMap.containsKey(MSG.CATEGORY)){
+			String[] categories = filterMap.get(MSG.CATEGORY);
+			filter = filter.and(f.getCategoryProperty().in(Arrays.asList(categories).toArray(new Integer[categories.length])));
 		}
 		
 		return filter;
@@ -306,7 +340,7 @@ public class DBIncome {
 		}
 		return json;
 	}
-	
+
 	public static JSONObject  incomeDetailToJSON(IncomeDetail incomeDetail){
 		JSONObject json = new JSONObject();
 		if(incomeDetail != null){
@@ -314,6 +348,36 @@ public class DBIncome {
 			json.put(MSG.DOMAIN, incomeDetail.getDomain());
 			json.put(MSG.PROJECT, incomeDetail.getProject());
 			json.put(MSG.INCOME, incomeDetail.getIncome().getId());
+			json.put(MSG.LINE, incomeDetail.getLine());
+			json.put(MSG.ITEM, incomeDetail.getItem().getId());
+			json.put(MSG.DESCRIPTION, incomeDetail.getDescription());
+			json.put(MSG.QUANTITY, incomeDetail.getQuantity());
+			json.put(MSG.PRICE, incomeDetail.getPrice());
+			json.put(MSG.PURCHASE_DETAIL, incomeDetail.getPurchaseDetail());
+			json.put(MSG.DISCOUNT_EXPR, incomeDetail.getDiscountExpression());
+			
+			json.put(MSG.CREATION_DATE, incomeDetail.getCreationDate());
+			json.put(MSG.CREATION_USER, incomeDetail.getCreationUser());
+			json.put(MSG.MODIFICATION_DATE, incomeDetail.getModificationDate());
+			json.put(MSG.MODIFICATION_USER, incomeDetail.getModificationUser());
+		}
+		return json;
+	}
+	
+	public static JSONObject  incomeDetailFullToJSON(IncomeDetail incomeDetail){
+		JSONObject json = new JSONObject();
+		if(incomeDetail != null){
+			json.put(MSG.ID, incomeDetail.getId());
+			json.put(MSG.DOMAIN, incomeDetail.getDomain());
+			json.put(MSG.PROJECT, incomeDetail.getProject());
+			json.put(MSG.INCOME,
+					new JSONObject()
+					.put(MSG.ID, incomeDetail.getIncome().getId())
+					.put(MSG.REGISTRY, new JSONObject()
+										.put(MSG.ID, incomeDetail.getIncome().getSupplier2().getId())
+										.put(MSG.NAME, incomeDetail.getIncome().getSupplier2().getName()))
+					.put(MSG.REFERENCE_CODE, incomeDetail.getIncome().getReferenceCode())
+					.put(MSG.ISSUE_DATE, AonDateUtils.dateTimeFormat(incomeDetail.getIncome().getIssueDate())));
 			json.put(MSG.LINE, incomeDetail.getLine());
 			json.put(MSG.ITEM, incomeDetail.getItem().getId());
 			json.put(MSG.DESCRIPTION, incomeDetail.getDescription());

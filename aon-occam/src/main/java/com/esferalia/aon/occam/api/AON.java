@@ -1615,6 +1615,17 @@ public class AON {
 		}
 	}
 	
+	public static Stream<DeliveryDetail> getDeliveryDetailStream(String domainName, Integer domainId, String login, DeliveryFilter deliveryFilter, ProductFilter productFilter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getDeliveryDetailStream(ctx, deliveryFilter, productFilter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}	
+	}
+	
 	public static LinkedList<Delivery> getDeliveryList(String domainName,
 			Integer domainId, String login, DeliveryFilter filter) {
 		return getDeliveryStream(domainName, domainId, login, filter)
@@ -2358,6 +2369,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getWarehouse().getIncomeDetailStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}	
+	}
+	
+	public static Stream<IncomeDetail> getIncomeDetailStream(String domainName, Integer domainId, String login, IncomeFilter incomeFilter, ProductFilter productFilter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getIncomeDetailStream(ctx, incomeFilter, productFilter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -97,6 +97,7 @@ public class Main extends Composite {
 
 			@Override
 			public void onSuccess(JSON<JsStockStat> result) {
+				hideFooterPanel();
 				content.setWidget(new GridPanel(parent, result.getData().toLinkedList()));
 				toast.hide();
 			}
@@ -112,11 +113,29 @@ public class Main extends Composite {
 	public void loadSouthContent() {
 		FooterPanel fp = new FooterPanel(this);
 		southContent.setWidget(fp);
-		fp.hideFooterPanel();
+		hideFooterPanel();
 	}
 	
+	public void loadSouthContent(JsStockStat jsStockStat) {
+		FooterPanel fp = new FooterPanel(this, jsStockStat);
+		southContent.setWidget(fp);
+		openFooterPanel();
+	}
 	
-	public void changeSouthContentSize(Double value) {
+	public void openFooterPanel() {
+		Integer clientHeight = Window.getClientHeight();
+		changeSouthContentSize(clientHeight.doubleValue() / 3);
+	}
+
+	public void closeFooterPanel() {
+		changeSouthContentSize(30.0);
+	}
+	
+	public void hideFooterPanel() {
+		changeSouthContentSize(0.0);
+	}
+	
+	private void changeSouthContentSize(Double value) {
 		contentSplitLayoutPanel.setWidgetSize(southContent, value);	
 	}
 
@@ -126,10 +145,6 @@ public class Main extends Composite {
 
 	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
 		this.filterMap = filterMap;
-	}
-
-	public void refreshSelect() {
-		
 	}
 		
 }

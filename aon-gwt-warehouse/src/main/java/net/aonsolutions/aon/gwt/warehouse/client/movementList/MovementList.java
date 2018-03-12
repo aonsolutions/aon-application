@@ -124,6 +124,10 @@ public class MovementList extends AonTemplate2 {
 		setContent(new Main(this, filterMap));
 	}
 	
+	public Main getMainContent() {
+		return (Main) super.getContent().getWidget();
+	}
+	
 	
 	public HashMap<String, LinkedList<String>> getFilterMap() {
 		if(filterMap==null) {
