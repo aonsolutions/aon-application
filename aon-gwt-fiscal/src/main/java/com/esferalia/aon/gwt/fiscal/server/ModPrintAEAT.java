@@ -193,7 +193,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		if(isCert()) {
 			String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
 			JSONObject json = parseHTML(html);
-			
+			saveHistory(json);
 			ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
 			AonIOUtils.copy(input, resp.getOutputStream());	
 		} else {
@@ -235,7 +235,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 				if(urls[i].contains("ENR") && urls[i].contains(json.getString("ENR"))) {
 					Integer a = urls[i+1].indexOf("=");
 					Integer z = urls[i+1].indexOf(";");
-					json.put("url", getUrlFile(engine.eval(urls[i+1].substring(a + 1, z)).toString()));
+					json.put("url", engine.eval(urls[i+1].substring(a + 1, z)).toString());
 				}
 			}
 		} else if(scripts.length > 4){

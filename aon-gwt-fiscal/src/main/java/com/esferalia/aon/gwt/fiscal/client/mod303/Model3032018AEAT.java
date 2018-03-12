@@ -385,7 +385,9 @@ public class Model3032018AEAT extends Model303Base {
 							
 					@Override
 					protected void onAccept() {
-						if (getMod303().isFinished() || getMod303().isSent()) {
+						if(getMod303().isSent()) {
+							getCallback().showBreakdownPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
+						} else if (getMod303().isFinished() || getMod303().isSent()) {
 							submitAEAT(VALIDATE_PRINT_ACTION, getCert(), getPass(), getName(), getDocument());
 							getCallback().showVisorAEAT();
 						} else {

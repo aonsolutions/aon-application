@@ -108,7 +108,7 @@ public class Model115AEAT extends Model115Base {
 				if (getModel().isFinished() || getModel().isSent()) {
 					submitForm(MODEL115_FILE);
 				} else {
-			// TODO		getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+					getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
 			}
 		});
@@ -136,7 +136,7 @@ public class Model115AEAT extends Model115Base {
 					submitAEAT(MODEL115_PRINT_AEAT);
 					getCallback().showVisorAEAT();
 				} else {
-				// TODO	getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+					getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
 			}
 		});
@@ -172,11 +172,13 @@ public class Model115AEAT extends Model115Base {
 							
 					@Override
 					protected void onAccept() {
-						if (getModel().isFinished() || getModel().isSent()) {
+						if(getModel().isSent()) {
+							getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
+						} else if(getModel().isFinished()) {
 							submitAEAT(MODEL115_PRINT_AEAT, getCert(), getPass(), getName(), getDocument());
 							getCallback().showVisorAEAT();
 						} else {
-					// TODO		getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+							getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 						}	
 					}
 				};
