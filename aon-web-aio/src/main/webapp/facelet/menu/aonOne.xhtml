@@ -438,6 +438,23 @@
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
+						<aon:if test="#{aonRole.statisticsOperator}">
+							<aon:panelGrid id="group_statistics_aonOne"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-statistics aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_role_statistics}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_invoiceStats-aonOne"
+											action="gwt_invoiceStat-aonFinance"
+											title="#{bundle.aon_global_statistics}"
+											value="#{bundle.aon_global_statistics}" />												
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:if>
 					</aon:panelGroup>					
 
 					<aon:panelGroup>
@@ -485,14 +502,6 @@
 											value="#{bundle.finance_invoice_signing_module}"/>
 									</aon:div>								
 								</aon:if>															
-								<aon:if test="#{aonRole.statisticsOperator}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_invoiceStats-aonOne"
-											action="gwt_invoiceStat-aonOne"
-											title="#{bundle.aon_global_statistics}"
-											value="#{bundle.aon_global_statistics}" />												
-									</aon:div>
-								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>

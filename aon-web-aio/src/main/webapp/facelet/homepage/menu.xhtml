@@ -48,18 +48,11 @@
 				action="menu_infoweb" immediate="true"
 				styleClass="aon-top-menu-item" />
 			
-			<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
+			<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.financeOperator}">
 				<aon:commandLink id="menu_management"
-					value="#{bundle.aon_module_management}" 
+					value="#{bundle.aon_erp}" 
 					action="menu_management" immediate="true"
 					styleClass="aon-top-menu-item"/>
-			</aon:if>
-			
-			<aon:if test="#{aonRole.financeOperator}">
-				<aon:commandLink id="menu_treasury"
-					value="#{bundle.aon_module_finance}"
-					action="menu_treasury" immediate="true"
-					styleClass="aon-top-menu-item" />
 			</aon:if>
 			
 			<aon:if test="#{aonRole.warehouseOperator}">

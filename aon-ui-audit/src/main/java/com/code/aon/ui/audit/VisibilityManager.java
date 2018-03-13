@@ -83,7 +83,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if ( addExtraModules) {
 			enabledModules.add(Module.CRM);
 			enabledModules.add(Module.MANAGEMENT);
-			enabledModules.add(Module.TREASURY);
 			enabledModules.add(Module.WAREHOUSE);
 			enabledModules.add(Module.GROUPWARE);
 			enabledModules.add(Module.POS);
@@ -110,7 +109,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if (ds.isEnabledGoToParent() && ds.isConsultancyDomain() && DomainType.OFFICE != ds.getType()) {
 			enabledModules.remove(Module.CRM);
 			enabledModules.remove(Module.MANAGEMENT);
-			enabledModules.remove(Module.TREASURY);
 			enabledModules.remove(Module.WAREHOUSE);
 			enabledModules.remove(Module.GROUPWARE);
 			enabledModules.remove(Module.POS);

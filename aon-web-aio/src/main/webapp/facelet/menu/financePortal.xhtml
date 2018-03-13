@@ -68,14 +68,6 @@
 											actionListener="#{purchaseInvoice.onEditSearch}"
 											value="#{bundle.finance_purchase_invoice_management_module}" />
 									</aon:div>
-									<aon:if test="#{aonRole.productOperator}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="product-financePortal"
-												action="product_search-financePortal"
-												actionListener="#{product.onEditSearch}"
-												value="#{bundle.aon_role_product}" />
-										</aon:div>
-									</aon:if>							
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
@@ -201,41 +193,34 @@
 					</aon:panelGroup>							
 
 					<aon:panelGroup>
-						<aon:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_auxiliary_financePortal"
+						<aon:if test="#{aonRole.productOperator or aonRole.config}">
+							<aon:panelGrid id="group_product_financePortal"
 								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-config">
+								headerClass="aon-direct-access-panel aon-icon-product">
 								<f:facet name="header">
-									<aon:outputText
-										value="#{bundle.menu_auxiliary_tables}" />
+									<aon:outputText	value="#{bundle.aon_role_product}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payMethod-financePortal"
-											action="payMethod-financePortal"
-											value="#{bundle.config_paymethod_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="geotreeParent_list-financePortal"
-											action="geotreeParent_list-financePortal"
-											actionListener="#{geotreeParent.onSearch}"
-											value="#{bundle.geozone_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="segment_form-financePortal"
-											action="segment_form-financePortal"
-											value="#{bundle.registry_segment_module}" />
-									</aon:div>				
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="productCategory-financePortal"
-											action="productCategory-financePortal"
-											value="#{bundle.aon_categories}" />
-									</aon:div>
+									<aon:if test="#{aonRole.productOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="product-financePortal"
+												action="product_search-financePortal"
+												actionListener="#{product.onEditSearch}"
+												value="#{bundle.aon_role_product}" />
+										</aon:div>
+									</aon:if>
+									<aon:if test="#{aonRole.config}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="productCategory-financePortal"
+												action="productCategory-financePortal"
+												value="#{bundle.aon_categories}" />
+										</aon:div>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
-					</aon:panelGroup>					
-
+					</aon:panelGroup>
+							
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.fiscal}">
 							<aon:panelGrid id="group_taxes_financePortal"
@@ -266,6 +251,40 @@
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+						<aon:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_auxiliary_financePortal"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-config">
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.menu_auxiliary_tables}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="payMethod-financePortal"
+											action="payMethod-financePortal"
+											value="#{bundle.config_paymethod_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="geotreeParent_list-financePortal"
+											action="geotreeParent_list-financePortal"
+											actionListener="#{geotreeParent.onSearch}"
+											value="#{bundle.geozone_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="segment_form-financePortal"
+											action="segment_form-financePortal"
+											value="#{bundle.registry_segment_module}" />
+									</aon:div>				
+								</aon:div>
+							</aon:panelGrid>
+						</aon:if>
+					</aon:panelGroup>					
+
+					<aon:panelGroup>
 						<aon:if test="#{aonRole.financeOperator or aonRole.accountingOperator}">
 							<aon:panelGrid id="group_conecta_financePortal" styleClass="aon-width-all"
 								columnClasses="aon-padding"
@@ -320,12 +339,32 @@
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>																
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+						<aon:if test="#{aonRole.statisticsOperator}">
+							<aon:panelGrid id="group_statistics_financePortal"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-statistics aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_role_statistics}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_invoiceStats-financePortal"
+											action="gwt_invoiceStat-financePortal"
+											title="#{bundle.aon_global_statistics}"
+											value="#{bundle.aon_global_statistics}" />												
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:if>
 					</aon:panelGroup>					
 
 					<aon:panelGroup>
 						<aon:panelGrid id="group_utilities_financePortal" styleClass="aon-width-all"
 							columnClasses="aon-padding"
-							headerClass="aon-icon-accounting aon-direct-access-panel">
+							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_utilities}" />
 							</f:facet>
@@ -359,18 +398,10 @@
 											value="#{bundle.finance_invoice_signing_module}"/>
 									</aon:div>								
 								</aon:if>
-								<aon:if test="#{aonRole.statisticsOperator}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_invoiceStats-financePortal"
-											action="gwt_invoiceStat-financePortal"
-											title="#{bundle.aon_global_statistics}"
-											value="#{bundle.aon_global_statistics}" />												
-									</aon:div>
-								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
-						
+
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>

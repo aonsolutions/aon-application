@@ -358,7 +358,6 @@ public class BookingInfo implements Serializable {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
 		list.add(aioInfo.getModuleInfo(Module.CRM));
 		list.add(aioInfo.getModuleInfo(Module.MANAGEMENT));
-		list.add(aioInfo.getModuleInfo(Module.TREASURY));
 		list.add(aioInfo.getModuleInfo(Module.WAREHOUSE));
 		list.add(aioInfo.getModuleInfo(Module.GROUPWARE));
 		list.add(aioInfo.getModuleInfo(Module.POS));
