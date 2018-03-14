@@ -3,19 +3,16 @@ package com.esferalia.aon.gwt.payroll.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
-import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SmartSQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.ibm.icu.util.Calendar;
 
@@ -29,7 +26,7 @@ public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorCon
 	public SQLSettleDraftCalculatorContext(SalaryDraft draft, Connection connection, Date startDate, Date endDate,
 			Date issueDate, Criteria criteria) throws ExpressionException, SQLException {
 
-		super(draft, new SQLContractSettleCalculatorContext(connection, startDate, endDate, issueDate, criteria) {
+		super(draft, new SmartSQLContractSettleCalculatorContext(connection, startDate, endDate, issueDate, criteria) {
 			
 			private Date noHolidaysEndDate = getNoHolidaysEndDate();
 
@@ -38,7 +35,7 @@ public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorCon
 					throws SQLException, ExpressionException {
 				
 
-				SQLContractSettleCalculatorContext sqlctx = new SQLContractSettleCalculatorContext(getConnection(),
+				SQLContractSettleCalculatorContext sqlctx = new SmartSQLContractSettleCalculatorContext(getConnection(),
 						getStart(), getEnd(), getIssueDate(), getCriteria()) {
 					
 					@Override

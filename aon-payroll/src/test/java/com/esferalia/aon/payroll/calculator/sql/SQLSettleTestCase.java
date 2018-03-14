@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMPENSATION_CAUSE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_COMPLETE;
@@ -15,7 +16,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOU
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORK_COMPLETE;
-import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
@@ -36,7 +37,10 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -46,6 +50,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -56,7 +61,6 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
-import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -768,6 +772,383 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 	
 
+	@Test
+	public void testSettleWithExtrasI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		Date contractEnd = getToday();
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				contractEnd,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"100\"");
+						put(MONTH_DAYS.getName(), "30");
+						put(QUOTE_GROUP.getName(), "\"01\"");
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 0.00/100" }, 
+						category);
+		//@formatter:off
+		
+		
+		addSSRegimeStuff(aonContext);
+
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		settleCtx.getExpressionContext().eval("TRACE('SALARIO_DIA:%f\r\n', SALARIO_DIA)", contractStart, getToday())
+		;
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		
+		int months = get(getToday(), Calendar.MONTH );
+		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+				
+		
+		
+		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
+		double julyExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360 ;
+		
+		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+
+	}
+
+	@Test
+	public void testSettleWithExtrasII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		Date contractEnd = getToday();
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"100\"");
+						put(MONTH_DAYS.getName(), "30");
+						put(QUOTE_GROUP.getName(), "\"01\"");
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 0.00/100" }, 
+						category);
+		//@formatter:off
+		
+		
+		addSSRegimeStuff(aonContext);
+
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		settleCtx.getExpressionContext().eval("TRACE('SALARIO_DIA:%f\r\n', SALARIO_DIA)", contractStart, getToday())
+		;
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		
+		int months = get(getToday(), Calendar.MONTH );
+		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+				
+		
+		
+		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
+		double julyExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360 ;
+		
+		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+
+	}
+
+	@Test
+	public void testSettleWithExtrasIII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+				{
+					put(TC2.getName(), "\"100\"");
+					put(MONTH_DAYS.getName(), "30");
+					put(QUOTE_GROUP.getName(), "\"01\"");
+				}
+				}, 
+				new String[] { "( P_1 + P_2 ) * 0.10 ",
+					"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					"BASE_IRPF * 0.00/100" 
+				}, 
+				category);
+		//@formatter:off		
+		
+		addSSRegimeStuff(aonContext);
+		
+		int year = get(getToday(), Calendar.YEAR);
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
+		
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
+		jooqSalaryBuilder.execute();
+		
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		int months = get(getToday(), Calendar.MONTH );
+		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+		
+		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
+		
+		Assert.assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
+	}
+		
+	@Test
+	public void testSettleWithExtrasIV() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+				{
+					put(TC2.getName(), "\"100\"");
+					put(MONTH_DAYS.getName(), "30");
+					put(QUOTE_GROUP.getName(), "\"01\"");
+				}
+				}, 
+				new String[] { "( P_1 + P_2 ) * 0.10 ",
+					"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					"BASE_IRPF * 0.00/100" 
+				}, 
+				category);
+		//@formatter:off		
+		
+		addSSRegimeStuff(aonContext);
+		
+		int year = get(getToday(), Calendar.YEAR);
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
+		
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
+		jooqSalaryBuilder.execute();
+		
+		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
+		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, getToday(), getToday());
+		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
+		jooqSalaryBuilder.execute();
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		int months = get(getToday(), Calendar.MONTH );
+		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+		
+		
+		Assert.assertEquals( 0.00 , settle.getTotalPayment(), DELTA);
+	}
+
+	// ------------------------------------------------------------------------
+	
+	@Test
+	public void testSettleWithExtrasVI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JANUARY;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "01/01";
+					}
+				}, });
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		Date contractEnd = getToday();
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				contractEnd,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"100\"");
+						put(MONTH_DAYS.getName(), "30");
+						put(QUOTE_GROUP.getName(), "\"01\"");
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 0.00/100" }, 
+						category);
+		//@formatter:off
+		
+		
+		addSSRegimeStuff(aonContext);
+
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		settleCtx.getExpressionContext().eval("TRACE('SALARIO_DIA:%f\r\n', SALARIO_DIA)", contractStart, getToday())
+		;
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		
+		int months = get(getToday(), Calendar.MONTH );
+		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+				
+		
+		
+		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
+		double julyExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360 ;
+		double bonusExtra = months == 11 ? ( 1750.00 * 1.10 ) * days  / 30 : 0.00;
+		
+		Assert.assertEquals( decemberExtra + julyExtra + bonusExtra, settle.getTotalPayment(), DELTA);
+
+	}
+
+	// ------------------------------------------------------------------------
 
 	public  void addSSRegimeStuff(AONContext aonContext) {
 		
@@ -858,6 +1239,15 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	
 	
 	
-	
+	protected ISQLContractSalaryCalculatorContext getSmartSQLContractSettleContext(Connection connection, Date contractStart,
+			ContractRecord contract) throws SQLException, ExpressionException {
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		ISQLContractSalaryCalculatorContext ctx = new SmartSQLContractSettleCalculatorContext(connection, contractStart,
+				getToday(), getToday(), criteria);
+		ctx.next();
+		return ctx;
+	}
+
 	
 }

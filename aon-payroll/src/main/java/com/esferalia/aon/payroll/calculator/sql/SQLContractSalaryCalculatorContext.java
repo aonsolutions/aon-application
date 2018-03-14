@@ -2126,6 +2126,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return guarantee(guarentee, 1, Integer.MAX_VALUE);
 	}
 
+
 	public Object guarantee(double guarentee, int start) throws ExpressionException {
 		return guarantee(guarentee, start, Integer.MAX_VALUE);
 	}
@@ -3144,21 +3145,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return ("14".indexOf(tc2.charAt(0)) != -1);
 	}
 	
-	private Date getContractStart() {
-		return getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
-	}
 
 	private boolean isShortContract() {
-		Date endDate = getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE);
+		Date endDate = getContractEndDate();
 		if (endDate == null) {
 			return false;
 		}
-		Date startDate = getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
+		Date startDate = getContractStartate();
 		long naturalDays = CommonUtil.getDaysBetweenDates(startDate, endDate) + 1;
 		if (naturalDays < 7) {
 			return true;
 		}
 		return false;
+	}
+
+	protected Date getContractStartate() {
+		return getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
+	}
+
+	protected Date getContractEndDate() {
+		return getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE);
 	}
 
 	private boolean isAssimilatted() {
@@ -3240,8 +3246,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	 */
 	protected void initContractExpressionCtx(NextHook hook) throws SQLException, ExpressionException {
 
-		this.contractStartDate = Period.max(getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE), startDate);
-		this.contractEndDate = Period.min(getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE), getEnd());
+		this.contractStartDate = Period.max(getContractStartate(), startDate);
+		this.contractEndDate = Period.min(getContractEndDate(), getEnd());
 
 		if (this.contractExpressionContext != null) {
 			this.contractExpressionContext = null;
@@ -3322,12 +3328,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.implicitExpressionContext.setVariable(EXTRA_PAY, salaryType == SalaryType.EXTRA, startDate, getEnd());
 
 		this.implicitExpressionContext.setVariable(CONTRACT_START,
-				getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE), startDate, getEnd());
+				getContractStartate(), startDate, getEnd());
 		this.implicitExpressionContext.setVariable(SENIORITY_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.SENIORITY_DATE), startDate, getEnd());
 
 		this.implicitExpressionContext.setVariable(CONTRACT_END, salaryType == SalaryType.SETTLE ? contractEndDate
-				: getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE), startDate, getEnd());
+				: getContractEndDate(), startDate, getEnd());
 
 		this.implicitExpressionContext.putVariable(IRPF_PERCENT, irpf);
 
@@ -4335,6 +4341,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 		return false;
 	}
+	
+	
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -4598,6 +4607,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return AonDateUtils.get(period.getEnd(),
 				Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(period.getEnd(), Calendar.DAY_OF_MONTH);
 	}
+	
+	
 
 	@Override
 	public Date getDate(String tableLabel, String columnLabel) {
@@ -4607,5 +4618,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			throw new RuntimeException(e);
 		}
 	}
+	
+	
 
 }

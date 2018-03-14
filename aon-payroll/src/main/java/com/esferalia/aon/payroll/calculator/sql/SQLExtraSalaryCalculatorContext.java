@@ -35,6 +35,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.Period;
 
 public class SQLExtraSalaryCalculatorContext implements
 		ISQLContractSalaryCalculatorContext {
@@ -49,6 +50,7 @@ public class SQLExtraSalaryCalculatorContext implements
 
 	private int year;
 	private int extra;
+	private Date endDate;
 	private Date chargeDate;
 	private Criteria criteria;
 	private Connection connection ;
@@ -60,9 +62,20 @@ public class SQLExtraSalaryCalculatorContext implements
 			Date chargeDate, 
 			Criteria criteria) 
 	throws SQLException {
+		this(connection, extra, year, null, chargeDate, criteria);
+	}
+	
+	public SQLExtraSalaryCalculatorContext(Connection connection,
+			int extra,
+			int year,
+			Date endDate, 
+			Date chargeDate, 
+			Criteria criteria) 
+	throws SQLException {
 
 		this.extra = extra;
 		this.year = year;
+		this.endDate = endDate;
 		this.criteria = criteria;
 		this.connection = connection;
 		this.chargeDate = chargeDate;
@@ -70,7 +83,7 @@ public class SQLExtraSalaryCalculatorContext implements
 		initExtrasResultSet();
 	}
 	
-
+	
 	@Override
 	public void close() throws SQLException {
 		if (this.ctx != null)
@@ -107,14 +120,13 @@ public class SQLExtraSalaryCalculatorContext implements
 			return false;
 		}
 		
-		Date startDate = 
+
+		Date extraStartDate = 
 			AgreementExtra.parseAgreementDate(this.rs.getString(START_DATE), this.year);
-		Date endDate  = 
-			AgreementExtra.parseAgreementDate(this.rs.getString(END_DATE), this.year);
-		Date issueDate  = 
-			AgreementExtra.parseAgreementDate(this.rs.getString(ISSUE_DATE), this.year);
+		Date extraEndDate  = AgreementExtra.parseAgreementDate(this.rs.getString(END_DATE), this.year);
+		Date extraIssueDate  = AgreementExtra.parseAgreementDate(this.rs.getString(ISSUE_DATE), this.year);
 		
-		if ( startDate.after(endDate)) {
+		if ( extraStartDate.after(extraEndDate)) {
 			return nextContractSalaryCalculatorContext();
 		}
 		
@@ -126,11 +138,16 @@ public class SQLExtraSalaryCalculatorContext implements
 		
 		this.ctx = new SQLContractExtraCalculatorContext(
 				this.connection, 
-				startDate, 
-				endDate, 
-				issueDate, 
+				extraStartDate, 
+				extraEndDate, 
+				extraIssueDate, 
 				chargeDate, 
-				agreementCriteria); 
+				agreementCriteria) {
+			@Override
+			protected Date getContractEndDate() {
+				return Period.min(endDate, super.getContractEndDate());
+			}
+		}; 
 		
 		return true;
 	}
