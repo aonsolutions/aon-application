@@ -1307,7 +1307,7 @@ public class IrpfCalculator {
 		double retribAnulaes = 0.00;
 		for ( TipoRetenedorEntrada2018 retenedor : entrada2018.getRetenedor() )
 			for ( TipoRetenidoEntrada2018 retenido: retenedor.getRetenido() )
-				if ( retenido.getRetribAnuales() == null )
+				if ( retenido.getRetribAnuales() != null )
 					retribAnulaes += retenido.getRetribAnuales().doubleValue(); 
 
 		if ( retribAnulaes == 0.00 ) 
