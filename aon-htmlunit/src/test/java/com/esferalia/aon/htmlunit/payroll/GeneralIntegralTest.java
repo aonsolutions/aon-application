@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -957,13 +958,20 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		//visual asserts
 		HtmlButton fxButton = getElementById("fxButton");
-		Assert.assertFalse(fxButton.isDisplayed());
+		
+		Pattern hidden = Pattern.compile("display\\s*:\\s*none");
+		
+		Assert.assertEquals(true, hidden.matcher(fxButton.getAttribute("style")).find());
+		//Assert.assertFalse(fxButton.isDisplayed());
 		HtmlButton undoAllButton = getElementById("undoAllButton");
-		Assert.assertFalse(undoAllButton.isDisplayed());
+		Assert.assertEquals(true, hidden.matcher(undoAllButton.getAttribute("style")).find());
+		//Assert.assertFalse(undoAllButton.isDisplayed());
 		HtmlButton undoButton = getElementById("undoButton");
-		Assert.assertFalse(undoButton.isDisplayed());
+		Assert.assertEquals(true, hidden.matcher(undoButton.getAttribute("style")).find());
+		//Assert.assertFalse(undoButton.isDisplayed());
 		HtmlButton redoButton = getElementById("redoButton");
-		Assert.assertFalse(redoButton.isDisplayed());
+		Assert.assertEquals(true, hidden.matcher(redoButton.getAttribute("style")).find());
+		//Assert.assertFalse(redoButton.isDisplayed());
 
 
 		calculate(Calendar.JANUARY);

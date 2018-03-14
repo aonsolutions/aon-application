@@ -61,6 +61,9 @@ public abstract class BaseIntegralTestCase {
 		webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		
+		webClient.getOptions().setCssEnabled(false);
+		
 		webClient.setAlertHandler(new AlertHandler() {
 			@Override
 			public void handleAlert(Page page, String message) {
