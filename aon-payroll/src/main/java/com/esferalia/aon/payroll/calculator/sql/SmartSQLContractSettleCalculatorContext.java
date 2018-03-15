@@ -50,12 +50,15 @@ import com.esferalia.aon.watson.util.AonDateUtils;
  *
  */
 public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCalculatorContext {
+	
+	private Date settleEndDate;
 
 	/**
 	 */
 	public SmartSQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate)
 			throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate);
+		this.settleEndDate = endDate;
 	}
 
 	/**
@@ -63,6 +66,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	public SmartSQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Criteria criteria) throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate, criteria);
+		this.settleEndDate = endDate;
 	}
 
 	/**
@@ -70,6 +74,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	public SmartSQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Criteria criteria, Criteria paymentsCriteria) throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate, criteria, paymentsCriteria);
+		this.settleEndDate = endDate;
 	}
 
 	/**
@@ -77,6 +82,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	public SmartSQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Date chargeDate, Criteria criteria) throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate, chargeDate, criteria);
+		this.settleEndDate = endDate;
 	}
 
 	/**
@@ -84,6 +90,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	public SmartSQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Date chargeDate, Criteria criteria, Criteria paymentsCriteria) throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate, chargeDate, criteria, paymentsCriteria);
+		this.settleEndDate = endDate;
 	}
 	
 	
@@ -112,7 +119,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		.fetchInto(AGREEMENT_EXTRA)
 		;
 		
-		int year = AonDateUtils.get(getEnd(), Calendar.YEAR );
+		int year = AonDateUtils.get(settleEndDate, Calendar.YEAR );
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
@@ -128,18 +135,18 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 			AgreementExtraRecord extra = extras.get(i);
 			
 			Date extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
-			if ( extraStartDate.after(getEnd()))  
+			if ( extraStartDate.after(settleEndDate))  
 				continue;  // Nothing to calculate
 
 			Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
 
-			if ( extraIssueDate.before(getEnd()))  
+			if ( extraIssueDate.before(settleEndDate))  
 				continue;  // It must be already calculated
 			
 			
 			// TODO: Extract to method ?
 			SQLExtraSalaryCalculatorContext extraCtx = 
-					new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, getEndDate(), getChargeDate(), criteria) ;
+					new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) ;
 			if ( !extraCtx.next() )
 				continue;
 			
@@ -189,7 +196,6 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 			;
 			
 			if ( record == null ) {
-				System.out.println(extraPayments.get(0).getDescription());
 				extrasPayments.addAll(extraPayments);
 				extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
 			} else { 
