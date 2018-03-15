@@ -458,6 +458,20 @@ public class Mod131Activity implements Serializable {
 		this.setBat(0);
 		this.setPrc(0);
 		this.setIin(0);
+		this.setRnp(0);
+		this.setIem(0);
+		this.setRnm(0);
+		this.setIc1(0);
+		this.setIc2(0);
+		this.setIc3(0);
+		this.setIc4(0);
+		this.setIc5(0);
+		this.setRpf(0);
+		this.setRlo(0);
+		this.setRdr(0);
+		this.setNet(0); 
+		this.setPor(0);
+		this.setRes(0);
 		this.setModules(new LinkedList<Mod131ActivityModule>());
 	}
 
