@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -301,6 +302,10 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 			@Override
 			public void onValueChange(ValueChangeEvent<String> arg0) {
 				callback.getInvoice().getInvoice().setRegistryName(rName.getValue());
+				if (AonStringUtils.isBlank(callback.getInvoice().getManualConcept())) {
+					callback.getInvoice().setManualConcept( rName.getValue());
+					ValueChangeEvent.fire(InvoiceExtraPanel.this, null );
+				}
 			}
 		});
 		panel.add(rName);

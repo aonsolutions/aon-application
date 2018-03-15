@@ -148,6 +148,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		extraPanel.addValueChangeHandler(new ValueChangeHandler<Void>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Void> event) {
+				if (AonStringUtils.isBlank(manualConcept.getValue())) {
+					if (AonStringUtils.isNotBlank(invoiceCallback.getInvoice().getManualConcept())) {
+						manualConcept.setValue(invoiceCallback.getInvoice().getManualConcept(),false);
+					}
+				}
 				vatPanel.extraInfoChanged();
 				withholdingPanel.setVisible(getWrapper().getInvoice().isWithholding());
 				withholdingPanel.setValue(getWrapper().getWithholdingData());
