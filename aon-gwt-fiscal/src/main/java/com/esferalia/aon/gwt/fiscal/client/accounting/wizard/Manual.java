@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryTable;
 import com.esferalia.aon.occam.api.model.Account;
@@ -50,8 +49,8 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getFiscalService().getAccountEntry(AccountEntryModule.getCurrentDomainName(),
-					AccountEntryModule.getCurrentDomain(), id ,
+			getFiscalService().getAccountEntry(getCallback().getCurrentDomainName(),
+					getCallback().getCurrentDomainId(), id ,
 					new AsyncCallback<AccountEntry>() {
 						@Override
 						public void onSuccess(AccountEntry result) {
@@ -135,7 +134,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		return new AccountEntryWrapper( new AccountEntry()
 				.setPeriod(base.getPeriod())
 				.setEntryType(AccountEntryType.MANUAL)
-				.setDomain(AccountEntryModule.getCurrentDomain())
+				.setDomain(getCallback().getCurrentDomainId())
 				.setConfidential(false)
 				.setEntryDate(base.getEntryDate())
 				.setActivity(base.getActivity())
@@ -147,7 +146,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		tableInnerContainer = new VerticalPanel();
 		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
 		
-		table = new AccountEntryTable(this);
+		table = new AccountEntryTable(getCallback().getCurrentDomainName(),getCallback().getCurrentUser(),getCallback().getCurrentDomainId(),this);
 		table.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);
 		table.addErrorHandler(new ErrorHandler() {
 

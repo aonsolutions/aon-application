@@ -177,7 +177,7 @@ public class AppParamDAO {
 		// rellenan los datos de document y name con los de company.
 		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
 		params.setCompany(company.getId());
-		Domain dom = SecurityDAO.getDomain(ctx, ctx.getDomainId());
+		Domain dom = DomainDAO.getDomain(ctx, ctx.getDomainId());
 		if (dom.isStandalone() || dom.isChild()) {
 			params.setDocument(company.getDocument());
 			params.setName(company.getName());

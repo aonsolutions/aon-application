@@ -4,21 +4,18 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
-@SuppressWarnings("serial")
 public class Domain implements Serializable {
 
-	Integer id;
-	String name;
-	Integer parentId;
-	String description;
-	DomainType domainType;
-	Byte domainManagement;
+	private static final long serialVersionUID = 2356532157666489635L;
 	
-	boolean parent;
-	boolean child;
-	boolean standalone;
-	boolean enableHeredity;
-	boolean active;
+	private Integer id;
+	private String name;
+	private String description;
+	private Integer parentId;
+	private DomainType domainType;
+	private boolean enableHeredity;
+	private boolean domainManagement;
+	private boolean active;
 
 	public Integer getId() {
 		return id;
@@ -48,30 +45,13 @@ public class Domain implements Serializable {
 	}	
 
 	public boolean isParent() {
-		return parent;
+		return parentId == null && isDomainManagement();
 	}
-
-	public Domain setParent(boolean parent) {
-		this.parent = parent;
-		return this;
-	}
-
 	public boolean isChild() {
-		return child;
+		return parentId != null;
 	}
-
-	public Domain setChild(boolean child) {
-		this.child = child;
-		return this;
-	}
-
 	public boolean isStandalone() {
-		return standalone;
-	}
-
-	public Domain setStandalone(boolean standalone) {
-		this.standalone = standalone;
-		return this;
+		return parentId == null && !isDomainManagement();
 	}
 
 	public boolean isActive() {
@@ -110,11 +90,11 @@ public class Domain implements Serializable {
 		return this;
 	}
 
-	public Byte getDomainManagement() {
+	public boolean isDomainManagement() {
 		return domainManagement;
 	}
 
-	public Domain setDomainManagement(Byte domainManagement) {
+	public Domain setDomainManagement(boolean domainManagement) {
 		this.domainManagement = domainManagement;
 		return this;
 	}

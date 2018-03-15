@@ -47,6 +47,10 @@ import com.google.gwt.user.client.ui.Widget;
 public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Focusable
  , HasSelectionHandlers<Account>, HasValueChangeHandlers<AccountEntryDetail> {
 	
+	private String domainName;
+	private int domainId;
+	private String user;
+	
 	private IWizardContent wizardContent;
 	private Label sumDebit;
 	private Label sumCredit;
@@ -113,8 +117,12 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		}
 	}
 	
-	public AccountEntryTable(IWizardContent wizardContent) {
+	public AccountEntryTable(String domainName, String user, int domainId, IWizardContent wizardContent) {
 		this.wizardContent = wizardContent;
+		this.domainName = domainName; 
+		this.domainId = domainId;
+		this.user = user; 
+
 		setConfirmConceptChange(true);
 		setConfirmDocumentChange(true);
 
@@ -130,7 +138,15 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			}
 		}; 
 	}
-	
+	public String getDomainName() {
+		return domainName;
+	}
+	public int getDomainId() {
+		return domainId;
+	}
+	public String getUser() {
+		return user;
+	}
 	public boolean isConfirmConceptChange() {
 		return confirmConceptChange;
 	}
@@ -281,7 +297,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	private void paintActiveRow(int row, final AccountEntryDetail aed) {
 		setWidget(row, COLS.NUM.ordinal(), new Label()  );
 		
-		final AccountBox detailAccountBox = new AccountBox(AccountEntryModule.getCurrentDomainName(),AccountEntryModule.getCurrentDomain());
+		final AccountBox detailAccountBox = new AccountBox(getDomainName(),getDomainId());
 		detailAccountBox.setValue(aed.getAccount(), aed.getAccountCode(),aed.getAccountDescription());
 
 		setWidget(row, COLS.ACC.ordinal(), detailAccountBox );
@@ -306,8 +322,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		setWidget(row, COLS.CRE.ordinal(), creditBox );
 		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.AON_CSS.aonTextRight());
 		
-		final AccountBox balancingAccountBox = new AccountBox(AccountEntryModule.getCurrentDomainName()
-				, AccountEntryModule.getCurrentDomain(), false);
+		final AccountBox balancingAccountBox = new AccountBox(getDomainName(),getDomainId(), false);
 		balancingAccountBox.setValue(aed.getBalancingAccount(), aed.getBalancingAccountCode(),
 				aed.getBalancingAccountDescription());
 		balancingAccountBox.setRequired(false);

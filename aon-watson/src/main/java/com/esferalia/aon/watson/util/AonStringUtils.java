@@ -135,6 +135,7 @@ public class AonStringUtils {
 	public static final String  PLUS = "+";
 	public static final String DOT = ".";
 	public static final String COMMA = ",";
+	public static final String BULLET = "\u2022";
 	public static final String PERCENT = "%";
 	public static final String ASTERISK = "*";
 	public static final String COLON = ":";

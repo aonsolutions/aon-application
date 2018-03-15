@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.jooq.impl.DSL;
@@ -27,7 +29,7 @@ public class AccountValidation {
 	 * El código de cuenta contable es un dato obligatorio.
 	 */
 	public static BiConsumer<Account,AONContext> EMPTY_CODE = (account,ctx) -> {
-		if (AonStringUtils.isEmpty(account.getCode()))
+		if (AonStringUtils.isBlank(account.getCode()))
 			throw new AonCoreException(AonError.ACCOUNT_EMPTY_CODE.getMessage());
 	};
 	
@@ -35,7 +37,7 @@ public class AccountValidation {
 	 * La descripcion de cuenta contable es un dato obligatorio.
 	 */
 	public static BiConsumer<Account,AONContext> EMPTY_DESCRIPTION = (account,ctx) -> {
-		if (AonStringUtils.isEmpty(account.getCode()))
+		if (AonStringUtils.isBlank(account.getDescription()))
 			throw new AonCoreException(AonError.ACCOUNT_EMPTY_DESCRIPTION.getMessage());
 	};
 
@@ -99,4 +101,17 @@ public class AccountValidation {
 
 	}
 
+	public static List<String> check(AONContext ctx, Account account) throws AonCoreException {
+		LinkedList<String> messages = new LinkedList<String>(); 
+		try {EMPTY_DOMAIN.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
+		try {EMPTY_CODE.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
+		try {EMPTY_DESCRIPTION.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
+		try {VALID_LENGTH.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
+		try {NUMERIC_CODE.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
+		try {LOW_LEVEL_EXISTS.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
+		try {DUPLICATED_CODE.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
+		return messages;
+		
+
+	}
 }

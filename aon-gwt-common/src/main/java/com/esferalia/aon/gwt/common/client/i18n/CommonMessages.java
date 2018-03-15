@@ -2599,7 +2599,13 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Limpiar")
 	String clean();
 	
-	@DefaultMessage("Importar")
+ 	@DefaultMessage("Actualizar")
+	String refresh();
+
+ 	@DefaultMessage("Ejecutar")
+	String execute();
+
+ 	@DefaultMessage("Importar")
 	String importAction();
 	
     @DefaultMessage("Se est\u00E1 enviando un archivo al servidor.\n Int\u00E9ntelo mas tarde.")

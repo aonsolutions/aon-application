@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.DomainGserviceaccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class DomainDAO {
 	private static final DomainPropertiesDAO DOMAIN_PROPERTIES = new DomainPropertiesDAO();
@@ -67,27 +68,25 @@ public class DomainDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DOMAIN.TYPE);}
 	}
 	public static Domain getDomain(AONContext ctx, Integer domainId){
-		Domain domain = null;
-		Result<DomainRecord> domainResult = ctx.getDslContext().select()
+		return ctx.getDslContext().select()
 				.from(DOMAIN)
 				.where(DOMAIN.ID.eq(domainId))
-				.fetchInto(DOMAIN);
-		 
-		if(domainResult.isNotEmpty()){
-			DomainRecord domainRecord = domainResult.get(0);
-			domain = new Domain();
-			domain.setId(domainId);
-			domain.setActive(domainRecord.getActive() == 1);
-			domain.setChild(domainRecord.getParent() == null);
-			domain.setDescription(domainRecord.getDescription());
-			domain.setDomainType(DomainType.values()[domainRecord.getType()]);
-			domain.setName(domainRecord.getName());
-			domain.setParent(domainRecord.getParent() != null);
-			domain.setParentId(domainRecord.getParent());
-			domain.setEnableHeredity(domainRecord.getEnableheredity() == 1);
-			domain.setDomainManagement(domainRecord.getDomainmanagement());
-		}
-		return domain;
+				.fetch()
+				.stream()
+				.map(rec ->  
+					new Domain()
+						.setId(rec.getValue(DOMAIN.ID))
+						.setActive(AonEnumUtils.getBoolean(rec.getValue(DOMAIN.ACTIVE)))
+						.setDescription(rec.getValue(DOMAIN.DESCRIPTION))
+						.setDomainType(DomainType.values()[rec.getValue(DOMAIN.TYPE)])
+						.setName(rec.getValue(DOMAIN.NAME))
+						.setParentId(rec.getValue(DOMAIN.PARENT))
+						.setEnableHeredity(AonEnumUtils.getBoolean(rec.getValue(DOMAIN.ENABLEHEREDITY)))
+						.setDomainManagement(AonEnumUtils.getBoolean(rec.getValue(DOMAIN.DOMAINMANAGEMENT)))
+					)
+				.findFirst()
+				.orElse(null)
+				;
 	}
 	
 	public static Domain getDomain(AONContext ctx, DomainFilter filter){
@@ -502,15 +501,13 @@ public class DomainDAO {
 		public Domain apply(DomainRecord r) {
 			return new Domain()
 					.setActive(r.getActive() == 1)
-					.setChild(r.getParent() != null)
 					.setDescription(r.getDescription())
 					.setDomainType(DomainType.values()[r.getType()])
 					.setEnableHeredity(r.getEnableheredity() == 1)
 					.setId(r.getId())
 					.setName(r.getName())
-					.setParent(r.getParent() == null)
 					.setParentId(r.getParent())
-					//.setStandalone(¿standalone?)
+					.setDomainManagement(r.getDomainmanagement()  == 1)
 					;
 		}
 	}

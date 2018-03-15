@@ -17,4 +17,15 @@ public enum AccountPeriodStatus implements Serializable {
 	 public byte getValue() {
 		 return (byte) this.ordinal();
 	 }
+	 
+	public static AccountPeriodStatus safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static AccountPeriodStatus safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= AccountPeriodStatus.values().length) return null;
+		return AccountPeriodStatus.values()[i];
+	}
+	 
 }

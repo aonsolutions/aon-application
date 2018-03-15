@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -82,5 +83,10 @@ public interface IAccounting {
 	public FinanceEntry save(AONContext ctx, FinanceEntry financeEntry);
 	public FinanceEntry getFinanceEntry(AONContext ctx, Integer accountEntry);
 	
-	
+	// Accounting Utilities 
+	public AccUtilitiesResult checkParentLinker(AONContext ctx, Account account);
+	public AccUtilitiesResult runParentLinker(AONContext ctx, Account account);
+	public AccUtilitiesResult emptyEntries(AONContext ctx);
+	public AccUtilitiesResult unbalancedEntries(AONContext ctx);
+		
 }

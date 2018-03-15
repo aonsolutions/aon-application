@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePrinter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -358,7 +357,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		if (!isMoreData()) return; 
 		
 		FinanceParams params = new FinanceParams()
-			.setDomain(AccountEntryModule.getCurrentDomain())
+			.setDomain(this.domainId)
 			.setFrom(fromDate.getValue())
 			.setTo(toDate.getValue())
 			.setRegistry(registryBox.getId())

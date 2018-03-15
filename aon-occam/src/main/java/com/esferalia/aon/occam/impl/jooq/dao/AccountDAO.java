@@ -104,8 +104,14 @@ public class AccountDAO {
 	}
 	
 	public static Account insert(AONContext ctx, Account account) {
+		return insert(ctx, account,false);
+	}
+	
+	protected static Account insert(AONContext ctx, Account account, boolean skipValidation) {
 		ctx.checkWrite();
-		AccountValidation.validate(ctx, account);
+		if (!skipValidation) {
+			AccountValidation.validate(ctx, account);
+		}
 		AccountAutoComplete.complete(ctx, account);
 		Integer id = ctx.getDslContext()
 			.insertInto(ACCOUNT)
@@ -142,6 +148,15 @@ public class AccountDAO {
 		return account;
 	}
 
+	public static Account delete(AONContext ctx, Account account) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.delete(ACCOUNT)
+			.where(ACCOUNT.ID.eq(account.getId()))
+			.execute();
+		return account;
+	}
+	
 	public static String getNextAccountCode(AONContext ctx, String prefix) {
 		Account last = ctx.getDslContext()
 			.selectFrom(ACCOUNT)

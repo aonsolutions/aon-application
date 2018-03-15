@@ -258,8 +258,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		regTable.setWidget(row, 0, label);
 		
 		registryBox = new AccountingRegistryBox(
-				AccountEntryModule.getCurrentDomainName()
-				,AccountEntryModule.getCurrentDomain()
+				 getCallback().getCurrentDomainName()
+				,getCallback().getCurrentDomainId()
 				,getCallback().getModule().getConfiguration()
 				,true);
 		registryBox.setTabIndex(++tabindex);
@@ -281,8 +281,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
 				final AccountingRegistry ar = event.getSelectedItem();
 				getFiscalService().initializeInvoice(
-						 AccountEntryModule.getCurrentDomainName()
-						,AccountEntryModule.getCurrentDomain()
+						getCallback().getCurrentDomainName()
+						,getCallback().getCurrentDomainId()
 						,ar
 						,getCallback().getModule().getActivity()
 						,getCallback().getModule().getEntryDate()
@@ -339,8 +339,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			public void onChange(ChangeEvent event) {
 				getWrapper().getInvoice().setSeries(series.getSelectedIndex()==0?null:series.getSelectedValue());
 				financeService.getInvoiceNextNumber(
-						 AccountEntryModule.getCurrentDomainName()
-						,AccountEntryModule.getCurrentDomain()
+						getCallback().getCurrentDomainName()
+						,getCallback().getCurrentDomainId()
 						,new Byte[]{getWrapper().getInvoice().getType().value()}
 						,getWrapper().getInvoice().getSeries()
 						,new AsyncCallback<Integer>() {
@@ -590,7 +590,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		payTable.setWidget(row, col, payAccountLabel);
 		col++;
 		
-		payAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(),AccountEntryModule.getCurrentDomain());
+		payAccount = new AccountBox(getCallback().getCurrentDomainName(),getCallback().getCurrentDomainId());
 		payAccount.setTabIndex(++tabindex);
 		payAccount.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
@@ -640,7 +640,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setAccountEntry(new AccountEntry()
 			.setPeriod(base.getPeriod())
-			.setDomain(AccountEntryModule.getCurrentDomain())
+			.setDomain(getCallback().getCurrentDomainId())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity())
@@ -652,8 +652,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getFiscalService().getAccountingInvoice(AccountEntryModule.getCurrentDomainName()
-				,AccountEntryModule.getCurrentDomain(),id
+			getFiscalService().getAccountingInvoice(getCallback().getCurrentDomainName()
+				,getCallback().getCurrentDomainId(),id
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {
@@ -931,12 +931,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 
 	@Override
-	public void save(final AsyncCallback<AccountEntry[]> callback) {
+	public void save(final AsyncCallback<AccountEntry[]> cbk) {
 		fastSave.setVisible(false);
 		vatPanel.hideButtons(false);
 		extraPanel.hideButtons(false);
-		getFiscalService().save(AccountEntryModule.getCurrentDomainName()
-				,AccountEntryModule.getCurrentDomain()
+		getFiscalService().save(getCallback().getCurrentDomainName()
+				, getCallback().getCurrentDomainId()
 				, getWrapper(), new AsyncCallback<AccountingInvoice>() {
 
 			@Override
@@ -948,7 +948,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				fastSave.setVisible(true);
 				vatPanel.hideButtons(true);
 				extraPanel.hideButtons(true);
-				callback.onSuccess(getWrapper().getAccountEntries().toArray(entries));
+				cbk.onSuccess(getWrapper().getAccountEntries().toArray(entries));
 			}
 
 			@Override
@@ -956,7 +956,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				fastSave.setVisible(true);
 				vatPanel.hideButtons(true);
 				extraPanel.hideButtons(true);
-				callback.onFailure(caught);
+				cbk.onFailure(caught);
 			}
 
 		});
@@ -967,7 +967,18 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		public AccountEntryModule getModule() {
 			return getCallback().getModule();
 		}
-
+		@Override
+		public String getCurrentDomainName() {
+			return getCallback().getCurrentDomainName();
+		}
+		@Override
+		public int getCurrentDomainId() {
+			return getCallback().getCurrentDomainId();
+		}
+		@Override
+		public String getCurrentUser() {
+			return getCallback().getCurrentUser();
+		}
 		@Override
 		public AccountingInvoice getInvoice() {
 			return getWrapper();
@@ -1017,8 +1028,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private void repeatLastInvoice(final ISelectionCallback cbk) {
 		Integer registryId = getWrapper().getRegistry().getId();
-		getFiscalService().getRegistryLastAccountingInvoice(AccountEntryModule.getCurrentDomainName()
-				,AccountEntryModule.getCurrentDomain(), registryId
+		getFiscalService().getRegistryLastAccountingInvoice(getCallback().getCurrentDomainName()
+				,getCallback().getCurrentDomainId(), registryId
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {

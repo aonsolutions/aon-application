@@ -73,8 +73,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		SplitLayoutPanel rootPanel = new SplitLayoutPanel(4);
 		
 		financeSearchPanel = new FinanceSearchPanel(
-			AccountEntryModule.getCurrentDomainName()
-			, AccountEntryModule.getCurrentDomain()
+			  getCallback().getCurrentDomainName()
+			, getCallback().getCurrentDomainId()
 			, new IFinancePanelCallback() {
 
 				@Override
@@ -293,8 +293,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	@Override
 	public void save(final AsyncCallback<AccountEntry[]> callback) {
 		
-		getFiscalService().save(AccountEntryModule.getCurrentDomainName()
-				,AccountEntryModule.getCurrentDomain()
+		getFiscalService().save(getCallback().getCurrentDomainName()
+				,getCallback().getCurrentDomainId()
 				, getWrapper(), new AsyncCallback<FinanceEntry>() {
 
 			@Override
@@ -320,7 +320,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		ai.setAccountEntry(new AccountEntry()
 			.setEntryType(AccountEntryType.FINANCE)
 			.setPeriod(base.getPeriod())
-			.setDomain(AccountEntryModule.getCurrentDomain())
+			.setDomain(getCallback().getCurrentDomainId())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity())
@@ -332,8 +332,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getFiscalService().getFinanceEntry(AccountEntryModule.getCurrentDomainName()
-					,AccountEntryModule.getCurrentDomain(),id
+			getFiscalService().getFinanceEntry(getCallback().getCurrentDomainName()
+					,getCallback().getCurrentDomainId(),id
 					,new AsyncCallback<FinanceEntry>() {
 							@Override
 							public void onSuccess(FinanceEntry result) {
@@ -373,12 +373,12 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		
 
 	private AccountBox createAccountBox() {
-		AccountBox ab = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain());
+		AccountBox ab = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId());
 		ab.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
 				Account acc = event.getSelectedItem();
-				callback.getModule().onBalance(acc);
+				getCallback().getModule().onBalance(acc);
 			}
 		});
 		return ab;

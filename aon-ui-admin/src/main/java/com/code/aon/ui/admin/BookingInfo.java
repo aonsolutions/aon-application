@@ -271,7 +271,7 @@ public class BookingInfo implements Serializable {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
 		list.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
 		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), aioInfo.getDomain().getId(), AonUtil.getRemoteUser());
-		if(domain != null && domain.getDomainManagement() != 1)
+		if(domain != null && domain.isDomainManagement())
 			list.add(aioInfo.getModuleInfo(Module.CALL_CENTER));
 		switch ( getDomain().getType() ) {
 			case GENERIC:

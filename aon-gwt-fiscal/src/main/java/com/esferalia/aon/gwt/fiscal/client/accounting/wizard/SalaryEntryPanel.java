@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -535,12 +534,12 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	}
 
 	private AccountBox createAccountBox() {
-		AccountBox ab = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain());
+		AccountBox ab = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId());
 		ab.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
 				Account acc = event.getSelectedItem();
-				callback.getModule().onBalance(acc);
+				getCallback().getModule().onBalance(acc);
 			}
 		});
 		return ab;
@@ -553,23 +552,23 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		}
 		SalaryEntry ai = new SalaryEntry()
 			.setConcept("N\u00F3minas")
-			.setMoneySalaryAccount( callback.getModule().getConfiguration().getDefaultSalary() )
-			.setInKindSalaryAccount(callback.getModule().getConfiguration().getDefaultSalaryInKind())
-			.setAllowanceAccount(callback.getModule().getConfiguration().getDefaultAllowance())
-			.setSalaryCompensationAccount(callback.getModule().getConfiguration().getDefaultCompensation())
-			.setSalaryDedAdvPaymentAccount(callback.getModule().getConfiguration().getSalaryDedAdvPayment())
-			.setSalaryDedSeizeAccount(callback.getModule().getConfiguration().getSalaryDedSeize())
-			.setSalaryOtherDeductionsAccount(callback.getModule().getConfiguration().getSalaryOtherDeductions())
-			.setIrpfAccount(callback.getModule().getConfiguration().getSalaryChargedRet())
-			.setInKindIrpfAccount(callback.getModule().getConfiguration().getSalaryChargedRetInKind())
-			.setEmployeeSocialInsuranceAccount(	callback.getModule().getConfiguration().getDefaultSocialInsurance())
-			.setCompanySocialInsuranceAccount(callback.getModule().getConfiguration().getDefaultCompanySocIns())
-			.setNetSalaryAccount(callback.getModule().getConfiguration().getDefaultPendingSalary())
+			.setMoneySalaryAccount( getCallback().getModule().getConfiguration().getDefaultSalary() )
+			.setInKindSalaryAccount(getCallback().getModule().getConfiguration().getDefaultSalaryInKind())
+			.setAllowanceAccount(getCallback().getModule().getConfiguration().getDefaultAllowance())
+			.setSalaryCompensationAccount(getCallback().getModule().getConfiguration().getDefaultCompensation())
+			.setSalaryDedAdvPaymentAccount(getCallback().getModule().getConfiguration().getSalaryDedAdvPayment())
+			.setSalaryDedSeizeAccount(getCallback().getModule().getConfiguration().getSalaryDedSeize())
+			.setSalaryOtherDeductionsAccount(getCallback().getModule().getConfiguration().getSalaryOtherDeductions())
+			.setIrpfAccount(getCallback().getModule().getConfiguration().getSalaryChargedRet())
+			.setInKindIrpfAccount(getCallback().getModule().getConfiguration().getSalaryChargedRetInKind())
+			.setEmployeeSocialInsuranceAccount(	getCallback().getModule().getConfiguration().getDefaultSocialInsurance())
+			.setCompanySocialInsuranceAccount(getCallback().getModule().getConfiguration().getDefaultCompanySocIns())
+			.setNetSalaryAccount(getCallback().getModule().getConfiguration().getDefaultPendingSalary())
 		;
 		ai.setAccountEntry(new AccountEntry()
 			.setEntryType(AccountEntryType.SALARY)
 			.setPeriod(base.getPeriod())
-			.setDomain(AccountEntryModule.getCurrentDomain())
+			.setDomain(getCallback().getCurrentDomainId())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity())
@@ -584,7 +583,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		wrp.getAccountEntry().setDomain(existing.getDomain());
 		wrp.getAccountEntry().setEntryType(existing.getEntryType());
 		wrp.getAccountEntry().setActivity(existing.getActivity());
-		callback.getModule().changeEntryDate(wrp.getAccountEntry().getEntryDate());
+		getCallback().getModule().changeEntryDate(wrp.getAccountEntry().getEntryDate());
 		wrp.setConcept("N\u00F3minas " + DATE_FORMAT.format(wrp.getAccountEntry().getEntryDate()));
 		wrp.setMoneySalaryAccount(getWrapper().getMoneySalaryAccount());
 		wrp.setInKindSalaryAccount(getWrapper().getInKindSalaryAccount());
@@ -683,51 +682,51 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	private LinkedList<AccountEntryDetail> getEntryDetails() {
 		if (getWrapper().getMoneySalary()  != 0 && (getWrapper().getMoneySalaryAccount() == null ||  getWrapper().getMoneySalaryAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Remuneraciones monetarias'";
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 		if (getWrapper().getInKindSalary()   != 0 && (getWrapper().getInKindSalaryAccount() == null || getWrapper().getInKindSalaryAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Remuneraciones en especie'";		
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 		if (getWrapper().getAllowance() != 0 	&& (getWrapper().getAllowanceAccount() == null || getWrapper().getAllowanceAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Dietas'";
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 		if (getWrapper().getSalaryCompensation() != 0 && (getWrapper().getSalaryCompensationAccount() == null || getWrapper().getSalaryCompensationAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Indemnizaciones'";		
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 
 		if (getWrapper().getSalaryDedAdvPayment() != 0 && (getWrapper().getSalaryDedAdvPaymentAccount() == null || getWrapper().getSalaryDedAdvPaymentAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Anticipo'";		
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 		
 		if (getWrapper().getSalaryDedSeize() != 0 && (getWrapper().getSalaryDedSeizeAccount() == null || getWrapper().getSalaryDedSeizeAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Embargo'";		
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 
 		if (getWrapper().getSalaryOtherDeductions() != 0 && (getWrapper().getSalaryOtherDeductionsAccount() == null || getWrapper().getSalaryOtherDeductionsAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Otras deducciones'";		
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 
 		if (getWrapper().getCompanySocialInsurance() != 0	&& (getWrapper().getCompanySocialInsuranceAccount() == null || getWrapper().getCompanySocialInsuranceAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Seg.Social Empresa'";			
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 		if (getWrapper().getIrpf() != 0	&& (getWrapper().getIrpfAccount() == null || getWrapper().getIrpfAccount().getId() == null)) {	
 			String msg = "Debe indicar una cuenta contable para el valor 'I.R.P.F.'";
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 		if (getWrapper().getInKindIrpf() != 0 && (getWrapper().getInKindIrpfAccount() == null || getWrapper().getInKindIrpfAccount().getId() == null)) {
 			String msg = "Debe indicar una cuenta contable para el valor 'I.R.P.F. en especie'";		
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 		if (getWrapper().getTotalSocialInsurance() != 0 && (getWrapper().getEmployeeSocialInsuranceAccount() == null || getWrapper().getEmployeeSocialInsuranceAccount().getId() == null)) {	
 			String msg = "Debe indicar una cuenta contable para el valor 'Seg.Social Empleado'";
-			callback.getModule().onError(msg);
+			getCallback().getModule().onError(msg);
 		}
 		
 		LinkedList<AccountEntryDetail> list = new LinkedList<AccountEntryDetail>();
@@ -933,7 +932,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		Integer period = getWrapper().getAccountEntry().getPeriod();
 		Date start = new Date();
 		Date end = new Date();
-		for( AccountPeriod ap : callback.getModule().getConfiguration().getPeriods() ) {
+		for( AccountPeriod ap : getCallback().getModule().getConfiguration().getPeriods() ) {
 			if (AonNumberUtils.equals(ap.getId(), period)) {
 				start = ap.getInitiationDate();
 				end = ap.getDeadline();
@@ -946,8 +945,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		tab.getColumnFormatter().setWidth(0, "15px");
 		tab.getColumnFormatter().setWidth(0, "15px");
 		centerPanel.add(tab);
-		getFiscalService().getSalaryEntries(AccountEntryModule.getCurrentDomainName()
-				,AccountEntryModule.getCurrentDomain() ,start, end
+		getFiscalService().getSalaryEntries(getCallback().getCurrentDomainName()
+				,getCallback().getCurrentDomainId() ,start, end
 				, new AsyncCallback<LinkedList<SalaryEntry>>() {
 					
 			@Override
@@ -978,15 +977,15 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 							@Override
 							public void onClick(ClickEvent event) {
 								getFiscalService().getSalaryFormatted(
-									AccountEntryModule.getCurrentDomainName()
-									, AccountEntryModule.getCurrentDomain()
+										getCallback().getCurrentDomainName()
+									, getCallback().getCurrentDomainId()
 									, entry.getAccountEntry().getEntryDate()
 									, entry.getAccountEntry().getEntryDate()
 									,new AsyncCallback<String>() {
 
 									@Override
 									public void onSuccess(String result) {
-										callback.getModule().addExtraInfo(result);	
+										getCallback().getModule().addExtraInfo(result);	
 									}
 
 									@Override
@@ -1034,8 +1033,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 										@Override
 										public void onAccept() {
 											getFiscalService().deleteAccountEntry(
-													AccountEntryModule.getCurrentDomainName()
-													, AccountEntryModule.getCurrentDomain()
+													getCallback().getCurrentDomainName()
+													, getCallback().getCurrentDomainId()
 													, entry.getAccountEntry().getId(),
 													new AsyncCallback<Void>() {
 
@@ -1089,7 +1088,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				callback.getModule().onError(caught.getMessage());							
+				getCallback().getModule().onError(caught.getMessage());							
 			}
 		});
 	}

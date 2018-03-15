@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -36,7 +38,6 @@ public class ACCOUNTING {
 	private static IAccounting getAccounting() {
 		return new AccountingImpl();
 	}
-
 
 	// ********************************************
 	// ********************* ACCOUNTING REGISTRY **
@@ -465,4 +466,49 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
+	public static AccUtilitiesResult checkParentLinker(String domainName, String user, Domain domain, Account account) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().checkParentLinker(ctx, account);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccUtilitiesResult runParentLinker(String domainName, String user, Domain domain, Account account) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().runParentLinker(ctx, account);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccUtilitiesResult emptyEntries(String domainName, String user, Domain domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().emptyEntries(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static AccUtilitiesResult unbalancedEntries(String domainName, String user, Domain domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().unbalancedEntries(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+		
 }

@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IContentAttachCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -18,7 +17,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends ResizeComposite implements RequiresResize, IWizardContent  {
 
 	static FiscalServiceAsync fiscalService;
-	protected IAccountEntryModuleCallback callback;
+	private IAccountEntryModuleCallback callback;
 	
 	public static interface ISelectionCallback {
 		void onSuccess();
@@ -32,12 +31,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 		}
 		return fiscalService;
 	}
-	private static String getDomainName() {
-		return AccountEntryModule.getCurrentDomainName();
-	}
-	private static int getDomain() {
-		return AccountEntryModule.getCurrentDomain();
-	}
+	
 	public AonConfiguration getConfiguration() {
 		return getCallback().getModule().getConfiguration();
 	}
@@ -58,7 +52,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	
 	@Override
 	public void save(final AsyncCallback<AccountEntry[]> callback) {
-		getFiscalService().save(getDomainName(), getDomain(), getWrapper().getAccountEntry()
+		getFiscalService().save(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getWrapper().getAccountEntry()
 			, new AsyncCallback<AccountEntry>() {
 
 			@Override
@@ -84,7 +78,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 		// pantalla.
 		// Es lo mismo que un reset().
 		if (getWrapper().getAccountEntry().getId() != null) {
-			getFiscalService().deleteAccountEntry(getDomainName(), getDomain()
+			getFiscalService().deleteAccountEntry(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId()
 					, getWrapper().getAccountEntry().getId(),
 					new AsyncCallbackWrapper<Void>(callback) {
 

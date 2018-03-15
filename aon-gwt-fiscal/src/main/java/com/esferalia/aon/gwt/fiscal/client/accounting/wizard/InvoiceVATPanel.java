@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -304,20 +303,20 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 
 	private class InvoicePanelRow implements Focusable {
-		private final AccountBox expAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
+		private final AccountBox expAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), false);
 		private final DoubleBox taxableBase = new DoubleBox(12,4);
 		private final DoubleBox vatPercent = new DoubleBox(6);
 		private final DoubleBox vatQuota = new DoubleBox(8);
 		private final DoubleBox surchargePercent = new DoubleBox(6);
 		private final DoubleBox surchargeQuota = new DoubleBox(8);
-		private final AccountBox inputVatAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
-		private final AccountBox outputVatAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
+		private final AccountBox inputVatAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), false);
+		private final AccountBox outputVatAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), false);
 		private final CheckBox withholding  = new CheckBox();
 		private final Button removeButton = new Button();
 		private final InvestAssetListBox investAsset = new InvestAssetListBox(); 
 		private final DoubleBox dedPercent = new DoubleBox(6);
 		private final DoubleBox dedQuota = new DoubleBox(8);
-		private final AccountBox adjAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
+		private final AccountBox adjAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), false);
 		
 		private InvoicePanelRow(final InvoiceVAT vat, FlexTable tab, boolean focus) {
 			inputVatAccount.setRequired(false);

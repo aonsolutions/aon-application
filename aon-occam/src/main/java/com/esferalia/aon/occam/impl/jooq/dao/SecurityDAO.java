@@ -76,44 +76,6 @@ public class SecurityDAO {
 		@Override public Property<String> getSignatureProperty() {return new FilterDAO.PropertyDAO<String>(SIGNATURE.SIGNATURE_);}
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.USER_ID);}
 	}
-	public static Domain getDomain(AONContext ctx, int domain) {
-		final Domain dom = new Domain();
-		ctx.getDslContext()
-			.select(DOMAIN.ID
-					,DOMAIN.NAME
-					,DOMAIN.PARENT
-					,DOMAIN.TYPE
-					,DOMAIN.DOMAINMANAGEMENT
-					,DOMAIN.ACTIVE)
-			.from(DOMAIN)
-			.where(DOMAIN.ID.equal(domain))
-			.fetch()
-			.stream()
-			.forEach( record -> {
-				dom.setId(record.getValue(DOMAIN.ID));
-				dom.setName(record.getValue(DOMAIN.NAME));
-				dom.setActive(AonEnumUtils.getBoolean(record.getValue(DOMAIN.ACTIVE)));
-				dom.setParentId(record.getValue(DOMAIN.PARENT));
-				boolean parent = (record.getValue(DOMAIN.PARENT) == null);
-				boolean domainManagement = AonEnumUtils.getBoolean(record.getValue(DOMAIN.DOMAINMANAGEMENT));
-				if (!parent) {
-					dom.setChild(true);
-					dom.setStandalone(false);
-					dom.setParent(false);
-				} else {
-					if (domainManagement) {
-						dom.setParent(true);
-						dom.setStandalone(false);
-						dom.setChild(false);
-					} else {
-						dom.setParent(false);
-						dom.setStandalone(true);
-						dom.setChild(false);
-					}
-				}
-			});
-		return dom;
-	}
 	
 	public static User getUser(AONContext ctx, Integer userId) {
 		ctx.checkRead();
@@ -287,7 +249,7 @@ public class SecurityDAO {
 		} 
 		
 		// Comprabamos si es un usuario del dominio padre.
-		Domain domain = getDomain(ctx, ctx.getDomainId());
+		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
 		int par = domain.getParentId();
 		if ( dom == par ) {
 			// Se trata de un usuario del dominio padre, por 

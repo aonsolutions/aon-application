@@ -74,9 +74,9 @@
 								<td style="width: auto;" class="{aonResources.css.aonPanelGridEven}">
  									<g:ListBox ui:field="entryType" />
 								</td>
-								<td style="width: 200px;" class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonTextCenter}">
-									<g:InlineLabel ui:field="journal"/>
-									<g:InlineLabel ui:field="id" styleName="{aonResources.css.aonMarginLeft}"/>
+								<td style="width: 200px;" class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonTextCenter} {aonResources.css.aonNowrap}">
+									<g:InlineLabel ui:field="journal" styleName="{aonResources.css.aonNowrap}"/>
+									<g:InlineLabel ui:field="id" styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonNowrap}"/>
 								</td>
 								<td style="width: 100px;" class="{aonResources.css.aonPanelGridEven}">
 									<g:ListBox ui:field="activity" visible="false" width="120px"/>

@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
@@ -184,8 +183,8 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					getFiscalService().getAccountingInvoiceFromInvoice(AccountEntryModule.getCurrentDomainName()
-							,AccountEntryModule.getCurrentDomain()
+					getFiscalService().getAccountingInvoiceFromInvoice(callback.getCurrentDomainName()
+							,callback.getCurrentDomainId()
 							,callback.getInvoice().getInvoice().getRectificationInvoice()
 							,new AsyncCallback<AccountingInvoice>() {
 								
@@ -564,8 +563,8 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 					dialog.setCaption(AON.MSG.rectifyInvoice());
 
 					final InvoiceRectificationDataPanel rectPanel = new InvoiceRectificationDataPanel();
-					rectPanel.show(AccountEntryModule.getCurrentDomainName()
-						,AccountEntryModule.getCurrentDomain()
+					rectPanel.show(callback.getCurrentDomainName()
+						,callback.getCurrentDomainId()
 						,callback.getModule().getConfiguration()
 						,data
 						, new InvoiceRectificationDataPanelCallback() {
@@ -577,8 +576,8 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 							
 							@Override
 							public void onAccept(InvoiceRectificationData data) {
-								getFiscalService().rectifyInvoice(AccountEntryModule.getCurrentDomainName()
-										,AccountEntryModule.getCurrentDomain()
+								getFiscalService().rectifyInvoice(callback.getCurrentDomainName()
+										,callback.getCurrentDomainId()
 										,callback.getInvoice().getInvoice().getId()
 										,data
 										,new AsyncCallback<AccountingInvoice>() {

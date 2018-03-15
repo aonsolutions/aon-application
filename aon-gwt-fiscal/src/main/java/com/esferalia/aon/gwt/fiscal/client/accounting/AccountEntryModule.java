@@ -78,6 +78,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -102,16 +103,24 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	static FiscalServiceAsync fiscalService;
 	static CommonServiceAsync commonService;
+
+	private String currentDomainName;
+	private int currentDomainId;
+	private String currentUser;
+	
 	private AccountEntry base;
 
 	interface AccountEntryModuleBinder extends
-			UiBinder<Widget, AccountEntryModule> {
+		UiBinder<Widget, AccountEntryModule> {
 	}
 
 	private static final AccountEntryModuleBinder BINDER = GWT
 			.create(AccountEntryModuleBinder.class);
 	
 	public interface IAccountEntryModuleCallback {
+		String getCurrentDomainName();
+		int getCurrentDomainId();
+		String getCurrentUser();
 		AccountEntryModule getModule();
 	}
 
@@ -152,6 +161,21 @@ public class AccountEntryModule extends MainEntryPoint {
 		@Override
 		public AccountEntryModule getModule() {
 			return AccountEntryModule.this;
+		}
+
+		@Override
+		public String getCurrentDomainName() {
+			return AccountEntryModule.this.getDomainName();
+		}
+
+		@Override
+		public int getCurrentDomainId() {
+			return AccountEntryModule.this.getDomainId();
+		}
+
+		@Override
+		public String getCurrentUser() {
+			return AccountEntryModule.this.getUser();
 		}
 	};
 
@@ -223,15 +247,35 @@ public class AccountEntryModule extends MainEntryPoint {
 	private boolean periodErrorShown;
 	private IWizardContent wizardContent;
 
+	private String getDomainName() {
+		return this.currentDomainName;
+	}
+	private String getUser() {
+		return this.currentUser;
+	}
+	private int getDomainId() {
+		return this.currentDomainId;
+	}
+	
 	@Override
 	public void onModuleLoad() {
+		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		this.onModuleLoad(root,getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), null);
+	}
+	
+	public void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, Integer accountEntryId ) {
+		this.currentDomainName = domainName;
+		this.currentDomainId = domain;
+		this.currentUser = user;
+			
 		AON.ensureInjected();
+		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 
-		splitLayoutPanel = new SplitLayoutPanel(4);
+		splitLayoutPanel = new SplitLayoutPanel();
 		
 
 //		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
@@ -241,11 +285,10 @@ public class AccountEntryModule extends MainEntryPoint {
 //		});
 		        
 		Widget ui = BINDER.createAndBindUi(this);
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		activity.setTabIndex(-1);
 		confidential.setTabIndex(-1);
 		commentsButton.setTabIndex(-1);
-		root.add(ui);
+		parentWidget.add(ui);
 		tabLayout.setAnimationDuration(300);
 		tabLayout.selectTab(BALANCES_TAB);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -287,8 +330,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			
 		});
 		
-		commonService.getAonConfiguration(getCurrentDomainName(),
-				getCurrentDomain(),
+		commonService.getAonConfiguration(getDomainName(), getDomainId(),
 				new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {
@@ -297,7 +339,9 @@ public class AccountEntryModule extends MainEntryPoint {
 						if (configuration.getPeriods() != null && !configuration.getPeriods().isEmpty()) {
 							period.fill(configuration.getPeriods());
 						} else {
-							invalidateModule(AON.MSG.noActiveAccountPeriod());
+							if (accountEntryId == null) {
+								invalidateModule(AON.MSG.noActiveAccountPeriod());
+							}
 						}
 
 						if (configuration.hasActivities() && activity.getItemCount() == 0) {
@@ -318,7 +362,7 @@ public class AccountEntryModule extends MainEntryPoint {
 						}
 						confidential.setVisible(configuration.getUser().hasConfidentialityRole());
 						
-						journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentDomain(), JOURNAL_PANEL_TAB_OFFSET, result);
+						journalPanel = new JournalPanel(getDomainName(), getDomainId(), JOURNAL_PANEL_TAB_OFFSET, result);
 						journalPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
 							@Override
 							public void onSelection(SelectionEvent<AccountEntry> event) {
@@ -327,7 +371,11 @@ public class AccountEntryModule extends MainEntryPoint {
 							}
 						});
 						journalPanelContainer.setWidget(journalPanel);
-						reset();
+						if (accountEntryId != null) {
+							selectEntry(accountEntryId);
+						} else {
+							reset();
+						}
 					}
 
 					@Override
@@ -349,16 +397,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		audit.setVisible(false);
 		duplicate.setVisible(false);
 	}
-
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
 
 	// -------------------------------------------------------------- UiHandler
 
@@ -459,10 +497,10 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	public boolean isNew() {
-		return wizardContent.getMainEntry() == null || wizardContent.getMainEntry().getId() == null;
+		return wizardContent != null && (wizardContent.getMainEntry() == null || wizardContent.getMainEntry().getId() == null);
 	}
 	public boolean isDirty() {
-		return wizardContent.getMainEntry().isDirty();
+		return wizardContent != null && wizardContent.getMainEntry().isDirty();
 	}
 	
 	private void syncCurrent() {
@@ -715,8 +753,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	private void selectEntry(final Integer id) {
 		if (id != null) {
-			fiscalService.getAccountEntry(getCurrentDomainName(),
-				getCurrentDomain(), id ,
+			fiscalService.getAccountEntry(getDomainName(),
+				getDomainId(), id ,
 				new AsyncCallback<AccountEntry>() {
 					@Override
 					public void onSuccess(AccountEntry result) {
@@ -879,7 +917,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			Integer periodId = (period == null? null : period.getId());
 			base = new AccountEntry()
 					.setPeriod(periodId)
-					.setDomain(AccountEntryModule.getCurrentDomain())
+					.setDomain(getDomainId())
 					.setConfidential(false)
 					.setEntryDate(new Date())
 					.setActivity(activity)

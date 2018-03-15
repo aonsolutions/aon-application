@@ -141,7 +141,7 @@ public class AccountPeriodDAO {
 				.setName(record.getValue(ACCOUNT_PERIOD.NAME) )
 				.setInitiationDate(record.getValue(ACCOUNT_PERIOD.INITIATION_DATE) )
 				.setDeadline(record.getValue(ACCOUNT_PERIOD.DEADLINE) )
-				.setStatus(AccountPeriodStatus.values()[record.getValue(ACCOUNT_PERIOD.STATUS)])
+				.setStatus(AccountPeriodStatus.safeValueOf(record.getValue(ACCOUNT_PERIOD.STATUS)))
 				.setCreationUser(record.getValue(ACCOUNT_PERIOD.CREATION_USER) )
 				.setCreationDate(record.getValue(ACCOUNT_PERIOD.CREATION_DATE) )
 				.setModificationUser(record.getValue(ACCOUNT_PERIOD.MODIFICATION_USER) )

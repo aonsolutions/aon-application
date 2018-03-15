@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO.AccountEntryOrder;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -295,5 +297,29 @@ public class AccountingImpl implements IAccounting {
 	public FinanceEntry getFinanceEntry(AONContext ctx, Integer accountEntry) {
 		return FinanceDAO.getFinanceEntry(ctx, accountEntry);
 	}
-
+	
+	// Accounting Utilities
+	@Override
+	public AccUtilitiesResult checkParentLinker(AONContext ctx, Account account) {
+		return AccountingUtilitiesDAO.checkParentLinker(ctx, account);
+	}
+	@Override
+	public AccUtilitiesResult runParentLinker(AONContext ctx, Account account) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AccountingUtilitiesDAO.runParentLinker(ctx, account)
+		 );		
+	}
+	@Override
+	public AccUtilitiesResult emptyEntries(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.emptyEntries(ctx)
+			 );		
+	}
+	@Override
+	public AccUtilitiesResult unbalancedEntries(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.unbalancedEntries(ctx)
+			 );		
+	}
+		
 }
