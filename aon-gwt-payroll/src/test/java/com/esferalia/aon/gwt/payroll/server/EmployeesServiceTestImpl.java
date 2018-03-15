@@ -37,6 +37,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
@@ -559,6 +560,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EmployeeEventsData getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public WorkplaceEmployees getWorkplaceEmployees(Integer workplaceId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

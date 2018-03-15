@@ -1,0 +1,141 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
+
+	<ui:style>
+		.editor {
+			
+		}
+		
+		.vertical-space {
+			height: 20px;
+		}
+		
+		.document {
+			margin-top: 5px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 15px;
+		}
+		
+		.edit-cells td {
+			color: #000000 !important;
+		}
+		
+		.edit-cells td:hover {
+			cursor: pointer;
+			background-color: #E2F1F5;
+		}
+		
+	</ui:style>
+
+	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
+
+	<g:DockLayoutPanel unit="PX" ui:field="mainPanel">
+		<g:north size="72">
+
+			<g:FlowPanel>
+
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal">
+								<g:Label styleName="aon-outputText">Incidencias</g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText"></g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button ui:field='acceptButton'
+									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
+								<g:Button ui:field="undoButton"
+									styleName='aon-finding-toolbar-item aon-icon-undo'
+									enabled="false" />
+								<g:Button ui:field='redoButton'
+									styleName="aon-finding-toolbar-item aon-icon-redo"
+									enabled="false" />
+								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border">COPIAR : </g:InlineLabel>
+								<g:ListBox ui:field="copyDateRangeListBox" />
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>
+
+			</g:FlowPanel>
+
+		</g:north>
+		<g:center>
+			<g:SimplePanel styleName="{style.editor}">
+				<g:VerticalPanel styleName="{style.document}">
+	
+					<g:HorizontalPanel styleName="aon-dataScroller2 aon-width-all"
+						verticalAlignment="ALIGN_MIDDLE">
+	
+						<g:Button ui:field='previousDateRangeButton'
+							styleName='aon-dataScroller2-button aon-dataScroller2-button-previous' />
+	
+						<g:cell horizontalAlignment="ALIGN_CENTER">
+							<g:InlineLabel ui:field='dateRangeLabel'
+								styleName="aon-dataScroller2-selected aon-nowrap">
+								15 – 21 de abr de
+								2013
+							</g:InlineLabel>
+						</g:cell>
+	
+						<g:Button ui:field='nextDateRangeButton'
+							styleName='aon-dataScroller2-button aon-dataScroller2-button-next' />
+	
+						<!-- fill remain space -->
+						<g:cell width="100%">
+							<g:Label>&nbsp;
+							</g:Label>
+						</g:cell>
+	
+						<g:cell>
+							<g:Label ui:field="eventLabel" styleName="aon-nowrap">&nbsp;
+							</g:Label>
+						</g:cell>
+
+						<g:cell>
+							<g:Label>&nbsp;
+							</g:Label>
+						</g:cell>
+
+						<g:ListBox ui:field="eventListBox">
+							<g:item>Incidencia</g:item>
+						</g:ListBox>
+	
+						<g:cell>
+							<g:Label>&nbsp;
+							</g:Label>
+						</g:cell>
+	
+						<g:ListBox ui:field="dateRangeListBox">
+							<!--  g:item value="0">Semana</g:item>
+							<g:item value="1">Mes</g:item>
+							<g:item value="2">A&ntilde;o</g:item> -->
+						</g:ListBox>
+	
+					</g:HorizontalPanel>
+	
+					<g:HTML styleName="{style.vertical-space}" />
+	
+					<g:ScrollPanel ui:field="eventsTableScrollPane">
+						<g:FlexTable ui:field="eventsTable"
+							styleName="aon-dataTable {style.edit-cells}" />
+					</g:ScrollPanel>
+	
+					<g:HTML styleName="{style.vertical-space}" />
+	
+				</g:VerticalPanel>
+			</g:SimplePanel> 
+
+		</g:center>
+	</g:DockLayoutPanel>
+
+</ui:UiBinder>

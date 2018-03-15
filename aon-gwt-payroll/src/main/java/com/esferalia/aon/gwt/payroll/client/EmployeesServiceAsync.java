@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -171,5 +172,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getAvaiableEmployees(AsyncCallback<Map<String, String>> callback)
 			throws IllegalArgumentException;
+
+	void getWorkplaceEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback);
 
 }

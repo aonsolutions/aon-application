@@ -711,22 +711,24 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 						new DecimalEventMetaData("COEFICIENTE_ERE", DateField.DAY),
 						new EventMetaData("OBSERVACIONES", DateField.MONTH));
 
-			Date date = new Date();
-
-			eventsDraftObject.setPeriod(DateUtils.getFirstDayOfWorkWeek(date), DateUtils.getLastDayOfWorkWeek(date),
-					new EventsDraftObject.Callback() {
-
-						@Override
-						public void onSucces() {
-							eventsItem.setUserObject(eventsDraftObject);
-						}
-
-						@Override
-						public void onFailure(Throwable throwable) {
-							eventsItem.setUserObject(eventsDraftObject);
-						}
-
-					});
+			
+			eventsItem.setUserObject(eventsDraftObject);
+//			Date date = new Date();
+//
+//			eventsDraftObject.setPeriod(DateUtils.getFirstDayOfWorkWeek(date), DateUtils.getLastDayOfWorkWeek(date),
+//					new EventsDraftObject.Callback() {
+//
+//						@Override
+//						public void onSucces() {
+//							eventsItem.setUserObject(eventsDraftObject);
+//						}
+//
+//						@Override
+//						public void onFailure(Throwable throwable) {
+//							eventsItem.setUserObject(eventsDraftObject);
+//						}
+//
+//					});
 		}
 
 		Agreement agreement = workplace.getAgreement();
