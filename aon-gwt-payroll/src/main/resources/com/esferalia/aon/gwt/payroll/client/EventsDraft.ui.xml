@@ -1,31 +1,114 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
-	<ui:style>
-		.editor {
-			
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EventsDraft.MyStyle">
+
+		/* ESTILOS CABECERA */
+
+		.eventsStyle{
+			padding-top: 5px;
 		}
-		
-		.vertical-space {
-			height: 20px;
+
+		.labelStyle{
+			padding-top: 5px;
+    		padding-left: 5px;
+    		padding-right: 5px;
+    		font-weight: bold;
 		}
-		
-		.document {
-			margin-top: 5px;
-			margin-left: auto;
-			margin-right: auto;
-			margin-bottom: 15px;
+
+		.listBoxStyle{
+			font-size: smaller;
+    		margin-top: 3px;
 		}
-		
-		.edit-cells td {
-			color: #000000 !important;
+
+		.hideElement{
+			visibility: hidden;
 		}
-		
-		.edit-cells td:hover {
+
+		/* ESTILOS CAMBIO DE AÑO */
+
+		.paddingHorizontalPanel{
+			padding-bottom: 30px;
+			padding-top: 20px;
+		}
+
+		.date {
+			font-size: 20px;
+			color: #FF704D;
+			padding-left: 8px;
+			padding-right: 8px;
+			padding-top: 7px;
+		}
+
+		.optionButtons{
+			width: 30px;
+			height: 25px;
 			cursor: pointer;
-			background-color: #E2F1F5;
+			border: none;
+		}
+
+		.optionButtonsLeft {
+			margin-top: 8px;
+			margin-left: 18px;
+		}
+
+		.optionButtonsRight {
+			margin-top: 8px;
+		}
+
+		/* ESTILOS TABLA */
+
+		.scrollStyle {
+			position: absolute !important;
+			right: 5px !important;
+			bottom: 50px !important;
+		}
+
+		.tableStyle {
+			border-collapse: collapse;
+			cursor: pointer;
+			margin-left: 0.8em;
+			width: 99%;
+		}
+
+		.tableStyle td{
+			padding: 3px;
+		}
+
+		.tableStyle tr {
+			text-align: center;
+			border-bottom: 1px solid #ddd;
+			font-family: Arial, Helvetica, sans-serif !important;
+			font-size: 11px !important;
+		}
+
+		.noSelectStyle {
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /* Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+		}
+
+		.widthEventTable{
+			width: 100%;
+		}
+		
+		.blankHeaderCell{
+			width: 100px;
+		}
+
+		.headerCell{
+			font-weight: bold;
+    		font-size: 0.9em;
+		}
+
+		.oddRowColor{
+			background-color: #eee;
 		}
 		
 	</ui:style>
@@ -33,14 +116,12 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
 
 	<g:DockLayoutPanel unit="PX" ui:field="mainPanel">
-		<g:north size="72">
-
+		<g:north size="30">
 			<g:FlowPanel>
-
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
+							<g:HTMLPanel styleName="aon-finding-title-internal {style.eventsStyle}">
 								<g:Label styleName="aon-outputText">Incidencias</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
@@ -59,82 +140,47 @@
 								<g:Button ui:field='redoButton'
 									styleName="aon-finding-toolbar-item aon-icon-redo"
 									enabled="false" />
-								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border">COPIAR : </g:InlineLabel>
-								<g:ListBox ui:field="copyDateRangeListBox" />
 							</g:HTMLPanel>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+						    <g:Label styleName="aon-outputText {style.labelStyle}">Tipo de vista :</g:Label>
+						    <g:ListBox styleName="{style.listBoxStyle}" ui:field="typeView" />
+						</g:HorizontalPanel>
+						<g:HorizontalPanel ui:field="varListViewPanel" styleName="aon-finding-toolbar {style.hideElement}">
+						    <g:Label styleName="aon-outputText {style.labelStyle}">Variable :</g:Label>
+						    <g:ListBox styleName="{style.listBoxStyle}" ui:field="varListView" />
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
-
-			</g:FlowPanel>
-
+			</g:FlowPanel>	
 		</g:north>
+		
 		<g:center>
-			<g:SimplePanel styleName="{style.editor}">
-				<g:VerticalPanel styleName="{style.document}">
-	
-					<g:HorizontalPanel styleName="aon-dataScroller2 aon-width-all"
-						verticalAlignment="ALIGN_MIDDLE">
-	
-						<g:Button ui:field='previousDateRangeButton'
-							styleName='aon-dataScroller2-button aon-dataScroller2-button-previous' />
-	
-						<g:cell horizontalAlignment="ALIGN_CENTER">
-							<g:InlineLabel ui:field='dateRangeLabel'
-								styleName="aon-dataScroller2-selected aon-nowrap">
-								15 – 21 de abr de
-								2013
-							</g:InlineLabel>
-						</g:cell>
-	
-						<g:Button ui:field='nextDateRangeButton'
-							styleName='aon-dataScroller2-button aon-dataScroller2-button-next' />
-	
-						<!-- fill remain space -->
-						<g:cell width="100%">
-							<g:Label>&nbsp;
-							</g:Label>
-						</g:cell>
-	
-						<g:cell>
-							<g:Label ui:field="eventLabel" styleName="aon-nowrap">&nbsp;
-							</g:Label>
-						</g:cell>
-
-						<g:cell>
-							<g:Label>&nbsp;
-							</g:Label>
-						</g:cell>
-
-						<g:ListBox ui:field="eventListBox">
-							<g:item>Incidencia</g:item>
-						</g:ListBox>
-	
-						<g:cell>
-							<g:Label>&nbsp;
-							</g:Label>
-						</g:cell>
-	
-						<g:ListBox ui:field="dateRangeListBox">
-							<!--  g:item value="0">Semana</g:item>
-							<g:item value="1">Mes</g:item>
-							<g:item value="2">A&ntilde;o</g:item> -->
-						</g:ListBox>
-	
+		    <g:HTMLPanel>
+				<!-- PANEL CAMBIO DE AÑO -->
+				<g:HorizontalPanel>
+				    <g:HorizontalPanel ui:field="datePanel" styleName="{style.paddingHorizontalPanel}">
+						<g:Button
+							styleName="{style.optionButtons} {style.optionButtonsLeft} aon-icon-previous"
+							ui:field="previusDateButton" />
+						<g:Label styleName="{style.date}" ui:field="dateLabel">01/2018</g:Label>
+						<g:Button
+							styleName="{style.optionButtons} {style.optionButtonsRight} aon-icon-next"
+							ui:field="nextDateButton" />
 					</g:HorizontalPanel>
-	
-					<g:HTML styleName="{style.vertical-space}" />
-	
-					<g:ScrollPanel ui:field="eventsTableScrollPane">
-						<g:FlexTable ui:field="eventsTable"
-							styleName="aon-dataTable {style.edit-cells}" />
-					</g:ScrollPanel>
-	
-					<g:HTML styleName="{style.vertical-space}" />
-	
-				</g:VerticalPanel>
-			</g:SimplePanel> 
-
+				</g:HorizontalPanel>
+				
+				<!-- TABLA -->
+				<g:DockLayoutPanel unit="PX" height="90%">
+					<g:center>
+						<g:ScrollPanel styleName="{style.scrollStyle}">
+							<g:FlexTable ui:field="eventsTable" styleName="{style.tableStyle} {style.noSelectStyle} {style.widthEventTable}">
+								<!-- AQUI SE CONSTRUYE LA TABLA VACIA. -->
+							</g:FlexTable>
+						</g:ScrollPanel>
+					</g:center>
+				</g:DockLayoutPanel>
+			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 

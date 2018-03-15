@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -151,5 +152,7 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 	void delete(Salary salaries[]) throws IllegalArgumentException;
 
 	Map<String, String> getAvaiableEmployees() throws IllegalArgumentException;
+
+	WorkplaceEmployees getWorkplaceEmployees(Integer workplaceId);
 
 }

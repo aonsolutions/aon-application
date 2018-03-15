@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -95,6 +96,12 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,
 				AsyncCallback<EmployeeEventsData> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getWorkplaceEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -175,6 +182,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,
 							AsyncCallback<EmployeeEventsData> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getWorkplaceEmployees(Integer workplaceId,
+							AsyncCallback<WorkplaceEmployees> asyncCallback) {
 						// TODO Auto-generated method stub
 						
 					}
