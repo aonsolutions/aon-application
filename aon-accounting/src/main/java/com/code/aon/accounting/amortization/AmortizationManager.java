@@ -46,6 +46,8 @@ public class AmortizationManager {
 		IManagerBean bean = BeanManager.getManagerBean(AmortizationDetail.class);
 		deletePendingDetails(a);
 		
+		ensureFirstDay(bean, a);
+		
 		Date amortizationFirstDay = a.getInitialDate();
 		Date amortizationLastDay = null;
 		double percent = a.getPercentage();
@@ -210,6 +212,20 @@ public class AmortizationManager {
 			exists = (AmortizationDetail) list.get(0);
 		}
 		return exists;
+	}
+
+	private void ensureFirstDay(IManagerBean bean, Amortization a) throws ManagerBeanException {
+		Criteria c = new Criteria();
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+		c.addOrder(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE));
+		List<ITransferObject> list = bean.getList(c);
+		if (list != null && list.size() > 0) {
+			AmortizationDetail exists = (AmortizationDetail) list.get(0);
+			if (!DateUtils.isSameDay(a.getInitialDate(),exists.getFromDate())) {
+				exists.setFromDate(a.getInitialDate());
+				bean.update(exists);			
+			}
+		}
 	}
 
 	private Date ensurePeriodLast(IManagerBean bean, Amortization a, Date last) throws ManagerBeanException {
