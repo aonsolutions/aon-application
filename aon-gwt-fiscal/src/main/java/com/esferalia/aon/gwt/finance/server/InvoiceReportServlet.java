@@ -100,7 +100,7 @@ public class InvoiceReportServlet extends HttpServlet {
 				}
 			}
 			ids = new Integer[brandList.size()];
-			final Integer[] brands = categoryList.toArray(ids);
+			final Integer[] brands = brandList.toArray(ids);
 
 			
 			String workplaceIds = req.getParameter( IRequestParamsNames.WORKPLACE_IDS);
