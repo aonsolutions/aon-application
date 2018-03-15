@@ -1,5 +1,12 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
@@ -43,6 +50,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.junit.Test;
 
+import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -95,6 +103,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
 
 		//@formatter:off
 		@SuppressWarnings("serial")
@@ -179,6 +189,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
@@ -257,6 +268,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
@@ -336,6 +348,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
@@ -438,6 +451,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 
@@ -538,6 +552,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 
@@ -706,6 +721,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 
@@ -859,6 +875,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 		
@@ -973,6 +990,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
+
 		//@formatter:off
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, 
@@ -1061,6 +1080,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		cleanSalaries(aonContext);
 
 		
 		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
@@ -1205,6 +1225,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
@@ -1233,6 +1254,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
@@ -1261,6 +1283,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
@@ -1295,6 +1318,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
@@ -1322,6 +1346,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1377,6 +1402,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1444,6 +1470,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1499,6 +1526,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1558,6 +1586,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1613,6 +1642,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1668,6 +1698,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1728,6 +1759,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1780,6 +1812,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1827,6 +1860,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1914,6 +1948,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -1971,6 +2006,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -2004,6 +2040,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemPayments(aonContext);
 
 		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
@@ -2034,6 +2071,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		cleanSalaries(aonContext);
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 
@@ -2489,5 +2527,20 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();
 	}
+	
+	private static final void cleanSalaries(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+		
+		aonContext.getDslContext().delete(SALARY_BONUS).execute();
+		aonContext.getDslContext().delete(SALARY_EMBARGO).execute();
+		aonContext.getDslContext().delete(SALARY_COST).execute();
+		aonContext.getDslContext().delete(SALARY_DEDUCTION).execute();
+		aonContext.getDslContext().delete(SALARY_PAYMENT).execute();
+		aonContext.getDslContext().delete(SALARY_DATA).execute();
+		aonContext.getDslContext().delete(SALARY).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+	
 
 }
