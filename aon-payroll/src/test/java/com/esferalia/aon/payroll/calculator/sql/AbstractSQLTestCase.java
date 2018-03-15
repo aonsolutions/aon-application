@@ -435,13 +435,13 @@ public abstract class AbstractSQLTestCase {
 
 	public static final DomainRecord newDomain(AONContext aonContext) {
 		return aonContext.getDslContext().insertInto(DOMAIN)
-				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis())).set(DOMAIN.OWNER, "")
+				.set(DOMAIN.NAME, java.util.UUID.randomUUID().toString()).set(DOMAIN.OWNER, "")
 				.set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
 	}
 
 	public static final DomainRecord newDomain(AONContext aonContext, int parent) {
 		return aonContext.getDslContext().insertInto(DOMAIN)
-				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis())).set(DOMAIN.OWNER, "")
+				.set(DOMAIN.NAME, java.util.UUID.randomUUID().toString()).set(DOMAIN.OWNER, "")
 				.set(DOMAIN.PARENT, parent).set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
 	}
 
@@ -918,7 +918,7 @@ public abstract class AbstractSQLTestCase {
 			public ContractRecord run(Configuration configuration) throws Exception {
 				// Add a domain, with a generated ID
 				DomainRecord domain = aonContext.getDslContext().insertInto(DOMAIN)
-						.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis())).set(DOMAIN.OWNER, "")
+						.set(DOMAIN.NAME, java.util.UUID.randomUUID().toString()).set(DOMAIN.OWNER, "")
 						.set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
 
 				ScopeRecord scope = newScope(aonContext, domain.getId());
