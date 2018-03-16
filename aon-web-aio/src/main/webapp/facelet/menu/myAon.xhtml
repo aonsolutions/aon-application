@@ -220,6 +220,26 @@
 												value="#{false}" />
 										</aon:commandLink>
 									</aon:div>
+									<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="pos_finance_batch" 
+												action="posFinance_search"
+												actionListener="#{posFinance.onEditSearch}"
+												value="#{bundle.finance_posFinance_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="reservation_finance_batch" 
+												action="reservationFinanceBatch"
+												actionListener="#{reservationFinanceBatch.onEditSearch}"
+												value="#{bundle.pms_reservation_finance_batch_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="paymentCardSettle" 
+												action="paymentCardSettle_search"
+												actionListener="#{paymentCardSettle.onInit}"
+												value="#{bundle.pms_paymentCardSettle_module}" />
+										</aon:div>
+									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sddMandate-myAon"
 											action="sddMandate_search-myAon"
