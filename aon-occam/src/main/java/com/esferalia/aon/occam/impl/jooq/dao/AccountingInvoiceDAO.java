@@ -315,7 +315,11 @@ public class AccountingInvoiceDAO {
 		Account inputVatAccount = null;
 		Account outputVatAccount = null;
 		if (config.getDefaultVatPercent() != null) {
-			vat.setPercentage(config.getDefaultVatPercent().getPercentage());
+			if (ai.isSales() && !ai.isNational()) {
+				vat.setPercentage(0.0);
+			} else {
+				vat.setPercentage(config.getDefaultVatPercent().getPercentage());
+			}
 			if (ai.isSurcharge()) {
 				vat.setSurcharge(config.getDefaultVatPercent().getSurcharge());	
 			}
