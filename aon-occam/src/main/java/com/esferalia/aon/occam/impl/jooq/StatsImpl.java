@@ -50,7 +50,15 @@ public class StatsImpl implements IStats {
 	public StatData<Integer, String, Double> getProductMovements(AONContext ctx, ProductFilter productFilter,
 			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
 			IncomeFilter incomeFilter) {
-		return StatDAO.getWarehouseMovementsStat(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter,
+		return StatDAO.getWarehouseProductMovements(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter,
+				incomeFilter);
+	}
+	
+	@Override
+	public StatData<Integer, String, Double> getItemMovements(AONContext ctx, ProductFilter productFilter,
+			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
+			IncomeFilter incomeFilter) {
+		return StatDAO.getWarehouseItemMovements(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter,
 				incomeFilter);
 	}
 

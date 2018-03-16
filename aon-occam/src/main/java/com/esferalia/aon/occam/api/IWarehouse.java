@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
+import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
@@ -58,8 +59,7 @@ public interface IWarehouse {
 	// 	***********************************************
 
 	Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter);
-	Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter,
-			ProductFilter productFilter);
+	Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, IncomeDetailFilter detailFilter, ProductFilter productFilter);
 	Optional<IncomeDetail> insertIncomeDetail(AONContext ctx, IncomeDetail incomeDetail);
 	Optional<IncomeDetail> updateIncomeDetail(AONContext ctx, IncomeDetail incomeDetail);
 	Optional<IncomeDetail> deleteIncomeDetail(AONContext ctx, Integer id);
@@ -72,9 +72,9 @@ public interface IWarehouse {
 	LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);
 
 	// 	***********************************************
-	// 	****************************** INCOME DETAIL***
+	// 	**************************** DELIVERY DETAIL***
 	// 	***********************************************
-	Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, ProductFilter productFilter);
+	Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter);
 	
 	// 	***********************************************
 	// 	************************** INVENTORY DETAIL ***

@@ -318,11 +318,12 @@ public class IncomeDAO {
 			.fetch();
 	}
 	
-	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, ProductFilter productFilter) {
+	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, IncomeDetailFilter detailFilter, ProductFilter productFilter) {
 		ctx.checkRead();
 		
 		Collection<Condition> whereConditions = new ArrayList<Condition>();
 		whereConditions.addAll(Arrays.asList(INCOME_PROPERTIES.getConditions(incomeFilter)));
+		whereConditions.addAll(Arrays.asList(INCOME_DETAIL_PROPERTIES.getConditions(detailFilter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 
 		return ctx.getDslContext()

@@ -208,11 +208,12 @@ public class DeliveryDAO {
 				.returning().fetch().stream().map(new DeliveryDetailFiller()).findFirst().orElse(new DeliveryDetail());
 	}
 	
-	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, ProductFilter productFilter) {
+	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter) {
 		ctx.checkRead();
 		
 		Collection<Condition> whereConditions = new ArrayList<Condition>();
 		whereConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
+		whereConditions.addAll(Arrays.asList(DELIVERY_DETAIL_PROPERTIES.getConditions(detailFilter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 
 		return ctx.getDslContext()

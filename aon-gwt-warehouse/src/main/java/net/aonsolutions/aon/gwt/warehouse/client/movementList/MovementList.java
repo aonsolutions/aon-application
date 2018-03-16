@@ -65,7 +65,7 @@ public class MovementList extends AonTemplate2 {
 				list.add("1");
 				filterMap.put("per_page", list);
 				
-				getAPI().getWarehouse().getMovementsList(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
+				getAPI().getWarehouse().getProductMovements(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
 
 					@Override
 					public void onSuccess(JSON<JsStockStat> result) {

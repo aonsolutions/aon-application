@@ -46,8 +46,10 @@ import org.jooq.Record2;
 import org.jooq.SelectField;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectSeekStep1;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
@@ -1009,51 +1011,68 @@ public class StatDAO {
 			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
 			SalesFilter salesFilter, PurchaseFilter purchaseFilter) {
 		
-		Map<Integer, Double> outputs = getOutputsProduct(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter);
-		Map<Integer, Double> pendingSales = getPendingSalesProduct(ctx, productFilter, salesFilter);
-		Map<Integer, Double> pendingPurchases = getPendingPurchasesProduct(ctx, productFilter, purchaseFilter);
+		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFilter, deliveryFilter);
+		Map<Integer, Double> pendingSales = getPendingSales(ctx, ITEM.PRODUCT, productFilter, salesFilter);
+		Map<Integer, Double> pendingPurchases = getPendingPurchases(ctx, ITEM.PRODUCT, productFilter, purchaseFilter);
 		Map<Integer, Double> stock = getProductStock(ctx, productFilter);
 		
 		final StatData<Integer, String, Double> stat = new StatData<>();
-		for(Integer productId: outputs.keySet()) {
-			stat.put(productId, PRODUCT_OUTPUTS, outputs.get(productId));
-			stat.put(productId, PRODUCT_STOCK, stock.get(productId));
-			stat.put(productId, PRODUCT_PENDING_PURCHASES, pendingPurchases.get(productId));
-			stat.put(productId, PRODUCT_PENDING_SALES, pendingSales.get(productId));
+		for(Integer key: outputs.keySet()) {
+			stat.put(key, PRODUCT_OUTPUTS, outputs.get(key));
+			stat.put(key, PRODUCT_STOCK, stock.get(key));
+			stat.put(key, PRODUCT_PENDING_PURCHASES, pendingPurchases.get(key));
+			stat.put(key, PRODUCT_PENDING_SALES, pendingSales.get(key));
 		}
 		
 		return stat;
 	}
 	
-	public static StatData<Integer, String, Double> getWarehouseMovementsStat(AONContext ctx,
+	public static StatData<Integer, String, Double> getWarehouseProductMovements(AONContext ctx,
 			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter,
 			DeliveryFilter deliveryFilter, IncomeFilter incomeFilter) {
 
-		Map<Integer, Double> outputs = getOutputsProduct(ctx, productFilter, itemFilter, invoiceFilter, deliveryFilter);
-		Map<Integer, Double> inputs = getInputsProduct(ctx, productFilter, itemFilter, invoiceFilter, incomeFilter);
+		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFilter, deliveryFilter);
+		Map<Integer, Double> inputs = getInputs(ctx, ITEM.PRODUCT, productFilter, itemFilter, invoiceFilter, incomeFilter);
 
 		final StatData<Integer, String, Double> stat = new StatData<>();
-		for (Integer productId : outputs.keySet())
-			stat.put(productId, PRODUCT_OUTPUTS, outputs.get(productId));
-		for (Integer productId : inputs.keySet())
-			stat.put(productId, PRODUCT_INPUTS, inputs.get(productId));
+		for (Integer key : outputs.keySet())
+			stat.put(key, PRODUCT_OUTPUTS, outputs.get(key));
+		for (Integer key : inputs.keySet())
+			stat.put(key, PRODUCT_INPUTS, inputs.get(key));
 
 		return stat;
 	}
+	
+	public static StatData<Integer, String, Double> getWarehouseItemMovements(AONContext ctx,
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter,
+			DeliveryFilter deliveryFilter, IncomeFilter incomeFilter) {
 
-	private static Map<Integer, Double> getOutputsProduct(AONContext ctx, ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter) {
+		Map<Integer, Double> outputs = getOutputs(ctx, ITEM.ID, productFilter, itemFilter, invoiceFilter, deliveryFilter);
+		Map<Integer, Double> inputs = getInputs(ctx, ITEM.ID, productFilter, itemFilter, invoiceFilter, incomeFilter);
+
+		final StatData<Integer, String, Double> stat = new StatData<>();
+		for (Integer key : outputs.keySet())
+			stat.put(key, PRODUCT_OUTPUTS, outputs.get(key));
+		for (Integer key : inputs.keySet())
+			stat.put(key, PRODUCT_INPUTS, inputs.get(key));
+
+		return stat;
+	}
+	
+	private static Map<Integer, Double> getOutputs(AONContext ctx, TableField<ItemRecord, Integer> selectField,
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter) {
 		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
 		deliveryConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
 		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 		deliveryConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
 		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> deliverySelect = ctx.getDslContext()
-			.select(ITEM.PRODUCT, DSL.sum(DELIVERY_DETAIL.QUANTITY).as(DELIVERY_DETAIL.QUANTITY))
+			.select(selectField, DSL.sum(DELIVERY_DETAIL.QUANTITY).as(DELIVERY_DETAIL.QUANTITY))
 			.from(DELIVERY)
 				.join(DELIVERY_DETAIL).on(DELIVERY.ID.equal(DELIVERY_DETAIL.DELIVERY))
 				.join(ITEM).on(DELIVERY_DETAIL.ITEM.equal(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
 			.where(deliveryConditions)
-			.groupBy(ITEM.PRODUCT)
+			.groupBy(selectField)
 			.orderBy(ITEM.PRODUCT);
 		
 		Collection<Condition> invoiceConditions = new ArrayList<Condition>();
@@ -1061,7 +1080,7 @@ public class StatDAO {
 		invoiceConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 		invoiceConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
 		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> invoiceSelect = ctx.getDslContext()
-				.select(ITEM.PRODUCT, DSL.sum(INVOICE_DETAIL.QUANTITY).as(INVOICE_DETAIL.QUANTITY))
+				.select(selectField, DSL.sum(INVOICE_DETAIL.QUANTITY).as(INVOICE_DETAIL.QUANTITY))
 				.from(INVOICE)
 				.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.join(ITEM).on(INVOICE_DETAIL.ITEM.equal(ITEM.ID))
@@ -1069,14 +1088,14 @@ public class StatDAO {
 				.where(invoiceConditions)
 				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
 				.and(INVOICE_DETAIL.SOURCE.ne(InvoiceSource.DELIVERY.value()))
-				.groupBy(ITEM.PRODUCT)
+				.groupBy(selectField)
 				.orderBy(ITEM.PRODUCT);
 		
 		Map<Integer, Double> map = new HashMap<>();
 		deliverySelect
 			.union(invoiceSelect)
 			.forEach(record -> {
-				Integer key = record.get(ITEM.PRODUCT);
+				Integer key = record.get(selectField);
 				Double value = record.value2().doubleValue();
 				if(!map.containsKey(key))
 					map.put(key, 0.0);
@@ -1085,19 +1104,20 @@ public class StatDAO {
 		return map;
 	}
 	
-	private static Map<Integer, Double> getInputsProduct(AONContext ctx, ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter, IncomeFilter incomeFilter) {
+	private static Map<Integer, Double> getInputs(AONContext ctx, TableField<ItemRecord, Integer> selectField,
+			ProductFilter productFilter, ItemFilter itemFilter, InvoiceFilter invoiceFilter, IncomeFilter incomeFilter) {
 		Collection<Condition> deliveryConditions = new ArrayList<Condition>();
 		deliveryConditions.addAll(Arrays.asList(INCOME_PROPERTIES.getConditions(incomeFilter)));
 		deliveryConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 		deliveryConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
 		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> deliverySelect = ctx.getDslContext()
-			.select(ITEM.PRODUCT, DSL.sum(INCOME_DETAIL.QUANTITY).as(INCOME_DETAIL.QUANTITY))
+			.select(selectField, DSL.sum(INCOME_DETAIL.QUANTITY).as(INCOME_DETAIL.QUANTITY))
 			.from(INCOME)
 				.join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 				.join(ITEM).on(INCOME_DETAIL.ITEM.equal(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
 			.where(deliveryConditions)
-			.groupBy(ITEM.PRODUCT)
+			.groupBy(selectField)
 			.orderBy(ITEM.PRODUCT);
 		
 		Collection<Condition> invoiceConditions = new ArrayList<Condition>();
@@ -1105,7 +1125,7 @@ public class StatDAO {
 		invoiceConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 		invoiceConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
 		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> invoiceSelect = ctx.getDslContext()
-				.select(ITEM.PRODUCT, DSL.sum(INVOICE_DETAIL.QUANTITY).as(INVOICE_DETAIL.QUANTITY))
+				.select(selectField, DSL.sum(INVOICE_DETAIL.QUANTITY).as(INVOICE_DETAIL.QUANTITY))
 				.from(INVOICE)
 				.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.join(ITEM).on(INVOICE_DETAIL.ITEM.equal(ITEM.ID))
@@ -1113,14 +1133,14 @@ public class StatDAO {
 				.where(invoiceConditions)
 				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.SOURCE.ne(InvoiceSource.INCOME.value()))
-				.groupBy(ITEM.PRODUCT)
+				.groupBy(selectField)
 				.orderBy(ITEM.PRODUCT);
 		
 		Map<Integer, Double> map = new HashMap<>();
 		deliverySelect
 			.union(invoiceSelect)
 			.forEach(record -> {
-				Integer key = record.get(ITEM.PRODUCT);
+				Integer key = record.get(selectField);
 				Double value = record.value2().doubleValue();
 				if(!map.containsKey(key))
 					map.put(key, 0.0);
@@ -1129,24 +1149,25 @@ public class StatDAO {
 		return map;
 	}
 	
-	private static Map<Integer, Double> getPendingSalesProduct(AONContext ctx, ProductFilter productFilter, SalesFilter salesFilter) {
+	private static Map<Integer, Double> getPendingSales(AONContext ctx, TableField<ItemRecord, Integer> selectField,
+			ProductFilter productFilter, SalesFilter salesFilter) {
 		Collection<Condition> whereConditions = new ArrayList<Condition>();
 		whereConditions.addAll(Arrays.asList(SALES_PROPERTIES.getConditions(salesFilter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 		
 		Map<Integer, Double> map = new HashMap<>();
 		ctx.getDslContext()
-			.select(ITEM.PRODUCT, DSL.sum(SALES_DETAIL.QUANTITY).as(SALES_DETAIL.QUANTITY))
+			.select(selectField, DSL.sum(SALES_DETAIL.QUANTITY).as(SALES_DETAIL.QUANTITY))
 			.from(SALES)
 				.join(SALES_DETAIL).on(SALES.ID.equal(SALES_DETAIL.SALES))
 				.join(ITEM).on(SALES_DETAIL.ITEM.equal(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
 			.where(whereConditions)
 			.and(SALES_DETAIL.STATUS.ne(SalesDetailStatus.SETTLED.value()))
-			.groupBy(ITEM.PRODUCT)
+			.groupBy(selectField)
 			.orderBy(ITEM.PRODUCT)
 			.forEach(record -> {
-				Integer key = record.get(ITEM.PRODUCT);
+				Integer key = record.get(selectField);
 				Double value = record.value2().doubleValue();
 				if(!map.containsKey(key))
 					map.put(key, 0.0);
@@ -1155,24 +1176,25 @@ public class StatDAO {
 		return map;
 	}
 	
-	private static Map<Integer, Double> getPendingPurchasesProduct(AONContext ctx, ProductFilter productFilter, PurchaseFilter purchaseFilter) {
+	private static Map<Integer, Double> getPendingPurchases(AONContext ctx, TableField<ItemRecord, Integer> selectField,
+			ProductFilter productFilter, PurchaseFilter purchaseFilter) {
 		Collection<Condition> whereConditions = new ArrayList<Condition>();
 		whereConditions.addAll(Arrays.asList(PURCHASE_PROPERTIES.getConditions(purchaseFilter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
 		
 		Map<Integer, Double> map = new HashMap<>();
 		ctx.getDslContext()
-			.select(ITEM.PRODUCT, DSL.sum(PURCHASE_DETAIL.QUANTITY).as(PURCHASE_DETAIL.QUANTITY))
+			.select(selectField, DSL.sum(PURCHASE_DETAIL.QUANTITY).as(PURCHASE_DETAIL.QUANTITY))
 			.from(PURCHASE)
 				.join(PURCHASE_DETAIL).on(PURCHASE.ID.equal(PURCHASE_DETAIL.PURCHASE))
 				.join(ITEM).on(PURCHASE_DETAIL.ITEM.equal(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
 			.where(whereConditions)
 			.and(PURCHASE_DETAIL.STATUS.ne(PurchaseDetailStatus.SETTLED.value()))
-			.groupBy(ITEM.PRODUCT)
+			.groupBy(selectField)
 			.orderBy(ITEM.PRODUCT)
 			.forEach(record -> {
-				Integer key = record.get(ITEM.PRODUCT);
+				Integer key = record.get(selectField);
 				Double value = record.value2().doubleValue();
 				if(!map.containsKey(key))
 					map.put(key, 0.0);

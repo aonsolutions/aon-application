@@ -93,7 +93,7 @@ public class Main extends Composite {
 		list.add("40");
 		getFilterMap().put("per_page", list);
 		
-		getAPI().getWarehouse().getMovementsList(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
+		getAPI().getWarehouse().getProductMovements(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
 
 			@Override
 			public void onSuccess(JSON<JsStockStat> result) {
@@ -116,9 +116,9 @@ public class Main extends Composite {
 		hideFooterPanel();
 	}
 	
-	public void loadSouthContent(JsStockStat jsStockStat) {
-		FooterPanel fp = new FooterPanel(this, jsStockStat);
-		southContent.setWidget(fp);
+	public void loadSouthContent(JsStockStat product) {
+		FooterPanel footer = new FooterPanel(this, product);
+		southContent.setWidget(footer);
 		openFooterPanel();
 	}
 	
@@ -139,6 +139,26 @@ public class Main extends Composite {
 		contentSplitLayoutPanel.setWidgetSize(southContent, value);	
 	}
 
+
+	public void onSelectProduct(JsStockStat object) {
+		FilterPanel filter = (FilterPanel)northContent.getWidget();
+		filter.selectProduct(object);
+		
+		loadSouthContent(object);
+	}
+	
+	public void onSelectItem(JsStockStat item) {
+		FilterPanel filter = (FilterPanel)northContent.getWidget();
+		filter.selectItem(item);
+		FooterPanel footer = (FooterPanel)southContent.getWidget();
+		footer.selectItem(item);
+	}
+	
+	
+	
+	/*
+	 * FILTER
+	 */
 	public HashMap<String, LinkedList<String>> getFilterMap() {
 		return filterMap;
 	}
@@ -146,5 +166,8 @@ public class Main extends Composite {
 	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
 		this.filterMap = filterMap;
 	}
+
+
+
 		
 }

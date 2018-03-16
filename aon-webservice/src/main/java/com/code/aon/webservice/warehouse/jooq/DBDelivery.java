@@ -29,7 +29,10 @@ public class DBDelivery {
 	
 	public static JSONArray getDeliveryMovements(Domain domain,String login, Map<String, String[]> map){
 		JSONArray array = new JSONArray();
-		AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> deliveryFilter(domain, map, f), f -> productFilter(domain, map, f))
+		AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login,
+				f -> deliveryFilter(domain, map, f),
+				f -> deliveryDetailFilter(domain, map, f),
+				f -> productFilter(domain, map, f))
 			.forEach(detail -> array.put(deliveryDetailFullToJSON(detail)));
 		return array;
 	}
@@ -58,6 +61,11 @@ public class DBDelivery {
 			filter = filter.and(f.getDelivery().eq(delivery));
 		}
 		
+		if(filterMap.containsKey(MSG.ITEM)){
+			Integer id = Integer.parseInt(filterMap.get(MSG.ITEM)[0]);
+			filter = filter.and(f.getItem().eq(id));
+		}
+		
 		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
 			Integer[] array = AON.getDeliveryStream(domain.getName(), domain.getId(), "", h -> 
 				h.getCarrierPackingProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0])))
@@ -73,12 +81,13 @@ public class DBDelivery {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		
 		if(filterMap.containsKey(MSG.PRODUCT)){
-			filter = filter.and(f.getIdProperty().eq(Integer.parseInt(filterMap.get(MSG.PRODUCT)[0])));
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.PRODUCT)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(ids));
 		}
 		
 		if(filterMap.containsKey(MSG.CATEGORY)){
-			String[] categories = filterMap.get(MSG.CATEGORY);
-			filter = filter.and(f.getCategoryProperty().in(Arrays.asList(categories).toArray(new Integer[categories.length])));
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.CATEGORY)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getCategoryProperty().in(ids));
 		}
 		
 		return filter;

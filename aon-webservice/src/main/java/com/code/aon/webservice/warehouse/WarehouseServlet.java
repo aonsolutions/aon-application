@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -141,8 +142,14 @@ public class WarehouseServlet extends HttpServlet{
 					} else object = getElaborationList(domain, userName, req.getParameterMap());
 				} else if("stock_forecast".equals(pathInfo[3])){
 					object = getStockForecast(domain, userName, req.getParameterMap());
-				} else if("movements_list".equals(pathInfo[3])){
-					object = getMovementsList(domain, userName, req.getParameterMap());
+				} else if("movements".equals(pathInfo[3])){
+					if(pathInfo.length > 4){
+						if(MSG.PRODUCT.equals(pathInfo[4])){
+							object = getProductMovements(domain, userName, req.getParameterMap());
+						} else if(MSG.ITEM.equals(pathInfo[4])){			
+							object = getItemMovements(domain, userName, req.getParameterMap());
+						}
+					}
 				} else if(MSG.WAREHOUSE.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						object = DBWarehouse.getWarehouse(domain, userName, Integer.parseInt(pathInfo[4]));
@@ -934,10 +941,10 @@ public class WarehouseServlet extends HttpServlet{
 	/*
      * MovementsList
      */
-    private JSONArray getMovementsList(Domain domain,String login, Map<String, String[]> filterMap){
+	private JSONArray getProductMovements(Domain domain,String login, Map<String, String[]> filterMap){
     	JSONArray array = new JSONArray();
     	if(filterMap.containsKey(MSG.FROM) && filterMap.containsKey(MSG.TO)) {
-    		StatData<Integer, String, Double> stat = getMovementsListStatData(domain, login, filterMap);
+    		StatData<Integer, String, Double> stat = getProductMovementsStatData(domain, login, filterMap);
         	
     		Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
         	Map<Integer, Product> productMap = new HashMap<>();
@@ -952,7 +959,7 @@ public class WarehouseServlet extends HttpServlet{
     				Double outputs = (stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
     				inputs = inputs==null?0.0:inputs;
     				outputs = outputs==null?0.0:outputs;
-    				Double balance = outputs - inputs;
+    				Double balance = inputs - outputs;
     				array.put(
     						new JSONObject()
     						.put(MSG.ID, productId)
@@ -967,8 +974,51 @@ public class WarehouseServlet extends HttpServlet{
     	}
     	return array;
     }
-    protected static StatData<Integer, String, Double> getMovementsListStatData(Domain domain,String login, Map<String, String[]> filterMap){
+    protected static StatData<Integer, String, Double> getProductMovementsStatData(Domain domain,String login, Map<String, String[]> filterMap){
     	StatData<Integer, String, Double> stat = AON.getProductMovements(domain.getName(), domain.getId(), login,
+				f -> productInventoriableFilter(domain, filterMap, f),
+				f -> itemFilter(domain, filterMap, f),
+				f -> invoiceFilter(domain, filterMap, f),
+				f -> deliveryFilter(domain, filterMap, f),
+				f -> incomeFilter(domain, filterMap, f));
+    	return stat;
+    }
+    
+    private JSONArray getItemMovements(Domain domain,String login, Map<String, String[]> filterMap){
+    	JSONArray array = new JSONArray();
+    	if(filterMap.containsKey(MSG.FROM) && filterMap.containsKey(MSG.TO)) {
+    		StatData<Integer, String, Double> stat = getItemMovementsStatData(domain, login, filterMap);
+        	
+    		Integer[] ids = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
+        	Map<Integer, Item> itemMap = new HashMap<>();
+        	AON.getFullItemList(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(ids)).forEach(item -> {
+        		itemMap.put(item.getId(), item);
+        	});
+    		
+        	for(Integer itemId: ids) {
+    			if(stat.getMap().containsKey(itemId)){
+    				Item item = itemMap.get(itemId);
+    				Double inputs = (stat.get(itemId, StatDAO.PRODUCT_INPUTS));
+    				Double outputs = (stat.get(itemId, StatDAO.PRODUCT_OUTPUTS));
+    				inputs = inputs==null?0.0:inputs;
+    				outputs = outputs==null?0.0:outputs;
+    				Double balance = inputs - outputs;
+    				array.put(
+    						new JSONObject()
+    						.put(MSG.ID, itemId)
+    						.put(MSG.DOMAIN, item.getDomain())
+    						.put("product_name", item.getProduct().getCode()+" / "+item.getProduct().getName()+" #"+item.getSerialNumber())
+    						.put("inputs", inputs)
+    						.put("outputs", outputs)
+    						.put("balance", balance)
+    						);    			
+    			}
+    		}
+    	}
+    	return array;
+    }
+    protected static StatData<Integer, String, Double> getItemMovementsStatData(Domain domain,String login, Map<String, String[]> filterMap){
+    	StatData<Integer, String, Double> stat = AON.getItemMovements(domain.getName(), domain.getId(), login,
 				f -> productInventoriableFilter(domain, filterMap, f),
 				f -> itemFilter(domain, filterMap, f),
 				f -> invoiceFilter(domain, filterMap, f),

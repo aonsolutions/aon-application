@@ -22,8 +22,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -59,7 +57,8 @@ public class FooterPanel extends Composite {
 	private API API;
 	
 	private Main parent;
-	private JsStockStat jsStockStat;
+	private JsStockStat product;
+	private JsStockStat item;
 
 	
 	@UiField
@@ -88,14 +87,15 @@ public class FooterPanel extends Composite {
 		this(parent, null);
 	}
 	
-	public FooterPanel(Main parent, JsStockStat jsStockStat) {
+	public FooterPanel(Main parent, JsStockStat product) {
 		this.parent = parent;
 		this.API = parent.getAPI();
-		this.jsStockStat = jsStockStat;
+		this.product = product;
+		this.item = null;
 		
 		initWidget(binder.createAndBindUi(this));
 		
-		tabPanel.getTabWidget(FooterTabs.ITEM.ordinal()).getParent().setVisible(false);
+		tabPanel.getTabWidget(FooterTabs.ITEM.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.INCOME.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.DELIVERY.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.PURCHASE_INVOICE.ordinal()).getParent().setVisible(false);
@@ -103,31 +103,12 @@ public class FooterPanel extends Composite {
 		tabPanel.getTabWidget(FooterTabs.WAREHOUSE_TRANSFER.ordinal()).getParent().setVisible(false);
 		tabPanel.getTabWidget(FooterTabs.ELABORATION.ordinal()).getParent().setVisible(false);
 		
-		tabPanel.selectTab(FooterTabs.INCOME.ordinal());
+		tabPanel.selectTab(FooterTabs.ITEM.ordinal());
 		
 		parent.closeFooterPanel();
 		
-//		loadItemTab(jsStockStat);
-		loadIncomeTab(jsStockStat);
-		loadDeliveryTab(jsStockStat);
-		loadPurchaseInvoiceTab(jsStockStat);
-		loadSaleInvoiceTab(jsStockStat);
-		loadWarehouseTransferTab(jsStockStat);
-		loadElaborationTab(jsStockStat);
-		
-//		if(jsStockStat!=null){
-//			tabPanel.getTabWidget(FooterTabs.PENDING.ordinal()).getParent().setVisible(false);
-//			loadSourceTab();
-//			loadCommetsTab();
-//			loadRemarksTab();
-//		} else {
-//			tabPanel.getTabWidget(FooterTabs.PENDING.ordinal()).getParent().setVisible(false);
-//			tabPanel.getTabWidget(FooterTabs.SOURCE.ordinal()).getParent().setVisible(false); 
-//			tabPanel.getTabWidget(FooterTabs.COMMENTS.ordinal()).getParent().setVisible(false); 
-//			tabPanel.getTabWidget(FooterTabs.REMARKS.ordinal()).getParent().setVisible(false); 
-//			loadPendingOrderTab();
-//		}
-		
+		loadItemTab();
+		loadTabs();
 		
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
@@ -137,30 +118,38 @@ public class FooterPanel extends Composite {
 			}
 		});
 		
+	}
+	
+	public void selectItem(JsStockStat item) {
+		this.item = item;
+		loadTabs();
+	}
+	
+	protected void loadTabs() {
+		if (item!=null && item.getId()!=null)
+			parent.getFilterMap().put("item", new LinkedList<>(Arrays.asList(item.getId()+"")));
+		if (product!=null && product.getId()!=null)
+			parent.getFilterMap().put("product", new LinkedList<>(Arrays.asList(product.getId()+"")));
 		
-		for(int i=0;i>tabPanel.getWidgetCount();i++)
-//			tabPanel.getTabWidget(i).addHandler(new ClickHandler() {
-			tabPanel.getWidget(i).addHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					MovementList.consoleLog("TAB clicked!");
-					parent.openFooterPanel();
-				}
-			}, ClickEvent.getType());
+		loadIncomeTab();
+		loadDeliveryTab();
+		loadPurchaseInvoiceTab();
+		loadSaleInvoiceTab();
+		loadWarehouseTransferTab();
+		loadElaborationTab();
 	}
 
 
-	private void loadItemTab(JsStockStat jsStockStat) {
-		if (jsStockStat!=null && jsStockStat.getId()!=null) {
-			parent.getFilterMap().put("product", new LinkedList<>(Arrays.asList(jsStockStat.getId()+"")));
-			
-			API.getProduct().getItemList(parent.getFilterMap(), new AsyncCallback<JSON<JsItem>>() {
+	private void loadItemTab() {
+		if (product!=null && product.getId()!=null) {
+			parent.getFilterMap().put("product", new LinkedList<>(Arrays.asList(product.getId()+"")));
+
+			API.getWarehouse().getItemMovements(parent.getFilterMap(), new AsyncCallback<JSON<JsStockStat>>() {
 				
 				@Override
-				public void onSuccess(JSON<JsItem> result) {
+				public void onSuccess(JSON<JsStockStat> result) {
 					if(!result.getData().toLinkedList().isEmpty()) {
-						itemPanel.add( createItemPanel(result.getData()) );
+						itemPanel.add( new DetailPanel(parent, result.getData().toLinkedList()) );
 					} else {
 						itemPanel.add(new Label("No se han encontrado resultados. "));
 					}
@@ -174,10 +163,14 @@ public class FooterPanel extends Composite {
 		}
 	}
 	
-	private void loadIncomeTab(JsStockStat jsStockStat) {
-		if (jsStockStat!=null && jsStockStat.getId()!=null) {
-			parent.getFilterMap().put("product", new LinkedList<>(Arrays.asList(jsStockStat.getId()+"")));
-			
+	private boolean isFilterDefined() {
+		return (parent.getFilterMap().containsKey("product") && !parent.getFilterMap().get("product").isEmpty())
+				|| (parent.getFilterMap().containsKey("item") && !parent.getFilterMap().get("item").isEmpty());
+	}
+	
+	private void loadIncomeTab() {
+		incomePanel.clear();
+		if(isFilterDefined()) {
 			API.getWarehouse().getIncomeMovements(parent.getFilterMap(), new AsyncCallback<JSON<JsIncomeDetail>>() {
 				
 				@Override
@@ -191,16 +184,14 @@ public class FooterPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-			
 		} else {
 			incomePanel.add(new Label("El objeto seleccinado no es valido. "));
 		}
 	}
 	
-	private void loadDeliveryTab(JsStockStat jsStockStat) {
-		if (jsStockStat!=null && jsStockStat.getId()!=null) {
-			parent.getFilterMap().put("product", new LinkedList<>(Arrays.asList(jsStockStat.getId()+"")));
-			
+	private void loadDeliveryTab() {
+		deliveryPanel.clear();
+		if(isFilterDefined()) {
 			API.getWarehouse().getDeliveryMovements(parent.getFilterMap(), new AsyncCallback<JSON<JsDeliveryDetail>>() {
 				
 				@Override
@@ -214,28 +205,27 @@ public class FooterPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-			
 		} else {
 			deliveryPanel.add(new Label("No se han encontrado resultados. "));
 		}
 	}
 	
-	private void loadPurchaseInvoiceTab(JsStockStat jsStockStat) {
+	private void loadPurchaseInvoiceTab() {
 		// TODO loadPurchaseInvoiceTab
 		purchaseInvoicePanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
-	private void loadSaleInvoiceTab(JsStockStat jsStockStat) {
+	private void loadSaleInvoiceTab() {
 		// TODO loadSaleInvoiceTab
 		saleInvoicePanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
-	private void loadWarehouseTransferTab(JsStockStat jsStockStat) {
+	private void loadWarehouseTransferTab() {
 		// TODO loadWarehouseTransferTab
 		warehouseTransferPanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
-	private void loadElaborationTab(JsStockStat jsStockStat) {
+	private void loadElaborationTab() {
 		// TODO loadElaborationTab
 		elaborationPanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
@@ -278,7 +268,7 @@ public class FooterPanel extends Composite {
 		return createPanel(list);
 	}
 	
-	protected FlowPanel createDeliveryPanel(AonJsArray<JsDeliveryDetail> aonJsArray){
+	protected FlowPanel createDeliveryPanel(AonJsArray<JsDeliveryDetail> aonJsArray) {
 		List<MovementObject> list = new LinkedList<>();
 		aonJsArray.toLinkedList().forEach(detail -> {
 			MovementObject o = new MovementObject();
@@ -296,19 +286,18 @@ public class FooterPanel extends Composite {
 		return null;
 	}
 	
-	protected FlowPanel createWarehouseTransferPanel(JsObject jsWarehouseTransfer){
+	protected FlowPanel createWarehouseTransferPanel(JsObject jsWarehouseTransfer) {
 		// TODO createWarehouseTransferPanel
 		return null;
 	}
 	
-	protected FlowPanel createElaborationPanel(JsElaboration jsElaboration){
+	protected FlowPanel createElaborationPanel(JsElaboration jsElaboration) {
 		// TODO createElaborationPanel
 		return null;
 	}
 	
 	
-	protected FlowPanel createPanel(List<MovementObject> list){
-//		MovementList.consoleLog("result count -> " + list.size());
+	protected FlowPanel createPanel(List<MovementObject> list) {
 		
 		final FlowPanel mainPanel = new FlowPanel("pre");
 		
@@ -336,6 +325,7 @@ public class FooterPanel extends Composite {
 			
 			Date date = AonDateUtils.parseDateTime(mo.date);
 			String issueDate = AonDateUtils.formatDate(date);
+			
 			final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
 					+ AonStringUtils.rightPad("", 9)
 					+ AonStringUtils.rightPad(

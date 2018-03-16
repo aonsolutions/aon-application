@@ -299,9 +299,13 @@ public class Warehouse extends Methods{
 		});
 	}
 	/* MOVEMENTS LISTSTOCK FORECAST */
-	public void getMovementsList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
+	public void getProductMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements_list" + filter, callback);
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements/product" + filter, callback);
+	}
+	public void getItemMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements/item" + filter, callback);
 	}
 	
 	/* WAREHOUSE */

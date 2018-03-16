@@ -89,8 +89,7 @@ public class GridPanel extends Composite {
 				    Integer subrow = event.getContext().getSubIndex();
 				    dataGrid.setKeyboardSelectedRow(relRow, subrow, true); 
 				    JsStockStat object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-					
-				    parent.getMainContent().loadSouthContent(object);
+					parent.getMainContent().onSelectProduct(object);
 				}
 			}
 		};

@@ -1615,11 +1615,12 @@ public class AON {
 		}
 	}
 	
-	public static Stream<DeliveryDetail> getDeliveryDetailStream(String domainName, Integer domainId, String login, DeliveryFilter deliveryFilter, ProductFilter productFilter){
+	public static Stream<DeliveryDetail> getDeliveryDetailStream(String domainName, Integer domainId, String login,
+			DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getDeliveryDetailStream(ctx, deliveryFilter, productFilter);
+			return getWarehouse().getDeliveryDetailStream(ctx, deliveryFilter, detailFilter, productFilter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2375,11 +2376,12 @@ public class AON {
 		}	
 	}
 	
-	public static Stream<IncomeDetail> getIncomeDetailStream(String domainName, Integer domainId, String login, IncomeFilter incomeFilter, ProductFilter productFilter){
+	public static Stream<IncomeDetail> getIncomeDetailStream(String domainName, Integer domainId, String login,
+			IncomeFilter incomeFilter, IncomeDetailFilter detailFilter, ProductFilter productFilter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getIncomeDetailStream(ctx, incomeFilter, productFilter);
+			return getWarehouse().getIncomeDetailStream(ctx, incomeFilter, detailFilter, productFilter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2672,6 +2674,19 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName,domainId,login);
 			return getStats().getProductMovements(ctx, productFilter, itemFilter, invoiceFilter,
+					deliveryFilter, incomeFilter);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}		
+	}
+	
+	public static StatData<Integer, String, Double> getItemMovements(String domainName, Integer domainId, String login, ProductFilter productFilter,
+			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, IncomeFilter incomeFilter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,login);
+			return getStats().getItemMovements(ctx, productFilter, itemFilter, invoiceFilter,
 					deliveryFilter, incomeFilter);
 		} finally {
 			if (ctx != null) 
