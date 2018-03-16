@@ -84,8 +84,10 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private TextBox concept;
 	private TextBox document;
 	private ListBox activity;
+	private TextBox comments;
 	private ListBox order;
 	private Button cleanButton;
+	
 	
 	
 	private int lastScrollPos = 0;
@@ -107,7 +109,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		
 		northPanel = new SimpleLayoutPanel();
 		fillNorthPanel(tabIndex,config);
-		addNorth(northPanel, 90);
+		addNorth(northPanel, 110);
 		centerPanel = new ScrollPanel();
 		centerPanel.addStyleName(AON.AON_CSS.aonTextCenter());
 		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
@@ -269,6 +271,18 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 				onSearch(config);
 			}
 		});
+		
+		comments = new TextBox();
+		comments.setVisibleLength(30);
+		comments.setStyleName(AON.AON_CSS.aonInputText());
+		comments.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				onSearch(config);
+			}
+		});
+		
 		if (config != null && config.hasActivities()) {
 			activity = new ListBox();
 			activity.setWidth("150px");
@@ -291,7 +305,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		}
 		
 		order = new ListBox();
-		order.setWidth("150px");
+		order.setWidth("200px");
 		order.addItem("Ejerc., n\u00BA diario, fecha");
 		order.addItem("Fecha creaci\u00F3n, descendente");
 		order.addItem("Fecha modificaci\u00F3n, descendente");
@@ -315,8 +329,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.getColumnFormatter().setWidth(4, "1%");
 		tab.getColumnFormatter().setWidth(5, "1%");
 		tab.getColumnFormatter().setWidth(6, "1%");
-		tab.getColumnFormatter().setWidth(7, "1%");
-		tab.getColumnFormatter().setWidth(8, "auto");
+		tab.getColumnFormatter().setWidth(7, "auto");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.fiscalYear() +"/"+ AON.MSG.date()));
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
@@ -390,9 +403,6 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			}
 		});
 
-		tab.setWidget(0, 8, order);
-		tab.getCellFormatter().setStyleName(0,8, AON.AON_CSS.aonPanelGridEven());
-
 		tab.setWidget(1, 0, new Label(AON.MSG.account()));
 		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
 
@@ -427,9 +437,21 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		tab.setWidget(1, 7, document);
 		tab.getCellFormatter().setStyleName(1,7, AON.AON_CSS.aonPanelGridEven());
 		
+		
+		tab.setWidget(2, 0, new Label(AON.MSG.comments()));
+		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonPanelGridOdd());
+		
+		tab.setWidget(2, 1, comments);
+		tab.getCellFormatter().setStyleName(2, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.getFlexCellFormatter().setColSpan(2, 1, 5);
+		
+		tab.setWidget(2, 2, order);
+		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridEven());
+		tab.getFlexCellFormatter().setColSpan(2, 2, 2);
+		
 		cleanButton.setTitle(AON.MSG.clean());
-		tab.setWidget(1, 8, cleanButton);
-		tab.getCellFormatter().setStyleName(1,8, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(2, 3, cleanButton);
+		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -492,6 +514,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			.setCredit(credit.getValue())
 			.setConcept(concept.getValue())
 			.setDocument(document.getValue())
+			.setComments(comments.getValue())
 			.setConfidential(confidential.getValue())
 			.setHasConfidentialityRole(config.getUser() != null && config.getUser().hasConfidentialityRole())
 			.setOrder(order.getSelectedIndex())

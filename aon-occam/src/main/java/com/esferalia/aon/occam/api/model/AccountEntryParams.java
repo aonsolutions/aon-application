@@ -27,6 +27,8 @@ public class AccountEntryParams implements Serializable{
 	private String document;
 	private Integer balancingAccount;
 	
+	private String comments;
+	
 	private int order;
 	
 	public int getDomain() {
@@ -111,6 +113,13 @@ public class AccountEntryParams implements Serializable{
 	}
 	public AccountEntryParams setDocument(String document) {
 		this.document = document;
+		return this;
+	}
+	public String getComments() {
+		return comments;
+	}
+	public AccountEntryParams setComments(String comments) {
+		this.comments = comments;
 		return this;
 	}
 	public Integer getBalancingAccount() {

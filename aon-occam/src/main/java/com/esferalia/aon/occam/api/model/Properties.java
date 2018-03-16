@@ -1134,6 +1134,7 @@ public interface Properties {
 		Property<Integer> getJournalProperty();
 		Property<Integer> getActivityProperty();
 		Property<Byte> getConfidentialProperty();
+		Property<String> getCommentsProperty();
 
 	}
 

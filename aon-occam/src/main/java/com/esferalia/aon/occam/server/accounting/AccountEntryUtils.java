@@ -38,6 +38,9 @@ public class AccountEntryUtils {
 						SecurityLevel.CONFIDENTIAL.value()));
 			}
 		}
+		if (AonStringUtils.isNotBlank(params.getComments())) {
+			prop = prop.and(p.getCommentsProperty().like(AonStringUtils.SQLlike(params.getComments())));
+		}
 		return prop;
 	}
 
@@ -51,7 +54,7 @@ public class AccountEntryUtils {
 					.or(p.getBalancingAccountProperty().eq(params.getAccount()))
 				);
 		}
-		if (AonStringUtils.isNotEmpty(params.getConcept())) {
+		if (AonStringUtils.isNotBlank(params.getConcept())) {
 			prop = prop.and(p.getConceptProperty().like(
 					AonStringUtils.SQLlike(params.getConcept())));
 		}
@@ -61,7 +64,7 @@ public class AccountEntryUtils {
 		if (params.getCredit() != null  && params.getCredit() != 0.0 ) {
 			prop = prop.and(p.getCreditProperty().eq(params.getCredit()));
 		}
-		if (AonStringUtils.isNotEmpty(params.getDocument())) {
+		if (AonStringUtils.isNotBlank(params.getDocument())) {
 			prop = prop.and(p.getDocumentNumber().like(
 					AonStringUtils.SQLlike(params.getDocument())));
 		}
