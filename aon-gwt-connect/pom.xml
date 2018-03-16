@@ -172,7 +172,7 @@
           <artifactId>gwt-maven-plugin</artifactId>
           <configuration>
             <draftCompile>true</draftCompile>
-	    <module>com.esferalia.aon.gwt.connect.WorkingConnect</module>
+	    <module>com.esferalia.aon.gwt.connect.DevelopmentConnect</module>
           </configuration>
         </plugin>
       </plugins>

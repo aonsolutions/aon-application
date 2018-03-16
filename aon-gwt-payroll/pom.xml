@@ -352,7 +352,7 @@
           <artifactId>gwt-maven-plugin</artifactId>
           <configuration>
             <draftCompile>true</draftCompile>
-	    <module>com.esferalia.aon.gwt.payroll.WorkingPayroll</module>
+	    	<module>com.esferalia.aon.gwt.payroll.DevelopmentPayroll</module>
           </configuration>
         </plugin>
       </plugins>

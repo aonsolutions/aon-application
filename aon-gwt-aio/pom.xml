@@ -315,7 +315,7 @@
           <artifactId>gwt-maven-plugin</artifactId>
           <configuration>
             <draftCompile>true</draftCompile>
-	   		<module>com.esferalia.aon.gwt.aio.WorkingAio</module>
+	   		<module>com.esferalia.aon.gwt.aio.DevelopmentAio</module>
           </configuration>
         </plugin>
       </plugins>

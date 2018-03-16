@@ -341,8 +341,8 @@
             <configuration>
               <draftCompile>true</draftCompile>
               <modules>
-                <module>com.esferalia.aon.gwt.fiscal.WorkingFiscal</module>
-                <module>com.esferalia.aon.gwt.fiscal.deposit.WorkingDeposit</module>
+                <module>com.esferalia.aon.gwt.fiscal.DevelopmentFiscal</module>
+                <module>com.esferalia.aon.gwt.fiscal.deposit.DevelopmentDeposit</module>
               </modules>
             </configuration>
           </plugin>
