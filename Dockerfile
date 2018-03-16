@@ -1,7 +1,7 @@
 FROM tomcat:9.0-jre8
 
-ARG AON_VERSION=9.00-SNAPSHOT
-ARG POOL_VERSION=9.00-SNAPSHOT
+ARG AON_VERSION=9.23-SNAPSHOT
+ARG POOL_VERSION=9.23-SNAPSHOT
 
 ENV CATALINA_HOME /usr/local/tomcat
 
@@ -14,9 +14,10 @@ ENV TOMCAT_LIBDIR $CATALINA_HOME/lib
 
 WORKDIR $TOMCAT_LIBDIR
 
+COPY aon-jaas/target/aon.jaas-${AON_VERSION}.jar aon-jaas.jar 
+
 RUN set -x \
 	\
-	&& wget $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/aon.jaas-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`.jar \
 	&& wget $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/pool-`wget -O - $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $POOL_VERSION`.jar
 
 
@@ -66,8 +67,9 @@ RUN mkdir -p "$AON_AIO_COMMON"
 RUN mkdir -p "$AON_AIO_COMMON/aon-report"
 WORKDIR $AON_AIO_COMMON/aon-report
 
+COPY aon-common-resources/target/aon-common-resources-${AON_VERSION}-templates.jar aon-common-resources-templates.jar
+
 RUN set -x \
-	&& wget -O aon-common-resources-templates.jar $AON_MAVEN_REPOSITORY_URL/aon-common-resources/$AON_VERSION/aon-common-resources-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon-common-resources/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`-templates.jar  \
 	&& unzip aon-common-resources-templates.jar -x META-INF/* \
 	&& rm aon-common-resources-templates.jar 
 
@@ -82,10 +84,10 @@ RUN ln -s izenpesigner-applet-*.jar izenpesigner-applet.jar
 RUN mkdir -p "$AON_AIO_HOME"
 WORKDIR $AON_AIO_HOME
 
+COPY aon-web-aio/target/aon-aio.war aon-aio.war
 
 RUN set -x \
 	\
-	&& wget -O aon-aio.war $AON_MAVEN_REPOSITORY_URL/aon-aio/$AON_VERSION/aon-aio-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon-aio/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`.war \
 	&& unzip aon-aio.war \
 	&& rm aon-aio.war 
 

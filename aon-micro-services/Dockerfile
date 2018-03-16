@@ -14,9 +14,10 @@ ENV TOMCAT_LIBDIR $CATALINA_HOME/lib
 
 WORKDIR $TOMCAT_LIBDIR
 
+COPY aon-jaas/target/aon.jaas-${AON_VERSION}.jar aon-jaas.jar
+
 RUN set -x \
 	\
-	&& wget $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/aon.jaas-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon.jaas/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`.jar \
 	&& wget $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/pool-`wget -O - $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $POOL_VERSION`.jar
 
 
@@ -63,8 +64,9 @@ RUN mkdir -p "$AON_MICRO_SERVICES_COMMON"
 RUN mkdir -p "$AON_MICRO_SERVICES_COMMON/aon-report"
 WORKDIR $AON_MICRO_SERVICES_COMMON/aon-report
 
+COPY aon-common-resources/target/aon-common-resources-${AON_VERSION}-templates.jar aon-common-resources-templates.jar
+
 RUN set -x \
-	&& wget -O aon-common-resources-templates.jar $AON_MAVEN_REPOSITORY_URL/aon-common-resources/$AON_VERSION/aon-common-resources-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon-common-resources/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`-templates.jar  \
 	&& unzip aon-common-resources-templates.jar -x META-INF/* \
 	&& rm aon-common-resources-templates.jar 
 
@@ -73,19 +75,20 @@ RUN mkdir -p "$AON_MICRO_SERVICES_HOME"
 WORKDIR $AON_MICRO_SERVICES_HOME
 
 
+COPY aon-micro-services/target/aon-micro-services.war aon-micro-services.war
+
 RUN set -x \
 	\
-	&& wget -O aon-micro-services.war $AON_MAVEN_REPOSITORY_URL/aon-micro-services/$AON_VERSION/aon-micro-services-`wget -O - $AON_MAVEN_REPOSITORY_URL/aon-micro-services/$AON_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $AON_VERSION`.war \
 	&& unzip aon-micro-services.war \
 	&& rm aon-micro-services.war 
 
 
 RUN mkdir -p "$AON_MICRO_SERVICES_CONF"
 
-COPY src/main/scripts/default.pool-properties $AON_MICRO_SERVICES_CONF
+COPY aon-micro-services/src/main/scripts/default.pool-properties $AON_MICRO_SERVICES_CONF
 
 
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY aon-micro-services/docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 
 # Set the time zone
