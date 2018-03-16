@@ -22,10 +22,8 @@
 	</ui:style>
 
 	<g:HTMLPanel styleName="aon-panelGrid-search" height="55px">
-		<div
-			class="aon-panelGrid-search-info {issuesResources.css.aonPanelGridSearchInfoIssues}">
-			<g:HorizontalPanel ui:field="filterHorizontal"
-				styleName="aon-width-all">
+		<div class="aon-panelGrid-search-info {issuesResources.css.aonPanelGridSearchInfoIssues}">
+			<g:HorizontalPanel ui:field="filterHorizontal">
 				<g:HTMLPanel>
 					<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>
 				</g:HTMLPanel>

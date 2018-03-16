@@ -6,7 +6,9 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.warehouse.JsStockStat;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
@@ -43,7 +45,9 @@ public class FilterPanel extends Composite {
 	private static Binder binder = GWT.create(Binder.class);
 
 	public static final AonGwtIssuesCSS ICSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
-
+	
+	@UiField
+	HorizontalPanel filterHorizontal;
 	@UiField
 	HorizontalPanel panel;
 	@UiField
@@ -53,11 +57,16 @@ public class FilterPanel extends Composite {
 
 	Main parent;
 	
+	FlowPanel breadcrumbs;
+	
 	DateBoxEx fromDate;
 	DateBoxEx toDate;
 	TextBox serialNumberInput;
 	PaperButton categoryButton;
 	PaperButton productButton;
+	
+	JsStockStat selectedProduct;
+	JsStockStat selectedItem;
 	
 	public API getAPI() {
 		return parent.getAPI();
@@ -66,6 +75,9 @@ public class FilterPanel extends Composite {
 	public FilterPanel(Main parent) {
 		this.parent = parent;
 		initWidget(binder.createAndBindUi(this));
+		
+		breadcrumbs = new FlowPanel();
+		filterHorizontal.add(breadcrumbs);
 		
 		searchButton.setTitle(AON.MSG.searchAction());
 		cleanButton.setTitle(AON.MSG.clean());
@@ -147,10 +159,10 @@ public class FilterPanel extends Composite {
 		panel.add(datePanel);
 		
 		FlowPanel fpanel = new FlowPanel();
-		fpanel.add(serialNumberLabel);
-		fpanel.add(serialNumberInput);
 		fpanel.add(categoryButton);
 		fpanel.add(productButton);
+		fpanel.add(serialNumberLabel);
+		fpanel.add(serialNumberInput);
 		panel.add(fpanel);
 	}
 
@@ -203,6 +215,7 @@ public class FilterPanel extends Composite {
 	
 	private void onChangeFilter(String key, LinkedList<String> value) {
     	parent.getFilterMap().put(key, value);
+    	reloadBreadcrumbs();
 	}
 
 	private PaperButton filterButton(String title) {
@@ -226,13 +239,15 @@ public class FilterPanel extends Composite {
 		parent.getFilterMap().clear();
 		fromDate.setValue(null);
 		toDate.setValue(null);
-//		((ValueBox<Integer>)accumulationDaysInput).setValue(null);
+		serialNumberInput.setValue(null);
 		reloadContent();
 	}
 	
 	@UiHandler("searchButton")
 	void searchButton(ClickEvent event) {
 		Date from = fromDate.getValue(), to = toDate.getValue();
+		selectedProduct = selectedItem = null;
+		parent.getFilterMap().remove("item");
 		if(from==null || to==null)
 			Window.alert("Se deben indicar, al menos, las fechas DESDE y HASTA");
 		else if(from.after(to))
@@ -240,6 +255,16 @@ public class FilterPanel extends Composite {
 		else
 			reloadContent();
 	}
+	
+	void selectProduct(JsStockStat product) {
+		this.selectedProduct = product;
+		reloadBreadcrumbs();
+	}
+	void selectItem(JsStockStat item) {
+		this.selectedItem = item;
+		reloadBreadcrumbs();
+	}
+	
 	
 	private String key;
 
@@ -269,9 +294,71 @@ public class FilterPanel extends Composite {
 						parent.getFilterMap().get(key).remove(js.getId() + "");
 					}
 				}
+				reloadBreadcrumbs();
 			}
 		};
 		sw.show();
+	}
+	private void reloadBreadcrumbs() {
+		breadcrumbs.clear();
+		if(parent.getFilterMap().containsKey("from")) {
+			String text = AonDateUtils.formatDate(new Date(Long.parseLong(parent.getFilterMap().get("from").getFirst())));
+			breadcrumbs.add(createFilterLabel(" Desde:"));
+			breadcrumbs.add(createFilterValue(text, null));
+		}
+		if(parent.getFilterMap().containsKey("to")) {
+			String text = AonDateUtils.formatDate(new Date(Long.parseLong(parent.getFilterMap().get("to").getFirst())));
+			breadcrumbs.add(new InlineLabel(" | "));
+			breadcrumbs.add(createFilterLabel("Hasta:"));
+			breadcrumbs.add(createFilterValue(text, null));
+		}
+		if(parent.getFilterMap().containsKey("category") && parent.getFilterMap().get("category").size()>0) {
+			String text = parent.getFilterMap().get("category").size()+"";
+			String title = parent.getFilterMap().get("category").toString();
+			breadcrumbs.add(new InlineLabel(" | "));
+			breadcrumbs.add(createFilterLabel("Cat.:"));
+			breadcrumbs.add(createFilterValue(text, title));
+		}
+		if(parent.getFilterMap().containsKey("product") && parent.getFilterMap().get("product").size()>0) {
+			String text = parent.getFilterMap().get("product").size()+"";
+			String title = parent.getFilterMap().get("product").toString();
+			breadcrumbs.add(new InlineLabel(" | "));
+			breadcrumbs.add(createFilterLabel("Prod.:"));
+			breadcrumbs.add(createFilterValue(text, title));
+		}
+		if(parent.getFilterMap().containsKey("serial_number") && parent.getFilterMap().get("serial_number").size()>0) {
+			String text = parent.getFilterMap().get("serial_number").getFirst();
+			breadcrumbs.add(new InlineLabel(" | "));
+			breadcrumbs.add(createFilterLabel("Lote/n\u00B0 Serie:"));
+			breadcrumbs.add(createFilterValue(text, null));
+		}
+//		if(parent.getFilterMap().containsKey("item") && parent.getFilterMap().get("item").size()>0) {
+//			String text = parent.getFilterMap().get("item").size()+"";
+//			String title = parent.getFilterMap().get("item").toString();
+//			breadcrumbs.add(new InlineLabel(" | "));
+//			breadcrumbs.add(createFilterLabel("Det.:"));
+//			breadcrumbs.add(createFilterValue(text, title));
+//		}
+		if(selectedItem!=null) {
+			breadcrumbs.add(new InlineLabel(" | "));
+			breadcrumbs.add(createFilterLabel("Seleccionado:"));
+			breadcrumbs.add(createFilterValue(selectedItem.getProductName(), selectedItem.getProductName()));
+		} else if(selectedProduct!=null) {
+			breadcrumbs.add(new InlineLabel(" | "));
+			breadcrumbs.add(createFilterLabel("Seleccionado:"));
+			breadcrumbs.add(createFilterValue(selectedProduct.getProductName(), selectedProduct.getProductName()));
+		}
+	}
+	private InlineLabel createFilterLabel(String text) {
+		InlineLabel label = new InlineLabel(text);
+		label.setStyleName(AON.AON_CSS.aonItalic());
+		return label;
+	}
+	private InlineLabel createFilterValue(String text, String title) {
+		InlineLabel label = new InlineLabel(text);
+		label.setTitle(title);
+		label.setStyleName(AON.AON_CSS.aonBold());
+		return label;
 	}
 	
 	private void reloadContent() {
