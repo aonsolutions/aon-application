@@ -102,8 +102,8 @@ public class FinanceRecorder {
 		String concept = (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();
 		if (AonStringUtils.isNotBlank(manualConcept)) {
 			concept = concept + " [" + manualConcept;
-			if (AonStringUtils.length(concept) > 32) {
-				concept = AonStringUtils.abbreviate(concept,31);
+			if (AonStringUtils.length(concept) > 31) {
+				concept = AonStringUtils.substring(concept, 0, 30);
 			}
 			concept = concept + "]";
 		}
