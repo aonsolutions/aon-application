@@ -22,8 +22,8 @@
 
 	<set-property name="user.agent" value="gecko1_8" />
 	<extend-property name="user.agent" values="safari" />
-	<extend-property name="user.agent" values="ie8" />
-	<extend-property name="user.agent" values="ie9" />
+	<!--extend-property name="user.agent" values="ie8" /-->
+	<!--extend-property name="user.agent" values="ie9" /-->
 	<extend-property name="user.agent" values="ie10" />
 
 	<set-configuration-property name="locale.useragent"
