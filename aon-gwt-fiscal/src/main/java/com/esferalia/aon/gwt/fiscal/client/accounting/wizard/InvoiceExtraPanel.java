@@ -684,7 +684,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 
 		@Override
 		public void visitCustomer(AccountingRegistry reg) {
-			investment.setVisible(false);
+			investment.setVisible(true);
 			service.setVisible(true);
 		}
 
