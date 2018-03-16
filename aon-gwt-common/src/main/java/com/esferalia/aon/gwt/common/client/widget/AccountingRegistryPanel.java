@@ -67,7 +67,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		setWidth("700px");
-		setHeight("550px");
+		setHeight("650px");
 		documentWarningContainer.setStyleName(AON.AON_CSS.aonMarginBottom());
 		if (id != null) {
 			commonService.getAccountingRegistries(domainName, domain,id
@@ -541,7 +541,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 		address.setValue(reg.getAddress());
 		address.setStyleName(AON.AON_CSS.aonInputText());
 		address.addStyleName(AON.AON_CSS.aonMarginRight5());
-		address.setVisibleLength(25);
+		address.setVisibleLength(35);
 		address.setMaxLength(64);
 		address.addKeyUpHandler( keyUpHandler);
 		address.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -707,6 +707,11 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 			@Override
 			public void onClick(ClickEvent event) {
 				okButton.setEnabled(false);
+				if (AonStringUtils.isBlank(reg.getName())) {
+					errorPanel.showError("Debe rellenar el nombre del titutlar" );
+					okButton.setEnabled(true);
+					name.setFocus(true);
+				} else {
 					commonService.insert(domainName, domain, reg, new AsyncCallback<AccountingRegistry>() {
 
 						@Override
@@ -721,6 +726,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 							callback.setFocus(true);
 						}
 					});
+				}
 			}
 		});
     	buttons.add(okButton);
