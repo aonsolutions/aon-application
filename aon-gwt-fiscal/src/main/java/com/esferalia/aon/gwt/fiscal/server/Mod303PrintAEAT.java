@@ -39,7 +39,8 @@ public class Mod303PrintAEAT extends ModPrintAEAT {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			init(req);
+			JSONObject json = getRequestJSON(req);
+			init(req, json);
 			Mod303 mod303 = FISCAL.getMod303(getDomainName(), getDomainId(), getUser(), getId());
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -54,6 +55,9 @@ public class Mod303PrintAEAT extends ModPrintAEAT {
 						
 			send(req, resp, mod303, output.toByteArray());
 		} catch (Throwable e) {
+			if(!isPrint()) {
+				exceptionErrors(req, resp, e.getMessage());
+			}
 			throw new ServletException(e);
 		}
 	}
@@ -68,7 +72,7 @@ public class Mod303PrintAEAT extends ModPrintAEAT {
 			// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
 			: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
 		
-		download(resp, request, urlParameters);
+		send(req, resp, request, urlParameters);
 	}
 	
 	public String getUrlParameters(Mod303 mod303, String encodedFile){

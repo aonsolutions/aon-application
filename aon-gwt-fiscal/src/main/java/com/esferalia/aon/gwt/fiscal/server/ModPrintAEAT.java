@@ -69,31 +69,59 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	String name;
 	String document;
 	
+	Boolean print;
+	
 	public ModPrintAEAT() {
 	
 	}
 	
-	protected void init(HttpServletRequest req) {
-		this.id = Integer.parseInt(req.getParameter("mod"));
-		this.domainName = req.getParameter("domainName");
-		this.domainId = Integer.parseInt(req.getParameter("domainId"));
-		this.user = req.getParameter("user");	
-		if(req.getParameter("cert") != null && !req.getParameter("cert").isEmpty()) {
-			Integer c = Integer.parseInt(req.getParameter("cert"));
+	protected void init2(JSONObject json) throws JSONException {
+		this.print = false;
+		
+		this.id = json.getInt("mod");
+		this.domainName = json.getString("domainName");
+		this.domainId = json.getInt("domainId");
+		this.user = json.getString("user");	
+		if(json.opt("cert") != null) {
+			Integer c = json.getInt("cert");
 			Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
-					.and(f.getIdProperty().eq(c))
-					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
+				.and(f.getIdProperty().eq(c))
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
 			if(attach.getData() == null){
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
 			this.cert = attach.getData();
-			this.pass = req.getParameter("pass");
-			this.name = req.getParameter("name");
-			this.document = req.getParameter("document");
+			this.pass = json.getString("pass");
+			this.name = json.getString("name");
+			this.document = json.getString("document");
 		}
-	}
+	}	
+	protected void init(HttpServletRequest req, JSONObject json) throws JSONException {
+		if(req.getParameter("mod") != null && !req.getParameter("mod").isEmpty()) {
+			this.print = true;
+			this.id = Integer.parseInt(req.getParameter("mod"));
+			this.domainName = req.getParameter("domainName");
+			this.domainId = Integer.parseInt(req.getParameter("domainId"));
+			this.user = req.getParameter("user");	
+			if(req.getParameter("cert") != null && !req.getParameter("cert").isEmpty()) {
+				Integer c = Integer.parseInt(req.getParameter("cert"));
+				Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
+						.and(f.getIdProperty().eq(c))
+						.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
+				if(attach.getData() == null){
+					DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
+					Drive drive = AonDrive.getInstace().serviceInitialize(g);
+					attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+				}
+				this.cert = attach.getData();
+				this.pass = req.getParameter("pass");
+				this.name = req.getParameter("name");
+				this.document = req.getParameter("document");
+			}
+		} else init2(json);
+	}	
 	
 	public Integer getId() {
 		return id;
@@ -148,6 +176,10 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		return getCert() != null;
 	}
 	
+	public Boolean isPrint() {
+		return print;
+	}
+	
 	protected String getEncodedFile(byte[] content) throws UnsupportedEncodingException {
 		String fileString = new String(content, "ISO-8859-1");
 		fileString = fileString.replace("'", " ");
@@ -157,7 +189,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		return URLEncoder.encode(fileString, "ISO-8859-1");
 	}	
 	
-	protected void download(HttpServletResponse resp, String request, String urlParameters) throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException, JSONException, ScriptException {
+	protected void send(HttpServletRequest req, HttpServletResponse resp, String request, String urlParameters) throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException, JSONException, ScriptException {
 		URL url = new URL(request);
    		
 		SSLContext ctx = SSLContext.getInstance("TLS");
@@ -190,17 +222,34 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		wr.flush();
 		wr.close();
 		
-		if(isCert()) {
-			String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
-			JSONObject json = parseHTML(html);
-			saveHistory(json);
-			ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
-			AonIOUtils.copy(input, resp.getOutputStream());	
+		if(isPrint()) {
+			if(isCert()) {
+				String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+				JSONObject json = parseHTML(html);
+				saveHistory(json);
+				ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
+				AonIOUtils.copy(input, resp.getOutputStream());	
+			} else {
+				DataInputStream input = new DataInputStream(connection.getInputStream());
+				AonIOUtils.copy(input, resp.getOutputStream());
+			} 
 		} else {
-			DataInputStream input = new DataInputStream(connection.getInputStream());
-			AonIOUtils.copy(input, resp.getOutputStream());
-		} 
-		
+			JSONObject json = new JSONObject();
+			if(isCert()) {
+				String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+				json = parseHTML(html);
+				saveHistory(json);
+				giveBack(req, resp, json, new JSONObject());
+			} else {
+				if(MimeType.PDF.getName().equals(connection.getContentType())) {
+					json.put("CEL", "CEL");
+				} else {
+					String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+					json = parseHTML(html);
+				}
+				giveBack(req, resp, json, new JSONObject());
+			}
+		}
 		resp.flushBuffer();
 		connection.disconnect();
 	}
@@ -276,19 +325,32 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		    AON.insertDataResponseDetail(getDomainName(), getDomainId(), getUser(), drd);
 		}
 		if(ok && json.opt("url") != null) {
-			Integer attachId = AON.insertAttach(getDomainName(), getDomainId(), getUser(), new Attach()
-				.setSourceType(getDataAttachSource().value())
-				.setSourceBatch(getId())
-				.setType(DataAttachType.RESPONSE_OK.value())
-				.setAttachModule(dr.getId())
-				.setAttachType(AttachType.DATA)
-				.setDomain(new Domain().setName(getDomainName()).setId(getDomainId()))
-				.setData(getUrlFile(json.get("url").toString()))
-				.setMimeType(MimeType.PDF)
-				.setDescription("Presentacion AEAT"));
-			json.put("data", attachId);
+			Attach attach = AON.getAttach(getDomainName(), getDomainId(), getUser(), f-> 
+				f.getDomainProperty().eq(getDomainId())
+				.and(f.getSourceTypeProperty().eq(getDataAttachSource().value()))
+				.and(f.getSourceBatchProperty().eq(getId()))
+				.and(f.getDescriptionProperty().eq("Presentacion AEAT"))
+				,AttachType.DATA, false);
+			if(attach.getId() != null) {
+				AON.updateAttachData(getDomainName(), getDomainId(), getUser(), 
+						attach.setData(getUrlFile(json.get("url").toString())));
+				json.put("data", attach.getId());
+			} else {
+				Integer attachId = AON.insertAttach(getDomainName(), getDomainId(), getUser(), new Attach()
+						.setSourceType(getDataAttachSource().value())
+						.setSourceBatch(getId())
+						.setType(DataAttachType.RESPONSE_OK.value())
+						.setAttachModule(dr.getId())
+						.setAttachType(AttachType.DATA)
+						.setDomain(new Domain().setName(getDomainName()).setId(getDomainId()))
+						.setData(getUrlFile(json.get("url").toString()))
+						.setMimeType(MimeType.PDF)
+						.setDescription("Presentacion AEAT"));
+				json.put("data", attachId);
+			}
+			updateMod(json);
 		}
-		updateMod(json);
+		
 	}
 	
 	public JSONObject getRequestJSON(HttpServletRequest req) throws JSONException{
@@ -299,6 +361,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 				bld.append(" " + line);
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		String s = checkString(bld.toString());
 		if(s == null || "".equals(s)){
@@ -376,6 +439,16 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		  if (is != null) { is.close(); }
 		}	
 		return b;
+	}
+	
+	protected void exceptionErrors(HttpServletRequest req, HttpServletResponse resp, String error) {
+		if("keystore password was incorrect".equals(error)){
+			try {
+				JSONObject json = new JSONObject();
+				json.put("E00", "La contraseña introducida es incorrecta.");
+				if(!isPrint()) giveBack(req, resp, json, new JSONObject());
+			} catch (JSONException e1) {e1.printStackTrace();}
+		}
 	}
 	
 	protected abstract DataResponseSource getDataResponseSource();

@@ -37,7 +37,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 @SuppressWarnings("serial")
 @WebServlet(name = "CommonServlet", urlPatterns = {"/common/*",
 												   "/aon_gwt_aio/common/*",
-												   "/aon_gwt_commercial/common/*"})
+												   "/aon_gwt_commercial/common/*",
+												   "/aon_gwt_fiscal/common/*"})
 public class CommonServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(CommonServlet.class.getName());

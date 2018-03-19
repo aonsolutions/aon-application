@@ -5,7 +5,10 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -37,6 +40,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class ModelMatrix extends MainEntryPoint {
 
@@ -219,20 +223,63 @@ public class ModelMatrix extends MainEntryPoint {
 	}
 
 	protected static FiscalModelServiceAsync SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+
+	private NeoMatrix neo;
+	
+	private NeoMatrix getNeo() {
+		return neo;
+	}
 
 	@Override
 	public void onModuleLoad() {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
+
+			@Override public void onFailure(Throwable caught) {}
+
+			@Override
+			public void onSuccess(AonData aonData) {
+				onModuleLoad(aonData);
+			}
+		});
+	}
+	
+	public void onModuleLoad(AonData aonData) {
 		AON.ensureInjected();
 		
 		FiscalModelServiceAsync serviceRaw = GWT.create(FiscalModelService.class);
 		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
-		
+
 		DockLayoutPanel dockLayout = new DockLayoutPanel(Unit.PX);
 		FilterPanel filterPanel = new FilterPanel();
 		dockLayout.addNorth(filterPanel, 50);
-		ScrollPanel scrollPanel = new ScrollPanel();
-		dockLayout.add(scrollPanel);
+		SplitLayoutPanel splitLayout = new SplitLayoutPanel();
 
+		// TODO Aqui añadir la nueva pantalla;
+		//************************************************//
+		this.neo = new NeoMatrix(aonData) {
+					
+			@Override
+			protected void onOpenPanel() {
+				Integer clientHeight = Window.getClientHeight();
+				splitLayout.setWidgetSize(getNeo(), clientHeight.doubleValue() / 3);	
+				splitLayout.animate(500);
+			}
+					
+			@Override
+			protected void onClosePanel() {
+				splitLayout.setWidgetSize(getNeo(), 30);	
+				splitLayout.animate(500);				
+			}
+		};
+		splitLayout.addSouth(neo, 30);
+
+		ScrollPanel scrollPanel = new ScrollPanel();
+		splitLayout.add(scrollPanel);
+		//************************************************//
+		
+		dockLayout.add(splitLayout);
+		
 		filterPanel.addValueChangeHandler( new ValueChangeHandler<FiscalMatrixParams>() {
 			
 			@Override
@@ -390,19 +437,26 @@ public class ModelMatrix extends MainEntryPoint {
 									mod.setText("\u2022");
 									if (model.getStatus() != FiscalStatus.MISSING) {
 //										mod.setTitle(model.getStatus().getName() + ". Click para detalles.");
-//										mod.setStyleName(AON.AON_CSS.aonClickable());
+										mod.setStyleName(AON.AON_CSS.aonClickable());
 										mod.addStyleName(AON.AON_CSS.aonTextCenter());
-//										focusPanel.addClickHandler( new ClickHandler() {
-//											
-//											@Override
-//											public void onClick(ClickEvent event) {
-//												showInfo( model );
-//											}
-//											
-//										});
+										
+										// TODO AQUI ESTA LA SELECCION DEL MODELO!
+										//************************************************//
+										focusPanel.addClickHandler( new ClickHandler() {
+											
+											@Override
+											public void onClick(ClickEvent event) {
+												getNeo().onOpenPanel();
+												if(getNeo().hasModel(model)) 
+													getNeo().removeModel(model);
+												else getNeo().addModel(model);
+											}
+											
+										});
+										//************************************************//
 									}
 									focusPanel.add(mod);
-									tab.getCellFormatter().addStyleName(row, col, FiscalModelUtils.gettStatusBckColor( model.getStatus() ));
+									tab.getCellFormatter().addStyleName(row, col, FiscalModelUtils.gettStatusBckColor(model.getStatus()));
 									tab.setWidget(row, col, focusPanel);
 								}
 							}
@@ -480,9 +534,5 @@ public class ModelMatrix extends MainEntryPoint {
 			models.set(type.getIndex(mod.getPeriod()), mod);
 		}
 		return domainMap;
-	}
-	
-	private void showInfo(IFiscalModel model) {
-		Window.alert("Click!!");
 	}
 }

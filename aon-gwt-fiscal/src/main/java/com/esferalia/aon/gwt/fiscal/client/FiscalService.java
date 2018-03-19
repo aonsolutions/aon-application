@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
@@ -82,5 +83,7 @@ public interface FiscalService extends RemoteService {
 	// --------------------------------------------------------------- GWT API INFO
 
 	AonData getAonData(String domainName, Integer domainId);
+
+	Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id);
 	
 }

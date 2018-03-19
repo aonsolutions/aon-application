@@ -38,7 +38,8 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			init(req);
+			JSONObject json = getRequestJSON(req);
+			init(req, json);
 			Mod115 mod115 = FISCAL.getMod115(getDomainName(), getDomainId(), getUser(), getId());
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -53,6 +54,9 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 			
 			send(req, resp, mod115, output.toByteArray());		
 		} catch (Throwable e) {
+			if(!isPrint()) {
+				exceptionErrors(req, resp, e.getMessage());
+			}
 			throw new ServletException(e);
 		}
 	}
@@ -67,7 +71,7 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 			// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
 			: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
 	
-		download(resp, request, urlParameters);
+		send(req, resp, request, urlParameters);
 	}
 		
 	private String getUrlParameters(Mod115 mod115, String encodedFile) {

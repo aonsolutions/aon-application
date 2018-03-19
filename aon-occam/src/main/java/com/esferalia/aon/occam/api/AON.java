@@ -2133,6 +2133,8 @@ public class AON {
 				getAttachment().updateProjectAttachData(ctx, attach);
 			else if (attach.getAttachType().equals(AttachType.SEPE))
 				getAttachment().updateSepeAttachData(ctx, attach);
+			else if (attach.getAttachType().equals(AttachType.DATA))
+				getAttachment().updateDataAttachData(ctx, attach);
 
 		} finally {
 			if (ctx != null)

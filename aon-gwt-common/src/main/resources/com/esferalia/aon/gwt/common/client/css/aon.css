@@ -1852,26 +1852,31 @@ input:disabled+label {
 
 @sprite .aon-icon-point-green {
 	gwt-image: "aonIconPointGreen";
+	background-position-y: -1px !important;
 	width: auto !important;
 }
 
 @sprite .aon-icon-point-light-green {
 	gwt-image: "aonIconPointLightGreen";
+	background-position-y: -1px !important;
 	width: auto !important;
 }
 
 @sprite .aon-icon-point-orange {
 	gwt-image: "aonIconPointOrange";
+	background-position-y: -1px !important;
 	width: auto !important;
 }
 
 @sprite .aon-icon-point-red {
 	gwt-image: "aonIconPointRed";
+	background-position-y: -1px !important;
 	width: auto !important;
 }
 
 @sprite .aon-icon-point-yellow {
 	gwt-image: "aonIconPointYellow";
+	background-position-y: -1px !important;
 	width: auto !important;
 }
 

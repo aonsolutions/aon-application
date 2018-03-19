@@ -23,6 +23,10 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	private static final long serialVersionUID = -1101706717961420535L;
 
+	public static Mod303ServiceImpl getInstance() {
+		return new Mod303ServiceImpl();
+	}
+	
 	// ---------------------------------------------------------------MODELO 303
 	@Override
 	public Mod303 getMod303(String domainName, String user, int domain,int id) throws AonCoreException {

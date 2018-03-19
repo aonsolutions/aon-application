@@ -517,6 +517,13 @@ public class AttachmentDAO {
 			.execute();
 		}
 		
+		public static void updateDataAttachData(AONContext ctx, Attach attach){
+			ctx.getDslContext().update(DATA_ATTACH)
+				.set(DATA_ATTACH.DATA, attach.getData())
+			.where(DATA_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		}
+		
 	//-------------------- DRIVE ID UPDATE
 		
 			public static void updateContractAttachDriveId(AONContext ctx, Integer attachId, String driveId){

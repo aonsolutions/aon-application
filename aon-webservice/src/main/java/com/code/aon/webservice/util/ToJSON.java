@@ -489,6 +489,7 @@ public class ToJSON {
 		return new JSONObject()
 				.put(MSG.ID, dr.getId())
 				.put(MSG.DOMAIN, dr.getDomain())
+				.put("code", dr.getCode())
 				.put(MSG.NUMBER, dr.getCode())
 				.put(MSG.ISSUE_DATE, dr.getResponseDate() != null ? AonDateUtils.dateTimeFormat(dr.getResponseDate()) : "")
 				.put(MSG.DATE, dr.getResponseDate() != null ? AonDateUtils.dateTimeFormat(dr.getResponseDate()) : "")

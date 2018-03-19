@@ -47,6 +47,8 @@ public interface IAttachment {
 	public void updateProjectAttachData(AONContext ctx, Attach attach);
 	public void updateRegistryAttachData(AONContext ctx, Attach attach);
 	public void updateSepeAttachData(AONContext ctx, Attach attach);
+	public void updateDataAttachData(AONContext ctx, Attach attach);
+	
 	
 	public void updateContractAttachDriveId(AONContext ctx, Integer attachId, String driveId);
 	public void updateItemAttachDriveId(AONContext ctx, Integer attachId, String driveId);

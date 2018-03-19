@@ -57,6 +57,87 @@ public abstract class CertificationPopup extends CustomDialog {
 		return tb.getValue();
 	}
 	
+	public CertificationPopup(API API) {
+		this.API = API;
+		setCaption("Certificado Digital");
+		setGlassEnabled(true);
+		setAnimationEnabled(true);
+
+		VerticalPanel vp = new VerticalPanel();
+		
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setVisible(false);
+		vp.add(hp);
+		
+		HorizontalPanel hp0 = new HorizontalPanel();
+		hp0.setVisible(false);
+		vp.add(hp0);
+		
+		HorizontalPanel hp1 = new HorizontalPanel();
+		hp1.addStyleName(AON.AON_CSS.aonPaddingTop());
+		Label l1 = new Label("Certificado");
+		l1.addStyleName(AON.AON_CSS.aonPaddingRight());
+		hp1.add(l1);
+		ListBox lb = new ListBox();
+		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsAttach> result) {
+				result.getData().stream().forEach(a -> {
+					lb.addItem(a.getTitle(), a.getId() + "");
+				});
+			}
+
+			@Override public void onFailure(Throwable caught) {}
+		});
+		hp1.add(lb);
+		
+		HorizontalPanel hp2 = new HorizontalPanel();
+		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
+		Label l2 = new Label("Contrase\u00f1a");
+		l2.addStyleName(AON.AON_CSS.aonPaddingRight());
+		hp2.add(l2);
+		PasswordTextBox ptb = new PasswordTextBox();
+		ptb.setStyleName(AON.AON_CSS.aonInputText());
+		hp2.add(ptb);
+		vp.add(hp1);
+		vp.add(hp2);
+
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.AON_CSS.aonPadding());
+		buttonsPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+		buttonsPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+		Button acceptButton = new Button();
+		acceptButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
+		acceptButton.setText( AON.MSG.accept());
+		
+		acceptButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				hide();
+				onAccept();
+			}
+		});
+		buttonsPanel.add(acceptButton);
+		Button cancelButton = new Button();
+    	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
+    	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+    	cancelButton.setText( AON.MSG.cancelAction());
+		cancelButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				hide();
+				onCancel();
+			}
+			
+		});
+		buttonsPanel.add(cancelButton);
+		vp.add(buttonsPanel);
+		add(vp);
+	}
+	
 	public CertificationPopup(API API, String name, String document) {
 		this.API = API;
 		setCaption("Certificado Digital");

@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
@@ -295,5 +296,21 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 	    }       
         return sb.toString();
+	}
+	@Override
+	public Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type,
+			Integer id) {
+		if(FiscalModelType.M303.equals(type) 
+				|| FiscalModelType.M303_RG.equals(type)
+				|| FiscalModelType.M303_RS.equals(type)) {
+			return Mod303ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
+		} else if(FiscalModelType.M111.equals(type)) {
+			return Mod111ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
+		}  else if(FiscalModelType.M115.equals(type)) {
+			return Mod115ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
+		}  else if(FiscalModelType.M123.equals(type)) {
+			return Mod123ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
+		}
+		return -1;
 	}
 }

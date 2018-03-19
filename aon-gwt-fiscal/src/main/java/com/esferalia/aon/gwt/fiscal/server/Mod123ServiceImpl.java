@@ -23,6 +23,10 @@ public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	private static final long serialVersionUID = 9086155747294281837L;
 
+	public static Mod123ServiceImpl getInstance() {
+		return new Mod123ServiceImpl();
+	}
+	
 	@Override
 	public Mod123 getMod123(String domainName,String userLogin, int domain,int id) throws AonCoreException {
 		return FISCAL.getMod123(domainName, domain, userLogin, id);	
