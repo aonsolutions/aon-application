@@ -1514,7 +1514,7 @@ INSERT INTO `tax` (`domain`,`name`,`tax_type`,`percentage`,`surcharge`,`start_da
   (@Domain,'REDUCIDO',1,10.000,1.400,'2012-09-01',0,0),
   (@Domain,'SUPERREDUCIDO',1,4.000,0.500,'2000-01-01',0,0),
   (@Domain,'SIN IVA',1,0.000,0.000,'2000-01-01',0,0),
-  (@Domain,'IRPF ALQUILERES',2,19.000,0.000,'2016-01-01',0,0),
+  (@Domain,'IRPF ALQUILERES',2,19.000,0.000,'2016-01-01',0,1),
   (@Domain,'IRPF PROFESIONALES',2,15.000,0.000,'2015-07-12',0,0);
 
 INSERT INTO `tax_detail` (`domain`,`tax`,`start_date`,`end_date`,`value`,`surcharge`) VALUES 
