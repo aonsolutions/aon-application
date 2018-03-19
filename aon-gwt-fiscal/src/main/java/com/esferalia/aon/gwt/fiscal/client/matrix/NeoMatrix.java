@@ -47,6 +47,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class NeoMatrix extends DockLayoutPanel {
+
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	private API API;
 	private HashMap<Integer, IFiscalModel> modelMap = new HashMap<>();
@@ -184,8 +186,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO 
-				Window.alert("Finalizar Modelo");
+				markAsFinished(0);
 			}
 		});
 		fp.add(finishButton);
@@ -238,6 +239,26 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		});
 	
 		return wrapper;		
+	}
+	
+	private void markAsFinished(Integer i) {
+		if(i < modelListPanel.getWidgetCount()) {
+			Integer id = Integer.parseInt(modelListPanel.getWidget(i).getTitle());
+			IFiscalModel model = modelMap.get(id);
+			impl.markAsFinished(domain.getName(), domain.getId(), user, model, new AsyncCallback<Void>() {
+				@Override
+				public void onSuccess(Void v) {
+					// TODO
+					markAsFinished(i + 1);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					// TODO
+					markAsFinished(i + 1);
+				}
+			});
+		}
 	}
 	
 	private void send(Integer i, String cert, String pass) {
@@ -381,7 +402,6 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		hp.add(l0);
 		hp.add(l1);
 		
-		final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 		impl.presentationFile(domain.getName(), domain.getId(), user, model.getModel(), model.getId(), new AsyncCallback<Integer>() {
 
 			@Override

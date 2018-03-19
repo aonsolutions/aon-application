@@ -33,9 +33,16 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
@@ -297,6 +304,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	    }       
         return sb.toString();
 	}
+	
 	@Override
 	public Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type,
 			Integer id) {
@@ -312,5 +320,30 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			return Mod123ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
 		}
 		return -1;
+	}
+	
+	@Override
+	public void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model) {
+		if(FiscalModelType.M303.equals(model.getModel()) 
+				|| FiscalModelType.M303_RG.equals(model.getModel())
+				|| FiscalModelType.M303_RS.equals(model.getModel())) {
+			Mod303 mod303 = FISCAL.getMod303(domainName, domainId, user, model.getId());
+			Mod303ServiceImpl.getInstance().markAsFinished(domainName, user, mod303);
+		} else if(FiscalModelType.M111.equals(model.getModel())) {
+			Mod111 mod111 = FISCAL.getMod111(domainName, domainId, user, model.getId());
+			Mod111ServiceImpl.getInstance().markAsFinished(domainName, user, mod111);
+		}  else if(FiscalModelType.M115.equals(model.getModel())) {
+			Mod115 mod115 = FISCAL.getMod115(domainName, domainId, user, model.getId());
+			Mod115ServiceImpl.getInstance().markAsFinished(domainName, user, mod115);
+		}  else if(FiscalModelType.M123.equals(model.getModel())) {
+			Mod123 mod123 = FISCAL.getMod123(domainName, domainId, user, model.getId());
+			Mod123ServiceImpl.getInstance().markAsFinished(domainName, user, mod123);
+		} else if(FiscalModelType.M130.equals(model.getModel())) {
+			Mod130 mod130 = FISCAL.getMod130(domainName, domainId, user, model.getId());
+			Mod130ServiceImpl.getInstance().markAsFinished(domainName, user, mod130);
+		} else if(FiscalModelType.M131.equals(model.getModel())) {
+			Mod131 mod131 = FISCAL.getMod131(domainName, domainId, user, model.getId());
+			Mod131ServiceImpl.getInstance().markAsFinished(domainName, user, mod131);
+		}
 	}
 }

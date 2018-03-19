@@ -19,6 +19,10 @@ public class Mod130ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	private static final long serialVersionUID = 1L;
 	
+	public static Mod130ServiceImpl getInstance() {
+		return new Mod130ServiceImpl();
+	}
+	
 	@Override
 	public Mod130 getMod130(String domainName, String user, int domain,int id) throws AonCoreException {
 		return FISCAL.getMod130(domainName, domain, user , id);
