@@ -174,6 +174,11 @@ public class FilterPanel extends Composite {
 		dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
+				Date from = fromDate.getValue(), to = toDate.getValue();
+				if(from!=null && to!=null && from.after(to)) {
+					Window.alert("La fecha DESDE no puede ser posterior a la fecha HASTA");
+					dateBox.setValue(null);
+				}
 				LinkedList<String> list = new LinkedList<>();
 				if(dateBox.getValue()!=null)
 					list.add(Long.toString(dateBox.getValue().getTime()));
@@ -214,7 +219,10 @@ public class FilterPanel extends Composite {
 	}
 	
 	private void onChangeFilter(String key, LinkedList<String> value) {
-    	parent.getFilterMap().put(key, value);
+    	if(value!=null && !value.isEmpty())
+    		parent.getFilterMap().put(key, value);
+    	else
+    		parent.getFilterMap().remove(key);
     	reloadBreadcrumbs();
 	}
 
@@ -240,6 +248,7 @@ public class FilterPanel extends Composite {
 		fromDate.setValue(null);
 		toDate.setValue(null);
 		serialNumberInput.setValue(null);
+		reloadBreadcrumbs();
 		reloadContent();
 	}
 	
@@ -258,6 +267,7 @@ public class FilterPanel extends Composite {
 	
 	void selectProduct(JsStockStat product) {
 		this.selectedProduct = product;
+		this.selectedItem = null;
 		reloadBreadcrumbs();
 	}
 	void selectItem(JsStockStat item) {
@@ -301,12 +311,12 @@ public class FilterPanel extends Composite {
 	}
 	private void reloadBreadcrumbs() {
 		breadcrumbs.clear();
-		if(parent.getFilterMap().containsKey("from")) {
+		if(parent.getFilterMap().containsKey("from") && parent.getFilterMap().get("from")!=null) {
 			String text = AonDateUtils.formatDate(new Date(Long.parseLong(parent.getFilterMap().get("from").getFirst())));
 			breadcrumbs.add(createFilterLabel(" Desde:"));
 			breadcrumbs.add(createFilterValue(text, null));
 		}
-		if(parent.getFilterMap().containsKey("to")) {
+		if(parent.getFilterMap().containsKey("to") && parent.getFilterMap().get("to")!=null) {
 			String text = AonDateUtils.formatDate(new Date(Long.parseLong(parent.getFilterMap().get("to").getFirst())));
 			breadcrumbs.add(new InlineLabel(" | "));
 			breadcrumbs.add(createFilterLabel("Hasta:"));
@@ -341,11 +351,11 @@ public class FilterPanel extends Composite {
 //		}
 		if(selectedItem!=null) {
 			breadcrumbs.add(new InlineLabel(" | "));
-			breadcrumbs.add(createFilterLabel("Seleccionado:"));
+			breadcrumbs.add(createFilterLabel("Selecci\u00F3n:"));
 			breadcrumbs.add(createFilterValue(selectedItem.getProductName(), selectedItem.getProductName()));
 		} else if(selectedProduct!=null) {
 			breadcrumbs.add(new InlineLabel(" | "));
-			breadcrumbs.add(createFilterLabel("Seleccionado:"));
+			breadcrumbs.add(createFilterLabel("Selecci\u00F3n:"));
 			breadcrumbs.add(createFilterValue(selectedProduct.getProductName(), selectedProduct.getProductName()));
 		}
 	}

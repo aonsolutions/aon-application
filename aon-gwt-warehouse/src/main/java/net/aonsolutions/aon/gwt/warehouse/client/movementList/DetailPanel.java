@@ -18,11 +18,13 @@ import com.google.gwt.user.client.ui.Label;
 public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsStockStat>{
 	
 	private Main parent;
+	private LinkedList<JsStockStat> itemList;
 	
 	public DetailPanel(Main parent, LinkedList<JsStockStat> itemList) {
 		super("pre");
 		this.parent = parent;
-		createPanel(itemList);
+		this.itemList = itemList;
+		createPanel();
 	}
 	
 	@Override
@@ -30,12 +32,14 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	
-	private void createPanel(LinkedList<JsStockStat> itemList){
+	private void createPanel(){
+		this.clear();
 		
 		final FlowPanel headerPanel = new FlowPanel("pre");
 		headerPanel.setStyleName(AON.AON_CSS.aonFixedFont());
 		headerPanel.addStyleName(AON.AON_CSS.aonFontMedium());
 		Label header = new Label(""
+				+ "   " // 3
 				+ AonStringUtils.rightPad("Producto", 75)
 				+ AonStringUtils.rightPad("Entradas", 15)
 				+ AonStringUtils.rightPad("Salidas", 15)
@@ -54,11 +58,16 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 			entryPanel.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					parent.onSelectItem(item);
+					onDetailSelect(item);
 				}
 			});
 		}
 		
+	}
+	
+	private void onDetailSelect(JsStockStat item) {
+		parent.onSelectItem(item);
+		createPanel();
 	}
 	
 	private FocusPanel print(JsStockStat item) {
@@ -78,6 +87,7 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 		StringBuffer buf = new StringBuffer();
 		buf.append(AonStringUtils.SPACE);
 		buf.append(AonStringUtils.rightPad("", 9));
+		buf.append(AonStringUtils.rightPad(isSelected(item)?">":"", 3));
 		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(item.getProductName()), 74), 75));
 		buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(item.getInputs()+""), 15));
 		buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(item.getOutputs()+""), 15));
@@ -86,6 +96,11 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 		Label line = new Label(buf.toString());
 		line.setStyleName(AON.AON_CSS.aonBold());
 		return line;
+	}
+
+	private boolean isSelected(JsStockStat item) {
+		FilterPanel filter = (FilterPanel)parent.northContent.getWidget();
+		return filter.selectedItem!=null && filter.selectedItem.getId()==item.getId();
 	}
 	
 	

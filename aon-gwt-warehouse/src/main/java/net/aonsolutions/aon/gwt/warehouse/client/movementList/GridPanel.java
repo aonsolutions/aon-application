@@ -81,6 +81,9 @@ public class GridPanel extends Composite {
 	}	
 	
 	private void load(LinkedList<JsStockStat> linkedList) {
+		if(linkedList!=null && !linkedList.isEmpty())
+			dataGrid.addStyleName(AON.AON_CSS.aonClickableBlock());
+		
 		DefaultKeyboardSelectionHandler<JsStockStat> selHandler = new DefaultKeyboardSelectionHandler<JsStockStat>(dataGrid){
 			@Override
 			public void onCellPreview(CellPreviewEvent<JsStockStat> event) {

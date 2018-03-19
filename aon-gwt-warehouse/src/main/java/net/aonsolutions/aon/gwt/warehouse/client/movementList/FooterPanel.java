@@ -8,7 +8,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
+import com.esferalia.aon.gwt.api.client.finance.JsInvoiceDetail;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.api.client.warehouse.JsDeliveryDetail;
@@ -92,24 +92,18 @@ public class FooterPanel extends Composite {
 		this.API = parent.getAPI();
 		this.product = product;
 		this.item = null;
+		parent.getFilterMap().remove("item");
 		
 		initWidget(binder.createAndBindUi(this));
 		
 		tabPanel.getTabWidget(FooterTabs.ITEM.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.INCOME.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.DELIVERY.ordinal()).getParent().setVisible(true);
-		tabPanel.getTabWidget(FooterTabs.PURCHASE_INVOICE.ordinal()).getParent().setVisible(false);
-		tabPanel.getTabWidget(FooterTabs.SALE_INVOICE.ordinal()).getParent().setVisible(false);
+		tabPanel.getTabWidget(FooterTabs.PURCHASE_INVOICE.ordinal()).getParent().setVisible(true);
+		tabPanel.getTabWidget(FooterTabs.SALE_INVOICE.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.WAREHOUSE_TRANSFER.ordinal()).getParent().setVisible(false);
 		tabPanel.getTabWidget(FooterTabs.ELABORATION.ordinal()).getParent().setVisible(false);
-		
 		tabPanel.selectTab(FooterTabs.ITEM.ordinal());
-		
-		parent.closeFooterPanel();
-		
-		loadItemTab();
-		loadTabs();
-		
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
 			@Override
@@ -118,6 +112,9 @@ public class FooterPanel extends Composite {
 			}
 		});
 		
+		loadItemTab();
+		loadTabs();
+		parent.closeFooterPanel();		
 	}
 	
 	public void selectItem(JsStockStat item) {
@@ -211,22 +208,43 @@ public class FooterPanel extends Composite {
 	}
 	
 	private void loadPurchaseInvoiceTab() {
+		purchaseInvoicePanel.clear();
+//		if(isFilterDefined()) {
+//			API.getFinance().getInvoiceMovements(parent.getFilterMap(), new AsyncCallback<JSON<JsInvoiceDetail>>() {
+//				
+//				@Override
+//				public void onSuccess(JSON<JsInvoiceDetail> result) {
+//					if(!result.getData().toLinkedList().isEmpty()) {
+//						purchaseInvoicePanel.add( createInvoicePanel(result.getData()) );
+//					} else {
+//						purchaseInvoicePanel.add(new Label("No se han encontrado resultados. "));
+//					}
+//				}
+//				
+//				@Override public void onFailure(Throwable caught) {}
+//			});
+//		} else {
+//			purchaseInvoicePanel.add(new Label("No se han encontrado resultados. "));
+//		}
 		// TODO loadPurchaseInvoiceTab
 		purchaseInvoicePanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
 	private void loadSaleInvoiceTab() {
 		// TODO loadSaleInvoiceTab
+		saleInvoicePanel.clear();
 		saleInvoicePanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
 	private void loadWarehouseTransferTab() {
 		// TODO loadWarehouseTransferTab
+		warehouseTransferPanel.clear();
 		warehouseTransferPanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
 	private void loadElaborationTab() {
 		// TODO loadElaborationTab
+		elaborationPanel.clear();
 		elaborationPanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
@@ -281,9 +299,17 @@ public class FooterPanel extends Composite {
 		return createPanel(list);
 	}
 	
-	protected FlowPanel createInvoicePanel(JsInvoice jsInvoice) {
-		// TODO createInvoicePanel
-		return null;
+	protected FlowPanel createInvoicePanel(AonJsArray<JsInvoiceDetail> aonJsArray) {
+		List<MovementObject> list = new LinkedList<>();
+		aonJsArray.toLinkedList().forEach(detail -> {
+			MovementObject o = new MovementObject();
+			o.date = detail.getInvoice().getTaxDate();
+			o.referenceCode = detail.getInvoice().getReferenceCode();
+			o.registryName = detail.getInvoice().getRegistryName();
+			o.quantity = detail.getQuantity();
+			list.add(o);
+		});
+		return createPanel(list);
 	}
 	
 	protected FlowPanel createWarehouseTransferPanel(JsObject jsWarehouseTransfer) {
