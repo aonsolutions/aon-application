@@ -410,6 +410,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					List<ContextData> datas = salary.getContextData()
 							.get(CGC_BASE.getName());
 					Assert.assertEquals(2, datas.size());
+					Collections.sort(datas, (d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) );
 
 					Assert.assertEquals(startDate, datas.get(0).getStartDate());
 					Assert.assertEquals(endActive, datas.get(0).getEndDate());
@@ -426,6 +427,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					// 601 o 611 Base de Accidentes de Trabajo.
 					datas = salary.getContextData().get(CGP_BASE.getName());
 					Assert.assertEquals(2, datas.size());
+					Collections.sort(datas, (d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) );
 
 					Assert.assertEquals(startDate, datas.get(0).getStartDate());
 					Assert.assertEquals(endActive, datas.get(0).getEndDate());
@@ -1043,7 +1045,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					List<ContextData> datas = salary.getContextData()
 							.get(CGC_BASE.getName());
 					Assert.assertEquals(2, datas.size());
-
+					Collections.sort(datas, (d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) );
+					
 					Assert.assertEquals(startDate, datas.get(0).getStartDate());
 					Assert.assertEquals(noOcupationEnd,
 							datas.get(0).getEndDate());
@@ -1059,6 +1062,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					// 601 o 611 Base de Accidentes de Trabajo.
 					datas = salary.getContextData().get(CGP_BASE.getName());
 					Assert.assertEquals(2, datas.size());
+					Collections.sort(datas, (d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) );
 					Assert.assertEquals(startDate, datas.get(0).getStartDate());
 					Assert.assertEquals(noOcupationEnd,
 							datas.get(0).getEndDate());
@@ -2150,6 +2154,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					List<ContextData> datas = salary.getContextData()
 							.get(CGC_BASE.getName());
 					Assert.assertEquals(3, datas.size());
+					Collections.sort(datas, (d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) );
 					// I
 					Assert.assertEquals(startDateI, datas.get(0).getStartDate());
 					Assert.assertEquals(endDateI, datas.get(0).getEndDate());
