@@ -489,6 +489,24 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("base_minima_diaria,_i.t");
 
+		draft("LACTANCIA, PERIODO");
+		calculate(Calendar.APRIL,2018);
+		double cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.MAY,2018);
+		assertValue("cgcBaseLabel", cgcBase );
+		calculate(Calendar.JUNE,2018);
+		assertValue("cgcBaseLabel", cgcBase );
+		assertValue("totalPaymentsLabel", 0.00 );
+
+		draft("RIESGO, DURANTE EL EMBARAZO");
+		calculate(Calendar.APRIL,2018);
+		cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.MAY,2018);
+		assertValue("cgcBaseLabel", cgcBase );
+		calculate(Calendar.JUNE,2018);
+		assertValue("cgcBaseLabel", cgcBase );
+		assertValue("totalPaymentsLabel", 0.00 );
+
 		draft("BASE MÍNIMA DIARIA, I.T");
 		calculate(Calendar.MAY,2016);
 		assertValue("cgcBaseLabel", 25.48 * 31); // GRUPO 09
@@ -618,7 +636,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		draft("MATERNIDAD, COMPLETA");
 		calculate(Calendar.FEBRUARY,2016);
-		double cgcBase = getValue("cgcBaseLabel");
+		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.MARCH,2016);
 		assertValue("cgcBaseLabel", cgcBase );
 		// Here start I.T
@@ -631,6 +649,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 
 		draft("MATERNIDAD, PARCIAL");
+		calculate(Calendar.NOVEMBER,2016);
+		cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.DECEMBER,2016);
+		assertValue("cgcBaseLabel", cgcBase );
+
+		draft("PATERNIDAD, PARCIAL");
 		calculate(Calendar.NOVEMBER,2016);
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.DECEMBER,2016);

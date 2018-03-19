@@ -353,7 +353,7 @@ public class ContractLeaveLoader {
 
 			@Override
 			public Void visitBreastFeedingRisk(LeaveType leaveType) {
-
+				visit(ContextVariable.MATERNITY_FACTOR, ContextVariable.MATERNITY_DAYS);
 				return null;
 			}
 

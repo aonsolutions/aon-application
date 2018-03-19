@@ -204,7 +204,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 			if ( type.isBBCCIncluded() 
 				&& !type.isBBCCExcluded() ) {
-				return delegate.quote(new ALLContractPayment(payment), start, end, amount);
+				return ( amount == 0.00 ) ? 
+				Collections.emptyList()  
+				: delegate.quote(new ALLContractPayment(payment), start, end, amount);
 			}
 
 			return delegate.quote(payment, start, end, amount);
@@ -261,9 +263,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				|| results.get(0).getContext().containsKey(ContextVariable.LIQUID)))
 				return  shareExtraITResults(results.get(0), its);
 		
-		
-			
-		
 		try {
 			Date startIt = getStartIT(expressionContext);
 			List<ITimedResult<Double>> brResults = getPaymentBR(startIt, contractPayment);
@@ -290,7 +289,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					fixed.add( new TimedResult<Double>(activeValue, active, context));
 				}
 				return fixed;
-			} 
+			}
+			
+			
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
