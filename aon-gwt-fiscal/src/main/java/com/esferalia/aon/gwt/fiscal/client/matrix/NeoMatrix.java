@@ -53,6 +53,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 	private API API;
 	private HashMap<Integer, IFiscalModel> modelMap = new HashMap<>();
 	private HashMap<Integer, JSONObject> errors = new HashMap<>();
+	private Integer eastSelected = 0;
 
 	private Boolean minimize = true;
 
@@ -77,7 +78,6 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 
 	public NeoMatrix(AonData aonData) {
 		super(Unit.PX);
-	
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getDomain().getId(),
 				aonData.getUser().getLogin());
@@ -115,11 +115,37 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 
 	protected void removeModel(IFiscalModel model) {
 		getModelMap().remove(model.getId());
+		errors.remove(model.getId());
+		if(model.getId().equals(eastSelected)) {
+			split.setWidgetSize(consolePanel, 0);	
+			split.animate(500);
+			consolePanel.remove(consolePanel.getWidget());
+		}
 		for(Integer i = 0 ; i < modelListPanel.getWidgetCount(); i++) {
 			if(modelListPanel.getWidget(i).getTitle().equals(model.getId().toString())) {
 				modelListPanel.remove(i);
 			}
 		}
+	}
+	
+	protected void clean() {
+		modelMap = new HashMap<>();
+		modelListPanel = new VerticalPanel();
+		consolePanel = new SimplePanel();
+		split.removeFromParent();
+
+		split = new SplitLayoutPanel();
+		consolePanel.addStyleName(AON.AON_CSS.aonSelector());
+		split.addEast(consolePanel, 0);
+		modelListPanel.setWidth("100%");
+		ScrollPanel sp = new ScrollPanel();
+		sp.add(modelListPanel);
+		split.add(sp);
+		add(split);
+		
+		split.setWidgetSize(consolePanel, 0);	
+		split.animate(500);
+		onClosePanel();
 	}
 	
 	private FlowPanel functionsPanel() {
@@ -191,6 +217,21 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		});
 		fp.add(finishButton);
 		
+		Button cleanButton = new Button();
+		cleanButton.setTitle("Limpiar Selecci\u00f3n");
+		cleanButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
+		cleanButton.addStyleName("aon-icon-rubber");
+		cleanButton.getElement().getStyle().setFloat(Float.RIGHT);
+		cleanButton.getElement().getStyle().setMarginRight(16, Unit.PX);
+		cleanButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				clean();
+			}
+		});
+		fp.add(cleanButton);
+		
 		return fp;
 	}
 	
@@ -233,6 +274,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 			wrapper.getElement().getStyle().setBackgroundColor("#eee");
 			east(model);
 			Integer clientWidth = Window.getClientWidth();
+			eastSelected = model.getId();
 			split.setWidgetSize(consolePanel, clientWidth.doubleValue() / 2);	
 			split.animate(500);
 		  }
@@ -245,20 +287,31 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		if(i < modelListPanel.getWidgetCount()) {
 			Integer id = Integer.parseInt(modelListPanel.getWidget(i).getTitle());
 			IFiscalModel model = modelMap.get(id);
-			impl.markAsFinished(domain.getName(), domain.getId(), user, model, new AsyncCallback<Void>() {
-				@Override
-				public void onSuccess(Void v) {
-					// TODO
-					markAsFinished(i + 1);
-				}
+			JSONObject js = new JSONObject();
+			if(hasFinishOption(model)) {
+				impl.markAsFinished(domain.getName(), domain.getId(), user, model, new AsyncCallback<Void>() {
+					@Override
+					public void onSuccess(Void v) {
+						// TODO
+						resultFocus(i, "green");
+						markAsFinished(i + 1);
+					}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					// TODO
-					markAsFinished(i + 1);
-				}
-			});
-		}
+					@Override
+					public void onFailure(Throwable caught) {
+						resultFocus(i, "red");
+						js.put("E00", new JSONString("Ha ocurrido un error inesperado."));
+						errors.put(model.getId(), js);
+						markAsFinished(i + 1);
+					}
+				});
+			} else {
+				resultFocus(i, "red");
+				js.put("E00", new JSONString("La funcionalidad no est\u00e1 disponible para este modelo."));
+				errors.put(model.getId(), js);
+				markAsFinished(i + 1);
+			}
+		} else onParentLoad();
 	}
 	
 	private void send(Integer i, String cert, String pass) {
@@ -282,14 +335,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 					@Override
 					public void onSuccess(JavaScriptObject result) {
 						JSONObject js = new JSONObject(result);
-						FocusPanel fp = (FocusPanel) modelListPanel.getWidget(i);
-						HorizontalPanel hp = (HorizontalPanel) fp.getWidget();
-						hp.getWidget(1).getElement().getStyle().setColor(js.containsKey("CEL") ? "green" : "red");
-						hp.getWidget(1).getElement().getStyle().setFontWeight(FontWeight.BOLD);
-						hp.getWidget(2).getElement().getStyle().setColor(js.containsKey("CEL") ? "green" : "red");
-						hp.getWidget(2).getElement().getStyle().setFontWeight(FontWeight.BOLD);
-						hp.getWidget(3).getElement().getStyle().setColor(js.containsKey("CEL") ? "green" : "red");
-						hp.getWidget(3).getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						resultFocus(i, js.containsKey("CEL") ? "green" : "red");
 						if(!js.containsKey("CEL")) {
 							errors.put(model.getId(), js);
 						} else errors.remove(model.getId());
@@ -298,26 +344,12 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						FocusPanel fp = (FocusPanel) modelListPanel.getWidget(i);
-						HorizontalPanel hp = (HorizontalPanel) fp.getWidget();
-						hp.getWidget(1).getElement().getStyle().setColor("red");
-						hp.getWidget(1).getElement().getStyle().setFontWeight(FontWeight.BOLD);
-						hp.getWidget(2).getElement().getStyle().setColor("red");
-						hp.getWidget(2).getElement().getStyle().setFontWeight(FontWeight.BOLD);
-						hp.getWidget(3).getElement().getStyle().setColor("red");
-						hp.getWidget(3).getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						resultFocus(i, "red");
 						send(i+1, cert, pass);
 					}			
 				});
 			} else {
-				FocusPanel fp = (FocusPanel) modelListPanel.getWidget(i);
-				HorizontalPanel hp = (HorizontalPanel) fp.getWidget();
-				hp.getWidget(1).getElement().getStyle().setColor("red");
-				hp.getWidget(1).getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				hp.getWidget(2).getElement().getStyle().setColor("red");
-				hp.getWidget(2).getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				hp.getWidget(3).getElement().getStyle().setColor("red");
-				hp.getWidget(3).getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				resultFocus(i, "red");
 				JSONObject js = new JSONObject();
 				Integer error = 0;
 				if(!model.isFinished()) {
@@ -337,10 +369,32 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		}
 	}
 	
+	private void resultFocus(Integer i, String color){
+		FocusPanel fp = (FocusPanel) modelListPanel.getWidget(i);
+		HorizontalPanel hp = (HorizontalPanel) fp.getWidget();
+		hp.getWidget(1).getElement().getStyle().setColor(color);
+		hp.getWidget(1).getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		hp.getWidget(2).getElement().getStyle().setColor(color);
+		hp.getWidget(2).getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		hp.getWidget(3).getElement().getStyle().setColor(color);
+		hp.getWidget(3).getElement().getStyle().setFontWeight(FontWeight.BOLD);
+	}
+	
 	private Boolean hasPresentationOption(IFiscalModel model) {
 		return FiscalModelType.M111.equals(model.getModel())
 			|| FiscalModelType.M115.equals(model.getModel())
 			|| FiscalModelType.M123.equals(model.getModel())
+			|| FiscalModelType.M303.equals(model.getModel())
+			|| FiscalModelType.M303_RG.equals(model.getModel())
+			|| FiscalModelType.M303_RS.equals(model.getModel());
+	}
+	
+	private Boolean hasFinishOption(IFiscalModel model) {
+		return FiscalModelType.M111.equals(model.getModel())
+			|| FiscalModelType.M115.equals(model.getModel())
+			|| FiscalModelType.M123.equals(model.getModel())
+			|| FiscalModelType.M130.equals(model.getModel())
+			|| FiscalModelType.M131.equals(model.getModel())
 			|| FiscalModelType.M303.equals(model.getModel())
 			|| FiscalModelType.M303_RG.equals(model.getModel())
 			|| FiscalModelType.M303_RS.equals(model.getModel());
@@ -508,4 +562,5 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 	
 	protected abstract void onOpenPanel();
 	protected abstract void onClosePanel();
+	protected abstract void onParentLoad();
 }

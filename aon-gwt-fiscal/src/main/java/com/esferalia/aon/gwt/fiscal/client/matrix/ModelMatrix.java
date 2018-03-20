@@ -271,6 +271,11 @@ public class ModelMatrix extends MainEntryPoint {
 				splitLayout.setWidgetSize(getNeo(), 30);	
 				splitLayout.animate(500);				
 			}
+
+			@Override
+			protected void onParentLoad() {
+				filterPanel.fireValueChangeEvent();				
+			}
 		};
 		splitLayout.addSouth(neo, 30);
 

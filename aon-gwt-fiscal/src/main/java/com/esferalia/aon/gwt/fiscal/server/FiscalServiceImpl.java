@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
@@ -51,6 +52,7 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/Fiscal" })
@@ -328,6 +330,11 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				|| FiscalModelType.M303_RG.equals(model.getModel())
 				|| FiscalModelType.M303_RS.equals(model.getModel())) {
 			Mod303 mod303 = FISCAL.getMod303(domainName, domainId, user, model.getId());
+			for(Mod303Key k : Mod303Key.values()) {
+				if(!mod303.getMap().containsKey(k.getValue())){
+					mod303.getMap().put(k.getValue(), new FiscalModelDetail().setAmount(0.0));
+				}
+			}
 			Mod303ServiceImpl.getInstance().markAsFinished(domainName, user, mod303);
 		} else if(FiscalModelType.M111.equals(model.getModel())) {
 			Mod111 mod111 = FISCAL.getMod111(domainName, domainId, user, model.getId());
