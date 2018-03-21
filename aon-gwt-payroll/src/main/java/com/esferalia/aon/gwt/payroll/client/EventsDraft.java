@@ -4,26 +4,28 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.Td;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EmployeeEventsVariable;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventEmployee;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class EventsDraft extends ResizeComposite {
 
@@ -37,12 +39,65 @@ public class EventsDraft extends ResizeComposite {
 		String blankHeaderCell();
 		String headerCell();
 		String oddRowColor();
+		String onChange();
+		String eventCell();
+		String setBlockCellStyle();
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	private class EventTableCell extends TextBox{
+		
+		int column;
+		int row;
+		
+		public EventTableCell(int row, int column) {
+			super();
+			this.column = column;
+			this.row = row;
+			
+			//ESTILOS
+			this.addStyleName(style.eventCell());
+			if (row % 2 != 0){
+				this.addStyleName(style.oddRowColor());
+			}
+		}
+		
+		public int getColumn() {
+			return column;
+		}
+		
+		public int getRow() {
+			return row;
+		}
+		
+		public void setTextBoxValue(String text) {
+			this.setText(text);
+		}
+
+		public void setBlockVariableStyle() {
+			this.addStyleName(style.setBlockCellStyle());
+		}
+
+		public void removeBlockVariableStyle() {
+			this.removeStyleName(style.setBlockCellStyle());
+		}
+
+		public void setOnChangeStyle() {
+			this.addStyleName(style.onChange());	
+		}
+
+		public void removeOnChangeStyle() {
+			this.removeStyleName(style.onChange());	
+		}
+			
+	}
 
 	@UiField
 	FlexTable eventsTable;
+	
+	@UiField
+	Button undoAllButton;
 	
 	@UiField
 	ListBox typeView;
@@ -64,17 +119,25 @@ public class EventsDraft extends ResizeComposite {
 
 	
 	private EventsDraftObject draftObject;
-	private MultiSelectionModel<Td> selectionModel;
 	
 	private Integer actualMonth;
 	private Integer actualYear;
 	
+	private ArrayList<String> blockedVariables;
 
 	public EventsDraft() {
 		initWidget(binder.createAndBindUi(this));
-		this.selectionModel = new MultiSelectionModel<Td>();
+		initializeBlockedVariables();
 	}
 	
+	private void initializeBlockedVariables() {
+		this.blockedVariables = new ArrayList<>();
+		this.blockedVariables.add("DIAS_VACACIONES");
+		this.blockedVariables.add("DIAS_HUELGA");
+		this.blockedVariables.add("DIAS_AUSENCIA");
+		this.blockedVariables.add("DIAS_ERE");
+	}
+
 	// -------------------------------------
 	//             UI HANDLER
 	// -------------------------------------
@@ -104,6 +167,16 @@ public class EventsDraft extends ResizeComposite {
 			this.actualYear += changeDate;
 			dateLabel.setText((this.actualYear+1900)+"");
 		}
+		
+		initializeView();
+	}
+	
+	@UiHandler("undoAllButton")
+	void onUndoAllButtonClick(ClickEvent event) {
+		while (draftObject.undoManager.canUndo())
+			draftObject.undoManager.undo();
+		
+		initializeView();
 	}
 	
 	// -------------------------------------
@@ -111,7 +184,7 @@ public class EventsDraft extends ResizeComposite {
 	// -------------------------------------	
 
 	public void setEventsDraftObject(EventsDraftObject eventsDraftObject) {
-		eventsTable.clear();
+		clearEventsTable();
 		this.draftObject = eventsDraftObject;
 		
 		Date currentDate = new Date();
@@ -119,18 +192,28 @@ public class EventsDraft extends ResizeComposite {
 		this.actualYear = currentDate.getYear();
 		
 		fillTypeViewListBox();
-		fillVariableListBox();
+		
+		this.draftObject.undoManager.addListener(new UndoManager.Listener() {
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void onChange(UndoManager undoManager) {
+				//saveButton.setEnabled(undoManager.canUndo());
+				undoAllButton.setEnabled(undoManager.canUndo());
+			}
+		});
 		
 		this.draftObject.getWorkPlaceEmployeesDB(this.actualYear,
-				r -> { initializeView(); },
+				r -> { 
+					fillVariableListBox();
+					initializeView(); 
+				},
 				t -> {});
 		
 	}	
 
+	// Metodo para inicializar la vista de la tabla
 	private void initializeView() {
-		Window.alert("TAMAÑO ALL VARIABLES :"+this.draftObject.getAllVariables().size());
-		for(String var : this.draftObject.getAllVariables())
-			Window.alert(var);
+		undoAllButton.setEnabled(this.draftObject.undoManager.canUndo());
 		
 		clearEventsTable();
 		fillDateLabel();
@@ -142,6 +225,7 @@ public class EventsDraft extends ResizeComposite {
 	//        METODOS AUXILIARES
 	// -------------------------------------
 	
+	// Metodo para inicializar los tipos de vista y que debe ocurrir cuando se elige cada una
 	private void fillTypeViewListBox() {
 		typeView.clear();
 		typeView.addItem("MES");
@@ -150,7 +234,6 @@ public class EventsDraft extends ResizeComposite {
 		typeView.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				eventsTable.clear();
 				initializeView();
 				String selectItem = typeView.getSelectedItemText();
 				if (selectItem == "MES"){
@@ -162,14 +245,6 @@ public class EventsDraft extends ResizeComposite {
 		});
 	}
 	
-	private void fillVariableListBox() {
-		varListView.clear();
-		// TODO: BORRAR ESTAS VARIABLES CUANDO SE CONSIGAN DE LA BD.
-		varListView.addItem("DIAS_HUELGA");
-		varListView.addItem("HORAS_EXTRAS");
-		varListView.addItem("VENTAS");
-	}
-	
 	private static void hide(UIObject uiObject) {
 		uiObject.getElement().getStyle().setVisibility(Visibility.HIDDEN);
 	}
@@ -178,6 +253,22 @@ public class EventsDraft extends ResizeComposite {
 		uiObject.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
 	
+	// Metodo para inicializar los tipos de variables y que debe ocurrir cuando se elige cada uno
+	private void fillVariableListBox() {
+		varListView.clear();
+		ArrayList<String> variableList = new ArrayList<>(this.draftObject.getAllVariables());
+		for(String var : variableList)
+			varListView.addItem(var);
+		
+		varListView.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				initializeView();	
+			}
+		});
+	}
+	
+	// Metodo para modifica la forma en la que se muestra la fecha
 	private void fillDateLabel() {
 		String selectItem = typeView.getSelectedItemText();
 		if (selectItem == "MES"){
@@ -187,48 +278,22 @@ public class EventsDraft extends ResizeComposite {
 		}
 	}
 	
+	// Metodo para recoger la informacion de las cabeceras e inicializar la tabla en funcion del tipo de vista
 	private void fillEventTable() {
-		//TODO: BORRAR ESTOS DOS METODOS CUANDO SE RECIBA LA INFO DE LA BD
-		ArrayList<String> variableList = createVariableList();
-		ArrayList<String> employeeList = this.draftObject.getWorkplaceEmployees();
+		ArrayList<String> variableList = new ArrayList<>(this.draftObject.getAllVariables());
+		ArrayList<EventEmployee> employeeList = this.draftObject.getWorkplaceEmployees();
 		ArrayList<String> monthList = createMonthList();
-		
-		//ArrayList<String> employeeList = createEmployeeList();
 		
 		String selectItem = typeView.getSelectedItemText();
 		if (selectItem == "MES"){
 			initializeFirstRow(variableList);
-			initializeTable(employeeList);
+			initializeTableByMonth(employeeList, variableList);
 		}else if (selectItem == "VARIABLE"){
 			initializeFirstRow(monthList);
-			initializeTable(employeeList);
-		}
-		
-		
+			initializeTableByVar(employeeList);
+		}		
 	}
 
-	private ArrayList<String> createVariableList() {
-		ArrayList<String> variableList = new ArrayList<>();
-		variableList.add("DIAS_HUELGA");
-		variableList.add("DIAS_VACACIONES");
-		variableList.add("VENTAS");
-		variableList.add("HORAS_EXTRAS");
-		variableList.add("DIAS_PECNORTA");
-		variableList.add("HORAS_COMPLEMENTARIAS");
-		
-		return variableList;
-	}
-	
-	private ArrayList<String> createEmployeeList() {
-		ArrayList<String> employeeList = new ArrayList<>();
-		employeeList.add("JOSÉ LUIS VALDEPEÑAS");
-		employeeList.add("PATRICIA CALVO");
-		employeeList.add("ERNESTO CABALLERO");
-		employeeList.add("JAVIER SOLERA");
-		
-		return employeeList;
-	}
-	
 	private ArrayList<String> createMonthList() {
 		ArrayList<String> monthList = new ArrayList<>();
 		monthList.add("ENERO");
@@ -247,6 +312,7 @@ public class EventsDraft extends ResizeComposite {
 		return monthList;
 	}
 	
+	// Metodo para rellenar la primera fila de la tabla, headerList cambia en funcion del tipo de vista
 	private void initializeFirstRow(ArrayList<String> headerList) {
 		Label blankLabel = new Label();
 		blankLabel.addStyleName(style.blankHeaderCell());
@@ -258,18 +324,114 @@ public class EventsDraft extends ResizeComposite {
 		}	
 	}
 	
-	private void initializeTable(ArrayList<String> employeeList) {
+	// Metodo para rellenar la tabla cuando la vista elegida es por mes
+	private void initializeTableByMonth(ArrayList<EventEmployee> employeeList, ArrayList<String> variableList) {
 		int columns = this.getColCount();
 		for(int row=0; row<employeeList.size(); row++){
-			eventsTable.setText(row+1, 0, employeeList.get(row));
+			//Rellenamos primera colunma con los nombres de los empleados
+			eventsTable.setText(row+1, 0, employeeList.get(row).getCompleteEmployeeName());
 			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
 			
 			for(int column=0; column<columns; column++){
-				eventsTable.setText(row+1, column+1, "-");
+				//Rellenamos el resto de columnas con la informacion de cada empleado
+				Date findingDate = new Date(this.actualYear, this.actualMonth, 1);
+				DateUtils.resetTime(findingDate);
+				Integer employeeId = this.draftObject.getEventEmployeeId(employeeList.get(row).getCompleteEmployeeName());
+				
+				EmployeeEventsVariable variable = this.draftObject.getEmployeeVariableByDate(employeeId, findingDate, variableList.get(column));
+				EventTableCell eventCell = new EventTableCell(row+1, column+1);
+				eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<String> event) {
+						Double value = Double.parseDouble(eventCell.getValue());
+						Date startDate = new Date(actualYear, actualMonth, 1);
+						Date endDate = DateUtils.getLastDayOfMonth(startDate);
+						Integer employeeId = draftObject.getEventEmployeeId(eventsTable.getText(eventCell.getRow(), 0));
+						String varName = eventsTable.getText(0, eventCell.getColumn());
+						
+						draftObject.addEvent(employeeId, varName, value, startDate, endDate);
+						
+						eventCell.setOnChangeStyle();
+					}
+				});
+				
+				if(null == variable){
+					eventCell.setTextBoxValue("-");
+				}else{
+					eventCell.setTextBoxValue(variable.getValue().toString());
+				}
+				
+				if(this.blockedVariables.contains(variableList.get(column))){
+					eventCell.setEnabled(false);
+					eventCell.setBlockVariableStyle();
+				}
+				
+				if(this.draftObject.hasChanged(employeeId, variableList.get(column), variable)){
+					eventCell.setOnChangeStyle();
+				}
+				
+				eventsTable.setWidget(row+1, column+1, eventCell);
 			}
-		}	
+		}
+		
 	}
 	
+	// Metodo para rellenar la tabla cuando la vista elegida es por variable
+	private void initializeTableByVar(ArrayList<EventEmployee> employeeList) {
+		//Cogemos la variable seleccionada en el momento de la creacion
+		String varName = varListView.getSelectedValue();
+		int columns = this.getColCount();
+		
+		for(int row=0; row<employeeList.size(); row++){
+			//Rellenamos primera colunma con los nombres de los empleados
+			eventsTable.setText(row+1, 0, employeeList.get(row).getCompleteEmployeeName());
+			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
+			
+			for(int column=0; column<columns; column++){
+				//Rellenamos el resto de columnas con la informacion de cada empleado
+				Date findingDate = new Date(this.actualYear, column, 1);
+				DateUtils.resetTime(findingDate);
+				Integer employeeId = this.draftObject.getEventEmployeeId(employeeList.get(row).getCompleteEmployeeName());
+				
+				EmployeeEventsVariable variable = this.draftObject.getEmployeeVariableByDate(employeeId, findingDate, varName);
+				EventTableCell eventCell = new EventTableCell(row+1, column+1);
+				eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<String> event) {
+						Double value = Double.parseDouble(eventCell.getValue());
+						Date startDate = new Date(actualYear, eventCell.getColumn()-1, 1);
+						Date endDate = DateUtils.getLastDayOfMonth(startDate);
+						Integer employeeId = draftObject.getEventEmployeeId(eventsTable.getText(eventCell.getRow(), 0));
+						
+						draftObject.addEvent(employeeId, varName, value, startDate, endDate);
+						
+						eventCell.setOnChangeStyle();
+					}
+				});
+				
+				if(null == variable){
+					eventCell.setTextBoxValue("-");
+				}else{
+					eventCell.setTextBoxValue(variable.getValue().toString());
+				}
+				
+				if(this.blockedVariables.contains(varName)){
+					eventCell.setEnabled(false);
+					eventCell.setBlockVariableStyle();
+				}
+				
+				if(this.draftObject.hasChanged(employeeId, varName, variable)){
+					eventCell.setOnChangeStyle();
+				}
+				
+				eventsTable.setWidget(row+1, column+1, eventCell);
+			}
+		}
+	}
+	
+	// Metodo para aplicar un color de fondo a las filas impares de la tabla
 	private void setStyleEventTable() {
 		int rows = this.getRowCount();
 		for(int row=0; row<rows; row++){

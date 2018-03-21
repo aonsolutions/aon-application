@@ -4,6 +4,8 @@
 	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EventsDraft.MyStyle">
 
 		/* ESTILOS CABECERA */
@@ -110,6 +112,22 @@
 		.oddRowColor{
 			background-color: #eee;
 		}
+
+		.onChange {
+			background-color: rgba(255, 255, 0, 0.38) !important;
+		}
+
+		.eventCell{
+			text-align: center;
+    		width: 40px;
+    		border: none;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 11px;
+		}
+
+		.setBlockCellStyle{
+			color: #aaa;
+		}
 		
 	</ui:style>
 
@@ -134,11 +152,8 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='acceptButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
-								<g:Button ui:field="undoButton"
-									styleName='aon-finding-toolbar-item aon-icon-undo'
-									enabled="false" />
-								<g:Button ui:field='redoButton'
-									styleName="aon-finding-toolbar-item aon-icon-redo"
+								<g:Button ui:field='undoAllButton'
+								    styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}'
 									enabled="false" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
