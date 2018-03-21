@@ -438,7 +438,10 @@ public class BookingInfo implements Serializable {
 					this.bookingModules.add(payroll);
 					payroll.setDisabled(!parentUser);
 				}
-			}			
+			} else {
+				this.bookingModules.add(aioInfo.getModuleInfo(Module.FISCAL));
+				this.bookingModules.add(aioInfo.getModuleInfo(Module.PAYROLL));
+			}
 			if (!this.displayModules.contains(this.documental) ) {
 				this.displayModules.add(this.documental);
 			}

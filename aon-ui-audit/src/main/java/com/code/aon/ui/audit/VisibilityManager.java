@@ -94,8 +94,7 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if ( addConfiguration ) {
 			enabledModules.add(Module.CONFIGURATION);
 		}
-		if ( (user != null) && (DomainType.ENTERPRISE == ds.getType()) &&
-			(parentDomainId != null) && (ObjectUtils.equals(user.getDomain(), domainId)) ) {
+		if ( (user != null) && (DomainType.ENTERPRISE == ds.getType()) && (parentDomainId != null) && (ObjectUtils.equals(user.getDomain(), domainId)) ) {
 			if (! hasModule(parentDomainId, Module.FISCAL) ) {
 				enabledModules.remove(Module.FISCAL);
 			}
