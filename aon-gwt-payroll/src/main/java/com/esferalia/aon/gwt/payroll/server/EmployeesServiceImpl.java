@@ -4773,6 +4773,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			JooqEmployeeEvents.setEmployeeEvents(connection, contract, updateInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		}finally {
+			releaseFacesContext();
 		}
 		
 	}
@@ -4787,14 +4789,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-				releaseFacesContext();
-			}
+			releaseFacesContext();
 		}
+//		finally {
+//			if ( connection != null ) {
+//				try {
+//					connection.close();
+//				} catch (SQLException e) {
+//				}
+//				releaseFacesContext();
+//			}
+//		}
 	}
 
 	
