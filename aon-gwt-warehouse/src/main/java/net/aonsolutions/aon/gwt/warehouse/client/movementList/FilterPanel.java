@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Unit;
@@ -188,21 +187,6 @@ public class FilterPanel extends Composite {
 		return dateBox;
 	}
 	
-	private IntegerBox createIntegerBox(String key) {
-		final IntegerBox input = new IntegerBox();
-		input.setWidth("20px");
-		input.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				LinkedList<String> list = new LinkedList<>();
-				if(input.getValue()!=null)
-					list.add(Long.toString(input.getValue()));
-				onChangeFilter(key, list);
-			}
-		});
-		return input;
-	}
-	
 	private TextBox createTextBox(String key) {
 		final TextBox input = new TextBox();
 		input.setWidth("100px");
@@ -248,21 +232,27 @@ public class FilterPanel extends Composite {
 		fromDate.setValue(null);
 		toDate.setValue(null);
 		serialNumberInput.setValue(null);
+		selectedProduct = selectedItem = null;
 		reloadBreadcrumbs();
+		parent.getFilterMap().remove("item");
+		parent.getFilterMap().remove("product_id");
 		reloadContent();
 	}
 	
 	@UiHandler("searchButton")
 	void searchButton(ClickEvent event) {
 		Date from = fromDate.getValue(), to = toDate.getValue();
-		selectedProduct = selectedItem = null;
-		parent.getFilterMap().remove("item");
 		if(from==null || to==null)
 			Window.alert("Se deben indicar, al menos, las fechas DESDE y HASTA");
 		else if(from.after(to))
 			Window.alert("La fecha DESDE no puede ser posterior a la fecha HASTA");
-		else
+		else {
 			reloadContent();
+			selectedProduct = selectedItem = null;
+			reloadBreadcrumbs();
+			parent.getFilterMap().remove("item");
+			parent.getFilterMap().remove("product_id");
+		}
 	}
 	
 	void selectProduct(JsStockStat product) {
@@ -342,13 +332,6 @@ public class FilterPanel extends Composite {
 			breadcrumbs.add(createFilterLabel("Lote/n\u00B0 Serie:"));
 			breadcrumbs.add(createFilterValue(text, null));
 		}
-//		if(parent.getFilterMap().containsKey("item") && parent.getFilterMap().get("item").size()>0) {
-//			String text = parent.getFilterMap().get("item").size()+"";
-//			String title = parent.getFilterMap().get("item").toString();
-//			breadcrumbs.add(new InlineLabel(" | "));
-//			breadcrumbs.add(createFilterLabel("Det.:"));
-//			breadcrumbs.add(createFilterValue(text, title));
-//		}
 		if(selectedItem!=null) {
 			breadcrumbs.add(new InlineLabel(" | "));
 			breadcrumbs.add(createFilterLabel("Selecci\u00F3n:"));

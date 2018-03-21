@@ -67,6 +67,12 @@ public class Finance extends Methods{
 		get(getUrl() + "finance/"+getDomainName()+"/"+getUserName()+"/invoice" + filter, callback);
 	}
 	
+	public void getInvoiceMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsInvoiceDetail>> callback){	
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "finance/"+getDomainName()+"/"+getUserName()+"/invoice/movements" + filter, callback);
+	}
+	
+	
 	public void sendSii(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = getFilter(filterMap) + "&domain="+ getDomainName() + "&login="+getUserName();
 		impl.base(str, new AsyncCallback<String>() {

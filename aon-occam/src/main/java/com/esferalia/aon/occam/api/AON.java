@@ -1192,6 +1192,18 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Stream<InvoiceDetail> getInvoiceDetailStream(String domainName, Integer domainId, String login,
+			InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getInvoiceMovements(ctx, filter, pFilter, iFilter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static InvoiceDetail getLastInvoiceDetail(String domainName,
 			Integer domainId, String user, Item item, Integer workplaceId,
@@ -1616,11 +1628,11 @@ public class AON {
 	}
 	
 	public static Stream<DeliveryDetail> getDeliveryDetailStream(String domainName, Integer domainId, String login,
-			DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter){
+			DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter, ItemFilter itemFilter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getDeliveryDetailStream(ctx, deliveryFilter, detailFilter, productFilter);
+			return getWarehouse().getDeliveryDetailStream(ctx, deliveryFilter, detailFilter, productFilter, itemFilter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2379,11 +2391,11 @@ public class AON {
 	}
 	
 	public static Stream<IncomeDetail> getIncomeDetailStream(String domainName, Integer domainId, String login,
-			IncomeFilter incomeFilter, IncomeDetailFilter detailFilter, ProductFilter productFilter){
+			IncomeFilter incomeFilter, IncomeDetailFilter detailFilter, ProductFilter productFilter, ItemFilter itemFilter){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getIncomeDetailStream(ctx, incomeFilter, detailFilter, productFilter);
+			return getWarehouse().getIncomeDetailStream(ctx, incomeFilter, detailFilter, productFilter, itemFilter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

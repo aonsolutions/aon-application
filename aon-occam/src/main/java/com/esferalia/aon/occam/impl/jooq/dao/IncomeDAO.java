@@ -30,6 +30,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IncomeRegistryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomeDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
@@ -53,6 +55,7 @@ public class IncomeDAO {
 	private static final IncomePropertiesDAO INCOME_PROPERTIES = new IncomePropertiesDAO();	
 	private static final IncomeDetailPropertiesDAO INCOME_DETAIL_PROPERTIES = new IncomeDetailPropertiesDAO();
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 	
 	public static Stream<Income> getIncomeStream(AONContext ctx, IncomeFilter filter){
 		return INCOME_PROPERTIES.build(ctx.getDslContext().select()
@@ -318,13 +321,15 @@ public class IncomeDAO {
 			.fetch();
 	}
 	
-	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, IncomeDetailFilter detailFilter, ProductFilter productFilter) {
+	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, IncomeDetailFilter detailFilter,
+			ProductFilter productFilter, ItemFilter itemFilter) {
 		ctx.checkRead();
 		
 		Collection<Condition> whereConditions = new ArrayList<Condition>();
 		whereConditions.addAll(Arrays.asList(INCOME_PROPERTIES.getConditions(incomeFilter)));
 		whereConditions.addAll(Arrays.asList(INCOME_DETAIL_PROPERTIES.getConditions(detailFilter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		whereConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
 
 		return ctx.getDslContext()
 			.select()

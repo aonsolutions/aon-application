@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
@@ -59,7 +60,8 @@ public interface IWarehouse {
 	// 	***********************************************
 
 	Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter);
-	Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, IncomeDetailFilter detailFilter, ProductFilter productFilter);
+	Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, IncomeDetailFilter detailFilter,
+			ProductFilter productFilter, ItemFilter itemFilter);
 	Optional<IncomeDetail> insertIncomeDetail(AONContext ctx, IncomeDetail incomeDetail);
 	Optional<IncomeDetail> updateIncomeDetail(AONContext ctx, IncomeDetail incomeDetail);
 	Optional<IncomeDetail> deleteIncomeDetail(AONContext ctx, Integer id);
@@ -74,7 +76,8 @@ public interface IWarehouse {
 	// 	***********************************************
 	// 	**************************** DELIVERY DETAIL***
 	// 	***********************************************
-	Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter);
+	Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter,
+			ProductFilter productFilter, ItemFilter itemFilter);
 	
 	// 	***********************************************
 	// 	************************** INVENTORY DETAIL ***

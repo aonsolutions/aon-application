@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.warehouse.JsStockStat;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -11,8 +12,10 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 
 public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsStockStat>{
@@ -66,8 +69,19 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 	}
 	
 	private void onDetailSelect(JsStockStat item) {
+		final AonToast toast = new AonToast();
+		final InlineLabel label =  new InlineLabel("Filtrando por Lote/n\u00B0 Serie...");
+		toast.show("Procesando ...", label);
 		parent.onSelectItem(item);
 		createPanel();
+		
+		Timer timer = new Timer() {
+            @Override
+            public void run() {
+            	toast.hide();
+            }
+        };
+        timer.schedule(1000);
 	}
 	
 	private FocusPanel print(JsStockStat item) {

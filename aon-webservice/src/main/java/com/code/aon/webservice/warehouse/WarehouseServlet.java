@@ -887,6 +887,10 @@ public class WarehouseServlet extends HttpServlet{
 			Integer[] ids = Arrays.stream(filterMap.get(MSG.PRODUCT)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
 			filter = filter.and(f.getIdProperty().in(ids));
 		}
+		if(filterMap.containsKey("product_id")){
+			Integer[] ids = Arrays.stream(filterMap.get("product_id")).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(ids));
+		}
 		return filter;
     }
     private static Filter itemFilter(Domain domain, Map<String, String[]> filterMap, ItemProperties f) {

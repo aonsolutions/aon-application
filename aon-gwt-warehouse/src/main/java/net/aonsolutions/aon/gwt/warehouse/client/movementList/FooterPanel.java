@@ -2,6 +2,7 @@ package net.aonsolutions.aon.gwt.warehouse.client.movementList;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -81,7 +83,22 @@ public class FooterPanel extends Composite {
 	ScrollPanel warehouseTransferPanel;
 	@UiField
 	ScrollPanel elaborationPanel;
-
+	
+	@UiField
+	InlineLabel itemCount;
+	@UiField
+	InlineLabel incomeCount;
+	@UiField
+	InlineLabel deliveryCount;
+	@UiField
+	InlineLabel purchaseInvoiceCount;
+	@UiField
+	InlineLabel saleInvoiceCount;
+	@UiField
+	InlineLabel warehouseTransferCount;
+	@UiField
+	InlineLabel elaborationCount;
+	
 		
 	public FooterPanel(Main parent) {
 		this(parent, null);
@@ -92,7 +109,6 @@ public class FooterPanel extends Composite {
 		this.API = parent.getAPI();
 		this.product = product;
 		this.item = null;
-		parent.getFilterMap().remove("item");
 		
 		initWidget(binder.createAndBindUi(this));
 		
@@ -103,7 +119,7 @@ public class FooterPanel extends Composite {
 		tabPanel.getTabWidget(FooterTabs.SALE_INVOICE.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.WAREHOUSE_TRANSFER.ordinal()).getParent().setVisible(false);
 		tabPanel.getTabWidget(FooterTabs.ELABORATION.ordinal()).getParent().setVisible(false);
-		tabPanel.selectTab(FooterTabs.ITEM.ordinal());
+		selectTab(FooterTabs.ITEM.ordinal());
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
 			@Override
@@ -123,25 +139,30 @@ public class FooterPanel extends Composite {
 	}
 	
 	protected void loadTabs() {
+		HashMap<String, LinkedList<String>> filterMap = parent.getFilterMap();
 		if (item!=null && item.getId()!=null)
-			parent.getFilterMap().put("item", new LinkedList<>(Arrays.asList(item.getId()+"")));
+			filterMap.put("item", new LinkedList<>(Arrays.asList(item.getId()+"")));
 		if (product!=null && product.getId()!=null)
-			parent.getFilterMap().put("product", new LinkedList<>(Arrays.asList(product.getId()+"")));
+			filterMap.put("product_id", new LinkedList<>(Arrays.asList(product.getId()+"")));
 		
-		loadIncomeTab();
-		loadDeliveryTab();
-		loadPurchaseInvoiceTab();
-		loadSaleInvoiceTab();
-		loadWarehouseTransferTab();
-		loadElaborationTab();
+		loadIncomeTab(filterMap);
+		loadDeliveryTab(filterMap);
+		loadPurchaseInvoiceTab(filterMap);
+		loadSaleInvoiceTab(filterMap);
+		loadWarehouseTransferTab(filterMap);
+		loadElaborationTab(filterMap);
+		
+		filterMap.remove("item");
+		filterMap.remove("product_id");
 	}
 
 
 	private void loadItemTab() {
 		if (product!=null && product.getId()!=null) {
-			parent.getFilterMap().put("product", new LinkedList<>(Arrays.asList(product.getId()+"")));
+			HashMap<String, LinkedList<String>> filterMap = parent.getFilterMap();
+			filterMap.put("product_id", new LinkedList<>(Arrays.asList(product.getId()+"")));
 
-			API.getWarehouse().getItemMovements(parent.getFilterMap(), new AsyncCallback<JSON<JsStockStat>>() {
+			API.getWarehouse().getItemMovements(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsStockStat> result) {
@@ -150,25 +171,31 @@ public class FooterPanel extends Composite {
 					} else {
 						itemPanel.add(new Label("No se han encontrado resultados. "));
 					}
+					updateTabTitle(itemCount, result.getData().length());
 				}
-				
+
 				@Override public void onFailure(Throwable caught) {}
 			});
 			
+			filterMap.remove("product_id");
 		} else {
-			itemPanel.add(new Label("El objeto seleccinado no es valido. "));
+			itemPanel.add(new Label("El objeto seleccinado no es v\u00E1lido. "));
 		}
 	}
 	
-	private boolean isFilterDefined() {
-		return (parent.getFilterMap().containsKey("product") && !parent.getFilterMap().get("product").isEmpty())
-				|| (parent.getFilterMap().containsKey("item") && !parent.getFilterMap().get("item").isEmpty());
+	private void updateTabTitle(InlineLabel inlineLabel, int length) {
+		inlineLabel.setText(" ("+length+")");
 	}
 	
-	private void loadIncomeTab() {
+	private boolean isFilterDefined(HashMap<String, LinkedList<String>> filterMap) {
+		return (filterMap.containsKey("product_id") && !filterMap.get("product_id").isEmpty())
+				|| (filterMap.containsKey("item") && !filterMap.get("item").isEmpty());
+	}
+	
+	private void loadIncomeTab(HashMap<String, LinkedList<String>> filterMap) {
 		incomePanel.clear();
-		if(isFilterDefined()) {
-			API.getWarehouse().getIncomeMovements(parent.getFilterMap(), new AsyncCallback<JSON<JsIncomeDetail>>() {
+		if(isFilterDefined(filterMap)) {
+			API.getWarehouse().getIncomeMovements(filterMap, new AsyncCallback<JSON<JsIncomeDetail>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsIncomeDetail> result) {
@@ -177,19 +204,20 @@ public class FooterPanel extends Composite {
 					} else {
 						incomePanel.add(new Label("No se han encontrado resultados. "));
 					}
+					updateTabTitle(incomeCount, result.getData().length());
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
 		} else {
-			incomePanel.add(new Label("El objeto seleccinado no es valido. "));
+			incomePanel.add(new Label("El objeto seleccinado no es v\u00E1lido. "));
 		}
 	}
 	
-	private void loadDeliveryTab() {
+	private void loadDeliveryTab(HashMap<String, LinkedList<String>> filterMap) {
 		deliveryPanel.clear();
-		if(isFilterDefined()) {
-			API.getWarehouse().getDeliveryMovements(parent.getFilterMap(), new AsyncCallback<JSON<JsDeliveryDetail>>() {
+		if(isFilterDefined(filterMap)) {
+			API.getWarehouse().getDeliveryMovements(filterMap, new AsyncCallback<JSON<JsDeliveryDetail>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsDeliveryDetail> result) {
@@ -198,53 +226,71 @@ public class FooterPanel extends Composite {
 					} else {
 						deliveryPanel.add(new Label("No se han encontrado resultados. "));
 					}
+					updateTabTitle(deliveryCount, result.getData().length());
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
 		} else {
-			deliveryPanel.add(new Label("No se han encontrado resultados. "));
+			deliveryPanel.add(new Label("El objeto seleccinado no es v\u00E1lido. "));
 		}
 	}
 	
-	private void loadPurchaseInvoiceTab() {
+	private void loadPurchaseInvoiceTab(HashMap<String, LinkedList<String>> filterMap) {
 		purchaseInvoicePanel.clear();
-//		if(isFilterDefined()) {
-//			API.getFinance().getInvoiceMovements(parent.getFilterMap(), new AsyncCallback<JSON<JsInvoiceDetail>>() {
-//				
-//				@Override
-//				public void onSuccess(JSON<JsInvoiceDetail> result) {
-//					if(!result.getData().toLinkedList().isEmpty()) {
-//						purchaseInvoicePanel.add( createInvoicePanel(result.getData()) );
-//					} else {
-//						purchaseInvoicePanel.add(new Label("No se han encontrado resultados. "));
-//					}
-//				}
-//				
-//				@Override public void onFailure(Throwable caught) {}
-//			});
-//		} else {
-//			purchaseInvoicePanel.add(new Label("No se han encontrado resultados. "));
-//		}
-		// TODO loadPurchaseInvoiceTab
-		purchaseInvoicePanel.add(new Label("Disponible pr\u00F3ximamente"));
+		if(isFilterDefined(filterMap)) {
+			filterMap.put("type", new LinkedList<>(Arrays.asList(InvoiceType.PURCHASE.ordinal()+"")));
+			API.getFinance().getInvoiceMovements(filterMap, new AsyncCallback<JSON<JsInvoiceDetail>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsInvoiceDetail> result) {
+					if(!result.getData().toLinkedList().isEmpty()) {
+						purchaseInvoicePanel.add( createInvoicePanel(result.getData()) );
+					} else {
+						purchaseInvoicePanel.add(new Label("No se han encontrado resultados. "));
+					}
+					updateTabTitle(purchaseInvoiceCount, result.getData().length());
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else {
+			purchaseInvoicePanel.add(new Label("El objeto seleccinado no es v\u00E1lido. "));
+		}
 	}
 	
-	private void loadSaleInvoiceTab() {
-		// TODO loadSaleInvoiceTab
+	private void loadSaleInvoiceTab(HashMap<String, LinkedList<String>> filterMap) {
 		saleInvoicePanel.clear();
-		saleInvoicePanel.add(new Label("Disponible pr\u00F3ximamente"));
+		if(isFilterDefined(filterMap)) {
+			filterMap.put("type", new LinkedList<>(Arrays.asList(InvoiceType.SALES.ordinal()+"")));
+			API.getFinance().getInvoiceMovements(filterMap, new AsyncCallback<JSON<JsInvoiceDetail>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsInvoiceDetail> result) {
+					if(!result.getData().toLinkedList().isEmpty()) {
+						saleInvoicePanel.add( createInvoicePanel(result.getData()) );
+					} else {
+						saleInvoicePanel.add(new Label("No se han encontrado resultados. "));
+					}
+					updateTabTitle(saleInvoiceCount, result.getData().length());
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else {
+			saleInvoicePanel.add(new Label("El objeto seleccinado no es v\u00E1lido. "));
+		}
 	}
 	
-	private void loadWarehouseTransferTab() {
-		// TODO loadWarehouseTransferTab
+	private void loadWarehouseTransferTab(HashMap<String, LinkedList<String>> filterMap) {
 		warehouseTransferPanel.clear();
+		// TODO loadWarehouseTransferTab
 		warehouseTransferPanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
-	private void loadElaborationTab() {
-		// TODO loadElaborationTab
+	private void loadElaborationTab(HashMap<String, LinkedList<String>> filterMap) {
 		elaborationPanel.clear();
+		// TODO loadElaborationTab
 		elaborationPanel.add(new Label("Disponible pr\u00F3ximamente"));
 	}
 	
@@ -303,7 +349,7 @@ public class FooterPanel extends Composite {
 		List<MovementObject> list = new LinkedList<>();
 		aonJsArray.toLinkedList().forEach(detail -> {
 			MovementObject o = new MovementObject();
-			o.date = detail.getInvoice().getTaxDate();
+			o.date = detail.getInvoice().getIssueDate();
 			o.referenceCode = detail.getInvoice().getReferenceCode();
 			o.registryName = detail.getInvoice().getRegistryName();
 			o.quantity = detail.getQuantity();
@@ -317,9 +363,18 @@ public class FooterPanel extends Composite {
 		return null;
 	}
 	
-	protected FlowPanel createElaborationPanel(JsElaboration jsElaboration) {
-		// TODO createElaborationPanel
-		return null;
+	protected FlowPanel createElaborationPanel(AonJsArray<JsElaboration> aonJsArray) {
+		List<MovementObject> list = new LinkedList<>();
+		aonJsArray.toLinkedList().forEach(elaboration -> {
+			MovementObject o = new MovementObject();
+			o.date = elaboration.getDate();
+			o.referenceCode = elaboration.getSeries()+"/"+elaboration.getNumber();;
+			// TODO registryName on elaboration
+			o.registryName = "";
+			o.quantity = elaboration.getQuantity();
+			list.add(o);
+		});
+		return createPanel(list);
 	}
 	
 	

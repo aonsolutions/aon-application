@@ -23,6 +23,8 @@
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Detalle"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel ui:field="itemCount"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:HTMLPanel>
@@ -36,6 +38,8 @@
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Albs. compra"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel ui:field="incomeCount"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
@@ -51,6 +55,8 @@
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Albs. venta"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel ui:field="deliveryCount"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:HTMLPanel>
@@ -64,6 +70,8 @@
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Fras. compra"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel ui:field="purchaseInvoiceCount"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
@@ -79,6 +87,8 @@
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Fras. venta"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel ui:field="saleInvoiceCount"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:HTMLPanel>
@@ -93,6 +103,8 @@
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Traspasos almacen"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel ui:field="warehouseTransferCount"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
 				<g:HTMLPanel>
@@ -106,6 +118,8 @@
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 						<g:InlineLabel text="Elaboraciones"
+							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						<g:InlineLabel ui:field="elaborationCount"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>

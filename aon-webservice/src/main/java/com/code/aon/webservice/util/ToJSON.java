@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -171,6 +172,33 @@ public class ToJSON {
 		json.put("tax_date", AonDateUtils.format(invoice.getTaxDate(), "dd-MM-yyyy"));
 		json.put("sii_status", invoice.getSiiStatus() != null ? invoice.getSiiStatus() : "Pendiente" );
 		
+		return json;
+	}
+	
+	public static JSONObject invoiceDetailFullToJSON(InvoiceDetail invoiceDetail){
+		JSONObject json = new JSONObject();
+		if(invoiceDetail != null){
+			json.put(MSG.ID, invoiceDetail.getId());
+			json.put(MSG.DOMAIN, invoiceDetail.getDomain());
+			json.put(MSG.PROJECT, invoiceDetail.getProject());
+			json.put(MSG.INVOICE,
+					new JSONObject()
+					.put(MSG.ID, invoiceDetail.getInvoice().getId())
+					.put(MSG.REGISTRY, new JSONObject()
+										.put(MSG.ID, invoiceDetail.getInvoice().getRegistry())
+										.put(MSG.NAME, invoiceDetail.getInvoice().getRegistryName()))
+					.put("registry_name", invoiceDetail.getInvoice().getRegistryName())
+					.put(MSG.REFERENCE_CODE, invoiceDetail.getInvoice().getReferenceCode())
+					.put(MSG.SERIES, invoiceDetail.getInvoice().getSeries())
+					.put(MSG.NUMBER, invoiceDetail.getInvoice().getNumber())
+					.put(MSG.ISSUE_DATE, AonDateUtils.dateTimeFormat(invoiceDetail.getInvoice().getIssueDate())));
+			json.put(MSG.LINE, invoiceDetail.getLine());
+			json.put(MSG.ITEM, invoiceDetail.getItem().getId());
+			json.put(MSG.DESCRIPTION, invoiceDetail.getDescription());
+			json.put(MSG.QUANTITY, invoiceDetail.getQuantity());
+			json.put(MSG.PRICE, invoiceDetail.getPrice());
+			json.put(MSG.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression());
+		}
 		return json;
 	}
 	

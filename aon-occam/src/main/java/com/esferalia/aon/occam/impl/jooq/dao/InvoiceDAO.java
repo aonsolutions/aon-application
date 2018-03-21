@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
@@ -16,7 +17,6 @@ import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -27,6 +27,9 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -48,6 +51,7 @@ import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
 import com.esferalia.aon.jooq.tables.records.InvoicingGroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
@@ -80,6 +84,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
@@ -98,6 +103,7 @@ public class InvoiceDAO {
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 	
 	private static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
 	private static class RegistryPropertiesDAO implements RegistryProperties {
@@ -178,6 +184,27 @@ public class InvoiceDAO {
 		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE)), filter)
 				.fetch().stream().map(new FullInvoiceFiller());
+	}
+	
+	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter){
+		ctx.checkRead();
+		
+		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		whereConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(filter)));
+		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(pFilter)));
+		whereConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(iFilter)));
+
+		return ctx.getDslContext()
+			.select()
+			.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.where(whereConditions)
+			.orderBy(INVOICE.ISSUE_DATE,INVOICE.SERIES,INVOICE.NUMBER,INVOICE_DETAIL.LINE)
+			.fetch().stream().map(new InvoiceDetailFiller());
 	}
 	
 	public static Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter,Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
@@ -817,8 +844,18 @@ public class InvoiceDAO {
 
 		@Override
 		public InvoiceDetail apply(Record r) {
-			return new InvoiceDetail().setInvoice(new Invoice().setIssueDate(r.getValue(INVOICE.ISSUE_DATE)))
-					.setPrice(r.getValue(INVOICE_DETAIL.PRICE)).setId(r.getValue(INVOICE_DETAIL.ID))
+			return new InvoiceDetail().setInvoice(new Invoice()
+						.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+						.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+						.setSeries(r.getValue(INVOICE.SERIES))
+						.setNumber(r.getValue(INVOICE.NUMBER))
+						.setRegistry(r.getValue(INVOICE.REGISTRY))
+						.setRegistryName(r.getValue(INVOICE.RNAME))
+						)
+					.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
+					.setId(r.getValue(INVOICE_DETAIL.ID))
+					.setItem((r.getValue(INVOICE_DETAIL.ITEM) == null)? null
+							: new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
 					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR) != null
 							? r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR) : "0.0")
 					.setQuantity(

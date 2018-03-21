@@ -35,6 +35,10 @@ public class JsInvoice extends JavaScriptObject {
 		return this.reference_code;
 	}-*/;
 	
+	public final native String getIssueDate() /*-{
+		return this.issue_date;
+	}-*/;
+	
 	public final native String getTaxDate() /*-{
 		return this.tax_date;
 	}-*/;

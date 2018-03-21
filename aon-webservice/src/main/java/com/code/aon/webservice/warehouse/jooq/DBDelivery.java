@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -32,7 +33,8 @@ public class DBDelivery {
 		AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login,
 				f -> deliveryFilter(domain, map, f),
 				f -> deliveryDetailFilter(domain, map, f),
-				f -> productFilter(domain, map, f))
+				f -> productFilter(domain, map, f),
+				f -> itemFilter(domain, map, f))
 			.forEach(detail -> array.put(deliveryDetailFullToJSON(detail)));
 		return array;
 	}
@@ -85,9 +87,29 @@ public class DBDelivery {
 			filter = filter.and(f.getIdProperty().in(ids));
 		}
 		
+		if(filterMap.containsKey("product_id")){
+			Integer[] ids = Arrays.stream(filterMap.get("product_id")).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(ids));
+		}
+		
 		if(filterMap.containsKey(MSG.CATEGORY)){
 			Integer[] ids = Arrays.stream(filterMap.get(MSG.CATEGORY)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
 			filter = filter.and(f.getCategoryProperty().in(ids));
+		}
+		
+		return filter;
+	}
+    
+    public static Filter itemFilter(Domain domain, Map<String, String[]> filterMap, ItemProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.ITEM)){
+			Integer id = Integer.parseInt(filterMap.get(MSG.ITEM)[0]);
+			filter = filter.and(f.getIdProperty().eq(id));
+		}
+		
+		if(filterMap.containsKey("serial_number")){
+			filter = filter.and(f.getSerialNumberProperty().like("%"+filterMap.get("serial_number")[0]+"%"));
 		}
 		
 		return filter;

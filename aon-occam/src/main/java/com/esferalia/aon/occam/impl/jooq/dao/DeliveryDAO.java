@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PDeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RDeliveryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
@@ -55,6 +57,7 @@ public class DeliveryDAO {
 	private static final DeliveryDetailPropertiesDAO DELIVERY_DETAIL_PROPERTIES = new DeliveryDetailPropertiesDAO();
 	private static final DeliveryPropertiesDAO DELIVERY_PROPERTIES = new DeliveryPropertiesDAO();
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 
 	// -------------------- DELIVERY
 	
@@ -208,13 +211,15 @@ public class DeliveryDAO {
 				.returning().fetch().stream().map(new DeliveryDetailFiller()).findFirst().orElse(new DeliveryDetail());
 	}
 	
-	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter) {
+	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter,
+			ProductFilter productFilter, ItemFilter itemFilter) {
 		ctx.checkRead();
 		
 		Collection<Condition> whereConditions = new ArrayList<Condition>();
 		whereConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
 		whereConditions.addAll(Arrays.asList(DELIVERY_DETAIL_PROPERTIES.getConditions(detailFilter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		whereConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
 
 		return ctx.getDslContext()
 			.select()

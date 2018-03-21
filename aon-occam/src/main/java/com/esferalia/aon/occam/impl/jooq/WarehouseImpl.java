@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
@@ -378,9 +379,10 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	@Override
-	public Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, IncomeDetailFilter detailFilter, ProductFilter productFilter) {
+	public Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeFilter incomeFilter, IncomeDetailFilter detailFilter,
+			ProductFilter productFilter, ItemFilter itemFilter) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			IncomeDAO.getIncomeDetailStream(ctx, incomeFilter, detailFilter, productFilter));
+			IncomeDAO.getIncomeDetailStream(ctx, incomeFilter, detailFilter, productFilter, itemFilter));
 	}
 
 	@Override
@@ -432,9 +434,10 @@ public class WarehouseImpl implements IWarehouse {
 	
 	// -------------------------- DELIVERY
 	@Override
-	public Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter, ProductFilter productFilter) {
+	public Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter,
+			ProductFilter productFilter, ItemFilter itemFilter) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			DeliveryDAO.getDeliveryDetailStream(ctx, deliveryFilter, detailFilter, productFilter));
+			DeliveryDAO.getDeliveryDetailStream(ctx, deliveryFilter, detailFilter, productFilter, itemFilter));
 	}
 	
 }

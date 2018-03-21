@@ -83,8 +83,8 @@ public class Main extends Composite {
 
 	public void loadContent() {
 		final AonToast toast = new AonToast();
-		final InlineLabel label =  new InlineLabel("...");
-		toast.show("Cargando ...", label);
+		final InlineLabel label =  new InlineLabel("Cargando el contenido...");
+		toast.show("Procesando ...", label);
 		
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
@@ -108,6 +108,11 @@ public class Main extends Composite {
 				Window.alert("No se han podido recuperar los datos.");
 			}
 		});
+	}
+	
+	public void cleanContent() {
+		hideFooterPanel();
+		content.setWidget(new GridPanel(parent, null));
 	}
 
 	public void loadSouthContent() {

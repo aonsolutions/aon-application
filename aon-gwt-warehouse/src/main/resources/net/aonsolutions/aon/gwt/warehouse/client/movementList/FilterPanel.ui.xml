@@ -32,9 +32,9 @@
 
 		<g:HorizontalPanel ui:field="panel" styleName="aon-width-all">
 			<p:PaperIconButton ui:field="searchButton" icon="search"
-				style="position:absolute;right:45px;" />
+				style="position:absolute;right:50px;" />
 			<p:PaperIconButton ui:field="cleanButton" icon="close"
-				style="position:absolute;right:15px;" />
+				style="position:absolute;right:10px;" />
 		</g:HorizontalPanel>
 
 	</g:HTMLPanel>

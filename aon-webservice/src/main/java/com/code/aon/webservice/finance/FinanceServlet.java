@@ -1,6 +1,8 @@
 package com.code.aon.webservice.finance;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -18,6 +20,8 @@ import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -58,7 +62,9 @@ public class FinanceServlet extends HttpServlet{
 								object = getInvoiceList(domain, user.getLogin(), Integer.parseInt(pathInfo[5]));
 						} else if(pathInfo[4].equals("id")) {
 							if(pathInfo.length > 5) // INVOICE CON ID X
-								object = getInvoice(domain, user.getLogin(), Integer.parseInt(pathInfo[5])); 
+								object = getInvoice(domain, user.getLogin(), Integer.parseInt(pathInfo[5]));
+						} else if(pathInfo[4].equals("movements")) {
+							object = getInvoiceMovements(domain, user.getLogin(), req.getParameterMap());
 						}
 					} else {// LISTA DE INVOICE CONDICION DOMAIN
 						object = getInvoiceList(domain, user.getLogin(), req);
@@ -295,12 +301,22 @@ public class FinanceServlet extends HttpServlet{
 	}
     
 	
-    private JSONArray getInvoiceList(Domain domain, String login, Integer registryId){
+	private JSONArray getInvoiceList(Domain domain, String login, Integer registryId){
     	JSONArray array = new JSONArray();
        	AON.getInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getRegistryProperty().eq(registryId)))
        		.forEach(rm -> array.put(ToJSON.invoiceToJSON(rm)));
+    	return array;
+    }
+	
+	private JSONArray getInvoiceMovements(Domain domain, String login, Map<String, String[]> map){
+    	JSONArray array = new JSONArray();
+    	AON.getInvoiceDetailStream(domain.getName(), domain.getId(), login,
+				f -> invoiceFilter(domain, map, f),
+				f -> productFilter(domain, map, f),
+				f -> itemFilter(domain, map, f))
+			.forEach(detail -> array.put(ToJSON.invoiceDetailFullToJSON(detail)));
     	return array;
     }
     
@@ -359,4 +375,63 @@ public class FinanceServlet extends HttpServlet{
 		}
     	return array;
     }
+    
+    
+    
+    public static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.FROM)){
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			filter = filter.and(f.getStartIssueDateProperty().ge(AonDateUtils.toSql(date)));
+		}
+
+		if(filterMap.containsKey(MSG.TO)){
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.TO)[0])));
+			filter = filter.and(f.getEndIssueDateProperty().le(AonDateUtils.toSql(date)));
+		}
+		
+		if(filterMap.containsKey(MSG.TYPE)){
+			filter = filter.and(f.getTypeProperty().eq(new Byte(filterMap.get(MSG.TYPE)[0])));
+		}
+		
+		return filter;
+	}
+    
+    public static Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.PRODUCT)){
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.PRODUCT)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(ids));
+		}
+		
+		if(filterMap.containsKey("product_id")){
+			Integer[] ids = Arrays.stream(filterMap.get("product_id")).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(ids));
+		}
+		
+		if(filterMap.containsKey(MSG.CATEGORY)){
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.CATEGORY)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getCategoryProperty().in(ids));
+			
+		}
+		
+		return filter;
+	}
+    
+    public static Filter itemFilter(Domain domain, Map<String, String[]> filterMap, ItemProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.ITEM)){
+			Integer id = Integer.parseInt(filterMap.get(MSG.ITEM)[0]);
+			filter = filter.and(f.getIdProperty().eq(id));
+		}
+		
+		if(filterMap.containsKey("serial_number")){
+			filter = filter.and(f.getSerialNumberProperty().like("%"+filterMap.get("serial_number")[0]+"%"));
+		}
+		
+		return filter;
+	}
 }

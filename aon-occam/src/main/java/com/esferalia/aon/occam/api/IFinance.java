@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -35,6 +36,8 @@ public interface IFinance {
 	// 	****************************************
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
 	Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii);
+	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter,
+			ItemFilter iFilter);
 
 	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
 	InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);

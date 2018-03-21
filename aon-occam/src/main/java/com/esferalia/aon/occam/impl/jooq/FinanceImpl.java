@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -41,6 +42,12 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceDAO.getSiiInvoiceStream(ctx, filter, pending, aceptada, aceptadaErrores,incorrecta, anulada, sii));
 	}
+		
+	@Override
+	public Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter) {
+		return InvoiceDAO.getInvoiceDetails(ctx, filter, pFilter, iFilter);
+	}
+
 	
 	// ------------------------------------- INVOICE DETAIL
 	
