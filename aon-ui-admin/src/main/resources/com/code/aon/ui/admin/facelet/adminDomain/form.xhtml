@@ -270,11 +270,11 @@
 							value="#{documentManager.usedSpaceMessage}" />
 					</h:panelGrid>
 					
-					<aon:if test="#{(adminDomain.to.type == 'ENTERPRISE') or (fn:length(adminDomain.bookingInfo.selectableBookingModules) &gt; 0)}">
+					<aon:if test="#{(adminDomain.to.type == 'ENTERPRISE' and (adminDomain.parentDomain == null or adminDomain.parentDomain.type == 'CONSULTANCY')) or (fn:length(adminDomain.bookingInfo.selectableBookingModules) &gt; 0)}">
 						<aon:outputLabel value="#{bundle.admin_modules_booked}" />
 						<h:panelGrid id="bookedModulesDiv" columns="2"
 							cellpadding="0" cellspacing="0">
-							<aon:if test="#{adminDomain.to.type == 'ENTERPRISE'}">
+							<aon:if test="#{adminDomain.to.type == 'ENTERPRISE' and (adminDomain.parentDomain == null or adminDomain.parentDomain.type == 'CONSULTANCY')}">
 								<aon:selectOneRadio id="Domain_booked"
 									styleClass="aon-margin-right" 
 									value="#{adminDomain.bookingInfo.aonMode}">

@@ -46,18 +46,19 @@ public class VisibilityManager extends BasicVisibilityManager {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getDomainId();
 		Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+		DomainType parentDomainType = (parentDomainId != null) ? DomainType.values()[AdminUtil.getDomainType(parentDomainId)] : null;
 		Set<Module> parentDomainModules = Collections.emptySet();
 		if ( parentDomainId != null ) {
 			parentDomainModules = getEnabledModuleList(parentDomainId);
 		}
 		boolean userOfParentDomain = false;
 		if ( user != null ) {
-			userOfParentDomain = ObjectUtils.equals(user.getDomain(), parentDomainId);
+			userOfParentDomain = parentDomainId == null || ObjectUtils.equals(user.getDomain(), parentDomainId);
 			if ( userOfParentDomain ) {
 				enabledModules.addAll( parentDomainModules );
 			}
 		}
-		Set<Module> domainModules = getEnabledModuleList(domainId);
+		Set<Module> domainModules = (parentDomainId == null || parentDomainType == DomainType.CONSULTANCY) ? getEnabledModuleList(domainId) : new HashSet<Module>();
 		boolean addConfiguration = true;
 		if ( domainModules.contains(Module.AON_ONE) ) {
 			for (Iterator<Module> iterator = domainModules.iterator(); iterator.hasNext();) {

@@ -176,7 +176,7 @@ public class BookingInfo implements Serializable {
 	}		
 	
 	public boolean isShowDisplayModules() {
-		if ( ((getDomain().getType() == DomainType.CONSULTANCY) && getDomain().isDomainManagement()) || isAonOne() || isAonFinance() ) {
+		if ( ((getDomain().getType() == DomainType.CONSULTANCY) && getDomain().isDomainManagement()) || (getParentDomain() != null && getParentDomain().getType() != DomainType.CONSULTANCY) || isAonOne() || isAonFinance() ) {
 			return false;
 		}
 		return true;
@@ -421,29 +421,31 @@ public class BookingInfo implements Serializable {
 			this.displayModules.remove(this.documental);
 		} else {
 			this.bookingModules.clear();
-			this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
-			this.bookingModules.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
-			this.bookingModules.add(aioInfo.getModuleInfo(Module.CALL_CENTER));
-			if ( getParentDomain() != null ) {
-				Integer parentDomainId = getParentDomain().getId();
-				Integer applicationId = aioInfo.getApplication().getId();
-				boolean parentUser = !getDomain().getId().equals(AonUtil.getAuthPrincipal().getDomainId());				
-				DomainModuleInfo fiscal = aioInfo.getModuleInfo(Module.FISCAL);
-				if ( AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {
-					this.bookingModules.add(fiscal);
-					fiscal.setDisabled(!parentUser);
+			if (getParentDomain() == null || getParentDomain().getType() == DomainType.CONSULTANCY) {
+				this.bookingModules.add(aioInfo.getModuleInfo(Module.AON_ONE));
+				this.bookingModules.add(aioInfo.getModuleInfo(Module.ACCOUNTING));
+				this.bookingModules.add(aioInfo.getModuleInfo(Module.CALL_CENTER));
+				if ( getParentDomain() != null ) {
+					Integer parentDomainId = getParentDomain().getId();
+					Integer applicationId = aioInfo.getApplication().getId();
+					boolean parentUser = !getDomain().getId().equals(AonUtil.getAuthPrincipal().getDomainId());				
+					DomainModuleInfo fiscal = aioInfo.getModuleInfo(Module.FISCAL);
+					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {
+						this.bookingModules.add(fiscal);
+						fiscal.setDisabled(!parentUser);
+					}
+					DomainModuleInfo payroll = aioInfo.getModuleInfo(Module.PAYROLL);
+					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
+						this.bookingModules.add(payroll);
+						payroll.setDisabled(!parentUser);
+					}
+				} else {
+					this.bookingModules.add(aioInfo.getModuleInfo(Module.FISCAL));
+					this.bookingModules.add(aioInfo.getModuleInfo(Module.PAYROLL));
 				}
-				DomainModuleInfo payroll = aioInfo.getModuleInfo(Module.PAYROLL);
-				if ( AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {
-					this.bookingModules.add(payroll);
-					payroll.setDisabled(!parentUser);
+				if (!this.displayModules.contains(this.documental) ) {
+					this.displayModules.add(this.documental);
 				}
-			} else {
-				this.bookingModules.add(aioInfo.getModuleInfo(Module.FISCAL));
-				this.bookingModules.add(aioInfo.getModuleInfo(Module.PAYROLL));
-			}
-			if (!this.displayModules.contains(this.documental) ) {
-				this.displayModules.add(this.documental);
 			}
 		}
 		this.aioInfo.sortApplicationModules(this.bookingModules);
