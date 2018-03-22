@@ -39,6 +39,9 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	
+	private String domainName;
+	private String user;
+	private Domain domain;
 	
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int RESULTS_TAB = 1;
@@ -51,6 +54,10 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 	private SimpleLayoutPanel resultContent;
 	
 	public OptionBase(String domainName, String user, Domain domain) {
+		this.domainName = domainName;
+		this.user = user;
+		this.domain = domain;
+		
 		mainPanel = new DockLayoutPanel(Unit.PX);
 		mainPanel.addNorth(getToolbarPanel(), 25);
 		
@@ -99,57 +106,16 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 			openFootPanel();
 		}
 	}
-//	protected Widget paintResults(AccUtilitiesResult result) {
-//		FlowPanel log = new FlowPanel(); 
-//		log.setStyleName(AON.AON_CSS.aonWidth98Percent());
-//		log.addStyleName(AON.AON_CSS.aonBlockCenter());
-//		log.addStyleName(AON.AON_CSS.aonMarginTop());
-//		log.addStyleName(AON.AON_CSS.aonMarginBottom());
-//		log.addStyleName(AON.AON_CSS.aonFixedFont());
-//		log.addStyleName(AON.AON_CSS.aonFontMedium());
-//		log.addStyleName(AON.AON_CSS.aonNowrap());
-//		log.addStyleName(AON.AON_CSS.aonPaddingLeft());
-//		if (result != null) {
-//			for ( IAccUtilitiesItem item : result.getItems()) {
-//				item.getType().visit(new IAccUtilitiesItemTypeVisitor() {
-//					@Override
-//					public void visitOther(AccUtilitiesItemType type) {
-//						log.add(new Label(AonStringUtils.BULLET + " " +item.getMessage()));	
-//					}
-//					@Override
-//					public void visitErrorMessage(AccUtilitiesItemType type) {
-//						log.add(new Label(AonStringUtils.BULLET + " " +item.getMessage()));
-//					}
-//					@Override
-//					public void visitInfoMessage(AccUtilitiesItemType type) {
-//						log.add(new Label(AonStringUtils.BULLET + " " +item.getMessage()));
-//					}
-//					
-//					@Override
-//					public void visitParentAccountLinker(AccUtilitiesItemType type) {
-//						log.add(new HTML(PARENT_LINKER_TEMPLATE.toString(item.getDomainName(),item.getMessage()).asString()));
-//					}
-//					@Override
-//					public void visitEmptyEntry(AccUtilitiesItemType type) {
-//						log.add(new Label(AonStringUtils.BULLET + " " +item.getMessage()));
-//					}
-//					@Override
-//					public void visitUnbalancedEntry(AccUtilitiesItemType type) {
-//						FlowPanel labelPanel = new FlowPanel();
-//						Label entryLabel = new Label(AonStringUtils.BULLET + " " +item.getMessage());
-//						labelPanel.add(entryLabel);
-//						log.add(labelPanel);
-//					}
-//				});
-//			}
-//		} else {
-//			Label label = new Label(AON.MSG.noData());
-//			log.add(label);
-//		}
-//		return log;
-//	}
-
-
+	
+	protected String getDomainName() {
+		return domainName;
+	}
+	protected String getUser() {
+		return user;
+	}
+	protected Domain getDomain() {
+		return domain;
+	}
 	protected void showResults(AccUtilitiesResult result) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(RESULTS_TAB);

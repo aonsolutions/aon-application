@@ -123,12 +123,23 @@ public class AccountingUtilities extends MainEntryPoint{
 		});
 		sidebarMenu.add(checksDisclosurePanel);
 		
+		DisclosurePanel utilitiesDisclosurePanel = new DisclosurePanel("UTILIDADES");
+		utilitiesDisclosurePanel.setOpen(false);
+		FlowPanel utilitiesPanel = new FlowPanel();
+		utilitiesDisclosurePanel.add(utilitiesPanel);
+
+		if (!domain.isParent()) {
+			AccountRegistryChecker archecker = new AccountRegistryChecker(getDomainName(),getUser(),domain);
+			utilitiesPanel.add(archecker.getSidebarWidget());
+			archecker.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+				@Override
+				public void onSelection(SelectionEvent<IOption> event) {
+					content.setWidget( archecker );			
+				}
+			});
+		}
+		
 		if (domain.isParent()) {
-			DisclosurePanel utilitiesDisclosurePanel = new DisclosurePanel("UTILIDADES");
-			utilitiesDisclosurePanel.setOpen(false);
-			FlowPanel utilitiesPanel = new FlowPanel();
-			utilitiesDisclosurePanel.add(utilitiesPanel);
-			
 			ParentAccountLinker linker = new ParentAccountLinker(getDomainName(),getUser(),domain);
 			utilitiesPanel.add(linker.getSidebarWidget());
 			linker.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
@@ -137,9 +148,8 @@ public class AccountingUtilities extends MainEntryPoint{
 					content.setWidget( linker );			
 				}
 			});
-			sidebarMenu.add(utilitiesDisclosurePanel);
 		}
-		
+		sidebarMenu.add(utilitiesDisclosurePanel);
 		
 		dockLayoutPanel.add( content );
 		return dockLayoutPanel; 

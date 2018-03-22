@@ -6,7 +6,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -56,6 +58,26 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
 		AON.start();
 		fsa.unbalancedEntries(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
+	@Override
+	public void getAccountLinks(String domainName, String user, Integer domain, AccUtilitiesParams params, AsyncCallback<AccUtilitiesResult> callback) {
+		AON.start();
+		fsa.getAccountLinks(domainName, user, domain, params, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
+	@Override
+	public void changeAccountDescription(String domainName, String user, Integer domain, Integer accountId,
+			String newDescription, AsyncCallback<String> callback) throws AonCoreException {
+		AON.start();
+		fsa.changeAccountDescription(domainName, user, domain, accountId, newDescription, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void createAndLinkAccount(String domainName, String user, Integer domain, AccountingRegistryType registryType,
+			Integer registryId, AsyncCallback<Account> callback) throws AonCoreException {
+		AON.start();
+		fsa.createAndLinkAccount(domainName, user, domain, registryType, registryId, new AsyncCallbackWrapper<Account>(callback));
 	}
 
 

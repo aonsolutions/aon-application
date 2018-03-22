@@ -311,6 +311,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-wrap")
 	String aonWrap();
+	
+	@ClassName("aon-wrap-important")
+	String aonWrapImportant();
 
 	@ClassName("aon-nowrap")
 	String aonNowrap();

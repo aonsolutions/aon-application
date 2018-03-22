@@ -1153,4 +1153,18 @@ public interface Properties {
 
 	}
 	
+	public interface AccountingRegistryProperties {
+		
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getAccountCodeProperty();
+		Property<String> getAccountDescriptionProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getDocumentTypeProperty();
+		Property<String> getDocumentCountryProperty();
+		Property<String> getDocumentProperty();
+		Property<String> getAliasProperty();
+		Property<Byte> getSecurityLevelProperty();
+		
+	}
 }

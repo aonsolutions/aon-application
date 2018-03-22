@@ -206,13 +206,15 @@ class EmptyEntryFinder extends OptionBase {
 			this.item = item;
 		}
 		
-		@Override
-		public void visitUnbalancedEntry(AccUtilitiesItemType type) {}
-		
+		@Override public void visitUnbalancedEntry(AccUtilitiesItemType type) {}
 		@Override public void visitParentAccountLinker(AccUtilitiesItemType type) {}
 		@Override public void visitOther(AccUtilitiesItemType type) {}
 		@Override public void visitInfoMessage(AccUtilitiesItemType type) {}
 		@Override public void visitErrorMessage(AccUtilitiesItemType type) {}
+		@Override public void visitCustomerAccount(AccUtilitiesItemType type) {}
+		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
+		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
+		
 		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
 			InlineLabel msgLabel = new InlineLabel(item.getMessage());

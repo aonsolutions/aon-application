@@ -343,6 +343,9 @@ input[type="checkbox"]:focus + label {
 .aon-wrap {
 	white-space: normal;
 }
+.aon-wrap-important {
+	white-space: normal !important;
+}
 
 .aon-nowrap {
 	white-space: nowrap;
@@ -914,7 +917,6 @@ input[type="checkbox"]:focus + label {
 @sprite .aon-icon-blocked {
 	gwt-image: "aonIconBlocked";
 	width: auto;
-	height: auto;
 }
 
 @sprite .aon-icon-unlock {

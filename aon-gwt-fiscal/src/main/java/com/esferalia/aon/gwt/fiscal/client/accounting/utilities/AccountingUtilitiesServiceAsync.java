@@ -4,7 +4,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -20,5 +22,12 @@ public interface AccountingUtilitiesServiceAsync {
 	// Apuntes sin lineas
 	void emptyEntries(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	void unbalancedEntries(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
+	
+	// Chequeo de cuentas asignadas a otras entidades
+	void getAccountLinks(String domainName, String user, Integer domain, AccUtilitiesParams params, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
+	void changeAccountDescription(String domainName, String user, Integer domain, Integer accountId, String newDescription, AsyncCallback<String> asyncCallback) throws AonCoreException;
+	void createAndLinkAccount(String domainName, String user, Integer domain, AccountingRegistryType registryType,
+			Integer registryId, AsyncCallback<Account> callback) throws AonCoreException;
+	
 	
 }

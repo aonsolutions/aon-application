@@ -2,39 +2,52 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
-import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
-import static com.esferalia.aon.jooq.tables.BankConcept.BANK_CONCEPT;
-import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
-import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
-import static com.esferalia.aon.jooq.tables.Loan.LOAN;
-import static com.esferalia.aon.jooq.tables.Tax.TAX;
-import static com.esferalia.aon.jooq.tables.PmTypeDetail.PM_TYPE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountHelper.ACCOUNT_HELPER;
+import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
+import static com.esferalia.aon.jooq.tables.BankConcept.BANK_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Loan.LOAN;
+import static com.esferalia.aon.jooq.tables.PmTypeDetail.PM_TYPE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.jooq.AggregateFunction;
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountLinkItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesErrorItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesInfoItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccountLinkerItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.CreditorStatus;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -420,6 +433,207 @@ public class AccountingUtilitiesDAO {
 						+ "]"
 						))
 		.forEach(item -> result.add(item) );
+	}
+	
+	public static AccUtilitiesResult getAccountLinks(AONContext ctx, AccUtilitiesParams params) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		
+		final String q = !AonStringUtils.contains(params.getQuery(), AonStringUtils.PERCENT)
+			 	?(AonStringUtils.PERCENT + params.getQuery() + AonStringUtils.PERCENT)
+				:(params.getQuery());
+			 	
+	 	Condition[] where = RegistryDAO.getConditions(p -> p.getDocumentProperty().like(q)
+	 			.or(p.getNameProperty().like(q))
+	 			.or(p.getAliasProperty().like(q))
+	 			.or(p.getAccountCodeProperty().like(q))
+	 			.or(p.getAccountDescriptionProperty().like(q)));
+		
+		// CLIENTES
+	 	if (params.isShowCustomers()) {
+			ctx.getDslContext().select(REGISTRY.ID,REGISTRY.DOCUMENT,REGISTRY.DOCUMENT_TYPE
+					,REGISTRY.DOCUMENT_COUNTRY,REGISTRY.NAME,REGISTRY.ALIAS
+					,CUSTOMER.STATUS
+					,ACCOUNT.ID,ACCOUNT.DOMAIN,ACCOUNT.CODE,ACCOUNT.DESCRIPTION				)
+				.from(CUSTOMER)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+				.leftOuterJoin(ACCOUNT).on(ACCOUNT.ID.eq(CUSTOMER.ACCOUNT))
+				.where(where)
+				.and(CUSTOMER.DOMAIN.eq(ctx.getDomainId())
+				.and(params.isShowInactives()
+						?DSL.trueCondition()
+						:CUSTOMER.STATUS.ne(CustomerStatus.INACTIVE.value()))
+				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CUSTOMER.SCOPE)))
+				.fetch()
+				.stream()
+				.map(rec -> new AccUtilitiesAccountLinkItem()
+						.setDomainName(ctx.getDomainName())
+						.setDomain(ctx.getDomainId())
+						.setType(AccUtilitiesItemType.CUSTOMER_ACCOUNT)
+						.setRegistryType(AccountingRegistryType.CUSTOMER)
+						.setLinkedId(rec.getValue(REGISTRY.ID))
+						.setLinkedDescription(rec.getValue(REGISTRY.NAME))
+						.setLinkedInactive(rec.getValue(CUSTOMER.STATUS) == CustomerStatus.INACTIVE.value())
+						.setAccountId(rec.getValue(ACCOUNT.ID))
+						.setAccountDomain(rec.getValue(ACCOUNT.DOMAIN))
+						.setAccountCode(rec.getValue(ACCOUNT.CODE))
+						.setAccountDescripion(rec.getValue(ACCOUNT.DESCRIPTION))
+					)
+				.filter(new AccUtilitiesParamFilter(params))
+				.forEach(item -> result.add(item) );
+			;
+	 	}
+		// PROVEEDORES
+	 	if (params.isShowSuppliers()) {
+			ctx.getDslContext().select(REGISTRY.ID,REGISTRY.DOCUMENT,REGISTRY.DOCUMENT_TYPE
+					,REGISTRY.DOCUMENT_COUNTRY,REGISTRY.NAME,REGISTRY.ALIAS
+					,SUPPLIER.STATUS
+					,ACCOUNT.ID,ACCOUNT.DOMAIN,ACCOUNT.CODE,ACCOUNT.DESCRIPTION				)
+				.from(SUPPLIER)
+				.join(REGISTRY).on(REGISTRY.ID.eq(SUPPLIER.REGISTRY))
+				.leftOuterJoin(ACCOUNT).on(ACCOUNT.ID.eq(SUPPLIER.ACCOUNT))
+				.where(where)
+				.and(SUPPLIER.DOMAIN.eq(ctx.getDomainId())
+				.and(params.isShowInactives()
+					?DSL.trueCondition()
+					:SUPPLIER.STATUS.ne(SupplierStatus.INACTIVE.value()))
+				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),SUPPLIER.SCOPE)))
+				.fetch()
+				.stream()
+				.map(rec -> new AccUtilitiesAccountLinkItem()
+						.setDomainName(ctx.getDomainName())
+						.setDomain(ctx.getDomainId())
+						.setType(AccUtilitiesItemType.SUPPLIER_ACCOUNT)
+						.setRegistryType(AccountingRegistryType.SUPPLIER)
+						.setLinkedId(rec.getValue(REGISTRY.ID))
+						.setLinkedDescription(rec.getValue(REGISTRY.NAME))
+						.setLinkedInactive(rec.getValue(SUPPLIER.STATUS) == SupplierStatus.INACTIVE.value())
+						.setAccountId(rec.getValue(ACCOUNT.ID))
+						.setAccountDomain(rec.getValue(ACCOUNT.DOMAIN))
+						.setAccountCode(rec.getValue(ACCOUNT.CODE))
+						.setAccountDescripion(rec.getValue(ACCOUNT.DESCRIPTION))
+					)
+				.filter(new AccUtilitiesParamFilter(params))
+				.forEach(item -> result.add(item) );
+			;
+	 	}
+		// ACREEDORES
+	 	if (params.isShowCreditors()) {
+			ctx.getDslContext().select(REGISTRY.ID,REGISTRY.DOCUMENT,REGISTRY.DOCUMENT_TYPE
+					,REGISTRY.DOCUMENT_COUNTRY,REGISTRY.NAME,REGISTRY.ALIAS
+					,CREDITOR.STATUS
+					,ACCOUNT.ID,ACCOUNT.DOMAIN,ACCOUNT.CODE,ACCOUNT.DESCRIPTION				)
+				.from(CREDITOR)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CREDITOR.REGISTRY))
+				.leftOuterJoin(ACCOUNT).on(ACCOUNT.ID.eq(CREDITOR.ACCOUNT))
+				.where(where)
+				.and(CREDITOR.DOMAIN.eq(ctx.getDomainId())
+				.and(params.isShowInactives()
+					?DSL.trueCondition()
+					:CREDITOR.STATUS.ne(CreditorStatus.INACTIVE.value()))
+				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CREDITOR.SCOPE)))
+				.fetch()
+				.stream()
+				.map(rec -> new AccUtilitiesAccountLinkItem()
+						.setDomainName(ctx.getDomainName())
+						.setDomain(ctx.getDomainId())
+						.setType(AccUtilitiesItemType.CREDITOR_ACCOUNT)
+						.setRegistryType(AccountingRegistryType.CREDITOR)
+						.setLinkedId(rec.getValue(REGISTRY.ID))
+						.setLinkedDescription(rec.getValue(REGISTRY.NAME))
+						.setLinkedInactive(rec.getValue(CREDITOR.STATUS) == CreditorStatus.INACTIVE.value())
+						.setAccountId(rec.getValue(ACCOUNT.ID))
+						.setAccountDomain(rec.getValue(ACCOUNT.DOMAIN))
+						.setAccountCode(rec.getValue(ACCOUNT.CODE))
+						.setAccountDescripion(rec.getValue(ACCOUNT.DESCRIPTION))
+					)
+				.filter(new AccUtilitiesParamFilter(params))
+				.forEach(item -> result.add(item) );
+			;
+	 	}
+		return result;
+	}
+
+	private static class AccUtilitiesParamFilter implements Predicate<AccUtilitiesAccountLinkItem> {
+		private AccUtilitiesParams params;
+		private AccUtilitiesParamFilter(AccUtilitiesParams params) {
+			this.params = params;
+		}
+		
+		@Override
+		public boolean test(AccUtilitiesAccountLinkItem item) {
+			boolean accepted = true;
+			if (params.isShowWihtoutAccount() && item.getAccountId() != null) {
+				accepted = false;
+			}
+			if (params.isShowSynchronizables() && AonStringUtils.equals(item.getAccountDescripion(),item.getLinkedDescription()) ) {
+				accepted = false;
+			}
+			return accepted;
+		}
+		
+	}
+
+	public static String changeAccountDescription(AONContext ctx, Integer accountId, String newDescription) {
+		Account account = AccountDAO.get(ctx, accountId);
+		if (account == null) throw new AonCoreException("Cuenta contable no encontrada");
+		account.setDescription(newDescription);
+		account = AccountDAO.save(ctx, account);
+		return account.getDescription();
+	}
+	
+	public static Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId) {
+		Registry registry = RegistryDAO.getRegistry(ctx, p -> p.getIdProperty().eq(registryId));
+		if (registry == null || registry.getId() == null) throw new AonCoreException("Registro no encontrado");
+		AccountLinker accountLinker = new AccountLinker(ctx, registry, registryType);
+		registryType.visit( null,  accountLinker);
+		return accountLinker.getAccount();
+	}
+	
+	private static class AccountLinker implements IAccountingRegistryTypeVisitor {
+		
+		private AONContext ctx;
+		private Registry registry;
+		private AccountingRegistryType registryType;
+		private Account account;
+		
+		private AccountLinker(AONContext ctx,Registry registry, AccountingRegistryType registryType) {
+			this.ctx = ctx;
+			this.registry = registry; 
+			this.registryType = registryType; 
+		}
+		
+		public Account getAccount() {
+			return account;
+		}
+		
+		@Override
+		public void visitSupplier(AccountingRegistry nullReg) {
+			account = createAccount(registry);
+			RegistryDAO.updateSupplierAccount(ctx,registry.getId(),account.getId());
+		}
+		
+		@Override
+		public void visitCustomer(AccountingRegistry nullReg) {
+			account = createAccount(registry);
+			RegistryDAO.updateCustomerAccount(ctx,registry.getId(),account.getId());
+		}
+		
+		@Override
+		public void visitCreditor(AccountingRegistry nullReg) {
+			account = createAccount(registry);
+			RegistryDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
+		}
+		
+		private Account createAccount(Registry reg) {
+			String code = AccountDAO.getNextAccountCode(ctx, registryType.getAccountPrefix());
+			return AccountDAO.insert(ctx, 
+					new Account()
+					.setDomain(ctx.getDomainId())
+					.setCode(code)
+					.setDescription(registry.getName())
+					.setAlias(registry.getAlias())
+					.setActive(true));
+		}
 	}
 	
 } 

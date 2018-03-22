@@ -14,17 +14,19 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
+import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -88,5 +90,8 @@ public interface IAccounting {
 	public AccUtilitiesResult runParentLinker(AONContext ctx, Account account);
 	public AccUtilitiesResult emptyEntries(AONContext ctx);
 	public AccUtilitiesResult unbalancedEntries(AONContext ctx);
+	public AccUtilitiesResult getAccountLinks(AONContext ctx, AccUtilitiesParams params);
+	public String changeAccountDescription(AONContext ctx, Integer accountId, String newDescription);
+	public Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId);
 		
 }

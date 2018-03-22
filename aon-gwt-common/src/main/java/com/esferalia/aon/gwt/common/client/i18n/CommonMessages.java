@@ -2302,6 +2302,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Filtro")
 	String filter();
 
+	@DefaultMessage("Mostrar")
+	String show();
+
 	@DefaultMessage("Fecha de emisi\u00F3n")
 	String issueDate();
 	
@@ -3524,6 +3527,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cliente")
 	String customer();
 	
+	@DefaultMessage("Proveedor")
+	String supplier();
+
 	@DefaultMessage("Empresa de Transporte")
 	String carrier();
 	

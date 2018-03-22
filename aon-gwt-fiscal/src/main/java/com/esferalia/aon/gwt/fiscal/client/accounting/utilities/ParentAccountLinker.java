@@ -226,10 +226,15 @@ class ParentAccountLinker extends OptionBase {
 				item.getType().visit(
 						new IAccUtilitiesItemTypeVisitor() {
 							
-							@Override
-							public void visitUnbalancedEntry(AccUtilitiesItemType type) {}
+							@Override public void visitOther(AccUtilitiesItemType type) {}
+							@Override public void visitUnbalancedEntry(AccUtilitiesItemType type) {}
+							@Override public void visitCustomerAccount(AccUtilitiesItemType type) {}
+							@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
+							@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
+							@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
 							
-							@Override public void visitParentAccountLinker(AccUtilitiesItemType type) {
+							@Override 
+							public void visitParentAccountLinker(AccUtilitiesItemType type) {
 								FlowPanel itemPanel = new FlowPanel();
 								InlineLabel domainLabel = new InlineLabel(item.getDomainName());
 								domainLabel.setStyleName(AON.AON_CSS.aonBold());
@@ -241,8 +246,8 @@ class ParentAccountLinker extends OptionBase {
 								itemPanel.add(msgLabel);
 								log.add(itemPanel);
 							}
-							@Override public void visitOther(AccUtilitiesItemType type) {}
-							@Override public void visitInfoMessage(AccUtilitiesItemType type) {
+							@Override 
+							public void visitInfoMessage(AccUtilitiesItemType type) {
 								FlowPanel itemPanel = new FlowPanel();
 								InlineLabel msgLabel = new InlineLabel(item.getMessage());
 								if (!AonStringUtils.isBlank( item.getDomainName())) {
@@ -262,7 +267,8 @@ class ParentAccountLinker extends OptionBase {
 								itemPanel.add(msgLabel);
 								log.add(itemPanel);
 							}
-							@Override public void visitErrorMessage(AccUtilitiesItemType type) {
+							@Override 
+							public void visitErrorMessage(AccUtilitiesItemType type) {
 								FlowPanel itemPanel = new FlowPanel();
 								InlineLabel msgLabel = new InlineLabel(item.getMessage());
 								if (!AonStringUtils.isBlank( item.getDomainName())) {
@@ -277,8 +283,6 @@ class ParentAccountLinker extends OptionBase {
 								msgLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
 								itemPanel.add(msgLabel);
 								log.add(itemPanel);
-							}
-							@Override public void visitEmptyEntry(AccUtilitiesItemType type) {
 							}
 						}						
 				);
