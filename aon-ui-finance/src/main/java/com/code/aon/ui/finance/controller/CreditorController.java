@@ -27,7 +27,11 @@ public class CreditorController extends RegistryController implements IAuditable
 
 	protected boolean isAccountSynchronizable(Creditor creditor) {
 		Account account = creditor.getAccount();
-		return (account != null && account.getId() != null && !creditor.getRegistry().getFullName().equals(account.getDescription()));
+		System.out.println(account.getDomain() +" --- "+ creditor.getDomain());
+		return (account != null 
+			&& account.getId() != null 
+			&& account.getDomain() == creditor.getDomain()
+			&& !creditor.getRegistry().getFullName().equals(account.getDescription()));
 	}
 
 	public void onAccountSynchronize(ActionEvent event) {

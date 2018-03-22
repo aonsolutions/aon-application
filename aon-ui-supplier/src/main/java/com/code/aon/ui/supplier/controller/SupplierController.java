@@ -42,7 +42,10 @@ public class SupplierController extends RegistryController implements IAuditable
 
 	protected boolean isAccountSynchronizable(Supplier supplier) {
 		Account account = supplier.getAccount();
-		return account != null && account.getId() != null && !supplier.getRegistry().getFullName().equals(account.getDescription());
+		return account != null 
+			&& account.getId() != null 
+			&& account.getDomain() == supplier.getDomain()
+			&& !supplier.getRegistry().getFullName().equals(account.getDescription());
 	}
 
 	public void onAccountSynchronize(ActionEvent event) {
