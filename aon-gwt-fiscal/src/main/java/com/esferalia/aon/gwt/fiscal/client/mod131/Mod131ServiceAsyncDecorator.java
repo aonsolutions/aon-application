@@ -109,4 +109,9 @@ public class Mod131ServiceAsyncDecorator implements Mod131ServiceAsync {
 		AON.start();
 		fsa.mathExpression(expression,new AsyncCallbackWrapper<Double>(callback));
 	}
+
+	@Override
+	public void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback) {
+		
+	}
 }

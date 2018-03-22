@@ -185,7 +185,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				CertificationPopup certPopup = new CertificationPopup(getAPI()) {
+				CertificationPopup certPopup = new CertificationPopup(getAPI(), false) {
 					
 					@Override
 					protected void onCancel() {
@@ -318,7 +318,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		if(i < modelListPanel.getWidgetCount()) {
 			Integer id = Integer.parseInt(modelListPanel.getWidget(i).getTitle());
 			IFiscalModel model = modelMap.get(id);
-			if(model.isAEAT() && model.isFinished() && hasPresentationOption(model)) {
+			if(model.isAEAT() && model.isFinished() && hasSendOption(model)) {
 				JSONObject json = new JSONObject();
 				json.put("mod", new JSONNumber(model.getId()));
 				json.put("domainId", new JSONNumber(domain.getId()));
@@ -329,7 +329,8 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				json.put("name", new JSONString(model.getFullName()));
 				json.put("document", new JSONString(model.getDocument()));
 				String requestData = JsonUtils.stringify(json.getJavaScriptObject());
-				getAPI().getFiscal().send2AEAT(GWT.getHostPageBaseURL() + "/aon_gwt_fiscal/ms/Model111PrintAEAT", 
+				
+				getAPI().getFiscal().send2AEAT(GWT.getHostPageBaseURL() + getSendPath(model), 
 					requestData, new AsyncCallback<JavaScriptObject>() {
 			
 					@Override
@@ -360,7 +361,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 					js.put("E0" + error, new JSONString("La presentaci\u00f3n telem\u00e1tica solo es compatible para los modelos de Territorio Com\u00fan."));
 					error++;
 				}
-				if(!hasPresentationOption(model)) {
+				if(!hasSendOption(model)) {
 					js.put("E0" + error, new JSONString("La funcionalidad no est\u00e1 disponible para este modelo."));	
 				}
 				errors.put(model.getId(), js);
@@ -380,13 +381,15 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		hp.getWidget(3).getElement().getStyle().setFontWeight(FontWeight.BOLD);
 	}
 	
-	private Boolean hasPresentationOption(IFiscalModel model) {
+	private Boolean hasSendOption(IFiscalModel model) {
 		return FiscalModelType.M111.equals(model.getModel())
 			|| FiscalModelType.M115.equals(model.getModel())
 			|| FiscalModelType.M123.equals(model.getModel())
 			|| FiscalModelType.M303.equals(model.getModel())
 			|| FiscalModelType.M303_RG.equals(model.getModel())
-			|| FiscalModelType.M303_RS.equals(model.getModel());
+			|| FiscalModelType.M303_RS.equals(model.getModel())
+			|| FiscalModelType.M130.equals(model.getModel())
+			|| FiscalModelType.M131.equals(model.getModel());
 	}
 	
 	private Boolean hasFinishOption(IFiscalModel model) {
@@ -398,6 +401,24 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 			|| FiscalModelType.M303.equals(model.getModel())
 			|| FiscalModelType.M303_RG.equals(model.getModel())
 			|| FiscalModelType.M303_RS.equals(model.getModel());
+	}
+	
+	private String getSendPath(IFiscalModel model){
+		if(FiscalModelType.M111.equals(model.getModel()))
+			return "/aon_gwt_fiscal/ms/Model111PrintAEAT";
+		else if(FiscalModelType.M115.equals(model.getModel()))
+			return "/aon_gwt_fiscal/ms/Model115PrintAEAT";
+		else if(FiscalModelType.M123.equals(model.getModel()))
+			return "/aon_gwt_fiscal/ms/Model123PrintAEAT";
+		else if(FiscalModelType.M130.equals(model.getModel()))
+			return "/aon_gwt_fiscal/ms/Model130PrintAEAT";
+		else if(FiscalModelType.M131.equals(model.getModel()))
+			return "/aon_gwt_fiscal/ms/Model131PrintAEAT";
+		else if(FiscalModelType.M303.equals(model.getModel())
+				|| FiscalModelType.M303_RG.equals(model.getModel())
+				|| FiscalModelType.M303_RS.equals(model.getModel()))
+			return "/aon_gwt_fiscal/ms/Model303PrintAEAT";
+		return "";
 	}
 	
 	private void east(IFiscalModel model) {

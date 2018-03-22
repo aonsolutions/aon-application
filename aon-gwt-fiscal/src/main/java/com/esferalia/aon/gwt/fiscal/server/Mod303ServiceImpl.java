@@ -128,5 +128,4 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		.and(f.getDescriptionProperty().eq("Presentacion AEAT")), AttachType.DATA, false);
 		return attach != null && attach.getId() != null ? attach.getId() :  -1;
 	}
-	
 }

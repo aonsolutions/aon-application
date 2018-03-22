@@ -57,7 +57,7 @@ public abstract class CertificationPopup extends CustomDialog {
 		return tb.getValue();
 	}
 	
-	public CertificationPopup(API API) {
+	public CertificationPopup(API API, Boolean showNRC) {
 		this.API = API;
 		setCaption("Certificado Digital");
 		setGlassEnabled(true);
@@ -102,7 +102,19 @@ public abstract class CertificationPopup extends CustomDialog {
 		hp2.add(ptb);
 		vp.add(hp1);
 		vp.add(hp2);
-
+		if(showNRC) {
+			HorizontalPanel hpx = new HorizontalPanel();
+			hpx.addStyleName(AON.AON_CSS.aonPaddingTop());
+			Label lx = new Label("NRC");
+			lx.addStyleName(AON.AON_CSS.aonPaddingRight());
+			hpx.add(lx);
+			TextBox tbx = new TextBox();
+			tbx.setStyleName(AON.AON_CSS.aonInputText());
+			tbx.setText("");
+			hpx.add(tbx);
+			vp.add(hpx);
+		}
+		
 		FlowPanel buttonsPanel = new FlowPanel();
 		buttonsPanel.setStyleName(AON.AON_CSS.aonPadding());
 		buttonsPanel.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -138,7 +150,7 @@ public abstract class CertificationPopup extends CustomDialog {
 		add(vp);
 	}
 	
-	public CertificationPopup(API API, String name, String document) {
+	public CertificationPopup(API API, String name, String document, Boolean showNRC) {
 		this.API = API;
 		setCaption("Certificado Digital");
 		setGlassEnabled(true);
@@ -197,7 +209,19 @@ public abstract class CertificationPopup extends CustomDialog {
 		hp2.add(ptb);
 		vp.add(hp1);
 		vp.add(hp2);
-
+		
+		if(showNRC) {
+			HorizontalPanel hpx = new HorizontalPanel();
+			hpx.addStyleName(AON.AON_CSS.aonPaddingTop());
+			Label lx = new Label("NRC");
+			lx.addStyleName(AON.AON_CSS.aonPaddingRight());
+			hpx.add(lx);
+			TextBox tbx = new TextBox();
+			tbx.setStyleName(AON.AON_CSS.aonInputText());
+			tbx.setText("");
+			hpx.add(tbx);
+			vp.add(hpx);
+		}
 		FlowPanel buttonsPanel = new FlowPanel();
 		buttonsPanel.setStyleName(AON.AON_CSS.aonPadding());
 		buttonsPanel.addStyleName(AON.AON_CSS.aonMarginTop());

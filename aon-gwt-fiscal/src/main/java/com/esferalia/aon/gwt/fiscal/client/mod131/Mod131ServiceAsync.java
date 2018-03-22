@@ -26,5 +26,6 @@ public interface Mod131ServiceAsync {
 	void create(String domainName, String user, int domain, Mod131 mod131, AsyncCallback<Mod131> callback);
 	void getInfo(String domainName, String user, int domain, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void mathExpression(String expression, AsyncCallback<Double> callback);
+	void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);
 
 }

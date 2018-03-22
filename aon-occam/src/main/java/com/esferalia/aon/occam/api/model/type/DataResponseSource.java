@@ -20,6 +20,8 @@ public enum DataResponseSource implements Serializable{
 	MOD111,
 	MOD115,
 	MOD123,
+	MOD130,
+	MOD131,
 	MOD390
 	;
 

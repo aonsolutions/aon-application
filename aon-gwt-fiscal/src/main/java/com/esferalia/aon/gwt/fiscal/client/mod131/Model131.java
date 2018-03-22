@@ -14,7 +14,10 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
@@ -38,16 +41,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
@@ -71,24 +70,25 @@ public class Model131 extends MainEntryPoint {
 	
 	final static int NOTIFICATIONS_TAB = 0;
 	final static int INFORMATION_TAB = 1;
-
-	static Mod131ServiceAsync SERVICE;
+	final static int AEAT_TAB = 2;
 	
+	static Mod131ServiceAsync SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+
 	interface Model131Binder extends UiBinder<Widget, Model131> {
 	}
 	private static final Model131Binder MODEL_131_BINDER = GWT
 			.create(Model131Binder.class);
 
-	private static final String MODEL131_PRINT = "/aon_gwt_fiscal/ms/Model131Print";
-	private static final String MODEL131_FILE = "/aon_gwt_fiscal/ms/Model131File";
-	private static final String MODEL131_PRINT_AEAT = "/aon_gwt_fiscal/ms/Model131PrintAEAT";
-	
 	public static interface IMod131Declaration extends IsWidget {
+		FlowPanel getDeclarationPanel();
 		LinkedList<Pair<String, String>> getInformationLinks();
 		void calculateAndRefresh(IFiscalModelCallback<Mod131> callback);
+		void printButtonClick();
 	}
 	
 	private Mod131 currentMod;
+	private AonData aonData;
 	private boolean dirty;
 
 	@UiField
@@ -112,6 +112,8 @@ public class Model131 extends MainEntryPoint {
 	@UiField
 	ScrollPanel informationPanel;
 	@UiField
+	SimpleLayoutPanel aeatPanel;
+	@UiField
 	Panel formContainer;
 
 	@UiField(provided = true)
@@ -133,10 +135,6 @@ public class Model131 extends MainEntryPoint {
 	Button markAsSentButton;
 	@UiField
 	Button markAsFinishedButton;
-	@UiField
-	Button generateFileButton;
-	@UiField
-	Button printViaAeatButton;
 	@UiField
 	Button auditButton;
 
@@ -178,12 +176,6 @@ public class Model131 extends MainEntryPoint {
 	@UiField
 	ScrollPanel infoContainer;
 
-	FormPanel diskForm;
-	Hidden mod131Hidden;
-	Hidden domainIdHidden;
-	Hidden domainNameHidden;
-	Hidden userHidden;
-
 	private abstract class FiscalModelCallback implements IFiscalModelCallback<Mod131> {
 		
 		@Override
@@ -198,7 +190,7 @@ public class Model131 extends MainEntryPoint {
 		
 		@Override
 		public void showVisorAEAT() {
-			
+			Model131.this.showVisorAEAT();
 		}
 		
 		@Override
@@ -246,9 +238,23 @@ public class Model131 extends MainEntryPoint {
 	};
 
 	private Logger logger = Logger.getLogger(Mod131.class.getName()); 
+
 	@Override
 	public void onModuleLoad() {
-		
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
+
+			@Override public void onFailure(Throwable caught) {}
+			
+			@Override
+			public void onSuccess(AonData aonData) {
+				onModuleLoad(aonData);
+			}
+			
+		});
+	}
+	
+	public void onModuleLoad(AonData aonData) {
+		this.aonData = aonData;
 		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
 		    @Override
 		    public void onUncaughtException(Throwable e) {
@@ -262,10 +268,14 @@ public class Model131 extends MainEntryPoint {
 		SERVICE = new Mod131ServiceAsyncDecorator(serviceRaw);
 
 		table = new FiscalModelTable<Mod131>(new Mod131SelectionHandler(), new FiscalModelProvidesKey<Mod131>());
-		
 
 		Widget ui = MODEL_131_BINDER.createAndBindUi(this);
 
+		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
+		html.setWidth("100%");
+		html.setHeight("100%");
+		aeatPanel.setWidget(html);
+		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -277,21 +287,7 @@ public class Model131 extends MainEntryPoint {
 		});
 
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-		
-		diskForm = new FormPanel("_blank");
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		FlowPanel formFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		mod131Hidden = new Hidden("mod131");
-		formFlowPanel.add(mod131Hidden);
-		domainIdHidden = new Hidden("domainId");
-		formFlowPanel.add(domainIdHidden);
-		domainNameHidden = new Hidden("domainName");
-		formFlowPanel.add(domainNameHidden);
-		userHidden = new Hidden("user");
-		formFlowPanel.add(userHidden);
-		formContainer.add(diskForm);
-		
+
 		replacedNumber.setVisibleLength(13);
 		replacedNumber.setMaxLength(13);
 
@@ -336,6 +332,10 @@ public class Model131 extends MainEntryPoint {
 		styleDirtyLabel();
 	}
 	
+	public AonData getAonData() {
+		return this.aonData;
+	}
+	
 	private void refreshToolbarState() {
 		newButton.setVisible(!currentMod.isNew());
 		saveButton.setVisible(!currentMod.isFinished() && !currentMod.isSent());
@@ -353,17 +353,6 @@ public class Model131 extends MainEntryPoint {
 				(currentMod.getStatus() == FiscalStatus.PENDING 
 				|| currentMod.getStatus() == FiscalStatus.MISSING));
 		auditButton.setVisible(!currentMod.isNew());
-		
-		generateFileButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		generateFileButton.setVisible(!currentMod.isNew());
-		generateFileButton.setEnabled((currentMod.isFinished() || currentMod.isSent()) && currentMod.getYear() > 2015);
-		generateFileButton.addStyleName(
-				generateFileButton.isEnabled()
-					?FiscalModelUtils.getAdministrationIcon(currentMod.getAdministration())
-					:FiscalModelUtils.getAdministrationIconBW(currentMod.getAdministration())
-							);
-		printViaAeatButton.setVisible(!currentMod.isNew() && currentMod.isAEAT() 
-				&& (currentMod.isFinished() || currentMod.isSent()));
 	}
 	
 	private void toolbarForTable() {
@@ -381,20 +370,17 @@ public class Model131 extends MainEntryPoint {
 		markAsPendingButton.setVisible(false);
 		markAsSentButton.setVisible(false);
 		markAsFinishedButton.setVisible(false);
-		generateFileButton.setVisible(false);
-		printViaAeatButton.setVisible(false);
 	}
 	
 	private void select(Mod131 selected) {
 		currentMod = selected;
 		dirty = false;
-		
 		documentLabel.setText(currentMod.getDocument());
 		nameLabel.setText(currentMod.getName());
 		surnameLabel.setText(currentMod.getSurname());
-	
 		styleDirtyLabel();
 		styleStatusLabel();
+
 		if (currentMod.isReplacementDeclarationAvailable()) {
 			replacementLabel.setText(AON.MSG.replacement());
 			replacementLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
@@ -405,7 +391,7 @@ public class Model131 extends MainEntryPoint {
 		} else {
 			replacementLabel.setText("");
 		}
-		
+
 		if (currentMod.isComplementaryDeclarationAvailable()) {
 			complementaryLabel.setText(AON.MSG.complementary());
 			complementaryLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
@@ -416,12 +402,12 @@ public class Model131 extends MainEntryPoint {
 		} else {
 			complementaryLabel.setText("");
 		}
-		
+
 		replacedNumber.setValue(currentMod.getReplacedNumber());
 		replacedNumber.setEnabled(currentMod.isReplacedNumberAvailable());
-		
+
 		confidential.setValue(currentMod.isConfidential());
-		
+
 		styleCommentsButton();
 		
 		fiscalInformationLabel.setStyleName(AON.AON_CSS.aonPaddingRight());
@@ -441,15 +427,15 @@ public class Model131 extends MainEntryPoint {
 			public void onCancel() {}
 			
 		}; 
-		
 		FiscalModelIdentificationData<Mod131> identificationData = new FiscalModelIdentificationData<Mod131>(callback);
 		identificationContainer.setWidget( identificationData);
 		if (currentMod.getAdministration() == Administration.COMMON_TERRITORY) {
-			declaration = new Model131AEAT(callback);
-		}
+			declaration = new Model131AEAT(callback, getAonData());
+		}	
+
 		if (declaration != null) {
 			declarationContainer.setWidget( declaration );
-			infoContainer.setWidget( getInformationPanel(declaration.getInformationLinks()) );
+			infoContainer.setWidget(declaration.getDeclarationPanel());
 		} else {
 			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 			hideToolbarButtons();
@@ -763,9 +749,6 @@ public class Model131 extends MainEntryPoint {
 						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 					}
 				});
-				
-				
-				
 			}
 		});
 		comment.setText(currentMod.getComments());
@@ -787,78 +770,9 @@ public class Model131 extends MainEntryPoint {
 	
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
-		if (isDirty()) {
-			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
-					, new ConfirmDialogCallback() {
-					
-					@Override
-					public void onAccept() {
-						submitForm(MODEL131_PRINT);
-					}
+		declaration.printButtonClick();
+	}
 	
-					@Override
-					public void onCancel() {
-						// Nothing
-					}
-				});
-		} else {
-			submitForm(MODEL131_PRINT);
-		}
-			
-	}
-
-	@UiHandler("generateFileButton")
-	void onGenerateFileButtonClick(ClickEvent event) {
-		if (isDirty()) {
-			new ConfirmDialog().confirm(AON.MSG.fileGeneration(),AON.MSG.fileGenerationNote() 
-				, new ConfirmDialogCallback() {
-				
-				@Override
-				public void onAccept() {
-					submitForm(MODEL131_FILE);
-				}
-	
-				@Override
-				public void onCancel() {
-					// Nothing
-				}
-			});
-		} else {
-			submitForm(MODEL131_FILE);
-		}
-	}
-
-	private void submitForm(String action) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod131Hidden.setValue(String.valueOf(currentMod.getId()));
-		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-		domainNameHidden.setValue(getCurrentDomainName());
-		userHidden.setValue(getCurrentUser());
-		diskForm.submit();
-	}
-
-	@UiHandler("printViaAeatButton")
-	void onPrintViaAeatButtonClick(ClickEvent event) {
-		new ConfirmDialog().confirm(AON.MSG.fileGeneration()
-				,"Se va a proceder a la validaci\u00F3n en los servidores de la \n"
-				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
-				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
-				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-				+ "La petici\u00F3n se genera a partir de los datos guardados." 
-				, new ConfirmDialogCallback() {
-				
-				@Override
-				public void onAccept() {
-					submitForm(MODEL131_PRINT_AEAT);
-				}
-
-				@Override
-				public void onCancel() {
-					// Nothing
-				}
-			});
-	}
-
 	@UiHandler("confidential")
 	void onConfidentialClick(ClickEvent event) {
 		currentMod.setConfidential(confidential.getValue());
@@ -915,6 +829,12 @@ public class Model131 extends MainEntryPoint {
 		panel.add(label);
 		resultsPanel.setWidget(panel);
 	}
+	
+	private void showVisorAEAT() {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(AEAT_TAB);		
+	}
+	
 	private void cleanInfo() {
 		Widget w = informationPanel.getWidget();
 		if (w != null) {
@@ -946,49 +866,6 @@ public class Model131 extends MainEntryPoint {
 		});
 		finalizeDialog.center();
 		finalizeDialog.show();
-	}
-	 
-	protected FlowPanel getInformationPanel(LinkedList<Pair<String,String>> infoList) {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.addStyleName(AON.AON_CSS.aonWidthAll());
-		panel.addStyleName(AON.AON_CSS.aonMarginTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		 
-		FlexTable tab = new FlexTable();
-		tab.getColumnFormatter().setWidth(0, "30px");
-		tab.getColumnFormatter().setWidth(1
-				, "auto");
-		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		Label title = new Label("Informaci\u00F3n \u00FAtil para la confecci\u00F3n del modelo");
-		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(currentMod.getAdministration()));
-		tab.setWidget(0, 0, title);
-		
-		int row = 1;
-		for (Pair<String, String> pair : infoList) {
-			Label icon = new Label();
-			icon.addStyleName(FiscalModelUtils.getAdministrationIcon(currentMod.getAdministration()));
-			tab.setWidget(row, 0, icon );
-			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-
-			FlowPanel p = new FlowPanel();
-			p.setStyleName(AON.AON_CSS.aonPadding2());
-			Anchor a = new Anchor(pair.getLeft(),pair.getRight(), "_blank");
-			a.setStyleName(AON.AON_CSS.aonPaddingLeft());
-			p.add(a);
-			tab.setWidget(row, 1, p );
-			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-			row++;
-		}
-		panel.add(tab);
-		return panel;
 	}
 	 
 }

@@ -376,7 +376,7 @@ public class Model3032018AEAT extends Model303Base {
 		button3.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {		
-				CertificationPopup certPopup = new CertificationPopup(getAPI(), getMod303().getName(), getMod303().getDocument()) {
+				CertificationPopup certPopup = new CertificationPopup(getAPI(), getMod303().getName(), getMod303().getDocument(), false) {
 							
 					@Override
 					protected void onCancel() {

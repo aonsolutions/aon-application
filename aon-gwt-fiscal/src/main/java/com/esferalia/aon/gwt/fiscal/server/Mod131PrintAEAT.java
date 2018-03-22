@@ -1,50 +1,49 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
+import javax.script.ScriptException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
-import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "Mod131 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model131PrintAEAT" })
-public class Mod131PrintAEAT extends HttpServlet {
+public class Mod131PrintAEAT extends ModPrintAEAT {
 
 	private static final long serialVersionUID = -6382863064129841608L;
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	public Mod131PrintAEAT() {
 
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			int id = Integer.parseInt(req.getParameter("mod131"));
-			String domainName = req.getParameter("domainName");
-			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = req.getParameter("user");
+			JSONObject json = new JSONObject();
+			if(req.getParameter("mod") == null || req.getParameter("mod").isEmpty())
+				json = getRequestJSON(req);
+			init(req, json);
+
 			Mod131 mod131 = FISCAL.getMod131(domainName, domainId, user,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -56,26 +55,31 @@ public class Mod131PrintAEAT extends HttpServlet {
 			}
 			PrintWriter writer = new PrintWriter(wr);
 			Mod131Writer.fillWriter(mod131, writer);
-			
-			String fileName = AonFiscalFileUtils.getFileName(mod131); 
-			downloadPDF(req, resp, mod131, fileName, output.toByteArray());
-
+			send(req, resp, mod131, output.toByteArray());
 		} catch (Throwable e) {
+			if(!isPrint()) {
+				exceptionErrors(req, resp, e.getMessage());
+			}
 			throw new ServletException(e);
 		}
 
 	}
-
-	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			Mod131 mod131,String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-		String fileString = new String(content);
-		fileString = fileString.replace("'", " ");
-		fileString = fileString.replace("&", " ");
-		fileString = fileString.replace("\n", "");
-		fileString = fileString.replace("\r", "");
-		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
-		
-		String urlParameters = "HID=IE61310A" 
+	
+	private void send(HttpServletRequest req, HttpServletResponse resp, Mod131 mod131, byte[] content) throws JSONException, KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, ScriptException {
+		String urlParameters = isCert() 
+			? getCertUrlParameters(mod131, getEncodedFile(content), getName(), getDocument())
+			: getUrlParameters(mod131, getEncodedFile(content));
+	
+		String request = isCert() 
+			? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica"
+			// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
+			: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
+	
+		send(req, resp, request, urlParameters);
+	}
+	
+	private String getUrlParameters(Mod131 mod131, String encodedFile) {		
+		return "HID=IE61310A" 
 				+"&IDI=ES"
 				+"&LEV=000000000000"
 				+"&FIC=" + encodedFile
@@ -84,46 +88,57 @@ public class Mod131PrintAEAT extends HttpServlet {
 				+"&FIN=" 
 				+"&EJF=" + mod131.getYear() 
 				+"&MOD=131";
-		// Validacion e impresion
-		String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
-				
-		URL url = new URL(request);
-
-		SSLContext ctx = SSLContext.getInstance("TLS");
-		ctx.init(new KeyManager[0],
-				new TrustManager[] { new DefaultTrustManager() },
-				new SecureRandom());
-		SSLContext.setDefault(ctx);
-
-		HttpsURLConnection connection = (HttpsURLConnection) url
-				.openConnection();
-		connection.setHostnameVerifier(new HostnameVerifier() {
-			@Override
-			public boolean verify(String arg0, SSLSession arg1) {
-				return true;
-			}
-		});
-		connection.setDoOutput(true);
-		connection.setDoInput(true);
-		connection.setInstanceFollowRedirects(false);
-		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
-		connection.setRequestProperty("charset", "ISO-8859-1");
-		connection.setRequestProperty("Content-Length",
-				"" + Integer.toString(urlParameters.getBytes().length));
-		connection.setUseCaches(false);
-
-		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-		wr.writeBytes(urlParameters);
-		wr.flush();
-		wr.close();
-
-		DataInputStream input = new DataInputStream(connection.getInputStream());
-		
-		AonIOUtils.copy(input, resp.getOutputStream());
-		resp.flushBuffer();
-		connection.disconnect();
 	}
 	
+	private String getCertUrlParameters(Mod131 mod131, String encodedFile, String name, String document) {
+		return "HID=IE51310A"
+				+ "&FIRNIF=" + name
+				+ "&FIRNOMBRE=" + document
+				+ "&TIA=" + mod131.getDeclarationType().getValue()
+				+ "&NDC=" + mod131.getDocument()
+				+ "&NRC=" + ("I".equals(mod131.getDeclarationType().getValue()) ? "" : "") // TODO Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
+				+ "&ING=" + ("I".equals(mod131.getDeclarationType().getValue()) ? mod131.getAmount(Mod131Key.C15) : "") // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
+				+ "&NRR=" + ""
+				+ "&ICO=" + ""
+				+ "&NR1=" + ""
+				+ "&IN1=" + ""
+				+ "&NR2=" + ""
+				+ "&IN2=" + ""
+				+ "&NR3=" + ""
+				+ "&IN3=" + ""
+				+ "&NR4=" + ""
+				+ "&IN4=" + ""
+				+ "&NR5=" + ""
+				+ "&IN5=" + ""
+				+ "&NR6=" + ""
+				+ "&IN6=" + ""
+				+ "&NR7=" + ""
+				+ "&IN7=" + ""
+				+ "&CMN=" + ""
+				+ "&LOT=" + "0"
+				+ "&IDI=" + "ES"
+				+ "&LEV=" + "000000000000"
+				+ "&F01=" + encodedFile
+				+ "&PUN=" + "00000000"
+				+ "&TXT=" + ""
+				+ "&FIR=" + "FirmaBasica"
+				+ "&FIN=" + "F";
+	}
+	
+	@Override
+	protected DataResponseSource getDataResponseSource() {
+		return DataResponseSource.MOD131;
+	}
+
+	@Override
+	protected DataAttachSource getDataAttachSource() {
+		return DataAttachSource.MOD131;
+	}
+
+	@Override
+	protected void updateMod(JSONObject json) throws JSONException {
+		Mod131 mod131 = FISCAL.getMod131(getDomainName(), getDomainId(), getUser(), getId());
+		mod131.setNumber(json.getString("JUS"));
+		FISCAL.markAsSent(getDomainName(), getUser(), mod131);
+	}
 }

@@ -40,8 +40,11 @@ public class Mod111PrintAEAT extends ModPrintAEAT {
 			throws ServletException, IOException {
 		System.out.println("POST Mod111 Print AEAT");
 		try {
-			JSONObject json = getRequestJSON(req);
+			JSONObject json = new JSONObject();
+			if(req.getParameter("mod") == null || req.getParameter("mod").isEmpty())
+				json = getRequestJSON(req);
 			init(req, json);
+			
 			Mod111 mod111 = FISCAL.getMod111(getDomainName(), getDomainId(), getUser(),getId());
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -89,13 +92,14 @@ public class Mod111PrintAEAT extends ModPrintAEAT {
 	}
 	
 	private String getCertUrlParameters(Mod111 mod111, String encodedFile, String name, String document) {
+		;
 		return "HID=IE71110A"
 				+ "&FIRNIF=" + name
 				+ "&FIRNOMBRE=" + document
 				+ "&TIA=" + mod111.getDeclarationType().getValue()
 				+ "&NDC=" + mod111.getDocument()
-				+ "&NRC=" + "" // Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
-				+ "&ING=" + "" // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
+				+ "&NRC=" + "" //("I".equals(mod111.getDeclarationType().getValue()) ? "" : "") // TODO Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
+				+ "&ING=" + "" //("I".equals(mod111.getDeclarationType().getValue()) ? mod111.getAmount(Mod111Key.CT_C30) : "") // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
 				+ "&NRR=" + ""
 				+ "&ICO=" + ""
 				+ "&NR1=" + ""

@@ -30,4 +30,6 @@ public interface Mod131Service extends RemoteService {
 	String getInfo(String domainName, String user, int domain, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	Double mathExpression(String expression) throws AonCoreException;
 	
+	Integer presentationFile(String domainName, Integer domainId, String user, Integer id);
+
 }

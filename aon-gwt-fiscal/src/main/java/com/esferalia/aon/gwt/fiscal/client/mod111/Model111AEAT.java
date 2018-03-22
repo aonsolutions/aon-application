@@ -163,7 +163,7 @@ public class Model111AEAT extends Model111Base {
 		button3.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {		
-				CertificationPopup certPopup = new CertificationPopup(getAPI(), getModel().getName(), getModel().getDocument()) {
+				CertificationPopup certPopup = new CertificationPopup(getAPI(), getModel().getName(), getModel().getDocument(), false) {
 								
 					@Override
 					protected void onCancel() {

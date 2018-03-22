@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
 
 @WebServlet(name = "Mod115 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model115PrintAEAT" })
@@ -38,8 +39,11 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			JSONObject json = getRequestJSON(req);
+			JSONObject json = new JSONObject();
+			if(req.getParameter("mod") == null || req.getParameter("mod").isEmpty())
+				json = getRequestJSON(req);
 			init(req, json);
+			
 			Mod115 mod115 = FISCAL.getMod115(getDomainName(), getDomainId(), getUser(), getId());
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -92,8 +96,8 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 				+ "&FIRNOMBRE=" + document
 				+ "&TIA=" + mod115.getDeclarationType().getValue()
 				+ "&NDC=" + mod115.getDocument()
-				+ "&NRC=" + "" // Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
-				+ "&ING=" + "" // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
+				+ "&NRC=" + ("I".equals(mod115.getDeclarationType().getValue()) ? "" : "") // TODO Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
+				+ "&ING=" + ("I".equals(mod115.getDeclarationType().getValue()) ? mod115.getAmount(Mod115Key.CT_C05) : "") // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
 				+ "&NRR=" + ""
 				+ "&ICO=" + ""
 				+ "&NR1=" + ""

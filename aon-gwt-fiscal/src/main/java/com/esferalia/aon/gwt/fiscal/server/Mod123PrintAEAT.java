@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer;
 
 @WebServlet(name = "Mod123 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model123PrintAEAT" })
@@ -38,8 +39,11 @@ public class Mod123PrintAEAT extends ModPrintAEAT {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			JSONObject json = getRequestJSON(req);
+			JSONObject json = new JSONObject();
+			if(req.getParameter("mod") == null || req.getParameter("mod").isEmpty())
+				json = getRequestJSON(req);
 			init(req, json);
+			
 			Mod123 mod123 = FISCAL.getMod123(getDomainName(), getDomainId(), getUser(), getId());
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -91,8 +95,8 @@ public class Mod123PrintAEAT extends ModPrintAEAT {
 				+ "&FIRNOMBRE=" + document
 				+ "&TIA=" + mod123.getDeclarationType().getValue()
 				+ "&NDC=" + mod123.getDocument()
-				+ "&NRC=" + "" // Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
-				+ "&ING=" + "" // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
+				+ "&NRC=" + ("I".equals(mod123.getDeclarationType().getValue()) ? "" : "") // TODO Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
+				+ "&ING=" + ("I".equals(mod123.getDeclarationType().getValue()) ? mod123.getAmount(Mod123Key.CT_C08) : "") // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
 				+ "&NRR=" + ""
 				+ "&ICO=" + ""
 				+ "&NR1=" + ""
@@ -135,12 +139,12 @@ public class Mod123PrintAEAT extends ModPrintAEAT {
 	
 	@Override
 	protected DataResponseSource getDataResponseSource() {
-		return DataResponseSource.MOD303;
+		return DataResponseSource.MOD123;
 	}
 
 	@Override
 	protected DataAttachSource getDataAttachSource() {
-		return DataAttachSource.MOD303;
+		return DataAttachSource.MOD123;
 	}
 
 	@Override

@@ -1,285 +1,220 @@
 package com.esferalia.aon.gwt.fiscal.client.mod131;
 
-import java.util.EnumMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
+import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod131.Model131.IMod131Declaration;
-import com.esferalia.aon.gwt.fiscal.client.mod131.Model131Activity.IMod131ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
-import com.esferalia.aon.gwt.fiscal.shared.mod131.Model131AEATScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod131.Model131ScriptProvider;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
-import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.Mod131Key;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.RangeChangeEvent.Handler;
-import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class Model131AEAT extends SimplePanel implements IMod131Declaration {
+public class Model131AEAT extends Model131Base {
 	
-	private static class Mod131ActivityProvidesKey implements ProvidesKey<Mod131Activity> {
-		@Override
-		public Object getKey(Mod131Activity model) {
-			return AonStringUtils.isBlank(model.getEpigraph()) ? null : model.getEpigraph();
-		}
-	}
-	
-	protected static final boolean ENABLED = true;
-	protected static final boolean DISABLED = false;
-	protected static final boolean HAS_INFO = true;
-	protected static final boolean HAS_NOT_INFO = false;
-	
-	private static final int MAX_LABEL_LENGTH = 300;
-	private static final int COL_NUMBER = 8;
-	
-	private FlexTable table;
-	private EnumMap<Mod131Key,DoubleBox> fieldsMap;
-	private ExpressionResolver resolver = new ExpressionResolver() {
-		@Override
-		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model131.SERVICE.mathExpression(expression,callback);
-		}
-	}; 
+	final Mod131ServiceAsync MOD131Service = GWT.create(Mod131Service.class);
 
-	public Model131AEAT(IFiscalModelCallback<Mod131> callback) {
-		fieldsMap = new EnumMap<>(Mod131Key.class);
-		table = new FlexTable();
-		paintDeclaration(callback);
-		setWidget(table);
+	public Model131AEAT(IFiscalModelCallback<Mod131> callback, AonData aonData) {
+		super(callback, aonData);
 	}
 	
-	protected FlexTable getTable() {
-		return table;
-	}
-	protected EnumMap<Mod131Key, DoubleBox> getFieldsMap() {
-		return fieldsMap;
-	}
-	
-	protected void paintDeclaration(final IFiscalModelCallback<Mod131> callback) {
-		if (getTable().getRowCount() > 0) {
-			getTable().removeAllRows();
-		}
-		defineTable();
+	public FlowPanel getDeclarationPanel(){
+		FlowPanel panel = new FlowPanel();
+		panel.setWidth("98%");
 		
-		for (IModelScript<Mod131Key> ms : Model131ScriptProvider.obtainScript(callback.getFiscalModel())) {
-			if (ms.paintHeaderBefore()) {
-				paintHeader();
-			}
-			paintRow(callback,ms);
-			if (ms == Model131AEATScript.R00) {
-				paintActivityRow(callback);
-			}
-		}
-	}
-
-	
-	protected void defineTable() {
-		getTable().setWidth("100%");
-		getTable().addStyleName(AON.AON_CSS.aonMarginBottom());
-		getTable().addStyleName(AON.AON_CSS.aonBorderCollapse());
-		getTable().addStyleName(AON.AON_CSS.aonBlockCenter());
+		FlowPanel formContainer = new FlowPanel();
+		aeatForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		FlowPanel aeatFormFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		aeatForm.add(aeatFormFlowPanel);
 		
-		getTable().getColumnFormatter().setWidth(0, "20px");
-		getTable().getColumnFormatter().setWidth(1, "140px");
-		getTable().getColumnFormatter().setWidth(2, "auto");
-		getTable().getColumnFormatter().setWidth(3, "140px");
-		getTable().getColumnFormatter().setWidth(4, "100px");
-		getTable().getColumnFormatter().setWidth(5, "40px");
-		getTable().getColumnFormatter().setWidth(6, "140px");
-		getTable().getColumnFormatter().setWidth(7, "50px");
-	}
-	
-	protected void paintHeader() {
-		int row = getTable().getRowCount();
-		getTable().setWidget(row, 0, new Label());
-		getTable().setWidget(row, 1, new Label());
-		getTable().setWidget(row, 2, new Label());
-		getTable().setWidget(row, 3, new Label());
-		getTable().setWidget(row, 4, new Label());
-		getTable().setWidget(row, 5, new Label());
-		getTable().setWidget(row, 6, new Label());
-		getTable().setWidget(row, 6, new Label());
-	}
+		formFlowPanel.add(mod131Hidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
 		
-	protected void paintEmptyRow() {
-		int row = table.getRowCount();
-		table.setWidget(row, 0, new Label( "." ));
-		table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
-	}
+		aeatFormFlowPanel.add(modAeatHidden);
+		aeatFormFlowPanel.add(domainIdAeatHidden);
+		aeatFormFlowPanel.add(domainNameAeatHidden);
+		aeatFormFlowPanel.add(userAeatHidden);
+		aeatFormFlowPanel.add(nameAeatHidden);
+		aeatFormFlowPanel.add(documentAeatHidden);
+		aeatFormFlowPanel.add(certAeatHidden);
+		aeatFormFlowPanel.add(passAeatHidden);
+		
+		formContainer.add(diskForm);
+		formContainer.add(aeatForm);
 
-	protected void paintRow(final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script) {
-		if (script.hasGraphicParticularity()) {
-			paintParticularyRow(callback,script);
-		} else {
-			int row = table.getRowCount();
-			paintLabel(row,callback,script);
-			table.getFlexCellFormatter().setColSpan(row, 0, (script.getKeys() == null)?COL_NUMBER:(COL_NUMBER-3));
-			if (script.getKeys() != null) {
-				int col = 1;
-				for (Mod131Key key : script.getKeys()) {
-					col = paintBox( row, col, key );
-					col = paintField( row, col, callback, script, key );
-				}
-				paintInfoCol(row,col,callback,script);	
-			}
-		}
+		panel.add(formContainer);
+		FlowPanel administrationPanel = getAdministrationPanel(); 
+		panel.add(administrationPanel);
+		FlowPanel informationPanel = getInformationPanel();
+		panel.add(informationPanel);
+		return panel;
 	}
 	
-	protected void paintLabel( int row,final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script) {
-		String labelText = script.getLabel();
-		Label label = new Label();
-		if (AonStringUtils.length(labelText) > MAX_LABEL_LENGTH) {
-			label.setTitle(labelText);	
-			labelText = AonStringUtils.abbreviate(labelText, MAX_LABEL_LENGTH);
-		}
-		label.setText(labelText);
-		table.setWidget(row, 0, label);
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		if (script.isTitle() ) {
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBold() );
-		} else {
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft20() );
-		}
-	}
-	
-	private int paintBox(int row, int col, Mod131Key key) {
-		table.setWidget(row, col, new BoxLabel(key.getBox()));
-		return ++col;
-	}
-
-	private int paintField(int row, int col, final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script, final Mod131Key key) {
-		final FiscalModelDetail det1 = callback.getFiscalModel().ensureDetail(key);
-		final DoubleBox input = new DoubleBox();
-		input.setResolver(resolver);
-		fieldsMap.put(key, input);
-		input.setEnabled(callback.getFiscalModel().isNotFinished() && script.isEnabled()); 
-		input.setValue(det1.getAmount());
-		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
+	public FlowPanel getAdministrationPanel() {
+		FlowPanel panel = new FlowPanel();
+		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.addStyleName(AON.AON_CSS.aonWidthAll());
+		panel.addStyleName(AON.AON_CSS.aonMarginTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
+		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		 
+		FlexTable tab = new FlexTable();
+		tab.getColumnFormatter().setWidth(0, "30px");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		tab.getColumnFormatter().setWidth(2, "30px");
+		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
+		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		Label title = new Label("Presentaci\u00F3n del modelo");
+		tab.getFlexCellFormatter().setColSpan(0, 0, 3);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
+		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getModel().getAdministration()));
+		tab.setWidget(0, 0, title);
+		
+		int row = 1;
+		Label icon1 = new Label();
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+		tab.setWidget(row, 0, icon1 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		
+		FlowPanel p1 = new FlowPanel();
+		p1.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
+		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button1.addStyleName(AON.AON_CSS.aonBorderNone());
+		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button1.addStyleName(AON.AON_CSS.aonClickable());
+		button1.addClickHandler( new ClickHandler() {
 			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				if (event.getValue() == null) input.setValue(0.0, false);
-				double result = callback.getFiscalModel().getResultAmount(key);
-				double adjust = callback.getFiscalModel().getAdjustAmount(key);
-				double amount = input.getValue();
-				if (AonMathUtils.isNotZero(result - adjust - amount)) {
-					callback.getFiscalModel().ensureDetail(key).setAdjustAmount( result - amount);	
+			public void onClick(ClickEvent event) {
+				if (getModel().isFinished() || getModel().isSent()) {
+					submitForm(MODEL131_FILE);
+				} else {
+					getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
-				callback.getFiscalModel().ensureDetail(key).setAmount(input.getValue());
-				if (input.isEnabled()) {
-					calculateAndRefresh( callback );
-				}
-				callback.markAsDirty();
 			}
 		});
-		table.setWidget(row, col, input);
-		return ++col;
-	}
-	
-	private void paintInfoCol(int row, int col, final IFiscalModelCallback<Mod131> callback, final IModelScript<Mod131Key> script) {
-		FlowPanel buttonContainer = new FlowPanel();
-		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
-			buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
-			if 	(infoKey != FiscalModelKeyInfo.NONE) {
-				final Button button = new Button("");
-				button.setTitle(infoKey.getLabel());
-				button.setStyleName(AON.AON_CSS.aonIconCommandButton());
-				
-				if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.AON_CSS.aonIconInvoice());
-				if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.AON_CSS.aonIconDiff());
-				if 	(infoKey == FiscalModelKeyInfo.SALARY) button.addStyleName(AON.AON_CSS.aonIconPayroll());
-				if 	(infoKey == FiscalModelKeyInfo.SALARY_IN_KIND) button.addStyleName(AON.AON_CSS.aonIconPayroll());
-				if 	(infoKey == FiscalModelKeyInfo.DIFF_SALARY) button.addStyleName(AON.AON_CSS.aonIconDiff());
-				if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
-				if 	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.AON_CSS.aonIconCalculator());
-				if 	(infoKey == FiscalModelKeyInfo.IRPF_ACTIVITY) button.addStyleName(AON.AON_CSS.aonIconActivities());
-				
-				button.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						Model131.SERVICE.getInfo(callback.getDomainName(),callback.getUser(),callback.getDomain(),
-							callback.getFiscalModel(), script, infoKey,new AsyncCallback<String>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										callback.showErrorMsg(AON.MSG.errorMessage());
-									}
-
-									@Override
-									public void onSuccess(String result) {
-										callback.showInfoPanel(result);
-									}
-							
-								}
-							);	
-					}
-				});
-				buttonContainer.add(button);
-			}
-			table.setWidget(row, col, buttonContainer);
-		}
-	}
-
-	@Override
-	public void calculateAndRefresh(final IFiscalModelCallback<Mod131> callback) {
-		Model131.SERVICE.calculate(callback.getDomainName(),callback.getUser(),callback.getFiscalModel(),
-				new AsyncCallback<Mod131>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.showErrorMsg(AON.MSG.errorMessage());
-					}
-
-					@Override
-					public void onSuccess(Mod131 result) {
-						for (Mod131Key key : fieldsMap.keySet()) {
-							double d1 = result.getAmount(key);
-							double d2 = fieldsMap.get(key).getValue();
-							if (!AonNumberUtils.equals(d1, d2)) {
-								fieldsMap.get(key).setValue(d1,true,true);
-							}
-						}
-					}
-			
+		p1.add(button1);
+		tab.setWidget(row, 1, p1 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.getFlexCellFormatter().setColSpan(row, 1, 2);
+		row++;
+		
+		Label icon2 = new Label();
+		icon2.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+		tab.setWidget(row, 0, icon2 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel p2 = new FlowPanel();
+		p2.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button2 = new Button("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
+		button2.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button2.addStyleName(AON.AON_CSS.aonBorderNone());
+		button2.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button2.addStyleName(AON.AON_CSS.aonClickable());
+		button2.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (getModel().isFinished() || getModel().isSent()) {
+					submitAEAT(MODEL131_PRINT_AEAT);
+					getCallback().showVisorAEAT();
+				} else {
+					getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
-			);	
-	}
-	
-	protected FlowPanel getAnchorPanel(Mod131 mod131, String label, String href) {
-		FlowPanel p = new FlowPanel();
-		p.setStyleName(AON.AON_CSS.aonPadding2());
-		Anchor a = new Anchor(label,href,"_blank");
-		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(FiscalModelUtils.getAdministrationIcon(mod131.getAdministration()));
-		p.add(a);
-		return p;
+			}
+		});
+		p2.add(button2);
+		tab.setWidget(row, 1, p2 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.getFlexCellFormatter().setColSpan(2, 1, 2);
+		row++;
+			
+		// CON FIRMA NO CRIPTOGRAFICA
+		Label icon3 = new Label();
+		icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+		tab.setWidget(row, 0, icon3 );
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel p3 = new FlowPanel();
+		p3.setStyleName(AON.AON_CSS.aonPadding2());
+		Button button3 = new Button("Presentaci\u00F3n via Agencia Tributaria con firma no criptogr\u00e1fica (a partir de los datos guardados).");
+		button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
+		button3.addStyleName(AON.AON_CSS.aonBorderNone());
+		button3.addStyleName(AON.AON_CSS.aonEvenBackground());
+		button3.addStyleName(AON.AON_CSS.aonClickable());
+		button3.addStyleName("aon-icon-beta-text");
+		button3.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+		button3.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {		
+				CertificationPopup certPopup = new CertificationPopup(getAPI(), getModel().getName(), getModel().getDocument(), false) {
+								
+					@Override
+					protected void onCancel() {
+					
+					}
+							
+					@Override
+					protected void onAccept() {
+						if(getModel().isSent()) {
+							getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
+						} else if (getModel().isFinished()) {
+							submitAEAT(MODEL131_PRINT_AEAT, getCert(), getPass(), getName(), getDocument());
+							getCallback().showVisorAEAT();
+						} else {
+							getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+						}	
+					}
+				};
+				certPopup.center();
+			}
+		});
+		p3.add(button3);
+		tab.setWidget(row, 1, p3 );
+		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+
+		MOD131Service.presentationFile(getCallback().getDomainName(), getCallback().getDomain(), getCallback().getUser(), getModel().getId(), new AsyncCallback<Integer>() {
+
+			@Override public void onFailure(Throwable caught) {}
+
+			@Override
+			public void onSuccess(Integer result) {
+				if(result > 0) {
+					Button download2 = new Button();
+					download2.setStyleName("aon-icon-mail-save");
+					download2.addStyleName(AON.AON_CSS.aonIconCommandButton());
+					download2.getElement().getStyle().setPaddingTop(16, Unit.PX);
+					download2.addClickHandler(new ClickHandler() {
+							
+						@Override
+						public void onClick(ClickEvent event) {
+							getAPI().getFiscal().download(result +"");
+						}
+					});
+					tab.setWidget(3, 2, download2 );
+					tab.getCellFormatter().setStyleName(3, 2, AON.AON_CSS.aonPanelGridEven());
+				} else tab.getFlexCellFormatter().setColSpan(3, 1, 2);
+			}
+		});
+		row++;
+
+		panel.add(tab);
+		return panel;
 	}
 	
 	@Override
@@ -293,114 +228,4 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G602.shtml"));
 		return list;
 	}
-	
-	protected void paintParticularyRow(final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script) {
-		if (script.getKeys() == null) return;
-		if (script.getKeys()[0] == Mod131Key.P2) {
-			paintRowP02(callback,script);
-		}
-	}
-
-	private void paintActivityRow(final IFiscalModelCallback<Mod131> callback) {
-		int row = getTable().getRowCount();
-		final Mod131ActivityProvidesKey providesKey = new Mod131ActivityProvidesKey();
-		final Mod131ActivityTable table = new Mod131ActivityTable(providesKey);
-		table.setStyleName( AON.AON_CSS.aonWidth90Percent());
-		table.addStyleName( AON.AON_CSS.aonBlockCenter());
-		table.addStyleName( AON.AON_CSS.aonMarginTop());
-		table.addStyleName( AON.AON_CSS.aonMarginBottom());
-		table.addRangeChangeHandler(new Handler() {
-			
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				table.setRowData(callback.getFiscalModel().getActivities());
-			}
-		});
-		final NoSelectionModel<Mod131Activity> model = new NoSelectionModel<Mod131Activity>(providesKey);
-		table.setSelectionModel(model);
-		model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				final CustomDialog dialog = new CustomDialog();
-				IMod131ActivityCallback activityCallback = new IMod131ActivityCallback() {
-					
-					@Override
-					public void onCancel() {
-						dialog.hide();
-						calculateAndRefresh(callback);
-						table.redraw();
-					}
-					
-					@Override
-					public void onAccept() {
-						dialog.hide();
-						calculateAndRefresh(callback);
-						table.redraw();
-					}
-					
-					@Override
-					public Mod131Activity getActivity() {
-						return model.getLastSelectedObject();
-					}
-
-					@Override
-					public void onRemove() {
-						dialog.hide();
-						for (int i = 0; i < callback.getFiscalModel().getActivities().size() ; i++ ) {
-							if (callback.getFiscalModel().getActivities().get(i) == model.getLastSelectedObject()) {
-								callback.getFiscalModel().getActivities().get(i).initialize();
-							}
-						}
-						calculateAndRefresh(callback);
-						table.redraw();
-					}
-
-					@Override
-					public String getDomainName() {
-						return callback.getDomainName();
-					}
-
-					@Override
-					public int getDomain() {
-						return callback.getDomain();
-					}
-
-					@Override
-					public String getUser() {
-						return callback.getUser();
-					}
-				};
-				Model131Activity actPanel = new Model131Activity(activityCallback);
-				dialog.setCaption(model.getLastSelectedObject().getFullDescription());
-				dialog.setGlassEnabled(true);
-				dialog.setAnimationEnabled(true);
-				dialog.add(actPanel);
-				dialog.setWidth("700px");
-				dialog.setHeight("600px");
-				dialog.show();
-				dialog.center();
-			}
-		});
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-		FlowPanel tableContainer = new FlowPanel();
-		tableContainer.add( table ) ;
-		getTable().setWidget(row, 0, tableContainer );
-		getTable().getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
-	}
-
-	private void paintRowP02(final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script) {
-		int row = getTable().getRowCount();
-		final FiscalModelDetail p2 = callback.getFiscalModel().ensureDetail(Mod131Key.P2);
-		getTable().setWidget(row, 0, new Label(script.getLabel()));
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
-		getTable().getFlexCellFormatter().setColSpan(row, 0, 6);
-		
-		final Label wP2 = new Label(p2.getAmount()==1?AON.MSG.yes():AON.MSG.no());
-		getTable().setWidget(row, 1, wP2 );
-		getTable().getFlexCellFormatter().setColSpan(row, 1, 2);
-	}
-	
-
 }

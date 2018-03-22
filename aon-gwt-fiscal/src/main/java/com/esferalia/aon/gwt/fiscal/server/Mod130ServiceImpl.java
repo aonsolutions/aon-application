@@ -7,7 +7,11 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Mod130Service;
 import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -96,5 +100,14 @@ public class Mod130ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		} catch ( Throwable t) {
 			throw new AonCoreException(t);
 		}
+	}
+	
+	@Override
+	public Integer presentationFile(String domainName, Integer domainId, String user,Integer id) {
+		Attach attach = AON.getAttach(domainName, domainId, user, f -> 
+		f.getSourceTypeProperty().eq(DataAttachSource.MOD130.value())
+		.and(f.getSourceBatchProperty().eq(id))
+		.and(f.getDescriptionProperty().eq("Presentacion AEAT")), AttachType.DATA, false);
+		return attach != null && attach.getId() != null ? attach.getId() :  -1;
 	}
 }
