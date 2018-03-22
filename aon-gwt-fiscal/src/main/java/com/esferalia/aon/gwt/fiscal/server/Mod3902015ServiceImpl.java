@@ -4,7 +4,11 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Mod3902015Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
@@ -34,5 +38,13 @@ public class Mod3902015ServiceImpl extends AonRemoteServiceServlet implements Mo
 		return FISCAL.changeStatusMod3902015(domainName, this.getUserLogin(), mod390, status);
 	}
 	
+	@Override
+	public Integer presentationFile(String domainName, Integer domainId, String user,Integer id) {
+		Attach attach = AON.getAttach(domainName, domainId, user, f -> 
+		f.getSourceTypeProperty().eq(DataAttachSource.MOD131.value())
+		.and(f.getSourceBatchProperty().eq(id))
+		.and(f.getDescriptionProperty().eq("Presentacion AEAT")), AttachType.DATA, false);
+		return attach != null && attach.getId() != null ? attach.getId() :  -1;
+	}
 	
 }

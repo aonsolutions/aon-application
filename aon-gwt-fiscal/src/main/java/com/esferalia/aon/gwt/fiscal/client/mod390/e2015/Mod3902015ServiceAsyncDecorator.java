@@ -46,4 +46,10 @@ public class Mod3902015ServiceAsyncDecorator implements Mod3902015ServiceAsync {
 		fsa.changeStatus(domainName, mod390, status,new AsyncCallbackWrapper<Mod3902015>(callback));
 	}
 
+	@Override
+	public void presentationFile(String domainName, Integer domainId, String user, Integer id,
+			AsyncCallback<Integer> callback) {
+		
+	}
+
 }

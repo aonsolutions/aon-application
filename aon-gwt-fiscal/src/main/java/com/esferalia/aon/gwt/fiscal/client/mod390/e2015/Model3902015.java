@@ -6,8 +6,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
@@ -51,8 +51,14 @@ public class Model3902015 extends DockLayoutPanel  {
 	private Mod3902015ServiceAsync MOD390_SERVICE;
 	
 	static interface IMod3902015CallBack {
+		String getDomainName();
+		Integer getDomainId();
+		String getUser();	
 		void calculateAndRefresh();
 		Mod3902015 getMod390();
+		void showVisorAEAT();
+		void showInfoPanel(String str);
+		
 	}	
 
 	static interface IMod3902015Page extends IsWidget {
@@ -68,11 +74,12 @@ public class Model3902015 extends DockLayoutPanel  {
 	private Hidden mod390Hidden = new Hidden("mod390");
 	private Hidden domainIdHidden = new Hidden("domainId");
 	private Hidden domainNameHidden = new Hidden("domainName");
-	
-
-	public Model3902015(Mod390 mod390, final Model390Callback cbk) {
+	private AonData aonData;
+	private Model390Callback cbk;
+	public Model3902015(Mod390 mod390, final Model390Callback cbk, AonData aonData) {
 		super(Unit.PX);
-		
+		this.aonData = aonData;
+		this.cbk = cbk;
 		AON.ensureInjected();
 
 		Mod3902015ServiceAsync mod3902015ServiceRaw = GWT.create(Mod3902015Service.class);
@@ -342,35 +349,6 @@ public class Model3902015 extends DockLayoutPanel  {
 		});
 		buttonContainer.add(markAsPendingButton);
 		
-		Button  printButton = new Button();
-		printButton.setVisible(!m390.isNew());
-		printButton.setText(AON.MSG.validatePrintViaAeat());
-		printButton.setTitle(newButton.getText());
-		printButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		printButton.addStyleName(AON.AON_CSS.aonIconAeat());
-		printButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				submitForm(MOD390_2015_PRINT, m390.getId());
-			}
-		});
-		buttonContainer.add(printButton);
-		
-		Button generateFileButton = new Button();
-		generateFileButton.setVisible(!m390.isNew() && (m390.isFinished() || m390.isSent()));
-		generateFileButton.setText(AON.MSG.generateFile());
-		generateFileButton.setTitle(newButton.getText());
-		generateFileButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		generateFileButton.addStyleName(AON.AON_CSS.aonIconAeatBW());
-		generateFileButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				submitForm(MOD390_2015_FILE, m390.getId());
-			}
-		});
-		buttonContainer.add(generateFileButton);
 		toolbarPanel.add(toolbar);
 				
 		FlowPanel formContainer = new FlowPanel();
@@ -396,6 +374,11 @@ public class Model3902015 extends DockLayoutPanel  {
 		return $wnd.getCurrentDomain();
 	}-*/;
 
+	public static native String getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
+	}-*/;
+	
 	private void showPage(int page) {
 		WestFocusPanel panel = (WestFocusPanel) linkContainer.getWidget(page);
 		panel.showPage();	
@@ -435,6 +418,31 @@ public class Model3902015 extends DockLayoutPanel  {
 				return m390;
 			}
 			
+			@Override
+			public String getDomainName() {
+				return getCurrentDomainName();
+			}
+			
+			@Override
+			public Integer getDomainId() {
+				return getCurrentDomain();
+			}
+			
+			@Override
+			public String getUser() {
+				return getCurrentUser();
+			}
+
+			@Override
+			public void showVisorAEAT() {
+				cbk.showVisorAEAT();
+			}
+
+			@Override
+			public void showInfoPanel(String str) {
+				cbk.showBreakdownPanel(str);
+			}
+			
 		};
 		ScrollPanel container = new ScrollPanel();
 		container.addStyleName(AON.AON_CSS.aonLinkPanel());
@@ -451,6 +459,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		linkContainer.add(new WestFocusPanel(AON.MSG.specificOperations(), new Page09(m390),callback));
 		linkContainer.add(new WestFocusPanel(AON.MSG.prorrata(), new Page10(m390),callback));
 		linkContainer.add(new WestFocusPanel(AON.MSG.difActivitiesRegime(), new Page11(m390),callback));
+		linkContainer.add(new WestFocusPanel("Agencia Tributaria", new Page12(m390, aonData, callback), callback));
 		container.add(linkContainer);
 		return container;
 	}
@@ -460,8 +469,8 @@ public class Model3902015 extends DockLayoutPanel  {
 	protected void submitForm(String action, Integer id) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod390Hidden.setValue(String.valueOf(id));
-		domainIdHidden.setValue(String.valueOf(Model303.getCurrentDomain()));
-		domainNameHidden.setValue(Model303.getCurrentDomainName());
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());
 		diskForm.submit();
 	}
 
@@ -688,7 +697,7 @@ public class Model3902015 extends DockLayoutPanel  {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						m390.setComments(event.getValue());
 						styleCommentsButton(m390,commentsButton);
-						Model390.MOD390_SERVICE.saveComments(Model303.getCurrentDomainName(), m390, new AsyncCallback<Mod390>() {
+						Model390.MOD390_SERVICE.saveComments(getCurrentDomainName(), m390, new AsyncCallback<Mod390>() {
 							@Override
 							public void onSuccess(Mod390 result) {
 								toast.hide();

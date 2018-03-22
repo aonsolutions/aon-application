@@ -12,6 +12,7 @@
 	<aon:valueParam name="entryPoint" default="Model390" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
+	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
 	
 <style>
 body {
@@ -39,6 +40,9 @@ body {
             }
             function getCurrentDomainName() {
             	return "#{gwtDomainName}"
+            }
+            function getCurrentUser() {
+            	return "#{gwtUser}"
             }
             ]]>
     </script> 

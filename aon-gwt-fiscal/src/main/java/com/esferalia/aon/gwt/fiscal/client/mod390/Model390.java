@@ -8,6 +8,9 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
@@ -33,8 +36,10 @@ public class Model390 extends MainEntryPoint {
 
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int INFORMATION_TAB = 1;
+	private final static int AEAT_TAB = 2;
 
 	public static Model390ServiceAsync MOD390_SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	interface Model390Binder extends UiBinder<Widget, Model390> {
 	}
@@ -58,8 +63,12 @@ public class Model390 extends MainEntryPoint {
 	@UiField
 	ScrollPanel breakdownPanel;
 	
+	@UiField
+	SimpleLayoutPanel aeatPanel;
+	
 	Model390Table model390Table;
-
+	private AonData aonData;
+	
 	public class Model390Callback {
 
 		public void onAccept(Mod390 mod390) {
@@ -74,6 +83,11 @@ public class Model390 extends MainEntryPoint {
 		public void showBreakdownPanel(String htmlText) {
 			Model390.this.showBreakdownPanel(htmlText);
 		}
+	
+		public void showVisorAEAT() {
+			Model390.this.showVisorAEAT();
+		}
+		
 		public void cleanBreakdownPanel() {
 			Model390.this.cleanBreakdownPanel();
 		}
@@ -88,16 +102,33 @@ public class Model390 extends MainEntryPoint {
 		}
 	};
 	
-
 	@Override
 	public void onModuleLoad() {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
+
+			@Override public void onFailure(Throwable caught) {}
+			
+			@Override
+			public void onSuccess(AonData aonData) {
+				onModuleLoad(aonData);
+			}
+		});
+	}
+	
+	public void onModuleLoad(AonData aonData) {
+		this.aonData = aonData;
 		AON.ensureInjected();
 
 		Model390ServiceAsync serviceRaw = GWT.create(Model390Service.class);
 		MOD390_SERVICE = new Model390ServiceAsyncDecorator(serviceRaw);
 
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
-
+		
+		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
+		html.setWidth("100%");
+		html.setHeight("100%");
+		aeatPanel.setWidget(html);
+		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -134,6 +165,10 @@ public class Model390 extends MainEntryPoint {
 		return $wnd.getCurrentDomain();
 	}-*/;
 
+	public AonData getAonData() {
+		return aonData;
+	}
+	
 	private void onSelectionChange(SelectionEvent<Mod390> event) {
 		Mod390 sel = event.getSelectedItem();
 		select(sel);
@@ -147,8 +182,8 @@ public class Model390 extends MainEntryPoint {
 				model3902014.select(selected);
 				declarationContainer.setWidget( model3902014 );
 			} else if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
-				Model3902015 model3902015 = new Model3902015(selected,new Model390Callback());
-				declarationContainer.setWidget( model3902015 );
+				Model3902015 model3902015 = new Model3902015(selected,new Model390Callback(), getAonData());
+				declarationContainer.setWidget(model3902015);
 			}
 			
 /*		
@@ -352,6 +387,11 @@ public class Model390 extends MainEntryPoint {
 		HTMLPanel panel = new HTMLPanel(htmlText);
 		breakdownPanel.setWidget(panel);
 		breakdownPanel.scrollToTop();
+	}
+	
+	private void showVisorAEAT() {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(AEAT_TAB);	
 	}
 
 	public static void main(String[] args) {

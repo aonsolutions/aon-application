@@ -14,5 +14,6 @@ public interface Mod3902015Service extends RemoteService {
 	Mod3902015 saveMod3902015(String domainName, Integer domain,Mod3902015 mod390) throws AonCoreException;
 	void deleteMod3902015(String domainName, Integer domain,Mod3902015 mod390) throws AonCoreException;
 	Mod3902015 changeStatus(String domainName, Mod3902015 mod390, FiscalStatus status);
+	Integer presentationFile(String domainName, Integer domainId, String user, Integer id);
 
 }

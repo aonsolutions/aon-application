@@ -434,6 +434,7 @@ public class MainEntryPoint implements EntryPoint {
 		}
 
 	}
+	
 	public static native String getCurrentDomainName()
 	/*-{
 		return $wnd.getCurrentDomainName();
