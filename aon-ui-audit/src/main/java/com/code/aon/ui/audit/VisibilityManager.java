@@ -47,18 +47,25 @@ public class VisibilityManager extends BasicVisibilityManager {
 		Integer domainId = ds.getDomainId();
 		Integer parentDomainId = AdminUtil.getParentDomain(domainId);
 		DomainType parentDomainType = (parentDomainId != null) ? DomainType.values()[AdminUtil.getDomainType(parentDomainId)] : null;
+
 		Set<Module> parentDomainModules = Collections.emptySet();
 		if ( parentDomainId != null ) {
 			parentDomainModules = getEnabledModuleList(parentDomainId);
 		}
+
 		boolean userOfParentDomain = false;
 		if ( user != null ) {
 			userOfParentDomain = parentDomainId == null || ObjectUtils.equals(user.getDomain(), parentDomainId);
-			if ( userOfParentDomain ) {
+			if ( userOfParentDomain || parentDomainType != DomainType.CONSULTANCY) {
 				enabledModules.addAll( parentDomainModules );
 			}
 		}
-		Set<Module> domainModules = (parentDomainId == null || parentDomainType == DomainType.CONSULTANCY) ? getEnabledModuleList(domainId) : new HashSet<Module>();
+
+		Set<Module> domainModules = Collections.emptySet();
+		if (parentDomainId == null || parentDomainType == DomainType.CONSULTANCY) {
+			domainModules = getEnabledModuleList(domainId);
+		}
+
 		boolean addConfiguration = true;
 		if ( domainModules.contains(Module.AON_ONE) ) {
 			for (Iterator<Module> iterator = domainModules.iterator(); iterator.hasNext();) {
@@ -67,7 +74,10 @@ public class VisibilityManager extends BasicVisibilityManager {
 			    }
 			}						
 			addConfiguration = userOfParentDomain;
+		} else if ( domainModules.contains(Module.AON_FINANCE) ) {
+			addConfiguration = userOfParentDomain;
 		}
+
 		enabledModules.addAll( domainModules );
 		enabledModules.remove(Module.PAYROLL_PORTAL);
 		enabledModules.remove(Module.CONTRATA);
