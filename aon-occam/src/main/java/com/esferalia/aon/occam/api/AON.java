@@ -2953,6 +2953,18 @@ public class AON {
 		}
 	}
 	
+	public static Stream<WarehouseTransferDetail> getWarehouseTransferDetailStream(String domainName, Integer domainId, String login,
+			WarehouseTransferFilter filter, ProductFilter pFilter, ItemFilter iFilter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getWarehouseTransferDetailStream(ctx, filter, pFilter, iFilter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Integer insertWarehouseTransferDetail(String domainName, Integer domainId, String login,
 			WarehouseTransferDetail warehouseTransferDetail){
 		AONContext ctx = null;

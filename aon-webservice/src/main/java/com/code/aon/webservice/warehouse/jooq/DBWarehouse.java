@@ -1,5 +1,6 @@
 package com.code.aon.webservice.warehouse.jooq;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -14,10 +15,15 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
+import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBWarehouse {
 	
@@ -52,6 +58,92 @@ public class DBWarehouse {
 		return json;
 	}
 	
+	/*
+	 * WAREHOUSE TRANSFER
+	 */
+	public static JSONArray getWarehouseTransferDetail(Domain domain, String login, Map<String, String[]> map) {
+		JSONArray array = new JSONArray();
+		AON.getWarehouseTransferDetailStream(domain.getName(), domain.getId(), login, 
+				f -> warehouseTransferFilter(domain, map, f),
+				f -> productFilter(domain, map, f),
+				f -> itemFilter(domain, map, f))
+				.forEach(detail -> array.put(warehouseTransferDetailToJSON(detail)));
+		return array;
+	}
+	
+	public static Filter warehouseTransferFilter(Domain domain, Map<String, String[]> filterMap, WarehouseTransferProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.FROM)){
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(date)));
+		}
+
+		if(filterMap.containsKey(MSG.TO)){
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.TO)[0])));
+			filter = filter.and(f.getIssueTimeProperty().le(AonDateUtils.toTimestamp(date)));
+		}
+		
+		return filter;
+	}
+	
+	public static Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.PRODUCT)){
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.PRODUCT)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(ids));
+		}
+		
+		if(filterMap.containsKey("product_id")){
+			Integer[] ids = Arrays.stream(filterMap.get("product_id")).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getIdProperty().in(ids));
+		}
+		
+		if(filterMap.containsKey(MSG.CATEGORY)){
+			Integer[] ids = Arrays.stream(filterMap.get(MSG.CATEGORY)).mapToInt(Integer::parseInt).boxed().toArray(Integer[]::new);
+			filter = filter.and(f.getCategoryProperty().in(ids));
+			
+		}
+		
+		return filter;
+	}
+	
+	public static Filter itemFilter(Domain domain, Map<String, String[]> filterMap, ItemProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(filterMap.containsKey(MSG.ITEM)){
+			Integer id = Integer.parseInt(filterMap.get(MSG.ITEM)[0]);
+			filter = filter.and(f.getIdProperty().eq(id));
+		}
+		
+		if(filterMap.containsKey("serial_number")){
+			filter = filter.and(f.getSerialNumberProperty().like("%"+filterMap.get("serial_number")[0]+"%"));
+		}
+		
+		return filter;
+	}
+	
+	public static JSONObject warehouseTransferDetailToJSON(WarehouseTransferDetail detail){
+		JSONObject json = new JSONObject();
+		if(detail != null){
+			json.put(MSG.ID, detail.getId());
+			json.put(MSG.DOMAIN, detail.getDomain());
+			json.put("warehouse_transfer",
+					new JSONObject()
+					.put(MSG.ID, detail.getWarehouseTransfer().getId())
+					.put(MSG.SERIES, detail.getWarehouseTransfer().getSeries())
+					.put(MSG.NUMBER, detail.getWarehouseTransfer().getNumber())
+					.put("issue_time", AonDateUtils.dateTimeFormat(detail.getWarehouseTransfer().getIssueTime())));
+			json.put(MSG.ITEM, detail.getItem());
+			json.put(MSG.QUANTITY, detail.getQuantity());
+		}
+		return json;
+	}
+	
+	/*
+	 * ELABORATION
+	 */
 	public static JSONObject createElaboration(Domain domain, String login) {
 		Elaboration elaboration = new Elaboration();
 		elaboration.setStatus(ElaborationStatus.PENDING.value());

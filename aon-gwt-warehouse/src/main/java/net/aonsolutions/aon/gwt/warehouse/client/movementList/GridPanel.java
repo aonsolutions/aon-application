@@ -108,13 +108,12 @@ public class GridPanel extends Composite {
 					toast.show("Procesando ...", label);
 				    parent.getMainContent().onSelectProduct(object);
 					dataProvider.refresh();
-					Timer timer = new Timer() {
+					new Timer() {
 			            @Override
 			            public void run() {
 			            	toast.hide();
 			            }
-			        };
-			        timer.schedule(1000);
+			        }.schedule(1000);
 				}
 			}
 		};

@@ -5,6 +5,9 @@ import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -15,6 +18,9 @@ import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TR
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +31,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.InsertValuesStep8;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
@@ -38,6 +45,8 @@ import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -65,6 +74,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.FullWarehouseFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
@@ -80,6 +91,8 @@ public class WarehouseDAO {
 	private static final WarehouseTransferDetailPropertiesDAO WAREHOUSE_TRANSFER_DETAIL_PROPERTIES = new WarehouseTransferDetailPropertiesDAO();
 	private static final DeliveryPropertiesDAO DELIVERY_PROPERTIES = new DeliveryPropertiesDAO();
 	private static final DeliveryDetailPropertiesDAO DELIVERY_DETAIL_PROPERTIES = new DeliveryDetailPropertiesDAO();
+	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 
 	private static final DepartmentPropertiesDAO DEPARTMENT_PROPERTIES = new DepartmentPropertiesDAO();
 	private static final StockPropertiesDAO STOCK_PROPERTIES = new StockPropertiesDAO();
@@ -314,6 +327,26 @@ public class WarehouseDAO {
 				.where(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER.eq(warehouseTransferId))
 				.fetchInto(WAREHOUSE_TRANSFER_DETAIL).stream().map(new FullWarehouseTransferDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Stream<WarehouseTransferDetail> getWarehouseTransferDetailStream(AONContext ctx, WarehouseTransferFilter filter,
+			ProductFilter pFilter, ItemFilter iFilter) {
+		
+		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		whereConditions.addAll(Arrays.asList(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter)));
+		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(pFilter)));
+		whereConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(iFilter)));
+
+		return ctx.getDslContext()
+			.select()
+			.from(WAREHOUSE_TRANSFER)
+			.join(WAREHOUSE_TRANSFER_DETAIL).on(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER.equal(WAREHOUSE_TRANSFER.ID))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(WAREHOUSE_TRANSFER_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.where(whereConditions)
+			.orderBy(WAREHOUSE_TRANSFER.ISSUE_TIME,WAREHOUSE_TRANSFER.SERIES, WAREHOUSE_TRANSFER.NUMBER)
+			.fetch().stream().map(new WarehouseTransferDetailFiller());
 	}
 	
 	public static Department getDepartment(AONContext ctx, Integer workplaceId, DepartmentFilter filter){
@@ -738,6 +771,24 @@ public class WarehouseDAO {
 					.setModificationUser(r.getModificationUser())
 					.setQuantity(r.getQuantity())
 					.setWarehouseTransfer(new WarehouseTransfer().setId(r.getWarehouseTransfer()));
+		}
+
+	}
+	
+	private static class WarehouseTransferDetailFiller implements Function<Record, WarehouseTransferDetail> {
+		
+		@Override
+		public WarehouseTransferDetail apply(Record r) {
+			return new WarehouseTransferDetail()
+					.setId(r.getValue(WAREHOUSE_TRANSFER_DETAIL.ID))
+					.setDomain(r.getValue(WAREHOUSE_TRANSFER_DETAIL.DOMAIN))
+					.setItem(new Item().setId(r.getValue(WAREHOUSE_TRANSFER_DETAIL.ITEM)))
+					.setQuantity(r.getValue(WAREHOUSE_TRANSFER_DETAIL.QUANTITY))
+					.setWarehouseTransfer(new WarehouseTransfer()
+							.setId(r.getValue(WAREHOUSE_TRANSFER.ID))
+							.setIssueTime(r.getValue(WAREHOUSE_TRANSFER.ISSUE_TIME))
+							.setSeries(r.getValue(WAREHOUSE_TRANSFER.SERIES))
+							.setNumber(r.getValue(WAREHOUSE_TRANSFER.NUMBER)));
 		}
 
 	}

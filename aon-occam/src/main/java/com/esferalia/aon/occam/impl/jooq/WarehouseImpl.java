@@ -213,6 +213,13 @@ public class WarehouseImpl implements IWarehouse {
 			WarehouseDAO.getWarehouseTransferNextNumber(ctx, serie));
 	}
 	
+	@Override
+	public Stream<WarehouseTransferDetail> getWarehouseTransferDetailStream(AONContext ctx,
+			WarehouseTransferFilter filter, ProductFilter pFilter, ItemFilter iFilter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WarehouseDAO.getWarehouseTransferDetailStream(ctx, filter, pFilter, iFilter));	
+	}
+	
 	// ------------------ CARRIER PACKING
 
 	@Override

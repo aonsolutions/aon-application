@@ -10,12 +10,12 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoiceDetail;
-import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.api.client.warehouse.JsDeliveryDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.api.client.warehouse.JsIncomeDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsStockStat;
+import com.esferalia.aon.gwt.api.client.warehouse.JsWarehouseTransferDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -85,23 +85,24 @@ public class FooterPanel extends Composite {
 	ScrollPanel elaborationPanel;
 	
 	@UiField
-	InlineLabel itemCount;
+	InlineLabel itemPanelHeader;
 	@UiField
-	InlineLabel incomeCount;
+	InlineLabel incomePanelHeader;
 	@UiField
-	InlineLabel deliveryCount;
+	InlineLabel deliveryPanelHeader;
 	@UiField
-	InlineLabel purchaseInvoiceCount;
+	InlineLabel purchaseInvoicePanelHeader;
 	@UiField
-	InlineLabel saleInvoiceCount;
+	InlineLabel saleInvoicePanelHeader;
 	@UiField
-	InlineLabel warehouseTransferCount;
+	InlineLabel warehouseTransferPanelHeader;
 	@UiField
-	InlineLabel elaborationCount;
+	InlineLabel elaborationPanelHeader;
 	
 		
 	public FooterPanel(Main parent) {
 		this(parent, null);
+		hideTabs();
 	}
 	
 	public FooterPanel(Main parent, JsStockStat product) {
@@ -112,12 +113,21 @@ public class FooterPanel extends Composite {
 		
 		initWidget(binder.createAndBindUi(this));
 		
+		itemPanelHeader.setText("Detalle");
+		incomePanelHeader.setText("Albs. compra");
+		deliveryPanelHeader.setText("Albs. venta");
+		purchaseInvoicePanelHeader.setText("Fras. compra");
+		saleInvoicePanelHeader.setText("Fras. venta");
+		warehouseTransferPanelHeader.setText("Traspasos almac\u00E9n");
+		elaborationPanelHeader.setText("Elaboraciones");
+		
+		
 		tabPanel.getTabWidget(FooterTabs.ITEM.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.INCOME.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.DELIVERY.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.PURCHASE_INVOICE.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.SALE_INVOICE.ordinal()).getParent().setVisible(true);
-		tabPanel.getTabWidget(FooterTabs.WAREHOUSE_TRANSFER.ordinal()).getParent().setVisible(false);
+		tabPanel.getTabWidget(FooterTabs.WAREHOUSE_TRANSFER.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.ELABORATION.ordinal()).getParent().setVisible(false);
 		selectTab(FooterTabs.ITEM.ordinal());
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -136,6 +146,11 @@ public class FooterPanel extends Composite {
 	public void selectItem(JsStockStat item) {
 		this.item = item;
 		loadTabs();
+	}
+	
+	public void hideTabs() {
+		for(FooterTabs tab: FooterTabs.values())
+			tabPanel.getTabWidget(tab.ordinal()).getParent().setVisible(false);
 	}
 	
 	protected void loadTabs() {
@@ -171,7 +186,7 @@ public class FooterPanel extends Composite {
 					} else {
 						itemPanel.add(new Label("No se han encontrado resultados. "));
 					}
-					updateTabTitle(itemCount, result.getData().length());
+					updateTabTitle(itemPanelHeader, result.getData().length());
 				}
 
 				@Override public void onFailure(Throwable caught) {}
@@ -179,12 +194,15 @@ public class FooterPanel extends Composite {
 			
 			filterMap.remove("product_id");
 		} else {
-			itemPanel.add(new Label("El objeto seleccinado no es v\u00E1lido. "));
+			itemPanel.add(new Label("Ning\u00FAn elemento seleccinado. "));
 		}
 	}
 	
 	private void updateTabTitle(InlineLabel inlineLabel, int length) {
-		inlineLabel.setText(" ("+length+")");
+		if(inlineLabel.getText().matches(".*\\(\\d+\\)"))
+			inlineLabel.setText( inlineLabel.getText().replaceFirst("\\(\\d+\\)", " ("+length+")") );
+		else
+			inlineLabel.setText( inlineLabel.getText() + " ("+length+")" );
 	}
 	
 	private boolean isFilterDefined(HashMap<String, LinkedList<String>> filterMap) {
@@ -204,7 +222,7 @@ public class FooterPanel extends Composite {
 					} else {
 						incomePanel.add(new Label("No se han encontrado resultados. "));
 					}
-					updateTabTitle(incomeCount, result.getData().length());
+					updateTabTitle(incomePanelHeader, result.getData().length());
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
@@ -226,7 +244,7 @@ public class FooterPanel extends Composite {
 					} else {
 						deliveryPanel.add(new Label("No se han encontrado resultados. "));
 					}
-					updateTabTitle(deliveryCount, result.getData().length());
+					updateTabTitle(deliveryPanelHeader, result.getData().length());
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
@@ -249,7 +267,7 @@ public class FooterPanel extends Composite {
 					} else {
 						purchaseInvoicePanel.add(new Label("No se han encontrado resultados. "));
 					}
-					updateTabTitle(purchaseInvoiceCount, result.getData().length());
+					updateTabTitle(purchaseInvoicePanelHeader, result.getData().length());
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
@@ -272,7 +290,7 @@ public class FooterPanel extends Composite {
 					} else {
 						saleInvoicePanel.add(new Label("No se han encontrado resultados. "));
 					}
-					updateTabTitle(saleInvoiceCount, result.getData().length());
+					updateTabTitle(saleInvoicePanelHeader, result.getData().length());
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
@@ -284,8 +302,24 @@ public class FooterPanel extends Composite {
 	
 	private void loadWarehouseTransferTab(HashMap<String, LinkedList<String>> filterMap) {
 		warehouseTransferPanel.clear();
-		// TODO loadWarehouseTransferTab
-		warehouseTransferPanel.add(new Label("Disponible pr\u00F3ximamente"));
+		if(isFilterDefined(filterMap)) {
+			API.getWarehouse().getWarehouseTransferDetail(filterMap, new AsyncCallback<JSON<JsWarehouseTransferDetail>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsWarehouseTransferDetail> result) {
+					if(!result.getData().toLinkedList().isEmpty()) {
+						warehouseTransferPanel.add( createWarehouseTransferPanel(result.getData()) );
+					} else {
+						warehouseTransferPanel.add(new Label("No se han encontrado resultados. "));
+					}
+					updateTabTitle(warehouseTransferPanelHeader, result.getData().length());
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else {
+			warehouseTransferPanel.add(new Label("El objeto seleccinado no es v\u00E1lido. "));
+		}
 	}
 	
 	private void loadElaborationTab(HashMap<String, LinkedList<String>> filterMap) {
@@ -358,9 +392,17 @@ public class FooterPanel extends Composite {
 		return createPanel(list);
 	}
 	
-	protected FlowPanel createWarehouseTransferPanel(JsObject jsWarehouseTransfer) {
-		// TODO createWarehouseTransferPanel
-		return null;
+	protected FlowPanel createWarehouseTransferPanel(AonJsArray<JsWarehouseTransferDetail> aonJsArray) {
+		List<MovementObject> list = new LinkedList<>();
+		aonJsArray.toLinkedList().forEach(detail -> {
+			MovementObject o = new MovementObject();
+			o.date = detail.getWarehouseTransfer().getIssueTime();
+			o.referenceCode = detail.getWarehouseTransfer().getSeries()+"/"+detail.getWarehouseTransfer().getNumber();
+			o.registryName = "-";
+			o.quantity = detail.getQuantity();
+			list.add(o);
+		});
+		return createPanel(list);
 	}
 	
 	protected FlowPanel createElaborationPanel(AonJsArray<JsElaboration> aonJsArray) {
@@ -369,8 +411,7 @@ public class FooterPanel extends Composite {
 			MovementObject o = new MovementObject();
 			o.date = elaboration.getDate();
 			o.referenceCode = elaboration.getSeries()+"/"+elaboration.getNumber();;
-			// TODO registryName on elaboration
-			o.registryName = "";
+			o.registryName = "-";
 			o.quantity = elaboration.getQuantity();
 			list.add(o);
 		});

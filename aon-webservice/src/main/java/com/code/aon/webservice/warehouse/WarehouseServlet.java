@@ -150,6 +150,12 @@ public class WarehouseServlet extends HttpServlet{
 							object = getItemMovements(domain, userName, req.getParameterMap());
 						}
 					}
+				} else if("transfer".equals(pathInfo[3])){
+					if(pathInfo.length > 4){
+						if(MSG.DETAIL.equals(pathInfo[4])){
+							object = DBWarehouse.getWarehouseTransferDetail(domain, userName, req.getParameterMap());
+						}
+					}
 				} else if(MSG.WAREHOUSE.equals(pathInfo[3])){
 					if(pathInfo.length > 4){
 						object = DBWarehouse.getWarehouse(domain, userName, Integer.parseInt(pathInfo[4]));

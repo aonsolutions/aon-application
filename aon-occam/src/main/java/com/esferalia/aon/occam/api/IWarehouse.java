@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -105,6 +106,9 @@ public interface IWarehouse {
 	
 	void updateWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer);
 	Integer insertWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer);
+	
+	Stream<WarehouseTransferDetail> getWarehouseTransferDetailStream(AONContext ctx, WarehouseTransferFilter filter,
+			ProductFilter pFilter, ItemFilter iFilter);
 	Integer insertWarehouseTransferDetail(AONContext ctx, WarehouseTransferDetail warehouseTransferDetail);
 	Integer insertWarehouseTransferDetail(AONContext ctx, Stream<WarehouseTransferDetail> warehouseTransferDetail);
 

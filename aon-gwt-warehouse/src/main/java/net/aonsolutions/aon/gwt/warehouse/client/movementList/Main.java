@@ -97,6 +97,7 @@ public class Main extends Composite {
 
 			@Override
 			public void onSuccess(JSON<JsStockStat> result) {
+				loadSouthContent();
 				hideFooterPanel();
 				content.setWidget(new GridPanel(parent, result.getData().toLinkedList()));
 				toast.hide();

@@ -74,14 +74,12 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 		toast.show("Procesando ...", label);
 		parent.onSelectItem(item);
 		createPanel();
-		
-		Timer timer = new Timer() {
+		new Timer() {
             @Override
             public void run() {
             	toast.hide();
             }
-        };
-        timer.schedule(1000);
+        }.schedule(1000);
 	}
 	
 	private FocusPanel print(JsStockStat item) {

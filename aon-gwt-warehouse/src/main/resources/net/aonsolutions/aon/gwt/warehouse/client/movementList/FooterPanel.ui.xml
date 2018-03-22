@@ -21,112 +21,84 @@
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Detalle"
-							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-						<g:InlineLabel ui:field="itemCount"
+						<g:InlineLabel ui:field="itemPanelHeader"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="itemPanel"
-						styleName="{aonResources.css.aonTextCenter}" />
-				</g:HTMLPanel>
+				<g:ScrollPanel ui:field="itemPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Albs. compra"
-							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-						<g:InlineLabel ui:field="incomeCount"
+						<g:InlineLabel ui:field="incomePanelHeader"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="incomePanel"
-						styleName="{aonResources.css.aonTextCenter}" />
-				</g:HTMLPanel>
+				<g:ScrollPanel ui:field="incomePanel"
+					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Albs. venta"
-							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-						<g:InlineLabel ui:field="deliveryCount"
+						<g:InlineLabel ui:field="deliveryPanelHeader"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="deliveryPanel"
-						styleName="{aonResources.css.aonTextCenter}" />
-				</g:HTMLPanel>
+				<g:ScrollPanel ui:field="deliveryPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Fras. compra"
-							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-						<g:InlineLabel ui:field="purchaseInvoiceCount"
+						<g:InlineLabel ui:field="purchaseInvoicePanelHeader"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="purchaseInvoicePanel"
-						styleName="{aonResources.css.aonTextCenter}" />
-				</g:HTMLPanel>
+				<g:ScrollPanel ui:field="purchaseInvoicePanel"
+					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Fras. venta"
-							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-						<g:InlineLabel ui:field="saleInvoiceCount"
+						<g:InlineLabel ui:field="saleInvoicePanelHeader"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="saleInvoicePanel"
-						styleName="{aonResources.css.aonTextCenter}" />
-				</g:HTMLPanel>
+				<g:ScrollPanel ui:field="saleInvoicePanel"
+					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Traspasos almacen"
-							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-						<g:InlineLabel ui:field="warehouseTransferCount"
+						<g:InlineLabel ui:field="warehouseTransferPanelHeader"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="warehouseTransferPanel"
-						styleName="{aonResources.css.aonTextCenter}" />
-				</g:HTMLPanel>
+				<g:ScrollPanel ui:field="warehouseTransferPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			<g:tab>
 				<g:customHeader>
 					<g:HTMLPanel>
 						<i:IronIcon icon="receipt"
 							styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						<g:InlineLabel text="Elaboraciones"
-							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-						<g:InlineLabel ui:field="elaborationCount"
+						<g:InlineLabel ui:field="elaborationPanelHeader"
 							styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 					</g:HTMLPanel>
 				</g:customHeader>
-				<g:HTMLPanel>
-					<g:ScrollPanel ui:field="elaborationPanel"
-						styleName="{aonResources.css.aonTextCenter}" />
-				</g:HTMLPanel>
+				<g:ScrollPanel ui:field="elaborationPanel"
+					styleName="{aonResources.css.aonTextCenter}" />
 			</g:tab>
 			
 		</g:TabLayoutPanel>
