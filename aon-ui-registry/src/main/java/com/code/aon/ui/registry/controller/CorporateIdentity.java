@@ -75,6 +75,10 @@ public class CorporateIdentity implements ICollectionProvider, Serializable {
 		this.backAction = backAction;
 	}
 
+	public String backAction() {
+		return getBackAction();
+	}
+
 	public CorporateIdentity()  {
 		identityReport = new IdentityReport();
         try {

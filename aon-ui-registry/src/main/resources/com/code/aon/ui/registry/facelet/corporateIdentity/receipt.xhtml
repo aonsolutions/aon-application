@@ -30,7 +30,7 @@
 						immediate="true" accesskey="#{bundle.aon_key_remove}" />
 					<aon:if test="#{corporateIdentity.showBackButton}">						
 						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
-							action="corporateIdentity_predefined"
+							action="#{corporateIdentity.backAction}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />

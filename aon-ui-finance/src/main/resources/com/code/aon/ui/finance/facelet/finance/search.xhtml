@@ -14,6 +14,17 @@
 				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (bundle.finance_payment_module) : (bundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="corporateIdentityReceipt"
+						value="#{bundle.warehouse_delivery_arrived}"
+						title="#{bundle.registry_corporateIdentity_receipt}"
+						styleClass="aon-finding-toolbar-item aon-icon-page"
+						actionListener="#{corporateIdentity.onInit}"
+						action="corporateIdentity_receipt">
+						<f:setPropertyActionListener target="#{corporateIdentity.showBackButton}"
+							value="#{true}" />
+						<f:setPropertyActionListener target="#{corporateIdentity.backAction}"
+							value="finance_search" />
+					</aon:commandButton>
 					<aon:if test="#{controller.payroll}">
 						<aon:commandButton id="generateFinances-Popup"
 							value="#{bundle.aon_generate}"
