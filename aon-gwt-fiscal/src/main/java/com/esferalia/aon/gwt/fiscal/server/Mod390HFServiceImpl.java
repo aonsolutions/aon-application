@@ -17,6 +17,10 @@ import com.esferalia.aon.watson.error.AonCoreException;
 @WebServlet(name = "Mod390HF Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod390HF" })
 public class Mod390HFServiceImpl extends AonRemoteServiceServlet implements Mod390HFService {
 
+	public static Mod390HFServiceImpl getInstance() {
+		return new Mod390HFServiceImpl();
+	}
+	
 	// ---------------------------------------------------------------MODELO 303
 	@Override
 	public Mod390HF getMod390HF(String domainName,

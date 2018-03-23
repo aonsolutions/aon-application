@@ -18,6 +18,10 @@ public class Mod3902015ServiceImpl extends AonRemoteServiceServlet implements Mo
 
 	private static final long serialVersionUID = -2916020705631202792L;
 
+	public static Mod3902015ServiceImpl getInstance() {
+		return new Mod3902015ServiceImpl();
+	}
+	
 	@Override
 	public Mod3902015 getMod3902015(String domainName, Integer domain,Mod390 mod390) {
 		return FISCAL.getMod3902015(domainName, domain, this.getUserLogin(), mod390);
@@ -36,6 +40,10 @@ public class Mod3902015ServiceImpl extends AonRemoteServiceServlet implements Mo
 	@Override
 	public Mod3902015 changeStatus(String domainName, Mod3902015 mod390, FiscalStatus status) {
 		return FISCAL.changeStatusMod3902015(domainName, this.getUserLogin(), mod390, status);
+	}
+	
+	public Mod3902015 changeStatus(String domainName, String user, Mod3902015 mod390, FiscalStatus status) {
+		return FISCAL.changeStatusMod3902015(domainName, user, mod390, status);
 	}
 	
 	@Override

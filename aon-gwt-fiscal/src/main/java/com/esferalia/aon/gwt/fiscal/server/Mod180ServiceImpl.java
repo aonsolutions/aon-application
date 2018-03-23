@@ -17,6 +17,10 @@ public class Mod180ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	private static final long serialVersionUID = 6311979458490221935L;
 
+	public static Mod180ServiceImpl getInstance() {
+		return new Mod180ServiceImpl();
+	}
+	
 	@Override
 	public Mod180 initializeMod180(String domainName, String user, Integer domain,Integer year) {
 		return FISCAL.initializeMod180(domainName, domain, user, year);

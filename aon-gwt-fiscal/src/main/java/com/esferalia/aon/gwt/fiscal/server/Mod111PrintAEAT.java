@@ -40,10 +40,8 @@ public class Mod111PrintAEAT extends ModPrintAEAT {
 			throws ServletException, IOException {
 		System.out.println("POST Mod111 Print AEAT");
 		try {
-			JSONObject json = new JSONObject();
-			if(req.getParameter("mod") == null || req.getParameter("mod").isEmpty())
-				json = getRequestJSON(req);
-			init(req, json);
+			JSONObject json = getRequestJSON(req);
+			init(json);
 			
 			Mod111 mod111 = FISCAL.getMod111(getDomainName(), getDomainId(), getUser(),getId());
 
@@ -92,7 +90,6 @@ public class Mod111PrintAEAT extends ModPrintAEAT {
 	}
 	
 	private String getCertUrlParameters(Mod111 mod111, String encodedFile, String name, String document) {
-		;
 		return "HID=IE71110A"
 				+ "&FIRNIF=" + name
 				+ "&FIRNOMBRE=" + document

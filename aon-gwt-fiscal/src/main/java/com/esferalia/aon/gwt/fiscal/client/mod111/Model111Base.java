@@ -389,7 +389,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 	}
 
 	protected void submitAEAT(String action) {
-		submitAEAT(action, null, null, null, null);
+		submitAEAT(action, "null", "null", "null", "null");
 	}
 	
 	protected void submitAEAT(String action, String cert, String pass, String document, String name) {

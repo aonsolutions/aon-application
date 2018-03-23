@@ -39,10 +39,8 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			JSONObject json = new JSONObject();
-			if(req.getParameter("mod") == null || req.getParameter("mod").isEmpty())
-				json = getRequestJSON(req);
-			init(req, json);
+			JSONObject json = getRequestJSON(req);
+			init(json);
 			
 			Mod115 mod115 = FISCAL.getMod115(getDomainName(), getDomainId(), getUser(), getId());
 			

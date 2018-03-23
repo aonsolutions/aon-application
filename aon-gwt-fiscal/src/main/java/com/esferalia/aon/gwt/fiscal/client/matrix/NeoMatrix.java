@@ -100,7 +100,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		super(Unit.PX);
 		this.API = API;
 		addNorth(functionsPanel(), 30);
-		addEast(modelInfoPanel(), 0);// Window.getClientWidth() / 2);
+		addEast(modelInfoPanel(), 0);
 		add(modelListPanel);
 	}
 	
@@ -329,7 +329,6 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				json.put("name", new JSONString(model.getFullName()));
 				json.put("document", new JSONString(model.getDocument()));
 				String requestData = JsonUtils.stringify(json.getJavaScriptObject());
-				
 				getAPI().getFiscal().send2AEAT(GWT.getHostPageBaseURL() + getSendPath(model), 
 					requestData, new AsyncCallback<JavaScriptObject>() {
 			
@@ -389,7 +388,8 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 			|| FiscalModelType.M303_RG.equals(model.getModel())
 			|| FiscalModelType.M303_RS.equals(model.getModel())
 			|| FiscalModelType.M130.equals(model.getModel())
-			|| FiscalModelType.M131.equals(model.getModel());
+			|| FiscalModelType.M131.equals(model.getModel())
+			|| FiscalModelType.M390.equals(model.getModel());
 	}
 	
 	private Boolean hasFinishOption(IFiscalModel model) {
@@ -398,9 +398,18 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 			|| FiscalModelType.M123.equals(model.getModel())
 			|| FiscalModelType.M130.equals(model.getModel())
 			|| FiscalModelType.M131.equals(model.getModel())
+			|| FiscalModelType.M180.equals(model.getModel())
+			|| FiscalModelType.M184.equals(model.getModel())
+			|| FiscalModelType.M190.equals(model.getModel())
+			|| FiscalModelType.M193.equals(model.getModel())
+			|| FiscalModelType.M202.equals(model.getModel())
 			|| FiscalModelType.M303.equals(model.getModel())
 			|| FiscalModelType.M303_RG.equals(model.getModel())
-			|| FiscalModelType.M303_RS.equals(model.getModel());
+			|| FiscalModelType.M303_RS.equals(model.getModel())
+			|| FiscalModelType.M347.equals(model.getModel())
+			|| FiscalModelType.M349.equals(model.getModel())
+			|| FiscalModelType.M390.equals(model.getModel())
+			|| FiscalModelType.M390_HF.equals(model.getModel());
 	}
 	
 	private String getSendPath(IFiscalModel model){
@@ -418,6 +427,8 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				|| FiscalModelType.M303_RG.equals(model.getModel())
 				|| FiscalModelType.M303_RS.equals(model.getModel()))
 			return "/aon_gwt_fiscal/ms/Model303PrintAEAT";
+		else if(FiscalModelType.M390.equals(model.getModel()))
+			return "/aon_gwt_fiscal/ms/Model390PrintAEAT";
 		return "";
 	}
 	
@@ -573,11 +584,17 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 			return DataResponseSource.MOD115.value() + "";
 		} else if(FiscalModelType.M123.equals(type)) {
 			return DataResponseSource.MOD123.value() + "";
+		} else if(FiscalModelType.M130.equals(type)) {
+			return DataResponseSource.MOD130.value() + "";
+		} else if(FiscalModelType.M131.equals(type)) {
+			return DataResponseSource.MOD131.value() + "";
 		} else if(FiscalModelType.M303.equals(type) ||
 				FiscalModelType.M303_RG.equals(type) ||
 				FiscalModelType.M303_RS.equals(type)) {
 			return DataResponseSource.MOD303.value() + "";
-		}
+		} else if(FiscalModelType.M390.equals(type)) {
+			return DataResponseSource.MOD390.value() + "";
+		} 
 		return "";
 	}
 	

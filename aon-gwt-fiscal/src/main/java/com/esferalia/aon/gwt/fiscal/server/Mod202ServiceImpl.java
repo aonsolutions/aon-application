@@ -19,6 +19,10 @@ public class Mod202ServiceImpl extends AonRemoteServiceServlet implements Mod202
 
 	private static final long serialVersionUID = -4034752509161501589L;
 	
+	public static Mod202ServiceImpl getInstance() {
+		return new Mod202ServiceImpl();
+	}
+	
 	@Override
 	public Mod202 getMod202(String domainName,String user, int domain,int id) throws AonCoreException {
 		return FISCAL.getMod202(domainName, domain, user, id);

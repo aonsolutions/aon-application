@@ -17,6 +17,10 @@ import com.esferalia.aon.watson.error.AonCoreException;
 @WebServlet(name = "Mod349 Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod349" })
 public class Mod349ServiceImpl extends AonRemoteServiceServlet implements Model349Service {
 
+	public static Mod349ServiceImpl getInstance() {
+		return new Mod349ServiceImpl();
+	}
+	
 	@Override
 	public Mod349 initializeMod349(String domainName, Integer domain) {
 		return FISCAL.initializeMod349(domainName, domain, this.getUserLogin());
@@ -56,6 +60,10 @@ public class Mod349ServiceImpl extends AonRemoteServiceServlet implements Model3
 	@Override
 	public Mod349 changeStatusMod349(String domainName, Mod349 mod349, FiscalStatus newStatus) throws AonCoreException {
 		return FISCAL.changeStatusMod349(domainName, this.getUserLogin(), mod349, newStatus);
+	}
+	
+	public Mod349 changeStatusMod349(String domainName, String user, Mod349 mod349, FiscalStatus newStatus) throws AonCoreException {
+		return FISCAL.changeStatusMod349(domainName, user, mod349, newStatus);
 	}
 	
 	@Override

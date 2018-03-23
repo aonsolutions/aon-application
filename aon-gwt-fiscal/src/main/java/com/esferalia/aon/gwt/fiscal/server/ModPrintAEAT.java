@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
@@ -75,14 +76,14 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	
 	}
 	
-	protected void init2(JSONObject json) throws JSONException {
-		this.print = false;
+	protected void init(JSONObject json) throws JSONException, UnsupportedEncodingException {
+		this.print = json.opt("print") != null;
 		
 		this.id = json.getInt("mod");
 		this.domainName = json.getString("domainName");
 		this.domainId = json.getInt("domainId");
 		this.user = json.getString("user");	
-		if(json.opt("cert") != null) {
+		if(json.opt("cert") != null && !"null".equals(json.optString("cert"))) {
 			Integer c = json.getInt("cert");
 			Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
 				.and(f.getIdProperty().eq(c))
@@ -93,34 +94,10 @@ public abstract class ModPrintAEAT extends HttpServlet{
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
 			this.cert = attach.getData();
-			this.pass = json.getString("pass");
-			this.name = json.getString("name");
+			this.pass = URLDecoder.decode(json.getString("pass"),  "UTF-8");
+			this.name = URLDecoder.decode(json.getString("name"),  "UTF-8");
 			this.document = json.getString("document");
-		}
-	}	
-	protected void init(HttpServletRequest req, JSONObject json) throws JSONException {
-		if(req.getParameter("mod") != null && !req.getParameter("mod").isEmpty()) {
-			this.print = true;
-			this.id = Integer.parseInt(req.getParameter("mod"));
-			this.domainName = req.getParameter("domainName");
-			this.domainId = Integer.parseInt(req.getParameter("domainId"));
-			this.user = req.getParameter("user");	
-			if(req.getParameter("cert") != null && !req.getParameter("cert").isEmpty()) {
-				Integer c = Integer.parseInt(req.getParameter("cert"));
-				Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
-						.and(f.getIdProperty().eq(c))
-						.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
-				if(attach.getData() == null){
-					DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
-					Drive drive = AonDrive.getInstace().serviceInitialize(g);
-					attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
-				}
-				this.cert = attach.getData();
-				this.pass = req.getParameter("pass");
-				this.name = req.getParameter("name");
-				this.document = req.getParameter("document");
-			}
-		} else init2(json);
+		}			
 	}	
 	
 	public Integer getId() {
@@ -364,13 +341,18 @@ public abstract class ModPrintAEAT extends HttpServlet{
 			e.printStackTrace();
 		}
 		String s = checkString(bld.toString());
-		if(s == null || "".equals(s)){
-			s = "{}";
+	
+		JSONObject json = new JSONObject();
+		try {
+			json = new JSONObject(s);
+		} catch (JSONException e) {
+			String toJson = "{" + s.replace("=", ":").replace("&", ",") + ",print:true}";
+			json = new JSONObject(toJson);
 		}
-		return new JSONObject(s);
+		return json;
 	}
 	
-	public String checkString(String str){
+	public String checkString(String str) {
 		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
 	}
 	
@@ -454,5 +436,5 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	protected abstract DataResponseSource getDataResponseSource();
 	protected abstract DataAttachSource getDataAttachSource();
 	protected abstract void updateMod(JSONObject json) throws JSONException;
-
+	
 }
