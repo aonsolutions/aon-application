@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
@@ -1873,6 +1874,13 @@ public class Mod131DAO extends FiscalModelDAO {
 					prevAct.setDia((int) (AonDateUtils.getDaysBetweenDates(
 							 FiscalUtils.getPeriodStart(mod)
 							,FiscalUtils.getPeriodEnd(mod)) + 1));
+					Epigraph epi = Epigraph.getEpigraph(prevAct.getEpigraph());
+					int idx = 0;
+					for (Module m : epi.getIRPFModules()) {
+						prevAct.getModules().get(idx).setSalariedStaff(m.isSalariedStaff());
+						prevAct.getModules().get(idx).setNoSalariedStaff(m.isNoSalariedStaff());
+						idx++;
+					}
 					mod.getActivities().add(prevAct);
 				}
 			}
