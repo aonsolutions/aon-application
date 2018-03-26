@@ -491,6 +491,17 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static AccUtilitiesResult noLowLevelAccounts(String domainName, String user, Domain domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().noLowLevelAccounts(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static AccUtilitiesResult emptyEntries(String domainName, String user, Domain domain) {
 		AONContext ctx = null;
 		try {
@@ -501,7 +512,7 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
-	
+
 	public static AccUtilitiesResult unbalancedEntries(String domainName, String user, Domain domain) {
 		AONContext ctx = null;
 		try {

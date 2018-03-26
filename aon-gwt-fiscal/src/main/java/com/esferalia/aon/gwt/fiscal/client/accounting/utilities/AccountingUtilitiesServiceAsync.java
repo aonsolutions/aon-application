@@ -18,7 +18,10 @@ public interface AccountingUtilitiesServiceAsync {
 	// ParentLinker Module
 	void checkParentLinker(String domainName, String user, Domain domain, Account account, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	void runParentLinker(String domainName, String user, Domain domain, Account account, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
-
+	
+	// Chequeo de cuentas contables sin niveles inferiores.
+	void noLowLevelAccounts(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
+	
 	// Apuntes sin lineas
 	void emptyEntries(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	void unbalancedEntries(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;

@@ -312,6 +312,12 @@ public class AccountingImpl implements IAccounting {
 		 );		
 	}
 	@Override
+	public AccUtilitiesResult noLowLevelAccounts(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.noLowLevelAccounts(ctx)
+			 );		
+	}
+	@Override
 	public AccUtilitiesResult emptyEntries(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountingUtilitiesDAO.emptyEntries(ctx)

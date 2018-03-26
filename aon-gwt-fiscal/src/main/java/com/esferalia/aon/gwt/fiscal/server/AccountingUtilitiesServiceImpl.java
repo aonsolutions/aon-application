@@ -43,6 +43,11 @@ public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet impl
 	}
 
 	@Override
+	public AccUtilitiesResult noLowLevelAccounts(String domainName, String user, Domain domain) {
+		return ACCOUNTING.noLowLevelAccounts(domainName, user, domain);
+	}
+
+	@Override
 	public AccUtilitiesResult emptyEntries(String domainName, String user, Domain domain) {
 		return ACCOUNTING.emptyEntries(domainName, user, domain);
 	}

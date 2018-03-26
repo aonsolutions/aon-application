@@ -1,14 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesNoLowLevelAccountItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
@@ -17,7 +11,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -30,11 +23,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class EmptyEntryFinder extends OptionBase {
+class NoLowLevelAccountFinder extends OptionBase {
 
-	private static FiscalServiceAsync FISCAL_SERVICE;
 	private static AccountingUtilitiesServiceAsync SERVICE;
-	
 	 
 	SimpleLayoutPanel content;
 	ScrollPanel container;
@@ -42,7 +33,7 @@ class EmptyEntryFinder extends OptionBase {
 	private String user;
 	private Domain domain;
 	
-	protected EmptyEntryFinder(String domainName, String user, Domain domain) {
+	protected NoLowLevelAccountFinder(String domainName, String user, Domain domain) {
 		super(domainName, user, domain);
 		this.domainName = domainName;
 		this.user = user;
@@ -50,9 +41,6 @@ class EmptyEntryFinder extends OptionBase {
 		
 		AccountingUtilitiesServiceAsync serviceRaw = GWT.create(AccountingUtilitiesService.class);
 		SERVICE = new AccountingUtilitiesServiceAsyncDecorator(serviceRaw);
-
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 
 		content = new SimpleLayoutPanel();
 		container = new ScrollPanel();
@@ -63,7 +51,7 @@ class EmptyEntryFinder extends OptionBase {
 	
 	@Override
 	public String getOptionDescription() {
-		return AonStringUtils.BULLET + " Buscador de apuntes sin l\u00EDneas";
+		return AonStringUtils.BULLET + " Chequeo de cuentas contables sin niveles inferiores.";
 	}
 
 	protected Widget getToolbarPanel() {
@@ -115,7 +103,7 @@ class EmptyEntryFinder extends OptionBase {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		SERVICE.emptyEntries(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
+		SERVICE.noLowLevelAccounts(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -167,7 +155,7 @@ class EmptyEntryFinder extends OptionBase {
 					disclosurePanel.addStyleName(AON.AON_CSS.aonFontMedium());
 					disclosurePanel.addStyleName(AON.AON_CSS.aonNowrap());
 				}
-				item.getType().visit( new EmptyVisitor(domainPanel,(AccUtilitiesEmptyEntryItem) item) );
+				item.getType().visit( new NoLowLevelAccountVisitor(domainPanel,(AccUtilitiesNoLowLevelAccountItem) item) );
 			}
 			if (disclosurePanel != null) {
 				String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
@@ -182,26 +170,12 @@ class EmptyEntryFinder extends OptionBase {
 		}
 		return log;
 	}
-
-	private void showEntry(int domain,Integer entryId) {
-		CustomPopup entryDialog = new CustomPopup();
-		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-		entryDialog.setAnimationEnabled(true);
-		entryDialog.setGlassEnabled(true);
-		entryDialog.setModal(true);
-		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
-		module.onModuleLoad(entryDialog, domainName, user, domain, entryId);
-		entryDialog.center();
-		entryDialog.show();
-	}
-
-	private class EmptyVisitor implements IAccUtilitiesItemTypeVisitor {
+	
+	private class NoLowLevelAccountVisitor implements IAccUtilitiesItemTypeVisitor {
 		private FlowPanel domainPanel;
-		private AccUtilitiesEmptyEntryItem item;
+		private AccUtilitiesNoLowLevelAccountItem item;
 		
-		public EmptyVisitor(FlowPanel domainPanel, AccUtilitiesEmptyEntryItem item) {
+		public NoLowLevelAccountVisitor(FlowPanel domainPanel, AccUtilitiesNoLowLevelAccountItem item) {
 			this.domainPanel = domainPanel;
 			this.item = item;
 		}
@@ -214,65 +188,11 @@ class EmptyEntryFinder extends OptionBase {
 		@Override public void visitCustomerAccount(AccUtilitiesItemType type) {}
 		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
 		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
-		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {}
-		
-		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {
+		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
+		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
 			InlineLabel msgLabel = new InlineLabel(item.getMessage());
 			itemPanel.add(msgLabel);
-			
-			InlineLabel clickLabel = new InlineLabel("Ver/Editar");
-			clickLabel.setTitle("Click para Ver/Editar");
-			clickLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			clickLabel.addStyleName(AON.AON_CSS.aonIconLoupe());
-			clickLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-			clickLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			itemPanel.add(clickLabel);
-			clickLabel.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					showEntry(item.getDomain(),item.getEntryId());
-				}
-			});
-			
-			InlineLabel removeLabel = new InlineLabel(AON.MSG.deleteAction());
-			removeLabel.setTitle("Borrar asiento");
-			removeLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			removeLabel.addStyleName(AON.AON_CSS.aonIconDelete());
-			removeLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-			removeLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			itemPanel.add(removeLabel);
-			removeLabel.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					ConfirmDialog cd = new ConfirmDialog();
-					cd.confirm("Continuar?", "Borrar", new ConfirmDialogCallback() {
-						
-						@Override
-						public void onCancel() {
-						}
-						
-						@Override
-						public void onAccept() {
-							FISCAL_SERVICE.deleteAccountEntry(domainName, item.getDomain(), item.getEntryId(), new AsyncCallback<Void>() {
-
-								@Override
-								public void onFailure(Throwable caught) {
-									openFootPanelIfNeeded();
-									showErrorPanel(caught.getMessage());
-								}
-
-								@Override
-								public void onSuccess(Void result) {
-									run();
-								}
-								
-							});
-						}
-					});
-				}
-			});
-			
 			domainPanel.add(itemPanel);
 		}
 	}

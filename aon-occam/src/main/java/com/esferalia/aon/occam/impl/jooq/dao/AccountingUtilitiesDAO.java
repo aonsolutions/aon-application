@@ -22,6 +22,7 @@ import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 import java.util.function.Predicate;
 
 import org.jooq.AggregateFunction;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccoun
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesErrorItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesInfoItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesNoLowLevelAccountItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateJournalItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
@@ -355,6 +357,72 @@ public class AccountingUtilitiesDAO {
 		return result;
 	}
 	
+	public static AccUtilitiesResult noLowLevelAccounts(AONContext ctx) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
+		if (domain.isChild() ) {
+			noLowLevelAccounts(ctx,domain,result);
+		} else {
+			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx
+					, p -> p.getParentProperty().eq(domain.getId()));
+			for (Domain childDomain : domains) {
+				noLowLevelAccounts(ctx,childDomain,result);	
+			}
+		}
+		return result;
+	}
+
+	private static void noLowLevelAccounts(AONContext ctx, Domain domain, AccUtilitiesResult result) {
+		Stack<String> stack = new Stack<String>();
+		FullAccountFiller filler = new FullAccountFiller();
+		ctx.getDslContext().select()
+			.from(ACCOUNT)
+			.where( domain.isEnableHeredity()
+					?ACCOUNT.DOMAIN.equal(domain.getId()).or(ACCOUNT.DOMAIN.equal(domain.getParentId()))
+					:ACCOUNT.DOMAIN.equal(domain.getId())
+			)
+			.orderBy(ACCOUNT.CODE)
+			.fetch()
+			.stream()
+			.forEach(rec -> {
+				String code = rec.getValue(ACCOUNT.CODE);
+				byte level = rec.getValue(ACCOUNT.LEVEL);
+				if (level == 1) {
+					stack.push(code);
+				} else {
+					String parent = stack.peek();
+					while (parent.length() >= code.length()) {
+						stack.pop();
+						parent = stack.peek();
+					}
+					if (!AonStringUtils.startsWith(code, parent)) {
+						Account account = filler.apply(rec);
+						result.add(new AccUtilitiesNoLowLevelAccountItem()
+								.setAccount(account)
+								.setDomain(domain.getId())
+								.setDomainName(domain.getDescription())
+								.setMessage("Cuenta sin niveles inferioes.: " + account.getFullName())
+								);
+						System.out.println("Cuenta sin niveles inferioes.: " + account.getFullName());
+					} else {
+						if (( level - parent.length()) > 1) {
+							Account account = filler.apply(rec);
+							result.add(new AccUtilitiesNoLowLevelAccountItem()
+									.setAccount(account)
+									.setDomain(domain.getId())
+									.setDomainName(domain.getDescription())
+									.setMessage("Cuenta sin niveles inferioes.: " + account.getFullName())
+									);
+							System.out.println("Cuenta sin niveles inferioes.: " + account.getFullName());
+						}
+					}
+					if (level < 5 ) {
+						stack.push(code);		
+					}
+				}
+			});
+	}
+
 	public static AccUtilitiesResult emptyEntries(AONContext ctx) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
