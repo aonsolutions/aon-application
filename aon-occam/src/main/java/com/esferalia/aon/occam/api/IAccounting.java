@@ -88,6 +88,8 @@ public interface IAccounting {
 	// Accounting Utilities 
 	public AccUtilitiesResult checkParentLinker(AONContext ctx, Account account);
 	public AccUtilitiesResult runParentLinker(AONContext ctx, Account account);
+	public AccUtilitiesResult accountIntegrity(AONContext ctx);
+	public AccUtilitiesResult accountIntegrityFix(AONContext ctx, Account account);
 	public AccUtilitiesResult noLowLevelAccounts(AONContext ctx);
 	public AccUtilitiesResult emptyEntries(AONContext ctx);
 	public AccUtilitiesResult unbalancedEntries(AONContext ctx);

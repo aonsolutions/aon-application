@@ -46,7 +46,19 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		fsa.runParentLinker(domainName, user, domain, account, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
 	}
 
-	// Chequeo de cuentas contables sin niveles inferiores.
+	@Override
+	public void accountIntegrity(String domainName, String user, Domain domain,
+			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.accountIntegrity(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
+	@Override
+	public void accountIntegrityFix(String domainName,String user, Integer domain, Account account, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.accountIntegrityFix(domainName, user, domain, account, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
 	@Override
 	public void noLowLevelAccounts(String domainName, String user, Domain domain,
 			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
@@ -100,6 +112,7 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		AON.start();
 		fsa.regenerateJournal(domainName, user, domain,accuountPeriod, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
 	}
+
 
 
 

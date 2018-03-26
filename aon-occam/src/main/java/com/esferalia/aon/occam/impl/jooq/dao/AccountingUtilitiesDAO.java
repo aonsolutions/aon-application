@@ -33,6 +33,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountIntegritItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountLinkItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesErrorItem;
@@ -403,7 +404,6 @@ public class AccountingUtilitiesDAO {
 								.setDomainName(domain.getDescription())
 								.setMessage("Cuenta sin niveles inferioes.: " + account.getFullName())
 								);
-						System.out.println("Cuenta sin niveles inferioes.: " + account.getFullName());
 					} else {
 						if (( level - parent.length()) > 1) {
 							Account account = filler.apply(rec);
@@ -413,12 +413,75 @@ public class AccountingUtilitiesDAO {
 									.setDomainName(domain.getDescription())
 									.setMessage("Cuenta sin niveles inferioes.: " + account.getFullName())
 									);
-							System.out.println("Cuenta sin niveles inferioes.: " + account.getFullName());
 						}
 					}
 					if (level < 5 ) {
 						stack.push(code);		
 					}
+				}
+			});
+	}
+	public static AccUtilitiesResult accountIntegrityFix(AONContext ctx,Account accountParam) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		Account account = AccountDAO.get(ctx, accountParam.getId());
+		if (account.getLevel() < 5 && account.isEntryEnabled()) {
+			account.setEntryEnabled(false);
+			account = AccountDAO.update(ctx, account);
+			result.addInfoMessage("Ya no se permite apuntes en la cuenta " + account.getFullName());
+		} else  if (account.getLevel() == 5 && !account.isEntryEnabled()) {
+			account.setEntryEnabled(true);
+			account = AccountDAO.update(ctx, account);
+			result.addInfoMessage("Ahora se permite apuntes en la cuenta " + account.getFullName());
+		}
+		return result;
+	}
+
+	public static AccUtilitiesResult accountIntegrity(AONContext ctx) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
+		if (domain.isChild() ) {
+			accountIntegrity(ctx,domain,result);
+		} else {
+			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx
+					, p -> p.getParentProperty().eq(domain.getId()));
+			for (Domain childDomain : domains) {
+				accountIntegrity(ctx,childDomain,result);	
+			}
+		}
+		return result;
+	}
+
+	private static void accountIntegrity(AONContext ctx, Domain domain, AccUtilitiesResult result) {
+		FullAccountFiller filler = new FullAccountFiller();
+		ctx.getDslContext().select()
+			.from(ACCOUNT)
+			.where( domain.isEnableHeredity()
+					?ACCOUNT.DOMAIN.equal(domain.getId()).or(ACCOUNT.DOMAIN.equal(domain.getParentId()))
+					:ACCOUNT.DOMAIN.equal(domain.getId())
+			)
+			.orderBy(ACCOUNT.CODE)
+			.fetch()
+			.stream()
+			.forEach(rec -> {
+				byte level = rec.getValue(ACCOUNT.LEVEL);
+				boolean entryEnabled = rec.getValue(ACCOUNT.ENTRYENABLED) == 1;
+				if (level < 5 && entryEnabled) {
+					Account account = filler.apply(rec);
+					result.add(new AccUtilitiesAccountIntegritItem()
+							.setAccount(account)
+							.setDomain(domain.getId())
+							.setDomainName(domain.getDescription())
+							.setMessage("Cuenta de nivel inferior que permite apuntes : " + account.getFullName())
+							);
+				}
+				if (level == 5 && !entryEnabled) {
+					Account account = filler.apply(rec);
+					result.add(new AccUtilitiesAccountIntegritItem()
+							.setAccount(account)
+							.setDomain(domain.getId())
+							.setDomainName(domain.getDescription())
+							.setMessage("Cuenta de nivel superior que no permite apuntes : " + account.getFullName())
+							);
 				}
 			});
 	}

@@ -31,7 +31,7 @@
 										<aon:commandLink id="gwt_accountEntry"
 											action="gwt_accountEntry-deposit"
 											title="#{bundle.accounting_entry_module}">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
 												style="margin-left: 5px; padding-left: 20px;" 
 												value="#{bundle.accounting_entry_module}"/>												
 										</aon:commandLink>
@@ -108,19 +108,15 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_mod347-accounting" 
 											action="gwt_mod347-accounting"
-											title="Modelo 347">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Modelo 347" />												
+											title="Modelo 347" 
+											value="Modelo 347">												
 										</aon:commandLink>
 									</aon:div>			
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_mod349-accounting" 
 											action="gwt_mod349-accounting"
-											title="Modelo 349">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Modelo 349" />												
+											title="Modelo 349" 
+											value="Modelo 349">
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -386,6 +382,15 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountingUtilities-child"
+											action="gwt_accountingUtilities-child"
+											title="Utilidades y chequeos contables">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="Utilidades y chequeos contables" />												
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accountChange"
 											action="accountChange_form"
 											actionListener="#{accountChange.onReset}"
@@ -413,15 +418,6 @@
 											action="accountingFinanceChecker_search"
 											actionListener="#{accountingFinanceChecker.onStart}"
 											value="#{bundle.accounting_finance_checker_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_accountingUtilities-child"
-											action="gwt_accountingUtilities-child"
-											title="Utilidades y chequeos contables">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Utilidades y chequeos contables" />												
-										</aon:commandLink>
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -452,7 +448,7 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-tree-root aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="Programas obsoletos"/>
+									<aon:outputText value="Opciones obsoletas"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">

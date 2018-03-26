@@ -48,9 +48,9 @@ public enum AonError implements Serializable{
 	,ACCOUNT_EMPTY_CODE("La cuenta contable es un dato obligatorio, no puede estar vac\u00EDo.")
 	,ACCOUNT_EMPTY_DESCRIPTION("La descripci\u00F3n de la cuenta contable es un dato obligatorio, no puede estar vac\u00EDo.")
 	,ACCOUNT_INVALID_LENGTH("La longitud de la cuenta {0} es incorrecta, debe tener una longitud de 1, 2, 3, 4 \u00F3 9 caracteres. ")
-	,ACCOUNT_DUPLICATED_CODE("No se puede crear la cuenta ({0}) porque ya existe una con el mismo c\u00F3digo ({1})")
+	,ACCOUNT_DUPLICATED_CODE("No se puede crear/modificar la cuenta ({0}) porque ya existe una con el mismo c\u00F3digo ({1})")
 	,ACCOUNT_NO_NUMERIC("La cuenta contable s\u00F3lo puede estar compuesta por caracteres num\u00E9ricos.")
-	,ACCOUNT_LOW_LEVEL_NOT_PRESENT("Imposible crear cuenta. No existe cuenta correspondiente de nivel inferior.")
+	,ACCOUNT_LOW_LEVEL_NOT_PRESENT("Imposible crear/modificar cuenta. No existe cuenta correspondiente de nivel inferior.")
 	
 	// -------------------------------------------- ACCOUNT_PERIOD
 	,ACCOUNT_PERIOD_EMPTY_INITIATION_DATE("La fecha de inicio del ejercicio es un dato obligatorio, no puede estar vac\u00EDo.")

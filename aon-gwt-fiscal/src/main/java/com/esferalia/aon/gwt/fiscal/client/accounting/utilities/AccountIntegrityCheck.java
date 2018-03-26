@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesNoLowLevelAccountItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountIntegritItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class NoLowLevelAccountFinder extends OptionBase {
+class AccountIntegrityCheck extends OptionBase {
 
 	private static AccountingUtilitiesServiceAsync SERVICE;
 	 
@@ -33,7 +33,7 @@ class NoLowLevelAccountFinder extends OptionBase {
 	private String user;
 	private Domain domain;
 	
-	protected NoLowLevelAccountFinder(String domainName, String user, Domain domain) {
+	protected AccountIntegrityCheck(String domainName, String user, Domain domain) {
 		super(domainName, user, domain);
 		this.domainName = domainName;
 		this.user = user;
@@ -51,7 +51,7 @@ class NoLowLevelAccountFinder extends OptionBase {
 	
 	@Override
 	public String getOptionDescription() {
-		return AonStringUtils.BULLET + " Chequeo de cuentas contables sin niveles inferiores.";
+		return AonStringUtils.BULLET + " Chequeo de integridad cuentas contables.";
 	}
 
 	protected Widget getToolbarPanel() {
@@ -103,7 +103,7 @@ class NoLowLevelAccountFinder extends OptionBase {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		SERVICE.noLowLevelAccounts(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
+		SERVICE.accountIntegrity(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -155,7 +155,7 @@ class NoLowLevelAccountFinder extends OptionBase {
 					disclosurePanel.addStyleName(AON.AON_CSS.aonFontMedium());
 					disclosurePanel.addStyleName(AON.AON_CSS.aonNowrap());
 				}
-				item.getType().visit( new NoLowLevelAccountVisitor(domainPanel,(AccUtilitiesNoLowLevelAccountItem) item) );
+				item.getType().visit( new AccountIntegritVisitor(domainPanel,(AccUtilitiesAccountIntegritItem) item) );
 			}
 			if (disclosurePanel != null) {
 				String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
@@ -171,11 +171,11 @@ class NoLowLevelAccountFinder extends OptionBase {
 		return log;
 	}
 	
-	private class NoLowLevelAccountVisitor implements IAccUtilitiesItemTypeVisitor {
+	private class AccountIntegritVisitor implements IAccUtilitiesItemTypeVisitor {
 		private FlowPanel domainPanel;
-		private AccUtilitiesNoLowLevelAccountItem item;
+		private AccUtilitiesAccountIntegritItem item;
 		
-		public NoLowLevelAccountVisitor(FlowPanel domainPanel, AccUtilitiesNoLowLevelAccountItem item) {
+		public AccountIntegritVisitor(FlowPanel domainPanel, AccUtilitiesAccountIntegritItem item) {
 			this.domainPanel = domainPanel;
 			this.item = item;
 		}
@@ -189,11 +189,38 @@ class NoLowLevelAccountFinder extends OptionBase {
 		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
 		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
 		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
-		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {}
-		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {
+		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {}
+		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
 			InlineLabel msgLabel = new InlineLabel(item.getMessage());
 			itemPanel.add(msgLabel);
+
+			InlineLabel removeLabel = new InlineLabel("Arreglar");
+			removeLabel.setTitle("Arreglar");
+			removeLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			removeLabel.addStyleName(AON.AON_CSS.aonIconDelete());
+			removeLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
+			removeLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			itemPanel.add(removeLabel);
+			removeLabel.addClickHandler( new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					SERVICE.accountIntegrityFix(domainName, user, item.getDomain(), item.getAccount(), new AsyncCallback<AccUtilitiesResult>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							openFootPanelIfNeeded();
+							showErrorPanel(caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(AccUtilitiesResult result) {
+							run();
+						}
+					});
+				}
+			});
+
 			domainPanel.add(itemPanel);
 		}
 	}

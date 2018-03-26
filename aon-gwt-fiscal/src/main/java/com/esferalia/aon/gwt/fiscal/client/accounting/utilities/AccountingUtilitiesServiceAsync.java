@@ -19,6 +19,10 @@ public interface AccountingUtilitiesServiceAsync {
 	void checkParentLinker(String domainName, String user, Domain domain, Account account, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	void runParentLinker(String domainName, String user, Domain domain, Account account, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	
+	// Chequeo de integridad de cuentas contables.
+	void accountIntegrity(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+	void accountIntegrityFix(String domainName, String user, Integer domain, Account account, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+
 	// Chequeo de cuentas contables sin niveles inferiores.
 	void noLowLevelAccounts(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	
@@ -34,5 +38,6 @@ public interface AccountingUtilitiesServiceAsync {
 	// Regeneracion del numero de diario
 	void getJournalRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback);
 	void regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod, AsyncCallback<AccUtilitiesResult> callback);
+
 	
 }

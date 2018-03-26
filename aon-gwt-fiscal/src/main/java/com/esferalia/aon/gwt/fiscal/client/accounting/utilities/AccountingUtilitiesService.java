@@ -21,6 +21,10 @@ public interface AccountingUtilitiesService extends RemoteService {
 	AccUtilitiesResult checkParentLinker(String domainName, String user, Domain domain, Account account) throws AonCoreException;
 	AccUtilitiesResult runParentLinker(String domainName, String user, Domain domain, Account account) throws AonCoreException;
 
+	// Chequeo de integridad de cuentas contables.
+	AccUtilitiesResult accountIntegrity(String domainName, String user, Domain domain) throws AonCoreException;
+	AccUtilitiesResult accountIntegrityFix(String domainName, String user, Integer domain, Account account) throws AonCoreException;
+
 	// Chequeo de cuentas contables sin niveles inferiores.
 	AccUtilitiesResult noLowLevelAccounts(String domainName, String user, Domain domain) throws AonCoreException;
 

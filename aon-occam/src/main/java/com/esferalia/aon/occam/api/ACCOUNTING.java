@@ -491,6 +491,28 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static AccUtilitiesResult accountIntegrity(String domainName, String user, Domain domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().accountIntegrity(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccUtilitiesResult accountIntegrityFix(String domainName, String user, Integer domain, Account account) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().accountIntegrityFix(ctx,account);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static AccUtilitiesResult noLowLevelAccounts(String domainName, String user, Domain domain) {
 		AONContext ctx = null;
 		try {
@@ -501,7 +523,6 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
-
 	public static AccUtilitiesResult emptyEntries(String domainName, String user, Domain domain) {
 		AONContext ctx = null;
 		try {

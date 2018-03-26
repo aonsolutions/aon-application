@@ -102,6 +102,16 @@ public class AccountingUtilities extends MainEntryPoint{
 		FlowPanel checksPanel = new FlowPanel();
 		checksDisclosurePanel.add(checksPanel);
 		
+		AccountIntegrityCheck accIntegrity = new AccountIntegrityCheck(getDomainName(),getUser(),domain);
+		checksPanel.add(accIntegrity.getSidebarWidget());
+		accIntegrity.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+			@Override
+			public void onSelection(SelectionEvent<IOption> event) {
+				content.setWidget( accIntegrity );
+				accIntegrity.run();
+			}
+		});
+				
 		NoLowLevelAccountFinder noLowLevel = new NoLowLevelAccountFinder(getDomainName(),getUser(),domain);
 		checksPanel.add(noLowLevel.getSidebarWidget());
 		noLowLevel.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
@@ -111,7 +121,7 @@ public class AccountingUtilities extends MainEntryPoint{
 				noLowLevel.run();
 			}
 		});
-				
+
 		EmptyEntryFinder empty = new EmptyEntryFinder(getDomainName(),getUser(),domain);
 		checksPanel.add(empty.getSidebarWidget());
 		empty.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {

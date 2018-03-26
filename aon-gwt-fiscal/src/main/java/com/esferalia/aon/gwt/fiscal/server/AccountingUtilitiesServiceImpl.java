@@ -48,6 +48,15 @@ public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet impl
 	}
 
 	@Override
+	public AccUtilitiesResult accountIntegrity(String domainName, String user, Domain domain)  throws AonCoreException {
+		return ACCOUNTING.accountIntegrity(domainName, user, domain);
+	}
+	@Override
+	public AccUtilitiesResult accountIntegrityFix(String domainName, String user, Integer domain, Account account) throws AonCoreException {
+		return ACCOUNTING.accountIntegrityFix(domainName, user, domain, account);
+	}
+
+	@Override
 	public AccUtilitiesResult emptyEntries(String domainName, String user, Domain domain) {
 		return ACCOUNTING.emptyEntries(domainName, user, domain);
 	}
@@ -83,5 +92,6 @@ public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet impl
 	public AccUtilitiesResult regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod) throws AonCoreException {
 		return ACCOUNTING.regenerateJournal(domainName,user,domain,accuountPeriod);
 	}
+
 
 }
