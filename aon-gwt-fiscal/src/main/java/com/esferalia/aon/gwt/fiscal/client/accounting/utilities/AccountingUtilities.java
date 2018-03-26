@@ -137,6 +137,17 @@ public class AccountingUtilities extends MainEntryPoint{
 					content.setWidget( archecker );			
 				}
 			});
+			
+			JournalRegenerator journalRegenerator = new JournalRegenerator(getDomainName(),getUser(),domain);
+			utilitiesPanel.add(journalRegenerator.getSidebarWidget());
+			journalRegenerator.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+				@Override
+				public void onSelection(SelectionEvent<IOption> event) {
+					content.setWidget( journalRegenerator );
+					journalRegenerator.run();
+				}
+			});
+			
 		}
 		
 		if (domain.isParent()) {

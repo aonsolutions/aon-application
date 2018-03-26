@@ -42,6 +42,7 @@ public class AccountEntryPrinter {
 		Label header = new Label();
 		header.setStyleName(AON.AON_CSS.aonBold());
 		header.addStyleName(AON.AON_CSS.aonTextUnderline());
+		header.addStyleName(AON.AON_CSS.aonPre());
 		header.setText(toString(entry,160));
 		if (AonStringUtils.isNotBlank(entry.getComments())) {
 			header.setTitle(entry.getComments());
@@ -82,6 +83,8 @@ public class AccountEntryPrinter {
 		buf.append(AonStringUtils.leftPad(type, lineSize - buf.length()));
 		return buf.toString();
 	}
+	
+	
 	
 	public static Label getDetail(AccountEntryDetail det) {
 		Label detail = new Label(toString(det));

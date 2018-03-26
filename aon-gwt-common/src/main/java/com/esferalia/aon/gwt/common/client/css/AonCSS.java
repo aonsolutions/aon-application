@@ -723,7 +723,16 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-icon-validate")
 	String aonIconValidate();
-
+	
+	@ClassName("aon-icon-refresh")
+	String aonIconRefresh();
+	
+	@ClassName("aon-icon-settings")
+	String aonIconSettings();
+	
+	@ClassName("aon-icon-synchronize")
+	String aonIconSynchronize();
+	
 	@ClassName("aon-icon-moveUp")
 	String aonIconMoveUp();
 

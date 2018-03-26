@@ -116,12 +116,15 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 	protected Domain getDomain() {
 		return domain;
 	}
-	protected void showResults(AccUtilitiesResult result) {
+	protected void showResults(Widget widget) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(RESULTS_TAB);
+		resultContent.setWidget(widget);
+	}
+	protected void showResults(AccUtilitiesResult result) {
 		ScrollPanel panel = new ScrollPanel();
 		panel.add(paintResults(result) );
-		resultContent.setWidget(panel);
+		showResults(panel);
 	}
 	protected void cleanErrorPanel() {
 		ScrollPanel panel = new ScrollPanel();
@@ -156,6 +159,33 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 		notificationsContent.setWidget(panel);
 	}
 	
+	protected void showInfoPanel(String msg) {
+		openFootPanelIfNeeded();
+		tabLayout.selectTab(NOTIFICATIONS_TAB);
+		ScrollPanel panel = new ScrollPanel();
+		FlexTable tab = new FlexTable();
+		tab.setWidth("95%");
+		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.getColumnFormatter().setWidth(0, "20px");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		
+		InlineLabel icon = new InlineLabel("");
+		icon.setStyleName(AON.AON_CSS.aonIconPointLightGreen());
+		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		tab.setWidget(0, 0, icon);
+		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		
+		InlineLabel label = new InlineLabel(msg);
+		label.addStyleName(AON.AON_CSS.aonBold());
+		tab.setWidget(0, 1, label);
+		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+		
+		panel.add(tab);
+		notificationsContent.setWidget(panel);
+	}
+
 	protected void setContent(Widget content) {
 		splitLayoutPanel.add(content);
 	}

@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -556,6 +555,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Administraci\u00F3n")
 	String administration();
+
+	@DefaultMessage("Ejercicio contable")
+	String accountingYear();
 
 	@DefaultMessage("Ejercicio")
 	String fiscalYear();
@@ -3221,15 +3223,6 @@ public interface CommonMessages extends Messages {
 
     @DefaultMessage("Tipo asiento")
     String accountEntryTypeLabel();
-
-    @DefaultMessage("----------")
-	@AlternateMessage({
-		 "ACTIVE","Activo"
-		,"INACTIVE","Inactivo"
-		,"OPENING","Apertura"
-		,"OPERATING","Explotaci\u00F3n"
-		,"CLOSED","Cerrado"})
-    String accountPeriodStatus(@Select AccountPeriodStatus status);
 
     @DefaultMessage("----------")
 	@AlternateMessage({

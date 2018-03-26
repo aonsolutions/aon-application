@@ -25,7 +25,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountBalancePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountStatementPanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceEntryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.IWizardContent;
@@ -227,7 +227,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	TabLayoutPanel tabLayout;
 	@UiField
 	SessionLog sessionLog;
-	JournalPanel journalPanel;
+	JournalPanelReport journalPanel;
 	@UiField
 	SimpleLayoutPanel journalPanelContainer;
 	@UiField
@@ -362,7 +362,7 @@ public class AccountEntryModule extends MainEntryPoint {
 						}
 						confidential.setVisible(configuration.getUser().hasConfidentialityRole());
 						
-						journalPanel = new JournalPanel(getDomainName(), getDomainId(), JOURNAL_PANEL_TAB_OFFSET, result);
+						journalPanel = new JournalPanelReport(getDomainName(), getUser(), getDomainId(), JOURNAL_PANEL_TAB_OFFSET, result);
 						journalPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
 							@Override
 							public void onSelection(SelectionEvent<AccountEntry> event) {
@@ -535,7 +535,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			statusMsg.addStyleName(AON.AON_CSS.aonInfoMessage());
 			if (!wizardContent.getMainEntry().isPeriodActive()) {
 				if (!canRemove) {
-					statusMsg.setText(AON.MSG.periodStatusWarning(AON.MSG.accountPeriodStatus(wizardContent.getMainEntry().getPeriodStatus())));
+					statusMsg.setText(AON.MSG.periodStatusWarning(wizardContent.getMainEntry().getPeriodStatus().getDescription()));
 				} else {
 					statusMsg.setText(AON.MSG.automaticEntryNoUpdateWarning());
 				}

@@ -106,11 +106,11 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// --------------------------------------------------------------- ACCOUNT
 	// ENTRIES
 	@Override
-	public void getAccountEntries(String domainName, int domain,
+	public void getAccountEntries(String domainName, String user, int domain,
 			AccountEntryParams params, int offset, int limit,
 			AsyncCallback<LinkedList<AccountEntry>> callback) {
 		AON.start();
-		fsa.getAccountEntries(domainName, domain, params, offset, limit,
+		fsa.getAccountEntries(domainName, user, domain, params, offset, limit,
 				new AsyncCallbackWrapper<LinkedList<AccountEntry>>(callback));
 	}
 

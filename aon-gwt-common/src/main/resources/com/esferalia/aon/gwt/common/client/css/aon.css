@@ -774,6 +774,21 @@ input[type="checkbox"]:focus + label {
 	gwt-image: "aonIconValidate";
 }
 
+@sprite .aon-icon-refresh {
+	width: auto;
+	gwt-image: "aonIconRefresh";
+}
+	
+@sprite .aon-icon-settings {
+	width: auto;
+	gwt-image: "aonIconSettings";
+}
+	
+@sprite .aon-icon-synchronize {
+	width: auto;
+	gwt-image: "aonIconSynchronize";
+}
+
 @sprite .aon-icon-moveUp {
 	width: auto;
 	gwt-image: "aonIconMoveUp";

@@ -93,5 +93,7 @@ public interface IAccounting {
 	public AccUtilitiesResult getAccountLinks(AONContext ctx, AccUtilitiesParams params);
 	public String changeAccountDescription(AONContext ctx, Integer accountId, String newDescription);
 	public Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId);
+	public AccUtilitiesResult getJournalRegenerationInfo(AONContext ctx);
+	public AccUtilitiesResult regenerateJournal(AONContext ctx, Integer accuountPeriod);
 		
 }

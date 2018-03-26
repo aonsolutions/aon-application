@@ -80,5 +80,18 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		fsa.createAndLinkAccount(domainName, user, domain, registryType, registryId, new AsyncCallbackWrapper<Account>(callback));
 	}
 
+	// Regeneracion del numero de diario
+	@Override
+	public void getJournalRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback) {
+		AON.start();
+		fsa.getJournalRegenerationInfo(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
+	@Override
+	public void regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod, AsyncCallback<AccUtilitiesResult> callback) {
+		AON.start();
+		fsa.regenerateJournal(domainName, user, domain,accuountPeriod, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
 
 }

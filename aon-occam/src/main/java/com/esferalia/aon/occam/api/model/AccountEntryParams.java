@@ -18,7 +18,7 @@ public class AccountEntryParams implements Serializable{
 	private Integer journal;
 	private Integer activity;
 	private boolean confidential; 
-	private boolean hasConfidentialityRole; 
+//	private boolean hasConfidentialityRole; 
 	
 	private Integer account;
 	private Double debit;
@@ -144,13 +144,13 @@ public class AccountEntryParams implements Serializable{
 		this.confidential = confidential;
 		return this;
 	}
-	public boolean hasConfidentialityRole() {
-		return hasConfidentialityRole;
-	}
-	public AccountEntryParams setHasConfidentialityRole(boolean hasConfidentialityRole) {
-		this.hasConfidentialityRole = hasConfidentialityRole;
-		return this;
-	}
+//	public boolean hasConfidentialityRole() {
+//		return hasConfidentialityRole;
+//	}
+//	public AccountEntryParams setHasConfidentialityRole(boolean hasConfidentialityRole) {
+//		this.hasConfidentialityRole = hasConfidentialityRole;
+//		return this;
+//	}
 	
 	public boolean hasDetailProperties() {
 		return (account != null 
@@ -159,6 +159,5 @@ public class AccountEntryParams implements Serializable{
 			|| AonStringUtils.isNotEmpty( concept ) 
 			|| AonStringUtils.isNotEmpty( document  ) );
 	}
-	
 	
 }

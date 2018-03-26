@@ -298,6 +298,14 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-progress-bar.png")
 	ImageResource aonIconProgressBar();
 
+	@Source("images/aon-icon-refresh.png")
+	ImageResource aonIconRefresh();
+	
+	@Source("images/aon-icon-settings.png")
+	ImageResource aonIconSettings();
+	
+	@Source("images/aon-icon-synchronize.png")
+	ImageResource aonIconSynchronize();
 	// ------------------------------------------------------------------------
 
 //	@Source("images/checkyes.png")

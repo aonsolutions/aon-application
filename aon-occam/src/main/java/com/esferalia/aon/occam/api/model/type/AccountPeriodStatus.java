@@ -4,28 +4,42 @@ import java.io.Serializable;
 
 public enum AccountPeriodStatus implements Serializable {
 
-	 ACTIVE
-	,INACTIVE
-	,OPENING
-	,OPERATING
-	,CLOSED;
+	 ACTIVE		("Activo")
+	,INACTIVE	("Inactivo")
+	,OPENING	("Apertura")
+	,OPERATING	("Explotaci\u00F3n")
+	,CLOSED		("Cerrado");
 
-	 public boolean isActive() {
-		 return (this == ACTIVE || this == OPENING); 
-	 }
-	 
-	 public byte getValue() {
-		 return (byte) this.ordinal();
-	 }
-	 
-	public static AccountPeriodStatus safeValueOf( Byte i ) {
-		if (i == null) return null;
-		return safeValueOf( i.intValue() ); 
+	private String description;
+	
+	private AccountPeriodStatus(String description) {
+		this.description = description;
 	}
-	public static AccountPeriodStatus safeValueOf( Integer i ) {
-		if (i == null) return null;
-		if (i < 0 || i >= AccountPeriodStatus.values().length) return null;
+
+	public String getDescription() {
+		return description;
+	}
+	
+	public boolean isActive() {
+		return (this == ACTIVE || this == OPENING);
+	}
+
+	public byte getValue() {
+		return (byte) this.ordinal();
+	}
+
+	public static AccountPeriodStatus safeValueOf(Byte i) {
+		if (i == null)
+			return null;
+		return safeValueOf(i.intValue());
+	}
+
+	public static AccountPeriodStatus safeValueOf(Integer i) {
+		if (i == null)
+			return null;
+		if (i < 0 || i >= AccountPeriodStatus.values().length)
+			return null;
 		return AccountPeriodStatus.values()[i];
 	}
-	 
+
 }

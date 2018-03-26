@@ -56,8 +56,7 @@ public interface FiscalService extends RemoteService {
 	LinkedList<AccountPeriod> getDomainPeriods(String domainName,int domain) throws AonCoreException;
 
 	// --------------------------------------------------------------- ACCOUNT ENTRIES
-	LinkedList<AccountEntry> getAccountEntries(String domainName,int domain
-			, AccountEntryParams params,int offset, int limit) throws AonCoreException;
+	LinkedList<AccountEntry> getAccountEntries(String domainName,String user,int domain, AccountEntryParams params,int offset, int limit) throws AonCoreException;
 	AccountEntry getAccountEntry(String domainName,int domain, int id) throws AonCoreException;
 	AccountEntry save(String domainName,int domain, AccountEntry ae) throws AonCoreException;
 	void deleteAccountEntry(String domainName,int domain, Integer id) throws AonCoreException;

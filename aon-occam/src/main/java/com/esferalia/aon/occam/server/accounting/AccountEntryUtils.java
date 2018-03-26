@@ -1,15 +1,18 @@
 package com.esferalia.aon.occam.server.accounting;
 
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryUtils {
 
-	public static Filter getFilter(AccountEntryProperties p, AccountEntryParams params) {
+	public static Filter getFilter(AONContext ctx, AccountEntryProperties p, AccountEntryParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
 		if (params.getPeriod()  != null && params.getPeriod().intValue() != 0 ) {
 			prop = prop.and(p.getAccountPeriodProperty().eq(params.getPeriod()));
@@ -29,7 +32,8 @@ public class AccountEntryUtils {
 		if (params.getType() != null) {
 			prop = prop.and(p.getEntryTypeProperty().eq((byte) params.getType().ordinal()));
 		}
-		if (!params.hasConfidentialityRole()) {
+		User user = SecurityDAO.getUser(ctx);
+		if (user == null || !user.hasConfidentialityRole()) {
 			prop = prop.and(p.getConfidentialProperty().eq(
 					SecurityLevel.OFFICIAL.value()));
 		} else {
@@ -44,9 +48,8 @@ public class AccountEntryUtils {
 		return prop;
 	}
 
-	public static Filter getFilterByLines(AccountEntryDetailProperties p,
-			AccountEntryParams params) {
-		Filter prop = getFilter(p, params);
+	public static Filter getFilterByLines(AONContext ctx, AccountEntryDetailProperties p, AccountEntryParams params) {
+		Filter prop = getFilter(ctx, p, params);
 
 		if (params.getAccount() != null) {
 			prop = prop.and(

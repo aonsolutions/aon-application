@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyE
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesErrorItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesInfoItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateJournalItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccountLinkerItem;
@@ -45,12 +46,14 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -634,6 +637,85 @@ public class AccountingUtilitiesDAO {
 					.setAlias(registry.getAlias())
 					.setActive(true));
 		}
+	}
+
+	private static Field<Integer> COUNT_FIELD = DSL.count(ACCOUNT_ENTRY.ID);
+	private static Field<Integer> JOURNAL_MAX = DSL.max(ACCOUNT_ENTRY.JOURNAL);
+	
+	public static AccUtilitiesResult getJournalRegenerationInfo(AONContext ctx) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		AccountPeriodDAO.getPeriods(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()) )
+			.forEach(period -> {
+				
+				Integer emptyCount = ctx.getDslContext().select( COUNT_FIELD )
+						.from(ACCOUNT_ENTRY)
+						.where(ACCOUNT_ENTRY.DOMAIN.eq(ctx.getDomainId()))
+						.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(period.getId()))
+						.and(ACCOUNT_ENTRY.JOURNAL.isNull()
+								.or(ACCOUNT_ENTRY.JOURNAL.le(0)))
+						.fetch()
+						.stream()
+						.map(rec -> rec.get(COUNT_FIELD))
+						.findFirst()
+						.orElse(0)
+						;
+				Integer count = ctx.getDslContext().select( COUNT_FIELD )
+					.from(ACCOUNT_ENTRY)
+					.where(ACCOUNT_ENTRY.DOMAIN.eq(ctx.getDomainId()))
+					.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(period.getId()))
+					.fetch()
+					.stream()
+					.map(rec -> rec.get(COUNT_FIELD))
+					.findFirst()
+					.orElse(0)
+					;
+				Integer max = ctx.getDslContext().select( JOURNAL_MAX )
+					.from(ACCOUNT_ENTRY)
+					.where(ACCOUNT_ENTRY.DOMAIN.eq(ctx.getDomainId()))
+					.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(period.getId()))
+					.fetch()
+					.stream()
+					.map(rec -> rec.get(JOURNAL_MAX))
+					.findFirst()
+					.orElse(0)
+					;
+				String msg = "N\u00BA de asientos: " + count + "."
+					+" \u00DAltimo n\u00BA de diario: " + max + "."
+					+" Asientos sin n\u00BA de diario: " + emptyCount+ "."
+					;
+				result.add( new  AccUtilitiesRegenerateJournalItem()
+						.setDomain(ctx.getDomainId())
+						.setAccountPeriod(period)
+						.setMessage(msg)
+						.setRegenerable( !AonNumberUtils.equals(count,max) || emptyCount > 0)
+						);
+			});
+		;
+		return result;
+	}
+	
+	public static AccUtilitiesResult regenerateJournal(AONContext ctx, Integer accuountPeriod) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		Field<Integer> order = DSL.decode()
+		   .when(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AccountEntryType.OPENING.getValue() ), 0)
+		   .when(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AccountEntryType.OPERATING.getValue() ), 2)
+		   .when(ACCOUNT_ENTRY.ENTRY_TYPE.equal( AccountEntryType.CLOSING.getValue() ), 3)
+		   .otherwise(1);
+		MutableInt journal = new MutableInt(0);
+		ctx.getDslContext().select( ACCOUNT_ENTRY.ID, order )
+			.from(ACCOUNT_ENTRY)
+			.where(ACCOUNT_ENTRY.DOMAIN.eq(ctx.getDomainId()))
+			.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(accuountPeriod))
+			.orderBy(order, ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ID)
+			.fetch()
+			.stream()
+			.forEach( rec -> {
+				journal.add(1);
+				ctx.getDslContext().update(ACCOUNT_ENTRY).set(ACCOUNT_ENTRY.JOURNAL,journal.getValue()).where(ACCOUNT_ENTRY.ID.eq(rec.get(ACCOUNT_ENTRY.ID))).execute();
+			});
+		;
+		result.addInfoMessage("Se han modificado " + journal.getValue() + " asientos.");
+		return result;
 	}
 	
 } 

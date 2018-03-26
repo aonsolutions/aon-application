@@ -52,7 +52,7 @@ public interface FiscalServiceAsync {
 			AsyncCallback<LinkedList<AccountPeriod>> callback);
 
 	// --------------------------------------------------------------- ACCOUNT ENTRIES
-	void getAccountEntries(String domainName, int domain,
+	void getAccountEntries(String domainName,String user, int domain,
 			AccountEntryParams params,int offset, int limit,
 			AsyncCallback<LinkedList<AccountEntry>> callback);
 	void getAccountEntry(String domainName, int domain, int id,

@@ -32,4 +32,8 @@ public interface AccountingUtilitiesService extends RemoteService {
 	String changeAccountDescription(String domainName, String user, Integer domain, Integer accountId, String newDescription) throws AonCoreException;
 	Account createAndLinkAccount(String domainName, String user, Integer domain, AccountingRegistryType registryType,Integer registryId) throws AonCoreException;
 
+	// Regeneracion del numero de diario
+	AccUtilitiesResult getJournalRegenerationInfo(String domainName, String user, Integer domain) throws AonCoreException;
+	AccUtilitiesResult regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod) throws AonCoreException;
+	
 }

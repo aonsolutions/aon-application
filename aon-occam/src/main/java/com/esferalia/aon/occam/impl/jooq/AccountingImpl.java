@@ -133,12 +133,12 @@ public class AccountingImpl implements IAccounting {
 			AccountEntryParams params, int offset, int numberOfRows) {
 		return params.hasDetailProperties()
 			? AccountEntryDAO.fetchByLines(ctx,
-					p -> AccountEntryUtils.getFilterByLines(p, params) 
+					p -> AccountEntryUtils.getFilterByLines(ctx,p, params) 
 					,offset,numberOfRows,
 					AccountEntryOrder.safeEnum(params.getOrder())
 					)
 			: AccountEntryDAO.fetch(ctx,
-				p -> AccountEntryUtils.getFilter(p, params) 
+				p -> AccountEntryUtils.getFilter(ctx,p, params) 
 				,offset,numberOfRows,AccountEntryOrder.safeEnum(params.getOrder()))
 			;
 	}
@@ -339,6 +339,18 @@ public class AccountingImpl implements IAccounting {
 	public Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountingUtilitiesDAO.createAndLinkAccount(ctx,registryType, registryId)
+			 );		
+	}
+	@Override
+	public AccUtilitiesResult getJournalRegenerationInfo(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.getJournalRegenerationInfo(ctx)
+			 );		
+	}
+	@Override
+	public AccUtilitiesResult regenerateJournal(AONContext ctx, Integer accuountPeriod) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.regenerateJournal(ctx,accuountPeriod)
 			 );		
 	}
 		

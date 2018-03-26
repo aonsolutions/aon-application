@@ -547,5 +547,27 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
+	public static AccUtilitiesResult getJournalRegenerationInfo(String domainName, String user, Integer domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getJournalRegenerationInfo(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccUtilitiesResult regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().regenerateJournal(ctx,accuountPeriod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 		
 }

@@ -26,8 +26,10 @@ public interface AccountingUtilitiesServiceAsync {
 	// Chequeo de cuentas asignadas a otras entidades
 	void getAccountLinks(String domainName, String user, Integer domain, AccUtilitiesParams params, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	void changeAccountDescription(String domainName, String user, Integer domain, Integer accountId, String newDescription, AsyncCallback<String> asyncCallback) throws AonCoreException;
-	void createAndLinkAccount(String domainName, String user, Integer domain, AccountingRegistryType registryType,
-			Integer registryId, AsyncCallback<Account> callback) throws AonCoreException;
-	
+	void createAndLinkAccount(String domainName, String user, Integer domain, AccountingRegistryType registryType, Integer registryId, AsyncCallback<Account> callback) throws AonCoreException;
+
+	// Regeneracion del numero de diario
+	void getJournalRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback);
+	void regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod, AsyncCallback<AccUtilitiesResult> callback);
 	
 }

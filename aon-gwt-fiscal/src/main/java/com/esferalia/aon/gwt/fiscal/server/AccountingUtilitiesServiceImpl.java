@@ -69,4 +69,14 @@ public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet impl
 		return ACCOUNTING.createAndLinkAccount(domainName, user, domain, registryType, registryId);
 	}
 
+	@Override
+	public AccUtilitiesResult getJournalRegenerationInfo(String domainName, String user, Integer domain) throws AonCoreException {
+		return ACCOUNTING.getJournalRegenerationInfo(domainName,user,domain);
+	}
+
+	@Override
+	public AccUtilitiesResult regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod) throws AonCoreException {
+		return ACCOUNTING.regenerateJournal(domainName,user,domain,accuountPeriod);
+	}
+
 }
