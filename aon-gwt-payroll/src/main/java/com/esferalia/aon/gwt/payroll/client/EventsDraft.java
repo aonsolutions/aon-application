@@ -182,12 +182,13 @@ public class EventsDraft extends ResizeComposite {
 		//Window.alert("GUARDAR");
 		this.draftObject.updateEventsWorkplace(
 				r -> {
-					setEventsDraftObject(draftObject);
+					//Window.alert("CARGANDO");
+					setEventsDraftObject(this.draftObject);
 					draftObject.undoManager.discardAll();
 				}, t -> {}
 		);
 	}
-	
+
 	@UiHandler("undoAllButton")
 	void onUndoAllButtonClick(ClickEvent event) {
 		while (draftObject.undoManager.canUndo())
@@ -309,8 +310,12 @@ public class EventsDraft extends ResizeComposite {
 	// Metodo para recoger la informacion de las cabeceras e inicializar la tabla en funcion del tipo de vista
 	private void fillEventTable() {
 		ArrayList<String> variableList = new ArrayList<>(this.draftObject.getAllVariables());
-		ArrayList<EventEmployee> employeeList = this.draftObject.getWorkplaceEmployees();
-		ArrayList<String> monthList = createMonthList();
+		ArrayList<EventEmployee> employeeList = new ArrayList<>();
+		employeeList = this.draftObject.getWorkplaceEmployees();
+		ArrayList<String> monthList = new ArrayList<>();
+		monthList = createMonthList();
+		
+//		Window.alert("Numero de empleados :"+employeeList.size());
 		
 		String selectItem = typeView.getSelectedItemText();
 		if (selectItem == "MES"){

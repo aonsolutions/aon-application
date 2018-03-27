@@ -226,6 +226,12 @@ public class EventsDraftObject {
 
 			@Override
 			public void onSuccess(WorkplaceEmployees result) {
+				workplaceEmployeesId.clear();
+				workplaceEmployees.clear();
+				mapEventsObject.clear();
+				contWorkplaceEmployeesId = 0;
+				allVariables.clear();
+				
 				for(EmployeeInfo employeeDB : result.getWorkplaceEmployees()){
 					//Crear empleado e inicializar mapEventsObject
 					EventEmployee employee = new EventEmployee(
@@ -595,6 +601,7 @@ public class EventsDraftObject {
 			@Override
 			public void onSuccess(EventsWorkplace result) {
 				draftMapEventsObject.clear();
+				mapEventsObject.clear();
 				success.accept(result);
 				
 			}
