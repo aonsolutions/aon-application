@@ -473,7 +473,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	}
 	private Condition getDeliveryCondition() {
 		Condition c = DELIVERY.DOMAIN.eq(this.ctx.getDomainId());
-		c = c.and(DELIVERY.STATUS.eq(DeliveryStatus.PENDING.value()));
+//		c = c.and(DELIVERY.STATUS.eq(DeliveryStatus.PENDING.value()));
 		
 		c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, DELIVERY.SCOPE));
 		c = c.and(SecurityDAO.getSecurityLevelCondition(this.ctx, this.ctx.getUser(), DELIVERY.SECURITY_LEVEL));
@@ -507,8 +507,8 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 		
 		c = c.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()));
 		c = c.and(
-//				INVOICE_DETAIL.SOURCE.eq(InvoiceSource.DIRECT_INVOICE.value())
-				INVOICE_DETAIL.SOURCE.in(InvoiceSource.DIRECT_INVOICE.value(),InvoiceSource.DELIVERY.value())
+				INVOICE_DETAIL.SOURCE.eq(InvoiceSource.DIRECT_INVOICE.value())
+//				INVOICE_DETAIL.SOURCE.in(InvoiceSource.DIRECT_INVOICE.value(),InvoiceSource.DELIVERY.value())
 			);
 		
 		c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, INVOICE.SCOPE));

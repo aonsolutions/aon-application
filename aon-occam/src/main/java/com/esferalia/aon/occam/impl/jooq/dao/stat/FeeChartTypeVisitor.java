@@ -6,23 +6,16 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.stat.fee.IFeeChartTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class FeeChartTypeVisitor implements IFeeChartTypeVisitor {
-
-	private static final String CATEGORY_STR = "category";
-	private static final String CUSTOMER_STR = "customer";
-	private static final String SELLER_STR = "seller";
-	private static final String WORKPLACE_STR = "workplace";
-	private static final String PERIOD_STR = "period";
 
 	private AONContext ctx;
 	private StatParams params;
@@ -41,7 +34,7 @@ public class FeeChartTypeVisitor implements IFeeChartTypeVisitor {
 		Date to = AonDateUtils.addDays(AonDateUtils.addYears(from, 1), -1);
 		HashMap<String, Double> map = new HashMap<String, Double>();
 		
-		LinkedList<Fee> list = FeeDAO.getFeeStream(ctx, f -> getFeeFilter(from, to, ctx.getDomainId(), params.getFilterMap(), f))
+		LinkedList<Fee> list = FeeDAO.getFeeStream(ctx, f -> StatDAO.getFeeFilter(from, to, ctx.getDomainId(), params.getFilterMap(), f))
 				.collect(Collectors.toCollection(LinkedList::new));
 		
 		for(Integer i = 0; i < 12 ; i++){
@@ -68,55 +61,6 @@ public class FeeChartTypeVisitor implements IFeeChartTypeVisitor {
 		.forEach(key -> table.put(key, "Cuotas", map.get(key)));
 	}
 
-
-	public Filter getFeeFilter(Date from, Date to, Integer domainId,
-			HashMap<String, String[]> filterMap, FeeProperties f) {
-		Filter filter = f.getFinalDateProperty().ge(AonDateUtils.toSql(from))
-				.or(f.getFinalDateProperty().isNull())
-			.and(f.getBillingDateProperty().lt(AonDateUtils.toSql(to)))
-			.and(f.getDomainProperty().eq(domainId));
-		
-		if(filterMap.containsKey(CATEGORY_STR)){
-			Filter fcategory = f.getCategoryProperty().eq(Integer.parseInt(filterMap.get(CATEGORY_STR)[0])); 
-			for(Integer i = 1; i < filterMap.get(CATEGORY_STR).length ; i++){
-				fcategory = fcategory.or(f.getCategoryProperty().eq(Integer.parseInt(filterMap.get(CATEGORY_STR)[i])));
-			}
-			filter = filter.and(fcategory);
-		}
-		
-		if(filterMap.containsKey(CUSTOMER_STR)){
-			Filter fcustomer = f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(CUSTOMER_STR)[0])); 
-			for(Integer i = 1; i < filterMap.get(CUSTOMER_STR).length ; i++){
-				fcustomer = fcustomer.or(f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(CUSTOMER_STR)[i])));
-			}
-			filter = filter.and(fcustomer);
-		}
-		
-		if(filterMap.containsKey(SELLER_STR)){
-			Filter fseller = f.getSellerProperty().eq(Integer.parseInt(filterMap.get(SELLER_STR)[0])); 
-			for(Integer i = 1; i < filterMap.get(SELLER_STR).length ; i++){
-				fseller = fseller.or(f.getSellerProperty().eq(Integer.parseInt(filterMap.get(SELLER_STR)[i])));
-			}
-			filter = filter.and(fseller);
-		}
-		
-		if(filterMap.containsKey(WORKPLACE_STR)){
-			Filter fworkplace = f.getWorkplaceProperty().eq(Integer.parseInt(filterMap.get(WORKPLACE_STR)[0])); 
-			for(Integer i = 1; i < filterMap.get(WORKPLACE_STR).length ; i++){
-				fworkplace = fworkplace.or(f.getWorkplaceProperty().eq(Integer.parseInt(filterMap.get(WORKPLACE_STR)[i])));
-			}
-			filter = filter.and(fworkplace);
-		}
-		
-		if(filterMap.containsKey(PERIOD_STR)){
-			Filter fperiod = f.getPeriodProperty().eq((short) Integer.parseInt(filterMap.get(PERIOD_STR)[0])); 
-			for(Integer i = 1; i < filterMap.get(PERIOD_STR).length ; i++){
-				fperiod = fperiod.or(f.getPeriodProperty().eq((short) Integer.parseInt(filterMap.get(PERIOD_STR)[i])));
-			}
-			filter = filter.and(fperiod);
-		}
-		return filter;
-	}
 
 	public static Double getPercent(Date startDate, Date endDate, Date date, int period){
 		if(period == 0 || (startDate.compareTo(date) < 0 && (endDate == null 

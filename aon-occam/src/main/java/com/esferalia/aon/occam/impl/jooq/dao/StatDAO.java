@@ -36,12 +36,14 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
+import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -72,9 +74,16 @@ import com.esferalia.aon.occam.impl.jooq.dao.stat.DirectSalesChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.FeeChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.InvoiceChartTypeVisitor;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.TaskChartTypeVisitor;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class StatDAO {
+
+	private static final String CATEGORY_STR = "category";
+	private static final String CUSTOMER_STR = "customer";
+	private static final String SELLER_STR = "seller";
+	private static final String WORKPLACE_STR = "workplace";
+	private static final String PERIOD_STR = "period";
 
 	public static StatParams createStatParams(AONContext ctx) {
 		StatParams params = new StatParams();
@@ -180,6 +189,55 @@ public class StatDAO {
 		return table;
 	}
 	
+	public static Filter getFeeFilter(Date from, Date to, Integer domainId,
+			HashMap<String, String[]> filterMap, FeeProperties f) {
+		Filter filter = f.getFinalDateProperty().ge(AonDateUtils.toSql(from))
+				.or(f.getFinalDateProperty().isNull())
+			.and(f.getBillingDateProperty().lt(AonDateUtils.toSql(to)))
+			.and(f.getDomainProperty().eq(domainId));
+		
+		if(filterMap.containsKey(CATEGORY_STR)){
+			Filter fcategory = f.getCategoryProperty().eq(Integer.parseInt(filterMap.get(CATEGORY_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(CATEGORY_STR).length ; i++){
+				fcategory = fcategory.or(f.getCategoryProperty().eq(Integer.parseInt(filterMap.get(CATEGORY_STR)[i])));
+			}
+			filter = filter.and(fcategory);
+		}
+		
+		if(filterMap.containsKey(CUSTOMER_STR)){
+			Filter fcustomer = f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(CUSTOMER_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(CUSTOMER_STR).length ; i++){
+				fcustomer = fcustomer.or(f.getCustomerProperty().eq(Integer.parseInt(filterMap.get(CUSTOMER_STR)[i])));
+			}
+			filter = filter.and(fcustomer);
+		}
+		
+		if(filterMap.containsKey(SELLER_STR)){
+			Filter fseller = f.getSellerProperty().eq(Integer.parseInt(filterMap.get(SELLER_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(SELLER_STR).length ; i++){
+				fseller = fseller.or(f.getSellerProperty().eq(Integer.parseInt(filterMap.get(SELLER_STR)[i])));
+			}
+			filter = filter.and(fseller);
+		}
+		
+		if(filterMap.containsKey(WORKPLACE_STR)){
+			Filter fworkplace = f.getWorkplaceProperty().eq(Integer.parseInt(filterMap.get(WORKPLACE_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(WORKPLACE_STR).length ; i++){
+				fworkplace = fworkplace.or(f.getWorkplaceProperty().eq(Integer.parseInt(filterMap.get(WORKPLACE_STR)[i])));
+			}
+			filter = filter.and(fworkplace);
+		}
+		
+		if(filterMap.containsKey(PERIOD_STR)){
+			Filter fperiod = f.getPeriodProperty().eq((short) Integer.parseInt(filterMap.get(PERIOD_STR)[0])); 
+			for(Integer i = 1; i < filterMap.get(PERIOD_STR).length ; i++){
+				fperiod = fperiod.or(f.getPeriodProperty().eq((short) Integer.parseInt(filterMap.get(PERIOD_STR)[i])));
+			}
+			filter = filter.and(fperiod);
+		}
+		return filter;
+	}
+
 	
 	public static String getInvoicesReport(AONContext ctx, StatParams params) {
 		final Integer[] scopes = SecurityDAO.getUserScopes(ctx);
