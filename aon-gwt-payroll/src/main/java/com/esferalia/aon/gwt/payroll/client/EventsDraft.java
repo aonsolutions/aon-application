@@ -179,7 +179,7 @@ public class EventsDraft extends ResizeComposite {
 	
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
-		Window.alert("GUARDAR");
+		//Window.alert("GUARDAR");
 		this.draftObject.updateEventsWorkplace(
 				r -> {
 					setEventsDraftObject(draftObject);
