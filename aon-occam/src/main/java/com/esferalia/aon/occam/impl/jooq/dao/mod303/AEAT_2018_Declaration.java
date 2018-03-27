@@ -1897,7 +1897,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT3;
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat, Mod303 mod) {
-		return !vat.isVatSurchargeRegime() && vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses();
+		return !vat.isVatSurchargeRegime() && (vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses());
 	}
 	
 	private static boolean adqIntracomunitariasFilterGene(VatContext vat, Mod303 mod) {

@@ -15,9 +15,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class BIZKAIA_2017_Declaration extends Mod303Declaration {
+public class BIZKAIA_2018_Declaration extends Mod303Declaration {
 	
-	protected BIZKAIA_2017_Declaration() {
+	protected BIZKAIA_2018_Declaration() {
 				
 	}
 	
@@ -30,7 +30,7 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT4 = 1.75;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isBizkaia() && mod.getYear() >= 2010 && mod.getYear() < 2018;
+		return  mod.isBizkaia() && mod.getYear() >= 2018;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -712,8 +712,10 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime()
-			&& !vat.isService()
-			&& vat.isIntracommunityPurchase();
+//			&& !vat.isService()
+			&& (vat.isIntracommunityPurchase()
+			 || vat.isIntracommunityExpenses()					
+					);
 	}
 	private static boolean adqIntracomunitariasDevFilter(VatContext vat) {
 		return !vat.isRectification() && adqIntracomunitariasFilter(vat);
@@ -724,8 +726,8 @@ public class BIZKAIA_2017_Declaration extends Mod303Declaration {
 					|| vat.isOtherISPExpenses() 
 					|| vat.isExtracommunityExpenses() 
 					|| vat.isCanCeuMelExpenses() 
-					|| vat.isIntracommunityExpenses()
-					|| (vat.isIntracommunityPurchase() && vat.isService())
+//					|| vat.isIntracommunityExpenses()
+//					|| (vat.isIntracommunityPurchase() && vat.isService())
 					|| (vat.isExtracommunityPurchase() && vat.isService()) 
 					|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
