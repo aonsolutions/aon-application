@@ -57,6 +57,13 @@ public abstract class CertificationPopup extends CustomDialog {
 		return tb.getValue();
 	}
 	
+	public String getNRC() {
+		VerticalPanel vp = (VerticalPanel) getWidget();
+		HorizontalPanel hp = (HorizontalPanel) vp.getWidget(4);
+		TextBox tb = (TextBox) hp.getWidget(1);
+		return tb.getValue();
+	}
+	
 	public CertificationPopup(API API, Boolean showNRC) {
 		this.API = API;
 		setCaption("Certificado Digital");

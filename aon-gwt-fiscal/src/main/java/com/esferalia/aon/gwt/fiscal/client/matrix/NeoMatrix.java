@@ -318,6 +318,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		if(i < modelListPanel.getWidgetCount()) {
 			Integer id = Integer.parseInt(modelListPanel.getWidget(i).getTitle());
 			IFiscalModel model = modelMap.get(id);
+
 			if(model.isAEAT() && model.isFinished() && hasSendOption(model)) {
 				JSONObject json = new JSONObject();
 				json.put("mod", new JSONNumber(model.getId()));
@@ -362,6 +363,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				}
 				if(!hasSendOption(model)) {
 					js.put("E0" + error, new JSONString("La funcionalidad no est\u00e1 disponible para este modelo."));	
+					error++;
 				}
 				errors.put(model.getId(), js);
 				send(i+1, cert, pass);

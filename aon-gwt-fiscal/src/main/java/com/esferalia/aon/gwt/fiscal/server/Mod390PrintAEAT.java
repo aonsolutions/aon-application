@@ -71,7 +71,7 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 
 		String request = getUrl(mod390.getYear());	
 		
-		send(req, resp, request, urlParameters);
+		send(req, resp, request, urlParameters, false);
 	}
 	
 	public String getUrl(Integer year) {
@@ -123,6 +123,7 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 	}
 	
 	public String getCertUrlParameters(Mod3902015 mod390, String encodedFile, String name, String document){
+		
 		return "HID=INF7390A"
 				+ "&FIRNIF=" + name
 				+ "&FIRNOMBRE=" + document
@@ -134,8 +135,8 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 				+ "&TEL=" + ""
 				+ "&ADM=" + ""
 				+ "&EJF=" + mod390.getYear()
-				+ "&P01=" + "" // TODO Vacío o resultado de la liquidación [86]
-				+ "&P01=" + "" // TODO Vacío o resultado de la liquidación anual atribuible al territorio común [94].
+				+ "&P01=" + mod390.getBox86() // TODO Vacío o resultado de la liquidación [86]
+				+ "&P01=" + mod390.getBox94() // TODO Vacío o resultado de la liquidación anual atribuible al territorio común [94].
 				+ "&TXT=" + ""
 				+ "&FIR=" + "FirmaBasica"
 				+ "&CRL=" + "|"

@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
 
@@ -43,7 +44,8 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 			init(json);
 			
 			Mod115 mod115 = FISCAL.getMod115(getDomainName(), getDomainId(), getUser(), getId());
-			
+			Boolean isI = FiscalModelDeclarationType.DEPOSIT.equals(mod115.getDeclarationType());
+
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
 			try {
@@ -54,7 +56,7 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 			PrintWriter writer = new PrintWriter(wr);
 			Mod115Writer.fillWriter(mod115, writer);
 			
-			send(req, resp, mod115, output.toByteArray());		
+			send(req, resp, mod115, output.toByteArray(), isI);		
 		} catch (Throwable e) {
 			if(!isPrint()) {
 				exceptionErrors(req, resp, e.getMessage());
@@ -63,7 +65,7 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 		}
 	}
 	
-	private void send(HttpServletRequest req, HttpServletResponse resp, Mod115 mod115, byte[] content) throws JSONException, KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, ScriptException {
+	private void send(HttpServletRequest req, HttpServletResponse resp, Mod115 mod115, byte[] content, Boolean isI) throws JSONException, KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, ScriptException {
 		String urlParameters = isCert() 
 			? getCertUrlParameters(mod115, getEncodedFile(content), getName(), getDocument())
 			: getUrlParameters(mod115, getEncodedFile(content));
@@ -73,7 +75,7 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 			// REAL "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
 			: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
 	
-		send(req, resp, request, urlParameters);
+		send(req, resp, request, urlParameters, isI);
 	}
 		
 	private String getUrlParameters(Mod115 mod115, String encodedFile) {
@@ -94,7 +96,7 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 				+ "&FIRNOMBRE=" + document
 				+ "&TIA=" + mod115.getDeclarationType().getValue()
 				+ "&NDC=" + mod115.getDocument()
-				+ "&NRC=" + ("I".equals(mod115.getDeclarationType().getValue()) ? "" : "") // TODO Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
+				+ "&NRC=" + ("I".equals(mod115.getDeclarationType().getValue()) ? getNrc() : "") // TODO Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
 				+ "&ING=" + ("I".equals(mod115.getDeclarationType().getValue()) ? mod115.getAmount(Mod115Key.CT_C05) : "") // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
 				+ "&NRR=" + ""
 				+ "&ICO=" + ""

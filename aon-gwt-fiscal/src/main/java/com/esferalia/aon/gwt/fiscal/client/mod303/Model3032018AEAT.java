@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -376,7 +377,8 @@ public class Model3032018AEAT extends Model303Base {
 		button3.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {		
-				CertificationPopup certPopup = new CertificationPopup(getAPI(), getMod303().getName(), getMod303().getDocument(), false) {
+				Boolean showNRC = FiscalModelDeclarationType.DEPOSIT.equals(getMod303().getDeclarationType()); 
+				CertificationPopup certPopup = new CertificationPopup(getAPI(), getMod303().getName(), getMod303().getDocument(), showNRC) {
 							
 					@Override
 					protected void onCancel() {
@@ -388,7 +390,7 @@ public class Model3032018AEAT extends Model303Base {
 						if(getMod303().isSent()) {
 							getCallback().showBreakdownPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
 						} else if (getMod303().isFinished() || getMod303().isSent()) {
-							submitAEAT(VALIDATE_PRINT_ACTION, getCert(), getPass(), getName(), getDocument());
+							submitAEAT(VALIDATE_PRINT_ACTION, getCert(), getPass(), getName(), getDocument(), getNRC());
 							getCallback().showVisorAEAT();
 						} else {
 							getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");

@@ -74,6 +74,7 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	protected Hidden passAeatHidden = new Hidden("pass");
 	protected Hidden nameAeatHidden = new Hidden("name");
 	protected Hidden documentAeatHidden = new Hidden("document");
+	protected Hidden nrcAeatHidden = new Hidden("nrc");
 	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
@@ -357,10 +358,10 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	}
 
 	protected void submitAEAT(String action) {
-		submitAEAT(action, "null", "null", "null", "null");
+		submitAEAT(action, "null", "null", "null", "null", "null");
 	}
 	
-	protected void submitAEAT(String action, String cert, String pass, String document, String name) {
+	protected void submitAEAT(String action, String cert, String pass, String document, String name, String nrc) {
 		aeatForm.setAction(GWT.getHostPageBaseURL() + action);
 		modAeatHidden.setValue(String.valueOf(getModel().getId()));
 		domainIdAeatHidden.setValue(String.valueOf(getCallback().getDomain()));
@@ -370,6 +371,7 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		passAeatHidden.setValue(pass);
 		nameAeatHidden.setValue(name);
 		documentAeatHidden.setValue(document);
+		nrcAeatHidden.setValue(nrc != null ? nrc : "null");	
 		aeatForm.submit();
 	}
 	

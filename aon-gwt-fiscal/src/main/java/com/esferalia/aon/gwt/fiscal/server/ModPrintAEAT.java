@@ -69,6 +69,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	String pass;
 	String name;
 	String document;
+	String nrc;
 	
 	Boolean print;
 	
@@ -97,6 +98,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 			this.pass = URLDecoder.decode(json.getString("pass"),  "UTF-8");
 			this.name = URLDecoder.decode(json.getString("name"),  "UTF-8");
 			this.document = json.getString("document");
+			this.nrc = json.opt("nrc") != null ? json.getString("nrc") : null;
 		}			
 	}	
 	
@@ -148,7 +150,12 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	public void setDocument(String document) {
 		this.document = document;
 	}
-
+	public String getNrc() {
+		return nrc;
+	}
+	public void setNrc(String nrc) {
+		this.nrc = nrc;
+	}
 	public Boolean isCert() {
 		return getCert() != null;
 	}
@@ -166,71 +173,76 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		return URLEncoder.encode(fileString, "ISO-8859-1");
 	}	
 	
-	protected void send(HttpServletRequest req, HttpServletResponse resp, String request, String urlParameters) throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException, JSONException, ScriptException {
-		URL url = new URL(request);
+	protected void send(HttpServletRequest req, HttpServletResponse resp, String request, String urlParameters, Boolean isI) throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException, JSONException, ScriptException {
+		if(isI && !isPrint()) {
+			JSONObject json = new JSONObject();
+			json.put("E00", "La declaración del modelo es de tipo ingreso (I). Realice la operación desde la pantalla del modelo.");	
+			giveBack(req, resp, json, new JSONObject());
+		} else {
+			URL url = new URL(request);
    		
-		SSLContext ctx = SSLContext.getInstance("TLS");
-		ctx.init(isCert() ? getKeyManagers(cert, pass) : new KeyManager[0],
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			ctx.init(isCert() ? getKeyManagers(cert, pass) : new KeyManager[0],
 				new TrustManager[] { new DefaultTrustManager() },
 				new SecureRandom());
-		SSLContext.setDefault(ctx);
+			SSLContext.setDefault(ctx);
 
-		HttpsURLConnection connection = (HttpsURLConnection) url
+			HttpsURLConnection connection = (HttpsURLConnection) url
 				.openConnection();
-		connection.setHostnameVerifier(new HostnameVerifier() {
-			@Override
-			public boolean verify(String arg0, SSLSession arg1) {
-				return true;
-			}
-		});
-		connection.setDoOutput(true);
-		connection.setDoInput(true);
-		connection.setInstanceFollowRedirects(false);
-		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type",
+			connection.setHostnameVerifier(new HostnameVerifier() {
+				@Override
+				public boolean verify(String arg0, SSLSession arg1) {
+					return true;
+				}
+			});
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type",
 				"application/x-www-form-urlencoded");
-		connection.setRequestProperty("charset", "ISO-8859-1");
-		connection.setRequestProperty("Content-Length",
+			connection.setRequestProperty("charset", "ISO-8859-1");
+			connection.setRequestProperty("Content-Length",
 				"" + Integer.toString(urlParameters.getBytes().length));
-		connection.setUseCaches(false);
+			connection.setUseCaches(false);
 
-		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-		wr.writeBytes(urlParameters);
-		wr.flush();
-		wr.close();
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
 		
-		if(isPrint()) {
-			if(isCert()) {
-				String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
-				JSONObject json = parseHTML(html);
-				saveHistory(json);
-				ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
-				AonIOUtils.copy(input, resp.getOutputStream());	
-			} else {
-				DataInputStream input = new DataInputStream(connection.getInputStream());
-				AonIOUtils.copy(input, resp.getOutputStream());
-			} 
-		} else {
-			JSONObject json = new JSONObject();
-			if(isCert()) {
-				String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
-				json = parseHTML(html);
-				saveHistory(json);
-				giveBack(req, resp, json, new JSONObject());
-			} else {
-				if(MimeType.PDF.getName().equals(connection.getContentType())) {
-					json.put("CEL", "CEL");
+			if(isPrint()) {
+				if(isCert()) {
+					String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+					JSONObject json = parseHTML(html);
+					json.put("nrc", getNrc());
+					saveHistory(json);
+					ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
+					AonIOUtils.copy(input, resp.getOutputStream());	
 				} else {
+					DataInputStream input = new DataInputStream(connection.getInputStream());
+					AonIOUtils.copy(input, resp.getOutputStream());
+				} 	
+			} else {
+				JSONObject json = new JSONObject();
+				if(isCert()) {
 					String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
 					json = parseHTML(html);
+					saveHistory(json);
+				} else {
+					if(MimeType.PDF.getName().equals(connection.getContentType())) {
+						json.put("CEL", "CEL");
+					} else {
+						String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+						json = parseHTML(html);
+					}
 				}
 				giveBack(req, resp, json, new JSONObject());
 			}
+			resp.flushBuffer();
+			connection.disconnect();
 		}
-		resp.flushBuffer();
-		connection.disconnect();
 	}
-	
 	public JSONObject parseHTML(String html) throws JSONException, ScriptException, IOException {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("js");

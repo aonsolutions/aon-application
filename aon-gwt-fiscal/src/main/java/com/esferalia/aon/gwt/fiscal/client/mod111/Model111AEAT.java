@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -162,8 +163,9 @@ public class Model111AEAT extends Model111Base {
 		button3.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		button3.addClickHandler( new ClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {		
-				CertificationPopup certPopup = new CertificationPopup(getAPI(), getModel().getName(), getModel().getDocument(), false) {
+			public void onClick(ClickEvent event) {			
+				Boolean showNRC = FiscalModelDeclarationType.DEPOSIT.equals(getModel().getDeclarationType()); 
+				CertificationPopup certPopup = new CertificationPopup(getAPI(), getModel().getName(), getModel().getDocument(), showNRC) {
 								
 					@Override
 					protected void onCancel() {
@@ -175,7 +177,7 @@ public class Model111AEAT extends Model111Base {
 						if(getModel().isSent()) {
 							getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
 						} else if (getModel().isFinished()) {
-							submitAEAT(MODEL111_PRINT_AEAT, getCert(), getPass(), getName(), getDocument());
+							submitAEAT(MODEL111_PRINT_AEAT, getCert(), getPass(), getName(), getDocument(), getNRC());
 							getCallback().showVisorAEAT();
 						} else {
 							getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");

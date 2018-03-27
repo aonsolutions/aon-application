@@ -15,8 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "DownloadAttachment", urlPatterns = {"/aon_gwt_aio/download_attachment/*",
 														"/aon_gwt_fiscal/download_attachment/*"})
@@ -41,8 +45,9 @@ public class DownloadAttachmentServlet extends HttpServlet {
 		
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id), AttachType.getAttachType(attachType), true);
 		if(attach.getDriveId() != null) {
-			// TODO DOWNLOAD FROM GOOGLE DRIVE
-			// attach.setData(data)
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), userName);
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
       
         Integer length = attach.getData().length;
