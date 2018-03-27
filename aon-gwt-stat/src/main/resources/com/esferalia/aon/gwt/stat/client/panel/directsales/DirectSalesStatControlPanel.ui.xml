@@ -1,0 +1,85 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
+	xmlns:stat="urn:import:com.esferalia.aon.gwt.stat.client.panel.directsales"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" styleName="{aonResources.css.aonSelector}">
+		<g:north size="26">
+			<g:FlowPanel height="100%"
+				styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+				<g:HorizontalPanel>
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+							<g:Label text="{msg.statistics} Ventas Directas" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+							<g:Label></g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel ui:field="toolbarPanel" styleName="{aonResources.css.aonFindingToolbar}">
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+							<g:Button ui:field="data"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconInvoice}" 
+								text="Ver datos gráfico" />
+							<g:Button ui:field="excelTable"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
+								text="Exportar datos gráfico" />
+<!-- 								
+							<g:Button ui:field="invoices"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconInvoice}" 
+								text="Ver facturas" />
+							<g:Button ui:field="excel"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
+								text="Exportar facturas" />
+							<g:Button ui:field="pdf"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdf}" 
+								text="Imprimir" />
+ -->
+							<g:SimplePanel ui:field="excelFormContainer"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:north>
+		<g:north size="122">
+			<g:SimpleLayoutPanel height="121px" ui:field="north" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonNoPrint}">
+				<stat:StatFilter ui:field="filter"/>
+			</g:SimpleLayoutPanel>
+		</g:north>
+		<g:center>
+			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+				<g:center>
+					<g:SimpleLayoutPanel ui:field="content" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonHeightAll}"/>
+				</g:center>
+				<g:south size="30">
+					<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
+						<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">
+							<g:tab>
+								<g:customHeader>
+									<g:Label
+										styleName="{aonResources.css.aonIconJournal} {aonResources.css.aonPaddingRight}"  
+										text="{msg.stadisticalData}" />
+								</g:customHeader>
+								<g:SimpleLayoutPanel ui:field="south" styleName="{aonResources.css.aonScrollArea}">
+								</g:SimpleLayoutPanel>
+							</g:tab>
+							<g:tab>
+								<g:customHeader>
+									<g:Label
+										styleName="{aonResources.css.aonIconInvoice} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+										text="{msg.invoices}" />
+								</g:customHeader>
+								<g:ScrollPanel ui:field="informationPanel" styleName="{aonResources.css.aonTextCenter}"/>
+							</g:tab>
+						</g:TabLayoutPanel>
+					</aon:MinimizePanel>
+				</g:south>
+			</g:SplitLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

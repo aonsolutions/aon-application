@@ -41,6 +41,13 @@
 	
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>gwt_directSalesStat</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/directSales.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
 			<from-outcome>gwt_fee_projection</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/fee_projection.xhtml</to-view-id>
 		</navigation-case>

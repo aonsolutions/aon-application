@@ -17,6 +17,7 @@ public class StatParams implements Serializable, Cloneable {
 	private Date from;
 	private Date to;
 	private boolean viewAmounts;
+	private boolean viewPreviousPeriod;
 	private IssueFilter issueFilter;
 
 	private StatType statType;
@@ -64,7 +65,17 @@ public class StatParams implements Serializable, Cloneable {
 		this.viewAmounts = viewAmounts;
 		return this;
 	}
+	public boolean isViewPreviousPeriodAvailable() {
+		return isViewPreviousPeriod() && getFrom() != null && getTo() != null;
+	}
 
+	public boolean isViewPreviousPeriod() {
+		return viewPreviousPeriod;
+	}
+	public StatParams setViewPreviousPeriod(boolean viewPreviousPeriod) {
+		this.viewPreviousPeriod = viewPreviousPeriod;
+		return this;
+	}
 	public IssueFilter getIssueFilter() {
 		return issueFilter;
 	}

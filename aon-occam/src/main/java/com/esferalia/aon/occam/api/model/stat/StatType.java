@@ -4,13 +4,15 @@ import java.io.Serializable;
 
 public enum StatType implements Serializable {
 
-	 INVOICE	( chartVisitor -> chartVisitor.visitInvoice())
-	,TASK		( chartVisitor -> chartVisitor.visitTask())
-	,FEE		( chartVisitor -> chartVisitor.visitFee())
+	 INVOICE		( chartVisitor -> chartVisitor.visitInvoice())
+	,DIRECT_SALES	( chartVisitor -> chartVisitor.visitDirectSales())
+	,TASK			( chartVisitor -> chartVisitor.visitTask())
+	,FEE			( chartVisitor -> chartVisitor.visitFee())
 	;
 	
 	public static interface IStatTypeVisitor {
 		void visitInvoice();
+		void visitDirectSales();
 		void visitTask();
 		void visitFee();
 	}

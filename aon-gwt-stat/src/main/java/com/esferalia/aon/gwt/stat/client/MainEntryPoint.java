@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.stat.client;
 
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.stat.client.panel.StatControlPanel;
+import com.esferalia.aon.gwt.stat.client.panel.directsales.DirectSalesStatControlPanel;
 import com.esferalia.aon.gwt.stat.client.panel.fee.StatFeeProjectionPanel;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -16,6 +17,7 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== STATS
 	//
 	private static final String ST_STATS_ENTRY_POINT = "StatControlPanel";
+	private static final String DS_STATS_ENTRY_POINT = "DirectSalesStatControlPanel";
 	private static final String CRM_STATS_ENTRY_POINT = "CrmStatControlPanel";
 	private static final String FEE_PROJECTION_ENTRY_POINT = "feeProjection";
 
@@ -47,6 +49,21 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
+		} else if(entryPoint.equalsIgnoreCase(DS_STATS_ENTRY_POINT)) {
+				GWT.runAsync(DirectSalesStatControlPanel.class, new RunAsyncCallback() {
+		
+					@Override
+					public void onFailure(Throwable reason) {
+						Window.alert("Error al cargar");
+					}
+		
+					@Override
+					public void onSuccess() {
+						DirectSalesStatControlPanel panel = new DirectSalesStatControlPanel();
+						panel.onModuleLoad();
+					}
+					
+				});
 		} else if(entryPoint.equalsIgnoreCase(FEE_PROJECTION_ENTRY_POINT)){
 			GWT.runAsync(StatFeeProjectionPanel.class, new RunAsyncCallback() {
 				
