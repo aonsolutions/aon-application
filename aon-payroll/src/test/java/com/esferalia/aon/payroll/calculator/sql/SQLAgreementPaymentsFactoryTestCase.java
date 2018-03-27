@@ -28,7 +28,7 @@ public class SQLAgreementPaymentsFactoryTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
-		int parentId = (int)System.currentTimeMillis()/1000;
+		int parentId =  (int)System.currentTimeMillis();
 		int overrideId = parentId +1;
 		
 		aonContext.getDslContext()
