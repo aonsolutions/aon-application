@@ -3,10 +3,8 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.shared.EvalException;
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -14,9 +12,9 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
-import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -154,5 +152,8 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 	Map<String, String> getAvaiableEmployees() throws IllegalArgumentException;
 
 	WorkplaceEmployees getWorkplaceEmployees(Integer workplaceId);
+
+	EventsWorkplace setEventsWorkplace(
+			com.esferalia.aon.gwt.payroll.shared.EventsWorkplace updateEventsWorkplace);
 
 }

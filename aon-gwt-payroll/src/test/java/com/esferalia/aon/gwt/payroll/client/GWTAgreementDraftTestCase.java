@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
@@ -18,6 +17,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -106,6 +106,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			
 		}
 
+		@Override
+		public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
+				AsyncCallback<EventsWorkplace> asyncCallback) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		
 	}
 
@@ -189,6 +196,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void getWorkplaceEmployees(Integer workplaceId,
 							AsyncCallback<WorkplaceEmployees> asyncCallback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
+							AsyncCallback<EventsWorkplace> asyncCallback) {
 						// TODO Auto-generated method stub
 						
 					}

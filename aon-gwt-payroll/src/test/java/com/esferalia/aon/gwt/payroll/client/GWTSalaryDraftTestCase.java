@@ -10,7 +10,6 @@ import static java.lang.Math.random;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
 import org.junit.Before;
 
@@ -18,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -99,6 +99,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void getWorkplaceEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
+					AsyncCallback<EventsWorkplace> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}

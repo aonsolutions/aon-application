@@ -150,8 +150,9 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='acceptButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
+								<g:Button ui:field='saveButton'
+									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" 
+									enabled="false"/>
 								<g:Button ui:field='undoAllButton'
 								    styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}'
 									enabled="false" />

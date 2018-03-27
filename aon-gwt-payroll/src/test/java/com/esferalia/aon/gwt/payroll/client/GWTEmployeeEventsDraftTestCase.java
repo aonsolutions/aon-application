@@ -7,7 +7,6 @@ import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
 import org.junit.Before;
 
@@ -20,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.junit.client.GWTTestCase;
@@ -93,6 +93,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void getWorkplaceEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
+					AsyncCallback<EventsWorkplace> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}

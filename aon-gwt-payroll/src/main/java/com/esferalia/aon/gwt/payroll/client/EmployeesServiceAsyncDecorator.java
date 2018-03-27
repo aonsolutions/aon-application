@@ -8,12 +8,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.EvalException;
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -26,11 +23,11 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
-import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -573,6 +570,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getWorkplaceEmployees(workplaceId, 
 				new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
+		
+	}
+
+	@Override
+	public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
+			AsyncCallback<EventsWorkplace> callback) {
+		AON.start();
+		employeesServiceAsync.setEventsWorkplace(updateEventsWorkplace, 
+				new AsyncCallbackWrapper<EventsWorkplace>(callback));
 		
 	}
 

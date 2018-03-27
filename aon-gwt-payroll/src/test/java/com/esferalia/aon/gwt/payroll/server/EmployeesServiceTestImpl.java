@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
@@ -566,6 +567,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public WorkplaceEmployees getWorkplaceEmployees(Integer workplaceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public EventsWorkplace setEventsWorkplace(EventsWorkplace updateEventsWorkplace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

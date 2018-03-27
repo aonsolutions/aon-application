@@ -118,6 +118,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
@@ -4848,6 +4849,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 //				releaseFacesContext();
 //			}
 //		}
+	}
+
+	@Override
+	public EventsWorkplace setEventsWorkplace(EventsWorkplace updateEventsWorkplace) {
+		Connection connection = null;
+		initFacesContext();
+		try {
+			connection = AonServletUtils.getConnection();
+			return JooqEvents.setWorkplaceEmployees(connection, updateEventsWorkplace);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+				releaseFacesContext();
+			}
+		}
 	}
 
 

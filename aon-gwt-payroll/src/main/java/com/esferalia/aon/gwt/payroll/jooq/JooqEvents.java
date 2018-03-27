@@ -7,7 +7,6 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -15,9 +14,9 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.payroll.client.Quartet;
+import com.esferalia.aon.gwt.payroll.client.Quintet;
 import com.esferalia.aon.gwt.payroll.client.Triplet;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
@@ -29,8 +28,8 @@ public class JooqEvents {
 		return getWorkplaceEmployeesInformation(DSL.using(conn, getDefaultSettings()), workplaceId);
 	}
 	
-	public static void setEmployeeEvents(Connection conn, Integer contract, EmployeeEventsUpdate updateInfo){
-		setEmployeeEventsInformation(DSL.using(conn, getDefaultSettings()), contract, updateInfo);
+	public static EventsWorkplace setWorkplaceEmployees(Connection conn, EventsWorkplace updateEventsWorkplace) {
+		return setWorkplaceEmployeesInformation(DSL.using(conn, getDefaultSettings()), updateEventsWorkplace);
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -67,23 +66,52 @@ public class JooqEvents {
 		return workplaceEmployees;
 	}
 	
-	private static void setEmployeeEventsInformation(DSLContext dslContext, Integer contract,
-			EmployeeEventsUpdate updateInfo) {
+	
+	private static EventsWorkplace setWorkplaceEmployeesInformation(DSLContext dslContext,
+			EventsWorkplace updateEventsWorkplace) {
 		
-		Integer domain = dslContext.select(CONTRACT.DOMAIN)
-				.from(CONTRACT)
-				.where(CONTRACT.ID.eq(contract))
-				.fetchOne().value1();
+		ArrayList<String> varNotToUpdate = new ArrayList<>();
+		varNotToUpdate.add("DIAS_ERE");
+		varNotToUpdate.add("DIAS_HUELGA");
+		varNotToUpdate.add("DIAS_VACACIONES");
 		
+		Integer numBorrado = 0;
+		Integer old_employeeId = null;
+		
+		for(Quintet<Integer, String, java.util.Date, java.util.Date, String> varQuintet : updateEventsWorkplace.getUpdateEventsWorkplace()){
+			Integer employeeId = varQuintet.getContractId();
+			if(old_employeeId != employeeId){
+				numBorrado++;
+				deleteEmployeeEventsVariables(dslContext, employeeId);
+				old_employeeId = employeeId;
+			}
+			
+			addEmployeeEventsVariable(
+					dslContext, 
+					employeeId, 
+					varQuintet.getVarName(), 
+					varQuintet.getStart_date(),
+					varQuintet.getEnd_date(),
+					varQuintet.getExpression(),
+					varNotToUpdate);
+		}
+		
+		System.out.println("Numero de variables :"+ updateEventsWorkplace.getUpdateEventsWorkplace().size());
+		System.out.println("Numero de borrados :"+numBorrado);		
+		
+		return updateEventsWorkplace;
+	}
+
+	private static void deleteEmployeeEventsVariables(DSLContext dslContext, Integer employeeContractId) {
 		dslContext.delete(CONTRACT_DATA)
-		   .where(CONTRACT_DATA.CONTRACT.eq(contract))
+		   .where(CONTRACT_DATA.CONTRACT.eq(employeeContractId))
 		   .and(CONTRACT_DATA.NAME.in(
 				   ContextVariable.WORKED_DAYS.getName()
-//				  ,ContextVariable.ERE_DAYS.getName()
-//				  ,ContextVariable.STRIKE_DAYS.getName()
 				  ,ContextVariable.LEAVE_DAYS.getName()
 				  ,ContextVariable.WORKED_HOURS.getName()
 				  ,ContextVariable.REAL_DAYS.getName()
+//				  ,ContextVariable.ERE_DAYS.getName()
+//				  ,ContextVariable.STRIKE_DAYS.getName()
 //				  ,ContextVariable.HOLIDAYS.getName()
 				  ,ContextVariable.EXTRA_HOURS.getName())
 				.or(CONTRACT_DATA.NAME.eq("DIAS_EFECTIVOS"))
@@ -100,23 +128,29 @@ public class JooqEvents {
 				)
 		   .execute();
 		
-		List<Quartet<Date, Date, String, String>> updateList = updateInfo.getVariableEventsList();
-		ArrayList<String> varNotToUpdate = new ArrayList<>();
-		varNotToUpdate.add("DIAS_ERE");
-		varNotToUpdate.add("DIAS_HUELGA");
-		varNotToUpdate.add("DIAS_VACACIONES");
-		
-		for (Quartet<Date, Date, String, String> quartet : updateList){
-			
-			if(!varNotToUpdate.contains(quartet.getName()))
-				if(null != quartet.getExpression())
-					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
-							CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(domain, quartet.getName(), contract, quartet.getExpression(), 
-									quartet.getStartDate(), quartet.getEndDate())
-							.execute();
-		}
-		
 	}
-
+	
+	private static void addEmployeeEventsVariable(DSLContext dslContext, Integer employeeContractId, String varName,
+			java.util.Date start_date, java.util.Date end_date, String expression,
+			ArrayList<String> varNotToUpdate) {
+		
+		Integer domain = dslContext.select(CONTRACT.DOMAIN)
+				.from(CONTRACT)
+				.where(CONTRACT.ID.eq(employeeContractId))
+				.fetchOne().value1();
+		
+		if(!varNotToUpdate.contains(varName))
+			if(null != expression){
+				
+				Date sqlStartDate = new Date(start_date.getTime());
+				Date sqlEndDate = new Date(end_date.getTime());
+				
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
+						CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(domain, varName, employeeContractId, expression, 
+								sqlStartDate, sqlEndDate)
+						.execute();
+			}
+	}
+	
 }

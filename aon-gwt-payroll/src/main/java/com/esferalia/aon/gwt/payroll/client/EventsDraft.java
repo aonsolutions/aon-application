@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EmployeeEventsVariable;
@@ -17,6 +19,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -97,6 +100,9 @@ public class EventsDraft extends ResizeComposite {
 	FlexTable eventsTable;
 	
 	@UiField
+	Button saveButton;
+	
+	@UiField
 	Button undoAllButton;
 	
 	@UiField
@@ -171,6 +177,17 @@ public class EventsDraft extends ResizeComposite {
 		initializeView();
 	}
 	
+	@UiHandler("saveButton")
+	void onSaveButtonClick(ClickEvent event) {
+		Window.alert("GUARDAR");
+		this.draftObject.updateEventsWorkplace(
+				r -> {
+					setEventsDraftObject(draftObject);
+					draftObject.undoManager.discardAll();
+				}, t -> {}
+		);
+	}
+	
 	@UiHandler("undoAllButton")
 	void onUndoAllButtonClick(ClickEvent event) {
 		while (draftObject.undoManager.canUndo())
@@ -197,7 +214,7 @@ public class EventsDraft extends ResizeComposite {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void onChange(UndoManager undoManager) {
-				//saveButton.setEnabled(undoManager.canUndo());
+				saveButton.setEnabled(undoManager.canUndo());
 				undoAllButton.setEnabled(undoManager.canUndo());
 			}
 		});
@@ -213,7 +230,18 @@ public class EventsDraft extends ResizeComposite {
 
 	// Metodo para inicializar la vista de la tabla
 	private void initializeView() {
+//		Integer numVars = 0;
+//		for(Entry<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> entry : this.draftObject.getInformation().entrySet()){
+//			for(Entry<String, ArrayList<EmployeeEventsVariable>> entryVar : entry.getValue().entrySet()){
+//				numVars += entryVar.getValue().size();
+//			}
+//		}
+//		
+//		Window.alert("NUMERO DE VARIABLES :"+ numVars);
+		
 		undoAllButton.setEnabled(this.draftObject.undoManager.canUndo());
+		if (typeView.getSelectedItemText() == "MES")
+			hide(varListViewPanel);
 		
 		clearEventsTable();
 		fillDateLabel();

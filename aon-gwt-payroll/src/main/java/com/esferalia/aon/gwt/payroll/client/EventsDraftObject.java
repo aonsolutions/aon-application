@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -18,7 +19,9 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -62,13 +65,14 @@ public class EventsDraftObject {
 		
 	}
 	
-	public interface EVENTimedVariable<V> {
+	public interface EVENTimedVariable<V>{
 		public Date getStartDate();
 		public Date getEndDate();
 		public V getValue();
 	}
 	
 	// Clase que contiene la informacion de una variable (Fecha de inicio, fecha de fin y Valor)
+	@SuppressWarnings("serial")
 	public class EmployeeEventsVariable implements EVENTimedVariable<Double>{
 
 		private Date startDate;
@@ -82,6 +86,7 @@ public class EventsDraftObject {
 		}
 		
 		public EmployeeEventsVariable() {
+			super();
 			this.startDate = null;
 			this.endDate = null;
 			this.value = null;
@@ -277,6 +282,7 @@ public class EventsDraftObject {
 					employeeContractVariablesDB.add("HORAS_EXTRAS");
 					employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
 					employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
+					employeeContractVariablesDB.add("VENTAS");
 		
 					for (String varName : context.getVariables()){
 						ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
@@ -573,6 +579,98 @@ public class EventsDraftObject {
 	// ---------------------------------------------------------------------------------------------------
 	//									  METODO GUARDAR
 	// ---------------------------------------------------------------------------------------------------
+	
+	public void updateEventsWorkplace(Consumer<EventsWorkplace> success, Consumer<Throwable> failure) {
+		EventsWorkplace updateEventsWorkplace = new EventsWorkplace();
+		updateEventsWorkplace.setUpdateEventsWorkplace(createUpdateEventsWorkplace());
+		
+		employeesServiceAsync.setEventsWorkplace(updateEventsWorkplace, new AsyncCallback<EventsWorkplace>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+				
+			}
+
+			@Override
+			public void onSuccess(EventsWorkplace result) {
+				draftMapEventsObject.clear();
+				success.accept(result);
+				
+			}
+			
+		});
+	}
+
+
+	private List<Quintet<Integer, String, Date, Date, String>> createUpdateEventsWorkplace() {
+		Map<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> updateMap = new HashMap<Integer, Map<String, ArrayList<EmployeeEventsVariable>>>();
+		
+		for (Entry<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> entry : mapEventsObject.entrySet()){
+			updateMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		for (Entry<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> entry : draftMapEventsObject.entrySet()){
+			Integer employeeId = entry.getKey();
+			for(Entry<String, ArrayList<EmployeeEventsVariable>> entryVar : entry.getValue().entrySet()){
+				String varName = entryVar.getKey();
+				for(EmployeeEventsVariable var : entryVar.getValue()){
+					addUpdateEventVarToMap(updateMap, employeeId, varName, var);
+				}
+			}
+		}
+		
+		return convertMapToList(updateMap);
+	}
+
+
+	private List<Quintet<Integer, String, Date, Date, String>> convertMapToList(
+			Map<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> updateMap) {
+		
+		List<Quintet<Integer, String, Date, Date, String>> updateList = new ArrayList<>();
+		
+		for (Entry<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> entry : updateMap.entrySet()){
+			Integer employeeId = entry.getKey();
+			for(Entry<String, ArrayList<EmployeeEventsVariable>> entryVar : entry.getValue().entrySet()){
+				String varName = entryVar.getKey();
+				for(EmployeeEventsVariable var : entryVar.getValue()){
+					java.sql.Date sqlStartDate = new java.sql.Date(var.getStartDate().getTime());
+					java.sql.Date sqlEndDate = new java.sql.Date(var.getEndDate().getTime());
+					
+					updateList.add(new Quintet<Integer, String, Date, Date, String>(employeeId, varName, sqlStartDate, sqlEndDate, var.getValue().toString()));
+				}
+			}
+		}
+		
+		return updateList;
+	}
+
+
+	private void addUpdateEventVarToMap(Map<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> updateMap,
+			Integer employeeId, String varName, EmployeeEventsVariable var) {
+		
+		EmployeeEventsVariable removeVar = null;
+		if(updateMap.containsKey(employeeId)){
+			if(updateMap.get(employeeId).containsKey(varName)){
+				for(EmployeeEventsVariable varDraft : this.draftMapEventsObject.get(employeeId).get(varName)){
+					if(varDraft.getStartDate().equals(var.getStartDate())){
+						removeVar = varDraft;
+						continue;
+					}	
+				}
+				updateMap.get(employeeId).get(varName).remove(removeVar);
+				updateMap.get(employeeId).get(varName).add(var);
+			}else{
+				updateMap.get(employeeId).put(varName, new ArrayList<EmployeeEventsVariable>());
+				updateMap.get(employeeId).get(varName).add(var);
+			}
+		}else{
+			updateMap.put(employeeId, new HashMap<String, ArrayList<EmployeeEventsVariable>>());
+			updateMap.get(employeeId).put(varName, new ArrayList<EmployeeEventsVariable>());
+			updateMap.get(employeeId).get(varName).add(var);
+		}
+		
+	}
 
 //	public void save(String event, final SaveCallback callback) {
 //	final Events dirtyEvents = getEvents(event);
