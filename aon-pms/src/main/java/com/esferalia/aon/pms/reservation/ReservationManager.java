@@ -3,6 +3,7 @@ package com.esferalia.aon.pms.reservation;
 import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.xmlbeans.XmlError;
+import org.apache.xmlbeans.XmlOptions;
 import org.opentravel.ota.x2003.x05.AmountType;
 import org.opentravel.ota.x2003.x05.CommentType.Comment;
 import org.opentravel.ota.x2003.x05.ErrorType;
@@ -111,7 +114,8 @@ public class ReservationManager implements IReservationConstants {
 		successMap = new HashMap<String, Integer>();
 		try {
 			OTAHotelResNotifRQDocument document = OTAHotelResNotifRQDocument.Factory.parse(reservationXml.replaceAll("&", "&amp;"));
-			if (document.validate()) {
+			List<XmlError> errors = new ArrayList<XmlError>();
+			if (document.validate(new XmlOptions().setErrorListener(errors))) {
 				POSType posType = document.getOTAHotelResNotifRQ().getPOS();
 				HotelReservationsType reservationsType = document.getOTAHotelResNotifRQ().getHotelReservations();
 				for (int i=0; i<reservationsType.sizeOfHotelReservationArray(); i++) {
@@ -120,7 +124,11 @@ public class ReservationManager implements IReservationConstants {
 					successMap.put(reservation.getCrsCode(), reservation.getId());
 				}
 			} else {
-				throw new ReservationException("Invalid message", 395);
+				StringBuffer errorMessage = new StringBuffer();
+				for (XmlError error: errors) {
+					errorMessage.append(error.getMessage());
+				}
+				throw new ReservationException(errorMessage.toString(), 395);
 			}
 			return reservationSuccess();
 		} catch (ReservationException ex) {
@@ -404,6 +412,10 @@ public class ReservationManager implements IReservationConstants {
 				}
 				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().sizeOfTelephoneArray() > 0) {
 					reservationGuest.setPhone(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getTelephoneArray(0).getPhoneNumber());
+				}
+				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().sizeOfCitizenCountryNameArray() > 0) {
+					String countryValue = guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getCitizenCountryNameArray(0).getCode();
+					reservationGuest.setDocumentCountry(Country.obtainCountry(countryValue));
 				}
 				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().sizeOfAddressArray() > 0) {
 					if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).sizeOfAddressLineArray() > 0) {
