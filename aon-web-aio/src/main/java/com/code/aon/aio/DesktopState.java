@@ -337,7 +337,6 @@ public class DesktopState implements Serializable {
 				properties.put( ICommonConstants.HIDE_MENU_CHOOSE_LANGUAGE, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_ADVANCED_MODE, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_WEB_MAP, Boolean.TRUE );
-				properties.put( ICommonConstants.HIDE_MENU_HELP, Boolean.TRUE );
 				if ( isPayrollPortal(user) ) {
 					properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
 					properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
