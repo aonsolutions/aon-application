@@ -148,6 +148,8 @@ public class WarehouseServlet extends HttpServlet{
 							object = getProductMovements(domain, userName, req.getParameterMap());
 						} else if(MSG.ITEM.equals(pathInfo[4])){			
 							object = getItemMovements(domain, userName, req.getParameterMap());
+						} else if(MSG.ELABORATION.equals(pathInfo[4])){			
+							object = getElaborationMovements(domain, userName, req.getParameterMap());
 						}
 					}
 				} else if("transfer".equals(pathInfo[3])){
@@ -1048,7 +1050,48 @@ public class WarehouseServlet extends HttpServlet{
 		}
 		return filter;
     }
-
+    
+    private JSONArray getElaborationMovements(Domain domain,String login, Map<String, String[]> filterMap){
+    	JSONArray array = new JSONArray();
+    	if(filterMap.containsKey(MSG.FROM) && filterMap.containsKey(MSG.TO)) {
+    		StatData<Integer, String, Double> stat = getElaborationMovementsStatData(domain, login, filterMap);
+        	
+    		Integer[] ids = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
+        	Map<Integer, Item> itemMap = new HashMap<>();
+        	AON.getFullItemList(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(ids)).forEach(item -> {
+        		itemMap.put(item.getId(), item);
+        	});
+    		
+        	for(Integer itemId: ids) {
+    			if(stat.getMap().containsKey(itemId)){
+    				Item item = itemMap.get(itemId);
+    				Double inputs = (stat.get(itemId, StatDAO.PRODUCT_INPUTS));
+    				Double outputs = (stat.get(itemId, StatDAO.PRODUCT_OUTPUTS));
+    				inputs = inputs==null?0.0:inputs;
+    				outputs = outputs==null?0.0:outputs;
+    				Double balance = inputs - outputs;
+    				array.put(
+    						new JSONObject()
+    						.put(MSG.ID, itemId)
+    						.put(MSG.DOMAIN, item.getDomain())
+    						.put("product_name", item.getProduct().getCode()+" / "+item.getProduct().getName()+" #"+item.getSerialNumber())
+    						.put("inputs", inputs)
+    						.put("outputs", outputs)
+    						.put("balance", balance)
+    						);    			
+    			}
+    		}
+    	}
+    	return array;
+    }
+    protected StatData<Integer, String, Double> getElaborationMovementsStatData(Domain domain,String login, Map<String, String[]> filterMap){
+    	StatData<Integer, String, Double> stat = AON.getElaborationMovements(domain.getName(), domain.getId(), login,
+				f -> productInventoriableFilter(domain, filterMap, f),
+				f -> itemFilter(domain, filterMap, f),
+				f -> elaborationFilter(domain, filterMap, f));
+    	return stat;
+    }
+    
 	
     
     /*

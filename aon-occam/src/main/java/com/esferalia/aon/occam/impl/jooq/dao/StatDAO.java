@@ -2,6 +2,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Elaboration.ELABORATION;
+import static com.esferalia.aon.jooq.tables.ElaborationDetail.ELABORATION_DETAIL;
+import static com.esferalia.aon.jooq.tables.ElaborationDetailComposition.ELABORATION_DETAIL_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -38,6 +41,7 @@ import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -63,6 +67,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO.ElaborationPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
@@ -347,6 +352,7 @@ public class StatDAO {
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 	private static final SalesPropertiesDAO SALES_PROPERTIES = new SalesPropertiesDAO();
 	private static final PurchasePropertiesDAO PURCHASE_PROPERTIES = new PurchasePropertiesDAO();
+	private static final ElaborationPropertiesDAO ELABORATION_PROPERTIES = new ElaborationPropertiesDAO();
 	
 	public static StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter,
 			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
@@ -397,6 +403,65 @@ public class StatDAO {
 		for (Integer key : inputs.keySet())
 			stat.put(key, PRODUCT_INPUTS, inputs.get(key));
 
+		return stat;
+	}
+	
+	public static StatData<Integer, String, Double> getElaborationMovements(AONContext ctx,
+			ProductFilter productFilter, ItemFilter itemFilter, ElaborationFilter elaborationFilter) {
+		
+		Collection<Condition> detailConditions = new ArrayList<Condition>();
+		detailConditions.addAll(Arrays.asList(ELABORATION_PROPERTIES.getConditions(elaborationFilter)));
+		detailConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		detailConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
+		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> detailSelect = ctx.getDslContext()
+			.select(ITEM.ID, DSL.sum(ELABORATION_DETAIL.QUANTITY).as(ELABORATION_DETAIL.QUANTITY))
+			.from(ELABORATION)
+				.join(ELABORATION_DETAIL).on(ELABORATION.ID.equal(ELABORATION_DETAIL.ELABORATION))
+				.join(ITEM).on(ELABORATION_DETAIL.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+			.where(detailConditions)
+			.groupBy(ELABORATION_DETAIL.ID)
+			.orderBy(ITEM.PRODUCT);
+		
+		Collection<Condition> compositionConditions = new ArrayList<Condition>();
+		detailConditions.addAll(Arrays.asList(ELABORATION_PROPERTIES.getConditions(elaborationFilter)));
+		compositionConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
+		compositionConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(itemFilter)));
+		SelectSeekStep1<Record2<Integer, BigDecimal>, Integer> compositionSelect = ctx.getDslContext()
+				.select(ITEM.ID, DSL.sum(ELABORATION_DETAIL_COMPOSITION.QUANTITY).as(ELABORATION_DETAIL_COMPOSITION.QUANTITY))
+				.from(ELABORATION)
+				.join(ELABORATION_DETAIL).on(ELABORATION.ID.equal(ELABORATION_DETAIL.ELABORATION))
+				.join(ELABORATION_DETAIL_COMPOSITION).on(ELABORATION_DETAIL.ID.equal(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL))
+				.join(ITEM).on(ELABORATION_DETAIL_COMPOSITION.ITEM.equal(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.equal(PRODUCT.ID))
+				.where(compositionConditions)
+				.groupBy(ELABORATION_DETAIL_COMPOSITION.ID)
+				.orderBy(ITEM.PRODUCT);
+		
+		Map<Integer, Double> detailMap = new HashMap<>();
+		detailSelect
+			.forEach(record -> {
+				Integer key = record.get(ITEM.ID);
+				Double value = record.value2().doubleValue();
+				if(!detailMap.containsKey(key))
+					detailMap.put(key, 0.0);
+				detailMap.put(key, detailMap.get(key)+value);
+			});
+		Map<Integer, Double> compositionMap = new HashMap<>();
+		compositionSelect
+			.forEach(record -> {
+				Integer key = record.get(ITEM.ID);
+				Double value = record.value2().doubleValue();
+				if(!compositionMap.containsKey(key))
+					compositionMap.put(key, 0.0);
+				compositionMap.put(key, compositionMap.get(key)+value);
+			});
+		
+		final StatData<Integer, String, Double> stat = new StatData<>();
+		for (Integer key : detailMap.keySet())
+			stat.put(key, PRODUCT_INPUTS, detailMap.get(key));
+		for (Integer key : compositionMap.keySet())
+			stat.put(key, PRODUCT_OUTPUTS, compositionMap.get(key));
 		return stat;
 	}
 	

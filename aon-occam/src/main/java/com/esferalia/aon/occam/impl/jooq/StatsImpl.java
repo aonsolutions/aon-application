@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IStats;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -62,5 +63,10 @@ public class StatsImpl implements IStats {
 				incomeFilter);
 	}
 
+	@Override
+	public StatData<Integer, String, Double> getElaborationMovements(AONContext ctx, ProductFilter productFilter,
+			ItemFilter itemFilter, ElaborationFilter elaborationFilter) {
+		return StatDAO.getElaborationMovements(ctx, productFilter, itemFilter, elaborationFilter);
+	}
 
 }

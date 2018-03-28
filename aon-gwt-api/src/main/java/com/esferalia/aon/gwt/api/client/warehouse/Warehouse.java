@@ -307,6 +307,10 @@ public class Warehouse extends Methods{
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements/item" + filter, callback);
 	}
+	public void getElaborationMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements/elaboration" + filter, callback);
+	}
 	
 	/* WAREHOUSE */
 	public void getWarehouseList(AsyncCallback<JSON<JsObject>> callback){ 

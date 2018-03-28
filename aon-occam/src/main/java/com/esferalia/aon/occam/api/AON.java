@@ -2708,6 +2708,18 @@ public class AON {
 		}		
 	}
 	
+	public static StatData<Integer, String, Double> getElaborationMovements(String domainName, Integer domainId, String login, ProductFilter productFilter,
+			ItemFilter itemFilter, ElaborationFilter elaborationFilter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,login);
+			return getStats().getElaborationMovements(ctx, productFilter, itemFilter, elaborationFilter);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}		
+	}
+	
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************

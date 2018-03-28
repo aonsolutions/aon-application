@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.api.client.warehouse;
 
-import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
@@ -25,6 +24,10 @@ public class JsElaborationDetail extends JavaScriptObject {
 											return this.domain;
 											}-*/;
 
+	public final native JsElaboration getElaboration() /*-{
+														return this.elaboration;
+														}-*/;
+
 	public final native String getDate() /*-{
 											return this.date;
 											}-*/;
@@ -38,8 +41,8 @@ public class JsElaborationDetail extends JavaScriptObject {
 												}-*/;
 
 	public final native JsWarehouse getWarehouse() /*-{
-												return this.warehouse;
-												}-*/;
+													return this.warehouse;
+													}-*/;
 
 	public final native String getAddInfo() /*-{
 												return this.add_info;

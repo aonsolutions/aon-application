@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoiceDetail;
 import com.esferalia.aon.gwt.api.client.product.JsItem;
 import com.esferalia.aon.gwt.api.client.warehouse.JsDeliveryDetail;
-import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.api.client.warehouse.JsIncomeDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsStockStat;
 import com.esferalia.aon.gwt.api.client.warehouse.JsWarehouseTransferDetail;
@@ -128,7 +127,7 @@ public class FooterPanel extends Composite {
 		tabPanel.getTabWidget(FooterTabs.PURCHASE_INVOICE.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.SALE_INVOICE.ordinal()).getParent().setVisible(true);
 		tabPanel.getTabWidget(FooterTabs.WAREHOUSE_TRANSFER.ordinal()).getParent().setVisible(true);
-		tabPanel.getTabWidget(FooterTabs.ELABORATION.ordinal()).getParent().setVisible(false);
+		tabPanel.getTabWidget(FooterTabs.ELABORATION.ordinal()).getParent().setVisible(true);
 		selectTab(FooterTabs.ITEM.ordinal());
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
@@ -324,8 +323,24 @@ public class FooterPanel extends Composite {
 	
 	private void loadElaborationTab(HashMap<String, LinkedList<String>> filterMap) {
 		elaborationPanel.clear();
-		// TODO loadElaborationTab
-		elaborationPanel.add(new Label("Disponible pr\u00F3ximamente"));
+		if(isFilterDefined(filterMap)) {
+			API.getWarehouse().getElaborationMovements(filterMap, new AsyncCallback<JSON<JsStockStat>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsStockStat> result) {
+					if(!result.getData().toLinkedList().isEmpty()) {
+						elaborationPanel.add( new DetailPanel(parent, result.getData().toLinkedList()) );
+					} else {
+						elaborationPanel.add(new Label("No se han encontrado resultados. "));
+					}
+					updateTabTitle(elaborationPanelHeader, result.getData().length());
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else {
+			elaborationPanel.add(new Label("El objeto seleccinado no es v\u00E1lido. "));
+		}
 	}
 	
 	
@@ -400,19 +415,6 @@ public class FooterPanel extends Composite {
 			o.referenceCode = detail.getWarehouseTransfer().getSeries()+"/"+detail.getWarehouseTransfer().getNumber();
 			o.registryName = "-";
 			o.quantity = detail.getQuantity();
-			list.add(o);
-		});
-		return createPanel(list);
-	}
-	
-	protected FlowPanel createElaborationPanel(AonJsArray<JsElaboration> aonJsArray) {
-		List<MovementObject> list = new LinkedList<>();
-		aonJsArray.toLinkedList().forEach(elaboration -> {
-			MovementObject o = new MovementObject();
-			o.date = elaboration.getDate();
-			o.referenceCode = elaboration.getSeries()+"/"+elaboration.getNumber();;
-			o.registryName = "-";
-			o.quantity = elaboration.getQuantity();
 			list.add(o);
 		});
 		return createPanel(list);

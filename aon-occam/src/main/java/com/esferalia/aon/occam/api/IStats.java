@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -33,6 +34,9 @@ public interface IStats {
 	StatData<Integer, String, Double> getItemMovements(AONContext ctx, ProductFilter productFilter,
 			ItemFilter itemFilter, InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter,
 			IncomeFilter incomeFilter);
+	
+	StatData<Integer, String, Double> getElaborationMovements(AONContext ctx, ProductFilter productFilter,
+			ItemFilter itemFilter, ElaborationFilter elaborationFilter);
 	
 
 }

@@ -24,10 +24,14 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 	private LinkedList<JsStockStat> itemList;
 	
 	public DetailPanel(Main parent, LinkedList<JsStockStat> itemList) {
+		this(parent, itemList, true);
+	}
+	
+	public DetailPanel(Main parent, LinkedList<JsStockStat> itemList, boolean withClickHandler) {
 		super("pre");
 		this.parent = parent;
 		this.itemList = itemList;
-		createPanel();
+		createPanel(withClickHandler);
 	}
 	
 	@Override
@@ -35,7 +39,7 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	
-	private void createPanel(){
+	private void createPanel(boolean withClickHandler){
 		this.clear();
 		
 		final FlowPanel headerPanel = new FlowPanel("pre");
@@ -58,12 +62,14 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 		for (final JsStockStat item: itemList) {
 			final FocusPanel entryPanel = print(item);
 			this.add(entryPanel);
-			entryPanel.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					onDetailSelect(item);
-				}
-			});
+			if(withClickHandler) {
+				entryPanel.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						onDetailSelect(item);
+					}
+				});
+			}
 		}
 		
 	}
@@ -73,7 +79,7 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 		final InlineLabel label =  new InlineLabel("Filtrando por Lote/n\u00B0 Serie...");
 		toast.show("Procesando ...", label);
 		parent.onSelectItem(item);
-		createPanel();
+		createPanel(true);
 		new Timer() {
             @Override
             public void run() {

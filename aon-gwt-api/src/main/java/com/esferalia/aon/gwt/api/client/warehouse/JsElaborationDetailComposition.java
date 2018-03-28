@@ -25,6 +25,10 @@ public class JsElaborationDetailComposition extends JavaScriptObject {
 											return this.domain;
 											}-*/;
 
+	public final native JsElaborationDetail getElaborationDetail() /*-{
+																	return this.elaboration_detail;
+																	}-*/;
+
 	public final native JsItem getItem() /*-{
 											return this.item;
 											}-*/;
@@ -36,7 +40,7 @@ public class JsElaborationDetailComposition extends JavaScriptObject {
 	public final native JsObject getWarehouse() /*-{
 												return this.warehouse;
 												}-*/;
-	
+
 	public final native String getAddInfo() /*-{
 											return this.add_info;
 											}-*/;
