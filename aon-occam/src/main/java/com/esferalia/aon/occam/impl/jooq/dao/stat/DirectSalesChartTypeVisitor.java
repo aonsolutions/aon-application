@@ -100,7 +100,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 				sel = sel.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID));
 			}
 			if (params.hasSegmentFilter()) {
-				sel = sel.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INVOICE.REGISTRY));
+				sel = sel.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(DELIVERY.CUSTOMER));
 			}
 		return sel;
 	}
@@ -297,7 +297,8 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 		
 		ctx.getDslContext().select(registryId,registry,SUM_FIELD)
 			.from(
-				getInvoiceSelect(INVOICE.REGISTRY.as(registryId), INVOICE.RNAME.as(registry) , invSum)
+				getInvoiceSelect(INVOICE.REGISTRY.as(registryId), REGISTRY.NAME.as(registry) , invSum)
+					.innerJoin(REGISTRY).on(REGISTRY.ID.eq(INVOICE.REGISTRY))
 					.where( getInvoiceCondition())
 					.groupBy(INVOICE.REGISTRY)
 			.unionAll(
