@@ -206,11 +206,11 @@ public class SIIBuilt {
 		
 		// BODY
 		invoiceList.stream().forEach(invoice -> {	
-			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() == 0  && !f.getVatDeductionType().equals(VatDeductionType.NON_TAXABLE))
+			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
-			Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getVatDeductionType().equals(VatDeductionType.NON_TAXABLE))
+			Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
-			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() > 0  && !f.getVatDeductionType().equals(VatDeductionType.NON_TAXABLE))
+			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() > 0  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.map(f -> new VatData().setBase(f.getBase())
 							.setPercentage(f.getPercentage())
 							.setQuota(f.getQuota())
@@ -1562,7 +1562,7 @@ public class SIIBuilt {
 		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
 		contraparte.setNombreRazon(vat.getRegistryName());
 	
-		if(vat.getRegistryDocumentCountry().equals(Country.ES)
+		if((vat.getRegistryDocumentCountry() == null || vat.getRegistryDocumentCountry().equals(Country.ES))
 				&& (!vat.getInvoiceType().equals(InvoiceType.SALES) || !isPersonaFisica(vat.getRegistryDocument()) ||  validateNif(vat.getRegistryDocument(), vat.getRegistryName(), vat.getRegistryDocumentType()))){
 			contraparte.setNIF(vat.getRegistryDocument());
 		} else {
