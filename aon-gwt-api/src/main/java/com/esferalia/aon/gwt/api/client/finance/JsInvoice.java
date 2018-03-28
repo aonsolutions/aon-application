@@ -51,6 +51,22 @@ public class JsInvoice extends JavaScriptObject {
 		return this.type;
 	}-*/;
 	
+	public final native String getCreationDate() /*-{
+		return this.creation_date;
+	}-*/;
+	
+	public final native String getCreationUser() /*-{
+		return this.creation_user;
+	}-*/;
+
+	public final native String getModificationDate() /*-{
+		return this.modification_date;
+	}-*/;
+	
+	public final native String getModificationUser() /*-{
+		return this.modification_user;
+	}-*/;
+	
 	
 	// SII
 

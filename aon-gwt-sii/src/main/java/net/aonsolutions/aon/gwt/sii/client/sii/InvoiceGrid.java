@@ -268,7 +268,28 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		});
 		dataGrid.getColumnSortList().push(taxDateColumn);
 		dataGrid.addColumn(taxDateColumn, "Fecha IVA");
-		dataGrid.setColumnWidth(taxDateColumn, 15, Unit.PCT);
+		dataGrid.setColumnWidth(taxDateColumn, 7.5, Unit.PCT);
+		
+		/** VAT DATE Column **/
+		Column<JsInvoice, String> creationDateColumn = new Column<JsInvoice, String>(new TextCell()) {
+
+			@Override
+			public String getValue(JsInvoice object) {
+				return object.getCreationDate();
+			}
+		};
+		taxDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		taxDateColumn.setSortable(true); 
+		sortHandler.setComparator(taxDateColumn,new Comparator<JsInvoice>() {
+			
+			@Override
+			public int compare(JsInvoice o1, JsInvoice o2) {
+				return o1.getCreationDate().compareTo(o2.getCreationDate());
+			}
+		});
+		dataGrid.getColumnSortList().push(creationDateColumn);
+		dataGrid.addColumn(creationDateColumn, "Fecha Reg.");
+		dataGrid.setColumnWidth(creationDateColumn, 7.5, Unit.PCT);
 		
 		/** Contraparte Column **/
 		Column<JsInvoice, String> contraparteColumn = new Column<JsInvoice, String>(new TextCell()) {
@@ -277,7 +298,6 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			public String getValue(JsInvoice object) {
 				return object.getRegistryName();
 			}
-		
 		};
 		contraparteColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		contraparteColumn.setSortable(true); 
@@ -556,59 +576,66 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			protected void onAccept() {
-				HashMap<String, LinkedList<String>> map =  new HashMap<>();
-				LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
-				map.put("id", list);
-		    	list = new LinkedList<>();
-		    	list.add("suministro");
-		    	map.put("action", list);
-		    	list = new LinkedList<>();
-		    	list.add(lb.getSelectedValue());
-		    	map.put("cert", list);
-		    	list = new LinkedList<>();
-		    	list.add(tb.getText());
-		    	map.put("pass", list);
-		    	list = new LinkedList<>();
-		    	list.add(sii);
-		    	map.put("option", list);
-		    	hide();
-		    	
-		    	list = new LinkedList<>();
-		    	list.add(lb0.getSelectedValue());
-		    	map.put("tipo_operacion", list);
-	
-		    	list = new LinkedList<>();
-		    	list.add(cb.getValue() ? t.getValue() : "false");
-		    	map.put("terceros", list);
-		  /*  	
-		    	list = new LinkedList<>();
-		    	list.add(cb.getValue() ? t4.getValue() : "");
-		    	map.put("auth", list);
-		    */
-		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsObject> result) {
-						VerticalPanel vp = new VerticalPanel();
-						result.getData().stream().forEach(r -> {
-							Label label = new Label(r.getName());
-							String str = r.getId() + "";
-							String color = "red";
-							if(str.equals("200")) color = "green";
-							else if(str.substring(0, 1).equals("2")) color = "orange";
-							label.getElement().getStyle().setColor(color);
-							vp.add(label);
-						});
-						parent.errorPanel.setWidget(vp);
-						parent.tabLayout.selectTab(0);
-						parent.openFootPanel();
-						parent.gridContent();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
+		    	VerticalPanel vp = new VerticalPanel();
+		    	parent.errorPanel.setWidget(vp);
+				parent.tabLayout.selectTab(0);
+				parent.openFootPanel();
+				parent.gridContent();
+				
+				selFiles.stream().forEach(r -> {
+					HashMap<String, LinkedList<String>> map =  new HashMap<>();
+					LinkedList<String> list = new LinkedList<>(); //.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
+					list.add(r.getId() + "");
+					map.put("id", list);
+			    	list = new LinkedList<>();
+			    	list.add("suministro");
+			    	map.put("action", list);
+			    	list = new LinkedList<>();
+			    	list.add(lb.getSelectedValue());
+			    	map.put("cert", list);
+			    	list = new LinkedList<>();
+			    	list.add(tb.getText());
+			    	map.put("pass", list);
+			    	list = new LinkedList<>();
+			    	list.add(sii);
+			    	map.put("option", list);
+			    	hide();
+			    	
+			    	list = new LinkedList<>();
+			    	list.add(lb0.getSelectedValue());
+			    	map.put("tipo_operacion", list);
+		
+			    	list = new LinkedList<>();
+			    	list.add(cb.getValue() ? t.getValue() : "false");
+			    	map.put("terceros", list);
+			  /*  	
+			    	list = new LinkedList<>();
+			    	list.add(cb.getValue() ? t4.getValue() : "");
+			    	map.put("auth", list);
+			    */
+			    	
+			    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
 						
-					}
+						@Override
+						public void onSuccess(JSON<JsObject> result) {
+							result.getData().stream().forEach(r -> {
+								Label label = new Label(r.getName());
+								String str = r.getId() + "";
+								String color = "red";
+								if(str.equals("200")) color = "green";
+								else if(str.substring(0, 1).equals("2")) color = "orange";
+								label.getElement().getStyle().setColor(color);
+								vp.add(label);
+							});
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							
+						}
+					});
+					
+			    	
 				});
 			}
 		};

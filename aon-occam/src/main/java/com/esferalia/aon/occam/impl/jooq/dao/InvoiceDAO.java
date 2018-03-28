@@ -508,7 +508,11 @@ public class InvoiceDAO {
 				.setRetentionQuota(record.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(record.getValue(INVOICE.TOTAL))	
 				.setComments(record.getValue(INVOICE.COMMENTS))
-				.setStatus(record.getValue(INVOICE.STATUS));
+				.setStatus(record.getValue(INVOICE.STATUS))
+				.setCreationDate(record.getValue(INVOICE.CREATION_DATE))
+				.setCreationUser(record.getValue(INVOICE.CREATION_USER))
+				.setModificationDate(record.getValue(INVOICE.MODIFICATION_DATE))
+				.setModificationUser(record.getValue(INVOICE.MODIFICATION_USER));
 		}
 		
 	}
@@ -557,7 +561,12 @@ public class InvoiceDAO {
 				.setTotal(record.getValue(INVOICE.TOTAL))	
 				.setComments(record.getValue(INVOICE.COMMENTS))
 				.setStatus(record.getValue(INVOICE.STATUS))
-				.setSiiStatus(pending ? "Pendiente" : record.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));
+				.setSiiStatus(pending ? "Pendiente" : record.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE))
+				.setCreationDate(record.getValue(INVOICE.CREATION_DATE))
+				.setCreationUser(record.getValue(INVOICE.CREATION_USER))
+				.setModificationDate(record.getValue(INVOICE.MODIFICATION_DATE))
+				.setModificationUser(record.getValue(INVOICE.MODIFICATION_USER))
+				;
 		}
 		
 	}

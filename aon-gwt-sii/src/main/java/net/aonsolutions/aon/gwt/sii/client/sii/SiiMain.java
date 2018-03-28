@@ -964,6 +964,5 @@ public class SiiMain extends AonTemplate2{
 			
 			@Override public void onFailure(Throwable caught) {}
 		});	
-		
 	}
 }
