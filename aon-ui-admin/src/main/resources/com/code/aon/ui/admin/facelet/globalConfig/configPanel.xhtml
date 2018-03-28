@@ -164,7 +164,7 @@
 											value="#{bundle.admin_global_accounting_parameters_short}" />
 									</aon:div>
 								</aon:if>
-								<aon:if test="#{aonRole.fiscal or aonRole.accountingManager}">
+								<aon:if test="#{aonRole.accountingOperator and domainSwitcher.parentDomainUserInChildDomain}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="conectaParams"
 											reRender="configPanelBar,configContent"
