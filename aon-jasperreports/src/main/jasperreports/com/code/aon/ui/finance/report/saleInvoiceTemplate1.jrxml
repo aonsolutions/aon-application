@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-03T15:13:35 -->
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="d6951c83-3bcb-4483-9c91-9eb1590804a0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -135,6 +134,10 @@
 	<field name="address" class="com.code.aon.registry.IAddress"/>
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="project" class="com.code.aon.project.Project"/>
+	<field name="rectifier" class="java.lang.Boolean"/>
+	<field name="rectified" class="java.lang.Boolean"/>
+	<field name="rectificationInvoice" class="com.code.aon.finance.Invoice"/>
+	<field name="rectificationInvoicesString" class="java.lang.String"/>
 	<field name="vatAccrualPayment" class="java.lang.Boolean"/>
 	<variable name="invoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup"/>
 	<variable name="increaseTotal" class="java.lang.Double" resetType="None">
@@ -146,6 +149,9 @@
 	<variable name="taxTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup"/>
 	<variable name="prepaymentTotal" class="java.lang.Double" resetType="None">
 		<variableExpression><![CDATA[$P{invoiceDetailPrinter}.getPrepaymentsTotal($F{id}, false)]]></variableExpression>
+	</variable>
+	<variable name="comments" class="java.lang.String">
+		<variableExpression><![CDATA[(($F{comments}!=null) ? $F{comments} : "") + (($F{rectifier}||$F{rectified}) ? (($F{comments}!=null && !"".equals($F{comments}.trim())) ? "\n" : "") + (($F{rectifier}) ? ($R{finance_invoice_rectifier_message} + " " + $F{rectificationInvoice}.getReferenceCode()) : ($F{rectified}) ? ($R{finance_invoice_rectified_message} + " " + $F{rectificationInvoicesString}) : "") : "")]]></variableExpression>
 	</variable>
 	<group name="invoiceGroup" isStartNewPage="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
@@ -405,7 +411,8 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 					<font fontName="SansSerif" size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_invoice_number}.toUpperCase()+" "+
-($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
+($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")
++" "+(($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : "")]]></textFieldExpression>
 			</textField>
 			<componentElement>
 				<reportElement key="detail" positionType="Float" x="21" y="166" width="489" height="31" isRemoveLineWhenBlank="true" uuid="0352b315-8de6-4018-9f53-169b0ddea6c3"/>
@@ -1018,7 +1025,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 		<band height="30">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="87" y="15" width="423" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="a95ca16d-2985-4f33-97bb-1e93140a2cf7">
-					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1029,11 +1036,11 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{comments}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-54" positionType="Float" x="21" y="15" width="66" height="15" isRemoveLineWhenBlank="true" uuid="c1136c3d-9df5-4783-b2b1-d55b71872aa9">
-					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

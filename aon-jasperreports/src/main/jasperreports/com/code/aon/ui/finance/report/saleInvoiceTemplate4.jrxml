@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-03T15:13:35 -->
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="9f2925b1-8fe6-4150-9401-400ac3b89246">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -140,6 +139,8 @@
 	<field name="project" class="com.code.aon.project.Project"/>
 	<field name="rectifier" class="java.lang.Boolean"/>
 	<field name="rectified" class="java.lang.Boolean"/>
+	<field name="rectificationInvoice" class="com.code.aon.finance.Invoice"/>
+	<field name="rectificationInvoicesString" class="java.lang.String"/>
 	<field name="vatAccrualPayment" class="java.lang.Boolean"/>
 	<variable name="invoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup"/>
 	<variable name="increaseTotal" class="java.lang.Double" resetType="None">
@@ -151,6 +152,9 @@
 	<variable name="taxTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup"/>
 	<variable name="prepaymentTotal" class="java.lang.Double" resetType="None">
 		<variableExpression><![CDATA[$P{invoiceDetailPrinter}.getPrepaymentsTotal($F{id}, false)]]></variableExpression>
+	</variable>
+	<variable name="comments" class="java.lang.String">
+		<variableExpression><![CDATA[(($F{comments}!=null) ? $F{comments} : "") + (($F{rectifier}||$F{rectified}) ? (($F{comments}!=null && !"".equals($F{comments}.trim())) ? "\n" : "") + (($F{rectifier}) ? ($R{finance_invoice_rectifier_message} + " " + $F{rectificationInvoice}.getReferenceCode()) : ($F{rectified}) ? ($R{finance_invoice_rectified_message} + " " + $F{rectificationInvoicesString}) : "") : "")]]></variableExpression>
 	</variable>
 	<group name="invoiceGroup" isStartNewPage="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
@@ -404,7 +408,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="87" y="135" width="423" height="38" isRemoveLineWhenBlank="true" uuid="45b5d1ba-9d54-470e-9aa6-9e8be4857bbe">
-					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -416,11 +420,11 @@
 					<font fontName="SansSerif"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{comments}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-54" positionType="Float" x="21" y="135" width="66" height="15" uuid="4f8714bd-73e0-4b11-a5e9-e3a6b30c7f21">
-					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
