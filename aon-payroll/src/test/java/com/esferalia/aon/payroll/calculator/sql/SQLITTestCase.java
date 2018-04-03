@@ -3820,8 +3820,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
 				.getSalaryPayments())
-			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+			System.out.println("1-."+ payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
+		
 
 		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
 		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
@@ -3836,11 +3837,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
 				.getSalaryPayments())
-			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+			System.out.println("2-." + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
 		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(1750.00, salary.getTotalPayment(), DELTA);
 	}
 	
 	
@@ -3902,7 +3903,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
 				.getSalaryPayments())
-			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+			System.out.println("1-." + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
 		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
@@ -3918,11 +3919,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
 				.getSalaryPayments())
-			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+			System.out.println("2-." + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
 					+ " (" + payment.getExpression() + ")");
 
 		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(1750.00, salary.getTotalPayment(), DELTA);
 	}
 	
 

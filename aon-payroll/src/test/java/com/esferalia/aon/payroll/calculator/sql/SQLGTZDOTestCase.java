@@ -2848,10 +2848,78 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 		
 		double br = 1000.00 / 30.00;
-		double prestIt = br * 0.75 * 30.00;
+		double prestIt = br * 0.75 * get(endDate, Calendar.DAY_OF_MONTH );
 		//@formatter:off
 		Assert.assertEquals(
 				Math.max(prestIt, 500.00) , 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
+	@Test
+	public void testGtzdoAllI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(P_1 + P_2)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getFirstDayOfMonth(getToday());
+		//Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() );
+		
+		double br = 1000.00 / 30.00;
+		double prestIt = br * 0.75 * 30.00;
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00 , 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
