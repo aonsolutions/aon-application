@@ -60,7 +60,7 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
 		this.add(headerPanel);
 		
 		for (final JsStockStat item: itemList) {
-			final FocusPanel entryPanel = print(item);
+			final FocusPanel entryPanel = print(item, withClickHandler);
 			this.add(entryPanel);
 			if(withClickHandler) {
 				entryPanel.addClickHandler(new ClickHandler() {
@@ -88,11 +88,12 @@ public class DetailPanel extends FlowPanel implements HasSelectionHandlers<JsSto
         }.schedule(1000);
 	}
 	
-	private FocusPanel print(JsStockStat item) {
+	private FocusPanel print(JsStockStat item, boolean withClickHandler) {
 		final FocusPanel entryPanel = new FocusPanel();
 		entryPanel.setTabIndex(Integer.MAX_VALUE);
 		FlowPanel panel = new FlowPanel("pre");
-		panel.setStyleName(AON.AON_CSS.aonClickableBlock());		
+		if(withClickHandler)
+			panel.setStyleName(AON.AON_CSS.aonClickableBlock());		
 		panel.addStyleName(AON.AON_CSS.aonFixedFont());
 		panel.addStyleName(AON.AON_CSS.aonFontMedium());
 		panel.addStyleName(AON.AON_CSS.aonMarginBottom());

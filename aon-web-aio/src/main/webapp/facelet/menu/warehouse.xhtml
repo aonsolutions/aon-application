@@ -243,17 +243,15 @@
 											value="#{bundle.warehouse_stockForecast}" />
 									</aon:commandLink>
 								</aon:div>
-								<aon:if test="#{domainSwitcher.betaDomain}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_movementList"
-											action="gwt_movementList"
-											title="#{bundle.warehouse_movementList}">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;"
-												value="#{bundle.warehouse_movementList}" />
-										</aon:commandLink>
-									</aon:div>
-								</aon:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_movementList"
+										action="gwt_movementList"
+										title="#{bundle.warehouse_movementList}">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="#{bundle.warehouse_movementList}" />
+									</aon:commandLink>
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>									
 						<aon:if test="#{aonRole.config}">

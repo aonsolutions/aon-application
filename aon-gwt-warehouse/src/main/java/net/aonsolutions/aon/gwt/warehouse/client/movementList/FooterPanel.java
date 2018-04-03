@@ -329,7 +329,7 @@ public class FooterPanel extends Composite {
 				@Override
 				public void onSuccess(JSON<JsStockStat> result) {
 					if(!result.getData().toLinkedList().isEmpty()) {
-						elaborationPanel.add( new DetailPanel(parent, result.getData().toLinkedList()) );
+						elaborationPanel.add( new DetailPanel(parent, result.getData().toLinkedList(), false) );
 					} else {
 						elaborationPanel.add(new Label("No se han encontrado resultados. "));
 					}
