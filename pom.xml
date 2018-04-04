@@ -198,6 +198,8 @@
 		<module>aon-common-resources</module>
 		<module>aon-db-up2date</module>
 		
+		<!-- AWS API Gateway & Lambda -->
+		<module>aon-jasper-report</module>
 		
 	</modules>
 
