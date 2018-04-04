@@ -28,6 +28,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -86,8 +87,6 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 	@UiField
 	SimpleLayoutPanel north;
 	@UiField
-	StatFilter filter;
-	@UiField
 	SimpleLayoutPanel content;
 	@UiField
 	SimpleLayoutPanel south;
@@ -98,6 +97,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 	@UiField
 	ScrollPanel informationPanel;
 	
+	StatFilter filter;
 	FormPanel diskForm;
 	Hidden invoiceTypes;
 	Hidden categoryIds;
@@ -114,7 +114,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 	Hidden statParams;
 	
 	private DirectSalesStatChartTypeVisitor statChartTypeVisitor;
-	private static final ScrollPanel ERROR_PANEL = new ScrollPanel();
+	private static final ScrollPanel NO_DATA_PANEL = new ScrollPanel();
 	static {
 		FlexTable tab = new FlexTable();
 		tab.setWidth("95%");
@@ -135,7 +135,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 		label.addStyleName(AON.AON_CSS.aonBold());
 		tab.setWidget(0, 1, label);
 		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		ERROR_PANEL.add(tab);
+		NO_DATA_PANEL.add(tab);
 	}
 
 	final private AsyncCallback<Widget> coreChartCallback = new AsyncCallback<Widget>() {
@@ -165,6 +165,16 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		Widget ui = INVOICE_STAT_BINDER.createAndBindUi(this);
 		
+		filter = new StatFilter(getCurrentDomainName(), getCurrentUser(), getCurrentDomain());
+		filter.addValueChangeHandler( new ValueChangeHandler<StatParams>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<StatParams> event) {
+				paintChart();
+			}
+		});
+		north.setWidget(filter);
+
 		content.getElement().setId("content");
 
 		diskForm = new FormPanel("_blank");
@@ -199,9 +209,6 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 		toolbarPanel.add(diskForm);
 		root.add(ui);
 		
-		
-		
-		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.selectTab(INFORMATION_TAB);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -217,7 +224,6 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 		
 		
 		statChartTypeVisitor = new DirectSalesStatChartTypeVisitor();
-		
 		filter.paintFilter(new AsyncCallback<StatParams>() {
 
 			@Override
@@ -385,12 +391,6 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 //		});
 	}
 	
-	
-	@UiHandler("filter")
-	void onFilterChanged( ValueChangeEvent<StatParams> event) {
-		paintChart();
-	}
-	
 	protected void paintChart() {
 //		excel.setEnabled(false);
 		excelTable.setEnabled(false);
@@ -518,7 +518,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.year());
 						coreChartCallback.onSuccess(chart);
@@ -539,7 +539,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.months());
 						coreChartCallback.onSuccess(chart);
@@ -560,7 +560,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.weeks());
 						chart.options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
@@ -582,7 +582,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.days());
 						chart.options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
@@ -604,7 +604,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
 						options.set("animation", StatUtils.ANIMATION);
@@ -643,7 +643,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
 						options.set("animation", StatUtils.ANIMATION);
@@ -682,7 +682,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						if (hasNegativeValues(result)) {
 							final ComboChart.Options options = ComboChart.createComboOptions();
@@ -741,7 +741,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						if (hasNegativeValues(result)) {
 							final ComboChart.Options options = ComboChart.createComboOptions();
@@ -800,7 +800,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
 						options.set("animation", StatUtils.ANIMATION);
@@ -838,7 +838,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					if (result.isEmpty()) coreChartCallback.onSuccess(NO_DATA_PANEL);
 					else {
 						final PieOptions options = PieChart.createPieOptions();
 						options.set("animation", StatUtils.ANIMATION);

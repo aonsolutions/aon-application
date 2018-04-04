@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public class StatFilterItem implements Serializable {
+public class StatFilterItem implements Serializable, Cloneable {
 
 	public static interface IFilterItemVisitor {
 		void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item);
@@ -137,5 +137,12 @@ public class StatFilterItem implements Serializable {
 		this.label = label;
 		return this;
 	}
-
+	
+	public StatFilterItem clone() {
+		return new StatFilterItem()
+			.setType( this.getType())
+			.setId(this.getId())
+			.setLabel(this.getLabel())
+			.setSelected(this.isSelected());
+	}
 }

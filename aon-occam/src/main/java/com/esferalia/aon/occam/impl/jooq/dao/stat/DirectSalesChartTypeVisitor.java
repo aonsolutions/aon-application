@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.impl.jooq.dao.stat;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Income.INCOME;
+import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
@@ -34,7 +36,6 @@ import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.stat.invoice.IDirectSalesChartTypeVisitor;
-import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
@@ -46,9 +47,14 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor {
 	private static final Field<Integer>  MONTH_FIELD = DSL.field("month_field", Integer.class);
-	private static final Field<Integer>   YEAR_FIELD = DSL.field("year_field" , Integer.class); 
+	private static final Field<Integer>   YEAR_FIELD = DSL.field("year_field" , Integer.class);
 	private static final Field<BigDecimal> SUM_FIELD = DSL.sum(DSL.field("sum_field"  , BigDecimal.class));
 	private static final Field<java.sql.Date> DATE_FIELD = DSL.field("date_field"  , java.sql.Date.class);
+	private static final Field<Byte>  TYPE_FIELD = DSL.field("in_type_field", Byte.class);
+	
+	private static final Field<Byte>  INVOICE_TYPE_FIELD = INVOICE.TYPE.as("in_type_field");
+	private static final Field<Byte>  SALES_TYPE_FIELD = DSL.inline(InvoiceType.SALES.value()).as("in_type_field");
+	private static final Field<Byte>  PURCHASE_TYPE_FIELD = DSL.inline(InvoiceType.PURCHASE.value()).as("in_type_field");
 	
 	private static final Field<Integer> INV_YEAR = DSL.year(INVOICE.ISSUE_DATE).as(YEAR_FIELD);
 	private static final Field<Integer> INV_MONTH = DSL.month(INVOICE.ISSUE_DATE).as(MONTH_FIELD);
@@ -56,8 +62,12 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	private static final Field<Integer> DEL_YEAR = DSL.year(DELIVERY.ISSUE_TIME).as(YEAR_FIELD);
 	private static final Field<Integer> DEL_MONTH = DSL.month(DELIVERY.ISSUE_TIME).as(MONTH_FIELD);
 
+	private static final Field<Integer> INC_YEAR = DSL.year(INCOME.ISSUE_TIME).as(YEAR_FIELD);
+	private static final Field<Integer> INC_MONTH = DSL.month(INCOME.ISSUE_TIME).as(MONTH_FIELD);
+
 	private static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yy");
 	protected static final String UNKNOWN = "Desconocido"; 
+	@Deprecated
 	private String periodLabel = "Periodo seleccionado";
 
 	private AONContext ctx;
@@ -105,30 +115,54 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 		return sel;
 	}
 	
+	private SelectOnConditionStep<Record> getIncomeSelect(SelectField<?> ... fields) {
+		SelectOnConditionStep<Record> sel = ctx.getDslContext()
+				.select(fields)
+				.from(INCOME)
+				.join(INCOME_DETAIL).on(INCOME.ID.eq(INCOME_DETAIL.INCOME))
+				.leftOuterJoin(ITEM).on(INCOME_DETAIL.ITEM.eq(ITEM.ID))
+				.leftOuterJoin(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				;
+			if (params.hasTagFilter()) {
+				sel = sel.leftOuterJoin(PRODUCT_TAG).on(PRODUCT_TAG.PRODUCT.eq(PRODUCT.ID));
+			}
+			if (params.hasSegmentFilter()) {
+				sel = sel.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(INCOME.SUPPLIER));
+			}
+		return sel;
+	}
+
 	@Override
 	public void visitDirectSalesTypeByYearComboChart() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
-		ctx.getDslContext().select(YEAR_FIELD,SUM_FIELD)
-		.from(
-			getInvoiceSelect(INV_YEAR, invSum )
-				.where( getInvoiceCondition())
-				.groupBy(INV_YEAR)
-				.orderBy(INV_YEAR)
-		.unionAll(
-			getDeliverySelect(DEL_YEAR, delSum ) 
-				.where( getDeliveryCondition())
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
+		ctx.getDslContext().select(TYPE_FIELD,YEAR_FIELD,SUM_FIELD)
+			.from(
+				getInvoiceSelect(INVOICE_TYPE_FIELD,INV_YEAR, invSum )
+					.where( getInvoiceCondition())
+				.groupBy(INVOICE_TYPE_FIELD,INV_YEAR)
+				.orderBy(INVOICE_TYPE_FIELD,INV_YEAR)
+			.unionAll(
+				getDeliverySelect( SALES_TYPE_FIELD, DEL_YEAR, delSum ) 
+					.where( getDeliveryCondition())
 				.groupBy(DEL_YEAR)
-				.orderBy(DEL_YEAR)
-		 ))
-		.groupBy(YEAR_FIELD)
-		.orderBy(YEAR_FIELD)
+				.orderBy(DEL_YEAR))
+			.unionAll(
+				getIncomeSelect(PURCHASE_TYPE_FIELD,INC_YEAR, incSum ) 
+					.where( getIncomeCondition())
+				.groupBy(INC_YEAR)
+				.orderBy(INC_YEAR))
+		)
+		.groupBy(TYPE_FIELD,YEAR_FIELD)
+		.orderBy(TYPE_FIELD,YEAR_FIELD)
 		.fetch()
 		.stream()
 		.forEach(rec -> {
+			InvoiceType type = InvoiceType.safeValueOf(rec.getValue(TYPE_FIELD));
 			double amount = rec.getValue(SUM_FIELD).doubleValue();
 			String y = AonNumberUtils.toString( rec.getValue(YEAR_FIELD) );
-			table.put(y, periodLabel , amount);
+			table.put(y, type.getDescription() , amount);
 		});
 	}
 
@@ -136,27 +170,34 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitDirectSalesTypeByMonthsComboChart() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
 		
-		ctx.getDslContext().select(YEAR_FIELD,MONTH_FIELD,SUM_FIELD)
+		ctx.getDslContext().select(TYPE_FIELD,YEAR_FIELD,MONTH_FIELD,SUM_FIELD)
 			.from(
-				getInvoiceSelect(INV_YEAR,INV_MONTH, invSum )
+				getInvoiceSelect(INVOICE_TYPE_FIELD,INV_YEAR,INV_MONTH, invSum )
 					.where( getInvoiceCondition())
-					.groupBy(INV_YEAR,INV_MONTH)
-					.orderBy(INV_YEAR,INV_MONTH)
+					.groupBy(INVOICE_TYPE_FIELD,INV_YEAR,INV_MONTH)
+					.orderBy(INVOICE_TYPE_FIELD,INV_YEAR,INV_MONTH)
 			.unionAll(
-				 getDeliverySelect(DEL_YEAR,DEL_MONTH, delSum ) 
+				 getDeliverySelect(SALES_TYPE_FIELD,DEL_YEAR,DEL_MONTH, delSum ) 
 					.where( getDeliveryCondition())
 					.groupBy(DEL_YEAR,DEL_MONTH)
-					.orderBy(DEL_YEAR,DEL_MONTH)
-			 ))
-			.groupBy(YEAR_FIELD,MONTH_FIELD)
-			.orderBy(YEAR_FIELD,MONTH_FIELD)
+					.orderBy(DEL_YEAR,DEL_MONTH))
+			.unionAll(
+					getIncomeSelect(PURCHASE_TYPE_FIELD,INC_YEAR,INC_MONTH, incSum ) 
+						.where( getIncomeCondition())
+						.groupBy(INC_YEAR)
+						.orderBy(INC_YEAR))
+			)
+			.groupBy(TYPE_FIELD,YEAR_FIELD,MONTH_FIELD)
+			.orderBy(TYPE_FIELD,YEAR_FIELD,MONTH_FIELD)
 			.fetch()
 			.stream()
 			.forEach(rec -> {
+				InvoiceType type = InvoiceType.safeValueOf(rec.getValue(TYPE_FIELD));
 				String monthKey = rec.getValue(MONTH_FIELD)+AonStringUtils.SLASH+rec.getValue(YEAR_FIELD);
 				double amount = rec.getValue(SUM_FIELD).doubleValue();
-				table.put(monthKey, periodLabel , amount);
+				table.put(monthKey, type.getDescription() , amount);
 			});
 	}
 
@@ -164,25 +205,32 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitDirectSalesTypeByWeeksComboChart() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
 
 		final Calendar calendar = Calendar.getInstance();
-		ctx.getDslContext().select(DATE_FIELD,SUM_FIELD)
+		ctx.getDslContext().select(TYPE_FIELD,DATE_FIELD,SUM_FIELD)
 		.from(
-			getInvoiceSelect(INVOICE.ISSUE_DATE.as(DATE_FIELD), invSum )
+			getInvoiceSelect(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE.as(DATE_FIELD), invSum )
 				.where( getInvoiceCondition())
-				.groupBy(INVOICE.ISSUE_DATE)
-				.orderBy(INVOICE.ISSUE_DATE)
+				.groupBy(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE)
+				.orderBy(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE)
 		.unionAll(
-			 getDeliverySelect(DSL.date( DELIVERY.ISSUE_TIME).as(DATE_FIELD) , delSum ) 
+			 getDeliverySelect(SALES_TYPE_FIELD,DSL.date( DELIVERY.ISSUE_TIME).as(DATE_FIELD) , delSum ) 
 				.where( getDeliveryCondition())
 				.groupBy(DSL.date( DELIVERY.ISSUE_TIME))
-				.orderBy(DSL.date( DELIVERY.ISSUE_TIME))
-		 ))
-		.groupBy(DATE_FIELD)
-		.orderBy(DATE_FIELD)
+				.orderBy(DSL.date( DELIVERY.ISSUE_TIME)))
+		.unionAll(
+				getIncomeSelect(PURCHASE_TYPE_FIELD,INCOME.ISSUE_TIME, incSum ) 
+					.where( getIncomeCondition())
+				.groupBy(INCOME.ISSUE_TIME)
+				.orderBy(INCOME.ISSUE_TIME))
+		)
+		.groupBy(TYPE_FIELD,DATE_FIELD)
+		.orderBy(TYPE_FIELD,DATE_FIELD)
 		.fetch()
 		.stream()
 		.forEach(rec -> {
+			InvoiceType type = InvoiceType.safeValueOf(rec.getValue(TYPE_FIELD));
 			Date date = rec.getValue(DATE_FIELD);
 			calendar.setTime(date);
 			calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
@@ -191,7 +239,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			double amount = rec.getValue(SUM_FIELD).doubleValue();
 			Double acum = table.get(weekKey, periodLabel );
 			acum = AonMathUtils.round( (acum == null ? 0.0 : acum) + amount); 
-			table.put(weekKey, periodLabel, acum);
+			table.put(weekKey, type.getDescription() , acum);
 		});
 	}
 
@@ -199,26 +247,33 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitDirectSalesTypeByDaysComboChart() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
-		ctx.getDslContext().select(DATE_FIELD,SUM_FIELD)
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
+		ctx.getDslContext().select(TYPE_FIELD,DATE_FIELD,SUM_FIELD)
 		.from(
-			getInvoiceSelect(INVOICE.ISSUE_DATE.as(DATE_FIELD), invSum )
+			getInvoiceSelect(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE.as(DATE_FIELD), invSum )
 				.where( getInvoiceCondition())
-				.groupBy(INVOICE.ISSUE_DATE)
-				.orderBy(INVOICE.ISSUE_DATE)
+			.groupBy(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE)
+			.orderBy(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE)
 		.unionAll(
-			 getDeliverySelect(DSL.date( DELIVERY.ISSUE_TIME).as(DATE_FIELD) , delSum ) 
+			 getDeliverySelect(SALES_TYPE_FIELD, DSL.date( DELIVERY.ISSUE_TIME).as(DATE_FIELD) , delSum ) 
 				.where( getDeliveryCondition())
-				.groupBy(DSL.date( DELIVERY.ISSUE_TIME))
-				.orderBy(DSL.date( DELIVERY.ISSUE_TIME))
-		 ))
-		.groupBy(DATE_FIELD)
-		.orderBy(DATE_FIELD)
+			.groupBy(DSL.date( DELIVERY.ISSUE_TIME))
+			.orderBy(DSL.date( DELIVERY.ISSUE_TIME)))
+		.unionAll(
+			getIncomeSelect(PURCHASE_TYPE_FIELD,INCOME.ISSUE_TIME, incSum ) 
+				.where( getIncomeCondition())
+			.groupBy(INCOME.ISSUE_TIME)
+			.orderBy(INCOME.ISSUE_TIME))
+		)
+		.groupBy(TYPE_FIELD,DATE_FIELD)
+		.orderBy(TYPE_FIELD,DATE_FIELD)
 		.fetch()
 		.stream()
 		.forEach(rec -> {
+			InvoiceType type = InvoiceType.safeValueOf(rec.getValue(TYPE_FIELD));
 			String date = FMT.format( rec.getValue(DATE_FIELD) );
 			double amount = rec.getValue(SUM_FIELD).doubleValue();
-			table.put(date, periodLabel, amount);
+			table.put(date, type.getDescription(), amount);
 		});
 	}
 	
@@ -259,30 +314,37 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitAbcDirectSalesWorkplace() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
 		final Field<Integer> workplaceId = DSL.field("workplaceId", Integer.class);
 		final Field<String> workplace = DSL.field("workplace", String.class);
 		
-		ctx.getDslContext().select(workplaceId,workplace,SUM_FIELD)
+		ctx.getDslContext().select(TYPE_FIELD,workplaceId,workplace,SUM_FIELD)
 		.from(
-			getInvoiceSelect(INVOICE_DETAIL.WORKPLACE.as(workplaceId),WORKPLACE.DESCRIPTION.as(workplace), invSum)
+			getInvoiceSelect(INVOICE_TYPE_FIELD,INVOICE_DETAIL.WORKPLACE.as(workplaceId),WORKPLACE.DESCRIPTION.as(workplace), invSum)
 				.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INVOICE_DETAIL.WORKPLACE))
-				.where( getInvoiceCondition())
-				.groupBy(INVOICE_DETAIL.WORKPLACE)
+			.where( getInvoiceCondition())
+			.groupBy(INVOICE_TYPE_FIELD,INVOICE_DETAIL.WORKPLACE)
 		.unionAll(
-			getDeliverySelect(DELIVERY.WORKPLACE.as(workplaceId),WORKPLACE.DESCRIPTION.as(workplace), delSum)
+			getDeliverySelect(SALES_TYPE_FIELD,DELIVERY.WORKPLACE.as(workplaceId),WORKPLACE.DESCRIPTION.as(workplace), delSum)
 				.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(DELIVERY.WORKPLACE))
-				.where( getDeliveryCondition())
-				.groupBy(DELIVERY.WORKPLACE)
-		 ))
-		.groupBy(workplaceId)
-		.orderBy(SUM_FIELD.desc())
+			.where( getDeliveryCondition())
+			.groupBy(DELIVERY.WORKPLACE))
+		.unionAll(
+			getIncomeSelect(PURCHASE_TYPE_FIELD,INCOME.WORKPLACE.as(workplaceId),WORKPLACE.DESCRIPTION.as(workplace), incSum)
+				.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.eq(INCOME.WORKPLACE))
+			.where( getIncomeCondition())
+			.groupBy(INCOME.WORKPLACE))
+		)
+		.groupBy(TYPE_FIELD,workplaceId)
+		.orderBy(TYPE_FIELD.asc(),SUM_FIELD.desc())
 		.fetch()
 		.stream()
 		.forEach(rec -> {
+			InvoiceType type = InvoiceType.safeValueOf(rec.getValue(TYPE_FIELD));
 			double d = rec.getValue(SUM_FIELD).doubleValue();
 			if (d >= 0) {
 				table.put( AonStringUtils.defaultIfBlank(rec.getValue(workplace), UNKNOWN)
-						, "VENTAS"
+						, type.getDescription()
 						, d);
 			}
 		});
@@ -292,30 +354,36 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitAbcDirectSalesTitular() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
 		final Field<Integer> registryId = DSL.field("registryId", Integer.class);
 		final Field<String> registry = DSL.field("registry", String.class);
 		
-		ctx.getDslContext().select(registryId,registry,SUM_FIELD)
+		ctx.getDslContext().select(TYPE_FIELD,registryId,registry,SUM_FIELD)
 			.from(
-				getInvoiceSelect(INVOICE.REGISTRY.as(registryId), REGISTRY.NAME.as(registry) , invSum)
+				getInvoiceSelect(INVOICE_TYPE_FIELD,INVOICE.REGISTRY.as(registryId), REGISTRY.NAME.as(registry) , invSum)
 					.innerJoin(REGISTRY).on(REGISTRY.ID.eq(INVOICE.REGISTRY))
-					.where( getInvoiceCondition())
-					.groupBy(INVOICE.REGISTRY)
+				.where( getInvoiceCondition())
+				.groupBy(INVOICE_TYPE_FIELD,INVOICE.REGISTRY)
 			.unionAll(
-				getDeliverySelect(DELIVERY.CUSTOMER.as(registryId), REGISTRY.NAME.as(registry) , delSum)
+				getDeliverySelect(SALES_TYPE_FIELD,DELIVERY.CUSTOMER.as(registryId), REGISTRY.NAME.as(registry) , delSum)
 					.innerJoin(REGISTRY).on(REGISTRY.ID.eq(DELIVERY.CUSTOMER))
-					.where( getDeliveryCondition())
-					.groupBy(DELIVERY.CUSTOMER)
-			 ))
-			.groupBy(registryId)
-			.orderBy(SUM_FIELD.desc())
+				.where( getDeliveryCondition())
+				.groupBy(DELIVERY.CUSTOMER))
+			.unionAll(
+				getIncomeSelect(PURCHASE_TYPE_FIELD,INCOME.SUPPLIER.as(registryId), REGISTRY.NAME.as(registry) , incSum)
+					.innerJoin(REGISTRY).on(REGISTRY.ID.eq(INCOME.SUPPLIER))
+				.where( getIncomeCondition())
+				.groupBy(INCOME.WORKPLACE))
+			)
+			.groupBy(TYPE_FIELD,registryId)
+			.orderBy(TYPE_FIELD.asc(),SUM_FIELD.desc())
 			.fetch()
 			.stream()
 			.forEach(rec -> {
 				double d = rec.getValue(SUM_FIELD).doubleValue();
 				if (d >= 0) {
 					table.put(rec.getValue(registry)
-							, "VENTAS"
+							, "Importe"
 							, d);
 				}
 			});
@@ -325,31 +393,40 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitAbcDirectSalesTitularAddress() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
 		final Field<Integer> registryId = DSL.field("registryId", Integer.class);
 		final Field<String> registry = DSL.field("registry", String.class);
 		final Field<Integer> addressId = DSL.field("addressId", Integer.class);
 		final Field<String> addressAlias = DSL.field("addressAlias", String.class);
 		final Field<String> address = DSL.field("address", String.class);
 		
-		ctx.getDslContext().select(registryId,registry,addressId,addressAlias,address,SUM_FIELD)
+		ctx.getDslContext().select(TYPE_FIELD,registryId,registry,addressId,addressAlias,address,SUM_FIELD)
 		.from(
-			getInvoiceSelect(INVOICE.REGISTRY.as(registryId), INVOICE.RNAME.as(registry)
+			getInvoiceSelect(INVOICE_TYPE_FIELD,INVOICE.REGISTRY.as(registryId), INVOICE.RNAME.as(registry)
 				, INVOICE.RADDRESS.as(addressId)
 				, RADDRESS.ALIAS.as(addressAlias), RADDRESS.ADDRESS.as(address), invSum)
 				.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(INVOICE.RADDRESS))
 				.where( getInvoiceCondition())
-				.groupBy(INVOICE.REGISTRY, INVOICE.RADDRESS)
+				.groupBy(INVOICE_TYPE_FIELD, INVOICE.REGISTRY, INVOICE.RADDRESS)
 		.unionAll(
-			getDeliverySelect(DELIVERY.CUSTOMER.as(registryId), REGISTRY.NAME.as(registry)
+			getDeliverySelect(SALES_TYPE_FIELD,DELIVERY.CUSTOMER.as(registryId), REGISTRY.NAME.as(registry)
 				, DELIVERY.ADDRESS.as(addressId)
 				, RADDRESS.ALIAS.as(addressAlias), RADDRESS.ADDRESS.as(address), delSum)
 				.innerJoin(REGISTRY).on(REGISTRY.ID.eq(DELIVERY.CUSTOMER))
 				.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(DELIVERY.ADDRESS))
 				.where( getDeliveryCondition())
-				.groupBy(DELIVERY.CUSTOMER,DELIVERY.ADDRESS)
-			 ))
-		.groupBy(registryId,addressId)
-		.orderBy(SUM_FIELD.desc())
+				.groupBy(DELIVERY.CUSTOMER,DELIVERY.ADDRESS))
+		.unionAll(
+			getIncomeSelect(PURCHASE_TYPE_FIELD,INCOME.SUPPLIER.as(registryId), REGISTRY.NAME.as(registry)
+				, INCOME.ADDRESS.as(addressId)
+				, RADDRESS.ALIAS.as(addressAlias), RADDRESS.ADDRESS.as(address), incSum)
+				.innerJoin(REGISTRY).on(REGISTRY.ID.eq(INCOME.SUPPLIER))
+				.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(INCOME.ADDRESS))
+				.where( getIncomeCondition())
+				.groupBy(INCOME.SUPPLIER,INCOME.ADDRESS))
+		)
+		.groupBy(TYPE_FIELD,registryId,addressId)
+		.orderBy(TYPE_FIELD.asc(),SUM_FIELD.desc())
 		.fetch()
 		.stream()
 		.forEach(rec -> {
@@ -364,7 +441,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 				} else {
 					name = rec.getValue(registry) + " [" + name + "]"; 
 				}
-				table.put(name , "VENTAS", d);
+				table.put(name ,"Importe", d);
 			}
 		});
 	}
@@ -377,27 +454,32 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitAbcDirectSalesProduct() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
 		final Field<Integer> productId = DSL.field("productId", Integer.class);
 		final Field<String> product = DSL.field("product", String.class);
 
-		ctx.getDslContext().select(productId,product,SUM_FIELD)
+		ctx.getDslContext().select(TYPE_FIELD,productId,product,SUM_FIELD)
 		.from(
-			getInvoiceSelect(PRODUCT.ID.as(productId),PRODUCT.NAME.as(product), invSum)
+			getInvoiceSelect(INVOICE_TYPE_FIELD,PRODUCT.ID.as(productId),PRODUCT.NAME.as(product), invSum)
 				.where( getInvoiceCondition())
-				.groupBy(PRODUCT.ID)
+			.groupBy(INVOICE_TYPE_FIELD,PRODUCT.ID)
 		.unionAll(
-			getDeliverySelect(PRODUCT.ID.as(productId),PRODUCT.NAME.as(product), delSum)
+			getDeliverySelect(SALES_TYPE_FIELD,PRODUCT.ID.as(productId),PRODUCT.NAME.as(product), delSum)
 				.where( getDeliveryCondition())
-				.groupBy(PRODUCT.ID)
-		 ))
-		.groupBy(productId)
-		.orderBy(SUM_FIELD.desc())
+			.groupBy(PRODUCT.ID))
+		.unionAll(
+			getIncomeSelect(PURCHASE_TYPE_FIELD,PRODUCT.ID.as(productId),PRODUCT.NAME.as(product), incSum)
+				.where( getIncomeCondition())
+			.groupBy(PRODUCT.ID))
+		)
+		.groupBy(TYPE_FIELD,productId)
+		.orderBy(TYPE_FIELD.asc(),SUM_FIELD.desc())
 		.fetch()
 		.stream()
 		.forEach(rec -> {
 			double d = rec.getValue(SUM_FIELD).doubleValue();
 			if (d >= 0) {
-				table.put(AonStringUtils.defaultIfBlank(rec.getValue(product), UNKNOWN), "VENTAS", d);
+				table.put(AonStringUtils.defaultIfBlank(rec.getValue(product), UNKNOWN), "Importe", d);
 			}
 		});
 	}
@@ -406,29 +488,35 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitAbcDirectSalesCategory() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
 		final Field<Integer> categoryId = DSL.field("categoryId", Integer.class);
 		final Field<String> category = DSL.field("category", String.class);
 		
-		ctx.getDslContext().select(categoryId,category,SUM_FIELD)
+		ctx.getDslContext().select(TYPE_FIELD,categoryId,category,SUM_FIELD)
 			.from(
-				getInvoiceSelect(PCATEGORY.ID.as(categoryId),PCATEGORY.NAME.as(category), invSum)
+				getInvoiceSelect(INVOICE_TYPE_FIELD,PCATEGORY.ID.as(categoryId),PCATEGORY.NAME.as(category), invSum)
 					.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
 					.where( getInvoiceCondition())
-					.groupBy(PCATEGORY.ID)
+				.groupBy(INVOICE_TYPE_FIELD,PCATEGORY.ID)
 			.unionAll(
-				getDeliverySelect(PCATEGORY.ID.as(categoryId),PCATEGORY.NAME.as(category), delSum)
+				getDeliverySelect(SALES_TYPE_FIELD,PCATEGORY.ID.as(categoryId),PCATEGORY.NAME.as(category), delSum)
 					.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
 					.where( getDeliveryCondition())
-					.groupBy(PCATEGORY.ID)
-			 ))
-			.groupBy(categoryId)
-			.orderBy(SUM_FIELD.desc())
+				.groupBy(PCATEGORY.ID))
+			.unionAll(
+				getIncomeSelect(PURCHASE_TYPE_FIELD,PCATEGORY.ID.as(categoryId),PCATEGORY.NAME.as(category), incSum)
+					.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
+					.where( getIncomeCondition())
+				.groupBy(PCATEGORY.ID))
+			)
+			.groupBy(TYPE_FIELD,categoryId)
+			.orderBy(TYPE_FIELD.asc(),SUM_FIELD.desc())
 			.fetch()
 			.stream()
 			.forEach(rec -> {
 				double d = rec.getValue(SUM_FIELD).doubleValue();
 				if (d >= 0) {
-					table.put(AonStringUtils.defaultIfBlank(rec.getValue(category), UNKNOWN), "VENTAS", d);
+					table.put(AonStringUtils.defaultIfBlank(rec.getValue(category), UNKNOWN), "Importe", d);
 				}
 			});
 	}
@@ -437,27 +525,33 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	public void visitAbcProductBrand() {
 		final Field<BigDecimal> invSum = getInvoiceSelectField(params).as("sum_field");
 		final Field<BigDecimal> delSum = getDeliverySelectField(params).as("sum_field");
+		final Field<BigDecimal> incSum = getIncomeSelectField(params).as("sum_field");
 		final Field<Integer> brandId = DSL.field("brandId", Integer.class);
 		final Field<String> brand = DSL.field("brand", String.class);
 		
-		ctx.getDslContext().select(brandId,brand,SUM_FIELD)
+		ctx.getDslContext().select(TYPE_FIELD,brandId,brand,SUM_FIELD)
 		.from(
-			getInvoiceSelect(BRAND.ID.as(brandId),BRAND.NAME.as(brand), invSum)
+			getInvoiceSelect(INVOICE_TYPE_FIELD,BRAND.ID.as(brandId),BRAND.NAME.as(brand), invSum)
 				.leftOuterJoin(BRAND).on(PRODUCT.BRAND.eq(BRAND.ID))
 				.where( getInvoiceCondition())
-				.groupBy(BRAND.ID)
+				.groupBy(INVOICE_TYPE_FIELD,BRAND.ID)
 		.unionAll(
-			getDeliverySelect(BRAND.ID.as(brandId),BRAND.NAME.as(brand), delSum)
+			getDeliverySelect(SALES_TYPE_FIELD,BRAND.ID.as(brandId),BRAND.NAME.as(brand), delSum)
 				.leftOuterJoin(BRAND).on(PRODUCT.BRAND.eq(BRAND.ID))
 				.where( getDeliveryCondition())
-				.groupBy(BRAND.ID)
-		 ))
-		.groupBy(brandId)
-		.orderBy(SUM_FIELD.desc())
+			.groupBy(BRAND.ID))
+		.unionAll(
+			getIncomeSelect(PURCHASE_TYPE_FIELD,BRAND.ID.as(brandId),BRAND.NAME.as(brand), incSum)
+				.leftOuterJoin(BRAND).on(PRODUCT.BRAND.eq(BRAND.ID))
+				.where( getIncomeCondition())
+			.groupBy(BRAND.ID))
+		)
+		.groupBy(TYPE_FIELD,brandId)
+		.orderBy(TYPE_FIELD.asc(),SUM_FIELD.desc())
 		.fetch()
 		.stream()
 		.forEach(rec -> {
-			table.put(AonStringUtils.defaultIfBlank(rec.getValue(brand), UNKNOWN), "VENTAS", rec.getValue(SUM_FIELD).doubleValue());
+			table.put(AonStringUtils.defaultIfBlank(rec.getValue(brand), UNKNOWN), "Importe", rec.getValue(SUM_FIELD).doubleValue());
 		});
 	}
 
@@ -475,46 +569,89 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	private Condition getDeliveryCondition() {
 		Condition c = DELIVERY.DOMAIN.eq(this.ctx.getDomainId());
 //		c = c.and(DELIVERY.STATUS.eq(DeliveryStatus.PENDING.value()));
-		
-		c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, DELIVERY.SCOPE));
-		c = c.and(SecurityDAO.getSecurityLevelCondition(this.ctx, this.ctx.getUser(), DELIVERY.SECURITY_LEVEL));
-		if (this.params.getFrom() != null) {
-			c = c.and(DELIVERY.ISSUE_TIME.ge(AonDateUtils.toTimestamp(this.params.getFrom())));
+		if (params.isSalesSelected()) {
+			c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, DELIVERY.SCOPE));
+			c = c.and(SecurityDAO.getSecurityLevelCondition(this.ctx, this.ctx.getUser(), DELIVERY.SECURITY_LEVEL));
+			if (this.params.getFrom() != null) {
+				c = c.and(DELIVERY.ISSUE_TIME.ge(AonDateUtils.toTimestamp(this.params.getFrom())));
+			}
+			if (this.params.getTo() != null) {
+				c = c.and(DELIVERY.ISSUE_TIME.le(AonDateUtils.toTimestamp(this.params.getTo())));
+			}
+			if (this.params.getRegistry() != null) {
+				c = c.and(DELIVERY.CUSTOMER.eq(this.params.getRegistry()));
+			}
+			if (this.params.getProduct() != null) {
+				c = c.and(PRODUCT.ID.eq(this.params.getProduct()));
+			}
+			// Se ignoran los suplidos.
+			c = c.and(PRODUCT.TYPE.isNull().or(PRODUCT.TYPE.ne(ProductType.PREPAYMENT.value())));
+			// -----------------------
+			StatDAOInvoiceFilterItemVisitor visitor = new StatDAODeliveryFilterItemVisitor();		
+			for (StatFilterItem item : this.params.getFilterItems() ) {
+				item.getType().visit(visitor,item);
+			}
+			c = visitor.appendCondition(c);
+		} else {
+			c = c.and(DSL.falseCondition());	
 		}
-		if (this.params.getTo() != null) {
-			c = c.and(DELIVERY.ISSUE_TIME.le(AonDateUtils.toTimestamp(this.params.getTo())));
-		}
-		if (this.params.getRegistry() != null) {
-			c = c.and(DELIVERY.CUSTOMER.eq(this.params.getRegistry()));
-		}
-		if (this.params.getProduct() != null) {
-			c = c.and(PRODUCT.ID.eq(this.params.getProduct()));
-		}
-		// Se ignoran los suplidos.
-		c = c.and(PRODUCT.TYPE.isNull().or(PRODUCT.TYPE.ne(ProductType.PREPAYMENT.value())));
-		// -----------------------
-		StatDAOInvoiceFilterItemVisitor visitor = new StatDAODeliveryFilterItemVisitor();		
-		for (StatFilterItem item : this.params.getFilterItems() ) {
-			item.getType().visit(visitor,item);
-		}
-		c = visitor.appendCondition(c);
-		
 		return c;
 	}
 
+	private AggregateFunction<BigDecimal> getIncomeSelectField(final StatParams params) {
+		return params.isViewAmounts()
+				?DSL.sum(INCOME_DETAIL.QUANTITY)
+						:DSL.sum(INCOME_DETAIL.QUANTITY.mul(INCOME_DETAIL.PRICE));
+	}
+	private Condition getIncomeCondition() {
+		Condition c = INCOME.DOMAIN.eq(this.ctx.getDomainId());
+		if (params.isPurchaseSelected()) {
+			c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, INCOME.SCOPE));
+			c = c.and(SecurityDAO.getSecurityLevelCondition(this.ctx, this.ctx.getUser(), INCOME.SECURITY_LEVEL));
+			if (this.params.getFrom() != null) {
+				c = c.and(INCOME.ISSUE_TIME.ge(AonDateUtils.toSql(this.params.getFrom())));
+			}
+			if (this.params.getTo() != null) {
+				c = c.and(INCOME.ISSUE_TIME.le(AonDateUtils.toSql(this.params.getTo())));
+			}
+			if (this.params.getRegistry() != null) {
+				c = c.and(INCOME.SUPPLIER.eq(this.params.getRegistry()));
+			}
+			if (this.params.getProduct() != null) {
+				c = c.and(PRODUCT.ID.eq(this.params.getProduct()));
+			}
+			// Se ignoran los suplidos.
+			c = c.and(PRODUCT.TYPE.isNull().or(PRODUCT.TYPE.ne(ProductType.PREPAYMENT.value())));
+			// -----------------------
+			StatDAOInvoiceFilterItemVisitor visitor = new StatDAODeliveryFilterItemVisitor();		
+			for (StatFilterItem item : this.params.getFilterItems() ) {
+				item.getType().visit(visitor,item);
+			}
+			c = visitor.appendCondition(c);
+		} else {
+			c = c.and(DSL.falseCondition());	
+		}
+		return c;
+	}
+	
+	
 	//SelectLimitStep para ir creando la condicion de la where, primero con los InvoiceType y luego con ProductCategory...
 	private Condition getInvoiceCondition() {
 		Condition c = INVOICE.DOMAIN.eq(this.ctx.getDomainId());
-		
-		c = c.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()));
+		Condition typeCondition = null;
+		if (params.isSalesSelected()) {
+			typeCondition = INVOICE.TYPE.eq(InvoiceType.SALES.value()); 	
+		}
+		if (params.isPurchaseSelected()) {
+			Condition pCondition = INVOICE.TYPE.eq(InvoiceType.PURCHASE.value());
+			typeCondition = (typeCondition == null) ? pCondition : typeCondition.or(pCondition);
+		}
+		c = c.and(typeCondition);
 		c = c.and(
-				INVOICE_DETAIL.SOURCE.eq(InvoiceSource.DIRECT_INVOICE.value())
-//				INVOICE_DETAIL.SOURCE.in(InvoiceSource.DIRECT_INVOICE.value(),InvoiceSource.DELIVERY.value())
-			);
-		
+			INVOICE_DETAIL.SOURCE.eq(InvoiceSource.DIRECT_INVOICE.value())
+		);
 		c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, INVOICE.SCOPE));
 		c = c.and(SecurityDAO.getSecurityLevelCondition(this.ctx, this.ctx.getUser(), INVOICE.SECURITY_LEVEL));
-		
 		if (this.params.getFrom() != null) {
 			c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(this.params.getFrom())));
 			periodLabel = FMT.format(this.params.getFrom());
@@ -523,7 +660,6 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql(this.params.getTo())));
 			periodLabel = periodLabel + " al " +  FMT.format(this.params.getTo());
 		}
-		
 		if (this.params.getRegistry() != null) {
 			c = c.and(INVOICE.REGISTRY.eq(this.params.getRegistry()));
 		}

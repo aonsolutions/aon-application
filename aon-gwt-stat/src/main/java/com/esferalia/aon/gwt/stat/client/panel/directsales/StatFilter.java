@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.stat.StatType;
 import com.esferalia.aon.occam.api.model.stat.invoice.DirectSalesChartType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -53,23 +54,24 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 	private String domainName;
 	public int domain;
 	public String user;
-
-		
 	
-	public StatFilter() {
+	public StatFilter(String domainName,String user,int domain) {
 		super();
+		this.domainName = domainName;
+		this.domain = domain;
+		this.user = user;
 		addStyleName(AON.AON_CSS.aonPanelGridSearch());
 		setHeight("100%");
 	}
 	
 	public String getDomainName() {
-		return getCurrentDomainName();
+		return this.domainName;
 	}
 	public int getDomain() {
-		return getCurrentDomain();
+		return this.domain;
 	}
 	public String getUser() {
-		return getCurrentUser();
+		return this.user;
 	}
 
 	public StatParams getParams() {
@@ -207,13 +209,18 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		int col = 1;
 		final HashMap<StatFilterType,StatFilterMenu> menus = new HashMap<StatFilterType,StatFilterMenu>();					
 		for (final StatFilterItem item : result.getFilterItems()) {
-			if (item.getType() != StatFilterType.INVOICE_TYPE) {
+			if (item.getType() == StatFilterType.SELLER 
+			|| (item.getType() == StatFilterType.INVOICE_TYPE && 
+					(InvoiceType.valueOf(item.getId()) == InvoiceType.UNDEDUCTIBLE || InvoiceType.valueOf(item.getId()) == InvoiceType.EXPENSES))
+			) {
+				// Nothing
+			} else {
 				if (!menus.containsKey( item.getType())) {
 					boolean multipleSelection = item.getType() == StatFilterType.SEGMENT || item.getType() == StatFilterType.PRODUCT_TAG; 
 					final StatFilterMenu menu = new StatFilterMenu(multipleSelection);
 					menus.put(item.getType(), menu);								
 					
-					final Button button = new Button(item.getType().getName() );
+					final Button button = new Button(item.getType() == StatFilterType.INVOICE_TYPE?"Vent./Comp.":item.getType().getName() );
 					button.setStyleName(AON.AON_CSS.aonDropButton());
 					
 					button.addClickHandler(new ClickHandler() {
@@ -246,7 +253,7 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 					});
 				}
 				StatFilterMenu parent = menus.get( item.getType());								
-				parent.addItem( item );						
+				parent.addItem( item );
 			}
 		}
 		tab.getFlexCellFormatter().setColSpan(row, 1, 7);
@@ -282,19 +289,4 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<StatParams> handler) {
 		return super.addHandler(handler, ValueChangeEvent.getType()); 
 	}
-	
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	
-	public static native String getCurrentUser()
-	/*-{
-		return $wnd.getCurrentUser();
-	}-*/;
 }

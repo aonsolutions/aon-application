@@ -4,40 +4,40 @@ import java.io.Serializable;
 
 public enum DirectSalesChartType implements Serializable {
 
-	 DELIVERY_TYPE_BY_YEAR_COMBO_CHART("Ventas directas por a\u00F1os", new ITypeVisitor() {
+	 DELIVERY_TYPE_BY_YEAR_COMBO_CHART("Gr\u00E1fico por a\u00F1os", new ITypeVisitor() {
 		@Override
 		public void visit(IDirectSalesChartTypeVisitor chartVisitor) {
 			chartVisitor. visitDirectSalesTypeByYearComboChart();
 		}
 	 })
 	 
-	,DELIVERY_TYPE_BY_MONTHS_COMBO_CHART("Ventas directas por meses", new ITypeVisitor() {
+	,DELIVERY_TYPE_BY_MONTHS_COMBO_CHART("Gr\u00E1fico por meses", new ITypeVisitor() {
 		@Override
 		public void visit(IDirectSalesChartTypeVisitor chartVisitor) {
 			chartVisitor. visitDirectSalesTypeByMonthsComboChart();
 		}
 	})
 	
-	,DELIVERY_TYPE_BY_WEEKS_COMBO_CHART("Ventas directas por semanas", new ITypeVisitor() {
+	,DELIVERY_TYPE_BY_WEEKS_COMBO_CHART("Gr\u00E1fico por semanas", new ITypeVisitor() {
 		@Override
 		public void visit(IDirectSalesChartTypeVisitor chartVisitor) {
 			chartVisitor. visitDirectSalesTypeByWeeksComboChart();
 		}
 	})
 
-	,DELIVERY_TYPE_BY_DAYS_COMBO_CHART("Ventas directas por d\u00EDas", new ITypeVisitor() {
+	,DELIVERY_TYPE_BY_DAYS_COMBO_CHART("Gr\u00E1fico por d\u00EDas", new ITypeVisitor() {
 		@Override
 		public void visit(IDirectSalesChartTypeVisitor chartVisitor) {
 			chartVisitor. visitDirectSalesTypeByDaysComboChart();
 		}
 	})
-	,ABC_DELIVERY_TITULAR("ABC Titular venta directa", new ITypeVisitor() {
+	,ABC_DELIVERY_TITULAR("ABC Titular venta o compra", new ITypeVisitor() {
 		@Override
 		public void visit(IDirectSalesChartTypeVisitor chartVisitor) {
 			chartVisitor. visitAbcDirectSalesTitular();
 		}
 	})
-	,ABC_DELIVERY_TITULAR_ADDRESS("ABC Direcci\u00F3n del titular venta directa", new ITypeVisitor() {
+	,ABC_DELIVERY_TITULAR_ADDRESS("ABC Direcci\u00F3n del titular venta o compra", new ITypeVisitor() {
 		@Override
 		public void visit(IDirectSalesChartTypeVisitor chartVisitor) {
 			chartVisitor. visitAbcDirectSalesTitularAddress();

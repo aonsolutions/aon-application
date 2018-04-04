@@ -189,4 +189,34 @@ public class StatParams implements Serializable, Cloneable {
 		}
 		return found;
 	}
+
+	public boolean isSalesSelected() {
+		boolean found = true;
+		for (StatFilterItem item : getFilterItems() ) {
+			if (item.getType() == StatFilterType.INVOICE_TYPE && item.isSelected()) {
+				if (InvoiceType.valueOf(item.getId()) == InvoiceType.SALES) {
+					found = true;
+					break;
+				} else {
+					found = false;
+				}
+			}
+		}
+		return found;
+	}
+
+	public boolean isPurchaseSelected() {
+		boolean found = true;
+		for (StatFilterItem item : getFilterItems() ) {
+			if (item.getType() == StatFilterType.INVOICE_TYPE && item.isSelected()) {
+				if (InvoiceType.valueOf(item.getId()) == InvoiceType.PURCHASE) {
+					found = true;
+					break;
+				} else {
+					found = false;
+				}
+			}
+		}
+		return found;
+	}
 }

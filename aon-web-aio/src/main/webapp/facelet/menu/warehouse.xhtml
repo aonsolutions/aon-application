@@ -106,7 +106,7 @@
 						</aon:panelGrid>
 						
 						
-						<aon:if test="#{domainSwitcher.udapa}">
+						<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat}">
 							<aon:panelGrid id="group_statistics_warehouse"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-statistics aon-direct-access-panel">
@@ -117,10 +117,10 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_directSalesStats-warehouse"
 											action="gwt_directSalesStat-warehouse"
-											title="Estadística de ventas directas">
+											title="Estadística de ventas/compras directas">
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
 												style="margin-left: 5px; padding-left: 20px;" 
-												value="Estadística de ventas directas" />		
+												value="Estadística de ventas/compras directas" />		
 										</aon:commandLink>												
 									</aon:div>
 								</aon:div>

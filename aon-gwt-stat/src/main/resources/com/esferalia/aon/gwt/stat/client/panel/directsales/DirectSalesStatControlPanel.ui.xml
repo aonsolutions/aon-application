@@ -1,6 +1,5 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
-	xmlns:stat="urn:import:com.esferalia.aon.gwt.stat.client.panel.directsales"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
@@ -13,7 +12,7 @@
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
 						<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
-							<g:Label text="{msg.statistics} Ventas Directas" />
+							<g:Label text="{msg.statistics} Ventas/Compras Directas" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel>
@@ -47,9 +46,7 @@
 			</g:FlowPanel>
 		</g:north>
 		<g:north size="122">
-			<g:SimpleLayoutPanel height="121px" ui:field="north" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonNoPrint}">
-				<stat:StatFilter ui:field="filter"/>
-			</g:SimpleLayoutPanel>
+			<g:SimpleLayoutPanel height="121px" ui:field="north" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonNoPrint}" />
 		</g:north>
 		<g:center>
 			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
