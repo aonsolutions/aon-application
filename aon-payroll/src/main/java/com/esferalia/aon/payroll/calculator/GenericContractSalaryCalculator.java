@@ -18,6 +18,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
@@ -96,6 +97,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			+ "<li>¿Es una Mejora de la Prestaci\u00F3n de la SS por Incapacidad Temporal?. Elija el tipo <span style='color:orange;'>CRA 0055</span></li>"
 			+ "<li>Revise la expressi\u00F3n <span style='color:orange;'>%s</span>. ¿ Falta mutiplicar por <span style='color:orange;'>DIAS_TRABAJADOS / DIAS_MES</span> ?.</li>"
 			+ "</ul>";
+	
+	static final String STRIKE_PAY_MSG = "El <span <span style='color:orange;'>%s</span> devenga durante la huelga."
+			+ "<ul style='margin-left:1em;'>"
+			+ "<li>Revise la expressi\u00F3n <span style='color:orange;'>%s</span>. ¿ Falta mutiplicar por <span style='color:orange;'>DIAS_TRABAJADOS / DIAS_MES</span> ?.</li>"
+			+ "</ul>";
+	
 	static final String CONSTANT_PAY_MSG = "Revise el concepto <span style='color:orange;'>%s</span>. ¿ Falta mutiplicar por <span style='color:orange;'>DIAS_TRABAJADOS / DIAS_MES</span> ?."
 			;
 	
@@ -411,11 +418,22 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			LinkedList<UndefPayment> undefTotalPayments = new LinkedList<UndefPayment>();
 
 			HashSet<String> alreadyDefined = new HashSet<String>();
+
+			List<Period> leavePeriods = new ArrayList<Period>(); 
+			for ( Period p : expressionContext.getPeriods(LEAVE_DAYS))
+				if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
+					leavePeriods.add(p);
+
+			List<Period> strikePeriods = new ArrayList<Period>(); 
+			for ( Period p : expressionContext.getPeriods(STRIKE_FACTOR))
+				if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
+					strikePeriods.add(p);
+
 			for (IContractPayment contractPayment : contractPayments) {
 				
 				try {
 					resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator,
-							quoteCalculator);
+							quoteCalculator, leavePeriods, strikePeriods);
 					alreadyDefined.add(contractPayment.getName());
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(new UndefPayment(contractPayment, e));
@@ -474,7 +492,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				UndefPayment undefPayment = undefPayments.pop();
 				try {
 					resolvePayment(undefPayment, start, end, issueDate, expressionContext, taxCalculator,
-							quoteCalculator);
+							quoteCalculator, leavePeriods, strikePeriods);
 					paymentsVars.add(undefPayment.getName());
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(undefPayment);
@@ -507,7 +525,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
 					resolvePayment(undefTotalPayment, start, end, issueDate, expressionContext, taxCalculator,
-							quoteCalculator);
+							quoteCalculator, leavePeriods, strikePeriods);
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(undefTotalPayment, e.getMessage(), e.getVariableNames());
 				}
@@ -959,8 +977,22 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				contractPayment.getExpression())); 
 	}
 
-	protected void resolvePayment(IContractPayment contractPayment, Date start, Date end, Date issueDate,
-			ExpressionContext expressionContext, TaxCalculator taxCalculator, QuoteCalculator quoteCalculator)
+	protected List<ITimedResult<Double>> fixStrikeResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, List<Period> its , Date start, Date end, ExpressionContext expressionContext) 
+	throws UnsupportedOperationException
+	{
+		throw new UnsupportedOperationException(String.format(STRIKE_PAY_MSG, contractPayment.getDescription(),
+				contractPayment.getExpression())); 
+	}
+
+	protected void resolvePayment(IContractPayment contractPayment,
+			Date start,
+			Date end,
+			Date issueDate,
+			ExpressionContext expressionContext, 
+			TaxCalculator taxCalculator, 
+			QuoteCalculator quoteCalculator, 
+			List<Period> leavePeriods, 
+			List<Period> strikePeriods)
 			throws AonException {
 		Date paymentStart = Period.max(contractPayment.getStartDate(), start);
 		Date paymentEnd = Period.min(contractPayment.getEndDate(), end);
@@ -974,15 +1006,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				paymentStart, paymentEnd);
 
 		String name = contractPayment.getName();
-
-		List<Period> leavePeriods = new ArrayList<Period>(); 
 		
-		for ( Period p : expressionContext.getPeriods(LEAVE_DAYS))
-			if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
-				leavePeriods.add(p);
-		
-		
-
 		try {
 			List<ITimedResult<Double>> results = expressionContext.eval(contractPayment.getExpression(), paymentStart,
 					paymentEnd, Double.class);
@@ -992,7 +1016,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			.filter(r->r.getContext().containsKey(name))
 			.findAny().ifPresent( r-> expressionContext.removeVariable(name));
 			
-
+			
 			if (contractPayment.getType() != PaymentType.CRA_0008
 					&& contractPayment.getType() != PaymentType.CRA_0055
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
@@ -1000,6 +1024,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
 				try {
 					results = fixItResults(contractPayment, results, leavePeriods, start, end, expressionContext);
+				} catch (UnsupportedOperationException e) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+			} else if (Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
+					.map(r -> r.getPeriod()).iterator(), strikePeriods.iterator())) {
+				try {
+					results = fixStrikeResults(contractPayment, results, strikePeriods, start, end, expressionContext);
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}

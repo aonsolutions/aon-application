@@ -306,6 +306,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	@Override
+	protected List<ITimedResult<Double>> fixStrikeResults(
+			IContractPayment contractPayment,
+			List<ITimedResult<Double>> results, 
+			List<Period> strikes, 
+			Date start, 
+			Date end,
+			ExpressionContext expressionContext) throws UnsupportedOperationException {
+		return  shareExtraITResults(results.get(0), strikes);
+	}
+	
+	@Override
 	protected QuoteCalculator getQuoteCalculator(IContractSalaryCalculatorContext ctx) {
 		return new SmartQuoteCalculator(super.getQuoteCalculator(ctx));
 	}

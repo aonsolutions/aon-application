@@ -12,6 +12,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
@@ -173,7 +174,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, getToday(), getToday(),
 				new HashMap<String, String>() {
 					{
-						put(STRIKE_DAYS.getName(), format("%d", 1));
+						put(STRIKE_FACTOR.getName(), format("%f", 1.00));
 					}
 				});
 
@@ -191,7 +192,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				connection, start, end, end, criteria);
 		ctx.next();
 		assertEquals(ctx, (double) ((get(end, DAY_OF_MONTH)
-				- contractStartDayOfMonth + 1 - 1)), contractStart, end, null);
+				- contractStartDayOfMonth + 1 - 1)), add(contractStart, DAY_OF_MONTH,1), end, null);
 
 	}
 

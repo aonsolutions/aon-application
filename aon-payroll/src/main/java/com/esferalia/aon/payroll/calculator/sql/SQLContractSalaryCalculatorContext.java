@@ -2889,7 +2889,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		double workedDays = availableDays /*- leaveDays*/;
 		workedDays *= 1.00 - getCurrentBindings().get(ERE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
-		workedDays -= getCurrentBindings().get(STRIKE_DAYS, obj -> ((Number) obj).doubleValue(), 0.00);
+		//workedDays -= getCurrentBindings().get(STRIKE_DAYS, obj -> ((Number) obj).doubleValue(), 0.00);
+		workedDays *= 1.00 - getCurrentBindings().get(STRIKE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
+		getCurrentBindings().get(STRIKE_DAYS);
 		
 		double workEndDay = AonDateUtils.get(workEnd, DAY_OF_MONTH);
 		double monthDays = AonDateUtils.getMax(p.getStart(), DAY_OF_MONTH);
@@ -3031,13 +3033,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
 				@Override
-				protected void resolvePayment(IContractPayment contractPayment, Date start, Date end, Date issueDate,
+				protected void resolvePayment(IContractPayment contractPayment,  Date start, Date end, Date issueDate,
 						ExpressionContext expressionContext,
 						com.esferalia.aon.payroll.calculator.TaxCalculator taxCalculator,
-						com.esferalia.aon.payroll.calculator.QuoteCalculator quoteCalculator) throws AonException {
+						com.esferalia.aon.payroll.calculator.QuoteCalculator quoteCalculator,
+						List<Period> leavePeriods,
+						List<Period> strikePeriods) throws AonException {
 					try {
 						super.resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator,
-								quoteCalculator);
+								quoteCalculator, leavePeriods, strikePeriods);
 					} catch (SalaryExpressionException e) {
 						// e.printStackTrace();
 					}
@@ -3642,11 +3646,25 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		List<Period> quote = contract;
-		List<Period> strike = ctx.getPeriods(STRIKE_FACTOR);
-		if (strike != null && !strike.isEmpty()) {
-			quote = Period.sub(quote, strike);
-			intersects = Period.sub(intersects, strike);
+//		List<Period> strike = ctx.getPeriods(STRIKE_FACTOR);
+//		if (strike != null && !strike.isEmpty()) {
+//			quote = Period.sub(quote, strike);
+//			intersects = Period.sub(intersects, strike);
+//		}
+		
+		for (ITimedVariable<Object> strikeFactor : ctx.getVariables(STRIKE_FACTOR)) {
+			Period period = strikeFactor.getPeriod();
+			Object value = strikeFactor.getValue(period);
+			if (!(value instanceof Number))
+				continue;
+			if (((Number) value).doubleValue() >= 1.00)
+				intersects = Period.sub(intersects, Collections.singletonList(period));
+			else
+				intersects = SQLNoItContractSalaryCalculatorContext.split(intersects,
+						Collections.singletonList(period));
+			
 		}
+		
 		for (ContextVariable var : new ContextVariable[] { QUOTE_GROUP, OCCUPATION, TC2, PARTIAL_FACTOR }) {
 			List<Period> periods = getPeriods(ctx, var.getName());
 			quote = Period.intersect(quote, periods);
