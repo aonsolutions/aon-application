@@ -30,6 +30,7 @@ public class VatContext implements Serializable {
 	private String registryName;
 	private Date issueDate;
 	private Date taxDate;
+	private Date creationDate;
 	private Date regContableDate;
 	
 	private String detailDescription;
@@ -198,6 +199,13 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setTaxDate(Date taxDate) {
 		this.taxDate = taxDate;
+		return this;
+	}
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public VatContext setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 		return this;
 	}
 	public boolean isInsidePeriod() {

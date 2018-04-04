@@ -169,6 +169,7 @@ public class ToJSON {
 		json.put("reference_code", invoice.getReferenceCode());
 		json.put("vat_accrual_payment", invoice.isVatAccrualPayment());
 		json.put("type", invoice.getType().getDescription());
+		json.put("issue_date", AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
 		json.put("tax_date", AonDateUtils.format(invoice.getTaxDate(), "dd-MM-yyyy"));
 		json.put("creation_date", AonDateUtils.format(invoice.getCreationDate(), "dd-MM-yyyy"));
 		json.put("creation_user", invoice.getCreationUser());

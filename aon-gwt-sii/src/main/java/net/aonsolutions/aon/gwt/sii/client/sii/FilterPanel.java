@@ -71,7 +71,6 @@ public class FilterPanel extends Composite {
     	fromLabel.setWidth("20px");
 		datePanel.add(fromLabel);
 		
-		
 		final DateBoxEx from = new DateBoxEx();
 		if(parent.getFilterMap().containsKey("from")){
 			Long lon = Long.parseLong(parent.getFilterMap().get("from").get(0));
@@ -79,9 +78,10 @@ public class FilterPanel extends Composite {
 			from.setValue(date);
 		}
 		from.getElement().getStyle().setBorderColor("#dedede");
-		from.getElement().getStyle().setHeight(16, Unit.PX);;
+		from.getElement().getStyle().setHeight(16, Unit.PX);
 		from.setWidth("70px");
 		from.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				LinkedList<String> list = new LinkedList<>();

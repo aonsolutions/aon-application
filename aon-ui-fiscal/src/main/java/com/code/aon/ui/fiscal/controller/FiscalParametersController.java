@@ -65,6 +65,7 @@ public class FiscalParametersController implements Serializable {
 	private static final String FS_MODEL_CFG_M202 = "FS_MODEL_CFG_M202";
 	private static final String FS_MODEL_CFG_M184 = "FS_MODEL_CFG_M184";
 	private static final String FS_MODEL_CFG_M193 = "FS_MODEL_CFG_M193";
+	private static final String FS_MODEL_CFG_SII = "FS_MODEL_CFG_SII";
 	
 	public static final String FISCAL_PARAMS_BEAN_NAME = "fiscalParams";
 	
@@ -140,6 +141,7 @@ public class FiscalParametersController implements Serializable {
 						,FS_MODEL_CFG_M202
 						,FS_MODEL_CFG_M184
 						,FS_MODEL_CFG_M193
+						,FS_MODEL_CFG_SII
 						};
 		
 		for (String key : keys) {
@@ -455,6 +457,13 @@ public class FiscalParametersController implements Serializable {
 		getParameters().get(FS_MODEL_CFG_M184).setValue(config);		
 	}
 	
+	public String getSii() {
+		return getParameters().get(FS_MODEL_CFG_SII).getValue();		
+	}
+	public void setSii(String config) {
+		getParameters().get(FS_MODEL_CFG_SII).setValue(config);		
+	}
+
 	public void onAccept(ActionEvent event) {
 		try {
 			Collection<ApplicationParameter>params = parameters.values();

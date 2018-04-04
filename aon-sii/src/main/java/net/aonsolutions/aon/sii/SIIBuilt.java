@@ -3,6 +3,7 @@ package net.aonsolutions.aon.sii;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -24,6 +26,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatData;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -199,7 +202,7 @@ public class SIIBuilt {
 			, byte[] cert, String pass, Boolean mod, String terceros, String auth) {
 		this.cert = cert;
 		this.pass = pass;
-		SuministroLRFacturasEmitidas suministro = new SuministroLRFacturasEmitidas();
+    	SuministroLRFacturasEmitidas suministro = new SuministroLRFacturasEmitidas();
 
 		// CABECERA
 		suministro.setCabecera(cabecera(company, mod, terceros));
@@ -289,7 +292,11 @@ public class SIIBuilt {
 			if(vat.isIntracommunity() || vat.isExtracommunity()){
 				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._02.getName());
 			}
-			if(vat.getTaxDate().compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
+			
+			ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+	    	Boolean isRegistro = "R".equals(ap.getValue());
+			Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
+			if(opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
 	//			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._16.getName());
 			}
 			
@@ -730,7 +737,10 @@ public class SIIBuilt {
 			if(vat.isIntracommunity()){
 				frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._09.getName());
 			}
-			if(vat.getTaxDate().compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
+			ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+	    	Boolean isRegistro = "R".equals(ap.getValue());
+			Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
+			if(opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
 	//			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
 			}
 			
@@ -764,7 +774,7 @@ public class SIIBuilt {
 				
 			// FECHA REGISTRO CONTABLE
 			//frt.setFechaRegContable(AonDateUtils.format(vat.getRegContableDate(), "dd-MM-yyyy"));
-			frt.setFechaRegContable(AonDateUtils.format(vat.getTaxDate(), "dd-MM-yyyy"));
+			frt.setFechaRegContable(AonDateUtils.format(opDate, "dd-MM-yyyy"));
 			
 			// IMPORTE TOTAL
 			Double total = noExenta.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum()

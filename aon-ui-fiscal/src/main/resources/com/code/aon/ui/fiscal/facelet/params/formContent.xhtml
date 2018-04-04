@@ -253,8 +253,11 @@
 					<f:selectItem itemValue="Y" itemLabel="#{bundle.fiscal_model_yearly}" />
 				</aon:selectOneMenu>
 				
-				<aon:outputLabel value=""/>
-				<aon:outputLabel value=""/>
+				<aon:outputLabel for="sii" value="SII" />
+				<aon:selectOneMenu id="sii" value="#{fiscalParams.sii}">
+					<f:selectItem itemValue="I" itemLabel="Fecha IVA" />
+					<f:selectItem itemValue="R" itemLabel="Fecha Registro" />
+				</aon:selectOneMenu>
 				
 			</aon:panelGrid>
 		</aon:div>

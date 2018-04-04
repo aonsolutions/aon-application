@@ -31,6 +31,14 @@ public class Sii extends Methods{
 		get(getUrl() + "s11/"+getDomainName()+"/"+getUserName()+"/historyDetail?id="+id, callback);
 	}
 	
+	public void getSiiConfiguration(AsyncCallback<JSON<JsSiiConfiguration>> callback){
+		get(url + "s11/"+getDomainName()+"/"+getUserName()+"/configuration",callback);
+	}
+	
+	public void setSiiConfiguration(String requestData){
+		post(url + "s11/" + getDomainName() + "/" + getUserName() + "/configuration", requestData);
+	}
+
 	public void downloadSiiXml(Integer id, String option){
 		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&id="+id + "&option=" + option;
 		impl.base(str, new AsyncCallback<String>() {

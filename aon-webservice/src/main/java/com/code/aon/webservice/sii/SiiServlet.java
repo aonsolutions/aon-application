@@ -15,7 +15,9 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
 @SuppressWarnings("serial")
@@ -46,6 +48,9 @@ public class SiiServlet extends HttpServlet{
 				case "historyDetail":
 					object = getSiiHistoryDetail(domain, userName, Integer.parseInt(req.getParameter("id")));
 					break;
+				case "configuration":
+					object = getSiiConfiguration(domain, userName);
+					break;
 				default:
 					break;
 				}
@@ -57,6 +62,20 @@ public class SiiServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Sii Servlet - POST METHOD");	
+		JSONObject json = Utils.getRequestJSON(req);
+		
+		String scheme = req.getParameter("scheme");
+		String[] pathInfo = req.getPathInfo().split("/");
+		String userName = pathInfo[2];
+		String domainName = pathInfo[1]; 
+		String url = Utils.getUrl(scheme, domainName, req.getRequestURL().toString().contains("aon-aio"));
+		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		if(pathInfo.length > 3){
+			Object object = new Object();
+			if("configuration".equals(pathInfo[3])) {
+				setSiiConfiguration(domain, userName, json);
+			}
+		}
 	}
     
     private JSONArray getSiiHistory(Domain domain, String login){
@@ -86,5 +105,38 @@ public class SiiServlet extends HttpServlet{
     		array.put(ToJSON.invoiceToJSON(r));
     	});
     	return array;
+    }
+    
+    private JSONArray getSiiConfiguration(Domain domain, String login){
+    	JSONArray array = new JSONArray();
+
+    	ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII.getValue());
+    	JSONObject json = new JSONObject();
+    	if(ap.getValue() != null && "R".equals(ap.getValue())) {
+    		json.put("operation_date", "Fecha Registro");
+    	} else json.put("operation_date", "Fecha IVA");
+    	
+    	JSONArray options = new JSONArray();
+
+    	JSONObject option1 = new JSONObject();
+    	option1.put("id", 0);
+    	option1.put("name", "Fecha IVA");
+    	options.put(option1);
+    	
+    	JSONObject option2 = new JSONObject();
+    	option2.put("id", 1);
+    	option2.put("name", "Fecha Registro");
+    	options.put(option2);
+    	
+    	json.put("operation_date_option", options);
+    	
+    	array.put(json);
+    	return array;
+    }
+    
+    private void setSiiConfiguration(Domain domain, String login, JSONObject json){
+    	if(json.opt("operation_date") != null) {
+    		AON.insertApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII, "Fecha Registro".equals(json.getString("operation_date")) ? "R" : "I");
+    	}
     }
 }

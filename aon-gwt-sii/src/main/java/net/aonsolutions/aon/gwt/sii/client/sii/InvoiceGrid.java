@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.sii.JsSiiConfiguration;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
@@ -84,6 +85,8 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	SiiPrincipal parent;
 	Integer cont = 0;
 	
+	Boolean isFechaIVA;
+	
 	private API getAPI() {
 		return parent.getAPI();
 	}
@@ -128,7 +131,18 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 				}
 			}
 		}, MouseOverEvent.getType());
-		load(list);	
+	
+		getAPI().getSii().getSiiConfiguration(new AsyncCallback<JSON<JsSiiConfiguration>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsSiiConfiguration> result) {
+				isFechaIVA = "Fecha IVA".equals(result.getData().get(0).getOperationDate());
+				load(list);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
 		initWidget(binder.createAndBindUi(this));
 	}	
 	
@@ -254,7 +268,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 
 			@Override
 			public String getValue(JsInvoice object) {
-				return object.getTaxDate();
+				return object.getIssueDate();
 			}
 		};
 		taxDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
@@ -263,11 +277,11 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			public int compare(JsInvoice o1, JsInvoice o2) {
-				return o1.getTaxDate().compareTo(o2.getTaxDate());
+				return o1.getIssueDate().compareTo(o2.getIssueDate());
 			}
 		});
 		dataGrid.getColumnSortList().push(taxDateColumn);
-		dataGrid.addColumn(taxDateColumn, "Fecha IVA");
+		dataGrid.addColumn(taxDateColumn, "Fecha Fact.");
 		dataGrid.setColumnWidth(taxDateColumn, 7.5, Unit.PCT);
 		
 		/** VAT DATE Column **/
@@ -275,7 +289,9 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 
 			@Override
 			public String getValue(JsInvoice object) {
-				return object.getCreationDate();
+				if(isFechaIVA) {
+					return object.getTaxDate();
+				} else return object.getCreationDate();
 			}
 		};
 		taxDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
@@ -284,11 +300,13 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			public int compare(JsInvoice o1, JsInvoice o2) {
-				return o1.getCreationDate().compareTo(o2.getCreationDate());
+				if(isFechaIVA) {
+					return o1.getTaxDate().compareTo(o2.getTaxDate());
+				} else return o1.getCreationDate().compareTo(o2.getCreationDate());
 			}
 		});
 		dataGrid.getColumnSortList().push(creationDateColumn);
-		dataGrid.addColumn(creationDateColumn, "Fecha Reg.");
+		dataGrid.addColumn(creationDateColumn, "Fecha Op.");
 		dataGrid.setColumnWidth(creationDateColumn, 7.5, Unit.PCT);
 		
 		/** Contraparte Column **/

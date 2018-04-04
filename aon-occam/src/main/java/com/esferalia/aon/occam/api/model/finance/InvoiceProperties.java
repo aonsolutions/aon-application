@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -32,4 +33,9 @@ public interface InvoiceProperties {
 	Property<Date> getTaxDateProperty();
 	Property<Byte> getVatAccrualPayment();
 
+	Property<Timestamp> getCreationDateProperty();
+	Property<String> getCreationUserProperty();
+	Property<Timestamp> getModificationDateProperty();
+	Property<String> getModificationUserProperty();
+	
 }

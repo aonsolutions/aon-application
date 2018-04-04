@@ -1,5 +1,6 @@
 package com.code.aon.webservice.finance;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -18,12 +19,14 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -173,9 +176,13 @@ public class FinanceServlet extends HttpServlet{
     }
     
     public static Filter iFilterEmitidas(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
+    	ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+    	Boolean isRegistro = "R".equals(ap.getValue());
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
 		.and(f.getTypeProperty().eq(InvoiceType.SALES.value()))
-		.and(f.getTaxDateProperty().ge(from));
+		.and(isRegistro 
+				? f.getCreationDateProperty().ge(new Timestamp(from.getTime()))
+				: f.getTaxDateProperty().ge(from));
 		
     	if("fe_generales".equals(sii)){
 			filter = filter.and(f.getRectificationInvoiceProperty().isNull())
@@ -194,8 +201,12 @@ public class FinanceServlet extends HttpServlet{
     }
     
     public static Filter iFilterRecibidas(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
+    	ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+    	Boolean isRegistro = "R".equals(ap.getValue());
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
-    			.and(f.getTaxDateProperty().ge(from));
+    			.and(isRegistro 
+    				? f.getCreationDateProperty().ge(new Timestamp(from.getTime()))
+    				: f.getTaxDateProperty().ge(from));
     	
     	if("fr_recibidas".equals(sii)){
 			filter = filter.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()) 
@@ -254,11 +265,15 @@ public class FinanceServlet extends HttpServlet{
 	
 	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage, Date from
 			,Boolean pending, Boolean sent, Boolean sent_error, Boolean error, Boolean anulada, String sii){
+		ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+    	Boolean isRegistro = "R".equals(ap.getValue());
 		JSONArray array = new JSONArray();
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getTransactionProperty().eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
-				.and(f.getTaxDateProperty().ge(from))
+				.and(isRegistro 
+	    				? f.getCreationDateProperty().ge(new Timestamp(from.getTime()))
+	    	    		: f.getTaxDateProperty().ge(from))
 				.page(page).perPage(perPage)
     			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm ->{
@@ -270,21 +285,24 @@ public class FinanceServlet extends HttpServlet{
     	return array;
 	}
     
-	
-	 public static Filter iFilterCobrosPagos(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
-	    	Filter filter =  f.getDomainProperty().eq(domain.getId())
-	    			.and(f.getVatAccrualPayment().eq((byte) 1))
-	    			.and(f.getTaxDateProperty().ge(from));
+	public static Filter iFilterCobrosPagos(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
+		ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+    	Boolean isRegistro = "R".equals(ap.getValue());	
+    	Filter filter =  f.getDomainProperty().eq(domain.getId())
+    			.and(f.getVatAccrualPayment().eq((byte) 1))
+    			.and(isRegistro 
+    					? f.getCreationDateProperty().ge(new Timestamp(from.getTime()))
+    					: f.getTaxDateProperty().ge(from));
 	    	
-	    	if("cp_pagos".equals(sii)){
-				filter = filter.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()) 
-						.or(f.getTypeProperty().eq(InvoiceType.EXPENSES.value())));
-			} else if("cp_cobros".equals(sii)){
-				filter = filter.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
-			} 
-	    	filter = filter.page(page).perPage(perPage);
-			return filter;
-	    }
+    	if("cp_pagos".equals(sii)){
+			filter = filter.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()) 
+					.or(f.getTypeProperty().eq(InvoiceType.EXPENSES.value())));
+		} else if("cp_cobros".equals(sii)){
+			filter = filter.and(f.getTypeProperty().eq(InvoiceType.SALES.value()));
+		} 
+    	filter = filter.page(page).perPage(perPage);
+		return filter;
+    }
 	
 	private JSONArray getInvoiceCobrosPagosList(Domain domain, String login, Integer page, Integer perPage, Date from, Boolean pending,Boolean error, Boolean partial, Boolean paid, String sii){
 		JSONArray array = new JSONArray();
@@ -375,9 +393,7 @@ public class FinanceServlet extends HttpServlet{
 		}
     	return array;
     }
-    
-    
-    
+     
     public static Filter invoiceFilter(Domain domain, Map<String, String[]> filterMap, InvoiceProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		

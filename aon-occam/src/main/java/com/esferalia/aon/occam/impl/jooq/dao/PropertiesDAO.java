@@ -182,6 +182,10 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getVatAccrualPayment() {return new FilterDAO.PropertyDAO<>(INVOICE.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SERIES);}
  		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.NUMBER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
