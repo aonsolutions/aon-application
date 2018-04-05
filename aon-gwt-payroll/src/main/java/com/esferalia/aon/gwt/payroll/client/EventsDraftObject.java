@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EventsDraftObject {
@@ -365,14 +366,17 @@ public class EventsDraftObject {
 							Date endDate = null;
 							if(null != quarter.getEndDate())
 								endDate = DateUtils.copyDateOnly(quarter.getEndDate());
+							else{ //TODO: MIRAR BIEN QUE HACER CUANDO ENDDATE ES NULL
+								endDate = DateUtils.copyDateOnly(new Date((quarter.getStartDate().getYear()+1),quarter.getStartDate().getMonth(),quarter.getStartDate().getDate()));
+							}
 							Double value = Double.parseDouble(quarter.getExpression());
-							if(startDate.getMonth() == endDate.getMonth()){
+							if(startDate.getMonth() == endDate.getMonth() && startDate.getYear() == endDate.getMonth()){
 								EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
 								varList.add(eVar);
 							}else{
-								for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
-									Date auxStartDate = new Date(startDate.getYear(), i, 1);
-									Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
+								for(Date date = startDate; date.before(endDate); DateUtils.addMonths2Date(date, 1)){
+									Date auxStartDate = new Date(date.getYear(), date.getMonth(), 1);
+									Date auxEndDate = new Date(date.getYear(), date.getMonth()+1, 0);
 									EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
 									varList.add(eVar);
 								}

@@ -21,7 +21,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -30,6 +29,8 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date, DayType> mapDaysType;
 	private Map<Date, String> mapFestivesDays;
 	private Map<Date, Double> mapExtraHours;
+	private Map<Date, Double> mapDaysCoefficientEre;
+	private Map<Date, Double> mapDaysCoefficientStrike;
 	
 	private Map<Date,Double> draftMapDaysHour;
 	private Map<Date, DayType> draftMapDaysType;
@@ -317,8 +318,7 @@ public class EmployeeCalendarDraftObjectData {
 		
 	}
 	
-	
-	
+		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
 	public EmployeeCalendarDraftObjectData(Integer employeeId, Date startContract, Date endContract,
@@ -330,6 +330,8 @@ public class EmployeeCalendarDraftObjectData {
 		this.mapDaysType = new HashMap<Date,DayType>();
 		this.mapFestivesDays = new HashMap<Date,String>();
 		this.mapExtraHours = new HashMap<Date,Double>();
+		this.mapDaysCoefficientEre = new HashMap<Date,Double>();
+		this.mapDaysCoefficientStrike = new HashMap<Date,Double>();
 		
 		this.draftMapDaysHour = new HashMap<Date,Double>();
 		this.draftMapDaysType = new HashMap<Date,DayType>();
@@ -892,6 +894,8 @@ public class EmployeeCalendarDraftObjectData {
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> hoursList = result.getContractHoursList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> extraHoursList = result.getContractExtraHoursList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> typesList = result.getContractTypeDaysList();
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreList = result.getContractCoefficientEREDayTypeList();
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientStrikeList = result.getContractCoefficientStrikeDayTypeList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> ITDaysList = result.getcontractITDayTypeList();
 				ArrayList<Byte> nonWorkingList = result.getContractNonWorkingDaysList();
 				HashMap<java.util.Date, String> festivesList = result.getContractFestiveDaysList();
@@ -901,6 +905,8 @@ public class EmployeeCalendarDraftObjectData {
 				initializeTypesMap(typesList);
 				initializeFestivesDaysTypeMap(festivesList);
 				initializeITDaysTypeMap(ITDaysList);
+				initializeMapDaysCoefficientEre(daysCoefficientEreList);
+				initializeMapDaysCoefficientStrike(daysCoefficientStrikeList);
 				fullTimeEmployee = result.isFullTimeJourney();
 				if (fullTimeEmployeeDraft == -1)
 					fullTimeEmployeeDraft = result.isFullTimeJourney() ? 1 : 0;
@@ -1089,6 +1095,22 @@ public class EmployeeCalendarDraftObjectData {
 				}
 				
 			}
+			
+			private void initializeMapDaysCoefficientStrike(
+					List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientStrikeList) {
+				for(Quartet<java.sql.Date, java.sql.Date, String, String> dayCoefficient : daysCoefficientStrikeList){
+					mapDaysCoefficientStrike.put(dayCoefficient.getStartDate(), Double.parseDouble(dayCoefficient.getExpression()));
+				}
+				
+			}
+
+			private void initializeMapDaysCoefficientEre(
+					List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreList) {
+				for(Quartet<java.sql.Date, java.sql.Date, String, String> dayCoefficient : daysCoefficientEreList){
+					mapDaysCoefficientEre.put(dayCoefficient.getStartDate(), Double.parseDouble(dayCoefficient.getExpression()));
+				}
+				
+			}
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1105,8 +1127,8 @@ public class EmployeeCalendarDraftObjectData {
 		updateInfo.setMonthExtraHoursList(createUpdateExtraHoursList(mapExtraHours, draftMapExtraHours));
 		updateInfo.setDaysTypeMap(createUpdateTypesMap(mapDaysType, draftMapDaysType));
 		updateInfo.setFullTimeEmployee(this.fullTimeEmployee);
-		updateInfo.setStrikeDaysValues(this.draftMapDaysCoefficientStrike);
-		updateInfo.setEreDaysValues(this.draftMapDaysCoefficientEre);
+		updateInfo.setStrikeDaysValues(createUpdateDaysCoefficientStrike());
+		updateInfo.setEreDaysValues(createUpdateDaysCoefficientEre());
 		
 		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
 
@@ -1119,6 +1141,10 @@ public class EmployeeCalendarDraftObjectData {
 			public void onSuccess(EmployeeCalendarUpdate result) {
 				draftMapDaysHour.clear();
 				draftMapDaysType.clear();
+				draftMapDaysCoefficientEre.clear();;
+				draftMapDaysCoefficientStrike.clear();
+				draftMapExtraHours.clear();
+				
 				success.accept(result);
 			}
 			
@@ -1261,6 +1287,34 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		return updateTypesMap;
+	}
+	
+	private Map<Date, Double> createUpdateDaysCoefficientEre() {
+		Map<Date, Double> updateMapDaysCoefficientEre = new HashMap<Date, Double>();
+		
+		for(Entry<Date, Double> entry : mapDaysCoefficientEre.entrySet()){
+			updateMapDaysCoefficientEre.put(entry.getKey(), entry.getValue());
+		}
+		
+		for(Entry<Date, Double> entry : draftMapDaysCoefficientEre.entrySet()){
+			updateMapDaysCoefficientEre.put(entry.getKey(), entry.getValue());
+		}
+		
+		return updateMapDaysCoefficientEre;
+	}
+
+	private Map<Date, Double> createUpdateDaysCoefficientStrike() {
+		Map<Date, Double> updateMapDaysCoefficientStrike = new HashMap<Date, Double>();
+		
+		for(Entry<Date, Double> entry : mapDaysCoefficientStrike.entrySet()){
+			updateMapDaysCoefficientStrike.put(entry.getKey(), entry.getValue());
+		}
+		
+		for(Entry<Date, Double> entry : draftMapDaysCoefficientStrike.entrySet()){
+			updateMapDaysCoefficientStrike.put(entry.getKey(), entry.getValue());
+		}
+		
+		return updateMapDaysCoefficientStrike;
 	}
 
 	public void getSalaryDraftChanged(SalaryDraft salaryDraft) {

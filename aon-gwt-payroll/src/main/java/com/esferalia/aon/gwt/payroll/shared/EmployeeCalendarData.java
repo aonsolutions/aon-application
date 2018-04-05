@@ -15,6 +15,8 @@ public class EmployeeCalendarData implements Serializable {
 	private ArrayList<Quartet<Date, Date, String, String>> contractExtraHoursList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractTypeDaysList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList;
+	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList;
+	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList;
 	private HashMap<java.util.Date, String> contractFestivesDaysList;
 	private ArrayList<Byte> contractNonWorkingDaysList;
 	private boolean fullTimeJourney;
@@ -29,7 +31,9 @@ public class EmployeeCalendarData implements Serializable {
 			ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList, 
 			HashMap<java.util.Date, String> contractFestivesDaysList,
 			ArrayList<Byte> contractNonWorkingDaysList, 
-			boolean fullTimeJourney) {
+			boolean fullTimeJourney,
+			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList,
+			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList) {
 		super();
 		this.contractHoursList = contractHoursList;
 		this.contractExtraHoursList = contractExtraHoursList;
@@ -38,6 +42,8 @@ public class EmployeeCalendarData implements Serializable {
 		this.contractFestivesDaysList = contractFestivesDaysList;
 		this.contractNonWorkingDaysList = contractNonWorkingDaysList;
 		this.fullTimeJourney = fullTimeJourney;
+		this.contractCoefficientEREDayTypeList = contractCoefficientEREDayTypeList;
+		this.contractCoefficientStrikeDayTypeList = contractCoefficientStrikeDayTypeList;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -103,6 +109,14 @@ public class EmployeeCalendarData implements Serializable {
 	public EmployeeCalendarData setFullTimeJourney(boolean fullTimeJourney) {
 		this.fullTimeJourney = fullTimeJourney;
 		return this;
+	}
+
+	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientEREDayTypeList() {
+		return contractCoefficientEREDayTypeList;
+	}
+
+	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientStrikeDayTypeList() {
+		return contractCoefficientStrikeDayTypeList;
 	}
 	
 }

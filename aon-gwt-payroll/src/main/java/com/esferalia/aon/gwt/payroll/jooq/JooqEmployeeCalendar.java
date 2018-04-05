@@ -60,6 +60,8 @@ public class JooqEmployeeCalendar {
 		ArrayList<Quartet<Date, Date, String, String>> contractHoursList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractExtraHoursList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractDayTypesList = new ArrayList<Quartet<Date, Date, String, String>>();
+		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
+		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 		HashMap<java.util.Date, String> contractFestiveDaysList = new HashMap<java.util.Date, String>();
 		ArrayList<Byte> contractNonWorkingDaysList = new ArrayList<Byte>();
@@ -241,6 +243,46 @@ public class JooqEmployeeCalendar {
 			contractITDayTypeList.add(quarterITDayEmployee);
 		}
 		
+		// -------------------------------------- COEFICIENTE TIPO DE DIAS ---------------------------------------------------------
+		
+		Result<Record> coeficientsEREEmployeeInfo = dslContext
+				.select()
+				.from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.and(CONTRACT_DATA.NAME.in(
+						ContextVariable.ERE_FACTOR.getName()))
+				.fetch();
+	
+		for(Record r: coeficientsEREEmployeeInfo){
+			Quartet<Date, Date, String, String> quarterCoeficcientERETypeEmployee = new Quartet<Date, Date, String, String>();
+			
+			quarterCoeficcientERETypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+			.setName(r.get(CONTRACT_DATA.NAME))
+			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+			
+			contractCoefficientEREDayTypeList.add(quarterCoeficcientERETypeEmployee);
+		}
+		
+		Result<Record> coeficientsStrikeEmployeeInfo = dslContext
+				.select()
+				.from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.and(CONTRACT_DATA.NAME.in(
+						ContextVariable.STRIKE_FACTOR.getName()))
+				.fetch();
+	
+		for(Record r: coeficientsStrikeEmployeeInfo){
+			Quartet<Date, Date, String, String> quarterCoeficcientStrikeTypeEmployee = new Quartet<Date, Date, String, String>();
+			
+			quarterCoeficcientStrikeTypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+			.setName(r.get(CONTRACT_DATA.NAME))
+			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+			
+			contractCoefficientStrikeDayTypeList.add(quarterCoeficcientStrikeTypeEmployee);
+		}
+		
 		// -------------------------------------- DIAS NO LABRABLES / FESTIVOS ---------------------------------------------------------
 		
 		Integer calendar = dslContext.select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
@@ -312,7 +354,7 @@ public class JooqEmployeeCalendar {
 		// ------------------------------------------------ RESULTADO -------------------------------------------------------------
 		
 		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractExtraHoursList, contractDayTypesList, contractITDayTypeList, 
-				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney);
+				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney, contractCoefficientEREDayTypeList, contractCoefficientStrikeDayTypeList);
 		
 		return employeeInfoCalendar;
 	}
@@ -406,8 +448,10 @@ public class JooqEmployeeCalendar {
 						Double actualDateHour = updateHoursMap.get(date);
 						if((startHour == null && actualDateHour != null) || (startHour != null && actualDateHour == null)){
 							
-							Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
-							Date sqlendDateHour = new Date(date.getTime());
+							Date sqlstartDateHour = parseStartDateForStrech(auxstartDateHour);
+							Date sqlendDateHour = parseEndDateForStrech(auxstartDateHour, date);
+//							Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
+//							Date sqlendDateHour = new Date(date.getTime());
 							if(startHour == null)
 								dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
@@ -431,8 +475,10 @@ public class JooqEmployeeCalendar {
 							
 							if(startHour.doubleValue() != actualDateHour.doubleValue()){
 							
-								Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
-								Date sqlendDateHour = new Date(date.getTime());
+								Date sqlstartDateHour = parseStartDateForStrech(auxstartDateHour);
+								Date sqlendDateHour = parseEndDateForStrech(auxstartDateHour, date);
+//								Date sqlstartDateHour = new Date(auxstartDateHour.getTime());
+//								Date sqlendDateHour = new Date(date.getTime());
 								
 								dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 											CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
@@ -448,14 +494,16 @@ public class JooqEmployeeCalendar {
 						DateUtils.addDays2Date(date, 7);
 					}
 					
-					Date sqlstartDateHour =  new Date(auxstartDateHour.getTime());
+					
+//					Date sqlstartDateHour =  new Date(auxstartDateHour.getTime());
+					Date sqlstartDateHour = parseStartDateForStrech(auxstartDateHour);
 					Date sqlendDateHour;
 					
 					if(realEndDate == null)
 						sqlendDateHour = null;
-					else
+					else{
 						sqlendDateHour = new Date(realEndDate.getTime());
-					
+					}
 					if(startHour == null)
 						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 							CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
@@ -583,6 +631,52 @@ public class JooqEmployeeCalendar {
 		
 	}
 	
+	private static Date parseEndDateForStrech(java.util.Date startDateAux, java.util.Date endDateAux) {
+		java.util.Date date = DateUtils.copyDateOnly(endDateAux);
+		
+		if(DateUtils.getLastDayOfMonth(date).getDate() == date.getDate() || date.getDay() == 0){
+			return new Date(date.getTime());
+		}else{
+			if((startDateAux.getMonth() != endDateAux.getMonth() && startDateAux.getYear() == endDateAux.getYear()) ||
+			   (startDateAux.getMonth() == endDateAux.getMonth() && startDateAux.getYear() != endDateAux.getYear())){ 
+				// Si la fecha de fin esta en otro mes la ficha fin sera el ultimo dia del mes anterior
+				java.util.Date date2 = null;
+				if(endDateAux.getMonth() > 0)
+					date2 = new Date(endDateAux.getYear(), endDateAux.getMonth()-1, endDateAux.getDate());
+				else
+					date2 = new Date(endDateAux.getYear()-1, 11, endDateAux.getDate());
+				return new Date(DateUtils.getLastDayOfMonth(date2).getTime());
+			}
+			
+			if(startDateAux.getMonth() != endDateAux.getMonth() && startDateAux.getYear() != endDateAux.getYear()){
+				return new Date(DateUtils.getLastDayOfYear(startDateAux).getTime());
+			}
+			
+			java.util.Date staticDate = new java.util.Date(date.getYear(), date.getMonth()-1, date.getDate());
+			staticDate = DateUtils.getLastDayOfMonth(staticDate);
+			while(date.getDay() != 0){
+				DateUtils.addDays2Date(date, -1);
+				if(date.getDate() == staticDate.getDate())
+					break;
+				
+			}
+			return new Date(date.getTime());
+		}
+	}
+
+	private static Date parseStartDateForStrech(java.util.Date dateAux) {
+		java.util.Date date = DateUtils.copyDateOnly(dateAux);
+		
+		if(date.getDate() == 1 || date.getDay() == 1){
+			return new Date(date.getTime());
+		}else{
+			while(!(date.getDate() == 1 || date.getDay() == 1)){
+				DateUtils.addDays2Date(date, -1);
+			}
+			return new Date(date.getTime());
+		}
+	}
+
 	private static String calculateExpression(java.util.Date startDate, java.util.Date endDate) {
 		int expression = 0;
 		
