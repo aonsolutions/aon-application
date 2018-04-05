@@ -3878,7 +3878,7 @@ CREATE TABLE `data_response_detail` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `data_response` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador de data_response',
   `data_variable` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo de la variable',
-  `data_value` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Valor de la variable',
+  `data_value` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Valor de la variable',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -8506,7 +8506,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('9.23.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 
 COMMIT;
 
