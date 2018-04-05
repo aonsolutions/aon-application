@@ -28,17 +28,9 @@
 							<g:Button ui:field="excelTable"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
 								text="Exportar datos gráfico" />
-<!-- 								
-							<g:Button ui:field="invoices"
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconInvoice}" 
-								text="Ver facturas" />
-							<g:Button ui:field="excel"
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
-								text="Exportar facturas" />
-							<g:Button ui:field="pdf"
-								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdf}" 
-								text="Imprimir" />
- -->
+							<g:Button ui:field="udapaExcel"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconJournal}" 
+								text="Estadística" />
 							<g:SimplePanel ui:field="excelFormContainer"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>

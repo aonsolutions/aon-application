@@ -66,7 +66,8 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	private static final Field<Integer> INC_MONTH = DSL.month(INCOME.ISSUE_TIME).as(MONTH_FIELD);
 
 	private static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yy");
-	protected static final String UNKNOWN = "Desconocido"; 
+	protected static final String UNKNOWN = "Desconocido";
+	public static final String AMOUNT_LABEL = "Importe"; 
 	@Deprecated
 	private String periodLabel = "Periodo seleccionado";
 
@@ -344,7 +345,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			double d = rec.getValue(SUM_FIELD).doubleValue();
 			if (d >= 0) {
 				table.put( AonStringUtils.defaultIfBlank(rec.getValue(workplace), UNKNOWN)
-						, type.getDescription()
+						, AMOUNT_LABEL
 						, d);
 			}
 		});
@@ -383,7 +384,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 				double d = rec.getValue(SUM_FIELD).doubleValue();
 				if (d >= 0) {
 					table.put(rec.getValue(registry)
-							, "Importe"
+							, AMOUNT_LABEL
 							, d);
 				}
 			});
@@ -441,7 +442,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 				} else {
 					name = rec.getValue(registry) + " [" + name + "]"; 
 				}
-				table.put(name ,"Importe", d);
+				table.put(name ,AMOUNT_LABEL, d);
 			}
 		});
 	}
@@ -479,7 +480,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 		.forEach(rec -> {
 			double d = rec.getValue(SUM_FIELD).doubleValue();
 			if (d >= 0) {
-				table.put(AonStringUtils.defaultIfBlank(rec.getValue(product), UNKNOWN), "Importe", d);
+				table.put(AonStringUtils.defaultIfBlank(rec.getValue(product), UNKNOWN), AMOUNT_LABEL, d);
 			}
 		});
 	}
@@ -516,7 +517,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			.forEach(rec -> {
 				double d = rec.getValue(SUM_FIELD).doubleValue();
 				if (d >= 0) {
-					table.put(AonStringUtils.defaultIfBlank(rec.getValue(category), UNKNOWN), "Importe", d);
+					table.put(AonStringUtils.defaultIfBlank(rec.getValue(category), UNKNOWN), AMOUNT_LABEL, d);
 				}
 			});
 	}
@@ -551,7 +552,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 		.fetch()
 		.stream()
 		.forEach(rec -> {
-			table.put(AonStringUtils.defaultIfBlank(rec.getValue(brand), UNKNOWN), "Importe", rec.getValue(SUM_FIELD).doubleValue());
+			table.put(AonStringUtils.defaultIfBlank(rec.getValue(brand), UNKNOWN), AMOUNT_LABEL, rec.getValue(SUM_FIELD).doubleValue());
 		});
 	}
 

@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.stat.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -11,15 +10,12 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class AbsExcelAction  {
 	
@@ -32,7 +28,7 @@ public abstract class AbsExcelAction  {
 	
 	protected XSSFWorkbook workbook;
 	protected XSSFSheet sheet;
-	protected Row row;
+	//protected Row row;
 	protected int rowCount;
 	protected int cellCount;
 	protected DataFormat dataFormat;
@@ -116,48 +112,48 @@ public abstract class AbsExcelAction  {
 	}
 
 	
-	protected Cell addCell(String value) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-		cell.setCellType(Cell.CELL_TYPE_STRING);
-		return cell;
-	}
-
-	protected Cell addCell(Enum<?> value) {
-		Cell cell = row.createCell(cellCount++);
-		if ( value != null ) {
-			cell.setCellValue(value.toString());
-		}
-		cell.setCellType(Cell.CELL_TYPE_STRING);
-		return cell;
-	}
-
-	protected Cell addCell(Short value) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellStyle(numberStyle);
-		if ( value != null ) {
-			cell.setCellValue(value);
-		}
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		return cell;
-	}
-	
-	protected Cell addCell(Date value) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellStyle(dateStyle);
-		if ( value != null ) {
-			cell.setCellValue(value);
-		}
-		return cell;
-	}
-
-	protected Cell addCell(Double number) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellStyle(decimalStyle);
-		cell.setCellValue(number!=null?number:0.0);
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		return cell;
-	}
+//	protected Cell addCell(String value) {
+//		Cell cell = row.createCell(cellCount++);
+//		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
+//		cell.setCellType(Cell.CELL_TYPE_STRING);
+//		return cell;
+//	}
+//
+//	protected Cell addCell(Enum<?> value) {
+//		Cell cell = row.createCell(cellCount++);
+//		if ( value != null ) {
+//			cell.setCellValue(value.toString());
+//		}
+//		cell.setCellType(Cell.CELL_TYPE_STRING);
+//		return cell;
+//	}
+//
+//	protected Cell addCell(Short value) {
+//		Cell cell = row.createCell(cellCount++);
+//		cell.setCellStyle(numberStyle);
+//		if ( value != null ) {
+//			cell.setCellValue(value);
+//		}
+//		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+//		return cell;
+//	}
+//	
+//	protected Cell addCell(Date value) {
+//		Cell cell = row.createCell(cellCount++);
+//		cell.setCellStyle(dateStyle);
+//		if ( value != null ) {
+//			cell.setCellValue(value);
+//		}
+//		return cell;
+//	}
+//
+//	protected Cell addCell(Double number) {
+//		Cell cell = row.createCell(cellCount++);
+//		cell.setCellStyle(decimalStyle);
+//		cell.setCellValue(number!=null?number:0.0);
+//		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+//		return cell;
+//	}
 
 	public void finalize(OutputStream out) throws IOException {
 		workbook.write(out);

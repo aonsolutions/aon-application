@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.stat.client.panel.directsales;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -80,10 +81,8 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 	Button data;
 	@UiField
 	Button excelTable;
-//	@UiField
-//	Button excel;
-//	@UiField
-//	Button invoices;
+	@UiField
+	Button udapaExcel;
 	@UiField
 	SimpleLayoutPanel north;
 	@UiField
@@ -260,14 +259,15 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 		diskForm.submit();
 	}
 
-//	@UiHandler("excel")
-//	void onExcelButtonClick(ClickEvent event) {
-//		prepareSubmit();
-//		diskForm.setMethod(FormPanel.METHOD_POST);
-//		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
-//		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/InvoiceReport");
-//		diskForm.submit();
-//	}
+	@UiHandler("udapaExcel")
+	void onUdapaExcelButtonClick(ClickEvent event) {
+		prepareSubmit();
+		statParams.setValue( JsonParams.convert( filter.getParams() ) );
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
+		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_stat/UdapaStatExcel");
+		diskForm.submit();
+	}
 	
 	private void prepareSubmit() {
 		invoiceTypes.setValue("");
@@ -392,7 +392,14 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 	}
 	
 	protected void paintChart() {
-//		excel.setEnabled(false);
+		Date from = filter.getParams().getFrom();
+		if (from == null || filter.getParams().getChartType() < DirectSalesChartType.ABC_DELIVERY_TITULAR.value()) {
+			udapaExcel.setVisible(false);
+		} else {
+			udapaExcel.setVisible(true);
+			udapaExcel.setEnabled(false);
+			udapaExcel.setText( "Estad\u00EDstica [" + DateTimeFormat.getFormat("LLL/yyyy").format(from) + "]");
+		}
 		excelTable.setEnabled(false);
 		DirectSalesChartType.values()[filter.getParams().getChartType()].visit(statChartTypeVisitor);
 	}
@@ -505,7 +512,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 			final DataTable dataTable = getDataTable(result, label);
 			RawDataTable table =  new RawDataTable(dataTable);
 			south.setWidget(table);
-//			excel.setEnabled(true);
+			udapaExcel.setEnabled(true);
 			excelTable.setEnabled(true);
 			final ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 			return chart;
@@ -620,7 +627,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 						final DataTable dataTable = getDataTable(result, "ABC");
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
-//						excel.setEnabled(true);
+						udapaExcel.setEnabled(true);
 						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
@@ -659,7 +666,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 						final DataTable dataTable = getDataTable(result, "ABC");
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
-//						excel.setEnabled(true);
+						udapaExcel.setEnabled(true);
 						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
@@ -699,7 +706,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 							final DataTable dataTable = getDataTable(result, AON.MSG.productCategories());
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
-//							excel.setEnabled(true);
+							udapaExcel.setEnabled(true);
 							excelTable.setEnabled(true);
 							ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 							coreChartCallback.onSuccess(chart);
@@ -718,7 +725,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 							final DataTable dataTable = getDataTable(result, "ABC");
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
-//							excel.setEnabled(true);
+							udapaExcel.setEnabled(true);
 							excelTable.setEnabled(true);
 							final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 							coreChartCallback.onSuccess(chart);
@@ -758,7 +765,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 							final DataTable dataTable = getDataTable(result, AON.MSG.productBrands());
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
-//							excel.setEnabled(true);
+							udapaExcel.setEnabled(true);
 							excelTable.setEnabled(true);
 							ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 							coreChartCallback.onSuccess(chart);
@@ -777,7 +784,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 							final DataTable dataTable = getDataTable(result, "ABC");
 							RawDataTable table =  new RawDataTable(dataTable);
 							south.setWidget(table);
-//							excel.setEnabled(true);
+							udapaExcel.setEnabled(true);
 							excelTable.setEnabled(true);
 							final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 							coreChartCallback.onSuccess(chart);
@@ -816,7 +823,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 						final DataTable dataTable = getDataTable(result, "ABC");
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
-//						excel.setEnabled(true);
+						udapaExcel.setEnabled(true);
 						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
@@ -854,7 +861,7 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 						final DataTable dataTable = getDataTable(result, "ABC");
 						RawDataTable table =  new RawDataTable(dataTable);
 						south.setWidget(table);
-//						excel.setEnabled(true);
+						udapaExcel.setEnabled(true);
 						excelTable.setEnabled(true);
 						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
@@ -867,95 +874,6 @@ public class DirectSalesStatControlPanel extends MainEntryPoint {
 				}
 			});
 		}
-
-//		@Override
-//		public void visitAbcDirectSalesSeller() {
-//			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
-//					new AsyncCallback<StatData<String, String, Double>>() {
-//
-//				@Override
-//				public void onSuccess(final StatData<String, String, Double> result) {
-//					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
-//					else {
-//						final PieOptions options = PieChart.createPieOptions();
-//						options.set("animation", StatUtils.ANIMATION);
-//						options.setWidth(content.getOffsetWidth());
-//						options.setHeight(content.getOffsetHeight());
-//						options.set3D(true);
-//						AxisOptions vaxis = AxisOptions.create();
-//						vaxis.setTitle(AON.MSG.amount());
-//						options.setVAxisOptions(vaxis);
-//						AxisOptions haxis = AxisOptions.create();
-//						haxis.setTitle(AON.MSG.months());
-//						options.setHAxisOptions(haxis);
-//						final DataTable dataTable = getDataTable(result, "ABC");
-//						RawDataTable table =  new RawDataTable(dataTable);
-//						south.setWidget(table);
-//						excel.setEnabled(true);
-//						excelTable.setEnabled(true);
-//						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
-//						coreChartCallback.onSuccess(chart);
-//					}
-//				}
-//
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					coreChartCallback.onFailure(caught);
-//				}
-//			});
-//		}
-//
-//		@Override
-//		public void visitGeoProvince() {
-//			statService.getStatData(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(), filter.getParams(), 
-//					new AsyncCallback<StatData<String, String, Double>>() {
-//
-//				@Override
-//				public void onSuccess(final StatData<String, String, Double> result) {
-//					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
-//					else {
-//						final  GeoChartWrapper.Options options = GeoChartWrapper.Options.create();
-//						options.set("animation", StatUtils.ANIMATION);
-//						options.setWidth(content.getOffsetWidth());
-//						options.setHeight(content.getOffsetHeight());
-//						options.setRegion("ES");
-//						options.setDisplayMode(DisplayMode.MARKERS);
-//						final DataTable dataTable = getGeoDataTable(result, "Provincias");
-//						RawDataTable table =  new RawDataTable(dataTable);
-//						south.setWidget(table);
-//						excel.setEnabled(true);
-//						excelTable.setEnabled(true);
-//						final ResizableGeoChart chart = new ResizableGeoChart(dataTable,options);
-//						coreChartCallback.onSuccess(chart);
-//					}
-//				}
-//
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					coreChartCallback.onFailure(caught);
-//				}
-//			});
-//		}
-
 	}
-	
-/*
-	@UiHandler("pdf")
-	void onPDFButtonClick(ClickEvent event) {
-		takeScreenShot();
-	}
-*/
-	
-//	public static native void takeScreenShot()
-//	/*-{
-//		$wnd.doTakeScreenshot(
-//			$doc.getElementById("content"),
-//			$doc.getElementById("pdfIframe")
-//		);		
-//	}-*/;
-	
-	
 }
 
