@@ -125,8 +125,11 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONArray getCertificateAttachJSON(Domain domain, String login) {
 		JSONArray array = new JSONArray();
+		Integer[] ds = {domain.getId(), domain.getParentId()};
+		Integer[] d = {domain.getId()};
+		User user = AON.getUser(domain.getName(), domain.getId(), login);
 		AON.getAttachStream(domain.getName(), domain.getId(), login, 
-				f -> f.getDomainProperty().eq(domain.getId())
+				f -> f.getDomainProperty().in(domain.getParentId() != null && user.getDomain().equals(domain.getParentId())? ds : d)
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())
 				.page(1)
 				.perPage(30)

@@ -368,7 +368,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				errors.put(model.getId(), js);
 				send(i+1, cert, pass);
 			}
-		}
+		} else onParentLoad();
 	}
 	
 	private void resultFocus(Integer i, String color){

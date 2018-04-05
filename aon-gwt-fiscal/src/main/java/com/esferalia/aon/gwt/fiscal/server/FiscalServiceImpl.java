@@ -344,38 +344,49 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 					mod303.getMap().put(k.getValue(), new FiscalModelDetail().setAmount(0.0));
 				}
 			}
+			mod303 = Mod303ServiceImpl.getInstance().initializeForFinish(domainName, user, mod303);
 			Mod303ServiceImpl.getInstance().markAsFinished(domainName, user, mod303);
 		} else if(FiscalModelType.M111.equals(model.getModel())) {
 			Mod111 mod111 = FISCAL.getMod111(domainName, domainId, user, model.getId());
+			mod111 = Mod111ServiceImpl.getInstance().initializeForFinish(domainName, user, mod111);
 			Mod111ServiceImpl.getInstance().markAsFinished(domainName, user, mod111);
 		}  else if(FiscalModelType.M115.equals(model.getModel())) {
 			Mod115 mod115 = FISCAL.getMod115(domainName, domainId, user, model.getId());
+			mod115 = Mod115ServiceImpl.getInstance().initializeForFinish(domainName, user, mod115);
 			Mod115ServiceImpl.getInstance().markAsFinished(domainName, user, mod115);
 		}  else if(FiscalModelType.M123.equals(model.getModel())) {
 			Mod123 mod123 = FISCAL.getMod123(domainName, domainId, user, model.getId());
+			mod123 = Mod123ServiceImpl.getInstance().initializeForFinish(domainName, user, mod123);
 			Mod123ServiceImpl.getInstance().markAsFinished(domainName, user, mod123);
 		} else if(FiscalModelType.M130.equals(model.getModel())) {
 			Mod130 mod130 = FISCAL.getMod130(domainName, domainId, user, model.getId());
+			mod130 = Mod130ServiceImpl.getInstance().initializeForFinish(domainName, user, mod130);
 			Mod130ServiceImpl.getInstance().markAsFinished(domainName, user, mod130);
 		} else if(FiscalModelType.M131.equals(model.getModel())) {
 			Mod131 mod131 = FISCAL.getMod131(domainName, domainId, user, model.getId());
+			mod131 = Mod131ServiceImpl.getInstance().initializeForFinish(domainName, user, mod131);
 			Mod131ServiceImpl.getInstance().markAsFinished(domainName, user, mod131);
 		} else if(FiscalModelType.M180.equals(model.getModel())) {
+			// TODO INITIALIZE FOR FINISH ??
 			Mod180 mod180 =  FISCAL.getMod180(domainName, domainId, user, model.getId());
 			Mod180ServiceImpl.getInstance().changeStatusMod180(domainName, user, mod180, FiscalStatus.FINISHED);
 		} else if(FiscalModelType.M184.equals(model.getModel())) {
+			// TODO INITIALIZE FOR FINISH ??
 			Mod184 mod184 =  FISCAL.getMod184(domainName, domainId, user, model.getId());
 			Mod184ServiceImpl.getInstance().changeStatusMod184(domainName, user, mod184, FiscalStatus.FINISHED);		
 		} else if(FiscalModelType.M190.equals(model.getModel())) {
+			// TODO INITIALIZE FOR FINISH ??
 			Mod190 mod190 =  FISCAL.getMod190(domainName, domainId, user, model.getId());
 			Mod190ServiceImpl.getInstance().changeStatus(domainName, user, mod190, FiscalStatus.FINISHED);
 		} else if(FiscalModelType.M193.equals(model.getModel())) {
+			// TODO INITIALIZE FOR FINISH ??
 			Mod193 mod193 =  FISCAL.getMod193(domainName, domainId, user, model.getId());
 			Mod193ServiceImpl.getInstance().changeStatus(domainName, user, mod193, FiscalStatus.FINISHED);
 		} else if(FiscalModelType.M200.equals(model.getModel())) {
 			// TODO
 		} else if(FiscalModelType.M202.equals(model.getModel())) {
 			Mod202 mod202 =  FISCAL.getMod202(domainName, domainId, user, model.getId());
+			mod202 = Mod202ServiceImpl.getInstance().initializeForFinish(domainName, user, mod202);
 			Mod202ServiceImpl.getInstance().markAsFinished(domainName, user, mod202);
 		} else if(FiscalModelType.M310.equals(model.getModel())) {
 			// TODO
@@ -384,16 +395,20 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		} else if(FiscalModelType.M340.equals(model.getModel())) {
 			// TODO
 		} else if(FiscalModelType.M347.equals(model.getModel())) {
+			// TODO INITIALIZE FOR FINISH ??
 			Mod347 mod347 =  FISCAL.getMod347(domainName, domainId, user, model.getId());
 			Mod347ServiceImpl.getInstance().changeStatusMod347(domainName, user, mod347, FiscalStatus.FINISHED);			
 		} else if(FiscalModelType.M349.equals(model.getModel())) {
+			// TODO INITIALIZE FOR FINISH ??
 			Mod349 mod349 =  FISCAL.getMod349(domainName, domainId, user, model.getId());
 			Mod349ServiceImpl.getInstance().changeStatusMod349(domainName, user, mod349, FiscalStatus.FINISHED);
 		} else if(FiscalModelType.M390.equals(model.getModel())) {
+			// TODO INITIALIZE FOR FINISH ??
 			Mod3902015 mod390 = FISCAL.getMod3902015(domainName, domainId, user, model.getId());
 			Mod3902015ServiceImpl.getInstance().changeStatus(domainName, user, mod390, FiscalStatus.FINISHED);
 		} else if(FiscalModelType.M390_HF.equals(model.getModel())) {
 			Mod390HF mod390 = FISCAL.getMod390HF(domainName, domainId, user, model.getId());
+			mod390 = Mod390HFServiceImpl.getInstance().initializeForFinish(domainName, mod390);
 			Mod390HFServiceImpl.getInstance().markAsFinished(domainName, mod390);
 		}
 	}
