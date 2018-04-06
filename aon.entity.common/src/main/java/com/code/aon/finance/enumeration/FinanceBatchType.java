@@ -28,7 +28,7 @@ public enum FinanceBatchType implements IResourceable {
     SEPA_19_14_COR1_XML(false, false),
     SEPA_58_ANTICIPO_XML(false, false),
     SEPA_58_COBRO_XML(false, false),
-    SEPA_34_14_ABONO_XML(true, false);
+    SEPA_34_14_ABONO_XML(false, false);
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_financebatchtype_";

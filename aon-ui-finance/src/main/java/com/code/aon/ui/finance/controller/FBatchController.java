@@ -260,31 +260,23 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
-        
-        if(to.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_ABONO_XML) 
-        	criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYMENT), false);
-        else
-        	criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYMENT), isPayment());
-        
+        criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYMENT), isPayment());
         criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), isPayroll());
         if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
-        	if(to.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_ABONO_XML) {
+        	if(to.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_ABONO_XML)
+        		criteria.addLessThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
+        	else
+        		criteria.addGreaterThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));        	
+        	if (!to.getFinanceBatchType().is34() || to.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_ABONO_XML) {
         		String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
         		criteria.addEqualExpression(payMethodTypeAlias, PayMethodType.NEGOTIABLE_DOCUMENT);
-        		criteria.addLessThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));	
         	} else {
-        		criteria.addGreaterThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
-        		if (!to.getFinanceBatchType().is34()) {
-        			String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
-        			criteria.addEqualExpression(payMethodTypeAlias, PayMethodType.NEGOTIABLE_DOCUMENT);
-        		} else {
-        			String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
-        			Expression transferExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.BANK_TRANSFER);
-        			Expression chequeExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.CHEQUE);
-        			criteria.addExpression(ExpressionUtilities.getOrExpression(transferExpr, chequeExpr));
-        			
-        			criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), to.getFinanceBatchType().isPayroll());
-        		}
+        		String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
+        		Expression transferExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.BANK_TRANSFER);
+        		Expression chequeExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.CHEQUE);
+        		criteria.addExpression(ExpressionUtilities.getOrExpression(transferExpr, chequeExpr));
+        		
+        		criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), to.getFinanceBatchType().isPayroll());
         	}
         	if(!to.getFinanceBatchType().is58()){
             	criteria.addNotNullExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT));
@@ -353,7 +345,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 		            FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
 					fBatchDetail.setFinance(finance);
 					fBatchDetail.setFinanceBatch(fBatch);
-		            fBatchDetail.setAmount(Math.abs(finance.getTotalAmount()));
+					fBatchDetail.setAmount(finance.getTotalAmount());
 		            fBatchDetail.setStatus(FinanceStatus.BATCHED);
 					financeBatchDetailBean.insert(fBatchDetail);
 				}
