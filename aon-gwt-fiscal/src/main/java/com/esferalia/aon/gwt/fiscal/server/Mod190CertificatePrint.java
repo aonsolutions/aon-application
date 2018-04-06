@@ -190,11 +190,11 @@ public class Mod190CertificatePrint extends HttpServlet {
 		cert.setEmployeeDocument(detail.getDocument());
 		
 		if(AonStringUtils.isNotBlank(key) && detail.getKey().equals(key)){
-			cert.setPerception(cert.getPerception() + detail.getPerception());
-			cert.setRetention(cert.getRetention() + detail.getRetention());
-			cert.setInKindPerception(cert.getInKindPerception() + detail.getInKindPerception());
-			cert.setInKindDeposit(cert.getInKindDeposit() + detail.getInKindDeposit());
-			cert.setInKindOutputDeposit(cert.getInKindOutputDeposit() + detail.getInKindOutputDeposit());
+			cert.setPerception(cert.getPerception() + detail.getPerception() + detail.getPerceptionIL());
+			cert.setRetention(cert.getRetention() + detail.getRetention()  + detail.getRetentionIL());
+			cert.setInKindPerception(cert.getInKindPerception() + detail.getInKindPerception() + detail.getInKindPerceptionIL());
+			cert.setInKindDeposit(cert.getInKindDeposit() + detail.getInKindDeposit() + detail.getInKindDepositIL());
+			cert.setInKindOutputDeposit(cert.getInKindOutputDeposit() + detail.getInKindOutputDeposit() + detail.getInKindOutputDepositIL());
 		}
 		
 		return cert;
