@@ -706,7 +706,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setRes(mod.getAmount(Mod303Key.CT_S124))
 			,false)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,CT_S125(Mod303Key.CT_S125,null,null,null,null,null
+		,CT_S125(Mod303Key.CT_S125,null,null,null,"isLastPeriod()?CT_S125:0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S125,ensureActivity(mod,0).getPcm())
 			,mod -> ensureActivity(mod,0).setPcm(mod.getAmount(Mod303Key.CT_S125))
 			,false)
@@ -966,7 +966,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setRes(mod.getAmount(Mod303Key.CT_S224))
 			,false)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,CT_S225(Mod303Key.CT_S225,null,null,null,null,null
+		,CT_S225(Mod303Key.CT_S225,null,null,null,"isLastPeriod()?CT_S225:0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S225,ensureActivity(mod,1).getPcm())
 			,mod -> ensureActivity(mod,1).setPcm(mod.getAmount(Mod303Key.CT_S225))
 			,false)
@@ -1226,7 +1226,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setRes(mod.getAmount(Mod303Key.CT_S324))
 			,false)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,CT_S325(Mod303Key.CT_S325,null,null,null,null,null
+		,CT_S325(Mod303Key.CT_S325,null,null,null,"isLastPeriod()?CT_S325:0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S325,ensureActivity(mod,2).getPcm())
 			,mod -> ensureActivity(mod,2).setPcm(mod.getAmount(Mod303Key.CT_S325))
 			,false)
@@ -1486,7 +1486,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setRes(mod.getAmount(Mod303Key.CT_S424))
 			,false)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,CT_S425(Mod303Key.CT_S425,null,null,null,null,null
+		,CT_S425(Mod303Key.CT_S425,null,null,null,"isLastPeriod()?CT_S425:0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S425,ensureActivity(mod,3).getPcm())
 			,mod -> ensureActivity(mod,3).setPcm(mod.getAmount(Mod303Key.CT_S425))
 			,false)
