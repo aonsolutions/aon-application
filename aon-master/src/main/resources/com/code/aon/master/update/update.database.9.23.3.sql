@@ -5,7 +5,7 @@
 
 BEGIN;
 
-ALTER TABLE `data_response_detail` MODIFY `data_value` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Valor de la variable'
+ALTER TABLE `data_response_detail` MODIFY `data_value` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Valor de la variable';
 
 UPDATE `db_version` SET `version_number` = '9.23.4';
 
