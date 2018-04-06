@@ -105,6 +105,7 @@ public class FBatchCreateDiskProcess implements ILongProcess, Serializable {
 					saveRegistryAttach(aebOutput, "SEPA_19_14_COR1_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
 					break;
 		    	case SEPA_34_14_XML:
+		    	case SEPA_34_14_ABONO_XML:
 		    	case SEPA_34_14_N_XML:
 					SEPA34_14XmlWriter sepa34Writer = new SEPA34_14XmlWriter();
 					aebOutput = sepa34Writer.createXml(company, fbatch, fbatchDetailCollection);
