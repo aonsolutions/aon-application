@@ -1971,6 +1971,7 @@ public class Mod131DAO extends FiscalModelDAO {
 				+ " DE " + mod131.getYear();
 		return IRPFFormatter.formatInvoices(title,script.getLabel()
 			,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod131)
+					.filter(br -> !br.isExempt())
 					.collect(Collectors.toCollection(LinkedList::new))
 		);
 	}
@@ -1987,6 +1988,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			, getPreviousModels(ctx,mod131)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
 			,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod131)
+				.filter(br -> !br.isExempt())
 				.collect(Collectors.toCollection(LinkedList::new))
 		);
 	}
