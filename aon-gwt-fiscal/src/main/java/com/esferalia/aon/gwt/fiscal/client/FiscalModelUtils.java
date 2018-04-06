@@ -235,7 +235,7 @@ public class FiscalModelUtils {
 
 	public static <T extends FiscalModel> void paintPaymentInfo(FlowPanel paymentInfo,T mod) {
 		paymentInfo.clear();
-		paymentInfo.setVisible(mod.isFinished());
+		paymentInfo.setVisible(mod.isFinished() || mod.isSent());
 		InlineLabel l1 = new InlineLabel(AON.MSG.result());
 		l1.setStyleName(AON.AON_CSS.aonInnerLabel());
 		paymentInfo.add(l1);
