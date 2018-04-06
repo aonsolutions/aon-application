@@ -255,6 +255,9 @@ public class IrpfBreakdown implements Serializable{
 	public boolean isObjectiveRegime() {
 		return isFromInvoice() &&  (regime == IRPFRegime.OBJECTIVE);
 	}
+	public boolean isExempt() {
+		return isFromInvoice() &&  (regime != null) && (regime == IRPFRegime.EXEMPT);
+	}
 	public boolean isNotObjectiveRegime() {
 		return !isObjectiveRegime();
 	}

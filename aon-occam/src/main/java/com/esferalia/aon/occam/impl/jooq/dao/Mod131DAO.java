@@ -1496,6 +1496,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		,C08 ( Mod131Key.C08.getValue() ,(mod -> mod.isAEAT()),null,null
 			,(ctx,mod) -> mod.putAmount(Mod131Key.C08, 
 					IRPFDAO.getOutputInvoicesIrpfBreakdown(ctx, mod)
+						.filter(br -> !br.isExempt())
 						.mapToDouble(br -> br.getQuota())
 						.sum())
 			,null,null)
