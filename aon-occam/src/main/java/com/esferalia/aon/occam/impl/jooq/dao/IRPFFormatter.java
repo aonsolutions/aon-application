@@ -26,7 +26,7 @@ public class IRPFFormatter {
 	public static final DecimalFormat INT = new DecimalFormat("#,##0");
 	public static final DecimalFormat DEC = new DecimalFormat("#,##0.00");
 	public static final DecimalFormat DEC2 = new DecimalFormat("#,###.##");
-	
+
 	private static final String NO_DATA = "<div>NO SE ENCONTRARON DATOS</div>";
 	static final String MAIN_DIV_MSG = "<div style=\"margin-bottom: 5px; font-size: 0.9em;text-align: center;\">{0}</div>";
 	static final String DIV_MSG = "<div>{0}</div>";
@@ -37,7 +37,7 @@ public class IRPFFormatter {
 	static final String DIV_MSG_BOLD_BORDER_BOTTOM = "<div style=\"border-bottom:solid black 1px;\"><b>{0}</b></div>";
 	static final String DIV_MSG_BOLD_BLUE= "<div style=\"color: blue;\"><b>{0}</b></div>";
 	private static final String SPAN_MSG_ORANGE= "<span style=\"color: red;\">{0}</span>";
-	
+
 	public static String formatSalaries(String title, String subtitle, LinkedList<IrpfBreakdown> list) {
 		StringBuilder buf = new StringBuilder();
 		String header = AonStringUtils.repeat(" ", 2)
@@ -92,7 +92,7 @@ public class IRPFFormatter {
 		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 
 	}
-	
+
 	public static String formatInvoices(String title, String subtitle, LinkedList<IrpfBreakdown> list) {
 		StringBuilder buf = new StringBuilder();
 		String header = AonStringUtils.repeat(" ", 2)
@@ -280,7 +280,7 @@ public class IRPFFormatter {
 
 		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 	}
-	
+
 	public static String formatAccountingBreakdown(String title, String subtitle, LinkedList<AccountingBreakdown> list) {
 		StringBuilder buf = new StringBuilder();
 		String header = AonStringUtils.repeat(" ", 2)
@@ -357,14 +357,20 @@ public class IRPFFormatter {
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
 		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 	}
-	
+
 	public static void formatInvoices(final PrintWriter out, Stream<IrpfBreakdown> stream, String title, String subtitle) {
 		out.print('[');
 		stream.forEach( vat -> writeToJSON(out,vat) );
 		out.print(']');
 		out.flush();
 	}
-	
+	public static void formatGroupedInvoices(final PrintWriter out, Stream<IrpfBreakdown> stream, String title, String subtitle) {
+		out.print('[');
+		stream.forEach( vat -> writeToGroupedJSON(out,vat) );
+		out.print(']');
+		out.flush();
+	}
+
 	private static void writeToJSON(final PrintWriter out,IrpfBreakdown irpf) {
 		out.print('{');
 		out.printf("\"invoice\":\"%d\"", irpf.getInvoice());
@@ -395,11 +401,29 @@ public class IRPFFormatter {
 		out.printf(",\"percent\":%s", Double.toString( irpf.getPercent()));
 		out.printf(",\"quota\":%s", Double.toString( irpf.getQuota()));
 //		if (irpf.getInvestAsset() != null) out.printf(",\"investAsset\":\"%d\"", irpf.getInvestAsset());
-		out.printf(",\"deductiblePercent\":%s", Double.toString( irpf.getDeductiblePercent()));
-		out.printf(",\"deductibleQuota\":%s", Double.toString( irpf.getDeductibleQuota()));
+		if (AonStringUtils.isNotBlank(Double.toString( irpf.getDeductiblePercent()))) out.printf(",\"deductiblePercent\":%s", Double.toString( irpf.getDeductiblePercent()));
+		if (AonStringUtils.isNotBlank(Double.toString( irpf.getDeductibleQuota()))) out.printf(",\"deductibleQuota\":%s", Double.toString( irpf.getDeductibleQuota()));
 //		if (irpf.isSurcharge()) out.printf(",\"surcharge\":\"true\"");
 //		if (irpf.isSurcharge()) out.printf(",\"surchargePercent\":%s", Double.toString( irpf.getSurchargePercent()));
 //		if (irpf.isSurcharge()) out.printf(",\"surchargeQuota\":%s", Double.toString( irpf.getSurchargeQuota()));
+		if (AonStringUtils.isNotBlank( irpf.getZip())) out.printf(",\"zip\":\"%s\"", irpf.getZip());
+		if (AonStringUtils.isNotBlank( irpf.getCity())) out.printf(",\"city\":\"%s\"", irpf.getCity());
+		out.print('}');
+		out.print(',');
+		out.flush();
+	}
+
+	private static void writeToGroupedJSON(final PrintWriter out,IrpfBreakdown irpf) {
+		out.print('{');
+		if (irpf.getActivity() != null) out.printf(",\"activity\":\"%d\"", irpf.getActivity());
+		if (AonStringUtils.isNotBlank( irpf.getActivityDescription())) out.printf(",\"activityDescription\":\"%s\"", irpf.getActivityDescription());
+		if (AonStringUtils.isNotBlank( irpf.getRegistryDocument())) out.printf("\"registryDocument\":\"%s\"", irpf.getRegistryDocument());
+		if (irpf.getRegistryDocumentType()!=null) out.printf(",\"registryDocumentType\":\"%d\"", irpf.getRegistryDocumentType().ordinal());
+		if (irpf.getRegistryDocumentCountry()!=null) out.printf(",\"registryDocumentCountry\":\"%s\"", irpf.getRegistryDocumentCountry().getIso2());
+		out.printf("," + JSONObject.toString("name", irpf.getName()) );
+		out.printf(",\"base\":%s", Double.toString( irpf.getBase()));
+		out.printf(",\"quota\":%s", Double.toString( irpf.getQuota()));
+		if (AonStringUtils.isNotBlank(Double.toString( irpf.getDeductibleQuota()))) out.printf(",\"deductibleQuota\":%s", Double.toString( irpf.getDeductibleQuota()));
 		out.print('}');
 		out.print(',');
 		out.flush();

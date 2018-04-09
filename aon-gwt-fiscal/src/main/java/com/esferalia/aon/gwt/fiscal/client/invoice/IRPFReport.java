@@ -47,6 +47,7 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -86,6 +87,8 @@ public class IRPFReport extends MainEntryPoint {
 	private WithholdingTypeListBox withholdingType;
 	private ListBox activity;
 	private ListBox rectificationType;
+	private ListBox orderBy;
+	private ListBox groupByNif;
 	
 	private NumberFormat formatter;
 	
@@ -176,6 +179,8 @@ public class IRPFReport extends MainEntryPoint {
 		year.setValue(DateUtils.getYear(),false);
 		period.setSelectedIndex(0);
 		fillDates();
+		orderBy.setSelectedIndex(0);
+		groupByNif.setSelectedIndex(0);
 		output.setSelectedIndex(0);
 		withholdingType.setSelectedIndex(0);
 		
@@ -279,6 +284,18 @@ public class IRPFReport extends MainEntryPoint {
 			}
 		});
 		
+		groupByNif = new ListBox();
+		groupByNif.addItem("No", "");
+		groupByNif.setSelectedIndex(0);
+		groupByNif.addItem("S\u00ED");
+		groupByNif.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				onSearch();
+			}
+		});
+		
 		withholdingType = new WithholdingTypeListBox("-- Todos --");
 		withholdingType.setWidth("100px");
 		withholdingType.addChangeHandler(new ChangeHandler() {
@@ -338,6 +355,24 @@ public class IRPFReport extends MainEntryPoint {
 				onSearch();
 			}
 		});
+		
+		// Desplegable Ordenar por...
+		orderBy = new ListBox();
+		orderBy.setWidth("200px");
+		orderBy.addItem("Fecha IVA", "");
+		orderBy.setSelectedIndex(0);
+		orderBy.addItem("Fecha de Factura");
+		orderBy.addItem("N\u00famero de Documento");
+		orderBy.addItem("N\u00famero de Factura");
+		orderBy.addItem("Nombre de Cliente/Proveedor/Acreedor");
+		orderBy.addItem("NIF/DNI de Cliente/Proveedor/Acreedor");
+		orderBy.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				onSearch();
+			}
+		});
 
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
@@ -385,6 +420,14 @@ public class IRPFReport extends MainEntryPoint {
 		firstRowPanel.add(outputLabel);
 		toDate.addStyleName(AON.AON_CSS.aonMarginRight());
 		firstRowPanel.add(output);
+		
+		Label groupByNifLabel = new InlineLabel("Agrupar por NIF/Raz\u00F3n social");
+		groupByNifLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		groupByNifLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+		firstRowPanel.add(groupByNif);
+		output.addStyleName(AON.AON_CSS.aonMarginRight());
+		firstRowPanel.add(groupByNifLabel);
+		
 
 		// ---------------------------------------------------------------- SECOND ROW
 		FlowPanel secondRowPanel = new FlowPanel();
@@ -423,6 +466,13 @@ public class IRPFReport extends MainEntryPoint {
 			thirdRowPanel.add(activityLabel);
 			thirdRowPanel.add(activity);
 		}
+		
+		Label orderbyLabel = new InlineLabel("Ordenar por...");
+		orderbyLabel.setStyleName(AON.AON_CSS.aonPanelGridOdd());
+		orderbyLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+		thirdRowPanel.add(orderbyLabel);
+		orderBy.addStyleName(AON.AON_CSS.aonMarginRight());
+		thirdRowPanel.add(orderBy);
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -466,6 +516,8 @@ public class IRPFReport extends MainEntryPoint {
 			params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
 		}
 		params.setWithholdingType(withholdingType.getValue());
+		params.setOrderBy(orderBy.getSelectedIndex());	
+		params.setGroupByNif(groupByNif.getSelectedIndex());
 
 		if (output.getSelectedIndex() == 1) params.setOutput(false);
 		if (output.getSelectedIndex() == 2) params.setOutput(true);
@@ -486,7 +538,7 @@ public class IRPFReport extends MainEntryPoint {
 	
 	private void refreshResults(IRPFParams params) {
 		resultsContent.clear();
-		resultsContent.setWidget(new IRPFReportPanel(getDomainName(), getUser(), getDomain(), params, null, null));
+		resultsContent.setWidget(new IRPFReportPanel(getDomainName(), getUser(), getDomain(), params, null, null));		
 	}
 	private void refreshSummary(IRPFParams params) {
 		

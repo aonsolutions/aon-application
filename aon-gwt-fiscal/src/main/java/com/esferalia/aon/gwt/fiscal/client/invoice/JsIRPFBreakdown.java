@@ -122,6 +122,15 @@ public class JsIRPFBreakdown extends JavaScriptObject {
 	public final native double getDeductibleQuota() /*-{
 		return this.deductibleQuota;
 	}-*/;
+	public final native int getGroupByNif() /*-{
+		return this.groupByNif;
+	}-*/;
+	public final native String getZip() /*-{
+		return this.zip;
+	}-*/;
+	public final native String getCity() /*-{
+		return this.city;
+	}-*/;
 //	public final native boolean isSurcharge() /*-{
 //		return this.surcharge;
 //	}-*/;

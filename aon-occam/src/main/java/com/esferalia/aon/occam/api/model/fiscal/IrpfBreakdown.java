@@ -41,6 +41,9 @@ public class IrpfBreakdown implements Serializable{
 	private double quota;
 	private double deductiblePercent;
 	private double deductibleQuota;
+	private Integer groupByNif;
+	private String zip;
+	private String city;
 	
 	public Integer getActivity() {
 		return activity;
@@ -207,6 +210,27 @@ public class IrpfBreakdown implements Serializable{
 	}
 	public IrpfBreakdown setDeductibleQuota(double deductibleQuota) {
 		this.deductibleQuota = deductibleQuota;
+		return this;
+	}
+	public Integer getGroupByNif() {
+		return groupByNif;
+	}
+	public IrpfBreakdown setGroupByNif(Integer groupByNif) {
+		this.groupByNif = groupByNif;
+		return this;
+	}
+	public String getZip() {
+		return zip;
+	}
+	public IrpfBreakdown setZip(String zip) {
+		this.zip = zip;
+		return this;
+	}
+	public String getCity() {
+		return city;
+	}
+	public IrpfBreakdown setCity(String city) {
+		this.city = city;
 		return this;
 	}
 	public boolean isInKind() {

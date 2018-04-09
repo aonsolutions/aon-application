@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -14,10 +15,14 @@ import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import java.math.BigDecimal;
+
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.finance.Filters.IRPFFilter;
@@ -209,22 +214,77 @@ public class IRPFDAO extends FiscalModelDAO {
 						,INVOICE_TAX.QUOTA
 						,INVOICE_TAX.DEDUCTIBLE_PERCENT
 						,INVOICE_TAX.DEDUCTIBLE_QUOTA
+						
+						,RADDRESS.ZIP
+						,RADDRESS.CITY
 					)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 					.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 					.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
 					.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+					.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(INVOICE.REGISTRY))
 					.where(IRPF_PROPERTIES.getConditions(filter))
 						.and(INVOICE.DOMAIN.equal(domain))
 						.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(dateFrom),AonDateUtils.toSql(dateTo)))
 						.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+						.and(RADDRESS.TYPE.eq((byte) 0))
 					.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 					.fetch()
 					.stream()
 					.map( new IrpfInvoiceBreakdown() );		
 	}
-	
+
+	private static Stream<IrpfBreakdown> getGroupedInvoicesIrpfBreakdown(final AONContext ctx, int domain, Date dateFrom, Date dateTo, IRPFFilter filter) {
+		return 	ctx.getDslContext()
+			.select( INVOICE.ID
+					,INVOICE.TYPE
+					,INVOICE.SERIES
+					
+					,INVOICE.RDOCUMENT
+					,INVOICE.RNAME
+					
+					,INVOICE_TAX.BASE.sum().as("INVOICE_TAX.BASE_SUM")
+					,INVOICE_TAX.QUOTA.sum().as("INVOICE_TAX.QUOTA_SUM")
+					,INVOICE_TAX.DEDUCTIBLE_QUOTA.sum().as("INVOICE_TAX.DEDUCTIBLE_QUOTA_SUM")
+				)
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.where(IRPF_PROPERTIES.getConditions(filter))
+					.and(INVOICE.DOMAIN.equal(domain))
+					.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(dateFrom),AonDateUtils.toSql(dateTo)))
+					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+				.groupBy(INVOICE.RDOCUMENT)
+				.orderBy(INVOICE.ID,INVOICE.RDOCUMENT)
+				.fetch()
+				.stream()
+				.map( new IrpfInvoiceGroupedBreakdown() );		
+	}
+
+	public static class IrpfInvoiceGroupedBreakdown implements Function<Record, IrpfBreakdown> {
+		@Override
+		public IrpfBreakdown apply(Record rec) {
+			double base =  ((BigDecimal) rec.getValue("INVOICE_TAX.BASE_SUM")).doubleValue();
+			double quota = ((BigDecimal) rec.getValue("INVOICE_TAX.QUOTA_SUM")).doubleValue();
+			double dedQuota = ((BigDecimal) rec.getValue("INVOICE_TAX.DEDUCTIBLE_QUOTA_SUM")).doubleValue();
+			if (AonMathUtils.isZero(dedQuota)) {
+				dedQuota = quota;
+			}
+			return new IrpfBreakdown()
+				.setFromSalary(false)
+				.setInvoice(rec.getValue(INVOICE.ID))
+				.setInvoiceType(AonEnumUtils.enumValue(InvoiceType.class,rec.getValue(INVOICE.TYPE)))
+				.setSeries(rec.getValue(INVOICE.SERIES))
+				.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
+				.setName(rec.getValue(INVOICE.RNAME))
+				.setBase(base)
+				.setQuota(quota)
+				.setDeductibleQuota(dedQuota)
+				;
+		}
+	}
+
 	public static class IrpfInvoiceBreakdown implements Function<Record, IrpfBreakdown> {
 		@Override
 		public IrpfBreakdown apply(Record rec) {
@@ -268,6 +328,8 @@ public class IRPFDAO extends FiscalModelDAO {
 					.setQuota(quota)
 					.setDeductiblePercent(dedPercent)
 					.setDeductibleQuota(dedQuota)
+					.setZip(rec.getValue(RADDRESS.ZIP))
+					.setCity(rec.getValue(RADDRESS.CITY))
 					;
 		}
 	}
@@ -300,8 +362,13 @@ public class IRPFDAO extends FiscalModelDAO {
 		return list;
 	}
 
-	public static Stream<IrpfBreakdown> getIRPFBreakdown(AONContext ctx, Date fromDate, Date toDate, IRPFFilter filter) {
-		return getInvoicesIrpfBreakdown(ctx, ctx.getDomainId(), fromDate, toDate, filter);
+	public static Stream<IrpfBreakdown> getIRPFBreakdown(AONContext ctx, Date fromDate, Date toDate, int grouped, IRPFFilter filter) {
+		if (grouped == 0) {
+			return getInvoicesIrpfBreakdown(ctx, ctx.getDomainId(), fromDate, toDate, filter);
+		} else {
+			return getGroupedInvoicesIrpfBreakdown(ctx, ctx.getDomainId(), fromDate, toDate, filter);
+		}
 	}
+
 }
 

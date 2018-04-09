@@ -23,6 +23,8 @@ public class IRPFParams implements Serializable {
 	private Boolean accrualRegime;
 	private Boolean investment;
 	private Boolean service;
+	private Integer orderBy;
+	private Integer groupByNif;
 	
 	Integer[] invoices;
 	
@@ -79,6 +81,20 @@ public class IRPFParams implements Serializable {
 	}
 	public IRPFParams setWithholdingType(WithholdingType type) {
 		this.type = type;
+		return this;
+	}
+	public Integer getOrderBy() {
+		return orderBy;
+	}
+	public IRPFParams setOrderBy(Integer orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+	public Integer getGroupByNif() {
+		return groupByNif;
+	}
+	public IRPFParams setGroupByNif(Integer groupByNif) {
+		this.groupByNif = groupByNif;
 		return this;
 	}
 	public Double getPercent() {

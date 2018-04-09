@@ -1301,6 +1301,7 @@ public class FiscalImpl implements IFiscal {
 			return IRPFDAO.getIRPFBreakdown(ctx 
 					,params.getFromDate()
 					,params.getToDate()
+					,params.getGroupByNif()==1?1:0
 					,p -> FinanceUtils.getIRPFFilter(p, params));
 		}
 }

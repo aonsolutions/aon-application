@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.shared;
 
-
 public interface IRequestParamsNames {
 
 	String DOMAIN = "domain";
@@ -17,6 +16,8 @@ public interface IRequestParamsNames {
 	String INVESTMENT = "investment";
 	String SERVICE = "service";
 	String RECTIFICATION = "rectification";
+	String ORDER_BY = "orderBy";
+	String GROUP_BY_NIF = "groupByNif";
 	
 	String DOMAIN_ID = "domainId";
 	String DOMAIN_NAME = "domainName";

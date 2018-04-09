@@ -39,6 +39,15 @@ public class IRPFReportPanel extends ScrollPanel{
 			+ AonStringUtils.leftPad("CUOTA DED.",15)
 			+ AonStringUtils.SPACE
 			+ AonStringUtils.rightPad("N\u00BA REFERENCIA",25)
+			+ AonStringUtils.rightPad("COD. POSTAL",15)
+			+ AonStringUtils.rightPad("MUNICIPIO",25)
+			+ AonStringUtils.repeat(" ", 2)
+			;
+	private static final String GROUPED_HEADER = AonStringUtils.rightPad("TITULAR FACTURA",31)
+			+ AonStringUtils.leftPad("BASE IMP.",15)
+			+ AonStringUtils.leftPad("CUOTA",15)
+			+ AonStringUtils.leftPad("CUOTA DED.",15)
+			+ AonStringUtils.SPACE
 			+ AonStringUtils.repeat(" ", 2)
 			;
 
@@ -76,9 +85,17 @@ public class IRPFReportPanel extends ScrollPanel{
 					try {
 						for (JsIRPFBreakdown irpf = read(text); text != null; irpf = read(text)) {
 							if (html.getWidgetCount() == 0) {
-								addHeaderWidget(html, title, subtitle);		
+								if (params.getGroupByNif() == 0) {
+									addHeaderWidget(html, title, subtitle);
+								} else {
+									addGroupedHeaderWidget(html, title, subtitle);
+								}
 							}
-							html.add( getIRPFWidget(irpf) );
+							if (params.getGroupByNif() == 0) {
+								html.add( getIRPFWidget(irpf) );
+							} else {
+								html.add( getGroupedIRPFWidget(irpf) );
+							}
 							sumBase = sumBase + irpf.getBase();
 							sumQuota = sumQuota + irpf.getQuota();
 							if (!irpf.isSales()) sumDedQuota = sumDedQuota + irpf.getDeductibleQuota();
@@ -99,14 +116,26 @@ public class IRPFReportPanel extends ScrollPanel{
 							+ AonStringUtils.leftPad(" ",8)
 							+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(sumDedQuota),15)
 							+ AonStringUtils.repeat(" ", 28)
-							);
+						);
+						Label total_grouped = new Label(AonStringUtils.leftPad("TOTAL: ",29)
+							+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(sumBase),17)
+							+ AonStringUtils.leftPad(" ",7)
+							+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(sumQuota),3)
+							+ AonStringUtils.leftPad(" ",7)
+							+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(sumDedQuota),3)
+							+ AonStringUtils.repeat(" ", 10)
+						);
 						html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
-						html.add(bold(total));
+						if (params.getGroupByNif() == 0) {
+							html.add(bold(total));
+						} else {
+							html.add(bold(total_grouped));
+						}
 						html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
 					}
 				}
 			}
-	
+
 			private JsIRPFBreakdown read(String text) {
 				for (int begin = loaded; begin < text.length(); begin++) {
 					if (text.charAt(begin) == '{') {
@@ -117,7 +146,7 @@ public class IRPFReportPanel extends ScrollPanel{
 				}
 				throw new IndexOutOfBoundsException();
 			}
-	
+
 			private int findEnd(String text, int start) {
 				for (int end = start; end < text.length(); end++) {
 					switch (text.charAt(end)) {
@@ -136,7 +165,6 @@ public class IRPFReportPanel extends ScrollPanel{
 		requestData.append("&irpfParams=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 
-		
 	}
 
 	private Widget bold( Widget w) {
@@ -152,6 +180,19 @@ public class IRPFReportPanel extends ScrollPanel{
 		}
 		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
 		html.add(bold(new Label(HEADER)));
+		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
+		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.SPACE, HEADER.length()))));
+	}
+	
+	private void addGroupedHeaderWidget(FlowPanel html, String title, String subtitle) {
+		if (AonStringUtils.isNotBlank(title)) {
+			html.add(bold(new Label(AonStringUtils.center(title, HEADER.length()))));
+		}	
+		if (AonStringUtils.isNotBlank(subtitle)) {
+			html.add(bold(new Label(AonStringUtils.center(subtitle, HEADER.length()))));
+		}
+		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
+		html.add(bold(new Label(GROUPED_HEADER)));
 		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, HEADER.length()))));
 		html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.SPACE, HEADER.length()))));
 	}
@@ -191,8 +232,30 @@ public class IRPFReportPanel extends ScrollPanel{
 		builder.appendEscaped( AonStringUtils.leftPad(irpf.isSales()?AonStringUtils.SPACE:AON.CURRENCY_FORMAT.format(irpf.getDeductibleQuota()),15));
 		builder.appendEscaped( AonStringUtils.SPACE);
 		builder.appendEscaped( AonStringUtils.rightPad(AonStringUtils.abbreviate(irpf.getReferenceCode(),25),25)); 
+		builder.appendEscaped( AonStringUtils.rightPad(irpf.getZip()==null?"":irpf.getZip(),15)); 
+		builder.appendEscaped( AonStringUtils.rightPad(irpf.getCity()==null?"":irpf.getCity(),25));
 		builder.appendEscaped( AonStringUtils.repeat(" ", 2));
 		line.setHTML(builder.toSafeHtml());
 		return line;
 	}
+
+	private Widget getGroupedIRPFWidget(JsIRPFBreakdown irpf) {
+		HTML line = new HTML();
+		line.setStyleName(AON.AON_CSS.aonReportRow());
+		SafeHtmlBuilder builder = new SafeHtmlBuilder();
+		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate( 
+				  AonStringUtils.defaultIfBlank(irpf.getRegistryDocument(), AonStringUtils.EMPTY) 
+				+ (AonStringUtils.isBlank(irpf.getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
+				+ AonStringUtils.defaultIfBlank(irpf.getName(), AonStringUtils.EMPTY)  
+				,29 ),30));
+		builder.appendEscaped( AonStringUtils.SPACE);
+		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(irpf.getBase()),15));
+		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(irpf.getQuota()),15));
+		builder.appendEscaped( AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(irpf.getDeductibleQuota()),15));
+		builder.appendEscaped( AonStringUtils.SPACE);
+		builder.appendEscaped( AonStringUtils.repeat(" ", 2));
+		line.setHTML(builder.toSafeHtml());
+		return line;
+	}
+
 }
