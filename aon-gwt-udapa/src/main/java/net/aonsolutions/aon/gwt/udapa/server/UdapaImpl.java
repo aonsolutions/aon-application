@@ -12,6 +12,8 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -79,6 +81,10 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		
 			map.put("warehouse", w.getName());
 			map.put("product_description", id.getDescription());
+			
+			Item item = AON.getItem(domainName, domainId, login, f -> f.getIdProperty().eq(id.getItem().getId()));
+			Product product = AON.getProduct(domainName, domainId, login, f -> f.getIdProperty().eq(item.getProductId()));
+			map.put("product_name", product.getName());
 			map.put("product_supplier", i.getSupplierName());
 			map.put("product_quantity", id.getQuantity() + "");
 

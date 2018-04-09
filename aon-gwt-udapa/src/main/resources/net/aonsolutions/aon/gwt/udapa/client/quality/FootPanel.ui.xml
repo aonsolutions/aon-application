@@ -29,6 +29,15 @@
 				</g:customHeader>
 				<g:ScrollPanel ui:field="calculatePanel" styleName="{aonResources.css.aonTextCenter}"/>
 			</g:tab>
+			<g:tab>
+				<g:customHeader>
+					<g:HTMLPanel>
+						<i:IronIcon icon="label" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						<g:InlineLabel text="Etiquetas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:ScrollPanel ui:field="tagPanel" styleName="{aonResources.css.aonTextCenter}"/>
+			</g:tab>
 		</g:TabLayoutPanel>
 	</aon:MinimizePanel>
 

@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -30,12 +31,15 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronImage;
@@ -75,6 +79,9 @@ public class FootPanel extends Composite {
 					openFootPanel();
 				} else  if(value == 1) {
 					calculatePanel();
+					openFootPanel();
+				} else if(value == 2) {
+					tagPanel();
 					openFootPanel();
 				}
 			}
@@ -444,6 +451,70 @@ public class FootPanel extends Composite {
 		}
 	}
 	
+	private void tagPanel() {
+		FlexTable ft = new FlexTable();
+
+		Label a = new Label("Posici\u00f3n");
+		a.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(0, 0, a);
+		DoubleBox tb1 = new DoubleBox();
+		tb1.setStyleName(AON.AON_CSS.aonInputText());
+		tb1.setText("1");
+		ft.setWidget(0, 1, tb1);
+		
+		Label b = new Label("50/60");
+		b.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(1, 0, b);
+		DoubleBox tb2 = new DoubleBox();
+		tb2.setStyleName(AON.AON_CSS.aonInputText());
+		tb2.setText("8");
+		ft.setWidget(1, 1, tb2);
+		
+		Label c = new Label("60/80");
+		c.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(2, 0, c);
+		DoubleBox tb3 = new DoubleBox();
+		tb3.setStyleName(AON.AON_CSS.aonInputText());
+		tb3.setText("8");
+		ft.setWidget(2, 1, tb3);
+		
+		Label d = new Label("Variedad");
+		d.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(3, 0, d);
+		TextBox tb4 = new TextBox();
+		tb4.setStyleName(AON.AON_CSS.aonInputText());
+		tb4.setText(parent.getMap().get("product_name").replace("patata", "").replace("PATATA", ""));
+		tb4.setWidth("100px");
+		ft.setWidget(3, 1, tb4);
+		
+		Label e = new Label("Destino");
+		e.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(4, 0, e);
+		TextBox tb5 = new TextBox();
+		tb5.setStyleName(AON.AON_CSS.aonInputText());
+		tb5.setWidth("100px");
+		ft.setWidget(4, 1, tb5);
+		
+		Label f = new Label("Observaciones");
+		f.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(5, 0, f);
+		TextArea ta = new TextArea();
+		ta.setStyleName(AON.AON_CSS.aonInputText());
+		ta.setWidth("100px");
+		ft.setWidget(5, 1, ta);
+
+		Button but = new Button("Descargar");
+		but.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), tb2.getValue(), tb3.getValue(), tb4.getValue(), tb5.getValue(),ta.getValue());
+			}
+		});
+		ft.setWidget(0, 2, but);
+		tagPanel.add(ft);
+	}
+	
 	private void updateIncomeDetail(Double price,Double quantity) {
 		String[] arr = parent.getMap().get("source").split("@");
 		parent.impl.updateIncomeDetail(parent.getAonData().getDomain().getName(), parent.getAonData().getDomain().getId(),
@@ -457,6 +528,7 @@ public class FootPanel extends Composite {
 	@UiField TabLayoutPanel tabPanel;
 	@UiField ScrollPanel imgPanel;
 	@UiField ScrollPanel calculatePanel;
+	@UiField ScrollPanel tagPanel;
 	
 	public TabLayoutPanel getTabPanel() {
 		return tabPanel;

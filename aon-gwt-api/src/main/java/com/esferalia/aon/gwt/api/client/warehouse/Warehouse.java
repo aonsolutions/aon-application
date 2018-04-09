@@ -209,7 +209,22 @@ public class Warehouse extends Methods{
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
-
+	
+	public void downloadUdapaTag(Integer id, Double pos, Double cal1, Double cal2, String var, String dest, String obv){
+		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&id="+id + "&position=" + pos + "&caliber1=" + cal1 + "&caliber2=" + cal2 
+				+ "&observation=" + (obv.isEmpty() ? "-" : obv) + "&variety=" + (var.isEmpty() ? "-" : var) + "&destiny=" + (dest.isEmpty() ? "-" : dest)  ;
+		
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_udapa_tag/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
 	public void sendPackingList(String requestData){
 		post(getUrl() + "packing_list_notification/" + getDomainName() + "/" + getUserName()  , requestData);
 	}
