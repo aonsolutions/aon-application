@@ -768,7 +768,7 @@ public class Mod111DAO extends FiscalModelDAO {
 				,script.getLabel()
 				,script.getKeys()
 //				,getPreviousModels(ctx,mod111)
-				,getEffectivePreviousModels(ctx,mod111)
+				,getMod111EffectivePreviousModels(ctx,mod111)
 				 .collect(Collectors.toCollection(LinkedList::new))	
 				,IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
 					.filter( br ->  keyDAO.acceptValue(mod111, br) )	
@@ -868,7 +868,7 @@ public class Mod111DAO extends FiscalModelDAO {
 					}
 			});
 		
-			getEffectivePreviousModels(ctx, mod111)
+			getMod111EffectivePreviousModels(ctx, mod111)
 				.forEach(mod -> {
 					for (String keyString : mod.getMap().keySet()) {
 						double amount = mod.getAmount(keyString);
@@ -900,7 +900,7 @@ public class Mod111DAO extends FiscalModelDAO {
 		return IRPFFormatter.formatDiffInvoices(title
 			,script.getLabel()
 			,script.getKeys()
-			,getEffectivePreviousModels(ctx, mod111)
+			,getMod111EffectivePreviousModels(ctx, mod111)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
 			,IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod111)
 				.filter( br ->  keyDAO.acceptValue(mod111, br) )	
@@ -933,5 +933,16 @@ public class Mod111DAO extends FiscalModelDAO {
 		return mod111;
 	}
 	
+	private static Stream<FiscalModel> getMod111EffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel) {
+		if (fiscalModel.isBizkaia()) {
+			LinkedList<FiscalModel> previousModels = getPreviousModels(ctx, fiscalModel) .collect(Collectors.toCollection(LinkedList::new));
+			if (fiscalModel.isComplementary()) { 
+				getSamePeriodModels(ctx, fiscalModel)
+					.forEach(fm ->  previousModels.add(fm));
+			}
+			return previousModels.stream(); 
+		} 
+		return getEffectivePreviousModels(ctx,fiscalModel);
+	}
 }
 

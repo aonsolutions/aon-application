@@ -74,6 +74,32 @@ public class FiscalModelValidation {
 		}
 	};
 
+	public static BiConsumer<FiscalModel,AONContext> SOMETHING_TO_COMPLEMENT = (fm,ctx) -> {
+		if (fm.getStatus() != FiscalStatus.BLOCKED 
+			&& (fm.isReplacement() || fm.isComplementary())
+			&& !(ctx.getDslContext()
+				.select()
+				.from(FS_MODEL)
+				.where(FS_MODEL.DOMAIN.equal(fm.getDomain()))
+					.and(FS_MODEL.MODEL.eq( fm.getModel().getValue()))
+					.and(FS_MODEL.YEAR.equal(fm.getYear()))
+					.and(FS_MODEL.PERIOD.eq( fm.getPeriod().getValue() ))
+					.and( fm.getModel().isOtherDeponentAllowedInSamePeriod()
+							?FS_MODEL.DOCUMENT.eq( fm.getDocument() )
+							:DSL.trueCondition() )
+					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
+					.and(FS_MODEL.REPLACEMENT.equal( ZERO ))
+					.and(FS_MODEL.COMPLEMENTARY.equal( ZERO ))
+					.and(FS_MODEL.STATUS.notEqual( (byte) FiscalStatus.BLOCKED.ordinal() ))
+					.and((fm.isNew())?DSL.trueCondition():FS_MODEL.ID.ne(fm.getId()))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent()) ) {
+			throw new AonCoreException(AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
+		}
+	};
+
 	/**
 	 * El Nombre debe tener 45 caracters como maximo.
 	 */
@@ -143,6 +169,7 @@ public class FiscalModelValidation {
 		.andThen(CONTACT_CELLULAR)
 		.andThen(CONTACT_PHONE)
 		.andThen(SAME_PERIOD_EXISTS_CHECK)
+		.andThen(SOMETHING_TO_COMPLEMENT)
 		.accept(fm, ctx);
 	}
 
