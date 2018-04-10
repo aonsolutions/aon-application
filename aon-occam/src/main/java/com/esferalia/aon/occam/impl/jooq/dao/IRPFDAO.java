@@ -10,19 +10,16 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import java.math.BigDecimal;
-
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.finance.Filters.IRPFFilter;
@@ -223,12 +220,12 @@ public class IRPFDAO extends FiscalModelDAO {
 					.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 					.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
 					.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
-					.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(INVOICE.REGISTRY))
+					.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(INVOICE.REGISTRY)).and(RADDRESS.TYPE.eq((byte) 0) )
 					.where(IRPF_PROPERTIES.getConditions(filter))
 						.and(INVOICE.DOMAIN.equal(domain))
 						.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(dateFrom),AonDateUtils.toSql(dateTo)))
 						.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
-						.and(RADDRESS.TYPE.eq((byte) 0))
+						
 					.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 					.fetch()
 					.stream()
