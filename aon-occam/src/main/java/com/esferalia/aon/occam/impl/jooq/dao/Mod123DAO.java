@@ -374,7 +374,7 @@ public class Mod123DAO extends FiscalModelDAO {
 							}
 					});
 			// Calcular lo declarado hasta ahora
-			getEffectivePreviousModels(ctx, mod123)
+			getMod123EffectivePreviousModels(ctx, mod123)
 			.forEach(mod -> {
 				for (String keyString : mod.getMap().keySet()) {
 					double amount = mod.getAmount(keyString);
@@ -408,7 +408,7 @@ public class Mod123DAO extends FiscalModelDAO {
 			,script.getLabel()
 			,script.getKeys()
 			//, getPreviousModels(ctx,mod123)
-			,getEffectivePreviousModels(ctx, mod123)
+			,getMod123EffectivePreviousModels(ctx, mod123)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
 			,IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod123)
 				.filter( br ->  keyDAO.acceptValue(mod123, br) )	
@@ -505,5 +505,16 @@ public class Mod123DAO extends FiscalModelDAO {
 		return mod123;
 	}
 
+	private static Stream<FiscalModel> getMod123EffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel) {
+		if (fiscalModel.isBizkaia()) {
+			LinkedList<FiscalModel> previousModels = getPreviousModels(ctx, fiscalModel) .collect(Collectors.toCollection(LinkedList::new));
+			if (fiscalModel.isComplementary()) { 
+				getSamePeriodModels(ctx, fiscalModel)
+					.forEach(fm ->  previousModels.add(fm));
+			}
+			return previousModels.stream(); 
+		} 
+		return getEffectivePreviousModels(ctx,fiscalModel);
+	}
 }
 

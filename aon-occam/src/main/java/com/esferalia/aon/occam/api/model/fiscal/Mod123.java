@@ -19,7 +19,7 @@ public class Mod123 extends FiscalModel implements Serializable {
 		if (getAdministration() == null) return false;
 		else if (isAEAT()) return true;
 		else if (isAraba()) return true;
-		else if (isBizkaia()) return false;
+		else if (isBizkaia()) return true;
 		else if (isGipuzkoa()) return false;
 		else if (isNavarra()) return false;
 		return false;
