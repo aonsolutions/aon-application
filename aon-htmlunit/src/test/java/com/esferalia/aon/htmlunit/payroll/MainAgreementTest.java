@@ -419,6 +419,7 @@ public class MainAgreementTest {
 		// 01-01-2018
 		calendar.add(Calendar.YEAR, -1);
 		newPrevSalaryDataTab(calendar.getTime());
+		wait4(htmlPage, htmlPage-> ((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 6);
 		wait4Id("textBox_SALARIO_MENSUAL_I");
 		htmlInput = getElementById("textBox_SALARIO_MENSUAL_I");
 		value = htmlInput.getValueAttribute();
@@ -426,9 +427,7 @@ public class MainAgreementTest {
 		Assert.assertNotEquals(value.trim(), "");
 
 		getElementById("deleteButton_01_01_2018").click();
-		wait4(htmlPage, htmlPage->
-			((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 4
-		);
+		wait4(htmlPage, htmlPage-> ((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 4);
 //		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 		getElementById("deleteButton_01_01_2019").click();
 		wait4(htmlPage, htmlPage->
