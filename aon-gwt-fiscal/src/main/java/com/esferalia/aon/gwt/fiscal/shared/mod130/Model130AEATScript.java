@@ -45,7 +45,7 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			+ "s actividades incluidas en este apartado y correspondientes"
 			+ " al per\u00EDodo comprendido entre el primer d\u00EDa del a\u00F1o y el \u00FAl"
 			+ "timo d\u00EDa del trimestre"
-			,new Mod130Key[]{Mod130Key.C06},INVOICE,DIFF_INVOICE)
+			,new Mod130Key[]{Mod130Key.C06},INVOICE)
 	,C07	("Pago fraccionado previo del trimestre ([04]-[05]-[06])"
 			,new Mod130Key[]{Mod130Key.C07},COMPUTE)
 	,R01	("II. Actividades agr\u00EDcolas, ganaderas, forestales y pesqueras "

@@ -92,8 +92,15 @@ public class IRPFFormatter {
 		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 
 	}
-
+	
+		
 	public static String formatInvoices(String title, String subtitle, LinkedList<IrpfBreakdown> list) {
+		return formatInvoices(title, subtitle, null, list);
+	}
+
+	
+	public static String formatInvoices(String title, String subtitle, Double participationPercent, LinkedList<IrpfBreakdown> list) {
+		boolean hasParticipationPercent = participationPercent !=null && !AonNumberUtils.equals(participationPercent,100.0);
 		StringBuilder buf = new StringBuilder();
 		String header = AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.rightPad("FACTURA",14)
@@ -104,6 +111,8 @@ public class IRPFFormatter {
 				+ AonStringUtils.rightPad("TIPO RET.",15)		
 				+ AonStringUtils.leftPad("BASE IMP.",15)		
 				+ AonStringUtils.leftPad("CUOTA",15)
+				+ (hasParticipationPercent?AonStringUtils.leftPad("% Part.",15):"") 
+				+ (hasParticipationPercent?AonStringUtils.leftPad("CUOTA",15):"")
 				+ AonStringUtils.repeat(" ", 2)
 				;
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", header.length())));
@@ -122,8 +131,10 @@ public class IRPFFormatter {
 		
 		double sumBase = 0;
 		double sumQuota = 0;
+		double sumPartQuota = 0;
 		HashSet<String> docs = new HashSet<String>();
 		for (IrpfBreakdown br : list) {
+			double partQuota =  hasParticipationPercent?AonMathUtils.round( br.getQuota() * participationPercent / 100):br.getQuota();
 			docs.add(br.getRegistryDocument());
 			buf.append(MessageFormat.format(DIV_MSG
 					 ,AonStringUtils.repeat(" ", 2)
@@ -139,10 +150,13 @@ public class IRPFFormatter {
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(br.getWithholdingType().getDescription(),14),15)		
 					+ AonStringUtils.leftPad(DEC.format(br.getBase()),15)		
 					+ AonStringUtils.leftPad(DEC.format(br.getQuota()),15)
+					+ (hasParticipationPercent?AonStringUtils.leftPad(AonStringUtils.leftPad(DEC.format(participationPercent),15),15):"") 
+					+ (hasParticipationPercent?AonStringUtils.leftPad(DEC.format(partQuota),15):"")
 					+ AonStringUtils.repeat(" ", 2)
 					));
 			sumBase += br.getBase(); 
 			sumQuota += br.getQuota();
+			sumPartQuota += partQuota;
 		}
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", header.length())));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD
@@ -152,6 +166,8 @@ public class IRPFFormatter {
 				+ AonStringUtils.leftPad(" ",40)
 				+ AonStringUtils.leftPad(DEC.format(sumBase),15)		
 				+ AonStringUtils.leftPad(DEC.format(sumQuota),15)
+				+ (hasParticipationPercent?AonStringUtils.leftPad(" ",15):"") 
+				+ (hasParticipationPercent?AonStringUtils.leftPad(DEC.format(sumPartQuota),15):"")
 				+ AonStringUtils.repeat(" ", 2)
 				));
 		docs =  null;
@@ -165,8 +181,9 @@ public class IRPFFormatter {
 			,IFiscalModelKey[] keys
 			, LinkedList<FiscalModel> models
 			, LinkedList<IrpfBreakdown> list) {
+		
 		StringBuilder buf = new StringBuilder();
-		int headerLength = 100; 
+		int headerLength = 120; 
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center(title, headerLength)));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.center("(" + subtitle + ")", headerLength)));		
@@ -180,8 +197,10 @@ public class IRPFFormatter {
 		
 		double sumBase = 0;
 		double sumQuota = 0;
+		
 		double sumBeforePeriodBase = 0;
 		double sumBeforePeriodQuota = 0;
+		
 		double sumPeriodBase = 0;
 		double sumPeriodQuota = 0;
 
@@ -194,8 +213,10 @@ public class IRPFFormatter {
 			}
 			sumBase += br.getBase(); 
 			sumQuota += br.getQuota();
+			
 			sumBeforePeriodBase += br.isInsidePeriod()?0.0:br.getBase(); 
 			sumBeforePeriodQuota += br.isInsidePeriod()?0.0:br.getQuota();
+			
 			sumPeriodBase += br.isInsidePeriod()?br.getBase():0.0; 
 			sumPeriodQuota += br.isInsidePeriod()?br.getQuota():0.0;
 		}
@@ -273,7 +294,7 @@ public class IRPFFormatter {
 				+ AonStringUtils.leftPad(" ",15)
 				+ AonStringUtils.leftPad(DEC.format(sumToDeclareBase),15)		
 				+ AonStringUtils.rightPad(" ",8)
-				+ AonStringUtils.leftPad(DEC.format(sumToDeclareQuota),15)
+				+ AonStringUtils.leftPad(DEC.format(sumToDeclareQuota),15) 
 				+ AonStringUtils.repeat(" ", 2)
 				));
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));

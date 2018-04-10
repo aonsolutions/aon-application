@@ -143,11 +143,16 @@ public class Mod130DAO extends FiscalModelDAO {
 			+"<li>Sumatorio de las casillas [016] --> @{c16Sum}</li>"
 			+"<li>Resultado: <b>@{C05}</b></li>")
 		,C06 (Mod130Key.C06 , (mod -> mod.isAEAT())
-			,(ctx,mod) -> mod.putAmount(Mod130Key.C06, 
-					IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod)
+			,(ctx,mod) -> {
+				double percent = mod.getAmount(Mod130Key.P1);
+				if (percent == 0) percent = 100;
+				double c06 = IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod)
 					    .filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )					
 						.mapToDouble(br -> br.getQuota())
-						.sum())
+						.sum();
+				c06 = AonMathUtils.round(c06 * percent / 100 );
+				mod.putAmount(Mod130Key.C06, c06 );
+							}
 			,null
 			,null)
 		,C07 (Mod130Key.C07 , (mod -> mod.isAEAT()),null
@@ -521,8 +526,9 @@ public class Mod130DAO extends FiscalModelDAO {
 		}
 		else 
 		{
+			double percent = mod130.getAmount(Mod130Key.P1); 
 			// Llamada desde la casilla 06
-			return IRPFFormatter.formatInvoices(title,script.getLabel()
+			return IRPFFormatter.formatInvoices(title,script.getLabel(),percent
 					   ,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
 					    .filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
 						.collect(Collectors.toCollection(LinkedList::new))
