@@ -826,7 +826,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 								agreementDraftObject.setStartDate(month);
 								agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
 								calculate();
-								agreementDraftObject.save(AgreementDraft.this);
 							}
 						};
 						
