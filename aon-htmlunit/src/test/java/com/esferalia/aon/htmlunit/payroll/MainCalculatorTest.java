@@ -40,6 +40,7 @@ public class MainCalculatorTest {
 		LOGGER.setLevel(Level.WARNING);
 		webClient = new WebClient(BrowserVersion.FIREFOX_45);
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+		webClient.getOptions().setCssEnabled(false);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 		webClient.setAlertHandler(new AlertHandler() {
 			@Override

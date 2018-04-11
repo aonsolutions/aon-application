@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -53,8 +54,11 @@ public class MainAgreementTest {
 	public static void setUp() throws Exception {
 		LOGGER.setLevel(Level.WARNING);
 		webClient = new WebClient(BrowserVersion.FIREFOX_45);
+		
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		webClient.getOptions().setCssEnabled(false);
+
 		webClient.setAlertHandler(new AlertHandler() {
 			@Override
 			public void handleAlert(Page page, String message) {
@@ -99,14 +103,18 @@ public class MainAgreementTest {
 		LOGGER.warning("Cick on: " + agreementTreeItem.asText());
 		agreementTreeItem.click();
 		
+		Pattern hidden = Pattern.compile("display\\s*:\\s*none");
+
 		HtmlButton draftButton = 
 				(HtmlButton) getElementById("draftButton");
-		Assert.assertNotEquals(draftButton.isDisplayed(), true );
+//		Assert.assertNotEquals(draftButton.isDisplayed(), true );
+		Assert.assertEquals(true, hidden.matcher(draftButton.getAttribute("style")).find());
 		
 		
 		agreementTreeItem.rightClick();
 		DomElement deleteItem = getElementById("deleteItem");
-		Assert.assertNotEquals(deleteItem.isDisplayed(), true );
+//		Assert.assertNotEquals(deleteItem.isDisplayed(), true );
+		Assert.assertEquals(true, hidden.matcher(deleteItem.getAttribute("style")).find());
 		
 		wait4(htmlPage,
 				htmlPage -> "ESTATUTO DE LOS TRABAJADORES".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
