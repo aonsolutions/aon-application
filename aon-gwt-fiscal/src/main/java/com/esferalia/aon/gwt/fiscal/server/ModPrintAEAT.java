@@ -86,8 +86,8 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		this.user = json.getString("user");	
 		if(json.opt("cert") != null && !"null".equals(json.optString("cert"))) {
 			Integer c = json.getInt("cert");
-			Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId)
-				.and(f.getIdProperty().eq(c))
+			Attach attach = AON.getAttach(domainName, domainId, user, f ->
+				f.getIdProperty().eq(c)
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
 			if(attach.getData() == null){
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);

@@ -95,7 +95,7 @@ public class Mod130PrintAEAT extends ModPrintAEAT {
 				+ "&TIA=" + mod130.getDeclarationType().getValue()
 				+ "&NDC=" + mod130.getDocument()
 				+ "&NRC=" + ("I".equals(mod130.getDeclarationType().getValue()) ? getNrc() : "") // TODO Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 
-				+ "&ING=" + ("I".equals(mod130.getDeclarationType().getValue()) ? mod130.getAmount(Mod130Key.C28) : "") // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
+				+ "&ING=" + ("I".equals(mod130.getDeclarationType().getValue()) ? mod130.getAmount(Mod130Key.C19) : "") // Importe ingresado correspondiente al NRC para el tipo I,  en resto de tipos vacío
 				+ "&NRR=" + ""
 				+ "&ICO=" + ""
 				+ "&NR1=" + ""
