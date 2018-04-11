@@ -1080,8 +1080,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private ContentAsistManager contentAssistManager;
 	
-	private boolean firstCalculate;
-	
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
@@ -1152,31 +1150,19 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private void initSalarytabs(Date draftStratDate, boolean readOnly) {
-		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
-		
-		if(firstCalculate){ // La primera vez que entra (PARCHE)
-			firstCalculate = false;
-			Date month = datesList[datesList.length - 1];
-			agreementDraftObject.setStartDate(month);
-			agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
-			calculate();
-		}
-			
 		salaryToggleButtonsPanel.clear();
 		moreToggleButtonsPanel.clear();
 		salaryToggleButtonsPanel.removeStyleName(style.hide());
 		int startTab = 0;
 		
+		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
 		if (datesList.length != 0){
 			for(int i=0; i<datesList.length; i++){
 				
 				Date date = datesList[i];
 				Date _endDate =  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : null;
 				
-				if (
-						(date.equals(draftStratDate) || 
-						(date.getMonth() == draftStratDate.getMonth() && date.getYear() == draftStratDate.getYear()))
-					){
+				if (date.equals(draftStratDate)){
 					startTab = i;
 					startTab = startTab*2;
 				}
@@ -1364,7 +1350,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			agreementDraftObject.removeListener(undoListener);
 		}
 		showDraft();
-		firstCalculate = true;
 		this.agreementDraftObject = agreementDraftObject;
 		this.agreementDraftObject.calculate(this);
 		enableUndoRedoButtons();
@@ -1383,9 +1368,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
 
-		initCategoryPanel(/*object.isSystem() &&*/ !object.isMine());
-		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
-		
 		loadAvailablePayments();
 
 		setDescription();
@@ -1414,6 +1396,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		loadContentAssistManager();
 		
 		setReadOnly(/*object.isSystem() &&*/ !object.isMine() );
+		
+		initCategoryPanel(/*object.isSystem() &&*/ !object.isMine());
+		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
 
 	}
 
