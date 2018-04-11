@@ -316,18 +316,15 @@ public class MainAgreementTest {
 		
 		wait4NoClass("textBox_SALARIO_MENSUAL_I", "aon-icon-changed");
 		
-//		HtmlTable salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
-		wait4(htmlPage, htmlPage-> 	((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 4 );
-//		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		HtmlTable salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 		
 		getElementById("deleteButton_01_01_2018").click();
-		wait4(htmlPage, htmlPage-> 	((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 2 );
-//		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 
 		getElementById("acceptButton").click();
 		System.out.println(getElementById("acceptButton").asXml());
-		wait4(htmlPage, htmlPage-> 	((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 2 );
-//		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size());
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size());
 		
 		htmlPage = webClient.getPage(url);
 		// Payroll Menu
@@ -347,9 +344,8 @@ public class MainAgreementTest {
 		agreementTreeItem.click();
 		wait4(htmlPage,
 				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
-		wait4(htmlPage, htmlPage-> ((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 2);
-//		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
-//		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 	
 		// 01-01-2018
 		newPrevSalaryDataTab(calendar.getTime());
@@ -379,18 +375,15 @@ public class MainAgreementTest {
 		wait4Value("textBox_SALARIO_MENSUAL_I", "999.99");
 		getElementById("acceptButton").click();
 		wait4NoClass("textBox_SALARIO_MENSUAL_I", "aon-icon-changed");
-		wait4(htmlPage, htmlPage-> ((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 6);
-//		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
-//		Assert.assertEquals(6, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(6, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 		
 		getElementById("deleteButton_01_01_2018").click();
-		wait4(htmlPage, htmlPage->((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 4);
-//		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 
 		getElementById("acceptButton").click();
 		System.out.println(getElementById("acceptButton").asXml());
-		wait4(htmlPage, htmlPage-> ((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 4);
-//		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size());
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size());
 		
 		htmlPage = webClient.getPage(url);
 		// Payroll Menu
@@ -410,9 +403,8 @@ public class MainAgreementTest {
 		agreementTreeItem.click();
 		wait4(htmlPage,
 				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
-		wait4(htmlPage, htmlPage-> ((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 4);
-//		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
-//		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 		
 		// 01-01-2018
 		calendar.add(Calendar.YEAR, -1);
@@ -424,20 +416,13 @@ public class MainAgreementTest {
 		Assert.assertNotEquals(value.trim(), "");
 		
 		getElementById("deleteButton_01_01_2018").click();
-		wait4(htmlPage, htmlPage-> 
-			((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 4
-		);
-//		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		Assert.assertEquals(4, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 		getElementById("deleteButton_01_01_2019").click();
-		wait4(htmlPage, htmlPage-> 
-			((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 2
-		);
-//		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 		
 		getElementById("acceptButton").click();
 		System.out.println(getElementById("acceptButton").asXml());
-		wait4(htmlPage, htmlPage-> ((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 2);
-//		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size());
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size());
 		
 		htmlPage = webClient.getPage(url);
 		// Payroll Menu
@@ -457,9 +442,8 @@ public class MainAgreementTest {
 		agreementTreeItem.click();
 		wait4(htmlPage,
 				htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
-		wait4(htmlPage, htmlPage->((HtmlTable)getElementById("salaryToggleButtonsPanel")).getRow(0).getCells().size() == 2);
-//		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
-//		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
+		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
+		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 		
 
 	}
