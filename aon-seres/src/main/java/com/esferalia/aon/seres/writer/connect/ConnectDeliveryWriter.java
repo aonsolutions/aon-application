@@ -45,6 +45,8 @@ import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1P;
 import com.esferalia.aon.seres.DeliveryPackages;
 import com.esferalia.aon.seres.SeresUtils;
 
+// TODO replace this writer with ConnectDeliveryWriterOccam 
+@Deprecated
 public class ConnectDeliveryWriter {
 
 	private final static Logger LOGGER = LoggerFactory
@@ -471,7 +473,7 @@ public class ConnectDeliveryWriter {
 		record.setNumeroDeLineaReferencia3(null);
 		record.setDiferenciaEnCantidadPedida_21_(null);
 		record.setCodigoDiscrepancia(null);
-		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(detail.getQuantity());
+		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * item.getPackMeasurement());
 		record.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
 		record.setUnidadDeMedidaPeso(null);
 		record.setDimensionDeTemperatura1_TC_(null);

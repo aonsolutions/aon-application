@@ -460,7 +460,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		record.setNumeroDeLineaReferencia3(null);
 		record.setDiferenciaEnCantidadPedida_21_(null);
 		record.setCodigoDiscrepancia(null);
-		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(detail.getQuantity());
+		record.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * item.getPackMeasurement());
 		record.setPesoTotalBrutoDeLaLinea_AAI_AAB_(null);
 		if(item.getPackMeasurementTag()!=null && item.getPackMeasurementTag().getName()!=null){
 			record.setUnidadDeMedidaPeso(
