@@ -3838,6 +3838,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
 				try {

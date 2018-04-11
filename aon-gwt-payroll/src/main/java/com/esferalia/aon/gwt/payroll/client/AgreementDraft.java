@@ -816,24 +816,24 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 					AgreementDraft.this.calculate(getExpressionFocusCallback());
 					//Window.alert("PAGOS : "+AgreementDraft.this.agreementDraftObject.getPayments().size());
-					if(AgreementDraft.this.agreementDraftObject.getPayments().size()==1){
-						EmployeeCalendarUntillDialog selectedDate = new EmployeeCalendarUntillDialog("Fecha inicio tramo", 
-								"Para poder crear el primer devengo es\nnecesario crear un primer tramo.") {
-							
-							@Override
-							protected void onAccept() {
-								Date month = this.getSelectedDate();
-								agreementDraftObject.addNewDatesWithChanges(month);
-								agreementDraftObject.setStartDate(month);
-								agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
-								calculate();
-							}
-						};
-						
-						selectedDate.setDefaultDate(new Date());
-						selectedDate.show();
-						selectedDate.center();
-					}
+//					if(AgreementDraft.this.agreementDraftObject.getPayments().size()==1){
+//						EmployeeCalendarUntillDialog selectedDate = new EmployeeCalendarUntillDialog("Fecha inicio tramo", 
+//								"Para poder crear el primer devengo es\nnecesario crear un primer tramo.") {
+//							
+//							@Override
+//							protected void onAccept() {
+//								Date month = this.getSelectedDate();
+//								agreementDraftObject.addNewDatesWithChanges(month);
+//								agreementDraftObject.setStartDate(month);
+//								agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+//								calculate();
+//							}
+//						};
+//						
+//						selectedDate.setDefaultDate(new Date());
+//						selectedDate.show();
+//						selectedDate.center();
+//					}
 				}
 			});
 		}
@@ -1080,7 +1080,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private ContentAsistManager contentAssistManager;
 	
-	private boolean firstCalculate;
+//	private boolean firstCalculate;
 	
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -1104,7 +1104,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		showDraft();
 	}
 	
-	private void initCategoryPanel(boolean readOnly) {
+	private Button initCategoryPanel(boolean readOnly) {
 		categoryButtonPanel.clear();
 		HorizontalPanel hPanel = new HorizontalPanel();
 		Button button = new Button("Categorias");
@@ -1148,20 +1148,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		categoryButtonPanel.add(hPanel);
 		HTML html = new HTML("&nbsp");
 		categoryButtonPanel.add(html);
-		
+		return button;
 	}
 
 	private void initSalarytabs(Date draftStratDate, boolean readOnly) {
 		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
 		
-		if(firstCalculate){ // La primera vez que entra (PARCHE)
-			firstCalculate = false;
-			Date month = datesList[datesList.length - 1];
-			agreementDraftObject.setStartDate(month);
-			agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
-			calculate();
-		}
-			
 		salaryToggleButtonsPanel.clear();
 		moreToggleButtonsPanel.clear();
 		salaryToggleButtonsPanel.removeStyleName(style.hide());
@@ -1261,13 +1253,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 							}
 							
 							if(newSelectMonth == null)
-								newSelectMonth = new Date(0);
+								newSelectMonth = TODAY;
 							
 							int finalSelectedButton = selectedButton;
 							Date finalnewSelectMonth = newSelectMonth;
 							
 							agreementDraftObject.setStartDate(newSelectMonth);
 							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(newSelectMonth));
+							
 							calculate( new CalculateCallback() {
 
 								@Override
@@ -1364,7 +1357,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			agreementDraftObject.removeListener(undoListener);
 		}
 		showDraft();
-		firstCalculate = true;
 		this.agreementDraftObject = agreementDraftObject;
 		this.agreementDraftObject.calculate(this);
 		enableUndoRedoButtons();
@@ -1377,13 +1369,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@Override
 	public void onCalculateFailure(Throwable throwable) {
 		// TODO Auto-generated method stub
-
+		Window.alert(throwable.getMessage());
 	}
 
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
 
-		initCategoryPanel(/*object.isSystem() &&*/ !object.isMine());
+		Button categoryButton = initCategoryPanel(/*object.isSystem() &&*/ !object.isMine());
 		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
 		
 		loadAvailablePayments();
@@ -1414,6 +1406,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		loadContentAssistManager();
 		
 		setReadOnly(/*object.isSystem() &&*/ !object.isMine() );
+		
+		if ( agreementDraftObject.getDatesWithChanges().isEmpty() )
+			categoryButton.click();
 
 	}
 

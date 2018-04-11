@@ -453,7 +453,8 @@ public class MainAgreementTest {
 		salaryToggleButtonsPanel = getElementById("salaryToggleButtonsPanel");
 		Assert.assertEquals(2, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 		
-
+		getElementById("deleteButton_01_01_2017").click();
+		Assert.assertEquals(0, salaryToggleButtonsPanel.getRow(0).getCells().size() );
 	}
 
 	@Test

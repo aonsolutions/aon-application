@@ -692,6 +692,7 @@ public class AgreementDraftObject {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
+						onSuccess(new ContextDescriptor());
 					}
 
 					@Override
