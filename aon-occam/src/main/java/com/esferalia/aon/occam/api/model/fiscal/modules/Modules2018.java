@@ -656,7 +656,7 @@ public class Modules2018 {
 					,new Module(2,ModuleInfo.M09,"Metro cua.",30.59)}
 				)			
 		,E_659_4A("659.4","Comercio al por menor de libros, peri\u00F3dicos, art\u00EDculos de papeler\u00EDa y escritorio y art\u00EDculos de dibujo y bellas artes, excepto en quioscos situados en la v\u00EDa p\u00FAblica."
-				,0.0
+				,100.0
 				,75
 				,3
 				,25207.02
@@ -670,7 +670,7 @@ public class Modules2018 {
 					 new Module(1,ModuleInfo.M58,"Euro",0.21)}
 				)
 		,E_659_4B("659.4","Comercio al por menor de prensa, revistas y libros en quioscos situados en la v\u00EDa p\u00FAblica."
-				,0.0
+				,100.0
 				,75
 				,2
 				,28860.22
