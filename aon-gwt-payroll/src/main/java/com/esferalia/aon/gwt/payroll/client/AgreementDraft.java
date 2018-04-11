@@ -636,6 +636,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			expressionBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
+					
 					if ( expressionBox.isReadOnly() ) return;
 					
 					reset.cancel();
@@ -815,7 +816,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 					AgreementDraft.this.calculate(getExpressionFocusCallback());
 					//Window.alert("PAGOS : "+AgreementDraft.this.agreementDraftObject.getPayments().size());
-					if(agreementDraftObject.getDatesWithChanges().size()<1){
+					if(AgreementDraft.this.agreementDraftObject.getPayments().size()==1){
 						EmployeeCalendarUntillDialog selectedDate = new EmployeeCalendarUntillDialog("Fecha inicio tramo", 
 								"Para poder crear el primer devengo es\nnecesario crear un primer tramo.") {
 							
@@ -1153,7 +1154,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private void initSalarytabs(Date draftStratDate, boolean readOnly) {
 		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
 		
-		if(firstCalculate && agreementDraftObject.getDatesWithChanges().size()>0){ // La primera vez que entra (PARCHE)
+		if(firstCalculate){ // La primera vez que entra (PARCHE)
 			firstCalculate = false;
 			Date month = datesList[datesList.length - 1];
 			agreementDraftObject.setStartDate(month);
