@@ -806,8 +806,8 @@ public class AccountingUtilitiesDAO {
 					.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(period.getId()))
 					.fetch()
 					.stream()
-					.map(rec -> rec.get(JOURNAL_MAX))
 					.findFirst()
+					.map(rec -> rec.get(JOURNAL_MAX))
 					.orElse(0)
 					;
 				String msg = "N\u00BA de asientos: " + count + "."
