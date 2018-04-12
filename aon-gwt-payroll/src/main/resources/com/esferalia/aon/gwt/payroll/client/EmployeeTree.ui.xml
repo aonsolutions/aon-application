@@ -44,15 +44,6 @@
 					</g:header>
 					<payroll:Employees ui:field='employees' extended="true" formers="false"/>
 				</g:stack>
-				<g:stack ui:field="configStack">
-					<g:header size='3'>									
-						<div class='{style.stackHeader}'>
-							<div class='{style.configIcon}' />
-							CONFIGURACI&Oacute;N
-						</div>
-					</g:header>
-					<payroll:MetaData ui:field='metaData' />
-				</g:stack>
 
 			</g:StackLayoutPanel>
 

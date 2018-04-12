@@ -1483,8 +1483,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	@UiField(provided=true)
 	Employees employees;
 	@UiField
-	MetaData metaData;
-	@UiField
 	DetailPanel employeeDetail;
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
@@ -1574,7 +1572,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		storage = Storage.getLocalStorageIfSupported();
 		
 		employees.addListener(this);
-		metaData.addListener(this);
 
 		fileEditor = new FileEditor();
 		resultsPanel = new ResultsPanel();
