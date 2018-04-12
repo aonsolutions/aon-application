@@ -90,8 +90,7 @@ public class SIIServlet extends HttpServlet{
 			// TODO dividir invoiceList en las demas listas.
 			Integer cert = Integer.parseInt(parameters.get("cert"));
 			String pass = parameters.get("pass");
-			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
-					.and(f.getIdProperty().eq(cert))
+			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(cert)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
 			if(attach.getData() == null){
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);

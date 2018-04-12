@@ -60,6 +60,7 @@ public class CommonServlet extends HttpServlet{
 		JSONObject meta = new JSONObject();
 		
 		if(accessToken.equals(md5)){
+			LOGGER.info("Common Servlet - GET METHOD - access token ok");
 			switch (req.getPathInfo()) {
 			case "/" + MSG.WORKPLACE:
 				object = getWorkplaceList(domain, user.getLogin());
@@ -84,6 +85,7 @@ public class CommonServlet extends HttpServlet{
 			default:
 				break;
 			}
+			Utils.addCorsHeader(resp);
 			Utils.giveBack(req, resp, object, meta);
 		}
 	}
@@ -155,6 +157,7 @@ public class CommonServlet extends HttpServlet{
 		}
 		JSONArray array = new JSONArray();
 		DataResponseSource source1 = DataResponseSource.QUALITY;
+		LOGGER.info("Common Servlet - GET METHOD - before get DATA RESPONSE");
 		AON.getDataResponseStream(domain.getName(), domain.getId(), login, source1,
 				f -> dataResponseFilter(domain, map, f))
 		.sorted((dr1, dr2) -> dr2.getResponseDate().compareTo(dr1.getResponseDate()))
@@ -177,6 +180,7 @@ public class CommonServlet extends HttpServlet{
 				}
 			}
 		});
+		LOGGER.info("Common Servlet - GET METHOD - BEFORE RETURN") ;
 	    return array;
 	}
 	
