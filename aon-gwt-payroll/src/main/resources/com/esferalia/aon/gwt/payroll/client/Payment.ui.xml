@@ -146,23 +146,33 @@
 					<g:Label>Tributa</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
-						styleName="aon-width-all">
-						<g:ListBox ui:field="taxListBox" styleName="gwt-ListBox aon-width-all" >
-							<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
-							<g:item value="{NONE}">Exento</g:item>
-							<g:item value="{CUSTOM}">Personalizado...</g:item>
-						</g:ListBox>
-						<g:Label>&nbsp;</g:Label>
-						<g:TextBox ui:field="taxTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}" />
-						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
-							<g:Button ui:field="fxTaxButton" styleName="aon-margin-left aon-editDataTable-button  aon-icon-fx" />
-						</g:cell>
-						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
-							<g:Button ui:field="resetTaxButton" styleName="aon-lookupButton-clear"
-								visible="false" />
-						</g:cell>
-					</g:HorizontalPanel>
+					<g:DeckPanel ui:field="taxDeckPanel" >
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+							styleName="aon-width-all" ui:field="taxFullPanel">
+								<g:Label>Importe &Iacute;ntegro</g:Label>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+							styleName="aon-width-all" ui:field="taxEditPanel">
+							<g:ListBox ui:field="taxListBox" styleName="gwt-ListBox aon-width-all" >
+								<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
+								<g:item value="{NONE}">Exento</g:item>
+								<g:item value="{CUSTOM}">Personalizado...</g:item>
+							</g:ListBox>
+							<g:Label>&nbsp;</g:Label>
+							<g:TextBox ui:field="taxTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}" />
+							<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
+								<g:Button ui:field="fxTaxButton" styleName="aon-margin-left aon-editDataTable-button  aon-icon-fx" />
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
+								<g:Button ui:field="resetTaxButton" styleName="aon-lookupButton-clear"
+									visible="false" />
+							</g:cell>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+							styleName="aon-width-all" ui:field="taxNonePanel">
+								<g:Label>Exento</g:Label>
+						</g:HorizontalPanel>
+					</g:DeckPanel>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -170,28 +180,38 @@
 					<g:Label>Cotiza</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
-						styleName="aon-width-all">
-						<g:ListBox ui:field="quoteListBox" styleName="gwt-ListBox aon-width-all">
-							<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
-							<g:item value="{NONE}">Exento</g:item>
-							<g:item value="{PRORATED}">Prorrateado</g:item>
-							<g:item value="{CUSTOM}">Personalizado...</g:item>
-						</g:ListBox>
-						<g:Label>&nbsp;</g:Label>
-						<g:TextBox ui:field="quoteTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}"/>
-						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
-							<g:Button ui:field="fxQuoteButton"
-								styleName="aon-margin-left aon-editDataTable-button aon-icon-fx" />
-						</g:cell>
-						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
-							<g:Button ui:field="resetQuoteButton" styleName="aon-lookupButton-clear"
-								visible="false" />
-						</g:cell>
-					</g:HorizontalPanel>
+					<g:DeckPanel ui:field="quoteDeckPanel" >
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+							styleName="aon-width-all" ui:field="quoteFullPanel">
+								<g:Label>Importe &Iacute;ntegro</g:Label>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+							styleName="aon-width-all" ui:field="quoteEditPanel">
+							<g:ListBox ui:field="quoteListBox" styleName="gwt-ListBox aon-width-all">
+								<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
+								<g:item value="{NONE}">Exento</g:item>
+								<g:item value="{PRORATED}">Prorrateado</g:item>
+								<g:item value="{CUSTOM}">Personalizado...</g:item>
+							</g:ListBox>
+							<g:Label>&nbsp;</g:Label>
+							<g:TextBox ui:field="quoteTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}"/>
+							<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
+								<g:Button ui:field="fxQuoteButton"
+									styleName="aon-margin-left aon-editDataTable-button aon-icon-fx" />
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
+								<g:Button ui:field="resetQuoteButton" styleName="aon-lookupButton-clear"
+									visible="false" />
+							</g:cell>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+							styleName="aon-width-all" ui:field="quoteNonePanel">
+								<g:Label>Exento</g:Label>
+						</g:HorizontalPanel>
+					</g:DeckPanel>
 				</g:customCell>
 			</g:row>
-			<g:row >
+			<g:row ui:Field="monthRow">
 				<g:customCell styleName="{style.label}">
 					<g:Label>Mes</g:Label>
 				</g:customCell>

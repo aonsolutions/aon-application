@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.shared.EvalWarning;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -17,6 +18,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -35,13 +37,16 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Payment extends ResizeComposite {
@@ -242,6 +247,30 @@ public class Payment extends ResizeComposite {
 	Button fxQuoteButton;
 	@UiField(provided = true)
 	MyExpressionBox quoteTextBox;
+	
+	@UiField
+	Panel taxFullPanel;
+	@UiField
+	Panel taxNonePanel;
+	@UiField
+	Panel taxEditPanel;
+	@UiField
+	DeckPanel taxDeckPanel;
+	@UiField
+	Panel quoteFullPanel;
+	@UiField
+	Panel quoteNonePanel;
+	@UiField
+	Panel quoteEditPanel;
+	@UiField
+	DeckPanel quoteDeckPanel;
+	
+	private int taxFullPanelIndex;
+	private int taxEditPanelIndex;
+	private int taxNonePanelIndex;
+	private int quoteFullPanelIndex;
+	private int quoteEditPanelIndex;
+	private int quoteNonePanelIndex;
 
 	private NumberFormat numberFormat;
 	private IContextProvider contextProvider;
@@ -257,6 +286,7 @@ public class Payment extends ResizeComposite {
 		initTypeListBox();
 		initReceiptListBox();
 		initMonthListBox();
+		initTaxDeckPanel();
 		showReceipt(false);
 	}
 
@@ -330,6 +360,8 @@ public class Payment extends ResizeComposite {
 				typeListBox.setSelectedIndex(i);
 
 		showOrHideResetTypeButton();
+		enableOrDisableTaxAndQuote();
+		enableOrDisableMonth();
 	}
 
 	public com.esferalia.aon.gwt.payroll.shared.Payment.Type getType() {
@@ -474,6 +506,8 @@ public class Payment extends ResizeComposite {
 	@UiHandler("typeListBox")
 	void onTypeListBoxChange(ChangeEvent event) {
 		showOrHideResetTypeButton();
+		enableOrDisableTaxAndQuote();
+		enableOrDisableMonth();
 	}
 
 	@UiHandler("resetTypeButton")
@@ -509,6 +543,18 @@ public class Payment extends ResizeComposite {
 			date.setMonth(month);
 			monthListBox.addItem(MONTH_FORMAT.format(date));
 		}
+	}
+
+	private void initTaxDeckPanel() {
+		taxFullPanelIndex = taxDeckPanel.getWidgetIndex(taxFullPanel);
+		taxEditPanelIndex = taxDeckPanel.getWidgetIndex(taxEditPanel);
+		taxNonePanelIndex = taxDeckPanel.getWidgetIndex(taxNonePanel);
+		quoteFullPanelIndex = quoteDeckPanel.getWidgetIndex(quoteFullPanel);
+		quoteEditPanelIndex = quoteDeckPanel.getWidgetIndex(quoteEditPanel);
+		quoteNonePanelIndex = quoteDeckPanel.getWidgetIndex(quoteNonePanel);
+		
+		taxDeckPanel.showWidget(taxEditPanelIndex);
+		quoteDeckPanel.showWidget(quoteEditPanelIndex);
 	}
 
 	public String getExpression(String listValue, String src) {
@@ -678,6 +724,36 @@ public class Payment extends ResizeComposite {
 		fxQuoteButton.setVisible(enabled);
 	}
 
+	private void enableOrDisableMonth() {
+		int rows = mainGrid.getRowCount();
+		com.google.gwt.user.client.Element monthRow = mainGrid.getRowFormatter().getElement(rows-1);
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		UIObject.setVisible(monthRow, type == Type.CRA_0004 || type== Type.CRA_0005);
+	}
+
+	private void enableOrDisableTaxAndQuote() {
+		if ( taxAndQuoteFull() ) {
+			taxDeckPanel.showWidget(taxFullPanelIndex);
+			quoteDeckPanel.showWidget(quoteFullPanelIndex);
+		} else if ( taxAndQuoteNone() ) {
+			taxDeckPanel.showWidget(taxNonePanelIndex);
+			quoteDeckPanel.showWidget(quoteNonePanelIndex);
+		} else {
+			taxDeckPanel.showWidget(taxEditPanelIndex);
+			quoteDeckPanel.showWidget(quoteEditPanelIndex);
+		}
+	}
+	
+	private boolean taxAndQuoteFull() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return ( type.isBBCCIncluded() && !type.isBBCCExcluded() );
+	}
+	
+	private boolean taxAndQuoteNone() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return ( !type.isBBCCIncluded() && type.isBBCCExcluded() );
+	}
+	
 	private void loadExpressionSuggestOracle() {
 
 		expressionSuggestOracle.clear();
