@@ -419,7 +419,7 @@ public class WarehouseServlet extends HttpServlet{
 	}
 	
 	private CarrierPacking getCarrierPacking(Domain domain, String login, JSONObject json, CarrierPacking carrierPacking) {
-		if(json.opt(MSG.SERIES) != null){
+		if(json.opt(MSG.SERIES) != null && AonStringUtils.isNumeric(json.getString(MSG.SERIES))){
 			carrierPacking.setSeries(json.getString(MSG.SERIES));
 		}
 		if(json.opt(MSG.NUMBER) != null && !MSG.EMPTY.equals(json.opt(MSG.NUMBER))){
