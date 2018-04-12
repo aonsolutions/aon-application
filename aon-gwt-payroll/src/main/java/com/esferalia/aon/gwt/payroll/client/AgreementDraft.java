@@ -66,6 +66,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -899,6 +900,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					AgreementDraft.this.calculate(getExpressionFocusCallback());
 
 				}
+			});
+			this.descriptionBox.addKeyDownHandler( (event) -> {
+				if ( KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode() )
+					suggestBox.hideSuggestionList();
+				else if ( event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode())
+					suggestBox.showSuggestionList();
 			});
 		}
 
@@ -1951,9 +1958,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			public void onSuccess(List<Payment> result) {
 				availablePaymens.addAll(result);
 				paymentDescriptionOracle.clear();
+				List<String> suggestionList = new ArrayList<String>();
 				for (Payment payment : availablePaymens) {
-					paymentDescriptionOracle.add(getSuggestionString(payment));
+					String suggestion = getSuggestionString(payment);
+					if ( StringUtils.isEmpty(suggestion))
+						continue;
+					suggestionList.add(suggestion);
+					paymentDescriptionOracle.add(suggestion);
 				}
+				paymentDescriptionOracle.setDefaultSuggestionsFromText(suggestionList);
 			}
 		});
 	}
@@ -3012,11 +3025,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private static String getSuggestionString(Payment payment) {
-		String description = payment.getDescription();
-		StringBuffer suggestion = StringUtils.isEmpty(description) ? new StringBuffer() : new StringBuffer(description);
-		if (!StringUtils.isEmpty(payment.getName()))
-			suggestion.append(" (").append(payment.getName()).append(")");
-		return suggestion.toString();
+		return SalaryDraft.getSuggestionString(payment);
+//		String description = payment.getDescription();
+//		StringBuffer suggestion = StringUtils.isEmpty(description) ? new StringBuffer() : new StringBuffer(description);
+//		if (!StringUtils.isEmpty(payment.getName()))
+//			suggestion.append(" (").append(payment.getName()).append(")");
+//		return suggestion.toString();
 	}
 
 	private static int getRealOffsetTop(Element scroll, Element e) {
