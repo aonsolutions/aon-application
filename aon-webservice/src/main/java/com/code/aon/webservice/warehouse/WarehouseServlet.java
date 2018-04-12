@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "WarehouseServlet", urlPatterns = { "/warehouse/*",
@@ -690,7 +691,7 @@ public class WarehouseServlet extends HttpServlet{
     	array.put(ToJSON.objectToJSON(year, year.toString()));
     	AON.getCarrierPackingSeries(domain.getName(), domain.getId(), login)
     	.forEach(series -> {
-    		if(!series.equals(year.toString()))
+    		if(series != null && AonStringUtils.isNumeric(series) && !series.equals(year.toString()))
     			array.put(ToJSON.objectToJSON(Integer.parseInt(series), series));
     	});
     	return array;
