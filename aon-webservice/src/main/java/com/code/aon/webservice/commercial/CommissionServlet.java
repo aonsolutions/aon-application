@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -44,17 +43,19 @@ public class CommissionServlet extends HttpServlet{
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
-	
+		String username = req.getRemoteUser().contains("=")
+				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
+				: req.getRemoteUser(); 
+		
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 		
 		switch (req.getPathInfo()) {
 		case "/calculated/offer":
-			object = getOfferCalculatedCommission(domain, user.getLogin(), req.getParameterMap());
+			object = getOfferCalculatedCommission(domain, username, req.getParameterMap());
 			break;
 		case "/calculated/invoice":
-			object = getInvoiceCalculatedCommission(domain, user.getLogin(), req.getParameterMap());
+			object = getInvoiceCalculatedCommission(domain, username, req.getParameterMap());
 			break;
 		default:
 			break;
@@ -71,15 +72,17 @@ public class CommissionServlet extends HttpServlet{
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
+		String username = req.getRemoteUser().contains("=")
+				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
+				: req.getRemoteUser(); 
 		
 		Object object = new Object();
 		switch (req.getPathInfo()) {
 		case "/calculated/offer":
-			object = updateOfferCalculatedCommission(domain, user.getLogin(), json);
+			object = updateOfferCalculatedCommission(domain, username, json);
 			break;
 		case "/calculated/invoice":
-			object = updateInvoiceCalculatedCommission(domain, user.getLogin(), json);
+			object = updateInvoiceCalculatedCommission(domain, username, json);
 			break;
 		default:
 			break;

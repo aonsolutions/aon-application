@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -49,9 +48,11 @@ public class FinanceServlet extends HttpServlet{
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
+		String username = req.getRemoteUser().contains("=")
+				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
+				: req.getRemoteUser();
 
-		String md5 = Utils.getMd5(user.getLogin()+domain.getName());
+		String md5 = Utils.getMd5(username+domain.getName());
 		
 		if(accessToken.equals(md5)){
 			if(pathInfo.length > 3){
@@ -62,35 +63,35 @@ public class FinanceServlet extends HttpServlet{
 					if(pathInfo.length > 4){
 						if (MSG.REGISTRY.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE INVOICE CON REGISTRY X
-								object = getInvoiceList(domain, user.getLogin(), Integer.parseInt(pathInfo[5]));
+								object = getInvoiceList(domain, username, Integer.parseInt(pathInfo[5]));
 						} else if(pathInfo[4].equals("id")) {
 							if(pathInfo.length > 5) // INVOICE CON ID X
-								object = getInvoice(domain, user.getLogin(), Integer.parseInt(pathInfo[5]));
+								object = getInvoice(domain, username, Integer.parseInt(pathInfo[5]));
 						} else if(pathInfo[4].equals("movements")) {
-							object = getInvoiceMovements(domain, user.getLogin(), req.getParameterMap());
+							object = getInvoiceMovements(domain, username, req.getParameterMap());
 						}
 					} else {// LISTA DE INVOICE CONDICION DOMAIN
-						object = getInvoiceList(domain, user.getLogin(), req);
+						object = getInvoiceList(domain, username, req);
 					}
 					break;
 				case MSG.FEE: // FEE
 					if(pathInfo.length > 4){
 						if (MSG.CUSTOMER.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE FEE CON CUSTOMER X
-								object = getFeeList(domain, user.getLogin(), Integer.parseInt(pathInfo[5]));
+								object = getFeeList(domain, username, Integer.parseInt(pathInfo[5]));
 						} else if(MSG.ID.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // FEE CON ID X
-								object = getFee(domain, user.getLogin(), Integer.parseInt(pathInfo[5])); 
+								object = getFee(domain, username, Integer.parseInt(pathInfo[5])); 
 						}
 					} else {// LISTA DE INVOICE CONDICION DOMAIN
-						getFeeList(domain, user.getLogin());
+						getFeeList(domain, username);
 					}
 					break;
 				case MSG.BOUGHT_PRODUCT: // INVOICE
 					if(pathInfo.length > 4){
 						if (MSG.REGISTRY.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE INVOICE CON REGISTRY X
-								object = getBoughtProductList(domain, user.getLogin(), Integer.parseInt(pathInfo[5]));
+								object = getBoughtProductList(domain, username, Integer.parseInt(pathInfo[5]));
 						}
 					}
 					break;

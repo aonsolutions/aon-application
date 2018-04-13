@@ -28,7 +28,6 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -52,35 +51,36 @@ public class CommonServlet extends HttpServlet{
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
-		
-		String md5 = Utils.getMd5(user.getLogin()+domain.getName());
+		String username = req.getRemoteUser().contains("=")
+				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
+				: req.getRemoteUser(); 
+				
+		String md5 = Utils.getMd5(username+domain.getName());
 	
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 		
 		if(accessToken.equals(md5)){
-			LOGGER.info("Common Servlet - GET METHOD - access token ok");
 			switch (req.getPathInfo()) {
 			case "/" + MSG.WORKPLACE:
-				object = getWorkplaceList(domain, user.getLogin());
+				object = getWorkplaceList(domain, username);
 				break;
 			case "/" + MSG.MAIL_ACCOUNT: 
-				object = getMailAccountList(domain, user.getLogin());
+				object = getMailAccountList(domain, username);
 				break;
 			case "/" + MSG.SIGNATURE: 
-				object = getSignatureList(domain, user.getLogin());
+				object = getSignatureList(domain, username);
 				break;
 			case "/" + MSG.APP_PARAM: 
 				String param = req.getParameter("param");
 				JSONArray array = new JSONArray();
-				AON.getApplicationParameterStream(domain.getName(), domain.getId(), user.getLogin(), f -> 
+				AON.getApplicationParameterStream(domain.getName(), domain.getId(), username, f -> 
 					f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().like(param+"%")))
 				.forEach(app -> array.put(ToJSON.applicationParameterToJSON(app)));
 				object = array;
 				break;
 			case "/" + MSG.DATA_RESPONSE: 
-				object = getDataResponseList(domain, user.getLogin(), req.getParameterMap());
+				object = getDataResponseList(domain, username, req.getParameterMap());
 				break;
 			default:
 				break;
@@ -157,7 +157,6 @@ public class CommonServlet extends HttpServlet{
 		}
 		JSONArray array = new JSONArray();
 		DataResponseSource source1 = DataResponseSource.QUALITY;
-		LOGGER.info("Common Servlet - GET METHOD - before get DATA RESPONSE");
 		AON.getDataResponseStream(domain.getName(), domain.getId(), login, source1,
 				f -> dataResponseFilter(domain, map, f))
 		.sorted((dr1, dr2) -> dr2.getResponseDate().compareTo(dr1.getResponseDate()))
@@ -180,7 +179,6 @@ public class CommonServlet extends HttpServlet{
 				}
 			}
 		});
-		LOGGER.info("Common Servlet - GET METHOD - BEFORE RETURN") ;
 	    return array;
 	}
 	

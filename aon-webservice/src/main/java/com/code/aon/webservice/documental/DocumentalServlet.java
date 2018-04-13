@@ -39,31 +39,33 @@ public class DocumentalServlet extends HttpServlet{
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		User user = AON.getUser(domain.getName(), domain.getId(), req.getRemoteUser());
-	
+		String username = req.getRemoteUser().contains("=")
+				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
+				: req.getRemoteUser();
+				
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 
-		String md5 = Utils.getMd5(user.getLogin()+domain.getName());
+		String md5 = Utils.getMd5(username+domain.getName());
 		if(accessToken.equals(md5)){
 			switch (req.getPathInfo()) {
 			case "/files":
-				object = getAttachJSON(domain, user.getLogin());
+				object = getAttachJSON(domain, username);
 				break;
 			case "/certificates":
-				object = getCertificateAttachJSON(domain, user.getLogin());
+				object = getCertificateAttachJSON(domain, username);
 				break;
 			case "/quality":
-				object = getQualityImagesJSON(domain, user.getLogin(), req.getParameter(MSG.ID));
+				object = getQualityImagesJSON(domain, username, req.getParameter(MSG.ID));
 				break;
 			case "/category":
-				object = getCategoryJSON(domain, user.getLogin());
+				object = getCategoryJSON(domain, username);
 				break;
 			case "/tag":
-				object = getTagJSON(domain, user.getLogin());
+				object = getTagJSON(domain, username);
 				break;
 			case "/scope":
-				object = getScopeJSON(domain, user.getLogin());
+				object = getScopeJSON(domain, username);
 				break;
 			default:
 				break;
