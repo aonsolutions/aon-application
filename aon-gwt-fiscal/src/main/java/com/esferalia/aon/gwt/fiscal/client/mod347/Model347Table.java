@@ -187,7 +187,7 @@ public class Model347Table extends SimpleLayoutPanel implements HasSelectionHand
 
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				Model347.SERVICE.getMod347s(Model347.getCurrentDomainName(), Model347.getCurrentDomain(),
+				Model347.SERVICE.getMod347s(cbk.getDomainName(),cbk.getUser(), cbk.getDomain(),
 						new AsyncCallback<LinkedList<Mod347>>() {
 							@Override
 							public void onSuccess(LinkedList<Mod347> result) {

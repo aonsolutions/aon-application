@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -19,7 +18,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod347 Print", urlPatterns = { "/aon_gwt_fiscal/Model347Print" })
+@WebServlet(name = "Mod347 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model347Print" })
 public class Mod347Print extends HttpServlet {
 
 	@Override
@@ -29,8 +28,8 @@ public class Mod347Print extends HttpServlet {
 		try {
 			int id = Integer.parseInt(req.getParameter("mod347"));
 			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = AonServletUtils.getLoggedUser();
 			Mod347 mod347 = FISCAL.getMod347(domainName, domainId, user,id);
 
 			Mod347ExcelAction action = new Mod347ExcelAction(mod347);

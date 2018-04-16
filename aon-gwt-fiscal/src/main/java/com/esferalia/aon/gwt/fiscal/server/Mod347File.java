@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -21,7 +20,7 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod347 File download", urlPatterns = { "/aon_gwt_fiscal/Model347File" })
+@WebServlet(name = "Mod347 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model347File" })
 public class Mod347File extends HttpServlet {
 
 	@Override
@@ -31,8 +30,9 @@ public class Mod347File extends HttpServlet {
 		try {
 			int id = Integer.parseInt(req.getParameter("mod347"));
 			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod347 mod347 = FISCAL.getMod347(domainName, domainId,AonServletUtils.getLoggedUser(), id);
+			Mod347 mod347 = FISCAL.getMod347(domainName, domainId,user, id);
 			mod347.setDomainName(domainName);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();

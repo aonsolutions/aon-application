@@ -26,15 +26,15 @@ public class Model347AEAT extends Model347Base {
 		paintDeclarationTab(tabPanel);
 		paintDeclaredTab(tabPanel, selectedIndexDeclared);
 		paintAssetsTab(tabPanel, selectedIndexAsset);
-		paintAdministrationTab(tabPanel);
+		paintAdministrationTab(cbk,tabPanel);
 		addTabPanelSelectionHandler(tabPanel);
 		
 		tabPanel.selectTab(tabPanelIndex, true);
 	}
 
-	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model347Callback cbk,TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel());
+		panel.add(getAdministrationPanel(cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod347().getAdministration())));
 	}

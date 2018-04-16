@@ -483,7 +483,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				Model347.SERVICE.getInfo(Model347.getCurrentDomainName(),Model347.getCurrentDomain(),
+				Model347.SERVICE.getInfo(cbk.getDomainName(),cbk.getUser(),cbk.getDomain(),
 						   cbk.getMod347(), declared, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
 
 							@Override

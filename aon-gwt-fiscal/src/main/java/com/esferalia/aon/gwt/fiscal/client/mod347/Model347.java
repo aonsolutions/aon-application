@@ -64,8 +64,12 @@ public class Model347 extends MainEntryPoint {
 		void cleanErrorPanel();
 		void onNew();
 		void showBreakdownPanel(String htmlText);
-		void cleanBreakdownPanel();		
+		void cleanBreakdownPanel();
+		String getDomainName();
+		String getUser();
+		int getDomain();
 	}
+	
 	protected class Model347Callback implements IModel347Callback {
 		
 		@Override
@@ -101,6 +105,18 @@ public class Model347 extends MainEntryPoint {
 		@Override
 		public void cleanBreakdownPanel() {
 			Model347.this.cleanBreakdownPanel();
+		}
+		@Override
+		public String getDomainName() {
+			return getCurrentDomainName();
+		}
+		@Override
+		public String getUser() {
+			return getCurrentUser();
+		}
+		@Override
+		public int getDomain() {
+			return getCurrentDomain();
 		}
 	
 	};
@@ -157,19 +173,9 @@ public class Model347 extends MainEntryPoint {
 
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	
 	private void onSelectionChange(SelectionEvent<Mod347> event) {
 		Mod347 sel = event.getSelectedItem();
-		SERVICE.getMod347(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod347(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				sel.getId(), new AsyncCallback<Mod347>() {
 					@Override
 					public void onSuccess(Mod347 selected) {
@@ -207,7 +213,7 @@ public class Model347 extends MainEntryPoint {
 
 	private void newModel() {
 		cleanErrorPanel();
-		SERVICE.initializeMod347(getCurrentDomainName(),getCurrentDomain(), 
+		SERVICE.initializeMod347(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), 
 				new AsyncCallback<Mod347>() {
 					@Override
 					public void onSuccess(Mod347 m347) {
@@ -323,7 +329,7 @@ public class Model347 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.saveMod347(getCurrentDomainName(),getCurrentDomain(),model,
+						SERVICE.saveMod347(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),model,
 								new AsyncCallback<Mod347>() {
 									@Override
 									public void onSuccess(Mod347 model) {
