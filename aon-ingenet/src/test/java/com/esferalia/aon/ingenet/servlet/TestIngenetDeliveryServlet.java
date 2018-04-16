@@ -17,7 +17,7 @@ public class TestIngenetDeliveryServlet  {
 		String xml = "";
 		
 		String filePath = "/tmp/delivery.xml";
-		filePath = "/home/eagirrezabal/Descargas/delivery.xml";
+		filePath = "/home/eagirrezabal/Descargas/delivery(5).xml";
 		
 		
 		try (
@@ -66,7 +66,6 @@ public class TestIngenetDeliveryServlet  {
 		String passwd = "1ng3n3t";
 		
 		String xml = getValue();
-		xml = "";
 		
 		StringBuilder postData = new StringBuilder();
 		postData.append('&');

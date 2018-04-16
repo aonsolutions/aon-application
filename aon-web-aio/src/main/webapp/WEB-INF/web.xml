@@ -477,24 +477,6 @@
 		<url-pattern>/aon_gwt_deposit/gwt_deposit_upload</url-pattern>
 	</servlet-mapping>
 	
-	<!-- Ingenet Servlet -->
-	<servlet>
-		<servlet-name>IngenetElaborationServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.ingenet.servlet.IngenetElaborationServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>IngenetElaborationServlet</servlet-name>
-		<url-pattern>/ingenet/elaboration</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>IngenetDeliveryServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.ingenet.servlet.IngenetDeliveryServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>IngenetDeliveryServlet</servlet-name>
-		<url-pattern>/ingenet/delivery</url-pattern>
-	</servlet-mapping>
 	
 
 	<!-- JSF STANDARD CONFIGURATION -->

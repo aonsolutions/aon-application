@@ -17,6 +17,7 @@ import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import net.aonsolutions.aon.gwt.communication.client.Communication;
 import net.aonsolutions.aon.gwt.invoice.client.Invoice;
 import net.aonsolutions.aon.gwt.sii.client.Sii;
 import net.aonsolutions.aon.gwt.seres.client.Seres;
@@ -215,6 +216,20 @@ public class Aio implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					new Seres(aonData).onModuleLoad();
+				}
+			});		
+			break;
+		case Modules.COMMUNICATION:
+			GWT.runAsync(Communication.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					new Communication(aonData).onModuleLoad();
 				}
 			});		
 			break;

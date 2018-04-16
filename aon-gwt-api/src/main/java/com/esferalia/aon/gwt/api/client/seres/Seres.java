@@ -64,6 +64,7 @@ public class Seres extends Methods{
 		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/history_detail?id="+id, callback);
 	}
 	
+	@Deprecated
 	public void processIngenetAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "ingenet_attach/"+getDomainName()+"/"+getUserName()+"/delivery" + str, callback);

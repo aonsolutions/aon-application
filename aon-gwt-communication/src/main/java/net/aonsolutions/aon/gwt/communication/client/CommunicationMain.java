@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.seres.client.seres;
+package net.aonsolutions.aon.gwt.communication.client;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -23,9 +23,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.aon.gwt.seres.shared.CommunicationTarget;
+import net.aonsolutions.aon.gwt.communication.client.ingenet.ContentGridIngenet;
+import net.aonsolutions.aon.gwt.communication.client.seres.ContentGrid;
+import net.aonsolutions.aon.gwt.communication.shared.CommunicationTarget;
 
-public class SeresMain extends AonTemplate2{
+public class CommunicationMain extends AonTemplate2{
 
 	private API API;
 	private HashMap<String, LinkedList<String>> filterMap;
@@ -36,7 +38,7 @@ public class SeresMain extends AonTemplate2{
 	private Button processAll;
 	
 	
-	public SeresMain(AonData aonData) {
+	public CommunicationMain(AonData aonData) {
 		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getDomain().getId(),
@@ -89,7 +91,7 @@ public class SeresMain extends AonTemplate2{
 		filterMap = new HashMap<>();
 		LinkedList<String> list = new LinkedList<>();
 		list.add("summary");
-		filterMap.put("seres",list);
+		filterMap.put("communication",list);
 		
 		Date date = new Date();
 		list = new LinkedList<>();
@@ -104,7 +106,7 @@ public class SeresMain extends AonTemplate2{
 	
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Comunicaciones SERES") {};
+		Toolbar toolbar = new Toolbar("Consola de comunicaciones") {};
 		
 		sendAll = toolbar.addButton("Enviar", AON.AON_CSS.aonIconSave());
 		retrieveAll = toolbar.addButton("Recuperar", AON.AON_CSS.aonIconImport());
@@ -116,10 +118,10 @@ public class SeresMain extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
+				CommunicationPrincipal p = (CommunicationPrincipal) getContent().getWidget();
 				SimpleLayoutPanel slp = p.getContent();
 				ContentGrid grid = (ContentGrid) slp.getWidget();
-				grid.send(getFilterMap().get("seres").get(0));
+				grid.send(getFilterMap().get("communication").get(0));
 			}
 		});
 		
@@ -127,10 +129,10 @@ public class SeresMain extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
+				CommunicationPrincipal p = (CommunicationPrincipal) getContent().getWidget();
 				SimpleLayoutPanel slp = p.getContent();
 				ContentGrid grid = (ContentGrid) slp.getWidget();
-				grid.retrieve(getFilterMap().get("seres").get(0));
+				grid.retrieve(getFilterMap().get("communication").get(0));
 			}
 		});
 		
@@ -138,17 +140,17 @@ public class SeresMain extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
+				CommunicationPrincipal p = (CommunicationPrincipal) getContent().getWidget();
 				SimpleLayoutPanel slp = p.getContent();
 				ContentGridIngenet grid = (ContentGridIngenet) slp.getWidget();
-				grid.process(getFilterMap().get("seres").get(0));
+				grid.process(getFilterMap().get("communication").get(0));
 			}
 		});
 	
 		setToolbar(toolbar);
 	}
 	
-	protected void cleanToolbarButtons() {
+	public void cleanToolbarButtons() {
 		sendAll.setVisible(false);
 		retrieveAll.setVisible(false);
 		processAll.setVisible(false);
@@ -163,18 +165,21 @@ public class SeresMain extends AonTemplate2{
 		
 		menuPanel.add(createMenuPanelButton("Visi\u00F3n global", "Visi\u00F3n global", null, false, false));
 		
-		menuPanel.add(createMenuPanelLabel("SERES - Env\u00EDo de Ficheros"));
-		menuPanel.add(createMenuPanelButton("Albaranes", "Env\u00EDo de Albaranes", CommunicationTarget.OUTCOME_DELIVERY));
-		menuPanel.add(createMenuPanelButton("Facturas", "Env\u00EDo de Facturas", CommunicationTarget.OUTCOME_INVOICE));
+		// TODO remove from aon-gwt-seres and implement here
+//		menuPanel.add(createMenuPanelLabel("SERES - Env\u00EDo de Ficheros"));
+//		menuPanel.add(createMenuPanelButton("Albaranes", "Env\u00EDo de Albaranes", CommunicationTarget.OUTCOME_DELIVERY));
+//		menuPanel.add(createMenuPanelButton("Facturas", "Env\u00EDo de Facturas", CommunicationTarget.OUTCOME_INVOICE));
 		
 		// TODO file retrieve options for sales and invoices
 //		menuPanel.add(createMenuPanelLabel("SERES - Recepci\u00F3n de Ficheros"));
 //		menuPanel.add(createMenuPanelButton("Pedidos", "Recepci\u00F3n de Pedidos", CommunicationTarget.INCOME_SALES, true, true));
 //		menuPanel.add(createMenuPanelButton("Facturas", "Recepci\u00F3n de Facturas", CommunicationTarget.INCOME_INVOICE, true, true));
 		
-		// TODO remove this implementation for Ingenet incomes
-//		menuPanel.add(createMenuPanelLabel("Ingenet - Recepci\u00F3n de Ficheros"));
-//		menuPanel.add(createMenuPanelButton("Albaranes", "Recepci\u00F3n de Albaranes Ingenet", CommunicationTarget.INGENET_DELIVERY));
+		menuPanel.add(createMenuPanelLabel("Ingenet - Env\u00EDo de Ficheros"));
+		menuPanel.add(createMenuPanelButton("Pedidos", "Env\u00EDo de Pedidos Ingenet", CommunicationTarget.INGENET_SALES));
+		
+		menuPanel.add(createMenuPanelLabel("Ingenet - Recepci\u00F3n de Ficheros"));
+		menuPanel.add(createMenuPanelButton("Albaranes", "Recepci\u00F3n de Albaranes Ingenet", CommunicationTarget.INGENET_DELIVERY));
 		
 		setWestContent(menuPanel);
 	}
@@ -228,7 +233,7 @@ public class SeresMain extends AonTemplate2{
 				cleanToolbarButtons();
 				initializeFilterMap();
 				
-				SeresPrincipal p = (SeresPrincipal) getContent().getWidget();
+				CommunicationPrincipal p = (CommunicationPrincipal) getContent().getWidget();
 				FilterPanel fp = (FilterPanel) p.getNorthContent().getWidget();
 				fp.setTitle(title);
 				p.gridContent(action);
@@ -246,7 +251,7 @@ public class SeresMain extends AonTemplate2{
 	}
 	
 	private void content() {
-		setContent(new SeresPrincipal(this));
+		setContent(new CommunicationPrincipal(this));
 	}
 
 	public static native void consoleLog( String message) 

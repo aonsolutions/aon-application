@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.seres.server;
+package net.aonsolutions.aon.gwt.communication.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,9 +29,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 
-@Deprecated
 @SuppressWarnings("serial")
-@WebServlet(name = "IngenetAttachServletDeprecated", urlPatterns = { "/ingenet_attach_deprecated/*", "/aon_gwt_aio/ingenet_attach_deprecated/*" })
+@WebServlet(name = "IngenetAttachServlet", urlPatterns = { "/ingenet_attach/*", "/aon_gwt_aio/ingenet_attach/*" })
 public class IngenetAttachServlet extends HttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(IngenetAttachServlet.class.getName());

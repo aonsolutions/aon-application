@@ -1,0 +1,36 @@
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core">
+
+	<ui:with
+		type="com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources"
+		field="issuesResources" />
+
+	<ui:style>
+	@external .gwt-PopupPanel;
+	.gwt-PopupPanel {
+		margin: 0px !important;
+		border: 1px solid #EEE !important;
+		padding: 4px 0px !important;
+		width: 200px;
+	}
+	</ui:style>
+
+	<g:HTMLPanel styleName="aon-panelGrid-search" height="55px">
+		<div
+			class="aon-panelGrid-search-info {issuesResources.css.aonPanelGridSearchInfoIssues}">
+			<g:HorizontalPanel ui:field="filterHorizontal"
+				styleName="aon-width-all">
+				<g:HTMLPanel>
+					<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>
+					<g:InlineLabel ui:field="label" />
+				</g:HTMLPanel>
+			</g:HorizontalPanel>
+		</div>
+		<g:HorizontalPanel ui:field="panel" styleName="aon-width-all" />
+	</g:HTMLPanel>
+
+</ui:UiBinder>
