@@ -4,48 +4,47 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import com.esferalia.aon.ingenet.api.consultaElaboraciones.ACCIONTYPE;
-import com.esferalia.aon.ingenet.api.consultaElaboraciones.CONSULTAELABORACIONES;
-import com.esferalia.aon.ingenet.api.consultaElaboraciones.ESTADOTYPE;
-import com.esferalia.aon.ingenet.api.consultaElaboraciones.PARAMETROSBUSQUEDATYPE;
-import com.esferalia.aon.ingenet.api.consultaElaboraciones.REFERENCIATYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.CIFNIFTYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.DATOSCENTROTRABAJOTYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.DATOSCLIENTETYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.DATOSDIRECCIONTYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.DATOSPEDIDOORIGENTYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.DATOSPRODUCTOTYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.DATOSREGISTROTYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.ERRORESTYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.PAISTYPE;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.RESPUESTAELABORACIONES;
-import com.esferalia.aon.ingenet.api.respuestaElaboraciones.RESPUESTAELABORACIONTYPE;
+import com.esferalia.aon.ingenet.api.consultaPedidos.ACCIONTYPE;
+import com.esferalia.aon.ingenet.api.consultaPedidos.CONSULTAPEDIDOS;
+import com.esferalia.aon.ingenet.api.consultaPedidos.ESTADOTYPE;
+import com.esferalia.aon.ingenet.api.consultaPedidos.PARAMETROSBUSQUEDATYPE;
+import com.esferalia.aon.ingenet.api.consultaPedidos.REFERENCIATYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.CIFNIFTYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.DATOSCENTROTRABAJOTYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.DATOSCLIENTETYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.DATOSDIRECCIONTYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.DATOSPRODUCTOTYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.DATOSREGISTROTYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.DETALLEPEDIDOTYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.ERRORESTYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.LINEADETALLETYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.PAISTYPE;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.RESPUESTAPEDIDOS;
+import com.esferalia.aon.ingenet.api.respuestaPedidos.RESPUESTAPEDIDOTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
-import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -53,25 +52,23 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.ElaborationSource;
-import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MediaType;
-import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
+import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 
-@WebServlet(name = "IngenetElaborationServlet", urlPatterns = { "/ingenet/elaboration/*", "/ingenet/elaboration/dev/*" })
-public class IngenetElaborationServlet extends AbstractIngenetServlet {
+@WebServlet(name = "IngenetSalesServlet", urlPatterns = { "/ingenet/sales/*", "/ingenet/sales/dev/*" })
+public class IngenetSalesServlet extends AbstractIngenetServlet {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetElaborationServlet.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetSalesServlet.class.getName());
 	
 	private List<String> errorList;
 	
@@ -84,13 +81,13 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		String _xml = httpRequest.getParameter(PARAM_VALUE);
 		PARAMETROSBUSQUEDATYPE params = null;
 		if(_xml!=null){
-			CONSULTAELABORACIONES consulta = null;
+			CONSULTAPEDIDOS consulta = null;
 			try {
-				super.validateConsultaElaboracionesXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
-				consulta = (CONSULTAELABORACIONES) IngenetXmlValidator.extractValue(_xml, CONSULTAELABORACIONES.class);
-				if(consulta!=null && consulta.getDATOSCONSULTAELABORACIONES()!=null
-						&& consulta.getDATOSCONSULTAELABORACIONES().getPARAMETROSBUSQUEDA()!=null){
-					params = consulta.getDATOSCONSULTAELABORACIONES().getPARAMETROSBUSQUEDA();
+				super.validateConsultaPedidosXmlPattern(new ByteArrayInputStream(_xml.getBytes()));
+				consulta = (CONSULTAPEDIDOS) IngenetXmlValidator.extractValue(_xml, CONSULTAPEDIDOS.class);
+				if(consulta!=null && consulta.getDATOSCONSULTAPEDIDOS()!=null
+						&& consulta.getDATOSCONSULTAPEDIDOS().getPARAMETROSBUSQUEDA()!=null){
+					params = consulta.getDATOSCONSULTAPEDIDOS().getPARAMETROSBUSQUEDA();
 				}
 			} catch (SAXException e) {
 				errorList.add("El fichero no ha pasado el proceso de validacion");
@@ -116,63 +113,63 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 				LOGGER.error("Cannot parse date value. Reason: "+ e.getMessage());
 			}
 		}
-		List<ElaborationStatus> statusList = new LinkedList<>();
+		List<SalesStatus> statusList = new LinkedList<>();
 		if(params.getESTADO()!=null){
-			if(params.getESTADO().contains(ESTADOTYPE.PENDIENTE)){
-				statusList.add(ElaborationStatus.PENDING);
-			}
-			if(params.getESTADO().contains(ESTADOTYPE.PROCESANDO)){
-				statusList.add(ElaborationStatus.IN_PROGRESS);
-			}
-			if(params.getESTADO().contains(ESTADOTYPE.FINALIZADO)){
-				statusList.add(ElaborationStatus.CLOSED);
-			}
-			if(params.getESTADO().contains(ESTADOTYPE.FALLIDO)){
-				statusList.add(ElaborationStatus.FAIL);
-			}
-			if(params.getESTADO().contains(ESTADOTYPE.REABIERTO)){
-				statusList.add(ElaborationStatus.REOPEN);
-			}
+//			if(params.getESTADO().contains(ESTADOTYPE.PENDIENTE)){
+//				statusList.add(SalesStatus.PENDING);
+//			}
+//			if(params.getESTADO().contains(ESTADOTYPE.PROCESANDO)){
+//				statusList.add(SalesStatus.PENDING);
+//			}
+//			if(params.getESTADO().contains(ESTADOTYPE.FINALIZADO)){
+//				statusList.add(SalesStatus.CLOSED);
+//			}
+//			if(params.getESTADO().contains(ESTADOTYPE.FALLIDO)){
+//				statusList.add(SalesStatus.BLOCKED);
+//			}
+//			if(params.getESTADO().contains(ESTADOTYPE.REABIERTO)){
+//				statusList.add(SalesStatus.PENDING);
+//			}
 		}
 		
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
-		List<Elaboration> elaborationList = null;
+		List<Sales> salesList = null;
 		try {
 			if(ACCIONTYPE.RECUPERAR==params.getACCION()) {
-				elaborationList = getElaborationList(ctx, date, statusList);
-				flushElaborations(httpResponse, ctx, elaborationList);
-				elaborationList.forEach(elaboration -> {
-					if(elaboration.getSourceId()!=null && existSales(ctx, elaboration)){						
-						elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
-						ElaborationDAO.updateElaboration(ctx, elaboration);
-					} else {
-						String reference = elaboration.getSeries()+"/"+elaboration.getNumber();
-//						errorList.add("Imposible localizar el pedido de origen de la elaboracion "+reference);
-						String subject = "Envío automático de elaboraciones";
-						String content = "Imposible localizar el pedido de origen de la elaboracion "+reference;
-						log(IngenetLogLevel.DEBUG, subject, content, "elaboraciones", _xml, getMailingDevelopers(ctx));
-					}
-				});
+				salesList = getSalesList(ctx, date, statusList);
+				flushSales(httpResponse, ctx, salesList);
+//				salesList.forEach(elaboration -> {
+//					if(elaboration.getSourceId()!=null && existSales(ctx, elaboration)){						
+//						elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
+//						ElaborationDAO.updateElaboration(ctx, elaboration);
+//					} else {
+//						String reference = elaboration.getSeries()+"/"+elaboration.getNumber();
+////						errorList.add("Imposible localizar el pedido de origen de la elaboracion "+reference);
+//						String subject = "Envío automático de elaboraciones";
+//						String content = "Imposible localizar el pedido de origen de la elaboracion "+reference;
+//						log(IngenetLogLevel.DEBUG, subject, content, "elaboraciones", _xml, getMailingDevelopers(ctx));
+//					}
+//				});
 				 
 //				String subject = "Recuperación automática de elaboraciones";
 //				String content = fillResponseMessage(elaborationList);
 //				sendEmail(subject, content, "recuperar", _xml, RECIPIENTS_TO_LOG);
 //				saveToDisk("elaboration", "elaboration-request", _xml!=null?_xml:"");
 			} else if(ACCIONTYPE.CANCELAR==params.getACCION()) {
-				if(params.getELABORACIONES()!=null 
-						&& params.getELABORACIONES().getREFERENCIAS()!=null 
-						&& params.getELABORACIONES().getREFERENCIAS().size()>0){
-					elaborationList = new ArrayList<>();
-					reopenElaborations(ctx, elaborationList, params.getELABORACIONES().getREFERENCIAS());
-					elaborationList.forEach(elaboration -> {
-						ElaborationDAO.updateElaboration(ctx, elaboration);
-					});
-					httpResponse.setStatus(HttpServletResponse.SC_OK);					
-				}
-				
-				String subject = "Cancelación automática de elaboraciones";
-				String content = fillCancellationMessage(params.getELABORACIONES().getREFERENCIAS());
-				log("elaboration", IngenetLogLevel.DEBUG, subject, content, "elaboration_cancelation", _xml, RECIPIENTS_TO_LOG);
+				// TODO cancelar pedidos
+//				if(params.getELABORACIONES()!=null 
+//						&& params.getELABORACIONES().getREFERENCIAS()!=null 
+//						&& params.getELABORACIONES().getREFERENCIAS().size()>0){
+//					salesList = new ArrayList<>();
+//					reopenElaborations(ctx, salesList, params.getELABORACIONES().getREFERENCIAS());
+//					salesList.forEach(elaboration -> {
+//						ElaborationDAO.updateElaboration(ctx, elaboration);
+//					});
+//					httpResponse.setStatus(HttpServletResponse.SC_OK);					
+//				}
+//				String subject = "Cancelación automática de elaboraciones";
+//				String content = fillCancellationMessage(params.getELABORACIONES().getREFERENCIAS());
+//				log("elaboration", IngenetLogLevel.DEBUG, subject, content, "elaboration_cancelation", _xml, RECIPIENTS_TO_LOG);
 			} else {
 				errorList.add("No se ha indicado la accion a realizar");
 			}
@@ -185,57 +182,58 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		}
 		
 		if(errorList!=null && errorList.size()>0){
-			errorList.add(0, "Se han producido errores al comunicar las elaboraciones");
+			errorList.add(0, "Se han producido errores al comunicar los pedidos");
 			flushErrors(httpResponse, errorList);
 		}
 		
 	}
 	
-	private boolean existSales(AONContext ctx, Elaboration elaboration) {
-		long count = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-				f -> f.getIdProperty().eq(elaboration.getSourceId())).count();
-		return count>0;
-	}
+//	private boolean existSales(AONContext ctx, Elaboration elaboration) {
+//		long count = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+//				f -> f.getIdProperty().eq(elaboration.getSourceId())).count();
+//		return count>0;
+//	}
 
-	private void reopenElaborations(AONContext ctx,
-			List<Elaboration> elaborationList, List<REFERENCIATYPE> referencias) {
-		referencias.forEach(ref -> {
-			String series = ref.getSERIE();
-			Integer number = Integer.parseInt(ref.getNUMERO());
-			Elaboration elaboration = ElaborationDAO.getElaboration(ctx,
-					series, number);
-			if(elaboration.getStatus()==ElaborationStatus.IN_PROGRESS.value()){
-				elaboration.setStatus(ElaborationStatus.REOPEN.value());
-				elaboration.setRemarks(StringUtils.mid(ref.getOBSERVACIONES(), 0, 128));
-				elaborationList.add(elaboration);
-			}
-		});
+	// TODO reopenSales
+	private void reopenSales(AONContext ctx,
+			List<Sales> salesList, List<REFERENCIATYPE> referencias) {
+//		referencias.forEach(ref -> {
+//			String series = ref.getSERIE();
+//			Integer number = Integer.parseInt(ref.getNUMERO());
+//			Sales sales = SalesDAO.getSales(ctx,
+//					series, number);
+//			if(sales.getStatus()==SalesStatus.IN_PROGRESS.value()){
+//				sales.setStatus(SalesStatus.REOPEN.value());
+//				sales.setRemarks(StringUtils.mid(ref.getOBSERVACIONES(), 0, 128));
+//				salesList.add(sales);
+//			}
+//		});
 	}
 	
-	private String fillResponseMessage(List<Elaboration> elaborationList) {
-		StringBuffer bf = new StringBuffer("<h1>Recuperación de elaboraciones.</h1>");
+	private String fillResponseMessage(List<Sales> salesList) {
+		StringBuffer bf = new StringBuffer("<h1>Recuperación de pedidos.</h1>");
 		bf.append("<ul>");
-		elaborationList.forEach(elab -> {
-			bf.append("<li>Elaboración ").append(elab.getSeries()).append("/").append(elab.getNumber()).append(" del ")
-					.append(elab.getDate()).append("</li>");
+		salesList.forEach(sales -> {
+			bf.append("<li>Pedido ").append(sales.getSeries()).append("/").append(sales.getNumber()).append(" del ")
+					.append(sales.getIssueDate()).append("</li>");
 		});
 		bf.append("</ul>");
 		return bf.toString();
 	}
 	
 	private String fillCancellationMessage(List<REFERENCIATYPE> list) {
-		StringBuffer bf = new StringBuffer("<h1>Cancelación de elaboraciones.</h1>");
+		StringBuffer bf = new StringBuffer("<h1>Cancelación de pedidos.</h1>");
 		bf.append("<ul>");
-		list.forEach(elab -> {
-			bf.append("<li>Elaboración ").append(elab.getSERIE()).append("/").append(elab.getNUMERO()).append("</li>");
-			bf.append("<li>").append(elab.getOBSERVACIONES()).append("</li>");
+		list.forEach(pedido -> {
+			bf.append("<li>Pedido ").append(pedido.getSERIE()).append("/").append(pedido.getNUMERO()).append("</li>");
+			bf.append("<li>").append(pedido.getOBSERVACIONES()).append("</li>");
 		});
 		bf.append("</ul>");
 		return bf.toString();
 	}
 	
 	private String fillErrorMessage(ERRORESTYPE errorestype, List<String> errorList) {
-		StringBuffer bf = new StringBuffer("<h1>Envío de elaboraciones.</h1>");
+		StringBuffer bf = new StringBuffer("<h1>Envío de pedidos.</h1>");
 		bf.append("<ul>");
 		errorList.forEach(error -> {
 			if (error != null)
@@ -253,16 +251,16 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 
 	private void flushErrors(HttpServletResponse httpResponse,
 			List<String> errorList) throws IOException {
-		RESPUESTAELABORACIONES respuesta = new RESPUESTAELABORACIONES();
+		RESPUESTAPEDIDOS respuesta = new RESPUESTAPEDIDOS();
 		respuesta.setERRORES(new ERRORESTYPE());
 		errorList.forEach(error -> {
 			respuesta.getERRORES().getERRORES().add(error);
 		});
-		String xml = IngenetXmlValidator.convertToXml(respuesta, RESPUESTAELABORACIONES.class);
+		String xml = IngenetXmlValidator.convertToXml(respuesta, RESPUESTAPEDIDOS.class);
 		
-		String subject = "Envío automático de elaboraciones";
+		String subject = "Envío automático de pedidos";
 		String content = fillErrorMessage(respuesta.getERRORES(), errorList);
-		log(IngenetLogLevel.ERROR, subject, content, "elaboraciones", xml, RECIPIENTS_TO_FAILURES);
+		log(IngenetLogLevel.ERROR, subject, content, "pedidos", xml, RECIPIENTS_TO_FAILURES);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
@@ -272,10 +270,10 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		out.flush();
 	}
 	
-	private void flushElaborations(HttpServletResponse httpResponse,
-			AONContext ctx, List<Elaboration> pendingList) throws IOException {
-		RESPUESTAELABORACIONES elaboraciones = fillElaborationData(ctx, pendingList);
-		String xml = IngenetXmlValidator.convertToXml(elaboraciones, RESPUESTAELABORACIONES.class);
+	private void flushSales(HttpServletResponse httpResponse,
+			AONContext ctx, List<Sales> pendingList) throws IOException {
+		RESPUESTAPEDIDOS pedidos = fillPedidosData(ctx, pendingList);
+		String xml = IngenetXmlValidator.convertToXml(pedidos, RESPUESTAPEDIDOS.class);
 		
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
@@ -284,84 +282,94 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		out.flush();
 	}
 	
-	private RESPUESTAELABORACIONES fillElaborationData(AONContext ctx, List<Elaboration> pendingList) {
-		RESPUESTAELABORACIONES elaboraciones = new RESPUESTAELABORACIONES();
-		pendingList.forEach(elaboration -> {
+	private RESPUESTAPEDIDOS fillPedidosData(AONContext ctx, List<Sales> pendingList) {
+		RESPUESTAPEDIDOS pedidos = new RESPUESTAPEDIDOS();
+		pendingList.forEach(sales -> {
 			try {
-				Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-						elaboration.getItem().getId());
-				Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
-				SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
-				Customer customer = null;
-				if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
-					customer = obtainCustomer(ctx, salesDetail.getSales().getId());
-				}
-				RESPUESTAELABORACIONTYPE elaboracion = new RESPUESTAELABORACIONTYPE();
-				elaboracion.setSERIE(elaboration.getSeries());
-				elaboracion.setNUMERO(String.valueOf(elaboration.getNumber()));
-				elaboracion.setFECHAEMISION(getDateFormatter().format(elaboration.getDate()));
-				elaboracion.setCOMENTARIOS(elaboration.getComments());
-				if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
-					Sales sales = obtainSales(ctx, salesDetail.getSales().getId());
-					elaboracion.setDATOSPEDIDOORIGEN(new DATOSPEDIDOORIGENTYPE());
-					elaboracion.getDATOSPEDIDOORIGEN().setSERIE(sales.getSeries());
-					elaboracion.getDATOSPEDIDOORIGEN().setNUMERO(String.valueOf(sales.getNumber()));
-					elaboracion.getDATOSPEDIDOORIGEN().setREFERENCIACOMPRA(sales.getPurchaseReference());
-					if(customer!=null && customer.getId()!=null){
-						elaboracion.getDATOSPEDIDOORIGEN().setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, salesDetail, customer));
-					}
-					elaboracion.getDATOSPEDIDOORIGEN().setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
-					elaboracion.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
-				}
-				elaboracion.setDATOSPRODUCTO(new DATOSPRODUCTOTYPE());
-				elaboracion.getDATOSPRODUCTO().setCODIGO(product.getCode());
-				elaboracion.getDATOSPRODUCTO().setNOMBRE(product.getName());
-				elaboracion.getDATOSPRODUCTO().setDESCRIPCION(item.getDescription());
-				elaboracion.getDATOSPRODUCTO().setDETALLE(item.getDetail());
-				elaboracion.getDATOSPRODUCTO().setDETALLE2(item.getDetail2());
-				elaboracion.getDATOSPRODUCTO().setDETALLE3(item.getDetail3());
-				elaboracion.getDATOSPRODUCTO().setFECHASERIE(null);
-				elaboracion.getDATOSPRODUCTO().setNUMEROSERIE(null);
-				elaboracion.getDATOSPRODUCTO().setCODIGOBARRAS(item.getBarcode());
+				// TODO DEBUG: remove line below before commit changes
+//				System.out.println("pedido " + sales.getSeries() + "/" + sales.getNumber());
+				Customer customer = sales.getCustomer();
+				RESPUESTAPEDIDOTYPE pedido = new RESPUESTAPEDIDOTYPE();
+				pedido.setSERIE(sales.getSeries());
+				pedido.setNUMERO(String.valueOf(sales.getNumber()));
+				pedido.setFECHAEMISION(getDateFormatter().format(sales.getIssueDate()));
+				pedido.setCOMENTARIOS(sales.getComments());
+				pedido.setREFERENCIACOMPRA(sales.getPurchaseReference());				
 				if(customer!=null && customer.getId()!=null){
-					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", salesDetail.getPrice()));
-//					Double price = obtainCustomerProductPrice(ctx, elaboration.getItem(), customer);
-//					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", price));
-					RegistryItem rItem = obtainCustomerItem(ctx, elaboration.getItem(), customer);
-					elaboracion.getDATOSPRODUCTO().setREFERENCIACLIENTE(rItem.getCode());
-				} else {
-					elaboracion.getDATOSPRODUCTO().setPRECIO(String.format(Locale.US, "%.3f%n", item.getPrice()));
+					pedido.setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, customer));
 				}
-				elaboracion.setCANTIDAD(String.format(Locale.US, "%.3f%n", elaboration.getQuantity()));
-				if(elaboration.getItem().getStockUnitTag()!=null){
-					elaboracion.setUNIDADMEDIDA(elaboration.getItem().getStockUnitTag().getName());
-				} else {
-					String errorMsg = "Producto sin unidad de stock:" 
-							+ elaboration.getItem().getProduct().getCode()
-							+ elaboration.getItem().getProduct().getName();
-					errorList.add(errorMsg);
-				}
-				ElaborationStatus elaborationStatus = ElaborationStatus.values()[elaboration.getStatus()];
-				if(elaborationStatus==ElaborationStatus.PENDING){
-					elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PENDIENTE);
-				} else if(elaborationStatus==ElaborationStatus.IN_PROGRESS){
-					elaboracion.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PROCESANDO);
-				}
-				elaboracion.setFECHACONSULTA(getDateFormatter().format(elaboration.getModificationDate()));
-				elaboracion.setHORACONSULTA(getTimeFormatter().format(elaboration.getModificationDate()));
-				elaboraciones.getDATOSRESPUESTAELABORACIONES().add(elaboracion);
+				pedido.setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
+				pedido.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
+				pedido.setDETALLEPEDIDO(obtainDETALLEPEDIDO(ctx, sales));
+
+				// TODO fill status
+//				ElaborationStatus elaborationStatus = ElaborationStatus.values()[sales.getStatus()];
+//				if(elaborationStatus==ElaborationStatus.PENDING){
+//					pedido.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PENDIENTE);
+//				} else if(elaborationStatus==ElaborationStatus.IN_PROGRESS){
+//					pedido.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PROCESANDO);
+//				}
+//				pedido.setFECHACONSULTA(getDateFormatter().format(sales.getModificationDate()));
+//				pedido.setHORACONSULTA(getTimeFormatter().format(sales.getModificationDate()));
+				pedidos.getDATOSRESPUESTAPEDIDOS().add(pedido);
 			} catch (Exception e) {
-				String errorMsg = "No se ha podido procesar la elaboracion " 
-						+ elaboration.getSeries() + "/" + elaboration.getNumber();
+				String errorMsg = "No se ha podido procesar el pedido " 
+						+ sales.getSeries() + "/" + sales.getNumber();
 				errorList.add(errorMsg);
 				errorList.add(e.getMessage());
 			}
 		});
-		elaboraciones.setTOTAL(String.valueOf(pendingList.size()));
-		return elaboraciones;
+		pedidos.setTOTAL(String.valueOf(pendingList.size()));
+		return pedidos;
 	}
 
-	
+	private DETALLEPEDIDOTYPE obtainDETALLEPEDIDO(AONContext ctx, Sales sales) {
+		DETALLEPEDIDOTYPE detalle = new DETALLEPEDIDOTYPE();
+		AON.getSalesDetails(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+				f -> f.getIdProperty().eq(sales.getId())).forEach(detail -> {
+					Item item = detail.getItem();
+					Product product = ProductDAO.getProduct(ctx, item.getProductId());
+					
+					LINEADETALLETYPE linea = new LINEADETALLETYPE();
+					linea.setLINEA(String.valueOf(detail.getLine()));
+					linea.setCANTIDAD(String.format(Locale.US, "%.3f", detail.getQuantity()));
+					if(detail.getItem().getStockUnitTag()!=null){
+						linea.setUNIDADMEDIDA(detail.getItem().getStockUnitTag().getName());
+					} else {
+						String errorMsg = "Producto sin unidad de stock:" 
+								+ product.getCode() + "-" + product.getName();
+						errorList.add(errorMsg);
+					}
+		
+					DATOSPRODUCTOTYPE datosProducto = new DATOSPRODUCTOTYPE();
+					datosProducto.setCODIGO(product.getCode());
+					datosProducto.setNOMBRE(product.getName());
+					datosProducto.setDESCRIPCION(item.getDescription());
+					datosProducto.setDETALLE(item.getDetail());
+					datosProducto.setDETALLE2(item.getDetail2());
+					datosProducto.setDETALLE3(item.getDetail3());
+					datosProducto.setFECHASERIE(null);
+					datosProducto.setNUMEROSERIE(null);
+					datosProducto.setCODIGOBARRAS(item.getBarcode());
+					double price = 0.0;
+					if(sales.getCustomer()!=null && sales.getCustomer().getId()!=null){
+//						datosProducto.setPRECIO(String.format(Locale.US, "%.3f", detail.getPrice()));
+						price = detail.getPrice();
+						RegistryItem rItem = obtainCustomerItem(ctx, item, sales.getCustomer());
+						datosProducto.setREFERENCIACLIENTE(rItem.getCode());
+					} else {
+//						datosProducto.setPRECIO(String.format(Locale.US, "%.3f", item.getPrice()));
+						price = item.getPrice();
+					}
+					
+					linea.setDATOSPRODUCTO(datosProducto);
+					linea.setPRECIO(String.format(Locale.US, "%.3f", price));
+					detalle.getLINEADETALLE().add(linea);
+				});
+		
+		return detalle;
+	}
+
 	private RegistryItem obtainCustomerItem(AONContext ctx, Item item, Customer customer) {
 		RegistryItem rItem = null;
 		if(item!=null && item.getId()!=null && customer!=null && customer.getId()!=null){
@@ -369,7 +377,8 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 					.getRItemStream(ctx,
 							f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getItemProperty().eq(item.getId()))
 									.and(f.getRegistryProperty().eq(customer.getId())))
-					.sorted((o1, o2) -> o1.getPriority().compareTo(o2.getPriority())).findFirst()
+//					.sorted((o1, o2) -> o1.getPriority().compareTo(o2.getPriority()))
+					.findFirst()
 					.orElse(new RegistryItem());
 		}
 		return rItem;
@@ -440,7 +449,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		return datos;
 	}
 
-	private DATOSCLIENTETYPE obtainDATOSCLIENTE(AONContext ctx, SalesDetail salesDetail, Customer customer) {
+	private DATOSCLIENTETYPE obtainDATOSCLIENTE(AONContext ctx, Customer customer) {
 		Registry registry = obtainRegistry(ctx, customer.getId());
 		
 		DATOSCLIENTETYPE datos = new DATOSCLIENTETYPE();
@@ -534,14 +543,14 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		return null;
 	}
 
-	private SalesDetail obtainSalesDetail(AONContext ctx, Elaboration elaboration){
-		if(elaboration.getSource()!=null
-				&& elaboration.getSourceId()!=null
-				&& elaboration.getSource()==ElaborationSource.SALES.value()){
-			return SalesDAO.getSalesDetail(ctx, elaboration.getSourceId());
-		}
-		return null;
-	}
+//	private SalesDetail obtainSalesDetail(AONContext ctx, Elaboration elaboration){
+//		if(elaboration.getSource()!=null
+//				&& elaboration.getSourceId()!=null
+//				&& elaboration.getSource()==ElaborationSource.SALES.value()){
+//			return SalesDAO.getSalesDetail(ctx, elaboration.getSourceId());
+//		}
+//		return null;
+//	}
 	
 	private RAddress obtainAddress(AONContext ctx, Integer id) {
 		if (id != null) {
@@ -559,9 +568,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		return null;
 	}
 
-	private List<Elaboration> getElaborationList(AONContext ctx, Date date,
-			List<ElaborationStatus> statusList) {
-		List<Elaboration> elaborationList = ElaborationDAO.getElaborationList(
+	private List<Sales> getSalesList(AONContext ctx, Date date,
+			List<SalesStatus> statusList) {
+		Stream<Sales> salesList = SalesDAO.getSalesStream(
 				ctx,
 				p -> {
 					Byte[] statuses = { null, null, null, null, null };
@@ -570,35 +579,35 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 							statuses[i] = statusList.get(i).value();
 						}
 					} else {
-						statuses[0] = ElaborationStatus.PENDING.value();
-						statuses[1] = ElaborationStatus.IN_PROGRESS.value();
-						statuses[2] = ElaborationStatus.FAIL.value();
-						statuses[3] = ElaborationStatus.REOPEN.value();
+						statuses[0] = SalesStatus.PENDING.value();
+//						statuses[1] = SalesStatus.IN_PROGRESS.value();
+//						statuses[2] = SalesStatus.FAIL.value();
+//						statuses[3] = SalesStatus.REOPEN.value();
 					}
-					java.sql.Timestamp start = null;
-					java.sql.Timestamp end = null;
+					java.sql.Date start = null;
+					java.sql.Date end = null;
 					if (date != null) {
-						start = new java.sql.Timestamp(DateUtils
+						start = new java.sql.Date(DateUtils
 								.setSeconds(
 										DateUtils.setMinutes(
 												DateUtils.setHours(date, 0), 0), 0)
 												.getTime());
-						end = new java.sql.Timestamp(DateUtils
+						end = new java.sql.Date(DateUtils
 								.setSeconds(
 										DateUtils.setMinutes(
 												DateUtils.setHours(date, 23), 59),
 												59).getTime());
 						return p.getDomainProperty().eq(ctx.getDomainId())
 								.and(p.getStatusProperty().in(statuses))
-								.and(date != null ? p.getDateProperty().between(
-										start, end) : p.getDateProperty()
+								.and(date != null ? p.getIssueDateProperty().between(
+										start, end) : p.getIssueDateProperty()
 										.isNotNull());
 					} else {
 						return p.getStatusProperty()
 								.in(statuses);
 					}
 				});
-		return elaborationList;
+		return salesList.collect(Collectors.toList());
 	}
 	
 

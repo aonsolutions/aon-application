@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- XML Schema ver.1.000 01/04/2018 -->
+<!-- =============================== -->
+<!-- Created by aonSolutions v1.0 01/04/2018 -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1">
+	<xsd:annotation>
+		<xsd:appinfo>
+			<jaxb:globalBindings
+				fixedAttributeAsConstantProperty="true" />
+		</xsd:appinfo>
+		<xsd:documentation xml:lang="es">XML SCHEMA -
+			Respuesta al
+			servicio de pedidos.
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:element name="CONSULTA_PEDIDOS">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="DATOS_CONSULTA_PEDIDOS" type="CONSULTA_PEDIDO_TYPE"
+					minOccurs="0" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- ********************************************************************** -->
+	<xsd:complexType name="CONSULTA_PEDIDO_TYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Consulta de
+				elaboraciones
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="PARAMETROS_BUSQUEDA" type="PARAMETROS_BUSQUEDA_TYPE"
+				minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PARAMETROS_BUSQUEDA_TYPE">
+		<xsd:sequence>
+			<xsd:element name="ACCION" type="ACCION_TYPE" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Accion a realizar. Si no se indica, se asume la accion RECUPERAR
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FECHA" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Fecha de los
+						pedidos. Formato : AAAAMMDD (Año Mes Día)
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{8}" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ESTADO" type="ESTADO_TYPE" minOccurs="0"
+				maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Estado de los
+						pedidos. Si no se indica ningun estado, se consideraran los
+						estados de no FINALIZADO.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PEDIDOS" type="PEDIDOS_TYPE"
+				minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Este campo solo es
+						valido cuando el campo ACCION no es RECUPERAR
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="ACCION_TYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="RECUPERAR" />
+			<xsd:enumeration value="CANCELAR" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ESTADO_TYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="PENDIENTE" />
+			<xsd:enumeration value="PROCESANDO" />
+			<xsd:enumeration value="FINALIZADO" />
+			<xsd:enumeration value="FALLIDO" />
+			<xsd:enumeration value="REABIERTO" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="PEDIDOS_TYPE">
+		<xsd:sequence>
+			<xsd:element name="REFERENCIAS" type="REFERENCIA_TYPE"
+				maxOccurs="unbounded">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="REFERENCIA_TYPE">
+		<xsd:sequence>
+			<xsd:element name="SERIE">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="5" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="NUMERO">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{0,5}" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="OBSERVACIONES" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="1024" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

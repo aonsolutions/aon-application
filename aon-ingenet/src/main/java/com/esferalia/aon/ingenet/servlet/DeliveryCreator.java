@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -252,8 +253,10 @@ public class DeliveryCreator implements Serializable {
 		albaran.setERRORES(null);
 		Delivery delivery = new Delivery(); 
 		List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
-		Attach attach = new Attach(); 
+		Attach attach = new Attach();
 		try {
+			// TODO checkExistingDelivery
+			checkExistingDelivery(ctx, albaran);
 			fillDelivery(ctx, albaran, delivery);
 		} catch (Throwable th) {
 			addError(albaran, th.getLocalizedMessage());
@@ -323,6 +326,38 @@ public class DeliveryCreator implements Serializable {
 			}
 		}
 		return null;
+	}
+	
+	private void checkExistingDelivery(AONContext ctx, ALBARANTYPE albaran) {
+		long deliveryCount = 0;
+		try {
+			deliveryCount = WarehouseDAO
+					.getDeliveryList(
+							ctx,
+							f -> f.getDomainProperty().eq(ctx.getDomainId())
+									.and(f.getSeriesProperty().like(albaran.getSERIE()))
+									.and(f.getNumberProperty().eq(Integer.parseInt(albaran.getNUMERO()))))
+					.stream().count();
+		} catch (Exception e) {
+			// TODO log me
+//			String errorMsg = "Error desconocido comprobando si existe el albaran " 
+//					+ albaran.getSERIE() + "/" + albaran.getNUMERO();
+//			addError(albaran, errorMsg);
+		}
+		if(deliveryCount>0){
+			Stream<Delivery> stream = WarehouseDAO
+					.getDeliveryList(
+							ctx,
+							f -> f.getDomainProperty().eq(ctx.getDomainId())
+									.and(f.getSeriesProperty().like(albaran.getSERIE()))
+									.and(f.getNumberProperty().eq(Integer.parseInt(albaran.getNUMERO()))))
+					.stream();
+			
+			// TODO log me
+			stream.forEach(delivery -> {
+				WarehouseDAO.deleteDelivery(ctx, delivery.getId());
+			});
+		}
 	}
 
 	private Delivery fillDelivery(AONContext ctx, ALBARANTYPE albaran, Delivery delivery) {

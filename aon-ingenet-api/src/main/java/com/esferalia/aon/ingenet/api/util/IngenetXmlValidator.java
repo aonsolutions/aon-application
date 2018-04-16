@@ -34,6 +34,10 @@ public class IngenetXmlValidator implements Serializable {
 	public static final String SCHEMA_FILE_NAME_CONSULTA_ELABORACIONES = "EsquemaConsultaElaboraciones.xsd";
 
 	public static final String SCHEMA_FILE_NAME_RESPUESTA_ELABORACIONES = "EsquemaRespuestaElaboraciones.xsd";
+	
+	public static final String SCHEMA_FILE_NAME_CONSULTA_PEDIDOS = "EsquemaConsultaPedidos.xsd";
+
+	public static final String SCHEMA_FILE_NAME_RESPUESTA_PEDIDOS = "EsquemaRespuestaPedidos.xsd";
 
 	/*
 	 * JAXB

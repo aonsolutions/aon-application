@@ -78,6 +78,34 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>add-source-consultaPedidos</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-source-respuestaPedidos</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
 						<id>add-source-albaranes</id>
 						<phase>process-sources</phase>
 						<goals>
@@ -139,6 +167,56 @@
 							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
 							<schemaIncludes>
 								<include>EsquemaRespuestaElaboraciones.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>  
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-consultaPedidos</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/consultaPedidos</generateDirectory>
+							<generatePackage>com.esferalia.aon.ingenet.api.consultaPedidos</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaConsultaPedidos.xsd</include>
+							</schemaIncludes>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<verbose>true</verbose>
+							<extension>true</extension>
+							<plugins>
+								<plugin>
+									<groupId>org.jvnet.jaxb2_commons</groupId>
+									<artifactId>jaxb2-basics</artifactId>
+									<version>0.6.4</version>
+								</plugin>
+							</plugins>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-respuestaPedidos</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/respuestaPedidos</generateDirectory>
+							<generatePackage>com.esferalia.aon.ingenet.api.respuestaPedidos</generatePackage>
+							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas</schemaDirectory>
+							<schemaIncludes>
+								<include>EsquemaRespuestaPedidos.xsd</include>
 							</schemaIncludes>
 							<forceRegenerate>false</forceRegenerate>
 							<removeOldOutput>true</removeOldOutput>  

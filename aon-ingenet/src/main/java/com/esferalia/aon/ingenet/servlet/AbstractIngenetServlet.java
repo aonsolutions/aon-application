@@ -243,6 +243,12 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 		IngenetXmlValidator.validateXmlPattern(xmlStream,
 				IngenetXmlValidator.SCHEMA_FILE_NAME_CONSULTA_ELABORACIONES);
 	}
+	
+	protected void validateConsultaPedidosXmlPattern(InputStream xmlStream)
+			throws IOException, SAXException {
+		IngenetXmlValidator.validateXmlPattern(xmlStream,
+				IngenetXmlValidator.SCHEMA_FILE_NAME_CONSULTA_PEDIDOS);
+	}
 
 	protected void validateAlbaranesXmlPattern(InputStream xmlStream)
 			throws IOException, SAXException {

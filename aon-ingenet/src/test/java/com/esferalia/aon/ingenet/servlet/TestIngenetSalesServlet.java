@@ -10,7 +10,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class TestIngenetElaborationServlet {
+public class TestIngenetSalesServlet {
 
 	
 	private static String getValue(){
@@ -18,7 +18,7 @@ public class TestIngenetElaborationServlet {
 		String sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 		String xml = "";
 		
-		String filePath = "/temp/consultaElaboraciones_example.xml";
+		String filePath = "/temp/consultaPedidos_example.xml";
 		try (
 			BufferedReader xml_br = new BufferedReader(new FileReader(filePath))) {
 			String sCurrentLine;
@@ -33,29 +33,29 @@ public class TestIngenetElaborationServlet {
 		 * CANCELAR 
 		 */
 //		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-//				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"
+//				+ "<CONSULTA_PEDIDOS><DATOS_CONSULTA_PEDIDOS><PARAMETROS_BUSQUEDA>"
 //				+ "<ACCION>CANCELAR</ACCION>"
-//				+ "<ELABORACIONES>"
+//				+ "<PEDIDOS>"
 //				+ "<REFERENCIAS>"
 //				+ "<SERIE>PV17</SERIE><NUMERO>113</NUMERO><OBSERVACIONES>"+sampleText+"</OBSERVACIONES>"
 //				+ "</REFERENCIAS>"
 //				+ "<REFERENCIAS>"
 //				+ "<SERIE>PV17</SERIE><NUMERO>112</NUMERO><OBSERVACIONES>"+sampleText+"</OBSERVACIONES>"
 //				+ "</REFERENCIAS>"
-//				+ "</ELABORACIONES>"
-//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
+//				+ "</PEDIDOS>"
+//				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_PEDIDOS></CONSULTA_PEDIDOS>";
 		
 		/**
 		 * RECUPERAR
 		 */
 		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-				+ "<CONSULTA_ELABORACIONES><DATOS_CONSULTA_ELABORACIONES><PARAMETROS_BUSQUEDA>"				
+				+ "<CONSULTA_PEDIDOS><DATOS_CONSULTA_PEDIDOS><PARAMETROS_BUSQUEDA>"				
 				+ "<ACCION>RECUPERAR</ACCION>"
-				+ "<FECHA>20170710</FECHA>"
+				+ "<FECHA>20180212</FECHA>"
 				+ "<ESTADO>PENDIENTE</ESTADO>"
 				+ "<ESTADO>PROCESANDO</ESTADO>"
 				+ "<ESTADO>FINALIZADO</ESTADO>"
-				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_ELABORACIONES></CONSULTA_ELABORACIONES>";
+				+ "</PARAMETROS_BUSQUEDA></DATOS_CONSULTA_PEDIDOS></CONSULTA_PEDIDOS>";
 
 		return xml;
 	}
@@ -66,8 +66,7 @@ public class TestIngenetElaborationServlet {
 		path += "http://udapa.aonsolutions.me:8080/aon-aio";
 //		path += "https://udapa.aonsolutions.net";
 //		path += "https://cau.aonsolutions.net";
-		path += "/ingenet/elaboration";
-		
+		path += "/ingenet/sales";
 		
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("URL: " + path);

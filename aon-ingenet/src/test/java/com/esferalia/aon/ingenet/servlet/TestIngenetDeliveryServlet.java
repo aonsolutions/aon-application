@@ -36,9 +36,10 @@ public class TestIngenetDeliveryServlet  {
 
 	public static void main(String[] args) throws Exception {
 		String path = "";
-//		path = "http://udapa.esferalia.net:8080/aon-aio";
-		path = "http://udapa.aonsolutions.me:8080/aon-aio";
-//		path = "https://udapa.aonsolutions.net";
+//		path += "http://udapa.esferalia.net:8080/aon-aio";
+		path += "http://udapa.aonsolutions.me:8080/aon-aio";
+//		path += "https://udapa.aonsolutions.net";
+//		path += "https://cau.aonsolutions.net";
 		path += "/ingenet/delivery";
 		
 		Scanner scanner = new Scanner(System.in);
@@ -65,6 +66,7 @@ public class TestIngenetDeliveryServlet  {
 		String passwd = "1ng3n3t";
 		
 		String xml = getValue();
+		xml = "";
 		
 		StringBuilder postData = new StringBuilder();
 		postData.append('&');
