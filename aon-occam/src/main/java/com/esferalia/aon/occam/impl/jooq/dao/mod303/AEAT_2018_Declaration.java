@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
@@ -309,7 +310,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 		,CT_SA13(Mod303Key.CT_SA13,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA13,( ensureFarmerActivity(mod,0).getInd() * 10000) )
 			,mod -> ensureFarmerActivity(mod,0).setInd(mod.getAmount(Mod303Key.CT_SA13) / 10000 )
-			,true)
+			,false)
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota devengada
 		,CT_SA14(Mod303Key.CT_SA14,null,null,null,"(hasFarmerActivity(0))?round(CT_SA12*CT_SA13/10000):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA14,ensureFarmerActivity(mod,0).getCuo())
@@ -319,7 +320,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 		,CT_SA15(Mod303Key.CT_SA15,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?CT_SA15:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA15,ensureFarmerActivity(mod,0).getPor())
 			,mod -> ensureFarmerActivity(mod,0).setPor(mod.getAmount(Mod303Key.CT_SA15))
-			,true)
+			,false)
 		// (1) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
 		,CT_SA16(Mod303Key.CT_SA16,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA14*CT_SA15/100):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA16,ensureFarmerActivity(mod,0).getIng())
@@ -2039,6 +2040,42 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 						FiscalModelDetail det = mod303.ensureDetail(key.getKey());
 						det.setAmount(prev.getAmount());
 						det.setDescription(prev.getDescription());
+						if (key == Mod303KeyDAO.CT_SA11 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA11))) {
+							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA11);
+							if (farmerIVA != null) {
+								mod303.ensureDetail(Mod303Key.CT_SA13).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								if (!mod303.isLastPeriod()) {
+									mod303.ensureDetail(Mod303Key.CT_SA15).setAmount(farmerIVA.getPorcentaje());
+								}
+							}
+						}
+						if (key == Mod303KeyDAO.CT_SA21 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA21))) {
+							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA21);
+							if (farmerIVA != null) {
+								mod303.ensureDetail(Mod303Key.CT_SA23).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								if (!mod303.isLastPeriod()) {
+									mod303.ensureDetail(Mod303Key.CT_SA25).setAmount(farmerIVA.getPorcentaje());
+								}
+							}
+						}
+						if (key == Mod303KeyDAO.CT_SA31 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA31))) {
+							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA31);
+							if (farmerIVA != null) {
+								mod303.ensureDetail(Mod303Key.CT_SA33).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								if (!mod303.isLastPeriod()) {
+									mod303.ensureDetail(Mod303Key.CT_SA35).setAmount(farmerIVA.getPorcentaje());
+								}
+							}
+						}
+						if (key == Mod303KeyDAO.CT_SA41 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA41))) {
+							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA41);
+							if (farmerIVA != null) {
+								mod303.ensureDetail(Mod303Key.CT_SA43).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								if (!mod303.isLastPeriod()) {
+									mod303.ensureDetail(Mod303Key.CT_SA45).setAmount(farmerIVA.getPorcentaje());
+								}
+							}
+						}
 						
 						if (key == Mod303KeyDAO.CT_S101 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S101))) {
 							IEpigraph epi = getEpigraph( mod303,  Mod303Key.CT_S101);
@@ -2089,9 +2126,16 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 
 	private IEpigraph getEpigraph(Mod303 mod303, Mod303Key key) {
 		if (mod303.getYear() < 2018) {
-			com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph.getEpigraph(mod303.getDescription(key));
+			return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph.getEpigraph(mod303.getDescription(key));
 		} 
 		return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph.getEpigraph(mod303.getDescription(key)); 
+	}
+
+	private IFarmerIVA getFarmerIVA(Mod303 mod303, Mod303Key key) {
+		if (mod303.getYear() < 2018) {
+			return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.FarmerIVA.getFarmerIVA(mod303.getDescription(key));
+		} 
+		return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.FarmerIVA.getFarmerIVA(mod303.getDescription(key)); 
 	}
 
 	@Override

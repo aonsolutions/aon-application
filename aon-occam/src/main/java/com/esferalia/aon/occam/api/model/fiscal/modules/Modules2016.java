@@ -36,7 +36,7 @@ public class Modules2016 {
 		}
 	}
 	
-	public enum FarmerIVA {
+	public enum FarmerIVA implements IFarmerIVA {
 		 A01 ("01",0.10,	  12.00, "Ganadera de explotaci\u00F3n intensiva de ganado porcino de carne y avicultura de carne.")
 		,A02 ("02",0.04,	   2.00, "Ganadera de explotaci\u00F3n intensiva de avicultura de huevos y, ganado ovino, caprino y bovino de leche.")
 		,A03 ("03",0.10,	  24.00, "Ganadera de explotaci\u00F3n intensiva de ganado bovino de carne y cunicultura.")
@@ -67,15 +67,19 @@ public class Modules2016 {
 			this.porcentaje = porcentaje;
 			this.description = description;
 		}
+		@Override
 		public String getCode() {
 			return code;
 		}
+		@Override
 		public double getIndiceRendimientoNeto() {
 			return indiceRendimientoNeto;
 		}
+		@Override
 		public double getPorcentaje() {
 			return porcentaje;
 		} 
+		@Override
 		public String getDescription() {
 			return description;
 		}
@@ -84,6 +88,15 @@ public class Modules2016 {
 				return null;
 			}
 			for (FarmerIVA farmerIVA : FarmerIVA.values()) {
+				if (AonStringUtils.equals(farmerIVA.getCode(), code)) {
+					return farmerIVA;
+				}
+			}
+			return null;
+		}
+		
+		public static FarmerIVA getFarmerIVA(String code) {
+			for (FarmerIVA farmerIVA: FarmerIVA.values()) {
 				if (AonStringUtils.equals(farmerIVA.getCode(), code)) {
 					return farmerIVA;
 				}
