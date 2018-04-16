@@ -75,9 +75,9 @@ import com.code.aon.ui.registry.controller.CorporateIdentity;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.warehouse.util.DeliveryPackagesHandler;
 import com.code.aon.ui.warehouse.importer.FtpDeliveryUploadHandler;
 import com.code.aon.ui.warehouse.udapa.UdapaDeliveryHandler;
+import com.code.aon.ui.warehouse.util.DeliveryPackagesHandler;
 import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
@@ -85,7 +85,11 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.seres.writer.udapa.UdapaDeliveryWriter;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DeliveryController extends HeaderObjectController implements IWarehouseConstants, IAuditableController {
 	
@@ -116,6 +120,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private BankAccountHelper accountHelper;
 	private UdapaDeliveryHandler udapaDeliveryHandler;
 	private boolean showEdiFtpWindow;
+	private CarrierPacking carrierPacking;
 	
 	private FtpDeliveryUploadHandler ftpEdiUploader;
 	private DeliveryPackagesHandler packagesHandler;
@@ -280,6 +285,24 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		this.listTotal = listTotal;
 	}
 
+	public CarrierPacking getCarrierPacking() {
+		Delivery delivery = (Delivery)this.getTo();
+		Domain domain = AON.getDomain(AonUtil.getDomainName(), delivery.getDomain(), "");
+		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(delivery.getCarrierPacking()));
+		setCarrierPacking(carrierPacking);
+		
+		return carrierPacking;
+	}
+	
+	public void setCarrierPacking(CarrierPacking carrierPacking) {
+		this.carrierPacking = carrierPacking;
+	}
+	
+	public String getCarrierPackingLastModification() {
+		Date date = getCarrierPacking().getModificationDate();
+		return date != null ? AonDateUtils.simpleFormat(date) + " " + AonDateUtils.timeFormat(date) : "-";
+	}
+	
 	public boolean isShippingAlternativeAddress() {
 		return shippingAlternativeAddress;
 	}
@@ -308,6 +331,8 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		}
 		return packagesHandler;
 	}
+	
+
 	
 	public boolean isCustomerReadOnly() {
 		Delivery delivery = (Delivery)this.getTo();

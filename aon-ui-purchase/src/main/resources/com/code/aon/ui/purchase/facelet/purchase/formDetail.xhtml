@@ -405,6 +405,17 @@
 						</aon:panelGrid>
 					</rich:toolTip>
 				</aon:commandLink>
+				
+				<aon:commandButton id="purchaseDetailCarrierPacking" value="&#160;"
+					styleClass="aon-icon-commandButton aon-icon-rename"
+					rendered="#{to.carrierPacking != null}"
+					title="#{bundle.carrier_shipment}"
+					actionListener="#{controller.onPurchaseDetailProjectShow}" 
+					reRender="showShipmentWindow">
+					<f:setPropertyActionListener target="#{purchase.showShipmentWindow}"
+						value="#{true}" />								
+				</aon:commandButton>
+				
 				<ui:insert name="afterInfoColumnContent"/>
 			</aon:column>
 		</ui:define>

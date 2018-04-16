@@ -74,8 +74,27 @@ public class PackingListDownload extends HttpServlet{
 					.and(f.getDomainProperty().eq(domain.getId())))
 			.forEach(purchase ->{
 				JSONObject purchaseJSON = ToJSON.purchaseToJSON(purchase);
+				boolean shippingAlternativeAddressDefined = purchase
+						.getShippingAlternativeAddress() != null
+						|| purchase.getShippingAlternativeAddress2() != null
+						|| purchase.getShippingAlternativeZip() != null
+						|| purchase.getShippingAlternativeCity() != null
+						|| purchase.getShippingAlternativePhone() != null
+						|| purchase.getShippingAlternativeRecipient() != null;	
+
+				JSONObject addressJSON2 = new JSONObject();
 				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(purchase.getAddress()));
-				JSONObject addressJSON2 = ToJSON.raddressToJSON(ra);
+
+				if(shippingAlternativeAddressDefined) {
+					addressJSON2 = new JSONObject()
+					.put("name", purchase.getShippingAlternativeRecipient())
+					.put("address", purchase.getShippingAlternativeAddress() + " " +purchase.getShippingAlternativeAddress2())
+					.put("zip", purchase.getShippingAlternativeZip())
+					.put("city", purchase.getShippingAlternativeCity())
+					.put("province", " ")
+					.put("country", " ");
+				} else addressJSON2 = ToJSON.raddressToJSON(ra);
+				
 				addressJSON2.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ? 
 						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
 				purchaseJSON.put("address",addressJSON2);
@@ -107,8 +126,27 @@ public class PackingListDownload extends HttpServlet{
 			AON.getDeliveryStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(carrierPackingId))
 			.forEach(delivery -> {
 				JSONObject deliveryJSON = ToJSON.deliveryToJSON(delivery);
+				boolean shippingAlternativeAddressDefined = delivery
+						.getShippingAlternativeAddress() != null
+						|| delivery.getShippingAlternativeAddress2() != null
+						|| delivery.getShippingAlternativeZip() != null
+						|| delivery.getShippingAlternativeCity() != null
+						|| delivery.getShippingAlternativePhone() != null
+						|| delivery.getShippingAlternativeRecipient() != null;	
+				
 				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()));
 				JSONObject addressJSON3= ToJSON.raddressToJSON(ra);
+
+				if(shippingAlternativeAddressDefined) {
+					addressJSON3 = new JSONObject()
+					.put("name", delivery.getShippingAlternativeRecipient())
+					.put("address", delivery.getShippingAlternativeAddress() + " " +delivery.getShippingAlternativeAddress2())
+					.put("zip", delivery.getShippingAlternativeZip())
+					.put("city", delivery.getShippingAlternativeCity())
+					.put("province", " ")
+					.put("country", " ");
+				} else addressJSON3 = ToJSON.raddressToJSON(ra);
+				
 				addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
 						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
 				deliveryJSON.put("address", addressJSON3);

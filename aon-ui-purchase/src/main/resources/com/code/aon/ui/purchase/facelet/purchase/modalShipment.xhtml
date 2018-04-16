@@ -10,8 +10,8 @@
 
 	<aon:panelGroup id="showShipmentWindow">
 		<aon:if test="#{purchase.showShipmentWindow}">
-			<rich:modalPanel id="shipmentModalPanel" minHeight="380"
-				minWidth="640" rendered="#{purchase.showShipmentWindow}"
+			<rich:modalPanel id="shipmentModalPanel" minHeight="400"
+				minWidth="650" rendered="#{purchase.showShipmentWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -58,13 +58,11 @@
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 0em;">
 									<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" >
 										<ui:param name="displayVertically" value="#{true}" />
 									</ui:include>
 								</aon:div>
-								
 							</aon:div>
 						</aon:div>
 					</aon:div>

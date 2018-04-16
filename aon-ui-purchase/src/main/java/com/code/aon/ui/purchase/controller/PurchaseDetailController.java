@@ -52,6 +52,10 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class PurchaseDetailController extends LinesController implements IPurchaseConstants {
 	
@@ -70,6 +74,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	private boolean showItemPackageWindow;
 	private boolean showDeliveryDateWindow;
 	private boolean showCarrierWindow;
+	private CarrierPacking carrierPacking;
 
 	public IPriceStrategy getPriceStrategy() {
 		if(priceStrategy == null){
@@ -166,6 +171,24 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		this.selectedBreakdown = selectedBreakdown;
 	}
 
+	public CarrierPacking getCarrierPacking() throws ManagerBeanException {
+		PurchaseDetail detail = getPurchaseDetail();
+		Domain domain = AON.getDomain(AonUtil.getDomainName(), detail.getDomain(), "");
+		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(detail.getCarrierPacking()));
+		setCarrierPacking(carrierPacking);
+		
+		return carrierPacking;
+	}
+	
+	public void setCarrierPacking(CarrierPacking carrierPacking) {
+		this.carrierPacking = carrierPacking;
+	}
+	
+	public String getCarrierPackingLastModification() throws ManagerBeanException {
+		Date date = getCarrierPacking().getModificationDate();
+		return date != null ? AonDateUtils.simpleFormat(date) + " " + AonDateUtils.timeFormat(date) : "-";
+	}
+	
 	public boolean isShowItemPackageWindow() {
 		return showItemPackageWindow;
 	}

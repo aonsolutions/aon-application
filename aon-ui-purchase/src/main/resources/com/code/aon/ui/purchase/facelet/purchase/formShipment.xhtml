@@ -14,32 +14,33 @@
 		columnClasses="aon-noborder aon-vertical-align-top, aon-noborder aon-padding-left aon-vertical-align-top">
 	
 		<aon:panelGrid columns="2" style="width:600px;">
-			<aon:if test="#{carrierCollections.carriersCount>0}">
-				<aon:outputLabel for="Purchase_carrier"
-					value="#{bundle.warehouse_delivery_carrier}" />
-				<aon:selectOneMenu id="Purchase_carrier" 
-					value="#{purchase.to.carrier}">
-					<f:selectItem itemLabel=" - " itemValue="#{null}" />
-					<f:selectItems value="#{carrierCollections.carriers}" />
-				</aon:selectOneMenu>
-					
-				<aon:outputText value="&#160;" />
-				<aon:outputText value="&#160;" />
-			</aon:if>
-				
-			<aon:outputLabel for="Purchase_shippingContact"
-				value="#{bundle.purchase_shipping_contact}" />
-			<aon:inputText id="Purchase_shippingContact"  
-				size="64" maxlength="128"
-				value="#{purchase.to.shippingContact}" />
+			<aon:outputLabel for="PurchaseDetail_carrier"
+				value="#{bundle.warehouse_delivery_carrier}" />
+			<aon:outputText value="#{purchaseDetail.carrierPacking.carrierName}" />
 			
-			<aon:outputLabel for="Purchase_shippingPeriod"
-				value="#{bundle.aon_calendar_schedule}" />
-			<aon:selectOneMenu id="Purchase_shippingPeriod" 
-				value="#{purchase.to.shippingPeriod}">
-				<f:selectItem itemLabel=" - " itemValue="#{null}" />
-				<f:selectItems value="#{carrierCollections.shipmentPeriods}" />
-			</aon:selectOneMenu>
+			<aon:outputLabel for="PurchaseDetail_numberPlate"
+				value="#{bundle.tas_publicCode}" />
+			<aon:outputText value="#{purchaseDetail.carrierPacking.numberPlate}" />
+							
+			<aon:outputLabel for="PurchaseDetail_driver"
+				value="#{bundle.warehouse_delivery_shipment_driver}" />
+			<aon:outputText value="#{purchaseDetail.carrierPacking.driverName}" />
+			
+			<aon:outputLabel for="PurchaseDetail_driverDocument"
+				value="#{bundle.aon_document}" />
+			<aon:outputText value="#{purchaseDetail.carrierPacking.driverDocument}" />
+			
+			<aon:outputLabel for="PurchaseDetail_trackingNumber"
+				value="#{bundle.warehouse_delivery_shipment_trackingNumber}" />
+			<aon:outputText value="#{purchaseDetail.carrierPacking.carrierReference}" />
+				
+			<aon:outputLabel for="PurchaseDetail_shippingStatus"
+				value="#{bundle.aon_status}" />
+			<aon:outputText value="#{purchaseDetail.carrierPacking.status.name}" />
+			
+			<aon:outputLabel for="PurchaseDetail_lastModification"
+				value="#{bundle.warehouse_delivery_shipment_lastModification}" />
+			<aon:outputText value="#{purchaseDetail.carrierPackingLastModification}" />
 		</aon:panelGrid>
 		
 		<aon:panel id="alternativeShippingAddressPanel" style="width:600px;">
@@ -66,11 +67,11 @@
 					value="#{purchase.to.shippingAlternativeRecipient}" size="64" maxlength="64"/>
 		
 				<aon:outputLabel for="Purchase_shippingAlternativeAddress" value="#{bundle.aon_address}" />
-				<aon:inputText id="Purchase_shippingAlternativeAddress" maxlength="128" size="80"
+				<aon:inputText id="Purchase_shippingAlternativeAddress" maxlength="128" size="70"
 					value="#{purchase.to.shippingAlternativeAddress}" />
 				
 				<aon:outputLabel for="Purchase_shippingAlternativeAddress2" value="#{bundle.registry_address_detail}" />
-				<aon:inputText id="Purchase_shippingAlternativeAddress2" maxlength="128" size="80"
+				<aon:inputText id="Purchase_shippingAlternativeAddress2" maxlength="128" size="70"
 					value="#{purchase.to.shippingAlternativeAddress2}" />
 				
 				<aon:outputLabel for="Purchase_shippingAlternativeZip" 

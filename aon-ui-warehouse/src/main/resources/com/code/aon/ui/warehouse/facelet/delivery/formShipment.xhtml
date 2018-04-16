@@ -11,108 +11,45 @@
 	<aon:panelGrid columns="2" 
 		columnClasses="aon-noborder aon-vertical-align-top, aon-noborder aon-padding-left aon-vertical-align-top">
 	
-		<aon:panelGrid columns="4" style="width:600px;">
-				
-			<aon:if test="#{carrierCollections.carriersCount>0}">
-				<aon:outputLabel for="Delivery_carrier"
-					value="#{bundle.warehouse_delivery_carrier}" />
-				<aon:selectOneMenu id="Delivery_carrier" 
-					value="#{delivery.to.carrier}">
-					<f:selectItem itemLabel=" - " itemValue="#{null}" />
-					<f:selectItems value="#{carrierCollections.carriers}" />
-				</aon:selectOneMenu>
-					
-				<aon:outputText value="&#160;" />
-				<aon:outputText value="&#160;" />
-			</aon:if>
+		<aon:panelGrid columns="2" style="width:600px;">	
+			<aon:outputLabel for="Delivery_carrier"
+				value="#{bundle.warehouse_delivery_carrier}" />
+			<aon:outputText value="#{delivery.carrierPacking.carrierName}" />
 				
 			<aon:outputLabel for="Delivery_numberPlate"
 				value="#{bundle.tas_publicCode}" />
-			<aon:inputText id="Delivery_numberPlate" 
-				value="#{delivery.to.numberPlate}" />
-				
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-				
+			<aon:outputText value="#{delivery.carrierPacking.numberPlate}" />
+							
 			<aon:outputLabel for="Delivery_driver"
 				value="#{bundle.warehouse_delivery_shipment_driver}" />
-			<aon:inputText id="Delivery_driver" 
-				value="#{delivery.to.driver}" />
-				
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
+			<aon:outputText value="#{delivery.carrierPacking.driverName}" />
 			
 			<aon:outputLabel for="Delivery_driverDocument"
 				value="#{bundle.aon_document}" />
-			<aon:inputText id="Delivery_driverDocument" 
-				value="#{delivery.to.driverDocument}" />
-				
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
+			<aon:outputText value="#{delivery.carrierPacking.driverDocument}" />
 			
 			<aon:outputText value="&#160;" />
 			<aon:outputText value="&#160;" />
 			
 			<aon:outputLabel for="Delivery_trackingNumber"
 				value="#{bundle.warehouse_delivery_shipment_trackingNumber}" />
-			<aon:inputText id="Delivery_trackingNumber"  
-				value="#{delivery.to.trackingNumber}" />
-				
-			<aon:outputLabel for="Delivery_shippingContact"
-				value="#{bundle.purchase_shipping_contact}" />
-			<aon:inputText id="Delivery_shippingContact"  
-				value="#{delivery.to.shippingContact}" />
+			<aon:outputText value="#{delivery.carrierPacking.carrierReference}" />
 				
 			<aon:outputLabel for="Delivery_shippingStatus"
 				value="#{bundle.aon_status}" />
-			<aon:selectOneMenu id="Delivery_shippingStatus" 
-				value="#{delivery.to.shippingStatus}">
-				<f:selectItem itemLabel=" - " itemValue="#{null}" />
-				<f:selectItems value="#{carrierCollections.shipmentStatuses}" />
-			</aon:selectOneMenu>
-			
-			<aon:outputLabel for="Delivery_shippingPeriod"
-				value="#{bundle.aon_calendar_schedule}" />
-			<aon:selectOneMenu id="Delivery_shippingPeriod" 
-				value="#{delivery.to.shippingPeriod}">
-				<f:selectItem itemLabel=" - " itemValue="#{null}" />
-				<f:selectItems value="#{carrierCollections.shipmentPeriods}" />
-			</aon:selectOneMenu>
-				
-			<aon:outputLabel for="Delivery_modificationDate"
-				value="#{bundle.warehouse_delivery_shipment_deliveryDate}" />
-			<aon:selectInputDate id="Delivery_modificationDate"
-				direction="auto"
-				value="#{delivery.to.statusModificationDate}" 
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}"/>
+			<aon:outputText value="#{delivery.carrierPacking.status.name}" />
 				
 			<aon:outputLabel for="Delivery_totalPackages"
 				value="#{bundle.warehouse_delivery_shipment_totalPackages}" />
-			<aon:inputText id="Delivery_totalPackages"  
-				value="#{delivery.to.totalPackages}" />
-				
-			<aon:outputLabel for="Delivery_modificationTime"
-				value="#{bundle.warehouse_delivery_shipment_deliveryTime}" />
-			<aon:div id="Delivery_modificationTime">
-				<aon:selectOneMenu id="Delivery_modificationTime-hour" value="#{delivery.to.statusModificationHour}">
-					<f:selectItem itemValue="#{null}" itemLabel=" - " />
-					<f:selectItems value="#{delivery.hours}" />
-				</aon:selectOneMenu>
-				<aon:outputText value=" : " />
-				<aon:selectOneMenu id="Delivery_modificationTime-minute" value="#{delivery.to.statusModificationMinute}">
-					<f:selectItem itemValue="#{null}" itemLabel=" - " />
-					<f:selectItems value="#{delivery.minutes}" />
-				</aon:selectOneMenu>
-			</aon:div>
-				
+			<aon:outputText value="#{delivery.to.totalPackages}" />
+
 			<aon:outputLabel for="Delivery_totalWeight"
 				value="#{bundle.warehouse_delivery_shipment_totalWeight}" />
-			<aon:inputText id="Delivery_totalWeight"  
-				value="#{delivery.to.totalWeight}" />
+			<aon:outputText value="#{delivery.to.totalWeight}" />
+			
+			<aon:outputLabel for="Delivery_lastModification"
+				value="#{bundle.warehouse_delivery_shipment_lastModification}" />
+			<aon:outputText value="#{delivery.carrierPackingLastModification}" />
 			
 		</aon:panelGrid>
 		

@@ -80,14 +80,6 @@
 							action="purchase_form"
 							actionListener="#{purchase.onReturnRequest}" 
 							onclick="if (!confirm('#{bundle.aon_confirm_title}')) { return false;}" />
-						<aon:menuItem id="purchaseShipment"
-							value="#{bundle.carrier_shipment}"
-							rendered="#{!purchase.nevv and purchase.pending}"
-							iconClass="aon-icon-rename"
-							reRender="showShipmentWindow">
-							<f:setPropertyActionListener target="#{purchase.showShipmentWindow}"
-								value="#{true}" />
-						</aon:menuItem>
 						<rich:menuSeparator id="actionMenuSeparator" />
 						<aon:menuItem id="comments"
 							value="#{bundle.aon_comment}"
@@ -457,12 +449,6 @@
 								</aon:if>
 							</ui:include>
 						</aon:panelTab>
-						<aon:if test="#{purchase.shippingDataDefined}">
-							<aon:panelTab id="purchaseShipmentTab" 
-								label="#{bundle.carrier_shipment}">
-								<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" />
-							</aon:panelTab>
-						</aon:if>
 					</aon:panelTabSet>
 				</aon:if>
 				
