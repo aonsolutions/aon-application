@@ -354,9 +354,9 @@ public class DeliveryCreator implements Serializable {
 					.stream();
 			
 			// TODO log me
-			stream.forEach(delivery -> {
-				WarehouseDAO.deleteDelivery(ctx, delivery.getId());
-			});
+//			stream.forEach(delivery -> {
+//				WarehouseDAO.deleteDelivery(ctx, delivery.getId());
+//			});
 		}
 	}
 
