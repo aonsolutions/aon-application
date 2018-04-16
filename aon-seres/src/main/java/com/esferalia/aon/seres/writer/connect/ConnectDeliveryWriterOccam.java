@@ -216,6 +216,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 					for(int level2LineId: level2LineList){
 						DeliveryDetail level2Detail = (DeliveryDetail) detailList.get(level2LineId-1);
 						if(!isPackageItem(level2Detail.getItem().getId())) {
+							Integer mainPackageKey = level1Map.get(level1Key).get(0);
+							completePackageSSCC(mainPackage, ssccMap.get(mainPackageKey));
 							mainPackage.seh1lList.add(createSEH1LRecord(delivery, level2Detail, null,
 									companyEdiCode, customerEdiCode, customerPackage));
 						} else {
@@ -243,6 +245,10 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		
 		return list;
+	}
+	
+	private void completePackageSSCC(SEH1P seh1p, String sscc) {
+		seh1p.setNumeroSerial1ONumeroDeIdentificacionInferior(StringUtils.leftPad(sscc, 18, "0"));
 	}
 	
 	private void addLine(List<SEH1P> list, SEH1P targetPackage, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
@@ -387,7 +393,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		record.setMarcaDeEnvio2(null);
 		record.setMarcaDeEnvio3(null);
 		record.setMarcaDeEnvio4(null);
-		record.setNumeroSerial1ONumeroDeIdentificacionInferior(sscc);
+		if(sscc!=null)
+			record.setNumeroSerial1ONumeroDeIdentificacionInferior(StringUtils.leftPad(sscc, 18, "0"));
 		record.setNumeroSerial1ONumeroDeIdentificacionSuperior(null);
 		record.setNumeroSerial2oNumeroDeIdentificacionInferior(null);
 		record.setNumeroSerial2ONumeroDeIdentificacionSuperior(null);
