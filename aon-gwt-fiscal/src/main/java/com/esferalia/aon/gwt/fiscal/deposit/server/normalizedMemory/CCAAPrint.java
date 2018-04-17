@@ -120,7 +120,7 @@ public class CCAAPrint extends HttpServlet {
 	}
 	
 	public void actionMemory(CCAAExcelAction action, Integer year, Integer pos){
-		switch (MemoryItem.getInstance().apartadosName.get(year)[pos]) {
+		switch (MemoryItem.getInstance().getApartadoName2(year, pos)) {
 		case MemoryItem.ACTIVIDAD_EMPRESA: action.AP1();break;
 		case MemoryItem.BASES_PRESENTACION: action.AP2();break;	
 		case MemoryItem.APLICACION_RESULTADOS: action.AP3();break;

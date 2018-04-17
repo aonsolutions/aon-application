@@ -68,7 +68,7 @@ public class MemoryItem {
     };
 	
 	@SuppressWarnings("serial")
-	public final HashMap<Integer,  String[]> apartadosName = new HashMap<Integer, String[]>() {{
+	private final HashMap<Integer,  String[]> apartadosName = new HashMap<Integer, String[]>() {{
 	    put(2014, apartadosName2014);
 	    put(2015, apartadosName2014);
 	    put(2016, apartadosName2016);
