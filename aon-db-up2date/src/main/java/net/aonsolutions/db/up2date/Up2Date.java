@@ -1,5 +1,6 @@
 package net.aonsolutions.db.up2date;
 
+import static net.aonsolutions.db.up2date.tgss.FellowsBases2018Update.FELLOWSBASES2018UPDATE;
 import static net.aonsolutions.db.up2date.tgss.HomePercentageUpdate.HOMEPERCENTAGEUPDATE;
 import static net.aonsolutions.db.up2date.tgss.TrainingBases2018Update.TRAININGBASES2018UPDATE;
 
@@ -20,6 +21,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.tgss.FellowsBases2018Update;
 import net.aonsolutions.db.up2date.tgss.HomePercentageUpdate;
 
 public class Up2Date {
@@ -34,7 +36,8 @@ public class Up2Date {
     		//REMOVE2HIDEUPDATE,
     		//HOMEBASESUPDATE,
     		//TRAININGBASES2018UPDATE,
-    		HOMEPERCENTAGEUPDATE
+    		//HOMEPERCENTAGEUPDATE
+    		FELLOWSBASES2018UPDATE
     }; 
 	
 	

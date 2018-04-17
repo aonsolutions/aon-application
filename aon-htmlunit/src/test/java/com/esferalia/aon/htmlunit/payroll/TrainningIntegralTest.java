@@ -70,12 +70,19 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		//costsCheck-input
 
 		draft("BECARIO, EL");
-		calculate(Calendar.MARCH, 2016);
+		calculate(Calendar.DECEMBER, 2016);
 		assertText("common_contingency", "6,18");
 		calculate(Calendar.DECEMBER, 2017);
 		assertText("common_contingency", "6,67");
-	
+		calculate(Calendar.APRIL, 2018);
+		assertText("common_contingency", "6,94");
+
+		assertValue("cgcBaseLabel", "858,60");
+		assertValue("cgpBaseLabel", "858,60");
+		wait4Id("common_contingency_cost");
+		assertText("common_contingency_cost", "34,80");
 	}
+
 
 	@Test
 	public void TestSettle() throws Exception {
