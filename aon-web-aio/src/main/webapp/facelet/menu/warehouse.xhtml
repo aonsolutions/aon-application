@@ -118,7 +118,7 @@
 										<aon:commandLink id="gwt_directSalesStats-warehouse"
 											action="gwt_directSalesStat-warehouse"
 											title="Estadística de ventas/compras directas">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
 												style="margin-left: 5px; padding-left: 20px;" 
 												value="Estadística de ventas/compras directas" />		
 										</aon:commandLink>												
@@ -174,26 +174,14 @@
 										</aon:commandLink>
 									</aon:div>
 								</aon:if>
-								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_carrier_packing"
-										action="gwt_carrier_packing"
-										title="carrier_packing">
-										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-											style="margin-left: 5px; padding-left: 20px;" 
-											value="Packing List" />												
-									</aon:commandLink>
-								</aon:div>
-								
+						
 								<aon:if test="#{domainSwitcher.udapa}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_udapa"
 											action="gwt_udapa"
-											title="Ficha de Calidad (Udapa)">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Ficha de Calidad (Udapa)" />												
-										</aon:commandLink>
+											title="Ficha de Calidad (Udapa)"
+											value="Ficha de Calidad (Udapa)" 
+										/>		
 									</aon:div>
 								</aon:if>
 							
@@ -219,18 +207,31 @@
 								<aon:outputText value="#{bundle.aon_utilities}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="corporateIdentityLabel"
-											action="corporateIdentity_label"
-											actionListener="#{corporateIdentity.onInit}"
-											value="#{bundle.registry_corporateIdentity_label}" />
-									</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_carrier_packing"
+										action="gwt_carrier_packing"
+										title="carrier_packing">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+											style="margin-left: 5px; padding-left: 20px;" 
+											value="Packing List" />												
+									</aon:commandLink>
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="corporateIdentityLabel"
+										action="corporateIdentity_label"
+										actionListener="#{corporateIdentity.onInit}"
+										value="#{bundle.registry_corporateIdentity_label}" />
+								</aon:div>
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="itemTagPrint-warehouse" 
 										action="itemTagPrint_search-warehouse"
 										actionListener="#{itemTagPrint.onEditSearch}"
 										value="#{bundle.product_tag_print_module}"/>	
 								</aon:div>
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_stockForecast"
 										action="gwt_stockForecast"
@@ -240,6 +241,7 @@
 											value="#{bundle.warehouse_stockForecast}" />
 									</aon:commandLink>
 								</aon:div>
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_movementList"
 										action="gwt_movementList"
@@ -249,6 +251,7 @@
 											value="#{bundle.warehouse_movementList}" />
 									</aon:commandLink>
 								</aon:div>
+								
 							</aon:div>
 						</aon:panelGrid>									
 						<aon:if test="#{aonRole.config}">
