@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -21,9 +20,10 @@ import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod349Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Mod349 File download", urlPatterns = { "/aon_gwt_fiscal/Model349File" })
+@WebServlet(name = "Mod349 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model349File" })
 public class Mod349File extends HttpServlet {
+
+	private static final long serialVersionUID = 5156577156936767723L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -32,8 +32,9 @@ public class Mod349File extends HttpServlet {
 		try {
 			int id = Integer.parseInt(req.getParameter("mod349"));
 			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod349 mod349 = FISCAL.getMod349(domainName, domainId,AonServletUtils.getLoggedUser(), id);
+			Mod349 mod349 = FISCAL.getMod349(domainName, domainId, user, id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

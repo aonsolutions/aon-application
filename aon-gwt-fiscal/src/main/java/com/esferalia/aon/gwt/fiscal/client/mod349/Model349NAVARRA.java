@@ -27,15 +27,15 @@ public class Model349NAVARRA extends Model349Base {
 		
 		paintDeclarationTab(tabPanel);
 		paintOperatorsTab(tabPanel,selectedIndex);
-		paintAdministrationTab(tabPanel);
+		paintAdministrationTab(cbk,tabPanel);
 		
 		tabPanel.selectTab(OPERATORS_TAB, false);			
 		
 	}
 
-	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model349Callback cbk,TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel());
+		panel.add(getAdministrationPanel(cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod349().getAdministration())));
 	}

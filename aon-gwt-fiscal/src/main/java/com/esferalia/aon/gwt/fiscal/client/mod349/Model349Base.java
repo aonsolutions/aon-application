@@ -47,8 +47,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model349Base extends DockLayoutPanel {
 
-	static final String MODEL349_PRINT = "/aon_gwt_fiscal/Model349Print";
-	static final String MODEL349_FILE = "/aon_gwt_fiscal/Model349File";
+	static final String MODEL349_PRINT = "/aon_gwt_fiscal/ms/Model349Print";
+	static final String MODEL349_FILE = "/aon_gwt_fiscal/ms/Model349File";
 	
 	protected interface IModel349Detail extends IsWidget {
 		Integer getSelectedOperatorIndex(); 		 
@@ -101,6 +101,18 @@ abstract class Model349Base extends DockLayoutPanel {
 		public void cleanBreakdownPanel() {
 			cbk.cleanBreakdownPanel();
 		}
+		@Override
+		public String getDomainName() {
+			return cbk.getDomainName();
+		}
+		@Override
+		public String getUser() {
+			return cbk.getUser();
+		}
+		@Override
+		public int getDomain() {
+			return cbk.getDomain();
+		}
 	}
 	
 	private Mod349 mod349;
@@ -127,6 +139,7 @@ abstract class Model349Base extends DockLayoutPanel {
 	protected Hidden mod349Hidden = new Hidden("mod349");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
+	protected Hidden userHidden = new Hidden("user");
 	
 	private IModel349Detail detailManager; 
 	
@@ -134,7 +147,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		super(Unit.PX);
 		select( mod349 );
 		
-		addNorth(getToolbarPanel(), 25);
+		addNorth(getToolbarPanel(cbk), 25);
 		
 		SimplePanel modelPanel = new SimplePanel();
 		FiscalModelUtils.paintHeaderTable(modelPanel, this.mod349 );
@@ -142,7 +155,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		
 		ScrollPanel headerPanel = new ScrollPanel();
 		headerPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		headerPanel.setWidget( getDeclarationHeaderTable());
+		headerPanel.setWidget( getDeclarationHeaderTable(cbk));
 		addNorth(headerPanel, 45);
 		
 		this.callback = new Model349BaseCallback(cbk);
@@ -175,7 +188,7 @@ abstract class Model349Base extends DockLayoutPanel {
 	}
 
 	
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(Model349Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -230,7 +243,7 @@ abstract class Model349Base extends DockLayoutPanel {
 				popup.setGlassEnabled(true);
 				popup.setAnimationEnabled(true);
 				popup.center();
-				Model349.SERVICE.saveMod349(Model349.getCurrentDomainName(), Model349.getCurrentDomain(),
+				Model349.SERVICE.saveMod349(cbk.getDomainName(),cbk.getUser(),cbk.getDomain(),
 						getMod349(), new AsyncCallback<Mod349>() {
 							@Override
 							public void onSuccess(Mod349 result) {
@@ -294,8 +307,7 @@ abstract class Model349Base extends DockLayoutPanel {
 
 					@Override
 					public void onAccept() {
-						Model349.SERVICE.deleteMod349(Model349.getCurrentDomainName(),
-								Model349.getCurrentDomain(), getMod349(), new AsyncCallback<Void>() {
+						Model349.SERVICE.deleteMod349(cbk.getDomainName(),cbk.getUser(),cbk.getDomain(), getMod349(), new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
@@ -329,7 +341,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(Model349.getCurrentDomainName(), getMod349(), FiscalStatus.FINISHED, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatusMod349(cbk.getDomainName(),cbk.getUser(),getMod349(), FiscalStatus.FINISHED, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
 						callback.onSelect(result , detailManager.getSelectedOperatorIndex() ); 
@@ -355,7 +367,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(Model349.getCurrentDomainName(), getMod349(), FiscalStatus.SENT, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatusMod349(cbk.getDomainName(),cbk.getUser(), getMod349(), FiscalStatus.SENT, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
 						callback.onSelect(result, detailManager.getSelectedOperatorIndex());
@@ -381,7 +393,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(Model349.getCurrentDomainName(), getMod349(), FiscalStatus.PENDING, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatusMod349(cbk.getDomainName(),cbk.getUser(), getMod349(), FiscalStatus.PENDING, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
 						callback.onSelect(result, detailManager.getSelectedOperatorIndex());
@@ -420,6 +432,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		formFlowPanel.add(mod349Hidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
 		formContainer.add(diskForm);
 		toolbarPanel.add(formContainer);
 		
@@ -431,11 +444,12 @@ abstract class Model349Base extends DockLayoutPanel {
 		dialog.show(getMod349());
 	}
 	
-	protected void submitForm(String action) {
+	protected void submitForm(Model349Callback cbk,String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod349Hidden.setValue(String.valueOf(getMod349().getId()));
-		domainIdHidden.setValue(String.valueOf(Model349.getCurrentDomain()));
-		domainNameHidden.setValue(Model349.getCurrentDomainName());
+		domainIdHidden.setValue(String.valueOf(cbk.getDomain()));
+		domainNameHidden.setValue(cbk.getDomainName());
+		userHidden.setValue(cbk.getUser());
 		diskForm.submit();
 	}
 	
@@ -680,7 +694,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private Widget getDeclarationHeaderTable() {
+	private Widget getDeclarationHeaderTable(Model349Callback cbk) {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -747,7 +761,7 @@ abstract class Model349Base extends DockLayoutPanel {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						getMod349().setComments(event.getValue());
 						styleCommentsButton();
-						Model349.SERVICE.saveCommentsMod349(Model349.getCurrentDomainName(), getMod349(), new AsyncCallback<Mod349>() {
+						Model349.SERVICE.saveCommentsMod349(cbk.getDomainName(),cbk.getUser(), getMod349(), new AsyncCallback<Mod349>() {
 							@Override
 							public void onSuccess(Mod349 result) {
 								toast.hide();
@@ -821,7 +835,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		return panel;
 	}
 
-	protected FlowPanel getAdministrationPanel() {
+	protected FlowPanel getAdministrationPanel(Model349Callback cbk) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -860,7 +874,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod349().isFinished() || getMod349().isSent()) {
-					submitForm(MODEL349_FILE);
+					submitForm(cbk,MODEL349_FILE);
 				} else {
 					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
@@ -889,7 +903,7 @@ abstract class Model349Base extends DockLayoutPanel {
 				public void onClick(ClickEvent event) {
 					// Servicio de validación y prueba, controlar ejercicio, solo a partir de 2014 (incluido)
 					if (getMod349().getYear() >= 2014) {
-						submitForm(MODEL349_PRINT);
+						submitForm(cbk,MODEL349_PRINT);
 					} else {
 						getCallback().showError("Servicio de validaci\u00F3n y prueba no disponible para el ejercicio del modelo.");
 					}

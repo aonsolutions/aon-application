@@ -30,9 +30,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@SuppressWarnings("serial")
 @WebServlet(name = "Mod347 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model347PrintAEAT" })
 public class Mod347PrintAEAT extends HttpServlet {
+
+	private static final long serialVersionUID = -4766047129359698678L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)

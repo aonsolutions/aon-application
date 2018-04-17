@@ -60,6 +60,9 @@ public class Model349 extends MainEntryPoint {
 		void onNew();
 		void showBreakdownPanel(String htmlText);
 		void cleanBreakdownPanel();
+		String getDomainName();
+		String getUser();
+		int getDomain();
 		
 	}
 	
@@ -104,6 +107,18 @@ public class Model349 extends MainEntryPoint {
 		public void cleanBreakdownPanel() {
 			Model349.this.cleanBreakdownPanel();
 		}
+		@Override
+		public String getDomainName() {
+			return getCurrentDomainName();
+		}
+		@Override
+		public String getUser() {
+			return getCurrentUser();
+		}
+		@Override
+		public int getDomain() {
+			return getCurrentDomain();
+		}
 		
 	};
 
@@ -130,9 +145,6 @@ public class Model349 extends MainEntryPoint {
 	Panel formContainer;
 	SimplePanel headerPanel = new SimplePanel();
 	
-	private int domain;
-	//private int enterprise;
-
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
@@ -159,19 +171,9 @@ public class Model349 extends MainEntryPoint {
 
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	
 	private void onSelectionChange(SelectionEvent<Mod349> event) {
 		Mod349 sel = event.getSelectedItem();
-		SERVICE.getMod349(getCurrentDomainName(), getCurrentDomain(),
+		SERVICE.getMod349(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				sel.getId(), new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 selected) {
@@ -209,7 +211,7 @@ public class Model349 extends MainEntryPoint {
 
 	private void newModel() {
 		cleanErrorPanel();
-		SERVICE.initializeMod349(getCurrentDomainName(),getCurrentDomain(),
+		SERVICE.initializeMod349(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),
 				new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 m349) {
@@ -254,14 +256,6 @@ public class Model349 extends MainEntryPoint {
 		splitLayoutPanel.animate(500);
 	}
 	
-	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 5);
-	}
-
-	private boolean isResultsPanelVisible() {
-		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
-	}
-	
 	private void cleanErrorPanel() {
 		SimpleLayoutPanel panel = new SimpleLayoutPanel();
 		notificationsPanel.setWidget(panel);
@@ -273,8 +267,6 @@ public class Model349 extends MainEntryPoint {
 		}
 	}
 	private void showErrorPanel(String msg) {
-		//openFootPanelIfNeeded();
-		
 		ScrollPanel panel = new ScrollPanel();
 		FlexTable tab = new FlexTable();
 		tab.setWidth("95%");
@@ -334,7 +326,7 @@ public class Model349 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.saveMod349(getCurrentDomainName(),getCurrentDomain(),model,
+						SERVICE.saveMod349(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),model,
 								new AsyncCallback<Mod349>() {
 									@Override
 									public void onSuccess(Mod349 model) {

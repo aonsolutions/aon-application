@@ -19,9 +19,10 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@SuppressWarnings("serial")
 @WebServlet(name = "Mod347 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model347File" })
 public class Mod347File extends HttpServlet {
+
+	private static final long serialVersionUID = -2003747741782692391L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)

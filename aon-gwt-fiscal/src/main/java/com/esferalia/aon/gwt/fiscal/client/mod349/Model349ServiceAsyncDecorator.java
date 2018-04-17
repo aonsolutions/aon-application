@@ -21,72 +21,66 @@ public class Model349ServiceAsyncDecorator implements Model349ServiceAsync {
 	
 	// ---------------------------------------------------------------MODELO 349
 	@Override
-	public void deleteMod349(String domainName, int domainId, Mod349 mod349,
+	public void deleteMod349(String domainName, String user, int domainId, Mod349 mod349,
 			AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.deleteMod349(domainName, domainId, mod349,
-				new AsyncCallbackWrapper<Void>(callback));
+		fsa.deleteMod349(domainName,user, domainId, mod349, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void saveMod349(String domainName, int domainId, Mod349 mod349,
+	public void saveMod349(String domainName, String user, int domainId, Mod349 mod349,
 			AsyncCallback<Mod349> callback) {
 		AON.start();
-		fsa.saveMod349(domainName, domainId, mod349,
-				new AsyncCallbackWrapper<Mod349>(callback));
+		fsa.saveMod349(domainName,user, domainId, mod349,new AsyncCallbackWrapper<Mod349>(callback));
 	}
 
 	@Override
-	public void getMod349s(String domainName, int domainId,
+	public void getMod349s(String domainName, String user, int domainId,
 			AsyncCallback<LinkedList<Mod349>> callback) {
 		AON.start();
-		fsa.getMod349s(domainName, domainId,
-				new AsyncCallbackWrapper<LinkedList<Mod349>>(callback));
+		fsa.getMod349s(domainName,user, domainId, new AsyncCallbackWrapper<LinkedList<Mod349>>(callback));
 	}
 
 	@Override
-	public void initializeMod349(String domainName, Integer domain,
+	public void initializeMod349(String domainName, String user, Integer domain,
 			AsyncCallback<Mod349> callback) {
 		AON.start();
-		fsa.initializeMod349(domainName, domain, new AsyncCallbackWrapper<Mod349>(callback));
+		fsa.initializeMod349(domainName,user, domain, new AsyncCallbackWrapper<Mod349>(callback));
 	}
 
 	@Override
-	public void getMod349(String domainName, int domainId, Integer id,
+	public void getMod349(String domainName, String user, int domainId, Integer id,
 			AsyncCallback<Mod349> callback) {
 		AON.start();
-		fsa.getMod349(domainName, domainId, id,
-				new AsyncCallbackWrapper<Mod349>(callback));
+		fsa.getMod349(domainName,user, domainId, id, new AsyncCallbackWrapper<Mod349>(callback));
 	}
 
 	@Override
-	public void getMod349Detail(String domainName, int domainId, Integer id,
+	public void getMod349Detail(String domainName, String user, int domainId, Integer id,
 			AsyncCallback<Mod349Detail> callback) {
 		AON.start();
-		fsa.getMod349Detail(domainName, domainId, id,new AsyncCallbackWrapper<Mod349Detail>(callback));
+		fsa.getMod349Detail(domainName,user, domainId, id,new AsyncCallbackWrapper<Mod349Detail>(callback));
 	}
 	
 	@Override
-	public void saveCommentsMod349(String domainName, Mod349 mod349,
+	public void saveCommentsMod349(String domainName, String user, Mod349 mod349,
 			AsyncCallback<Mod349> callback) {
 		AON.start();
-		fsa.saveCommentsMod349(domainName, mod349, new AsyncCallbackWrapper<Mod349>(
-				callback));
+		fsa.saveCommentsMod349(domainName,user, mod349, new AsyncCallbackWrapper<Mod349>(callback));
 	}
 
 	@Override
-	public void changeStatusMod349(String domainName, Mod349 mod349, FiscalStatus newStatus,
+	public void changeStatusMod349(String domainName, String user, Mod349 mod349, FiscalStatus newStatus,
 			AsyncCallback<Mod349> callback) {
 		AON.start();
-		fsa.changeStatusMod349(domainName, mod349, newStatus, 
-				new AsyncCallbackWrapper<Mod349>(callback));
+		fsa.changeStatusMod349(domainName,user, mod349, newStatus, new AsyncCallbackWrapper<Mod349>(callback));
 	}
 	
 	@Override
-	public void getInfo(String domainName, int domain, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey,
+	public void getInfo(String domainName, String user, int domain, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey,
 			AsyncCallback<String> callback) {
 		AON.start();
-		fsa.getInfo(domainName, domain, mod349, detail, infoKey, new AsyncCallbackWrapper<String>(callback));		
+		fsa.getInfo(domainName,user, domain, mod349, detail, infoKey, new AsyncCallbackWrapper<String>(callback));		
 	}
 
 }
