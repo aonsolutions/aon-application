@@ -1930,8 +1930,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			return parentDomainId != null ? SQLAgreementDraft
 					.getDatesWithChanges(conn, agreement.getId(), domainId,
-							parentDomainId) : SQLAgreementDraft
-					.getDatesWithChanges(conn, agreement.getId(), domainId);
+							parentDomainId,agreement.getDomain()) : SQLAgreementDraft
+					.getDatesWithChanges(conn, agreement.getId(), domainId, agreement.getDomain());
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
