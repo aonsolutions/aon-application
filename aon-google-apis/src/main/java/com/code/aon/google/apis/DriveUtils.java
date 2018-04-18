@@ -1037,6 +1037,7 @@ public class DriveUtils implements IBlobManager {
 				}
 				if(type.equals("registry")){
 					if(file.getType() == RegistryAttachmentType.LOGO.value()
+						|| file.getType() == RegistryAttachmentType.BANNER.value()
 						|| file.getType() == RegistryAttachmentType.AON_TEMPLATES.value() 
 						|| file.getType() == RegistryAttachmentType.D2_DEPOSIT.value()
 						|| file.getType() == RegistryAttachmentType.INVOICE_FOOTER_TEXT.value()

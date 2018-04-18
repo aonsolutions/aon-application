@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpTransport;
@@ -33,12 +34,12 @@ public class DriveUtils {
 		return new DriveUtils();
 	}
 	private static final Logger LOGGER  = Logger.getLogger(DriveUtils.class.getName());
+	private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+	private static final JsonFactory JSON_FACTORY = new JacksonFactory();
 	private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE);
 	
 	public Drive serviceInitializeOld(DomainGserviceaccount d){
 		try{
-			final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-			final JsonFactory JSON_FACTORY = new JacksonFactory();
 			final String SERVICE_ACCOUNT_ID = d.getEmailAddress();
 
 			InputStream keyStream = new ByteArrayInputStream(d.getPrivateKey());
@@ -55,9 +56,7 @@ public class DriveUtils {
 			.setServiceAccountPrivateKey(serviceAccountPrivateKey)
 			.build();
 		
-			return new com.google.api.services.drive.Drive.Builder(
-				HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(
-				"AON SOLUTIONS").build();
+			return getDrive(credential);
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "I/O Error connecting to Drive: {}", e.getMessage());
 		} catch (GeneralSecurityException e1) {
@@ -68,8 +67,6 @@ public class DriveUtils {
 
 	public Drive serviceInitialize(DomainGserviceaccount d){
 		try {
-			final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-			final JsonFactory JSON_FACTORY = new JacksonFactory();
 			final String SERVICE_ACCOUNT_ID = d.getEmailAddress();
 	
 			InputStream keyStream = new ByteArrayInputStream(d.getPrivateKey());
@@ -100,15 +97,18 @@ public class DriveUtils {
 						.setServiceAccountPrivateKey(serviceAccountPrivateKey)
 					.build();
 			}
-			return new com.google.api.services.drive.Drive.Builder(
-					HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(
-						"AON SOLUTIONS").build();
+			return getDrive(credential);
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "I/O Error connecting to Drive: {}", e.getMessage());
 		} catch (GeneralSecurityException e1) {
 			LOGGER.log(Level.SEVERE, "Security Error connecting to Drive: {}", e1.getMessage());
 		}
 		return null;
+	}
+	
+	public Drive getDrive(Credential credential) {
+		return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY,
+				credential).setApplicationName("AON SOLUTIONS").build();
 	}
 
 	public File getFile(Drive drive, String id){

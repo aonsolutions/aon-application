@@ -151,6 +151,7 @@ public class AonDrive extends DriveUtils{
 	public static Boolean checkTypes(Attach attach) {
 		return (AttachType.REGISTRY.equals(attach.getAttachType())
 				&& (attach.getType() == RegistryAttachmentType.LOGO.value()
+					|| attach.getType() == RegistryAttachmentType.BANNER.value()
 					|| attach.getType() == RegistryAttachmentType.AON_TEMPLATES.value() 
 					|| attach.getType() == RegistryAttachmentType.D2_DEPOSIT.value()
 					|| attach.getType() == RegistryAttachmentType.DOMAIN_BOOK_HISTORY.value() // Historial en configuración
