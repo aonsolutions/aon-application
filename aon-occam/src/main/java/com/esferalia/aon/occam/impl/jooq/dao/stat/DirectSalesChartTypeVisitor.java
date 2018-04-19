@@ -238,7 +238,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			String firstDayOfWeek = FMT.format( calendar.getTime() );
 			String weekKey = calendar.get(Calendar.WEEK_OF_YEAR) + " ("+firstDayOfWeek+")";
 			double amount = rec.getValue(SUM_FIELD).doubleValue();
-			Double acum = table.get(weekKey, periodLabel );
+			Double acum = table.get(weekKey, type.getDescription() );
 			acum = AonMathUtils.round( (acum == null ? 0.0 : acum) + amount); 
 			table.put(weekKey, type.getDescription() , acum);
 		});
