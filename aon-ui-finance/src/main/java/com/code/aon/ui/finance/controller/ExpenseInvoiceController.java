@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -28,6 +31,8 @@ import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 
 public class ExpenseInvoiceController extends InvoiceController {
 	
@@ -107,16 +112,57 @@ public class ExpenseInvoiceController extends InvoiceController {
 
 	public InvoiceDetail obtainCreditorLastExpense(int line) throws ManagerBeanException {
 		Invoice invoice = getInvoice();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_REGISTRY_ID), invoice.getRegistry().getId());
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.EXPENSES);
-		criteria.addNotNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_ID));
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), line);
-		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ISSUE_DATE), false);
-		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), false);
-		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
-			return (InvoiceDetail)ito;
+		if (invoice.getRegistry().getId() != null) {
+			Connection conn = null;
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			try {
+				conn = DatabaseUtil.getConnection( AonUtil.getDomainName() );
+				String stmt = "SELECT id.id FROM invoice_detail id "
+						+ " INNER JOIN invoice i ON i.id = id.invoice"
+						+ " WHERE i.registry = " + invoice.getRegistry().getId()
+						+ " AND i.type = " + InvoiceType.EXPENSES.ordinal()
+						+ " AND id.line = " + line
+						+ " AND id.item is not null"
+						+ " ORDER BY i.issue_date desc,i.id desc"
+						+ " LIMIT 1"
+						;
+				ps  = conn.prepareStatement( stmt, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+				rs = ps.executeQuery();
+				Integer invoiceDetailId = null;
+				while (rs.next()) {
+					invoiceDetailId = rs.getInt(1);
+				}
+				if (invoiceDetailId != null) {
+					IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ID), invoiceDetailId);
+					for (ITransferObject ito : invoiceDetailBean.getList(criteria,0,1)) {
+						return (InvoiceDetail)ito;
+					}
+				}
+				rs.close();
+				ps.close();
+			} catch (Throwable e) {
+				e.printStackTrace();
+				return null;
+			} finally {
+				DatabaseUtil.closeQuietly(ps);
+				DatabaseUtil.closeQuietly(rs);
+				DatabaseUtil.closeQuietly(conn);
+			}
+//			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_REGISTRY_ID), invoice.getRegistry().getId());
+//			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.EXPENSES);
+//			criteria.addNotNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_ID));
+//			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), line);
+//			criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ISSUE_DATE), false);
+//			criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), false);
+//			for (ITransferObject ito : invoiceDetailBean.getList(criteria,0,1)) {
+//				System.out.println(" obtainCreditorLastExpense ..... END!");
+//				return (InvoiceDetail)ito;
+//			}
 		}
 		return null;
 	}
