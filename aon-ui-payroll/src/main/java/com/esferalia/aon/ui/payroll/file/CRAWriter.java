@@ -213,20 +213,22 @@ public class CRAWriter {
 		if(!NumberUtils.isNumber(code)){
 			code = "1";
 		}
-		if(amount!=0.0d && !isExtraPayment(code)){
-			CRE cre = new CRE();
-			cre.setConcepto(autoComplete(code, 4, "0", true));
-			cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
-			cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
-			cre.setIndicativoTipoActuacion(repeated?"C":"");
-			return cre;
-		} else if(quote!=0.0d && isExtraPayment(code)){
-			CRE cre = new CRE();
-			cre.setConcepto(autoComplete(code, 4, "0", true));
-			cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
-			cre.setImporte(String.valueOf((int)(CommonUtil.round(quote, 2)*100)));
-			cre.setIndicativoTipoActuacion(repeated?"C":"");
-			return cre;
+		if(Integer.parseInt(code)>0) {
+			if(amount!=0.0d && !isExtraPayment(code)){
+				CRE cre = new CRE();
+				cre.setConcepto(autoComplete(code, 4, "0", true));
+				cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
+				cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
+				cre.setIndicativoTipoActuacion(repeated?"C":"");
+				return cre;
+			} else if(quote!=0.0d && isExtraPayment(code)){
+				CRE cre = new CRE();
+				cre.setConcepto(autoComplete(code, 4, "0", true));
+				cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
+				cre.setImporte(String.valueOf((int)(CommonUtil.round(quote, 2)*100)));
+				cre.setIndicativoTipoActuacion(repeated?"C":"");
+				return cre;
+			}
 		}
 		return null;
 	}
