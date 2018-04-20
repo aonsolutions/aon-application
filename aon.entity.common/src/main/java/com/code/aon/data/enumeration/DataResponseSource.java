@@ -18,7 +18,15 @@ public enum DataResponseSource implements IResourceable {
 	SERES_INVOICE,
 	SERES_SALES,
 	INGENET,
-	PACKING_LIST_NOTIFICATION;
+	PACKING_LIST_NOTIFICATION,
+	MOD303,
+	MOD111,
+	MOD115,
+	MOD123,
+	MOD130,
+	MOD131,
+	MOD390,
+	INGENET_SALES;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_response_source_";
