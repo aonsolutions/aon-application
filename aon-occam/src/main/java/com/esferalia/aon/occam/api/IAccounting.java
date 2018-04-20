@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -57,6 +58,7 @@ public interface IAccounting {
 			, int offset, int numberOfRows);
 	public Stream<AccountEntry> getAccountEntries(AONContext ctx,AccountEntryFilter filter
 			, int offset, int numberOfRows);
+	public Stream<FlatAccountEntryDetail> getFlatAccountEntries(AONContext ctx, AccountEntryParams params);
 	public boolean existsAnyEntry(AONContext ctx,Integer period, AccountEntryType accountEntryType);
 	public Integer save(AONContext ctx,AccountEntry ae);
 	public void delete(AONContext ctx,Integer id);
@@ -98,5 +100,5 @@ public interface IAccounting {
 	public Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId);
 	public AccUtilitiesResult getJournalRegenerationInfo(AONContext ctx);
 	public AccUtilitiesResult regenerateJournal(AONContext ctx, Integer accuountPeriod);
-		
+	
 }

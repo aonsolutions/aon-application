@@ -2,6 +2,11 @@ package com.esferalia.aon.gwt.fiscal.shared;
 
 public interface IRequestParamsNames {
 
+	String DOMAIN_ID = "domainId";
+	String DOMAIN_NAME = "domainName";
+	String USER = "user";
+	String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
+
 	String DOMAIN = "domain";
 	String REGISTRY = "registry";
 	String ACTIVITY = "activity";
@@ -19,8 +24,17 @@ public interface IRequestParamsNames {
 	String ORDER_BY = "orderBy";
 	String GROUP_BY_NIF = "groupByNif";
 	
-	String DOMAIN_ID = "domainId";
-	String DOMAIN_NAME = "domainName";
+	String PERIOD = "period";
+	String JOURNAL = "journal";
+	String CONFIDENTIAL = "confidential";
+	String ACCOUNT = "account";
+	String DEBIT = "debit";
+	String CREDIT = "credit";
+	String CONCEPT = "concept";
+	String DOCUMENT = "document";
+	String BALANCING_ACCOUNT = "balancingAccount";
+	String COMMENTS = "comments";
+	String ORDER = "order";
 
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";

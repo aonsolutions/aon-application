@@ -221,6 +221,17 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountJournal"
+											action="gwt_accountJournal-acc"
+											title="#{bundle.account_journal_report}">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.account_journal_report}"/>												
+										</aon:commandLink>
+									</aon:div>
+								
+								
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accountStatement"
 											action="accountStatement_search"
 											actionListener="#{trialBalance.onReset}"

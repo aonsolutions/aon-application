@@ -28,6 +28,7 @@ public abstract class AbsExcelAction  {
 	protected static final String DECIMAL_PATTERN = "#,##0.00";
 	protected static final String NUMBER_PATTERN = "#,###";
 	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207));
+	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(220,220,220));
 	
 	protected SXSSFWorkbook workbook;
 	protected SXSSFSheet sheet;

@@ -8,149 +8,151 @@ import com.esferalia.aon.occam.api.model.IAccountEntryTypeVisitor;
 
 public enum AccountEntryType  implements Serializable {
 	
-	OPENING ( new  IAccountEntryTypeVisitorWalker() {
+
+	OPENING ("Apertura", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitOpening(entry);
 		}
 	}),
-	CLOSING ( new  IAccountEntryTypeVisitorWalker() {
+	
+	CLOSING ("Cierre", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitClosing(entry);
 		}
 	}),
-	OPERATING ( new  IAccountEntryTypeVisitorWalker() {
+	OPERATING ("Explotaci\u00F3n", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitOperating(entry);
 		}
 	}),
-	MANUAL ( new  IAccountEntryTypeVisitorWalker() {
+	MANUAL ("Manual",new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitManual(entry);
 		}
 	}),
-	SALES_INVOICE ( new  IAccountEntryTypeVisitorWalker() {
+	SALES_INVOICE ("Factura de Venta", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitSalesInvoice(entry);
 		}
 	}),
-	PURCHASE_INVOICE ( new  IAccountEntryTypeVisitorWalker() {
+	PURCHASE_INVOICE ("Factura de Compra", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitPurchaseInvoice(entry);
 		}
 	}),
-	EXPENSE_INVOICE ( new  IAccountEntryTypeVisitorWalker() {
+	EXPENSE_INVOICE ("Factura de Gastos", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitExpenseInvoice(entry);
 		}
 	}),
 	@Deprecated
-	INVESTMENT_INVOICE ( new  IAccountEntryTypeVisitorWalker() {
+	INVESTMENT_INVOICE ("Factura de Inversi\u00F3n", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitInvestmentInvoice(entry);
 		}
 	}),
-	EXPENSES ( new  IAccountEntryTypeVisitorWalker() {
+	EXPENSES ("Gastos sin IVA", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitExpenses(entry);
 		}
 	}),
-	SALARY ( new  IAccountEntryTypeVisitorWalker() {
+	SALARY ("N\u00F3minas", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitSalary(entry);
 		}
 	}),
-	TAX ( new  IAccountEntryTypeVisitorWalker() {
+	TAX ("Impuestos", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitTax(entry);
 		}
 	}),
-	LOAN ( new  IAccountEntryTypeVisitorWalker() {
+	LOAN ("Pr\u00E9stamos", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitLoan(entry);
 		}
 	}),
 	@Deprecated
-	LEASING ( new  IAccountEntryTypeVisitorWalker() {
+	LEASING ("Leasing", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitLeasing(entry);
 		}
 	}),
-	PAYMENT ( new  IAccountEntryTypeVisitorWalker() {
+	PAYMENT ("Pago", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitPayment(entry);
 		}
 	}),
-	COLLECTION ( new  IAccountEntryTypeVisitorWalker() {
+	COLLECTION ("Cobro", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitCollection(entry);
 		}
 	}),
 	@Deprecated
-	STOCK_VARIATION ( new  IAccountEntryTypeVisitorWalker() {
+	STOCK_VARIATION ( "Variaci\u00F3n de Existencias",new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitStockVariation(entry);
 		}
 	}),
-	AMORTIZATION ( new  IAccountEntryTypeVisitorWalker() {
+	AMORTIZATION ("Amortizaci\u00F3n", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitAmortization(entry);
 		}
 	}),
-	SOCIAL_INSURANCE ( new  IAccountEntryTypeVisitorWalker() {
+	SOCIAL_INSURANCE ( "Seg. Social",new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitSocialInsurance(entry);
 		}
 	}),
-	LOAN_FEE ( new  IAccountEntryTypeVisitorWalker() {
+	LOAN_FEE ("Cuotas Pr\u00E9stamos", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitLoanFee(entry);
 		}
 	}),
 	@Deprecated
-	LEASING_FEE ( new  IAccountEntryTypeVisitorWalker() {
+	LEASING_FEE ( "Cuotas Leasing",new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitLeasingFee(entry);
 		}
 	}),
-	RETURNED_PAYMENT ( new  IAccountEntryTypeVisitorWalker() {
+	RETURNED_PAYMENT ("Devoluci\u00F3n de Pago", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitReturnedPayment(entry);
 		}
 	}),
-	RETURNED_COLLECTION ( new  IAccountEntryTypeVisitorWalker() {
+	RETURNED_COLLECTION ( "Devoluci\u00F3n de Cobro",new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitReturnedCollection(entry);
 		}
 	}),
-	SOCIAL_INSURANCE_ADJUST ( new  IAccountEntryTypeVisitorWalker() {
+	SOCIAL_INSURANCE_ADJUST ( "Ajuste Seg. Social",new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitSocialInsuranceAdjust(entry);
 		}
 	}),
-	FINANCE ( new  IAccountEntryTypeVisitorWalker() {
+	FINANCE ( "Tesorer\u00EDa", new  IAccountEntryTypeVisitorWalker() {
 		@Override
 		public void visit(AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 			visitor.visitFinance(entry);
@@ -163,11 +165,16 @@ public enum AccountEntryType  implements Serializable {
 	}
 	
 	private IAccountEntryTypeVisitorWalker walker;
+	private String description;
 	
-	private AccountEntryType( IAccountEntryTypeVisitorWalker walker ) {
+	private AccountEntryType( String description, IAccountEntryTypeVisitorWalker walker ) {
+		this.description = description;
 		this.walker = walker;		
 	}
 	
+	public String getDescription() {
+		return description;
+	}
 	
 	public Byte getValue() {
 		return (byte) ordinal();
@@ -183,4 +190,15 @@ public enum AccountEntryType  implements Serializable {
 	public void visit( AccountEntry entry, IAccountEntryTypeVisitor visitor) {
 		this.walker.visit(entry, visitor);
 	}
+	
+	public static AccountEntryType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static AccountEntryType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= AccountEntryType.values().length) return null;
+		return AccountEntryType.values()[i];
+	}
+	
 }

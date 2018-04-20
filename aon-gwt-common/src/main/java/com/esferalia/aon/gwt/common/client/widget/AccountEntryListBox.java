@@ -1,16 +1,12 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class AccountEntryListBox extends ListBox {
 
-	private static final CommonMessages MSGS = GWT.create(CommonMessages.class);
-	
 	@SuppressWarnings("deprecation")
 	public AccountEntryListBox() {
 		setWidth("160px");
@@ -21,7 +17,7 @@ public class AccountEntryListBox extends ListBox {
 				&& type != AccountEntryType.INVESTMENT_INVOICE
 				&& type != AccountEntryType.STOCK_VARIATION
 				) {
-				this.addItem( MSGS.accountEntryType(type), AonNumberUtils.toString(type.ordinal()) );
+				this.addItem( type.getDescription(), AonNumberUtils.toString(type.ordinal()) );
 			}
 		}
 	}

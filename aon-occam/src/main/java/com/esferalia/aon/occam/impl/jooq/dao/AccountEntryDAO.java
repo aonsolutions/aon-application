@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.AutoConcept;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -81,6 +82,27 @@ public class AccountEntryDAO {
 		}
 	}
 	
+	public static enum AccountEntryFlatOrder {
+		 ORDER_PERIOD_JOURNAL( ACCOUNT_ENTRY.ACCOUNT_PERIOD.asc(),ACCOUNT_ENTRY.JOURNAL.asc(),ACCOUNT_ENTRY.ENTRY_DATE.asc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
+		,ORDER_CREATION_DATE_DESC ( ACCOUNT_ENTRY.ID.desc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
+		,ORDER_MODIFICATION_DATE_DESC ( ACCOUNT_ENTRY.MODIFICATION_DATE.desc(),ACCOUNT_ENTRY.CREATION_DATE.desc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
+		;
+		SortField<?>[] fields;
+		private AccountEntryFlatOrder( SortField<?> ...fields) {
+			this.fields = fields;
+		}
+		public SortField<?>[] getFields() {
+			return fields;
+		}
+		
+		public static AccountEntryFlatOrder safeEnum(int order) {
+			if (order < 0 || order > AccountEntryOrder.values().length) {
+				return ORDER_PERIOD_JOURNAL;
+			}
+			return AccountEntryFlatOrder.values()[order];
+		}
+	}
+
 	private static final Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
 	private static final Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
 
@@ -152,6 +174,60 @@ public class AccountEntryDAO {
 							.stream()
 							.map( new FullAccountEntryDetailFiller() )
 							.collect(Collectors.toCollection(LinkedList::new)))
+					)
+			;
+	}
+
+
+	public static Stream<FlatAccountEntryDetail> fetchFlat(AONContext ctx
+			, AccountEntryFilter filter
+			, AccountEntryOrder orderBy) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
+					,ACCOUNT_PERIOD.NAME,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE
+					,ACCOUNT_ENTRY.ACTIVITY,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.SECURITY_LEVEL
+					,ACCOUNT_ENTRY.CREATION_USER,ACCOUNT_ENTRY.CREATION_DATE
+					,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE
+					,ACCOUNT_ENTRY_DETAIL.ID,ACCOUNT_ENTRY_DETAIL.ACCOUNT,DET_ACCOUNT.CODE
+					,DET_ACCOUNT.DESCRIPTION,ACCOUNT_ENTRY_DETAIL.CONCEPT
+					,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT
+					,ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,BAL_ACCOUNT.CODE,BAL_ACCOUNT.DESCRIPTION
+					,ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER)
+				.from(ACCOUNT_ENTRY)
+				.innerJoin(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))
+				.innerJoin(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+				.innerJoin(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+				.where(ACCOUNT_ENTRY_PROPERTIES.getConditions(filter))
+				.orderBy(AccountEntryFlatOrder.safeEnum( orderBy.ordinal() ).getFields())
+				.fetch()
+				.stream()
+				.map( record ->new FlatAccountEntryDetail()
+						.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
+						.setEntryDomain(record.getValue(ACCOUNT_ENTRY.DOMAIN))
+						.setEntryPperiod(record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
+						.setEntryPeriodName(record.getValue(ACCOUNT_PERIOD.NAME))
+						.setEntryDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+						.setEntryType(AccountEntryType.safeValueOf( record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)))
+						.setEntryActivity(record.getValue(ACCOUNT_ENTRY.ACTIVITY))
+						.setEntryJournal(record.getValue(ACCOUNT_ENTRY.JOURNAL))
+						.setEntrySecurityLevel(SecurityLevel.safeValueOf(record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)))
+						.setEntryCreationUser(record.getValue(ACCOUNT_ENTRY.CREATION_USER))
+						.setEntryCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
+						.setEntryModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
+						.setEntryModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
+						.setDetailId(record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
+						.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+						.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
+						.setAccountDescription(record.getValue(DET_ACCOUNT.DESCRIPTION))
+						.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
+						.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
+						.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
+						.setBalancingAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+						.setBalancingAccountCode(record.getValue(BAL_ACCOUNT.CODE))
+						.setBalancingAccountDescription(record.getValue(BAL_ACCOUNT.DESCRIPTION))
+						.setDocumentNumber(record.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
 					)
 			;
 	}
@@ -651,7 +727,7 @@ public class AccountEntryDAO {
 				;
 		}
 	}
-	
+
 	// ---------------------------------------------------------- FILTROS
 	private static final AccountEntryPropertiesDAO ACCOUNT_ENTRY_PROPERTIES = new AccountEntryPropertiesDAO();
 	private static class AccountEntryPropertiesDAO implements AccountEntryProperties {

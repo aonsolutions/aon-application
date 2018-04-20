@@ -3,6 +3,9 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.AccountEntryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -16,6 +19,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -27,6 +31,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -42,6 +48,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 
 public class JournalPanelReport extends DockLayoutPanel implements Focusable, HasSelectionHandlers<AccountEntry>{
+
+	private static CommonServiceAsync commonService;
 
 	private String currentDomainName;
 	private String currentUser;
@@ -67,27 +75,48 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	private TextBox comments;
 	private ListBox order;
 	private Button cleanButton;
-	
-	
+
+	private boolean activitiesListBoxEnabled;
 	
 	public JournalPanelReport(String domainName,String user, int domainId) {
 		this(domainName,user,domainId,Integer.MAX_VALUE,null);
 	}
+	
 	public JournalPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config) {
 		super(Unit.PX);
 		this.currentDomainName = domainName;
 		this.currentUser = user;
 		this.currentDomainId = domainId;
-		
+		if (config == null) {
+			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+			commonService.getAonConfiguration(domainName, domainId
+				,new AsyncCallback<AonConfiguration>() {
+					@Override
+					public void onSuccess(AonConfiguration result) {
+						fill(tabIndex, result);
+					}
+	
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error al leer la configuraci\u00F3n");
+					}
+				});
+		} else {
+			fill (tabIndex,config );
+		}
+	}
+	
+	private void fill(int tabIndex, AonConfiguration config) {
+		activitiesListBoxEnabled = (config != null && config.hasActivities());
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());
-		
 		northPanel = new SimpleLayoutPanel();
 		fillNorthPanel(tabIndex,config);
 		addNorth(northPanel, 110);
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
-		onSearch(config);
+		onSearch();
 	}
 	
 	public String getCurrentDomainName() {
@@ -99,14 +128,14 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	public String getCurrentUser() {
 		return currentUser;
 	}
-	private void fillNorthPanel(int tabIndex,final AonConfiguration config) {
+	private void fillNorthPanel(int tabIndex ,final AonConfiguration config) {
 		period = new AccountPeriodBox();
 		period.fill(config.getPeriods(),true);
 		period.addChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		
@@ -115,7 +144,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		toDate = new DateBoxEx();
@@ -123,7 +152,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		confidential = new CheckBox(AON.MSG.confidential());
@@ -131,7 +160,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		account = new AccountBox(this.currentDomainName,this.currentDomainId);
@@ -140,7 +169,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		debit = new DoubleBox();
@@ -149,7 +178,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		credit = new DoubleBox();
@@ -158,7 +187,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		entryListBox = new AccountEntryListBox();
@@ -167,7 +196,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		
@@ -177,7 +206,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		concept = new TextBox();
@@ -187,7 +216,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		document = new TextBox();
@@ -197,7 +226,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		
@@ -208,11 +237,11 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		
-		if (config != null && config.hasActivities()) {
+		if (activitiesListBoxEnabled) {
 			activity = new ListBox();
 			activity.setWidth("150px");
 			activity.addItem("-- Todas --", "");
@@ -228,7 +257,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			activity.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					onSearch(config);
+					onSearch();
 				}
 			});
 		}
@@ -243,7 +272,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				onSearch(config);
+				onSearch();
 			}
 		});
 		
@@ -295,7 +324,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		tab.setWidget(0, 5, journal);
 		tab.getCellFormatter().setStyleName(0,5, AON.AON_CSS.aonPanelGridEven());
 		
-		if (config != null && config.hasActivities()) {
+		if (activitiesListBoxEnabled) {
 			tab.setWidget(0, 6, new Label(AON.MSG.activity()));
 			tab.setWidget(0, 7, activity);
 		} else {
@@ -324,11 +353,11 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 				credit.setValue(null,false);
 				concept.setValue(null,false);
 				document.setValue(null,false);
-				if (config != null && config.hasActivities()) {
+				if (activitiesListBoxEnabled) {
 					activity.setSelectedIndex(0);
 				}
 				period.setFocus(true);
-				onSearch(config);
+				onSearch();
 			}
 		});
 
@@ -415,14 +444,27 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		fromDate.setTabIndex(index);
 	}
 	
-	private void onSearch(AonConfiguration config) {
+	private void onSearch() {
+		AccountEntryParams params = getWidgetParams();
+		JournalPanel journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
+		journalPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<AccountEntry> event) {
+				SelectionEvent.fire(JournalPanelReport.this, event.getSelectedItem() );
+			}
+		});
+		centerPanel.setWidget(journalPanel);
+	}
+
+	public AccountEntryParams getWidgetParams() {
 		Integer activityId = null;
-		if (config != null && config.hasActivities()) {
+		if (activitiesListBoxEnabled) {
 			if (activity.getSelectedIndex() > 0 ) {
 				activityId = AonNumberUtils.toInteger(activity.getSelectedValue());
 			}
 		}
-		AccountEntryParams params = new AccountEntryParams()
+		return new AccountEntryParams()
 			.setDomain(this.currentDomainId)
 			.setPeriod(period.getValue())
 			.setFrom(fromDate.getValue())
@@ -438,18 +480,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			.setDocument(document.getValue())
 			.setComments(comments.getValue())
 			.setConfidential(confidential.getValue())
-			.setOrder(order.getSelectedIndex())
-		;
-		
-		JournalPanel journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
-		journalPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<AccountEntry> event) {
-				SelectionEvent.fire(JournalPanelReport.this, event.getSelectedItem() );
-			}
-		});
-		centerPanel.setWidget(journalPanel);
+			.setOrder(order.getSelectedIndex());
 	}
 	
 }

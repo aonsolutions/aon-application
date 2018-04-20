@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -140,6 +141,12 @@ public class AccountingImpl implements IAccounting {
 			: AccountEntryDAO.fetch(ctx,
 				p -> AccountEntryUtils.getFilter(ctx,p, params) 
 				,offset,numberOfRows,AccountEntryOrder.safeEnum(params.getOrder()))
+			;
+	}
+
+	@Override
+	public Stream<FlatAccountEntryDetail> getFlatAccountEntries(AONContext ctx, AccountEntryParams params) {
+		return AccountEntryDAO.fetchFlat(ctx, p -> AccountEntryUtils.getFilter(ctx,p, params),AccountEntryOrder.safeEnum(params.getOrder()))
 			;
 	}
 

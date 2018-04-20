@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -175,6 +176,18 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountEntries(ctx, params, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Stream<FlatAccountEntryDetail> getFlatAccountEntries(String domainName,
+			int domain, String user, final AccountEntryParams params) throws AonCoreException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getFlatAccountEntries(ctx, params);
 		} finally {
 			if (ctx != null)
 				ctx.close();

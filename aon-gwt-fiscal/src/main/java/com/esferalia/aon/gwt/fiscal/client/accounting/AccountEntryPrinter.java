@@ -51,7 +51,6 @@ public class AccountEntryPrinter {
 	}
 
 	public static String toString(AccountEntry entry, int lineSize) {
-		String type = AON.MSG.accountEntryType(entry.getEntryType());
 		StringBuffer buf = new StringBuffer();
 		buf.append(entry.isConfidential()
 			?AonStringUtils.OPEN_BRACKET 
@@ -80,7 +79,7 @@ public class AccountEntryPrinter {
 		} else {
 			buf.append(AonStringUtils.repeat(AonStringUtils.SPACE, 40));
 		}
-		buf.append(AonStringUtils.leftPad(type, lineSize - buf.length()));
+		buf.append(AonStringUtils.leftPad(entry.getEntryType().getDescription(), lineSize - buf.length()));
 		return buf.toString();
 	}
 	

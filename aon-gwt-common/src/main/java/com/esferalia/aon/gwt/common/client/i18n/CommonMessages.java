@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.common.client.i18n;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -3192,34 +3191,6 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Libro diario")
 	String journalBook();
-
-    @DefaultMessage("----------")
-	@AlternateMessage({
-		"OPENING", "Apertura",
-		"CLOSING", "Cierre",
-	    "OPERATING", "Explotaci\u00F3n",
-	    "MANUAL", "Manual",
-	    "SALES_INVOICE", "Factura de Venta",
-	    "PURCHASE_INVOICE", "Factura de Compra",
-	    "EXPENSE_INVOICE", "Factura de Gastos",
-	    "INVESTMENT_INVOICE", "Factura de Inversi\u00F3n",
-	    "EXPENSES", "Gastos sin IVA",
-	    "SALARY", "N\u00F3minas",
-	    "TAX", "Impuestos",
-	    "LOAN", "Pr\u00E9stamos",
-	    "LEASING", "Leasing",
-	    "PAYMENT", "Pago",
-	    "COLLECTION", "Cobro",
-	    "STOCK_VARIATION", "Variaci\u00F3n de Existencias",
-	    "AMORTIZATION", "Amortizaci\u00F3n",
-	    "SOCIAL_INSURANCE", "Seg. Social",
-	    "LOAN_FEE", "Cuotas Pr\u00E9stamos",
-	    "LEASING_FEE", "Cuotas Leasing",
-	    "RETURNED_PAYMENT", "Devoluci\u00F3n de Pago",
-	    "RETURNED_COLLECTION", "Devoluci\u00F3n de Cobro",
-	    "SOCIAL_INSURANCE_ADJUST", "Ajuste Seg. Social",
-	    "FINANCE", "Tesorer\u00EDa"})
-    String accountEntryType(@Select AccountEntryType type);
 
     @DefaultMessage("Tipo asiento")
     String accountEntryTypeLabel();
