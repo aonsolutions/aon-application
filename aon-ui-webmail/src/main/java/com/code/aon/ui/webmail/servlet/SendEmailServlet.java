@@ -32,6 +32,10 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 @WebServlet(name = "SendEmail", urlPatterns = { "/send_email/*" })
 public class SendEmailServlet extends HttpServlet{
 
+	public static SendEmailServlet getInstance() {
+		return new SendEmailServlet();
+	}
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
@@ -167,7 +171,7 @@ public class SendEmailServlet extends HttpServlet{
 				.getSignature();
 	}
 	
-	private com.code.aon.webmail.db.MailAccount getMa2(MailAccount ma) {
+	public com.code.aon.webmail.db.MailAccount getMa2(MailAccount ma) {
 		com.code.aon.webmail.db.MailAccount ma2 = new com.code.aon.webmail.db.MailAccount();
 		ma2.setDefaultAccount(ma.getDefaultAccount() == 1);
 		ma2.setDisplayName(ma.getDisplayName());

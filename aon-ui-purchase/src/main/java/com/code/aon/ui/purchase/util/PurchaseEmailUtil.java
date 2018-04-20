@@ -11,8 +11,10 @@ import static com.code.aon.ui.common.ICommonMessages.SALES_PURCHASE_REFERENCE;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
@@ -30,6 +32,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.LogPanelController;
+import com.code.aon.marketing.enumeration.MailProcessType;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
@@ -39,6 +42,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseConstants {
 	
@@ -55,11 +61,54 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 	public void initMessageController( MessageController messageController, Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = getEmails( purchase, moreRecipients );
 		initMessageController(messageController, emails);
-		messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(PURCHASE_EMAIL_BODY_HEADER)) );
+		
+		if(!messageController.initMessageController(getDomain(purchase.getDomain()), "", getMap(purchase), "AON_MAIL_PROCESS" + MailProcessType.ORDER.ordinal())) {
+			messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(PURCHASE_EMAIL_BODY_HEADER)) );
+		}
+		
 		messageController.setSubject( getEmailSubject(purchase) );
 		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
 		purchaseReportManager.setValued(purchase.getSupplier().isPurchaseValuated());
 		messageController.addAttachment( getReport(purchase, REPORT_KEY) );
+	}
+	
+	private Map<String,String> getMap(Purchase purchase) {
+		Map<String,String> map = new HashMap<String,String>();		
+		
+		map.put("comentarios", purchase.getComments());
+		map.put("comments", purchase.getComments());
+		
+		map.put("fecha", AonDateUtils.simpleFormat(purchase.getDate()));
+		map.put("date", AonDateUtils.simpleFormat(purchase.getDate()));
+		
+		map.put("fecha_entrega", AonDateUtils.simpleFormat(purchase.getDeliveryDate()));
+		map.put("delivery_date", AonDateUtils.simpleFormat(purchase.getDeliveryDate()));
+
+		map.put("fecha_pedido", AonDateUtils.simpleFormat(purchase.getIssueDate()));
+		map.put("issue_date", AonDateUtils.simpleFormat(purchase.getIssueDate()));
+		
+		map.put("serie", purchase.getSeries());
+		
+		map.put("numero", Integer.toString(purchase.getNumber()));
+		map.put("number", Integer.toString(purchase.getNumber()));
+
+		map.put("estado", purchase.getStatus().getName(AonUtil.getCurrentLocale()));
+		map.put("status", purchase.getStatus().getName(AonUtil.getCurrentLocale()));
+			
+		map.put("nombre_proveedor", purchase.getSupplier().getRegistry().getName());
+		map.put("supplier_name", purchase.getSupplier().getRegistry().getName());
+		
+		map.put("documento_proveedor", purchase.getSupplier().getRegistry().getDocument());
+		map.put("supplier_document", purchase.getSupplier().getRegistry().getDocument());
+		
+		map.put("referencia", purchase.getReferenceCode());
+		map.put("reference", purchase.getReferenceCode());
+		
+		return map;
+	}
+	
+	private Domain getDomain(Integer domainId) {
+		return AON.getDomain(AonUtil.getDomainName(), domainId, "");
 	}
 	
 	private Address[] getEmailAddresses( String[] emails, String name ) throws UnsupportedEncodingException, AddressException {

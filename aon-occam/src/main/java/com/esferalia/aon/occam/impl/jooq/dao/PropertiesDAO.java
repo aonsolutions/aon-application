@@ -45,6 +45,7 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -78,6 +79,7 @@ import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -118,6 +120,7 @@ import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
@@ -1312,6 +1315,34 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.DOMAIN);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.DESCRIPTION);}
+	}
+	
+	protected static class MailTemplatePropertiesDAO implements MailTemplateProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, MailTemplateFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(MailTemplateFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.DOMAIN);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.SCOPE);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.NAME);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.ACTIVE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.CREATIONDATE);}
+ 		@Override public Property<String> getSubjectProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.SUBJECT);} 
+		@Override public Property<String> getWidthProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.WIDTH);}
+		@Override public Property<String> getTitleColorProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.TITLE_COLOR);}
+		@Override public Property<String> getBackgroundColorProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.BACKGROUND_COLOR);}
+		@Override public Property<Integer> getHeaderTemplateProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.HEADER_TEMPLATE);}
+		@Override public Property<Integer> getFooterTemplateProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.FOOTER_TEMPLATE);}
 	}
 
 	

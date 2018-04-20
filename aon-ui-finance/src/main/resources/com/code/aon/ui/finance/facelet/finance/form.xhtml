@@ -49,6 +49,11 @@
 						immediate="#{true}" rendered="#{!finance.nevv and (finance.pending or finance.returned)}"
 						styleClass="aon-finding-toolbar-item aon-icon-fraction"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
+					<aon:commandButton id="email" 
+						value="EMAIL"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2"
+						actionListener="#{finance.onSendByEmail}" />
 				</ui:define>				
 				<ui:define name="moreMenuContent">
 					<aon:menuItem id="remarks"

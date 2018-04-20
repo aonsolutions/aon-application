@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
@@ -25,6 +27,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.marketing.enumeration.MailProcessType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -35,6 +38,9 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CommercialEmailUtil extends CompanyEmailUtil {
 	
@@ -52,6 +58,9 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 		}
 		initMessageController(messageController, emails);
 		messageController.setSubject( getEmailSubject(offer) );
+	
+		Boolean istemplate = messageController.initMessageController(getDomain(offer.getDomain()), "", getMap(offer), "AON_MAIL_PROCESS" + MailProcessType.OFFER.ordinal());
+		
 		String bodyMessage = "";
 		if(includeOffer){
 			bodyMessage += getEmailOfferBody(offer);
@@ -62,12 +71,61 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 				messageController.addAttachment(aonFile);
 			}		
 		}
+		
 		if(includeSddMandate){
 			bodyMessage += getEmailSddMandateBody(offer);
 			FinanceEmailUtil emailUtil = new FinanceEmailUtil();
 			messageController.addAttachment(emailUtil.getSddMandateReport(sddMandateObject));
 		}
-		messageController.updateMessageBody( this.getEmailContent(bodyMessage) );
+		
+		if(!istemplate) {
+			messageController.updateMessageBody( this.getEmailContent(bodyMessage) );
+		}
+	}
+	
+	private Map<String,String> getMap(Offer offer) {
+		Map<String,String> map = new HashMap<String,String>();	
+		map.put("comentarios", offer.getComments());
+		map.put("comments", offer.getComments());
+		
+		map.put("nombre_commercial", offer.getSeller().getRegistry().getName());
+		map.put("seller_name", offer.getSeller().getRegistry().getName());
+		
+		map.put("documento_commercial", offer.getSeller().getRegistry().getDocument());
+		map.put("seller_document", offer.getSeller().getRegistry().getDocument());
+		
+		map.put("nombre_cliente_potencial", offer.getTarget().getRegistry().getName());
+		map.put("target_name", offer.getTarget().getRegistry().getName());
+		
+		map.put("documento_cliente_potencial", offer.getTarget().getRegistry().getDocument());
+		map.put("target_document", offer.getTarget().getRegistry().getDocument());
+
+		map.put("nombre_proveedor", offer.getSupplier().getRegistry().getName());
+		map.put("supplier_name", offer.getSupplier().getRegistry().getName());
+		
+		map.put("documento_proveedor", offer.getSupplier().getRegistry().getDocument());
+		map.put("supplier_document", offer.getSupplier().getRegistry().getDocument());
+
+		map.put("fecha", AonDateUtils.simpleFormat(offer.getDate()));
+		map.put("date", AonDateUtils.simpleFormat(offer.getDate()));
+		
+		map.put("serie", offer.getSeries());
+		map.put("numero", Integer.toString(offer.getNumber()));
+		map.put("number", Integer.toString(offer.getNumber()));
+		map.put("referencia", offer.getReferenceCode());
+		map.put("reference", offer.getReferenceCode());
+		
+		map.put("referencia_externa", offer.getReferenceCode());
+		map.put("external_reference", offer.getReferenceCode());
+		
+		map.put("estado", offer.getStatus().getName(AonUtil.getCurrentLocale()));
+		map.put("status", offer.getStatus().getName(AonUtil.getCurrentLocale()));
+				
+		return map;
+	}
+	
+	private Domain getDomain(Integer domainId) {
+		return AON.getDomain(AonUtil.getDomainName(), domainId, "");
 	}
 	
 	public String getEmailSubject( Offer offer ) {

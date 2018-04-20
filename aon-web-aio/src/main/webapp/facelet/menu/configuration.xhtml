@@ -81,8 +81,8 @@
 									</aon:div>
  -->
 								</aon:if>
-								<aon:if
-									test="#{actionDenied.moduleEnabled['hotel'] and aonRole.purchaseOperator}">
+								
+								<aon:if test="#{actionDenied.moduleEnabled['hotel'] and aonRole.purchaseOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="hotel" action="hotel_list"
 											value="#{bundle.pms_hotel_module}" />
@@ -92,8 +92,7 @@
 											value="#{bundle.company_department_module}" />
 									</aon:div>
 								</aon:if>
-								<aon:if
-									test="#{actionDenied.moduleEnabled['hotel'] and aonRole.config}">
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mailProcess" action="mailProcess_form"
 											actionListener="#{mailProcess.onInit}"

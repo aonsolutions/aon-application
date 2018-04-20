@@ -4,10 +4,12 @@ import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAM
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,18 +29,22 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.servlet.SendEmailServlet;
 import com.code.aon.webmail.IContact;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.ISignature;
@@ -48,6 +54,17 @@ import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class MessageController implements IWebMailConstants, Serializable {
 	
@@ -88,6 +105,8 @@ public class MessageController implements IWebMailConstants, Serializable {
     private boolean showTemplates;
     
     private List<Address> sentAddressList;
+    
+    private Map<String, String> variableMap;
     
 	private MailConfigController getMailConfig() {
 		return (MailConfigController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
@@ -254,6 +273,7 @@ public class MessageController implements IWebMailConstants, Serializable {
 		loadContacts = true;
 		template = null;
 		showTemplates = true;
+		variableMap = new HashMap<>();
 	}
 
 	public void initNewMsgFileList(){
@@ -313,7 +333,7 @@ public class MessageController implements IWebMailConstants, Serializable {
 	 * @param subject the subject to set
 	 */
 	public void setSubject(String subject) {
-		this.subject = subject;
+		this.subject = velocity(subject);
 	}
 
     public String getContent(){
@@ -329,6 +349,105 @@ public class MessageController implements IWebMailConstants, Serializable {
     	updateContent( senderMailAccount );    	
     }
 
+    public Map<String, String> getVariableMap(){
+    	return variableMap;
+    }
+
+    public void setVariableMap(Map<String, String> variableMap){
+    	this.variableMap = variableMap;
+    }
+    
+	private String velocity(String text)  {
+		if(getVariableMap() != null) {
+			VelocityContext context = new VelocityContext();
+			for( Map.Entry<String,String> entry : getVariableMap().entrySet() ) {
+				context.put(entry.getKey(), entry.getValue());
+			}
+			StringWriter out = new StringWriter();
+			
+			try {
+				Velocity.evaluate( context, out, "template text", text);
+			} catch (Throwable e) {
+				LOGGER.error(e.getMessage(), e);
+			}	
+			return out.toString();
+		}
+		return text;
+	}
+	
+	public void onTemplateChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if(event.getNewValue() != null) {
+			Integer id = (Integer) event.getNewValue();
+			updateTemplateBody(id);
+		}
+	}	
+	
+	public void updateTemplateBody(Integer templateId) {
+		MailTemplate template = AON.getMailTemplate(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "", 
+				f -> f.getIdProperty().eq(templateId));
+		updateMessageBody(getMessageBody(template));
+	}
+	
+	public String getMessageBody(MailTemplate template) {
+		StringBuffer sb = new StringBuffer();
+		addHeader( template, sb );
+		addFooter( template, sb );
+		return sb.toString();				
+	}
+	
+	public void addHeader( MailTemplate template, StringBuffer sb ) {
+		boolean nullTemplate = template==null || template.getId()==null;
+		sb.append("<div style=\"text-align: center;");
+		if (! (nullTemplate || StringUtils.isEmpty(template.getBackgroundColor())) ) {
+			sb.append("background-color:");
+			sb.append(template.getBackgroundColor());	
+		}
+		sb.append("\">");
+		sb.append("<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: 0 auto");
+		if ( !nullTemplate && !StringUtils.isEmpty(template.getWidth()) ) {
+			sb.append(";width: ").append(template.getWidth());			
+		}		
+		sb.append(";\">");
+		sb.append("<tbody><tr><td align=\"center\">");		
+		if (!nullTemplate && template.getHeaderTemplate() != null) {
+			addTemplate(sb, template, template.getHeaderTemplate());
+		}		
+	}
+	
+	public void addFooter(MailTemplate template, StringBuffer sb ) {
+		if (template!=null && template.getId()!=null && template.getFooterTemplate() != null) {
+			addTemplate(sb, template, template.getFooterTemplate());
+		}
+		sb.append("</td></tr></tbody></table></div>");		
+	}
+		
+	private void addTemplate( StringBuffer sb, MailTemplate template, Integer attachId) {
+		Attach attach = AON.getAttach(AonUtil.getDomainName(), template.getDomain(), "", 
+				f -> f.getIdProperty().eq(attachId), AttachType.REGISTRY);
+		if(attach.getData() == null) {
+			DomainGserviceaccount d = AON.getDomainGserviceaccount(AonUtil.getDomainName(), template.getDomain(), "");
+			Drive drive = AonDrive.getInstace().serviceInitialize(d);
+			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+		}
+		if(attach.getData() != null) {
+			sb.append(new String(attach.getData()));
+		}	
+	}
+	
+	public Boolean initMessageController(Domain domain, String login, Map<String, String> map, String type) {
+		setVariableMap(map);
+		ApplicationParameter mp = AON.getApplicationParameter(domain.getName(), domain.getId(), login, type);
+		if(mp != null && mp.getId() != null) {
+			String[] ids = mp.getValue().split(" ");
+			MailAccount ma = AON.getMailAccount(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(Integer.parseInt(ids[0])));
+			IMailAccount mailAccount = (IMailAccount) SendEmailServlet.getInstance().getMa2(ma);
+			setSenderMailAccount(mailAccount);
+			setTemplate(Integer.parseInt(ids[1]));
+			updateTemplateBody(Integer.parseInt(ids[1]));
+		}
+		return mp != null && mp.getId() != null;
+	}
+	
 	//********************************************************************************************
 	// EMAIL SELECTION POPUP
 	//********************************************************************************************
@@ -451,9 +570,9 @@ public class MessageController implements IWebMailConstants, Serializable {
 	
 	private void updateContent( IMailAccount mailAccount ) {
 		if ( includeSignature(mailAccount) ) {
-			content = StringUtils.defaultString(messageBody) + mailAccount.getISignature().getSignature();
+			content = velocity(StringUtils.defaultString(messageBody) + mailAccount.getISignature().getSignature());
 		} else {
-			content = StringUtils.defaultString(messageBody);	
+			content = velocity(StringUtils.defaultString(messageBody));	
 		}		
 	}
     

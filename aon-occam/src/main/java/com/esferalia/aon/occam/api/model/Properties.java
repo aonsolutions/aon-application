@@ -1167,4 +1167,19 @@ public interface Properties {
 		Property<Byte> getSecurityLevelProperty();
 		
 	}
+	
+	public interface MailTemplateProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getScopeProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getActiveProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getSubjectProperty();
+		Property<String> getWidthProperty();
+		Property<String> getTitleColorProperty();
+		Property<String> getBackgroundColorProperty();
+		Property<Integer> getHeaderTemplateProperty();
+		Property<Integer> getFooterTemplateProperty();
+	}
 }

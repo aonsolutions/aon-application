@@ -131,8 +131,7 @@ public class AonDrive extends DriveUtils{
 					deleteData(attach);
 					LOGGER.log(Level.INFO,"'"+attach.getDescription()+"': Not at Drive. It was created & uploaded ["+file.getId()+"].");
 				} else LOGGER.log(Level.SEVERE,"Parent of file is null");
-			} else {
-				if (attach.getData() == null) LOGGER.log(Level.FINE, "Skip '"+ attach.getDescription() +"': No new data.");
+			} else if(attach.getData() != null) {
 				File file = getFile(drive, attach.getDriveId());
 				if (file.getMd5Checksum() == null || !file.getMd5Checksum().equals(
 						AonFileUtils.getMD5Checksum(attach.getData()))) {

@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_GROUPED;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_INVALID_AMOUNT_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.StringWriter;
 import java.sql.Connection;
@@ -19,6 +20,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.AonVersion;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.common.BeanManager;
@@ -33,7 +37,6 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.enumeration.PayMethodType;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
@@ -44,7 +47,6 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -60,18 +62,25 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.finance.event.FinanceSearchListener;
+import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class FinanceController extends FinanceListController implements IFinanceController, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceController.class);
+	
 	private Company company;
 	private boolean payment;
 	private boolean payroll;
@@ -105,8 +114,11 @@ public class FinanceController extends FinanceListController implements IFinance
 	private List<ITransferObject> orderedList;
 	private boolean showAuditInfoWindow;
 	private BankAccountHelper accountHelper;
+	private FinanceEmailUtil emailUtil;
+
 	
 	public FinanceController() {
+    	this.emailUtil = new FinanceEmailUtil();
 		this.accountHelper = new BankAccountHelper(this);
 	}
 
@@ -989,4 +1001,18 @@ public class FinanceController extends FinanceListController implements IFinance
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
+	public void onSendByEmail( ActionEvent event ) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {			
+			try {			
+				controller.onNewMessage(event);
+				emailUtil.initMessageController(controller, (Finance) getTo());
+			} catch ( Throwable e ) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);				
+			}				
+		}
+	}
 }

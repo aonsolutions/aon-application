@@ -1,5 +1,7 @@
 package com.code.aon.ui.warehouse.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,6 +13,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -54,6 +58,8 @@ import com.code.aon.ui.product.controller.ItemTagPrintController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -63,6 +69,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class IncomeController extends BasicController implements IWarehouseConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(IncomeController.class);
 	
 	private List<SelectItem> addresses;
 	private Warehouse warehouse;
@@ -80,11 +88,13 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private boolean showPurchaseFilterWindow;
 	private boolean showAuditInfoWindow;	
 	private boolean showWarehouseChangeWindow;
+	private WarehouseEmailUtil emailUtil;
 	private Warehouse newWarehouse;
 	private Double listTotal;
 	private BankAccountHelper accountHelper;
 	
     public IncomeController() {
+    	this.emailUtil = new WarehouseEmailUtil();
     	this.accountHelper = new BankAccountHelper(this);
 	}
 
@@ -669,4 +679,18 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		itemTagController.onItemTagPrintShow(event, idList);
 	}
 
+	public void onSendByEmail( ActionEvent event ) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onPrepareEmailWindow(event);
+		if ( controller.isShowNewMessageWindow() ) {			
+			try {			
+				controller.onNewMessage(event);
+				emailUtil.initMessageController(controller, (Income) getTo(), "incomeForm");
+			} catch ( Throwable e ) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);				
+			}				
+		}
+	}	
 }

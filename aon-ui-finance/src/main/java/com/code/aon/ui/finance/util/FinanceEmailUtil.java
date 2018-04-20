@@ -6,19 +6,20 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_SUBJE
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_WITHOUT_EMAIL;
+import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_BODY;
+import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_SUBJECT;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
@@ -39,9 +40,9 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.facturae.FACeUtil;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.marketing.enumeration.MailProcessType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.finance.SddMandateObject;
@@ -52,18 +53,21 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceEmailUtil.class.getName());
-	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 	
 	private Address[] getEmailAddresses( String[] emails, String name ) throws UnsupportedEncodingException, AddressException {
 		Address[] addresses = new Address[emails.length];
@@ -77,28 +81,128 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		return addresses;
 	}		
 	
-	public void initMessageController( MessageController messageController, Invoice invoice, IAttachment attach, boolean facturae ) throws ManagerBeanException, IOException{
+	public void initMessageController(MessageController messageController, Finance finance) throws ManagerBeanException{
+		String[] emails = getAdministrativeEmails(finance.getRegistry());
+		initMessageController(messageController, emails);
+		
+		if(!messageController.initMessageController(getDomain(finance.getDomain()), "", getMap(finance), "AON_MAIL_PROCESS" + MailProcessType.FINANCE.ordinal())) {
+			initMessageController(messageController, emails, getEmailBody(finance));
+		}
+		messageController.setSubject(getEmailSubject(finance));
+	}
+	
+	private Map<String,String> getMap(Finance finance) {
+		Map<String,String> map = new HashMap<String,String>();		
+		map.put("importe", Double.toString(finance.getAmount()));
+		map.put("amount", Double.toString(finance.getAmount()));
+		
+		map.put("importe_total", Double.toString(finance.getTotalAmount()));
+		map.put("total_amount", Double.toString(finance.getTotalAmount()));
+		
+		map.put("concepto", finance.getConcept());
+		map.put("concept", finance.getConcept());
+		
+		map.put("nombre_acreedor", finance.getRegistryName());
+		map.put("creditor_name", finance.getRegistryName());
+		
+		map.put("documento_acreedor", finance.getRegistryDocument());
+		map.put("creditor_document", finance.getRegistryDocument());
+
+		map.put("nombre_deudor", finance.getRegistryName());
+		map.put("debtor_name", finance.getRegistryName());
+
+		map.put("documento_deudor", finance.getRegistryDocument());
+		map.put("debtor_document", finance.getRegistryDocument());
+
+		map.put("iban", finance.getBankAccount().getIban());
+
+		map.put("gastos", Double.toString(finance.getExpenses()));
+		map.put("expenses", Double.toString(finance.getExpenses()));
+
+		return map;
+	}
+	
+	public String getEmailSubject(Finance finance) {
+		return AonUtil.getMessage(WAREHOUSE_DELIVERY_EMAIL_SUBJECT, finance.getReferenceCode());
+	}
+	
+	public String getEmailBody(Finance finance) {
+		return AonUtil.getMessage(WAREHOUSE_DELIVERY_EMAIL_BODY, finance.getReferenceCode(), finance.getDueDate()); 
+	}
+	
+	public void initMessageController(MessageController messageController, Invoice invoice, IAttachment attach, boolean facturae) throws ManagerBeanException, IOException{
 		String[] emails = getAdministrativeEmails(invoice.getRegistry());
-		if(attach!=null){
-			initMessageController(messageController, emails, getEmailBody(invoice));
-		} else {
-			Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
-			String host = map.get("host"), referer = map.get("referer");
-			String remain_url = "domain="+host.replaceAll(":8080", "")+"&login="+AonUtil.getRemoteUser()+"&invoice="+invoice.getId();
-			remain_url = referer+"sid/"+Base64.getEncoder().encodeToString(remain_url.getBytes(StandardCharsets.UTF_8));
-			initMessageController(messageController, emails, getEmailBody(invoice, remain_url));
+		initMessageController(messageController, emails);
+
+		if(!messageController.initMessageController(getDomain(invoice.getDomain()), "", getMap(invoice), "AON_MAIL_PROCESS" + MailProcessType.INVOICE.ordinal())) {
+			if(attach!=null){
+				initMessageController(messageController, emails, getEmailBody(invoice));
+			} else {
+				Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
+				String host = map.get("host"), referer = map.get("referer");
+				String remain_url = "domain="+host.replaceAll(":8080", "")+"&login="+AonUtil.getRemoteUser()+"&invoice="+invoice.getId();
+				remain_url = referer+"sid/"+Base64.getEncoder().encodeToString(remain_url.getBytes(StandardCharsets.UTF_8));
+				initMessageController(messageController, emails, getEmailBody(invoice, remain_url));
+			}
 		}
-		messageController.setSubject( getEmailSubject(invoice) );
-		if ( attach != null ) {
-			messageController.addAttachment( getInvoiceFile(attach, invoice) );	
+		
+		messageController.setSubject(getEmailSubject(invoice));
+		
+		if (attach != null) {
+			messageController.addAttachment(getInvoiceFile(attach, invoice));	
 		}
-		if ( facturae ) {
+		if(facturae) {
 			AonFile xml = getInvoiceXml(invoice);
-			if ( xml != null ) {
+			if (xml != null) {
 				messageController.addAttachment(xml);	
 			}	
 		}
 	}	
+	
+	private Domain getDomain(Integer domainId) {
+		return AON.getDomain(AonUtil.getDomainName(), domainId, "");
+	}
+	
+	private Map<String,String> getMap(Invoice invoice) {
+		Map<String,String> map = new HashMap<String,String>();		
+
+		map.put("serie", invoice.getSeries());
+
+		map.put("numero", Integer.toString(invoice.getNumber()));
+		map.put("number", Integer.toString(invoice.getNumber()));
+		
+		map.put("referencia", invoice.getReferenceCode());
+		map.put("reference", invoice.getReferenceCode());
+		
+		map.put("documento_cliente", invoice.getRegistryDocument());
+		map.put("customer_document", invoice.getRegistryDocument());
+		
+		map.put("nombre_cliente", invoice.getRegistryName());
+		map.put("customer_name", invoice.getRegistryName());
+		
+		map.put("documento_proveedor", invoice.getRegistryDocument());
+		map.put("supplier_document", invoice.getRegistryDocument());
+		
+		map.put("nombre_proveedor", invoice.getRegistryName());
+		map.put("supplier_name", invoice.getRegistryName());
+		
+		map.put("documento_acreedor", invoice.getRegistryDocument());
+		map.put("creditor_document", invoice.getRegistryDocument());
+		
+		map.put("nombre_acreedor", invoice.getRegistryName());
+		map.put("creditor_name", invoice.getRegistryName());
+		
+		map.put("fecha", AonDateUtils.simpleFormat(invoice.getDate()));
+		map.put("date", AonDateUtils.simpleFormat(invoice.getDate()));
+		
+		map.put("fecha_iva", AonDateUtils.simpleFormat(invoice.getTaxDate()));
+		map.put("tax_date", AonDateUtils.simpleFormat(invoice.getTaxDate()));
+		
+		map.put("total", Double.toString(invoice.getTotal()));
+		
+		return map;
+	}
+	
 	
 	public String getEmailSubject( Invoice invoice ) {
 		String key = invoice.isSigned() ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
@@ -164,10 +268,14 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 			_extension = attach.getMimeType().getExtension();	
 		}
 		File file = File.createTempFile( _fileName, "." + _extension );
+		if(attach.getData() == null && attach.getDriveId() != null) {
+			DomainGserviceaccount serviceAccount = AON.getDomainGserviceaccount(AonUtil.getDomainName()
+					, attach.getDomain(), AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
+			Drive drive = AonDrive.getInstace().serviceInitialize(serviceAccount);
+			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+		}
 		if (attach.getData() != null) {
-			FileUtils.writeByteArrayToFile(file, attach.getData());
-		} else if (StringUtils.isNotBlank(attach.getDriveId())) {
-			writeAttachDataToFile(attach, file);
+			AonFileUtils.writeByteArrayToFile(file, attach.getData());
 		} else {
 			throw new AonCoreException("No se ha podido generar el Documento de Factura.");
 		}
@@ -178,33 +286,6 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		aonFile.setMimeType(attach.getMimeType());
 		return aonFile;
 	}
-
-	private void writeAttachDataToFile(IAttachment attach, File file) throws IOException {
-		try {
-			Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(attach.getDomain());
-			User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
-			DomainGserviceaccount serviceAccount = DBConsults.getServiceAccount(domain, user);
-			Drive drive = DriveUtils.serviceInitialize(serviceAccount);
-			InputStream input = DriveUtils.downloadFile(drive, DriveUtils.getFile(drive, domain, user, attach.getDriveId(), attach.getId()));
-			copyInputStreamToFile(input, file);
-		} catch (GeneralSecurityException ex) {
-			throw new AonCoreException(ex.getMessage());
-		}
-	}
-
-    private long copyInputStreamToFile(InputStream input, File file) throws IOException {
-		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-		long count = 0;
-		int bytes = 0;
-
-		FileOutputStream output = new FileOutputStream(file);
-		while (-1 != (bytes = input.read(buffer))) {
-			output.write(buffer, 0, bytes);
-			count += bytes;
-		}
-		output.close();
-		return count;
-    }
 
 	@SuppressWarnings("unchecked")
 	public AonFile getSddMandateReport(SddMandateObject sddMandateObject) throws ReportException, IOException {

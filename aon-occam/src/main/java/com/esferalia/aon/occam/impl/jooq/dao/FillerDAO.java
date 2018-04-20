@@ -3,6 +3,11 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
+import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
+import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
+import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
+import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
+import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
@@ -14,8 +19,14 @@ import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Offer.OFFER;
+import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
+import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
@@ -24,20 +35,9 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
-import static com.esferalia.aon.jooq.tables.Offer.OFFER;
-import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
-import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
-import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
-import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
-import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
-import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
-import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
-import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
+import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 
 import java.util.function.Function;
 
@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
@@ -1031,6 +1032,26 @@ public class FillerDAO {
 					.setDomain(r.getValue(COMMISSION_TYPE.DOMAIN))
 					.setName(r.getValue(COMMISSION_TYPE.NAME))
 					.setRate(r.getValue(COMMISSION_TYPE.RATE));
+		}
+	}
+	
+	public static class MailTemplateFiller implements Function<Record, MailTemplate> {
+		
+		@Override
+		public MailTemplate apply(Record r) {
+			return new MailTemplate()
+					.setId(r.getValue(MK_TEMPLATE.ID))
+					.setDomain(r.getValue(MK_TEMPLATE.DOMAIN))
+					.setName(r.getValue(MK_TEMPLATE.NAME))
+					.setActive(r.getValue(MK_TEMPLATE.ACTIVE) == 1)
+					.setBackgroundColor(r.getValue(MK_TEMPLATE.BACKGROUND_COLOR))
+					.setCreationDate(r.getValue(MK_TEMPLATE.CREATIONDATE))
+					.setFooterTemplate(r.getValue(MK_TEMPLATE.FOOTER_TEMPLATE))
+					.setHeaderTemplate(r.getValue(MK_TEMPLATE.HEADER_TEMPLATE))
+					.setScope(r.getValue(MK_TEMPLATE.SCOPE))
+					.setSubject(r.getValue(MK_TEMPLATE.SUBJECT))
+					.setTitleColor(r.getValue(MK_TEMPLATE.TITLE_COLOR))
+					.setWidth(r.getValue(MK_TEMPLATE.WIDTH));
 		}
 	}
 
