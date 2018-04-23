@@ -36,6 +36,7 @@ public class CommunicationMain extends AonTemplate2{
 	private Button sendAll;
 	private Button retrieveAll;
 	private Button processAll;
+	private Button removeAll;
 	
 	
 	public CommunicationMain(AonData aonData) {
@@ -71,6 +72,10 @@ public class CommunicationMain extends AonTemplate2{
 	
 	public Button getProcessAll() {
 		return processAll;
+	}
+	
+	public Button getRemoveAll() {
+		return removeAll;
 	}
 	
 	
@@ -111,6 +116,7 @@ public class CommunicationMain extends AonTemplate2{
 		sendAll = toolbar.addButton("Enviar", AON.AON_CSS.aonIconSave());
 		retrieveAll = toolbar.addButton("Recuperar", AON.AON_CSS.aonIconImport());
 		processAll = toolbar.addButton("Procesar", AON.AON_CSS.aonIconSave());
+		removeAll = toolbar.addButton("Borrar", AON.AON_CSS.aonIconDelete());
 		
 		cleanToolbarButtons();
 		
@@ -144,6 +150,17 @@ public class CommunicationMain extends AonTemplate2{
 				SimpleLayoutPanel slp = p.getContent();
 				ContentGridIngenet grid = (ContentGridIngenet) slp.getWidget();
 				grid.process(getFilterMap().get("communication").get(0));
+			}
+		});
+		
+		removeAll.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				CommunicationPrincipal p = (CommunicationPrincipal) getContent().getWidget();
+				SimpleLayoutPanel slp = p.getContent();
+				ContentGrid grid = (ContentGrid) slp.getWidget();
+				grid.remove(getFilterMap().get("communication").get(0));
 			}
 		});
 	

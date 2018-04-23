@@ -4,9 +4,12 @@ import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 
-
 import java.util.Date;
 import java.util.stream.Stream;
+
+import org.jooq.Record1;
+import org.jooq.Select;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -73,6 +76,18 @@ public class DataResponseDAO {
 		return DATA_RESPONSE_DETAIL_PROPERTIES.build( ctx.getDslContext()
 				.select().from(DATA_RESPONSE_DETAIL), filter)
 			.fetchInto(DATA_RESPONSE_DETAIL).stream().map(new DataResponseDetailFiller());		
+	}
+	
+	public static Stream<DataResponseDetail> getLastDataResponseDetailStream(AONContext ctx, DataResponseFilter filter){
+		Select<Record1<Integer>> subQuery = ctx.getDslContext()
+			.select(DSL.max(DATA_RESPONSE_DETAIL.ID).as(DATA_RESPONSE_DETAIL.ID))
+			.from(DATA_RESPONSE).leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
+			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter))
+			.groupBy(DATA_RESPONSE_DETAIL.DATA_RESPONSE);
+		return ctx.getDslContext()
+			.select().from(DATA_RESPONSE_DETAIL)
+			.where(DATA_RESPONSE_DETAIL.ID.in(subQuery))
+			.fetchInto(DATA_RESPONSE_DETAIL).stream().map(new DataResponseDetailFiller());
 	}
 	
 	public static DataResponseDetail insertDataResponseDetail(AONContext ctx, DataResponseDetail dataResponseDetail){	

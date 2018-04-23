@@ -300,6 +300,12 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DataResponseDAO.getDataResponseDetailStream(ctx, filter));
 	}
+	
+	@Override
+	public Stream<DataResponseDetail> getLastDataResponseDetailStream(AONContext ctx, DataResponseFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DataResponseDAO.getLastDataResponseDetailStream(ctx, filter));
+	}
 
 	@Override
 	public DataResponseDetail insertDataResponseDetail(AONContext ctx, DataResponseDetail dataResponseDetail) {

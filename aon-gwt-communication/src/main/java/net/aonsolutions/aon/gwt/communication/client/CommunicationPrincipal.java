@@ -141,11 +141,13 @@ public class CommunicationPrincipal extends Composite{
 		
 		filterPanel.setCheckVisible(command==CommunicationTarget.OUTCOME_DELIVERY
 				|| command==CommunicationTarget.OUTCOME_INVOICE
-				|| command==CommunicationTarget.INGENET_DELIVERY);
+				|| command==CommunicationTarget.INGENET_DELIVERY
+				|| command==CommunicationTarget.INGENET_SALES);
 		
 		Widget content = null;
 		if (CommunicationTarget.OUTCOME_DELIVERY==command || CommunicationTarget.OUTCOME_INVOICE==command
-				|| CommunicationTarget.INCOME_SALES==command || CommunicationTarget.INCOME_INVOICE==command) {
+				|| CommunicationTarget.INCOME_SALES==command || CommunicationTarget.INCOME_INVOICE==command
+				|| CommunicationTarget.INGENET_SALES==command) {
 			ContentGrid contentGrid = (new ContentGrid(me));
 			reloadContentGrid(contentGrid);
 			content = contentGrid;
@@ -191,8 +193,10 @@ public class CommunicationPrincipal extends Composite{
 						name = "PEDIDOS";
 					} else if(CommunicationTarget.INCOME_INVOICE.getValue().equals(o.getLabel())){
 						name = "FACTURAS";
+					} else if(CommunicationTarget.INGENET_SALES.getValue().equals(o.getLabel())){
+						name = "PEDIDOS";
 					} else if(CommunicationTarget.INGENET_DELIVERY.getValue().equals(o.getLabel())){
-						name = "ALBARANES ";
+						name = "ALBARANES";
 					}
 					table.setWidget(0, 0, boldLabel(name));
 					table.setWidget(0, 1, new Label("Total"));
@@ -220,6 +224,8 @@ public class CommunicationPrincipal extends Composite{
 					} else if(CommunicationTarget.INCOME_SALES.getValue().equals(o.getLabel())
 							|| CommunicationTarget.INCOME_INVOICE.getValue().equals(o.getLabel())){
 						title = new InlineLabel( "SERES - Recepci\u00F3n de Ficheros" );
+					} else if(CommunicationTarget.INGENET_SALES.getValue().equals(o.getLabel())){
+						title = new InlineLabel( "Ingenet - Env\u00EDo de Ficheros" );
 					} else if(CommunicationTarget.INGENET_DELIVERY.getValue().equals(o.getLabel())){
 						title = new InlineLabel( "Ingenet - Recepci\u00F3n de Ficheros" );
 					}
@@ -292,6 +298,18 @@ public class CommunicationPrincipal extends Composite{
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
+		} else if(CommunicationTarget.INGENET_SALES==command){
+			getAPI().getCommunication().getIngenetSales(getFilterMap(), new AsyncCallback<JSON<JsCommunicationInfo>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsCommunicationInfo> result) {
+					contentGrid.addAll(result.getData().toLinkedList());
+					contentGrid.dataGrid.redraw();
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
 		} else {
 			
 		}
@@ -299,7 +317,7 @@ public class CommunicationPrincipal extends Composite{
 	
 	public void reloadContentGrid(ContentGridIngenet contentGrid) {
 		if(CommunicationTarget.INGENET_DELIVERY==command){
-			getAPI().getCommunication().getIngenetDeliveryAttach(getFilterMap(), new AsyncCallback<JSON<JsAttachFile>>() {
+			getAPI().getCommunication().getIngenetDelivery(getFilterMap(), new AsyncCallback<JSON<JsAttachFile>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsAttachFile> result) {
@@ -338,6 +356,10 @@ public class CommunicationPrincipal extends Composite{
 
 	public Button getProcessAll() {
 		return parent.getProcessAll();
+	}
+	
+	public Button getRemoveAll() {
+		return parent.getRemoveAll();
 	}
 	
 	@UiHandler("footPanel")

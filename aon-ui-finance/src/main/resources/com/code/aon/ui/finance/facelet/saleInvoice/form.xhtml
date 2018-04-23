@@ -59,10 +59,10 @@
 						</aon:htmlCommandLink>
 						<aon:if test="#{company.ediSupportEnabled}">
 							<aon:commandButton id="saleInvoice-downloadEdiFtp"
-								value="SERESNET"
+								value="SERES"
 								title="Recuperar del servidor FTP de Seresnet"
 								rendered="#{saleInvoice.nevv}"
-								styleClass="aon-finding-toolbar-item aon-icon-seresnet"
+								styleClass="aon-finding-toolbar-item aon-icon-seres"
 								actionListener="#{saleInvoice.ftpEdiDownloader.onShowFtpEdi}"
 								ajaxSingle="#{true}"
 								action="saleInvoice_form"
@@ -72,10 +72,10 @@
 									value="#{true}" />
 							</aon:commandButton>
 							<aon:commandButton id="saleInvoice-uploadEdiFtp"
-								value="SERESNET"
+								value="SERES"
 								title="Enviar al servidor FTP de Seresnet"
 								rendered="#{not saleInvoice.nevv}"
-								styleClass="aon-finding-toolbar-item aon-icon-seresnet"
+								styleClass="aon-finding-toolbar-item aon-icon-seres"
 								actionListener="#{saleInvoice.ftpEdiUploader.onShowFtpEdi}">
 								<f:setPropertyActionListener target="#{saleInvoice.ftpEdiUploader.showEdiFtpWindow}"
 									value="#{true}" />

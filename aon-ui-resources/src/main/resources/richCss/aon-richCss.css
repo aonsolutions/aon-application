@@ -1113,8 +1113,17 @@ color:#000;
 .aon-icon-sepe{
 	background:transparent url(images/aon-icon/aon-icon-sepe.png) scroll left center no-repeat;	
 }
-.aon-icon-seresnet{
-	background:transparent url(images/aon-icon/aon-seresnet.png) scroll left center no-repeat;	
+.aon-icon-seres{
+	background:transparent url(images/aon-icon/aon-icon-seres.png) scroll left center no-repeat;	
+}
+.aon-seres{
+	background:transparent url(images/aon-icon/aon-seres.png) scroll left center no-repeat;	
+}
+.aon-icon-ingenet{
+	background:transparent url(images/aon-icon/aon-icon-ingenet.png) scroll left center no-repeat;	
+}
+.aon-ingenet{
+	background:transparent url(images/aon-icon/aon-ingenet.png) scroll left center no-repeat;	
 }
 
 .aon-icon-aeat{

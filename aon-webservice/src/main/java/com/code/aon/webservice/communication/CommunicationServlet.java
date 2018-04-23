@@ -3,7 +3,9 @@ package com.code.aon.webservice.communication;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -25,6 +27,7 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
@@ -57,6 +60,8 @@ public class CommunicationServlet extends HttpServlet {
 	final static String OUTCOME_INVOICE = "outcome_invoice";
 	final static String INCOME_SALES = "income_sales";
 	final static String INCOME_INVOICE = "income_invoice";
+	
+	final static String INGENET_SALES = "ingenet_sales";
 	final static String INGENET_DELIVERY = "ingenet_delivery";
 
 	@Override
@@ -107,6 +112,8 @@ public class CommunicationServlet extends HttpServlet {
 					if(pathInfo.length > 4){
 						if (MSG.DELIVERY.equals(pathInfo[4])) {
 							object = getIngenetDeliveryAttach(domain, userName, req);
+						} else if (MSG.SALES.equals(pathInfo[4])) {
+							object = getIngenetSales(domain, userName, req);
 						}
 					}
 					break;
@@ -128,7 +135,16 @@ public class CommunicationServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Communication Servlet - POST METHOD");
 		
-		JSONObject json = Utils.getRequestJSON(req);
+//		JSONObject json = Utils.getRequestJSON(req);
+		
+		Map<String, String[]> filterMap = req.getParameterMap();
+		String[] idList = null;
+		if (filterMap.containsKey("id_list")) {
+			idList = filterMap.get("id_list");
+		} else if (filterMap.containsKey("?id_list")) {
+			idList = filterMap.get("?id_list");
+		}
+		
 
 		String[] pathInfo = req.getPathInfo().split("/");
 		String domainName = pathInfo[1]; 
@@ -140,9 +156,22 @@ public class CommunicationServlet extends HttpServlet {
 			if(SERES.equals(pathInfo[3])){
 				
 			} else if(INGENET.equals(pathInfo[3])){
-				
+				if(pathInfo.length > 4){
+					if(MSG.SALES.equals(pathInfo[4])){
+						if(pathInfo.length > 5){
+							if(MSG.DELETE.equals(pathInfo[5])){
+								List<Integer> _idList = Arrays.asList(idList).stream().map(o -> Integer.parseInt(o))
+										.collect(Collectors.toCollection(LinkedList::new));
+								Integer[] ids = _idList.toArray(new Integer[_idList.size()]);
+								AON.deleteDataResponseDetail(domain.getName(), domain.getId(), userName, f->f.getDataResponseProperty().in(ids));
+								AON.deleteDataResponse(domain.getName(), domain.getId(), userName, f->f.getIdProperty().in(ids));
+								object = ToJSON.objectToJSON(ids.length, "delete");
+							} 
+						}
+					}
+				}
 			}
-				
+			
 			resp.setContentType("application/json;charset=UTF-8");
 			Utils.addCorsHeader(resp);
 			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
@@ -160,14 +189,17 @@ public class CommunicationServlet extends HttpServlet {
 		JSONArray array = new JSONArray();
 //		JSONArray outcome = getOutcomeAll(domain, login, req);
 //		JSONArray income = getIncomeAll(domain, login, req);
-		JSONArray ingenet = getIngenetAll(domain, login, req);
+		JSONArray ingenetSales = getIngenetSalesAll(domain, login, req);
+		JSONArray ingenetDelivery = getIngenetDeliveryAll(domain, login, req);
 		
 //		for (int i = 0; i < outcome.length(); i++) 
 //	        array.put(outcome.get(i));
 //		for (int i = 0; i < income.length(); i++) 
 //	        array.put(income.get(i));
-		for (int i = 0; i < ingenet.length(); i++) 
-	        array.put(ingenet.get(i));
+		for (int i = 0; i < ingenetSales.length(); i++) 
+	        array.put(ingenetSales.get(i));
+		for (int i = 0; i < ingenetDelivery.length(); i++) 
+	        array.put(ingenetDelivery.get(i));
 
 		return array;
 	}
@@ -254,7 +286,29 @@ public class CommunicationServlet extends HttpServlet {
 		return array;
 	}
 	
-	private JSONArray getIngenetAll(Domain domain, String login, HttpServletRequest req) {
+	private JSONArray getIngenetSalesAll(Domain domain, String login, HttpServletRequest req) {
+		Map<String, String[]> filterMap = getFilterMap(req);
+		JSONArray array = new JSONArray();
+		
+		Supplier<Stream<DataResponseDetail>> responseDetailSupplier = () -> AON.getLastDataResponseDetailStream(domain.getName(), domain.getId(), login,
+				f -> dataResponseFilter(domain, filterMap, f, DataResponseSource.INGENET_SALES));
+		List<Integer> dataAttachIds = responseDetailSupplier.get().map(DataResponseDetail::getId).collect(Collectors.toList());
+		List<Integer> orphansIds = responseDetailSupplier.get().filter(o -> o.getDataValue().equals("PENDING"))
+				.map(DataResponseDetail::getId).collect(Collectors.toList());
+		List<Integer> errorIds = responseDetailSupplier.get().filter(o -> o.getDataValue().equals("ERROR"))
+				.map(DataResponseDetail::getId).collect(Collectors.toList());
+		
+		array.put(new JSONObject()
+				.put("label", INGENET_SALES)
+				.put("quantity", dataAttachIds.size())
+				.put("pending", orphansIds.size())
+				.put("error", errorIds.size())
+		);
+
+		return array;
+	}
+	
+	private JSONArray getIngenetDeliveryAll(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
 		
@@ -279,7 +333,6 @@ public class CommunicationServlet extends HttpServlet {
 
 		return array;
 	}
-	
 	
 	private JSONArray getOutcomeDelivery(Domain domain, String login, HttpServletRequest req){
 		Map<String, String[]> filterMap = getFilterMap(req);
@@ -359,12 +412,35 @@ public class CommunicationServlet extends HttpServlet {
 	private JSONArray getIngenetDeliveryAttach(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
-//		if (req.getParameterMap().containsKey("ingenet")) {
-			AON.getAttachStream(domain.getName(), domain.getId(), login,
-					f -> dataAttachFilter(domain, filterMap, f)
-							.and(f.getSourceTypeProperty().eq(DataAttachSource.INGENET.value())),
-					AttachType.DATA, false).forEach(o -> array.put(toDeliveryAttachJSON((o))));
-//		}
+		AON.getAttachStream(domain.getName(), domain.getId(), login,
+				f -> dataAttachFilter(domain, filterMap, f)
+						.and(f.getSourceTypeProperty().eq(DataAttachSource.INGENET.value())),
+				AttachType.DATA, false).forEach(o -> array.put(toAttachJSON((o))));
+		return array;
+	}
+
+	private JSONArray getIngenetSales(Domain domain, String login, HttpServletRequest req) {
+		Map<String, String[]> filterMap = getFilterMap(req);
+		JSONArray array = new JSONArray();
+		// TODO getIngenetSales
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login,
+				com.esferalia.aon.occam.api.model.type.DataResponseSource.INGENET_SALES,
+				f -> dataResponseFilter(domain, filterMap, f, DataResponseSource.INGENET_SALES))
+				.forEach(o -> array.put(toSeresFileJSON((o))));
+		
+		
+		
+		
+		Supplier<Stream<DataResponseDetail>> responseDetailSupplier = () -> AON.getLastDataResponseDetailStream(domain.getName(), domain.getId(), login,
+				f -> dataResponseFilter(domain, filterMap, f, DataResponseSource.INGENET_SALES));
+//		List<Integer> dataAttachIds = responseDetailSupplier.get().map(DataResponseDetail::getId).collect(Collectors.toList());
+//		List<Integer> orphansIds = responseDetailSupplier.get().filter(o -> o.getDataValue().equals("PENDING"))
+//				.map(DataResponseDetail::getId).collect(Collectors.toList());
+//		List<Integer> errorIds = responseDetailSupplier.get().filter(o -> o.getDataValue().equals("ERROR"))
+//				.map(DataResponseDetail::getId).collect(Collectors.toList());
+		
+		
+		
 		return array;
 	}
 	
@@ -469,7 +545,7 @@ public class CommunicationServlet extends HttpServlet {
 		return json;
 	}
 	
-	public static JSONObject toDeliveryAttachJSON(Attach attach) {
+	public static JSONObject toAttachJSON(Attach attach) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, attach.getId());
 		json.put("source", attach.getSourceType());
@@ -477,6 +553,21 @@ public class CommunicationServlet extends HttpServlet {
 		json.put("description", attach.getDescription());
 		json.put("type", attach.getType());
 		json.put("creation_date", AonDateUtils.format(attach.getCreationDate(), "dd-MM-yyyy HH:mm:ss"));
+		return json;
+	}
+	
+	public static JSONObject toSeresFileJSON(DataResponse dataResponse) {
+		JSONObject json = new JSONObject();
+		json.put(MSG.ID, dataResponse.getId());
+		json.put("registry_name", dataResponse.getCode().split(";")[1]);
+		json.put("reference_code", dataResponse.getCode().split(";")[0]);
+		json.put("date", AonDateUtils.format(dataResponse.getResponseDate(), "dd-MM-yyyy"));
+		json.put("status", "Pendiente" );
+		
+		// TODO sales status
+//		json.put("status", "Error" );
+//		json.put("status", "Aceptado" );
+//		json.put("status", "Rechazado" );
 		return json;
 	}
 	
@@ -540,9 +631,19 @@ public class CommunicationServlet extends HttpServlet {
 		return filter;
 	}
 	
-	private Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f) {
-		// TODO
-		return null;
+	private Filter dataResponseFilter(Domain domain, Map<String, String[]> filterMap, DataResponseProperties f, DataResponseSource source) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(source!=null)
+			filter = filter.and(f.getSourceProperty().eq(source.value()));
+		
+		if (filterMap.containsKey(MSG.FROM)) {
+			Date date = AonDateUtils.getDateWithoutTime(new Date(Long.parseLong(filterMap.get(MSG.FROM)[0])));
+			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(date)));
+		}
+		
+		fillPaginationFilter(filter, filterMap);
+		return filter;
 	}
 	
 	private Filter dataAttachAllFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {

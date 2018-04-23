@@ -89,9 +89,19 @@ public class Communication extends Methods{
 	 * INGENET
 	 * 
 	 */
-	public void getIngenetDeliveryAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsAttachFile>> callback){
+	public void getIngenetDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsAttachFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/attach/delivery"+filter, callback);
+		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/delivery"+filter, callback);
+	}
+	
+	public void getIngenetSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommunicationInfo>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales"+filter, callback);
+	}
+	
+	public void removeIngenetSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		post(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales/delete"+str, str, callback);
 	}
 	
 	public void processIngenetAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){

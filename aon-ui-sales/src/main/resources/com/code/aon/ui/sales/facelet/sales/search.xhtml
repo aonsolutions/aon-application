@@ -16,9 +16,9 @@
 				<ui:define name="additionalToolbarContent">
 					<aon:if test="#{company.ediSupportEnabled}">
 						<aon:commandButton id="sales-ediFtp"
-							value="SERESNET"
+							value="SERES"
 							title="Recuperar del servidor FTP de Seresnet"
-							styleClass="aon-finding-toolbar-item aon-icon-seresnet"
+							styleClass="aon-finding-toolbar-item aon-icon-seres"
 							actionListener="#{controller.ftpEdiDownloader.onShowFtpEdi}"
 							action="sales_form"
 							onclick="Richfaces.showModalPanel('waitProccess')" 

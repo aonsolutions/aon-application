@@ -36,7 +36,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 
 @WebServlet(name = "IngenetDeliveryServlet", urlPatterns = { "/ingenet/delivery/*", "/ingenet/delivery/dev/*",
-		"/ingenet/delivery/v2/*" })
+		"/ingenet/delivery/deprecated/*" })
 public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 
 	/**

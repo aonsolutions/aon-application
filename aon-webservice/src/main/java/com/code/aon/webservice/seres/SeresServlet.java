@@ -114,14 +114,14 @@ public class SeresServlet extends HttpServlet {
 		JSONArray array = new JSONArray();
 		JSONArray outcome = getOutcomeAll(domain, login, req);
 		JSONArray income = getIncomeAll(domain, login, req);
-		JSONArray ingenet = getIngenetAll(domain, login, req);
+//		JSONArray ingenet = getIngenetAll(domain, login, req);
 		
 		for (int i = 0; i < outcome.length(); i++) 
 	        array.put(outcome.get(i));
 		for (int i = 0; i < income.length(); i++) 
 	        array.put(income.get(i));
-		for (int i = 0; i < ingenet.length(); i++) 
-	        array.put(ingenet.get(i));
+//		for (int i = 0; i < ingenet.length(); i++) 
+//	        array.put(ingenet.get(i));
 
 		return array;
 	}

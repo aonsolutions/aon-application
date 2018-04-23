@@ -4805,6 +4805,16 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
+	
+	public static Stream<DataResponseDetail> getLastDataResponseDetailStream(String domainName, Integer domainId, String login, DataResponseFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getLastDataResponseDetailStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 
 	public static Optional<DataResponseDetail> getDataResponseDetail(String domainName, Integer domainId, String login, DataResponseDetailFilter filter){
 		AONContext ctx = null;

@@ -84,6 +84,7 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 			controller.setPurchaseGenerator(null);
 			controller.setSavedDeliveryDate(sales.getDeliveryDate());
 			controller.setSavedCarrier(sales.getCarrier());
+			controller.setIngenetHandler(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

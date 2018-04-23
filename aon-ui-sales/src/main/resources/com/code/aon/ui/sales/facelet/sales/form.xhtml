@@ -38,10 +38,9 @@
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:commandButton id="sales-ediFtp"
-								value="SERESNET"
-								title="Recuperar del servidor FTP de Seresnet"
-								styleClass="aon-finding-toolbar-item aon-icon-seresnet"
+							<aon:commandButton id="sales-ediFtp" value="SERES"
+								title="Recuperar del servidor FTP de Seres"
+								styleClass="aon-finding-toolbar-item aon-icon-seres"
 								actionListener="#{controller.ftpEdiDownloader.onShowFtpEdi}"
 								ajaxSingle="#{true}"
 								action="sales_form"
@@ -49,6 +48,23 @@
 								oncomplete="Richfaces.hideModalPanel('waitProccess')">
 								<f:setPropertyActionListener target="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
 									value="#{true}" />
+							</aon:commandButton>
+						</aon:if>
+						<aon:if test="#{domainSwitcher.udapa}">
+							<aon:commandButton id="sales-ingenet" value="INGENET"
+								rendered="#{!sales.nevv and salesDetail.model.rowCount > 0}"
+								title="Preparar pedido para Ingenet"
+								styleClass="aon-finding-toolbar-item aon-icon-ingenet"
+								ajaxSingle="#{true}"
+								action="sales_form">
+								<f:setPropertyActionListener target="#{sales.ingenetHandler.showIngenetWindow}"
+									value="#{true}" />
+								<!--  
+								actionListener="#{controller.ingenetHandler.onShowIngenetWindow}"
+								-->
+								<f:setPropertyActionListener target="#{sales.ingenetHandler.sales}"
+									value="#{sales.to}" />
+								<aon:actionListener method="#{controller.ingenetHandler.onShowIngenetWindow}" />
 							</aon:commandButton>
 						</aon:if>
 					</ui:define>
@@ -201,7 +217,7 @@
 								<aon:commandButton id="toPending" value="&#160;"
 									actionListener="#{sales.onPending}" 
 									title="#{bundle.sales_to_pending}"
-									immediate="true" rendered="#{sales.closed}"
+									immediate="true" rendered="#{sales.closed and sales.reopenable}"
 									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
 								<aon:commandButton id="close" value="&#160;"
 									actionListener="#{sales.onClose}"
@@ -220,6 +236,12 @@
 									immediate="true" rendered="#{sales.blocked}"
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 								</aon:commandButton>										
+								<aon:if test="#{domainSwitcher.udapa}">
+									<aon:outputText styleClass="aon-ingenet"
+										style="padding-right: 30px;"
+										value="&#160;" title="Disponible para Ingenet"
+										rendered="#{sales.ingenetHandler.enabledForIngenet}" />
+								</aon:if>
 							</aon:div>
 						</h:panelGrid>
  					</aon:div>
@@ -532,6 +554,7 @@
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalUdapaImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalEdiFtp.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalIngenet.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalPurchaseReference.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />

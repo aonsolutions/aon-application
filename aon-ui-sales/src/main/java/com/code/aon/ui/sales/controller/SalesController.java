@@ -68,6 +68,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler;
 import com.code.aon.ui.sales.importer.edi.FtpSalesDownloadHandler;
+import com.code.aon.ui.sales.udapa.SalesIngenetHandler;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.sales.util.SalesUtils;
@@ -123,6 +124,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaImporter;
 	
 	private FtpSalesDownloadHandler ftpEdiDownloader;
+	private SalesIngenetHandler ingenetHandler;
 	
 	private SalesElaborationProcess elaborationProcess;
 	
@@ -370,6 +372,17 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		return ftpEdiDownloader;
 	}
 	
+	public SalesIngenetHandler getIngenetHandler() {
+		if(ingenetHandler==null){
+			ingenetHandler = new SalesIngenetHandler(this);
+		}
+		return ingenetHandler;
+	}
+	
+	public void setIngenetHandler(SalesIngenetHandler ingenetHandler) {
+		this.ingenetHandler = ingenetHandler;
+	}
+	
 	public SalesElaborationProcess getElaborationProcess() {
 		if(elaborationProcess==null){
 			elaborationProcess = new SalesElaborationProcess(this);
@@ -452,6 +465,10 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public boolean isInvoiced(){
 		Sales sales = (Sales)this.getTo();
 		return sales.getStatus() == SalesStatus.INVOICED;
+	}
+	
+	public boolean isReopenable() {
+		return !getIngenetHandler().isEnabledForIngenet();
 	}
 
 	public Invoice getInvoice() throws ManagerBeanException {
