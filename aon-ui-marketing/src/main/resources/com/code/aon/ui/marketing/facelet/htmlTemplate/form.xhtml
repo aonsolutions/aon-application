@@ -9,11 +9,16 @@
 
 	<ui:define name="content">
 		<aon:form id="htmlTemplateForm">
-
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.marketing_html_template_module}" />
 				<ui:param name="controller" value="#{htmlTemplate}" />
-			</ui:include>
+				<ui:define name="beforeSpinToolbarContent" >
+					<aon:commandButton id="variables"
+						reRender="showVariableWindow" immediate="true"
+						value="Variables" actionListener="#{htmlTemplate.onVariablesInfo}"
+						styleClass="aon-finding-toolbar-item aon-icon-info" />	
+				</ui:define>	
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
@@ -45,9 +50,10 @@
 						converter="aon.ByteArrayConverter"
 						height="500" width="700"
 						configuration="tinyMCE" />	
-								
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+
+		<ui:include src="/com/code/aon/ui/marketing/facelet/htmlTemplate/variableModal.xhtml" />
 	</ui:define>
 </ui:composition>

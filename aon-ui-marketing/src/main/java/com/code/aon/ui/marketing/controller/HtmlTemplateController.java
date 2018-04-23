@@ -12,6 +12,8 @@ public class HtmlTemplateController extends RegistryAttachController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+    private boolean showVariableWindow;
+	
 	@Override
 	public void onReset(ActionEvent event) {
 		super.onReset(event);
@@ -30,4 +32,15 @@ public class HtmlTemplateController extends RegistryAttachController {
 		setAonFile(aonFile);		
 	}
 	
+	public boolean isShowVariableWindow() {
+		return showVariableWindow;
+	}
+
+	public void setShowVariableWindow(boolean showVariableWindow) {
+		this.showVariableWindow = showVariableWindow;
+	}
+	
+	public void onVariablesInfo(ActionEvent event) {
+		setShowVariableWindow(true);
+	}
 }
