@@ -171,6 +171,7 @@ public class CommunicationMain extends AonTemplate2{
 		sendAll.setVisible(false);
 		retrieveAll.setVisible(false);
 		processAll.setVisible(false);
+		removeAll.setVisible(false);
 	}
 	
 	
