@@ -3951,7 +3951,7 @@ CREATE TABLE `data_response_detail` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `data_response` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador de data_response',
   `data_variable` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo de la variable',
-  `data_value` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Valor de la variable',
+  `data_value` text COLLATE latin1_spanish_ci NOT NULL COMMENT 'Valor de la variable',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -3992,7 +3992,7 @@ CREATE TABLE `db_version` (
 
 LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
-INSERT INTO `db_version` VALUES ('9.23.3');
+INSERT INTO `db_version` VALUES ('9.23.4');
 /*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -13200,4 +13200,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-10 17:36:02
+-- Dump completed on 2018-04-24 11:13:24
