@@ -268,8 +268,10 @@ public class CretaServlet extends HttpServlet
 		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
 		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
 		String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
+		String controlMes = req.getParameter(CretaService.Parameter.CTRL_MES.name());
+		String controlAnho = req.getParameter(CretaService.Parameter.CTRL_ANHO.name());
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		Confirmacion.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, cccs, resp.getOutputStream());
+		Confirmacion.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, controlMes, controlAnho, tipo, cccs, resp.getOutputStream());
 	}
 
 	@Override

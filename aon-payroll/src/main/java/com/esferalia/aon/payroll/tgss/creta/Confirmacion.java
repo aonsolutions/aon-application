@@ -91,6 +91,23 @@ public class Confirmacion {
 		generate(authorized, fromMonth, fromYear, toMonth, toYear, tipo, cccs, os);
 	}
 
+	public static void generate(String autorizado, 
+			String desdeMes, String desdeAnho,
+			String hastaMes, String hastaAnho,
+			String controlMes, String controlAnho,
+			String tipo, String cccs[], OutputStream os) throws JAXBException {
+
+		int authorized = Integer.parseInt(autorizado);
+		Month fromMonth = Month.of(Integer.parseInt(desdeMes));
+		int fromYear = Integer.parseInt(desdeAnho);
+		Month toMonth = Month.of(Integer.parseInt(hastaMes));
+		int toYear = Integer.parseInt(hastaAnho);
+		Month ctrlMonth = Month.of(Integer.parseInt(controlMes));
+		int ctrlYear = Integer.parseInt(controlAnho);
+
+		generate(authorized, fromMonth, fromYear, toMonth, toYear, ctrlMonth, ctrlYear, tipo, cccs, os);
+	}
+
 	public static void generate(int autorizado, Month desdeMes, int desdeAnho,Month hastaMes, int hastaAnho,
 			String tipo, String cccs[], OutputStream os) throws JAXBException {
 
@@ -115,4 +132,30 @@ public class Confirmacion {
 		
 	}
 	
+	public static void generate(int autorizado, Month desdeMes, int desdeAnho,Month hastaMes, int hastaAnho,
+			Month controlMes, int controlAnho,
+			String tipo, String cccs[], OutputStream os) throws JAXBException {
+
+		SolicitudConfirmacionBuilder builder = 
+				new SolicitudConfirmacionBuilder()
+		.setAutorizado(autorizado);
+
+		for ( String cCC: cccs ) {
+			builder
+			.setCCC(cCC)
+			.setTipo(tipo)
+			.setMesDesde(desdeMes)
+			.setAnhoDesde(desdeAnho)
+			.setMesHasta(hastaMes)
+			.setAnhoHasta(hastaAnho)
+			.setMesControl(controlMes)
+			.setAnhoControl(controlAnho)
+			.addLiquidacion()
+			;
+		}
+		SolicitudConfirmacion solicitudConfirmacion = builder.createSolicitudConfirmacion();
+
+		Utils.marshal(solicitudConfirmacion, os);
+		
+	}
 }
