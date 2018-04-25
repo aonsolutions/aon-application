@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -159,13 +161,8 @@ public class CommunicationServlet extends HttpServlet {
 				if(pathInfo.length > 4){
 					if(MSG.SALES.equals(pathInfo[4])){
 						if(pathInfo.length > 5){
-							if(MSG.DELETE.equals(pathInfo[5])){
-								List<Integer> _idList = Arrays.asList(idList).stream().map(o -> Integer.parseInt(o))
-										.collect(Collectors.toCollection(LinkedList::new));
-								Integer[] ids = _idList.toArray(new Integer[_idList.size()]);
-								AON.deleteDataResponseDetail(domain.getName(), domain.getId(), userName, f->f.getDataResponseProperty().in(ids));
-								AON.deleteDataResponse(domain.getName(), domain.getId(), userName, f->f.getIdProperty().in(ids));
-								object = ToJSON.objectToJSON(ids.length, "delete");
+							if("reopen".equals(pathInfo[5])){
+								object = reopenIngenetSales(domain, userName, idList);
 							} 
 						}
 					}
@@ -180,6 +177,7 @@ public class CommunicationServlet extends HttpServlet {
 			os.close();
 		}
 	}
+	
 	
 	private Map<String, String[]> getFilterMap(HttpServletRequest req) {
 		return req.getParameterMap();
@@ -422,24 +420,18 @@ public class CommunicationServlet extends HttpServlet {
 	private JSONArray getIngenetSales(Domain domain, String login, HttpServletRequest req) {
 		Map<String, String[]> filterMap = getFilterMap(req);
 		JSONArray array = new JSONArray();
-		// TODO getIngenetSales
-		AON.getDataResponseStream(domain.getName(), domain.getId(), login,
-				com.esferalia.aon.occam.api.model.type.DataResponseSource.INGENET_SALES,
+		
+		Map<Integer, String> statusMap = new HashMap<>();
+		AON.getLastDataResponseDetailStream(domain.getName(), domain.getId(), login,
 				f -> dataResponseFilter(domain, filterMap, f, DataResponseSource.INGENET_SALES))
-				.forEach(o -> array.put(toSeresFileJSON((o))));
+			.forEach(detail -> {
+				statusMap.put(detail.getDataResponse(), detail.getDataValue());
+			});
 		
-		
-		
-		
-		Supplier<Stream<DataResponseDetail>> responseDetailSupplier = () -> AON.getLastDataResponseDetailStream(domain.getName(), domain.getId(), login,
-				f -> dataResponseFilter(domain, filterMap, f, DataResponseSource.INGENET_SALES));
-//		List<Integer> dataAttachIds = responseDetailSupplier.get().map(DataResponseDetail::getId).collect(Collectors.toList());
-//		List<Integer> orphansIds = responseDetailSupplier.get().filter(o -> o.getDataValue().equals("PENDING"))
-//				.map(DataResponseDetail::getId).collect(Collectors.toList());
-//		List<Integer> errorIds = responseDetailSupplier.get().filter(o -> o.getDataValue().equals("ERROR"))
-//				.map(DataResponseDetail::getId).collect(Collectors.toList());
-		
-		
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login,
+				DataResponseSource.INGENET_SALES,
+				f -> dataResponseFilter(domain, filterMap, f, DataResponseSource.INGENET_SALES))
+				.forEach(o -> array.put(toSeresFileJSON(o, statusMap)));
 		
 		return array;
 	}
@@ -481,6 +473,38 @@ public class CommunicationServlet extends HttpServlet {
 				.map(m -> m.getRegistry()).toArray(Integer[]::new);
 		return ids;
 	}
+	
+	
+	private Object reopenIngenetSales(Domain domain, String userName, String[] idList) {
+		List<Integer> _idList = Arrays.asList(idList).stream().map(o -> Integer.parseInt(o))
+				.collect(Collectors.toCollection(LinkedList::new));
+		for(Integer id: _idList) {
+			// restore sales status to PENDING
+			DataResponse response = AON.getDataResponse(domain.getName(),
+					domain.getId(), userName, DataResponseSource.INGENET_SALES,
+					f -> f.getIdProperty().eq(id));
+			Sales sales = AON.getSales(domain.getName(),
+					domain.getId(), userName, f -> f.getIdProperty().eq(response.getSourceId()));
+			sales.setStatus(SalesStatus.PENDING);
+			AON.updateSales(domain.getName(), domain.getId(), userName, sales);
+			
+			// add new ingenet status -> REOPENED
+			DataResponseDetail lastDetail = AON.getLastDataResponseDetailStream(domain.getName(), domain.getId(), userName, f->f.getIdProperty().eq(id)).findFirst().orElse(null);
+			if("PENDING".equals(lastDetail.getDataValue())) {
+				AON.deleteDataResponseDetail(domain.getName(), domain.getId(), userName, f->f.getIdProperty().eq(lastDetail.getId()));
+				AON.deleteDataResponse(domain.getName(), domain.getId(), userName, f->f.getIdProperty().eq(id));
+			} else {
+				DataResponseDetail detail = new DataResponseDetail();
+				detail.setDomain(domain.getId());
+				detail.setDataResponse(id);
+				detail.setDataVariable("STATUS");
+				detail.setDataValue("REOPENED");
+				AON.insertDataResponseDetail(domain.getName(), domain.getId(), userName, detail);
+			}
+		}
+		return ToJSON.objectToJSON(idList.length, "reopen");
+	}
+	
 	
 	/**
 	 * 
@@ -556,18 +580,13 @@ public class CommunicationServlet extends HttpServlet {
 		return json;
 	}
 	
-	public static JSONObject toSeresFileJSON(DataResponse dataResponse) {
+	public static JSONObject toSeresFileJSON(DataResponse dataResponse, Map<Integer, String> statusMap) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, dataResponse.getId());
 		json.put("registry_name", dataResponse.getCode().split(";")[1]);
 		json.put("reference_code", dataResponse.getCode().split(";")[0]);
 		json.put("date", AonDateUtils.format(dataResponse.getResponseDate(), "dd-MM-yyyy"));
-		json.put("status", "Pendiente" );
-		
-		// TODO sales status
-//		json.put("status", "Error" );
-//		json.put("status", "Aceptado" );
-//		json.put("status", "Rechazado" );
+		json.put("status", statusMap.get(dataResponse.getId()) );
 		return json;
 	}
 	

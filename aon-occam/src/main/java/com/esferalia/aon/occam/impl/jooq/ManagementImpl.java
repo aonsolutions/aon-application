@@ -40,6 +40,12 @@ public class ManagementImpl implements IManagement {
 				configuration -> SalesDAO.getSalesStream(ctx, filter));
 	}
 	
+	@Override
+	public void updateSales(AONContext ctx, Sales sales) {
+		ctx.getDslContext().transaction(
+				configuration -> SalesDAO.updateSales(ctx, sales));
+	}
+	
 	// ------------------ SALES DETAIL
 	
 	@Override

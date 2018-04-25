@@ -29,9 +29,6 @@ public class SalesIngenetHandler implements Serializable {
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 	
 	private final static String INGENET_STATUS = "STATUS";
-	private final static String INGENET_PENDING = "PENDING";
-	private final static String INGENET_RETRIEVED = "RETRIEVED";
-	private final static String INGENET_CLOSED = "CLOSED";
 	
 	private SalesController controller;
 	private boolean showIngenetWindow;
@@ -39,6 +36,13 @@ public class SalesIngenetHandler implements Serializable {
 	private Sales sales;
 	private Date responseDate;
 	
+	
+	public enum SalesIngenetStatus {
+		PENDING,
+		REOPENED,
+		RETRIEVED,
+		CLOSED;
+	}
 	
 	
 	public SalesIngenetHandler(SalesController controller) {
@@ -88,55 +92,33 @@ public class SalesIngenetHandler implements Serializable {
 				sales.getDomain(), AonUtil.getRemoteUser(), response);
 		
 		DataResponseDetail detail = new DataResponseDetail();
-		detail.setDomain(sales.getDomain());
+		detail.setDomain(response.getDomain());
 		detail.setDataResponse(response.getId());
 		detail.setDataVariable(INGENET_STATUS);
-		detail.setDataValue(INGENET_PENDING);
+		detail.setDataValue(SalesIngenetStatus.PENDING.name());
 		detail = AON.insertDataResponseDetail(AonUtil.getDomainName(),
 				sales.getDomain(), AonUtil.getRemoteUser(), detail);
 		
 		// TODO create data_attach if needed
 //		DataAttach attach = new DataAttach();
-//		attach.
 		
-		
-		// TODO process the sales for Ingenet
-		controller.onClose(event);
+		// process the sales for Ingenet
+		controller.onBlock(event);
 	}
 	
 	public boolean isEnabledForIngenet() {
-		Integer responseId = getResponseId();
-		if(responseId!=null) {
-			String status = AON.getDataResponseDetailStream(
-					AonUtil.getDomainName(),
-					sales.getDomain(),
-					AonUtil.getRemoteUser(),
-					f -> f.getDataResponseProperty().eq(responseId).and(f.getDataVariableProperty().eq(INGENET_STATUS)))
-					.sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
-					.map(o -> o.getDataValue())
-					.findFirst().orElse(null);
-			return INGENET_PENDING.equals(status);
-		}
-		return false;
+		return SalesIngenetStatus.PENDING.name().equals(getLastStatus()) && !SalesIngenetStatus.REOPENED.name().equals(getLastStatus());
 	}
 	
 	public boolean isRetrievedByIngenet() {
-		Integer responseId = getResponseId();
-		if(responseId!=null) {
-			String status = AON.getDataResponseDetailStream(
-					AonUtil.getDomainName(),
-					sales.getDomain(),
-					AonUtil.getRemoteUser(),
-					f -> f.getDataResponseProperty().eq(responseId).and(f.getDataVariableProperty().eq(INGENET_STATUS)))
-					.sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
-					.map(o -> o.getDataValue())
-					.findFirst().orElse(null);
-			return INGENET_RETRIEVED.equals(status);
-		}
-		return false;
+		return SalesIngenetStatus.RETRIEVED.name().equals(getLastStatus());
 	}
 	
 	public boolean isClosedByIngenet() {
+		return SalesIngenetStatus.CLOSED.name().equals(getLastStatus());
+	}
+	
+	private String getLastStatus() {
 		Integer responseId = getResponseId();
 		if(responseId!=null) {
 			String status = AON.getDataResponseDetailStream(
@@ -147,9 +129,9 @@ public class SalesIngenetHandler implements Serializable {
 					.sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
 					.map(o -> o.getDataValue())
 					.findFirst().orElse(null);
-			return INGENET_CLOSED.equals(status);
+			return status;
 		}
-		return false;
+		return null;
 	}
 	
 	private Integer getResponseId() {

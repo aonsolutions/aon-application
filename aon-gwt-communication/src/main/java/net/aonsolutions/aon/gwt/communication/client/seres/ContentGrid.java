@@ -155,7 +155,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 					} else if(parent.command.equals(CommunicationTarget.INGENET_DELIVERY)){
 						parent.getProcessAll().setVisible(enable);
 					} else if(parent.command.equals(CommunicationTarget.INGENET_SALES)){
-						parent.getRemoveAll().setVisible(enable);
+						parent.getReopenAll().setVisible(enable);
 					}
 					
 //					String sii = parent.getFilterMap().get("sii").get(0);
@@ -396,9 +396,9 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		}
 	}
 	
-	public void remove(String action) {
+	public void reopen(String action) {
 		if(action.equals(CommunicationTarget.INGENET_SALES.getValue())){
-			removeIngenetSales();
+			reopenIngenetSales();
 		}
 	}
 
@@ -516,7 +516,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		dialog.center();
 	}
 	
-	private void removeIngenetSales() {
+	private void reopenIngenetSales() {
 		HashMap<String, LinkedList<String>> map =  new HashMap<>();
 		LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
 		map.put("id_list", list);
@@ -524,7 +524,7 @@ public class ContentGrid extends ResizeComposite implements RequiresResize {
 		parent.parent.cleanToolbarButtons();
 		parent.closeFootPanel();
 		
-		getAPI().getCommunication().removeIngenetSales(map, new AsyncCallback<JSON<JsObject>>() {
+		getAPI().getCommunication().reopenIngenetSales(map, new AsyncCallback<JSON<JsObject>>() {
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
 				VerticalPanel vp = new VerticalPanel();

@@ -79,6 +79,7 @@
 	<xsd:simpleType name="ACCION_TYPE">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="RECUPERAR" />
+			<xsd:enumeration value="CERRAR" />
 			<xsd:enumeration value="CANCELAR" />
 		</xsd:restriction>
 	</xsd:simpleType>
@@ -86,10 +87,9 @@
 	<xsd:simpleType name="ESTADO_TYPE">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="PENDIENTE" />
-			<xsd:enumeration value="PROCESANDO" />
-			<xsd:enumeration value="FINALIZADO" />
-			<xsd:enumeration value="FALLIDO" />
 			<xsd:enumeration value="REABIERTO" />
+			<xsd:enumeration value="RECUPERADO" />
+			<xsd:enumeration value="CERRADO" />
 		</xsd:restriction>
 	</xsd:simpleType>
 

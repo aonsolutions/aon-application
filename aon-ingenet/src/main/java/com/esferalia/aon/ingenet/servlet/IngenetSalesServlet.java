@@ -5,11 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -42,6 +43,8 @@ import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
@@ -52,8 +55,8 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
-import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -113,63 +116,51 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 				LOGGER.error("Cannot parse date value. Reason: "+ e.getMessage());
 			}
 		}
-		List<SalesStatus> statusList = new LinkedList<>();
+		List<String> statusList = new LinkedList<>();
 		if(params.getESTADO()!=null){
-//			if(params.getESTADO().contains(ESTADOTYPE.PENDIENTE)){
-//				statusList.add(SalesStatus.PENDING);
-//			}
-//			if(params.getESTADO().contains(ESTADOTYPE.PROCESANDO)){
-//				statusList.add(SalesStatus.PENDING);
-//			}
-//			if(params.getESTADO().contains(ESTADOTYPE.FINALIZADO)){
-//				statusList.add(SalesStatus.CLOSED);
-//			}
-//			if(params.getESTADO().contains(ESTADOTYPE.FALLIDO)){
-//				statusList.add(SalesStatus.BLOCKED);
-//			}
-//			if(params.getESTADO().contains(ESTADOTYPE.REABIERTO)){
-//				statusList.add(SalesStatus.PENDING);
-//			}
+			if(params.getESTADO().contains(ESTADOTYPE.PENDIENTE)){
+				statusList.add("PENDING");
+			}
+			if(params.getESTADO().contains(ESTADOTYPE.REABIERTO)){
+				statusList.add("REOPENED");
+			}
+			if(params.getESTADO().contains(ESTADOTYPE.RECUPERADO)){
+				statusList.add("RETRIEVED");
+			}
+			if(params.getESTADO().contains(ESTADOTYPE.CERRADO)){
+				statusList.add("CLOSED");
+			}
 		}
 		
 		AONContext ctx = AONContext.getAONContext(getDomain(), getDomainId(), getUser());
 		List<Sales> salesList = null;
 		try {
 			if(ACCIONTYPE.RECUPERAR==params.getACCION()) {
-				salesList = getSalesList(ctx, date, statusList);
+				List<DataResponse> responseList = getDataResponseList(ctx, date, statusList);
+				
+				Integer[] salesIds = responseList.stream()
+						.mapToInt(DataResponse::getSourceId).boxed().toArray(Integer[]::new);
+				salesList = SalesDAO.getSalesStream(
+						ctx, f -> f.getIdProperty().in(salesIds)).collect(Collectors.toList());
 				flushSales(httpResponse, ctx, salesList);
-//				salesList.forEach(elaboration -> {
-//					if(elaboration.getSourceId()!=null && existSales(ctx, elaboration)){						
-//						elaboration.setStatus(ElaborationStatus.IN_PROGRESS.value());
-//						ElaborationDAO.updateElaboration(ctx, elaboration);
-//					} else {
-//						String reference = elaboration.getSeries()+"/"+elaboration.getNumber();
-////						errorList.add("Imposible localizar el pedido de origen de la elaboracion "+reference);
-//						String subject = "Envío automático de elaboraciones";
-//						String content = "Imposible localizar el pedido de origen de la elaboracion "+reference;
-//						log(IngenetLogLevel.DEBUG, subject, content, "elaboraciones", _xml, getMailingDevelopers(ctx));
-//					}
-//				});
-				 
-//				String subject = "Recuperación automática de elaboraciones";
-//				String content = fillResponseMessage(elaborationList);
+				
+				responseList.stream().forEach(response -> {
+					DataResponseDetail detail = new DataResponseDetail();
+					detail.setDomain(response.getDomain());
+					detail.setDataResponse(response.getId());
+					detail.setDataVariable("STATUS");
+					detail.setDataValue("RETRIEVED");
+					detail = AON.insertDataResponseDetail(ctx.getDomainName(),
+							ctx.getDomainId(), ctx.getUser(), detail);
+				});
+				
+				
+//				String subject = "Recuperación automática de pedidos";
+//				String content = fillResponseMessage(salesList);
 //				sendEmail(subject, content, "recuperar", _xml, RECIPIENTS_TO_LOG);
 //				saveToDisk("elaboration", "elaboration-request", _xml!=null?_xml:"");
 			} else if(ACCIONTYPE.CANCELAR==params.getACCION()) {
-				// TODO cancelar pedidos
-//				if(params.getELABORACIONES()!=null 
-//						&& params.getELABORACIONES().getREFERENCIAS()!=null 
-//						&& params.getELABORACIONES().getREFERENCIAS().size()>0){
-//					salesList = new ArrayList<>();
-//					reopenElaborations(ctx, salesList, params.getELABORACIONES().getREFERENCIAS());
-//					salesList.forEach(elaboration -> {
-//						ElaborationDAO.updateElaboration(ctx, elaboration);
-//					});
-//					httpResponse.setStatus(HttpServletResponse.SC_OK);					
-//				}
-//				String subject = "Cancelación automática de elaboraciones";
-//				String content = fillCancellationMessage(params.getELABORACIONES().getREFERENCIAS());
-//				log("elaboration", IngenetLogLevel.DEBUG, subject, content, "elaboration_cancelation", _xml, RECIPIENTS_TO_LOG);
+				// TODO cancelar pedidos recuperados
 			} else {
 				errorList.add("No se ha indicado la accion a realizar");
 			}
@@ -188,11 +179,6 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		
 	}
 	
-//	private boolean existSales(AONContext ctx, Elaboration elaboration) {
-//		long count = AON.getSalesDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
-//				f -> f.getIdProperty().eq(elaboration.getSourceId())).count();
-//		return count>0;
-//	}
 
 	// TODO reopenSales
 	private void reopenSales(AONContext ctx,
@@ -283,11 +269,25 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 	}
 	
 	private RESPUESTAPEDIDOS fillPedidosData(AONContext ctx, List<Sales> pendingList) {
+		Integer[] salesIds = pendingList.stream().mapToInt(Sales::getId).boxed().toArray(Integer[]::new);
+		Map<Integer, Object> salesStatus = new HashMap<>();
+		AON.getDataResponseStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), DataResponseSource.INGENET_SALES, 
+				f -> f.getSourceIdProperty().in(salesIds))
+			.forEach(response -> {
+					salesStatus.put(response.getSourceId(), response.getId());
+				});
+		AON.getLastDataResponseDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 
+				f -> f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()).and(f.getSourceIdProperty().in(salesIds)))
+			.forEach(detail -> {
+				for(Integer sales: salesStatus.keySet())
+					if(salesStatus.get(sales).equals(detail.getDataResponse()))
+						salesStatus.put(sales, detail.getDataValue());	
+			});
+		
+		
 		RESPUESTAPEDIDOS pedidos = new RESPUESTAPEDIDOS();
 		pendingList.forEach(sales -> {
 			try {
-				// TODO DEBUG: remove line below before commit changes
-//				System.out.println("pedido " + sales.getSeries() + "/" + sales.getNumber());
 				Customer customer = sales.getCustomer();
 				RESPUESTAPEDIDOTYPE pedido = new RESPUESTAPEDIDOTYPE();
 				pedido.setSERIE(sales.getSeries());
@@ -302,15 +302,13 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 				pedido.setDATOSCENTROTRABAJO(obtainDATOSCENTROTRABAJO(ctx, sales));
 				pedido.setDETALLEPEDIDO(obtainDETALLEPEDIDO(ctx, sales));
 
-				// TODO fill status
-//				ElaborationStatus elaborationStatus = ElaborationStatus.values()[sales.getStatus()];
-//				if(elaborationStatus==ElaborationStatus.PENDING){
-//					pedido.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PENDIENTE);
-//				} else if(elaborationStatus==ElaborationStatus.IN_PROGRESS){
-//					pedido.setESTADO(com.esferalia.aon.ingenet.api.respuestaElaboraciones.ESTADOTYPE.PROCESANDO);
-//				}
-//				pedido.setFECHACONSULTA(getDateFormatter().format(sales.getModificationDate()));
-//				pedido.setHORACONSULTA(getTimeFormatter().format(sales.getModificationDate()));
+				System.out.println(salesStatus.get(sales.getId()));
+				if(salesStatus.get(sales.getId()).equals("PENDING")) {
+					pedido.setESTADO(com.esferalia.aon.ingenet.api.respuestaPedidos.ESTADOTYPE.PENDIENTE);
+				} else if(salesStatus.get(sales.getId()).equals("REOPENED")) {	
+					pedido.setESTADO(com.esferalia.aon.ingenet.api.respuestaPedidos.ESTADOTYPE.REABIERTO);
+				}
+				
 				pedidos.getDATOSRESPUESTAPEDIDOS().add(pedido);
 			} catch (Exception e) {
 				String errorMsg = "No se ha podido procesar el pedido " 
@@ -542,15 +540,6 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		}
 		return null;
 	}
-
-//	private SalesDetail obtainSalesDetail(AONContext ctx, Elaboration elaboration){
-//		if(elaboration.getSource()!=null
-//				&& elaboration.getSourceId()!=null
-//				&& elaboration.getSource()==ElaborationSource.SALES.value()){
-//			return SalesDAO.getSalesDetail(ctx, elaboration.getSourceId());
-//		}
-//		return null;
-//	}
 	
 	private RAddress obtainAddress(AONContext ctx, Integer id) {
 		if (id != null) {
@@ -568,22 +557,20 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		return null;
 	}
 
-	private List<Sales> getSalesList(AONContext ctx, Date date,
-			List<SalesStatus> statusList) {
-		Stream<Sales> salesList = SalesDAO.getSalesStream(
-				ctx,
-				p -> {
-					Byte[] statuses = { null, null, null, null, null };
-					if (statusList != null && statusList.size() > 0) {
-						for (int i = 0; i < statusList.size(); i++) {
-							statuses[i] = statusList.get(i).value();
-						}
-					} else {
-						statuses[0] = SalesStatus.PENDING.value();
-//						statuses[1] = SalesStatus.IN_PROGRESS.value();
-//						statuses[2] = SalesStatus.FAIL.value();
-//						statuses[3] = SalesStatus.REOPEN.value();
-					}
+	private List<DataResponse> getDataResponseList(AONContext ctx, Date date,
+			List<String> statusList) {
+		String[] statuses = { null, null, null, null, null };
+		if (statusList != null && statusList.size() > 0) {
+			for (int i = 0; i < statusList.size(); i++) {
+				statuses[i] = statusList.get(i);
+			}
+		} else {
+			statuses[0] = "PENDING";
+			statuses[1] = "REOPENED";
+		}
+		
+		Integer[] responseIds = AON.getLastDataResponseDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 
+				f -> {
 					java.sql.Date start = null;
 					java.sql.Date end = null;
 					if (date != null) {
@@ -597,17 +584,20 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 										DateUtils.setMinutes(
 												DateUtils.setHours(date, 23), 59),
 												59).getTime());
-						return p.getDomainProperty().eq(ctx.getDomainId())
-								.and(p.getStatusProperty().in(statuses))
-								.and(date != null ? p.getIssueDateProperty().between(
-										start, end) : p.getIssueDateProperty()
-										.isNotNull());
+						return f.getDomainProperty().eq(ctx.getDomainId())
+								.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
+								.and(f.getIssueDateProperty().between(start, end));
 					} else {
-						return p.getStatusProperty()
-								.in(statuses);
+						return f.getIssueDateProperty().ge(new java.sql.Date((new Date()).getTime()));
 					}
-				});
-		return salesList.collect(Collectors.toList());
+				})
+				.filter(detail-> (detail.getDataValue().equals("PENDING")||detail.getDataValue().equals(("REOPENED"))))
+				.mapToInt(DataResponseDetail::getDataResponse).boxed().toArray(Integer[]::new);
+		
+		return AON.getDataResponseStream(ctx.getDomainName(), ctx.getDomainId(),
+				ctx.getUser(), DataResponseSource.INGENET_SALES, f -> f.getIdProperty().in(responseIds))
+				.collect(Collectors.toList());
+		
 	}
 	
 

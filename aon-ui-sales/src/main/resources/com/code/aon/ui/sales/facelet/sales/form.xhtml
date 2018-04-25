@@ -52,16 +52,13 @@
 						</aon:if>
 						<aon:if test="#{domainSwitcher.udapa}">
 							<aon:commandButton id="sales-ingenet" value="INGENET"
-								rendered="#{!sales.nevv and salesDetail.model.rowCount > 0}"
+								rendered="#{!sales.nevv and sales.pending and salesDetail.model.rowCount > 0}"
 								title="Preparar pedido para Ingenet"
 								styleClass="aon-finding-toolbar-item aon-icon-ingenet"
 								ajaxSingle="#{true}"
 								action="sales_form">
 								<f:setPropertyActionListener target="#{sales.ingenetHandler.showIngenetWindow}"
 									value="#{true}" />
-								<!--  
-								actionListener="#{controller.ingenetHandler.onShowIngenetWindow}"
-								-->
 								<f:setPropertyActionListener target="#{sales.ingenetHandler.sales}"
 									value="#{sales.to}" />
 								<aon:actionListener method="#{controller.ingenetHandler.onShowIngenetWindow}" />
@@ -217,7 +214,7 @@
 								<aon:commandButton id="toPending" value="&#160;"
 									actionListener="#{sales.onPending}" 
 									title="#{bundle.sales_to_pending}"
-									immediate="true" rendered="#{sales.closed and sales.reopenable}"
+									immediate="true" rendered="#{sales.closed}"
 									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
 								<aon:commandButton id="close" value="&#160;"
 									actionListener="#{sales.onClose}"
@@ -233,7 +230,7 @@
 								<aon:commandButton id="unblock" value="&#160;"
 									actionListener="#{sales.onUnblock}"
 									title="#{bundle.sales_to_unblock}"
-									immediate="true" rendered="#{sales.blocked}"
+									immediate="true" rendered="#{sales.blocked and sales.reopenable}"
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 								</aon:commandButton>										
 								<aon:if test="#{domainSwitcher.udapa}">

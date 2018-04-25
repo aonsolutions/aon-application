@@ -29,6 +29,7 @@ public interface IManagement {
 
 	// -------------------- SALES 
 	Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter);
+	void updateSales(AONContext ctx, Sales sales);
 	
 	// -------------------- SALES DETAIL
 	Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter);

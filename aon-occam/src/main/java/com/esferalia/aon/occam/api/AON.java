@@ -1409,6 +1409,16 @@ public class AON {
 				.getCustomer().getId()));
 		return sales;
 	}
+	
+	public static void updateSales(String domainName, Integer domainId, String login, Sales sales) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getManagement().updateSales(ctx, sales);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 
 	// ------------------ SALES DETAIL
 	public static Stream<SalesDetail> getSalesDetailStream(String domainName,

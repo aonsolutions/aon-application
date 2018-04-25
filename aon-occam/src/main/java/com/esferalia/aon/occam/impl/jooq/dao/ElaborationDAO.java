@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Elaboration.ELABORATION;
 import static com.esferalia.aon.jooq.tables.ElaborationDetail.ELABORATION_DETAIL;
 import static com.esferalia.aon.jooq.tables.ElaborationDetailComposition.ELABORATION_DETAIL_COMPOSITION;
-import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 
 import java.sql.Timestamp;
@@ -501,41 +500,6 @@ public class ElaborationDAO {
 				.findFirst()
 				.orElse(0);
 		return ++next;
-	}
-	
-	// FIXME this is not the place for this method 
-	@Deprecated
-	public static String getCustomerItemCode(AONContext ctx, Integer itemId,
-			Integer customerId) {
-		try {
-			return ctx
-					.getDslContext()
-					.select(RITEM.CODE)
-					.from(RITEM)
-					.where(RITEM.DOMAIN.eq(ctx.getDomainId())
-							.and(RITEM.ITEM.eq(itemId))
-							.and(RITEM.REGISTRY.eq(customerId)))
-					.orderBy(RITEM.PRIORITY).limit(1).fetchOne().value1();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	@Deprecated
-	public static Double getCustomerItemPrice(AONContext ctx, Integer itemId,
-			Integer customerId) {
-		try {
-			return ctx
-					.getDslContext()
-					.select(RITEM.PRICE)
-					.from(RITEM)
-					.where(RITEM.DOMAIN.eq(ctx.getDomainId())
-							.and(RITEM.ITEM.eq(itemId))
-							.and(RITEM.REGISTRY.eq(customerId)))
-					.orderBy(RITEM.PRIORITY).limit(1).fetchOne().value1();
-		} catch (Exception e) {
-			return null;
-		}
 	}
 	
 	

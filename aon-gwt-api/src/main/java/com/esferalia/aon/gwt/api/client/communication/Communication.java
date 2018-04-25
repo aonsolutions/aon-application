@@ -99,9 +99,9 @@ public class Communication extends Methods{
 		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales"+filter, callback);
 	}
 	
-	public void removeIngenetSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+	public void reopenIngenetSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		post(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales/delete"+str, str, callback);
+		post(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales/reopen"+str, str, callback);
 	}
 	
 	public void processIngenetAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){

@@ -44,7 +44,7 @@
 											value="#{bundle.aon_availability_date}" />
 										<aon:selectInputDate id="Ingenet_date"
 											value="#{sales.ingenetHandler.responseDate}" 
-											required="true" disabled="#{!sales.pending}"
+											required="true" disabled="#{true}"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"/>
 									</aon:panelGrid>
@@ -61,7 +61,7 @@
 							 		<aon:panelGrid id="responseDate" columns="2" dir="true" styleClass="aon-width-all">
 										<aon:outputText value="#{bundle.aon_status}" />
 										<aon:div>
-											<aon:outputText value="Pedido pendiente de recuperar"
+											<aon:outputText value="Pedido recuperado y REABIERTO"
 												rendered="#{not sales.ingenetHandler.retrievedByIngenet and not sales.ingenetHandler.closedByIngenet}" />
 									 		<aon:outputText value="Pedido recuperado"
 												rendered="#{sales.ingenetHandler.retrievedByIngenet}" />

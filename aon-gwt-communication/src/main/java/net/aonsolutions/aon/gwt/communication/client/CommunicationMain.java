@@ -36,7 +36,7 @@ public class CommunicationMain extends AonTemplate2{
 	private Button sendAll;
 	private Button retrieveAll;
 	private Button processAll;
-	private Button removeAll;
+	private Button reopenAll;
 	
 	
 	public CommunicationMain(AonData aonData) {
@@ -74,8 +74,8 @@ public class CommunicationMain extends AonTemplate2{
 		return processAll;
 	}
 	
-	public Button getRemoveAll() {
-		return removeAll;
+	public Button getReopenAll() {
+		return reopenAll;
 	}
 	
 	
@@ -116,7 +116,7 @@ public class CommunicationMain extends AonTemplate2{
 		sendAll = toolbar.addButton("Enviar", AON.AON_CSS.aonIconSave());
 		retrieveAll = toolbar.addButton("Recuperar", AON.AON_CSS.aonIconImport());
 		processAll = toolbar.addButton("Procesar", AON.AON_CSS.aonIconSave());
-		removeAll = toolbar.addButton("Borrar", AON.AON_CSS.aonIconDelete());
+		reopenAll = toolbar.addButton("Reabrir", AON.AON_CSS.aonIconRefresh());
 		
 		cleanToolbarButtons();
 		
@@ -153,14 +153,14 @@ public class CommunicationMain extends AonTemplate2{
 			}
 		});
 		
-		removeAll.addClickHandler(new ClickHandler() {
+		reopenAll.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				CommunicationPrincipal p = (CommunicationPrincipal) getContent().getWidget();
 				SimpleLayoutPanel slp = p.getContent();
 				ContentGrid grid = (ContentGrid) slp.getWidget();
-				grid.remove(getFilterMap().get("communication").get(0));
+				grid.reopen(getFilterMap().get("communication").get(0));
 			}
 		});
 	
@@ -171,7 +171,7 @@ public class CommunicationMain extends AonTemplate2{
 		sendAll.setVisible(false);
 		retrieveAll.setVisible(false);
 		processAll.setVisible(false);
-		removeAll.setVisible(false);
+		reopenAll.setVisible(false);
 	}
 	
 	

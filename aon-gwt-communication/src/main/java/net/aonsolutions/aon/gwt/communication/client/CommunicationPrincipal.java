@@ -358,8 +358,8 @@ public class CommunicationPrincipal extends Composite{
 		return parent.getProcessAll();
 	}
 	
-	public Button getRemoveAll() {
-		return parent.getRemoveAll();
+	public Button getReopenAll() {
+		return parent.getReopenAll();
 	}
 	
 	@UiHandler("footPanel")
