@@ -6,8 +6,8 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_SUBJE
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_WITHOUT_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_BODY;
-import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_SUBJECT;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_EMAIL_BODY;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_EMAIL_SUBJECT;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -123,11 +123,11 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 	}
 	
 	public String getEmailSubject(Finance finance) {
-		return AonUtil.getMessage(WAREHOUSE_DELIVERY_EMAIL_SUBJECT, finance.getReferenceCode());
+		return AonUtil.getMessage(FINANCE_EMAIL_SUBJECT, finance.getReferenceCode());
 	}
 	
 	public String getEmailBody(Finance finance) {
-		return AonUtil.getMessage(WAREHOUSE_DELIVERY_EMAIL_BODY, finance.getReferenceCode(), finance.getDueDate()); 
+		return AonUtil.getMessage(FINANCE_EMAIL_BODY, finance.getReferenceCode(), finance.getDueDate()); 
 	}
 	
 	public void initMessageController(MessageController messageController, Invoice invoice, IAttachment attach, boolean facturae) throws ManagerBeanException, IOException{

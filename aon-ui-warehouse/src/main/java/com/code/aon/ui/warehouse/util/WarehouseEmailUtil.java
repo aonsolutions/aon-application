@@ -3,6 +3,9 @@ package com.code.aon.ui.warehouse.util;
 import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_SUBJECT;
 
+import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_INCOME_EMAIL_BODY;
+import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_INCOME_EMAIL_SUBJECT;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -113,11 +116,11 @@ public class WarehouseEmailUtil extends CompanyEmailUtil {
 	}
 	
 	public String getEmailSubject(Income income) {
-		return AonUtil.getMessage(WAREHOUSE_DELIVERY_EMAIL_SUBJECT, income.getReferenceCode());
+		return AonUtil.getMessage(WAREHOUSE_INCOME_EMAIL_SUBJECT, income.getReferenceCode());
 	}
 	
 	public String getEmailBody(Income income) {
-		return AonUtil.getMessage(WAREHOUSE_DELIVERY_EMAIL_BODY, income.getReferenceCode(), income.getIssueTime()); 
+		return AonUtil.getMessage(WAREHOUSE_INCOME_EMAIL_BODY, income.getReferenceCode(), income.getIssueTime()); 
 	}
 
 	private Domain getDomain(Integer domainId) {

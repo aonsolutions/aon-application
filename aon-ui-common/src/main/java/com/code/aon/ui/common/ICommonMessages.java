@@ -601,6 +601,11 @@ public interface ICommonMessages {
 	
 	String WAREHOUSE_DELIVERY_EMAIL_SUBJECT = "warehouse_delivery_email_subject";
 	String WAREHOUSE_DELIVERY_EMAIL_BODY = "warehouse_delivery_email_body";
+	String WAREHOUSE_INCOME_EMAIL_SUBJECT = "warehouse_income_email_subject";
+	String WAREHOUSE_INCOME_EMAIL_BODY = "warehouse_income_email_body";
+	String FINANCE_EMAIL_SUBJECT = "finance_email_subject";
+	String FINANCE_EMAIL_BODY = "finance_email_body";
+	
 	String STOCK_BY_WAREHOUSE_KEY = "warehouse_stock_by_warehouse_module";
 	String STOCK_BY_ITEM_KEY = "warehouse_stock_by_item_module";
 	String STOCK_BY_WAREHOUSE_VALUED_KEY = "warehouse_stock_by_warehouse_valued_module";
