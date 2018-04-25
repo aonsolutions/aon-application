@@ -436,6 +436,8 @@ public class JooqEmployeeCalendar {
 					DateUtils.addDays2Date(date, i);
 		
 					String dayOfWeek = calculateDayOfWeek(date.getDay());
+//					if(dayOfWeek == "HORAS_MIERCOLES")
+//						System.out.println("HORAS_MIERCOLES");
 					
 					java.util.Date auxstartDateHour = DateUtils.copyDateOnly(date);
 					Double startHour = updateHoursMap.get(auxstartDateHour);
@@ -634,33 +636,37 @@ public class JooqEmployeeCalendar {
 	private static Date parseEndDateForStrech(java.util.Date startDateAux, java.util.Date endDateAux) {
 		java.util.Date date = DateUtils.copyDateOnly(endDateAux);
 		
-		if(DateUtils.getLastDayOfMonth(date).getDate() == date.getDate() || date.getDay() == 0){
+		if(/*DateUtils.getLastDayOfMonth(date).getDate() == date.getDate() || */date.getDay() == 0){
 			return new Date(date.getTime());
 		}else{
-			if((startDateAux.getMonth() != endDateAux.getMonth() && startDateAux.getYear() == endDateAux.getYear()) ||
-			   (startDateAux.getMonth() == endDateAux.getMonth() && startDateAux.getYear() != endDateAux.getYear())){ 
-				// Si la fecha de fin esta en otro mes la ficha fin sera el ultimo dia del mes anterior
-				java.util.Date date2 = null;
-				if(endDateAux.getMonth() > 0)
-					date2 = new Date(endDateAux.getYear(), endDateAux.getMonth()-1, endDateAux.getDate());
-				else
-					date2 = new Date(endDateAux.getYear()-1, 11, endDateAux.getDate());
-				return new Date(DateUtils.getLastDayOfMonth(date2).getTime());
-			}
-			
-			if(startDateAux.getMonth() != endDateAux.getMonth() && startDateAux.getYear() != endDateAux.getYear()){
-				return new Date(DateUtils.getLastDayOfYear(startDateAux).getTime());
-			}
-			
-			java.util.Date staticDate = new java.util.Date(date.getYear(), date.getMonth()-1, date.getDate());
-			staticDate = DateUtils.getLastDayOfMonth(staticDate);
-			while(date.getDay() != 0){
+			while(date.getDay() != 0)
 				DateUtils.addDays2Date(date, -1);
-				if(date.getDate() == staticDate.getDate())
-					break;
-				
-			}
 			return new Date(date.getTime());
+			
+//			if((startDateAux.getMonth() != endDateAux.getMonth() && startDateAux.getYear() == endDateAux.getYear()) ||
+//			   (startDateAux.getMonth() == endDateAux.getMonth() && startDateAux.getYear() != endDateAux.getYear())){ 
+//				// Si la fecha de fin esta en otro mes la ficha fin sera el ultimo dia del mes anterior
+//				java.util.Date date2 = null;
+//				if(endDateAux.getMonth() > 0)
+//					date2 = new Date(endDateAux.getYear(), endDateAux.getMonth()-1, endDateAux.getDate());
+//				else
+//					date2 = new Date(endDateAux.getYear()-1, 11, endDateAux.getDate());
+//				return new Date(DateUtils.getLastDayOfMonth(date2).getTime());
+//			}
+//			
+//			if(startDateAux.getMonth() != endDateAux.getMonth() && startDateAux.getYear() != endDateAux.getYear()){
+//				return new Date(DateUtils.getLastDayOfYear(startDateAux).getTime());
+//			}
+//			
+//			java.util.Date staticDate = new java.util.Date(date.getYear(), date.getMonth()-1, date.getDate());
+//			staticDate = DateUtils.getLastDayOfMonth(staticDate);
+//			while(date.getDay() != 0){
+//				DateUtils.addDays2Date(date, -1);
+//				if(date.getDate() == staticDate.getDate())
+//					break;
+//				
+//			}
+//			return new Date(date.getTime());
 		}
 	}
 
