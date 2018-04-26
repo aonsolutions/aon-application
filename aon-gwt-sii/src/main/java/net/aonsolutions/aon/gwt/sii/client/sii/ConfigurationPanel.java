@@ -523,7 +523,7 @@ public class ConfigurationPanel extends Composite {
     	acb.setItems(configuration.getOperationDateOption());
     	acb.setInputElementValue(configuration.getOperationDate());
     	acb.setStyle("padding-left:20px;padding-right:20px;padding-bottom: 20px; width:250px;");
-    	acb.setLabel("Fecha Operaci\u00f3n");
+    	acb.setLabel("Fecha Registro");
     	acb.addChangeHandler(new net.aonsolutions.polymer.aon.widget.event.ChangeEventHandler() {
 			
 			@Override

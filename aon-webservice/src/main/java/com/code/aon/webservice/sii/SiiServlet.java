@@ -113,7 +113,7 @@ public class SiiServlet extends HttpServlet{
     	ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII.getValue());
     	JSONObject json = new JSONObject();
     	if(ap.getValue() != null && "R".equals(ap.getValue())) {
-    		json.put("operation_date", "Fecha Registro");
+    		json.put("operation_date", "Fecha Auditoria");
     	} else json.put("operation_date", "Fecha IVA");
     	
     	JSONArray options = new JSONArray();
@@ -125,7 +125,7 @@ public class SiiServlet extends HttpServlet{
     	
     	JSONObject option2 = new JSONObject();
     	option2.put("id", 1);
-    	option2.put("name", "Fecha Registro");
+    	option2.put("name", "Fecha Auditoria");
     	options.put(option2);
     	
     	json.put("operation_date_option", options);
