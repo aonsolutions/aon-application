@@ -594,7 +594,6 @@ public class EmployeeCalendarDraftObjectData {
 	}
 	
 	public ArrayList<StringVariable> getVariablesListStrike(Date startDate, Date endDate) {
-
 		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
 		
 		if ( draftMapDaysCoefficientStrike.isEmpty() )
@@ -608,8 +607,11 @@ public class EmployeeCalendarDraftObjectData {
 		String name = "DIAS_HUELGA";
 		Integer contStrikeDays = 0;
 		
-		if(null == endDate)
-			endDate = DateUtils.copyDateOnly(orderedDraftDatesCS.get(orderedDraftDatesCS.size() - 1));
+		if(null == endDate){
+			endDate = DateUtils.getLastDayOfMonth(startDate);
+			//endDate = DateUtils.copyDateOnly(orderedDraftDatesCS.get(orderedDraftDatesCS.size() - 1));
+		}
+			
 		
 		for(Date date : orderedDraftDatesCS){
 			
@@ -626,8 +628,20 @@ public class EmployeeCalendarDraftObjectData {
 				continue;
 			}else{
 				if(var != null){
+					//DIAS_HUELGA
 					variablesList.add(var);
 					contStrikeDays=0;
+					
+					//COEFICIENTE_HUELGA
+					CalendarVariable cs_var = null;
+					cs_var = new CalendarVariable();
+					cs_var.setImplicit(false);
+					cs_var.setScope(Scope.SALARY); // DRAFT
+					cs_var.setName("COEFICIENTE_HUELGA");
+					cs_var.setEndDate(var.getEndDate());
+					cs_var.setStartDate(var.getStartDate());
+					cs_var.setExpression(Double.toString(draftMapDaysCoefficientStrike.get(var.getStartDate())));
+					variablesList.add(cs_var);
 				}	
 				
 				dateBefore = DateUtils.copyDateOnly(date);
@@ -644,7 +658,19 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		if(var != null){
+			//DIAS_HUELGA
 			variablesList.add(var);
+			
+			//COEFICIENTE_HUELGA
+			CalendarVariable cs_var = null;
+			cs_var = new CalendarVariable();
+			cs_var.setImplicit(false);
+			cs_var.setScope(Scope.SALARY); // DRAFT
+			cs_var.setName("COEFICIENTE_HUELGA");
+			cs_var.setEndDate(var.getEndDate());
+			cs_var.setStartDate(var.getStartDate());
+			cs_var.setExpression(Double.toString(draftMapDaysCoefficientStrike.get(var.getStartDate())));
+			variablesList.add(cs_var);
 		}
 		
 		return variablesList;
