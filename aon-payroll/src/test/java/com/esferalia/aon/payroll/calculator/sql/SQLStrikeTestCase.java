@@ -7,13 +7,16 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
+import static java.util.Calendar.MONTH;
 import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Connection;
@@ -464,4 +467,47 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 				, count);
 	}
 
+	@Test
+	public void testStrikeXI() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		
+		ContractRecord contract = newContract(aonContext,
+				contractStart, Collections.emptyMap());
+
+		addData(aonContext, contract, contractStart, null, ContextVariable.MONTH_DAYS, "30.00");
+
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 2);
+		
+		Date strikeDay = add(startDate, DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, strikeDay, strikeDay,
+				new HashMap<String, String>() {
+					{
+						put(STRIKE_DAYS.getName(), "1.00");
+						put(STRIKE_FACTOR.getName(), "1.00");
+					}
+				});
+		
+		addPayment(aonContext, contract, "1200.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+		
+		Assert.assertEquals(1200.00 * 29 / 30.00, salary.getTotalPayment(), DELTA);
+		
+
+	}
 }

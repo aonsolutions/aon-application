@@ -857,6 +857,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			// Skip load GUARANTEE, that is already loaded
 		}
 
+		@Override
+		protected double getActiveDays(Period p) {
+			return 0.00;
+		}
+
 		// --------------------------------------------------------------------
 
 		private Date getGuaranteeEnd() {
@@ -1831,10 +1836,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Date start  = AonDateUtils.getFirstDayOfMonth(p.getStart());
 		Date end  = AonDateUtils.getLastDayOfMonth(p.getStart()); //AonDateUtils.add(p.getStart(), DAY_OF_MONTH,-1);
 		
-		return getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, start, end)
+		double activeDays = getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, start, end)
 		.stream().map( v -> (Double) v.getValue(v.getPeriod()) ).collect(Collectors.summingDouble( v -> v ))
 		;
 
+		if (activeDays > 0.00 )
+			return activeDays;
+		
+		end  = AonDateUtils.add(p.getStart(), Calendar.DAY_OF_MONTH,-1);
+		
+		activeDays = getExpressionContext().getVariables(ContextVariable.WORKED_DAYS, start, end)
+		.stream().map( v -> (Double) v.getValue(v.getPeriod()) ).collect(Collectors.summingDouble( v -> v ))
+		;
+		activeDays += getExpressionContext().getVariables(ContextVariable.STRIKE_FACTOR, start, end)
+		.stream().map( v -> ((Number) v.getValue(v.getPeriod())).doubleValue() ).collect(Collectors.summingDouble( v -> v ))
+		;
+		return activeDays;
 	}
 
 	protected AgreementKey getEnterpriseAgreementKey() {
