@@ -71,7 +71,7 @@ public interface FiscalService extends RemoteService {
 	String getSalaryFormatted(String domainName, int domain, Date from, Date to) throws AonCoreException;
 	
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
-	AccountStatementReport getAccountStatement(String domainName,int domain, AccountStatementParams params) throws AonCoreException;	
+	AccountStatementReport getAccountStatement(String domainName,String user,int domain, AccountStatementParams params) throws AonCoreException;	
 	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain, AccountStatementParams params) throws AonCoreException;
 
 

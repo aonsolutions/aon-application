@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.shared;
 
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -75,4 +76,17 @@ public class JsonParams extends JSONObject {
 		return json.toString();
 	}
 	
+	public static String convert(AccountStatementParams params) {
+		JSONObject json = new JSONObject();
+		JSONNull JSON_NULL = JSONNull.getInstance();
+		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
+		json.put(IRequestParamsNames.PERIOD   		,params.getPeriod() 		== null? JSON_NULL : new JSONNumber( params.getPeriod()));
+		json.put(IRequestParamsNames.ACCOUNT   		,params.getAccount()			== null? JSON_NULL : new JSONNumber( params.getAccount()));
+		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromDate()		== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
+		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToDate()   			== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
+		json.put(IRequestParamsNames.ACTIVITY 		,params.getActivity() 			== null? JSON_NULL : new JSONNumber( params.getActivity()));
+		json.put(IRequestParamsNames.CONFIDENTIAL	,params.getSecurityLevel() == null?JSON_NULL :new JSONNumber( params.getSecurityLevel().value()));
+		json.put(IRequestParamsNames.DOCUMENT 	 	,AonStringUtils.isBlank(params.getDocumentNumber())? JSON_NULL : new JSONString( params.getDocumentNumber()));
+		return json.toString();
+	}
 }

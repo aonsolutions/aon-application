@@ -9,11 +9,13 @@ public class AccountStatementParams implements Serializable {
 
 	private static final long serialVersionUID = 8075038329917800745L;
 	
-	private SecurityLevel securityLevel; 
-	
+	private int domain;
+	private Integer period;
 	private Integer account;
 	private Date fromDate;
 	private Date toDate;
+	private Integer activity;
+	private SecurityLevel securityLevel;
 	
 	private boolean openingEntriesExcluded;
 	private boolean operatingEntriesExcluded;
@@ -21,20 +23,25 @@ public class AccountStatementParams implements Serializable {
 
 	private String documentNumber;
 	
-	
-	public SecurityLevel getSecurityLevel() {
-		return securityLevel;
+	public int getDomain() {
+		return domain;
 	}
-
-	public AccountStatementParams setSecurityLevel(SecurityLevel securityLevel) {
-		this.securityLevel = securityLevel;
+	public AccountStatementParams setDomain(int domain) {
+		this.domain = domain;
+		return this;
+	}
+	
+	public Integer getPeriod() {
+		return period;
+	}
+	public AccountStatementParams setPeriod(Integer period) {
+		this.period = period;
 		return this;
 	}
 
 	public Integer getAccount() {
 		return account;
 	}
-
 	public AccountStatementParams setAccount(Integer account) {
 		this.account = account;
 		return this;
@@ -56,6 +63,22 @@ public class AccountStatementParams implements Serializable {
 		return this;
 	}
 
+	public Integer getActivity() {
+		return activity;
+	}
+	public AccountStatementParams setActivity(Integer activity) {
+		this.activity = activity;
+		return this;
+	}
+	
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+	public AccountStatementParams setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+		return this;
+	}
+	
 	public boolean areOpeningEntriesExcluded() {
 		return openingEntriesExcluded;
 	}

@@ -135,7 +135,7 @@
 												styleName="{aonResources.css.aonIconStatement} {aonResources.css.aonPaddingRight}"  
 												text="{msg.accountStatetement}" />
 										</g:customHeader>
-										<accPanel:AccountStatementPanel ui:field="statementPanel"/>
+										<g:SimpleLayoutPanel ui:field="statementPanelContainer"/>
 									</g:tab>
 									<g:tab>
 										<g:customHeader>

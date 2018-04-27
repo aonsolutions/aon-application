@@ -54,9 +54,12 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-europe.png")
 	ImageResource aonIconEurope();
 
+	@Source("images/aon-icon-minus.png")
+	ImageResource aonIconMinus();
+	
 	@Source("images/aon-icon-plus.png")
 	ImageResource aonIconPlus();
-	
+
 	@Source("images/aon-icon-delete.png")
 	ImageResource aonIconDelete();
 

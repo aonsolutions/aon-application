@@ -3,11 +3,13 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
+
 public class AccountStatement implements Serializable {
 
 	private static final long serialVersionUID = 8075038329917800745L;
 	
-	private Integer type;
+	private AccountStatementPeriod period;
 	private Integer accountEntry;
 	private Integer journal;
 	private Date entryDate;
@@ -24,12 +26,14 @@ public class AccountStatement implements Serializable {
 	private String balancingAccountDescription;
 	private String documentNumber;
 	
+	private boolean selected;
+	private boolean balanced;
 	
-	public Integer getType() {
-		return type;
+	public AccountStatementPeriod getPeriod() {
+		return period;
 	}
-	public AccountStatement setType(Integer type) {
-		this.type = type;
+	public AccountStatement setPeriod(AccountStatementPeriod period) {
+		this.period = period;
 		return this;
 	}
 
@@ -157,6 +161,20 @@ public class AccountStatement implements Serializable {
 
 	public AccountStatement setDocumentNumber(String documentNumber) {
 		this.documentNumber = documentNumber;
+		return this;
+	}
+	public boolean isSelected() {
+		return selected;
+	}
+	public AccountStatement setSelected(boolean selected) {
+		this.selected = selected;
+		return this;
+	}
+	public boolean isBalanced() {
+		return balanced;
+	}
+	public AccountStatement setBalanced(boolean balanced) {
+		this.balanced = balanced;
 		return this;
 	}
 	

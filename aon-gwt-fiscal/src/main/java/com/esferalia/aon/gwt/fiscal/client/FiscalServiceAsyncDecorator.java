@@ -205,11 +205,11 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// --------------------------------------------------------------- ACCOUNT
 	// STATEMENT
 	@Override
-	public void getAccountStatement(String domainName, int domain,
+	public void getAccountStatement(String domainName,String user, int domain,
 			AccountStatementParams params,
 			AsyncCallback<AccountStatementReport> callback) {
 		AON.start();
-		fsa.getAccountStatement(domainName, domain, params,
+		fsa.getAccountStatement(domainName, user, domain, params,
 				new AsyncCallbackWrapper<AccountStatementReport>(callback));
 	}
 

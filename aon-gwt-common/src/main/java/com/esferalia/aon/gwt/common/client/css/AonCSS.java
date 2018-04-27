@@ -37,8 +37,15 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-flex")
 	String aonFlex();
 	
+	@ClassName("aon-display-none")
+	String aonDisplayNone();
+
+	@ClassName("aon-display-block")
+	String aonDisplayBlock();
+	
 	@ClassName("aon-flex-container")
 	String aonFlexContainer();
+	
 	@ClassName("aon-justify-content-space-between")
 	String aonJustifyContentSpaceBetween();
 
@@ -258,6 +265,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-plus")
 	String aonIconPlus();
 
+	@ClassName("aon-icon-minus")
+	String aonIconMinus();
+
 	@ClassName("aon-icon-delete")
 	String aonIconDelete();
 
@@ -464,6 +474,15 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-background-disabled")
 	String aonBackgroundDisabled();
+
+	@ClassName("aon-background-highlighted-yellow")
+	String aonBackgroundHighlightedYellow();
+	
+	@ClassName("aon-background-highlighted-green")
+	String aonBackgroundHighlightedGreen();
+
+	@ClassName("aon-background-highlighted-orange")
+	String aonBackgroundHighlightedOrange();
 
 	@ClassName("aon-background-white")
 	String aonBackgroundWhite();
@@ -1233,6 +1252,15 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-documental-title")
 	String aonDocumentalTitle();
+	
+	@ClassName("aon-report-table")
+	String aonReportTable();
+	
+	@ClassName("aon-report-table-header")
+	String aonReportTableHeader();
+
+	@ClassName("aon-report-table-row")
+	String aonReportTableRow();
 	
 	
 }

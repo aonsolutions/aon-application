@@ -6,23 +6,30 @@ import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DET
 
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Account;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod.IAccountStatementPeriodVisitor;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountStatementDAO {
@@ -30,76 +37,83 @@ public class AccountStatementDAO {
 	private static final Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
 	private static final Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
 
-	private static final int BEFORE = 0;
-	private static final int PERIOD = 1;
-	private static final int AFTER =  2;
-
-	private static final String BEFORE_MSG = "Saldo anterior al {0,date,dd/MM/yyyy}";
-	private static final String PERIOD_MSG = "Saldo periodo del {0,date,dd/MM/yyyy} al {1,date,dd/MM/yyyy}";
-	private static final String AFTER_MSG  = "Saldo posterior al {0,date,dd/MM/yyyy}";
-	
 	public static Stream<AccountStatement> balance(AONContext ctx , final AccountStatementParams params ) {
 		ctx.checkRead();
-		Date fromDate = params.getFromDate()!=null
-				?params.getFromDate()
-				:AccountPeriodDAO.getMinDate(ctx);
-		final java.sql.Date sqlStart = AonDateUtils.toSql(fromDate );
-		Date toDate = params.getToDate()!=null
-				?params.getToDate()
-				:AccountPeriodDAO.getMaxDate(ctx);
-		final java.sql.Date sqlEnd = AonDateUtils.toSql(toDate);
-		
+		AccountPeriod ap = (params.getPeriod() == null)?null: AccountPeriodDAO.getPeriod(ctx, params.getPeriod());
+		if (params.getPeriod() == null) {
+			if (params.getFromDate() == null) params.setFromDate(AccountPeriodDAO.getMinDate(ctx));
+			if (params.getToDate() == null) params.setToDate(AccountPeriodDAO.getMaxDate(ctx));
+		} else {
+			if (ap == null) {
+				throw new AonCoreException("Periodo no encontrado");
+			}
+			if (params.getFromDate() == null) params.setFromDate(ap.getInitiationDate());
+			if (params.getToDate() == null) params.setToDate(ap.getDeadline());
+		}
 		final MutableDouble sdebitBalance = new MutableDouble(0.0);
 		final MutableDouble sunpaidBalance = new MutableDouble(0.0);
 		
-		Field<Integer> when = DSL.decode()
-		   .when(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(sqlStart), BEFORE )
-		   .when(ACCOUNT_ENTRY.ENTRY_DATE.between(sqlStart,sqlEnd), PERIOD )
-		   .when(ACCOUNT_ENTRY.ENTRY_DATE.greaterThan(sqlEnd), AFTER ).as("TIPO");
+		EnumMap<AccountStatementPeriod,AccountStatement> map = new EnumMap<AccountStatementPeriod,AccountStatement>(AccountStatementPeriod.class);
 		
-		return ctx.getDslContext()
-			.select(when 
-					,DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT)
-					,DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT))
+		ctx.getDslContext()
+			.select(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY.ACCOUNT_PERIOD
+					,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT)
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-				.join(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.where(getCondition(ctx, params, false))
-				.groupBy(when)
-				.orderBy(when)
+				.orderBy(ACCOUNT_ENTRY.ENTRY_DATE)
 				.fetch()
 				.stream()
-				.map(rec -> {
-					String concept;
-					if ( (rec.getValue(when) == BEFORE) ) {
-						concept = MessageFormat.format(BEFORE_MSG,params.getFromDate());  	
-					} else if (rec.getValue(when) == PERIOD) {
-						concept = MessageFormat.format(PERIOD_MSG,params.getFromDate(),params.getToDate());
-					} else {
-						concept = MessageFormat.format(AFTER_MSG,params.getToDate());
+				.forEach(rec -> {
+					AccountStatementPeriod period = getAccountStatementPeriod(params,ap
+							,rec.getValue( ACCOUNT_ENTRY.ENTRY_DATE )
+							,AccountEntryType.safeValueOf(rec.getValue(ACCOUNT_ENTRY.ENTRY_TYPE))
+							,rec.getValue( ACCOUNT_ENTRY.ACCOUNT_PERIOD ));
+					AccountStatement as = map.get(period);
+					if (as == null) {
+						as = new AccountStatement().setPeriod(period);
+						map.put(period, as);
 					}
-					return new AccountStatement()
-						.setType(rec.getValue(when))
-						.setConcept(concept)
-						.setDebit(rec.getValue(DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT)).doubleValue())
-						.setCredit(rec.getValue(DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT)).doubleValue());
-							}
-					)
-				// Si el balance no corresponde al periodo que se solicita y está saldado, no interesa.
-				.filter(as -> (as.getType() == PERIOD) || AonMathUtils.isNotZero(as.getDebit() - as.getCredit()))
-				.peek( as -> {
-						double db = sdebitBalance.getValue() - sunpaidBalance.getValue() + as.getDebit() - as.getCredit();
-						double ub = sunpaidBalance.getValue() - sdebitBalance.getValue() - as.getDebit() + as.getCredit();
-						db = AonMathUtils.isNegative(db)?0.0:db;
-						ub = AonMathUtils.isNegative(ub)?0.0:ub;
-						sdebitBalance.setValue( db );
-						sunpaidBalance.setValue( ub );
-						as.setDebitBalance(db);
-						as.setUnpaidBalance(ub);
+					as.setDebit(AonMathUtils.round(as.getDebit() + rec.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT)))
+					  .setCredit(AonMathUtils.round(as.getCredit() + rec.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT)));
 				});
+		return map.values()
+			.stream()
+			.filter(as -> (as.getPeriod() == AccountStatementPeriod.IN_PERIOD) || AonMathUtils.isNotZero(as.getDebit() - as.getCredit()))
+			.peek( as -> {
+				as.setConcept( getMessage(as.getPeriod(),params.getFromDate(), params.getToDate(), ap ) );
+				double db = sdebitBalance.getValue() - sunpaidBalance.getValue() + as.getDebit() - as.getCredit();
+				double ub = sunpaidBalance.getValue() - sdebitBalance.getValue() - as.getDebit() + as.getCredit();
+				db = AonMathUtils.isNegative(db)?0.0:db;
+				ub = AonMathUtils.isNegative(ub)?0.0:ub;
+				sdebitBalance.setValue( db );
+				sunpaidBalance.setValue( ub );
+				as.setDebitBalance(db);
+				as.setUnpaidBalance(ub);
+			});
 	}
 	
-	public static Stream<AccountStatement> statement(AONContext ctx , AccountStatementParams params ) {
+    private static AccountStatementPeriod getAccountStatementPeriod(AccountStatementParams params, AccountPeriod ap, Date date, AccountEntryType type, Integer period) {
+    	
+		if (params.getPeriod() != null) {
+        	if (date.before(ap.getInitiationDate())) return AccountStatementPeriod.BEFORE_PERIOD;
+        	if (date.after(ap.getDeadline())) return AccountStatementPeriod.AFTER_PERIOD;
+        	
+        	if (AonNumberUtils.equals( params.getPeriod() , period) && type == AccountEntryType.OPENING) return AccountStatementPeriod.IN_PERIOD_OPENING;
+//        	if (AonNumberUtils.equals( params.getPeriod() , period) && type == AccountEntryType.OPERATING) return AccountStatementPeriod.IN_PERIOD_OPERATING;
+        	if (AonNumberUtils.equals( params.getPeriod() , period) && type == AccountEntryType.CLOSING) return AccountStatementPeriod.IN_PERIOD_CLOSING;
+        	
+        	if (AonNumberUtils.equals( params.getPeriod() , period) && date.before(params.getFromDate())) return AccountStatementPeriod.IN_PERIOD_BEFORE; 
+        	if (AonNumberUtils.equals( params.getPeriod() , period) && date.after(params.getToDate())) return AccountStatementPeriod.IN_PERIOD_AFTER;
+        	
+    	} else {
+        	if (date.before(params.getFromDate())) return AccountStatementPeriod.BEFORE_PERIOD;
+        	if (date.after(params.getToDate())) return AccountStatementPeriod.AFTER_PERIOD;
+    	}
+		return AccountStatementPeriod.IN_PERIOD;    	
+    }
+
+    public static Stream<AccountStatement> statement(AONContext ctx , AccountStatementParams params ) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ID
@@ -120,6 +134,7 @@ public class AccountStatementDAO {
 				.join(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
 				.where(getCondition(ctx, params, true))
+				.and(params.getPeriod()==null?DSL.trueCondition():ACCOUNT_ENTRY.ENTRY_TYPE.notIn(AccountEntryType.OPENING.getValue(),AccountEntryType.CLOSING.getValue()))
 				.orderBy(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY)
 				.fetch()
 				.stream()
@@ -132,17 +147,30 @@ public class AccountStatementDAO {
 			condition = condition.and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(params.getAccount()));	
 		}
 		if (applyDateFilterIfNeeded) {
-			if (params.getFromDate() != null) {
-				java.sql.Date start = AonDateUtils.toSql(params.getFromDate());
-				condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(start));
+			java.sql.Date sqlStart = null;
+			java.sql.Date sqlEnd = null;
+			if (params.getPeriod() == null) {
+				Date fromDate = params.getFromDate()!=null ?params.getFromDate() :AccountPeriodDAO.getMinDate(ctx);
+				Date toDate = params.getToDate()!=null ?params.getToDate() :AccountPeriodDAO.getMaxDate(ctx);
+				sqlStart = AonDateUtils.toSql(fromDate );
+				sqlEnd = AonDateUtils.toSql(toDate);
+			} else {
+				AccountPeriod ap = AccountPeriodDAO.getPeriod(ctx, params.getPeriod());
+				if (ap == null) {
+					throw new AonCoreException("Periodo no encontrado");
+				}
+				sqlStart = AonDateUtils.toSql(params.getFromDate()==null?ap.getInitiationDate():params.getFromDate());
+				sqlEnd = AonDateUtils.toSql(params.getToDate()==null?ap.getDeadline():params.getToDate());
 			}
-			if (params.getToDate() != null) {
-				java.sql.Date end = AonDateUtils.toSql(params.getToDate());
-				condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.le(end));
-			}
+			condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.between(sqlStart,sqlEnd));
 		}
-		if ( params.getSecurityLevel() != null ) {
-			condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( params.getSecurityLevel().value() ));
+		User user = SecurityDAO.getUser(ctx);
+		if (user.hasConfidentialityRole()) {
+			if ( params.getSecurityLevel() != null ) {
+				condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( params.getSecurityLevel().value() ));
+			}
+		} else {
+			condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( SecurityLevel.OFFICIAL.value() ));
 		}
 		if ( params.areOpeningEntriesExcluded() ) {
 			condition = condition.and( ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.OPENING.getValue()));	
@@ -183,12 +211,13 @@ public class AccountStatementDAO {
 	public static AccountStatementReport calculate(AccountStatementReport report) {
 		final MutableDouble debitBalance = new MutableDouble(0.0);
 		final MutableDouble creditBalance = new MutableDouble(0.0);
-		AccountStatement beforeAccStmt = 	
-		report.getSummary()
-			.stream()
-			.filter(accs -> (accs.getType() == BEFORE) )
-			.findFirst()
-			.orElse(null);
+		AccountStatement beforeAccStmt = null;
+		for (AccountStatement as : report.getSummary()) {
+			if (as.getPeriod() == AccountStatementPeriod.IN_PERIOD) {
+				break;
+			}
+			beforeAccStmt = as;			
+		}
 		if (beforeAccStmt != null) {
 			debitBalance.setValue( beforeAccStmt.getDebitBalance() );			
 			creditBalance.setValue( beforeAccStmt.getUnpaidBalance());
@@ -209,4 +238,36 @@ public class AccountStatementDAO {
 		return report;
 	}
 
+	private static String getMessage(AccountStatementPeriod period,Date fromDate,Date toDate, AccountPeriod ap) {
+		StringBuffer msg = new StringBuffer();
+		IAccountStatementPeriodVisitor descriptionVisitor = new IAccountStatementPeriodVisitor() {
+			
+			@Override public void visitBeforePeriod() {
+				msg.append( MessageFormat.format("Saldo anterior al {0,date,dd/MM/yyyy}", fromDate));
+			}
+			@Override public void visitInPeriodOpening() {
+				msg.append( "Saldo asiento apertura"); 
+			}
+			@Override public void visitInPeriodBefore() {
+				msg.append( MessageFormat.format("Saldo entre el {0,date,dd/MM/yyyy} y el {1,date,dd/MM/yyyy}", ap.getInitiationDate(), fromDate));
+			}
+			@Override public void visitInPeriod() {
+				msg.append( MessageFormat.format("Saldo periodo del {0,date,dd/MM/yyyy} al {1,date,dd/MM/yyyy}", fromDate, toDate));
+			}
+			@Override public void visitInPeriodAfter() {
+				msg.append( MessageFormat.format("Saldo entre el {0,date,dd/MM/yyyy} y el {1,date,dd/MM/yyyy}", toDate, ap.getDeadline()));
+			}
+//			@Override public void visitInPeriodOperating() {
+//				msg.append( "Saldo asiento explotaci\u00F3n");
+//			}
+			@Override public void visitInPeriodClosing() {
+				msg.append( "Saldo asiento cierre");
+			}
+			@Override public void visitAfterPeriod() {
+				msg.append( MessageFormat.format("Saldo posterior al {0,date,dd/MM/yyyy}", toDate));
+			}
+		};
+		period.accept(descriptionVisitor);
+		return msg.toString();
+	}
 }

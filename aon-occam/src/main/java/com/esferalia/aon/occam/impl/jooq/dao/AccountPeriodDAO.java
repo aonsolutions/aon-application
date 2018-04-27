@@ -54,6 +54,15 @@ public class AccountPeriodDAO {
 				.findFirst()
 				.orElse(null);
 	}
+	public static AccountPeriod getPeriod(AONContext ctx, Integer id) {
+		ctx.checkRead();
+		return getPeriods(ctx,
+					p -> p.getDomainProperty().eq(ctx.getDomainId())
+						.and(p.getIdProperty().eq(id) )
+						)
+				.findFirst()
+				.orElse(null);
+	}
 	public static AccountPeriod getActivePeriod(AONContext ctx, Date entryDate) {
 		ctx.checkRead();
 		return getPeriods(ctx,

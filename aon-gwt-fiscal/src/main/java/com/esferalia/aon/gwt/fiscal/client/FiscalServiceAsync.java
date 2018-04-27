@@ -78,7 +78,7 @@ public interface FiscalServiceAsync {
 	void getSalaryFormatted(String domainName, int domain, Date from, Date to, AsyncCallback<String> callback);
 
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
-	void getAccountStatement(String domainName, int domain, 
+	void getAccountStatement(String domainName,String user, int domain, 
 			AccountStatementParams params,
 			AsyncCallback<AccountStatementReport> callback);
 

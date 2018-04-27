@@ -74,7 +74,7 @@ public class AccountEntryPrinter {
 		buf.append(AonStringUtils.SPACE);
 		if (AonStringUtils.isNotBlank(entry.getComments())) {
 			buf.append("[");
-			buf.append(AonStringUtils.abbreviate(entry.getComments(), 38));
+			buf.append(AonStringUtils.abbreviate(AonStringUtils.removeTabsAndNewLine(entry.getComments()), 38));
 			buf.append("]");
 		} else {
 			buf.append(AonStringUtils.repeat(AonStringUtils.SPACE, 40));

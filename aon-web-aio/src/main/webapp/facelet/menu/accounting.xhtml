@@ -220,6 +220,7 @@
 									<aon:outputText value="#{bundle.menu_reports}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
+<!--	GWT MODULES -->								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_accountJournal"
 											action="gwt_accountJournal-acc"
@@ -230,7 +231,7 @@
 										</aon:commandLink>
 									</aon:div>
 								
-								
+<!--	OLD MODULES -->								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accountStatement"
 											action="accountStatement_search"
@@ -258,6 +259,18 @@
 											actionListener="#{journalReport.onEditSearch}"
 											value="#{bundle.account_journal_report}" />
 									</aon:div>
+									
+<!--	BETA MODULES -->								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountStatement"
+											action="gwt_accountStatement-acc"
+											title="#{bundle.accounting_statement_module}">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.accounting_statement_module}"/>												
+										</aon:commandLink>
+									</aon:div>
+									
 								</aon:div>
 							</aon:panelGrid>
 	

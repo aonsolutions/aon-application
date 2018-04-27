@@ -243,9 +243,9 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 //	}
 
 	@Override
-	public AccountStatementReport getAccountStatement(String domainName,
+	public AccountStatementReport getAccountStatement(String domainName, String user,
 			int domain, AccountStatementParams params) throws AonCoreException {
-		return ACCOUNTING.getAccountStatement(domainName,domain,this.getUserLogin(),params);
+		return ACCOUNTING.getAccountStatement(domainName,domain,user,params);
 	}
 	@Override
 	public LinkedList<AccountStatement> getAccountBalance(String domainName,

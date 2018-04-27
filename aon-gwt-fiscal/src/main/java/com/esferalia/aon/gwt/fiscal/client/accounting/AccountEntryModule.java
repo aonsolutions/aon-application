@@ -24,9 +24,9 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountBalancePanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountStatementPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.StatementPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceEntryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.IWizardContent;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel;
@@ -233,7 +233,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiField
 	AccountBalancePanel balancePanel;
 	@UiField
-	AccountStatementPanel statementPanel;
+	SimpleLayoutPanel statementPanelContainer;
 	@UiField
 	ScrollPanel extraInfoContainer;
 	
@@ -727,11 +727,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		selectEntry(entry.getId(),event.getSelectedItem());
 	}
 
-	
-	@UiHandler("statementPanel")
-	public void onSelectStatement(SelectionEvent<Integer> event) {
-		selectEntry(event.getSelectedItem());
-	}
 	private void addSelectionEvent(final InvoicePanel panel) {
 		panel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
 			
@@ -929,11 +924,20 @@ public class AccountEntryModule extends MainEntryPoint {
 	private void showFullStatement(Integer selectedItem) {
 		tabLayout.selectTab(STATEMENT_TAB);
 		Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
-		statementPanel.show(
+		StatementPanel statementPanel = new  StatementPanel(
+			getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),
 			new AccountStatementParams()
 				.setAccount(selectedItem)
 				.setFromDate(from)
-				.setToDate(entryDate.getValue()));
+				.setToDate(entryDate.getValue())
+			,false);
+		statementPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
+			@Override
+			public void onSelection(SelectionEvent<AccountEntry> event) {
+				selectEntry(event.getSelectedItem().getId());
+			}
+		});
+		statementPanelContainer.setWidget(statementPanel);
 	}
 
 	public static interface IContentAttachCallback {
