@@ -2931,6 +2931,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return availableDays == monthDays ? ctxMonthDays : availableDays;
 	}
 
+	private double getQuoteDays(ExpressionContext ctx, Period p, double factor) {
+		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
+		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
+		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
+
+		double prevAdjustDays = getActiveDays(p) ;
+		
+		return ( availableDays + prevAdjustDays ) == monthDays ? (ctxMonthDays - prevAdjustDays) : availableDays;
+	}
+
 	private int getSeniorityYears(Period period) {
 		Date start = getSeniorityDate();
 		Date end = period.getStart();
@@ -3638,7 +3648,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					@Override
 					public Double getValue(Period p) {
-						return getDays(ctx, p, 1.00);
+						return getQuoteDays(ctx, p, 1.00);
 					}
 
 				};
@@ -3843,7 +3853,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Double getValue(Period p) {
-					return getDays(ctx, p, 1.00);
+					return getQuoteDays(ctx, p, 1.00);
 				}
 
 			};

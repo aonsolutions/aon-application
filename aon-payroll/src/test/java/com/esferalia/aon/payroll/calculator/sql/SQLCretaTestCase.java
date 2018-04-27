@@ -18,6 +18,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_DA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
@@ -64,8 +66,10 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -2176,6 +2180,51 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		;
 	}
 
+	@Test
+	public void testStrike() throws ExpressionException, SQLException,
+			SalaryException, IOException, JAXBException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+
+		addData(aonContext, contract, contractStart, contract.getStartDate(), ContextVariable.MONTH_DAYS, "30.00");
+
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 2);
+		
+		Date strikeDay = add(startDate, DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, strikeDay, strikeDay,
+				new HashMap<String, String>() {
+					{
+						put(STRIKE_DAYS.getName(), "1.00");
+						put(STRIKE_FACTOR.getName(), "1.00");
+					}
+				});
+		
+		addPayment(aonContext, contract, "1200.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		
+		Date endDate = getLastDayOfMonth(startDate);
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(2, tramos.size());
+		Assert.assertEquals(1, Integer.parseInt(tramos.get(0).getFechaDesde().getDia()));
+		Assert.assertEquals(10, Integer.parseInt(tramos.get(0).getFechaHasta().getDia()));
+		Assert.assertEquals(10, Integer.parseInt(tramos.get(0).getDiasCotizados()));
+
+		Assert.assertEquals(12, Integer.parseInt(tramos.get(1).getFechaDesde().getDia()));
+		Assert.assertEquals(31, Integer.parseInt(tramos.get(1).getFechaHasta().getDia()));
+		Assert.assertEquals(19, Integer.parseInt(tramos.get(1).getDiasCotizados()));
+
+	}
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
