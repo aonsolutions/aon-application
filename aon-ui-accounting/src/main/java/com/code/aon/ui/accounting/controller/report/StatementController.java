@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
 
 public class StatementController extends BasicController {
 
@@ -139,15 +140,19 @@ public class StatementController extends BasicController {
 			params.setDocumentNumber(getParams().getDocumentNumber() );
 		}
 		AccountStatementReport asr = ACCOUNTING.getAccountStatement(domainName, domainId, user, params);
+		Balance previousBalance = null;
 		for (AccountStatement as : asr.getSummary()) {
-			if (as.getType() == 0) {
+			if (as.getPeriod().ordinal() < AccountStatementPeriod.IN_PERIOD.ordinal()) {
+				if (previousBalance == null) {
+					previousBalance = new Balance();
+					previousBalance.setFromDate(null);
+					previousBalance.setToDate(asr.getFrom());
+				}
 				Balance balance = new Balance();
-				balance.setFromDate(null);
-				balance.setToDate(asr.getFrom());
 				balance.setUnpaidBalance(as.getDebitBalance());
 				balance.setCreditBalance(as.getUnpaidBalance());
-				setPreviousBalance(balance);
-			} else if (as.getType() == 1) {
+				previousBalance.addBalance(balance);
+			} else if (as.getPeriod() == AccountStatementPeriod.IN_PERIOD) {
 				Balance balance = new Balance();
 				balance.setFromDate(asr.getFrom());
 				balance.setToDate(asr.getTo());
@@ -155,6 +160,9 @@ public class StatementController extends BasicController {
 				balance.setCreditBalance(as.getUnpaidBalance());
 				setPeriodBalance(balance);
 			}
+		}
+		if (previousBalance != null) {
+			setPreviousBalance(previousBalance);
 		}
 		setDetail(asr.getDetails());
 		setDetailModel(new SerializableListDataModel(getDetail()));
