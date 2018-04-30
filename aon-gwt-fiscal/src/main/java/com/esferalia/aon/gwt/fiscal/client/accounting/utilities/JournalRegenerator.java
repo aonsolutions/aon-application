@@ -159,57 +159,54 @@ class JournalRegenerator extends OptionBase {
 				}
 			});
 			
-			if (item.isRegenerable() ) {
-				Button regenerate = new Button("Regenerar");
-				regenerate.setTitle("Regenerar " + item.getAccountPeriod().getName());
-				regenerate.setStyleName(AON.AON_CSS.aonIconCommandButton());
-				regenerate.addStyleName(AON.AON_CSS.aonIconSettings());
-				regenerate.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						if (item.getAccountPeriod().getStatus() != AccountPeriodStatus.ACTIVE) {
-							ConfirmDialog cd = new ConfirmDialog();
-							cd.confirm("Confirme","El ejericio que pretende regenerar se encuentra en estado "
-									+ item.getAccountPeriod().getStatus().getDescription()
-									+ " Si continua, se modificar\u00E1n los n\u00FAmeros de asientos \u00BFDesea continuar?"
-							, new ConfirmDialogCallback() {
-								
-								@Override public void onCancel() {}
-								
-								@Override
-								public void onAccept() {
-									regenerate();
-								}
-							});
-						} else {
-							regenerate();
-						}
-					}
-
-					private void regenerate() {
-						SERVICE.regenerateJournal(domainName, user, domain.getId(), item.getAccountPeriod().getId(), new AsyncCallback<AccUtilitiesResult>() {
-
+			Button regenerate = new Button("Regenerar");
+			regenerate.setTitle("Regenerar " + item.getAccountPeriod().getName());
+			regenerate.setStyleName(AON.AON_CSS.aonIconCommandButton());
+			regenerate.addStyleName(AON.AON_CSS.aonIconSettings());
+			regenerate.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					if (item.getAccountPeriod().getStatus() != AccountPeriodStatus.ACTIVE) {
+						ConfirmDialog cd = new ConfirmDialog();
+						cd.confirm("Confirme","El ejericio que pretende regenerar se encuentra en estado "
+								+ item.getAccountPeriod().getStatus().getDescription()
+								+ " Si continua, se modificar\u00E1n los n\u00FAmeros de asientos \u00BFDesea continuar?"
+						, new ConfirmDialogCallback() {
+							
+							@Override public void onCancel() {}
+							
 							@Override
-							public void onFailure(Throwable caught) {
-								showErrorPanel(caught.getMessage());
-							}
-
-							@Override
-							public void onSuccess(AccUtilitiesResult result) {
-								if (result.getItems() != null && result.getItems().size()>0) {
-									showInfoPanel(result.getItems().get(0).getMessage());
-								}
-								run();
+							public void onAccept() {
+								regenerate();
 							}
 						});
+					} else {
+						regenerate();
 					}
-				});
-				tab.setWidget(row, 5, regenerate);
-			} else {
-				tab.setWidget(row, 5, new Label());
-			}
+				}
+
+				private void regenerate() {
+					SERVICE.regenerateJournal(domainName, user, domain.getId(), item.getAccountPeriod().getId(), new AsyncCallback<AccUtilitiesResult>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorPanel(caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(AccUtilitiesResult result) {
+							if (result.getItems() != null && result.getItems().size()>0) {
+								showInfoPanel(result.getItems().get(0).getMessage());
+							}
+							run();
+						}
+					});
+				}
+			});
+			tab.setWidget(row, 5, regenerate);
 			tab.getCellFormatter().setStyleName(row, 5, AON.AON_CSS.aonPanelGridEven());
+			
 			row++;
 		};
 		return tab;
