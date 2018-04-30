@@ -110,115 +110,121 @@ public class AccountingInvoiceDAO {
 							INVOICE_DETAIL.PRICE, 
 							INVOICE_DETAIL.SOURCE, 
 							INVOICE_DETAIL.TAXABLE_BASE,
-							INVOICE_DETAIL.WORKPLACE,
-							EXP_ACCOUNT.ID,
-							EXP_ACCOUNT.CODE, 
-							EXP_ACCOUNT.DESCRIPTION 
+							INVOICE_DETAIL.WORKPLACE
 							) 
 					.from( INVOICE_DETAIL )
-					.join( INVOICE_DETAIL_ACCOUNT ).on(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-					.join( EXP_ACCOUNT ).on( INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(EXP_ACCOUNT.ID))
 					.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
 					.fetch()
 					.stream()
 					.forEach( det -> {
 						final Integer invoideDetailId = det.getValue(INVOICE_DETAIL.ID);
-						ai.getInvoice().getDetails().add(new InvoiceDetail()
-								.setId(invoideDetailId)
-								.setDomain(det.getValue(INVOICE_DETAIL.DOMAIN))
-								.setSource(AonEnumUtils.enumValue(InvoiceSource.class,det.getValue(INVOICE_DETAIL.SOURCE)))
-						);
-						final LinkedList<InvoiceVAT> vats = new LinkedList<InvoiceVAT>();
-						// TODO ¿Más de uno?
-						ai.setWorkplace(det.getValue(INVOICE_DETAIL.WORKPLACE));
-						// -----------------
-						final InvoiceVAT vat = new InvoiceVAT();
 						ctx.getDslContext()
-						.select( 
-								INVOICE_TAX.INVOICE_DETAIL,
-								INVOICE_TAX.TAX_TYPE,
-								INVOICE_TAX.BASE,
-								INVOICE_TAX.PERCENTAGE,
-								INVOICE_TAX.SURCHARGE,
-								INVOICE_TAX.QUOTA,
-								INVOICE_TAX.SURCHARGE_QUOTA,
-								INVOICE_TAX.VAT_DEDUCTION_TYPE,
-								INVOICE_TAX.WITHHOLDING_TYPE,
-								INVOICE_TAX.DEDUCTIBLE_PERCENT,
-								INVOICE_TAX.DEDUCTIBLE_QUOTA,
-								VAT_ACCOUNT.ID,
-								VAT_ACCOUNT.CODE, 
-								VAT_ACCOUNT.DESCRIPTION 
-								) 
-						.from( INVOICE_TAX )
-						.leftOuterJoin( INVOICE_TAX_ACCOUNT ).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(INVOICE_TAX.ID))
-						.leftOuterJoin( VAT_ACCOUNT ).on( INVOICE_TAX_ACCOUNT.ACCOUNT.eq(VAT_ACCOUNT.ID))
-						.where(INVOICE_TAX.INVOICE_DETAIL.eq(invoideDetailId))
+						.select(EXP_ACCOUNT.ID,
+								EXP_ACCOUNT.CODE, 
+								EXP_ACCOUNT.DESCRIPTION) 
+						.from( INVOICE_DETAIL_ACCOUNT )
+						.join( EXP_ACCOUNT ).on( INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(EXP_ACCOUNT.ID))
+						.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal(invoideDetailId))
+						.limit(1)
 						.fetch()
 						.stream()
-						.forEach( tax -> {
-							boolean withholding = tax.getValue(INVOICE_TAX.TAX_TYPE) == TaxType.RETENTION.ordinal();
-							if (!withholding) {
-								vats.add(vat);
-								vat.setVatDeductionType(AonEnumUtils.enumValue(VatDeductionType.class,tax.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
-									.setBase(tax.getValue(INVOICE_TAX.BASE))
-									.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
-									.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
-									.setSurcharge(tax.getValue(INVOICE_TAX.SURCHARGE))
-									.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
-									.setInvestAsset(det.getValue(INVOICE_DETAIL.INVEST_ASSET))
-									.setDeductiblePercent(tax.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT))
-									.setDeductibleQuota(tax.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA))
-									.setExpAccountId(det.getValue(EXP_ACCOUNT.ID))
-									.setExpAccountCode(det.getValue(EXP_ACCOUNT.CODE))
-									.setExpAccountDescription(det.getValue(EXP_ACCOUNT.DESCRIPTION));
-								vat.setQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getQuotaGap(vat, vat.getQuota())));
-								vat.setSurchargeQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getSurchargeQuotaGap(vat, vat.getSurchargeQuota())));
-								vat.setDeductibleQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getDeductibleQuotaGap(vat, vat.getDeductibleQuota())));
-							}
-							if (withholding) {
-								vat.setWithholding(withholding);
-								if (!ai.hasWithholdingData()) {
-									ai.setWithholdingData( new InvoiceWithholding()
-											.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
-											.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
-											.setAccountId(tax.getValue(VAT_ACCOUNT.ID))
-											.setAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
-											.setAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION)));
+						.forEach( accDet -> {
+							ai.getInvoice().getDetails().add(new InvoiceDetail()
+									.setId(invoideDetailId)
+									.setDomain(det.getValue(INVOICE_DETAIL.DOMAIN))
+									.setSource(AonEnumUtils.enumValue(InvoiceSource.class,det.getValue(INVOICE_DETAIL.SOURCE)))
+							);
+							final LinkedList<InvoiceVAT> vats = new LinkedList<InvoiceVAT>();
+							// TODO ¿Más de uno?
+							ai.setWorkplace(det.getValue(INVOICE_DETAIL.WORKPLACE));
+							// -----------------
+							final InvoiceVAT vat = new InvoiceVAT();
+							ctx.getDslContext()
+							.select( 
+									INVOICE_TAX.INVOICE_DETAIL,
+									INVOICE_TAX.TAX_TYPE,
+									INVOICE_TAX.BASE,
+									INVOICE_TAX.PERCENTAGE,
+									INVOICE_TAX.SURCHARGE,
+									INVOICE_TAX.QUOTA,
+									INVOICE_TAX.SURCHARGE_QUOTA,
+									INVOICE_TAX.VAT_DEDUCTION_TYPE,
+									INVOICE_TAX.WITHHOLDING_TYPE,
+									INVOICE_TAX.DEDUCTIBLE_PERCENT,
+									INVOICE_TAX.DEDUCTIBLE_QUOTA,
+									VAT_ACCOUNT.ID,
+									VAT_ACCOUNT.CODE, 
+									VAT_ACCOUNT.DESCRIPTION 
+									) 
+							.from( INVOICE_TAX )
+							.leftOuterJoin( INVOICE_TAX_ACCOUNT ).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(INVOICE_TAX.ID))
+							.leftOuterJoin( VAT_ACCOUNT ).on( INVOICE_TAX_ACCOUNT.ACCOUNT.eq(VAT_ACCOUNT.ID))
+							.where(INVOICE_TAX.INVOICE_DETAIL.eq(invoideDetailId))
+							.fetch()
+							.stream()
+							.forEach( tax -> {
+								boolean withholding = tax.getValue(INVOICE_TAX.TAX_TYPE) == TaxType.RETENTION.ordinal();
+								if (!withholding) {
+									vats.add(vat);
+									vat.setVatDeductionType(AonEnumUtils.enumValue(VatDeductionType.class,tax.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
+										.setBase(tax.getValue(INVOICE_TAX.BASE))
+										.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
+										.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
+										.setSurcharge(tax.getValue(INVOICE_TAX.SURCHARGE))
+										.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
+										.setInvestAsset(det.getValue(INVOICE_DETAIL.INVEST_ASSET))
+										.setDeductiblePercent(tax.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT))
+										.setDeductibleQuota(tax.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA))
+										.setExpAccountId(accDet.getValue(EXP_ACCOUNT.ID))
+										.setExpAccountCode(accDet.getValue(EXP_ACCOUNT.CODE))
+										.setExpAccountDescription(accDet.getValue(EXP_ACCOUNT.DESCRIPTION));
+									vat.setQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getQuotaGap(vat, vat.getQuota())));
+									vat.setSurchargeQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getSurchargeQuotaGap(vat, vat.getSurchargeQuota())));
+									vat.setDeductibleQuotaEdited( AonMathUtils.isNotZero(InvoiceCalculator.getDeductibleQuotaGap(vat, vat.getDeductibleQuota())));
 								}
-								ai.getWithholdingData()
-									.setBase (ai.getWithholdingData().getBase() + tax.getValue(INVOICE_TAX.BASE) )
-									.setQuota(ai.getWithholdingData().getQuota() + tax.getValue(INVOICE_TAX.QUOTA));
-							}
-							if (!withholding) {
-								if (ai.isSales()) {
-									vat.setOutputAccountId(tax.getValue(VAT_ACCOUNT.ID))
-									.setOutputAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
-									.setOutputAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION));
+								if (withholding) {
+									vat.setWithholding(withholding);
+									if (!ai.hasWithholdingData()) {
+										ai.setWithholdingData( new InvoiceWithholding()
+												.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
+												.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
+												.setAccountId(tax.getValue(VAT_ACCOUNT.ID))
+												.setAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
+												.setAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION)));
+									}
+									ai.getWithholdingData()
+										.setBase (ai.getWithholdingData().getBase() + tax.getValue(INVOICE_TAX.BASE) )
+										.setQuota(ai.getWithholdingData().getQuota() + tax.getValue(INVOICE_TAX.QUOTA));
 								}
-								if (!ai.isSales()) {
-									vat.setInputAccountId(tax.getValue(VAT_ACCOUNT.ID))
-									.setInputAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
-									.setInputAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION));
-									if (ai.isOutputVatEnabled() && config.getDefaultChargedVatAccount() != null) {
-										vat.setOutputAccountId(config.getDefaultChargedVatAccount().getId())
-										.setOutputAccountCode(config.getDefaultChargedVatAccount().getCode())
-										.setOutputAccountDescription(config.getDefaultChargedVatAccount().getDescription());
+								if (!withholding) {
+									if (ai.isSales()) {
+										vat.setOutputAccountId(tax.getValue(VAT_ACCOUNT.ID))
+										.setOutputAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
+										.setOutputAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION));
+									}
+									if (!ai.isSales()) {
+										vat.setInputAccountId(tax.getValue(VAT_ACCOUNT.ID))
+										.setInputAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
+										.setInputAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION));
+										if (ai.isOutputVatEnabled() && config.getDefaultChargedVatAccount() != null) {
+											vat.setOutputAccountId(config.getDefaultChargedVatAccount().getId())
+											.setOutputAccountCode(config.getDefaultChargedVatAccount().getCode())
+											.setOutputAccountDescription(config.getDefaultChargedVatAccount().getDescription());
+										}
+									}
+									if (vat.getInvestAsset() != null && config.getVatNegativeAdjustAccount() != null) {
+										vat.setAdjAccountId(config.getVatNegativeAdjustAccount().getId())
+										.setAdjAccountCode(config.getVatNegativeAdjustAccount().getCode())
+										.setAdjAccountDescription(config.getVatNegativeAdjustAccount().getDescription());
 									}
 								}
-								if (vat.getInvestAsset() != null && config.getVatNegativeAdjustAccount() != null) {
-									vat.setAdjAccountId(config.getVatNegativeAdjustAccount().getId())
-									.setAdjAccountCode(config.getVatNegativeAdjustAccount().getCode())
-									.setAdjAccountDescription(config.getVatNegativeAdjustAccount().getDescription());
-								}
+							});
+							if (!vats.isEmpty()) {
+								ai.addVat(vats.get(0));
 							}
 						}
-						);
-						if (!vats.isEmpty()) {
-							ai.addVat(vats.get(0));
-						}
-					}
-				);
+					);
+				});
 				ai.setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
 				return ai;
 			}
