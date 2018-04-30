@@ -197,6 +197,10 @@ public class AccountJournalFlatReportExcelPrint extends HttpServlet {
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 15 * 256);
 
+			CellUtil.createCell(row, cellCount, "ACTIVIDAD", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 15 * 256);
+
 			CellUtil.createCell(row, cellCount, "CUENTA", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 8 * 256);
@@ -244,6 +248,11 @@ public class AccountJournalFlatReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, "FEC. MODIF.", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 10 * 256);
+			
+			CellUtil.createCell(row, cellCount, "COMENTARIOS", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 25 * 256);
+			
 		}
 
 		@Override
@@ -252,9 +261,10 @@ public class AccountJournalFlatReportExcelPrint extends HttpServlet {
 			cellCount = 0;
 			
 			addCell(entry.getEntryPeriodName());
-			addCell(AonNumberUtils.toString( entry.getEntryJournal()));
+			addCell(AonNumberUtils.toString( entry.getJournal()));
 			addCell(entry.getEntryDate());
 			addCell(entry.getEntryType().getDescription());
+			addCell(entry.getActivityName());
 
 			addCell(entry.getAccountCode());
 			addCell(entry.getAccountDescription());
@@ -270,6 +280,7 @@ public class AccountJournalFlatReportExcelPrint extends HttpServlet {
 			addCell(entry.getEntryModificationUser());
 			addCell(entry.getEntryModificationDate());
 			
+			addCell(entry.getComments());
 
 			try {
 				if (rowCount % 100 == 0) sheet.flushRows();

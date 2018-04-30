@@ -16,9 +16,11 @@ public class FlatAccountEntryDetail implements Serializable{
 	private String entryPeriodName;
 	private Date entryDate;
 	private AccountEntryType entryType;
-	private Integer entryActivity;
-	private Integer entryJournal;
+	private Integer activity;
+	private String activityName;
+	private Integer journal;
 	private SecurityLevel entrySecurityLevel;
+	private String comments;
 	private String entryCreationUser;
 	private Date entryCreationDate;
 	private String entryModificationUser;
@@ -77,18 +79,25 @@ public class FlatAccountEntryDetail implements Serializable{
 		this.entryType = entryType;
 		return this;
 	}
-	public Integer getEntryActivity() {
-		return entryActivity;
+	public Integer getActivity() {
+		return activity;
 	}
-	public FlatAccountEntryDetail setEntryActivity(Integer entryActivity) {
-		this.entryActivity = entryActivity;
+	public FlatAccountEntryDetail setActivity(Integer activity) {
+		this.activity = activity;
 		return this;
 	}
-	public Integer getEntryJournal() {
-		return entryJournal;
+	public String getActivityName() {
+		return activityName;
 	}
-	public FlatAccountEntryDetail setEntryJournal(Integer entryJournal) {
-		this.entryJournal = entryJournal;
+	public FlatAccountEntryDetail setActivityName(String activityName) {
+		this.activityName = activityName;
+		return this;
+	}
+	public Integer getJournal() {
+		return journal;
+	}
+	public FlatAccountEntryDetail setJournal(Integer journal) {
+		this.journal = journal;
 		return this;
 	}
 	public SecurityLevel getEntrySecurityLevel() {
@@ -96,6 +105,13 @@ public class FlatAccountEntryDetail implements Serializable{
 	}
 	public FlatAccountEntryDetail setEntrySecurityLevel(SecurityLevel entrySecurityLevel) {
 		this.entrySecurityLevel = entrySecurityLevel;
+		return this;
+	}
+	public String getComments() {
+		return comments;
+	}
+	public FlatAccountEntryDetail setComments(String comments) {
+		this.comments = comments;
 		return this;
 	}
 	public String getEntryCreationUser() {

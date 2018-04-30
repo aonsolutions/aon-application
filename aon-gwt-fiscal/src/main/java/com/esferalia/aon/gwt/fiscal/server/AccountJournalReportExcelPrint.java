@@ -261,7 +261,7 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			sumCredit= 0.0;
 			row = sheet.createRow(rowCount);
 			cellCount = 0;
-			String header = "Fecha: " + DATE_FORMATTER.format(entry.getEntryDate()) + " N\u00BA diario: " +  entry.getEntryJournal();
+			String header = "Fecha: " + DATE_FORMATTER.format(entry.getEntryDate()) + " N\u00BA diario: " +  entry.getJournal();
 			CellUtil.createCell(row, 0, header, entryHeaderStyle);
 			sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, 0, 6));
 			row.setHeight((short) 350);

@@ -28,8 +28,7 @@ public class AccountEntryReductionStreamTest {
 				p -> p.getAccountPeriodProperty().eq(period) 
 				,AccountEntryOrder.ORDER_PERIOD_JOURNAL
 				).forEach(acc -> {
-					System.out.println( acc.getEntryId() 
-							+ "\t" + acc.getEntryJournal());
+					System.out.println( acc.getEntryId() + "\t" + acc.getJournal());
 				});
 		Date end = new Date();
 		System.out.println( "END! ---> " + (end.getTime() - start.getTime()) + "ms.");
