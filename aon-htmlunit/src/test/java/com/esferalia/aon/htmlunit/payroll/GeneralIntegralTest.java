@@ -769,9 +769,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.MAY);
 		assertText("prorationBaseLabel", ( 1027.65 / 6 ) / 12.00 * 2.00 );
 		
-		click("viewButton");
-		wait4Id("formerMenuItem");
-		click("formerMenuItem");
 		draft("EXTRA, FIN DE CONTRATO");
 
 		calculate(Calendar.FEBRUARY, 2018);
@@ -780,11 +777,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		prorationBase += getText("prorationBaseLabel");
 		calculate(Calendar.APRIL, 2018);
 		prorationBase += getText("prorationBaseLabel");
+		calculate(Calendar.MAY, 2018);
+		prorationBase += getText("prorationBaseLabel");
 		
 		calendar = Calendar.getInstance();
 		calendar.set(2018, Calendar.JULY, 15);
 		issueDate = calendar.getTime();
-		calendar.set(2018, Calendar.APRIL, 8);
+		calendar.set(2018, Calendar.MAY, 8);
 		endDate = calendar.getTime();
 		extra(issueDate, endDate);
 		assertValue("cgcBaseLabel", "");
