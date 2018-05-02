@@ -1520,6 +1520,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					}
 				});
 				endDateMenuItem.setStyleName("aon-MenuItemCheckYes", endDate);
+				endDateMenuItem.ensureDebugId("endDateMenuItem");
 				menuBar.addItem(endDateMenuItem);
 
 				formerMenuItem = new MenuItem("Antiguos Empleados", new Command() {
@@ -1532,6 +1533,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					}
 				});
 				formerMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
+				formerMenuItem.ensureDebugId("formerMenuItem");
 				menuBar.addItem(formerMenuItem);
 
 				inactiveMenuItem = new MenuItem("Centros Inactivos", new Command() {
@@ -1549,6 +1551,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					}
 				});
 				inactiveMenuItem.setStyleName("aon-MenuItemCheckYes", inactive);
+				inactiveMenuItem.ensureDebugId("inactiveMenuItem");
 				menuBar.addItem(inactiveMenuItem);
 
 				filterDialog = new FilterDialog() {
@@ -1597,6 +1600,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 						filterDialog.show();
 					}
 				});
+				filterMenuItem.ensureDebugId("filterMenuItem");
 				menuBar.addItem(filterMenuItem);
 
 				popup.add(menuBar);
