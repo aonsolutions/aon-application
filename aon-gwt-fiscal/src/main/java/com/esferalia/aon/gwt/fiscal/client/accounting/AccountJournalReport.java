@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
@@ -12,8 +15,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -117,12 +118,12 @@ public class AccountJournalReport extends MainEntryPoint {
 		dockLayoutPanel.add( panel );
 		
 		
-		panel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
+		panel.addSelectionHandler(new AccountEntrySelectionHandler() {
 			
 			@Override
-			public void onSelection(SelectionEvent<AccountEntry> event) {
-				AccountEntry entry = event.getSelectedItem();  
-				showEntry(entry.getDomain(), entry.getId());
+			public void onSelection(AccountEntrySelectionEvent event) {
+				AccountEntry entry = event.getSelectedItem();
+				showEntry(entry.getDomain(), entry.getId(), event.getCallback());
 				
 			}
 		});
@@ -131,7 +132,7 @@ public class AccountJournalReport extends MainEntryPoint {
 		root.add(dockLayoutPanel);
 	}
 
-	private void showEntry(int domain,Integer entryId) {
+	private void showEntry(int domain,Integer entryId, ModuleCallback<AccountEntry> moduleCallback) {
 		CustomPopup entryDialog = new CustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
@@ -140,7 +141,31 @@ public class AccountJournalReport extends MainEntryPoint {
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
 		AccountEntryModule module = new AccountEntryModule();
-		module.onModuleLoad(entryDialog, getCurrentDomainName(), getCurrentUser(), domain, entryId);
+		module.onModuleLoad(entryDialog, getCurrentDomainName(), getCurrentUser(), domain, entryId, new ModuleCallback<AccountEntry>() {
+			
+			@Override
+			public void onRemove(AccountEntry removed) {
+				entryDialog.hide();
+				moduleCallback.onRemove(removed);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				moduleCallback.onFailure(caught);
+			}
+			
+			@Override
+			public void onExit() {
+				entryDialog.hide();
+				moduleCallback.onExit();
+			}
+			
+			@Override
+			public void onChange(AccountEntry changed) {
+				entryDialog.hide();
+				moduleCallback.onChange(changed);
+			}
+		});
 		entryDialog.center();
 		entryDialog.show();
 	}

@@ -3,9 +3,13 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
@@ -15,10 +19,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
-import com.google.gwt.event.logical.shared.HasSelectionHandlers;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -26,7 +28,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 
-public class JournalPanel extends ScrollPanel implements HasSelectionHandlers<AccountEntry>{
+public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectionHandlers{
 
 	static FiscalServiceAsync fiscalService;
 	
@@ -105,8 +107,8 @@ public class JournalPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountEntry> handler) {
-		return super.addHandler(handler, SelectionEvent.getType());
+	public HandlerRegistration addSelectionHandler(AccountEntrySelectionHandler handler) {
+		return super.addHandler(handler, AccountEntrySelectionEvent.getType());
 	}
 
 	private void search(AccountEntryParams params) {
@@ -124,15 +126,9 @@ public class JournalPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 					public void onSuccess(LinkedList<AccountEntry> result) {
 						if (result != null && !result.isEmpty()) {
 							for (final AccountEntry entry : result) {
-								final FocusPanel entryPanel = AccountEntryPrinter.print(entry);
-								container.add(entryPanel);
-								entryPanel.addClickHandler(new ClickHandler() {
-									@Override
-									public void onClick(ClickEvent event) {
-										 SelectionEvent.<AccountEntry>fire( JournalPanel.this, entry);
-									}
-								});
-		
+								final FlowPanel entrycontainer = new FlowPanel();
+								container.add(entrycontainer);
+								paintEntry(entrycontainer, entry);
 							}
 							offset.setValue(ofs + result.size());
 							enableMoreData();
@@ -146,6 +142,44 @@ public class JournalPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						enableSearch();
 					}
 					
+					private FocusPanel paintEntry(final FlowPanel entrycontainer, AccountEntry entry) {
+						final FocusPanel entryPanel = AccountEntryPrinter.print(entry);
+						entrycontainer.add(entryPanel);
+						entryPanel.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+								AccountEntrySelectionEvent.fire( JournalPanel.this, entry, new ModuleCallback<AccountEntry>() {
+									
+									@Override
+									public void onRemove(AccountEntry removed) {
+										entrycontainer.remove(entryPanel);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {}
+									
+									@Override
+									public void onExit() {}
+									
+									@Override
+									public void onChange(AccountEntry changed) {
+										entrycontainer.remove(entryPanel);
+										FocusPanel newEntryPanel = paintEntry(entrycontainer, changed);
+										newEntryPanel.addStyleName(AON.AON_CSS.aonValueChanged());
+										new Timer() {
+											@Override
+											public void run() {
+												newEntryPanel.removeStyleName(AON.AON_CSS.aonValueChanged());
+											}
+										}.schedule(3000);
+
+									}
+								});
+							}
+						});
+						return entryPanel;
+					}
+
 					@Override
 					public void onFailure(Throwable caught) {
 						FlowPanel line = new FlowPanel();
@@ -156,5 +190,5 @@ public class JournalPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 					}
 				});
 	}
-	
+
 }

@@ -11,9 +11,11 @@ import com.esferalia.aon.gwt.common.client.widget.AccountEntryListBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
+import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -25,7 +27,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -47,7 +48,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 
-public class JournalPanelReport extends DockLayoutPanel implements Focusable, HasSelectionHandlers<AccountEntry>{
+public class JournalPanelReport extends DockLayoutPanel implements Focusable, HasAccountEntrySelectionHandlers{
 
 	private static CommonServiceAsync commonService;
 
@@ -418,8 +419,8 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountEntry> handler) {
-		return super.addHandler(handler, SelectionEvent.getType());
+	public HandlerRegistration addSelectionHandler(AccountEntrySelectionHandler handler) {
+		return super.addHandler(handler, AccountEntrySelectionEvent.getType());
 	}
 
 	@Override
@@ -447,12 +448,13 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	private void onSearch() {
 		AccountEntryParams params = getWidgetParams();
 		JournalPanel journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
-		journalPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
+		journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
 			
 			@Override
-			public void onSelection(SelectionEvent<AccountEntry> event) {
-				SelectionEvent.fire(JournalPanelReport.this, event.getSelectedItem() );
+			public void onSelection(AccountEntrySelectionEvent event) {
+				AccountEntrySelectionEvent.fire(JournalPanelReport.this, event.getSelectedItem(), event.getCallback() );
 			}
+
 		});
 		centerPanel.setWidget(journalPanel);
 	}

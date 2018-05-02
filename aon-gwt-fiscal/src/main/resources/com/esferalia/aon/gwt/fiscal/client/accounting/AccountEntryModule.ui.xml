@@ -35,6 +35,8 @@
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}" />
 							<g:Button ui:field="remove" text="{msg.deleteAction}" 
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
+							<g:Button ui:field="back" text="{msg.backAction}" 
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
 							<g:Button ui:field="duplicate" text="{msg.duplicate}" 
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDuplicate}" />
 							<g:Button ui:field="audit" text="{msg.audit}" 

@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
@@ -142,7 +144,19 @@ class UnbalancedEntryFinder extends OptionBase {
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
 		AccountEntryModule module = new AccountEntryModule();
-		module.onModuleLoad(entryDialog, domainName, user, domain, entryId);
+		module.onModuleLoad(entryDialog, domainName, user, domain, entryId, new ModuleCallback<AccountEntry>() {
+			
+			@Override public void onRemove(AccountEntry removed) {
+				entryDialog.hide();
+			}
+			@Override public void onFailure(Throwable caught) {}
+			@Override public void onExit() {
+				entryDialog.hide();
+			}
+			@Override public void onChange(AccountEntry changed) {
+				entryDialog.hide();
+			}
+		});
 		entryDialog.center();
 		entryDialog.show();
 	}

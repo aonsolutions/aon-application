@@ -346,6 +346,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Borrar")
 	String deleteAction();
 	
+	@DefaultMessage("Volver")
+	String backAction();
+
 	@DefaultMessage("Duplicar")
 	String duplicate();
 

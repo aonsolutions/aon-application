@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
@@ -19,6 +20,8 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -107,6 +110,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	private String currentDomainName;
 	private int currentDomainId;
 	private String currentUser;
+	
+	private ModuleCallback<AccountEntry> externalCallback;
 	
 	private AccountEntry base;
 
@@ -200,6 +205,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiField
 	Button duplicate;
 	@UiField
+	Button back;
+	@UiField
 	SimpleLayoutPanel wizardPanel;
 	@UiField
 	HTMLPanel entryHeader;
@@ -260,13 +267,14 @@ public class AccountEntryModule extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		this.onModuleLoad(root,getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), null);
+		this.onModuleLoad(root,getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), null, null);
 	}
 	
-	public void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, Integer accountEntryId ) {
+	public void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, Integer accountEntryId, ModuleCallback<AccountEntry> externalCallback ) {
 		this.currentDomainName = domainName;
 		this.currentDomainId = domain;
 		this.currentUser = user;
+		this.externalCallback = externalCallback; 
 			
 		AON.ensureInjected();
 		
@@ -363,9 +371,9 @@ public class AccountEntryModule extends MainEntryPoint {
 						confidential.setVisible(configuration.getUser().hasConfidentialityRole());
 						
 						journalPanel = new JournalPanelReport(getDomainName(), getUser(), getDomainId(), JOURNAL_PANEL_TAB_OFFSET, result);
-						journalPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
+						journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
 							@Override
-							public void onSelection(SelectionEvent<AccountEntry> event) {
+							public void onSelection(AccountEntrySelectionEvent event) {
 								final AccountEntry entry = event.getSelectedItem();
 								selectEntry(entry.getId());
 							}
@@ -396,6 +404,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		remove.setVisible(false);
 		audit.setVisible(false);
 		duplicate.setVisible(false);
+		back.setVisible(false);
 	}
 
 	// -------------------------------------------------------------- UiHandler
@@ -553,13 +562,17 @@ public class AccountEntryModule extends MainEntryPoint {
 		wizardContent.manageWidgets(canRemove,canEdit);
 
 		// Enable/Disable header values
+		reset.setVisible(externalCallback == null);
+		search.setVisible(externalCallback == null);
+		
 		period.setEnabled(canEdit);
 		entryDate.setEnabled(canEdit);
 		confidential.setEnabled(canEdit);
 		entryType.setEnabled(canEdit);
 		accept.setEnabled(canEdit);
 		remove.setEnabled(canRemove);
-		duplicate.setEnabled(!isNew());
+		duplicate.setEnabled(externalCallback != null && !isNew());
+		back.setVisible(externalCallback != null);
 		
 		styleCommentsButton();
 		errors = new ErrorPanel();
@@ -614,6 +627,9 @@ public class AccountEntryModule extends MainEntryPoint {
 						entryDate.getTextBox().selectAll();
 					}
 				});
+				if (externalCallback != null ) {
+					externalCallback.onChange(base);
+				}
 			}
 
 			@Override
@@ -696,6 +712,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 					@Override
 					public void onSuccess(Void result) {
+						AccountEntry removed = wizardContent.getMainEntry();
 						if (wizardContent.getMainEntry().getId() != null) {
 							wizardContent.getMainEntry().setId(
 									wizardContent.getMainEntry().getId() * -1);
@@ -703,6 +720,9 @@ public class AccountEntryModule extends MainEntryPoint {
 						}
 						remove.setEnabled(true);
 						reset();
+						if (externalCallback != null ) {
+							externalCallback.onRemove(removed);
+						}
 					}
 
 					@Override
@@ -931,9 +951,9 @@ public class AccountEntryModule extends MainEntryPoint {
 				.setFromDate(from)
 				.setToDate(entryDate.getValue())
 			,false);
-		statementPanel.addSelectionHandler(new SelectionHandler<AccountEntry>() {
+		statementPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
 			@Override
-			public void onSelection(SelectionEvent<AccountEntry> event) {
+			public void onSelection(AccountEntrySelectionEvent event) {
 				selectEntry(event.getSelectedItem().getId());
 			}
 		});
@@ -1137,6 +1157,13 @@ public class AccountEntryModule extends MainEntryPoint {
 		HTMLPanel panel = new HTMLPanel(htmlText);
 		extraInfoContainer.setWidget(panel);
 		extraInfoContainer.scrollToTop();
+	}
+	
+	@UiHandler("back")
+	public void onBack(ClickEvent event) {
+		if (externalCallback != null) {
+			externalCallback.onExit();
+		}
 	}
 	
 	@UiHandler("duplicate")
