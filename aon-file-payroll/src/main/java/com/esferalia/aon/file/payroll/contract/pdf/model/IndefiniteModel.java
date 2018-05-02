@@ -357,7 +357,9 @@ public class IndefiniteModel extends AbstractContractModel {
 					setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME_WEEKLY.getValue(), "true");
 				} else if(contrata!=null){
 					if(contrata.getHorasJornada()!=null){
-						setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(Integer.parseInt(contrata.getHorasJornada())));
+						Integer hours = Integer.parseInt(contrata.getHorasJornada());
+						Integer mins = Integer.parseInt(contrata.getMinutosJornada());
+						setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(hours + CommonUtil.round(new Double(mins)*1/60)));
 					}
 					if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
 						setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME_DAYLY.getValue(), "true");
