@@ -62,6 +62,7 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 			controller.initSeries();
 			controller.setSavedDeliveryDate(null);
 			controller.setSavedCarrier(null);
+			controller.setIngenetHandler(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

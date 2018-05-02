@@ -1,14 +1,11 @@
 package com.code.aon.ui.sales.udapa;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.sales.Sales;
@@ -25,8 +22,6 @@ public class SalesIngenetHandler implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	private static final Logger LOGGER = LoggerFactory.getLogger(SalesIngenetHandler.class);
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 	
 	private final static String INGENET_STATUS = "STATUS";
 	
@@ -41,7 +36,8 @@ public class SalesIngenetHandler implements Serializable {
 		PENDING,
 		REOPENED,
 		RETRIEVED,
-		CLOSED;
+		CLOSED,
+		PROCESSED;
 	}
 	
 	
@@ -79,7 +75,7 @@ public class SalesIngenetHandler implements Serializable {
 		setResponseDate(sales.getIssueDate());
 	}
 	
-	public void onEnableForIngenet(ActionEvent event){
+	public void onEnable(ActionEvent event){
 		String customerName = StringUtils.abbreviate(sales.getCustomer().getRegistry().getFullName(), 30-sales.getReferenceCode().length());
 		
 		DataResponse response = new DataResponse();
@@ -106,16 +102,24 @@ public class SalesIngenetHandler implements Serializable {
 		controller.onBlock(event);
 	}
 	
-	public boolean isEnabledForIngenet() {
-		return SalesIngenetStatus.PENDING.name().equals(getLastStatus()) && !SalesIngenetStatus.REOPENED.name().equals(getLastStatus());
+	public boolean isEnabled() {
+		return SalesIngenetStatus.PENDING.name().equals(getLastStatus());
 	}
 	
-	public boolean isRetrievedByIngenet() {
+	public boolean isReopened() {
+		return SalesIngenetStatus.REOPENED.name().equals(getLastStatus());
+	}
+	
+	public boolean isRetrieved() {
 		return SalesIngenetStatus.RETRIEVED.name().equals(getLastStatus());
 	}
-	
-	public boolean isClosedByIngenet() {
+
+	public boolean isClosed() {
 		return SalesIngenetStatus.CLOSED.name().equals(getLastStatus());
+	}
+
+	public boolean isProcessed() {
+		return SalesIngenetStatus.PROCESSED.name().equals(getLastStatus());
 	}
 	
 	private String getLastStatus() {

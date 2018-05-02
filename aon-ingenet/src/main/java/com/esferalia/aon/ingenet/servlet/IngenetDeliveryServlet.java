@@ -16,11 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.customer.IEdiSupport;
-import com.esferalia.aon.seres.ftp.seres.FtpDeliveryUploadOccamHandler;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANTYPE;
+import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ERRORESTYPE;
 import com.esferalia.aon.ingenet.api.util.IngenetXmlValidator;
+import com.esferalia.aon.ingenet.servlet.delivery.AbstractDeliveryCreator;
+import com.esferalia.aon.ingenet.servlet.delivery.DeliveryCreator;
+import com.esferalia.aon.ingenet.servlet.delivery.DeliveryCreatorSales;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
@@ -34,6 +37,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.seres.ftp.seres.FtpDeliveryUploadOccamHandler;
 
 @WebServlet(name = "IngenetDeliveryServlet", urlPatterns = { "/ingenet/delivery/*", "/ingenet/delivery/dev/*",
 		"/ingenet/delivery/deprecated/*" })
@@ -46,6 +50,10 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetDeliveryServlet.class.getName());
 	
+	
+	private boolean isDev(HttpServletRequest httpRequest) {
+		return httpRequest.getRequestURI().contains("/dev");
+	}
 		
 	protected void processRequest(HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws ServletException, IOException {
@@ -60,7 +68,15 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		createDataAttach(attach, _xml);
 		
 		
-		DeliveryCreator creator = new DeliveryCreator(getDomain(), getDomainId(), getUser());
+//		DeliveryCreator creator = new DeliveryCreator(getDomain(), getDomainId(), getUser());
+		
+		AbstractDeliveryCreator creator = null;
+		if(isDev(httpRequest)) {
+			creator = new DeliveryCreatorSales(getDomain(), getDomainId(), getUser());
+		} else {
+			creator = new DeliveryCreator(getDomain(), getDomainId(), getUser());
+		}
+		
 		
 		try {
 			creator.validateAlbaranesXmlPattern(_xml);
@@ -116,7 +132,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 				try {
 					if(deliveryList!=null && deliveryList.size()>0){
 						subject = "Recepción automática de albaranes";
-						content = fillSuccessMessage(ctx, albaranes.getDATOSALBARANES(), deliveryList, warningList);
+						content = fillSuccessMessage(ctx, albaranes.getDATOSALBARANES(), deliveryList, warningList, creator);
 						log(IngenetLogLevel.INFO, subject, content, null, null, RECIPIENTS_TO_SUCCESS);
 						
 						creator.processDataAttach(attach, deliveryList);
@@ -179,7 +195,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		out.flush();
 	}
 	
-	private String fillSuccessMessage(AONContext ctx, List<ALBARANTYPE> albaranes, List<Delivery> deliveryList, List<String> warningList) {
+	private String fillSuccessMessage(AONContext ctx, List<ALBARANTYPE> albaranes, List<Delivery> deliveryList, List<String> warningList, AbstractDeliveryCreator creator) {
 		StringBuffer bf = new StringBuffer("<h1>Recepción de albaranes.</h1>");
 		bf.append("<ul>");
 		albaranes.forEach(alb -> {
@@ -204,9 +220,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			}
 			bf.append("<ul>");
 			alb.getLINEASALBARAN().getDATOSLINEAALBARAN().forEach(lin -> {
-				bf.append("<li>Elaboración finalizada: <b>").append(lin.getDATOSELABORACIONORIGEN().getSERIE())
-						.append("/").append(lin.getDATOSELABORACIONORIGEN().getNUMERO()).append("</b>")
-						.append("</li>");
+				creator.fillSuccessMessage(bf, lin);
 			});
 			bf.append("</ul>");
 			bf.append("</li>");
@@ -223,6 +237,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		return bf.toString();
 	}
 	
+
 	private String fillErrorMessage(List<ALBARANTYPE> deliveryList, List<String> errorList) {
 		StringBuffer bf = new StringBuffer("<h1>Recepción de albaranes.</h1>");
 		bf.append("<ul>");

@@ -35,7 +35,7 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-							 	<aon:if test="#{!sales.ingenetHandler.enabledForIngenet}">
+							 	<aon:if test="#{!sales.ingenetHandler.enabled}">
 							 		<aon:panelGrid id="responseDate" columns="2" dir="true" styleClass="aon-width-all aon-margin-bottom">
 										<aon:outputText value="#{bundle.aon_status}" />
 										<aon:outputText value="No disponible para Ingenet" />
@@ -53,20 +53,23 @@
 										<aon:commandButton id="enableIngenet-button"
 											styleClass="aon-commandButton"
 											value="Habilitar"
-											actionListener="#{sales.ingenetHandler.onEnableForIngenet}"
+											rendered="#{sales.pending}"
+											actionListener="#{sales.ingenetHandler.onEnable}"
 											reRender="salesForm, showIngenetWindow" />
 									</aon:div>
 							 	</aon:if>
-							 	<aon:if test="#{sales.ingenetHandler.enabledForIngenet}">
+							 	<aon:if test="#{sales.ingenetHandler.enabled}">
 							 		<aon:panelGrid id="responseDate" columns="2" dir="true" styleClass="aon-width-all">
 										<aon:outputText value="#{bundle.aon_status}" />
 										<aon:div>
+											<aon:outputText value="Pedido disponible"
+												rendered="#{sales.ingenetHandler.enabled}" />
 											<aon:outputText value="Pedido recuperado y REABIERTO"
-												rendered="#{not sales.ingenetHandler.retrievedByIngenet and not sales.ingenetHandler.closedByIngenet}" />
+												rendered="#{sales.ingenetHandler.reopened}" />
 									 		<aon:outputText value="Pedido recuperado"
-												rendered="#{sales.ingenetHandler.retrievedByIngenet}" />
+												rendered="#{sales.ingenetHandler.retrieved}" />
 											<aon:outputText value="Pedido cerrado"
-												rendered="#{sales.ingenetHandler.closedByIngenet}" />
+												rendered="#{sales.ingenetHandler.closed}" />
 										</aon:div>
 							 		</aon:panelGrid>
 							 	</aon:if>

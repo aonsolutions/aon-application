@@ -1,5 +1,7 @@
 package com.code.aon.ui.sales.controller;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +13,8 @@ import com.code.aon.AonVersion;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.sales.udapa.SalesIngenetHandler;
 import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Warehouse;
@@ -119,6 +123,19 @@ public class SalesElaborationProcess implements Serializable {
 			});
 		}
 		salesController.loadElaborationMap();
+		
+		enableForIngenet(sales, event);
+	}
+	
+	// FIXME this is temporary method
+	@Deprecated
+	private void enableForIngenet(Sales sales, ActionEvent event) {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		if(ds.isUdapa()) {
+			SalesIngenetHandler ingenetHandler = new SalesIngenetHandler(salesController);
+			ingenetHandler.setResponseDate(sales.getIssueDate());
+			ingenetHandler.onEnable(event);
+		}
 	}
 
 	public void onExecute(ActionEvent event) {

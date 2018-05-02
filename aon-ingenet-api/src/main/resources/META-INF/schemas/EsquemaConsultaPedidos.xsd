@@ -87,9 +87,10 @@
 	<xsd:simpleType name="ESTADO_TYPE">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="PENDIENTE" />
-			<xsd:enumeration value="REABIERTO" />
 			<xsd:enumeration value="RECUPERADO" />
+			<xsd:enumeration value="REABIERTO" />
 			<xsd:enumeration value="CERRADO" />
+			<xsd:enumeration value="PROCESADO" />
 		</xsd:restriction>
 	</xsd:simpleType>
 

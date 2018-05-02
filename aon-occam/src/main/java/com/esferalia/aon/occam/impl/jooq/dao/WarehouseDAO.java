@@ -612,6 +612,12 @@ public class WarehouseDAO {
 		.execute();
 	}
 	
+	public static Delivery deleteDelivery(AONContext ctx, Integer deliveryId) {
+		Delivery delivery = getDelivery(ctx, deliveryId);
+		ctx.getDslContext().delete(DELIVERY).where(DELIVERY.ID.eq(deliveryId)).execute();
+		return delivery;
+	}
+	
 	// ----------------- CARRIER 
 	public static int insertCarrier(AONContext ctx, Carrier carrier) {
 		ctx.checkWrite();

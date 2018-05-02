@@ -466,10 +466,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		Sales sales = (Sales)this.getTo();
 		return sales.getStatus() == SalesStatus.INVOICED;
 	}
-	
-	public boolean isReopenable() {
-		return !getIngenetHandler().isEnabledForIngenet();
-	}
 
 	public Invoice getInvoice() throws ManagerBeanException {
 		Sales sales = (Sales)this.getTo();
