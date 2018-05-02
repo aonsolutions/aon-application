@@ -1531,7 +1531,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		
 		String duracionjornada = String.valueOf(weekHours);
 		duracionjornada = (duracionjornada==null?"":completeLength(getHours(duracionjornada), 4, "0", false)+(completeLength(getMinutes(duracionjornada), 2, "0", false)));
-		if(StringUtils.isBlank(duracionjornada)){
+		if(StringUtils.isBlank(duracionjornada) || Integer.parseInt(duracionjornada)<=0){
 			duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
 		}
 		datos.setHORASCONVENIO(duracionconvenio.isEmpty()?null:completeLength(duracionconvenio, 6, "0", false));
