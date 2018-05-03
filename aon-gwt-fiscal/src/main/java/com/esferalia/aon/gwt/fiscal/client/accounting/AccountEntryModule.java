@@ -29,7 +29,7 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountBalancePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.StatementPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.StatementPanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceEntryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.IWizardContent;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel;
@@ -943,21 +943,35 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	private void showFullStatement(Integer selectedItem) {
 		tabLayout.selectTab(STATEMENT_TAB);
-		Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
-		StatementPanel statementPanel = new  StatementPanel(
-			getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),
-			new AccountStatementParams()
-				.setAccount(selectedItem)
-				.setFromDate(from)
-				.setToDate(entryDate.getValue())
-			,false);
-		statementPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
+		commonService.getAccount(currentDomainName, currentDomainId, selectedItem, new AsyncCallback<Account>() {
+			
 			@Override
-			public void onSelection(AccountEntrySelectionEvent event) {
-				selectEntry(event.getSelectedItem().getId());
+			public void onSuccess(Account result) {
+				StatementPanelReport statementPanel = new  StatementPanelReport(
+						getCurrentDomainName(),getCurrentUser(),getCurrentDomain()
+						,Integer.MAX_VALUE
+						,configuration
+						,new AccountStatementParams()
+							.setAccount(selectedItem)
+							.setFullAccount(result)
+							.setPeriod(period.getValue())
+							.setToDate(entryDate.getValue())
+						,false);
+					statementPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
+						@Override
+						public void onSelection(AccountEntrySelectionEvent event) {
+							selectEntry(event.getSelectedItem().getId());
+						}
+					});
+					statementPanelContainer.setWidget(statementPanel);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
-		statementPanelContainer.setWidget(statementPanel);
 	}
 
 	public static interface IContentAttachCallback {

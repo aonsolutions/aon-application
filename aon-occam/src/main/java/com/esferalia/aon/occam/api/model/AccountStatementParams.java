@@ -12,6 +12,7 @@ public class AccountStatementParams implements Serializable {
 	private int domain;
 	private Integer period;
 	private Integer account;
+	private Account fullAccount;
 	private Date fromDate;
 	private Date toDate;
 	private Integer activity;
@@ -46,7 +47,13 @@ public class AccountStatementParams implements Serializable {
 		this.account = account;
 		return this;
 	}
-
+	public Account getFullAccount() {
+		return fullAccount;
+	}
+	public AccountStatementParams setFullAccount(Account fullAccount) {
+		this.fullAccount = fullAccount;
+		return this;
+	} 
 	public Date getFromDate() {
 		return fromDate;
 	}

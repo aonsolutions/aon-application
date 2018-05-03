@@ -42,11 +42,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 
@@ -57,11 +57,10 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	private String currentDomainName;
 	private String currentUser;
 	private Integer currentDomainId;
+	private boolean allowChecks;
 	
-	private SimpleLayoutPanel northPanel;
 	private SimpleLayoutPanel centerPanel;
 	
-	private FlexTable tab;
 	private AccountPeriodBox period;
 	private DateBoxEx fromDate;
 	private DateBoxEx toDate;
@@ -73,14 +72,16 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	private boolean activitiesListBoxEnabled;
 	
 	public StatementPanelReport(String domainName,String user, int domainId) {
-		this(domainName,user,domainId,Integer.MAX_VALUE,null);
+		this(domainName,user,domainId,Integer.MAX_VALUE,null,null, false);
 	}
 	
-	public StatementPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config) {
+	public StatementPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountStatementParams params, boolean allowChecks) {
 		super(Unit.PX);
 		this.currentDomainName = domainName;
 		this.currentUser = user;
 		this.currentDomainId = domainId;
+		this.allowChecks = allowChecks;
+		
 		if (config == null) {
 			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
@@ -88,7 +89,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				,new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {
-						fill(tabIndex, result);
+						fill(tabIndex, result, params);
 					}
 	
 					@Override
@@ -97,19 +98,19 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 					}
 				});
 		} else {
-			fill (tabIndex,config );
+			fill (tabIndex,config,params);
 		}
 	}
 	
-	private void fill(int tabIndex, AonConfiguration config) {
+	private void fill(int tabIndex, AonConfiguration config, AccountStatementParams params) {
 		activitiesListBoxEnabled = (config != null && config.hasActivities());
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());
-		northPanel = new SimpleLayoutPanel();
-		fillNorthPanel(tabIndex,config);
-		addNorth(northPanel, 80);
+		SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
+		addNorth(northPanel, 95);
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
+		fillNorthPanel(northPanel,tabIndex,config,params);
 	}
 	
 	public String getCurrentDomainName() {
@@ -121,10 +122,35 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	public String getCurrentUser() {
 		return currentUser;
 	}
-	private void fillNorthPanel(int tabIndex ,final AonConfiguration config) {
+	
+	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountStatementParams params) {
+		
 		FlexTable dateTab = new FlexTable();
 		period = new AccountPeriodBox();
+		fromDate = new DateBoxEx();
+		toDate = new DateBoxEx();
+		
+		boolean periodBoxShown = false;
 		period.fill(config.getPeriods(),true);
+		if (params != null) {
+			if (params.getPeriod() != null) {
+				for (AccountPeriod p : config.getPeriods()) {
+					if (AonNumberUtils.equals(p.getId(), params.getPeriod())) {
+						period.select(params.getPeriod());
+						ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+						dateTab.setWidget(0, 1, periodBox);
+						periodBoxShown = true;
+					}
+				}
+			}
+			if (params.getFromDate() != null) {
+				fromDate.setValue(params.getFromDate(), false);
+			}
+			if (params.getToDate() != null) {
+				toDate.setValue(params.getToDate(), false);
+			}
+		} 
+		
 		period.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -134,8 +160,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				onSearch();
 			}
 		});
-		
-		fromDate = new DateBoxEx();
+
 		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
@@ -143,7 +168,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				onSearch();
 			}
 		});
-		toDate = new DateBoxEx();
+		
 		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
@@ -151,12 +176,19 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				onSearch();
 			}
 		});
+		
 		if (config.getUser().hasConfidentialityRole()) {
 			confidential = new ListBox();
 			confidential.addItem( "Asientos NO confidenciales" );
 			confidential.addItem( "Asientos confidenciales" );
 			confidential.addItem(" Todos ");
-			confidential.setSelectedIndex(2);
+			if (params != null && params.getSecurityLevel() == SecurityLevel.OFFICIAL) {
+				confidential.setSelectedIndex(0);
+			} else if (params != null && params.getSecurityLevel() == SecurityLevel.CONFIDENTIAL) {
+				confidential.setSelectedIndex(1);
+			} else {
+				confidential.setSelectedIndex(2);
+			}
 			confidential.addChangeHandler(new ChangeHandler() {
 				
 				@Override
@@ -167,6 +199,12 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		}
 		account = new AccountBox(this.currentDomainName,this.currentDomainId);
 		account.setRequired(false);
+		if (params != null && params.getFullAccount() != null) {
+			account.setValue(params.getFullAccount().getId()
+				,params.getFullAccount().getCode()
+				,params.getFullAccount().getDescription()
+				,false);
+		}
 		account.addSelectionHandler(new SelectionHandler<Account>() {
 			
 			@Override
@@ -186,6 +224,11 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
 				}
+				if (params != null && params.getActivity() != null) {
+					if (AonNumberUtils.equals(params.getActivity(), ea.getId())) {
+						activity.setSelectedIndex(i);
+					}
+				}
 				i++;
 			}
 			activity.addChangeHandler(new ChangeHandler() {
@@ -195,10 +238,18 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				}
 			});
 		}
+		FlexTable mainTab = new FlexTable();
+		mainTab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
+		mainTab.addStyleName(AON.AON_CSS.aonWidthAll());
+		mainTab.getColumnFormatter().setWidth(0, "auto");
+		mainTab.getColumnFormatter().setWidth(1, "50px");
 		
-		tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
+		
+		
+		FlexTable tab = new FlexTable();
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
+		
+		mainTab.setWidget(0, 0, tab);
 		
 		tab.getColumnFormatter().setWidth(0, "1%");
 		tab.getColumnFormatter().setWidth(1, "1%");
@@ -219,8 +270,10 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		dateTab.setWidget(0, 0, period);
 		period.addStyleName(AON.AON_CSS.aonMarginRight());
 		
-		ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
-		dateTab.setWidget(0, 1, periodBox);
+		if (!periodBoxShown) {
+			ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+			dateTab.setWidget(0, 1, periodBox);
+		}
 
 		InlineLabel from = new InlineLabel(AON.MSG.from());
 		from.setStyleName(AON.AON_CSS.aonItalic());
@@ -292,11 +345,52 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		tab.setWidget(1, 4, cleanButton);
 		tab.getCellFormatter().setStyleName(2,4, AON.AON_CSS.aonPanelGridEven());
 
-		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		scrollPanel.setWidget(tab);
-		northPanel.setWidget(scrollPanel);
-		account.setFocus(true);
+		FlowPanel min = new FlowPanel();
+		min.setStyleName(AON.AON_CSS.aonTextRight());
+		min.addStyleName(AON.AON_CSS.aonPaddingRight());
+		min.addStyleName(AON.AON_CSS.aonNowrap());
+		min.addStyleName(AON.AON_CSS.aonWidthAll());
+		
+		Button maximize = new Button();
+		maximize.setStyleName(AON.AON_CSS.aonIconCommandButton());
+		maximize.addStyleName(AON.AON_CSS.aonIconMaximize());
+		maximize.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				tab.removeStyleName(AON.AON_CSS.aonDisplayNone());
+				StatementPanelReport.this.setWidgetSize(northPanel, 95 );
+				StatementPanelReport.this.animate(500);
+			}
+		});
+
+		min.add(maximize);
+		
+		Button minimize = new Button();
+		minimize.setStyleName(AON.AON_CSS.aonIconCommandButton());
+		minimize.addStyleName(AON.AON_CSS.aonIconMinimize());
+		minimize.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				tab.addStyleName(AON.AON_CSS.aonDisplayNone());
+				StatementPanelReport.this.setWidgetSize(northPanel, 25);
+				StatementPanelReport.this.animate(500);
+			}
+		});
+		min.add(minimize);
+
+		mainTab.setWidget(0, 1, min);
+		mainTab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridOdd());
+
+		northPanel.setWidget(mainTab);
+		if (params != null) {
+			tab.addStyleName(AON.AON_CSS.aonDisplayNone());
+			StatementPanelReport.this.setWidgetSize(northPanel, 25);
+			onSearch();
+		} else {
+			account.setFocus(true);
+		}
 	}
 
 	private ListBox getPeriodBox(LinkedList<AccountPeriod> periods, String selectedValue) {
@@ -354,9 +448,12 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 						}
 					}
 				});
+				fromDate.setValue(period.getInitiationDate(),false);
+				toDate.setValue(period.getDeadline(),false);
+			} else {
+				fromDate.setValue(null,false);
+				toDate.setValue(null,false);
 			}
-			fromDate.setValue(period.getInitiationDate(),false);
-			toDate.setValue(period.getDeadline(),false);
 		} else {
 			fromDate.setValue(null,false);
 			toDate.setValue(null,false);
@@ -393,7 +490,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	
 	private void onSearch() {
 		AccountStatementParams params = getWidgetParams();
-		StatementPanel journalPanel = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
+		StatementPanel journalPanel = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params, allowChecks);
 		journalPanel.addSelectionHandler(new AccountEntrySelectionHandler () {
 			
 			@Override
