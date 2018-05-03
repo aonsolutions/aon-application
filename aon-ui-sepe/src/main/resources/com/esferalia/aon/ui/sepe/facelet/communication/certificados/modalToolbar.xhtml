@@ -77,18 +77,20 @@
 							iconClass="aon-icon-refresh" 
 							/>
 			            			
+						<aon:if test="#{aonRole.sysAdmin}">
 							<aon:menuItem iconClass="aon-icon-file-download">
 								<aon:htmlCommandLink id="sepeXmldownload" 
 									value="#{bundle.aon_fileupload_download} XML" target="_blank"
 									actionListener="#{contractCertificados.onDownloadSepeXml}" />
 				     		</aon:menuItem>
-						<aon:if test="#{!skipDownloadButton}">
+							<aon:if test="#{!skipDownloadButton}">
+							</aon:if>
+							<aon:menuItem iconClass="aon-icon-file-upload">
+								<aon:htmlCommandLink id="sepeXmlupload" 
+									value="#{bundle.aon_file_upload} XML" target="_blank"
+									actionListener="#{contractCertificados.onDownloadSepeXml}" />
+				     		</aon:menuItem>
 						</aon:if>
-						<aon:menuItem iconClass="aon-icon-file-upload">
-							<aon:htmlCommandLink id="sepeXmlupload" 
-								value="#{bundle.aon_file_upload} XML" target="_blank"
-								actionListener="#{contractCertificados.onDownloadSepeXml}" />
-			     		</aon:menuItem>
 					</aon:dropDownMenu>			
 				</aon:if>
 				
