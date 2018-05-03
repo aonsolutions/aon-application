@@ -139,8 +139,8 @@ public abstract class AbstractEnterpriseCertificate implements IContractPdfDocum
 	
 	public enum EnterpriseCertificateField implements IStringEnum {
 		
-		ENTERPRISE_DIR_STAFF_NAME("Texto1-cer"),
-		ENTERPRISE_DIR_STAFF_CHARGE("Texto3-cer"),
+		ENTERPRISE_DIR_STAFF_NAME("Texto1-ce"),
+		ENTERPRISE_DIR_STAFF_CHARGE("Texto2-ce"),
 		
 		// ENTERPRISE
 		ENTERPRISE_NAME("Texto3-ce"),
