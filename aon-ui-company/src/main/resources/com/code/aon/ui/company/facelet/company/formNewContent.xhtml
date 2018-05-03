@@ -79,6 +79,7 @@
 		value="#{bundle.registry_municipality}" />
 	<aon:div>
 		<aon:selectOneMenu id="Company_address_municipality"
+			required="#{true}"
 			value="#{controller.mainAddress.municipalityCode}"
 			valueChangeListener="#{controller.addressChanged}">
 			<f:selectItem itemLabel="-" value="#{null}" />

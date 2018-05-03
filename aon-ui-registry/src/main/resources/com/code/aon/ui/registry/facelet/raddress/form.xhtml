@@ -59,6 +59,7 @@
 			value="#{bundle.registry_municipality}" />
 		<aon:div>
 			<aon:selectOneMenu id="#{pojoName}_address_municipality"
+				required="#{true}"
 				value="#{registryAddress.municipalityCode}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{controller.municipalities}" />
