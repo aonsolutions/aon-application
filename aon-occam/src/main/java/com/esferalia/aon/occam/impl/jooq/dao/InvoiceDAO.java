@@ -646,8 +646,7 @@ public class InvoiceDAO {
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
-						INVOICE_DETAIL.QUANTITY)
+				.select()
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
 				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
@@ -661,9 +660,9 @@ public class InvoiceDAO {
 	public static InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date){
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
+
 		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
-						INVOICE_DETAIL.QUANTITY)
+				.select()
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
 				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
@@ -679,8 +678,7 @@ public class InvoiceDAO {
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
-						INVOICE_DETAIL.QUANTITY)
+				.select()
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
@@ -709,8 +707,7 @@ public class InvoiceDAO {
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
-						INVOICE_DETAIL.QUANTITY)
+				.select()
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
@@ -743,8 +740,7 @@ public class InvoiceDAO {
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 
 		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
-						INVOICE_DETAIL.QUANTITY)
+				.select()
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
@@ -773,8 +769,7 @@ public class InvoiceDAO {
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 
 		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR,
-						INVOICE_DETAIL.QUANTITY)
+				.select()
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
