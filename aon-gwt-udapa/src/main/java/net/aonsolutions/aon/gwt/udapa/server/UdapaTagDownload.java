@@ -55,12 +55,28 @@ public class UdapaTagDownload extends HttpServlet{
 		
 		String caliber1_str = parameters.get("caliber1");
 		Integer caliber1 = Integer.parseInt(caliber1_str);
+		String destiny1 = parameters.get("destiny1");
 		
 		String caliber2_str = parameters.get("caliber2");
 		Integer caliber2 = Integer.parseInt(caliber2_str);
+		String destiny2 = parameters.get("destiny2");
+
+		String caliber3_str = parameters.get("caliber3");
+		Integer caliber3 = Integer.parseInt(caliber3_str);
+		String destiny3 = parameters.get("destiny3");
+
+		String caliber4_str = parameters.get("caliber4");
+		Integer caliber4 = Integer.parseInt(caliber4_str);
+		String destiny4 = parameters.get("destiny4");
+		
+		String caliber5_str = parameters.get("caliber5");
+		Integer caliber5 = Integer.parseInt(caliber5_str);
+		String destiny5 = parameters.get("destiny5");
+
+		Integer[] calibers = new Integer[] {caliber1, caliber2, caliber3, caliber4, caliber5};
+		String[] destinies = new String[] {destiny1, destiny2, destiny3, destiny4, destiny5};
 		
 		String variety = parameters.get("variety");
-		String destiny = parameters.get("destiny");
 		String observation = parameters.get("observation");
 
 		File file = null;
@@ -74,7 +90,7 @@ public class UdapaTagDownload extends HttpServlet{
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY, f -> f.getIdProperty().eq(dataResponseId));
 		map.put("number", dr.getCode());
 				
-		file = createPdf(map, position, caliber1, caliber2, observation, variety, destiny);
+		file = createPdf(map, position, calibers, destinies, observation, variety);
 		
 		resp.addHeader("Access-Control-Allow-Origin", "*");
 	    resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
@@ -89,7 +105,7 @@ public class UdapaTagDownload extends HttpServlet{
 		fileInpurOs.close();
 	}
 	
-	private File createPdf(HashMap<String, String> map, Integer position, Integer caliber1, Integer caliber2, String observation,String variety, String destiny) {
+	private File createPdf(HashMap<String, String> map, Integer position, Integer[] calibers, String[] destinies, String observation,String variety) {
 		File archivoPDF = null;
 		try {
 			archivoPDF = File.createTempFile("quality", "pdf");
@@ -113,8 +129,9 @@ public class UdapaTagDownload extends HttpServlet{
 				t.addCell(cell);
 				p--;
 			}
-			for(Integer c1 = 0; c1 < caliber1; c1++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destiny, "50/60", observation, variety, pdfWriter));
+			
+			for(Integer c1 = 0; c1 < calibers[0]; c1++) {
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[0], "<45", observation, variety, pdfWriter));
 				cell.setPaddingBottom(32);
 				cell.setPaddingTop(32);
 				cell.setPaddingRight(10);
@@ -123,18 +140,46 @@ public class UdapaTagDownload extends HttpServlet{
 				t.addCell(cell);
 			}
 			
-			for(Integer c2 = 0; c2 < caliber2; c2++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destiny, "60/80", observation, variety, pdfWriter));
+			for(Integer c2 = 0; c2 < calibers[1]; c2++) {
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[1], "45/50", observation, variety, pdfWriter));
 				cell.setPaddingBottom(32);
 				cell.setPaddingTop(32);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
 				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
-			}	
+			}
+			for(Integer c1 = 0; c1 < calibers[2]; c1++) {
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[2], "50/60", observation, variety, pdfWriter));
+				cell.setPaddingBottom(32);
+				cell.setPaddingTop(32);
+				cell.setPaddingRight(10);
+				cell.setPaddingLeft(10);
+				cell.setBorder(PdfPCell.NO_BORDER);
+				t.addCell(cell);
+			}
 			
-			if((!isPar(caliber1 + caliber2) && !isPar(position))
-				|| (isPar(caliber1 + caliber2) && isPar(position))) {
+			for(Integer c2 = 0; c2 < calibers[3]; c2++) {
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[3], "60/80", observation, variety, pdfWriter));
+				cell.setPaddingBottom(32);
+				cell.setPaddingTop(32);
+				cell.setPaddingRight(10);
+				cell.setPaddingLeft(10);
+				cell.setBorder(PdfPCell.NO_BORDER);
+				t.addCell(cell);
+			}
+			for(Integer c2 = 0; c2 < calibers[4]; c2++) {
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[4], "S/C", observation, variety, pdfWriter));
+				cell.setPaddingBottom(32);
+				cell.setPaddingTop(32);
+				cell.setPaddingRight(10);
+				cell.setPaddingLeft(10);
+				cell.setBorder(PdfPCell.NO_BORDER);
+				t.addCell(cell);
+			}
+			
+			if((!isPar(calibers[0] + calibers[1] + calibers[2] + calibers[3] + calibers[4]) && !isPar(position))
+				|| (isPar(calibers[0] + calibers[1] + calibers[2] + calibers[3] + calibers[4]) && isPar(position))) {
 				PdfPCell cell = new PdfPCell(new Phrase(""));
 				cell.setFixedHeight(180);
 				cell.setBorder(PdfPCell.NO_BORDER);

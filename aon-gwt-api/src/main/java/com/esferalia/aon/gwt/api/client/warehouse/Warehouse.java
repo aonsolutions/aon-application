@@ -210,9 +210,15 @@ public class Warehouse extends Methods{
 		});
 	}
 	
-	public void downloadUdapaTag(Integer id, Double pos, Double cal1, Double cal2, String var, String dest, String obv){
-		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&id="+id + "&position=" + pos + "&caliber1=" + cal1 + "&caliber2=" + cal2 
-				+ "&observation=" + (obv.isEmpty() ? "-" : obv) + "&variety=" + (var.isEmpty() ? "-" : var) + "&destiny=" + (dest.isEmpty() ? "-" : dest)  ;
+	public void downloadUdapaTag(Integer id, Double pos, Double[] cals,  String[] dests, String var, String obv){
+		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&id="+id + "&position=" + pos 
+				+ "&observation=" + (obv.isEmpty() ? "-" : obv) + "&variety=" + (var.isEmpty() ? "-" : var);
+		for (Integer i = 0 ; i < cals.length ; i++) {
+			str = str + "&caliber" + (i+1) + "=" + cals[i] + "&destiny" + (i+1) + "=" + (dests[i].isEmpty() ? "-" : dests[i]); 
+		}
+		
+//		+ "&caliber1=" + cal1 + "&caliber2=" + cal2 
+//				+ "&observation=" + (obv.isEmpty() ? "-" : obv) + "&variety=" + (var.isEmpty() ? "-" : var) + "&destiny=" + (dest.isEmpty() ? "-" : dest)  ;
 		
 		impl.base(str, new AsyncCallback<String>() {
 			

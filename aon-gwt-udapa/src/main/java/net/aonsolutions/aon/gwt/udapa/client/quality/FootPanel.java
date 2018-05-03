@@ -461,57 +461,117 @@ public class FootPanel extends Composite {
 		tb1.setStyleName(AON.AON_CSS.aonInputText());
 		tb1.setText("1");
 		ft.setWidget(0, 1, tb1);
-		
-		Label b = new Label("50/60");
+
+		Label b = new Label("<45");
 		b.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(1, 0, b);
 		DoubleBox tb2 = new DoubleBox();
 		tb2.setStyleName(AON.AON_CSS.aonInputText());
-		tb2.setText("8");
+		tb2.setText("0");
 		ft.setWidget(1, 1, tb2);
 		
-		Label c = new Label("60/80");
+		Label b1 = new Label("Destino");
+		b1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(1, 2, b1);
+		TextBox tb21 = new TextBox();
+		tb21.setStyleName(AON.AON_CSS.aonInputText());
+		tb21.setWidth("100px");
+		ft.setWidget(1, 3, tb21);
+		
+		Label c = new Label("45/50");
 		c.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(2, 0, c);
 		DoubleBox tb3 = new DoubleBox();
 		tb3.setStyleName(AON.AON_CSS.aonInputText());
-		tb3.setText("8");
+		tb3.setText("0");
 		ft.setWidget(2, 1, tb3);
 		
-		Label d = new Label("Variedad");
+		Label c1 = new Label("Destino");
+		c1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(2, 2, c1);
+		TextBox tb31 = new TextBox();
+		tb31.setStyleName(AON.AON_CSS.aonInputText());
+		tb31.setWidth("100px");
+		ft.setWidget(2, 3, tb31);
+		
+		Label d = new Label("50/60");
 		d.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(3, 0, d);
-		TextBox tb4 = new TextBox();
+		DoubleBox tb4 = new DoubleBox();
 		tb4.setStyleName(AON.AON_CSS.aonInputText());
-		tb4.setText(parent.getMap().get("product_name").replace("patata", "").replace("PATATA", ""));
-		tb4.setWidth("100px");
+		tb4.setText("8");
 		ft.setWidget(3, 1, tb4);
+
+		Label d1 = new Label("Destino");
+		d1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(3, 2, d1);
+		TextBox tb41 = new TextBox();
+		tb41.setStyleName(AON.AON_CSS.aonInputText());
+		tb41.setWidth("100px");
+		ft.setWidget(3, 3, tb41);
 		
-		Label e = new Label("Destino");
+		Label e = new Label("60/80");
 		e.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(4, 0, e);
-		TextBox tb5 = new TextBox();
+		DoubleBox tb5 = new DoubleBox();
 		tb5.setStyleName(AON.AON_CSS.aonInputText());
-		tb5.setWidth("100px");
+		tb5.setText("8");
 		ft.setWidget(4, 1, tb5);
 		
-		Label f = new Label("Observaciones");
+		Label e1 = new Label("Destino");
+		e1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(4, 2, e1);
+		TextBox tb51 = new TextBox();
+		tb51.setStyleName(AON.AON_CSS.aonInputText());
+		tb51.setWidth("100px");
+		ft.setWidget(4, 3, tb51);
+		
+		Label f = new Label("Sin Calibrar (S/C)");
 		f.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(5, 0, f);
+		DoubleBox tb6 = new DoubleBox();
+		tb6.setStyleName(AON.AON_CSS.aonInputText());
+		tb6.setText("0");
+		ft.setWidget(5, 1, tb6);
+		
+		Label f1 = new Label("Destino");
+		f1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(5, 2, f1);
+		TextBox tb61 = new TextBox();
+		tb61.setStyleName(AON.AON_CSS.aonInputText());
+		tb61.setWidth("100px");
+		ft.setWidget(5, 3, tb61);
+		
+		Label g = new Label("Variedad");
+		g.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(6, 0, g);
+		TextBox tb7 = new TextBox();
+		tb7.setStyleName(AON.AON_CSS.aonInputText());
+		tb7.setText(parent.getMap().get("product_name").replace("patata", "").replace("PATATA", ""));
+		tb7.setWidth("100px");
+		ft.setWidget(6, 1, tb7);
+		
+		
+		Label h = new Label("Observaciones");
+		h.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(7, 0, h);
 		TextArea ta = new TextArea();
 		ta.setStyleName(AON.AON_CSS.aonInputText());
 		ta.setWidth("100px");
-		ft.setWidget(5, 1, ta);
+		ft.setWidget(7, 1, ta);
 
 		Button but = new Button("Descargar");
 		but.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), tb2.getValue(), tb3.getValue(), tb4.getValue(), tb5.getValue(),ta.getValue());
+				Double[] calibers = new Double[] {tb2.getValue(), tb3.getValue(), tb4.getValue(), tb5.getValue(), tb6.getValue()};
+				String[] destinies = new String[] {tb21.getValue(), tb31.getValue(), tb41.getValue(), tb51.getValue(), tb61.getValue()};
+				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), calibers, destinies, tb7.getValue(), ta.getValue());
+//				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), tb4.getValue(), tb5.getValue(), tb6.getValue(), tb51.getValue(),ta.getValue());
 			}
 		});
-		ft.setWidget(0, 2, but);
+		ft.setWidget(0, 4, but);
 		tagPanel.add(ft);
 	}
 	
