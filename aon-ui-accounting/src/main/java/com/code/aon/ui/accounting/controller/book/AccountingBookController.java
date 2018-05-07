@@ -1,6 +1,8 @@
 package com.code.aon.ui.accounting.controller.book;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DateFormat;
@@ -15,30 +17,32 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.annualReport.AnnualReportContext;
 import com.code.aon.accounting.annualReport.AnnualReportParameters;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.enumeration.TaxRegime;
@@ -52,6 +56,16 @@ import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class AccountingBookController implements ICollectionProvider, Serializable {
 	
@@ -290,15 +304,20 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		setValid(true);
 	}
 	
+	public void onGenerate(ActionEvent event) {
+		setShowBookWindow(true);
+		setBookFile(false);
+	}
+	
 	public void onCreate(ActionEvent event) {
+		AON.deleteAttach(AonUtil.getDomainName(),getCompanyController().obtainCompany().getDomain(), "", 
+				f -> f.getDomainProperty().eq(getCompanyController().obtainCompany().getDomain())
+				.and(f.getDescriptionProperty().eq("ACCOUNTING_BOOK_" + getPeriod().getName())), AttachType.REGISTRY);
+		
 		try {
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			ExternalContext ec = ctx.getExternalContext();
-			HttpServletResponse res = (HttpServletResponse) ec.getResponse();
-			res.setContentType(MimeType.MIME_ZIP.getName());
-			res.setHeader("Content-Disposition", "attachment; filename=\""+getCompanyAdaptedName()+".zip\";");
 			List<IAccountingBookRunner> runners = getRunners();
-		    ZipOutputStream zout = new ZipOutputStream(res.getOutputStream());
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+			ZipOutputStream zout = new ZipOutputStream(baos);
 		    zout.setLevel(9);
 		    for (IAccountingBookRunner runner : runners) {
 		    	AccountingBook book = runner.getAccountingContext().getAccountingBook();
@@ -310,15 +329,17 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 			addRequiredFiles(zout,runners);
 			zout.flush();
 			zout.finish();
-		    res.flushBuffer();
-			ctx.responseComplete();
+			
+			FileOutput bookOutput = new FileOutput();
+			bookOutput.setContent(baos.toByteArray());
+			saveRegistryAttach(bookOutput, "ACCOUNTING_BOOK_" + getPeriod().getName(), com.esferalia.aon.occam.api.model.type.MimeType.ZIP);
 		} catch (IOException e) {
 			AonUtil.addErrorMessage("El fichero no es correcto. " + e.getMessage() );
 			throw new AbortProcessingException( e );
 		} catch (AccountingBookException e) {
 			AonUtil.addErrorMessage("Error al ejecutar el listado. " + e.getMessage() );
 			throw new AbortProcessingException( e );
-		}
+		} 
 	}
 
 	private List<IAccountingBookRunner> getRunners() throws AccountingBookException {
@@ -684,4 +705,143 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 		setModel(new SerializableListDataModel( getBookList()));
     }
     
+	private Boolean showBookWindow;
+	private Boolean bookFile;
+	private Boolean init;
+	
+	public Boolean getBookFile() {
+		if(bookFile == null) {
+			try {
+				loadBookFile();
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+		}
+		return bookFile;
+	}
+	
+	public void setBookFile(Boolean bookFile) {
+		this.bookFile = bookFile;
+	}
+	
+	public Boolean getShowBookWindow() {
+		if(showBookWindow == null) {
+			setShowBookWindow(false);
+		}
+		return showBookWindow;
+	}
+	
+	public void setShowBookWindow(Boolean showBookWindow) {
+		this.showBookWindow = showBookWindow;
+	}
+	
+	public Boolean getInit() {
+		if(init == null) {
+			setInit(false);
+		}
+		return init;
+	}
+	public void setInit(Boolean init) {
+		this.init = init;
+	}
+	public void onShowBookWindow(ActionEvent event) throws AccountingBookException {
+		setBookFile(false);
+		setShowBookWindow(true);
+	}
+	
+	public void onChangePeriod(ValueChangeEvent event) throws ManagerBeanException {
+		setPeriod((Period) event.getNewValue());
+		loadBookFile();
+	}
+	
+	public void onReloadDisk(ActionEvent event) throws ManagerBeanException {
+		if(!getInit()) {
+			setInit(true); 
+			onCreate(event);
+		}
+		loadBookFile();
+	}
+	
+	public void loadBookFile() throws ManagerBeanException {
+		if(getPeriod() == null) {
+			AccountingCollectionsController acc = new AccountingCollectionsController();
+			setPeriod(acc.getClassAllAccountPeriods().get(0));
+		}
+
+		Attach attach = AON.getAttach(AonUtil.getDomainName(),getCompanyController().obtainCompany().getDomain(), "", 
+				f -> f.getDomainProperty().eq(getCompanyController().obtainCompany().getDomain())
+				.and(f.getDescriptionProperty().eq("ACCOUNTING_BOOK_" + getPeriod().getName())), AttachType.REGISTRY, true);
+		
+		setBookFile(attach != null && attach.getData() != null);		
+	}
+
+	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
+		getCompanyController().obtainCompany();
+        try {
+    		FacesContext faces = FacesContext.getCurrentInstance();
+            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+
+            Attach attach = AON.getAttach(AonUtil.getDomainName(), getCompany().getDomain(), "", 
+    				f -> f.getDomainProperty().eq(getCompany().getDomain())
+    				.and(f.getDescriptionProperty().eq("ACCOUNTING_BOOK_" + getPeriod().getName())), AttachType.REGISTRY, true);
+            
+            if(attach.getData() == null && attach.getDriveId() != null) {
+            	DomainGserviceaccount g = AON.getDomainGserviceaccount(AonUtil.getDomainName(), getCompany().getDomain(), "");
+        		Drive drive = AonDrive.getInstace().serviceInitialize(g);
+            	attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+            }
+            
+	        response.setContentType(attach.getMimeType().getName());
+	        response.setHeader("Content-disposition", "attachment; filename=\"" + attach.getDescription() + "." + attach.getMimeType().getExtension() +"\"");
+
+	        ServletOutputStream output = response.getOutputStream();
+	        InputStream input = new java.io.ByteArrayInputStream(attach.getData());
+	      
+	        int size = IOUtils.copy(input, output);
+	        if (size > 0) {
+		        response.setHeader("Content-Length", String.valueOf(size));
+	        }
+	        output.close();
+	        input.close();
+	        
+	        response.flushBuffer();
+	        faces.responseComplete();
+        } catch (IOException e) {
+			throw new ManagerBeanException(e);
+		}
+	}
+	
+	private Company getCompany() {
+		return getCompanyController().obtainCompany();
+	}
+	
+	private void saveRegistryAttach(FileOutput bookOutput, String name, com.esferalia.aon.occam.api.model.type.MimeType mimeType) {
+		Domain domain = AON.getDomain(AonUtil.getDomainName(), getCompany().getDomain(), "");
+		User user = new User().setLogin("");
+		Attach attach = new Attach()
+				.setAttachType(AttachType.REGISTRY)
+				.setAttachModule(getCompany().getId())
+				.setDescription(name)
+				.setConfidential(false)
+				.setDate(new Date())
+				.setDomain(domain)
+				.setData(bookOutput.getContent())
+				.setType(RegistryAttachmentType.SYSTEM_MESSAGE.value())
+				.setMimeType(mimeType)
+				.setCreationDate(new Date())
+				.setCreationUser("")
+				.setModificationDate(new Date())
+				.setModificationUser("");
+		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+		/*	Integer id = 
+			
+			attach.setId(id);
+			attach.setData(bookOutput.getContent());
+				
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+			AonDrive.getInstace().sync(drive, user, attach, false);
+		*/
+	}
+	
 }

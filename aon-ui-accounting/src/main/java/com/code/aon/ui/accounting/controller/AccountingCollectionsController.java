@@ -11,6 +11,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
@@ -22,7 +23,6 @@ import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.accounting.enumeration.Quarter;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -135,6 +135,23 @@ public class AccountingCollectionsController implements Serializable {
 		return getPeriods(criteria);
 	}
 
+	public List<Period> getClassAllAccountPeriods() throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		criteria.addOrder(getPeriodIdAlias(), false);
+		return getClassPeriods(criteria);
+	}
+	
+	private List<Period> getClassPeriods(Criteria criteria) throws ManagerBeanException {
+		List<Period> accountPeriods = new LinkedList<Period>();
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		List<ITransferObject> list = periodBean.getList(criteria);
+		for (ITransferObject to : list) {
+			Period period = (Period) to;
+			accountPeriods.add(period);
+		}
+		return accountPeriods;
+	}
+	
 	public List<SelectItem> getAccountPeriodStatuses() {
 		if (periodStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();

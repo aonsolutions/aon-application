@@ -25,7 +25,8 @@
 					<ui:param name="skipSearchButton" value="true" />
 
 					<aon:outputLabel for="accountPeriod" value="#{bundle.aon_financial_year}" />
-					<aon:selectOneMenu id="accountPeriod" value="#{accountingBook.period}" reRender="journal" ajaxSingle="true">
+					<aon:selectOneMenu id="accountPeriod" value="#{accountingBook.period}" reRender="journal,buttonContainer" ajaxSingle="true"
+						valueChangeListener="#{accountingBook.onChangePeriod}">
 						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 					</aon:selectOneMenu>
 
@@ -229,20 +230,47 @@
 							reRender="buttonContainer"
 							disabled="#{accountingBook.valid}">
 						</aon:commandButton>
+						
+						<aon:commandButton id="book-generate"
+							styleClass="aon-search-lookup-button"
+							style="cursor:pointer;" 
+							value="#{bundle.aon_generate}" 
+							actionListener="#{accountingBook.onGenerate}"
+							reRender="showBookWindow"
+							rendered="#{accountingBook.valid}">
+							<f:setPropertyActionListener
+								target="#{accountingBook.showBookWindow}"
+								value="#{true}" />
+						</aon:commandButton>
 
 						<aon:htmlCommandLink id="book-report"
 							styleClass="aon-search-lookup-button"
 							style="border-right: 1px solid black;" 
-							value="#{bundle.aon_generate}" 
-							target="_blank" actionListener="#{accountingBook.onCreate}"
-							rendered="#{accountingBook.valid}">
+							value="Descargar" 
+							target="_blank"
+							actionListener="#{accountingBook.downloadDisk}"
+							rendered="#{accountingBook.bookFile}">
 						</aon:htmlCommandLink>
+
+<!-- 
+						<aon:htmlCommandLink id="book-report"
+							styleClass="aon-search-lookup-button"
+							style="border-right: 1px solid black;" 
+							value="#{bundle.aon_generate}" 
+							target="frameTarget"
+							actionListener="#{accountingBook.onCreate}"
+							rendered="#{accountingBook.valid}"
+							reRender="showBookWindow">
+						</aon:htmlCommandLink>
+	 -->					
 					</aon:div>
 
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/accounting/facelet/book/modalBookWaitingProcess.xhtml" />
+		
 	</ui:define>
 </ui:composition>
 
