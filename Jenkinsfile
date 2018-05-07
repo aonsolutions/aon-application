@@ -115,7 +115,7 @@ node {
 
 	def snapshot_db_up2date_task_definition_json = readFile 'snapshot-db-up2date-task-definition.json'
 	def snapshot_db_up2date_task_definition_arn = getTaskDefinitionArn(snapshot_db_up2date_task_definition_json)
-	sh "aws ecs run-task --count 1 --cluster SNAPSH0T --task-definition ${snapshot_db_up2date_task_definition_arn} > snapshot-db-up2date-task.json"
+	sh "aws ecs run-task --count 1 --cluster SNAPSH0T --task-definition ${snapshot_db_up2date_task_definition_arn} --network-configuration 'awsvpcConfiguration={subnets=[subnet-0d78677b,subnet-3c051a58],securityGroups=[sg-37015f4f],assignPublicIp=DISABLED}' --launch-type FARGATE > snapshot-db-up2date-task.json"
 	def snapshot_db_up2date_task_json = readFile 'snapshot-db-up2date-task.json'
 	def snapshot_db_up2date_task_arn = getTaskArn(snapshot_db_up2date_task_json)
 	sh "aws ecs wait tasks-stopped --cluster SNAPSH0T --tasks ${snapshot_db_up2date_task_arn}"
