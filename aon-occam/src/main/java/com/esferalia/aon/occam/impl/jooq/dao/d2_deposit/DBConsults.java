@@ -291,6 +291,23 @@ public class DBConsults {
 			try {
 				schema = Utils.readXml(data);
 			} catch (Exception e) {
+				// TODO error
+				Record3<Integer, String, String> reg = ctx
+						.getDslContext()
+						.select(ENTERPRISE.REGISTRY, REGISTRY.DOCUMENT,
+								REGISTRY.NAME)
+						.from(ENTERPRISE.join(REGISTRY).on(
+								REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
+						.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
+				String document = reg.value2();
+				String name = reg.value3();
+				data = Utils.CreateXml(document, name);
+				try {
+					schema = Utils.readXml(data);
+					schema.setError("El fichero del deposito esta dañado \n " + e.getLocalizedMessage());
+				} catch (JAXBException e1) {
+					e1.printStackTrace();
+				}
 				e.printStackTrace();
 			}
 			return schema;

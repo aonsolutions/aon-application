@@ -106,7 +106,16 @@ import javax.xml.bind.annotation.XmlType;
 })
 @XmlRootElement(name = "Esquema")
 public class Esquema {
-
+	
+	protected String error;
+	
+	public String getError() {
+		return error;
+	}
+	public void setError(String error) {
+		this.error = error;
+	}
+	
     @XmlElement(name = "Cabecera", required = true)
     protected Esquema.Cabecera cabecera;
     @XmlElement(name = "Claves", required = true)

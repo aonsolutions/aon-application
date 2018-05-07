@@ -89,13 +89,15 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			// System.out.println(domainId);
 			if (textMode) {
 				schema = DBConsults.getDeposit(domain, domainId, cif);
-			} else
-				schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
+			} else schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
 			request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif + year, schema);
 		}
 		
 		List<Clave> claves = schema.getClaves().getClave();
 		Map<String, String> map = new HashMap<String, String>();
+		if(schema.getError() != null) {
+			map.put("error", schema.getError());
+		}
 		String type = schema.getCabecera().getTipoCuestionario();
 		map.put(D2DepositConstants.DEPOSIT_TYPE, type);
 		for (Integer i = 0; i < claves.size(); i++) {
