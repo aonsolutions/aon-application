@@ -150,7 +150,7 @@ node {
 
 	def snapshot_services_cpu = getCpu(last_snapshot_services_task_definition_json)
 	def snapshot_services_memory = getMemory(last_snapshot_services_task_definition_json)
-	def snapshot_services_network_mode = getNetworkMode(last_snapshot_services_up2date_task_definition_json)
+	def snapshot_services_network_mode = getNetworkMode(last_snapshot_services_task_definition_json)
 	def snapshot_services_execution_role_arn = getExecutionRoleArn(last_snapshot_services_task_definition_json)
 	def snapshot_services_compatibilities = getCompatibilities(last_snapshot_services_task_definition_json)
 	def snapshot_services_container_definitions_json = getContainerDefinitions(last_snapshot_services_task_definition_json, "aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8")
