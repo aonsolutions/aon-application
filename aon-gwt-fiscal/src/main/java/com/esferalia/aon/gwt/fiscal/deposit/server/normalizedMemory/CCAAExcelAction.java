@@ -1722,9 +1722,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				macell(text, j, j);
 			}
 		}
-		
-	
-
 	}
 	
 	private void MA11() {

@@ -115,7 +115,7 @@ public class NormalizedMemory extends ResizeComposite {
 		deleteButton.setVisible(true);
 		importAllButton.setVisible(true);
 		downloadButton.setVisible(true);
-		downloadButtonPdf.setVisible(false);
+		downloadButtonPdf.setVisible(false); // TODO cambiar a true para activar descarga en pdf
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		d2Deposit = ddtn.getD2Deposit();
@@ -366,7 +366,7 @@ public class NormalizedMemory extends ResizeComposite {
 									generateFileButton.setVisible(true);		
 									importAllButton.setVisible(true);
 									downloadButton.setVisible(true);
-									downloadButtonPdf.setVisible(false);
+									downloadButtonPdf.setVisible(false); // TODO cambiar a true para activar descarga en pdf
 								}
 					});
 					
@@ -541,9 +541,6 @@ public class NormalizedMemory extends ResizeComposite {
 												}
 											
 											});
-											
-										
-											
 										}
 										else if(t.equals("Perdidas y ganancias (I.S.)")){
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
@@ -618,12 +615,10 @@ public class NormalizedMemory extends ResizeComposite {
 										else if(t.equals("Memoria (Deposito.xml)")){
 											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
 											String ejercicio = ej.getSelectedItemText();
-											
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), year, new AsyncCallback<Map<String, String>>() {
-												@Override
-												public void onFailure(
-														Throwable caught) {
-												}
+								
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), getYear(), new AsyncCallback<Map<String, String>>() {
+
+												@Override public void onFailure(Throwable caught) {}
 
 												@Override
 												public void onSuccess(Map<String, String> result) {
@@ -633,11 +628,8 @@ public class NormalizedMemory extends ResizeComposite {
 													paintHeaderTable("Cuentas Anuales", result.get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit.getYear().toString());
 													update();
 												}
-											
 											});
-											
 										}
-										
 									}
 								};
 								popup.addStyleName("gwt-PopupPanel-template");

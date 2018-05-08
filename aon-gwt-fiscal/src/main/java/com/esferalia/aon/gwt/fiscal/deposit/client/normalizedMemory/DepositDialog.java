@@ -335,8 +335,8 @@ public abstract class DepositDialog extends CustomDialogB {
 
 				if(lb.getSelectedItemText().equals("Memoria (Deposito.xml)")){
 					ListBox lb1 = new ListBox();
-					//lb1.addItem("2013");
 					lb1.addItem(year.toString());
+
 					flex_table.setWidget(1, 0, new Label("Ejercicio"));
 					flex_table.setWidget(1,	1, lb1);	
 					
