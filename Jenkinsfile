@@ -39,7 +39,7 @@ node {
     	def rolling_version = new Date().format('yyyy.MM.dd-HH.mm.ss')
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine ./aon-db-up2date"
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
-	// For intermediate builds micro-services aren't used. 
+	// For intermediate builds micro-services aren't used.
     	//sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile ."
 
     	// Mark the Integration Tests 'stage'....
@@ -75,7 +75,7 @@ node {
     echo "currentBuild.result = ${currentBuild.result}"
 
     if ( currentBuild.result != 'UNSTABLE' ) {
-        
+
         stage 'Build Release'
 
     	rolling_version = new Date().format('yyyy.MM.dd-HH.mm.ss')
@@ -170,7 +170,7 @@ node {
         def last_release_db_up2date_task_definition_json = readFile 'last-release-db-up2date-task-definition.json'
         def release_db_up2date_container_definitions_json = getContainerDefinitions(last_release_db_up2date_task_definition_json, "aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine")
         sh "aws ecs register-task-definition --family RELEASE-DB-UP2DATE --container-definitions '${release_db_up2date_container_definitions_json}' > release-db-up2date-task-definition.json"
-	
+
 	sh "aws ecs list-task-definitions --family-prefix RELEASE > release-task-definitions.json"
 	def release_task_definitions_json = readFile 'release-task-definitions.json'
 	def release_task_definitions_arns = getTaskDefinitionArns(release_task_definitions_json)
@@ -180,6 +180,19 @@ node {
 	def release_container_definitions_json = getContainerDefinitions(last_release_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre8")
 	sh "aws ecs register-task-definition --family RELEASE --container-definitions '${release_container_definitions_json}' > release-task-definition.json"
 
+	sh "aws ecs list-task-definitions --family-prefix RELEASE-SERVICES > release-services-task-definitions.json"
+	def release_services_task_definitions_json = readFile 'release-services-task-definitions.json'
+	def release_services_task_definitions_arns = getTaskDefinitionArns(release_services_task_definitions_json)
+	def last_release_services_task_definition_arn = release_services_task_definitions_arns[release_services_task_definitions_arns.size()-1]
+	sh "aws ecs describe-task-definition --task-definition ${last_release_services_task_definition_arn} > last-release-services-task-definition.json"
+	def last_release_services_task_definition_json = readFile 'last-release-services-task-definition.json'
+	def release_services_cpu = getCpu(last_release_services_task_definition_json)
+	def release_services_memory = getMemory(last_release_services_task_definition_json)
+	def release_services_network_mode = getNetworkMode(last_release_services_task_definition_json)
+	def release_services_execution_role_arn = getExecutionRoleArn(last_release_services_task_definition_json)
+	def release_services_compatibilities = getCompatibilities(last_release_services_task_definition_json)
+	def release_services_container_definitions_json = getContainerDefinitions(last_release_services_task_definition_json, "aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8")
+	sh "aws ecs register-task-definition --family RELEASE-SERVICES --task-role-arn '${release_services_execution_role_arn}' --execution-role-arn '${release_services_execution_role_arn}' --network-mode '${release_services_network_mode}' --cpu '${release_services_cpu}' --memory '${release_services_memory}'  --requires-compatibilities ${release_services_compatibilities} --container-definitions '${release_services_container_definitions_json}' > release-services-task-definition.json"
     }
 
 }
@@ -250,4 +263,3 @@ def getExecutionRoleArn(def json) {
     def executionRoleArn = new groovy.json.JsonSlurper().parseText(json).taskDefinition.executionRoleArn
     executionRoleArn
 }
-
