@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -84,10 +85,13 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			
 			Item item = AON.getItem(domainName, domainId, login, f -> f.getIdProperty().eq(id.getItem().getId()));
 			Product product = AON.getProduct(domainName, domainId, login, f -> f.getIdProperty().eq(item.getProductId()));
+			Optional<Supplier> supplier = AON.getSupplier(domainName, domainId, login, f -> f.getIdProperty().eq(i.getSupplier()));
 			map.put("product_name", product.getName());
 			map.put("product_supplier", i.getSupplierName());
+			if(supplier.get().getAlias() != null && !supplier.get().getAlias().isEmpty()) {
+				map.put("product_supplier_alias", supplier.get().getAlias());
+			}
 			map.put("product_quantity", id.getQuantity() + "");
-
 				
 			if(map.get(QualitySheetCode.UFQCC01.getName()).equals("0.0") || Double.parseDouble(map.get(QualitySheetCode.UFQCC01.getName())) > id.getQuantity()) {
 				map.put(QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "");

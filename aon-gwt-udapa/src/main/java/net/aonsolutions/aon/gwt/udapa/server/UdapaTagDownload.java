@@ -78,6 +78,8 @@ public class UdapaTagDownload extends HttpServlet{
 		
 		String variety = parameters.get("variety");
 		String observation = parameters.get("observation");
+		
+		String supplier = parameters.get("supplier");
 
 		File file = null;
 
@@ -90,7 +92,7 @@ public class UdapaTagDownload extends HttpServlet{
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY, f -> f.getIdProperty().eq(dataResponseId));
 		map.put("number", dr.getCode());
 				
-		file = createPdf(map, position, calibers, destinies, observation, variety);
+		file = createPdf(map, position, calibers, destinies, observation, variety, supplier);
 		
 		resp.addHeader("Access-Control-Allow-Origin", "*");
 	    resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
@@ -105,7 +107,7 @@ public class UdapaTagDownload extends HttpServlet{
 		fileInpurOs.close();
 	}
 	
-	private File createPdf(HashMap<String, String> map, Integer position, Integer[] calibers, String[] destinies, String observation,String variety) {
+	private File createPdf(HashMap<String, String> map, Integer position, Integer[] calibers, String[] destinies, String observation,String variety, String supplier) {
 		File archivoPDF = null;
 		try {
 			archivoPDF = File.createTempFile("quality", "pdf");
@@ -131,9 +133,9 @@ public class UdapaTagDownload extends HttpServlet{
 			}
 			
 			for(Integer c1 = 0; c1 < calibers[0]; c1++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[0], "<45", observation, variety, pdfWriter));
-				cell.setPaddingBottom(32);
-				cell.setPaddingTop(32);
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[0], "<45", observation, variety, supplier, pdfWriter));
+				cell.setPaddingBottom(16);
+				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
 				cell.setBorder(PdfPCell.NO_BORDER);
@@ -141,18 +143,18 @@ public class UdapaTagDownload extends HttpServlet{
 			}
 			
 			for(Integer c2 = 0; c2 < calibers[1]; c2++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[1], "45/50", observation, variety, pdfWriter));
-				cell.setPaddingBottom(32);
-				cell.setPaddingTop(32);
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[1], "45/50", observation, variety, supplier, pdfWriter));
+				cell.setPaddingBottom(16);
+				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
 				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 			}
 			for(Integer c1 = 0; c1 < calibers[2]; c1++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[2], "50/60", observation, variety, pdfWriter));
-				cell.setPaddingBottom(32);
-				cell.setPaddingTop(32);
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[2], "50/60", observation, variety, supplier, pdfWriter));
+				cell.setPaddingBottom(16);
+				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
 				cell.setBorder(PdfPCell.NO_BORDER);
@@ -160,18 +162,18 @@ public class UdapaTagDownload extends HttpServlet{
 			}
 			
 			for(Integer c2 = 0; c2 < calibers[3]; c2++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[3], "60/80", observation, variety, pdfWriter));
-				cell.setPaddingBottom(32);
-				cell.setPaddingTop(32);
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[3], "60/80", observation, variety, supplier, pdfWriter));
+				cell.setPaddingBottom(16);
+				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
 				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 			}
 			for(Integer c2 = 0; c2 < calibers[4]; c2++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[4], "S/C", observation, variety, pdfWriter));
-				cell.setPaddingBottom(32);
-				cell.setPaddingTop(32);
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[4], "S/C", observation, variety, supplier, pdfWriter));
+				cell.setPaddingBottom(16);
+				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
 				cell.setBorder(PdfPCell.NO_BORDER);
@@ -196,7 +198,7 @@ public class UdapaTagDownload extends HttpServlet{
 		return i % 2 == 0; 
 	}
 	
-	public static PdfPTable tagTable(HashMap<String, String> map, String destiny, String caliber, String observation, String variety, PdfWriter pdfWriter){
+	public static PdfPTable tagTable(HashMap<String, String> map, String destiny, String caliber, String observation, String variety, String supplier, PdfWriter pdfWriter){
 	    	PdfPTable tag = new PdfPTable(2);
 	    	
 	    	Paragraph p = new Paragraph("UDAPA, S.COOP. 01015 VITORIA-GASTEIZ (ÁLAVA)", getFontX());
@@ -238,13 +240,14 @@ public class UdapaTagDownload extends HttpServlet{
 	    	c3.setFixedHeight(30);
 			tag.addCell(c3);
 				
+			if(destiny.length() > 10) destiny = destiny.substring(0, 10);
 			PdfPCell c4 = new PdfPCell(new Phrase(destiny, getFont2()));
 			c4.setHorizontalAlignment(Element.ALIGN_CENTER);
 	    	c4.setVerticalAlignment(Element.ALIGN_MIDDLE);
 	    	c4.setFixedHeight(30);
 			tag.addCell(c4);
 			
-	    	Paragraph p1 = new Paragraph("Observaciones", getFontX());
+	    	Paragraph p1 = new Paragraph("Proveedor", getFontX());
 
 			PdfPCell c5 = new PdfPCell(p1);
 			c5.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -258,7 +261,8 @@ public class UdapaTagDownload extends HttpServlet{
 			c6.setBackgroundColor(BaseColor.GRAY);
 			tag.addCell(c6);
 			
-			PdfPCell c7 = new PdfPCell(new Phrase(observation, getFont2()));
+			if(supplier.length()> 10) supplier = supplier.substring(0, 10) + "...";
+			PdfPCell c7 = new PdfPCell(new Phrase(supplier, getFont2()));
 			c7.setHorizontalAlignment(Element.ALIGN_CENTER);
 	    	c7.setVerticalAlignment(Element.ALIGN_MIDDLE);
 	    	c7.setFixedHeight(50);
@@ -276,6 +280,13 @@ public class UdapaTagDownload extends HttpServlet{
 	    	c8.setFixedHeight(50);
 			tag.addCell(c8);
 						
+	    	PdfPCell cX = new PdfPCell(new Phrase(observation, getFont2()));
+	    	cX.setHorizontalAlignment(Element.ALIGN_CENTER);
+	    	cX.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	    	cX.setFixedHeight(30);
+	    	cX.setColspan(2);
+			tag.addCell(cX);
+			
 			return tag;
 	    }
 	
@@ -288,52 +299,25 @@ public class UdapaTagDownload extends HttpServlet{
     }
 	
 	// ------------------- FONTS
-		private static Font getTableTitleFont(){
-			Font font = new Font();
-			font.setSize(12);
-			font.setStyle(Font.BOLD);
-			return font;
-		}
-		
-		private static Font getTitleFont(){
-			Font font = new Font();
-			font.setSize(16);
-			font.setStyle(Font.BOLD);
-			return font;
-		}
-		
-		private static Font getFont1(){
-			Font font1 = new Font();
-			font1.setSize(8);
-			font1.setStyle(Font.BOLD);
-			return font1;
-		}
 
-		private static Font getFontX(){
-			Font font2 = new Font();
-			font2.setSize(5);
-			return font2;
-		}
+	private static Font getFontX(){
+		Font font2 = new Font();
+		font2.setSize(5);
+		return font2;
+	}
 
+	private static Font getFont2(){
+		Font font2 = new Font();
+		font2.setSize(14);
+		font2.setStyle(Font.BOLD);
+		return font2;
+	}
 		
-		private static Font getFont2(){
-			Font font2 = new Font();
-			font2.setSize(14);
-			font2.setStyle(Font.BOLD);
-			return font2;
-		}
-		
-		private static Font getFont22(){
-			Font font2 = new Font();
-			font2.setSize(20);
-			font2.setStyle(Font.BOLD);
-			return font2;
-		}
+	private static Font getFont22(){
+		Font font2 = new Font();
+		font2.setSize(20);
+		font2.setStyle(Font.BOLD);
+		return font2;
+	}
 
-		private static Font getFont3(){
-			Font font1 = new Font();
-			font1.setSize(12);
-			font1.setStyle(Font.BOLD);
-			return font1;
-		}
 }

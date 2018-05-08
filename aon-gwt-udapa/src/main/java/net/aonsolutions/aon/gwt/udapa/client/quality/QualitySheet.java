@@ -565,7 +565,7 @@ public class QualitySheet extends Composite{
 		return cb;
 	}
 	
-	private ListBox listBox(LinkedList<String> options, QualitySheetCode code){
+	protected ListBox listBox(LinkedList<String> options, QualitySheetCode code){
 		ListBox listBox = new ListBox();
 		listBox.setStyleName(AON.AON_CSS.aonTextBox());
 		listBox.addItem("-");

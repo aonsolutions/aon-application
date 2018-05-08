@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -473,7 +474,7 @@ public class FootPanel extends Composite {
 		Label b1 = new Label("Destino");
 		b1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(1, 2, b1);
-		TextBox tb21 = new TextBox();
+		ListBox tb21 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
 		tb21.setStyleName(AON.AON_CSS.aonInputText());
 		tb21.setWidth("100px");
 		ft.setWidget(1, 3, tb21);
@@ -489,7 +490,7 @@ public class FootPanel extends Composite {
 		Label c1 = new Label("Destino");
 		c1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(2, 2, c1);
-		TextBox tb31 = new TextBox();
+		ListBox tb31 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
 		tb31.setStyleName(AON.AON_CSS.aonInputText());
 		tb31.setWidth("100px");
 		ft.setWidget(2, 3, tb31);
@@ -505,7 +506,7 @@ public class FootPanel extends Composite {
 		Label d1 = new Label("Destino");
 		d1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(3, 2, d1);
-		TextBox tb41 = new TextBox();
+		ListBox tb41 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
 		tb41.setStyleName(AON.AON_CSS.aonInputText());
 		tb41.setWidth("100px");
 		ft.setWidget(3, 3, tb41);
@@ -521,7 +522,7 @@ public class FootPanel extends Composite {
 		Label e1 = new Label("Destino");
 		e1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(4, 2, e1);
-		TextBox tb51 = new TextBox();
+		ListBox tb51 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
 		tb51.setStyleName(AON.AON_CSS.aonInputText());
 		tb51.setWidth("100px");
 		ft.setWidget(4, 3, tb51);
@@ -537,7 +538,7 @@ public class FootPanel extends Composite {
 		Label f1 = new Label("Destino");
 		f1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(5, 2, f1);
-		TextBox tb61 = new TextBox();
+		ListBox tb61 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
 		tb61.setStyleName(AON.AON_CSS.aonInputText());
 		tb61.setWidth("100px");
 		ft.setWidget(5, 3, tb61);
@@ -566,8 +567,10 @@ public class FootPanel extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				Double[] calibers = new Double[] {tb2.getValue(), tb3.getValue(), tb4.getValue(), tb5.getValue(), tb6.getValue()};
-				String[] destinies = new String[] {tb21.getValue(), tb31.getValue(), tb41.getValue(), tb51.getValue(), tb61.getValue()};
-				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), calibers, destinies, tb7.getValue(), ta.getValue());
+				String[] destinies = new String[] {tb21.getSelectedItemText(), tb31.getSelectedItemText(), tb41.getSelectedItemText(), tb51.getSelectedItemText(), tb61.getSelectedItemText()};
+				String supplier = parent.getMap().containsKey("product_supplier_alias") ? parent.getMap().get("product_supplier_alias")
+						: parent.getMap().get("product_supplier");
+				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), calibers, destinies, tb7.getValue(), ta.getValue(), supplier);
 //				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), tb4.getValue(), tb5.getValue(), tb6.getValue(), tb51.getValue(),ta.getValue());
 			}
 		});
