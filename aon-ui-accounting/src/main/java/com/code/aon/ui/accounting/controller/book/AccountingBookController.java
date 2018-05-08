@@ -772,7 +772,7 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 				f -> f.getDomainProperty().eq(getCompanyController().obtainCompany().getDomain())
 				.and(f.getDescriptionProperty().eq("ACCOUNTING_BOOK_" + getPeriod().getName())), AttachType.REGISTRY, true);
 		
-		setBookFile(attach != null && attach.getData() != null);		
+		setBookFile(attach != null && (attach.getData() != null || attach.getDriveId() != null));		
 	}
 
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
@@ -833,15 +833,6 @@ public class AccountingBookController implements ICollectionProvider, Serializab
 				.setModificationDate(new Date())
 				.setModificationUser("");
 		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
-		/*	Integer id = 
-			
-			attach.setId(id);
-			attach.setData(bookOutput.getContent());
-				
-			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
-			Drive drive = AonDrive.getInstace().serviceInitialize(g);
-			AonDrive.getInstace().sync(drive, user, attach, false);
-		*/
 	}
 	
 }
