@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,6 +22,7 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.PdfUtils;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.server.warehouse.XMLUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
@@ -42,9 +41,6 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 public class PackingList extends PdfUtils{
 	
 	private static final Logger LOGGER  = Logger.getLogger(PackingList.class.getName());
-	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	public static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	public static final SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
 	
 	private PackingList() {
 	    throw new IllegalAccessError("Utility class");
@@ -413,10 +409,10 @@ public class PackingList extends PdfUtils{
 		destinatario.addCell(new Phrase("Fecha:",getFont1()));
 		String dstr = "";
 		try {
-			Date d = dateTimeFormat.parse(json.getString("issue_date"));
-			dstr = dateFormat.format(d);
-		} catch (JSONException | ParseException e1) {
-			e1.printStackTrace();
+			Date d = AonDateUtils.dateTimeParse(json.getString("issue_date"));
+			dstr = AonDateUtils.simpleFormat(d);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		destinatario.addCell(new Phrase(dstr,getFont2()));
 		
