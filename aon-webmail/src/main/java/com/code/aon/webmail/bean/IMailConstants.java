@@ -42,6 +42,8 @@ public interface IMailConstants {
 	
 	String AUTH = ".auth";
 
+	String LOCALHOST = ".localhost";
+
 	String MAIL_HOST = MAIL_PREFIX + "host";
 	
 	String MAIL_STORE_PROTOCOL = MAIL_PREFIX + "store.protocol";

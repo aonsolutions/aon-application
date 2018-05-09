@@ -177,9 +177,16 @@ public class AonServer implements IMailConstants, Serializable {
         return transport;
     }
     
+    private String getDomain (IMailAccount account) {
+    	String someEmail = account.getEmail();
+	    return  someEmail != null ? someEmail.substring(someEmail.indexOf("@") + 1) : "aon";
+    }
+    
     private void setOutcomingProperties( IMailAccount account, Properties values ) {
     	String transport = getTransportProtocol(account);
         String prefix = MAIL_PREFIX + transport;
+
+        values.setProperty(prefix + LOCALHOST, getDomain(account));
         if (account.getOutgoingSecurity() == ConnectionSecurity.SSL) {
         	values.setProperty(prefix + SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
         	values.setProperty(prefix + SOCKET_FACTORY_FALLBACK, Boolean.FALSE.toString());
