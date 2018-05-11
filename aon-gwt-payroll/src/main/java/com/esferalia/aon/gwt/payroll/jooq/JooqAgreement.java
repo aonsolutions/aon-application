@@ -25,12 +25,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
-import org.hibernate.cfg.FkSecondPass;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Cursor;
@@ -46,10 +50,10 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -57,9 +61,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
-import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -375,7 +377,9 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreement.setId(record.getId()); // Not NULL
 			agreement.setDomain(record.getDomain());
 			agreement.setDescription(record.getDescription());
-
+			
+			agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
+			
 			boolean hasContracts = hasContract(dslContext, record.getId());
 			agreement.setHasContract(hasContracts);
 			// agreement.setLevelsWithoutCategories(false);
@@ -385,6 +389,30 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		}
 		return agreements;
+	}
+
+	private static Set<Level> getAgreementLevel(DSLContext dslContext, Integer id, Agreement agreement) {
+		Set<Level>  levelsList = new HashSet();
+		Map<Integer, Set<String>> categoriesMap = new HashMap<>();
+		Result<Record> levels = dslContext.select().from(AGREEMENT_LEVEL).where(AGREEMENT_LEVEL.AGREEMENT.eq(id)).fetch();
+		for(Record r: levels){
+			Level level =  new Level();
+			level.setId(r.get(AGREEMENT_LEVEL.ID));
+			level.setDescription(r.get(AGREEMENT_LEVEL.DESCRIPTION));
+			
+			Result<Record> categories = dslContext.select().from(AGREEMENT_LEVEL_CATEGORY)
+				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(r.get(AGREEMENT_LEVEL.ID))).fetch();
+			
+			
+			categoriesMap.put(r.get(AGREEMENT_LEVEL.ID), new HashSet());
+			for(Record rc : categories){
+				categoriesMap.get(r.get(AGREEMENT_LEVEL.ID)).add(rc.get(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
+			}
+			
+			levelsList.add(level);
+		}
+		agreement.setCategoriesMap(categoriesMap);
+		return levelsList;
 	}
 
 	public static List<Extra> getExtras(DSLContext dslContext, Condition ...conditions) throws SQLException {

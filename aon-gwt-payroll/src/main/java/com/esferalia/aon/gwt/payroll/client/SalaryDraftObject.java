@@ -1139,6 +1139,7 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 	
 	private void addCalendarDraft(ArrayList<StringVariable> variablesList) {
+		
 		for (StringVariable stringVariable : variablesList){
 			salaryDraft.addDraftVariable(stringVariable);
 		}

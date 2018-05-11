@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.google.gwt.user.client.Window;
 
 public class SalaryDraft extends SalaryPreview {
 
@@ -297,7 +298,10 @@ public class SalaryDraft extends SalaryPreview {
 		if (i != -1) {
 			oldVariable = draftContext.remove(i);
 		}
-
+		
+		Window.alert("SALARY_DRAFT --> " + var.getName() + " = " + var.getExpression() + 
+						", StartDate :" + var.getStartDate() + ", EndDate :" + var.getEndDate());
+		
 		draftContext.add(var);
 		return oldVariable;
 	}

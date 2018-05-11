@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -102,6 +103,23 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			@Override
 			public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
 					AsyncCallback<EventsWorkplace> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEmployeeInfoDataBase(Integer id, AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
+					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}

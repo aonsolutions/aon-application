@@ -82,7 +82,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		void onLoadAvaiableEmployees(Map<String, String> map);
 
-		void onEmployeeSelected(Employee employee);
+		void onEmployeeSelected(/*Employee employee*/ EmployeeDraftObject employeeDraftObject);
 
 		void onEnterpriseSelected(Enterprise enterprise);
 
@@ -173,6 +173,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private Images images;
 	private List<Listener> listeners;
 	private EmployeesServiceAsync employeesService;
+	private EnterprisesServiceAsync enterprisesService;
+	private AgreementServiceAsync agreementService;
 
 	private boolean formers = true;
 	private boolean endDate = true;
@@ -209,6 +211,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		// service.
 		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
 		employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
+		
+		EnterprisesServiceAsync enterprisesServiceRaw = GWT.create(EnterprisesService.class);
+		enterprisesService = new EnterprisesServiceAsyncDecorator(enterprisesServiceRaw);
+		
+		AgreementServiceAsync agreementServiceRaw = GWT.create(AgreementService.class);
+		agreementService = new AgreementServiceAsyncDecorator(agreementServiceRaw);
 		
 		initWidget(binder.createAndBindUi(this));
 
@@ -372,8 +380,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEnterpriseSelected((Enterprise) userObject);
 		} else if (userObject instanceof Workplace) {
 			onWorkplaceSelected((Workplace) userObject);
-		} else if (userObject instanceof Employee) {
-			onEmployeeSelected((Employee) userObject);
+		} else if (userObject instanceof /*Employee*/ EmployeeDraftObject) {
+			onEmployeeSelected((/*Employee*/EmployeeDraftObject) userObject);
 		} else if (userObject instanceof SalaryDraftObject) {
 			onSalaryDraftSelected((SalaryDraftObject) userObject);
 		} else if (userObject instanceof SalaryPreviewDocument) {
@@ -1010,9 +1018,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 
-	private void onEmployeeSelected(Employee employee) {
+	private void onEmployeeSelected(/*Employee employee*/ EmployeeDraftObject employeeDraftObject) {
 		for (Listener listener : listeners) {
-			listener.onEmployeeSelected(employee);
+			listener.onEmployeeSelected(/*employee*/employeeDraftObject);
 		}
 	}
 
@@ -1324,9 +1332,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			text.append(END_DATE_FORMAT.format(employee.getEndDate()));
 			text.append(")");
 		}
+		
+		
 
 		employeeItem.setHTML(imageItemHTML(current ? images.employee() : images.oldemployee(), text.toString()));
-		employeeItem.setUserObject(employee);
+		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(employee, employeesService, enterprisesService, agreementService);
+		employeeItem.setUserObject(employeeDraftObject);
+		//employeeItem.setUserObject(employee);
 		employeeItem.ensureDebugId(getId(employee));
 
 		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());

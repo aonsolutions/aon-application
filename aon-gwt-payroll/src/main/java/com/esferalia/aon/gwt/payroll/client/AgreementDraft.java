@@ -32,7 +32,7 @@ import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -132,6 +132,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	public static final String ONLY_THIS_YEAR = "ONLY_THIS_YEAR";
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
 	public static final String FROM_THIS_MONTH = "FROM_THIS_MONTH";
+
 
 	static class TypeListBox<T extends Enum<?> & HasDescription> extends ListBox {
 
@@ -1173,8 +1174,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				Date _endDate =  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : null;
 				
 				if (
-						(date.equals(draftStratDate) || 
-						(date.getMonth() == draftStratDate.getMonth() && date.getYear() == draftStratDate.getYear()))
+						(date.equals(draftStratDate) || (date.getMonth() == draftStratDate.getMonth() && date.getYear() == draftStratDate.getYear()))
 					){
 					startTab = i;
 					startTab = startTab*2;
@@ -1416,6 +1416,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		if ( agreementDraftObject.getDatesWithChanges().isEmpty() )
 			categoryButton.click();
+		//Window.alert("ToggleButtons Size :"+ salaryToggleButtonsPanel.getWidgetCount());
 
 	}
 
