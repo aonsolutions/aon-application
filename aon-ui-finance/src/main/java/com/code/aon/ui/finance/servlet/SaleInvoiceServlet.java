@@ -66,8 +66,6 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.report.IReportConstants;
-import com.code.aon.report.ReportException;
-import com.code.aon.report.jr.JRReportFactory;
 import com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.warehouse.Delivery;
@@ -85,7 +83,6 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
 
 @WebServlet(name = "DownloadSaleInvoice", urlPatterns = { "/aon_gwt_aio/saleinvoice_download/*", "/sid/*" })
 public class SaleInvoiceServlet extends HttpServlet{
@@ -163,7 +160,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 	@SuppressWarnings("unchecked")
 	private byte[] obtainInvoiceData(){
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
-		String reportKey = AON.getApplicationParamenter(domain.getName(), domain.getId(), login,
+		String reportKey = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
 				AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM).getValue();
 		reportKey = reportKey==null?"saleInvoice":reportKey;
 		// TODO search for custom report template
@@ -567,7 +564,7 @@ public class SaleInvoiceServlet extends HttpServlet{
 		
 		try {
 			Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
-			String reportKey = AON.getApplicationParamenter(domain.getName(), domain.getId(), login,
+			String reportKey = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
 					AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM).getValue();
 			reportKey = reportKey==null?"saleInvoice":reportKey;
 			// TODO search for custom report template

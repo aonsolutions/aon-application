@@ -1,11 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
-import static com.esferalia.aon.jooq.tables.Item.ITEM;
-
 
 import java.sql.Date;
 import java.util.Vector;
@@ -17,8 +16,6 @@ import org.jooq.InsertValuesStep17;
 import org.jooq.Record;
 import org.jooq.Record17;
 
-import com.esferalia.aon.jooq.tables.Item;
-import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;

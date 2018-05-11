@@ -293,7 +293,7 @@ public class SIIBuilt {
 				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._02.getName());
 			}
 			
-			ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+			ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
 	    	Boolean isRegistro = "R".equals(ap.getValue());
 			Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
 			if(opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
@@ -737,7 +737,7 @@ public class SIIBuilt {
 			if(vat.isIntracommunity()){
 				frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._09.getName());
 			}
-			ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+			ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
 	    	Boolean isRegistro = "R".equals(ap.getValue());
 			Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
 			if(opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){

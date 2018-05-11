@@ -270,7 +270,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			inventory.setWarehouse(warehouse);
 			inventory = (Inventory) inventoryBean.insert(inventory);
 			
-			com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
+			com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 			
 	        Query q = session.createQuery(
 	                " select item, sum(stock.quantity), item.id " +
@@ -454,7 +454,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 
 		updateID = null;
 		LinkedList<Integer> idList = new LinkedList<>();
-		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
+		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 		
 		AON.getInventoryDetailStream(domainName, domainId, user, f -> f.getInventoryProperty().eq(inventory.getId()))
 		.map(i -> OccamClassesTransform.getInventoryDetail(i))

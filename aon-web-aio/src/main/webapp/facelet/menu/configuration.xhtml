@@ -92,13 +92,7 @@
 											value="#{bundle.company_department_module}" />
 									</aon:div>
 								</aon:if>
-								<aon:if test="#{aonRole.config}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mailProcess" action="mailProcess_form"
-											actionListener="#{mailProcess.onInit}"
-											value="#{bundle.webmail_mailAccount_process}" />
-									</aon:div>
-								</aon:if>
+								
 								<aon:if test="#{aonRole.sysAdmin}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="applicationParameter"

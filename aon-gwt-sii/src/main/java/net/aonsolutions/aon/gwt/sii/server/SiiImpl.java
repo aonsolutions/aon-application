@@ -16,7 +16,7 @@ import net.aonsolutions.aon.gwt.sii.client.ISii;
 public class SiiImpl extends AonRemoteServiceServlet implements ISii{
 
 	public Administration getAdministration(Domain domain, String login) {
-		ApplicationParameter param= AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
+		ApplicationParameter param= AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
 		return param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
 	}
 

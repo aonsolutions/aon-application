@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ApplicationParameterFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ApplicationParameterPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -210,4 +211,22 @@ public class AppParamDAO {
 				.and(APP_PARAM.NAME.eq(param)).execute();
 		return fetchOne(ctx, param);
 	}
+	
+	public static ApplicationParameter insertApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter) {
+		return ctx.getDslContext()
+			.insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+			.values(ctx.getDomainId(), applicationParameter.getName(), applicationParameter.getValue())
+			.returning().fetch().stream().map(new ApplicationParameterFiller()).findFirst().orElse(new ApplicationParameter());
+	}
+	
+	public static ApplicationParameter updateApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter, ApplicationParameterFilter filter) {
+		return ctx.getDslContext()
+			.update(APP_PARAM)
+			.set(APP_PARAM.DOMAIN, applicationParameter.getDomain())
+			.set(APP_PARAM.NAME, applicationParameter.getName())
+			.set(APP_PARAM.VALUE, applicationParameter.getValue())
+			.where(APPLICATION_PARAMETER_PROPERTIES.getConditions(filter))
+			.returning().fetch().stream().map(new ApplicationParameterFiller()).findFirst().orElse(new ApplicationParameter());
+	}
+	
 }

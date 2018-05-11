@@ -596,12 +596,12 @@ public class ReposServlet extends HttpServlet{
 	
 	private JSONObject getFastFilterJSON(Domain domain, String userName) {
 		JSONObject json = new JSONObject();
-		String mine = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_MINE).getValue();
-		String assignee = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_ASSIGNEE).getValue();
-		String withoutGroup = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_GROUP).getValue();
-		String withoutOperator= AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_OPERATOR).getValue();
-		String type = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_TYPE).getValue();
-		String priority = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_PRIORITY).getValue();
+		String mine = AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_MINE).getValue();
+		String assignee = AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_ASSIGNEE).getValue();
+		String withoutGroup = AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_GROUP).getValue();
+		String withoutOperator= AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_OPERATOR).getValue();
+		String type = AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_TYPE).getValue();
+		String priority = AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_FAST_FILTER_PRIORITY).getValue();
 		json.put("mine", mine != null && mine.equalsIgnoreCase("true"));
 		json.put("assignee", assignee != null && assignee.equalsIgnoreCase("true"));
 		json.put("without_group", withoutGroup != null && withoutGroup.equalsIgnoreCase("true"));
@@ -625,10 +625,10 @@ public class ReposServlet extends HttpServlet{
 
 	private JSONObject getGithubJSON(Domain domain, String userName) {
 		JSONObject json = new JSONObject();
-		String active = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_ACTIVE).getValue();
-		String username = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_USERNAME).getValue();
-		String repository = AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_REPOSITORY).getValue();
-		String token= AON.getApplicationParamenter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_TOKEN).getValue();
+		String active = AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_ACTIVE).getValue();
+		String username = AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_USERNAME).getValue();
+		String repository = AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_REPOSITORY).getValue();
+		String token= AON.getApplicationParameter(domain.getName(), domain.getId(), userName, AppParam.CALL_CENTER_GITHUB_TOKEN).getValue();
 
 		json.put("active", active != null && "1".equals(active));
 		json.put("username", username != null ? username : MSG.EMPTY);

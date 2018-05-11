@@ -105,7 +105,7 @@ public class DBStock {
 			Integer warehouseId = data3.getValue(WAREHOUSE.ID);
 			Integer workplaceId = data3.getValue(WAREHOUSE.WORKPLACE); 
 			java.util.Date inventoryDate = data3.getValue(INVENTORY.INVENTORY_DATE);
-			ApplicationParameter ap = AON.getApplicationParamenter(domain, domainId, login, AppParam.AON_PRODUCT_VALUATION_METHOD);
+			ApplicationParameter ap = AON.getApplicationParameter(domain, domainId, login, AppParam.AON_PRODUCT_VALUATION_METHOD);
 
 			
 			stock.stream().filter(f -> f.getProduct() != null).forEach(s ->{

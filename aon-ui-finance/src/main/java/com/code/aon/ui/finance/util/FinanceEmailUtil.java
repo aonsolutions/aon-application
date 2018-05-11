@@ -20,9 +20,11 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -56,6 +58,7 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -84,8 +87,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 	public void initMessageController(MessageController messageController, Finance finance) throws ManagerBeanException{
 		String[] emails = getAdministrativeEmails(finance.getRegistry());
 		initMessageController(messageController, emails);
-		
-		if(!messageController.initMessageController(getDomain(finance.getDomain()), "", getMap(finance), "AON_MAIL_PROCESS" + MailProcessType.FINANCE.ordinal())) {
+		messageController.setGenericMessage(false);
+		messageController.setTemplates(getTemplates(MailProcessType.FINANCE));
+		if(!messageController.initMessageController(getDomain(finance.getDomain()), "", getMap(finance), "AON_MAIL_PROCESS_" + MailProcessType.FINANCE.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(finance));
 		}
 		messageController.setSubject(getEmailSubject(finance));
@@ -133,8 +137,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 	public void initMessageController(MessageController messageController, Invoice invoice, IAttachment attach, boolean facturae) throws ManagerBeanException, IOException{
 		String[] emails = getAdministrativeEmails(invoice.getRegistry());
 		initMessageController(messageController, emails);
-
-		if(!messageController.initMessageController(getDomain(invoice.getDomain()), "", getMap(invoice), "AON_MAIL_PROCESS" + MailProcessType.INVOICE.ordinal())) {
+		messageController.setGenericMessage(false);
+		messageController.setTemplates(getTemplates(MailProcessType.INVOICE));
+		if(!messageController.initMessageController(getDomain(invoice.getDomain()), "", getMap(invoice), "AON_MAIL_PROCESS_" + MailProcessType.INVOICE.ordinal() + "_1")) {
 			if(attach!=null){
 				initMessageController(messageController, emails, getEmailBody(invoice));
 			} else {
@@ -158,6 +163,20 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 			}	
 		}
 	}	
+	
+	private LinkedList<SelectItem> getTemplates(MailProcessType type) {
+		LinkedList<SelectItem> templates = new LinkedList<>();
+		AON.getApplicationParameterStream(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> 
+			f.getDomainProperty().eq(getCompany().getDomain())
+			.and(f.getNameProperty().like("AON_MAIL_PROCESS_" + type.ordinal() + "%"))).forEach(ap -> {
+				String[] ids = StringUtils.split(ap.getValue());
+				MailTemplate mt = AON.getMailTemplate(AonUtil.getDomainName(), ap.getDomain(), "", f-> 
+					f.getIdProperty().eq(Integer.parseInt(ids[1])));
+				templates.add(new SelectItem(mt.getId(), mt.getName()));
+			});
+		
+		return templates;
+	}
 	
 	private Domain getDomain(Integer domainId) {
 		return AON.getDomain(AonUtil.getDomainName(), domainId, "");

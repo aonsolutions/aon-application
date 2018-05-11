@@ -136,7 +136,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			}
 			
 			if("0.0".equals(map.get(QualitySheetCode.UFQC2.getName()))){
-				ApplicationParameter app = AON.getApplicationParamenter(domainName, domainId, login, AppParam.QUALITY_PFONDO);
+				ApplicationParameter app = AON.getApplicationParameter(domainName, domainId, login, AppParam.QUALITY_PFONDO);
 				map.put(QualitySheetCode.UFQC2.getName(), app != null ? app.getValue(): "0.0");
 			}
  		}

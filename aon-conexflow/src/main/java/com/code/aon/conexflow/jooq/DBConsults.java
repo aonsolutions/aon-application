@@ -229,7 +229,7 @@ public class DBConsults {
 	public static void updateConexFlowDescription(Domain domain, String login, Integer attachId, String description){
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.PROJECT);
 		attach.setDescription(description);
-		AON.update(domain.getName(), domain.getId(), login, attach);
+		AON.updateAttach(domain.getName(), domain.getId(), login, attach);
 	}
 	
 	public static void updateConexFlowPayslipDescription(Domain domain, String login, String filter, String description){
@@ -237,7 +237,7 @@ public class DBConsults {
 			f.getDescriptionProperty().eq(filter).and(f.getTypeProperty().eq(ProjectAttachmentType.PAYSLIP.value()))
 			, AttachType.PROJECT);
 		attach.setDescription(description);
-		AON.update(domain.getName(), domain.getId(), login, attach);
+		AON.updateAttach(domain.getName(), domain.getId(), login, attach);
 	}
 	
 	public static ConexFlow getConexFlowLastOperation(Domain domain, Integer project){
@@ -333,11 +333,11 @@ public class DBConsults {
 	}
 	
 	public static ConexFlowConnection getConection(Domain domain){
-		ApplicationParameter server = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_SERVER_PARAM);
-		ApplicationParameter serverAck = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
-		ApplicationParameter user = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_USER);
-		ApplicationParameter keyA = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_KEY_A);
-		ApplicationParameter keyB = AON.getApplicationParamenter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_KEY_B);
+		ApplicationParameter server = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_SERVER_PARAM);
+		ApplicationParameter serverAck = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
+		ApplicationParameter user = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_USER);
+		ApplicationParameter keyA = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_KEY_A);
+		ApplicationParameter keyB = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.PMS_CONEXFLOW_KEY_B);
 
 		return new ConexFlowConnection()
 				.setActive(server != null && server.getValue() != null && !server.getValue().equals("Null"))

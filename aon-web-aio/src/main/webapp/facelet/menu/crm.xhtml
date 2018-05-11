@@ -53,6 +53,9 @@
 											value="#{bundle.commercial_activity_module}" />
 									</aon:div>
 								</aon:if>
+								<aon:div style="height: 26px;">
+						
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 						
@@ -169,7 +172,10 @@
 											value="#{bundle.commercial_target_deduplication_module}">
 										</aon:commandLink>
 									</aon:div>									
-								</aon:div>								
+								</aon:div>	
+								<aon:div style="height: 26px;">
+						
+								</aon:div>							
 							</aon:div>
 						</aon:panelGrid>
 						
@@ -291,6 +297,11 @@
 											value="#{bundle.company_images_module}">
 											<aon:actionListener method="#{companyImages.onSearch}" />
 										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mailProcess" action="mailProcess_form"
+											actionListener="#{mailProcess.onInit}"
+											value="#{bundle.webmail_mailAccount_process}" />
 									</aon:div>
 								</aon:div>							
 							</aon:panelGrid>

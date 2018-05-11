@@ -338,7 +338,7 @@ public class printLiqList extends HttpServlet{
 							// P FONDO
 							String p_fondo = map.containsKey(QualitySheetCode.UFQC2.getName()) ?  map.get(QualitySheetCode.UFQC2.getName()) : "0.0";
 							if("0.0".equals(p_fondo)){
-								ApplicationParameter app = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.QUALITY_PFONDO);
+								ApplicationParameter app = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.QUALITY_PFONDO);
 								p_fondo = app != null ? app.getValue(): "0.0";
 							}
 							Double pFondo = Double.parseDouble(p_fondo.replace(",", "."));

@@ -77,6 +77,16 @@ public class CommonImpl implements ICommon {
 		return AppParamDAO.insertApplicationParameter(ctx, param, value);
 	}
 	
+	@Override
+	public ApplicationParameter insertApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter) {
+		return AppParamDAO.insertApplicationParameter(ctx, applicationParameter);
+	}
+	
+	@Override
+	public ApplicationParameter updateApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter, ApplicationParameterFilter filter) {
+		return AppParamDAO.updateApplicationParameter(ctx, applicationParameter, filter);
+	}
+	
 	// ------------------ FISCAL PARAMETERS
 
 	@Override
@@ -324,11 +334,11 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(configuration -> 
 					DataResponseDAO.deleteDataResponseDetail(ctx, filter));
 	}
-
+	
 	@Override
-	public MailTemplate getMailTemplate(AONContext ctx, MailTemplateFilter filter) {
+	public Stream<MailTemplate> getMailTemplateStream(AONContext ctx, MailTemplateFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			MailDAO.getMailTemplate(ctx, filter));
+			MailDAO.getMailTemplateStream(ctx, filter));
 	}
 
 }

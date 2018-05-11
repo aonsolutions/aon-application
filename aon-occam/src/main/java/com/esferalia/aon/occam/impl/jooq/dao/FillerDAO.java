@@ -38,12 +38,14 @@ import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.util.function.Function;
 
 import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -116,6 +118,17 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class FillerDAO {
 
+	public static class ApplicationParameterFiller implements Function<Record, ApplicationParameter> {
+		@Override
+		public ApplicationParameter apply(Record r) {
+			return new ApplicationParameter()
+					.setId(r.getValue(APP_PARAM.ID))
+					.setDomain(r.getValue(APP_PARAM.DOMAIN))
+					.setName(r.getValue(APP_PARAM.NAME))
+					.setValue(r.getValue(APP_PARAM.VALUE));
+		}
+	}
+	
 	public static class FullWarehouseFiller implements Function<WarehouseRecord, Warehouse> {
 		@Override
 		public Warehouse apply(WarehouseRecord r) {

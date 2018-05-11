@@ -1,7 +1,5 @@
 package com.code.aon.marketing.util;
 
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -16,7 +14,6 @@ import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.marketing.MailProcess;
 import com.code.aon.marketing.Template;
 import com.code.aon.marketing.enumeration.MailProcessType;
-import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.db.MailAccount;
 
 public class MailProcessUtil {
@@ -39,7 +36,7 @@ public class MailProcessUtil {
 	}
 
 	private static String getKey( MailProcessType type ) {
-		return AON_MAIL_PROCESS + type.ordinal();
+		return AON_MAIL_PROCESS + "_" + type.ordinal() + "_1";
 	}
 	
 	public static MailProcess get( MailProcessType type ) {
@@ -56,9 +53,11 @@ public class MailProcessUtil {
 				mailProcess.setMailAccount(mailAccount);
 				mailProcess.setType(type);
 				mailProcess.setTemplate(template);
+				mailProcess.setPrincipal(Integer.parseInt(ap.getName().substring(ap.getName().length() - 1)));
 				return mailProcess;
 			}
 		}
+
 		return null;
 	}
 

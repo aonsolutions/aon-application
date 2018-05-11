@@ -503,7 +503,7 @@ public class Utils {
 			return item.getPurchasePrice();
 					
 		Integer domainId = item.getDomain();
-		ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, AppParam.AON_PRODUCT_AVERAGE_MONTHS);
+		ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, user, AppParam.AON_PRODUCT_AVERAGE_MONTHS);
 		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailListUntilDate(domainName, domainId, user, item, ap.getValue(), workplaceId, warehouseId, inventoryDate);
 		

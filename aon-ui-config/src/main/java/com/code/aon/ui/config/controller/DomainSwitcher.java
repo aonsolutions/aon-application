@@ -468,12 +468,12 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 	
 	public boolean isUdapa() {
-	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParamenter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
+	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParameter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
 		return ud != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("udapa");
 	}
 	
 	public boolean isPaturpat() {
-	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParamenter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
+	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParameter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
 		return ud != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("paturpat");
 	}
 

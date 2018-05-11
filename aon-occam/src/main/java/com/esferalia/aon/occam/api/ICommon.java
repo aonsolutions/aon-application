@@ -51,6 +51,8 @@ public interface ICommon {
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param);
 	public FiscalParameters getFiscalParameters(AONContext ctx);	
 	public ApplicationParameter insertApplicationParameter(AONContext ctx, String param, String value);
+	public ApplicationParameter insertApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter);
+	public ApplicationParameter updateApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter, ApplicationParameterFilter filter);
 
 	// --------------------------------------------
 	// ENTERPRISE
@@ -124,5 +126,6 @@ public interface ICommon {
 
 	// MAIL TEMPLATE
 	
-	public MailTemplate getMailTemplate(AONContext ctx, MailTemplateFilter filter);
+	public Stream<MailTemplate> getMailTemplateStream(AONContext ctx, MailTemplateFilter filter);
+
 }

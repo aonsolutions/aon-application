@@ -14,29 +14,43 @@ public class MailProcess implements ITransferObject {
 	private MailAccount mailAccount;
 	
 	private Template template;
+	
+	private Integer principal;
 
 	public MailProcessType getType() {
 		return type;
 	}
 
-	public void setType(MailProcessType type) {
+	public MailProcess setType(MailProcessType type) {
 		this.type = type;
+		return this;
 	}
 
 	public MailAccount getMailAccount() {
 		return mailAccount;
 	}
 
-	public void setMailAccount(MailAccount mailAccount) {
+	public MailProcess setMailAccount(MailAccount mailAccount) {
 		this.mailAccount = mailAccount;
+		return this;
 	}
 
 	public Template getTemplate() {
 		return template;
 	}
 
-	public void setTemplate(Template template) {
+	public MailProcess setTemplate(Template template) {
 		this.template = template;
+		return this;
+	}
+	
+	public Integer getPrincipal() {
+		return principal;
+	}
+
+	public MailProcess setPrincipal(Integer principal) {
+		this.principal = principal;
+		return this;
 	}
 	
 }

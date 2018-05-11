@@ -606,13 +606,8 @@ public class AON {
 		}
 	}
 	
-	public static ApplicationParameter getApplicationParamenter(String domainName, Integer domainId, String login, AppParam param){
+	public static ApplicationParameter getApplicationParameter(String domainName, Integer domainId, String login, AppParam param){
 		ApplicationParameter ap = fetchApplicationParameter(domainName, domainId, login, param);
-		return ap != null ? ap : new ApplicationParameter();
-	}
-	
-	public static ApplicationParameter getApplicationParamenter(String domainName, Integer domainId, String login, String id){
-		ApplicationParameter ap = getApplicationParameter(domainName, domainId, login, id);
 		return ap != null ? ap : new ApplicationParameter();
 	}
 	
@@ -625,6 +620,28 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().insertApplicationParameter(ctx, param, value);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static ApplicationParameter insertApplicationParameter(String domainName, Integer domainId, String login, ApplicationParameter applicationParameter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().insertApplicationParameter(ctx, applicationParameter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static ApplicationParameter updateApplicationParameter(String domainName, Integer domainId, String login, ApplicationParameter applicationParameter, ApplicationParameterFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().updateApplicationParameter(ctx, applicationParameter, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -5049,7 +5066,18 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getMailTemplate(ctx, filter);
+			return getCommon().getMailTemplateStream(ctx, filter).findFirst().orElse(new MailTemplate());
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<MailTemplate> getMailTemplateStream(String domainName, Integer domainId, String login, MailTemplateFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getMailTemplateStream(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -131,7 +131,7 @@ public class InvoiceServlet extends HttpServlet{
 			
 			Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
 			
-			String reportKey = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM).getValue();
+			String reportKey = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM).getValue();
 			
 			Company company = company(AON.getCompanyForDomain(domain.getName(), domain.getId(), login));
 			
@@ -557,7 +557,7 @@ public class InvoiceServlet extends HttpServlet{
 
 	private InputStream getTemplateInputStream(Domain domain, String login, ReportConfig config ) {
 		InputStream input = null;
-		String customTemplate = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, "REPORT_"+ config.getId()).getValue();
+		String customTemplate = AON.getApplicationParameter(domain.getName(), domain.getId(), login, "REPORT_"+ config.getId()).getValue();
 		if (! StringUtils.isEmpty(customTemplate) ) {
 			File file = new File( config.getTemplate() );
 			File customDirectory = new File( REPORT_PATH, customTemplate );

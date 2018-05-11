@@ -14,7 +14,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
@@ -40,6 +43,7 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CommercialEmailUtil extends CompanyEmailUtil {
@@ -58,8 +62,10 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 		}
 		initMessageController(messageController, emails);
 		messageController.setSubject( getEmailSubject(offer) );
-	
-		Boolean istemplate = messageController.initMessageController(getDomain(offer.getDomain()), "", getMap(offer), "AON_MAIL_PROCESS" + MailProcessType.OFFER.ordinal());
+		
+		messageController.setGenericMessage(false);
+		messageController.setTemplates(getTemplates(MailProcessType.OFFER));
+		Boolean istemplate = messageController.initMessageController(getDomain(offer.getDomain()), "", getMap(offer), "AON_MAIL_PROCESS_" + MailProcessType.OFFER.ordinal() + "_1");
 		
 		String bodyMessage = "";
 		if(includeOffer){
@@ -81,6 +87,20 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 		if(!istemplate) {
 			messageController.updateMessageBody( this.getEmailContent(bodyMessage) );
 		}
+	}
+	
+	private LinkedList<SelectItem> getTemplates(MailProcessType type) {
+		LinkedList<SelectItem> templates = new LinkedList<>();
+		AON.getApplicationParameterStream(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> 
+			f.getDomainProperty().eq(getCompany().getDomain())
+			.and(f.getNameProperty().like("AON_MAIL_PROCESS_" + type.ordinal() + "%"))).forEach(ap -> {
+				String[] ids = StringUtils.split(ap.getValue());
+				MailTemplate mt = AON.getMailTemplate(AonUtil.getDomainName(), ap.getDomain(), "", f-> 
+					f.getIdProperty().eq(Integer.parseInt(ids[1])));
+				templates.add(new SelectItem(mt.getId(), mt.getName()));
+			});
+		
+		return templates;
 	}
 	
 	private Map<String,String> getMap(Offer offer) {

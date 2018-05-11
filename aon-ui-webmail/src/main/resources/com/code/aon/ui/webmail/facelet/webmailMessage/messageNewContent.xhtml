@@ -80,11 +80,20 @@
 					</aon:div>							
 					<aon:selectOneMenu id="NewMail_Template#{messageSuffix}"
 						reRender="messageContent#{messageSuffix}"
-						rendered="#{webmailMessage.showTemplates and (marketingTemplate.templateCount &gt; 0)}"
+						rendered="#{webmailMessage.genericMessage and webmailMessage.showTemplates and (marketingTemplate.templateCount &gt; 0)}"
 						valueChangeListener="#{webmailMessage.onTemplateChanged}"
 						value="#{webmailMessage.template}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{marketingTemplate.templates}" />
+					</aon:selectOneMenu>
+					
+					<aon:selectOneMenu id="NewMail_GenericTemplate#{messageSuffix}"
+						reRender="messageContent#{messageSuffix}"
+						rendered="#{!webmailMessage.genericMessage and webmailMessage.showTemplates and (marketingTemplate.templateCount &gt; 0)}"
+						valueChangeListener="#{webmailMessage.onTemplateChanged}"
+						value="#{webmailMessage.template}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{webmailMessage.templates}" />
 					</aon:selectOneMenu>
 					
 					<aon:if test="#{!skipRecipients}" >

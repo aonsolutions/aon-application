@@ -1308,6 +1308,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			   }	
 			   bos.close();
 			   zis.closeEntry();
+			   zis.close();
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -1335,7 +1336,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		attach.setModificationDate(new java.util.Date());
 		attach.setCreationUser(getUserLogin());
 		attach.setModificationUser(getUserLogin());
-		Integer id = AON.insert(domain.getName(), domain.getId(), getUserLogin(), attach);
+		Integer id = AON.insertAttach(domain.getName(), domain.getId(), getUserLogin(), attach);
 		fi.getTags().stream().forEach(tag ->{
 			AON.insertRegistryAttachTag(domain.getName(), domain.getId(), getUserLogin(), id, tag.getId());
 		});
@@ -1395,12 +1396,12 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	
 	
 	public Boolean isBeta(Domain domain) {
-		ApplicationParameter appParam = AON.getApplicationParamenter(domain.getName(), domain.getId(), getUserLogin(),AppParam.AON_BETA_ENABLED);
+		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), getUserLogin(),AppParam.AON_BETA_ENABLED);
 		return (appParam!=null && new Boolean(appParam.getValue()));
 	}
 	
 	public Boolean isAlpha(Domain domain) {
-		ApplicationParameter appParam = AON.getApplicationParamenter(domain.getName(), domain.getId(), getUserLogin(),AppParam.AON_ALPHA_ENABLED);
+		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), getUserLogin(),AppParam.AON_ALPHA_ENABLED);
 		return (appParam!=null && new Boolean(appParam.getValue()));
 	}
 }

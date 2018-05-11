@@ -98,7 +98,7 @@ public class SIIServlet extends HttpServlet{
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
 			
-			ApplicationParameter param= AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
+			ApplicationParameter param= AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
 			Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
 
 			try{

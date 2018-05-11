@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags.Flag;
@@ -104,9 +106,13 @@ public class MessageController implements IWebMailConstants, Serializable {
     
     private boolean showTemplates;
     
+    private List<SelectItem> templates;
+    
     private List<Address> sentAddressList;
     
     private Map<String, String> variableMap;
+    
+    Boolean genericMessage;
     
 	private MailConfigController getMailConfig() {
 		return (MailConfigController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
@@ -274,6 +280,8 @@ public class MessageController implements IWebMailConstants, Serializable {
 		template = null;
 		showTemplates = true;
 		variableMap = new HashMap<>();
+		genericMessage = true;
+		templates = new LinkedList<SelectItem>();
 	}
 
 	public void initNewMsgFileList(){
@@ -692,5 +700,21 @@ public class MessageController implements IWebMailConstants, Serializable {
 	public void setShowTemplates(boolean showTemplates) {
 		this.showTemplates = showTemplates;
 	}
-	
+
+	public List<SelectItem> getTemplates() {
+		return templates;
+	}
+
+	public void setTemplates(List<SelectItem> templates) {
+		this.templates = templates;
+	}
+
+	public Boolean getGenericMessage() {
+		return genericMessage;
+	}
+
+	public void setGenericMessage(Boolean genericMessage) {
+		this.genericMessage = genericMessage;
+	}
+		
 }

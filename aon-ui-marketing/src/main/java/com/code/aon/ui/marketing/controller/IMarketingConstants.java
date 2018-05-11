@@ -42,4 +42,5 @@ public interface IMarketingConstants {
 
 	String SHOW_PHONE_ACTION_MEDIA_TYPE = "showPhoneActionMediaType";
 	
+	String COMPANY_CONTROLLER = "company";
 }

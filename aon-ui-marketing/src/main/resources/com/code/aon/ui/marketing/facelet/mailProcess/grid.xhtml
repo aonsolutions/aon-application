@@ -31,15 +31,15 @@
 								<aon:outputLabel for="MailProcess_type"
 									value="#{bundle.aon_type}" />
 							</f:facet>
-							<aon:outputText value="#{to.type}" rendered="#{formList}" />
+							<aon:outputText value="#{to.type.name}" rendered="#{formList}" />
 							<aon:selectOneMenu id="MailProcess_type" rendered="#{formEdit}"
-								required="true" value="#{controller.to.type}">
+								required="true" value="#{controller.type}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{mailProcess.mailProcessTypes}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
 								<aon:selectOneMenu id="MailProcess_type-New" rendered="#{formNew}"
-									required="true" value="#{controller.to.type}">
+									required="true" value="#{controller.type}">
 									<f:selectItem itemLabel="-" value="#{null}"/>
 									<f:selectItems value="#{mailProcess.mailProcessTypes}" />
 								</aon:selectOneMenu>
@@ -51,15 +51,15 @@
 								<aon:outputLabel for="MailProcess_mailAccount"
 									value="#{bundle.webmail_mailAccount_full}" />
 							</f:facet>
-							<aon:outputText value="#{to.mailAccount.name}" rendered="#{formList}" />
+							<aon:outputText value="#{to.mailAccount.displayName}" rendered="#{formList}" />
 							<aon:selectOneMenu id="MailProcess_mailAccount" rendered="#{formEdit}"
-								required="true" value="#{controller.to.mailAccount}">
+								required="true" value="#{controller.mailAccount}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{mailProcess.mailAccounts}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
 								<aon:selectOneMenu id="MailProcess_mailAccount-New" rendered="#{formNew}"
-									required="true" value="#{controller.to.mailAccount}">
+									required="true" value="#{controller.mailAccount}">
 									<f:selectItem itemLabel="-" value="#{null}"/>
 									<f:selectItems value="#{mailProcess.mailAccounts}" />
 								</aon:selectOneMenu>
@@ -72,21 +72,42 @@
 									value="#{bundle.marketing_mail_template}" />
 							</f:facet>
 							<aon:outputText value="#{to.template.name}" rendered="#{formList}" />
-							<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
-								<ui:param name="lookupTo" value="#{controller.to.template}" />
+						 	<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{controller.template}" />
 								<ui:param name="idRequired" value="#{true}" />
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="lookupRendered" value="#{formEdit}" />
 							</ui:include>
 							<f:facet name="footer" >
 								<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
-									<ui:param name="lookupTo" value="#{controller.to.template}" />
+									<ui:param name="lookupTo" value="#{controller.template}" />
 									<ui:param name="idRequired" value="#{true}" />
 									<ui:param name="skipLabel" value="#{true}" />
 									<ui:param name="lookupRendered" value="#{formNew}" />
 									<ui:param name="lookupSuffix" value="-New" />
 								</ui:include>
 							</f:facet>	
+						
+						</aon:column>							
+						
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputLabel for="MailProcess_priority"
+									value="Prioridad" />
+							</f:facet>
+							<aon:outputText value="#{to.priorityName}" rendered="#{formList}" />
+							<aon:selectOneMenu id="MailProcess_priority" rendered="#{formEdit}"
+								required="true" value="#{controller.priority}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{mailProcess.uses}" />
+							</aon:selectOneMenu>
+							<f:facet name="footer">
+								<aon:selectOneMenu id="MailProcess_priority-New" rendered="#{formNew}"
+									required="true" value="#{controller.priority}" >
+									<f:selectItem itemLabel="-" value="#{null}"/>
+									<f:selectItems value="#{mailProcess.uses}" />
+								</aon:selectOneMenu>
+							</f:facet>
 						</aon:column>
 						
 					</ui:define>

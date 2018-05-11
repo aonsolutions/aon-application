@@ -177,7 +177,7 @@ public class FinanceServlet extends HttpServlet{
     }
     
     public static Filter iFilterEmitidas(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
-    	ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+    	ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
 		.and(f.getTypeProperty().eq(InvoiceType.SALES.value()))
@@ -202,7 +202,7 @@ public class FinanceServlet extends HttpServlet{
     }
     
     public static Filter iFilterRecibidas(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
-    	ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+    	ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
     			.and(isRegistro 
@@ -266,7 +266,7 @@ public class FinanceServlet extends HttpServlet{
 	
 	private JSONArray getInvoiceIntracomunitariasList(Domain domain, String login, Integer page, Integer perPage, Date from
 			,Boolean pending, Boolean sent, Boolean sent_error, Boolean error, Boolean anulada, String sii){
-		ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+		ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
 		JSONArray array = new JSONArray();
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
@@ -287,7 +287,7 @@ public class FinanceServlet extends HttpServlet{
 	}
     
 	public static Filter iFilterCobrosPagos(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
-		ApplicationParameter ap = AON.getApplicationParamenter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+		ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());	
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
     			.and(f.getVatAccrualPayment().eq((byte) 1))

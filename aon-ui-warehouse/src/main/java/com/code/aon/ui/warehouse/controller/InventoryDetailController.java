@@ -125,7 +125,7 @@ public class InventoryDetailController extends LinesController implements IColle
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getRemoteUser();
-		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParamenter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
+		com.esferalia.aon.occam.api.model.ApplicationParameter ap = AON.getApplicationParameter(domainName, domainId, user, com.esferalia.aon.occam.api.model.type.AppParam.AON_PRODUCT_VALUATION_METHOD);
 
 		Double cost  = InventoryController.getCost(inventoryDetail, workplaceId, inventory.getWarehouse().getId(), inventory.getInventoryDate(), ap);
 		inventoryDetail.setCost(cost);
