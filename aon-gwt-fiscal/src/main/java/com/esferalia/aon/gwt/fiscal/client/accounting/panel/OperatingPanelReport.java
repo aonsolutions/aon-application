@@ -7,16 +7,14 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
-import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -30,8 +28,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -40,6 +36,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -50,14 +47,13 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 
-public class StatementPanelReport extends DockLayoutPanel implements Focusable, HasAccountEntrySelectionHandlers{
+public class OperatingPanelReport extends DockLayoutPanel implements Focusable, HasAccountEntrySelectionHandlers{
 
 	private static CommonServiceAsync commonService;
 
 	private String currentDomainName;
 	private String currentUser;
 	private Integer currentDomainId;
-	private boolean allowChecks;
 	
 	private SimpleLayoutPanel centerPanel;
 	
@@ -65,26 +61,23 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	private DateBoxEx fromDate;
 	private DateBoxEx toDate;
 	private ListBox confidential;
-	private AccountBox account;
+	private ListBox level;
+	private ListBox previousPeriods;
 	private ListBox activity;
+	private CheckBox showPercents;
 	private Button cleanButton;
 
 	private boolean activitiesListBoxEnabled;
 	
-	public StatementPanelReport(String domainName,String user, int domainId) {
-		this(domainName,user,domainId,Integer.MAX_VALUE,null,null, false);
+	public OperatingPanelReport(String domainName,String user, int domainId) {
+		this(domainName,user,domainId,Integer.MAX_VALUE,null,null);
 	}
 	
-	public StatementPanelReport(String domainName,String user, int domainId, boolean allowChecks) {
-		this(domainName,user,domainId,Integer.MAX_VALUE,null,null, allowChecks);
-	}
-
-	public StatementPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountStatementParams params, boolean allowChecks) {
+	public OperatingPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountOperatingParams params) {
 		super(Unit.PX);
 		this.currentDomainName = domainName;
 		this.currentUser = user;
 		this.currentDomainId = domainId;
-		this.allowChecks = allowChecks;
 		
 		if (config == null) {
 			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
@@ -106,15 +99,19 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		}
 	}
 	
-	private void fill(int tabIndex, AonConfiguration config, AccountStatementParams params) {
-		activitiesListBoxEnabled = (config != null && config.hasActivities());
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
-		SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
-		addNorth(northPanel, 95);
-		centerPanel = new SimpleLayoutPanel();
-		add(centerPanel);
-		fillNorthPanel(northPanel,tabIndex,config,params);
+	private void fill(int tabIndex, AonConfiguration config, AccountOperatingParams params) {
+		if (config.getPeriods() == null || config.getPeriods().size() == 0 ) {
+			Window.alert("No se han encontrado ejercicios contables");
+		} else {
+			activitiesListBoxEnabled = (config != null && config.hasActivities());
+			addStyleName(AON.AON_CSS.aonScrollArea());
+			addStyleName(AON.AON_CSS.aonMarginBottom());
+			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
+			addNorth(northPanel, 105);
+			centerPanel = new SimpleLayoutPanel();
+			add(centerPanel);
+			fillNorthPanel(northPanel,tabIndex,config,params);
+		}
 	}
 	
 	public String getCurrentDomainName() {
@@ -127,15 +124,17 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		return currentUser;
 	}
 	
-	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountStatementParams params) {
+	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountOperatingParams params) {
 		
 		FlexTable dateTab = new FlexTable();
 		period = new AccountPeriodBox();
+		period.setWidth("100px");
 		fromDate = new DateBoxEx();
 		toDate = new DateBoxEx();
 		
 		boolean periodBoxShown = false;
 		period.fill(config.getPeriods(),true);
+		period.removeItem(0);
 		if (params != null) {
 			if (params.getPeriod() != null) {
 				for (AccountPeriod p : config.getPeriods()) {
@@ -154,7 +153,6 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				toDate.setValue(params.getToDate(), false);
 			}
 		} 
-		
 		period.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -181,6 +179,48 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 			}
 		});
 		
+		level = new ListBox();
+		level.addItem( "Cuentas a 2 d\u00EDgitos","2");
+		level.addItem( "Cuentas a 3 d\u00EDgitos","3");
+		level.addItem( "Cuentas a 4 d\u00EDgitos","4");
+		level.addItem( "Cuentas a 9 d\u00EDgitos","9");
+		level.setSelectedIndex(2);
+		if (params != null ) {
+			if (params.getLevel() == 9) { 
+				level.setSelectedIndex(3);
+			} else if (params.getLevel() == 3) {
+				level.setSelectedIndex(1);
+			} else if (params.getLevel() == 2) {
+				level.setSelectedIndex(0);
+			} else {
+				level.setSelectedIndex(3);		
+			}
+		}
+		level.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				onSearch();
+			}
+		});
+		
+		previousPeriods = new ListBox();
+		previousPeriods.addItem( "----");
+		previousPeriods.addItem( " ejercicio anterior");
+		previousPeriods.addItem( " dos \u00FAltimos ejercicios");
+		previousPeriods.addItem( " tres \u00FAltimos ejercicios");
+		previousPeriods.setSelectedIndex(0);
+		if (params != null ) {
+			previousPeriods.setSelectedIndex(params.getPreviousPeriods());
+		}
+		previousPeriods.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				onSearch();
+			}
+		});
+
 		if (config.getUser().hasConfidentialityRole()) {
 			confidential = new ListBox();
 			confidential.addItem( "Asientos NO confidenciales" );
@@ -201,21 +241,6 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				}
 			});
 		}
-		account = new AccountBox(this.currentDomainName,this.currentDomainId);
-		account.setRequired(false);
-		if (params != null && params.getFullAccount() != null) {
-			account.setValue(params.getFullAccount().getId()
-				,params.getFullAccount().getCode()
-				,params.getFullAccount().getDescription()
-				,false);
-		}
-		account.addSelectionHandler(new SelectionHandler<Account>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				onSearch();
-			}
-		});
 
 		if (activitiesListBoxEnabled) {
 			activity = new ListBox();
@@ -242,13 +267,24 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				}
 			});
 		}
+		
+		showPercents = new CheckBox("Informaci\u00F3n extendida");
+		if (params != null ) {
+			showPercents.setValue(params.isPercentsEnabled());
+		}
+		showPercents.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onSearch();
+			}
+		});
+		
 		FlexTable mainTab = new FlexTable();
 		mainTab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
 		mainTab.addStyleName(AON.AON_CSS.aonWidthAll());
 		mainTab.getColumnFormatter().setWidth(0, "auto");
 		mainTab.getColumnFormatter().setWidth(1, "50px");
-		
-		
 		
 		FlexTable tab = new FlexTable();
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -259,7 +295,9 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		tab.getColumnFormatter().setWidth(1, "1%");
 		tab.getColumnFormatter().setWidth(2, "1%");
 		tab.getColumnFormatter().setWidth(3, "1%");
-		tab.getColumnFormatter().setWidth(4, "auto");
+		tab.getColumnFormatter().setWidth(4, "1%");
+		tab.getColumnFormatter().setWidth(5, "1%");
+		tab.getColumnFormatter().setWidth(6, "auto");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.fiscalYear() +"/"+ AON.MSG.date()));
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
@@ -296,6 +334,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		
 		tab.setWidget(0, 1, dateTab);
 		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
+		tab.getFlexCellFormatter().setColSpan(0, 1, 3);
 		
 		if (activitiesListBoxEnabled) {
 			tab.setWidget(0, 2, new Label(AON.MSG.activity()));
@@ -305,7 +344,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 			tab.setWidget(0, 3, new Label());
 		}
 		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonPanelGridOdd());
-		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());	
+		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
 		
 		cleanButton = new Button();
 		cleanButton.setStyleName(AON.AON_CSS.aonIconDelete());
@@ -319,7 +358,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				fromDate.setValue(null,false);
 				toDate.setValue(null,false);
 				confidential.setSelectedIndex(2);
-				account.setAccount(null, false);;
+				level.setSelectedIndex(2);
 				if (activitiesListBoxEnabled) {
 					activity.setSelectedIndex(0);
 				}
@@ -328,26 +367,35 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 			}
 		});
 
-		tab.setWidget(1, 0, new Label(AON.MSG.account()));
+		tab.setWidget(1, 0, new Label(AON.MSG.level()));
 		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
 
-		tab.setWidget(1, 1, account);
+		tab.setWidget(1, 1, level);
 		tab.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
 		
+		tab.setWidget(1, 2, new Label("Comparar con ..."));
+		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonPanelGridOdd());
+		
+		tab.setWidget(1, 3, previousPeriods);
+		tab.getCellFormatter().setStyleName(1,3, AON.AON_CSS.aonPanelGridEven());
+		
+		
 		if (config.getUser().hasConfidentialityRole()) {
-			tab.setWidget(1, 2, new Label(AON.MSG.show()));
-			tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonPanelGridOdd());
+			tab.setWidget(1, 4, new Label(AON.MSG.show()));
+			tab.getCellFormatter().setStyleName(1,4, AON.AON_CSS.aonPanelGridOdd());
 			
-			tab.setWidget(1, 3, confidential);
-			tab.getCellFormatter().setStyleName(1,3, AON.AON_CSS.aonPanelGridEven());
+			tab.setWidget(1, 5, confidential);
+			tab.getCellFormatter().setStyleName(1,5, AON.AON_CSS.aonPanelGridEven());
 		} else {
-			tab.setWidget(1, 2, new Label());
-			tab.setWidget(1, 3, new Label());
+			tab.setWidget(1, 4, new Label());
+			tab.setWidget(1, 5, new Label());
 		}
 
 		cleanButton.setTitle(AON.MSG.clean());
-		tab.setWidget(1, 4, cleanButton);
-		tab.getCellFormatter().setStyleName(2,4, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(1, 6, cleanButton);
+		tab.getCellFormatter().setStyleName(1,6, AON.AON_CSS.aonPanelGridEven());
+
+		tab.setWidget(2, 1, showPercents);
 
 		FlowPanel min = new FlowPanel();
 		min.setStyleName(AON.AON_CSS.aonTextRight());
@@ -363,8 +411,8 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 			@Override
 			public void onClick(ClickEvent event) {
 				tab.removeStyleName(AON.AON_CSS.aonDisplayNone());
-				StatementPanelReport.this.setWidgetSize(northPanel, 95 );
-				StatementPanelReport.this.animate(500);
+				OperatingPanelReport.this.setWidgetSize(northPanel, 95 );
+				OperatingPanelReport.this.animate(500);
 			}
 		});
 
@@ -378,8 +426,8 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 			@Override
 			public void onClick(ClickEvent event) {
 				tab.addStyleName(AON.AON_CSS.aonDisplayNone());
-				StatementPanelReport.this.setWidgetSize(northPanel, 25);
-				StatementPanelReport.this.animate(500);
+				OperatingPanelReport.this.setWidgetSize(northPanel, 25);
+				OperatingPanelReport.this.animate(500);
 			}
 		});
 		min.add(minimize);
@@ -388,13 +436,13 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		mainTab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridOdd());
 
 		northPanel.setWidget(mainTab);
+		
 		if (params != null) {
 			tab.addStyleName(AON.AON_CSS.aonDisplayNone());
-			StatementPanelReport.this.setWidgetSize(northPanel, 25);
-			onSearch();
-		} else {
-			account.setFocus(true);
+			OperatingPanelReport.this.setWidgetSize(northPanel, 25);
 		}
+		onSearch();
+		
 	}
 
 	private ListBox getPeriodBox(LinkedList<AccountPeriod> periods, String selectedValue) {
@@ -493,33 +541,37 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 	
 	private void onSearch() {
-		AccountStatementParams params = getWidgetParams();
-		StatementPanel journalPanel = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params, allowChecks);
-		journalPanel.addSelectionHandler(new AccountEntrySelectionHandler () {
-			
-			@Override
-			public void onSelection(AccountEntrySelectionEvent  event) {
-				AccountEntrySelectionEvent.fire(StatementPanelReport.this, event.getSelectedItem(), event.getCallback() );
-			}
-		});
-		centerPanel.setWidget(journalPanel);
+		AccountOperatingParams params = getWidgetParams();
+		OperatingPanel operatingPanel = new OperatingPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
+//		operatingPanel.addSelectionHandler(new AccountEntrySelectionHandler () {
+//			
+//			@Override
+//			public void onSelection(AccountEntrySelectionEvent  event) {
+//				AccountEntrySelectionEvent.fire(OperatingPanelReport.this, event.getSelectedItem(), event.getCallback() );
+//			}
+//		});
+		centerPanel.setWidget(operatingPanel);
 	}
 
-	public AccountStatementParams getWidgetParams() {
+	public AccountOperatingParams getWidgetParams() {
 		Integer activityId = null;
 		if (activitiesListBoxEnabled) {
 			if (activity.getSelectedIndex() > 0 ) {
 				activityId = AonNumberUtils.toInteger(activity.getSelectedValue());
 			}
 		}
-		return new AccountStatementParams()
+		int l = level.getSelectedIndex();
+		return new AccountOperatingParams()
 			.setDomain(this.currentDomainId)
-			.setPeriod(period.getValue())
+			.setPeriod(AonNumberUtils.toInteger( period.getSelectedValue()))
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
 			.setActivity(activityId)
-			.setAccount(account.getId())
-			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()));
+			.setLevel(l==0?2:l==1?3:l==2?4:l==3?9:3)
+			.setPreviousPeriods( previousPeriods.getSelectedIndex() )
+			.setPercentsEnabled(showPercents.getValue())
+			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			;
 	}
 	
 }

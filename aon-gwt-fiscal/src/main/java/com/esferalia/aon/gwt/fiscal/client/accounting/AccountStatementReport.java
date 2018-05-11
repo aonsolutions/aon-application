@@ -26,7 +26,7 @@ public class AccountStatementReport extends MainEntryPoint {
 		
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		StatementPanelReport panel = new StatementPanelReport(getCurrentDomainName(), getCurrentUser(), getCurrentDomain());
+		StatementPanelReport panel = new StatementPanelReport(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), true);
 		
 		
 		FlowPanel toolbarPanel = new FlowPanel();

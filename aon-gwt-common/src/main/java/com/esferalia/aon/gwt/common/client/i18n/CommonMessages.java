@@ -3149,6 +3149,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Cuenta contable")
  	String account();
  	
+ 	@DefaultMessage("Nivel")
+ 	String level();
+ 	
  	@DefaultMessage("Cta. Ctb.")
  	String accountAbr();
  	

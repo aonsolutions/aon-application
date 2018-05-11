@@ -478,6 +478,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-background-highlighted-yellow")
 	String aonBackgroundHighlightedYellow();
 	
+	@ClassName("aon-background-light-yellow")
+	String aonBackgroundLightYellow();
+	
 	@ClassName("aon-background-highlighted-green")
 	String aonBackgroundHighlightedGreen();
 
@@ -1261,6 +1264,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-report-table-row")
 	String aonReportTableRow();
-	
+
+	@ClassName("aon-report-table-bold")
+	String aonReportTableBold();
+
 	
 }

@@ -7,6 +7,8 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountOperatingParams;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
@@ -85,6 +87,10 @@ public interface FiscalServiceAsync {
 	void getAccountBalance(String domainName, int domain, 
 			AccountStatementParams params,
 			AsyncCallback<LinkedList<AccountStatement>> callback);
+	// --------------------------------------------------------------- ACCOUNT OPERATING STATEMENT
+	void getAccountOperatingReport(String domainName, String user, int domain
+			,AccountOperatingParams params
+			,AsyncCallback<AccountOperatingReport> callback);
 
 	void getAccountFinances(String domainName, int domain,
 			FinanceParams params,int offset, int limit,
@@ -105,6 +111,7 @@ public interface FiscalServiceAsync {
 	void getAonData(String domainName, Integer domainId, AsyncCallback<AonData> callback);
 	void presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id, AsyncCallback<Integer> callback);
 	void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException;
+
 
 
 }

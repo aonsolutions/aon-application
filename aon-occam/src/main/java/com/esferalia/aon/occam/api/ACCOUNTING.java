@@ -10,6 +10,8 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
+import com.esferalia.aon.occam.api.model.AccountOperatingParams;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
@@ -609,6 +611,18 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().regenerateJournal(ctx,accuountPeriod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccountOperatingReport getAccountOperatingReport(String domainName, String user, int domain,
+			AccountOperatingParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return  getAccounting().getAccountOperatingReport(ctx, params);
 		} finally {
 			if (ctx != null)
 				ctx.close();

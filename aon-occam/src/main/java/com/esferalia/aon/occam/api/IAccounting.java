@@ -9,6 +9,8 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
+import com.esferalia.aon.occam.api.model.AccountOperatingParams;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
@@ -81,6 +83,8 @@ public interface IAccounting {
 			throws AonCoreException;
 	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)
 			throws AonCoreException;
+	public AccountOperatingReport getAccountOperatingReport(AONContext ctx, AccountOperatingParams params);
+	
 	
 	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params,
 			int offset, int limit);

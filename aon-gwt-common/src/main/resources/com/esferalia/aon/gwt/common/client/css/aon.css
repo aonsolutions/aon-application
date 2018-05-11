@@ -517,6 +517,9 @@ input[type="checkbox"]:focus + label {
 .aon-background-highlighted-orange {
 	background-color: #ffa54f;
 }
+.aon-background-light-yellow {
+	background-color: #ffffcc;
+}
 .aon-background-white {
 	background-color: white;
 }
@@ -3018,14 +3021,15 @@ right
 	
 .aon-report-table {
 	width: 100%;
-	font: 0.8em "Fixed", "monospace";
+	font: normal 0.8em fixed,"Lucida Console", monospace;
 	border: #ccc 1px solid;
 	border-collapse: collapse;
 }
+
 @sprite .aon-report-table-header {
 	padding: 5px 1em;
 	height: 14.4px;
-	font-weight: bold !important;
+	font: bold 1em fixed,"Lucida Console", monospace  !important;
 	text-transform: uppercase;
 	text-align: center;
 	gwt-image: "aonDataTableHeader";
@@ -3047,10 +3051,13 @@ right
 	text-decoration: underline;
 }
 .aon-report-table td {
-	font: 1em "Fixed", "monospace";
+	font: normal 1em fixed,"Lucida Console", monospace;
 	padding-top: 1px;
 	padding-bottom: 1px;
 	padding-left: 3px;
 	padding-right: 3px;
 	border: #ccc 1px solid;
+}
+.aon-report-table-bold {
+	font: bold 1.1em fixed,"Lucida Console", monospace !important;
 }

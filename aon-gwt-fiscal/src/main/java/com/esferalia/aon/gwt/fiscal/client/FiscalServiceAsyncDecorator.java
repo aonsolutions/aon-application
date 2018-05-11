@@ -9,6 +9,8 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountOperatingParams;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
@@ -202,8 +204,7 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	// --------------------------------------------------------------- ACCOUNT
-	// STATEMENT
+	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	@Override
 	public void getAccountStatement(String domainName,String user, int domain,
 			AccountStatementParams params,
@@ -223,6 +224,19 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				domain,
 				params,
 				new AsyncCallbackWrapper<LinkedList<AccountStatement>>(callback));
+	}
+
+	@Override
+	public void getAccountOperatingReport(String domainName, String user, int domain, AccountOperatingParams params,
+			AsyncCallback<AccountOperatingReport> callback) {
+		AON.start();
+		fsa.getAccountOperatingReport(
+				domainName,
+				user,
+				domain,
+				params,
+				new AsyncCallbackWrapper<AccountOperatingReport>(callback));
+		
 	}
 
 	@Override
