@@ -482,7 +482,8 @@ public class AccountStatementDAO {
 					if (itm != null && pre != null) {
 						double p = (pre!=null)?AonMathUtils.absRounded( pre.getDebitBalance() - pre.getUnpaidBalance()):0.0;
 						double i = AonMathUtils.absRounded( itm.getDebitBalance() - itm.getUnpaidBalance());
-						itm.setIncreasePercent(AonMathUtils.round( i==0?0.0:(1-(p/i)) ));
+						//itm.setIncreasePercent(AonMathUtils.round( i==0?0.0:(1-(p/i)) ));
+						itm.setIncreasePercent(AonMathUtils.round( i==0?0.0:(((i-p)*100)/p) ));
 					}
 				}
 			}
