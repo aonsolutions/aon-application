@@ -16,11 +16,56 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 
 public class AgreementDraft extends Agreement {
 	
+	public static class Level implements Serializable, HasId<Integer>, HasDomain<Integer> {
+
+		private Integer id;
+		private Integer domain;
+		private String description;
+
+		@Override
+		public Integer getId() {
+			return id;
+		}
+
+		public void setId(Integer id) {
+			this.id = id;
+		}
+		
+		@Override
+		public Integer getDomain() {
+			return domain;
+		}
+		
+		public void setDomain(Integer domain) {
+			this.domain = domain;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		@Override
+		public int hashCode() {
+			return id;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return obj instanceof Level && id.equals(((Level) obj).id);
+		}
+
+	}
+
 	public static class SalaryTable implements Serializable {
 
 		public static class Key implements Serializable {
@@ -188,7 +233,7 @@ public class AgreementDraft extends Agreement {
 	private Set<Payment> payments;
 	private Map<Integer, Payment> draftPayments;
 
-	
+	private Set<Level> levels;
 	private Map<Integer, Level> draftLevels;
 
 	private Set<String> variables;
@@ -196,7 +241,7 @@ public class AgreementDraft extends Agreement {
 	private SalaryTable salaryTable;
 	private SalaryTable draftSalaryTable;
 
-	
+	private Map<Integer, Set<String>> categories;
 	private Map<Integer, Set<String>> draftCategories;
 
 	public AgreementDraft() {
@@ -247,7 +292,15 @@ public class AgreementDraft extends Agreement {
 	public void setPayments(Set<Payment> payments) {
 		this.payments = payments;
 	}
-	
+
+	public Set<Level> getLevels() {
+		return levels != null ? levels : Collections.<Level>emptySet();
+	}
+
+	public void setLevels(Set<Level> levels) {
+		this.levels = levels;
+	}
+
 	public Set<String> getVariables() {
 		return variables != null ? variables : Collections.<String>emptySet();
 	}
@@ -272,7 +325,13 @@ public class AgreementDraft extends Agreement {
 		this.datesWithChanges = datesWithChanges;
 	}
 
-	
+	public Map<Integer, Set<String>> getCategoriesMap() {
+		return categories != null ? categories : Collections.<Integer, Set<String>>emptyMap();
+	}
+
+	public void setCategoriesMap(Map<Integer, Set<String>> categories) {
+		this.categories = categories;
+	}
 
 	public Set<Level> getDraftLevels() {
 		return new HasIdSet<Level>(draftLevels);
@@ -408,7 +467,7 @@ public class AgreementDraft extends Agreement {
 
 	private Set<Level> getAllLevels() {
 		Set<Level> all = new HashSet<Level>(draftLevels.values());
-		all.addAll(getLevels());
+		all.addAll(levels);
 		return all;
 	}
 
@@ -434,7 +493,7 @@ public class AgreementDraft extends Agreement {
 		if (draftCategories.containsKey(levelId))
 			return draftCategories.get(levelId);
 		else
-			return getCategoriesMap().get(levelId);
+			return categories.get(levelId);
 	}
 
 }

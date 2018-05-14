@@ -21,7 +21,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -580,21 +579,6 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.setEventsWorkplace(updateEventsWorkplace, 
 				new AsyncCallbackWrapper<EventsWorkplace>(callback));
-		
-	}
-
-	@Override
-	public void getEmployeeInfoDataBase(Integer id, AsyncCallback<EmployeeInfoDataBase> callback) {
-		AON.start();
-		employeesServiceAsync.getEmployeeInfoDataBase(id,
-				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
-		
-	}
-
-	@Override
-	public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo, AsyncCallback<EmployeeInfoDataBase> callback) {
-		employeesServiceAsync.setEmployeeInfoDataBase(newEmployeeInfo,
-				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
 		
 	}
 

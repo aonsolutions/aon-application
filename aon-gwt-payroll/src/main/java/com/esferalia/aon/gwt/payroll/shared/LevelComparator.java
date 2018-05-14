@@ -4,7 +4,7 @@ import static com.esferalia.aon.watson.util.AonStringUtils.romanIntValue;
 
 import java.util.Comparator;
 
-import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 

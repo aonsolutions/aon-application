@@ -55,7 +55,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private ITEditor it;
 	private CalendarDraft calendarDraft;
 	private Documents documents;
-	private EmployeeDraft employeeDraft;
 	
 	
 
@@ -141,13 +140,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}
 
 	@Override
-	public void onEmployeeSelected(/*Employee employee*/ EmployeeDraftObject employeeDraftObject) {
-		detailPanel.setWidget(employeeDraft);
-		employeeDraft.setEmployeeDraftObject(employeeDraftObject);
-		
-		// ---------------------------- ANTIGUO -----------------------------------
-//		detailPanel.setWidget(jsf);
-//		jsf.employeeSelected(employee.getId());
+	public void onEmployeeSelected(Employee employee) {
+		detailPanel.setWidget(jsf);
+		jsf.employeeSelected(employee.getId());
 	}
 
 	@Override

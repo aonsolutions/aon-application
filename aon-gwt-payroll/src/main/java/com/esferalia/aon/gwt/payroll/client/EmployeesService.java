@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -156,9 +155,5 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 
 	EventsWorkplace setEventsWorkplace(
 			com.esferalia.aon.gwt.payroll.shared.EventsWorkplace updateEventsWorkplace);
-
-	EmployeeInfoDataBase getEmployeeInfoDataBase(Integer id);
-
-	EmployeeInfoDataBase setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo);
 
 }

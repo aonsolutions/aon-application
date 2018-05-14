@@ -1504,7 +1504,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
-	private EmployeeDraft employeeDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
 	private CategoryDraft categoryDraft;
@@ -1670,16 +1669,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	@Override
-	public void onEmployeeSelected(/*Employee employee,*/ EmployeeDraftObject employeeDraftObject) {
-		//Window.alert("HOLA");
-		EmployeeTree employeeTree = getEmployeeTree();
-		employeeTree.employeeDetail.setWidget(getEmployeeDraft());
-		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
-		
-		// ------------------------------------ ANTIGÜO ------------------------------------------------
-//		employeeDetail.setWidget(jsf);
-//		jsf.employeeSelected(employee.getId());
-//		this.employee = employee;
+	public void onEmployeeSelected(Employee employee) {
+		employeeDetail.setWidget(jsf);
+		jsf.employeeSelected(employee.getId());
+		this.employee = employee;
 	}
 
 	@Override
@@ -2007,13 +2000,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (calendarDraft == null)
 			calendarDraft = new CalendarDraft();
 		return calendarDraft;
-	}
-	
-	private EmployeeDraft getEmployeeDraft() {
-		// TODO Auto-generated method stub
-		if(employeeDraft == null)
-			employeeDraft = new EmployeeDraft();
-		return employeeDraft;
 	}
 
 	private EmployeeCalendarDraft getEmployeeCalendarDraft() {

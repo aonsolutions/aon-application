@@ -3,11 +3,11 @@ package com.esferalia.aon.gwt.payroll.sql;
 import static com.esferalia.aon.gwt.payroll.shared.AgreementDraft.isRemove;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getInteger;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getType;
+import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
-import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,9 +40,8 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqUtils;
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -50,6 +49,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.jooq.tables.AgreementData;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
@@ -794,7 +794,7 @@ public class SQLAgreementDraft {
 	}
 
 	private static int insertAgreement(Connection conn, Integer domainId,
-			Agreement draft) throws SQLException {
+			AgreementDraft draft) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -821,7 +821,7 @@ public class SQLAgreementDraft {
 	}
 
 	private static void updateAgreement(Connection conn, Integer domainId,
-			Agreement draft) throws SQLException {
+			AgreementDraft draft) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 
