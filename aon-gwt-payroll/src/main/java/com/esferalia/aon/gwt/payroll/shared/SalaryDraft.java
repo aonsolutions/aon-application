@@ -299,8 +299,8 @@ public class SalaryDraft extends SalaryPreview {
 			oldVariable = draftContext.remove(i);
 		}
 		
-//		Window.alert("SALARY_DRAFT --> " + var.getName() + " = " + var.getExpression() + 
-//						", StartDate :" + var.getStartDate() + ", EndDate :" + var.getEndDate());
+		Window.alert("SALARY_DRAFT --> " + var.getName() + " = " + var.getExpression() + 
+						", StartDate :" + var.getStartDate() + ", EndDate :" + var.getEndDate());
 		
 		draftContext.add(var);
 		return oldVariable;
