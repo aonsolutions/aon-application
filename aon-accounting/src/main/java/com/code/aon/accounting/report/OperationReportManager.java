@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.jooq.tools.StringUtils;
 
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.ManagerBeanException;
 import net.aonsolutions.core.dbutils.DatabaseUtil;
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -35,10 +36,21 @@ public class OperationReportManager {
 				+"LEFT OUTER JOIN invoice i on aei.invoice = i.id "
 				+"WHERE ae.domain = ? "
 				+"AND ae.entry_date between ? and ? "
-				+"AND ae.entry_type != 2 "
-				+"AND a.code like ? "
+//				+"AND ae.entry_type != " + AccountEntryType.OPERATING.ordinal()
+//				+"AND a.code like ? "
+				+"AND ("
+					+"(ae.entry_type IN ("+AccountEntryType.SALES_INVOICE.ordinal() 
+								+ "," + AccountEntryType.PURCHASE_INVOICE.ordinal()	
+								+ "," + AccountEntryType.EXPENSE_INVOICE.ordinal()
+								+ "," + AccountEntryType.EXPENSES.ordinal()
+					+") AND (a.code like ? || a.code like ?))"
+					+" OR (ae.entry_type != "+AccountEntryType.OPERATING.ordinal()+" AND a.code like ?)"
+					+") "
 				+"GROUP BY ae.id,aed.account "
 				+"ORDER BY ae.entry_date,ae.id,aed.id";
+		
+		System.out.println(select);
+		
 		String taxSelect = "SELECT " 
 				+"ELT(it.tax_type,'IVA','IRPF') taxType "
 				+", it.percentage percentage "
@@ -83,9 +95,13 @@ public class OperationReportManager {
 			}
 			ps.setDate(3, toDate );
 			if (params.isExpenses()) {
-				ps.setString(4, "6%");	
+				ps.setString(4, "6%");
+				ps.setString(5, "2%");
+				ps.setString(6, "6%");
 			} else {
 				ps.setString(4, "7%");
+				ps.setString(5, "2%");
+				ps.setString(6, "7%");
 			}
 			rs = ps.executeQuery();
 			
