@@ -122,7 +122,13 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 
 		map.put("gastos", Double.toString(finance.getExpenses()));
 		map.put("expenses", Double.toString(finance.getExpenses()));
-
+			
+		map.put("fecha_vencimiento", AonDateUtils.simpleFormat(finance.getDueDate()));
+		map.put("due_date", AonDateUtils.simpleFormat(finance.getDueDate()));
+		
+		map.put("fecha_factura", AonDateUtils.simpleFormat(finance.getInvoice().getDate()));
+		map.put("invoice_date", AonDateUtils.simpleFormat(finance.getInvoice().getDate()));
+		
 		return map;
 	}
 	
