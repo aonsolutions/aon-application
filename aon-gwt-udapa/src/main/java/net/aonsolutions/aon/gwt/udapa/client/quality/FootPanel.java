@@ -453,6 +453,22 @@ public class FootPanel extends Composite {
 	}
 	
 	private void tagPanel() {
+		String proveedor = "-";
+		String variedad = "-";
+		String productor = "-";
+		
+		String productDescription = parent.getMap().get("product_description");
+		Integer posA = productDescription.indexOf(".");
+		Integer posB = productDescription.indexOf("#");
+		if(posA >= 0 && posB >= 0) {
+			String[] arr = productDescription.substring(posA + 1, posB).split("-");
+			if(arr.length > 2) {
+				proveedor = arr[0];
+				variedad = arr[1];
+				productor = arr[2];
+			}		
+		}
+		
 		FlexTable ft = new FlexTable();
 
 		Label a = new Label("Posici\u00f3n");
@@ -471,13 +487,37 @@ public class FootPanel extends Composite {
 		tb2.setText("0");
 		ft.setWidget(1, 1, tb2);
 		
+		Boolean bool1 = true;
 		Label b1 = new Label("Destino");
 		b1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(1, 2, b1);
-		ListBox tb21 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		HorizontalPanel hp2 = new HorizontalPanel();
+		
+		ListBox lb21 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		lb21.setStyleName(AON.AON_CSS.aonInputText());
+		lb21.setWidth("100px");
+		
+		TextBox tb21 = new TextBox();
 		tb21.setStyleName(AON.AON_CSS.aonInputText());
 		tb21.setWidth("100px");
-		ft.setWidget(1, 3, tb21);
+		tb21.setVisible(false);
+
+		hp2.add(lb21);
+		hp2.add(tb21);
+		ft.setWidget(1, 3, hp2);
+		
+		Button but1 = new Button("");
+		but1.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				lb21.setVisible(!lb21.isVisible());
+				tb21.setVisible(!tb21.isVisible());
+			}
+		});
+		but1.setStyleName("aon-editDataTable-button");
+		but1.addStyleName("aon-icon-edit");
+		ft.setWidget(1, 4, but1);
 		
 		Label c = new Label("45/50");
 		c.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -490,10 +530,34 @@ public class FootPanel extends Composite {
 		Label c1 = new Label("Destino");
 		c1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(2, 2, c1);
-		ListBox tb31 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		HorizontalPanel hp3 = new HorizontalPanel();
+		
+		ListBox lb31 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		lb31.setStyleName(AON.AON_CSS.aonInputText());
+		lb31.setWidth("100px");
+		
+		TextBox tb31 = new TextBox();
 		tb31.setStyleName(AON.AON_CSS.aonInputText());
 		tb31.setWidth("100px");
-		ft.setWidget(2, 3, tb31);
+		tb31.setVisible(false);
+		
+		hp3.add(lb31);
+		hp3.add(tb31);
+		ft.setWidget(2, 3, hp3);
+		
+		Button but3 = new Button("");
+		but3.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				lb31.setVisible(!lb31.isVisible());
+				tb31.setVisible(!tb31.isVisible());
+			}
+		});
+		but3.setStyleName("aon-editDataTable-button");
+		but3.addStyleName("aon-icon-edit");
+		ft.setWidget(2, 4, but3);
+		
 		
 		Label d = new Label("50/60");
 		d.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -506,10 +570,33 @@ public class FootPanel extends Composite {
 		Label d1 = new Label("Destino");
 		d1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(3, 2, d1);
-		ListBox tb41 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		HorizontalPanel hp4 = new HorizontalPanel();
+		
+		ListBox lb41 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		lb41.setStyleName(AON.AON_CSS.aonInputText());
+		lb41.setWidth("100px");
+		
+		TextBox tb41 = new TextBox();
 		tb41.setStyleName(AON.AON_CSS.aonInputText());
 		tb41.setWidth("100px");
-		ft.setWidget(3, 3, tb41);
+		tb41.setVisible(false);
+		
+		hp4.add(lb41);
+		hp4.add(tb41);
+		ft.setWidget(3, 3, hp4);
+		
+		Button but4 = new Button("");
+		but4.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				lb41.setVisible(!lb41.isVisible());
+				tb41.setVisible(!tb41.isVisible());
+			}
+		});
+		but4.setStyleName("aon-editDataTable-button");
+		but4.addStyleName("aon-icon-edit");
+		ft.setWidget(3, 4, but4);
 		
 		Label e = new Label("60/80");
 		e.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -522,10 +609,33 @@ public class FootPanel extends Composite {
 		Label e1 = new Label("Destino");
 		e1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(4, 2, e1);
-		ListBox tb51 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		HorizontalPanel hp5 = new HorizontalPanel();
+		
+		ListBox lb51 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		lb51.setStyleName(AON.AON_CSS.aonInputText());
+		lb51.setWidth("100px");
+		
+		TextBox tb51 = new TextBox();
 		tb51.setStyleName(AON.AON_CSS.aonInputText());
 		tb51.setWidth("100px");
-		ft.setWidget(4, 3, tb51);
+		tb51.setVisible(false);
+		
+		hp5.add(lb51);
+		hp5.add(tb51);
+		ft.setWidget(4, 3, hp5);
+		
+		Button but5 = new Button("");
+		but5.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				lb51.setVisible(!lb51.isVisible());
+				tb51.setVisible(!tb51.isVisible());
+			}
+		});
+		but5.setStyleName("aon-editDataTable-button");
+		but5.addStyleName("aon-icon-edit");
+		ft.setWidget(4, 4, but5);
 		
 		Label f = new Label("Sin Calibrar (S/C)");
 		f.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -538,40 +648,86 @@ public class FootPanel extends Composite {
 		Label f1 = new Label("Destino");
 		f1.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(5, 2, f1);
-		ListBox tb61 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		HorizontalPanel hp6 = new HorizontalPanel();
+		
+		ListBox lb61 = parent.listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1);
+		lb61.setStyleName(AON.AON_CSS.aonInputText());
+		lb61.setWidth("100px");
+		
+		TextBox tb61 = new TextBox();
 		tb61.setStyleName(AON.AON_CSS.aonInputText());
 		tb61.setWidth("100px");
-		ft.setWidget(5, 3, tb61);
+		tb61.setVisible(false);
+		
+		hp6.add(lb61);
+		hp6.add(tb61);
+		
+		ft.setWidget(5, 3, hp6);
+		
+		Button but6 = new Button("");
+		but6.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				lb61.setVisible(!lb61.isVisible());
+				tb61.setVisible(!tb61.isVisible());
+			}
+		});
+		but6.setStyleName("aon-editDataTable-button");
+		but6.addStyleName("aon-icon-edit");
+		ft.setWidget(5, 4, but6);
 		
 		Label g = new Label("Variedad");
 		g.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		ft.setWidget(6, 0, g);
 		TextBox tb7 = new TextBox();
 		tb7.setStyleName(AON.AON_CSS.aonInputText());
-		tb7.setText(parent.getMap().get("product_name").replace("patata", "").replace("PATATA", ""));
+		tb7.setText(variedad.isEmpty() ? parent.getMap().get("product_name").replace("patata", "").replace("PATATA", "") : variedad);
 		tb7.setWidth("100px");
 		ft.setWidget(6, 1, tb7);
-		
-		
-		Label h = new Label("Observaciones");
+				
+		Label h = new Label("Proveedor");
 		h.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		ft.setWidget(7, 0, h);
+		ft.setWidget(6, 2, h);
+		String supplier = parent.getMap().containsKey("product_supplier_alias") ? parent.getMap().get("product_supplier_alias")
+				: parent.getMap().get("product_supplier");
+		TextBox tb71 = new TextBox();
+		tb71.setStyleName(AON.AON_CSS.aonInputText());
+		tb71.setText(proveedor.isEmpty() ? supplier : proveedor);
+		tb71.setWidth("100px");
+		ft.setWidget(6, 3, tb71);
+		
+		Label i = new Label("Productor");
+		i.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(7, 0, i);
+		TextBox tb8 = new TextBox();
+		tb8.setStyleName(AON.AON_CSS.aonInputText());
+		tb8.setText(productor);
+		tb8.setWidth("100px");
+		ft.setWidget(7, 1, tb8);
+		
+		Label j = new Label("Observaciones");
+		j.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		ft.setWidget(7, 2, j);
 		TextArea ta = new TextArea();
 		ta.setStyleName(AON.AON_CSS.aonInputText());
 		ta.setWidth("100px");
-		ft.setWidget(7, 1, ta);
+		ft.setWidget(7, 3, ta);
 
 		Button but = new Button("Descargar");
 		but.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				String dest2 = lb21.isVisible() ? lb21.getSelectedItemText() : tb21.getValue();
+				String dest3 = lb31.isVisible() ? lb31.getSelectedItemText() : tb31.getValue();
+				String dest4 = lb41.isVisible() ? lb41.getSelectedItemText() : tb41.getValue();
+				String dest5 = lb51.isVisible() ? lb51.getSelectedItemText() : tb51.getValue();
+				String dest6 = lb61.isVisible() ? lb61.getSelectedItemText() : tb61.getValue();
+				
 				Double[] calibers = new Double[] {tb2.getValue(), tb3.getValue(), tb4.getValue(), tb5.getValue(), tb6.getValue()};
-				String[] destinies = new String[] {tb21.getSelectedItemText(), tb31.getSelectedItemText(), tb41.getSelectedItemText(), tb51.getSelectedItemText(), tb61.getSelectedItemText()};
-				String supplier = parent.getMap().containsKey("product_supplier_alias") ? parent.getMap().get("product_supplier_alias")
-						: parent.getMap().get("product_supplier");
-				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), calibers, destinies, tb7.getValue(), ta.getValue(), supplier);
-//				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), tb4.getValue(), tb5.getValue(), tb6.getValue(), tb51.getValue(),ta.getValue());
+				String[] destinies = new String[] {dest2, dest3, dest4, dest5, dest6};
+				getAPI().getWarehouse().downloadUdapaTag(parent.getDataResponse().getId(), tb1.getValue(), calibers, destinies, tb7.getValue(), ta.getValue(), tb71.getValue(), tb8.getValue());
 			}
 		});
 		ft.setWidget(0, 4, but);
@@ -617,4 +773,6 @@ public class FootPanel extends Composite {
 		parent.southContentSize(30.0);
 		parent.contentSplitLayoutPanel.animate(500);
 	}
+	
+	
 }

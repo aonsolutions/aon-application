@@ -80,6 +80,7 @@ public class UdapaTagDownload extends HttpServlet{
 		String observation = parameters.get("observation");
 		
 		String supplier = parameters.get("supplier");
+		String productor = parameters.get("productor");
 
 		File file = null;
 
@@ -92,7 +93,7 @@ public class UdapaTagDownload extends HttpServlet{
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY, f -> f.getIdProperty().eq(dataResponseId));
 		map.put("number", dr.getCode());
 				
-		file = createPdf(map, position, calibers, destinies, observation, variety, supplier);
+		file = createPdf(map, position, calibers, destinies, observation, variety, supplier, productor);
 		
 		resp.addHeader("Access-Control-Allow-Origin", "*");
 	    resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
@@ -107,7 +108,7 @@ public class UdapaTagDownload extends HttpServlet{
 		fileInpurOs.close();
 	}
 	
-	private File createPdf(HashMap<String, String> map, Integer position, Integer[] calibers, String[] destinies, String observation,String variety, String supplier) {
+	private File createPdf(HashMap<String, String> map, Integer position, Integer[] calibers, String[] destinies, String observation,String variety, String supplier, String productor) {
 		File archivoPDF = null;
 		try {
 			archivoPDF = File.createTempFile("quality", "pdf");
@@ -133,7 +134,7 @@ public class UdapaTagDownload extends HttpServlet{
 			}
 			
 			for(Integer c1 = 0; c1 < calibers[0]; c1++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[0], "<45", observation, variety, supplier, pdfWriter));
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[0], "<45", observation, variety, supplier, productor, pdfWriter));
 				cell.setPaddingBottom(16);
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
@@ -143,7 +144,7 @@ public class UdapaTagDownload extends HttpServlet{
 			}
 			
 			for(Integer c2 = 0; c2 < calibers[1]; c2++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[1], "45/50", observation, variety, supplier, pdfWriter));
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[1], "45/50", observation, variety, supplier, productor, pdfWriter));
 				cell.setPaddingBottom(16);
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
@@ -152,7 +153,7 @@ public class UdapaTagDownload extends HttpServlet{
 				t.addCell(cell);
 			}
 			for(Integer c1 = 0; c1 < calibers[2]; c1++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[2], "50/60", observation, variety, supplier, pdfWriter));
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[2], "50/60", observation, variety, supplier, productor, pdfWriter));
 				cell.setPaddingBottom(16);
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
@@ -162,7 +163,7 @@ public class UdapaTagDownload extends HttpServlet{
 			}
 			
 			for(Integer c2 = 0; c2 < calibers[3]; c2++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[3], "60/80", observation, variety, supplier, pdfWriter));
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[3], "60/80", observation, variety, supplier, productor, pdfWriter));
 				cell.setPaddingBottom(16);
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
@@ -171,7 +172,7 @@ public class UdapaTagDownload extends HttpServlet{
 				t.addCell(cell);
 			}
 			for(Integer c2 = 0; c2 < calibers[4]; c2++) {
-				PdfPCell cell = new PdfPCell(tagTable(map, destinies[4], "S/C", observation, variety, supplier, pdfWriter));
+				PdfPCell cell = new PdfPCell(tagTable(map, destinies[4], "S/C", observation, variety, supplier, productor, pdfWriter));
 				cell.setPaddingBottom(16);
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
@@ -198,7 +199,7 @@ public class UdapaTagDownload extends HttpServlet{
 		return i % 2 == 0; 
 	}
 	
-	public static PdfPTable tagTable(HashMap<String, String> map, String destiny, String caliber, String observation, String variety, String supplier, PdfWriter pdfWriter){
+	public static PdfPTable tagTable(HashMap<String, String> map, String destiny, String caliber, String observation, String variety, String supplier, String productor, PdfWriter pdfWriter){
 	    	PdfPTable tag = new PdfPTable(2);
 	    	
 	    	Paragraph p = new Paragraph("UDAPA, S.COOP. 01015 VITORIA-GASTEIZ (ÁLAVA)", getFontX());
@@ -247,7 +248,7 @@ public class UdapaTagDownload extends HttpServlet{
 	    	c4.setFixedHeight(30);
 			tag.addCell(c4);
 			
-	    	Paragraph p1 = new Paragraph("Proveedor", getFontX());
+	    	Paragraph p1 = new Paragraph("Proveedor / Productor", getFontX());
 
 			PdfPCell c5 = new PdfPCell(p1);
 			c5.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -261,8 +262,8 @@ public class UdapaTagDownload extends HttpServlet{
 			c6.setBackgroundColor(BaseColor.GRAY);
 			tag.addCell(c6);
 			
-			if(supplier.length()> 10) supplier = supplier.substring(0, 10) + "...";
-			PdfPCell c7 = new PdfPCell(new Phrase(supplier, getFont2()));
+		//	if(supplier.length()> 10) supplier = supplier.substring(0, 10) + "...";
+			PdfPCell c7 = new PdfPCell(new Phrase(supplier + " / " + productor, getFont2()));
 			c7.setHorizontalAlignment(Element.ALIGN_CENTER);
 	    	c7.setVerticalAlignment(Element.ALIGN_MIDDLE);
 	    	c7.setFixedHeight(50);
