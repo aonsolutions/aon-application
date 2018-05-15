@@ -564,6 +564,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		// Enable/Disable header values
 		reset.setVisible(externalCallback == null);
 		search.setVisible(externalCallback == null);
+		duplicate.setVisible(externalCallback == null && !isNew());
 		
 		period.setEnabled(canEdit);
 		entryDate.setEnabled(canEdit);
@@ -571,7 +572,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		entryType.setEnabled(canEdit);
 		accept.setEnabled(canEdit);
 		remove.setEnabled(canRemove);
-		duplicate.setEnabled(externalCallback != null && !isNew());
 		back.setVisible(externalCallback != null);
 		
 		styleCommentsButton();
