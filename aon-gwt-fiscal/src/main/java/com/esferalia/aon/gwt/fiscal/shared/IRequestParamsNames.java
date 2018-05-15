@@ -14,6 +14,8 @@ public interface IRequestParamsNames {
 	String TO_DATE = "toDate";
 	String PERCENT = "percent";
 	String TYPE = "type";
+	String EXPENSES = "expenses";
+	String IRPF = "irpf";
 	String OUTPUT = "output";
 	String SURCHARGE = "surcharge";
 	String FARMER_REGIME = "farmerRegime";
@@ -23,7 +25,7 @@ public interface IRequestParamsNames {
 	String RECTIFICATION = "rectification";
 	String ORDER_BY = "orderBy";
 	String GROUP_BY_NIF = "groupByNif";
-	
+		
 	String PERIOD = "period";
 	String JOURNAL = "journal";
 	String CONFIDENTIAL = "confidential";

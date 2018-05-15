@@ -35,6 +35,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -72,6 +74,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod3902014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014DAO;
@@ -1303,5 +1306,17 @@ public class FiscalImpl implements IFiscal {
 					,params.getToDate()
 					,params.getGroupByNif()==1?1:0
 					,p -> FinanceUtils.getIRPFFilter(p, params));
+		}
+		
+		// ---------------------------------------------------- [Operation]
+		@Override
+		public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, int activity, boolean expenses, boolean irpf, OperationParams params) {
+			return OperationDAO.getOperationBreakdownIRPF(ctx 
+					,domain
+					,params.getFromDate()
+					,params.getToDate()
+					,activity /*,params.getActivity().intValue()*/
+					,expenses/*,params.getExpenses()*/
+					,irpf);/*,params.getType());*/
 		}
 }

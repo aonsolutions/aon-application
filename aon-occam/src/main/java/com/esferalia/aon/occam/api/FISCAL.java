@@ -32,6 +32,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
@@ -50,6 +52,8 @@ import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FISCAL {
 
@@ -2542,6 +2546,17 @@ public class FISCAL {
 			try {
 				ctx = AONContext.getAONContext(domainName, domain, user);
 				return getFiscal().getIrpfBreakdown(ctx, params);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+		public static Stream<OperationBreakdown> getOperationBreakdown(String domainName, String user, int domain, int activity, boolean expenses, boolean irpf, OperationParams params) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domain, user);
+				return getFiscal().getOperationBreakdown(ctx, domain, activity, expenses, irpf, params);
 			} finally {
 				if (ctx != null)
 					ctx.close();

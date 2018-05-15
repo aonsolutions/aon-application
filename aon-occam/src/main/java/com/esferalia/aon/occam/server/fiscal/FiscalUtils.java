@@ -6,6 +6,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -144,6 +145,53 @@ public class FiscalUtils {
 		if (params.getService() != null) {
 			buf.append(params.getService() ?" (Serv. SI)":" (Serv. NO)");
 		} 
+		return buf.length()>0 ? buf.insert(0,"Filtro:").toString():"";
+	}
+
+	public static String toString(OperationParams params) {
+		StringBuffer buf = new StringBuffer();
+		if (params.getFromDate() != null) {
+			buf.append(" (Desde:");
+			buf.append( DATE_FORMATTER.format(params.getFromDate()));
+			buf.append(")");
+		}
+		if (params.getToDate() != null) {
+			buf.append(" (Hasta:");
+			buf.append( DATE_FORMATTER.format(params.getToDate()));
+			buf.append(")");
+		}
+		if (params.getRegistry() != null) {
+			buf.append(" (Titular:");
+			buf.append(params.getRegistry());
+			buf.append(")");
+		}
+		if (params.getActivity() != null) {
+			buf.append(" (Actividad:");
+			buf.append(params.getActivity());
+			buf.append(")");
+		}
+//		if (params.getOutput() != null) {
+//			buf.append(params.getOutput() ?" (Emitidas)":" (Recibidas)");
+//		}
+//		if (params.getWithholdingType() != null) {
+//			buf.append(" (");
+//			buf.append(params.getWithholdingType().getDescription());
+//			buf.append(")");
+//		}
+//		if (params.getPercent() != null) {
+//			buf.append(" (Porc:");
+//			buf.append(params.getPercent());
+//			buf.append(")");
+//		}
+//		if (params.getAccrualRegime()!= null) {
+//			buf.append(params.getAccrualRegime()?" (Crit.Caja. SI)":" (Crit.Caja. NO)");
+//		} 
+//		if (params.getInvestment()!= null) {
+//			buf.append(params.getInvestment()?" (Bien Inv.)":" (Bien Corr.)");
+//		} 
+//		if (params.getService() != null) {
+//			buf.append(params.getService() ?" (Serv. SI)":" (Serv. NO)");
+//		} 
 		return buf.length()>0 ? buf.insert(0,"Filtro:").toString():"";
 	}
 
