@@ -124,22 +124,23 @@ public class UdapaTagDownload extends HttpServlet{
 			
 			PdfPTable t = new PdfPTable(2);
 			t.setWidthPercentage(100);
-			t.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
+//			t.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 			while(p > 1) {
 				PdfPCell cell = new PdfPCell(new Phrase(""));
 				cell.setFixedHeight(180);
-				cell.setBorder(PdfPCell.NO_BORDER);
+//				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 				p--;
 			}
 			
 			for(Integer c1 = 0; c1 < calibers[0]; c1++) {
 				PdfPCell cell = new PdfPCell(tagTable(map, destinies[0], "<45", observation, variety, supplier, productor, pdfWriter));
+				
 				cell.setPaddingBottom(16);
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
-				cell.setBorder(PdfPCell.NO_BORDER);
+//				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 			}
 			
@@ -149,7 +150,7 @@ public class UdapaTagDownload extends HttpServlet{
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
-				cell.setBorder(PdfPCell.NO_BORDER);
+//				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 			}
 			for(Integer c1 = 0; c1 < calibers[2]; c1++) {
@@ -158,7 +159,7 @@ public class UdapaTagDownload extends HttpServlet{
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
-				cell.setBorder(PdfPCell.NO_BORDER);
+//				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 			}
 			
@@ -168,7 +169,7 @@ public class UdapaTagDownload extends HttpServlet{
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
-				cell.setBorder(PdfPCell.NO_BORDER);
+//				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 			}
 			for(Integer c2 = 0; c2 < calibers[4]; c2++) {
@@ -177,7 +178,7 @@ public class UdapaTagDownload extends HttpServlet{
 				cell.setPaddingTop(16);
 				cell.setPaddingRight(10);
 				cell.setPaddingLeft(10);
-				cell.setBorder(PdfPCell.NO_BORDER);
+//				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 			}
 			
@@ -185,7 +186,7 @@ public class UdapaTagDownload extends HttpServlet{
 				|| (isPar(calibers[0] + calibers[1] + calibers[2] + calibers[3] + calibers[4]) && isPar(position))) {
 				PdfPCell cell = new PdfPCell(new Phrase(""));
 				cell.setFixedHeight(180);
-				cell.setBorder(PdfPCell.NO_BORDER);
+//				cell.setBorder(PdfPCell.NO_BORDER);
 				t.addCell(cell);
 			}
 		
@@ -281,7 +282,7 @@ public class UdapaTagDownload extends HttpServlet{
 	    	c8.setFixedHeight(50);
 			tag.addCell(c8);
 						
-	    	PdfPCell cX = new PdfPCell(new Phrase(observation, getFont2()));
+	    	PdfPCell cX = new PdfPCell(new Phrase(observation, getFont3()));
 	    	cX.setHorizontalAlignment(Element.ALIGN_CENTER);
 	    	cX.setVerticalAlignment(Element.ALIGN_MIDDLE);
 	    	cX.setFixedHeight(30);
@@ -310,6 +311,13 @@ public class UdapaTagDownload extends HttpServlet{
 	private static Font getFont2(){
 		Font font2 = new Font();
 		font2.setSize(14);
+		font2.setStyle(Font.BOLD);
+		return font2;
+	}
+		
+	private static Font getFont3(){
+		Font font2 = new Font();
+		font2.setSize(10);
 		font2.setStyle(Font.BOLD);
 		return font2;
 	}
