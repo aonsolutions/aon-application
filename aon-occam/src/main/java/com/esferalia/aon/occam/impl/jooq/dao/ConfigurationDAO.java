@@ -51,6 +51,12 @@ public class ConfigurationDAO {
 				.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))
 				.setAutoConcepts(AccountEntryDAO.getAutoConcepts(ctx).map(ac -> ac.getDescription())
 						.collect(Collectors.toCollection(LinkedList::new)))
+				.setCostCenters(
+						AppParamDAO.getApplicationParameterStream(ctx
+							, p -> p.getDomainProperty().eq(ctx.getDomainId())
+							.and(p.getNameProperty().like(AppParam.ACC_COST_CENTER_.toString() + "%")))
+						.map( app -> app.getValue() )
+						.collect(Collectors.toCollection(LinkedList::new)))
 				.setPayMethods(FinanceDAO.getPayMethods(ctx))
 				.setDefaultVatPercent(defaultVatPercent == 0
 					?null

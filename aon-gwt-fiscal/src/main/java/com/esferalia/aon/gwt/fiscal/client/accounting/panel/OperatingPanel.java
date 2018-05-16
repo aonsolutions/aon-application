@@ -61,6 +61,9 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 			public void onSuccess(final AccountOperatingReport report) {
 				FlexTable tab = new FlexTable();
 				tab.addStyleName(AON.AON_CSS.aonReportTable());
+				if ( report.getIntervals() != null && report.getIntervals().size() < 3) {
+					tab.addStyleName(AON.AON_CSS.aonReportTableFontBig());
+				}
 
 				tab.getColumnFormatter().setWidth( 0, "auto");
 				
@@ -139,6 +142,8 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 					for (AccountOperatingAccount account : report.getAccounts()) {
 						boolean title = account.getId() == null;
 						tab.setWidget(row, 0, new Label((title?"":account.getCode()) + " " + account.getDescription()));
+						tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
+						
 						if (title) {
 							tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextRight());
 							tab.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonReportTableBold());

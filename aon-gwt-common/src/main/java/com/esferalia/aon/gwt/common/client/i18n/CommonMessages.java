@@ -3630,5 +3630,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Importar declaraciones antiguas")
 	String transferModels();
 	
+	@DefaultMessage("Centro de costo")
+	String costCenter();
+	
 }
 
