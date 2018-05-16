@@ -550,7 +550,7 @@
 											actionListener="#{retentionReport.onReset}"
 											value="#{bundle.fiscal_retention_report_module}" />
 									</aon:div>
-									<aon:if test="#{domainSwitcher.snapshotVersion}">  
+									<aon:if test="#{domainSwitcher.betaEnabled}">  
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_operationReport-eos"
 												action="gwt_operationReport-eos"
