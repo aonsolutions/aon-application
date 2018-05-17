@@ -26,7 +26,6 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<Scope> availableScopes;
 	private LinkedList<PayMethod> payMethods;
 	private LinkedList<String> autoConcepts;
-	private LinkedList<String> costCenters;
 	private Tax defaultVatPercent;
 	private LinkedList<Tax> withholdingTaxes;
 	private Tax defaultWithholdingPercent;
@@ -127,10 +126,6 @@ public class AonConfiguration implements Serializable {
 	public boolean hasActivities() {
 		return this.enterpriseActivities != null && this.enterpriseActivities.size() > 0;
 	}
-	public boolean hasCostCenters() {
-		return this.costCenters != null && this.costCenters.size() > 0;
-	}
-	
 	public EnterpriseActivity getMainActivity() {
 		if (hasActivities()) {
 			for (EnterpriseActivity act : this.enterpriseActivities) {
@@ -184,13 +179,6 @@ public class AonConfiguration implements Serializable {
 	}
 	public AonConfiguration setAutoConcepts(LinkedList<String> autoConcepts) {
 		this.autoConcepts = autoConcepts;
-		return this;
-	}
-	public LinkedList<String> getCostCenters() {
-		return costCenters;
-	}
-	public AonConfiguration setCostCenters(LinkedList<String> costCenters) {
-		this.costCenters = costCenters;
 		return this;
 	}
 	public LinkedList<Scope> getAvailableScopes() {
@@ -413,6 +401,5 @@ public class AonConfiguration implements Serializable {
 		this.salaryDedSeize = salaryDedSeize;
 		return this;
 	}
-
 
 }

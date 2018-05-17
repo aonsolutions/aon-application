@@ -34,6 +34,12 @@ public enum AccountStatementPeriod implements Serializable {
 			 visitor.visitInPeriodAfter();
 		}
 	 } 
+//	,IN_PERIOD_OPERATING { 
+//		@Override
+//		public void accept(IAccountStatementPeriodVisitor visitor) {
+//			 visitor.visitInPeriodOperating();
+//		}
+//	 }
 	,IN_PERIOD_CLOSING {
 		@Override
 		public void accept(IAccountStatementPeriodVisitor visitor) {
@@ -54,6 +60,7 @@ public enum AccountStatementPeriod implements Serializable {
 		void visitInPeriodBefore();
 		void visitInPeriod();
 		void visitInPeriodAfter();
+//		void visitInPeriodOperating();
 		void visitInPeriodClosing();
 		void visitAfterPeriod();
 	}

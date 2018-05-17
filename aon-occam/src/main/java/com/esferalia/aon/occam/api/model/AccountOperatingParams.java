@@ -2,15 +2,12 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class AccountOperatingParams implements Serializable,Cloneable {
 
 	private static final long serialVersionUID = 8075038329917800745L;
-	
-	public static String EMPTY_COST_CENTER_ACCOUNT = "CUENTAS SIN CENTRO DE COSTO";
 	
 	private int domain;
 	private Integer period;
@@ -19,7 +16,6 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 	private int level;
 	private Integer activity;
 	private SecurityLevel securityLevel;
-	private HashSet<String> costCenters;
 	
 	private boolean percentsEnabled;
 	
@@ -112,27 +108,6 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 	}
 	public AccountOperatingParams setPercentsEnabled(boolean percentsEnabled) {
 		this.percentsEnabled = percentsEnabled;
-		return this;
-	}
-	public HashSet<String> getCostCenters() {
-		return costCenters;
-	}
-	public AccountOperatingParams setCostCenters(HashSet<String> costCenters) {
-		this.costCenters = costCenters;
-		return this;
-	}
-	public AccountOperatingParams addCostCenter(String costCenter) {
-		if (costCenters == null) setCostCenters(new HashSet<String>());
-		if (!costCenters.contains(costCenter)) {
-			costCenters.add(costCenter);
-		}
-		return this;
-	}
-	public AccountOperatingParams removeCostCenter(String costCenter) {
-		if (costCenters == null) setCostCenters(new HashSet<String>());
-		if (costCenters.contains(costCenter)) {
-			costCenters.remove(costCenter);
-		}
 		return this;
 	}
 	

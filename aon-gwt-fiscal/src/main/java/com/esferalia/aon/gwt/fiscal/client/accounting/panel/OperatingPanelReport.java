@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -57,7 +56,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	private Integer currentDomainId;
 	
 	private SimpleLayoutPanel centerPanel;
-	private HashSet<String> costCentersSet;
 	
 	private AccountPeriodBox period;
 	private DateBoxEx fromDate;
@@ -67,8 +65,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	private ListBox previousPeriods;
 	private ListBox activity;
 	private CheckBox showPercents;
-	private ListBox costCenters;
-	private FlowPanel selectedCostCenter;
 	private Button cleanButton;
 
 	private boolean activitiesListBoxEnabled;
@@ -209,7 +205,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		});
 		
 		previousPeriods = new ListBox();
-		previousPeriods.setWidth("200px");
 		previousPeriods.addItem( "----");
 		previousPeriods.addItem( " ejercicio anterior");
 		previousPeriods.addItem( " dos \u00FAltimos ejercicios");
@@ -284,56 +279,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				onSearch();
 			}
 		});
-		
-		if (config != null && config.hasCostCenters()) {
-			costCenters = new ListBox();
-			costCenters.setWidth("200px");
-			costCenters.addItem("--- Todos ---");
-			costCenters.addItem(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT);
-			costCenters.setSelectedIndex(0);
-			selectedCostCenter = new FlowPanel();
-			for (String costCenter : config.getCostCenters()) {
-				costCenters.addItem(costCenter);
-			}
-			costCenters.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					if (costCenters.getSelectedIndex() == 0) {
-						if (params.getCostCenters() != null ) {
-							params.setCostCenters( new HashSet<String>());
-						}
-						selectedCostCenter.clear();
-					} else {
-						if (costCentersSet == null) {
-							costCentersSet = new HashSet<String>();
-						}
-						if (!costCentersSet.contains(costCenters.getSelectedValue())) {
-							if (costCentersSet == null) costCentersSet = new HashSet<String>(); 
-							costCentersSet.add(costCenters.getSelectedValue());
-							InlineLabel l = new InlineLabel( costCenters.getSelectedValue() );
-							l.setStyleName(AON.AON_CSS.aonMarginLeft());
-							l.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-							l.addStyleName(AON.AON_CSS.aonIconDelete());
-							l.addStyleName(AON.AON_CSS.aonItalic());
-							l.addStyleName(AON.AON_CSS.aonFontSmall());
-							l.addClickHandler( new ClickHandler() {
-								
-								@Override
-								public void onClick(ClickEvent event) {
-									costCentersSet.remove(l.getText());
-									selectedCostCenter.remove(l);
-									onSearch();			
-								}
-							});
-							selectedCostCenter.add(l);
-							costCenters.setSelectedIndex(0);
-						}
-					}
-					onSearch();
-				}
-			});
-		}
 		
 		FlexTable mainTab = new FlexTable();
 		mainTab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
@@ -419,8 +364,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				}
 				period.setFocus(true);
 				centerPanel.clear();
-				costCenters.setSelectedIndex(0);
-				costCentersSet = null;
 			}
 		});
 
@@ -453,17 +396,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		tab.getCellFormatter().setStyleName(1,6, AON.AON_CSS.aonPanelGridEven());
 
 		tab.setWidget(2, 1, showPercents);
-		if (config != null && config.hasCostCenters()) {
-			tab.setWidget(2, 2, new Label(AON.MSG.costCenter()));
-			tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridOdd());
-			FlexTable costCenterContainer = new FlexTable();
-			costCenterContainer.setWidget(0, 0, costCenters);
-			costCenterContainer.setWidget(0, 1, selectedCostCenter);
-			
-			tab.setWidget(2, 3, costCenterContainer);
-			tab.getFlexCellFormatter().setColSpan(2, 3, 4);
-			tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
-		}
 
 		FlowPanel min = new FlowPanel();
 		min.setStyleName(AON.AON_CSS.aonTextRight());
@@ -638,7 +570,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			.setLevel(l==0?2:l==1?3:l==2?4:l==3?9:3)
 			.setPreviousPeriods( previousPeriods.getSelectedIndex() )
 			.setPercentsEnabled(showPercents.getValue())
-			.setCostCenters(costCentersSet)
 			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
 			;
 	}
