@@ -115,6 +115,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onEventsDraftSelected(EventsDraftObject eventsDraftObject);
 
 		void onEmployeeEventsDraftSelected(EmployeeEventsDraftObject employeeEventsDraft);
+		
+		void onEmployeeDraftSelected(EmployeeDraftObject employeeDraft);
 
 		void onCategoryDraftSelected(CategoryDraftObject agreementDraftObject);
 
@@ -410,8 +412,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onCategoryDraftSelected((CategoryDraftObject) userObject);
 		} else if (userObject instanceof AgreementDraftObject) {
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
-		}else if (userObject instanceof EmployeeCalendarDraftObjectData) {
+		} else if (userObject instanceof EmployeeCalendarDraftObjectData) {
 			onEmployeeCalendarDraftSelected((EmployeeCalendarDraftObjectData) userObject);
+		} else if (userObject instanceof EmployeeDraftObject) {
+			onEmployeeDraftSelected((EmployeeDraftObject) userObject);
 		} 
 	}
 
@@ -1279,6 +1283,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			listener.onEmployeeCalendarSelected(employeeEventsDraftObject);
 		}
 	}
+	
+	private void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
+		for (Listener listener : listeners) {
+			listener.onEmployeeDraftSelected(employeeDraftObject);
+		}	
+	}
 
 	public void addEmployee(TreeItem workplaceItem, Employees employee, int limit) {
 
@@ -1336,7 +1346,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData = new EmployeeCalendarDraftObjectData(employee.getId(), 
 				employee.getStartDate(), employee.getEndDate(), employeesService);
 		calendarDraftItem.setUserObject(employeeCalendarDraftobjectData);
-		
 		calendarDraftItem.ensureDebugId(getId(employee)+"-employeecalendar");
 		
 
@@ -1375,41 +1384,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
 			
-//			final EmployeeEventsDraftObject_COPIA employeeEventsDraftObject;
-//
-//			employeeEventsDraftObject = new EmployeeEventsDraftObject_COPIA(employee, employeesService,
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_TRABAJADOS", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_EFECTIVOS", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_ERE", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_HUELGA", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_AUSENCIA", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("HORAS_TRABAJADAS", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("HORAS_COMPLEMENTARIAS", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_PECNORTA", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_MANUTENCION", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_PECNORTA_EXTRANJERO", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_MANUTENCION_EXTRANJERO", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("KMS", DateField.DAY),
-//					new AbstractEventsDraftObject.BooleanEventMetaData("DIAS_VACACIONES", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("JORNADAS_REALES", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("HORAS_EXTRAS", DateField.DAY),
-//					new AbstractEventsDraftObject.DecimalEventMetaData("HORAS_EXTRAS_FZA", DateField.DAY));
-//
-//			Date date = new Date();
-//
-//			employeeEventsDraftObject.setPeriod(DateUtils.getFirstDayOfWorkWeek(date),
-//					DateUtils.getLastDayOfWorkWeek(date), new EmployeeEventsDraftObject_COPIA.Callback() {
-//
-//						@Override
-//						public void onSucces() {
-//							employeeEventsItem.setUserObject(employeeEventsDraftObject);
-//						}
-//
-//						@Override
-//						public void onFailure(Throwable throwable) {
-//							employeeEventsItem.setUserObject(employeeEventsDraftObject);
-//						}
-//					});
+			//INFORMACION
+			TreeItem employeeDraftItem = addImageItem(employeeItem, "Informaci\u00F3n", images.employee());
+			EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(employee, employeesService, null);
+			employeeDraftItem.setUserObject(employeeDraftObject);
+			employeeDraftItem.ensureDebugId(getId(employee)+"-employeedraft");
 
 			// A.E.T
 			// addImageItem(employeeItem, "Regularizaciones", images.aet());
