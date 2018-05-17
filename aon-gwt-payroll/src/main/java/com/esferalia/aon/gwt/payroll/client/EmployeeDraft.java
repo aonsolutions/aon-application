@@ -271,15 +271,15 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			}
 		});
 		
-		this.agreement.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				level.clear();
-				String agreementName = agreement.getSelectedItemText();
-				List<Agreement> agreements = employeeDraftObject.getAgreements();
-				level.addItem("-");
-				for(Agreement a : agreements){
+//		this.agreement.addChangeHandler(new ChangeHandler() {
+//			
+//			@Override
+//			public void onChange(ChangeEvent event) {
+//				level.clear();
+//				String agreementName = agreement.getSelectedItemText();
+//				List<Agreement> agreements = employeeDraftObject.getAgreements();
+//				level.addItem("-");
+//				for(Agreement a : agreements){
 //					if(a.getId() > 0 && a.getDescription() == agreementName){
 //						Set<Level> levels = a.getLevels();
 //						for(Level levelRecord : levels){
@@ -289,9 +289,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 //							}
 //						}
 //					}
-				}
-			}
-		});
+//				}
+//			}
+//		});
 		
 		this.contractType.addChangeHandler(new ChangeHandler() {
 			
@@ -364,34 +364,34 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		employeeDraftObject.setContractSeniorityDate(seniority_date.getValue());
 	}
 	
-	@UiHandler("agreement")
-	void onContractAgreementChangeValue(ChangeEvent event) {
-		if(this.agreement.getSelectedIndex() == 0){
-			employeeDraftObject.setContractAgreementId(null);
-			employeeDraftObject.setContractAgreementDescription(null);
-			employeeDraftObject.setContractAgreementLevelId(null);
-			employeeDraftObject.setContractAgreementLevelDescription(null);
-		}else{
-			Integer agreementId = employeeDraftObject.getAgreementId(this.agreement.getSelectedItemText());
-			employeeDraftObject.setContractAgreementId(agreementId);
-			employeeDraftObject.setContractAgreementDescription(this.agreement.getSelectedItemText());
-		}
-	}
+//	@UiHandler("agreement")
+//	void onContractAgreementChangeValue(ChangeEvent event) {
+//		if(this.agreement.getSelectedIndex() == 0){
+//			employeeDraftObject.setContractAgreementId(null);
+//			employeeDraftObject.setContractAgreementDescription(null);
+//			employeeDraftObject.setContractAgreementLevelId(null);
+//			employeeDraftObject.setContractAgreementLevelDescription(null);
+//		}else{
+//			Integer agreementId = employeeDraftObject.getAgreementId(this.agreement.getSelectedItemText());
+//			employeeDraftObject.setContractAgreementId(agreementId);
+//			employeeDraftObject.setContractAgreementDescription(this.agreement.getSelectedItemText());
+//		}
+//	}
 	
-	@UiHandler("level")
-	void onContractAgreementLevelChangeValue(ChangeEvent event) {
-		if(this.agreement.getSelectedIndex() == 0 || this.level.getSelectedIndex() == 0){
-			employeeDraftObject.setContractAgreementLevelId(null);
-			employeeDraftObject.setContractAgreementLevelDescription(null);
-		}else{
-			Integer agreementLevelId = employeeDraftObject.getAgreementLevelId(this.agreement.getSelectedItemText(), this.level.getSelectedItemText());
-			employeeDraftObject.setContractAgreementLevelId(agreementLevelId);
-			employeeDraftObject.setContractAgreementLevelDescription(this.level.getSelectedItemText());
-			String levelDescription = (this.level.getSelectedItemText() == null || this.level.getSelectedItemText() == "-") ? null : this.level.getSelectedItemText().split("- ")[1];
-			this.category.setValue(levelDescription);
-			employeeDraftObject.setContractCategory(levelDescription);
-		}
-	}
+//	@UiHandler("level")
+//	void onContractAgreementLevelChangeValue(ChangeEvent event) {
+//		if(this.agreement.getSelectedIndex() == 0 || this.level.getSelectedIndex() == 0){
+//			employeeDraftObject.setContractAgreementLevelId(null);
+//			employeeDraftObject.setContractAgreementLevelDescription(null);
+//		}else{
+//			Integer agreementLevelId = employeeDraftObject.getAgreementLevelId(this.agreement.getSelectedItemText(), this.level.getSelectedItemText());
+//			employeeDraftObject.setContractAgreementLevelId(agreementLevelId);
+//			employeeDraftObject.setContractAgreementLevelDescription(this.level.getSelectedItemText());
+//			String levelDescription = (this.level.getSelectedItemText() == null || this.level.getSelectedItemText() == "-") ? null : this.level.getSelectedItemText().split("- ")[1];
+//			this.category.setValue(levelDescription);
+//			employeeDraftObject.setContractCategory(levelDescription);
+//		}
+//	}
 	
 	@UiHandler("category")
 	void onCategoryChangeValue(ChangeEvent event) {
@@ -631,16 +631,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		Date seniority_date = (employeeInfo.getSeniority_date() == null) ? null : employeeInfo.getSeniority_date();
 		if(seniority_date != null) this.seniority_date.setValue(seniority_date);
 		
-		Integer agreementIndex = this.employeeDraftObject.getAgreementIndex(employeeInfo.getAgreement());
-		this.agreement.setSelectedIndex(agreementIndex+1);
-		
-		String category_description = (employeeInfo.getCategory_description() == null) ? "" : employeeInfo.getCategory_description();
-		this.category.setText(category_description);
-		
-		String agreementName = agreement.getSelectedItemText();
-		Integer agremeentLevelCategoyIndex = getAgreementLevelCategoryIndex(agreementName, employeeInfo.getAgreement_level(), category_description);
-		getAgreementLevels(agreementName);
-		this.level.setSelectedIndex(agremeentLevelCategoyIndex+1);
+//		Integer agreementIndex = this.employeeDraftObject.getAgreementIndex(employeeInfo.getAgreement());
+//		this.agreement.setSelectedIndex(agreementIndex+1);
+//		
+//		String category_description = (employeeInfo.getCategory_description() == null) ? "" : employeeInfo.getCategory_description();
+//		this.category.setText(category_description);
+//		
+//		String agreementName = agreement.getSelectedItemText();
+//		Integer agremeentLevelCategoyIndex = getAgreementLevelCategoryIndex(agreementName, employeeInfo.getAgreement_level(), category_description);
+//		getAgreementLevels(agreementName);
+//		this.level.setSelectedIndex(agremeentLevelCategoyIndex+1);
 	}
 	
 	private void showElementsContractTable() {
@@ -701,16 +701,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		Date seniority_date = (employeeInfo.getSeniority_date() == null) ? null : employeeInfo.getSeniority_date();
 		if(seniority_date != null) this.seniority_date.setValue(seniority_date);
 		
-		Integer agreementIndex = this.employeeDraftObject.getAgreementIndex(employeeInfo.getAgreement());
-		this.agreement.setSelectedIndex(agreementIndex+1);
-		
-		String category_description = (employeeInfo.getCategory_description() == null) ? "" : employeeInfo.getCategory_description();
-		this.category.setText(category_description);
-		
-		String agreementName = agreement.getSelectedItemText();
-		Integer agremeentLevelCategoyIndex = getAgreementLevelCategoryIndex(agreementName, employeeInfo.getAgreement_level(), category_description);
-		getAgreementLevels(agreementName);
-		this.level.setSelectedIndex(agremeentLevelCategoyIndex+1);
+//		Integer agreementIndex = this.employeeDraftObject.getAgreementIndex(employeeInfo.getAgreement());
+//		this.agreement.setSelectedIndex(agreementIndex+1);
+//		
+//		String category_description = (employeeInfo.getCategory_description() == null) ? "" : employeeInfo.getCategory_description();
+//		this.category.setText(category_description);
+//		
+//		String agreementName = agreement.getSelectedItemText();
+//		Integer agremeentLevelCategoyIndex = getAgreementLevelCategoryIndex(agreementName, employeeInfo.getAgreement_level(), category_description);
+//		getAgreementLevels(agreementName);
+//		this.level.setSelectedIndex(agremeentLevelCategoyIndex+1);
 		
 		Integer quote_groupIndex = (employeeInfo.getQuote_group() == null) ? 0 : Integer.parseInt(employeeInfo.getQuote_group());
 		this.quote_group.setSelectedIndex(quote_groupIndex);
@@ -719,14 +719,14 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.occupation.setSelectedIndex(ocupationIndex);
 	}
 	
-	private Integer getAgreementLevelCategoryIndex(String agreementName, String agreement_level,
-			String category_description) {
-		if(category_description == null || category_description == "")
-			return -1;
-		
-		Integer result = 0;
-		List<Agreement> agreements = employeeDraftObject.getAgreements();
-		for(Agreement a : agreements){
+//	private Integer getAgreementLevelCategoryIndex(String agreementName, String agreement_level,
+//			String category_description) {
+//		if(category_description == null || category_description == "")
+//			return -1;
+//		
+//		Integer result = 0;
+//		List<Agreement> agreements = employeeDraftObject.getAgreements();
+//		for(Agreement a : agreements){
 //			if(a.getId() > 0 && a.getDescription() == agreementName){
 //				Set<Level> levels = a.getLevels();
 //				for(Level levelRecord : levels){
@@ -739,10 +739,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 //					}	
 //				}
 //			}
-		}
-		
-		result = 0;
-		for(Agreement a : agreements){
+//		}
+//		
+//		result = 0;
+//		for(Agreement a : agreements){
 //			if(a.getId() > 0 && a.getDescription() == agreementName){
 //				Set<Level> levels = a.getLevels();
 //				for(Level levelRecord : levels){
@@ -755,15 +755,15 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 //					}	
 //				}
 //			}
-		}
-		return -1;
-	}
+//		}
+//		return -1;
+//	}
 
-	private void getAgreementLevels(String agreementName) {
-		level.clear();
-		List<Agreement> agreements = employeeDraftObject.getAgreements();
-		level.addItem("-");
-		for(Agreement a : agreements){
+//	private void getAgreementLevels(String agreementName) {
+//		level.clear();
+//		List<Agreement> agreements = employeeDraftObject.getAgreements();
+//		level.addItem("-");
+//		for(Agreement a : agreements){
 //			if(a.getId() > 0 && a.getDescription() == agreementName){
 //				Set<Level> levels = a.getLevels();
 //				for(Level levelRecord : levels){
@@ -773,8 +773,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 //					}
 //				}
 //			}
-		}	
-	}
+//		}	
+//	}
 
 	private int getCharIndex(String ocupation) {
 		switch (ocupation) {

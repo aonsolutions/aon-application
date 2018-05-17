@@ -136,18 +136,18 @@ public class EmployeeDraftObject {
 		return -1;
 	}
 	
-	public Integer getAgreementLevelId(String agreementName, String agreementLevelName) {
-		String levelDescription = (agreementLevelName == null || agreementLevelName == "-") ? null : agreementLevelName.split(" ")[0];
-		for(Agreement a : getAgreements()){
+//	public Integer getAgreementLevelId(String agreementName, String agreementLevelName) {
+//		String levelDescription = (agreementLevelName == null || agreementLevelName == "-") ? null : agreementLevelName.split(" ")[0];
+//		for(Agreement a : getAgreements()){
 //			if(a.getDescription() == agreementName && a.getId() > 0)
 //				for(Level level : a.getLevels()){
 //					if(level.getId() > 0 && level.getDescription() == levelDescription){
 //						return level.getId();
 //					}
 //				}
-		}
-		return -1;
-	}		
+//		}
+//		return -1;
+//	}		
 
 	
 //	public Set<Level> getLevels(Integer agreementId){
@@ -159,57 +159,57 @@ public class EmployeeDraftObject {
 //		return new HashSet<>();
 //	}
 	
-	public Map<Integer, Set<String>> getCategories(Integer agreementId, Integer levelId){
+//	public Map<Integer, Set<String>> getCategories(Integer agreementId, Integer levelId){
 //		for(Agreement a : getAgreements()){
 //			if(a.getId() == agreementId){
 //				return a.getCategoriesMap();
 //			}	
 //		}
-		return null;
-	}
+//		return null;
+//	}
 
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	
 	public void initializeEmployee(Consumer<EmployeeInfoDataBase> success, Consumer<Throwable> failure) {
-		
-//		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeInfoDataBase>() {
-//			
-//			@Override
-//			public void onSuccess(EmployeeInfoDataBase result) {
-//				employeeInfo = result;
-//				newEmployeeInfo = new EmployeeInfoDataBase(employeeInfo);
+		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeInfoDataBase>() {
+			
+			@Override
+			public void onSuccess(EmployeeInfoDataBase result) {
+				employeeInfo = result;
+				newEmployeeInfo = new EmployeeInfoDataBase(employeeInfo);
+				success.accept(result); //TODO: BORRAR
 //				getAgreements(
 //						r ->{success.accept(result);},
 //						f->{}
 //				);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				failure.accept(caught);
-//			}
-//		});
-	}
-	
-	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
-			
-			@Override
-			public void onSuccess(List<Agreement> result) {
-				
-				agreements = result;
-				success.accept(result);
-				
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				failure.accept(caught);
 			}
 		});
-		
 	}
+	
+//	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
+//		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
+//			
+//			@Override
+//			public void onSuccess(List<Agreement> result) {
+//				
+//				agreements = result;
+//				success.accept(result);
+//				
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
+//		
+//	}
 	
 	public void updateEmployee(Consumer<EmployeeInfoDataBase> success, Consumer<Throwable> failure){
 //		employeesService.setEmployeeInfoDataBase(this.newEmployeeInfo, new AsyncCallback<EmployeeInfoDataBase>() {
