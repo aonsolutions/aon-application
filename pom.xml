@@ -31,8 +31,11 @@
 		<module>aon.mock.entity.maven.plugin</module>
 
 		<!-- CORE MODULES -->
+		<module>sii</module>
 		<module>aeat</module>
 		<module>tgss</module>
+		<module>pool</module>
+		<module>dbutils</module>
 
 		<!-- DB MODULES -->
 		<module>aon-master</module>

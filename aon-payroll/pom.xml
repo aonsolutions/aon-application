@@ -165,7 +165,7 @@
     <dependency>
       <groupId>net.aonsolutions.core</groupId>
       <artifactId>aeat</artifactId>
-      <version>9.23-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
