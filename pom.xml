@@ -24,10 +24,15 @@
 
 	<modules>
 
+
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
 		<module>aon-maven-plugin</module>
 		<module>aon.mock.entity.maven.plugin</module>
+
+		<!-- CORE MODULES -->
+		<module>aeat</module>
+		<module>tgss</module>
 
 		<!-- DB MODULES -->
 		<module>aon-master</module>

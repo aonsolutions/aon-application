@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema targetNamespace="http://www.seg-social.es/creta/esquemas/V100/TrabajadoresTramos" xmlns="http://www.seg-social.es/creta/esquemas/V100/TrabajadoresTramos" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="TrabajadoresTramos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Autorizado"/>
+				<xs:element ref="ReferenciaExterna"/>
+				<xs:element ref="Liquidacion"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Autorizado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d\d\d\d\d\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ReferenciaExterna">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="8"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Liquidacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Ccc"/>
+				<xs:element ref="CccConcertado" minOccurs="0"/>
+				<xs:element ref="PeriodoDesde"/>
+				<xs:element ref="PeriodoHasta"/>
+				<xs:element ref="Tipo"/>
+				<xs:element ref="FechaControl" minOccurs="0"/>
+				<xs:element ref="FechaHoraRecaudacion"/>
+				<xs:element ref="DatosLiquidacion" minOccurs="0"/>
+				<xs:element ref="LiquidacionMes" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="CtaCot">
+		<xs:sequence>
+			<xs:element ref="Regimen"/>
+			<xs:element ref="Provincia"/>
+			<xs:element ref="Numero"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Ccc" type="CtaCot"/>
+	<xs:element name="CccConcertado" type="CtaCot"/>
+	<xs:element name="Regimen">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{9}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PeriodoDesde" type="Periodo"/>
+	<xs:element name="PeriodoHasta" type="Periodo"/>
+	<xs:element name="Tipo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaControl" type="Periodo"/>
+	<xs:complexType name="Periodo">
+		<xs:sequence>
+			<xs:element ref="Mes"/>
+			<xs:element ref="Anho"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Mes">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="12"/>
+				<xs:enumeration value="11"/>
+				<xs:enumeration value="10"/>
+				<xs:enumeration value="09"/>
+				<xs:enumeration value="08"/>
+				<xs:enumeration value="07"/>
+				<xs:enumeration value="06"/>
+				<xs:enumeration value="05"/>
+				<xs:enumeration value="04"/>
+				<xs:enumeration value="03"/>
+				<xs:enumeration value="02"/>
+				<xs:enumeration value="01"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Anho">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="4"/>
+				<xs:pattern value="\d{4}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaHoraRecaudacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FechaRecaudacion"/>
+				<xs:element ref="HoraRecaudacion"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaRecaudacion" type="Fecha"/>
+	<xs:element name="HoraRecaudacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="6"/>
+				<xs:pattern value="\d{6}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosLiquidacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DatoSolicitado" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatoSolicitado">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TipoDato"/>
+				<xs:element ref="Codigo"/>
+				<xs:element ref="IndicadorObligatoriedad"/>
+				<xs:element ref="Valor" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoDato">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+				<xs:enumeration value="C"/>
+				<xs:enumeration value="H"/>
+				<xs:enumeration value="I"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Codigo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="2"/>
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IndicadorObligatoriedad">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+				<xs:enumeration value="B"/>
+				<xs:enumeration value="P"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Valor">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="11"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiquidacionMes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="MesLiquidativo"/>
+				<xs:element ref="DatosMes" minOccurs="0"/>
+				<xs:element ref="Trabajadores"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosMes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DatoSolicitado" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MesLiquidativo" type="Periodo"/>
+	<xs:element name="Trabajadores">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Trabajador" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Trabajador">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Naf"/>
+				<xs:element ref="Ipf"/>
+				<xs:element ref="Caf"/>
+				<xs:element ref="Tramos"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Naf">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{12}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Ipf" type="TIpf"/>
+	<xs:complexType name="TIpf">
+		<xs:sequence>
+			<xs:element ref="TipoIpf"/>
+			<xs:element ref="NumeroIpf"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="TipoIpf">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\w"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroIpf">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\w{10}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Caf">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Tramos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Tramo" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Tramo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FechaDesde"/>
+				<xs:element ref="FechaHasta"/>
+				<xs:element ref="DiasCotizados"/>
+				<xs:element ref="InformacionAfiliacion"/>
+				<xs:element ref="DatosTramo" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Fecha">
+		<xs:sequence>
+			<xs:element ref="Dia"/>
+			<xs:element ref="Mes"/>
+			<xs:element ref="Anho"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Dia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="2"/>
+				<xs:maxLength value="2"/>
+				<xs:pattern value="\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaDesde" type="Fecha"/>
+	<xs:element name="FechaHasta" type="Fecha"/>
+	<xs:element name="DiasCotizados">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="InformacionAfiliacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="GrupoCotizacion"/>
+				<xs:element ref="TipoContrato"/>
+				<xs:element ref="CoeficienteTiempoParcial" minOccurs="0"/>
+				<xs:element ref="CNAE"/>
+				<xs:element ref="ModalidadPesca" minOccurs="0"/>
+				<xs:choice minOccurs="0">
+					<xs:element ref="Ocupacion"/>
+					<xs:element ref="Epigrafe"/>
+				</xs:choice>
+				<xs:element ref="TRL"/>
+				<xs:element ref="ColectivoEspecial" minOccurs="0"/>
+				<xs:element ref="CatProfesional" minOccurs="0"/>
+				<xs:element ref="NumJornadasReales" minOccurs="0"/>
+				<xs:element ref="ModalidadCotizSEA" minOccurs="0"/>
+				<xs:element ref="Peculiaridades" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GrupoCotizacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="2"/>
+				<xs:maxLength value="2"/>
+				<xs:pattern value="\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoContrato">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="3"/>
+				<xs:pattern value="\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CoeficienteTiempoParcial">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="3"/>
+				<xs:pattern value="\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CNAE">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ModalidadPesca">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="2"/>
+				<xs:pattern value="\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Ocupacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Epigrafe">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="3"/>
+				<xs:pattern value="\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TRL">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="3"/>
+				<xs:pattern value="\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ColectivoEspecial">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="4"/>
+				<xs:pattern value="\d\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CatProfesional">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="7"/>
+				<xs:pattern value="\d{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumJornadasReales">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ModalidadCotizSEA">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Peculiaridades">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Peculiaridad" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Peculiaridad">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodPec"/>
+				<xs:element ref="FraccionCuota"/>
+				<xs:element ref="ColectIncentivado"/>
+				<xs:element ref="ValorPec"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodPec">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="2"/>
+				<xs:pattern value="\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FraccionCuota">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="3"/>
+				<xs:pattern value="\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ColectIncentivado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="4"/>
+				<xs:pattern value="\d\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ValorPec">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{3}[,]\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosTramo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DatoSolicitado" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

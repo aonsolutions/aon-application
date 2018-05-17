@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.seg-social.es/creta/esquemas/V110/SolicitudTrabajadoresTramos" targetNamespace="http://www.seg-social.es/creta/esquemas/V110/SolicitudTrabajadoresTramos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="SolicitudTrabajadoresTramos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Autorizado"/>
+				<xs:element ref="ReferenciaExterna"/>
+				<xs:element ref="Liquidacion" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Autorizado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d\d\d\d\d\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ReferenciaExterna">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="8"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Liquidacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Ccc"/>
+				<xs:element ref="CccConcertado" minOccurs="0"/>
+				<xs:element ref="PeriodoDesde"/>
+				<xs:element ref="PeriodoHasta"/>
+				<xs:element ref="Tipo"/>
+				<xs:element ref="FechaControl" minOccurs="0"/>
+				<xs:element ref="LiquidacionMes" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="CtaCot">
+		<xs:sequence>
+			<xs:element ref="Regimen"/>
+			<xs:element ref="Provincia"/>
+			<xs:element ref="Numero"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Ccc" type="CtaCot"/>
+	<xs:element name="CccConcertado" type="CtaCot"/>
+	<xs:element name="Regimen">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d\d\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d\d"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{9}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PeriodoDesde" type="Periodo"/>
+	<xs:element name="PeriodoHasta" type="Periodo"/>
+	<xs:element name="Tipo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaControl" type="Periodo"/>
+	<xs:complexType name="Periodo">
+		<xs:sequence>
+			<xs:element ref="Mes"/>
+			<xs:element ref="Anho"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="LiquidacionMes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="MesLiquidativo"/>
+				<xs:element ref="Trabajadores"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MesLiquidativo" type="Periodo"/>
+	<!--  xs:element name="MesLiquidativo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Mes"/>
+				<xs:element ref="Anho"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element-->
+	<xs:element name="Trabajadores">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Trabajador" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Trabajador">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Naf"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>	
+	<xs:element name="Naf">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{12}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>	
+	<xs:element name="Mes">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="12"/>
+				<xs:enumeration value="11"/>
+				<xs:enumeration value="10"/>
+				<xs:enumeration value="09"/>
+				<xs:enumeration value="08"/>
+				<xs:enumeration value="07"/>
+				<xs:enumeration value="06"/>
+				<xs:enumeration value="05"/>
+				<xs:enumeration value="04"/>
+				<xs:enumeration value="03"/>
+				<xs:enumeration value="02"/>
+				<xs:enumeration value="01"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Anho">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+					<!-- Sólo se admiten años mayores o iguales a 2006 hasta 2099 -->
+					<xs:pattern value="200[6-9]|20[1-9][0-9]"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

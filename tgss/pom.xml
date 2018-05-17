@@ -1,0 +1,203 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.23-SNAPSHOT</version>
+	</parent>
+	<groupId>net.aonsolutions.core</groupId>
+	<artifactId>tgss</artifactId>
+	<name>tgss Java Classes of TGSS SLD XSD schemas</name>
+	<description>aon Solutions JAXB Java classes of TGSS SLD XSD validation schemas</description>
+
+	<properties>
+		<junit.version>4.12</junit.version>
+		<junit.jupiter.version>5.0.3</junit.jupiter.version>
+		<junit.vintage.version>${junit.version}.3</junit.vintage.version>
+		<junit.platform.version>1.0.3</junit.platform.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>xjc-request-dba</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources><source>src/main/xsd/DBA.xsd</source></sources>
+							<packageName>net.aonsolutions.core.tgss.creta.jaxb.dba</packageName>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>xjc-request-draft</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources><source>src/main/xsd/SolicitudBorrador.xsd</source></sources>
+							<packageName>net.aonsolutions.core.tgss.creta.jaxb.solicitud.borrador</packageName>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>xjc-response-calc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources><source>src/main/xsd/Calculos.xsd</source></sources>
+							<packageName>net.aonsolutions.core.tgss.creta.jaxb.calculos</packageName>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>xjc-response-bases</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources><source>src/main/xsd/Bases.xsd</source></sources>
+							<packageName>net.aonsolutions.core.tgss.creta.jaxb.bases</packageName>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>xjc-response-rlc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources><source>src/main/xsd/RLC.xsd</source></sources>
+							<packageName>net.aonsolutions.core.tgss.creta.jaxb.rlc</packageName>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.jvnet.jaxb2.maven2</groupId>
+			    <artifactId>maven-jaxb2-plugin</artifactId>
+				<executions>
+				    <execution>
+				        <goals>
+				            <goal>generate</goal>
+				        </goals>
+				    </execution>
+				</executions>
+            	<configuration>
+            		<verbose>true</verbose>
+			        <extension>true</extension>
+			        <args>
+			            <!--  arg>-XtoString</arg -->
+			            <!--  arg>-Xequals</arg-->
+			            <arg>-Xinheritance</arg>
+			            <arg>-Xsetters</arg>
+			        </args>
+			        <plugins>
+			            <plugin>
+			                <groupId>org.jvnet.jaxb2_commons</groupId>
+			                <artifactId>jaxb2-basics</artifactId>
+			                <version>0.9.4</version>
+			            </plugin>
+			        </plugins>
+			        <!-- The schema directory or xsd files. -->
+			        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+ 					<schemaIncludes>
+                		<include>DCL.xsd</include>
+                		<include>RNT.xsd</include>
+                		<include>Respuesta.xsd</include>
+                		<include>TrabajadoresTramos.xsd</include>
+                		<include>SolicitudCalculos.xsd</include>
+                		<include>SolicitudConfirmacion.xsd</include>
+                		<include>SolicitudTrabajadoresTramos.xsd</include>
+            		</schemaIncludes>			        
+					<!-- Default to the schemaDirectory -->
+					<bindingDirectory>src/main/resources</bindingDirectory>
+					<bindingIncludes>
+					    <include>AONSolutions.xjb</include>
+					</bindingIncludes>
+                	<!-- The working directory to create the generated java source files. -->
+                	<outputDirectory>${basedir}/target/generated-sources/</outputDirectory>
+                </configuration>
+			</plugin>
+		<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<includes>
+						<include>**/Test*.java</include>
+						<include>**/*Test.java</include>
+						<include>**/*Tests.java</include>
+						<include>**/*TestCase.java</include>
+					</includes>
+					<properties>
+						<!-- <includeTags>fast</includeTags> -->
+						<excludeTags>slow</excludeTags>
+						<!--
+						<configurationParameters>
+							junit.jupiter.conditions.deactivate = *
+						</configurationParameters>
+						-->
+					</properties>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.platform</groupId>
+						<artifactId>junit-platform-surefire-provider</artifactId>
+						<version>${junit.platform.version}</version>
+					</dependency>
+				</dependencies>
+		</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Only required to run tests in an IDE that bundles an older version -->
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<version>${junit.platform.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Only required to run tests in an IDE that bundles an older version -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Only required to run tests in an IDE that bundles an older version -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>${junit.vintage.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- To avoid compiler warnings about @API annotations in JUnit code -->
+		<dependency>
+			<groupId>org.apiguardian</groupId>
+			<artifactId>apiguardian-api</artifactId>
+			<version>1.0.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

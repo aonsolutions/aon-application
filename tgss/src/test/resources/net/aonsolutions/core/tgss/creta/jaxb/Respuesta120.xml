@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Respuesta xmlns="http://www.seg-social.es/creta/esquemas/V120/Respuesta">
+<Autorizado>00095734</Autorizado>
+<ReferenciaExterna>f8099fb0</ReferenciaExterna>
+<Liquidacion>
+<Ccc>
+<Regimen>0111</Regimen>
+<Provincia>30</Provincia>
+<Numero>127401970</Numero>
+</Ccc>
+<PeriodoDesde>
+<Mes>01</Mes>
+<Anho>2018</Anho>
+</PeriodoDesde>
+<PeriodoHasta>
+<Mes>01</Mes>
+<Anho>2018</Anho>
+</PeriodoHasta>
+<Tipo>L00</Tipo>
+<FechaHoraRecaudacion>
+<FechaRecaudacion>
+<Dia>07</Dia>
+<Mes>02</Mes>
+<Anho>2018</Anho>
+</FechaRecaudacion>
+<HoraRecaudacion>183732</HoraRecaudacion>
+</FechaHoraRecaudacion>
+<NumeroLiquidacion>30201800208242185</NumeroLiquidacion>
+<Errores>
+<Error>
+<CodigoErr>R9529</CodigoErr>
+<Descripcion>La liquidación está calculada</Descripcion>
+</Error>
+</Errores>
+</Liquidacion>
+</Respuesta>
+<!--<LineaBuzon>/FECHA/=08-02-2018|/HORA/=10:32:18|/DIRECCION/=|/ASUNTO/=(RES10XML10)|/MSJ/=Z:\tgs\SILTRA\SVA\Msjrec\352073414.xml|/IDT/=000352073414|/IDT_ENVIO/=000351614515|/NUMENVIO/=1808359361|/NUMSUBENVIO/=0001|/USUARIO/=22924634M|/REFERENCIA/=f8099fb0|/ENTORNO/=CR|</LineaBuzon> -->
