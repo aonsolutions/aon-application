@@ -178,4 +178,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getEmployeeInfoDataBase(Integer employeeContract, AsyncCallback<EmployeeInfoDataBase> asyncCallback);
 
+	void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
+			AsyncCallback<EmployeeInfoDataBase> asyncCallback);
+
 }

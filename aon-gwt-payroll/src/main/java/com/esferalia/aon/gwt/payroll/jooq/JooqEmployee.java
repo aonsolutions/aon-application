@@ -369,7 +369,7 @@ public class JooqEmployee {
 			.set(CONTRACT.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 			.set(CONTRACT.SENIORITY_DATE, new Date(newEmployeeInfo.getSeniority_date().getTime()))
 			.set(CONTRACT.CATEGORY_DESCRIPTION, newEmployeeInfo.getCategory_description())
-			.set(CONTRACT.AGREEMENT_LEVEL, newEmployeeInfo.getAgreement_level_table_id())
+			//.set(CONTRACT.AGREEMENT_LEVEL, newEmployeeInfo.getAgreement_level_table_id())
 			.where(CONTRACT.ID.eq(newEmployeeInfo.getContract_table_id()))
 			.execute();
 		

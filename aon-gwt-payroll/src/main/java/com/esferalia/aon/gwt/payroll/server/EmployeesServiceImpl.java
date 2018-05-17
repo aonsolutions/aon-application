@@ -4895,5 +4895,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
+	public EmployeeInfoDataBase setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo) {
+		Connection connection = null;
+		initFacesContext();
+		try {
+			connection = AonServletUtils.getConnection();
+			return JooqEmployee.setEmployeeInfo(connection, newEmployeeInfo);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+				releaseFacesContext();
+			}
+		}
+	}
+
 
 }

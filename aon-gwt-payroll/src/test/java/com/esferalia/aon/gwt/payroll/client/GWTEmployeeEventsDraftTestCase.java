@@ -116,6 +116,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
+					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

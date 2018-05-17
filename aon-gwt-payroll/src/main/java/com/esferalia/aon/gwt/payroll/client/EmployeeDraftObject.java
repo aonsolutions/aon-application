@@ -212,18 +212,18 @@ public class EmployeeDraftObject {
 //	}
 	
 	public void updateEmployee(Consumer<EmployeeInfoDataBase> success, Consumer<Throwable> failure){
-//		employeesService.setEmployeeInfoDataBase(this.newEmployeeInfo, new AsyncCallback<EmployeeInfoDataBase>() {
-//			
-//			@Override
-//			public void onSuccess(EmployeeInfoDataBase result) {
-//				success.accept(result);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				failure.accept(caught);
-//			}
-//		});
+		employeesService.setEmployeeInfoDataBase(this.newEmployeeInfo, new AsyncCallback<EmployeeInfoDataBase>() {
+			
+			@Override
+			public void onSuccess(EmployeeInfoDataBase result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------------------------------

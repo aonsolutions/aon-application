@@ -159,4 +159,6 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 
 	EmployeeInfoDataBase getEmployeeInfoDataBase(Integer employeeContract);
 
+	EmployeeInfoDataBase setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo);
+
 }

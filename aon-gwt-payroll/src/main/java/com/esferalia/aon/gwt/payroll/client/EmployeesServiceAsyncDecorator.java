@@ -588,11 +588,16 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getEmployeeInfoDataBase(employeeContract, 
 				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
-		
+
 	}
 
+	@Override
+	public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
+			AsyncCallback<EmployeeInfoDataBase> callback) {
+		AON.start();
+		employeesServiceAsync.setEmployeeInfoDataBase(newEmployeeInfo, 
+				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
 	
-
-	
+	}
 	
 }
