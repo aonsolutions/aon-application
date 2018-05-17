@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -217,8 +218,6 @@ public class AccountStatementDAO {
 				condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.le(AonDateUtils.toSql(params.getToDate())));
 			}
 		}
-		
-
 		User user = SecurityDAO.getUser(ctx);
 		if (user.hasConfidentialityRole()) {
 			if ( params.getSecurityLevel() != null ) {
@@ -227,6 +226,21 @@ public class AccountStatementDAO {
 		} else {
 			condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( SecurityLevel.OFFICIAL.value() ));
 		}
+		
+		
+		if (params.getCostCenters() != null && params.getCostCenters().size() > 0) {
+			Condition c = null;
+			if (params.getCostCenters().contains(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT)) {
+				@SuppressWarnings("unchecked")
+				HashSet<String> cloned = (HashSet<String>) params.getCostCenters().clone();
+				cloned.remove(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT);
+				c = ACCOUNT.COST_CENTER.isNull().or(ACCOUNT.COST_CENTER.in( cloned ));	
+			} else {
+				c = ACCOUNT.COST_CENTER.in( params.getCostCenters());
+			}
+			condition = condition.and( c );
+		}
+		
 		return condition;
 	}
 
@@ -300,9 +314,6 @@ public class AccountStatementDAO {
 			@Override public void visitInPeriodAfter() {
 				msg.append( MessageFormat.format("Saldo entre el {0,date,dd/MM/yyyy} y el {1,date,dd/MM/yyyy}", toDate, ap.getDeadline()));
 			}
-//			@Override public void visitInPeriodOperating() {
-//				msg.append( "Saldo asiento explotaci\u00F3n");
-//			}
 			@Override public void visitInPeriodClosing() {
 				msg.append( "Saldo asiento cierre");
 			}

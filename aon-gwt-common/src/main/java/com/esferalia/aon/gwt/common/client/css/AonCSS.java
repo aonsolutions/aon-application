@@ -1259,11 +1259,20 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-report-table")
 	String aonReportTable();
 	
+	@ClassName("aon-report-table-font-medium")
+	String aonReportTableFontMedium();
+	
+	@ClassName("aon-report-table-font-big")
+	String aonReportTableFontBig();
+	
 	@ClassName("aon-report-table-header")
 	String aonReportTableHeader();
 
 	@ClassName("aon-report-table-row")
 	String aonReportTableRow();
+	
+	@ClassName("aon-report-table-row-bck-hover")
+	String aonReportTableRowBckHover();
 
 	@ClassName("aon-report-table-bold")
 	String aonReportTableBold();

@@ -3025,6 +3025,12 @@ right
 	border: #ccc 1px solid;
 	border-collapse: collapse;
 }
+.aon-report-table-font-medium {
+	font: normal 0.9em fixed,"Lucida Console", monospace;
+}
+.aon-report-table-font-big {
+	font: normal 1em fixed,"Lucida Console", monospace;
+}
 
 @sprite .aon-report-table-header {
 	padding: 5px 1em;
@@ -3050,6 +3056,11 @@ right
 .aon-report-table-row:hover {
 	text-decoration: underline;
 }
+.aon-report-table-row-bck-hover {}
+.aon-report-table-row-bck-hover:hover {
+	text-shadow: 0.1em 0.1em 0.2em #49fb35;
+}
+	
 .aon-report-table td {
 	font: normal 1em fixed,"Lucida Console", monospace;
 	padding-top: 1px;
