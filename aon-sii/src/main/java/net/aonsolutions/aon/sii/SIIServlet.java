@@ -137,6 +137,8 @@ public class SIIServlet extends HttpServlet{
 					}
 				} else if(option.contains("fe_")){
 					if(action.equals("suministro")){
+						// TODO PRUEBA!! NEW
+						//object = SIIManager.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth);
 						object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);
 					} else if(action.equals("baja")){
 						object = SIIPost.getInstance(attach.getData(), pass, administration).bajaFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, auth, administration);

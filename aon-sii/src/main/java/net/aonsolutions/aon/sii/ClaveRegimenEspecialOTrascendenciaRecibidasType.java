@@ -70,7 +70,7 @@ public enum ClaveRegimenEspecialOTrascendenciaRecibidasType {
     _13,
 
     /**
-     *	Primer sementre 2017.
+     *	Primer sementre 2017 y otras facturas anteriores a la inclusión en el SII.
      */
     _14,
     ;

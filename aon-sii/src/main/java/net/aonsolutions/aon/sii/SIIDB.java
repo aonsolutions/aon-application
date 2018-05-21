@@ -29,7 +29,7 @@ public class SIIDB {
 		
 	}
 	
-    protected void insertSuministro(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<String> status, LinkedList<VatContext> vatList, SendType sendType){
+    public void insertSuministro(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<String> status, LinkedList<VatContext> vatList, SendType sendType){
     	
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
@@ -196,7 +196,7 @@ public class SIIDB {
     	AON.insertAttach(domain.getName(), domain.getId(), login, responseAttach);
     }
     
-    protected void insertSuministroBajas(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, HashMap<Integer, String> status, SendType sendType){
+    public void insertSuministroBajas(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, HashMap<Integer, String> status, SendType sendType){
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
@@ -252,7 +252,7 @@ public class SIIDB {
     	}
     }
     
-    protected void insertSuministroCobrosPagos(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<Finance> financeList, HashMap<Integer, String> status){
+    public void insertSuministroCobrosPagos(Domain domain, String login, LinkedList<Integer> invoiceList, byte[] requestXml, byte[] responseXml, LinkedList<Finance> financeList, HashMap<Integer, String> status){
     	DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     			new DataResponse()
     			.setDomain(domain.getId())
