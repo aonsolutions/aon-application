@@ -14,7 +14,8 @@
 	<aon:valueParam name="entryPoint" default="templates" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
-
+	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
+	
 	<aon:if test="#{gwt.entryPoint != entryPoint }">
 		<aon:form id="entryPointForm" style="display:none">
 			<aon:inputText id="gwtEntryPointText" value="#{gwt.entryPoint}" />
@@ -56,8 +57,13 @@
         function getCurrentDomain() {
         	return #{gwtDomain};
         }
+        
         function getCurrentDomainName() {
         	return "#{gwtDomainName}"
+        }
+        
+        function getCurrentUser() {
+        	return "#{gwtUser}";
         }
         
         //]]>

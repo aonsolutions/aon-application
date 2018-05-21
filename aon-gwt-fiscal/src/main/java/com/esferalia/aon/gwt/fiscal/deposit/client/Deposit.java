@@ -69,6 +69,11 @@ public class Deposit implements EntryPoint {
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
+	
+	public static native int getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
+	}-*/;
 
 	@Override
 	public void onModuleLoad() {
