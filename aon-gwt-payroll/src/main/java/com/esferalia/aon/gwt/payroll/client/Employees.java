@@ -175,6 +175,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private Images images;
 	private List<Listener> listeners;
 	private EmployeesServiceAsync employeesService;
+	private EnterprisesServiceAsync enterprisesService;
 
 	private boolean formers = true;
 	private boolean endDate = true;
@@ -211,6 +212,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		// service.
 		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
 		employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
+		
+		EnterprisesServiceAsync enterprisesServiceRaw = GWT.create(EnterprisesService.class);
+		enterprisesService = new EnterprisesServiceAsyncDecorator(enterprisesServiceRaw);
 		
 		initWidget(binder.createAndBindUi(this));
 
@@ -1386,7 +1390,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			
 			//INFORMACION
 			TreeItem employeeDraftItem = addImageItem(employeeItem, "Informaci\u00F3n", images.employee());
-			EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(employee, employeesService, null);
+			EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(employee, employeesService, enterprisesService);
 			employeeDraftItem.setUserObject(employeeDraftObject);
 			employeeDraftItem.ensureDebugId(getId(employee)+"-employeedraft");
 
