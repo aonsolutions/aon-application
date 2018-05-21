@@ -23,8 +23,10 @@ import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
@@ -71,11 +73,40 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	private static final String D2_FILE_AUDIT = "Informe de Auditor\u00eda";
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
 	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
-
-	public String getLoggedUser() {
-		return AonServletUtils.getLoggedUser();
-	}
 	
+	public Map<String, String> getSchema(Domain domain, String login, String cif, Integer year, Boolean textMode){
+		Attach attach = new Attach();
+		if(textMode) {
+			Integer id =  Integer.parseInt(cif);
+			attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), AttachType.REGISTRY);	
+		} else {
+			attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
+					.and(f.getTypeProperty().eq((byte) 17))
+					.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
+				, AttachType.REGISTRY);
+		}
+
+		Map<String, String> map = new HashMap<String, String>();
+
+		try {
+			Esquema schema = Utils.readXml(attach.getData());		
+
+			List<Clave> claves = schema.getClaves().getClave();
+			if(schema.getError() != null) {
+				map.put("error", schema.getError());
+			}
+			String type = schema.getCabecera().getTipoCuestionario();
+			map.put(D2DepositConstants.DEPOSIT_TYPE, type);
+			for (Integer i = 0; i < claves.size(); i++) {
+				if(!map.containsKey(claves.get(i).getCodigo().toString()))
+					map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+
 	public Map<String, String> getSchema(String cif,
 			Integer domainId, Boolean textMode, Integer year) {
 		HttpServletRequest request = getThreadLocalRequest();

@@ -17,6 +17,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("gwt_deposit")
 public interface INormalizedMemory extends RemoteService{
 	
+//	public Map<String, String> getSchema(Domain domain, String login, String cif, Integer year, Boolean textMode);
+
 	public Map<String, String> getSchema(String cif, Integer domainId, Boolean textMode, Integer year);
 	
 	void updateSchema(String cif, Integer domainId, String key, String value, Integer year);
