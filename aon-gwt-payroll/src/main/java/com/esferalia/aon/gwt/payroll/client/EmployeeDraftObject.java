@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-//import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -136,37 +136,37 @@ public class EmployeeDraftObject {
 		return -1;
 	}
 	
-//	public Integer getAgreementLevelId(String agreementName, String agreementLevelName) {
-//		String levelDescription = (agreementLevelName == null || agreementLevelName == "-") ? null : agreementLevelName.split(" ")[0];
-//		for(Agreement a : getAgreements()){
-//			if(a.getDescription() == agreementName && a.getId() > 0)
-//				for(Level level : a.getLevels()){
-//					if(level.getId() > 0 && level.getDescription() == levelDescription){
-//						return level.getId();
-//					}
-//				}
-//		}
-//		return -1;
-//	}		
+	public Integer getAgreementLevelId(String agreementName, String agreementLevelName) {
+		String levelDescription = (agreementLevelName == null || agreementLevelName == "-") ? null : agreementLevelName.split(" ")[0];
+		for(Agreement a : getAgreements()){
+			if(a.getDescription() == agreementName && a.getId() > 0)
+				for(Level level : a.getLevels()){
+					if(level.getId() > 0 && level.getDescription() == levelDescription){
+						return level.getId();
+					}
+				}
+		}
+		return -1;
+	}		
 
 	
-//	public Set<Level> getLevels(Integer agreementId){
-//		for(Agreement a : getAgreements()){
-//			if(a.getId() == agreementId){
-//				return a.getLevels();
-//			}	
-//		}
-//		return new HashSet<>();
-//	}
+	public Set<Level> getLevels(Integer agreementId){
+		for(Agreement a : getAgreements()){
+			if(a.getId() == agreementId){
+				return a.getLevels();
+			}	
+		}
+		return new HashSet<>();
+	}
 	
-//	public Map<Integer, Set<String>> getCategories(Integer agreementId, Integer levelId){
-//		for(Agreement a : getAgreements()){
-//			if(a.getId() == agreementId){
-//				return a.getCategoriesMap();
-//			}	
-//		}
-//		return null;
-//	}
+	public Map<Integer, Set<String>> getCategories(Integer agreementId, Integer levelId){
+		for(Agreement a : getAgreements()){
+			if(a.getId() == agreementId){
+				return a.getCategoriesMap();
+			}	
+		}
+		return null;
+	}
 
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	
@@ -177,11 +177,11 @@ public class EmployeeDraftObject {
 			public void onSuccess(EmployeeInfoDataBase result) {
 				employeeInfo = result;
 				newEmployeeInfo = new EmployeeInfoDataBase(employeeInfo);
-				success.accept(result); //TODO: BORRAR
-//				getAgreements(
-//						r ->{success.accept(result);},
-//						f->{}
-//				);
+//				success.accept(result); //TODO: BORRAR
+				getAgreements(
+						r ->{success.accept(result);},
+						f->{}
+				);
 			}
 
 			@Override
@@ -191,25 +191,25 @@ public class EmployeeDraftObject {
 		});
 	}
 	
-//	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-//		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
-//			
-//			@Override
-//			public void onSuccess(List<Agreement> result) {
-//				
-//				agreements = result;
-//				success.accept(result);
-//				
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
-//		
-//	}
+	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
+		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
+			
+			@Override
+			public void onSuccess(List<Agreement> result) {
+				
+				agreements = result;
+				success.accept(result);
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+	}
 	
 	public void updateEmployee(Consumer<EmployeeInfoDataBase> success, Consumer<Throwable> failure){
 		employeesService.setEmployeeInfoDataBase(this.newEmployeeInfo, new AsyncCallback<EmployeeInfoDataBase>() {
