@@ -26,9 +26,13 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.hibernate.cfg.FkSecondPass;
 import org.jooq.AggregateFunction;
@@ -46,6 +50,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -375,6 +380,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreement.setId(record.getId()); // Not NULL
 			agreement.setDomain(record.getDomain());
 			agreement.setDescription(record.getDescription());
+			
+			agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
 
 			boolean hasContracts = hasContract(dslContext, record.getId());
 			agreement.setHasContract(hasContracts);
@@ -385,6 +392,30 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		}
 		return agreements;
+	}
+
+	private static Set<Level> getAgreementLevel(DSLContext dslContext, Integer id, Agreement agreement) {
+		Set<Level>  levelsList = new HashSet();
+		Map<Integer, Set<String>> categoriesMap = new HashMap<>();
+		Result<Record> levels = dslContext.select().from(AGREEMENT_LEVEL).where(AGREEMENT_LEVEL.AGREEMENT.eq(id)).fetch();
+		for(Record r: levels){
+			Level level =  new Level();
+			level.setId(r.get(AGREEMENT_LEVEL.ID));
+			level.setDescription(r.get(AGREEMENT_LEVEL.DESCRIPTION));
+				
+			Result<Record> categories = dslContext.select().from(AGREEMENT_LEVEL_CATEGORY)
+				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(r.get(AGREEMENT_LEVEL.ID))).fetch();
+			
+			
+			categoriesMap.put(r.get(AGREEMENT_LEVEL.ID), new HashSet());
+			for(Record rc : categories){
+				categoriesMap.get(r.get(AGREEMENT_LEVEL.ID)).add(rc.get(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
+			}
+			
+			levelsList.add(level);
+		}
+		agreement.setCategoriesMap(categoriesMap);
+		return levelsList;
 	}
 
 	public static List<Extra> getExtras(DSLContext dslContext, Condition ...conditions) throws SQLException {
