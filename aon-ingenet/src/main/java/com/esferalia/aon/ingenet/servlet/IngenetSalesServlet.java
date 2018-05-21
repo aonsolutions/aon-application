@@ -17,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -561,12 +562,11 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 			List<String> statusList) {
 		String[] statuses = { null, null, null, null, null };
 		if (statusList != null && statusList.size() > 0) {
-			for (int i = 0; i < statusList.size(); i++) {
+			for (int i = 0; i < statusList.size(); i++)
 				statuses[i] = statusList.get(i);
-			}
 		} else {
-			statuses[0] = "PENDING";
-			statuses[1] = "REOPENED";
+			statuses[0] = "PENDIENTE";
+			statuses[1] = "REABIERTO";
 		}
 		
 		Integer[] responseIds = AON.getLastDataResponseDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 
@@ -591,7 +591,8 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 						return f.getIssueDateProperty().ge(new java.sql.Date((new Date()).getTime()));
 					}
 				})
-				.filter(detail-> (detail.getDataValue().equals("PENDING")||detail.getDataValue().equals(("REOPENED"))))
+				.filter(detail-> ArrayUtils.contains(statuses, detail.getDataValue())
+						)
 				.mapToInt(DataResponseDetail::getDataResponse).boxed().toArray(Integer[]::new);
 		
 		return AON.getDataResponseStream(ctx.getDomainName(), ctx.getDomainId(),
