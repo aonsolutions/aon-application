@@ -21,6 +21,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -120,7 +121,7 @@ public class OperationDAO extends FiscalModelDAO {
 		                
 		                .where(ACCOUNT_ENTRY.DOMAIN.equal(domain))		                
 		                .and(dateCondition)
-		                .and(ACCOUNT_ENTRY.ENTRY_TYPE.notEqual((byte)2))
+		                .and(ACCOUNT_ENTRY.ENTRY_TYPE.notEqual(AccountEntryType.OPERATING.getValue()))
 		                .and(ACCOUNT.CODE.startsWith(expenses?"6":"7")) // Compras/Gastos o Ventas/Ingresos 
 		                .and(condition)
 		                .and(ACCOUNT_ENTRY.ACTIVITY.equal(activity).or(ACCOUNT_ENTRY.ACTIVITY.isNull()))  // Actividad Null, quiere decir que el apunte o factura, se reparte entre todas las actividades

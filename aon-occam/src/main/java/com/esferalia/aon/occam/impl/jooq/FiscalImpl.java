@@ -1310,13 +1310,13 @@ public class FiscalImpl implements IFiscal {
 		
 		// ---------------------------------------------------- [Operation]
 		@Override
-		public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, int activity, boolean expenses, boolean irpf, OperationParams params) {
+		public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params) {
 			return OperationDAO.getOperationBreakdownIRPF(ctx 
 					,domain
 					,params.getFromDate()
 					,params.getToDate()
-					,activity /*,params.getActivity().intValue()*/
-					,expenses/*,params.getExpenses()*/
-					,irpf);/*,params.getType());*/
+					,params.getActivity().intValue()
+					,params.getExpenses()
+					,params.getIrpf());
 		}
 }

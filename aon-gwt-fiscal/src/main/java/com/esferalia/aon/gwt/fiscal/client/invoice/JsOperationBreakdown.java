@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 

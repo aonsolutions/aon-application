@@ -2,24 +2,11 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.TreeMap;
 import java.util.stream.Stream;
 
-import org.jooq.tools.json.JSONObject;
-
-import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.Window;
 
 public class OperationFormatter {
 

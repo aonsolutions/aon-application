@@ -2552,11 +2552,11 @@ public class FISCAL {
 			}
 		}
 
-		public static Stream<OperationBreakdown> getOperationBreakdown(String domainName, String user, int domain, int activity, boolean expenses, boolean irpf, OperationParams params) {
+		public static Stream<OperationBreakdown> getOperationBreakdown(String domainName, String user, int domain, OperationParams params) {
 			AONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domain, user);
-				return getFiscal().getOperationBreakdown(ctx, domain, activity, expenses, irpf, params);
+				return getFiscal().getOperationBreakdown(ctx, domain, params);
 			} finally {
 				if (ctx != null)
 					ctx.close();

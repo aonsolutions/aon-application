@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,14 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "Operation Report Stream", urlPatterns = { "/aon_gwt_fiscal/OperationReportStream" })
@@ -68,16 +64,14 @@ public class OperationReportStreamServlet extends HttpServlet {
 				params.setIrpf(irpf==1?true:false);
 			}
 
-			String user = AonServletUtils.getLoggedUser();
+			String user = req.getParameter(IRequestParamsNames.USER);
 			
 			resp.setContentType(MimeType.HTML.getName());
 			OperationFormatter.formatIrpf(resp.getWriter()
-				,FISCAL.getOperationBreakdown(domainName, user, domainId, activity.intValue(), expenses==1?true:false, irpf==1?true:false, params)
+				,FISCAL.getOperationBreakdown(domainName, user, domainId, params)
 				,"PANEL IRPF"
-//				, FiscalUtils.toString(params));
-				, "");
+				, FiscalUtils.toString(params));
 			resp.flushBuffer();
-			
 			
 		} catch (Throwable e) {
 			throw new ServletException(e);

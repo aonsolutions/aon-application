@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -21,17 +19,12 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -44,7 +37,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -62,8 +54,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class OperationReport extends MainEntryPoint {
 
 	private static CommonServiceAsync commonService;
-	private static FiscalServiceAsync fiscalService;
-	
 	private String currentDomainName;
 	private int currentDomain;
 	private String currentUser;
@@ -84,7 +74,6 @@ public class OperationReport extends MainEntryPoint {
 	private AccountingRegistryBox registry;
 	
 	private ListBox activity;
-	private ListBox orderBy;
 	
 	private NumberFormat formatter;
 	
@@ -118,7 +107,7 @@ public class OperationReport extends MainEntryPoint {
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
@@ -134,7 +123,7 @@ public class OperationReport extends MainEntryPoint {
 					@Override
 					public void onSuccess(AonConfiguration result) {
 						configuration = result;
-						dockLayoutPanel.addNorth(getFilterPanel(), 135);
+						dockLayoutPanel.addNorth(getFilterPanel(), 90);
 						content = new SimpleLayoutPanel();
 						content.setStyleName(AON.AON_CSS.aonSelector());
 						tabLayout = new TabLayoutPanel(26, Unit.PX);
@@ -435,11 +424,11 @@ public class OperationReport extends MainEntryPoint {
 	private void refreshIVA(OperationParams params) {
 		ivaContent.clear();
 		params.setIrpf(false);
-		ivaContent.setWidget(new OperationReportPanel(getDomainName(), getUser(), getDomain(), params, params.getExpenses(), params.getIrpf(), null, null));	
+		ivaContent.setWidget(new OperationReportPanel(getDomainName(), getUser(), getDomain(), params));	
 	}
 	private void refreshIRPF(OperationParams params) {
 		irpfContent.clear();
 		params.setIrpf(true);
-		irpfContent.setWidget(new OperationReportPanel(getDomainName(), getUser(), getDomain(), params, params.getExpenses(), params.getIrpf(), null, null));
+		irpfContent.setWidget(new OperationReportPanel(getDomainName(), getUser(), getDomain(), params));
 	}
 }
