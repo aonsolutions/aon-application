@@ -23,7 +23,7 @@ import org.mvel2.CompileException;
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Event;

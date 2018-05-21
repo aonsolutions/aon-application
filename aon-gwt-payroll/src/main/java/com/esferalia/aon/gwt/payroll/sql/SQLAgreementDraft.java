@@ -41,7 +41,8 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqUtils;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -794,7 +795,7 @@ public class SQLAgreementDraft {
 	}
 
 	private static int insertAgreement(Connection conn, Integer domainId,
-			AgreementDraft draft) throws SQLException {
+			Agreement draft) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -821,7 +822,7 @@ public class SQLAgreementDraft {
 	}
 
 	private static void updateAgreement(Connection conn, Integer domainId,
-			AgreementDraft draft) throws SQLException {
+			Agreement draft) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 

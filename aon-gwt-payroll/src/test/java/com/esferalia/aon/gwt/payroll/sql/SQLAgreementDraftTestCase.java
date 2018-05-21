@@ -17,7 +17,7 @@ import org.junit.Test;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
