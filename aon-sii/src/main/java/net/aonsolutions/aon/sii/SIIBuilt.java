@@ -1011,7 +1011,7 @@ public class SIIBuilt {
 		JAXBContext ctx;
 		byte[] b = null;
 		try {
-			ctx = JAXBContext.newInstance(SuministroLRPagosRecibidas.class);
+			ctx = JAXBContext.newInstance(SuministroLRBienesInversion.class);
 			b = writeXml(ctx, suministro);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
@@ -1317,7 +1317,7 @@ public class SIIBuilt {
 		JAXBContext ctx;
 		byte[] b = null;
 		try {
-			ctx = JAXBContext.newInstance(SuministroLRDetOperacionIntracomunitaria.class);
+			ctx = JAXBContext.newInstance(SuministroLRCobrosMetalico.class);
 			b = writeXml(ctx, suministro);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
