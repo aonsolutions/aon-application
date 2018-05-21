@@ -42,7 +42,9 @@ public class WarehouseEmailUtil extends CompanyEmailUtil {
 		if(!messageController.initMessageController(getDomain(delivery.getDomain()), "", getMap(delivery), "AON_MAIL_PROCESS_"+ MailProcessType.DELIVERY.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(delivery));
 		}
-		messageController.setSubject(getEmailSubject(delivery));
+		if(messageController.getSubject() == null || messageController.getSubject().isEmpty()) {
+			messageController.setSubject(getEmailSubject(delivery));
+		}
 		messageController.addAttachment(getReport(delivery, reportKey));
 	}
 	
@@ -107,7 +109,9 @@ public class WarehouseEmailUtil extends CompanyEmailUtil {
 		if(!messageController.initMessageController(getDomain(income.getDomain()), "", getMap(income), "AON_MAIL_PROCESS_" + MailProcessType.DELIVERY.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(income));
 		}
-		messageController.setSubject( getEmailSubject(income) );
+		if(messageController.getSubject() == null || messageController.getSubject().isEmpty()) {
+			messageController.setSubject(getEmailSubject(income));
+		}
 		messageController.addAttachment( getReport(income, reportKey) );
 	}
 	

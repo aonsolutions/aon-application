@@ -387,13 +387,14 @@ public class MessageController implements IWebMailConstants, Serializable {
 		if(event.getNewValue() != null) {
 			Integer id = (Integer) event.getNewValue();
 			updateTemplateBody(id);
-		}
+		} else updateMessageBody(" ");
 	}	
 	
 	public void updateTemplateBody(Integer templateId) {
 		MailTemplate template = AON.getMailTemplate(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "", 
 				f -> f.getIdProperty().eq(templateId));
 		updateMessageBody(getMessageBody(template));
+		setSubject(template.getSubject());
 	}
 	
 	public String getMessageBody(MailTemplate template) {

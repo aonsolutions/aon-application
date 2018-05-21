@@ -42,7 +42,10 @@ public class SalesEmailUtil extends CompanyEmailUtil implements ISalesMessages {
 		if(!messageController.initMessageController(getDomain(sales.getDomain()), "", getMap(sales), "AON_MAIL_PROCESS_"+ MailProcessType.ORDER.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(sales));
 		}
-		messageController.setSubject( getEmailSubject(sales) );
+		if(messageController.getSubject() == null || messageController.getSubject().isEmpty()) {
+			messageController.setSubject(getEmailSubject(sales));
+		}		
+		
 		messageController.addAttachment( getReport(sales, REPORT_KEY) );
 	}
 	
