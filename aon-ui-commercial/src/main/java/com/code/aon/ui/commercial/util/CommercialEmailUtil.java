@@ -61,12 +61,13 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 			emails = getCommercialEmails(target.getRegistry());
 		}
 		initMessageController(messageController, emails);
-		messageController.setSubject( getEmailSubject(offer) );
-		
+
 		messageController.setGenericMessage(false);
 		messageController.setTemplates(getTemplates(MailProcessType.OFFER));
 		Boolean istemplate = messageController.initMessageController(getDomain(offer.getDomain()), "", getMap(offer), "AON_MAIL_PROCESS_" + MailProcessType.OFFER.ordinal() + "_1");
-		
+		if(messageController.getSubject() == null || messageController.getSubject().isEmpty()) {
+			messageController.setSubject( getEmailSubject(offer) );
+		}
 		String bodyMessage = "";
 		if(includeOffer){
 			bodyMessage += getEmailOfferBody(offer);

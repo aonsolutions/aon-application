@@ -92,7 +92,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		if(!messageController.initMessageController(getDomain(finance.getDomain()), "", getMap(finance), "AON_MAIL_PROCESS_" + MailProcessType.FINANCE.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(finance));
 		}
-		messageController.setSubject(getEmailSubject(finance));
+		if(messageController.getSubject() == null || messageController.getSubject().isEmpty()) {
+			messageController.setSubject( getEmailSubject(finance) );
+		}
 	}
 	
 	private Map<String,String> getMap(Finance finance) {
@@ -156,8 +158,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 				initMessageController(messageController, emails, getEmailBody(invoice, remain_url));
 			}
 		}
-		
-		messageController.setSubject(getEmailSubject(invoice));
+		if(messageController.getSubject() == null || messageController.getSubject().isEmpty()) {
+			messageController.setSubject(getEmailSubject(invoice));
+		}
 		
 		if (attach != null) {
 			messageController.addAttachment(getInvoiceFile(attach, invoice));	

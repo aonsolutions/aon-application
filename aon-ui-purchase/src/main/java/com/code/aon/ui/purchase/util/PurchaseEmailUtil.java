@@ -68,8 +68,10 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 		if(!messageController.initMessageController(getDomain(purchase.getDomain()), "", getMap(purchase), "AON_MAIL_PROCESS_" + MailProcessType.ORDER.ordinal()+ "_1")) {
 			messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(PURCHASE_EMAIL_BODY_HEADER)) );
 		}
-		
-		messageController.setSubject( getEmailSubject(purchase) );
+		if(messageController.getSubject() == null || messageController.getSubject().isEmpty()) {
+			messageController.setSubject(getEmailSubject(purchase));
+		}
+
 		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
 		purchaseReportManager.setValued(purchase.getSupplier().isPurchaseValuated());
 		messageController.addAttachment( getReport(purchase, REPORT_KEY) );
