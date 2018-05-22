@@ -167,15 +167,12 @@ public class ConnectSaleInvoiceWriter {
 			String customerEdiMainCode) {
 		List<Finance> financeList = getFinances(invoice);
 		SINCC sincc = new SINCC();
-//		if(invoice.getType()==InvoiceType.SALES){
-//			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.NOTA_E_ABONO_381
-//					.getValue());
-//		} else if(invoice.getType()==InvoiceType.PURCHASE){
-//			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.NOTA_DE_CARGO_383
-//					.getValue());
-//		}
-		sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.FACTURA_COMERCIAL_380
-				.getValue());
+		if(invoice.getRectificationInvoice()!=null)
+			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.NOTA_E_ABONO_381
+					.getValue());
+		else
+			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.FACTURA_COMERCIAL_380
+					.getValue());
 		sincc.setNumeroDeFactura(invoice.getReferenceCode());
 		sincc.setFuncionDelMensaje_7_31_5_(null);
 		sincc.setFechaDeFactura(Integer.valueOf(SeresUtils.dateFormat().format(invoice
@@ -640,7 +637,7 @@ public class ConnectSaleInvoiceWriter {
 	private SINCI createSINCIRecord(TaxBreakDown tax, int lineNumber,
 			Invoice invoice, String companyEdiCode, String customerEdiMainCode) {
 		SINCI sinci = null;		
-		if(tax.getBase()>0.0) {
+		if(tax.getBase()!=0.0) {
 			sinci = new SINCI();
 			sinci.setNumeroDeLineaDeImpuesto(lineNumber);
 			if(tax.getTaxType()==TaxType.VAT){
