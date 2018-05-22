@@ -39,7 +39,7 @@ public class CommissionServlet extends HttpServlet{
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("Common Servlet - GET METHOD");
+		LOGGER.info("Commission Servlet - GET METHOD");
 		String domainName = req.getServerName();
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
@@ -65,7 +65,7 @@ public class CommissionServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		LOGGER.info("Common Servlet - POST METHOD");
+		LOGGER.info("Commission Servlet - POST METHOD");
 
 		JSONObject json = Utils.getRequestJSON(req);
 

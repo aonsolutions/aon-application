@@ -202,6 +202,12 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.getCarrierStream(ctx, filter));
 	}
 	
+	@Override
+	public Carrier insertCarrier(AONContext ctx, Carrier carrier) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertCarrier(ctx, carrier));
+	}
+	
 	// -------------------- RECORD DATA
 	
 	@Override

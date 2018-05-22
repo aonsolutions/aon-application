@@ -286,16 +286,18 @@ public class SecurityDAO {
 			.collect(Collectors.toCollection(LinkedList::new))
 			;
 	}
-	public static Scope getScope(AONContext ctx, Integer scopeId){
-		return ctx.getDslContext().select().from(SCOPE)
-				.where(SCOPE.ID.eq(scopeId)).limit(1).fetchInto(SCOPE)
-				.stream().map(new ScopeFiller()).findFirst().orElse(new Scope());
-	}
-	
+
 	public static Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter){
 		return ctx.getDslContext().select().from(SCOPE)
 				.where(SCOPE_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new ScopeFiller());
+	}
+	
+	public static Scope insertScope(AONContext ctx, Scope scope){
+		return ctx.getDslContext().insertInto(SCOPE, SCOPE.DOMAIN, SCOPE.DESCRIPTION)
+			.values(scope.getDomain(), scope.getDescription())
+			.returning().fetch().stream().map(new ScopeFiller())
+			.findFirst().orElse(new Scope());
 	}
 	
 	private static class ScopeFiller implements Function<Record, Scope> {

@@ -43,7 +43,7 @@ public class QualityServlet extends HttpServlet{
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("Common Servlet - GET METHOD");
+		LOGGER.info("Quality Servlet - GET METHOD");
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[2];

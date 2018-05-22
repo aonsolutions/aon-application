@@ -344,16 +344,9 @@ public class AON {
 		}
 	}
 
-	public static Scope getScope(String domainName, Integer domainId,
-			String login, Integer scopeId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getScope(ctx, scopeId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static Scope getScope(String domainName, Integer domainId, String login, Integer scopeId) {
+		return getScopeStream(domainName, domainId, login, f -> f.getIdProperty().eq(scopeId))
+				.findFirst().orElse(new Scope());
 	}
 	
 	public static Stream<Scope> getScopeStream(String domainName, Integer domainId, String login, ScopeFilter filter) {
@@ -361,6 +354,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getScopeStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Scope insertScope(String domainName, Integer domainId, String login, Scope scope) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().insertScope(ctx, scope);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -3144,6 +3148,16 @@ public class AON {
 	
 	public static Carrier getCarrier(String domainName, Integer domainId, String login, Integer id) {
 		return getCarrier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
+	
+	public static Carrier insertCarrier(String domainName, Integer domainId, String login, Carrier carrier) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertCarrier(ctx, carrier);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
 	}
 	
 	// ------------------ CARRIER PACKING

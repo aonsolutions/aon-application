@@ -82,6 +82,7 @@ public interface IRegistry {
 	
 	// ------------------- CARRIER
 	public Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter);
+	public Carrier insertCarrier(AONContext ctx, Carrier carrier);
 	
 	// ------------------- SUPPLIER
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter);

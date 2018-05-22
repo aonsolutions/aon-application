@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -45,7 +46,9 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.stat.StatData;
+import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -290,6 +293,17 @@ public class WarehouseServlet extends HttpServlet{
 		CarrierPacking carrierPacking = new CarrierPacking();
 		if(json.opt("action")!= null){
 			Carrier carrier = AON.getCarrierStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Carrier());
+			if(carrier.getId() == null) {
+				Optional<Scope> opt = AON.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())).findFirst();
+				Scope scope = opt.isPresent() ? opt.get() : 
+					AON.insertScope(domain.getName(), domain.getId(), login, new Scope().setDomain(domain.getId()).setDescription("TRANSPORTE"));
+
+				carrier = new Carrier().setScope(scope.getId()).setStatus(CarrierStatus.ACTIVE);
+				carrier.setDomain(domain.getId());
+				carrier.setName("TRANSPORTE");
+				
+				carrier = AON.insertCarrier(domain.getName(), domain.getId(), login, carrier);
+			}
 			carrierPacking = new CarrierPacking()
 					.setDomain(domain.getId())
 					.setSeries(Integer.toString(AonDateUtils.getYear(new Date())))
