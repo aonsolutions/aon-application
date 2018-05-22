@@ -889,6 +889,15 @@ public class RegistryDAO {
 				.fetch().stream().map(new CarrierFiller());
 	}
 	
+	public static Carrier insertCarrier(AONContext ctx, Carrier carrier){
+		Registry registry = insertRegistry(ctx, carrier);
+		ctx.getDslContext().insertInto(CARRIER, CARRIER.DOMAIN, CARRIER.REGISTRY, CARRIER.SCOPE, CARRIER.STATUS)
+			.values(carrier.getDomain(), registry.getId(), carrier.getScope(), carrier.getStatus().value())
+			.execute();
+		carrier.setId(registry.getId());
+		return carrier;
+	}
+	
 	// ------------------- SUPPLIER
 
 	public static Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter){

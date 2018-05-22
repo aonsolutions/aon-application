@@ -34,13 +34,13 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
-	public Scope getScope(AONContext ctx, Integer scopeId) {
-		return SecurityDAO.getScope(ctx, scopeId);
-	}
-	
-	@Override
 	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter) {
 		return SecurityDAO.getScopeStream(ctx, filter);
+	}
+
+	@Override
+	public Scope insertScope(AONContext ctx, Scope scope) {
+		return SecurityDAO.insertScope(ctx, scope);
 	}
 
 	// ------------------ SIGNATURE

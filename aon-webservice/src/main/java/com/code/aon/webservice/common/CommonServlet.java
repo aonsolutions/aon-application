@@ -135,8 +135,7 @@ public class CommonServlet extends HttpServlet{
 	
 	private JSONArray getDataResponseList2(Domain domain, String login, Map<String,String[]> map) {
 		JSONArray array = new JSONArray();
-		DataResponseSource source1 = DataResponseSource.QUALITY;
-		AON.getDataResponseStream(domain.getName(), domain.getId(), login, source1,
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login, null,
 				f -> map.containsKey("filter2") ? dataResponseFilter2(domain, map, f) : dataResponseFilter(domain, map, f))
 		.sorted((dr1, dr2) -> dr2.getResponseDate().compareTo(dr1.getResponseDate()))
 		.forEach(dr -> {
@@ -156,8 +155,7 @@ public class CommonServlet extends HttpServlet{
 			return getDataResponseList2(domain, login, map);
 		}
 		JSONArray array = new JSONArray();
-		DataResponseSource source1 = DataResponseSource.QUALITY;
-		AON.getDataResponseStream(domain.getName(), domain.getId(), login, source1,
+		AON.getDataResponseStream(domain.getName(), domain.getId(), login, null,
 				f -> dataResponseFilter(domain, map, f))
 		.sorted((dr1, dr2) -> dr2.getResponseDate().compareTo(dr1.getResponseDate()))
 		.forEach(dr -> {

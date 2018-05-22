@@ -135,7 +135,7 @@ public class PackingListMailServlet extends HttpServlet{
 					f -> f.getRegistryProperty().eq(carrierPacking.getCarrier())
 					.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 			}
-			sendEmail(domain, login, mailAccount.getId(),(to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "packing List", msg, scheme, carrierPacking, "Empresa de Transporte");
+			sendEmail(domain, login, mailAccount.getId(),(to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Empresa de Transporte");
 		} else if(MSG.REGISTRY.equalsIgnoreCase(type)){
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 				Stream<Purchase> stream = null;
@@ -169,7 +169,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(purchase.getSupplier())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "prueba packingList", msg, scheme, carrierPacking, "Proveedor");
+					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Proveedor");
 				});
 			} else if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
 				Stream<Delivery> stream = null;
@@ -199,7 +199,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(delivery.getCustomer())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "prueba packingList", msg, scheme, carrierPacking, "Cliente");
+					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Cliente");
 				});
 			}
 		}

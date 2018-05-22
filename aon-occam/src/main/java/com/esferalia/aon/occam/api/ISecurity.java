@@ -17,8 +17,8 @@ public interface ISecurity {
 	public User getUser(AONContext ctx, String login);
 	public User getUser(AONContext ctx, Integer userId);
 	public Integer[] getUserScopes(AONContext ctx, Integer userId);
-	public Scope getScope(AONContext ctx, Integer scopeId);
 	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter);
+	public Scope insertScope(AONContext ctx, Scope scope);
 	
 	// SIGNATURE
 	public Signature getSignature(AONContext ctx, Integer signatureId);

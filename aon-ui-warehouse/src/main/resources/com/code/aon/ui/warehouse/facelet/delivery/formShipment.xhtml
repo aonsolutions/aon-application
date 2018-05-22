@@ -12,6 +12,18 @@
 		columnClasses="aon-noborder aon-vertical-align-top, aon-noborder aon-padding-left aon-vertical-align-top">
 	
 		<aon:panelGrid columns="2" style="width:600px;">	
+		
+			<aon:outputLabel for="Delivery_totalPackages"
+				value="#{bundle.warehouse_delivery_shipment_totalPackages}" />
+			<aon:inputText id="Delivery_totalPackages" value="#{delivery.to.totalPackages}" />
+			
+			<aon:outputLabel for="Delivery_totalWeight"
+				value="#{bundle.warehouse_delivery_shipment_totalWeight}" />
+			<aon:inputText id="Delivery_totalWeight" value="#{delivery.to.totalWeight}" />
+			
+			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" />
+			
 			<aon:outputLabel for="Delivery_carrier"
 				value="#{bundle.warehouse_delivery_carrier}" />
 			<aon:outputText value="#{delivery.carrierPacking.carrierName}" />
@@ -38,14 +50,6 @@
 			<aon:outputLabel for="Delivery_shippingStatus"
 				value="#{bundle.aon_status}" />
 			<aon:outputText value="#{delivery.carrierPacking.status.name}" />
-				
-			<aon:outputLabel for="Delivery_totalPackages"
-				value="#{bundle.warehouse_delivery_shipment_totalPackages}" />
-			<aon:outputText value="#{delivery.to.totalPackages}" />
-
-			<aon:outputLabel for="Delivery_totalWeight"
-				value="#{bundle.warehouse_delivery_shipment_totalWeight}" />
-			<aon:outputText value="#{delivery.to.totalWeight}" />
 			
 			<aon:outputLabel for="Delivery_lastModification"
 				value="#{bundle.warehouse_delivery_shipment_lastModification}" />
