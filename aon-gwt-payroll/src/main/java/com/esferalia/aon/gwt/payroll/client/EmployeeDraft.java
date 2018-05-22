@@ -104,6 +104,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	interface MyStyle extends CssResource {
 		String backgroundColorFirstColumn();
 		String hide();
+		String passDocumentStyle();
+		String passNSSStyle();
+		String passNationalityStyle();
+		String nieNSSStyle();
+		String nieNationalityStyle();
+		
 	}
 	
 	@UiField
@@ -123,8 +129,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	@UiField
 	TextBox quotationAccount;
 	
-	@UiField
-	HorizontalPanel activityPanel;
+//	@UiField
+//	HorizontalPanel activityPanel;
 	
 	@UiField
 	TextBox activity;
@@ -604,7 +610,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	private void hideElementsFreelancerTable() {
 		this.quoteAccountPanel.addStyleName(style.hide());
-		this.activityPanel.addStyleName(style.hide());
+		//this.activityPanel.addStyleName(style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(0, style.hide());
 		this.contractDataTable.getRowFormatter().addStyleName(2, style.hide());
 		this.seniorityDatePanel.addStyleName(style.hide());
 		this.contractType.addStyleName(style.hide());
@@ -644,7 +651,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	private void showElementsContractTable() {
 		this.quoteAccountPanel.removeStyleName(style.hide());
-		this.activityPanel.removeStyleName(style.hide());
+		//this.activityPanel.removeStyleName(style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(0, style.hide());
 		this.contractDataTable.getRowFormatter().removeStyleName(2, style.hide());
 		this.seniorityDatePanel.removeStyleName(style.hide());
 		this.contractType.removeStyleName(style.hide());
@@ -920,6 +928,24 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void showNationality(String document_type_str) {
+		if(document_type_str == "Pasaporte"){
+			this.document.addStyleName(style.passDocumentStyle());
+			this.nationality.addStyleName(style.passNationalityStyle());
+			this.security_social_num.addStyleName(style.passNSSStyle());
+		}else{
+			this.document.removeStyleName(style.passDocumentStyle());
+			this.nationality.removeStyleName(style.passNationalityStyle());
+			this.security_social_num.removeStyleName(style.passNSSStyle());
+		}
+		
+		if(document_type_str == "NIE"){
+			this.nationality.addStyleName(style.nieNationalityStyle());
+			this.security_social_num.addStyleName(style.nieNSSStyle());
+		}else{
+			this.nationality.removeStyleName(style.nieNationalityStyle());
+			this.security_social_num.removeStyleName(style.nieNSSStyle());
+		}
+		
 		if(document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE")
 			nationalityPanel.removeStyleName(style.hide());
 		else{
