@@ -326,8 +326,10 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		DETALLEPEDIDOTYPE detalle = new DETALLEPEDIDOTYPE();
 		AON.getSalesDetails(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getIdProperty().eq(sales.getId())).forEach(detail -> {
-					Item item = detail.getItem();
-					Product product = ProductDAO.getProduct(ctx, item.getProductId());
+					Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+							detail.getItem().getId());
+					Product product = AON.getProduct(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+							item.getProductId());
 					
 					LINEADETALLETYPE linea = new LINEADETALLETYPE();
 					linea.setLINEA(String.valueOf(detail.getLine()));
@@ -571,9 +573,9 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		
 		Integer[] responseIds = AON.getLastDataResponseDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 
 				f -> {
-					java.sql.Date start = null;
-					java.sql.Date end = null;
 					if (date != null) {
+						java.sql.Date start = null;
+						java.sql.Date end = null;
 						start = new java.sql.Date(DateUtils
 								.setSeconds(
 										DateUtils.setMinutes(
@@ -588,7 +590,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 								.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
 								.and(f.getIssueDateProperty().between(start, end));
 					} else {
-						return f.getIssueDateProperty().ge(new java.sql.Date((new Date()).getTime()));
+						return f.getIssueDateProperty().isNotNull();
 					}
 				})
 				.filter(detail-> ArrayUtils.contains(statuses, detail.getDataValue())
