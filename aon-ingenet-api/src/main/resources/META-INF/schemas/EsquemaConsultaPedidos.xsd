@@ -61,7 +61,7 @@
 				<xsd:annotation>
 					<xsd:documentation xml:lang="es">Estado de los
 						pedidos. Si no se indica ningun estado, se consideraran los
-						estados de no FINALIZADO.
+						estados PENDIENTE y REABIERTO.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
