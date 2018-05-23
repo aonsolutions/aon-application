@@ -34,6 +34,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
@@ -170,6 +171,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	ListBox occupation;
+	
+	@UiField
+	ListBox journeyType;
 	
 	// TABLA DATOS EMPLEADO
 	
@@ -423,6 +427,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 	}
 	
+	@UiHandler("journeyType")
+	void onContractJourneyTypeChangeValue(ChangeEvent event) {
+//		Integer journeyTypeIndex = this.journeyType.getSelectedIndex();
+//		Boolean journey_type = (journeyTypeIndex == 0) ? true : false;
+//		employeeDraftObject.setContractJourneyType(journey_type);
+	}
+	
 	@UiHandler("document")
 	void onDocumentChangeValue(ChangeEvent event) {
 		String document_type_str = checkDocumentType(document.getValue());
@@ -484,6 +495,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		String countryIso2 = getIso2(nationality.getValue());
 		employeeDraftObject.setNationality(countryIso2);
 		
+		Integer journeyTypeIndex = this.journeyType.getSelectedIndex();
+		Boolean journey_type = (journeyTypeIndex == 0) ? true : false;
+		employeeDraftObject.setContractJourneyType(journey_type);
+		
 		employeeDraftObject.updateEmployee(
 			r -> {
 				setEmployeeDraftObject(employeeDraftObject);
@@ -540,6 +555,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.category.setValue("");
 		this.quote_group.clear();
 		this.occupation.clear();
+		this.journeyType.clear();
 		
 		//Clear employee elements
 		this.document.setValue("");
@@ -595,6 +611,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.occupation.addItem("g. Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles");
 		this.occupation.addItem("h. Vigilantes, guardas, guardas jurados y personal de seguridad");
 		
+		//TIPO DE JORNADA
+		this.journeyType.addItem("Tiempo Completo");
+		this.journeyType.addItem("Tiempo Parcial");
+		
 		//SEXO
 		this.gender.addItem("Hombre");
 		this.gender.addItem("Mujer");
@@ -609,15 +629,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void hideElementsFreelancerTable() {
-		this.quoteAccountPanel.addStyleName(style.hide());
-		//this.activityPanel.addStyleName(style.hide());
 		this.contractDataTable.getRowFormatter().addStyleName(0, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(2, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(1, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(3, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(6, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(7, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(8, style.hide());
+		
 		this.seniorityDatePanel.addStyleName(style.hide());
 		this.contractType.addStyleName(style.hide());
-		this.contractTypeFreelance.removeStyleName(style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(5, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(6, style.hide());
+		this.contractTypeFreelance.removeStyleName(style.hide());	
 	}
 
 	private void fillContractFreelancerTable() {
@@ -647,18 +668,26 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		Integer agremeentLevelCategoyIndex = getAgreementLevelCategoryIndex(agreementName, employeeInfo.getAgreement_level(), category_description);
 		getAgreementLevels(agreementName);
 		this.level.setSelectedIndex(agremeentLevelCategoyIndex+1);
+		
+		if(employeeInfo.getJourneyType() == null)
+			this.journeyType.setSelectedIndex(0);
+		else{
+			Integer journeyTypeIndex = (employeeInfo.getJourneyType() == true) ? 0 : 1;
+			this.journeyType.setSelectedIndex(journeyTypeIndex);
+		}
 	}
 	
 	private void showElementsContractTable() {
-		this.quoteAccountPanel.removeStyleName(style.hide());
-		//this.activityPanel.removeStyleName(style.hide());
 		this.contractDataTable.getRowFormatter().removeStyleName(0, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(2, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(1, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(3, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(6, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(7, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(8, style.hide());
+		
 		this.seniorityDatePanel.removeStyleName(style.hide());
 		this.contractType.removeStyleName(style.hide());
 		this.contractTypeFreelance.addStyleName(style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(5, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(6, style.hide());
 	}
 	
 	private void fillContractTable() {

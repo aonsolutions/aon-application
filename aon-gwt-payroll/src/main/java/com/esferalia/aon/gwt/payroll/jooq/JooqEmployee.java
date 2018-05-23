@@ -190,6 +190,8 @@ public class JooqEmployee {
 				employee.setContract_data_table_quote_group_id(r.get(CONTRACT_DATA.ID));
 			else if(r.get(CONTRACT_DATA.NAME).equals("OCUPACION"))
 				employee.setContract_data_table_ocupation_id(r.get(CONTRACT_DATA.ID));
+			else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO"))
+				employee.setContract_data_table_journey_type_id(r.get(CONTRACT_DATA.ID));
 		}
 		
 		employee.setContract_data(contractDataMap);
@@ -223,6 +225,7 @@ public class JooqEmployee {
 				"Mostrar como = " + employee.getCategory_description() + "\n" +
 				"Grupo de cotizacion = " + employee.getQuote_group() + "\n" +
 				"Ocupacion = " + employee.getOcupation() + "\n" +
+				"Tiempo completo = " + employee.getJourneyType() + "\n" +
 				"\n" +
 				"------------------- EMPLOYEE INFO ------------------- \n" +
 				"Documento = " + employee.getDocument() + "\n" +
@@ -373,135 +376,171 @@ public class JooqEmployee {
 			.where(CONTRACT.ID.eq(newEmployeeInfo.getContract_table_id()))
 			.execute();
 		
-		if(newEmployeeInfo.getEnterprise_ccc_table_id() != null)
-			dslContext.update(ENTERPRISE_CCC)
-				.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
-				.where(ENTERPRISE_CCC.ID.eq(newEmployeeInfo.getEnterprise_ccc_table_id()))
-				.execute();
-		else if(newEmployeeInfo.getQuote_account() != null)
-			dslContext.insertInto(ENTERPRISE_CCC)
-			.set(ENTERPRISE_CCC.DOMAIN, newEmployeeInfo.getDomain())
-			.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
-			.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, newEmployeeInfo.getEnterprise_activity_table_id())
-			.execute();
-		
-		if(newEmployeeInfo.getContract_data_table_type_id() != null){
-			if(newEmployeeInfo.getContract_type().contains("\""))
-				dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getContract_type())
-					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_type_id()))
+		if(newEmployeeInfo.getContract_type() != null){
+			
+			if(newEmployeeInfo.getEnterprise_ccc_table_id() != null)
+				dslContext.update(ENTERPRISE_CCC)
+					.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
+					.where(ENTERPRISE_CCC.ID.eq(newEmployeeInfo.getEnterprise_ccc_table_id()))
 					.execute();
-			else
-				dslContext.update(CONTRACT_DATA)
+			else if(newEmployeeInfo.getQuote_account() != null)
+				dslContext.insertInto(ENTERPRISE_CCC)
+				.set(ENTERPRISE_CCC.DOMAIN, newEmployeeInfo.getDomain())
+				.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
+				.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, newEmployeeInfo.getEnterprise_activity_table_id())
+				.execute();
+		
+			if(newEmployeeInfo.getContract_data_table_type_id() != null){
+				if(newEmployeeInfo.getContract_type() != null)
+					dslContext.update(CONTRACT_DATA)
 					.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getContract_type()+"\"")
 					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_type_id()))
 					.execute();
-		}else
-			dslContext.insertInto(CONTRACT_DATA)
-			.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
-			.set(CONTRACT_DATA.NAME, "TC2")
-			.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
-			.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getContract_type())
-			.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-			.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-			.execute();
+				else
+					dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, (String) null)
+					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_type_id()))
+					.execute();
+			}else
+				dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
+				.set(CONTRACT_DATA.NAME, "TC2")
+				.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
+				.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getContract_type())
+				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.execute();
 		
-		if(newEmployeeInfo.getContract_info_table_id() != null){
-			if(newEmployeeInfo.getContract_model() != null)
-				dslContext.update(CONTRACT_INFO)
-					.set(CONTRACT_INFO.EXPRESSION,  "\""+ ModelOption.values()[newEmployeeInfo.getContract_model()].toString()  +"\"")
+			if(newEmployeeInfo.getContract_info_table_id() != null){
+				if(newEmployeeInfo.getContract_model() != null)
+					dslContext.update(CONTRACT_INFO)
+						.set(CONTRACT_INFO.EXPRESSION,  "\""+ ModelOption.values()[newEmployeeInfo.getContract_model()].toString()  +"\"")
+						.set(CONTRACT_INFO.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+						.set(CONTRACT_INFO.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+						.where(CONTRACT_INFO.ID.eq(newEmployeeInfo.getContract_info_table_id()))
+						.execute();
+				else
+					dslContext.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.EXPRESSION, (String) null)
 					.set(CONTRACT_INFO.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 					.set(CONTRACT_INFO.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 					.where(CONTRACT_INFO.ID.eq(newEmployeeInfo.getContract_info_table_id()))
 					.execute();
-			else
-				dslContext.update(CONTRACT_INFO)
-				.set(CONTRACT_INFO.EXPRESSION, (String) null)
+			}else if(newEmployeeInfo.getContract_model() != null)
+				dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, newEmployeeInfo.getDomain())
+				.set(CONTRACT_INFO.NAME, "OPCION_CONTRATO")
+				.set(CONTRACT_INFO.CONTRACT, newEmployeeInfo.getContract_table_id())
+				.set(CONTRACT_INFO.EXPRESSION, ModelOption.values()[newEmployeeInfo.getContract_model()].toString())
 				.set(CONTRACT_INFO.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 				.set(CONTRACT_INFO.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-				.where(CONTRACT_INFO.ID.eq(newEmployeeInfo.getContract_info_table_id()))
 				.execute();
-		}else if(newEmployeeInfo.getContract_model() != null)
-			dslContext.insertInto(CONTRACT_INFO)
-			.set(CONTRACT_INFO.DOMAIN, newEmployeeInfo.getDomain())
-			.set(CONTRACT_INFO.NAME, "OPCION_CONTRATO")
-			.set(CONTRACT_INFO.CONTRACT, newEmployeeInfo.getContract_table_id())
-			.set(CONTRACT_INFO.EXPRESSION, ModelOption.values()[newEmployeeInfo.getContract_model()].toString())
-			.set(CONTRACT_INFO.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-			.set(CONTRACT_INFO.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-			.execute();
 		
-		if(newEmployeeInfo.getContract_data_table_quote_group_id() != null){
-			if(newEmployeeInfo.getQuote_group() != null){
-				if(newEmployeeInfo.getQuote_group().contains("\""))
-					dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getQuote_group())
+			if(newEmployeeInfo.getContract_data_table_quote_group_id() != null){
+				if(newEmployeeInfo.getQuote_group() != null){
+					if(newEmployeeInfo.getQuote_group().contains("\""))
+						dslContext.update(CONTRACT_DATA)
+							.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getQuote_group())
+							.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+							.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+							.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_quote_group_id()))
+							.execute();
+					else
+						dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getQuote_group()+"\"")
 						.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 						.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 						.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_quote_group_id()))
 						.execute();
-				else
+				}else{
 					dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getQuote_group()+"\"")
+					.set(CONTRACT_DATA.EXPRESSION, (String) null)
 					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_quote_group_id()))
 					.execute();
-			}else{
-				dslContext.update(CONTRACT_DATA)
-				.set(CONTRACT_DATA.EXPRESSION, (String) null)
+				}
+			}else
+				dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
+				.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
+				.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
+				.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getQuote_group())
 				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-				.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_quote_group_id()))
 				.execute();
-			}
-		}else
-			dslContext.insertInto(CONTRACT_DATA)
-			.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
-			.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
-			.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
-			.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getQuote_group())
-			.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-			.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-			.execute();
 		
-		if(newEmployeeInfo.getContract_data_table_ocupation_id() != null){
-			if(newEmployeeInfo.getOcupation() != null){
-				if (newEmployeeInfo.getOcupation().contains("\""))
-					dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getOcupation())
-					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
-					.execute();
-				else
-					dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getOcupation()+"\"")
+			if(newEmployeeInfo.getContract_data_table_ocupation_id() != null){
+				if(newEmployeeInfo.getOcupation() != null){
+					if (newEmployeeInfo.getOcupation().contains("\""))
+						dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getOcupation())
 						.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 						.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 						.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
 						.execute();
-			}else{
-				dslContext.update(CONTRACT_DATA)
-				.set(CONTRACT_DATA.EXPRESSION, (String) null)
+					else
+						dslContext.update(CONTRACT_DATA)
+							.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getOcupation()+"\"")
+							.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+							.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+							.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
+							.execute();
+				}else{
+					dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, (String) null)
+					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
+					.execute();
+				} 
+			}else
+				dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
+				.set(CONTRACT_DATA.NAME, "OCUPACION")
+				.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
+				.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getOcupation())
 				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-				.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
-				.execute();
-			} 
-		}else
-			dslContext.insertInto(CONTRACT_DATA)
-			.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
-			.set(CONTRACT_DATA.NAME, "OCUPACION")
-			.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
-			.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getOcupation())
-			.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-			.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-			.execute();
+				.execute();	
+		}
+		
+		if(newEmployeeInfo.getContract_type() == null){
+		
+			if(newEmployeeInfo.getContract_data_table_journey_type_id() != null){
+				if(newEmployeeInfo.getJourneyType() != null)
+					dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getJourneyType().toString())
+					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_journey_type_id()))
+					.execute();
+			}else{
+				if(newEmployeeInfo.getJourneyType() != null)
+					dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
+					.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
+					.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
+					.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getJourneyType().toString())
+					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+					.execute();
+				else
+					dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
+					.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
+					.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
+					.set(CONTRACT_DATA.EXPRESSION, (String) null)
+					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+					.execute();
+			}
+		
+		}
 		
 		//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,
 		// contract_leave, contract_payment
@@ -625,6 +664,7 @@ public class JooqEmployee {
 				"Mostrar como = " + newEmployeeInfo.getCategory_description() + "\n" +
 				"Grupo de cotizacion = " + newEmployeeInfo.getQuote_group() + "\n" +
 				"Ocupacion = " + newEmployeeInfo.getOcupation() + "\n" +
+				"Tiempo completo = " + newEmployeeInfo.getJourneyType() + "\n" +
 				"\n" +
 				"------------------- EMPLOYEE UPDATE INFO ------------------- \n" +
 				"Documento = " + newEmployeeInfo.getDocument() + "\n" +

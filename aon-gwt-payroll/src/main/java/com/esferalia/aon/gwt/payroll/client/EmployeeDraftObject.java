@@ -284,6 +284,10 @@ public class EmployeeDraftObject {
 	public void setContractOccupation(String ocupation) {
 		newEmployeeInfo.setOcupation(ocupation);		
 	}
+
+	public void setContractJourneyType(Boolean journey_type) {
+		newEmployeeInfo.setJourneyType(journey_type);
+	}
 	
 	// EMPLOYEE
 	

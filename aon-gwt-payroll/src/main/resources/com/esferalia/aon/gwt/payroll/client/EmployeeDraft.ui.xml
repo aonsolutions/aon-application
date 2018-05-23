@@ -280,7 +280,7 @@
 								<g:customCell styleName='{style.secondColumnWidth}'>
 									<g:HorizontalPanel>
 									    <g:ListBox ui:field="contractType" width="740px"></g:ListBox>
-									    <g:TextBox ui:field="contractTypeFreelance" styleName='{style.paddingLabel}' width="701px"></g:TextBox>
+									    <g:TextBox ui:field="contractTypeFreelance" styleName='{style.paddingLabel}' width="730px"></g:TextBox>
 									</g:HorizontalPanel>
 								</g:customCell>
 							</g:row>
@@ -347,6 +347,16 @@
 								<g:customCell styleName='{style.secondColumnWidth}'>
 									<g:HorizontalPanel>
 									    <g:ListBox ui:field="occupation" width="740px"></g:ListBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft}'>Tipo de jornada</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:ListBox ui:field="journeyType" width="740px"></g:ListBox>
 									</g:HorizontalPanel>
 								</g:customCell>
 							</g:row>  
