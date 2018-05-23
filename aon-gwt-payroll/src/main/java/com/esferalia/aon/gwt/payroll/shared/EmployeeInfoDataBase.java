@@ -87,6 +87,8 @@ public class EmployeeInfoDataBase implements Serializable {
 	private Integer 
 		contract_data_table_ocupation_id = null;	//ID Contract Data Table Ocupation
 	private String ocupation;				//Contract Ocupation
+	private Integer contract_data_table_journey_type_id = null; //ID Contract Journey Type
+	private Boolean journeyType;			//Contract Journey Type
 	
 	//AGREEMENT TABLE
 	private Integer agreement_table_id;		//ID Agreement Table
@@ -170,6 +172,8 @@ public class EmployeeInfoDataBase implements Serializable {
 		this.quote_group = employeeInfo.getQuote_group();
 		this.contract_data_table_ocupation_id = employeeInfo.getContract_data_table_ocupation_id();
 		this.ocupation = employeeInfo.getOcupation();
+		this.contract_data_table_journey_type_id = employeeInfo.getContract_data_table_journey_type_id();
+		this.journeyType = employeeInfo.getJourneyType();
 		
 		this.agreement_table_id = employeeInfo.getAgreement_table_id();
 		this.agreement = employeeInfo.getAgreement();
@@ -402,6 +406,14 @@ public class EmployeeInfoDataBase implements Serializable {
 	public void setOcupation(String ocupation) {
 		this.ocupation = ocupation;
 	}
+	
+	public Boolean getJourneyType() {
+		return journeyType;
+	}
+
+	public void setJourneyType(Boolean journeyType) {
+		this.journeyType = journeyType;
+	}
 
 	public String getAgreement() {
 		return agreement;
@@ -436,6 +448,7 @@ public class EmployeeInfoDataBase implements Serializable {
 		this.contract_type = (this.contract_data.get("TC2") == null) ? null : this.contract_data.get("TC2").split("\"")[1];
 		this.quote_group = (this.contract_data.get("GRUPO_COTIZACION") == null) ? null : this.contract_data.get("GRUPO_COTIZACION").split("\"")[1];
 		this.ocupation = (this.contract_data.get("OCUPACION") == null) ? null : this.contract_data.get("OCUPACION").split("\"")[1];
+		this.journeyType = (this.contract_data.get("TIEMPO_COMPLETO") == null) ? null : Boolean.parseBoolean(this.contract_data.get("TIEMPO_COMPLETO"));
 	}
 
 	public Integer getRegistry_table_id() {
@@ -532,6 +545,14 @@ public class EmployeeInfoDataBase implements Serializable {
 
 	public void setContract_data_table_ocupation_id(Integer contract_data_table_ocupation_id) {
 		this.contract_data_table_ocupation_id = contract_data_table_ocupation_id;
+	}
+	
+	public Integer getContract_data_table_journey_type_id() {
+		return contract_data_table_journey_type_id;
+	}
+
+	public void setContract_data_table_journey_type_id(Integer contract_data_table_journey_type_id) {
+		this.contract_data_table_journey_type_id = contract_data_table_journey_type_id;
 	}
 
 	public Integer getAgreement_table_id() {
