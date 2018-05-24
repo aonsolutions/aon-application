@@ -6,6 +6,7 @@
                 <artifactId>aon.parent</artifactId>
                 <version>9.23-SNAPSHOT</version>
 	</parent>
+	<groupId>net.aonsolutions.core</groupId>
 	<artifactId>dbutils</artifactId>
 	<name>dbutils Database Utilities</name>
 	<description>aon Solutions Database Utilities</description>

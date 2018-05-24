@@ -5,6 +5,7 @@
                 <artifactId>aon.parent</artifactId>
                 <version>9.23-SNAPSHOT</version>
 	</parent>
+	<groupId>net.aonsolutions.core</groupId>
 	<artifactId>pool</artifactId>
 	<name>pool JDBC Connection Pool</name>
 	<description>Provides JDBC connection pooling</description>
