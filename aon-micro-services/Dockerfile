@@ -1,7 +1,6 @@
 FROM tomcat:9.0-jre8
 
 ARG AON_VERSION=9.00-SNAPSHOT
-ARG POOL_VERSION=9.00-SNAPSHOT
 
 ENV CATALINA_HOME /usr/local/tomcat
 
@@ -15,10 +14,8 @@ ENV TOMCAT_LIBDIR $CATALINA_HOME/lib
 WORKDIR $TOMCAT_LIBDIR
 
 COPY aon-jaas/target/aon.jaas-${AON_VERSION}.jar aon-jaas.jar
+COPY pool/target/pool-${AON_VERSION}.jar pool.jar
 
-RUN set -x \
-	\
-	&& wget $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/pool-`wget -O - $NET_MAVEN_REPOSITORY_URL/core/pool/$POOL_VERSION/maven-metadata.xml 2>/dev/null | grep -m 1 -Po "(?<=<value>).*(?=</value>)" || echo $POOL_VERSION`.jar
 
 
 ENV SLF4J_API_URL=http://central.maven.org/maven2/org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar

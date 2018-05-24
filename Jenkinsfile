@@ -38,9 +38,9 @@ node {
     	// Run the docker build
     	def rolling_version = new Date().format('yyyy.MM.dd-HH.mm.ss')
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine ./aon-db-up2date"
-    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
 	// For intermediate builds micro-services aren't used.
-    	//sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile ."
+    	//sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile ."
 
     	// Mark the Integration Tests 'stage'....
     	stage 'Integration Tests'
@@ -87,8 +87,8 @@ node {
         sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -DskipTests=true -Dmaven.test.failure.ignore=true clean deploy"
 
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine ./aon-db-up2date"
-    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
-    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} --build-arg POOL_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile ."
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile ."
 
         stage 'Docker Publish'
 
