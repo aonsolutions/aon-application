@@ -162,23 +162,33 @@ node {
 	sh "aws ecs update-service --cluster SNAPSH0T --service SNAPSH0T-SERVICES --task-definition ${snapshot_services_task_definition_arn}"
 
 
-        sh "aws ecs list-task-definitions --family-prefix RELEASE-DB-UP2DATE > release-db-up2date-task-definitions.json"
-        def release_db_up2date_task_definitions_json = readFile 'release-db-up2date-task-definitions.json'
-        def release_db_up2date_task_definitions_arns = getTaskDefinitionArns(release_db_up2date_task_definitions_json)
-        def last_release_db_up2date_task_definition_arn = release_db_up2date_task_definitions_arns[release_db_up2date_task_definitions_arns.size()-1]
-        sh "aws ecs describe-task-definition --task-definition ${last_release_db_up2date_task_definition_arn} > last-release-db-up2date-task-definition.json"
-        def last_release_db_up2date_task_definition_json = readFile 'last-release-db-up2date-task-definition.json'
-        def release_db_up2date_container_definitions_json = getContainerDefinitions(last_release_db_up2date_task_definition_json, "aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine")
-        sh "aws ecs register-task-definition --family RELEASE-DB-UP2DATE --container-definitions '${release_db_up2date_container_definitions_json}' > release-db-up2date-task-definition.json"
+  sh "aws ecs list-task-definitions --family-prefix RELE4SE-DB-UP2DATE > release-db-up2date-task-definitions.json"
+  def release_db_up2date_task_definitions_json = readFile 'release-db-up2date-task-definitions.json'
+  def release_db_up2date_task_definitions_arns = getTaskDefinitionArns(release_db_up2date_task_definitions_json)
+  def last_release_db_up2date_task_definition_arn = release_db_up2date_task_definitions_arns[release_db_up2date_task_definitions_arns.size()-1]
+  sh "aws ecs describe-task-definition --task-definition ${last_release_db_up2date_task_definition_arn} > last-release-db-up2date-task-definition.json"
+  def last_release_db_up2date_task_definition_json = readFile 'last-release-db-up2date-task-definition.json'
+	def release_db_up2date_cpu = getCpu(last_release_db_up2date_task_definition_json)
+	def release_db_up2date_memory = getMemory(last_release_db_up2date_task_definition_json)
+	def release_db_up2date_network_mode = getNetworkMode(last_release_db_up2date_task_definition_json)
+	def release_db_up2date_execution_role_arn = getExecutionRoleArn(last_release_db_up2date_task_definition_json)
+	def release_db_up2date_compatibilities = getCompatibilities(last_release_db_up2date_task_definition_json)
+  def release_db_up2date_container_definitions_json = getContainerDefinitions(last_release_db_up2date_task_definition_json, "aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine")
+	sh "aws ecs register-task-definition --family RELE4SE-DB-UP2DATE --task-role-arn '${release_db_up2date_execution_role_arn}' --execution-role-arn '${release_db_up2date_execution_role_arn}' --network-mode '${release_db_up2date_network_mode}' --cpu '${release_db_up2date_cpu}' --memory '${release_db_up2date_memory}' --container-definitions '${release_db_up2date_container_definitions_json}' --requires-compatibilities ${release_db_up2date_compatibilities} > release-db-up2date-task-definition.json"
 
-	sh "aws ecs list-task-definitions --family-prefix RELEASE > release-task-definitions.json"
+	sh "aws ecs list-task-definitions --family-prefix RELE4SE > release-task-definitions.json"
 	def release_task_definitions_json = readFile 'release-task-definitions.json'
 	def release_task_definitions_arns = getTaskDefinitionArns(release_task_definitions_json)
 	def last_release_task_definition_arn = release_task_definitions_arns[release_task_definitions_arns.size()-1]
 	sh "aws ecs describe-task-definition --task-definition ${last_release_task_definition_arn} > last-release-task-definition.json"
 	def last_release_task_definition_json = readFile 'last-release-task-definition.json'
+	def release_cpu = getCpu(last_release_task_definition_json)
+	def release_memory = getMemory(last_release_task_definition_json)
+	def release_network_mode = getNetworkMode(last_release_task_definition_json)
+	def release_execution_role_arn = getExecutionRoleArn(last_release_task_definition_json)
+	def release_compatibilities = getCompatibilities(last_release_task_definition_json)
 	def release_container_definitions_json = getContainerDefinitions(last_release_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre8")
-	sh "aws ecs register-task-definition --family RELEASE --container-definitions '${release_container_definitions_json}' > release-task-definition.json"
+	sh "aws ecs register-task-definition --family RELE4SE --task-role-arn '${release_execution_role_arn}' --execution-role-arn '${release_execution_role_arn}' --network-mode '${release_network_mode}' --cpu '${release_cpu}' --memory '${release_memory}' --container-definitions '${release_container_definitions_json}' --requires-compatibilities ${release_compatibilities} > release-task-definition.json"
 
 	sh "aws ecs list-task-definitions --family-prefix RELEASE-SERVICES > release-services-task-definitions.json"
 	def release_services_task_definitions_json = readFile 'release-services-task-definitions.json'
