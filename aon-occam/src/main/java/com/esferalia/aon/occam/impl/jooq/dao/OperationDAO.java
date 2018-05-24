@@ -186,7 +186,6 @@ public class OperationDAO extends FiscalModelDAO {
 									.setPercent(rec.getValue(INVOICE_TAX.PERCENTAGE)==null?0.0:rec.getValue(INVOICE_TAX.PERCENTAGE))
 									.setSurchargePercent(rec.getValue(INVOICE_TAX.SURCHARGE)==null?0.0:rec.getValue(INVOICE_TAX.SURCHARGE));							
 						});
-					
 	}
 	
 }

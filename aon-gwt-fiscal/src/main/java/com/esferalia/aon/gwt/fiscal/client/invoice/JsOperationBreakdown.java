@@ -91,4 +91,5 @@ public class JsOperationBreakdown extends JavaScriptObject {
 	public final native boolean getIrpf() /*-{
 		return this.irpf;
 	}-*/;
+	
 }

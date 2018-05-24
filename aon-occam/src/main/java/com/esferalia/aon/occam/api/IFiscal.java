@@ -56,8 +56,10 @@ public interface IFiscal {
 	// 			        IRPF
 	public Stream<IrpfBreakdown> getIrpfBreakdownSummary(AONContext ctx, IRPFParams params);
 	public Stream<IrpfBreakdown> getIrpfBreakdown(AONContext ctx, IRPFParams params);
+	
 	//					OPERATION
 	public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params);
+	
 	// 			        VAT
 	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, VatParams params);
 	public Stream<VatContext> getVatContext(AONContext ctx, VatParams params);

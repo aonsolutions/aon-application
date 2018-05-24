@@ -358,7 +358,6 @@ public class OperationReport extends MainEntryPoint {
 		firstRowPanel.add(toDate);
 
 		// ---------------------------------------------------------------- SECOND ROW
-
 		FlowPanel thirdRowPanel = new FlowPanel();
 		thirdRowPanel.addStyleName(AON.AON_CSS.aonMarginTop5());
 		filterPanel.add(thirdRowPanel);

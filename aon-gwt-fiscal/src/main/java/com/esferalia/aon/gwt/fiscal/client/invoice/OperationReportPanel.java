@@ -335,6 +335,7 @@ public class OperationReportPanel extends ScrollPanel{
 		builder.appendEscaped( AonStringUtils.repeat(" ", 2));
 		line.setHTML(builder.toSafeHtml());
 		return line;
+		
 	}
 
 }

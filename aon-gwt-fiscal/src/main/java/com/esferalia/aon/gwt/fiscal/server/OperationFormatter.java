@@ -40,7 +40,6 @@ public class OperationFormatter {
 
 	private static void writeToJSONIva(final PrintWriter out, OperationBreakdown irpf) {
 		out.print('{');
-
 		if (AonStringUtils.isNotBlank( irpf.getAccountDescription())) out.printf("\"accountDescription\":\"%s\"", irpf.getAccountDescription());
 		if (AonStringUtils.isNotBlank( irpf.getConcept())) out.printf(",\"concept\":\"%s\"", irpf.getFullConcept());
 		out.printf(",\"documentNumber\":\"%s\"", irpf.getDocNumber());
@@ -65,7 +64,6 @@ public class OperationFormatter {
 
 	private static void writeToJSONIrpf(final PrintWriter out, OperationBreakdown irpf) {
 		out.print('{');
-
 		if (AonStringUtils.isNotBlank( irpf.getAccount())) out.printf("\"account\":\"%s\"", irpf.getAccount());
 		if (AonStringUtils.isNotBlank( irpf.getAccountDescription())) out.printf(",\"accountDescription\":\"%s\"", irpf.getAccountDescription());
 		if (AonStringUtils.isNotBlank( irpf.getConcept())) out.printf(",\"concept\":\"%s\"", irpf.getFullConcept());
