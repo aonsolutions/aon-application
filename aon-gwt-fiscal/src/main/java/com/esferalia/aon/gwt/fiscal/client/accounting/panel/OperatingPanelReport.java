@@ -251,8 +251,9 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			activity = new ListBox();
 			activity.setWidth("150px");
 			activity.addItem("-- Todas --", "");
+			activity.addItem("-- Sin actividad --", "-1");
 			activity.setSelectedIndex(0);
-			int i = 1;
+			int i = 2;
 			for (EnterpriseActivity ea : config.getActivities()) {
 				activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {

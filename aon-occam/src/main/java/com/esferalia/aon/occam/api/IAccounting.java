@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
@@ -83,7 +85,8 @@ public interface IAccounting {
 			throws AonCoreException;
 	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)
 			throws AonCoreException;
-	public AccountOperatingReport getAccountOperatingReport(AONContext ctx, AccountOperatingParams params);
+	public AccountOperatingReport getAccountOperatingReport(AONContext ctx, AccountOperatingParams params) throws AonCoreException;
+	public AccountTrialBalanceReport getTrialBalanceReport(AONContext ctx, AccountTrialBalanceParams params) throws AonCoreException;
 	
 	
 	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params,
@@ -104,5 +107,6 @@ public interface IAccounting {
 	public Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId);
 	public AccUtilitiesResult getJournalRegenerationInfo(AONContext ctx);
 	public AccUtilitiesResult regenerateJournal(AONContext ctx, Integer accuountPeriod);
+	
 	
 }

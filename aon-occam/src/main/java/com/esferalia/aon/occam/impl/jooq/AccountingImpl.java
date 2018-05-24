@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
@@ -286,10 +288,14 @@ public class AccountingImpl implements IAccounting {
 		return AccountStatementDAO.statement(ctx, params);
 	}
 	@Override
-	public AccountOperatingReport getAccountOperatingReport(AONContext ctx, AccountOperatingParams params) {
+	public AccountOperatingReport getAccountOperatingReport(AONContext ctx, AccountOperatingParams params) throws AonCoreException {
 		return AccountStatementDAO.operatingReport(ctx, params);
 	}
-
+	@Override
+	public AccountTrialBalanceReport getTrialBalanceReport(AONContext ctx, AccountTrialBalanceParams params) throws AonCoreException {
+		return AccountStatementDAO.trialBalance(ctx, params);
+	}
+	
 	@Override
 	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountStatementParams params)
 			throws AonCoreException {

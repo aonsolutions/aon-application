@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,7 +36,11 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.DateInterval;
+import com.esferalia.aon.occam.api.model.IAccountParams;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
@@ -72,8 +77,7 @@ public class AccountStatementDAO {
 		EnumMap<AccountStatementPeriod,AccountStatement> map = new EnumMap<AccountStatementPeriod,AccountStatement>(AccountStatementPeriod.class);
 		
 		ctx.getDslContext()
-			.select(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY.ACCOUNT_PERIOD
-					,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT)
+			.select(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT)
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 				.where(getCondition(ctx, params, false))
@@ -83,8 +87,7 @@ public class AccountStatementDAO {
 				.forEach(rec -> {
 					AccountStatementPeriod period = getAccountStatementPeriod(params,ap
 							,rec.getValue( ACCOUNT_ENTRY.ENTRY_DATE )
-							,AccountEntryType.safeValueOf(rec.getValue(ACCOUNT_ENTRY.ENTRY_TYPE))
-							,rec.getValue( ACCOUNT_ENTRY.ACCOUNT_PERIOD ));
+							,AccountEntryType.safeValueOf(rec.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)));
 					AccountStatement as = map.get(period);
 					if (as == null) {
 						as = new AccountStatement().setPeriod(period);
@@ -109,18 +112,17 @@ public class AccountStatementDAO {
 			});
 	}
 	
-    private static AccountStatementPeriod getAccountStatementPeriod(AccountStatementParams params, AccountPeriod ap, Date date, AccountEntryType type, Integer period) {
+    private static AccountStatementPeriod getAccountStatementPeriod(IAccountParams params, AccountPeriod ap, Date date, AccountEntryType type) {
     	
 		if (params.getPeriod() != null) {
         	if (date.before(ap.getInitiationDate())) return AccountStatementPeriod.BEFORE_PERIOD;
         	if (date.after(ap.getDeadline())) return AccountStatementPeriod.AFTER_PERIOD;
         	
-        	if (AonNumberUtils.equals( params.getPeriod() , period) && type == AccountEntryType.OPENING) return AccountStatementPeriod.IN_PERIOD_OPENING;
-//        	if (AonNumberUtils.equals( params.getPeriod() , period) && type == AccountEntryType.OPERATING) return AccountStatementPeriod.IN_PERIOD_OPERATING;
-        	if (AonNumberUtils.equals( params.getPeriod() , period) && type == AccountEntryType.CLOSING) return AccountStatementPeriod.IN_PERIOD_CLOSING;
+        	if (AonNumberUtils.equals( params.getPeriod() , ap.getId()) && type == AccountEntryType.OPENING) return AccountStatementPeriod.IN_PERIOD_OPENING;
+        	if (AonNumberUtils.equals( params.getPeriod() , ap.getId()) && type == AccountEntryType.CLOSING) return AccountStatementPeriod.IN_PERIOD_CLOSING;
         	
-        	if (AonNumberUtils.equals( params.getPeriod() , period) && date.before(params.getFromDate())) return AccountStatementPeriod.IN_PERIOD_BEFORE; 
-        	if (AonNumberUtils.equals( params.getPeriod() , period) && date.after(params.getToDate())) return AccountStatementPeriod.IN_PERIOD_AFTER;
+        	if (AonNumberUtils.equals( params.getPeriod() , ap.getId()) && params.getFromDate() != null && date.before(params.getFromDate())) return AccountStatementPeriod.IN_PERIOD_BEFORE; 
+        	if (AonNumberUtils.equals( params.getPeriod() , ap.getId()) && params.getToDate() != null && date.after(params.getToDate())) return AccountStatementPeriod.IN_PERIOD_AFTER;
         	
     	} else {
         	if (date.before(params.getFromDate())) return AccountStatementPeriod.BEFORE_PERIOD;
@@ -156,92 +158,6 @@ public class AccountStatementDAO {
 				.stream()
 				.map( new StatementFiller() )
 		;
-	}
-	private static Condition getCondition(AONContext ctx , AccountStatementParams params, boolean applyDateFilterIfNeeded ) {
-		Condition condition = ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(ctx.getDomainId());
-		if (params.getAccount() != null) {
-			condition = condition.and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(params.getAccount()));	
-		}
-		if (applyDateFilterIfNeeded) {
-			java.sql.Date sqlStart = null;
-			java.sql.Date sqlEnd = null;
-			if (params.getPeriod() == null) {
-				Date fromDate = params.getFromDate()!=null ?params.getFromDate() :AccountPeriodDAO.getMinDate(ctx);
-				Date toDate = params.getToDate()!=null ?params.getToDate() :AccountPeriodDAO.getMaxDate(ctx);
-				sqlStart = AonDateUtils.toSql(fromDate );
-				sqlEnd = AonDateUtils.toSql(toDate);
-			} else {
-				AccountPeriod ap = AccountPeriodDAO.getPeriod(ctx, params.getPeriod());
-				if (ap == null) {
-					throw new AonCoreException("Periodo no encontrado");
-				}
-				sqlStart = AonDateUtils.toSql(params.getFromDate()==null?ap.getInitiationDate():params.getFromDate());
-				sqlEnd = AonDateUtils.toSql(params.getToDate()==null?ap.getDeadline():params.getToDate());
-			}
-			condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.between(sqlStart,sqlEnd));
-		}
-		User user = SecurityDAO.getUser(ctx);
-		if (user.hasConfidentialityRole()) {
-			if ( params.getSecurityLevel() != null ) {
-				condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( params.getSecurityLevel().value() ));
-			}
-		} else {
-			condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( SecurityLevel.OFFICIAL.value() ));
-		}
-		if ( params.areOpeningEntriesExcluded() ) {
-			condition = condition.and( ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.OPENING.getValue()));	
-		}
-		if ( params.areOperatingEntriesExcluded() ) {
-			condition = condition.and( ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.OPERATING.getValue()));	
-		}
-		if ( params.areClosingEntriesExcluded() ) {
-			condition = condition.and( ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.CLOSING.getValue()));	
-		}
-		if ( AonStringUtils.isNotBlank(params.getDocumentNumber()) ) {
-			condition = condition.and( ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER.eq( params.getDocumentNumber() ));
-		}
-		return condition;
-	}
-	
-	private static Condition getCondition(AONContext ctx , AccountOperatingParams params) {
-		Condition condition = ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(ctx.getDomainId());
-		if (params.getPeriod() == null) {
-			Date fromDate = params.getFromDate()!=null ?params.getFromDate() :AccountPeriodDAO.getMinDate(ctx);
-			Date toDate = params.getToDate()!=null ?params.getToDate() :AccountPeriodDAO.getMaxDate(ctx);
-			condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.between(AonDateUtils.toSql(fromDate ),AonDateUtils.toSql(toDate)));
-		} else {
-			condition = condition.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(params.getPeriod()));	
-			if (params.getFromDate()!=null) {
-				condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(AonDateUtils.toSql(params.getFromDate())));
-			}
-			if (params.getToDate()!=null) {
-				condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.le(AonDateUtils.toSql(params.getToDate())));
-			}
-		}
-		User user = SecurityDAO.getUser(ctx);
-		if (user.hasConfidentialityRole()) {
-			if ( params.getSecurityLevel() != null ) {
-				condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( params.getSecurityLevel().value() ));
-			}
-		} else {
-			condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( SecurityLevel.OFFICIAL.value() ));
-		}
-		
-		
-		if (params.getCostCenters() != null && params.getCostCenters().size() > 0) {
-			Condition c = null;
-			if (params.getCostCenters().contains(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT)) {
-				@SuppressWarnings("unchecked")
-				HashSet<String> cloned = (HashSet<String>) params.getCostCenters().clone();
-				cloned.remove(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT);
-				c = ACCOUNT.COST_CENTER.isNull().or(ACCOUNT.COST_CENTER.in( cloned ));	
-			} else {
-				c = ACCOUNT.COST_CENTER.in( params.getCostCenters());
-			}
-			condition = condition.and( c );
-		}
-		
-		return condition;
 	}
 
 	private static class StatementFiller  implements Function<Record,AccountStatement> {
@@ -433,9 +349,6 @@ public class AccountStatementDAO {
 						AccountOperatingStatement sum = report.get(type.toString(), inter);
 						sum.setDebit( AonMathUtils.round(sum.getDebit() + item.getDebit()));
 						sum.setCredit( AonMathUtils.round(sum.getCredit() + item.getCredit()));
-						if (account.getType() == AccountOperatingStatementType.RESULT) {
-							System.out.println( AonStringUtils.isNumeric(item.getAccount().getCode())+ " -" + item.getAccount().getCode() + "  - " + item.getDebit() + " - " + item.getCredit());
-						}
 					}
 				}
 			}
@@ -483,6 +396,7 @@ public class AccountStatementDAO {
 			}
 		}
 	}
+	
 	private static void calculateIncreasePercent(AccountOperatingReport report) {
 		DateInterval previous = null; 
 		for (DateInterval inter : report.getIntervals() ) {
@@ -501,4 +415,310 @@ public class AccountStatementDAO {
 		}
 	}
 	
+	// *********************************************************************************************************
+	// ********************************* BALANCE DE SUMAS Y SALDOS *********************************************
+	// *********************************************************************************************************
+	
+	public static AccountTrialBalanceReport trialBalance(AONContext ctx, AccountTrialBalanceParams params) {
+		ctx.checkRead();
+		AccountPeriod ap = null;
+		if (params.getPeriod() != null) {
+			ap = AccountPeriodDAO.getPeriod(ctx, params.getPeriod());
+			if (ap == null) {
+				throw new AonCoreException("Ejercicio contable no encontrado");			
+			}
+		}
+		java.sql.Date sqlStart = null;
+		java.sql.Date sqlEnd = null;
+		if (ap == null) {
+			Date fromDate = params.getFromDate()!=null ?params.getFromDate() :AccountPeriodDAO.getMinDate(ctx);
+			Date toDate = params.getToDate()!=null ?params.getToDate() :AccountPeriodDAO.getMaxDate(ctx);
+			sqlStart = AonDateUtils.toSql(fromDate);
+			sqlEnd = AonDateUtils.toSql(toDate);
+		} else {
+			sqlStart = AonDateUtils.toSql(params.getFromDate()!=null ?params.getFromDate() : ap.getInitiationDate());
+			sqlEnd = AonDateUtils.toSql(params.getToDate()==null?ap.getDeadline():params.getToDate());
+		}
+		
+		AggregateFunction<BigDecimal> SUM_DEBIT = DSL.sum( ACCOUNT_ENTRY_DETAIL.DEBIT);
+		AggregateFunction<BigDecimal> SUM_CREDIT = DSL.sum( ACCOUNT_ENTRY_DETAIL.CREDIT);
+
+		// Se busca si existe un asiento de apertura en el ejercicio seleccionado.
+		boolean hasOpeningAmounts = false;
+		if (ap != null) {
+			hasOpeningAmounts = ctx.getDslContext().fetchExists(
+				ctx.getDslContext().select()
+				.from(ACCOUNT_ENTRY)
+				.where(ACCOUNT_ENTRY.DOMAIN.eq(params.getDomain()))
+				.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
+				.and(ACCOUNT_ENTRY.ENTRY_TYPE.eq(AccountEntryType.OPENING.getValue())));
+		}
+
+		// Se busca si existen saldo anteriores a la fecha seleccionada. Si existe un asiento de apertura, no 
+		// deberían existan errores en la contabilidad.
+		boolean hasBeforePeriodAmounts =  !hasOpeningAmounts;
+//		ctx.getDslContext()
+//			.select(SUM_DEBIT, SUM_CREDIT)
+//			.from( ACCOUNT_ENTRY )
+//			.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+//			.where(getCondition(ctx, params)
+//				.and(ACCOUNT_ENTRY.ENTRY_DATE.lt(sqlStart)))
+//			.fetch()
+//			.stream()
+//			.map( rec ->  AonNumberUtils.equals(rec.getValue(SUM_DEBIT), rec.getValue(SUM_CREDIT)) )
+//			.filter(bool ->  bool == null )
+//			.findFirst()
+//			.orElse( false );
+		
+
+		// Se busca si existen saldo desde el inicio del ejericio hasta la fecha selecciona
+		boolean hasInPeriodPreviousAmounts = ap != null && params.getFromDate().after(ap.getInitiationDate());
+		
+		
+		AccountTrialBalanceReport report = new AccountTrialBalanceReport()
+			.setPeriod(ap)
+			.setParams(params)
+			.setHasBeforePeriodAmounts(hasBeforePeriodAmounts)
+			.setHasOpeningAmounts(hasOpeningAmounts)
+			.setHasInPeriodPreviousAmounts( hasInPeriodPreviousAmounts )
+			;
+
+
+		// Configuramos los periodos de fechas:
+		EnumMap<AccountStatementPeriod,Condition> conditions = new EnumMap<AccountStatementPeriod,Condition>(AccountStatementPeriod.class);
+
+		// 1) Periodos anteriores:
+		if (hasBeforePeriodAmounts) {
+			conditions.put(AccountStatementPeriod.BEFORE_PERIOD
+				,getCondition(ctx, params)
+				.and(ACCOUNT_ENTRY.ENTRY_DATE.lt(sqlStart)));
+		}
+		// 2) Saldo asiento de apertura
+		if (hasOpeningAmounts) {
+			conditions.put(AccountStatementPeriod.IN_PERIOD_OPENING
+				,getCondition(ctx, params)
+				.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
+				.and(ACCOUNT_ENTRY.ENTRY_TYPE.eq(AccountEntryType.OPENING.getValue())));
+		}
+		// 3) Saldo del ejercicio anterior a la fecha seleccinada.
+		if (hasInPeriodPreviousAmounts) {
+			conditions.put(AccountStatementPeriod.IN_PERIOD_BEFORE
+				,getCondition(ctx, params)
+				.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
+				.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPENING.getValue()))
+				.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(AonDateUtils.toSql(ap.getInitiationDate())))
+				.and(ACCOUNT_ENTRY.ENTRY_DATE.lt(sqlStart))
+				);
+		}
+
+		// 4) Sumas del rango de fechas seleccionado.
+		conditions.put(AccountStatementPeriod.IN_PERIOD
+			,getCondition(ctx, params)
+			.and(ap==null?DSL.trueCondition():ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
+			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPENING.getValue()))
+			.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(sqlStart))
+			.and(ACCOUNT_ENTRY.ENTRY_DATE.le(sqlEnd))
+		);
+
+		for (AccountStatementPeriod accountStatementPeriod : conditions.keySet() ) {
+			ctx.getDslContext()
+				.select(ACCOUNT.ID,ACCOUNT.CODE,ACCOUNT.DESCRIPTION, SUM_DEBIT, SUM_CREDIT)
+				.from( ACCOUNT_ENTRY )
+				.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+				.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
+				.where(conditions.get(accountStatementPeriod))
+				.groupBy(ACCOUNT.ID)
+				.fetch()
+				.stream()
+				.forEach( record -> {
+					String code = record.getValue(ACCOUNT.CODE);
+					Account account = (params.getLevel() == 9)  
+						?new Account().setId(record.getValue(ACCOUNT.ID))
+							.setCode(code)
+							.setDescription(record.getValue(ACCOUNT.DESCRIPTION))
+						:new Account()
+							.setCode(AonStringUtils.substring(code, 0,params.getLevel())); 
+					addToTrialBalance(ctx,report
+						,account
+						,accountStatementPeriod
+						,record.getValue(SUM_DEBIT).doubleValue()
+						,record.getValue(SUM_CREDIT).doubleValue())
+						;
+				}
+			);
+		}
+		if (!report.getParams().isNoActivityAccountVisible()) {
+			TreeMap<String, AccountTrialBalance> balances = new TreeMap<String, AccountTrialBalance>();
+			for (String account : report.getBalances().keySet()) {
+				if (report.getBalances().get(account).hasPeriodEntries() ) {
+					balances.put(account, report.getBalances().get(account));
+				}
+			}
+			report.setBalances( balances );
+		}
+		return report;
+	}
+	
+	private static void addToTrialBalance(AONContext ctx, AccountTrialBalanceReport report
+		, Account account, AccountStatementPeriod accountStatementPeriod, Double debit, Double credit) {
+		
+		if (report.getParams().isLowLevelAccountVisible()) {
+			int l = account.getCode().length();
+			if (l == 9) addToTrialBalance(ctx,report, new Account().setCode( AonStringUtils.substring(account.getCode(), 0,4)), accountStatementPeriod, debit,credit); 
+			else if (l == 4) addToTrialBalance(ctx,report, new Account().setCode( AonStringUtils.substring(account.getCode(), 0,3)), accountStatementPeriod, debit,credit);
+			else if (l == 3) addToTrialBalance(ctx,report, new Account().setCode( AonStringUtils.substring(account.getCode(), 0,2)), accountStatementPeriod, debit,credit);
+			else if (l == 2) addToTrialBalance(ctx,report, new Account().setCode( AonStringUtils.substring(account.getCode(), 0,1)), accountStatementPeriod, debit,credit);
+			else if (l == 1) addToTrialBalance(ctx,report, new Account().setCode( AonStringUtils.substring(account.getCode(), 0,0)), accountStatementPeriod, debit,credit);
+		}
+		if (!report.getBalances().containsKey(account.getCode())) {
+			if (account.getId() == null) {
+				Account acc = AccountDAO.get(ctx, account.getCode());
+				if (acc != null) {
+					account.setId(acc.getId());
+					account.setDescription(acc.getDescription());
+				}
+			}
+			report.getBalances().put(account.getCode(), new AccountTrialBalance()
+						.setId(account.getId())
+						.setCode(account.getCode())
+						.setDescription(account.getDescription()));
+		}
+		final AccountTrialBalance tot = report.getTotalBalance();
+		final AccountTrialBalance bal = report.getBalances().get(account.getCode());
+		
+		IAccountStatementPeriodVisitor sumVisitor = new IAccountStatementPeriodVisitor() {
+			@Override public void visitBeforePeriod() {
+				bal.setBeforePeriodDebit(bal.getBeforePeriodDebit() + debit);
+				bal.setBeforePeriodCredit(bal.getBeforePeriodCredit() + credit);
+				tot.setBeforePeriodDebit(tot.getBeforePeriodDebit() + debit);
+				tot.setBeforePeriodCredit(tot.getBeforePeriodCredit() + credit);
+			}
+			@Override public void visitInPeriodOpening() {
+				bal.setInPeriodOpeningDebit(bal.getInPeriodOpeningDebit()  + debit);
+				bal.setInPeriodOpeningCredit(bal.getInPeriodOpeningCredit() + credit);
+				tot.setInPeriodOpeningDebit(tot.getInPeriodOpeningDebit()  + debit);
+				tot.setInPeriodOpeningCredit(tot.getInPeriodOpeningCredit() + credit);
+			}
+			@Override public void visitInPeriodBefore() {
+				bal.setInPeriodBeforeDebit(bal.getInPeriodBeforeDebit() + debit);
+				bal.setInPeriodBeforeCredit(bal.getInPeriodBeforeCredit() + credit);
+				tot.setInPeriodBeforeDebit(tot.getInPeriodBeforeDebit() + debit);
+				tot.setInPeriodBeforeCredit(tot.getInPeriodBeforeCredit() + credit);
+			}
+			@Override public void visitInPeriod() {
+				bal.setInPeriodDebit(bal.getInPeriodDebit()  + debit);
+				bal.setInPeriodCredit(bal.getInPeriodCredit() + credit);
+				tot.setInPeriodDebit(tot.getInPeriodDebit()  + debit);
+				tot.setInPeriodCredit(tot.getInPeriodCredit() + credit);
+			}
+			@Override public void visitInPeriodAfter() {}
+			@Override public void visitInPeriodClosing() {}
+			@Override public void visitAfterPeriod() {}
+		};
+		accountStatementPeriod.accept(sumVisitor);
+	}
+	
+	private static Condition getBasicCondition(AONContext ctx , IAccountParams params, boolean applyDateFilterIfNeeded ) {
+		Condition condition = ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(ctx.getDomainId());
+		if (applyDateFilterIfNeeded) {
+			java.sql.Date sqlStart = null;
+			java.sql.Date sqlEnd = null;
+			if (params.getPeriod() == null) {
+				Date fromDate = params.getFromDate()!=null ?params.getFromDate() :AccountPeriodDAO.getMinDate(ctx);
+				Date toDate = params.getToDate()!=null ?params.getToDate() :AccountPeriodDAO.getMaxDate(ctx);
+				sqlStart = AonDateUtils.toSql(fromDate );
+				sqlEnd = AonDateUtils.toSql(toDate);
+			} else {
+				AccountPeriod ap = AccountPeriodDAO.getPeriod(ctx, params.getPeriod());
+				if (ap == null) {
+					throw new AonCoreException("Periodo no encontrado");
+				}
+				sqlStart = AonDateUtils.toSql(params.getFromDate()==null?ap.getInitiationDate():params.getFromDate());
+				sqlEnd = AonDateUtils.toSql(params.getToDate()==null?ap.getDeadline():params.getToDate());
+			}
+			condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.between(sqlStart,sqlEnd));
+		}
+		if (params.getActivity() != null) {
+			if (AonMathUtils.isNegative(params.getActivity())) {
+				// Sólo las comunes. Los apuntes sin activdad.
+				condition = condition.and( ACCOUNT_ENTRY.ACTIVITY.isNull());
+			} else {
+				condition = condition.and( ACCOUNT_ENTRY.ACTIVITY.eq( params.getActivity() ));
+			}
+		}
+		User user = SecurityDAO.getUser(ctx);
+		if (user.hasConfidentialityRole()) {
+			if ( params.getSecurityLevel() != null ) {
+				condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( params.getSecurityLevel().value() ));
+			}
+		} else {
+			condition = condition.and( ACCOUNT_ENTRY.SECURITY_LEVEL.eq( SecurityLevel.OFFICIAL.value() ));
+		}
+		return condition;
+	}
+
+	private static Condition getCondition(AONContext ctx , AccountStatementParams params, boolean applyDateFilterIfNeeded ) {
+		Condition condition = getBasicCondition(ctx, params, applyDateFilterIfNeeded);
+		if (params.getAccount() != null) {
+			condition = condition.and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(params.getAccount()));	
+		}
+		if ( params.areOpeningEntriesExcluded() ) {
+			condition = condition.and( ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.OPENING.getValue()));	
+		}
+		if ( params.areOperatingEntriesExcluded() ) {
+			condition = condition.and( ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.OPERATING.getValue()));	
+		}
+		if ( params.areClosingEntriesExcluded() ) {
+			condition = condition.and( ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.CLOSING.getValue()));	
+		}
+		if ( AonStringUtils.isNotBlank(params.getDocumentNumber()) ) {
+			condition = condition.and( ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER.eq( params.getDocumentNumber() ));
+		}
+		return condition;
+	}
+	
+	private static Condition getCondition(AONContext ctx , AccountOperatingParams params) {
+		Condition condition = getBasicCondition(ctx, params, true);
+		if (params.getCostCenters() != null && params.getCostCenters().size() > 0) {
+			Condition c = null;
+			if (params.getCostCenters().contains(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT)) {
+				@SuppressWarnings("unchecked")
+				HashSet<String> cloned = (HashSet<String>) params.getCostCenters().clone();
+				cloned.remove(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT);
+				c = ACCOUNT.COST_CENTER.isNull().or(ACCOUNT.COST_CENTER.in( cloned ));	
+			} else {
+				c = ACCOUNT.COST_CENTER.in( params.getCostCenters());
+			}
+			condition = condition.and( c );
+		}
+		return condition;
+	}
+	
+	private static Condition getCondition(AONContext ctx , AccountTrialBalanceParams params) {
+		Condition condition = getBasicCondition(ctx, params, false);
+		if (AonStringUtils.isNotBlank(params.getCode())) {
+			String account = AonStringUtils.replace(params.getCode(), AonStringUtils.ASTERISK, AonStringUtils.EMPTY); 
+			if (AonStringUtils.isNotBlank(account)) {
+				if (AonStringUtils.isNumeric(account)) {
+					String code = AonStringUtils.replace(params.getCode(), AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+					if (!AonStringUtils.endsWith(code, AonStringUtils.PERCENT)) {
+						code = code + AonStringUtils.PERCENT;
+					}	
+					condition = condition.and(ACCOUNT.CODE.like(code));
+				} else {
+					String descr = AonStringUtils.replace(params.getCode(), AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+					if (!AonStringUtils.startsWith(descr, AonStringUtils.PERCENT)) {
+						descr = AonStringUtils.PERCENT + descr;
+					}
+					if (!AonStringUtils.endsWith(descr, AonStringUtils.PERCENT)) {
+						descr = descr + AonStringUtils.PERCENT;
+					}	
+					condition = condition.and(ACCOUNT.DESCRIPTION.like(descr).or(ACCOUNT.ALIAS.like(descr)));
+				}
+				
+			}
+			
+		}
+		return condition;
+	}
 }

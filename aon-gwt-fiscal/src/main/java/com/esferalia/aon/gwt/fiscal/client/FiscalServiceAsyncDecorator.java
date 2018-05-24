@@ -15,6 +15,8 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
@@ -212,6 +214,15 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getAccountStatement(domainName, user, domain, params,
 				new AsyncCallbackWrapper<AccountStatementReport>(callback));
+	}
+	
+	// --------------------------------------------------------------- ACCOUNT TRIAL BALANCE
+	@Override
+	public void getAccountTrialBalanceReport(String domainName, String user, int domain,
+			AccountTrialBalanceParams params, AsyncCallback<AccountTrialBalanceReport> callback) {
+		AON.start();
+		fsa.getAccountTrialBalanceReport(domainName, user, domain, params,
+				new AsyncCallbackWrapper<AccountTrialBalanceReport>(callback));
 	}
 
 	@Override

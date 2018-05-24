@@ -1,11 +1,10 @@
 package com.esferalia.aon.occam.api.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
-public class AccountStatementParams implements Serializable {
+public class AccountStatementParams implements IAccountParams {
 
 	private static final long serialVersionUID = 8075038329917800745L;
 	
@@ -23,7 +22,8 @@ public class AccountStatementParams implements Serializable {
 	private boolean closingEntriesExcluded;
 
 	private String documentNumber;
-	
+
+	@Override
 	public int getDomain() {
 		return domain;
 	}
@@ -32,6 +32,7 @@ public class AccountStatementParams implements Serializable {
 		return this;
 	}
 	
+	@Override
 	public Integer getPeriod() {
 		return period;
 	}
@@ -54,6 +55,7 @@ public class AccountStatementParams implements Serializable {
 		this.fullAccount = fullAccount;
 		return this;
 	} 
+	@Override
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -62,6 +64,7 @@ public class AccountStatementParams implements Serializable {
 		return this;
 	}
 
+	@Override
 	public Date getToDate() {
 		return toDate;
 	}
@@ -70,6 +73,7 @@ public class AccountStatementParams implements Serializable {
 		return this;
 	}
 
+	@Override
 	public Integer getActivity() {
 		return activity;
 	}
@@ -78,6 +82,7 @@ public class AccountStatementParams implements Serializable {
 		return this;
 	}
 	
+	@Override
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}

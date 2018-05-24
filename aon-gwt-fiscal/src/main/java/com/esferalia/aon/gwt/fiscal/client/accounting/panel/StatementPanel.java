@@ -84,6 +84,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 			public void onSuccess(final AccountStatementReport result) {
 				FlexTable tab = new FlexTable();
 				tab.addStyleName(AON.AON_CSS.aonReportTable());
+				tab.addStyleName(AON.AON_CSS.aonReportTableFontMedium());
 
 				tab.getColumnFormatter().setWidth( 0, "20px");
 				tab.getColumnFormatter().setWidth( 1, "50px");
@@ -93,7 +94,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 				tab.getColumnFormatter().setWidth( 5, "100px");
 				tab.getColumnFormatter().setWidth( 6, "100px");
 				tab.getColumnFormatter().setWidth( 7, "100px");
-				tab.getColumnFormatter().setWidth( 8, "150px");
+				tab.getColumnFormatter().setWidth( 8, "200px");
 				tab.getColumnFormatter().setWidth( 9, "175px");
 				
 				int row = 0;
@@ -231,10 +232,8 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 							
 							@Override
 							public void onClick(ClickEvent event) {
-								int rw = 0;
-								for (final AccountStatement as : result.getDetails()) {
+								for (int rw = 0; rw < result.getDetails().size(); rw++) {
 									tab.getRowFormatter().removeStyleName(rw+rowOffset, AON.AON_CSS.aonDisplayNone());
-									rw++;
 								}
 								showBalanced.setText("Mostrar los ocultados");
 								showBalanced.setVisible(false);
@@ -346,7 +345,9 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 						
 						
 						tab.setWidget(row, 2, new Label( AON.DATE_FORMAT.format(as.getEntryDate()) ));
-						tab.setWidget(row, 3, new Label( AonStringUtils.abbreviate(as.getConcept(),32) ));
+						Label conceptLabel = new Label( AonStringUtils.abbreviate(as.getConcept(),32) );
+						conceptLabel.setStyleName(AON.AON_CSS.aonNowrap());
+						tab.setWidget(row, 3, conceptLabel);
 						tab.setWidget(row, 4, new Label( AonMathUtils.isZero(as.getDebit())?AonStringUtils.SPACE:AON.FMT.format(as.getDebit()) ));
 						tab.getCellFormatter().addStyleName(row, 4,AON.AON_CSS.aonTextRight());
 						tab.setWidget(row, 5, new Label( AonMathUtils.isZero(as.getCredit())?AonStringUtils.SPACE:AON.FMT.format(as.getCredit()) ));
@@ -356,15 +357,18 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 						tab.setWidget(row, 7, new Label( AonMathUtils.isZero(as.getUnpaidBalance())?AonStringUtils.SPACE:AON.FMT.format(as.getUnpaidBalance()) ));
 						tab.getCellFormatter().addStyleName(row, 7,AON.AON_CSS.aonTextRight());
 						tab.getCellFormatter().addStyleName(row, 7,AON.AON_CSS.aonPaddingRight());
-						tab.setWidget(row, 8, new Label( AonStringUtils.defaultString(as.getBalancingAccountCode()) 
-								+ " " + AonStringUtils.defaultString(AonStringUtils.abbreviate(as.getBalancingAccountDescription(),11))));
+						Label balancingAccountLabel = new Label( AonStringUtils.defaultString(as.getBalancingAccountCode()) 
+								+ " " + AonStringUtils.defaultString(AonStringUtils.abbreviate(as.getBalancingAccountDescription(),11)));
+						balancingAccountLabel.setStyleName(AON.AON_CSS.aonNowrap());
+						tab.setWidget(row, 8, balancingAccountLabel);
 						
 
 						Label documentLabel = new Label( document );
 						tab.setWidget(row, 9, documentLabel);
-						documentLabel.addStyleName(AON.AON_CSS.aonClickableLabel());
+						documentLabel.setStyleName(AON.AON_CSS.aonNowrap());
 						documentLabel.setTitle(AON.MSG.goAction());
 						if (allowChecks) {
+							documentLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
 							documentLabel.addClickHandler(new ClickHandler() {
 								
 								@Override
@@ -396,7 +400,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 								}
 							});
 						}
-						tab.getRowFormatter().addStyleName(currentRow, AON.AON_CSS.aonReportTableRow());
+						tab.getRowFormatter().addStyleName(currentRow, AON.AON_CSS.aonReportTableRowBckHover());
 						
 						row++;
 					}

@@ -1,12 +1,11 @@
 package com.esferalia.aon.occam.api.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
-public class AccountOperatingParams implements Serializable,Cloneable {
+public class AccountOperatingParams implements IAccountParams,Cloneable {
 
 	private static final long serialVersionUID = 8075038329917800745L;
 	
@@ -27,6 +26,7 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 	private boolean byMonth;
 	
 	
+	@Override
 	public int getDomain() {
 		return domain;
 	}
@@ -35,6 +35,7 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 		return this;
 	}
 	
+	@Override
 	public Integer getPeriod() {
 		return period;
 	}
@@ -43,6 +44,7 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 		return this;
 	}
 
+	@Override
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -51,6 +53,7 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 		return this;
 	}
 
+	@Override
 	public Date getToDate() {
 		return toDate;
 	}
@@ -59,6 +62,7 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 		return this;
 	}
 
+	@Override
 	public Integer getActivity() {
 		return activity;
 	}
@@ -67,6 +71,7 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 		return this;
 	}
 	
+	@Override
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -136,6 +141,7 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 		return this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public AccountOperatingParams clone() {
 		return new AccountOperatingParams()
 			.setDomain(getDomain())
@@ -148,6 +154,7 @@ public class AccountOperatingParams implements Serializable,Cloneable {
 			.setPreviousPeriods(getPreviousPeriods())
 			.setByMonth(isByMonth())
 			.setPercentsEnabled(isPercentsEnabled())
+			.setCostCenters((HashSet<String>) getCostCenters().clone())
 		;
 	}
 }
