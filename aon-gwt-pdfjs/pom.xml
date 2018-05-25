@@ -36,6 +36,7 @@
 				<includes>
 					<include>**/*.gwt.xml</include>
 					<include>**/public/**</include>
+					<include>**/client/**</include>
 				</includes>
 			</resource>
 		</resources>
