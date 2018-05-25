@@ -8,6 +8,7 @@
 
 	<inherits name="com.vaadin.polymer.Elements"/>
 	
+	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
 	<inherits name='com.esferalia.aon.gwt.common.Common'/>
 	<inherits name="com.esferalia.aon.occam.api.Occam" />	
 	<inherits name='com.esferalia.aon.gwt.codemirror.CodeMirror'/>

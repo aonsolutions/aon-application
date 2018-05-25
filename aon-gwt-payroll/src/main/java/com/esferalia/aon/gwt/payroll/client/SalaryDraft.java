@@ -8,7 +8,6 @@ import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENG
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -103,7 +102,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -129,7 +127,6 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
@@ -145,12 +142,15 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.ValueBoxBase;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.events.OnMouseOverHandler;
+
+import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class SalaryDraft extends ResizeComposite
 		implements CalculateCallback, SalarySelect.Listener, UndoManager.Listener{
@@ -166,6 +166,8 @@ public class SalaryDraft extends ResizeComposite
 
 
 	private static Map<String, String> IRPF_ICONS = new HashMap<String, String>() {
+		private static final long serialVersionUID = 784424826829639284L;
+
 		{
 			put("01", AON.AON_ICON_ARABA);
 			put("48", AON.AON_ICON_BIZKAIA);
@@ -174,6 +176,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 	};
 
+	@SuppressWarnings("serial")
 	private static Map<Scope, String> SCOPE_DESCRIPTIONS = new HashMap<Scope, String>() {
 		{
 			put(Scope.AGREEMENT, "Convenio");
@@ -184,6 +187,9 @@ public class SalaryDraft extends ResizeComposite
 	};
 
 	private static Map<String, String> COSTS_DESCRIPTIONS = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 4224861477651976669L;
+
 		{
 			put("ECSS_E", "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS");
 			put("ATEP_E", "Accidentes de Trabajo y Enfermedades Profesionales");
@@ -199,6 +205,9 @@ public class SalaryDraft extends ResizeComposite
 			Deduction.Type.STRUCTURAL_OVERTIME, Deduction.Type.NON_STRUCTURAL_OVERTIME, Deduction.Type.FOGASA };
 
 	private static Map<Deduction.Type, String> DEDUCTION_DESCRIPTIONS = new HashMap<Deduction.Type, String>() {
+
+		private static final long serialVersionUID = 4930183777517542277L;
+
 		{
 			put(Deduction.Type.IRPF, "IRPF");
 			put(Deduction.Type.COMMON_CONTINGENCY, "Contingencias Comunes");
@@ -2102,13 +2111,13 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	ScrollPanel scrollPanel;
 	@UiField
+	VerticalPanel scrolledPanel;
+	@UiField
 	DeckPanel deckPanel;
 	@UiField
 	Panel draftPanel;
 	@UiField
-	HTML printPreviewHTML;
-	@UiField
-	HTML irpfPreviewHTML;
+	Viewer pdfViewer;
 
 	@UiField
 	ListBox zoomListBox;
@@ -2204,8 +2213,6 @@ public class SalaryDraft extends ResizeComposite
 	Label dbTotalDeductionLabel;
 
 	@UiField
-	Button printButton;
-	@UiField
 	Button acceptButton;
 	@UiField
 	Button salaryButton;
@@ -2231,13 +2238,21 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Button closePreviewButton;
 	@UiField
+	Button irpfPreviewButton;
+	@UiField
 	Button printPreviewButton;
+	
 
 	@UiField
 	MyStyle style;
 
 	@UiField
 	HorizontalPanel timeRulePanel;
+	
+	@UiField
+	Button saveButton;
+//	@UiField
+//	Button printButton;
 
 	private int zoom;
 	private Scope scope;
@@ -2325,7 +2340,7 @@ public class SalaryDraft extends ResizeComposite
 
 		// I don't like it. But almost it's clear enough.
 		if (isPreviewVisible()) {
-			getPrintPreview();
+			printPreview();
 		}
 		
 		
@@ -2350,10 +2365,14 @@ public class SalaryDraft extends ResizeComposite
 
 	// ------------------------------------------------------------ @UIHandlers
 
+//	@UiHandler("printButton")
+//	void onPrintButtonClick(ClickEvent event) {
+//		pdfViewer.print();
+//	}
 
 	@UiHandler("irpfPreviewButton")
 	void onIrpfPreviewClick(ClickEvent event) {
-		irpfPreview();
+		irpfPrint();
 	}
 
 	@UiHandler("totalLiquidLabel")
@@ -2562,50 +2581,69 @@ public class SalaryDraft extends ResizeComposite
 	private void showDraft() {
 		showWidget(draftPanel);
 
+		saveButton.setVisible(false);
+//		printButton.setVisible(false);
 		zoomListBox.setVisible(false);
 		closePreviewButton.setVisible(false);
-
+		
 		fxButton.setVisible(true);
+		undoButton.setVisible(true);
+		redoButton.setVisible(true);
+		undoAllButton.setVisible(true);
+		costsCheck.setVisible(true);
 		salarySelect.setVisible(true);
+		acceptButton.setVisible(true);
+		salaryButton.setVisible(true);
+		irpfPreviewButton.setVisible(true);
 		printPreviewButton.setVisible(true);
 		tgssCheck.setVisible(isSalary());
 		dbSalaryCheck.setVisible(hasDbSalary());
 		
 	}
 
-	private void showPreview() {
-		showWidget(printPreviewHTML);
 
+	private void showPreview() {
+		showWidget(pdfViewer);
+
+		saveButton.setVisible(true);
+//		printButton.setVisible(true);
 		zoomListBox.setVisible(true);
 		closePreviewButton.setVisible(true);
 
 		fxButton.setVisible(false);
+		costsCheck.setVisible(false);
 		salarySelect.setVisible(false);
 		tgssCheck.setVisible(false);
 		dbSalaryCheck.setVisible(false);
+		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
 	}
+
 
 	private void showIrpfPreview() {
-		showWidget(irpfPreviewHTML);
+		showWidget(pdfViewer);
 
+		saveButton.setVisible(true);
+//		printButton.setVisible(true);
 		zoomListBox.setVisible(true);
 		closePreviewButton.setVisible(true);
 
 		fxButton.setVisible(false);
+		undoButton.setVisible(false);
+		redoButton.setVisible(false);
+		undoAllButton.setVisible(false);
+		costsCheck.setVisible(false);
 		salarySelect.setVisible(false);
+		acceptButton.setVisible(false);
+		salaryButton.setVisible(false);
 		tgssCheck.setVisible(false);
 		dbSalaryCheck.setVisible(false);
+		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
-
-	}
-
-	boolean isIrpfPreviewVisible() {
-		return isWidgetVisible(irpfPreviewHTML);
 	}
 
 	boolean isPreviewVisible() {
-		return isWidgetVisible(printPreviewHTML);
+		return isWidgetVisible(pdfViewer);
 	}
 
 	private void showWidget(Widget widget) {
@@ -2832,7 +2870,6 @@ public class SalaryDraft extends ResizeComposite
 
 		Date startDate = salaryDraftObject.getStartDate();
 		Date endDate = salaryDraftObject.getEndDate();
-
 		periodLabel.setText(format(startDate) + " - " + format(endDate));
 		daysLabel.setText(Integer.toString(salaryDraftObject.getTimeUnits()));
 
@@ -3181,17 +3218,18 @@ public class SalaryDraft extends ResizeComposite
 		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 
-	@UiHandler("printButton")
-	void onPrintButtonClick(ClickEvent event) {
-		if (isIrpfPreviewVisible())
-			irpfPrint();
-		else
-			print();
-	}
-
 	@UiHandler("costsCheck")
 	void onCostsCheckChange(ValueChangeEvent<Boolean> event) {
 		showCosts();
+	}
+	
+	@UiHandler("saveButton")
+	void onDownloadClick(ClickEvent event) {
+		String fileName = 
+				salaryDraftObject.getEmployeeName() + " " 
+				+ DateTimeFormat.getFormat(PredefinedFormat.MONTH).format(salaryDraftObject.getChargeDate())
+				+".pdf";
+		pdfViewer.download(fileName);
 	}
 
 	// -------------------------------------------------------------------------
@@ -3227,9 +3265,10 @@ public class SalaryDraft extends ResizeComposite
 				int index = SalaryDraft.this.zoomListBox.getSelectedIndex();
 				String text = SalaryDraft.this.zoomListBox.getItemText(index);
 				SalaryDraft.this.zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
-				getPrintPreview();
+				pdfViewer.scale(zoom / 100.00);
 			}
 		});
+		
 	}
 
 	private void clearDbWidgets() {
@@ -4121,7 +4160,6 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void print() {
-
 		salaryDraftObject.download("application/pdf", new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -4131,8 +4169,8 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public void onSuccess(String dataURI) {
-				// TODO Auto-generated method stub
-				Window.open(dataURI, "Vista Preliminar", null);
+				showPreview();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
 			}
 
 		});
@@ -4149,55 +4187,50 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public void onSuccess(String dataURI) {
-				// TODO Auto-generated method stub
-				Window.open(dataURI, "Vista Preliminar", null);
+				showIrpfPreview();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
 			}
 
 		});
-	}
-
-	private void irpfPreview() {
-		showIrpfPreview();
-		getIrpfPreview();
 	}
 
 	private void printPreview() {
-		showPreview();
-		getPrintPreview();
-	}
-
-	private void getPrintPreview() {
-		salaryDraftObject.getAsHTML(zoom, new AsyncCallback<String>() {
-
+		salaryDraftObject.getType()
+		.accept( new Salary.TypeVisitor<Void>() {
 			@Override
-			public void onSuccess(String result) {
-				printPreviewHTML.setHTML(result);
+			public Void visitDelay(Type type) {
+				print();
+				return null;
+			}
+			
+			@Override
+			public Void visitExtra(Type type) {
+				print();
+				return null;
+			}
+			
+			@Override
+			public Void visitSalary(Type type) {
+				print();
+				return null;
+			}
+			
+			@Override
+			public Void visitSettle(Type type) {
+				print();
+				return null;
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO
-				printPreviewHTML.setHTML(caught.getMessage());
+			public Void visitNotEnjoyedVacations(Type type) {
+				print();
+				return null;
 			}
+			
 		});
 	}
 
-	private void getIrpfPreview() {
-		salaryDraftObject.getIrpfAsHTML(zoom, new AsyncCallback<String>() {
-
-			@Override
-			public void onSuccess(String result) {
-				irpfPreviewHTML.setHTML(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO
-				irpfPreviewHTML.setHTML(caught.getMessage());
-			}
-		});
-	}
-
+	
 	private void setDbStyleName(Label l2, HasText l1) {
 		setDbStyleName(l2, l1.getText(), l2.getText());
 	}

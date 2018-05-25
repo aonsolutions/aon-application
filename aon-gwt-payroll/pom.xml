@@ -216,6 +216,12 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.gwt.pdfjs</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
        	<dependency>
 			<groupId>com.code.aon</groupId>
 	        <artifactId>aon.google.apis</artifactId>

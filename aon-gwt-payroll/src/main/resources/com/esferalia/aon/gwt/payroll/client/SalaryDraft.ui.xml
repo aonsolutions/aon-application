@@ -1,7 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client" 
+	xmlns:s="urn:import:com.google.gwt.dom.builder.shared" 
+	>
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
 
@@ -14,6 +17,9 @@
 			opacity: 0.5;		
 		}
 		
+		.page-shadow {
+    		box-shadow: 5px 5px 10px 5px #d4d0c8;
+		}
 		
 		.vertical-space {
 			height: 20px;
@@ -228,7 +234,7 @@
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.SalaryDraft.*" />
 
-	<g:DockLayoutPanel unit="PX">
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="72">
 
 			<g:FlowPanel>
@@ -253,8 +259,6 @@
 									enabled="false" />
 								<g:Button debugId='salaryButton' ui:field='salaryButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="EMITIR NOMINA" />
-								<g:Button debugId='printButton' ui:field='printButton'
-									styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" />
 								<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconPdfPreview}'
 									text="Vista Preliminar" />
@@ -262,9 +266,15 @@
 									styleName='aon-finding-toolbar-item {res.css.aonIconIrpfPreview}'
 									text="IRPF" />
 								<e:SalarySelect ui:field="salarySelect" />
+
 								<g:ListBox ui:field="zoomListBox" />
+								<!--  g:Button debugId='printButton' ui:field='printButton'
+									styleName='aon-finding-toolbar-item aon-icon-printer' text="IMPRIMIR" /-->
+								<g:Button debugId='saveButton' ui:field='saveButton'
+									styleName='aon-finding-toolbar-item aon-icon-mail-save' text="DESCARGAR" />
 								<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
+
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -311,7 +321,7 @@
 		</g:north>
 		<g:center>
 			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.editor}">
-				<g:VerticalPanel styleName="{style.document}">
+				<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
 					<g:DeckPanel ui:field="deckPanel">
 						<g:VerticalPanel ui:field="draftPanel" width="auto">
 							
@@ -617,10 +627,17 @@
 								</g:Grid>
 							</g:HorizontalPanel>
 						</g:VerticalPanel>
-						<g:HTML styleName="reset" ui:field='printPreviewHTML'
-							wordWrap='true' />
-						<g:HTML styleName="reset" ui:field='irpfPreviewHTML'
-							wordWrap='true' />
+						
+						<!--  g:HTML styleName="reset" ui:field='printPreviewHTML'
+						wordWrap='true' /-->
+							
+						<!--  g:HTML styleName="reset" ui:field='irpfPreviewHTML'
+						wordWrap='true' /-->
+
+						<!--  g:Frame styleName="reset" ui:field='pdfPreviewHTML'
+						/-->
+						
+						<p:Viewer styleName="reset" ui:field='pdfViewer' />
 
 					</g:DeckPanel>
 				</g:VerticalPanel>
