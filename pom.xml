@@ -152,6 +152,7 @@
 		<module>aon-ui-sepe</module>
 
 		<!-- GWT MODULES -->
+		<module>aon-gwt-pdfjs</module>
 		<module>aon-gwt-aio</module>
 		<module>aon-gwt-polymer</module>
 		<module>aon-gwt-common</module>
