@@ -75,30 +75,35 @@ public class EnterpriseCostProvider implements Serializable {
 	}
 	
 	public boolean excelReport(Date startDate, Date endDate, Integer domain, List<Integer> cccList, List<Integer> workPlaceList, List<Integer> salaryList, OutputStream output) throws IOException, ReportException, AonConnectionException {
-		Connection conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-		int salaryCount = initSalaryContext(conn, startDate, endDate, domain, cccList, workPlaceList, salaryList);
-		if(salaryCount<=0){
-			return false;
+		Connection conn = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			int salaryCount = initSalaryContext(conn, startDate, endDate, domain, cccList, workPlaceList, salaryList);
+			if(salaryCount<=0){
+				return false;
+			}
+			
+			ExcelReportExporter exporter = new ExcelReportExporter();
+			
+			// MS EXCEL 97 not support more than 256 columns 
+			if(salaryCount<256){
+				exporter.startExport("Conceptos");
+				ReportMetadata conceptColumnMetadata = getConceptColumnMetadata();
+				exporter.exportHeader(conceptColumnMetadata);
+				excelReportByConcept(exporter, conceptColumnMetadata);
+			}
+	
+			exporter.setSheet(exporter.createSheet("Trabajadores"));
+			ReportMetadata contractColumnMetadata = getContractColumnMetadata();
+			exporter.exportHeader(contractColumnMetadata);
+			excelReportByContract(exporter, contractColumnMetadata);
+			
+			exporter.endExport(output);
+			output.flush();
+			return true;
+		} finally {
+			DatabaseUtil.closeQuietly(conn);
 		}
-		
-		ExcelReportExporter exporter = new ExcelReportExporter();
-		
-		// MS EXCEL 97 not support more than 256 columns 
-		if(salaryCount<256){
-			exporter.startExport("Conceptos");
-			ReportMetadata conceptColumnMetadata = getConceptColumnMetadata();
-			exporter.exportHeader(conceptColumnMetadata);
-			excelReportByConcept(exporter, conceptColumnMetadata);
-		}
-
-		exporter.setSheet(exporter.createSheet("Trabajadores"));
-		ReportMetadata contractColumnMetadata = getContractColumnMetadata();
-		exporter.exportHeader(contractColumnMetadata);
-		excelReportByContract(exporter, contractColumnMetadata);
-		
-		exporter.endExport(output);
-		output.flush();
-		return true;
 	}
 	
 	private int initSalaryContext(Connection connection, Date startDate, Date endDate, Integer domain, List<Integer> cccIds,

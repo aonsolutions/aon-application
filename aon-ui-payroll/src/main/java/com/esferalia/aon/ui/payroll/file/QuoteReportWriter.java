@@ -111,23 +111,29 @@ public class QuoteReportWriter {
 	}
 	
 	public void excelReport(Integer year, Month month, Integer domain, List<Integer> ccc, OutputStream output) throws IOException, ReportException, AonConnectionException {
-		Connection conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-		initSalaryContext(conn, year, month, domain, ccc);
-		
-		CustomExcelReportExporter exporter = new CustomExcelReportExporter();
-		
-		exporter.startExport("Conceptos");
-		ReportMetadata contractColumnMetadata = getContractColumnMetadata();
-		exporter.exportHeader(contractColumnMetadata);
-		excelReportByContract(exporter, contractColumnMetadata);	
+		Connection conn = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			initSalaryContext(conn, year, month, domain, ccc);
+			
+			CustomExcelReportExporter exporter = new CustomExcelReportExporter();
+			
+			exporter.startExport("Conceptos");
+			ReportMetadata contractColumnMetadata = getContractColumnMetadata();
+			exporter.exportHeader(contractColumnMetadata);
+			excelReportByContract(exporter, contractColumnMetadata);	
+	
+			exporter.startSheet("Trabajadores");
+			ReportMetadata conceptColumnMetadata = getConceptColumnMetadata();
+			exporter.exportHeader(conceptColumnMetadata);
+			excelReportByConcept(exporter, conceptColumnMetadata);	
+			
+			exporter.endExport(output);
+			output.flush();
+		} finally {
+			DatabaseUtil.closeQuietly(conn);
+		}
 
-		exporter.startSheet("Trabajadores");
-		ReportMetadata conceptColumnMetadata = getConceptColumnMetadata();
-		exporter.exportHeader(conceptColumnMetadata);
-		excelReportByConcept(exporter, conceptColumnMetadata);	
-		
-		exporter.endExport(output);
-		output.flush();
 	}
 	
 	private static void initSalaryContext(Connection conn, Integer year, Month month, Integer domain, List<Integer> cccIds) throws AonConnectionException {
