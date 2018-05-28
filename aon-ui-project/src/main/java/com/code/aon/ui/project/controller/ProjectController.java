@@ -64,9 +64,12 @@ public class ProjectController extends BasicController {
 			Project p = (Project) getTo();
 			Integer pt = p.getProjectType() != null ? p.getProjectType().getId() : null;
 			alias = engine.getLastProjectAlias(c, pt);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			DatabaseUtil.closeQuietly(c);
 		} 
+				
 		return isNevv() && alias != null && !"".equals(alias) && !" ".equals(alias)? "(Último expediente: " + alias + ")" : "";
 	}
 }
