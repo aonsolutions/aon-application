@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -73,6 +75,9 @@ public class SiiPrincipal extends Composite{
 		parent.setFilterMap(filterMap);
 	}
 	
+	Integer page = 1;
+	Integer perPage = 40;
+	Boolean scroll = true;
 	public SiiPrincipal(SiiMain parent) {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = parent;
@@ -87,11 +92,38 @@ public class SiiPrincipal extends Composite{
 				Integer value  = arg0.getSelectedItem();
 				if(value == 1){
 					openFootPanel();
-					getAPI().getSii().getSiiHistory(new AsyncCallback<JSON<JsDataResponse>>() {
+					getAPI().getSii().getSiiHistory(page, perPage, new AsyncCallback<JSON<JsDataResponse>>() {
 						
 						@Override
 						public void onSuccess(JSON<JsDataResponse> result) {
 							historyPanel.add(new HistoryPanel(me, result.getData()));
+							
+							historyPanel.addScrollHandler(new ScrollHandler() {
+								
+								@Override
+								public void onScroll(ScrollEvent event) {
+									Integer scrollTop = historyPanel.getElement().getScrollTop();
+									Integer offsetHeight = historyPanel.getElement().getOffsetHeight();
+									Integer physicalSize = historyPanel.getElement().getScrollHeight();
+									Integer maxScrollPosition = physicalSize - offsetHeight;
+									if(scrollTop >= maxScrollPosition && scroll){
+										page++;
+										HistoryPanel tsp = (HistoryPanel) historyPanel.getWidget();
+										getAPI().getSii().getSiiHistory(page, perPage, new AsyncCallback<JSON<JsDataResponse>>() {
+											
+											@Override
+											public void onSuccess(JSON<JsDataResponse> result) {
+												scroll = result.getData().length() == perPage;
+												if(result.getData().length() > 0)
+													tsp.addItems(result.getData());
+											}
+											
+											@Override public void onFailure(Throwable caught) {}
+										});
+										historyPanel.getElement().setScrollTop(scrollTop);
+									}
+								}
+							});
 						}
 						
 						@Override public void onFailure(Throwable caught) {}

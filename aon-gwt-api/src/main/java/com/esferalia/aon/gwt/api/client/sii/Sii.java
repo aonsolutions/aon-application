@@ -23,8 +23,8 @@ public class Sii extends Methods{
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
-	public void getSiiHistory(AsyncCallback<JSON<JsDataResponse>> callback){
-		get(getUrl() + "s11/"+getDomainName()+"/"+getUserName()+"/history", callback);
+	public void getSiiHistory(Integer page, Integer perPage, AsyncCallback<JSON<JsDataResponse>> callback){
+		get(getUrl() + "s11/"+getDomainName()+"/"+getUserName()+"/history?page="+ page + "&per_page=" +perPage, callback);
 	}
 	
 	public void getSiiHistoryDetail(Integer id, AsyncCallback<JSON<JsInvoice>> callback){

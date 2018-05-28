@@ -43,7 +43,9 @@ public class SiiServlet extends HttpServlet{
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
 				case "history": // INVOICE
-					object = getSiiHistory(domain, userName);
+					Integer page = Integer.parseInt(req.getParameter("page"));
+					Integer perPage = Integer.parseInt(req.getParameter("per_page"));
+					object = getSiiHistory(domain, userName, page, perPage);
 					break;
 				case "historyDetail":
 					object = getSiiHistoryDetail(domain, userName, Integer.parseInt(req.getParameter("id")));
@@ -78,12 +80,13 @@ public class SiiServlet extends HttpServlet{
 		}
 	}
     
-    private JSONArray getSiiHistory(Domain domain, String login){
+    private JSONArray getSiiHistory(Domain domain, String login, Integer page, Integer perPage){
     	JSONArray array = new JSONArray();
     	
     	AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.SII, f -> 
     		f.getDomainProperty().eq(domain.getId())
-    		.and(f.getSourceProperty().eq(DataResponseSource.SII.value())))
+    		.and(f.getSourceProperty().eq(DataResponseSource.SII.value()))
+    		.page(page).perPage(perPage))
     	.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
     	.forEach(r -> {
     		array.put(ToJSON.dataResponseToJSON(r));

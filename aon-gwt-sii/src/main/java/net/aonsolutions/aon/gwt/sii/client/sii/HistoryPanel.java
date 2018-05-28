@@ -23,52 +23,56 @@ public class HistoryPanel extends SouthPanel {
     	super(parent);
         vertical.setWidth("100%");
         if(items.length() > 0){
-        	items.stream().forEach(js -> {
-        		PaperItem pi = buildProduct(js);
-        		VerticalPanel vp = new VerticalPanel();
-        		vp.setWidth("100%");
-        		vp.setVisible(false);
-        		Integer id = js.getId();
-        		
-        		pi.addClickHandler(new ClickHandler() {
-        			
-        			@Override
-        			public void onClick(ClickEvent arg0) {
-        				if(!isButton){
-        					if(vp.getWidgetCount() > 0){
-        						if(vp.isVisible()) vp.setVisible(false);
-        						else vp.setVisible(true);
-        					} else {
-        						getAPI().getSii().getSiiHistoryDetail(id, new AsyncCallback<JSON<JsInvoice>>() {
-    						
-        							@Override
-        							public void onSuccess(JSON<JsInvoice> result) {
-        								if(result.getData().length() > 0){
-        									if(vp.isVisible()) vp.setVisible(false);
-        									else vp.setVisible(true);
-        									vp.getElement().getStyle().setPaddingLeft(24, Unit.PX);
-        									result.getData().stream().forEach(js2 -> {
-        										PaperItem pi2 = buildPaperItem(js2);
-        										vp.add(pi2);
-        									});
-        								}
-        							}
-    						
-        							@Override public void onFailure(Throwable caught) {}
-        						});
-        					}
-        				} else {
-        					isButton = false;
-        				}
-        			}
-        		});
-        		vertical.add(pi);
-        		vertical.add(vp);
-        	});
+        	addItems(items);
         } else {
         	vertical.add(new Label(nothing));
         }
     }
+	
+	public void addItems(AonJsArray<JsDataResponse> items) {
+		items.stream().forEach(js -> {
+    		PaperItem pi = buildProduct(js);
+    		VerticalPanel vp = new VerticalPanel();
+    		vp.setWidth("100%");
+    		vp.setVisible(false);
+    		Integer id = js.getId();
+    		
+    		pi.addClickHandler(new ClickHandler() {
+    			
+    			@Override
+    			public void onClick(ClickEvent arg0) {
+    				if(!isButton){
+    					if(vp.getWidgetCount() > 0){
+    						if(vp.isVisible()) vp.setVisible(false);
+    						else vp.setVisible(true);
+    					} else {
+    						getAPI().getSii().getSiiHistoryDetail(id, new AsyncCallback<JSON<JsInvoice>>() {
+						
+    							@Override
+    							public void onSuccess(JSON<JsInvoice> result) {
+    								if(result.getData().length() > 0){
+    									if(vp.isVisible()) vp.setVisible(false);
+    									else vp.setVisible(true);
+    									vp.getElement().getStyle().setPaddingLeft(24, Unit.PX);
+    									result.getData().stream().forEach(js2 -> {
+    										PaperItem pi2 = buildPaperItem(js2);
+    										vp.add(pi2);
+    									});
+    								}
+    							}
+						
+    							@Override public void onFailure(Throwable caught) {}
+    						});
+    					}
+    				} else {
+    					isButton = false;
+    				}
+    			}
+    		});
+    		vertical.add(pi);
+    		vertical.add(vp);
+    	});
+	}
     
     public PaperItem buildProduct(JsDataResponse js){
     	PaperItem pi = new PaperItem();
