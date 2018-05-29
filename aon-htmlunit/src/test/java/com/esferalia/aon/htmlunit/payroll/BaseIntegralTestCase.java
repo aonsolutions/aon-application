@@ -458,6 +458,11 @@ public abstract class BaseIntegralTestCase {
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getAttribute("class").contains(clazz));
 	}
 
+	protected static void wait4NoClass(String id, String clazz) throws InterruptedException {
+		wait4(htmlPage,
+				htmlPage -> !htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getAttribute("class").contains(clazz));
+	}
+
 	protected static void assertNotElement(String id) throws ParseException {
 		Assert.assertNull(getElementById(id));
 	}
@@ -491,6 +496,10 @@ public abstract class BaseIntegralTestCase {
 		Assert.assertEquals(button.isDisabled(), disabled);
 	}
 
+	protected static void assertInputDisabled(String id, boolean disabled) throws InterruptedException {
+		HtmlInput input = (HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id);
+		Assert.assertEquals(input.isDisabled(), disabled);
+	}
 
 	protected static double getValue(String id) throws ParseException {
 		HtmlInput input = getElementById(id);

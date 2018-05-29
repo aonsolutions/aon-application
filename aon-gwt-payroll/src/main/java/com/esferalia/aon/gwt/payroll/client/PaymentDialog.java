@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0000;
+
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
@@ -68,7 +70,7 @@ public class PaymentDialog extends CustomDialog {
 	}
 	
 	public void setType(com.esferalia.aon.gwt.payroll.shared.Payment.Type type) {
-		payment.setType(type);
+		payment.setType(type == null ? CRA_0000 : type);
 	}
 
 	public com.esferalia.aon.gwt.payroll.shared.Salary.Type getReceiptType() {

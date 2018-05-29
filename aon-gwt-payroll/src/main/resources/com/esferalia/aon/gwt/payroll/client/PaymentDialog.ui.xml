@@ -8,7 +8,7 @@
 	</ui:Style>
 
 
-	<g:HTMLPanel styleName="aon-width-all aon-height-all"> 
+	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel"> 
 
 		<table class="aon-width-all aon-height-all" >
 			<tr>
@@ -19,8 +19,8 @@
 
 			<tr>
 				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton">Aceptar</g:Button>
+					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton">Cancelar</g:Button>
+					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" >Aceptar</g:Button>
 				</td>
 			</tr>
 		</table>

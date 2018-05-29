@@ -2,10 +2,7 @@ package com.esferalia.aon.htmlunit.payroll;
 
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
-import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 
-import java.awt.MenuItem;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,13 +14,11 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.css.StyleElement;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
@@ -1087,6 +1082,162 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertEquals(0, eventsTable.getRowCount());
 	}
 
+	
+	@Test
+	public void TestPercepcionesDelSistema() throws Exception {
+
+		if (!isDisplayed("prest,_enfermedad_comun"))
+			open("percepciones_del_sistema");
+		
+		wait4Id("prest,_enfermedad_comun");
+
+		// PREST, ENFERMEDAD COMUN
+		draft("PREST, ENFERMEDAD COMUN");
+		
+		calculate(Calendar.JUNE, 2018);
+		
+		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR ENFERMEDAD COMÚN
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DE LA EMPRESA
+		assertDisabled("delete-button-2", true);
+		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
+		assertDisabled("delete-button-3", true);
+		assertInputDisabled( "db-amount-label-4" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-4", false);
+		
+		
+		setValue("description-box-1", "PRESTACIÓN POR ENFERMEDAD COMÚN");
+		
+		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
+		wait4Class("payment-row-2", "aon-dataTable-row-highlight");
+		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR ENFERMEDAD COMÚN
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DE LA EMPRESA
+		assertDisabled("delete-button-2", true);
+		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
+		assertDisabled("delete-button-3", true);
+		assertInputDisabled( "db-amount-label-4" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-4", false);
+		
+		click("edit-button-1");
+		wait4Id("paymetDialogHTMLPanel");
+		assertDisplay("fxPaymentButton", false);
+		assertDisplay("resetPaymentButton", false);
+		click("paymetDialogCancelButton");
+
+		click("acceptButton");
+		wait4Disabled("acceptButton", true);
+		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
+		wait4NoClass("payment-row-2", "aon-dataTable-row-highlight");
+		wait4NoClass("payment-row-3", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR ENFERMEDAD COMÚN
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DE LA EMPRESA
+		assertDisabled("delete-button-2", true);
+		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
+		assertDisabled("delete-button-3", true);
+		assertInputDisabled( "db-amount-label-4" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-4", false);
+		
+		
+		// PREST, ENFERMEDAD PROFESIONAL
+		draft("PREST, ENFERMEDAD PROFESIONAL");
+		
+		calculate(Calendar.JUNE, 2018);
+		
+		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-2", false);
+		
+		setValue("description-box-1", "PRESTACIÓN POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL");
+		
+		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-2", false);
+		
+		click("acceptButton");
+		wait4Disabled("acceptButton", true);
+		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR ENFERMEDAD COMÚN
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-2", false);
+
+		// PREST, MATERNIDAD
+		draft("PREST, MATERNIDAD");
+		
+		calculate(Calendar.JUNE, 2018);
+		
+		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		
+		setValue("description-box-1", "PRESTACIÓN POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO");
+		
+		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		
+		click("acceptButton");
+		wait4Disabled("acceptButton", true);
+		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		
+		// PREST, PATERNIDAD
+		draft("PREST, PATERNIDAD");
+		
+		calculate(Calendar.JUNE, 2018);
+		
+		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR PATERNIDAD
+		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR PATERNIDAD
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-2", false);
+		
+		setValue("description-box-1", "PRESTACIÓN POR PATERNIDAD");
+		
+		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR PATERNIDAD
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-2", false);
+		
+		click("acceptButton");
+		wait4Disabled("acceptButton", true);
+		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR PATERNIDAD
+		assertDisabled("delete-button-1", true);
+		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-2", false);
+
+		//VACACIONES, NO DISFRUTADAS
+		draft("VACACIONES, NO DISFRUTADAS");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2018, Calendar.JUNE, 15, 0, 0, 0);
+		settle(calendar.getTime());
+
+		assertInputDisabled( "db-amount-label-1" , true); // VACACIONES RETRIBUIDAS NO DISFRUTADAS
+		assertNotElement("description-box-2");
+		
+		setValue("description-box-1", "VACACIONES");
+		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // VACACIONES
+		assertNotElement("description-box-2");
+
+		click("acceptButton");
+		wait4Disabled("acceptButton", true);
+		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
+		assertInputDisabled( "db-amount-label-1" , true); // VACACIONES
+		assertNotElement("description-box-2");
+		
+		
+	}	
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
@@ -1114,5 +1265,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		HtmlButton button = getElementById(id);
 		if ( button.getAttribute("class").contains("aon-icon-collapseAll"))
 			button.click();
+	}
+	
+	private void assertDisplay(String id, boolean display ) {
+		DomElement el = getElementById(id);
+		Pattern hidden = Pattern.compile("display\\s*:\\s*none");
+		Assert.assertEquals(!display, hidden.matcher(el.getAttribute("style")).find());
+		
 	}
 }

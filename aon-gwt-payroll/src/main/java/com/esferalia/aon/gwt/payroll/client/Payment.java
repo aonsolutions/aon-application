@@ -223,6 +223,8 @@ public class Payment extends ResizeComposite {
 	@UiField
 	Button resetDescriptionButton;
 
+	@UiField
+	Button fxPaymentButton;
 	@UiField(provided = true)
 	MyExpressionBox paymentTextBox;
 	@UiField
@@ -318,8 +320,9 @@ public class Payment extends ResizeComposite {
 
 	public void setExpression(String payment) {
 		paymentTextBox.setExpression(payment);
-		showOrHideResetPaymentButton();
 		paymentTextBox.enable(!SpecialExpresion.isReadOnly(payment));
+		showOrHideFxPaymentButton();
+		showOrHideResetPaymentButton();
 	}
 
 	public String getIrpfExpression() {
@@ -354,7 +357,8 @@ public class Payment extends ResizeComposite {
 	}
 
 	public void setType(com.esferalia.aon.gwt.payroll.shared.Payment.Type type) {
-
+		
+		
 		for (int i = 0; i < typeListBox.getItemCount(); i++)
 			if (Integer.valueOf(typeListBox.getValue(i)) == type.getCode())
 				typeListBox.setSelectedIndex(i);
@@ -475,6 +479,7 @@ public class Payment extends ResizeComposite {
 
 	@UiHandler("paymentTextBox")
 	void onPaymentTextBoxChange(BlurEvent event) {
+		showOrHideFxPaymentButton();
 		showOrHideResetPaymentButton();
 	}
 
@@ -644,6 +649,7 @@ public class Payment extends ResizeComposite {
 
 		showOrHideResetTaxButton();
 		showOrHideResetQuoteButton();
+		showOrHideFxPaymentButton();
 		showOrHideResetPaymentButton();
 		showOrHideResetDescriptionButton();
 
@@ -711,7 +717,12 @@ public class Payment extends ResizeComposite {
 	private void showOrHideResetPaymentButton() {
 		resetPaymentButton.setVisible(concept != null
 				&& !StringUtils.equals(concept.getExpression(),
-						((MyExpressionBox) paymentTextBox).expression));
+					((MyExpressionBox) paymentTextBox).expression)
+				&& paymentTextBox.isEnabled());
+	}
+
+	private void showOrHideFxPaymentButton() {
+		fxPaymentButton.setVisible(paymentTextBox.isEnabled());
 	}
 
 	private void enableCustomTax(boolean enabled) {

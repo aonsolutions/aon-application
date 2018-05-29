@@ -105,6 +105,7 @@ public class Payment extends Item<Payment.Type> {
 		//@formatter:off
 		static Map<Type, String> DESCRIPTIONS = new HashMap<Type, String>() {
 			{
+				put(CRA_0000, "-");
 				put(CRA_0001, "RETRIBUCION NO INCLUIDA OTROS APARTADOS");
 				put(CRA_0002, "HORAS EXTRAORDINARIAS NO ESTRUCTURALES");
 				put(CRA_0003, "HORAS EXTR. ESTRUCTURALES O FUERZA MAYOR");
@@ -167,6 +168,7 @@ public class Payment extends Item<Payment.Type> {
 
 		static Map<Type, Boolean> BBCC_INCLUDED = new HashMap<Type, Boolean>() {
 			{
+				put(CRA_0000, true);
 				put(CRA_0001, true);
 				put(CRA_0002, true);
 				put(CRA_0003, true);
@@ -230,6 +232,7 @@ public class Payment extends Item<Payment.Type> {
 		//@formatter:off
 		static Map<Type, Boolean> BBCC_EXCLUDED = new HashMap<Type, Boolean>() {
 			{
+				put(CRA_0000, false);
 				put(CRA_0001, false);
 				put(CRA_0002, false);
 				put(CRA_0003, false);
