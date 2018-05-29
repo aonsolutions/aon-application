@@ -20,6 +20,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBSync;
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -37,7 +38,7 @@ public class ShareFiles {
 	public static Boolean setPermission(Drive drive, String fileId, String email){
 		Permission p=new Permission();
 		p.setValue(email);
-		p.setType("user");//user || group || domain || anyone
+		p.setType(Utils.isGmail(email) ? "user" : "anyone");//user || group || domain || anyone
 		p.setRole("reader");//owner || reader || writer || commenter		  		
 		try {
 			drive.permissions().insert(fileId, p).execute();

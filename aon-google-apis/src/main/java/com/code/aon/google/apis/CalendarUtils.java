@@ -411,29 +411,26 @@ public class CalendarUtils {
 		Vector<String> emails = DBCalendar.getSellerEmails(domain, user, commercialTracking);
 		String email = DBCalendar.getSellerEmail(domain, user, commercialTracking);
 		
-		try {
-			if(email == null ){
-				email = "";
-				for (String s : emails) {
-					if (s!=null && Utils.isGmail(s)){
-						if((!s.contains("gmail.com") && email.contains("gmail.com"))
-							|| email.equals(""))
-							email = s;
-					}	
-				}
-				if(!email.equals(""))DBCalendar.setSellerEmail(domain, user, commercialTracking, email);
+		if(email == null ){
+			email = "";
+			for (String s : emails) {
+				if (s!=null && Utils.isGmail(s)){
+					if((!s.contains("gmail.com") && email.contains("gmail.com"))
+						|| email.equals(""))
+						email = s;
+				}	
 			}
-			if(email !=null && email!= ""){
-				EventAttendee eventAttendee = new EventAttendee();
-				List<EventAttendee> list = new LinkedList<EventAttendee>();
-				eventAttendee.setEmail(email);
-				list.add(eventAttendee);
-				event.setAttendees(list);
-			}
-		
-		} catch (NamingException e) {
-			e.printStackTrace();
+			if(!email.equals(""))DBCalendar.setSellerEmail(domain, user, commercialTracking, email);
 		}
+		if(email !=null && email!= ""){
+			EventAttendee eventAttendee = new EventAttendee();
+			List<EventAttendee> list = new LinkedList<EventAttendee>();
+			eventAttendee.setEmail(email);
+			list.add(eventAttendee);
+			event.setAttendees(list);
+		}
+		
+		
 		// START DATE
 		Date startDate = convertDate(commercialTracking.getDate());
 		DateTime start = new DateTime(startDate, TimeZone.getTimeZone("UTC"));

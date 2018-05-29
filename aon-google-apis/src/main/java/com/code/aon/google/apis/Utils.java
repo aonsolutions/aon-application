@@ -128,21 +128,24 @@ public class Utils{
 
 	/******************************* CHECK GMAIL *******************************/
 	
-	public static Boolean isGmail(String email) throws NamingException{ 
-		Integer pos= email.indexOf("@");
-		String username = email.substring(0, pos);
-		String hostname = email.substring(pos+1);
-		Attribute attr = doLookup(hostname);
-		int i=0;
-		if (attr!=null){
-			while(i<attr.size()){
-				String a = (String) attr.get(i);
-				if(StringUtils.containsIgnoreCase(a, "google.com") || StringUtils.containsIgnoreCase(a, "googlemail.com")){
-					return true;
+	public static Boolean isGmail(String email) {
+		try {
+			Integer pos= email.indexOf("@");
+			String hostname = email.substring(pos+1);
+			Attribute attr = doLookup(hostname);
+			int i=0;
+			if (attr!=null){
+				while(i<attr.size()){
+					String a = (String) attr.get(i);
+					if(StringUtils.containsIgnoreCase(a, "google.com") || StringUtils.containsIgnoreCase(a, "googlemail.com")){
+						return true;
+					}
+					i++;
 				}
-				i++;
-			}
-		} 
+			} 	
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
 		return false;	  
 	}
 	  

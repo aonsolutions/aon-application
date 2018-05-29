@@ -28,6 +28,8 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 
+import net.aonsolutions.aon.google.apis.Utils;
+
 public class DriveUtils {
 
 	public static DriveUtils getInstace() {
@@ -192,7 +194,7 @@ public class DriveUtils {
 	public Boolean setPermission(Drive drive, String fileId, String email){
 		Permission permission =new Permission()
 				.setEmailAddress(email)
-				.setType("user")//user || group || domain || anyone
+				.setType(Utils.isGmail(email) ? "user" : "anyone")//user || group || domain || anyone
 				.setRole("reader");//owner || reader || writer || commenter		  		
 		try {
 			drive.permissions().create(fileId, permission).execute();
