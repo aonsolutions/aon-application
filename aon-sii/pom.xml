@@ -7,6 +7,8 @@
 	</parent>
 	<groupId>net.aonsolutions</groupId>
 	<artifactId>aon.sii</artifactId>
+	<name>AON SII</name>
+	<description>AON SII</description>
 
 	<properties>
 		<java.version>1.8</java.version>
