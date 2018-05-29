@@ -530,7 +530,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		resetElements();
 		initializeListBox();
 		initializeSuugestBox();
-		if(employeeInfo.getContract_type() == null){
+		if(employeeInfo.getSSRegime() == 3){
 			fillContractFreelancerTable();
 			hideElementsFreelancerTable();
 		}else{
@@ -636,7 +636,6 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.contractDataTable.getRowFormatter().addStyleName(7, style.hide());
 		this.contractDataTable.getRowFormatter().removeStyleName(8, style.hide());
 		
-		this.seniorityDatePanel.addStyleName(style.hide());
 		this.contractType.addStyleName(style.hide());
 		this.contractTypeFreelance.removeStyleName(style.hide());	
 	}
@@ -685,7 +684,6 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.contractDataTable.getRowFormatter().removeStyleName(7, style.hide());
 		this.contractDataTable.getRowFormatter().addStyleName(8, style.hide());
 		
-		this.seniorityDatePanel.removeStyleName(style.hide());
 		this.contractType.removeStyleName(style.hide());
 		this.contractTypeFreelance.addStyleName(style.hide());
 	}

@@ -55,6 +55,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	private Date end_date;					//Contract EndDate
 	private Date seniority_date;			//Contract SeniorityDate
 	private String category_description;	//Contract CategoryDescription
+	private Byte regime;					//Contract SS Regime
 	
 	//WORKPLACE TABLE
 	private Integer workplace_table_id;		//ID Workplace Table
@@ -150,6 +151,7 @@ public class EmployeeInfoDataBase implements Serializable {
 		this.end_date = employeeInfo.getEnd_date();
 		this.seniority_date = employeeInfo.getSeniority_date();
 		this.category_description = employeeInfo.getCategory_description();
+		this.regime = employeeInfo.getSSRegime();
 		
 		this.workplace_table_id = employeeInfo.getWorkplace_table_id();
 		this.workplace = employeeInfo.getWorkplace();
@@ -617,6 +619,14 @@ public class EmployeeInfoDataBase implements Serializable {
 
 	public String getWorkplace() {
 		return this.workplace;
+	}
+
+	public void setSSRegime(Byte regime) {
+		this.regime = regime;
+	}
+	
+	public Byte getSSRegime(){
+		return this.regime;
 	}
 	
 }

@@ -122,6 +122,7 @@ public class JooqEmployee {
 		
 		// ------------------------------------------------ CONTRACT INFO ---------------------------------------------------------
 		System.out.println("******************************* CONTRACT = "+contract+" *******************************");
+		
 		Record contractTable = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contract)).fetchOne();
 		
 		employee.setContract_table_id(contract);
@@ -129,6 +130,7 @@ public class JooqEmployee {
 		employee.setEnd_date(contractTable.get(CONTRACT.END_DATE));
 		employee.setSeniority_date(contractTable.get(CONTRACT.SENIORITY_DATE));
 		employee.setCategory_description(contractTable.get(CONTRACT.CATEGORY_DESCRIPTION));
+		employee.setSSRegime(contractTable.get(CONTRACT.SS_REGIME));
 		
 		Integer employe_workplace_table_id = contractTable.get(CONTRACT.WORKPLACE);
 		Record workplaceTable = dslContext.select().from(WORKPLACE).where(WORKPLACE.ID.eq(employe_workplace_table_id)).fetchOne();
@@ -136,19 +138,28 @@ public class JooqEmployee {
 		employee.setWorkplace_table_id(employe_workplace_table_id);
 		employee.setWorkplace(workplaceTable.get(WORKPLACE.DESCRIPTION));
 		
-		Integer enterpriseActivity = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
-		
-		//enterpriseActivity can be null
-		Record enterpriseActivityTable = dslContext.select().from(ENTERPRISE_ACTIVITY).where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivity)).fetchOne();
-		Integer cnae2009 = enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.CNAE2009);
-		//cnae2009 can be null
-		Record cnae2009Table = dslContext.select().from(CNAE2009).where(CNAE2009.ID.eq(cnae2009)).fetchOne();
-		
-		employee.setEnterprise_activity_table_id((enterpriseActivityTable == null) ? null : enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
-		//TODO: MIRAR EL ACCESO A CNAE2009TABLE
-		employee.setEnterprise_activity(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.DESCRIPTION) + " - " + cnae2009Table.get(CNAE2009.TITLE));
-		employee.setCname2009_table_id((cnae2009Table == null) ? null : cnae2009Table.get(CNAE2009.ID));
-		employee.setCname2009((cnae2009Table == null) ? null : cnae2009Table.get(CNAE2009.TITLE));
+		if(employee.getSSRegime() != 3){ //NO ES RETA
+			Integer enterpriseActivity = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
+			
+			//enterpriseActivity can be null
+			Record enterpriseActivityTable = dslContext.select().from(ENTERPRISE_ACTIVITY).where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivity)).fetchOne();
+			Integer cnae2009 = enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.CNAE2009);
+			//cnae2009 can be null
+			Record cnae2009Table = dslContext.select().from(CNAE2009).where(CNAE2009.ID.eq(cnae2009)).fetchOne();
+			
+			employee.setEnterprise_activity_table_id((enterpriseActivityTable == null) ? null : enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
+			//TODO: MIRAR EL ACCESO A CNAE2009TABLE
+			employee.setEnterprise_activity(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.DESCRIPTION) + " - " + cnae2009Table.get(CNAE2009.TITLE));
+			employee.setCname2009_table_id((cnae2009Table == null) ? null : cnae2009Table.get(CNAE2009.ID));
+			employee.setCname2009((cnae2009Table == null) ? null : cnae2009Table.get(CNAE2009.TITLE));
+			
+			Integer enterpriseCCC = contractTable.get(CONTRACT.ENTERPRISE_CCC);
+			//enterpriseCCC can be null
+			Record enterpriseCCCTable = dslContext.select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(enterpriseCCC)).fetchOne();
+			
+			employee.setQuote_account((enterpriseCCCTable == null) ? null : enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
+			employee.setEnterprise_ccc_table_id((enterpriseCCCTable == null) ? null : enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
+		}
 		
 		Integer agreementLevel = contractTable.get(CONTRACT.AGREEMENT_LEVEL);
 		//agreementLevel can be null
@@ -163,13 +174,6 @@ public class JooqEmployee {
 		
 		employee.setAgreement((agreementTable == null) ? null : agreementTable.get(AGREEMENT.DESCRIPTION));	
 		employee.setAgreement_table_id((agreementTable == null) ? null : agreementTable.get(AGREEMENT.ID));
-		
-		Integer enterpriseCCC = contractTable.get(CONTRACT.ENTERPRISE_CCC);
-		//enterpriseCCC can be null
-		Record enterpriseCCCTable = dslContext.select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(enterpriseCCC)).fetchOne();
-		
-		employee.setQuote_account((enterpriseCCCTable == null) ? null : enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
-		employee.setEnterprise_ccc_table_id((enterpriseCCCTable == null) ? null : enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
 		
 		java.util.Date actualJavaDate = new java.util.Date();
 		Date actualSQLDate = new Date(actualJavaDate.getTime());
@@ -213,6 +217,7 @@ public class JooqEmployee {
 		
 		System.out.println(
 				"------------------- CONTRACT INFO ------------------- \n" +
+				"Contrato =" + contract + "\n" +
 				"Actividad = " + employee.getEnterprise_activity() + "\n" +
 				"Cuenta de cotizacion = " + employee.getQuote_account() + "\n" +
 				"Tipo de contrato = " + employee.getContract_type() + "\n" +
@@ -376,7 +381,7 @@ public class JooqEmployee {
 			.where(CONTRACT.ID.eq(newEmployeeInfo.getContract_table_id()))
 			.execute();
 		
-		if(newEmployeeInfo.getContract_type() != null){
+		if(newEmployeeInfo.getSSRegime() != 3){ //NO ES RETA
 			
 			if(newEmployeeInfo.getEnterprise_ccc_table_id() != null)
 				dslContext.update(ENTERPRISE_CCC)
@@ -509,7 +514,7 @@ public class JooqEmployee {
 				.execute();	
 		}
 		
-		if(newEmployeeInfo.getContract_type() == null){
+		if(newEmployeeInfo.getSSRegime() == 3){ //ES RETA
 		
 			if(newEmployeeInfo.getContract_data_table_journey_type_id() != null){
 				if(newEmployeeInfo.getJourneyType() != null)
@@ -650,8 +655,8 @@ public class JooqEmployee {
 				"Tipo de contrato = " + newEmployeeInfo.getContract_type() + "\n";
 		if(newEmployeeInfo.getContract_model() == null)
 			updateInfo += "Modalidad = null \n";
-		else
-			updateInfo += "Modalidad = \"" + ModelOption.values()[newEmployeeInfo.getContract_model()].toString() + "\"\n";
+//		else
+//			updateInfo += "Modalidad = \"" + ModelOption.values()[newEmployeeInfo.getContract_model()].toString() + "\"\n";
 				
 		updateInfo +=
 				"Fecha inicio = " + newEmployeeInfo.getStart_date() + "\n" +
