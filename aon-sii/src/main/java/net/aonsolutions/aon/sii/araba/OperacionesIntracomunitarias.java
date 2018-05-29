@@ -3,7 +3,6 @@ package net.aonsolutions.aon.sii.araba;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.LinkedList;
 
 import javax.xml.bind.JAXBContext;
@@ -35,14 +34,13 @@ import https.sii_araba_eus.documentos.suministroinformacion.IDOtroType;
 import https.sii_araba_eus.documentos.suministroinformacion.OperacionIntracomunitariaType;
 import https.sii_araba_eus.documentos.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.sii_araba_eus.documentos.suministroinformacion.PersonaFisicaJuridicaType;
-import https.sii_araba_eus.documentos.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 import https.sii_araba_eus.documentos.suministrolr.BajaLRDetOperacionIntracomunitaria;
 import https.sii_araba_eus.documentos.suministrolr.LRBajaOperacionIntracomunitariaType;
 import https.sii_araba_eus.documentos.suministrolr.LROperacionIntracomunitariaType;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRDetOperacionIntracomunitaria;
 import net.aonsolutions.aon.sii.IDType;
 
-public class OperacionesIntracomunitarias {
+public class OperacionesIntracomunitarias extends SIIBuilt {
 
 	public static OperacionesIntracomunitarias getInstance() {
 		return new OperacionesIntracomunitarias();
@@ -120,7 +118,7 @@ public class OperacionesIntracomunitarias {
 				
 				LROperacionIntracomunitariaType opIntracomunitaria = new LROperacionIntracomunitariaType();
 				
-				opIntracomunitaria.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+				opIntracomunitaria.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 				
 				IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
 				idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
@@ -212,7 +210,7 @@ public class OperacionesIntracomunitarias {
 				
 				factura.setIDFactura(idFactura);
 				
-				factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+				factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 				
 				baja.getRegistroLRBajaDetOperacionIntracomunitaria().add(factura);
 			});
@@ -221,29 +219,6 @@ public class OperacionesIntracomunitarias {
 			
 		// -------------------- FUNCIONES
 		
-		/**
-		 * Devuelve el periodo Impositivo ó periodo de liquidación.
-		 * 
-		 * @param invoice
-		 * @return PeriodoImpositivo
-		 */
-		private PeriodoLiquidacion periodoLiquidacion(Date date, Boolean anual){
-			Integer year = AonDateUtils.getYear(date);
-			Integer month = AonDateUtils.getMonth(date) + 1;
-			String p = month.toString();
-			if(month < 10){
-				p = "0" + p;
-			}
-			PeriodoLiquidacion periodo = new PeriodoLiquidacion();
-			periodo.setEjercicio(year.toString());
-			if(anual){
-				periodo.setPeriodo("0A");
-			} else {
-				periodo.setPeriodo(p);// mes (01,02,03,04,...,12) || anual (0A));
-			}
-			return periodo;
-		}
-
 		/**
 		 * Devuelve la cabecera.
 		 * 

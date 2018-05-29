@@ -63,7 +63,6 @@ import https.sii_araba_eus.documentos.suministroinformacion.IDOtroType;
 import https.sii_araba_eus.documentos.suministroinformacion.NoSujetaType;
 import https.sii_araba_eus.documentos.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.sii_araba_eus.documentos.suministroinformacion.PersonaFisicaJuridicaType;
-import https.sii_araba_eus.documentos.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 import https.sii_araba_eus.documentos.suministroinformacion.SujetaPrestacionType;
 import https.sii_araba_eus.documentos.suministroinformacion.SujetaPrestacionType.Exenta;
 import https.sii_araba_eus.documentos.suministroinformacion.SujetaPrestacionType.NoExenta;
@@ -83,7 +82,7 @@ import https.sii_araba_eus.documentos.suministrolr.SuministroLRFacturasEmitidas;
 import net.aonsolutions.aon.sii.ClaveRegimenEspecialOTrascendenciaEmitidasType;
 import net.aonsolutions.aon.sii.IDType;
 
-public class FacturasEmitidas {
+public class FacturasEmitidas extends SIIBuilt{
 
 	public static FacturasEmitidas getInstance() {
 		return new FacturasEmitidas();
@@ -175,7 +174,7 @@ public class FacturasEmitidas {
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 			
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 			IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 			
 			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
@@ -470,7 +469,7 @@ public class FacturasEmitidas {
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
 			
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 		
 			baja.getRegistroLRBajaExpedidas().add(factura);
 		});
@@ -549,29 +548,6 @@ public class FacturasEmitidas {
 
 	// -------------------- FUNCIONES
 	
-	/**
-	 * Devuelve el periodo Impositivo ó periodo de liquidación.
-	 * 
-	 * @param invoice
-	 * @return PeriodoImpositivo
-	 */
-	private PeriodoLiquidacion periodoLiquidacion(Date date, Boolean anual){
-		Integer year = AonDateUtils.getYear(date);
-		Integer month = AonDateUtils.getMonth(date) + 1;
-		String p = month.toString();
-		if(month < 10){
-			p = "0" + p;
-		}
-		PeriodoLiquidacion periodo = new PeriodoLiquidacion();
-		periodo.setEjercicio(year.toString());
-		if(anual){
-			periodo.setPeriodo("0A");
-		} else {
-			periodo.setPeriodo(p);// mes (01,02,03,04,...,12) || anual (0A));
-		}
-		return periodo;
-	}
-
 	/**
 	 * Devuelve la cabecera para cobros y pagos.
 	 * 

@@ -87,7 +87,6 @@ public class SiiServlet extends HttpServlet{
     		f.getDomainProperty().eq(domain.getId())
     		.and(f.getSourceProperty().eq(DataResponseSource.SII.value()))
     		.page(page).perPage(perPage))
-    	.sorted((e1, e2) -> e2.getCreationDate().compareTo(e1.getCreationDate()))
     	.forEach(r -> {
     		array.put(ToJSON.dataResponseToJSON(r));
     	});

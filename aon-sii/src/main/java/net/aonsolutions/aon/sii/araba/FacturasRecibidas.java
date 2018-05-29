@@ -34,7 +34,6 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-import https.sii_araba_eus.documentos.suministrolr.SuministroLRFacturasRecibidas;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRBajaFRecibidasType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRFRecibidasType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRPagosRecibidasType;
@@ -62,16 +61,16 @@ import https.sii_araba_eus.documentos.suministroinformacion.IDOtroType;
 import https.sii_araba_eus.documentos.suministroinformacion.PagosType;
 import https.sii_araba_eus.documentos.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.sii_araba_eus.documentos.suministroinformacion.PersonaFisicaJuridicaType;
-import https.sii_araba_eus.documentos.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 import https.sii_araba_eus.documentos.suministrolr.BajaLRFacturasRecibidas;
 import https.sii_araba_eus.documentos.suministrolr.LRBajaRecibidasType;
 import https.sii_araba_eus.documentos.suministrolr.LRFacturasRecibidasType;
 import https.sii_araba_eus.documentos.suministrolr.LRPagosEmitidasType;
+import https.sii_araba_eus.documentos.suministrolr.SuministroLRFacturasRecibidas;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRPagosRecibidas;
 import net.aonsolutions.aon.sii.ClaveRegimenEspecialOTrascendenciaRecibidasType;
 import net.aonsolutions.aon.sii.IDType;
 
-public class FacturasRecibidas {
+public class FacturasRecibidas extends SIIBuilt{
 
 	public static FacturasRecibidas getInstance() {
 		return new FacturasRecibidas();
@@ -173,7 +172,7 @@ public class FacturasRecibidas {
 			LRFacturasRecibidasType factura = new LRFacturasRecibidasType();
 
 			// PeriodoLiquidacion || PeriodoImpositivo
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 
 			// IDFactura
 			IDFacturaRecibidaType f = new IDFacturaRecibidaType();
@@ -414,7 +413,7 @@ public class FacturasRecibidas {
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
 
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 
 			baja.getRegistroLRBajaRecibidas().add(factura);
 		});
@@ -506,29 +505,6 @@ public class FacturasRecibidas {
 	}
 	
 	// -------------------- FUNCIONES
-	
-	/**
-	 * Devuelve el periodo Impositivo ó periodo de liquidación.
-	 * 
-	 * @param invoice
-	 * @return PeriodoImpositivo
-	 */
-	private PeriodoLiquidacion periodoLiquidacion(Date date, Boolean anual){
-		Integer year = AonDateUtils.getYear(date);
-		Integer month = AonDateUtils.getMonth(date) + 1;
-		String p = month.toString();
-		if(month < 10){
-			p = "0" + p;
-		}
-		PeriodoLiquidacion periodo = new PeriodoLiquidacion();
-		periodo.setEjercicio(year.toString());
-		if(anual){
-			periodo.setPeriodo("0A");
-		} else {
-			periodo.setPeriodo(p);// mes (01,02,03,04,...,12) || anual (0A));
-		}
-		return periodo;
-	}
 
 	/**
 	 * Devuelve la cabecera para cobros y pagos.

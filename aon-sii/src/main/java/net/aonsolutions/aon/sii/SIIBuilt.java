@@ -225,7 +225,7 @@ public class SIIBuilt {
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 			
-			factura.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			factura.setPeriodoImpositivo(periodoImpositivo(vat, false));
 
 			IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 			
@@ -520,7 +520,7 @@ public class SIIBuilt {
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
 			
-			factura.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			factura.setPeriodoImpositivo(periodoImpositivo(vat, false));
 		
 			baja.getRegistroLRBajaExpedidas().add(factura);
 		});
@@ -697,8 +697,14 @@ public class SIIBuilt {
 			
 			LRFacturasRecibidasType factura = new LRFacturasRecibidasType();
 
+			ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+	    	Boolean isRegistro = "R".equals(ap.getValue());
+			Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
+			if(opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
+	//			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
+			}
 			// PeriodoLiquidacion || PeriodoImpositivo
-			factura.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			factura.setPeriodoImpositivo(periodoImpositivo(vat, false));
 			
 			// IDFactura
 			IDFacturaRecibidaType f = new IDFacturaRecibidaType();
@@ -736,12 +742,6 @@ public class SIIBuilt {
 			
 			if(vat.isIntracommunity()){
 				frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._09.getName());
-			}
-			ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
-	    	Boolean isRegistro = "R".equals(ap.getValue());
-			Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
-			if(opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0){
-	//			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
 			}
 			
 			// BASE IMPONIBLE A COSTE (OPTIONAL)
@@ -915,8 +915,8 @@ public class SIIBuilt {
 			
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
-			
-			factura.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+
+			factura.setPeriodoImpositivo(periodoImpositivo(vat, false));
 			
 			baja.getRegistroLRBajaRecibidas().add(factura);
 		});
@@ -1074,7 +1074,7 @@ public class SIIBuilt {
 
 			LRBienesInversionType bien = new LRBienesInversionType();
 			
-			bien.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), true));
+			bien.setPeriodoImpositivo(periodoImpositivo(vat, true));
 			
 			IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
 			
@@ -1137,7 +1137,7 @@ public class SIIBuilt {
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
 				
-			factura.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			factura.setPeriodoImpositivo(periodoImpositivo(vat, false));
 			
 			baja.getRegistroLRBajaBienesInversion().add(factura);
 		});
@@ -1212,7 +1212,7 @@ public class SIIBuilt {
 			
 			LROperacionIntracomunitariaType opIntracomunitaria = new LROperacionIntracomunitariaType();
 			
-			opIntracomunitaria.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			opIntracomunitaria.setPeriodoImpositivo(periodoImpositivo(vat, false));
 			
 			IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
 			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
@@ -1304,7 +1304,7 @@ public class SIIBuilt {
 			
 			factura.setIDFactura(idFactura);
 			
-			factura.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			factura.setPeriodoImpositivo(periodoImpositivo(vat, false));
 			
 			baja.getRegistroLRBajaDetOperacionIntracomunitaria().add(factura);
 		});
@@ -1354,7 +1354,7 @@ public class SIIBuilt {
 			
 			LRCobrosMetalicoType metalico = new LRCobrosMetalicoType();	
 
-			metalico.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			metalico.setPeriodoImpositivo(periodoImpositivo(vat, false));
 			metalico.setContraparte(contraparte(vat));
 			metalico.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));	
 
@@ -1407,7 +1407,7 @@ public class SIIBuilt {
 			
 			LROperacionesSegurosType seguros = new LROperacionesSegurosType();
 			
-			seguros.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			seguros.setPeriodoImpositivo(periodoImpositivo(vat, false));
 			seguros.setContraparte(contraparte(vat));
 			seguros.setClaveOperacion(ClaveOperacionType.A); // TODO 
 			seguros.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
@@ -1463,7 +1463,7 @@ public class SIIBuilt {
 
 			LRAgenciasViajesType agencias = new LRAgenciasViajesType();	
 
-			agencias.setPeriodoImpositivo(periodoImpositivo(vat.getIssueDate(), false));
+			agencias.setPeriodoImpositivo(periodoImpositivo(vat, false));
 			agencias.setContraparte(contraparte(vat));
 			agencias.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
 			
@@ -1480,9 +1480,9 @@ public class SIIBuilt {
 	 * @param invoice
 	 * @return PeriodoImpositivo
 	 */
-	private PeriodoImpositivo periodoImpositivo(Date date, Boolean anual){
-		Integer year = AonDateUtils.getYear(date);
-		Integer month = AonDateUtils.getMonth(date) + 1;
+	private PeriodoImpositivo periodoImpositivo(VatContext vat, Boolean anual){
+		Integer year = AonDateUtils.getYear(vat.getTaxDate());
+		Integer month = AonDateUtils.getMonth(vat.getTaxDate()) + 1;
 		String p = month.toString();
 		if(month < 10){
 			p = "0" + p;

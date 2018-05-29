@@ -32,7 +32,6 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-import net.aonsolutions.core.aeat.nif.VNifV1Ent;
 import net.aonsolutions.core.gipuzkoa.sii.BajaLRBienesInversion;
 import net.aonsolutions.core.gipuzkoa.sii.BajaLRDetOperacionIntracomunitaria;
 import net.aonsolutions.core.gipuzkoa.sii.BajaLRFacturasEmitidas;
@@ -1465,8 +1464,8 @@ public class SIIGipuzkoaBuilt {
 	 * @return PeriodoImpositivo
 	 */
 	private PeriodoImpositivo periodoImpositivo(VatContext vat, Boolean anual){
-		Integer year = AonDateUtils.getYear(vat.getIssueDate());
-		Integer month = AonDateUtils.getMonth(vat.getIssueDate()) + 1;
+		Integer year = AonDateUtils.getYear(vat.getTaxDate());
+		Integer month = AonDateUtils.getMonth(vat.getTaxDate()) + 1;
 		String p = month.toString();
 		if(month < 10){
 			p = "0" + p;

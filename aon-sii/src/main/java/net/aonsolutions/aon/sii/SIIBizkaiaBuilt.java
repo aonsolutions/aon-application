@@ -1464,8 +1464,8 @@ public class SIIBizkaiaBuilt {
 	 * @return PeriodoImpositivo
 	 */
 	private PeriodoImpositivo periodoImpositivo(VatContext vat, Boolean anual){
-		Integer year = AonDateUtils.getYear(vat.getIssueDate());
-		Integer month = AonDateUtils.getMonth(vat.getIssueDate()) + 1;
+		Integer year = AonDateUtils.getYear(vat.getTaxDate());
+		Integer month = AonDateUtils.getMonth(vat.getTaxDate()) + 1;
 		String p = month.toString();
 		if(month < 10){
 			p = "0" + p;

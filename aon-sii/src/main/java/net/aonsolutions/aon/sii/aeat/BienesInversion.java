@@ -3,7 +3,6 @@ package net.aonsolutions.aon.sii.aeat;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.LinkedList;
 
 import javax.xml.bind.JAXBContext;
@@ -30,14 +29,13 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaComunitariaType.IDEmisorFactura;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDOtroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaESType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.BajaLRBienesInversion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRBajaBienesInversionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRBienesInversionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.SuministroLRBienesInversion;
 import net.aonsolutions.aon.sii.IDType;
 
-public class BienesInversion {
+public class BienesInversion extends SIIBuilt {
 
 	public static BienesInversion getInstance() {
 		return new BienesInversion();
@@ -117,7 +115,7 @@ public class BienesInversion {
 
 			LRBienesInversionType bien = new LRBienesInversionType();
 
-			bien.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), true));
+			bien.setPeriodoLiquidacion(periodoLiquidacion(vat, true));
 
 			IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
 
@@ -181,7 +179,7 @@ public class BienesInversion {
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
 
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 
 			baja.getRegistroLRBajaBienesInversion().add(factura);
 		});
@@ -189,105 +187,79 @@ public class BienesInversion {
 	}
 
 	// -------------------- FUNCIONES
-	
-		/**
-		 * Devuelve el periodo Impositivo ó periodo de liquidación.
-		 * 
-		 * @param invoice
-		 * @return PeriodoImpositivo
-		 */
-		private PeriodoLiquidacion periodoLiquidacion(Date date, Boolean anual){
-			Integer year = AonDateUtils.getYear(date);
-			Integer month = AonDateUtils.getMonth(date) + 1;
-			String p = month.toString();
-			if(month < 10){
-				p = "0" + p;
-			}
-			PeriodoLiquidacion periodo = new PeriodoLiquidacion();
-			periodo.setEjercicio(year.toString());
-			if(anual){
-				periodo.setPeriodo("0A");
-			} else {
-				periodo.setPeriodo(p);// mes (01,02,03,04,...,12) || anual (0A));
-			}
-			return periodo;
-		}
 
-		
-		/**
-		 * Devuelve la cabecera.
-		 * 
-		 * @param company
-		 * @return CabeceraSii
-		 */
-		public CabeceraSii cabecera(Company company, Boolean mod, String terceros){
-			CabeceraSii cabecera = new CabeceraSii();
-			cabecera.setIDVersionSii("1.0");
-			cabecera.setTipoComunicacion(mod ? ClaveTipoComunicacionType.A_1 : ClaveTipoComunicacionType.A_0);
-			PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
-			titular.setNIF(company.getDocument());
-			titular.setNombreRazon(company.getName());
-			if(terceros != null && !terceros.equals("false"))
-				titular.setNIFRepresentante(terceros);
-			cabecera.setTitular(titular);
-			
-			
-			return cabecera;
-		}
-		public CabeceraSii cabecera(Company company){
-			CabeceraSii cabecera = new CabeceraSii();
-			cabecera.setIDVersionSii("1.0");
-			cabecera.setTipoComunicacion(ClaveTipoComunicacionType.A_0);
-			PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
-			titular.setNIF(company.getDocument());
-			titular.setNombreRazon(company.getName());
-			cabecera.setTitular(titular);
-			return cabecera;
-		}
-		
-		/**
-		 * Devuelve la cabecera para bajas.
-		 * 
-		 * @param company
-		 * @return CabeceraSiiBaja
-		 */
-		private CabeceraSiiBaja cabeceraBaja(Company company, String terceros){
-			CabeceraSiiBaja cabecera = new CabeceraSiiBaja();
-			cabecera.setIDVersionSii("1.0");
-			PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
-			titular.setNIF(company.getDocument());
-			titular.setNombreRazon(company.getName());
-			if(terceros != null && !terceros.equals("false"))
-				titular.setNIFRepresentante(terceros);
-			cabecera.setTitular(titular);
-			return cabecera;
-		}
-		
-		public Boolean validateNif(String nif, String name, DocumentType type) {
-			return !type.equals(DocumentType.NOT_CENSUSED);
-			/*
-			VNifV1Ent vnif = new VNifV1Ent();
-			vnif.setNif(nif);
-			vnif.setNombre(name);
-			return NIFPost.getInstance(cert, pass).vnifV1(vnif);
-			*/
-		}
-		
-		public static byte[] writeXml(JAXBContext ctx, Object object) throws JAXBException, IOException{		
-			Marshaller marshaller = ctx.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			marshaller.marshal(object, baos);
-			baos.close();
+	/**
+	 * Devuelve la cabecera.
+	 * 
+	 * @param company
+	 * @return CabeceraSii
+	 */
+	public CabeceraSii cabecera(Company company, Boolean mod, String terceros) {
+		CabeceraSii cabecera = new CabeceraSii();
+		cabecera.setIDVersionSii("1.0");
+		cabecera.setTipoComunicacion(mod ? ClaveTipoComunicacionType.A_1 : ClaveTipoComunicacionType.A_0);
+		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
+		titular.setNIF(company.getDocument());
+		titular.setNombreRazon(company.getName());
+		if (terceros != null && !terceros.equals("false"))
+			titular.setNIFRepresentante(terceros);
+		cabecera.setTitular(titular);
 
-			return baos.toByteArray();
-		}
+		return cabecera;
+	}
 
-		public static Object readXml(JAXBContext ctx, byte[] xmlFile) throws JAXBException{
-			Unmarshaller unmarshaller = ctx.createUnmarshaller();
-		
-			InputStream input = new ByteArrayInputStream(xmlFile);
-			return unmarshaller.unmarshal(input);
-		}
+	public CabeceraSii cabecera(Company company) {
+		CabeceraSii cabecera = new CabeceraSii();
+		cabecera.setIDVersionSii("1.0");
+		cabecera.setTipoComunicacion(ClaveTipoComunicacionType.A_0);
+		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
+		titular.setNIF(company.getDocument());
+		titular.setNombreRazon(company.getName());
+		cabecera.setTitular(titular);
+		return cabecera;
+	}
+
+	/**
+	 * Devuelve la cabecera para bajas.
+	 * 
+	 * @param company
+	 * @return CabeceraSiiBaja
+	 */
+	private CabeceraSiiBaja cabeceraBaja(Company company, String terceros) {
+		CabeceraSiiBaja cabecera = new CabeceraSiiBaja();
+		cabecera.setIDVersionSii("1.0");
+		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
+		titular.setNIF(company.getDocument());
+		titular.setNombreRazon(company.getName());
+		if (terceros != null && !terceros.equals("false"))
+			titular.setNIFRepresentante(terceros);
+		cabecera.setTitular(titular);
+		return cabecera;
+	}
+
+	public Boolean validateNif(String nif, String name, DocumentType type) {
+		return !type.equals(DocumentType.NOT_CENSUSED);
+		/*
+		 * VNifV1Ent vnif = new VNifV1Ent(); vnif.setNif(nif); vnif.setNombre(name);
+		 * return NIFPost.getInstance(cert, pass).vnifV1(vnif);
+		 */
+	}
+
+	public static byte[] writeXml(JAXBContext ctx, Object object) throws JAXBException, IOException {
+		Marshaller marshaller = ctx.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		marshaller.marshal(object, baos);
+		baos.close();
+
+		return baos.toByteArray();
+	}
+
+	public static Object readXml(JAXBContext ctx, byte[] xmlFile) throws JAXBException {
+		Unmarshaller unmarshaller = ctx.createUnmarshaller();
+
+		InputStream input = new ByteArrayInputStream(xmlFile);
+		return unmarshaller.unmarshal(input);
+	}
 }

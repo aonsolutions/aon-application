@@ -3,7 +3,6 @@ package net.aonsolutions.aon.sii.aeat;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.LinkedList;
 
 import javax.xml.bind.JAXBContext;
@@ -17,7 +16,6 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -31,7 +29,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDOtroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRAgenciasViajesType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRCobrosMetalicoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LROperacionesSegurosType;
@@ -41,7 +38,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import net.aonsolutions.aon.sii.IDType;
 
 
-public class OperacionesTrascendenciaTributaria {
+public class OperacionesTrascendenciaTributaria extends SIIBuilt{
 
 	public static OperacionesTrascendenciaTributaria getInstance() {
 		return new OperacionesTrascendenciaTributaria();
@@ -94,7 +91,7 @@ public class OperacionesTrascendenciaTributaria {
 			
 			LRCobrosMetalicoType metalico = new LRCobrosMetalicoType();	
 
-			metalico.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			metalico.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 			metalico.setContraparte(contraparte(vat));
 			metalico.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));	
 
@@ -147,7 +144,7 @@ public class OperacionesTrascendenciaTributaria {
 			
 			LROperacionesSegurosType seguros = new LROperacionesSegurosType();
 			
-			seguros.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			seguros.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 			seguros.setContraparte(contraparte(vat));
 			seguros.setClaveOperacion(ClaveOperacionType.A); // TODO 
 			seguros.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
@@ -203,7 +200,7 @@ public class OperacionesTrascendenciaTributaria {
 
 			LRAgenciasViajesType agencias = new LRAgenciasViajesType();	
 
-			agencias.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			agencias.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 			agencias.setContraparte(contraparte(vat));
 			agencias.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
 			
@@ -213,30 +210,6 @@ public class OperacionesTrascendenciaTributaria {
 	}
 
 	// -------------------- FUNCIONES
-	
-	/**
-	 * Devuelve el periodo Impositivo ó periodo de liquidación.
-	 * 
-	 * @param invoice
-	 * @return PeriodoImpositivo
-	 */
-	private PeriodoLiquidacion periodoLiquidacion(Date date, Boolean anual){
-		Integer year = AonDateUtils.getYear(date);
-		Integer month = AonDateUtils.getMonth(date) + 1;
-		String p = month.toString();
-		if(month < 10){
-			p = "0" + p;
-		}
-		PeriodoLiquidacion periodo = new PeriodoLiquidacion();
-		periodo.setEjercicio(year.toString());
-		if(anual){
-			periodo.setPeriodo("0A");
-		} else {
-			periodo.setPeriodo(p);// mes (01,02,03,04,...,12) || anual (0A));
-		}
-		return periodo;
-	}
-
 	
 	/**
 	 * Devuelve la cabecera.

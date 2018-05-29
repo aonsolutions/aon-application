@@ -64,7 +64,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.NoSujetaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaPrestacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaPrestacionType.Exenta;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaPrestacionType.NoExenta;
@@ -84,7 +83,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import net.aonsolutions.aon.sii.ClaveRegimenEspecialOTrascendenciaEmitidasType;
 import net.aonsolutions.aon.sii.IDType;
 
-public class FacturasEmitidas {
+public class FacturasEmitidas extends SIIBuilt {
 
 	public static FacturasEmitidas getInstance() {
 		return new FacturasEmitidas();
@@ -175,7 +174,7 @@ public class FacturasEmitidas {
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 			
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 			IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 			
 			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
@@ -472,7 +471,7 @@ public class FacturasEmitidas {
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
 			
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 		
 			baja.getRegistroLRBajaExpedidas().add(factura);
 		});
@@ -551,29 +550,6 @@ public class FacturasEmitidas {
 
 	// -------------------- FUNCIONES
 	
-	/**
-	 * Devuelve el periodo Impositivo ó periodo de liquidación.
-	 * 
-	 * @param invoice
-	 * @return PeriodoImpositivo
-	 */
-	private PeriodoLiquidacion periodoLiquidacion(Date date, Boolean anual){
-		Integer year = AonDateUtils.getYear(date);
-		Integer month = AonDateUtils.getMonth(date) + 1;
-		String p = month.toString();
-		if(month < 10){
-			p = "0" + p;
-		}
-		PeriodoLiquidacion periodo = new PeriodoLiquidacion();
-		periodo.setEjercicio(year.toString());
-		if(anual){
-			periodo.setPeriodo("0A");
-		} else {
-			periodo.setPeriodo(p);// mes (01,02,03,04,...,12) || anual (0A));
-		}
-		return periodo;
-	}
-
 	/**
 	 * Devuelve la cabecera para cobros y pagos.
 	 * 

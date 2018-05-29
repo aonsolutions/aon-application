@@ -61,7 +61,6 @@ import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.IDOtroType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.PagosType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.PersonaFisicaJuridicaESType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.PersonaFisicaJuridicaType;
-import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 import eus.bizkaia.ogasuna.sii.documentos.suministrolr.BajaLRFacturasRecibidas;
 import eus.bizkaia.ogasuna.sii.documentos.suministrolr.LRBajaRecibidasType;
 import eus.bizkaia.ogasuna.sii.documentos.suministrolr.LRFacturasRecibidasType;
@@ -71,7 +70,7 @@ import eus.bizkaia.ogasuna.sii.documentos.suministrolr.SuministroLRPagosRecibida
 import net.aonsolutions.aon.sii.ClaveRegimenEspecialOTrascendenciaRecibidasType;
 import net.aonsolutions.aon.sii.IDType;
 
-public class FacturasRecibidas {
+public class FacturasRecibidas extends SIIBuilt {
 
 	public static FacturasRecibidas getInstance() {
 		return new FacturasRecibidas();
@@ -173,7 +172,7 @@ public class FacturasRecibidas {
 			LRFacturasRecibidasType factura = new LRFacturasRecibidasType();
 
 			// PeriodoLiquidacion || PeriodoImpositivo
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 
 			// IDFactura
 			IDFacturaRecibidaType f = new IDFacturaRecibidaType();
@@ -414,7 +413,7 @@ public class FacturasRecibidas {
 			idFactura.setIDEmisorFactura(emisor);
 			factura.setIDFactura(idFactura);
 
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getIssueDate(), false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 
 			baja.getRegistroLRBajaRecibidas().add(factura);
 		});
@@ -506,29 +505,6 @@ public class FacturasRecibidas {
 	}
 	
 	// -------------------- FUNCIONES
-	
-	/**
-	 * Devuelve el periodo Impositivo ó periodo de liquidación.
-	 * 
-	 * @param invoice
-	 * @return PeriodoImpositivo
-	 */
-	private PeriodoLiquidacion periodoLiquidacion(Date date, Boolean anual){
-		Integer year = AonDateUtils.getYear(date);
-		Integer month = AonDateUtils.getMonth(date) + 1;
-		String p = month.toString();
-		if(month < 10){
-			p = "0" + p;
-		}
-		PeriodoLiquidacion periodo = new PeriodoLiquidacion();
-		periodo.setEjercicio(year.toString());
-		if(anual){
-			periodo.setPeriodo("0A");
-		} else {
-			periodo.setPeriodo(p);// mes (01,02,03,04,...,12) || anual (0A));
-		}
-		return periodo;
-	}
 
 	/**
 	 * Devuelve la cabecera para cobros y pagos.
