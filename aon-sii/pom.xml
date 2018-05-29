@@ -61,13 +61,6 @@
        <!-- AON DEPENDENCIES -->
 
 		<dependency>
-			<groupId>net.aonsolutions.core</groupId>
-			<artifactId>sii</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-        
-		<dependency>
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.google.apis.v2</artifactId>
 			<version>${project.version}</version>
