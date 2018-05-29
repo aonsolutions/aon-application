@@ -79,6 +79,8 @@ import com.google.api.services.drive.model.ParentReference;
 import com.google.api.services.drive.model.Permission;
 import com.google.api.services.drive.model.Property;
 
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
+
 public class DriveUtils implements IBlobManager {
 
 	private static final Logger LOGGER = LoggerFactory
@@ -1212,6 +1214,72 @@ public class DriveUtils implements IBlobManager {
 			//		fileInfo.getTitle(), type);
 			return false;
 		}
+	}
+	
+	public String syncX(Drive drive, User user, Attach attach){		
+		AonDrive aonDrive = AonDrive.getInstace();
+		if (!AonDrive.checkTypes(attach)) {
+			if(attach.getData() != null && attach.getDriveId() != null) {
+				File file = getFile(drive, attach.getDriveId());
+				if(file.getId() != null) {
+					aonDrive.updateFile(drive, attach, file, dryRun);
+				} else {
+					return aonDrive.createFile(drive, attach, dryRun);
+				}
+			} else if(attach.getData() != null && attach.getDriveId() == null) {
+				return aonDrive.createFile(drive, attach, dryRun);
+			} else if(attach.getData() == null && attach.getDriveId() != null) {
+				File file = getFile(drive, attach.getDriveId());
+				if(file == null || file.getId() == null) {
+					return searchFile(drive, attach);
+				}
+			} else {//if(attach.getData() == null && attach.getDriveId() == null) {
+				return searchFile(drive, attach);
+			}
+			
+		}
+		//else  LOGGER.log(Level.WARNING,"Skip '"+attach.getDescription()+"': won't be synchronized.");
+		return attach.getDriveId();
+	}
+	
+	
+	
+	private String searchFile(Drive drive, Attach attach) {
+		String[] keys = new String[] {"domain","aontype","fileId"};
+		String[] properties = new String[] {attach.getDomain().getName(),attach.getAttachType().getName(), attach.getId().toString()};
+		FileList fl = SearchFiles.searchFilesProperties(drive, keys, properties);
+		if(!fl.isEmpty() && fl.getItems().size() > 0) {
+			attach.setDriveId(fl.getItems().get(0).getId());	
+			AonDrive.getInstace().updateDriveId(attach);
+		} else {
+			FileList domainFolders = SearchFiles.searchFilesTitleEqualAndMimetype(drive, attach.getDomain().getName());
+			if(domainFolders.getItems().size() > 0) {
+				File domainFolder = domainFolders.getItems().get(0);
+				FileList typeFolders = SearchFiles.searchFilesTitleAndParent(drive, attach.getAttachType().getName(), domainFolder.getId());
+				if(typeFolders.getItems().size()>0) {
+					File typeFolder = typeFolders.getItems().get(0);
+					FileList files = SearchFiles.searchFilesTitleAndParent(drive, attach.getDescription(), typeFolder.getId());
+					Boolean delete = true;
+					if(files.getItems().size() > 0) {
+						for (Integer i = 0; i < files.getItems().size(); i++) {
+							File file = files.getItems().get(i);
+							Attach attachX = AON.getAttach(attach.getDomain().getName(), attach.getDomain().getId(), "", f -> f.getDriveIdProperty().eq(file.getId()), attach.getAttachType());
+							if(attachX.getId() == null) {
+								attach.setDriveId(file.getId());	
+								AonDrive.getInstace().updateDriveId(attach);
+								i = files.getItems().size();
+								delete = false;
+							}
+						}
+					}
+					if(delete) {
+						// TODO de momento no borrar!!!
+						// AON.deleteAttach(attach.getDomain().getName(), attach.getDomain().getId(), "", f -> f.getIdProperty().eq(attach.getId()), attach.getAttachType());
+					}
+				}
+			}
+		}
+		return attach.getDriveId();
 	}
 
 	public static void updateDateSync(Drive drive, FileInfo fileInfo) throws IOException, GeneralSecurityException {

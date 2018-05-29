@@ -114,7 +114,7 @@ public class DriveUtils {
 	public File getFile(Drive drive, String id){
 		File file  = new File();
 		try {
-			file = drive.files().get(id).setFields("id").execute();
+			file = drive.files().get(id).execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

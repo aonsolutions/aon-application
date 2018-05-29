@@ -26,9 +26,14 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class DownloadFilesServlet extends HttpServlet {
 
@@ -119,7 +124,15 @@ public class DownloadFilesServlet extends HttpServlet {
         	}
         	else{
         		b = DriveUtils.getByteFile(domain, user, driveId, idFile);
+        		if(b == null) {
+            		DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
+            		Drive drive = AonDrive.getInstace().serviceInitialize(g);
+            		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(idFile), AttachType.REGISTRY);
+            		DriveUtils.getInstace().syncX(drive, user, attach);
+            		b = DriveUtils.getByteFile(domain, user, driveId, idFile);
+            	}
         	}
+        	
 			fi = new FileInfo();
 		    fi.setData(b);
 		    fi.setTitle(title);	
