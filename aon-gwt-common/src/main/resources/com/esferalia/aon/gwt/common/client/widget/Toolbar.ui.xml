@@ -1,9 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
-	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:p='urn:import:com.vaadin.polymer.paper.widget' >
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' >
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
@@ -20,29 +17,9 @@
 					<g:Label></g:Label>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTMLPanel width="800px" styleName="{aonResources.css.aonFindingToolbar}">
-				<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup} {aonResources.css.aonWidthAll}">
-					<g:Button ui:field="back" text="Volver" visible="false"
-						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
-					<g:Button ui:field="reset" text="{msg.newAction}" 
-						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}" />
-					<g:Button ui:field="remove" text="{msg.deleteAction}"  visible="false"
-						styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
-					<g:Button ui:field="print" text="Impresion"  visible="false"
-						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-pdf" />
-					<g:Button ui:field="email" text="Enviar"  visible="false"
-						styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-mail" />
-						
-					<g:Button ui:field='excelDownload'
-						styleName='aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-excel' text="" visible="true"/>
-					<g:Button ui:field='pdfDownload'
-						styleName='aon-finding-toolbar-item aon-icon-pdf' text="DESCARGAR" visible="true"/>
-	
-					<g:Button ui:field='liqDownload'
-						styleName='aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-excel' text="Liquidacion" visible="true"/>
+			<g:HTMLPanel width="400px" styleName="{aonResources.css.aonFindingToolbar}">
+				<g:HTMLPanel ui:field="buttonPanel" styleName="{aonResources.css.aonFindingToolbarItemGroup} {aonResources.css.aonWidthAll}">
 				
-					<p:PaperIconButton ui:field="ant" noink="true" visible="false" style="margin:0px;padding:0px;height:20px;right:40px;position:absolute;" icon="chevron-left"/>
-					<p:PaperIconButton ui:field="next" noink="true" visible="false" style="margin:0px;padding:0px;height:20px;right:0px;position:absolute;" icon="chevron-right"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			

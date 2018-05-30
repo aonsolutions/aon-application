@@ -3,6 +3,7 @@ package net.aonsolutions.aon.gwt.commercial.client.commission;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
+import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
@@ -55,24 +56,30 @@ public class CommissionCalculate extends AonTemplate2{
 
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		CommissionCalculateToolbar toolbar = new CommissionCalculateToolbar("Comisiones") {
+		
+		Toolbar toolbar = new Toolbar("Comisiones");
+		toolbar.addButton("Limpiar", AON.AON_CSS.aonIconRubber()).addClickHandler(new ClickHandler() {
 			
 			@Override
-			protected void clean() {
+			public void onClick(ClickEvent arg0) {
 				content();
 			}
+		});
+		
+		toolbar.addButton("Calcular", AON.AON_CSS.aonIconSave()).addClickHandler(new ClickHandler() {
 			
 			@Override
-			protected void calculate() {
+			public void onClick(ClickEvent arg0) {
 				String requestData = JsonUtils.stringify(getCalcJson().getJavaScriptObject());
 				if(isOffer()) {
 					getAPI().getCommission().offerCommissionCalculate(requestData);
 				} else if(isInvoice()) {
 					getAPI().getCommission().invoiceCommissionCalculate(requestData);
 				}
-				content(new CommissionCalculatePrincipal(me));
+				content(new CommissionCalculatePrincipal(me));				
 			}
-		};
+		});
+
 		setToolbar(toolbar);
 	}
 	
@@ -113,9 +120,9 @@ public class CommissionCalculate extends AonTemplate2{
 				commissionType.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				commissionSection.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				
-				CommissionCalculateToolbar toolbar = (CommissionCalculateToolbar) getToolbar().getWidget();
-				toolbar.setCleanVisible(true);
-				toolbar.setCalculateVisible(true);
+				Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+				toolbar.getButtonPanel().getWidget(0).setVisible(true);// CLEAN BUTTON
+				toolbar.getButtonPanel().getWidget(1).setVisible(true);// CALCULATE BUTTON
 				type = "invoice";
 				content();
 			}
@@ -128,9 +135,9 @@ public class CommissionCalculate extends AonTemplate2{
 				commissionType.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				commissionSection.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 				
-				CommissionCalculateToolbar toolbar = (CommissionCalculateToolbar) getToolbar().getWidget();
-				toolbar.setCleanVisible(false);
-				toolbar.setCalculateVisible(false);
+				Toolbar toolbar = (Toolbar) getToolbar().getWidget();
+				toolbar.getButtonPanel().getWidget(0).setVisible(false);// CLEAN BUTTON
+				toolbar.getButtonPanel().getWidget(1).setVisible(false);// CALCULATE BUTTON
 				type = "invoice";
 				content(new CommissionCalculatePrincipal(me));
 			}

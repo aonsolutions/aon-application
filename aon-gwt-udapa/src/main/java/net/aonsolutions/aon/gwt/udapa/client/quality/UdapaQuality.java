@@ -18,6 +18,8 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -31,6 +33,7 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperItemElement;
 import com.vaadin.polymer.paper.PaperRadioButtonElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
@@ -67,8 +70,8 @@ public class UdapaQuality extends AonTemplate2{
 	public UdapaQuality(AonData aonData) {
 		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getDomain().getId(),
-				aonData.getUser().getLogin());
+			aonData.getDomain().getName(), aonData.getDomain().getId(),
+			aonData.getUser().getLogin());
 	}
 	
 	@Override
@@ -112,103 +115,31 @@ public class UdapaQuality extends AonTemplate2{
 	
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Ficha de calidad") {
-			
-			@Override
-			protected void reset() {
-				resetQuality();
-			}
-			
-			@Override
-			protected void remove() {
-				removeQuality();
-			}
-			
-			@Override
-			protected void print() {
-				printQuality();
-			}
-			
-			@Override
-			protected void next() {
-				Integer page = Integer.parseInt(filterMap.get("page").get(0));
-				page = page + 1;
-				LinkedList<String> list = new LinkedList<>();
-				list.add(page.toString());
-				filterMap.put("page", list);
-				list = new LinkedList<>();
-				list.add("1");
-				filterMap.put("per_page", list);
-				getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsDataResponse> result) {
-						if(result.getData().length() == 0){
-							Integer page = Integer.parseInt(filterMap.get("page").get(0));
-							page = page < 2 ? 1 : page - 1;
-							LinkedList<String> list = new LinkedList<>();
-							list.add(page.toString());
-							filterMap.put("page", list);
-						}
-						setContent(new QualitySheet(me, result.getData().get(0)));						
-				}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});
-			}
-			
-			@Override
-			protected void email() {}
-			
-			@Override
-			protected void back() {
-				backApplication();
-			}
-			
-			@Override
-			protected void ant() {
-				Integer page = Integer.parseInt(filterMap.get("page").get(0));
-				
-				if(page > 1 ){
-					page = page - 1;
-					LinkedList<String> list = new LinkedList<>();
-					list.add(page.toString());
-					filterMap.put("page", list);
-					list = new LinkedList<>();
-					list.add("1");
-					filterMap.put("per_page", list);
-					getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
-						
-						@Override
-						public void onSuccess(JSON<JsDataResponse> result) {
-							setContent(new QualitySheet(me, result.getData().get(0)));
-						}
-						
-						@Override public void onFailure(Throwable caught) {}
-					});
-				}
-			}
-
-			@Override
-			protected void excelDownload() {
-				printQualityList("excel");
-			}
-
-			@Override
-			protected void pdfDownload() {
-				printQualityList("pdf");
-			}
-
-			@Override
-			protected void liqDownload() {
-				printLiqList("excel");			
-			}
-		};
-		toolbar.setAllVisible(false);
-		toolbar.setResetVisible(true);
-		toolbar.setExcelVisible(true);
-		toolbar.setPdfVisible(true);
-		toolbar.setLiqVisible(true);
+		Toolbar toolbar = new Toolbar("Ficha de calidad");
+		toolbar.addButton("Volver", AON.AON_CSS.aonIconCancel(), false).addClickHandler(backClickHandler());
+		toolbar.addButton(AON.MSG.newAction(), AON.AON_CSS.aonIconReset()).addClickHandler(resetClickHandler());
+		toolbar.addButton(AON.MSG.deleteAction(), AON.AON_CSS.aonIconDelete(), false).addClickHandler(deleteClickHandler());
+		toolbar.addButton("Impresi\u00f3n", AON.AON_CSS.aonIconPdf(), false).addClickHandler(printClickHandler());
+		toolbar.addButton("", AON.AON_CSS.aonIconExcel()).addClickHandler(excelDownloadClickHandler());
+		toolbar.addButton("Descargar", AON.AON_CSS.aonIconPdf()).addClickHandler(pdfDownloadClickHandler());
+		toolbar.addButton("Liquidaci\u00f3n", AON.AON_CSS.aonIconExcel()).addClickHandler(liqDownloadClickHandler());
+		
+		PaperIconButton ant = new PaperIconButton();
+		ant.setNoink(true);
+		ant.setVisible(false);
+		ant.setStyle("margin:0px;padding:0px;height:20px;right:40px;position:absolute;");
+		ant.setIcon("chevron-left");
+		ant.addClickHandler(antClickHandler());
+		toolbar.addWidget(ant);
+		
+		PaperIconButton next = new PaperIconButton();
+		next.setNoink(true);
+		next.setVisible(false);
+		next.setStyle("margin:0px;padding:0px;height:20px;right:0px;position:absolute;");
+		next.setIcon("chevron-right");
+		next.addClickHandler(nextClickHandler());
+		toolbar.addWidget(next);
+		
 		setToolbar(toolbar);
 	}
 	
@@ -224,14 +155,16 @@ public class UdapaQuality extends AonTemplate2{
 	public void sheetContent(JsDataResponse js, HashMap<String, LinkedList<String>> map) {
 		this.filterMap = map;
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
-		toolbar.setBackVisible(true);
-		toolbar.setPrintVisible(true);
-		toolbar.setRemoveVisible(true);
-		toolbar.setAntVisible(true);
-		toolbar.setNextVisible(true);
-		toolbar.setExcelVisible(false);
-		toolbar.setPdfVisible(false);
-		toolbar.setLiqVisible(false);
+		
+		toolbar.getButtonPanel().getWidget(0).setVisible(true);// toolbar.setBackVisible(true);
+		toolbar.getButtonPanel().getWidget(2).setVisible(true);// toolbar.setRemoveVisible(true);
+		toolbar.getButtonPanel().getWidget(3).setVisible(true);// toolbar.setPrintVisible(true);
+		toolbar.getButtonPanel().getWidget(4).setVisible(false);// toolbar.setExcelVisible(false);
+		toolbar.getButtonPanel().getWidget(5).setVisible(false);// toolbar.setPdfVisible(false);
+		toolbar.getButtonPanel().getWidget(6).setVisible(false);// toolbar.setLiqVisible(false);
+		toolbar.getButtonPanel().getWidget(7).setVisible(true);// toolbar.setAntVisible(true);
+		toolbar.getButtonPanel().getWidget(8).setVisible(true);// toolbar.setNextVisible(true);
+
 		setContent(new QualitySheet(this, js));
 	}
 
@@ -255,8 +188,8 @@ public class UdapaQuality extends AonTemplate2{
 	private void printLiqList(String type) {
 		getAPI().getWarehouse().downloadUdapaLiqList(getFilterMap(), type);
 	}
-	
-	private void removeQuality() {
+
+	private void deleteQuality() {
 		Label label = new Label("Est\u00e1 seguro que quiere borrar el Carrier Packing ");
 		
 		AonDialog dialog = new AonDialog("Borrar Carrier Packing", label) {
@@ -284,6 +217,8 @@ public class UdapaQuality extends AonTemplate2{
 		dialog.getElement().getStyle().setWidth(310, Unit.PX);
 		dialog.center();	
 	}
+	
+
 	
 	private void resetQuality() {
 		VerticalPanel panel = new VerticalPanel();
@@ -377,6 +312,137 @@ public class UdapaQuality extends AonTemplate2{
 	}
 	
 	
+	/***** BUTTON CLICK HANDLER *****/
 	
-
+	private ClickHandler backClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				backApplication();
+			}
+		};
+	}
+	
+	private ClickHandler resetClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				resetQuality();
+			}
+		};
+	}
+	
+	private ClickHandler deleteClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				deleteQuality();
+			}
+		};
+	}
+	
+	private ClickHandler printClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				printQuality();
+			}
+		};
+	}
+	
+	private ClickHandler excelDownloadClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				printQualityList("excel");
+			}
+		};
+	}
+	
+	private ClickHandler pdfDownloadClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				printQualityList("pdf");
+			}
+		};
+	}
+	
+	private ClickHandler liqDownloadClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				printLiqList("excel");
+			}
+		};
+	}
+	
+	private ClickHandler antClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Integer page = Integer.parseInt(filterMap.get("page").get(0));
+				
+				if(page > 1 ){
+					page = page - 1;
+					LinkedList<String> list = new LinkedList<>();
+					list.add(page.toString());
+					filterMap.put("page", list);
+					list = new LinkedList<>();
+					list.add("1");
+					filterMap.put("per_page", list);
+					getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsDataResponse> result) {
+							setContent(new QualitySheet(me, result.getData().get(0)));
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				}
+			}
+		};
+	}
+	
+	private ClickHandler nextClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Integer page = Integer.parseInt(filterMap.get("page").get(0));
+				page = page + 1;
+				LinkedList<String> list = new LinkedList<>();
+				list.add(page.toString());
+				filterMap.put("page", list);
+				list = new LinkedList<>();
+				list.add("1");
+				filterMap.put("per_page", list);
+				getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsDataResponse> result) {
+						if(result.getData().length() == 0){
+							Integer page = Integer.parseInt(filterMap.get("page").get(0));
+							page = page < 2 ? 1 : page - 1;
+							LinkedList<String> list = new LinkedList<>();
+							list.add(page.toString());
+							filterMap.put("page", list);
+						}
+						setContent(new QualitySheet(me, result.getData().get(0)));						
+				}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		};
+	}
 }

@@ -39,19 +39,7 @@ public class ContractMediaPage extends AonTemplate2 {
 	
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Informe de personal asalariado") {
-			@Override protected void reset() {}
-			@Override protected void remove() {}	
-			@Override protected void print() {}
-			@Override protected void next() {}
-			@Override protected void email() {}
-			@Override protected void back() {}
-			@Override protected void ant() {}
-			@Override protected void excelDownload() {}
-			@Override protected void pdfDownload() {}
-			@Override protected void liqDownload() {}
-		};
-		toolbar.setAllVisible(false);
+		Toolbar toolbar = new Toolbar("Informe de personal asalariado");
 		setToolbar(toolbar);
 	} 
 	
