@@ -650,7 +650,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			selectEmployeeItem(workplaceItem, workplaceItem.getChildCount(), predicate, fireEvents);
 		}
 	}
+	
+	public int getVerticalScrollPosition() {
+		return scrollPanel.getVerticalScrollPosition();
+	}
 
+	public void setVerticalScrollPosition(int position) {
+		scrollPanel.setVerticalScrollPosition(position);
+	}
 	// ------------------------------------------------------------------------
 
 	EmployeesServiceAsync getEmployeesService() {
