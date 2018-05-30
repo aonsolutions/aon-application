@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.code.aon.ql.Criteria;
@@ -24,11 +25,13 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
+import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -129,7 +132,8 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 
 				@Override
 				public int getAñoNacimiento() {
-					return 1969;
+					Date birthDate = SQLContractSettleCalculatorContext.this.getDate(SQLConstants.PERSON, SQLConstants.PersonColumns.BIRTH_DATE);
+					return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 1969;
 				}
 
 				@Override

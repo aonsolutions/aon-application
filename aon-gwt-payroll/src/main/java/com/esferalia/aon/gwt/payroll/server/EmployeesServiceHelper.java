@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -58,6 +59,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
+import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -72,6 +74,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 public class EmployeesServiceHelper {
@@ -600,7 +603,8 @@ public class EmployeesServiceHelper {
 
 						@Override
 						public int getAñoNacimiento() {
-							return 1969;
+							Date birthDate = SalaryCalculatorContextImpl.this.getDate(SQLConstants.PERSON, SQLConstants.PersonColumns.BIRTH_DATE);
+							return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 1969;
 						}
 
 					};
