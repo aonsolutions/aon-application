@@ -1657,6 +1657,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
+		int pos = employees.getVerticalScrollPosition();
+		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
+
 		employeeDetail.setWidget(jsf);
 		jsf.enterpriseSelected(enterprise.getId());
 		this.enterprise = enterprise;
@@ -1664,6 +1667,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onWorkplaceSelected(Workplace workplace) {
+		int pos = employees.getVerticalScrollPosition();
+		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
+
 		employeeDetail.setWidget(jsf);
 		jsf.workplaceSelected(workplace.getId());
 		this.workplace = workplace;
@@ -1671,6 +1677,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onEmployeeSelected(Employee employee) {
+		int pos = employees.getVerticalScrollPosition();
+		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
+
 		employeeDetail.setWidget(jsf);
 		jsf.employeeSelected(employee.getId());
 		this.employee = employee;
@@ -1678,6 +1687,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onActivitySelected(Activity activity) {
+		int pos = employees.getVerticalScrollPosition();
+		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
+
 		employeeDetail.setWidget(jsf);
 		jsf.activitySelected(activity.getId());
 		this.activity = activity;

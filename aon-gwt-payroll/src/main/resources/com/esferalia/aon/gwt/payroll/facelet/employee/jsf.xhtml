@@ -10,6 +10,13 @@
 
 	<aon:div id="jsf" style="display:none;">
 
+		<script type="text/javascript">
+           	//<![CDATA[
+				rerenderHandler = function(){
+				}
+           	//]]>
+		</script>
+
 		<aon:form style="display:none">
 			<aon:commandButton id="jsfBonusConceptsButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onBonusConceptsSelected}" />
@@ -139,6 +146,11 @@
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/deduction_concept.xhtml"/>
 			</aon:if>
+			<script type="text/javascript">
+	           	//<![CDATA[
+					rerenderHandler(); 
+	           	//]]>
+			</script>
 		</aon:div>
 		<script type="text/javascript">
            	//<![CDATA[

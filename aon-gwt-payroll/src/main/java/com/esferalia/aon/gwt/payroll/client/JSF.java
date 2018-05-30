@@ -7,6 +7,10 @@ import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.user.client.ui.HTML;
 
 class JSF extends HTML implements Handler {
+	
+	public static interface OnRerenderHandler {
+		void onRerender();
+	}
 
 	public JSF() {
 		super(getJsfElement());
@@ -56,6 +60,12 @@ class JSF extends HTML implements Handler {
 
 	public final native void paymentConceptsSelected() /*-{
 		$wnd.paymentConceptsSelected();
+	}-*/;
+
+	public final native void setRerenderHandler(OnRerenderHandler handler) /*-{
+		$wnd.rerenderHandler = function( ){
+			handler.@com.esferalia.aon.gwt.payroll.client.JSF.OnRerenderHandler::onRerender()();
+		};
 	}-*/;
 
 	private static final native Element getJsfElement() /*-{
