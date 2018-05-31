@@ -59,8 +59,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 		setWidget(root);
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());		
-		
-		if (params == null || params.getAccount() == null) {
+		if (params == null || (params.getAccount() == null && params.getFullAccount() == null)) {
 			final FlowPanel msgPanel = new FlowPanel("pre");
 			InlineLabel accountLabel = new InlineLabel("Indique una cuenta contable.");
 			accountLabel.addStyleName(AON.AON_CSS.aonBold());
@@ -256,6 +255,11 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 								for (final AccountStatement as : result.getDetails()) {
 									as.setSelected(false);
 									as.setBalanced(false);
+									Widget check = tab.getWidget(rw+rowOffset, 0);
+									if (check != null) {
+										check.removeStyleName(AON.AON_CSS.aonIconChecked());
+										check.addStyleName(AON.AON_CSS.aonIconCheck());
+									}
 									tab.getRowFormatter().removeStyleName(rw+rowOffset, AON.AON_CSS.aonDisplayNone());
 									tab.getRowFormatter().removeStyleName(rw+rowOffset, AON.AON_CSS.aonBackgroundHighlightedGreen());
 									tab.getRowFormatter().removeStyleName(rw+rowOffset, AON.AON_CSS.aonBackgroundHighlightedOrange());
@@ -280,12 +284,13 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 							check.setStyleName(AON.AON_CSS.aonIconCheck());
 							check.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
 							check.addStyleName(AON.AON_CSS.aonClickable());
-							check.setTitle(AON.MSG.goAction());
+							check.setTitle(AON.MSG.check());
 							check.addClickHandler(new ClickHandler() {
 								
 								@Override
 								public void onClick(ClickEvent event) {
 									boolean selected = !as.isSelected();
+									check.setTitle(selected?AON.MSG.uncheck():AON.MSG.check());
 									as.setSelected(selected);
 									toogleStyle( check, selected  );
 									if (selected) {
@@ -366,7 +371,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 						Label documentLabel = new Label( document );
 						tab.setWidget(row, 9, documentLabel);
 						documentLabel.setStyleName(AON.AON_CSS.aonNowrap());
-						documentLabel.setTitle(AON.MSG.goAction());
+						documentLabel.setTitle("Seleccionar apuntes con este n\u00BA documento");
 						if (allowChecks) {
 							documentLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
 							documentLabel.addClickHandler(new ClickHandler() {

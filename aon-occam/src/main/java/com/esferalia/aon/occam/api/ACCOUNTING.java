@@ -302,7 +302,11 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			report.setFrom(params.getFromDate());
 			report.setTo(params.getToDate());
+			
+			AccountStatementDAO.ensureParamsAccount( ctx, params);
 			report.setAccount(ACCOUNTING.getAccount(ctx, params.getAccount()));
+			
+			
 			report.setSummary(getAccounting().getAccountBalance(ctx, params)
 					.collect(Collectors.toCollection(LinkedList::new)));
 			report.setDetails(getAccounting().getAccountStatement(ctx, params)

@@ -133,6 +133,7 @@ public class AccountStatementDAO {
 
     public static Stream<AccountStatement> statement(AONContext ctx , AccountStatementParams params ) {
 		ctx.checkRead();
+		ensureParamsAccount( ctx , params );
 		return  ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ID
 					,ACCOUNT_ENTRY.JOURNAL
@@ -158,6 +159,27 @@ public class AccountStatementDAO {
 				.stream()
 				.map( new StatementFiller() )
 		;
+	}
+
+	public static void ensureParamsAccount(AONContext ctx, AccountStatementParams params) {
+		if (params.getAccount() == null) {
+			if (params.getFullAccount() == null) {
+				throw new AonCoreException("Debe indicar una cuenta contable");
+			}
+			if (params.getFullAccount().getId() != null) {
+				params.setAccount( params.getFullAccount().getId() );
+			} else {
+				if (AonStringUtils.isBlank(params.getFullAccount().getCode())) {
+					throw new AonCoreException("Debe indicar una cuenta contable");
+				}
+				Account account = AccountDAO.get(ctx, params.getFullAccount().getCode());
+				if (account == null) {
+					throw new AonCoreException("Cuenta contable '" + params.getFullAccount().getCode() +"' no encontrada");
+				}
+				params.setFullAccount( account );
+				params.setAccount( account.getId() );
+			}
+		}
 	}
 
 	private static class StatementFiller  implements Function<Record,AccountStatement> {

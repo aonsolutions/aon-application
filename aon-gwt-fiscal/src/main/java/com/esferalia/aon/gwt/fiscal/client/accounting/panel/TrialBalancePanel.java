@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
@@ -12,6 +11,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -23,7 +24,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 
-public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandlers<Account>{
+public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandlers<AccountTrialBalanceParams>{
 
 	private static FiscalServiceAsync fiscalService;
 	
@@ -47,6 +48,10 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 		
 		search();
 		scrollToTop();
+	}
+	
+	public AccountTrialBalanceParams getParams() {
+		return params;
 	}
 
 	private void search() {
@@ -94,11 +99,16 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					tab.getColumnFormatter().setWidth( col++, "100px");
 					
 					col = 0;
+					int colPlus = 0;
 					
-					tab.setWidget(row, col, new Label(AON.MSG.account()));
-					tab.getFlexCellFormatter().setColSpan(row, col, 2);
-					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+					tab.setWidget(row,col, new Label());
+					tab.getFlexCellFormatter().setColSpan(row, colPlus, 2);
 					col++;
+					
+					tab.setWidget(row+1, colPlus, new Label(AON.MSG.account()));
+					tab.getFlexCellFormatter().setColSpan(row+1, colPlus, 2);
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					colPlus++;
 					
 					if (report.hasBeforePeriodAmounts()) {
 						String msg = report.getPeriod() != null
@@ -107,6 +117,13 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 						tab.setWidget(row, col, new Label(msg));
 						tab.getFlexCellFormatter().setColSpan(row, col, 2);
 						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						
+						tab.setWidget(row+1, colPlus, new Label("Saldo deudor"));
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						colPlus++;
+						tab.setWidget(row+1, colPlus, new Label("Saldo acreed."));
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						colPlus++;
 						col++;
 					}
 					
@@ -114,6 +131,14 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 						tab.setWidget(row, col, new Label("Saldo apertura"));
 						tab.getFlexCellFormatter().setColSpan(row, col, 2);
 						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						
+						tab.setWidget(row+1, colPlus, new Label("Saldo deudor"));
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						colPlus++;
+						tab.setWidget(row+1, colPlus, new Label("Saldo acreed."));
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						colPlus++;
+						
 						col++;
 					}
 					
@@ -122,21 +147,42 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 						tab.setWidget(row, col, new Label("Saldo hasta " + AON.DATE_FORMAT.format(report.getParams().getFromDate())));
 						tab.getFlexCellFormatter().setColSpan(row, col, 2);
 						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						
+						tab.setWidget(row+1, colPlus, new Label("Saldo deudor"));
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						colPlus++;
+						tab.setWidget(row+1, colPlus, new Label("Saldo acreed."));
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						colPlus++;
 						col++;
 					}
 					
 					tab.setWidget(row, col, new Label("Sumas periodo"));
 					tab.getFlexCellFormatter().setColSpan(row, col, 2);
 					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+					
+					tab.setWidget(row+1, colPlus, new Label("Debe"));
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					colPlus++;
+					tab.setWidget(row+1, colPlus, new Label("Haber."));
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					colPlus++;
 					col++;
 
 					tab.setWidget(row, col, new Label("Saldos finales"));
 					tab.getFlexCellFormatter().setColSpan(row, col, 2);
 					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+					
+					tab.setWidget(row+1, colPlus, new Label("Saldo deudor"));
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					colPlus++;
+					tab.setWidget(row+1, colPlus, new Label("Saldo acreed."));
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					colPlus++;
 					col++;
 					
 					row++;
-					
+					row++;
 					
 					for (AccountTrialBalance bal : report.getBalances().values()) {
 						paintRow(report, tab,row,bal);
@@ -163,6 +209,17 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					codeLabel.getElement().getStyle().setMarginLeft( length > 4 ? 20.0 : (length-1)*5 , Unit.PX);
 				}
 				tab.setWidget(row, col, codeLabel);
+				codeLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
+				codeLabel.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						AccountTrialBalanceParams newParams = params.clone();
+						newParams.setCode(bal.getCode());
+						SelectionEvent.fire(TrialBalancePanel.this, newParams );						
+					}
+				});
+				
 				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
 				col++;
 				tab.setWidget(row, col, new Label(bal.getDescription()));
@@ -248,7 +305,7 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 	}
 	
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Account> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountTrialBalanceParams> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 }

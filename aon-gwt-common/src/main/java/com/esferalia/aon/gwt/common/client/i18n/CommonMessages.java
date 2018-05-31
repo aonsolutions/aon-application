@@ -406,6 +406,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ir")
 	String goAction();
 
+	@DefaultMessage("Marcar")
+	String check();
+
+	@DefaultMessage("Desmarcar")
+	String uncheck();
+
 	@DefaultMessage("Aceptar")
 	String accept();
 
