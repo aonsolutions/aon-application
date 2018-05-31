@@ -338,12 +338,13 @@ public class ConnectSaleInvoiceWriter {
 	private List<SINCL> createSINCLList(List<InvoiceDetail> detailList,
 			String companyEdiCode, String customerEdiMainCode, String customerPackage) {
 		List<SINCL> list = new ArrayList<>();
-		detailList.forEach(detail -> {
+		int idx = 0;
+		for(InvoiceDetail detail: detailList) {
 			if(detail.getTaxableBase()!=0.0){
-				list.add(createSINCLRecord(detail, detailList.indexOf(detail)+1,
+				list.add(createSINCLRecord(detail, ++idx,
 						companyEdiCode, customerEdiMainCode, customerPackage));
 			}
-		});
+		}
 		return list;
 	}
 
