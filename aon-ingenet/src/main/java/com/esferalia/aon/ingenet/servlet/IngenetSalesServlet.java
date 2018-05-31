@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -161,10 +162,12 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 //				sendEmail(subject, content, "recuperar", _xml, RECIPIENTS_TO_LOG);
 //				saveToDisk("elaboration", "elaboration-request", _xml!=null?_xml:"");
 			} else if(ACCIONTYPE.CERRAR==params.getACCION()) {
-				// TODO cerrar pedidos recuperados
-//				reopenSales(ctx, sales, referencias);
-				errorList.add("Accion 'CERRAR' en proceso de implementación");
+				if(params.getPEDIDOS()!=null && params.getPEDIDOS().getREFERENCIAS()!=null)
+					blockSales(ctx, params.getPEDIDOS().getREFERENCIAS());
+				else
+					errorList.add("No se han encontrado referencias de pedido para marcarlas en proceso de elaboración");	
 			} else if(ACCIONTYPE.CANCELAR==params.getACCION()) {
+				reopenSales(ctx, params.getPEDIDOS().getREFERENCIAS());
 				// TODO cancelar pedidos recuperados
 				errorList.add("Accion 'CANCELAR' en proceso de implementación");
 			} else {
@@ -186,9 +189,28 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 	}
 	
 
+	private void blockSales(AONContext ctx, List<REFERENCIATYPE> referencias) {
+		List<Sales> salesList = new LinkedList<>();
+		for (REFERENCIATYPE ref : referencias)
+			salesList.add(SalesDAO.getSales(ctx, ref.getSERIE(), Integer.parseInt(ref.getNUMERO())));
+		
+		Integer[] salesIds = salesList.stream()
+				.mapToInt(Sales::getId).boxed().toArray(Integer[]::new);
+		List<DataResponse> responseList = getDataResponseList(ctx, salesIds);
+		
+		responseList.stream().forEach(response -> {
+			DataResponseDetail detail = new DataResponseDetail();
+			detail.setDomain(response.getDomain());
+			detail.setDataResponse(response.getId());
+			detail.setDataVariable("STATUS");
+			detail.setDataValue("IN_PROGRESS");
+			detail = AON.insertDataResponseDetail(ctx.getDomainName(),
+					ctx.getDomainId(), ctx.getUser(), detail);
+		});
+	}
+
 	// TODO reopenSales
-	private void reopenSales(AONContext ctx,
-			List<Sales> salesList, List<REFERENCIATYPE> referencias) {
+	private void reopenSales(AONContext ctx, List<REFERENCIATYPE> referencias) {
 //		referencias.forEach(ref -> {
 //			String series = ref.getSERIE();
 //			Integer number = Integer.parseInt(ref.getNUMERO());
@@ -606,6 +628,19 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 				ctx.getUser(), DataResponseSource.INGENET_SALES, f -> f.getIdProperty().in(responseIds))
 				.collect(Collectors.toList());
 		
+	}
+	
+	private List<DataResponse> getDataResponseList(AONContext ctx, Integer[] salesIds) {
+		Integer[] responseIds = AON.getLastDataResponseDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 
+				f -> {
+					return f.getDomainProperty().eq(ctx.getDomainId())
+							.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
+							.and(f.getSourceIdProperty().in(salesIds));
+				})
+				.mapToInt(DataResponseDetail::getDataResponse).boxed().toArray(Integer[]::new);
+		return AON.getDataResponseStream(ctx.getDomainName(), ctx.getDomainId(),
+				ctx.getUser(), DataResponseSource.INGENET_SALES, f -> f.getIdProperty().in(responseIds))
+				.collect(Collectors.toList());
 	}
 	
 
