@@ -552,8 +552,7 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setUnidadDeMedida(null);
 		sincl.setUnidadesEntregadas(null);
 		sincl.setNumeroUnidadesDeConsumoEnU_Expedicion(null);
-		sincl.setImporteTotalNetoDeLaLineaDeArticulo(CommonUtil.round(detail
-				.getTaxableBase(), 3));
+		
 		sincl.setPrecioBrutoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
 		sincl.setPrecioNetoUnitario(CommonUtil.round(detail.getPrice()*unitPriceFactor, 4));
 		sincl.setUnidadDeMedidaDelPrecio(null);
@@ -572,6 +571,11 @@ public class ConnectSaleInvoiceWriter {
 		} else {
 			sincl.setImporteRecargoDeEquivalencia(CommonUtil.round(detail.getRetentionQuota(), 3));
 		}
+		sincl.setImporteTotalNetoDeLaLineaDeArticulo(
+				CommonUtil.round( detail.getTotalSalesPrice()
+				- sincl.getImporteImpuestoIVA_IGIG() 
+				- sincl.getImporteRecargoDeEquivalencia(), 3));
+		
 		sincl.setCalificadorOtroTipoDeImpuesto(null);
 		sincl.setPorcentajeOtroTipoDeImpuesto(null);
 		sincl.setImporteOtroTipoDeImpuesto(null);
