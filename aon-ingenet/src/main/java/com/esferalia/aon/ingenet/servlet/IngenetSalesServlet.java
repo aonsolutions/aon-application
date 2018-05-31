@@ -160,8 +160,13 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 //				String content = fillResponseMessage(salesList);
 //				sendEmail(subject, content, "recuperar", _xml, RECIPIENTS_TO_LOG);
 //				saveToDisk("elaboration", "elaboration-request", _xml!=null?_xml:"");
+			} else if(ACCIONTYPE.CERRAR==params.getACCION()) {
+				// TODO cerrar pedidos recuperados
+//				reopenSales(ctx, sales, referencias);
+				errorList.add("Accion 'CERRAR' en proceso de implementación");
 			} else if(ACCIONTYPE.CANCELAR==params.getACCION()) {
 				// TODO cancelar pedidos recuperados
+				errorList.add("Accion 'CANCELAR' en proceso de implementación");
 			} else {
 				errorList.add("No se ha indicado la accion a realizar");
 			}
