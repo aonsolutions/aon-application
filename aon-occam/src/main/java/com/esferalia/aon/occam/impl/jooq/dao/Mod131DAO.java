@@ -1862,27 +1862,29 @@ public class Mod131DAO extends FiscalModelDAO {
 		if (previousModel != null) {
 			Mod131 previous = (Mod131) previousModel;
 			for (Mod131Activity prevAct : previous.getActivities()) {
-				boolean addActivity = true;
-				if (previousModel.getYear() != mod.getYear()) {
-					prevAct.setYear(mod.getYear());
-					if (mod.getYear() > 2017) {
-						if (Epigraph.getEpigraph(prevAct.getEpigraph()) == null) {
-							addActivity = false;
+				if (prevAct.getEpigraph() != null) {
+					boolean addActivity = true;
+					if (previousModel.getYear() != mod.getYear()) {
+						prevAct.setYear(mod.getYear());
+						if (mod.getYear() > 2017) {
+							if (Epigraph.getEpigraph(prevAct.getEpigraph()) == null) {
+								addActivity = false;
+							}
 						}
 					}
-				}
-				if (addActivity) {
-					prevAct.setDia((int) (AonDateUtils.getDaysBetweenDates(
-							 FiscalUtils.getPeriodStart(mod)
-							,FiscalUtils.getPeriodEnd(mod)) + 1));
-					Epigraph epi = Epigraph.getEpigraph(prevAct.getEpigraph());
-					int idx = 0;
-					for (Module m : epi.getIRPFModules()) {
-						prevAct.getModules().get(idx).setSalariedStaff(m.isSalariedStaff());
-						prevAct.getModules().get(idx).setNoSalariedStaff(m.isNoSalariedStaff());
-						idx++;
+					if (addActivity) {
+						prevAct.setDia((int) (AonDateUtils.getDaysBetweenDates(
+								FiscalUtils.getPeriodStart(mod)
+								,FiscalUtils.getPeriodEnd(mod)) + 1));
+						Epigraph epi = Epigraph.getEpigraph(prevAct.getEpigraph());
+						int idx = 0;
+						for (Module m : epi.getIRPFModules()) {
+							prevAct.getModules().get(idx).setSalariedStaff(m.isSalariedStaff());
+							prevAct.getModules().get(idx).setNoSalariedStaff(m.isNoSalariedStaff());
+							idx++;
+						}
+						mod.getActivities().add(prevAct);
 					}
-					mod.getActivities().add(prevAct);
 				}
 			}
 		}
