@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.CloseTab;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
@@ -46,6 +47,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 
 public class OperatingPanelReport extends DockLayoutPanel implements Focusable, HasAccountEntrySelectionHandlers{
@@ -57,6 +59,8 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	private Integer currentDomainId;
 	
 	private SimpleLayoutPanel centerPanel;
+	private TabLayoutPanel tabPanel;
+	
 	private HashSet<String> costCentersSet;
 	
 	private AccountPeriodBox period;
@@ -112,8 +116,14 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			addStyleName(AON.AON_CSS.aonMarginBottom());
 			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
 			addNorth(northPanel, 105);
+			SimpleLayoutPanel centerPanelContainer = new SimpleLayoutPanel();
+			centerPanelContainer.setStyleName(AON.AON_CSS.aonSelector());
 			centerPanel = new SimpleLayoutPanel();
-			add(centerPanel);
+			tabPanel = new TabLayoutPanel(30, Unit.PX);
+			tabPanel.add(centerPanel,new CloseTab("Resultados", false));
+			centerPanelContainer.setWidget(tabPanel);
+			add(centerPanelContainer);
+
 			fillNorthPanel(northPanel,tabIndex,config,params);
 		}
 	}

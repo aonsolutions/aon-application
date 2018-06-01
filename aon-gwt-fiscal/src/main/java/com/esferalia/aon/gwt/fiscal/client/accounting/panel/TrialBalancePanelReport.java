@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.CloseTab;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -17,28 +18,17 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.WhiteSpace;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.HasCloseHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
@@ -242,84 +232,6 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 			}
 		});
 		return resultsPanel;
-	}
-
-	public class CloseTab extends Composite implements HasCloseHandlers<Integer> {
-
-		public CloseTab(final String label, final boolean canClose) {
-
-			final HTMLPanel hPanel = new HTMLPanel("");
-
-			// Add label
-			final HTML html = new HTML(SafeHtmlUtils.fromString(label));
-			html.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
-			html.getElement().getStyle().setFloat(com.google.gwt.dom.client.Style.Float.LEFT);
-			hPanel.add(html);
-
-			// Add close button if requested
-			if (canClose) {
-
-				Image closeButton = new Image(AON.AON_RESOURCES.aonIconClose());
-				closeButton.setSize("13px", "13px");
-				closeButton.getElement().getStyle().setCursor(Cursor.POINTER);
-				closeButton.getElement().getStyle().setFloat(com.google.gwt.dom.client.Style.Float.RIGHT);
-
-				closeButton.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						CloseEvent.fire(CloseTab.this, null);
-					}
-				});
-
-				html.getElement().getStyle().setMarginRight(8, Unit.PX);
-				hPanel.add(closeButton);
-			}
-
-			initWidget(hPanel);
-		}
-
-		@Override
-		public HandlerRegistration addCloseHandler(CloseHandler<Integer> handler) {
-			return addHandler(handler, CloseEvent.getType());
-		}
-	}
-
-	public class PlusTab extends Composite implements HasClickHandlers {
-
-		public PlusTab() {
-
-			final HTMLPanel hPanel = new HTMLPanel("");
-
-			// Add label
-//			final HTML html = new HTML(SafeHtmlUtils.fromString(label));
-			final HTML html = new HTML();
-			hPanel.add(html);
-
-			Image plusButton = new Image(AON.AON_RESOURCES.aonIconPlus());
-			plusButton.setTitle("Nueva pesta\u00F1a");
-			plusButton.setSize("13px", "13px");
-			plusButton.getElement().getStyle().setCursor(Cursor.POINTER);
-
-			plusButton.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					ClickEvent.fireNativeEvent(event.getNativeEvent(), PlusTab.this);
-				}
-			});
-
-			html.getElement().getStyle().setMarginRight(8, Unit.PX);
-			hPanel.add(plusButton);
-			
-			initWidget(hPanel);
-		}
-
-
-		@Override
-		public HandlerRegistration addClickHandler(ClickHandler handler) {
-			return addHandler(handler, ClickEvent.getType());
-		}
 	}
 
 }
