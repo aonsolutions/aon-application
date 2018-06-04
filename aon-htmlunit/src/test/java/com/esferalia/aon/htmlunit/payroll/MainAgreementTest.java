@@ -220,7 +220,13 @@ public class MainAgreementTest {
 		}
 		LOGGER.warning("Month : " + datePickerMonth.getTextContent());
 		
-		for ( HtmlElement datePickerDay : moreDatePicker.getElementsByAttribute(HtmlDivision.TAG_NAME, "class", "datePickerDay ") ) {
+		//for ( HtmlElement datePickerDay : moreDatePicker.getElementsByAttribute(HtmlDivision.TAG_NAME, "class", "datePickerDay ") ) {
+		for ( HtmlElement divElement : moreDatePicker.getElementsByTagName(HtmlDivision.TAG_NAME) ) {
+			if ( !divElement.getAttribute("class").contains("datePickerDay"))
+				continue;
+			
+			HtmlElement datePickerDay = divElement;
+			LOGGER.warning("datePickerDay : " + datePickerDay.getTextContent());
 			if ( "1".equals(datePickerDay.getTextContent())) {
 				datePickerDay.fireEvent(MouseEvent.TYPE_MOUSE_OVER);
 				datePickerDay.click();
