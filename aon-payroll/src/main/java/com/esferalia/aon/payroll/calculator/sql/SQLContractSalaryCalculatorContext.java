@@ -856,10 +856,17 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		protected void onContractLeaveLoaded(ResultSet rs, ExpressionContext ctx) {
 			// Skip load GUARANTEE, that is already loaded
 		}
-
+		
 		@Override
 		protected double getActiveDays(Period p) {
-			return 0.00;
+			try {
+				double activeDays = getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, p.getStart(), p.getEnd())
+						.stream().map( v -> (Number) v.getValue(v.getPeriod()) ).collect(Collectors.summingDouble( v -> v.doubleValue() ))
+						;
+				return activeDays;
+			} catch (Throwable t ) {
+				return 0.00;
+			}
 		}
 
 		// --------------------------------------------------------------------
@@ -2164,7 +2171,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		//  throw new UndefinedVariablesException(PREST_IT);
 		if ( totalPayment == null )
 			for ( Leave leave : leaveLoader.getLeaves() )
-				if ( !hasVariable(PREST_IT, leave.getStart(), leave.getEnd()) )
+				if ( Period.compare(leave.getStart(), getEndDate() ) <= 0 
+						&& !hasVariable(PREST_IT, leave.getStart(), leave.getEnd()) )
 					throw new UndefinedVariablesException(PREST_IT);
 		
 

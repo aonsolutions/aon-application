@@ -25,11 +25,10 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
-import com.esferalia.aon.payroll.SalaryData;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.CompositeIterator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -43,6 +42,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -52,10 +52,13 @@ public class SQLContractDelayCalculatorContext extends
 	
 	
 	private static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
+		
+		private long prevDays = 0;
 
 		public DelaySQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate,
-				Date issueDate, Criteria criteria) throws SQLException, ExpressionException {
+				Date issueDate, Criteria criteria, long prevDays ) throws SQLException, ExpressionException {
 			super(connection, startDate, endDate, issueDate, criteria);
+			this.prevDays = prevDays;
 		}
 		
 		@Override
@@ -66,6 +69,14 @@ public class SQLContractDelayCalculatorContext extends
 			
 			Object br =  super.calculateBr(date);
 			return br;
+		}
+		
+		@Override
+		protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(Connection conn, Date startDate,
+				Date endDate, Date issueDate, Criteria criteria, int start, int end) {
+			ISQLContractSalaryCalculatorContext ctx =  super.getNoItCalculatorContext(conn, startDate, endDate, issueDate, criteria, start, end);
+			ctx.getExpressionContext().setVariable(ContextVariable.ACTIVE_DAYS.getName(), prevDays, startDate, endDate);
+			return ctx;
 		}
 		
 	}
@@ -124,7 +135,7 @@ public class SQLContractDelayCalculatorContext extends
 		return String.format(
 				"Atrasos en la Nómina");
 	}
-
+	
 	private Collection<IContractPayment> getDifferencePayments()
 			throws ExpressionException, SQLException, SalaryException {
 
@@ -169,16 +180,24 @@ public class SQLContractDelayCalculatorContext extends
 
 		Collection<Period> periods = getCgcPeriods(connection, getId(), startDate, endDate);//split(startDate, endDate);
 		
-
+		long prevDays = 0;
+		
 		for (Period period : periods) {
+			
+			if  ( AonDateUtils.getDay(period.getStart()) == 1)
+				prevDays = 0;
+			
+			
 			ISQLContractSalaryCalculatorContext ctx = new DelaySQLContractSalaryCalculatorContext(
 					connection, period.getStart(), period.getEnd(),
-					period.getEnd(), criteria) ;
+					period.getEnd(), criteria, prevDays ) ;
 			while (ctx.next()) {
 				calculator.calculate(ctx);
 				payments.addAll(delayPaymentBuilder.getContractPayments());
 				payments.addAll(extrasDelayPaymentBuilder.getContractPayments());
 			}
+			
+			prevDays += period.daysStream().count();
 
 		}
 
@@ -302,6 +321,15 @@ public class SQLContractDelayCalculatorContext extends
 				+", 0.00)";
 				;
 
+		private static final String GARANTIZADO_IRPF_SQL = 
+				"IFNULL((SELECT"
+				+ " SUM(" + SalaryPaymentColumns.IRPF+")"
+				+ " FROM " + SALARY_PAYMENT 
+				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = 'GARANTIZADO')"
+				+", 0.00)";
+				;
+
 		private static final String PREST_IT_AMOUNT_SQL = 
 				"IFNULL((SELECT"
 				+ " SUM(" + SalaryPaymentColumns.AMOUNT+")"
@@ -311,17 +339,52 @@ public class SQLContractDelayCalculatorContext extends
 				+", 0.00)";
 				;
 
-		private static final String WORKED_DAYS = 
+		private static final String GARANTIZADO_AMOUNT_SQL = 
+				"IFNULL((SELECT"
+				+ " SUM(" + SalaryPaymentColumns.AMOUNT+")"
+				+ " FROM " + SALARY_PAYMENT 
+				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = 'GARANTIZADO')"
+				+", 0.00)";
+				;
+
+		private static final String IT_DAYS = 
 				"(SELECT"
+				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
+				+ " FROM " + SALARY_DATA 
+				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND (" 
+				+ SalaryDataColumns.NAME + " LIKE 'DIAS_ENFERMEDAD%'" 
+				+ " OR " + SalaryDataColumns.NAME + " IN ('DIAS_MATERNIDAD', 'DIAS_PATERNIDAD')"
+				+ ")"
+				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
+				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
+				+ ")"
+				;
+
+		private static final String WORKED_DAYS = 
+				"IFNULL((SELECT"
 				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
 				+ " FROM " + SALARY_DATA 
 				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
 				+ " AND " + SalaryDataColumns.NAME + " = 'DIAS_TRABAJADOS'"
 				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
 				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
-				+ ")"
+				+ "),0.00)"
 				;
 		
+		private static final String ALL_IT_DAYS = 
+				"(SELECT"
+				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
+				+ " FROM " + SALARY_DATA 
+				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND (" 
+				+ SalaryDataColumns.NAME + " LIKE 'DIAS_ENFERMEDAD%'" 
+				+ " OR " + SalaryDataColumns.NAME + " IN ('DIAS_MATERNIDAD', 'DIAS_PATERNIDAD')"
+				+ ")"
+				+ ")"
+				;
+
 		private static final String ALL_WORKED_DAYS = 
 				"(SELECT"
 				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
@@ -334,15 +397,23 @@ public class SQLContractDelayCalculatorContext extends
 		private static final String SALARY_SQL = 
 				"SELECT " 
 				
-				+ " " + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
+				+ "@GTZDO:=" + GARANTIZADO_AMOUNT_SQL +  ""
+				+ " AS GTZDO" 
+
+				+ ", @GTZDOIT:=IFNULL((@GTZDO / " + ALL_IT_DAYS + " * " + IT_DAYS+"),0.00)"
+				+ " AS GTZDOIT" 
+
+				+ ", " + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
 				+ " AS " + SalaryColumns.CGC_BASE
 				
-				+ ", IFNULL( "+ SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF  
-				+ ", (" + SalaryColumns.IRPF_BASE + "- (" + PREST_IT_IRPF_SQL + ")) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS + ")"
+				+ ", (IFNULL( "+ SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF  + " + @GTZDOIT"
+				+ ", (" + SalaryColumns.IRPF_BASE + "- (" + PREST_IT_IRPF_SQL + " + @GTZDO )) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS + ")"
+				+ ")"
 				+ " AS " + SalaryColumns.IRPF_BASE
 
-				+ ", IFNULL( " + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT
-				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- (" + PREST_IT_AMOUNT_SQL + ")) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS +")"
+				+ ", (IFNULL( " + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT + " + @GTZDOIT"
+				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- (" + PREST_IT_AMOUNT_SQL + " + @GTZDO )) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS +")"
+				+ ")"
 				+ " AS " + SalaryColumns.TOTAL_PAYMENT
 				
 				+ " FROM "
@@ -413,6 +484,18 @@ public class SQLContractDelayCalculatorContext extends
 		public void setIrpfBase(Double irpfBase) {
 			values.put(SalaryColumns.IRPF_BASE, irpfBase);
 		}
+		
+		@Override
+		public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
+				Map<String, ITimedVariable<?>> context) {
+			super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
+		}
+		
+		@Override
+		public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+				Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+		}
 
 		public Collection<IContractPayment> getContractPayments()
 				throws SQLException {
@@ -422,7 +505,7 @@ public class SQLContractDelayCalculatorContext extends
 			Map<String, Double> paidValues = getPaidSalary(fields);
 
 			Map<String, Double> diffValues = new HashMap<String, Double>();
-
+			
 			for (String field : fields) {
 				Double value = values.get(field);
 				value = value == null ? 0.00 : value;
@@ -430,10 +513,8 @@ public class SQLContractDelayCalculatorContext extends
 				paidValue = paidValue == null ? 0.00 : paidValue;
 				Double diffValue = value - paidValue;
 				diffValues.put(field, diffValue);
-				/*
-				 * System.out.println(String.format("%s : %f - %f = %f.", field,
-				 * value, paidValue, value -paidValue) );
-				 */
+				
+				 
 			}
 			
 			
@@ -542,6 +623,8 @@ public class SQLContractDelayCalculatorContext extends
 			int i = 1;
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
