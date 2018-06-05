@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -24,7 +26,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 
-public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<Account>{
+public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<AccountingReportParams>{
 
 	private static FiscalServiceAsync fiscalService;
 	
@@ -141,7 +143,19 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 					
 					for (AccountOperatingAccount account : report.getAccounts()) {
 						boolean title = account.getId() == null;
-						tab.setWidget(row, 0, new Label((title?"":account.getCode()) + " " + account.getDescription()));
+						Label codeLabel = new Label((title?"":account.getCode()) + " " + account.getDescription());
+						codeLabel.addClickHandler(new ClickHandler() {
+							
+							@Override
+							public void onClick(ClickEvent event) {
+								AccountingReportParams newParams = params.clone();
+								newParams.setAccount( new Account()
+									.setId(account.getId())
+									.setCode(account.getCode()));
+								SelectionEvent.fire(OperatingPanel.this, newParams );						
+							}
+						});
+						tab.setWidget(row, 0, codeLabel);
 						tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
 						
 						if (title) {
@@ -223,7 +237,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 	}
 	
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Account> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountingReportParams> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 }

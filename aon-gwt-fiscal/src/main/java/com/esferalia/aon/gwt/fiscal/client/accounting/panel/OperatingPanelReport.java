@@ -30,6 +30,10 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -618,18 +622,94 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	public void setTabIndex(int index) {
 		fromDate.setTabIndex(index);
 	}
-	
 	private void onSearch() {
 		AccountingReportParams params = getWidgetParams();
+		onSearch(params,0);
+	}
+	private void onSearch(AccountingReportParams params, int tab) {
+		SimpleLayoutPanel panel = (SimpleLayoutPanel) tabPanel.getWidget(tab);
+		panel.clear();
+		panel.add(getResultPanel(params));
+		tabPanel.selectTab(tab);
+	}
+	
+	private OperatingPanel getResultPanel(AccountingReportParams params) {
 		OperatingPanel operatingPanel = new OperatingPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
-//		operatingPanel.addSelectionHandler(new AccountEntrySelectionHandler () {
-//			
-//			@Override
-//			public void onSelection(AccountEntrySelectionEvent  event) {
-//				AccountEntrySelectionEvent.fire(OperatingPanelReport.this, event.getSelectedItem(), event.getCallback() );
-//			}
-//		});
-		centerPanel.setWidget(operatingPanel);
+		operatingPanel.addSelectionHandler( new SelectionHandler<AccountingReportParams>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<AccountingReportParams> event) {
+				AccountingReportParams newParams = event.getSelectedItem();
+				SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
+				String tabLabel = "";
+				String code = newParams.getAccount().getCode();
+				if (AonStringUtils.length( code ) < 9 ) {
+					tabLabel = "Bal S/S: (" + code + "*)";
+					breakdownPanel.add(getTrialBalance( newParams ));
+				} else {
+					AccountingReportParams stmParams = new AccountingReportParams()
+							.setDomain( newParams.getDomain() )
+							.setPeriod( newParams.getPeriod() )
+							.setFromDate( newParams.getFromDate() )
+							.setToDate( newParams.getToDate() )
+							.setActivity( newParams.getActivity() )
+							.setSecurityLevel( newParams.getSecurityLevel() )
+							.setAccount( newParams.getAccount().clone() )
+					;
+					StatementPanel statement = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), stmParams, true);
+					statement.addSelectionHandler(new AccountEntrySelectionHandler () {
+						
+						@Override
+						public void onSelection(AccountEntrySelectionEvent  event) {
+							AccountEntrySelectionEvent.fire(OperatingPanelReport.this, event.getSelectedItem(), event.getCallback() );
+						}
+					});
+					
+					tabLabel = "Extr: " + code;
+					breakdownPanel.add(statement);
+				}
+				CloseTab closeTab = new CloseTab(tabLabel, true);
+				closeTab.addCloseHandler(new CloseHandler<Integer>() {
+					@Override
+					public void onClose(CloseEvent<Integer> event) {
+						tabPanel.remove(breakdownPanel); 
+					}
+				});
+				tabPanel.add(breakdownPanel,closeTab);
+				tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
+			}
+
+			private TrialBalancePanel getTrialBalance(AccountingReportParams newParams) {
+				if (newParams.getLevel() == 1) newParams.setLevel(2);
+				else if (newParams.getLevel() == 2) newParams.setLevel(3);
+				else if (newParams.getLevel() == 3) newParams.setLevel(4);
+				else if (newParams.getLevel() == 4) newParams.setLevel(9);
+				else newParams.setLevel(9);
+				TrialBalancePanel trialBalance = new TrialBalancePanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), newParams);
+				trialBalance.addSelectionHandler(new SelectionHandler<AccountingReportParams>() {
+
+					@Override
+					public void onSelection(SelectionEvent<AccountingReportParams> event) {
+						SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
+						String code = newParams.getAccount().getCode();
+						String tabLabel = "Bal S/S: (" + code + "*)";
+						AccountingReportParams newParams = event.getSelectedItem();
+						breakdownPanel.add(getTrialBalance( newParams ));
+						CloseTab closeTab = new CloseTab(tabLabel, true);
+						closeTab.addCloseHandler(new CloseHandler<Integer>() {
+							@Override
+							public void onClose(CloseEvent<Integer> event) {
+								tabPanel.remove(breakdownPanel); 
+							}
+						});
+						tabPanel.add(breakdownPanel,closeTab);
+						tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
+					}
+				});
+				return trialBalance;
+			}
+		});
+		return operatingPanel;
 	}
 
 	public AccountingReportParams getWidgetParams() {
