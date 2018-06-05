@@ -72,23 +72,6 @@
         </configuration>
       </plugin>
     </plugins>
-     <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/client/**</include>
-          <include>**/shared/**</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/client/**</include>
-          <include>**/facelet/**</include>
-          <include>**/*.gwt.xml</include>
-        </includes>
-      </resource>
-    </resources>
   </build>
   <dependencies>
     <dependency>
