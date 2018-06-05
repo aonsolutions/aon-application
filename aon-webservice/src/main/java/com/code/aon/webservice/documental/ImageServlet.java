@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.AonVersion;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -19,7 +18,11 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 @WebServlet(name = "ImageServletXXX", urlPatterns = { "/aon_gwt_aio/image_servlet/*" })
 public class ImageServlet  extends HttpServlet {
 	
-	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public ImageServlet() {
 		super();
