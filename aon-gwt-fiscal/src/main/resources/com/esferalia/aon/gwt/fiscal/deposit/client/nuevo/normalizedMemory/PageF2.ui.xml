@@ -1,0 +1,253 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonFiscalContainer}">
+			<g:SimplePanel ui:field="headerPanel"/>
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.footer2Title}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					
+					<table>
+						<tr>
+							<td>
+								<g:Label text="{msg.footer2Label1}" />
+								<g:ListBox ui:field="PR8081001"  /> 
+							</td>
+						</tr>
+					</table>
+		 			<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.footer2Label2}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr>
+									<td colspan="2">
+										<g:Label text="{msg.footer2Label3}" />
+										<g:Label ui:field="IDA01020" />
+									</td>
+									<td colspan="2">
+										<g:Label text="{msg.nif}" />
+										<g:Label ui:field="IDA01010" />
+									
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<g:Label text="Datos Registrales:"  /> 
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label text="{msg.footer2Label4}" />
+										<g:TextBox ui:field="PR8081002"  styleName="{aonResources.css.aonInputText}"/>
+									</td>
+									<td>
+										<g:Label text="{msg.footer2Label5}" />
+										<g:TextBox ui:field="PR8081003"  styleName="{aonResources.css.aonInputText}"/>
+									</td>
+									<td>
+										<g:Label text="{msg.footer2Label6}" />
+										<g:TextBox ui:field="PR8081004"  styleName="{aonResources.css.aonInputText}"/>
+									</td>
+									<td>
+										<g:Label text="{msg.footer2Label7}" />
+										<g:Label ui:field="IDA01101" />
+									</td>
+								</tr>
+							</table>
+							<g:FlexTable ui:field="table"/>
+						</div>
+					</div>
+	
+		 		
+		 			<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.footer2Label8}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table>
+								<tr>
+									<td>
+										<g:Label text="{msg.balanceSheet}"></g:Label>
+									</td>
+									<td>
+										<g:Label text="{msg.profitAndLoss}"></g:Label>
+									</td>
+									<td>
+										<g:Label text="{msg.memory}"></g:Label>
+									</td>
+									<td>
+										<g:Label text="{msg.footer2Label9}"></g:Label>
+									</td>
+									<td>
+										<g:Label text="{msg.footer2Label10}"></g:Label>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:CheckBox ui:field="balanceNormal" enabled="false" text="{msg.normal}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="pygNormal" enabled="false" text="{msg.normal}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="memoriaNormal" enabled="false" text="{msg.normal}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="ecpnNormal" enabled="false" text="{msg.normal}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="efeNormal" enabled="false" text="{msg.normal}" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:CheckBox ui:field="PR8080801" enabled="false" text="{msg.abreviate}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080803" enabled="false" text="{msg.abreviate}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080805" enabled="false" text="{msg.abreviate}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080854" enabled="false" text="{msg.abreviate}" />
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:CheckBox ui:field="PR8080850" enabled="false" text="{msg.pyme}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080851" enabled="false" text="{msg.pyme}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080852" enabled="false" text="{msg.pyme}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080855" enabled="false" text="{msg.pyme}" />
+									</td>
+									<td>
+									</td>
+								</tr>
+							</table>
+							<table>
+								<tr>
+									<td>
+										<g:CheckBox ui:field="PR8080800" enabled="false" value="true" text="{msg.footer2Label11}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080819" enabled="false" value="true" text="{msg.footer2Label12}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080807" enabled="false" text="{msg.footer2Label13}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080817" enabled="false" text="{msg.footer2Label14}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080809" enabled="false" text="{msg.footer1Title}" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:CheckBox ui:field="PR8080823" enabled="false" text="{msg.footer2Label15}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080821" enabled="false" text="{msg.footer2Label16}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080811" enabled="true" value="true" text="{msg.footer2Label17}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="OTROS" enabled="false" text="{msg.footer2Label18}" />
+									</td>
+									<td>
+										<g:Label text="{msg.footer2Label19}"/>
+										<g:Label ui:field="NUM" />									</td>
+								</tr>
+							</table>
+							
+							<table> 
+								<tr> 
+									<td>
+										<g:Label ui:field="ROACLabel"></g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="ROAC" styleName="{aonResources.css.aonInputText}"></g:TextBox>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					
+					
+					
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.footer2Label20}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<table style="width:100%;">
+								<tr>
+									<td>
+										<g:Label text="{msg.nameAndSurname}" />
+										<g:TextBox ui:field="PR8081201"  styleName="{aonResources.css.aonInputText}"/>
+									</td>
+									<td>
+										<g:Label text="{msg.dni}" />
+										<g:TextBox ui:field="PR8081202" styleName="{aonResources.css.aonInputText}"/>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label text="{msg.domicilio}" />
+										<g:TextBox ui:field="PR8081203" styleName="{aonResources.css.aonInputText}"/>
+									</td>
+									<td>
+										<g:Label text="{msg.zip}" />
+										<g:TextBox ui:field="PR8081205" styleName="{aonResources.css.aonInputText}"/>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label text="{msg.ciudad}" />
+										<g:TextBox ui:field="PR8081204" styleName="{aonResources.css.aonInputText}"/>
+									</td>
+									<td>
+										<g:Label text="{msg.province}" />
+										<g:ListBox ui:field="PR8081206" styleName="{aonResources.css.aonInputText}"/>
+									</td>
+									<tr>
+									<td>
+										<g:Label text="{msg.phone}" />
+										<g:TextBox ui:field="PR8081208" styleName="{aonResources.css.aonInputText}"/>
+										<g:Label text="{msg.fax}" />
+										<g:TextBox ui:field="PR8081207" styleName="{aonResources.css.aonInputText}"/>
+									</td>
+									<td>
+										<g:Label text="{msg.mail}" />
+										<g:TextBox ui:field="PR8081209" styleName="{aonResources.css.aonInputText}"/>
+									</td>
+								</tr>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>

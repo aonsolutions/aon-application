@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.deposit.client.Deposit;
 import com.esferalia.aon.gwt.fiscal.deposit.client.DigitalDepositFreeTextTreeNode;
 import com.esferalia.aon.gwt.fiscal.deposit.client.DigitalDepositTreeNode;
@@ -72,6 +73,7 @@ public class NormalizedMemory extends ResizeComposite {
 	DigitalDepositTreeNode digitalDepositTreeNode;
 	DigitalDepositFreeTextTreeNode digitalDepositFreeTextTreeNode;
 	Deposit deposit;
+	AonData aonData;
 	
 	public void setImportAllButton(Button importAllButton) {
 		this.importAllButton = importAllButton;
@@ -87,7 +89,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param ddtn
 	 * @param ft
 	 */
-	public NormalizedMemory(DigitalDepositTreeNode ddtn, Deposit deposit) {
+	public NormalizedMemory(AonData aonData, DigitalDepositTreeNode ddtn, Deposit deposit) {
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -105,7 +107,7 @@ public class NormalizedMemory extends ResizeComposite {
 		this.textMode = false;
 		digitalDepositTreeNode = ddtn;
 		this.deposit = deposit;	
-
+		this.aonData = aonData;
 		headerPanel = new SimplePanel();
 		pagesPanel = new FlowPanel();
 		
@@ -144,7 +146,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param page
 	 * @param mt
 	 */
-	public NormalizedMemory(Enterprise enterprise,MemoryTemplate mt, DigitalDepositFreeTextTreeNode ddtn) {
+	public NormalizedMemory(AonData aonData, Enterprise enterprise,MemoryTemplate mt, DigitalDepositFreeTextTreeNode ddtn) {
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -164,7 +166,7 @@ public class NormalizedMemory extends ResizeComposite {
 		//this.page = page;
 		this.textMode = true;
 		this.memoryTemplate = mt;
-		
+		this.aonData = aonData;
 		pagesPanel = new FlowPanel();
 		headerPanel = new SimplePanel();
 		
@@ -200,7 +202,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param ddtn
 	 * @param e
 	 */
-	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn, Deposit deposit) {
+	public NormalizedMemory(AonData aonData, Boolean type, DigitalDepositTreeNode ddtn, Deposit deposit) {
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -219,6 +221,7 @@ public class NormalizedMemory extends ResizeComposite {
 		enterprise = ddtn.getD2Deposit().getEnterprise();
 		year = ddtn.getD2Deposit().getYear();
 		this.deposit = deposit;
+		this.aonData = aonData;
 		Widget ui = MODEL_NORMALIZED_MEMORY_BINDER.createAndBindUi(this);
 		initWidget(ui);
 		importButton.setVisible(false);
@@ -244,7 +247,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param ddtn
 	 * @param e
 	 */
-	public NormalizedMemory(Boolean type, DigitalDepositFreeTextTreeNode ddtn, Enterprise e) {
+	public NormalizedMemory(AonData aonData, Boolean type, DigitalDepositFreeTextTreeNode ddtn, Enterprise e) {
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -258,7 +261,7 @@ public class NormalizedMemory extends ResizeComposite {
 		downloadButton = new Button();
 		downloadButtonPdf = new Button();
 		this.textMode = true;
-		
+		this.aonData = aonData;
 		enterprise = e;
 		pagesPanel = new FlowPanel();
 		headerPanel = new SimplePanel();
@@ -488,237 +491,149 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("importAllButton")
 	void onImportAllButtonClick(ClickEvent event){
-		inma.getParentDomain(enterprise.getDomain(), new AsyncCallback<Integer>() {
+		inma.getDigitalDepositTemplates(aonData.getDomain().getParentId(), year, new AsyncCallback<Vector<MemoryTemplate>>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
+			public void onSuccess(Vector<MemoryTemplate> result) {
+				String url = GWT.getModuleBaseURL();
+				mts = result;
+				DepositDialog popup = new DepositDialog("Importar", "importAll", enterprise, url, result, false, null, year) {
+					Vector<MemoryTemplate> vector = mts;
 
-			@Override
-			public void onSuccess(Integer result) {
-				inma.getDigitalDepositTemplates(result, year,
-						new AsyncCallback<Vector<MemoryTemplate>>() {
+					@Override
+					protected void onCancel() {
+						hide();
+					}
 
-							@Override
-							public void onSuccess(Vector<MemoryTemplate> result) {
-								String url = GWT.getModuleBaseURL();
-										//+ "gwt_deposit_upload";
-								mts = result;
-								DepositDialog popup = new DepositDialog(
-										"Importar", "importAll", enterprise,
-										url, result, false, null, year) {
-									Vector<MemoryTemplate> vector = mts;
-
-									@Override
-									protected void onCancel() {
-										hide();
-
-									}
-
-									@Override
-									protected void onAccept() {
-										hide();
-										
-										ListBox lb = (ListBox) flex_table.getWidget(0,1);
-										String t = lb.getSelectedItemText();
-										
-										if(t.equals("Balance (I.S.)")){
-											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
-											String ejercicio = ej.getSelectedItemText();
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(),d2Deposit.getMapDraft(), year, new AsyncCallback<Map<String, String>>() {
-												@Override
-												public void onFailure(
-														Throwable caught) {
-												}
-
-												@Override
-												public void onSuccess(Map<String, String> result) {		
-													d2Deposit.setMapDraft(result);
-													saveButton.setEnabled(true);
-													cancelButton.setEnabled(true);
-													update();
-												}
-											
-											});
-										}
-										else if(t.equals("Perdidas y ganancias (I.S.)")){
-											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
-											String ejercicio = ej.getSelectedItemText();
-											
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), year, new AsyncCallback<Map<String, String>>() {
-												@Override
-												public void onFailure(
-														Throwable caught) {
-												}
-
-												@Override
-												public void onSuccess(Map<String, String> result) {
-													d2Deposit.setMapDraft(result);
-													saveButton.setEnabled(true);
-													cancelButton.setEnabled(true);
-													update();
-												}
-											
-											});
-											
-										}
-										else if(t.equals("ECPN (I.S.)")){
-											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
-											String ejercicio = ej.getSelectedItemText();
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), year, new AsyncCallback<Map<String, String>>() {
-												@Override
-												public void onFailure(
-														Throwable caught) {
-												}
-
-												@Override
-												public void onSuccess(Map<String, String> result) {
-													d2Deposit.setMapDraft(result);
-													saveButton.setEnabled(true);
-													cancelButton.setEnabled(true);
-													update();
-												}
-											
-											});
-											
-										}
-										else if(t.equals("Memoria predefinida")){
-									
-											ListBox lb1 = (ListBox) flex_table.getWidget(1,1);
-											String text = lb1.getSelectedItemText();
-											MemoryTemplate m = new MemoryTemplate();
-											for (MemoryTemplate mt : vector) {
-												if (mt.getName().equals(text))
-													m = mt;
-											}
-											
-											
-											inma.updateTexts(m, getFreeTextMap(), enterprise.getDomain(),
-													enterprise.getDocument(), d2Deposit.getMapDraft(), 
-													new AsyncCallback<Map<String, String>>() {
-
-														@Override
-														public void onFailure(
-																Throwable caught) {
-														}
-
-														@Override
-														public void onSuccess(Map<String, String> result) {
-															d2Deposit.setMapDraft(result);
- 															saveButton.setEnabled(true);
- 															cancelButton.setEnabled(true);
-															update();
-														}
-													});
-										}
-										else if(t.equals("Memoria (Deposito.xml)")){
-											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
-											String ejercicio = ej.getSelectedItemText();
-								
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), getYear(), new AsyncCallback<Map<String, String>>() {
-
-												@Override public void onFailure(Throwable caught) {}
-
-												@Override
-												public void onSuccess(Map<String, String> result) {
-													d2Deposit.setMapDraft(result);
-													saveButton.setEnabled(true);
-													cancelButton.setEnabled(true);
-													paintHeaderTable("Cuentas Anuales", result.get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit.getYear().toString());
-													update();
-												}
-											});
-										}
-									}
-								};
-								popup.addStyleName("gwt-PopupPanel-template");
-								popup.setGlassEnabled(true);
-								popup.show();
+					@Override
+					protected void onAccept() {
+						hide();
+						
+						ListBox lb = (ListBox) flex_table.getWidget(0,1);
+						String t = lb.getSelectedItemText();
+						
+						if(t.equals("Memoria predefinida")){
+							
+							ListBox lb1 = (ListBox) flex_table.getWidget(1,1);
+							String text = lb1.getSelectedItemText();
+							MemoryTemplate m = new MemoryTemplate();
+							for (MemoryTemplate mt : vector) {
+								if (mt.getName().equals(text))
+									m = mt;
 							}
+							
+							
+							inma.updateTexts(aonData, m, getFreeTextMap(), enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), new AsyncCallback<Map<String, String>>() {	
 
-							@Override
-							public void onFailure(Throwable caught) {
+								@Override	
+								public void onFailure(
+										Throwable caught) {
+								}
 								
-							}	
-				});
+								@Override
+								public void onSuccess(Map<String, String> result) {
+									d2Deposit.setMapDraft(result);
+									saveButton.setEnabled(true);
+									cancelButton.setEnabled(true);
+									update();
+								}
+							});
+						} else {
+							String ejercicio = "";
+							if(t.equals("Balance (I.S.)")){
+								ListBox ej = (ListBox) flex_table.getWidget(2, 1);
+								ejercicio = ej.getSelectedItemText();
+								
+							} else if(t.equals("Perdidas y ganancias (I.S.)")){
+								ListBox ej = (ListBox) flex_table.getWidget(2, 1);
+								ejercicio = ej.getSelectedItemText();
+							} else if(t.equals("ECPN (I.S.)")){
+								ListBox ej = (ListBox) flex_table.getWidget(2, 1);
+								ejercicio = ej.getSelectedItemText();
+							} else if(t.equals("Memoria (Deposito.xml)")){
+								ListBox ej = (ListBox) flex_table.getWidget(1, 1);
+								ejercicio = ej.getSelectedItemText();
+							}
+							inma.importAll(aonData, t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), getYear(), new AsyncCallback<Map<String, String>>() {	
+								
+								@Override public void onFailure(Throwable caught) {}
+							
+								@Override
+								public void onSuccess(Map<String, String> result) {
+									d2Deposit.setMapDraft(result);
+									saveButton.setEnabled(true);
+									cancelButton.setEnabled(true);
+									if(t.equals("Memoria (Deposito.xml)")) paintHeaderTable("Cuentas Anuales", result.get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit.getYear().toString());
+									update();
+								}
+							});
+						}
+					}
+				};
+				popup.addStyleName("gwt-PopupPanel-template");
+				popup.setGlassEnabled(true);
+				popup.show();
 			}
+
+			@Override public void onFailure(Throwable caught) {}	
 		});
 	}
 	
 	@UiHandler("importTextButton")
 	void onImportTextButtonClick(ClickEvent event) {
-		inma.getParentDomain(enterprise.getDomain(), new AsyncCallback<Integer>() {
+		inma.getDigitalDepositTemplates(aonData.getDomain().getParentId(), year, new AsyncCallback<Vector<MemoryTemplate>>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
+			public void onSuccess(Vector<MemoryTemplate> result) {
+				String url = GWT.getModuleBaseURL()
+						+ "gwt_deposit_upload";
+				mts = result;
+				DepositDialog popup = new DepositDialog("Importar Textos", "importText", enterprise, url, result, false, null, year) {
+					Vector<MemoryTemplate> vector = mts;
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
 
-			@Override
-			public void onSuccess(Integer result) {
-				
-				inma.getDigitalDepositTemplates(result, year,
-						new AsyncCallback<Vector<MemoryTemplate>>() {
-
-							@Override
-							public void onSuccess(Vector<MemoryTemplate> result) {
-								String url = GWT.getModuleBaseURL()
-										+ "gwt_deposit_upload";
-								mts = result;
-								DepositDialog popup = new DepositDialog(
-										"Importar Textos", "importText", enterprise,
-										url, result, false, null, year) {
-									Vector<MemoryTemplate> vector = mts;
-
-									@Override
-									protected void onCancel() {
-										hide();
-									}
-
-									@Override
-									protected void onAccept() {
-										hide();
-										ListBox lb = (ListBox) flex_table.getWidget(0,1);
-										String t = lb.getSelectedItemText();
-										MemoryTemplate m = new MemoryTemplate();
-										for (MemoryTemplate mt : vector) {
-											if (mt.getName().equals(t))
-												m = mt;
-										}
-										inma.updateTexts(m, getFreeTextMap(), enterprise.getDomain(),
-												enterprise.getDocument(), d2Deposit.getMapDraft(),
-												new AsyncCallback<Map<String, String>>() {
-
-													@Override
-													public void onFailure(Throwable caught) {
-														
-													}
-
-													@Override
-													public void onSuccess(Map<String, String> result) {
-														d2Deposit.setMapDraft(result);
-														saveButton.setEnabled(true);
-														cancelButton.setEnabled(true);
-														update();
-													}
-												});
-									}
-								};
-
-								popup.addStyleName("gwt-PopupPanel-template");
-								popup.setGlassEnabled(true);
-								popup.show();
-							}
-
+					@Override
+					protected void onAccept() {
+						hide();
+						ListBox lb = (ListBox) flex_table.getWidget(0,1);
+						String t = lb.getSelectedItemText();
+						MemoryTemplate m = new MemoryTemplate();
+						for (MemoryTemplate mt : vector) {
+							if (mt.getName().equals(t))
+								m = mt;
+						}
+						inma.updateTexts(aonData, m, getFreeTextMap(), enterprise.getDomain(),
+								enterprise.getDocument(), d2Deposit.getMapDraft(),
+								new AsyncCallback<Map<String, String>>() {
+							
 							@Override
 							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
+								
+							}
 
+							@Override
+							public void onSuccess(Map<String, String> result) {
+								d2Deposit.setMapDraft(result);
+								saveButton.setEnabled(true);
+								cancelButton.setEnabled(true);
+								update();
 							}
 						});
+					}
+				};
+
+				popup.addStyleName("gwt-PopupPanel-template");
+				popup.setGlassEnabled(true);
+				popup.show();
 			}
+
+			@Override public void onFailure(Throwable caught) {}
 		});
+			
 	}
 	
 	@UiHandler("deleteButton")

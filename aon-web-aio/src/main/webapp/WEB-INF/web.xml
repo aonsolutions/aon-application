@@ -137,10 +137,6 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_deposit/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
 		<url-pattern>/aon_gwt_connect/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
@@ -465,7 +461,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>D2 Deposit</servlet-name>
-		<url-pattern>/aon_gwt_deposit/gwt_deposit</url-pattern>
+		<url-pattern>/aon_gwt_aio/gwt_deposit</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -474,7 +470,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UploadFiscalFile</servlet-name>
-		<url-pattern>/aon_gwt_deposit/gwt_deposit_upload</url-pattern>
+		<url-pattern>/aon_gwt_aio/gwt_deposit_upload</url-pattern>
 	</servlet-mapping>
 	
 	

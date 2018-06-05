@@ -8,9 +8,9 @@ import java.util.Stack;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.google.gwt.core.client.EntryPoint;
@@ -47,6 +47,8 @@ public class Deposit implements EntryPoint {
 	private static final DepositBinder BINDER = GWT.create(DepositBinder.class);
 	
 	public static final int CURRENT_YEAR = 1900 + new Date().getYear();
+
+	AonData aonData;
 	
 	Enterprise enterprise;
 	TreeNode<Enterprise> rootNode;
@@ -59,22 +61,15 @@ public class Deposit implements EntryPoint {
 	@UiField Label subtitle;
 	@UiField(provided = true) SuggestBox enterpriseSuggest;
 	@UiField SimpleLayoutPanel content;
-	
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
 
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
+	public Deposit(AonData aonData) {
+		this.aonData = aonData;
+	}
 	
-	public static native int getCurrentUser()
-	/*-{
-		return $wnd.getCurrentUser();
-	}-*/;
-
+	public AonData getAonData() {
+		return aonData;
+	}
+	
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
@@ -86,7 +81,7 @@ public class Deposit implements EntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 				
-		inma.getParentEnterprises(getCurrentDomainName(),getCurrentDomain(), "%", new AsyncCallback<LinkedList<Enterprise>>() {
+		inma.getParentEnterprises(getAonData(), "%", new AsyncCallback<LinkedList<Enterprise>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<Enterprise> result) {	
@@ -149,7 +144,7 @@ public class Deposit implements EntryPoint {
 		for(Integer year = CURRENT_YEAR-1; year >= 2014; year--){
 			TreeNode<Integer> yearTreeNode = TreeNodeTypes.YEAR.getInstance().render(rootNode, year);
 			TreeNode<D2Deposit> digitalDepositNode = TreeNodeTypes.DIGITAL_DEPOSIT.getInstance().render(yearTreeNode, new D2Deposit()
-					.setDomain(new Domain().setName(getCurrentDomainName()).setId(enterprise.getDomain()))
+					.setDomain(aonData.getDomain())
 					.setEnterprise(enterprise).setYear(year));
 			if(year.equals(CURRENT_YEAR - 1)){
 				tree.setSelectedItem(digitalDepositNode);
@@ -159,7 +154,7 @@ public class Deposit implements EntryPoint {
 		
 		if(isParent){
 			TreeNode<Integer> rootNode2 =  TreeNodeTypes.DIGITAL_DEPOSIT_FREETEXT.getInstance();
-			rootNode2.render(tree, getCurrentDomain());
+			rootNode2.render(tree, aonData.getDomain().getId());
 			tree.addItem(rootNode2);
 			tree.setSelectedItem(rootNode2);
 		}
@@ -170,7 +165,7 @@ public class Deposit implements EntryPoint {
 		subtitle.setText(AON.MSG.enterprise());
 		tree.removeItems();
 		TreeNode<Integer> rootNode =  TreeNodeTypes.DIGITAL_DEPOSIT_FREETEXT.getInstance();
-		rootNode.render(tree, getCurrentDomain());
+		rootNode.render(tree, getAonData().getDomain().getId());
 		tree.addItem(rootNode);
 		tree.setSelectedItem(rootNode);
 	}
@@ -194,7 +189,7 @@ public class Deposit implements EntryPoint {
 		public void requestSuggestions(final Request request, final Callback callback) {
 			String query = '%' + request.getQuery() + '%';
 			   
-			inma.getParentEnterprises(getCurrentDomainName(), getCurrentDomain(), query, new AsyncCallback<LinkedList<Enterprise>>() {
+			inma.getParentEnterprises(getAonData(), query, new AsyncCallback<LinkedList<Enterprise>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {

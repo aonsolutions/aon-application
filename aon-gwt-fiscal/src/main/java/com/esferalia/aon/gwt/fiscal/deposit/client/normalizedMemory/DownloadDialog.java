@@ -24,6 +24,10 @@ public abstract class DownloadDialog extends CustomDialogB {
 	@UiField Button accept_button;
 	@UiField Button cancel_button;
 	
+	public FlexTable getFlex_table() {
+		return flex_table;
+	}
+	
 	public DownloadDialog(Boolean isMemory, Boolean isMa, Integer year) {
 		setCaption("Descargar");
 		flex_table = new FlexTable();

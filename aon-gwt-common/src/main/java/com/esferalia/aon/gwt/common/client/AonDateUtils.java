@@ -10,6 +10,10 @@ public class AonDateUtils {
 	public static final DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
 	public static final DateTimeFormat hourFormat = DateTimeFormat.getFormat("HH:mm");
 
+	public static Integer getCurrentYear() {
+		return 1900 + new Date().getYear();
+	}
+	
 	public static Date parse(String format, String date) {
 		DateTimeFormat dateFormat = DateTimeFormat.getFormat(format);
 		return dateFormat.parse(date);

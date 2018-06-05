@@ -24,7 +24,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "CCAAPrint", urlPatterns = { "/aon_gwt_deposit/CCAAPrint" })
+@WebServlet(name = "CCAAPrint", urlPatterns = { "/aon_gwt_deposit/CCAAPrint",
+												"/aon_gwt_aio/CCAAPrint"})
 public class CCAAPrint extends HttpServlet {
 
 	@Override

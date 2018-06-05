@@ -33,7 +33,8 @@ import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
-@WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_deposit/gwt_download_deposit/*" })
+@WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_deposit/gwt_download_deposit/*",
+												  "/aon_gwt_aio/gwt_download_deposit/*"})
 public class DownloadXmlFileServlet extends HttpServlet {
 	/**
 	 * 

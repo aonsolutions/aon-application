@@ -110,15 +110,6 @@
 		</navigation-case>
 	</navigation-rule>
 
-	
-	<!-- =================== Deposit ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_deposit</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/deposit/facelet/deposit.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
 	<!-- =================== Accounting ========================== -->
 	<navigation-rule>
 		<navigation-case>

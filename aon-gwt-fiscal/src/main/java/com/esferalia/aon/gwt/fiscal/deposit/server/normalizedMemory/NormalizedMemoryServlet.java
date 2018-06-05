@@ -18,11 +18,13 @@ import javax.xml.bind.JAXBException;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
@@ -39,6 +41,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2PrevioustoD2Current;
@@ -52,6 +55,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002015toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002016toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -74,38 +78,100 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
 	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
 	
-	public Map<String, String> getSchema(Domain domain, String login, String cif, Integer year, Boolean textMode){
-		Attach attach = new Attach();
-		if(textMode) {
-			Integer id =  Integer.parseInt(cif);
-			attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), AttachType.REGISTRY);	
+	/***** NEW GWT DEPOSIT *****/
+	
+	public AonData getAonData(String domainName, Integer domainId, String login){
+		Domain domain = AON.getDomain(domainName, domainId, login);
+		User user = AON.getUser(domain.getName(), domain.getId(), login);
+		Integer operator = AON.getTaskHolder(domain.getName(), domainId, login, 
+				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
+		return new AonData().setUser(user)
+				.setDomain(domain)
+				.setUserOperator(operator);
+	}
+	
+	public Company getCompany(AonData aonData) {
+		return AON.getCompany(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getDomainProperty().eq(aonData.getDomain().getId()));
+	}
+	
+	public Map<String, String> getSchema(AonData aonData, Company company, Integer year, Boolean textMode){
+		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getDomainProperty().eq(aonData.getDomain().getId())
+				.and(f.getTypeProperty().eq((byte) 17))
+				.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
+			, AttachType.REGISTRY);
+		
+		if(attach.getId() == null) {
+			// TODO CREATE NEW SCHEMA 
+			return createD2Deposit(aonData.getDomain().getId(), company.getId(), company.getName(), "Abreviado", year);	
 		} else {
-			attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
-					.and(f.getTypeProperty().eq((byte) 17))
-					.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
-				, AttachType.REGISTRY);
+			Map<String, String> map = new HashMap<String, String>();
+
+			try {
+				Esquema schema = Utils.readXml(attach.getData());		
+				
+				List<Clave> claves = schema.getClaves().getClave();
+				if(schema.getError() != null) {
+					map.put("error", schema.getError());
+				}
+				String type = schema.getCabecera().getTipoCuestionario();
+				map.put(D2DepositConstants.DEPOSIT_TYPE, type);
+				for (Integer i = 0; i < claves.size(); i++) {
+					if(!map.containsKey(claves.get(i).getCodigo().toString()))
+						map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return map;
 		}
+	}
 
-		Map<String, String> map = new HashMap<String, String>();
-
+	public void saveDeposit(AonData aonData, Map<String, String> deposit, Integer year) {
+		Esquema schema = DBConsults.getDeposit(aonData.getDomain().getName(), aonData.getDomain().getId(), year, aonData.getUser().getLogin());
+		schema = deposit2Schema(schema, deposit);
 		try {
-			Esquema schema = Utils.readXml(attach.getData());		
-
-			List<Clave> claves = schema.getClaves().getClave();
-			if(schema.getError() != null) {
-				map.put("error", schema.getError());
-			}
-			String type = schema.getCabecera().getTipoCuestionario();
-			map.put(D2DepositConstants.DEPOSIT_TYPE, type);
-			for (Integer i = 0; i < claves.size(); i++) {
-				if(!map.containsKey(claves.get(i).getCodigo().toString()))
-					map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
-			}
-		} catch (Exception e) {
+			byte[] b = Utils.writeXml(schema);
+			DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
+		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private Esquema deposit2Schema(Esquema schema, Map<String, String> deposit) {
+		Esquema s = new Esquema();
+		s.setCabecera(schema.getCabecera());
+		Claves claves = new Claves();
+
+		for(String key : deposit.keySet()){
+			if(!key.equals("DepositType")){
+				Clave clave = new Clave();
+				clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
+				clave.setValor(deposit.get(key));
+				claves.getClave().add(clave);
+			}
+		}
+		s.setClaves(claves);
+		return s;
+	}
+	
+	public Map<String, String> calculate(AonData aonData, Map<String, String> map, Integer year){
+		map = calculate(map, year);
+		saveDeposit(aonData, map, year);
 		return map;
 	}
+	
+	public Vector<MemoryTemplate> getDepositTemplates(AonData aonData, Integer year) {
+		return AON.getAttachStream(aonData.getDomain().getName(), aonData.getDomain().getParentId(), aonData.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(aonData.getDomain().getParentId())
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.D2_DEPOSIT.value())),
+			AttachType.REGISTRY, true).map(r -> new MemoryTemplate()
+										.setId(r.getId())
+										.setName(r.getDescription())
+										.setD2Deposit(getD2DepositTreeObject(r.getId(), year, r.getData())))
+			.collect(Collectors.toCollection(Vector::new));
+	}
+	
+	/***************************/
 
 	public Map<String, String> getSchema(String cif,
 			Integer domainId, Boolean textMode, Integer year) {
@@ -199,13 +265,16 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		request.getSession().removeAttribute(MODIFY_D2_DEPOSIT_SCHEMA + cif + year);
 	}
 	
+	public String[] getDepositExercises(AonData aonData) {
+		return DBConsults.getDepositExercises(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin());
+	}
 	
 	public String[] getDepositExercises(Integer domainId){
 		HttpServletRequest request = getThreadLocalRequest();
 		String domain = AonServletUtils.getRequestDomainName(request);
 		return DBConsults.getDepositExercises(domain, domainId, getUserLogin());
 	}
-	
+
 	public void saveDeposit(String cif, Integer domainId, D2Deposit d2Deposit2014, Boolean textMode, Integer year) {
 		HttpServletRequest request = getThreadLocalRequest();
 		String domain = AonServletUtils.getRequestDomainName(request);
@@ -242,12 +311,14 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return s;
 	}
 	
+	
+	
 	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId, Integer year) {
+			
 		HttpServletRequest request = getThreadLocalRequest();
 		String domain = AonServletUtils.getRequestDomainName(request);
 
 		return getDepositText(domain, domainId, year);
-
 	}
 
 	private Vector<MemoryTemplate> getDepositText(String domain, Integer domainId, Integer year) {
@@ -296,12 +367,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 				.setD2Deposit(getD2DepositTreeObject(id, year, data));
 	}
 	
-	public Map<String, String> updateTexts(MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif, Map<String, String> map) {
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain = AonServletUtils.getRequestDomainName(request);
+	public Map<String, String> updateTexts(AonData aonData, MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif, Map<String, String> map) {
 
-		Esquema schema = DBConsults.getDeposit(domain, domainId, mt.getId()
-				.toString());
+		Esquema schema = DBConsults.getDeposit(aonData.getDomain().getName(), domainId, mt.getId().toString());
 		
 		for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
 			if (freeTextMap.get(D2DepositKey.MAT19019001) && schema.getClaves().getClave().get(i).getCodigo().toString()
@@ -396,21 +464,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return date;
 	}
 
-	public Integer getParentDomain(Integer domainId) {
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain = AonServletUtils.getRequestDomainName(request);
-		return AON.getDomain(domain, domainId, getUserLogin()).getParentId();
-	}
-
-	public String getDomainName(Integer domainId) {
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain = AonServletUtils.getRequestDomainName(request);
-		return AON.getDomain(domain, domainId, getUserLogin()).getName();
-	}
-
-	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,
-			Integer domainId, String cif, Map<String, String> map, Integer year) {
-		String domainName = getDomainName(domainId);
+	public Map<String, String> importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map, Integer year) {
+		String domainName = aonData.getDomain().getName();
 		if ("Balance (I.S.)".equals(type)) {
 			if("2013".equals(ejercicio)) {
 				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
@@ -623,6 +678,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return getSchema(enterprise.getDocument(), domainId, false, year);
 	}
 	
+
+	
 	public Map<String, String> calculate(Map<String, String> map, Integer year) {
 		AccMiningMVELContext ctx = new AccMiningMVELContext(new IAccMiningKeyAccept() {
 			@Override
@@ -649,7 +706,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		
 		ctx.setExpressionMap(D2Compute.COMPUTE_MAP_PREVIOUS);
 		map = calculate(map, ctx, D2Compute.COMPUTE_MAP_PREVIOUS);
-
+		
 		return map;
 	}
 	
@@ -660,9 +717,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;
 				ctx.put("Q"+key, calculated);
-				
-				if(map.containsKey(key)) map.remove(key);
-				map.put(key, round(calculated, 2).toString());
+				map.put(key, Double.toString(AonMathUtils.round(calculated)));
 			}
 		}
 		return map;
@@ -678,14 +733,11 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return (String) request.getSession().getAttribute(D2_DEPOSIT_MIMETYPE+domainId);
 	}
 	
-	public Vector<MemoryFiles> getMemoryFiles(Integer domainId){
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain  = AonServletUtils.getRequestDomainName(request);
-
+	public Vector<MemoryFiles> getMemoryFiles(AonData aonData){
 		Vector<MemoryFiles> ms = new Vector<MemoryFiles>();
 		
 		MemoryFiles m = new MemoryFiles();
-		Vector<Integer> id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_MEMORY);
+		Vector<Integer> id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_MEMORY);
 		m.setId(id.get(0));m.setBool(id.get(0) != -1);m.setName(D2_FILE_MEMORY);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
@@ -695,7 +747,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m);
 		
 		MemoryFiles m2 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_AUTOCARTERA_MODEL);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_AUTOCARTERA_MODEL);
 		m2.setId(id.get(0));m2.setBool(id.get(0) != -1);m2.setName(D2_FILE_AUTOCARTERA_MODEL);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
@@ -705,7 +757,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m2);
 		
 		MemoryFiles m3 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_GESTION);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_GESTION);
 		m3.setId(id.get(0));m3.setBool(id.get(0) != -1);m3.setName(D2_FILE_GESTION);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
@@ -715,7 +767,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m3);
 
 		MemoryFiles m4 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_AUDIT);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_AUDIT);
 		m4.setId(id.get(0));m4.setBool(id.get(0) != -1);m4.setName(D2_FILE_AUDIT);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
@@ -725,7 +777,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m4);
 
 		MemoryFiles m5 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_CONVOC);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_CONVOC);
 		m5.setId(id.get(0));m5.setBool(id.get(0) != -1);m5.setName(D2_FILE_CONVOC);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
@@ -735,7 +787,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m5);
 
 		MemoryFiles m6 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_SICAV);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_SICAV);
 		m6.setId(id.get(0));m6.setBool(id.get(0) != -1);m6.setName(D2_FILE_SICAV);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
@@ -747,39 +799,25 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return ms;
 	}
 	
-	public void deleteMemoryFile(Integer domainId, Integer id){
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain  = AonServletUtils.getRequestDomainName(request);
-		DBConsults.deleteMemoryFile(domain, domainId, id);
-		
+	public void deleteMemoryFile(AonData aonData, Integer id){
+		DBConsults.deleteMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), id);
 	}
 	
-	public void deleteMemoryFile(Integer domainId, String name){
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain  = AonServletUtils.getRequestDomainName(request);
-		DBConsults.deleteMemoryFile(domain, domainId, name);
-		
-	}
-	
-	public MemoryFiles insertMemoryFile(Integer domainId, MemoryFiles mf){
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain  = AonServletUtils.getRequestDomainName(request);
-		byte[] b = getFile(domainId);
-		byte  m = (byte) MimeType.get(getMimeType(domainId)).ordinal();
+	public MemoryFiles insertMemoryFile(AonData aonData, MemoryFiles mf){
+		byte[] b = getFile(aonData.getDomain().getId());  // TODO ESTO SESSION!!!!!
+		byte  m = (byte) MimeType.get(getMimeType(aonData.getDomain().getId())).ordinal();
 		if(mf.getBool()){			
-			DBConsults.updateMemoryFile(domain, domainId, m, b, mf.getId());
+			DBConsults.updateMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), m, b, mf.getId());
 		}
 		else {
-			Integer id = DBConsults.insertMemoryFile(domain, domainId, m, b, mf.getName(), this.getUserLogin());
+			Integer id = DBConsults.insertMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), m, b, mf.getName(), this.getUserLogin());
 			mf.setId(id);
 		}
 		return mf;
 	}
 	
-	public void updateSchemaMemory(Boolean bool, Integer domainId, String key, Integer year){
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain  = AonServletUtils.getRequestDomainName(request);
-		Esquema schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
+	public void updateSchemaMemory(AonData aonData, Boolean bool, String key, Integer year){
+		Esquema schema = DBConsults.getDeposit(aonData.getDomain().getName(), aonData.getDomain().getId(), year, this.getUserLogin());
 		if(D2DepositFooterKey.PR8080805.getCode().equals(key))
 			schema.getCabecera().setMemoriaNormalizada(!bool);
 		
@@ -804,17 +842,17 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		
 		try {
 			byte[] b = Utils.writeXml(schema);
-			DBConsults.insertDeposit(domain, b, domainId, year, this.getUserLogin());
+			DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, this.getUserLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	// -------------------------------------------------------------- ENTERPRISE
+	
 	@Override
-	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,
-			String query){
-		return AON.getParentEnterprises(domainName, domain, this.getUserLogin(), query);		
+	public LinkedList<Enterprise> getParentEnterprises(AonData aonData,	String query){
+		return AON.getParentEnterprises(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), query);		
 	}
 
 	public Esquema getSchema(Integer domainId, Integer year){
@@ -977,14 +1015,5 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		}
 		
 		return map;
-	}
-	
-	
-	public static Double round(double value, int places) {
-	    if (places < 0) throw new IllegalArgumentException();
-	    long factor = (long) Math.pow(10, places);
-	    value = value * factor;
-	    long tmp = Math.round(value);
-	    return (double) tmp / factor;
 	}
 }

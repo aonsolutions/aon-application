@@ -1040,6 +1040,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-fiscal-registro-mercantil")
 	String aonFiscalRegistroMercantil();
 
+	@ClassName("aon-fiscal-registro-mercantil2")
+	String aonFiscalRegistroMercantil2();
+	
 	@ClassName("aon-odd-background")
 	String aonOddBackground();
 

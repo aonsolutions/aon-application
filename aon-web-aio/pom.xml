@@ -274,7 +274,7 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>com.esferalia.aon</groupId>
+      <groupId>net.aonsolutions</groupId>
       <artifactId>aon.gwt.aio</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
@@ -436,7 +436,7 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.code.aon</groupId>
+      <groupId>net.aonsolutions</groupId>
       <artifactId>aon.webservice</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

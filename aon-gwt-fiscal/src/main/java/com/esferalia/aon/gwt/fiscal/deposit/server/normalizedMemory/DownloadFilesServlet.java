@@ -16,7 +16,8 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 
 
-@WebServlet(name = "DownloadMemoryFiles", urlPatterns = { "/aon_gwt_deposit/gwt_download_memory/*" })
+@WebServlet(name = "DownloadMemoryFiles", urlPatterns = { "/aon_gwt_deposit/gwt_download_memory/*",
+		 												  "/aon_gwt_aio/gwt_download_memory/*"})
 public class DownloadFilesServlet extends HttpServlet {
 
 	/**
@@ -58,4 +59,5 @@ public class DownloadFilesServlet extends HttpServlet {
         bais.close();
         out.flush();
         out.close();
-    }}
+    }
+}

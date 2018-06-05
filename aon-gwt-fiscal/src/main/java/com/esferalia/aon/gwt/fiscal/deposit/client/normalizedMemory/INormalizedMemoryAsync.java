@@ -6,8 +6,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
@@ -15,6 +17,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INormalizedMemoryAsync {
 
+	void getAonData(String domainName, Integer domainId, String login, AsyncCallback<AonData> callback);
+
+	void getSchema(AonData aonData, Company company, Integer year, Boolean textMode,
+			AsyncCallback<Map<String, String>> callback);
+	
 	void getSchema(String cif, Integer domainId, Boolean textMode, Integer year, AsyncCallback<Map<String, String>> callback);
 
 	void updateSchema(String cif, Integer domainId, String key, String value, Integer year,
@@ -24,20 +31,23 @@ public interface INormalizedMemoryAsync {
 
 	void clearSession(String cif, Integer year, AsyncCallback<Void> callback);
 
+	void saveDeposit(AonData aonData, Map<String, String> deposit, Integer year, AsyncCallback<Void> callback);
+	
+	void saveDeposit(String cif, Integer domainId, D2Deposit d2Deposit, Boolean textMode, Integer year, AsyncCallback<Void> callback);
+
 	void saveDeposit(String cif, Integer domainId, Boolean textMode, Integer year, AsyncCallback<Void> callback);
 
 	void getDigitalDepositTemplates(Integer domainId, Integer year, AsyncCallback<Vector<MemoryTemplate>> callback);
 
 	void createTextMemory(Integer domainId, String name, Integer year, AsyncCallback<MemoryTemplate> callback);
 
-	void updateTexts(MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif,
+	void updateTexts(AonData aonData, MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif,
 			Map<String, String> map, AsyncCallback<Map<String, String>> callback);
 
-	void getParentDomain(Integer domainId, AsyncCallback<Integer> callback);
 
 	void getDate(String str, AsyncCallback<Date> callback);
 
-	void importAll(String type, String ejercicio, MemoryTemplate mt, Integer domainId, String cif,
+	void importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, Integer domainId, String cif,
 			Map<String, String> map, Integer year, AsyncCallback<Map<String, String>> callback);
 
 	void delete(Integer domainId, String document, Integer year,
@@ -45,22 +55,17 @@ public interface INormalizedMemoryAsync {
 
 	void deleteFreeText(Integer domainId, Integer rattachId, Integer year, AsyncCallback<Void> callback);
 
-	void saveDeposit(String cif, Integer domainId, D2Deposit d2Deposit,
-			Boolean textMode, Integer year, AsyncCallback<Void> callback);
+	void calculate(AonData aonData, Map<String, String> map, Integer year, AsyncCallback<Map<String, String>> callback);
 
-	void calculate(Map<String, String> map, Integer year,
-			AsyncCallback<Map<String, String>> callback);
+	void calculate(Map<String, String> map, Integer year, AsyncCallback<Map<String, String>> callback);
 
-	void getMemoryFiles(Integer domainId, AsyncCallback<Vector<MemoryFiles>> callback);
+	void getMemoryFiles(AonData aonData, AsyncCallback<Vector<MemoryFiles>> callback);
 
-	void deleteMemoryFile(Integer domainId, Integer id,
-			AsyncCallback<Void> callback);
+	void deleteMemoryFile(AonData aonData, Integer id, AsyncCallback<Void> callback);
 
-	void insertMemoryFile(Integer domainId, MemoryFiles mf,
-			AsyncCallback<MemoryFiles> callback);
+	void insertMemoryFile(AonData aonData, MemoryFiles mf, AsyncCallback<MemoryFiles> callback);
 
-	void updateSchemaMemory(Boolean bool, Integer domainId, String key,
-			Integer year, AsyncCallback<Void> callback);
+	void updateSchemaMemory(AonData aonData, Boolean bool, String key, Integer year, AsyncCallback<Void> callback);
 
 	void isDigitalDeposit(Integer domainId, Integer year,
 			AsyncCallback<Boolean> callback);
@@ -69,8 +74,15 @@ public interface INormalizedMemoryAsync {
 			String type, Integer year,
 			AsyncCallback<Map<String, String>> callback);
 
-	void getParentEnterprises(String domainName, int domain, String query,
+	void getParentEnterprises(AonData aonData, String query,
 			AsyncCallback<LinkedList<Enterprise>> callback);
+	
+	void getCompany(AonData aonData, AsyncCallback<Company> callback);
 
+	void getDepositExercises(AonData aonData, AsyncCallback<String[]> callback);
+	
 	void getDepositExercises(Integer domainId, AsyncCallback<String[]> callback);
+
+	void getDepositTemplates(AonData aonData, Integer year, AsyncCallback<Vector<MemoryTemplate>> callback);
+	
 }

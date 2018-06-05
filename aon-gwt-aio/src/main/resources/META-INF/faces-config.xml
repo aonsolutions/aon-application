@@ -8,7 +8,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>aon_dump_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/dump_form.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/dump_form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -17,7 +17,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_documents</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/documents.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/documents.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -26,7 +26,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_issues</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/issues.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/issues.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -35,21 +35,21 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_invoiceStat</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/invoiceStat.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/invoiceStat.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_directSalesStat</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/directSales.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/directSales.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_fee_projection</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/fee_projection.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/fee_projection.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -58,25 +58,25 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_carrier_packing</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/warehouse/carrier_packing.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/warehouse/carrier_packing.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_elaboration</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/warehouse/elaboration.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/warehouse/elaboration.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_stockForecast</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/warehouse/stockForecast.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/warehouse/stockForecast.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_movementList</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/warehouse/movementList.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/warehouse/movementList.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -85,14 +85,14 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_udapa</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/udapa.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/udapa.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_paturpat</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/udapa.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/udapa.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -101,16 +101,33 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_sii</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/fiscal/sii.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/fiscal/sii.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- AON GWT FISCAL -->
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_deposit</from-outcome>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/fiscal/deposit.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_deposit_new</from-outcome>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/fiscal/depositNew.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+
 	<!-- AON GWT INVOICE -->
 	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_sabbatic</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/invoice/sabbatic.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/invoice/sabbatic.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -119,7 +136,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_seres</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/seres.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/seres.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -128,7 +145,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_communication</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/communication.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/communication.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -137,35 +154,35 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_templates</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/templates/templates.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/templates/templates.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_consumption_templates</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/templates/consumption.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/templates/consumption.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_marketplace</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/templates/marketplace.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/templates/marketplace.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_download_amazon_delivery</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/templates/download_amazon_delivery.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/templates/download_amazon_delivery.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_contract_media</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/payroll/contract_media.xhtml</to-view-id>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/payroll/contract_media.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

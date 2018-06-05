@@ -14,21 +14,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ProjectAttachmentType;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.google.api.services.drive.Drive;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.html.simpleparser.HTMLWorker;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "printConexFlowPayslip", urlPatterns = {"/print_conexflowpayslip/*"})
 public class PrintConexFlowPayslip extends HttpServlet{
@@ -49,7 +51,6 @@ public class PrintConexFlowPayslip extends HttpServlet{
 		Integer projectId = Integer.parseInt(projectIdStr);
 	
 		Domain domain = new Domain().setName(domainName).setId(domainId);
-		User user = new User().setLogin(login);
 		LinkedList<Attach>  attachList = AON.getAttachList(domainName, domainId, login, f -> 
 			f.getTypeProperty().eq(ProjectAttachmentType.PAYSLIP.value())
 			.and(f.getAttachModuleProperty().eq(projectId))
@@ -72,8 +73,9 @@ public class PrintConexFlowPayslip extends HttpServlet{
 		
 		attachList.stream().forEach(r ->{
 			if(r.getData() == null){
-				byte[] b = DriveUtils.getByteFile(domain, user, r.getDriveId(), r.getId());
-				r.setData(b);
+				DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
+				Drive drive = AonDrive.getInstace().serviceInitialize(g);
+				r.setData(AonDrive.getInstace().downloadFileByteArray(drive, r.getDriveId()));
 			}
 			
 			if(r.getData() != null){

@@ -86,7 +86,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 						d2Deposit.setMap(result);
 						d2Deposit.setMapDraft(result);
 						
-						inma.getMemoryFiles(d2Deposit.getDomain().getId(), new AsyncCallback<Vector<MemoryFiles>>() {
+						inma.getMemoryFiles(deposit.getAonData(), new AsyncCallback<Vector<MemoryFiles>>() {
 							
 							@Override
 							public void onSuccess(Vector<MemoryFiles> result) {
@@ -94,7 +94,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 								isMa = result.get(1).getBool();
 								items();			
 								setState(true);
-								normalizedMemory = new NormalizedMemory(ddtn, deposit);
+								normalizedMemory = new NormalizedMemory(deposit.getAonData(), ddtn, deposit);
 								normalizedMemory.paintHeaderTable("Cuentas Anuales", d2Deposit.getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit.getYear().toString());
 								normalizedMemory.setPagesPanel(deposit.getGenericContent(ddtn), true);
 								deposit.setContent(normalizedMemory);							
@@ -108,7 +108,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 			}
 			else normalizedMemory.setPagesPanel(deposit.getGenericContent(this),true);
 		} else{
-			normalizedMemory = new NormalizedMemory(true, this, deposit);
+			normalizedMemory = new NormalizedMemory(deposit.getAonData(), true, this, deposit);
 			normalizedMemory.paintHeaderTable("Cuentas Anuales","Tipo", d2Deposit.getYear().toString());
 			normalizedMemory.setPagesPanel(deposit.getGenericContent(this), true);
 		}
@@ -121,7 +121,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 		d2Deposit = d2;
 		d2Deposit.setMap(map);
 		d2Deposit.setMapDraft(map);
-		normalizedMemory = new NormalizedMemory(this, deposit);
+		normalizedMemory = new NormalizedMemory(deposit.getAonData(), this, deposit);
 		normalizedMemory.getNewButton().setVisible(false);
 		normalizedMemory.getSaveButton().setVisible(true);
 		normalizedMemory.getSaveButton().setEnabled(false);
@@ -356,7 +356,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 			@Override
 			public void select(Deposit deposit) {
 				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit.getYear().toString());
-				MemoryDocuments md = new MemoryDocuments(d2Deposit.getEnterprise(), normalizedMemory, memory, ma);
+				MemoryDocuments md = new MemoryDocuments(deposit.getAonData(), d2Deposit.getEnterprise(), normalizedMemory, memory, ma);
 
 				normalizedMemory.setPagesPanel(md);
     			deposit.setContent(normalizedMemory);

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.deposit.client;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.FreeText;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
@@ -27,11 +28,11 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 
 	@Override
 	public void select(final Deposit deposit) {
-		digitalDepositMenu(deposit);	
+		digitalDepositMenu(deposit.getAonData(), deposit);	
 	}
 	
-	public void digitalDepositMenu(Deposit deposit){
-		NormalizedMemory nm =  new NormalizedMemory(true, this, enterpriseAux);
+	public void digitalDepositMenu(AonData aonData, Deposit deposit){
+		NormalizedMemory nm =  new NormalizedMemory(aonData, true, this, enterpriseAux);
 		nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 		nm.setPagesPanel(deposit.getGenericContent(this));
 		deposit.setContent(nm);
@@ -84,7 +85,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 			
 			@Override
 			public void select(Deposit deposit) {
-				NormalizedMemory nm =  new NormalizedMemory(true, ddtn, enterpriseAux);
+				NormalizedMemory nm =  new NormalizedMemory(deposit.getAonData(), true, ddtn, enterpriseAux);
 				nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 				nm.setPagesPanel(deposit.getGenericContent(this));
 				deposit.setContent(nm);
@@ -108,7 +109,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT1"; 
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph1Page = new FreeText("Actividad de la empresa", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph1Page.dumpFT(mt.getD2Deposit());
@@ -135,7 +136,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT2";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph2Page = new FreeText("Bases de presentaci\u00F3n de las cuentas anuales", true, page, enterpriseAux, nm,true, mt.getId().toString());
 					paragraph2Page.dumpFT(mt.getD2Deposit());
@@ -162,7 +163,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page =  "MAT3";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph3_1Page = new FreeText("Aplicaci\u00F3n de resultados", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph3_1Page.dumpFT(mt.getD2Deposit());
@@ -188,7 +189,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT4";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada","Plantilla","20XX");
 					FreeText paragraph4Page = new FreeText("Normas de registro y valoraci\u00F3n", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph4Page.dumpFT(mt.getD2Deposit());
@@ -214,7 +215,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT5";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph5_1Page = new FreeText("Inmovilizado material, intangible, e inversiones inmobiliarias", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph5_1Page.dumpFT(mt.getD2Deposit());
@@ -242,7 +243,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT6";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph6_1Page = new FreeText("Activos financieros", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph6_1Page.dumpFT(mt.getD2Deposit());
@@ -269,7 +270,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT7";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph7_1Page = new FreeText("Pasivos financieros", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph7_1Page.dumpFT(mt.getD2Deposit());
@@ -296,7 +297,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT8";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph8Page = new FreeText("Fondos propios", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph8Page.dumpFT(mt.getD2Deposit());
@@ -322,7 +323,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT9";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux,  mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux,  mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph9Page = new FreeText("Situaci\u00F3n fiscal", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph9Page.dumpFT(mt.getD2Deposit());
@@ -351,7 +352,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT11";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph11_1Page = new FreeText("Subvenciones, donaciones y legados", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph11_1Page.dumpFT(mt.getD2Deposit());
@@ -378,7 +379,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page = "MAT12";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph12_1Page = new FreeText("Operaciones con partes vinculadas", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph12_1Page.dumpFT(mt.getD2Deposit());
@@ -405,7 +406,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page =  "MAT13";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph13_1Page = new FreeText("Otra informaci\u00F3n", true, page, enterpriseAux, nm,true, mt.getId().toString());
 	    			paragraph13_1Page.dumpFT(mt.getD2Deposit());
@@ -432,7 +433,7 @@ public class DigitalDepositFreeTextTreeNode extends TreeNode<Integer> {
 				@Override
 				public void select(Deposit deposit) {
 					String page =  "MAT14";
-					NormalizedMemory nm = new NormalizedMemory(enterpriseAux, mt, ddtn);
+					NormalizedMemory nm = new NormalizedMemory(deposit.getAonData(), enterpriseAux, mt, ddtn);
 					nm.paintHeaderTable("Memoria Normalizada", "Plantilla","20XX");
 					FreeText paragraph14_1Page = new FreeText("Informaci\u00F3n sobre medio ambiente", true, page, enterpriseAux, nm, true, mt.getId().toString());
 	    			paragraph14_1Page.dumpFT(mt.getD2Deposit());

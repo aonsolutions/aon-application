@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='aon_gwt_aio' >
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.i18n.I18N" />
+	<inherits name='com.google.gwt.visualization.Visualization'/>
+	<inherits name="com.google.gwt.logging.Logging"/>
+	<inherits name='com.esferalia.aon.gwt.common.Common'/>
+	<inherits name="com.esferalia.aon.occam.api.Occam" />
+	<inherits name="com.esferalia.aon.gwt.api.Api" />
+	<inherits name='com.esferalia.aon.gwt.issues.IssuesAio' />
+	<inherits name='com.esferalia.aon.gwt.document.DocumentAio' />
+	<inherits name='com.esferalia.aon.gwt.stat.StatAio' />
+	<inherits name='com.esferalia.aon.gwt.dump.DumpAio' />
+	<inherits name='com.esferalia.aon.gwt.template.TemplateAio' />
+	<inherits name="com.google.gwt.resources.Resources" />
+	<inherits name="com.vaadin.polymer.Elements"/>
+	<inherits name='net.aonsolutions.aon.gwt.warehouse.WarehouseAio' />
+	<inherits name='net.aonsolutions.aon.gwt.udapa.UdapaAio' />
+	<inherits name='net.aonsolutions.aon.gwt.sii.SiiAio' />
+	<inherits name='net.aonsolutions.aon.gwt.invoice.InvoiceAio' />
+	<inherits name='net.aonsolutions.aon.gwt.seres.SeresAio' />
+	<inherits name='net.aonsolutions.aon.gwt.communication.CommunicationAio' />
+	<inherits name='com.esferalia.aon.gwt.fiscal.deposit.DepositAio' />
+	<inherits name="net.aonsolutions.polymer.Elements"/>
+	
+	<inherits name='com.google.gwt.user.theme.clean.Clean' />
+	
+	<!-- Include GWTUpload library -->
+  	<inherits name="gwtupload.GWTUpload"/>
+  	
+ 	<!-- Load dinamically predefined styles in the library when the application starts -->
+	
+
+	<extend-property name="locale" values="es" />
+	
+	<extend-property name="locale" values="es_ES" />
+	
+	<set-property-fallback name="locale" value="es_ES"/> 
+
+	<set-property name="user.agent" value="gecko1_8" />	
+	<extend-property name="user.agent" values="safari" />
+	<!--extend-property name="user.agent" values="ie8" /-->
+	<!--extend-property name="user.agent" values="ie9" /-->
+	<extend-property name="user.agent" values="ie10" />
+
+	<set-configuration-property name="locale.useragent" value="Y" />
+
+	<entry-point class='net.aonsolutions.aon.gwt.aio.client.Aio' />
+
+	<source path='client' />
+	<source path='shared' />
+
+</module>
