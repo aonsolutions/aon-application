@@ -11,8 +11,9 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -41,7 +42,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasValueChangeHandlers<AccountTrialBalanceParams>{
+public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasValueChangeHandlers<AccountingReportParams>{
 	
 	private String domainName;
 	private String user;
@@ -60,7 +61,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 	private CheckBox noActivityAccountVisible;
 	
 	
-	public TrialBalancePanelFilter(String domainName,String user, int domainId, AonConfiguration config, AccountTrialBalanceParams params) {
+	public TrialBalancePanelFilter(String domainName,String user, int domainId, AonConfiguration config, AccountingReportParams params) {
 		this.domainName = domainName;
 		this.user = user;
 		this.domainId = domainId;
@@ -124,7 +125,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 	}
 
 	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<AccountTrialBalanceParams> handler) {
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<AccountingReportParams> handler) {
 		return super.addHandler(handler, ValueChangeEvent.getType());
 	}
 	public HandlerRegistration addMinimizeHandler(MinimizeHandler handler) {
@@ -181,12 +182,12 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 							if (pair != null) {
 								fromDate.setValue(dates.get(i).getLeft(),false);
 								toDate.setValue(dates.get(i).getRight(),false);
-								ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+								ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 							}
 						} else {
 							fromDate.setValue(periodStart,false);
 							toDate.setValue(periodEnd,false);
-							ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+							ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 						}
 					}
 				});
@@ -203,7 +204,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		return periodBox;
 	}
 
-	private Widget getFilterTab(AonConfiguration config, AccountTrialBalanceParams params) {
+	private Widget getFilterTab(AonConfiguration config, AccountingReportParams params) {
 		FlexTable tab = new FlexTable();
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
 		tab.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -388,7 +389,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 				account.setValue(null,false);
 				lowLevelAccountVisible.setValue(false, false);
 				noActivityAccountVisible.setValue(false, false);
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
 		
@@ -424,77 +425,80 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			public void onChange(ChangeEvent event) {
 				ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
 				dateTab.setWidget(0, 1, periodBox);
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
 		
 		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
 
 		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
-
-		activity.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
-			}
-		});
+		if (activitiesListBoxEnabled) {
+			activity.addChangeHandler(new ChangeHandler() {
+				@Override
+				public void onChange(ChangeEvent event) {
+					ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				}
+			});
+		}
 		
 		account.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
 		
-		confidential.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
-			}
-		});
+		if (config.getUser().hasConfidentialityRole()) {
+			confidential.addChangeHandler(new ChangeHandler() {
+				@Override
+				public void onChange(ChangeEvent event) {
+					ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				}
+			});
+		}
 		
 		level.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
 		
 		lowLevelAccountVisible.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
 		
 		noActivityAccountVisible.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ValueChangeEvent.<AccountTrialBalanceParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
 		
 		return tab;
 	}
 	
-	public AccountTrialBalanceParams getWidgetParams() {
+	public AccountingReportParams getWidgetParams() {
 		Integer activityId = null;
 		if (activity != null) {
 			if (activity.getSelectedIndex() > 0 ) {
 				activityId = AonNumberUtils.toInteger(activity.getSelectedValue());
 			}
 		}
-		return new AccountTrialBalanceParams()
+		return new AccountingReportParams()
 			.setDomain(getDomainId())
 			.setPeriod(period.getSelectedIndex()==0?null:AonNumberUtils.toInteger( period.getSelectedValue()))
 			.setFromDate(fromDate.getValue())
@@ -503,7 +507,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			.setLevel(AonNumberUtils.toInteger( level.getSelectedValue()))
 			.setLowLevelAccountVisible(lowLevelAccountVisible.getValue() )
 			.setNoActivityAccountVisible(noActivityAccountVisible.getValue())
-			.setCode(account.getValue())
+			.setAccount(new Account().setCode(account.getValue()))
 			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
 			;
 	}

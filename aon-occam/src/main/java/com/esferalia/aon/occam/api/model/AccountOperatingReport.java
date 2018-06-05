@@ -242,7 +242,7 @@ public class AccountOperatingReport implements Serializable {
 		}
 	}
 
-	private AccountOperatingParams params;
+	private AccountingReportParams params;
 	
 	private LinkedHashSet<AccountOperatingAccount> accounts = new LinkedHashSet<AccountOperatingAccount>();
 	
@@ -251,10 +251,10 @@ public class AccountOperatingReport implements Serializable {
 	private TreeMap<String, TreeMap<DateInterval, AccountOperatingStatement>> map = 
 			new TreeMap<String, TreeMap<DateInterval, AccountOperatingStatement>>();
 
-	public AccountOperatingParams getParams() {
+	public AccountingReportParams getParams() {
 		return params;
 	}
-	public AccountOperatingReport setParams(AccountOperatingParams params) {
+	public AccountOperatingReport setParams(AccountingReportParams params) {
 		this.params = params;
 		
 		return this;

@@ -10,15 +10,13 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
@@ -295,7 +293,7 @@ public class ACCOUNTING {
 
 	// ------------------------------ ACCOUNT STATEMENT
 	public static AccountStatementReport getAccountStatement(String domainName,
-			int domain, String user, AccountStatementParams params) {
+			int domain, String user, AccountingReportParams params) {
 		AONContext ctx = null;
 		try {
 			AccountStatementReport report = new AccountStatementReport();
@@ -304,7 +302,7 @@ public class ACCOUNTING {
 			report.setTo(params.getToDate());
 			
 			AccountStatementDAO.ensureParamsAccount( ctx, params);
-			report.setAccount(ACCOUNTING.getAccount(ctx, params.getAccount()));
+			report.setAccount(ACCOUNTING.getAccount(ctx, params.getAccount().getCode()));
 			
 			
 			report.setSummary(getAccounting().getAccountBalance(ctx, params)
@@ -320,7 +318,7 @@ public class ACCOUNTING {
 	}
 
 	public static Stream<AccountStatement> getAccountBalance(String domainName,
-			int domain, String user, AccountStatementParams params) {
+			int domain, String user, AccountingReportParams params) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
@@ -624,7 +622,7 @@ public class ACCOUNTING {
 	}
 
 	public static AccountOperatingReport getAccountOperatingReport(String domainName, String user, int domain,
-			AccountOperatingParams params) {
+			AccountingReportParams params) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
@@ -636,7 +634,7 @@ public class ACCOUNTING {
 	}
 
 	public static AccountTrialBalanceReport getAccountTrialBalance(String domainName, int domain, String user,
-			AccountTrialBalanceParams params) {
+			AccountingReportParams params) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);

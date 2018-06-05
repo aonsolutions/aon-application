@@ -28,17 +28,15 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatementType;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.IAccountParams;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -58,7 +56,7 @@ public class AccountStatementDAO {
 	private static final com.esferalia.aon.jooq.tables.Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
 	private static final com.esferalia.aon.jooq.tables.Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
 
-	public static Stream<AccountStatement> balance(AONContext ctx , final AccountStatementParams params ) {
+	public static Stream<AccountStatement> balance(AONContext ctx , final AccountingReportParams params ) {
 		ctx.checkRead();
 		AccountPeriod ap = (params.getPeriod() == null)?null: AccountPeriodDAO.getPeriod(ctx, params.getPeriod());
 		if (params.getPeriod() == null) {
@@ -80,7 +78,7 @@ public class AccountStatementDAO {
 			.select(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT)
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-				.where(getCondition(ctx, params, false))
+				.where(getBalanceCondition(ctx, params, false))
 				.orderBy(ACCOUNT_ENTRY.ENTRY_DATE)
 				.fetch()
 				.stream()
@@ -131,7 +129,7 @@ public class AccountStatementDAO {
 		return AccountStatementPeriod.IN_PERIOD;    	
     }
 
-    public static Stream<AccountStatement> statement(AONContext ctx , AccountStatementParams params ) {
+    public static Stream<AccountStatement> statement(AONContext ctx , AccountingReportParams params ) {
 		ctx.checkRead();
 		ensureParamsAccount( ctx , params );
 		return  ctx.getDslContext()
@@ -152,7 +150,7 @@ public class AccountStatementDAO {
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 				.join(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
-				.where(getCondition(ctx, params, true))
+				.where(getBalanceCondition(ctx, params, true))
 				.and(params.getPeriod()==null?DSL.trueCondition():ACCOUNT_ENTRY.ENTRY_TYPE.notIn(AccountEntryType.OPENING.getValue(),AccountEntryType.CLOSING.getValue()))
 				.orderBy(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY)
 				.fetch()
@@ -161,24 +159,19 @@ public class AccountStatementDAO {
 		;
 	}
 
-	public static void ensureParamsAccount(AONContext ctx, AccountStatementParams params) {
+	public static void ensureParamsAccount(AONContext ctx, AccountingReportParams params) {
 		if (params.getAccount() == null) {
-			if (params.getFullAccount() == null) {
+				throw new AonCoreException("Debe indicar una cuenta contable");
+		}
+		if (params.getAccount().getId() == null) {
+			if (AonStringUtils.isBlank(params.getAccount().getCode())) {
 				throw new AonCoreException("Debe indicar una cuenta contable");
 			}
-			if (params.getFullAccount().getId() != null) {
-				params.setAccount( params.getFullAccount().getId() );
-			} else {
-				if (AonStringUtils.isBlank(params.getFullAccount().getCode())) {
-					throw new AonCoreException("Debe indicar una cuenta contable");
-				}
-				Account account = AccountDAO.get(ctx, params.getFullAccount().getCode());
-				if (account == null) {
-					throw new AonCoreException("Cuenta contable '" + params.getFullAccount().getCode() +"' no encontrada");
-				}
-				params.setFullAccount( account );
-				params.setAccount( account.getId() );
+			Account account = AccountDAO.get(ctx, params.getAccount().getCode());
+			if (account == null) {
+				throw new AonCoreException("Cuenta contable '" + params.getAccount().getCode() +"' no encontrada");
 			}
+			params.setAccount( account );
 		}
 	}
 
@@ -262,11 +255,11 @@ public class AccountStatementDAO {
 		period.accept(descriptionVisitor);
 		return msg.toString();
 	}
-	public static AccountOperatingReport operatingReport(AONContext ctx , final AccountOperatingParams params ) {
+	public static AccountOperatingReport operatingReport(AONContext ctx , final AccountingReportParams params ) {
 		ctx.checkRead();
 		AccountOperatingReport report = new AccountOperatingReport();
 		report.setParams(params);
-		LinkedHashMap<DateInterval,AccountOperatingParams> intervals = getDateIntervals(ctx,params);
+		LinkedHashMap<DateInterval,AccountingReportParams> intervals = getDateIntervals(ctx,params);
 		for (DateInterval inter : intervals.keySet()) {
 			operatingAccount(ctx, intervals.get(inter)).forEach(aos -> report.put(inter, aos) ); 
 		}
@@ -274,13 +267,13 @@ public class AccountStatementDAO {
 		return report;
 	}
 
-	private static LinkedHashMap<DateInterval,AccountOperatingParams> getDateIntervals(AONContext ctx, AccountOperatingParams params) {
+	private static LinkedHashMap<DateInterval,AccountingReportParams> getDateIntervals(AONContext ctx, AccountingReportParams params) {
 		if (params.getPeriod() == null) {
 			throw new AonCoreException("Es necesario indicar el ejercicio contable");			
 		}
 		LinkedList<AccountPeriod> periods = AccountPeriodDAO.getPeriods(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
 				.collect(Collectors.toCollection(LinkedList::new));
-		LinkedHashMap<DateInterval,AccountOperatingParams> map = new LinkedHashMap<DateInterval,AccountOperatingParams>();
+		LinkedHashMap<DateInterval,AccountingReportParams> map = new LinkedHashMap<DateInterval,AccountingReportParams>();
 		for (AccountPeriod ap : periods ) {
 			if (AonNumberUtils.equals(ap.getId(),params.getPeriod())) {
 				DateInterval inter = new DateInterval()
@@ -289,7 +282,7 @@ public class AccountStatementDAO {
 						.setName(ap.getName());
 				map.put(inter,params);
 			} else if (map.size() > 0 && params.getPreviousPeriods() >= map.size() ) {
-				AccountOperatingParams cloned = params.clone();
+				AccountingReportParams cloned = params.clone();
 				cloned.setPeriod(ap.getId());
 				cloned.setFromDate( AonDateUtils.add(params.getFromDate(), Calendar.YEAR, (map.size() * (-1)) ));
 				cloned.setToDate( AonDateUtils.add(params.getToDate(), Calendar.YEAR,  (map.size() * (-1)) ));
@@ -306,7 +299,7 @@ public class AccountStatementDAO {
 		return map;
 	}
 
-	public static Stream<AccountOperatingStatement> operatingAccount(AONContext ctx , final AccountOperatingParams params ) {
+	public static Stream<AccountOperatingStatement> operatingAccount(AONContext ctx , final AccountingReportParams params ) {
 		ctx.checkRead();
 		if (params.getPeriod() == null) {
 			throw new AonCoreException("Es necesario indicar el ejercicio contable");			
@@ -325,7 +318,7 @@ public class AccountStatementDAO {
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 				.join(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
-				.where(getCondition(ctx, params))
+				.where(getOperatingCondition(ctx, params))
 				.and(ACCOUNT_ENTRY.ENTRY_TYPE.notIn(AccountEntryType.OPERATING.getValue(),AccountEntryType.CLOSING.getValue()))
 				.and(ACCOUNT.CODE.like("6%").or(ACCOUNT.CODE.like("7%")) )
 				.groupBy(CODE)
@@ -441,7 +434,7 @@ public class AccountStatementDAO {
 	// ********************************* BALANCE DE SUMAS Y SALDOS *********************************************
 	// *********************************************************************************************************
 	
-	public static AccountTrialBalanceReport trialBalance(AONContext ctx, AccountTrialBalanceParams params) {
+	public static AccountTrialBalanceReport trialBalance(AONContext ctx, AccountingReportParams params) {
 		ctx.checkRead();
 		AccountPeriod ap = null;
 		if (params.getPeriod() != null) {
@@ -512,20 +505,20 @@ public class AccountStatementDAO {
 		// 1) Periodos anteriores:
 		if (hasBeforePeriodAmounts) {
 			conditions.put(AccountStatementPeriod.BEFORE_PERIOD
-				,getCondition(ctx, params)
+				,getTrialBalanceCondition(ctx, params)
 				.and(ACCOUNT_ENTRY.ENTRY_DATE.lt(sqlStart)));
 		}
 		// 2) Saldo asiento de apertura
 		if (hasOpeningAmounts) {
 			conditions.put(AccountStatementPeriod.IN_PERIOD_OPENING
-				,getCondition(ctx, params)
+				,getTrialBalanceCondition(ctx, params)
 				.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
 				.and(ACCOUNT_ENTRY.ENTRY_TYPE.eq(AccountEntryType.OPENING.getValue())));
 		}
 		// 3) Saldo del ejercicio anterior a la fecha seleccinada.
 		if (hasInPeriodPreviousAmounts) {
 			conditions.put(AccountStatementPeriod.IN_PERIOD_BEFORE
-				,getCondition(ctx, params)
+				,getTrialBalanceCondition(ctx, params)
 				.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
 				.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPENING.getValue()))
 				.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(AonDateUtils.toSql(ap.getInitiationDate())))
@@ -535,7 +528,7 @@ public class AccountStatementDAO {
 
 		// 4) Sumas del rango de fechas seleccionado.
 		conditions.put(AccountStatementPeriod.IN_PERIOD
-			,getCondition(ctx, params)
+			,getTrialBalanceCondition(ctx, params)
 			.and(ap==null?DSL.trueCondition():ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
 			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPENING.getValue()))
 			.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(sqlStart))
@@ -679,10 +672,10 @@ public class AccountStatementDAO {
 		return condition;
 	}
 
-	private static Condition getCondition(AONContext ctx , AccountStatementParams params, boolean applyDateFilterIfNeeded ) {
+	private static Condition getBalanceCondition(AONContext ctx , AccountingReportParams params, boolean applyDateFilterIfNeeded ) {
 		Condition condition = getBasicCondition(ctx, params, applyDateFilterIfNeeded);
-		if (params.getAccount() != null) {
-			condition = condition.and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(params.getAccount()));	
+		if (params.getAccount() != null && params.getAccount().getId() != null) {
+			condition = condition.and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(params.getAccount().getId()));	
 		}
 		if ( params.areOpeningEntriesExcluded() ) {
 			condition = condition.and( ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.OPENING.getValue()));	
@@ -699,14 +692,14 @@ public class AccountStatementDAO {
 		return condition;
 	}
 	
-	private static Condition getCondition(AONContext ctx , AccountOperatingParams params) {
+	private static Condition getOperatingCondition(AONContext ctx , AccountingReportParams params) {
 		Condition condition = getBasicCondition(ctx, params, true);
 		if (params.getCostCenters() != null && params.getCostCenters().size() > 0) {
 			Condition c = null;
-			if (params.getCostCenters().contains(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT)) {
+			if (params.getCostCenters().contains(AccountingReportParams.EMPTY_COST_CENTER_ACCOUNT)) {
 				@SuppressWarnings("unchecked")
 				HashSet<String> cloned = (HashSet<String>) params.getCostCenters().clone();
-				cloned.remove(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT);
+				cloned.remove(AccountingReportParams.EMPTY_COST_CENTER_ACCOUNT);
 				c = ACCOUNT.COST_CENTER.isNull().or(ACCOUNT.COST_CENTER.in( cloned ));	
 			} else {
 				c = ACCOUNT.COST_CENTER.in( params.getCostCenters());
@@ -716,19 +709,19 @@ public class AccountStatementDAO {
 		return condition;
 	}
 	
-	private static Condition getCondition(AONContext ctx , AccountTrialBalanceParams params) {
+	private static Condition getTrialBalanceCondition(AONContext ctx , AccountingReportParams params) {
 		Condition condition = getBasicCondition(ctx, params, false);
-		if (AonStringUtils.isNotBlank(params.getCode())) {
-			String account = AonStringUtils.replace(params.getCode(), AonStringUtils.ASTERISK, AonStringUtils.EMPTY); 
+		if (params.getAccount() != null && AonStringUtils.isNotBlank(params.getAccount().getCode())) {
+			String account = AonStringUtils.replace(params.getAccount().getCode(), AonStringUtils.ASTERISK, AonStringUtils.EMPTY); 
 			if (AonStringUtils.isNotBlank(account)) {
 				if (AonStringUtils.isNumeric(account)) {
-					String code = AonStringUtils.replace(params.getCode(), AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+					String code = AonStringUtils.replace(params.getAccount().getCode(), AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
 					if (!AonStringUtils.endsWith(code, AonStringUtils.PERCENT)) {
 						code = code + AonStringUtils.PERCENT;
 					}	
 					condition = condition.and(ACCOUNT.CODE.like(code));
 				} else {
-					String descr = AonStringUtils.replace(params.getCode(), AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+					String descr = AonStringUtils.replace(params.getAccount().getCode(), AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
 					if (!AonStringUtils.startsWith(descr, AonStringUtils.PERCENT)) {
 						descr = AonStringUtils.PERCENT + descr;
 					}
@@ -737,9 +730,7 @@ public class AccountStatementDAO {
 					}	
 					condition = condition.and(ACCOUNT.DESCRIPTION.like(descr).or(ACCOUNT.ALIAS.like(descr)));
 				}
-				
 			}
-			
 		}
 		return condition;
 	}

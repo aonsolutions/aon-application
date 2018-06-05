@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -135,8 +135,8 @@ public class AccountBalancePanel extends SplitLayoutPanel implements HasSelectio
 					SelectionEvent.<Integer>fire(AccountBalancePanel.this, id);
 				}
 			});
-			AccountStatementParams params = new AccountStatementParams();
-			params.setAccount(account.getId());
+			AccountingReportParams params = new AccountingReportParams();
+			params.setAccount(account);
 			params.setFromDate(from);
 			params.setToDate(to);
 			

@@ -1,20 +1,17 @@
 package com.esferalia.aon.occam.jooq.test;
 
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.util.Date;
 
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountTrialBalanceTest {
 	
@@ -32,11 +29,11 @@ public class AccountTrialBalanceTest {
 	// ACCOUNT ENTRY
 	@Test
 	public void testStatement() throws FileNotFoundException {
-		AccountTrialBalanceParams params = new AccountTrialBalanceParams()
+		AccountingReportParams params = new AccountingReportParams()
 //				.setPeriod(32705) // 2016	MACAYC
 //				.setPeriod(53762)  // 2018	MACAYC
 				.setPeriod(49062)  // 2017	UDAPA
-				.setCode("572")
+				.setAccount(new Account().setCode("572"))
 				.setFromDate( AonDateUtils.getDate(2018, 2, 1))
 				.setToDate( AonDateUtils.getDate(2018, 6, 31))
 				.setLowLevelAccountVisible(true)

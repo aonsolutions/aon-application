@@ -19,15 +19,13 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
@@ -248,26 +246,26 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	@Override
 	public AccountStatementReport getAccountStatement(String domainName, String user,
-			int domain, AccountStatementParams params) throws AonCoreException {
+			int domain, AccountingReportParams params) throws AonCoreException {
 		return ACCOUNTING.getAccountStatement(domainName,domain,user,params);
 	}
 	
 	@Override
 	public AccountTrialBalanceReport getAccountTrialBalanceReport(String domainName, String user, int domain,
-			AccountTrialBalanceParams params) throws AonCoreException {
+			AccountingReportParams params) throws AonCoreException {
 		return ACCOUNTING.getAccountTrialBalance(domainName,domain,user,params);
 	}
 	
 	@Override
 	public LinkedList<AccountStatement> getAccountBalance(String domainName,
-			int domain, AccountStatementParams params) throws AonCoreException {
+			int domain, AccountingReportParams params) throws AonCoreException {
 		return ACCOUNTING.getAccountBalance(domainName,domain,this.getUserLogin(),params)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	@Override
 	public AccountOperatingReport getAccountOperatingReport(String domainName, String user, int domain,
-			AccountOperatingParams params) throws AonCoreException {
+			AccountingReportParams params) throws AonCoreException {
 		return ACCOUNTING.getAccountOperatingReport(domainName, user, domain,params);
 	}
 

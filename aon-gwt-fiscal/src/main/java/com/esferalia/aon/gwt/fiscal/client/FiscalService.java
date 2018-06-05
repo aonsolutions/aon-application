@@ -7,15 +7,13 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
@@ -75,12 +73,12 @@ public interface FiscalService extends RemoteService {
 	String getSalaryFormatted(String domainName, int domain, Date from, Date to) throws AonCoreException;
 	
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
-	AccountStatementReport getAccountStatement(String domainName,String user,int domain, AccountStatementParams params) throws AonCoreException;	
-	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain, AccountStatementParams params) throws AonCoreException;
+	AccountStatementReport getAccountStatement(String domainName,String user,int domain, AccountingReportParams params) throws AonCoreException;	
+	LinkedList<AccountStatement> getAccountBalance(String domainName,int domain, AccountingReportParams params) throws AonCoreException;
 	// --------------------------------------------------------------- ACCOUNT OPERATING STATEMENT
-	AccountOperatingReport getAccountOperatingReport(String domainName,String user,int domain, AccountOperatingParams params) throws AonCoreException;	
+	AccountOperatingReport getAccountOperatingReport(String domainName,String user,int domain, AccountingReportParams params) throws AonCoreException;	
 	// --------------------------------------------------------------- ACCOUNT TRIAL BALANCE
-	AccountTrialBalanceReport getAccountTrialBalanceReport(String domainName, String user, int domain, AccountTrialBalanceParams params) throws AonCoreException;
+	AccountTrialBalanceReport getAccountTrialBalanceReport(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
 
 
 	LinkedList<Finance> getAccountFinances(String domainName, int domain, FinanceParams params, int offset,

@@ -42,8 +42,8 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
@@ -951,9 +951,8 @@ public class AccountEntryModule extends MainEntryPoint {
 						getCurrentDomainName(),getCurrentUser(),getCurrentDomain()
 						,Integer.MAX_VALUE
 						,configuration
-						,new AccountStatementParams()
-							.setAccount(selectedItem)
-							.setFullAccount(result)
+						,new AccountingReportParams()
+							.setAccount(result)
 							.setPeriod(period.getValue())
 							.setToDate(entryDate.getValue())
 						,false);

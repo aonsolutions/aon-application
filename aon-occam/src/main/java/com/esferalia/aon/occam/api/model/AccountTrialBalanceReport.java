@@ -170,7 +170,7 @@ public class AccountTrialBalanceReport implements Serializable{
 	}
 	
 	private AccountPeriod period;
-	private AccountTrialBalanceParams params;
+	private AccountingReportParams params;
 	private TreeMap<String, AccountTrialBalance> balances = new TreeMap<String, AccountTrialBalance>();
 	private boolean hasBeforePeriodAmounts;
 	private boolean hasOpeningAmounts;
@@ -184,10 +184,10 @@ public class AccountTrialBalanceReport implements Serializable{
 		this.period = period;
 		return this;
 	}
-	public AccountTrialBalanceParams getParams() {
+	public AccountingReportParams getParams() {
 		return params;
 	}
-	public AccountTrialBalanceReport setParams(AccountTrialBalanceParams params) {
+	public AccountTrialBalanceReport setParams(AccountingReportParams params) {
 		this.params = params;
 		return this;
 	}

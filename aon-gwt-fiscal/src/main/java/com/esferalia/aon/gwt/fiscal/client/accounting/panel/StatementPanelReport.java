@@ -16,7 +16,7 @@ import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -79,7 +79,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		this(domainName,user,domainId,Integer.MAX_VALUE,null,null, allowChecks);
 	}
 
-	public StatementPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountStatementParams params, boolean allowChecks) {
+	public StatementPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountingReportParams params, boolean allowChecks) {
 		super(Unit.PX);
 		this.currentDomainName = domainName;
 		this.currentUser = user;
@@ -106,7 +106,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		}
 	}
 	
-	private void fill(int tabIndex, AonConfiguration config, AccountStatementParams params) {
+	private void fill(int tabIndex, AonConfiguration config, AccountingReportParams params) {
 		activitiesListBoxEnabled = (config != null && config.hasActivities());
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());
@@ -127,7 +127,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		return currentUser;
 	}
 	
-	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountStatementParams params) {
+	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountingReportParams params) {
 		
 		FlexTable dateTab = new FlexTable();
 		period = new AccountPeriodBox();
@@ -203,10 +203,10 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		}
 		account = new AccountBox(this.currentDomainName,this.currentDomainId);
 		account.setRequired(false);
-		if (params != null && params.getFullAccount() != null) {
-			account.setValue(params.getFullAccount().getId()
-				,params.getFullAccount().getCode()
-				,params.getFullAccount().getDescription()
+		if (params != null && params.getAccount() != null) {
+			account.setValue(params.getAccount().getId()
+				,params.getAccount().getCode()
+				,params.getAccount().getDescription()
 				,false);
 		}
 		account.addSelectionHandler(new SelectionHandler<Account>() {
@@ -494,32 +494,35 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 	
 	private void onSearch() {
-		AccountStatementParams params = getWidgetParams();
-		StatementPanel journalPanel = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params, allowChecks);
-		journalPanel.addSelectionHandler(new AccountEntrySelectionHandler () {
+		AccountingReportParams params = getWidgetParams();
+		StatementPanel statementPanel = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params, allowChecks);
+		statementPanel.addSelectionHandler(new AccountEntrySelectionHandler () {
 			
 			@Override
 			public void onSelection(AccountEntrySelectionEvent  event) {
 				AccountEntrySelectionEvent.fire(StatementPanelReport.this, event.getSelectedItem(), event.getCallback() );
 			}
 		});
-		centerPanel.setWidget(journalPanel);
+		centerPanel.setWidget(statementPanel);
 	}
 
-	public AccountStatementParams getWidgetParams() {
+	public AccountingReportParams getWidgetParams() {
 		Integer activityId = null;
 		if (activitiesListBoxEnabled) {
 			if (activity.getSelectedIndex() > 0 ) {
 				activityId = AonNumberUtils.toInteger(activity.getSelectedValue());
 			}
 		}
-		return new AccountStatementParams()
+		return new AccountingReportParams()
 			.setDomain(this.currentDomainId)
 			.setPeriod(period.getValue())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
 			.setActivity(activityId)
-			.setAccount(account.getId())
+			.setAccount(new Account()
+					.setId(account.getId())
+					.setCode(account.getValue())
+					.setDescription(account.getDescription()))
 			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()));
 	}
 	

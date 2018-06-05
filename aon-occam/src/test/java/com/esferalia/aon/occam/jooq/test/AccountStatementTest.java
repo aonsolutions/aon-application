@@ -7,8 +7,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -26,8 +27,8 @@ public class AccountStatementTest {
 	// ACCOUNT ENTRY
 	@Test
 	public void testStatement() {
-		AccountStatementParams params = new AccountStatementParams()
-				.setAccount(604530)
+		AccountingReportParams params = new AccountingReportParams()
+				.setAccount(new Account().setId(604530))
 				.setFromDate( AonDateUtils.getDate(2015, 0, 1))
 				.setToDate( AonDateUtils.getDate(2015, 10, 25)); 
 		AccountStatementReport report = ACCOUNTING.getAccountStatement(DOMAIN_NAME, DOMAIN_ID, USER, params);
@@ -80,8 +81,8 @@ public class AccountStatementTest {
 	@Test
 	@Ignore
 	public void testBalance() {
-		AccountStatementParams params = new AccountStatementParams()
-				.setAccount(603888)
+		AccountingReportParams params = new AccountingReportParams()
+				.setAccount(new Account().setId(603888))
 				.setFromDate( AonDateUtils.getDate(2015, 0, 1))
 				.setToDate( AonDateUtils.getDate(2015, 5, 31)); 
 		ACCOUNTING.getAccountBalance(DOMAIN_NAME, DOMAIN_ID, USER, params )

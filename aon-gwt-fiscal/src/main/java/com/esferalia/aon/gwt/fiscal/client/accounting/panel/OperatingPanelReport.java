@@ -15,8 +15,8 @@ import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -81,7 +81,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		this(domainName,user,domainId,Integer.MAX_VALUE,null,null);
 	}
 	
-	public OperatingPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountOperatingParams params) {
+	public OperatingPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountingReportParams params) {
 		super(Unit.PX);
 		this.currentDomainName = domainName;
 		this.currentUser = user;
@@ -107,7 +107,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		}
 	}
 	
-	private void fill(int tabIndex, AonConfiguration config, AccountOperatingParams params) {
+	private void fill(int tabIndex, AonConfiguration config, AccountingReportParams params) {
 		if (config.getPeriods() == null || config.getPeriods().size() == 0 ) {
 			Window.alert("No se han encontrado ejercicios contables");
 		} else {
@@ -138,7 +138,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		return currentUser;
 	}
 	
-	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountOperatingParams params) {
+	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountingReportParams params) {
 		
 		FlexTable dateTab = new FlexTable();
 		period = new AccountPeriodBox();
@@ -300,7 +300,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			costCenters = new ListBox();
 			costCenters.setWidth("200px");
 			costCenters.addItem("--- Todos ---");
-			costCenters.addItem(AccountOperatingParams.EMPTY_COST_CENTER_ACCOUNT);
+			costCenters.addItem(AccountingReportParams.EMPTY_COST_CENTER_ACCOUNT);
 			costCenters.setSelectedIndex(0);
 			selectedCostCenter = new FlowPanel();
 			for (String costCenter : config.getCostCenters()) {
@@ -620,7 +620,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 	
 	private void onSearch() {
-		AccountOperatingParams params = getWidgetParams();
+		AccountingReportParams params = getWidgetParams();
 		OperatingPanel operatingPanel = new OperatingPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
 //		operatingPanel.addSelectionHandler(new AccountEntrySelectionHandler () {
 //			
@@ -632,7 +632,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		centerPanel.setWidget(operatingPanel);
 	}
 
-	public AccountOperatingParams getWidgetParams() {
+	public AccountingReportParams getWidgetParams() {
 		Integer activityId = null;
 		if (activitiesListBoxEnabled) {
 			if (activity.getSelectedIndex() > 0 ) {
@@ -640,7 +640,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			}
 		}
 		int l = level.getSelectedIndex();
-		return new AccountOperatingParams()
+		return new AccountingReportParams()
 			.setDomain(this.currentDomainId)
 			.setPeriod(AonNumberUtils.toInteger( period.getSelectedValue()))
 			.setFromDate(fromDate.getValue())

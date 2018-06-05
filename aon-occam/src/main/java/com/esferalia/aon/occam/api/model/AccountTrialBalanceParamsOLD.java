@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
-public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
+public class AccountTrialBalanceParamsOLD implements IAccountParams,Cloneable {
 
 	private static final long serialVersionUID = 8075038329917800745L;
 	
@@ -24,7 +24,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public int getDomain() {
 		return domain;
 	}
-	public AccountTrialBalanceParams setDomain(int domain) {
+	public AccountTrialBalanceParamsOLD setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -33,7 +33,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public Integer getPeriod() {
 		return period;
 	}
-	public AccountTrialBalanceParams setPeriod(Integer period) {
+	public AccountTrialBalanceParamsOLD setPeriod(Integer period) {
 		this.period = period;
 		return this;
 	}
@@ -42,7 +42,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public Date getFromDate() {
 		return fromDate;
 	}
-	public AccountTrialBalanceParams setFromDate(Date fromDate) {
+	public AccountTrialBalanceParamsOLD setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 		return this;
 	}
@@ -51,7 +51,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public Date getToDate() {
 		return toDate;
 	}
-	public AccountTrialBalanceParams setToDate(Date toDate) {
+	public AccountTrialBalanceParamsOLD setToDate(Date toDate) {
 		this.toDate = toDate;
 		return this;
 	}
@@ -59,7 +59,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public String getCode() {
 		return code;
 	}
-	public AccountTrialBalanceParams setCode(String code) {
+	public AccountTrialBalanceParamsOLD setCode(String code) {
 		this.code = code;
 		return this;
 	}
@@ -68,7 +68,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public Integer getActivity() {
 		return activity;
 	}
-	public AccountTrialBalanceParams setActivity(Integer activity) {
+	public AccountTrialBalanceParamsOLD setActivity(Integer activity) {
 		this.activity = activity;
 		return this;
 	}
@@ -77,7 +77,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-	public AccountTrialBalanceParams setSecurityLevel(SecurityLevel securityLevel) {
+	public AccountTrialBalanceParamsOLD setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 		return this;
 	}
@@ -85,7 +85,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public int getLevel() {
 		return level;
 	}
-	public AccountTrialBalanceParams setLevel(int level) {
+	public AccountTrialBalanceParamsOLD setLevel(int level) {
 		this.level = level;
 		return this;
 	}
@@ -93,7 +93,7 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public boolean isLowLevelAccountVisible() {
 		return lowLevelAccountVisible;
 	}
-	public AccountTrialBalanceParams setLowLevelAccountVisible(boolean lowLevelAccountVisible) {
+	public AccountTrialBalanceParamsOLD setLowLevelAccountVisible(boolean lowLevelAccountVisible) {
 		this.lowLevelAccountVisible = lowLevelAccountVisible;
 		return this;
 	}
@@ -101,13 +101,13 @@ public class AccountTrialBalanceParams implements IAccountParams,Cloneable {
 	public boolean isNoActivityAccountVisible() {
 		return noActivityAccountVisible;
 	}
-	public AccountTrialBalanceParams setNoActivityAccountVisible(boolean noActivityAccountVisible) {
+	public AccountTrialBalanceParamsOLD setNoActivityAccountVisible(boolean noActivityAccountVisible) {
 		this.noActivityAccountVisible = noActivityAccountVisible;
 		return this;
 	}
 	
-	public AccountTrialBalanceParams clone() {
-		return new AccountTrialBalanceParams()
+	public AccountTrialBalanceParamsOLD clone() {
+		return new AccountTrialBalanceParamsOLD()
 			.setDomain(getDomain())
 			.setPeriod(getPeriod())
 			.setFromDate(getFromDate())

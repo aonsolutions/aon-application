@@ -30,6 +30,8 @@ public interface IRequestParamsNames {
 	String JOURNAL = "journal";
 	String CONFIDENTIAL = "confidential";
 	String ACCOUNT = "account";
+	String ACCOUNT_CODE = "accountCode";
+	String ACCOUNT_DESCRIPTION = "accountDescription";
 	String DEBIT = "debit";
 	String CREDIT = "credit";
 	String CONCEPT = "concept";

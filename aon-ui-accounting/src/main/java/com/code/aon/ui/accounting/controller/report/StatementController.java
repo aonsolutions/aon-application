@@ -26,8 +26,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
 
 public class StatementController extends BasicController {
@@ -121,14 +121,16 @@ public class StatementController extends BasicController {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getAuthPrincipal().getShortName();
-		AccountStatementParams params = new AccountStatementParams();
+		AccountingReportParams params = new AccountingReportParams();
 		SecurityLevel se = getParams().getSecurityLevel();
 		if (se != null) {
 			com.esferalia.aon.occam.api.model.type.SecurityLevel securityLevel =
 					com.esferalia.aon.occam.api.model.type.SecurityLevel.values()[se.ordinal()];
 			params.setSecurityLevel( securityLevel );
 		}
-		params.setAccount(getAccount().getId());
+		com.esferalia.aon.occam.api.model.Account acc = new com.esferalia.aon.occam.api.model.Account();
+		acc.setId(getAccount().getId());
+		params.setAccount(acc);
 		params.setFromDate(getParams().getFromDate());
 		params.setToDate(getParams().getToDate());
 		if (getParams().getPeriod() != null && getParams().getPeriod().getId() != null) {

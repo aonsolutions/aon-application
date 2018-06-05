@@ -4,9 +4,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -24,7 +25,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 
-public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandlers<AccountTrialBalanceParams>{
+public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandlers<AccountingReportParams>{
 
 	private static FiscalServiceAsync fiscalService;
 	
@@ -33,9 +34,9 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 	private String currentDomainName;
 	private String currentUser;
 	private Integer currentDomainId;
-	private AccountTrialBalanceParams params;
+	private AccountingReportParams params;
 	
-	public TrialBalancePanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountTrialBalanceParams params) {
+	public TrialBalancePanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountingReportParams params) {
 		this.currentDomainName = currentDomainName;
 		this.currentUser = currentUser;
 		this.currentDomainId = currentDomainId;
@@ -50,7 +51,7 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 		scrollToTop();
 	}
 	
-	public AccountTrialBalanceParams getParams() {
+	public AccountingReportParams getParams() {
 		return params;
 	}
 
@@ -214,8 +215,8 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						AccountTrialBalanceParams newParams = params.clone();
-						newParams.setCode(bal.getCode());
+						AccountingReportParams newParams = params.clone();
+						newParams.setAccount( new Account().setCode(bal.getCode()));
 						SelectionEvent.fire(TrialBalancePanel.this, newParams );						
 					}
 				});
@@ -305,7 +306,7 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 	}
 	
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountTrialBalanceParams> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountingReportParams> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 }

@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
-public class AccountOperatingParams implements IAccountParams,Cloneable {
+public class AccountOperatingParamsOLD implements IAccountParams,Cloneable {
 
 	private static final long serialVersionUID = 8075038329917800745L;
 	
@@ -30,7 +30,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public int getDomain() {
 		return domain;
 	}
-	public AccountOperatingParams setDomain(int domain) {
+	public AccountOperatingParamsOLD setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -39,7 +39,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public Integer getPeriod() {
 		return period;
 	}
-	public AccountOperatingParams setPeriod(Integer period) {
+	public AccountOperatingParamsOLD setPeriod(Integer period) {
 		this.period = period;
 		return this;
 	}
@@ -48,7 +48,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public Date getFromDate() {
 		return fromDate;
 	}
-	public AccountOperatingParams setFromDate(Date fromDate) {
+	public AccountOperatingParamsOLD setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 		return this;
 	}
@@ -57,7 +57,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public Date getToDate() {
 		return toDate;
 	}
-	public AccountOperatingParams setToDate(Date toDate) {
+	public AccountOperatingParamsOLD setToDate(Date toDate) {
 		this.toDate = toDate;
 		return this;
 	}
@@ -66,7 +66,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public Integer getActivity() {
 		return activity;
 	}
-	public AccountOperatingParams setActivity(Integer activity) {
+	public AccountOperatingParamsOLD setActivity(Integer activity) {
 		this.activity = activity;
 		return this;
 	}
@@ -75,7 +75,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-	public AccountOperatingParams setSecurityLevel(SecurityLevel securityLevel) {
+	public AccountOperatingParamsOLD setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 		return this;
 	}
@@ -83,7 +83,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public int getLevel() {
 		return level;
 	}
-	public AccountOperatingParams setLevel(int level) {
+	public AccountOperatingParamsOLD setLevel(int level) {
 		this.level = level;
 		return this;
 	}
@@ -91,7 +91,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public int getPreviousPeriods() {
 		return previousPeriods;
 	}
-	public AccountOperatingParams setPreviousPeriods(int previousPeriods) {
+	public AccountOperatingParamsOLD setPreviousPeriods(int previousPeriods) {
 		this.previousPeriods = previousPeriods;
 		return this;
 	}
@@ -107,7 +107,7 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public boolean isByMonth() {
 		return byMonth;
 	}
-	public AccountOperatingParams setByMonth(boolean byMonth) {
+	public AccountOperatingParamsOLD setByMonth(boolean byMonth) {
 		this.byMonth = byMonth;
 		return this;
 	}
@@ -115,25 +115,25 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	public boolean isPercentsEnabled() {
 		return percentsEnabled;
 	}
-	public AccountOperatingParams setPercentsEnabled(boolean percentsEnabled) {
+	public AccountOperatingParamsOLD setPercentsEnabled(boolean percentsEnabled) {
 		this.percentsEnabled = percentsEnabled;
 		return this;
 	}
 	public HashSet<String> getCostCenters() {
 		return costCenters;
 	}
-	public AccountOperatingParams setCostCenters(HashSet<String> costCenters) {
+	public AccountOperatingParamsOLD setCostCenters(HashSet<String> costCenters) {
 		this.costCenters = costCenters;
 		return this;
 	}
-	public AccountOperatingParams addCostCenter(String costCenter) {
+	public AccountOperatingParamsOLD addCostCenter(String costCenter) {
 		if (costCenters == null) setCostCenters(new HashSet<String>());
 		if (!costCenters.contains(costCenter)) {
 			costCenters.add(costCenter);
 		}
 		return this;
 	}
-	public AccountOperatingParams removeCostCenter(String costCenter) {
+	public AccountOperatingParamsOLD removeCostCenter(String costCenter) {
 		if (costCenters == null) setCostCenters(new HashSet<String>());
 		if (costCenters.contains(costCenter)) {
 			costCenters.remove(costCenter);
@@ -142,8 +142,8 @@ public class AccountOperatingParams implements IAccountParams,Cloneable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public AccountOperatingParams clone() {
-		return new AccountOperatingParams()
+	public AccountOperatingParamsOLD clone() {
+		return new AccountOperatingParamsOLD()
 			.setDomain(getDomain())
 			.setPeriod(getPeriod())
 			.setFromDate(getFromDate())

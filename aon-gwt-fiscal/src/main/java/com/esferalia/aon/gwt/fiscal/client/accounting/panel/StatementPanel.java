@@ -13,8 +13,8 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -23,6 +23,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -43,13 +44,13 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 	private String currentDomainName;
 	private String currentUser;
 	private Integer currentDomainId;
-	private AccountStatementParams params;
+	private AccountingReportParams params;
 	
-	public StatementPanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountStatementParams params) {
+	public StatementPanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountingReportParams params) {
 		this(currentDomainName, currentUser, currentDomainId, params, true);
 	}
 	
-	public StatementPanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountStatementParams params, boolean allowChecks) {
+	public StatementPanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountingReportParams params, boolean allowChecks) {
 		this.currentDomainName = currentDomainName;
 		this.currentUser = currentUser;
 		this.currentDomainId = currentDomainId;
@@ -59,16 +60,22 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 		setWidget(root);
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());		
-		if (params == null || (params.getAccount() == null && params.getFullAccount() == null)) {
-			final FlowPanel msgPanel = new FlowPanel("pre");
-			InlineLabel accountLabel = new InlineLabel("Indique una cuenta contable.");
-			accountLabel.addStyleName(AON.AON_CSS.aonBold());
-			msgPanel.add(accountLabel);
-			root.add(msgPanel);	
+		if (params == null 
+			|| params.getAccount() == null 
+			|| (params.getAccount().getId() == null && AonStringUtils.isBlank(params.getAccount().getCode()))) {
+			showError("Indique una cuenta contable.");
 		} else {
 			search(allowChecks);
 			scrollToTop();
 		}
+	}
+
+	private void showError(String msg) {
+		final FlowPanel msgPanel = new FlowPanel("pre");
+		InlineLabel accountLabel = new InlineLabel(msg);
+		accountLabel.addStyleName(AON.AON_CSS.aonBold());
+		msgPanel.add(accountLabel);
+		root.add(msgPanel);	
 	}
 
 	private void search(boolean allowChecks) {
@@ -415,8 +422,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				Label label = new Label(AON.MSG.noData() + " ["+caught+"]");
-				root.add(label );
+				showError(caught.getMessage());
 			}
 			
 		});

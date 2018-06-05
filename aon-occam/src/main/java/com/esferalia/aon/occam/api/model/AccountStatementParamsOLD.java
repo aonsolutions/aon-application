@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
-public class AccountStatementParams implements IAccountParams {
+public class AccountStatementParamsOLD implements IAccountParams {
 
 	private static final long serialVersionUID = 8075038329917800745L;
 	
@@ -27,7 +27,7 @@ public class AccountStatementParams implements IAccountParams {
 	public int getDomain() {
 		return domain;
 	}
-	public AccountStatementParams setDomain(int domain) {
+	public AccountStatementParamsOLD setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -36,7 +36,7 @@ public class AccountStatementParams implements IAccountParams {
 	public Integer getPeriod() {
 		return period;
 	}
-	public AccountStatementParams setPeriod(Integer period) {
+	public AccountStatementParamsOLD setPeriod(Integer period) {
 		this.period = period;
 		return this;
 	}
@@ -44,14 +44,14 @@ public class AccountStatementParams implements IAccountParams {
 	public Integer getAccount() {
 		return account;
 	}
-	public AccountStatementParams setAccount(Integer account) {
+	public AccountStatementParamsOLD setAccount(Integer account) {
 		this.account = account;
 		return this;
 	}
 	public Account getFullAccount() {
 		return fullAccount;
 	}
-	public AccountStatementParams setFullAccount(Account fullAccount) {
+	public AccountStatementParamsOLD setFullAccount(Account fullAccount) {
 		this.fullAccount = fullAccount;
 		return this;
 	} 
@@ -59,7 +59,7 @@ public class AccountStatementParams implements IAccountParams {
 	public Date getFromDate() {
 		return fromDate;
 	}
-	public AccountStatementParams setFromDate(Date fromDate) {
+	public AccountStatementParamsOLD setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 		return this;
 	}
@@ -68,7 +68,7 @@ public class AccountStatementParams implements IAccountParams {
 	public Date getToDate() {
 		return toDate;
 	}
-	public AccountStatementParams setToDate(Date toDate) {
+	public AccountStatementParamsOLD setToDate(Date toDate) {
 		this.toDate = toDate;
 		return this;
 	}
@@ -77,7 +77,7 @@ public class AccountStatementParams implements IAccountParams {
 	public Integer getActivity() {
 		return activity;
 	}
-	public AccountStatementParams setActivity(Integer activity) {
+	public AccountStatementParamsOLD setActivity(Integer activity) {
 		this.activity = activity;
 		return this;
 	}
@@ -86,7 +86,7 @@ public class AccountStatementParams implements IAccountParams {
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-	public AccountStatementParams setSecurityLevel(SecurityLevel securityLevel) {
+	public AccountStatementParamsOLD setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 		return this;
 	}
@@ -95,7 +95,7 @@ public class AccountStatementParams implements IAccountParams {
 		return openingEntriesExcluded;
 	}
 
-	public AccountStatementParams setOpeningEntriesExcluded(boolean openingEntriesExcluded) {
+	public AccountStatementParamsOLD setOpeningEntriesExcluded(boolean openingEntriesExcluded) {
 		this.openingEntriesExcluded = openingEntriesExcluded;
 		return this;
 	}
@@ -104,7 +104,7 @@ public class AccountStatementParams implements IAccountParams {
 		return closingEntriesExcluded;
 	}
 
-	public AccountStatementParams setClosingEntriesExcluded(boolean closingEntriesExcluded) {
+	public AccountStatementParamsOLD setClosingEntriesExcluded(boolean closingEntriesExcluded) {
 		this.closingEntriesExcluded = closingEntriesExcluded;
 		return this;
 	}
@@ -113,7 +113,7 @@ public class AccountStatementParams implements IAccountParams {
 		return operatingEntriesExcluded;
 	}
 
-	public AccountStatementParams setOperatingEntriesExcluded(boolean operatingEntriesExcluded) {
+	public AccountStatementParamsOLD setOperatingEntriesExcluded(boolean operatingEntriesExcluded) {
 		this.operatingEntriesExcluded = operatingEntriesExcluded;
 		return this;
 	}
@@ -122,7 +122,7 @@ public class AccountStatementParams implements IAccountParams {
 		return documentNumber;
 	}
 
-	public AccountStatementParams setDocumentNumber(String documentNumber) {
+	public AccountStatementParamsOLD setDocumentNumber(String documentNumber) {
 		this.documentNumber = documentNumber;
 		return this;
 	}

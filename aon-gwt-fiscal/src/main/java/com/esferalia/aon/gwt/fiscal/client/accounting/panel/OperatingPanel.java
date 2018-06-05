@@ -6,9 +6,9 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -33,9 +33,9 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 	private String currentDomainName;
 	private String currentUser;
 	private Integer currentDomainId;
-	private AccountOperatingParams params;
+	private AccountingReportParams params;
 	
-	public OperatingPanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountOperatingParams params) {
+	public OperatingPanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountingReportParams params) {
 		this.currentDomainName = currentDomainName;
 		this.currentUser = currentUser;
 		this.currentDomainId = currentDomainId;

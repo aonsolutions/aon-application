@@ -9,14 +9,12 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
@@ -81,12 +79,12 @@ public interface IAccounting {
 		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException;
 
 	// 			STATEMENT
-	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountStatementParams params) 
+	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountingReportParams params) 
 			throws AonCoreException;
-	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)
+	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountingReportParams params)
 			throws AonCoreException;
-	public AccountOperatingReport getAccountOperatingReport(AONContext ctx, AccountOperatingParams params) throws AonCoreException;
-	public AccountTrialBalanceReport getTrialBalanceReport(AONContext ctx, AccountTrialBalanceParams params) throws AonCoreException;
+	public AccountOperatingReport getAccountOperatingReport(AONContext ctx, AccountingReportParams params) throws AonCoreException;
+	public AccountTrialBalanceReport getTrialBalanceReport(AONContext ctx, AccountingReportParams params) throws AonCoreException;
 	
 	
 	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params,

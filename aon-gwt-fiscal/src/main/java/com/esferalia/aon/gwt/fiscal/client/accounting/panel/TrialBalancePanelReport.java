@@ -12,9 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
-import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -49,7 +47,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 		this(domainName,user,domainId,Integer.MAX_VALUE,null,null);
 	}
 	
-	public TrialBalancePanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountTrialBalanceParams params) {
+	public TrialBalancePanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountingReportParams params) {
 		super(Unit.PX);
 		this.currentDomainName = domainName;
 		this.currentUser = user;
@@ -77,7 +75,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 		}
 	}
 	
-	private void fill(int tabIndex, AccountTrialBalanceParams params) {
+	private void fill(int tabIndex, AccountingReportParams params) {
 		if (config.getPeriods() == null || config.getPeriods().size() == 0 ) {
 			Window.alert("No se han encontrado ejercicios contables");
 		} else {
@@ -132,11 +130,11 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 					TrialBalancePanelReport.this.animate(500);
 				}
 			});
-			filter.addValueChangeHandler(new ValueChangeHandler<AccountTrialBalanceParams>() {
+			filter.addValueChangeHandler(new ValueChangeHandler<AccountingReportParams>() {
 				
 				@Override
-				public void onValueChange(ValueChangeEvent<AccountTrialBalanceParams> event) {
-					AccountTrialBalanceParams params = event.getValue();
+				public void onValueChange(ValueChangeEvent<AccountingReportParams> event) {
+					AccountingReportParams params = event.getValue();
 					onSearch(params,0);
 				}
 			});
@@ -173,40 +171,41 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 //		tabPanel.insert(panel, closeTab, (tabPanel.getWidgetCount()-1));
 //	}
 	
-	private void onSearch(AccountTrialBalanceParams params, int tab) {
+	private void onSearch(AccountingReportParams params, int tab) {
 		SimpleLayoutPanel panel = (SimpleLayoutPanel) tabPanel.getWidget(tab);
 		panel.clear();
 		panel.add(getResultPanel(params));
 		tabPanel.selectTab(tab);
 	}
 	
-	private TrialBalancePanel getResultPanel(AccountTrialBalanceParams params) {
+	private TrialBalancePanel getResultPanel(AccountingReportParams params) {
 		TrialBalancePanel resultsPanel = new TrialBalancePanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
-		resultsPanel.addSelectionHandler( new SelectionHandler<AccountTrialBalanceParams>() {
+		resultsPanel.addSelectionHandler( new SelectionHandler<AccountingReportParams>() {
 			
 			@Override
-			public void onSelection(SelectionEvent<AccountTrialBalanceParams> event) {
-				AccountTrialBalanceParams newParams = event.getSelectedItem();
+			public void onSelection(SelectionEvent<AccountingReportParams> event) {
+				AccountingReportParams newParams = event.getSelectedItem();
 				SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
 				String tabLabel = "";
-				if (AonStringUtils.length( newParams.getCode()) < 9 ) {
+				String code = newParams.getAccount().getCode();
+				if (AonStringUtils.length( code ) < 9 ) {
 					if (newParams.getLevel() == 1) newParams.setLevel(2);
 					else if (newParams.getLevel() == 2) newParams.setLevel(3);
 					else if (newParams.getLevel() == 3) newParams.setLevel(4);
 					else if (newParams.getLevel() == 4) newParams.setLevel(9);
 					else newParams.setLevel(9);
 					TrialBalancePanel breakdown = getResultPanel(newParams);
-					tabLabel = "Bal S/S: (" + newParams.getCode() + "*)";
+					tabLabel = "Bal S/S: (" + code + "*)";
 					breakdownPanel.add(breakdown);
 				} else {
-					AccountStatementParams stmParams = new AccountStatementParams()
+					AccountingReportParams stmParams = new AccountingReportParams()
 							.setDomain( newParams.getDomain() )
 							.setPeriod( newParams.getPeriod() )
 							.setFromDate( newParams.getFromDate() )
 							.setToDate( newParams.getToDate() )
 							.setActivity( newParams.getActivity() )
 							.setSecurityLevel( newParams.getSecurityLevel() )
-							.setFullAccount( new Account().setCode(newParams.getCode()) )
+							.setAccount( newParams.getAccount().clone() )
 					;
 					StatementPanel statement = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), stmParams, true);
 					statement.addSelectionHandler(new AccountEntrySelectionHandler () {
@@ -217,7 +216,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 						}
 					});
 					
-					tabLabel = "Extr: " + newParams.getCode();
+					tabLabel = "Extr: " + code;
 					breakdownPanel.add(statement);
 				}
 				CloseTab closeTab = new CloseTab(tabLabel, true);

@@ -9,15 +9,13 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
@@ -209,7 +207,7 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	@Override
 	public void getAccountStatement(String domainName,String user, int domain,
-			AccountStatementParams params,
+			AccountingReportParams params,
 			AsyncCallback<AccountStatementReport> callback) {
 		AON.start();
 		fsa.getAccountStatement(domainName, user, domain, params,
@@ -219,7 +217,7 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// --------------------------------------------------------------- ACCOUNT TRIAL BALANCE
 	@Override
 	public void getAccountTrialBalanceReport(String domainName, String user, int domain,
-			AccountTrialBalanceParams params, AsyncCallback<AccountTrialBalanceReport> callback) {
+			AccountingReportParams params, AsyncCallback<AccountTrialBalanceReport> callback) {
 		AON.start();
 		fsa.getAccountTrialBalanceReport(domainName, user, domain, params,
 				new AsyncCallbackWrapper<AccountTrialBalanceReport>(callback));
@@ -227,7 +225,7 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 
 	@Override
 	public void getAccountBalance(String domainName, int domain,
-			AccountStatementParams params,
+			AccountingReportParams params,
 			AsyncCallback<LinkedList<AccountStatement>> callback) {
 		AON.start();
 		fsa.getAccountBalance(
@@ -238,7 +236,7 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 
 	@Override
-	public void getAccountOperatingReport(String domainName, String user, int domain, AccountOperatingParams params,
+	public void getAccountOperatingReport(String domainName, String user, int domain, AccountingReportParams params,
 			AsyncCallback<AccountOperatingReport> callback) {
 		AON.start();
 		fsa.getAccountOperatingReport(

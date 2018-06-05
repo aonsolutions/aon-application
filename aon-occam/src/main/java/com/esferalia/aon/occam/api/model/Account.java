@@ -128,4 +128,17 @@ public class Account implements Serializable {
 				);
 	}
 	
+	public Account clone() {
+		return new Account()
+			.setId( getId() )
+			.setDomain( getDomain())
+			.setCode( getCode())
+			.setDescription( getDescription())
+			.setAlias( getAlias())
+			.setEntryEnabled( isEntryEnabled())
+			.setLevel( getLevel())
+			.setActive( isActive())
+			.setCostCenter( getCostCenter())
+			;
+	}
 }

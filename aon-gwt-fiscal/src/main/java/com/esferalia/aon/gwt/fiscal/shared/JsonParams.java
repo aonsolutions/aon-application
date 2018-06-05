@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.shared;
 
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
@@ -77,12 +77,20 @@ public class JsonParams extends JSONObject {
 		return json.toString();
 	}
 	
-	public static String convert(AccountStatementParams params) {
+	public static String convert(AccountingReportParams params) {
 		JSONObject json = new JSONObject();
 		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
 		json.put(IRequestParamsNames.PERIOD   		,params.getPeriod() 		== null? JSON_NULL : new JSONNumber( params.getPeriod()));
-		json.put(IRequestParamsNames.ACCOUNT   		,params.getAccount()			== null? JSON_NULL : new JSONNumber( params.getAccount()));
+		if (params.getAccount() != null) {
+			json.put(IRequestParamsNames.ACCOUNT,params.getAccount().getId() == null? JSON_NULL : new JSONNumber( params.getAccount().getId()));
+			json.put(IRequestParamsNames.ACCOUNT_CODE,AonStringUtils.isBlank(params.getAccount().getCode())? JSON_NULL : new JSONString( params.getAccount().getCode()));
+			json.put(IRequestParamsNames.ACCOUNT_DESCRIPTION,AonStringUtils.isBlank(params.getAccount().getDescription())? JSON_NULL : new JSONString( params.getAccount().getDescription()));
+		} else {
+			json.put(IRequestParamsNames.ACCOUNT,JSON_NULL);
+			json.put(IRequestParamsNames.ACCOUNT_CODE,JSON_NULL);
+			json.put(IRequestParamsNames.ACCOUNT_DESCRIPTION,JSON_NULL);
+		}
 		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromDate()		== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
 		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToDate()   			== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
 		json.put(IRequestParamsNames.ACTIVITY 		,params.getActivity() 			== null? JSON_NULL : new JSONNumber( params.getActivity()));

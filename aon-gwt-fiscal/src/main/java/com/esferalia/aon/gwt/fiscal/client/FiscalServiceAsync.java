@@ -7,15 +7,13 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountOperatingParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceParams;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
@@ -83,20 +81,20 @@ public interface FiscalServiceAsync {
 
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	void getAccountStatement(String domainName,String user, int domain, 
-			AccountStatementParams params,
-			AsyncCallback<AccountStatementReport> callback);
+			AccountingReportParams params,
+			AsyncCallback<AccountStatementReport> callback) throws AonCoreException;
 
 	void getAccountBalance(String domainName, int domain, 
-			AccountStatementParams params,
-			AsyncCallback<LinkedList<AccountStatement>> callback);
+			AccountingReportParams params,
+			AsyncCallback<LinkedList<AccountStatement>> callback) throws AonCoreException;
 	// --------------------------------------------------------------- ACCOUNT OPERATING STATEMENT
 	void getAccountOperatingReport(String domainName, String user, int domain
-			,AccountOperatingParams params
-			,AsyncCallback<AccountOperatingReport> callback);
+			,AccountingReportParams params
+			,AsyncCallback<AccountOperatingReport> callback) throws AonCoreException;
 	// --------------------------------------------------------------- ACCOUNT TRIAL BALANCE
 	void getAccountTrialBalanceReport(String domainName, String user, int domain
-			,AccountTrialBalanceParams params
-			,AsyncCallback<AccountTrialBalanceReport> callback);
+			,AccountingReportParams params
+			,AsyncCallback<AccountTrialBalanceReport> callback) throws AonCoreException;
 
 	
 	void getAccountFinances(String domainName, int domain,
