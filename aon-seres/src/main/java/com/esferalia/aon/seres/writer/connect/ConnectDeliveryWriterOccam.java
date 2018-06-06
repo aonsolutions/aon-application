@@ -218,7 +218,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 						if(!isPackageItem(level2Detail.getItem().getId())) {
 							Integer mainPackageKey = level1Map.get(level1Key).get(0);
 							completePackageSSCC(mainPackage, ssccMap.get(mainPackageKey));
-							mainPackage.seh1lList.add(createSEH1LRecord(delivery, level2Detail, null,
+							int lineNumber = mainPackage.seh1lList.size()+1;
+							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, level2Detail, null,
 									companyEdiCode, customerEdiCode, customerPackage));
 						} else {
 							SEH1P subPackage = null;
@@ -261,7 +262,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				for(SEH1L l: p.seh1lList){
 					if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
 							&& l.getNumeroDeLote_NB_().equals(seralNumber)){
-						SEH1L newLine = createSEH1LRecord(delivery, detail, packageQuantity,
+						SEH1L newLine = createSEH1LRecord(0, delivery, detail, packageQuantity,
 								companyEdiCode, customerEdiCode, customerPackage);
 						l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
 						if(packageQuantity!=null){
@@ -273,7 +274,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			}
 		}
 		if(!success){
-			targetPackage.seh1lList.add(createSEH1LRecord(delivery, detail, packageQuantity,
+			int lineNumber = targetPackage.seh1lList.size()+1;
+			targetPackage.seh1lList.add(createSEH1LRecord(lineNumber, delivery, detail, packageQuantity,
 					companyEdiCode, customerEdiCode, customerPackage));
 		}
 	}
@@ -406,14 +408,14 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	/**
 	 * Línea de artículos
 	 */
-	private SEH1L createSEH1LRecord(Delivery delivery, DeliveryDetail detail, Double packageQuantity,
+	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
 			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		Item item = getItem(detail.getItem().getId());
 		Integer customerId = delivery.getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customerId);
 		
 		SEH1L record = new SEH1L();
-		record.setNumeroDeLineaDelArticulo((int)detail.getLine());
+		record.setNumeroDeLineaDelArticulo(lineNumber);
 		record.setCodigoEANDelArticulo(productCustomerCode);
 		record.setDescripcionDelArticulo(item.getProduct().getName());
 		record.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");

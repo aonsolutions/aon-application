@@ -167,7 +167,7 @@ public class ConnectSaleInvoiceWriter {
 			String customerEdiMainCode) {
 		List<Finance> financeList = getFinances(invoice);
 		SINCC sincc = new SINCC();
-		if(invoice.getRectificationInvoice()!=null)
+		if(invoice.getRectificationInvoice()!=null && invoice.getRectificationInvoice().getId()!=null)
 			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.NOTA_E_ABONO_381
 					.getValue());
 		else
@@ -338,13 +338,12 @@ public class ConnectSaleInvoiceWriter {
 	private List<SINCL> createSINCLList(List<InvoiceDetail> detailList,
 			String companyEdiCode, String customerEdiMainCode, String customerPackage) {
 		List<SINCL> list = new ArrayList<>();
-		int idx = 0;
-		for(InvoiceDetail detail: detailList) {
+		detailList.forEach(detail -> {
 			if(detail.getTaxableBase()!=0.0){
-				list.add(createSINCLRecord(detail, ++idx,
+				list.add(createSINCLRecord(detail, detailList.indexOf(detail)+1,
 						companyEdiCode, customerEdiMainCode, customerPackage));
 			}
-		}
+		});
 		return list;
 	}
 

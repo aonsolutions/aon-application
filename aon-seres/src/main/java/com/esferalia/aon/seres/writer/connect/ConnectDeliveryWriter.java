@@ -240,7 +240,8 @@ public class ConnectDeliveryWriter {
 						if(!isPackageItem(level2Detail.getItem())) {
 							Integer mainPackageKey = level1Map.get(level1Key).get(0);
 							completePackageSSCC(mainPackage, ssccMap.get(mainPackageKey));
-							mainPackage.seh1lList.add(createSEH1LRecord(level2Detail, null,
+							int lineNumber = mainPackage.seh1lList.size()+1;
+							mainPackage.seh1lList.add(createSEH1LRecord(lineNumber, level2Detail, null,
 									companyEdiCode, customerEdiCode, customerPackage));
 						} else {
 							SEH1P subPackage = null;
@@ -283,7 +284,7 @@ public class ConnectDeliveryWriter {
 				for(SEH1L l: p.seh1lList){
 					if(l.getNumeroDeLote_NB_()!=null && !"".equals(l.getNumeroDeLote_NB_())
 							&& l.getNumeroDeLote_NB_().equals(seralNumber)){
-						SEH1L newLine = createSEH1LRecord(detail, packageQuantity,
+						SEH1L newLine = createSEH1LRecord(0, detail, packageQuantity,
 								companyEdiCode, customerEdiCode, customerPackage);
 						l.setCantidadEnviada_12_(l.getCantidadEnviada_12_()+newLine.getCantidadEnviada_12_());
 						if(packageQuantity!=null){
@@ -295,7 +296,8 @@ public class ConnectDeliveryWriter {
 			}
 		}
 		if(!success){
-			targetPackage.seh1lList.add(createSEH1LRecord(detail, packageQuantity,
+			int lineNumber = targetPackage.seh1lList.size()+1;
+			targetPackage.seh1lList.add(createSEH1LRecord(lineNumber, detail, packageQuantity,
 					companyEdiCode, customerEdiCode, customerPackage));
 		}
 	}
@@ -423,14 +425,14 @@ public class ConnectDeliveryWriter {
 	/**
 	 * Línea de artículos
 	 */
-	private SEH1L createSEH1LRecord(DeliveryDetail detail, Double packageQuantity,
+	private SEH1L createSEH1LRecord(Integer lineNumber, DeliveryDetail detail, Double packageQuantity,
 			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		Item item = detail.getItem();
 		Customer customer = detail.getDelivery().getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customer);
 
 		SEH1L record = new SEH1L();
-		record.setNumeroDeLineaDelArticulo(detail.getLine());
+		record.setNumeroDeLineaDelArticulo(lineNumber);
 		record.setCodigoEANDelArticulo(productCustomerCode);
 		record.setDescripcionDelArticulo(item.getProduct().getName());
 		record.setTipoDeIdentificacionDelArticulo_CU_DU_("CU");
