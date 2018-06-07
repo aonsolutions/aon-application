@@ -697,7 +697,7 @@ public class CertificadosWriter implements Serializable {
 							}
 						}
 					}
-					if(noHolidays!=null){
+					if(noHolidays!=null && noHolidays.intValue()>0){
 						o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
 						Double baseCg = getCommonBase(settle, utils.getSalaryDataList(settle, settle.getStartDate(), settle.getEndDate()));
 						Double baseAcc = getProfessionalBase(settle, utils.getSalaryDataList(settle, settle.getStartDate(), settle.getEndDate()));
