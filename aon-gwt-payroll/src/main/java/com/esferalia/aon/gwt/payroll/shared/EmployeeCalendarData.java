@@ -20,6 +20,8 @@ public class EmployeeCalendarData implements Serializable {
 	private HashMap<java.util.Date, String> contractFestivesDaysList;
 	private ArrayList<Byte> contractNonWorkingDaysList;
 	private boolean fullTimeJourney;
+	ArrayList<Quartet<Date, Date, String, String>> typeInactivityList;
+	
 	
 	public EmployeeCalendarData() {
 		super();
@@ -33,7 +35,8 @@ public class EmployeeCalendarData implements Serializable {
 			ArrayList<Byte> contractNonWorkingDaysList, 
 			boolean fullTimeJourney,
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList,
-			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList) {
+			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList,
+			ArrayList<Quartet<Date, Date, String, String>> typeInactivityList) {
 		super();
 		this.contractHoursList = contractHoursList;
 		this.contractExtraHoursList = contractExtraHoursList;
@@ -44,6 +47,7 @@ public class EmployeeCalendarData implements Serializable {
 		this.fullTimeJourney = fullTimeJourney;
 		this.contractCoefficientEREDayTypeList = contractCoefficientEREDayTypeList;
 		this.contractCoefficientStrikeDayTypeList = contractCoefficientStrikeDayTypeList;
+		this.typeInactivityList = typeInactivityList;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -118,5 +122,12 @@ public class EmployeeCalendarData implements Serializable {
 	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientStrikeDayTypeList() {
 		return contractCoefficientStrikeDayTypeList;
 	}
-	
+
+	public ArrayList<Quartet<Date, Date, String, String>> getTypeInactivityList() {
+		return typeInactivityList;
+	}
+
+	public void setTypeInactivityList(ArrayList<Quartet<Date, Date, String, String>> typeInactivityList) {
+		this.typeInactivityList = typeInactivityList;
+	}
 }

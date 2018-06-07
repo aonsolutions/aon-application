@@ -1,0 +1,106 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+    <ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarInactivityDialog.MyStyle">
+
+		.paddingLabelStyle{
+			padding-left: 7px;
+    		padding-top: 5px;
+			padding-right: 5px;
+		}
+
+		.paddingLabelStyle2{
+			padding-left: 7px;
+    		padding-top: 3px;
+			padding-right: 53px;
+		}
+		
+		.paddingLabelStyle3{
+			padding-left: 7px;
+    		padding-top: 3px;
+			padding-right: 68px;
+		}
+
+		.paddingBlocks{
+			padding-bottom: 15px;
+			padding-top: 10px;
+		}
+
+		.form {
+			padding: 10px;
+		}
+
+		.closeButton {
+			position: relative;
+    		left: 155px;
+			border: 1px solid #bbb;
+			border-radius: 3px;
+			cursor: pointer;
+		}
+
+		.hideElement{
+			visibility: hidden;
+		}
+
+		.messageStyle{
+			color: red;
+    		font-size: small;
+    		padding-bottom: 10px;
+    		width: 300px;
+		}
+
+		.dateStyle{
+			font-size: small;
+    		padding-right: 20px;
+    		padding-left: 50px;
+		}
+
+		.paddingButtons{
+			padding-left: 58px;
+		}
+
+		.margingButton{
+			margin-left: 10px;
+		}
+
+		.widthDateBox{
+			width: 110px !important;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:VerticalPanel>
+		    <g:HorizontalPanel ui:field="messageBlock">
+		        <g:Label ui:field="message"/>
+		   	</g:HorizontalPanel>
+		   	<g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Label styleName="{style.paddingLabelStyle}">Causa de inactividad:</g:Label>
+		    	<g:ListBox ui:field="typeInactivity"></g:ListBox>
+		    </g:HorizontalPanel>
+		   	<g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Label styleName="{style.paddingLabelStyle2}">Fecha inicio:</g:Label>
+		    	<a:DateBoxEx styleName="{style.widthDateBox}" ui:field="startDateBox"></a:DateBoxEx>
+		    </g:HorizontalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Label styleName="{style.paddingLabelStyle3}">Fecha fin:</g:Label>
+		    	<a:DateBoxEx styleName="{style.widthDateBox}" ui:field="endDateBox"></a:DateBoxEx>
+		    </g:HorizontalPanel>
+		    <g:HorizontalPanel ui:field="buttons" styleName="{style.paddingBlocks}">
+		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
+		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">OK</g:Button>
+		    </g:HorizontalPanel>
+		</g:VerticalPanel>
+			
+	</g:HTMLPanel>
+
+</ui:UiBinder>

@@ -15,12 +15,14 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -28,6 +30,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date,Double> mapDaysHour;
 	private Map<Date, DayType> mapDaysType;
 	private Map<Date, String> mapFestivesDays;
+	private Map<Date, String> mapInactivityDays;
 	private Map<Date, Double> mapExtraHours;
 	private Map<Date, Double> mapDaysCoefficientEre;
 	private Map<Date, Double> mapDaysCoefficientStrike;
@@ -37,6 +40,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date, Double> draftMapDaysCoefficientEre;
 	private Map<Date, Double> draftMapDaysCoefficientStrike;
 	private Map<Date, Double> draftMapExtraHours;
+	private Map<Date, String> draftMapInactivityDays;
 	
 	private Date startContract;
 	private Date endContract;
@@ -46,6 +50,8 @@ public class EmployeeCalendarDraftObjectData {
 	
 	private boolean fullTimeEmployee;
 	private int fullTimeEmployeeDraft = -1;
+	
+	private String typeInactivityDays;
 	
 	public UndoManager<Undoable> undoManager;
 	
@@ -73,6 +79,7 @@ public class EmployeeCalendarDraftObjectData {
 			put("DIAS_VACACIONES", DayType.HOLIDAY);
 			put("DIAS_HUELGA", DayType.STRIKEDAY);
 			put("DIAS_ERE", DayType.EREDAY);
+			put("DIAS_INACTIVIDAD", DayType.INACTIVITY);
 		}
 	};
 	
@@ -89,6 +96,7 @@ public class EmployeeCalendarDraftObjectData {
 		T visitSuspensionDay(DayType dayType);
 		T visitITDay(DayType dayType);
 		T visitNoTypeDay(DayType dayType);
+		T visitInactivityDay(DayType dayType);
 	}
 	
 	public static enum DayType{
@@ -144,6 +152,12 @@ public class EmployeeCalendarDraftObjectData {
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
 				return visitor.visitITDay(this);
+			}
+		},
+		INACTIVITY {
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitInactivityDay(this);
 			}
 		},
 		NOTYPEDAY {
@@ -291,6 +305,33 @@ public class EmployeeCalendarDraftObjectData {
 		
 	}
 	
+	class SetInactivityEdit implements Undoable {
+
+		private String oldEre;
+		private String newEre;
+		private Date day;
+		
+		public SetInactivityEdit(String oldT, String newT, Date actualDay) {
+			this.oldEre = oldT;
+			this.newEre = newT;
+			this.day = actualDay;
+		}
+		
+		@Override
+		public void undo() {
+			if (oldEre == null)
+				draftMapInactivityDays.remove(day);
+			else
+				draftMapInactivityDays.put(day, oldEre);
+		}
+		
+		@Override
+		public void redo() {
+			draftMapInactivityDays.put(day, newEre);
+		}
+		
+	}
+	
 	class SetStrikeEdit implements Undoable {
 
 		private Double oldStrike;
@@ -332,13 +373,14 @@ public class EmployeeCalendarDraftObjectData {
 		this.mapExtraHours = new HashMap<Date,Double>();
 		this.mapDaysCoefficientEre = new HashMap<Date,Double>();
 		this.mapDaysCoefficientStrike = new HashMap<Date,Double>();
+		this.mapInactivityDays = new HashMap<Date,String>();
 		
 		this.draftMapDaysHour = new HashMap<Date,Double>();
 		this.draftMapDaysType = new HashMap<Date,DayType>();
 		this.draftMapDaysCoefficientEre = new HashMap<Date,Double>();
 		this.draftMapDaysCoefficientStrike = new HashMap<Date,Double>();
 		this.draftMapExtraHours = new HashMap<Date,Double>();
-		
+		this.draftMapInactivityDays = new HashMap<Date,String>();
 		
 		this.startContract = startContract;
 		this.endContract = endContract;
@@ -438,6 +480,8 @@ public class EmployeeCalendarDraftObjectData {
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	}
 	
+	
+	
 	public Double getHourByDay (Date day){
 		Double hourDayDraft = draftMapDaysHour.get(day);
 		if (hourDayDraft != null)
@@ -499,6 +543,20 @@ public class EmployeeCalendarDraftObjectData {
 			undos.add(new SetEreEdit(oldCE, ce, day));
 		}
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+	
+	public void setInactiveDays(List<Date> dates, DayType inactivity, String typeInactivity) {
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Date day : dates){
+			DateUtils.resetTime(day);
+			//Window.alert(day + " = " + inactivity);
+			DayType oldType = draftMapDaysType.put(day, inactivity);
+			String oldCE = draftMapInactivityDays.put(day, typeInactivity);
+			undos.add(new SetTypeEdit(oldType, inactivity, day));
+			undos.add(new SetInactivityEdit(oldCE, typeInactivity, day));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+		
 	}
 	
 	public void setStrikeCoefficientDays(List<Date> strikeDays, DayType strikeType, double cs) {
@@ -923,6 +981,7 @@ public class EmployeeCalendarDraftObjectData {
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreList = result.getContractCoefficientEREDayTypeList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientStrikeList = result.getContractCoefficientStrikeDayTypeList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> ITDaysList = result.getcontractITDayTypeList();
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> inactivityTypeList = result.getTypeInactivityList();
 				ArrayList<Byte> nonWorkingList = result.getContractNonWorkingDaysList();
 				HashMap<java.util.Date, String> festivesList = result.getContractFestiveDaysList();
 				initializeNonWorkingsDaysTypeMap(nonWorkingList);
@@ -933,6 +992,7 @@ public class EmployeeCalendarDraftObjectData {
 				initializeITDaysTypeMap(ITDaysList);
 				initializeMapDaysCoefficientEre(daysCoefficientEreList);
 				initializeMapDaysCoefficientStrike(daysCoefficientStrikeList);
+				initializeMapInactivityDays(inactivityTypeList);
 				fullTimeEmployee = result.isFullTimeJourney();
 				if (fullTimeEmployeeDraft == -1)
 					fullTimeEmployeeDraft = result.isFullTimeJourney() ? 1 : 0;
@@ -1093,6 +1153,18 @@ public class EmployeeCalendarDraftObjectData {
 				}
 			}
 			
+			private void initializeMapInactivityDays(
+					List<Quartet<java.sql.Date, java.sql.Date, String, String>> inactivityTypeList) {
+				for(Quartet<java.sql.Date, java.sql.Date, String, String> entry : inactivityTypeList){
+					Date startDate = entry.getStartDate();
+					while(startDate.before(entry.getEndDate())){
+						mapInactivityDays.put(startDate, entry.getExpression());
+						DateUtils.addDays2Date(startDate, 1);
+					}
+				}
+				
+			}
+			
 			private void initializeITDaysTypeMap(List<Quartet<java.sql.Date, java.sql.Date, String, String>> iTDaysList) {
 				for (Quartet<java.sql.Date, java.sql.Date, String, String> quarterTypes : iTDaysList) {
 					
@@ -1155,6 +1227,7 @@ public class EmployeeCalendarDraftObjectData {
 		updateInfo.setFullTimeEmployee(this.fullTimeEmployee);
 		updateInfo.setStrikeDaysValues(createUpdateDaysCoefficientStrike());
 		updateInfo.setEreDaysValues(createUpdateDaysCoefficientEre());
+		updateInfo.setMapInactivityDays(createUpdateInactivity());
 		
 		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
 
@@ -1308,6 +1381,10 @@ public class EmployeeCalendarDraftObjectData {
 			updateTypesMap.put(e.getKey(), e.getValue());
 		}
 		
+		Date date = new Date();
+		DateUtils.resetTime(date);
+		//Window.alert(date +" = "+draftMapDaysType.get(date));
+		
 		for (Entry<Date,DayType> e : draftMapDaysType.entrySet()){
 			updateTypesMap.put(e.getKey(), e.getValue());
 		}
@@ -1327,6 +1404,20 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		return updateMapDaysCoefficientEre;
+	}
+	
+	private Map<java.util.Date, String> createUpdateInactivity() {
+		Map<Date, String> updateMapInactivity = new HashMap<Date, String>();
+		
+		for(Entry<Date, String> entry : mapInactivityDays.entrySet()){
+			updateMapInactivity.put(entry.getKey(), entry.getValue());
+		}
+		
+		for(Entry<Date, String> entry : draftMapInactivityDays.entrySet()){
+			updateMapInactivity.put(entry.getKey(), entry.getValue());
+		}
+		
+		return updateMapInactivity;
 	}
 
 	private Map<Date, Double> createUpdateDaysCoefficientStrike() {
@@ -1354,5 +1445,6 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 	}
+
 	
 }

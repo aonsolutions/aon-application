@@ -18,6 +18,7 @@ public class EmployeeCalendarUpdate implements Serializable {
 	private List<Quartet<Date, Date, String, String>> monthExtraHoursList;
 	private Map<java.util.Date, Double> mapDaysCoefficientStrike;
 	private Map<java.util.Date, Double> mapDaysCoefficientEre;
+	private Map<java.util.Date, String> mapInactivityDays;
 	private Double ereCoefficient;
 	private Boolean fullTimeEmployee;
 	
@@ -26,13 +27,15 @@ public class EmployeeCalendarUpdate implements Serializable {
 	}
 
 	public EmployeeCalendarUpdate(HashMap<java.util.Date, DayType> daysTypesMap, HashMap<java.util.Date, Double> daysHoursMap,
-			List<Quartet<Date, Date, String, String>> monthExtraHoursList, Double ereCoefficient, Boolean fullTimeEmployee) {
+			List<Quartet<Date, Date, String, String>> monthExtraHoursList, Double ereCoefficient, Boolean fullTimeEmployee,
+			Map<java.util.Date, String> mapInactivityDays) {
 		super();
 		this.daysTypesMap = daysTypesMap;
 		this.daysHoursMap = daysHoursMap;
 		this.monthExtraHoursList = monthExtraHoursList;
 		this.ereCoefficient = ereCoefficient;
 		this.fullTimeEmployee = fullTimeEmployee;
+		this.mapInactivityDays = mapInactivityDays;
 		
 	}
 
@@ -100,5 +103,15 @@ public class EmployeeCalendarUpdate implements Serializable {
 	public Map<java.util.Date, Double> getMapDaysCoefficientEre() {
 		return mapDaysCoefficientEre;
 	}
+
+	public Map<java.util.Date, String> getMapInactivityDays() {
+		return mapInactivityDays;
+	}
+
+	public void setMapInactivityDays(Map<java.util.Date, String> mapInactivityDays) {
+		this.mapInactivityDays = mapInactivityDays;
+	}
+	
+	
 	
 }
