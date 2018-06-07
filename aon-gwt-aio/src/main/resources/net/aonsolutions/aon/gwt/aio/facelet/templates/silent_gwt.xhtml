@@ -15,6 +15,7 @@
 	<aon:valueParam name="subEntryPoint" default="" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
+	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
 
 	<script type="text/javascript">
         //<![CDATA[
@@ -35,7 +36,9 @@
         function getCurrentDomainName() {
         	return "#{gwtDomainName}"
         }
-        
+        function getCurrentUser() {
+        	return "#{gwtUser}";
+        }
         function getSubEntryPoint() {
         	return "#{subEntryPoint}"
         }
