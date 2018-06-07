@@ -144,17 +144,20 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 					for (AccountOperatingAccount account : report.getAccounts()) {
 						boolean title = account.getId() == null;
 						Label codeLabel = new Label((title?"":account.getCode()) + " " + account.getDescription());
-						codeLabel.addClickHandler(new ClickHandler() {
-							
-							@Override
-							public void onClick(ClickEvent event) {
-								AccountingReportParams newParams = params.clone();
-								newParams.setAccount( new Account()
-									.setId(account.getId())
-									.setCode(account.getCode()));
-								SelectionEvent.fire(OperatingPanel.this, newParams );						
-							}
-						});
+						if (!title) {
+							codeLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
+							codeLabel.addClickHandler(new ClickHandler() {
+								
+								@Override
+								public void onClick(ClickEvent event) {
+									AccountingReportParams newParams = params.clone();
+									newParams.setAccount( new Account()
+										.setId(account.getId())
+										.setCode(account.getCode()));
+									SelectionEvent.fire(OperatingPanel.this, newParams );						
+								}
+							});
+						}
 						tab.setWidget(row, 0, codeLabel);
 						tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
 						

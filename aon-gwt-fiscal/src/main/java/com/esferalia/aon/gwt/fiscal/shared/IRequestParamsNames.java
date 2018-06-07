@@ -6,6 +6,7 @@ public interface IRequestParamsNames {
 	String DOMAIN_NAME = "domainName";
 	String USER = "user";
 	String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
+	String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 
 	String DOMAIN = "domain";
 	String REGISTRY = "registry";
@@ -39,6 +40,13 @@ public interface IRequestParamsNames {
 	String BALANCING_ACCOUNT = "balancingAccount";
 	String COMMENTS = "comments";
 	String ORDER = "order";
+	String LEVEL = "level";
+	String COST_CENTERS = "costCenters";
+	String PREVIOUS_PERIODS = "previousPeriods";
+	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
+	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
+	String PERCENTS_ENABLED = "percentsEnabled";
+	String BY_MONTH = "byMonth";
 
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";

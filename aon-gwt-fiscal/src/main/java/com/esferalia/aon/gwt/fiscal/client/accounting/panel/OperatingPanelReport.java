@@ -52,6 +52,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 
 public class OperatingPanelReport extends DockLayoutPanel implements Focusable, HasAccountEntrySelectionHandlers{
@@ -640,33 +641,19 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			@Override
 			public void onSelection(SelectionEvent<AccountingReportParams> event) {
 				AccountingReportParams newParams = event.getSelectedItem();
+				addTab(newParams);
+			}
+
+			private void addTab(AccountingReportParams newParams) {
 				SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
 				String tabLabel = "";
 				String code = newParams.getAccount().getCode();
 				if (AonStringUtils.length( code ) < 9 ) {
 					tabLabel = "Bal S/S: (" + code + "*)";
-					breakdownPanel.add(getTrialBalance( newParams ));
+					breakdownPanel.add(getTrialBalance(newParams));
 				} else {
-					AccountingReportParams stmParams = new AccountingReportParams()
-							.setDomain( newParams.getDomain() )
-							.setPeriod( newParams.getPeriod() )
-							.setFromDate( newParams.getFromDate() )
-							.setToDate( newParams.getToDate() )
-							.setActivity( newParams.getActivity() )
-							.setSecurityLevel( newParams.getSecurityLevel() )
-							.setAccount( newParams.getAccount().clone() )
-					;
-					StatementPanel statement = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), stmParams, true);
-					statement.addSelectionHandler(new AccountEntrySelectionHandler () {
-						
-						@Override
-						public void onSelection(AccountEntrySelectionEvent  event) {
-							AccountEntrySelectionEvent.fire(OperatingPanelReport.this, event.getSelectedItem(), event.getCallback() );
-						}
-					});
-					
 					tabLabel = "Extr: " + code;
-					breakdownPanel.add(statement);
+					breakdownPanel.add(getStatementPanel(newParams));
 				}
 				CloseTab closeTab = new CloseTab(tabLabel, true);
 				closeTab.addCloseHandler(new CloseHandler<Integer>() {
@@ -677,6 +664,28 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				});
 				tabPanel.add(breakdownPanel,closeTab);
 				tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
+
+			}
+
+			private Widget getStatementPanel(AccountingReportParams newParams) {
+				AccountingReportParams stmParams = new AccountingReportParams()
+						.setDomain( newParams.getDomain() )
+						.setPeriod( newParams.getPeriod() )
+						.setFromDate( newParams.getFromDate() )
+						.setToDate( newParams.getToDate() )
+						.setActivity( newParams.getActivity() )
+						.setSecurityLevel( newParams.getSecurityLevel() )
+						.setAccount( newParams.getAccount().clone() )
+				;
+				StatementPanel statement = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), stmParams, true);
+				statement.addSelectionHandler(new AccountEntrySelectionHandler () {
+					
+					@Override
+					public void onSelection(AccountEntrySelectionEvent  event) {
+						AccountEntrySelectionEvent.fire(OperatingPanelReport.this, event.getSelectedItem(), event.getCallback() );
+					}
+				});
+				return statement;
 			}
 
 			private TrialBalancePanel getTrialBalance(AccountingReportParams newParams) {
@@ -690,20 +699,8 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 
 					@Override
 					public void onSelection(SelectionEvent<AccountingReportParams> event) {
-						SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
-						String code = newParams.getAccount().getCode();
-						String tabLabel = "Bal S/S: (" + code + "*)";
 						AccountingReportParams newParams = event.getSelectedItem();
-						breakdownPanel.add(getTrialBalance( newParams ));
-						CloseTab closeTab = new CloseTab(tabLabel, true);
-						closeTab.addCloseHandler(new CloseHandler<Integer>() {
-							@Override
-							public void onClose(CloseEvent<Integer> event) {
-								tabPanel.remove(breakdownPanel); 
-							}
-						});
-						tabPanel.add(breakdownPanel,closeTab);
-						tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
+						addTab(newParams);
 					}
 				});
 				return trialBalance;

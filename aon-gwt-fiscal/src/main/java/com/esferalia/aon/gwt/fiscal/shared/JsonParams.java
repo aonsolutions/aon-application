@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
@@ -80,8 +81,8 @@ public class JsonParams extends JSONObject {
 	public static String convert(AccountingReportParams params) {
 		JSONObject json = new JSONObject();
 		JSONNull JSON_NULL = JSONNull.getInstance();
-		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
-		json.put(IRequestParamsNames.PERIOD   		,params.getPeriod() 		== null? JSON_NULL : new JSONNumber( params.getPeriod()));
+		json.put(IRequestParamsNames.DOMAIN,new JSONNumber( params.getDomain()));
+		json.put(IRequestParamsNames.PERIOD,params.getPeriod() 		== null? JSON_NULL : new JSONNumber( params.getPeriod()));
 		if (params.getAccount() != null) {
 			json.put(IRequestParamsNames.ACCOUNT,params.getAccount().getId() == null? JSON_NULL : new JSONNumber( params.getAccount().getId()));
 			json.put(IRequestParamsNames.ACCOUNT_CODE,AonStringUtils.isBlank(params.getAccount().getCode())? JSON_NULL : new JSONString( params.getAccount().getCode()));
@@ -91,11 +92,31 @@ public class JsonParams extends JSONObject {
 			json.put(IRequestParamsNames.ACCOUNT_CODE,JSON_NULL);
 			json.put(IRequestParamsNames.ACCOUNT_DESCRIPTION,JSON_NULL);
 		}
-		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromDate()		== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
-		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToDate()   			== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
-		json.put(IRequestParamsNames.ACTIVITY 		,params.getActivity() 			== null? JSON_NULL : new JSONNumber( params.getActivity()));
-		json.put(IRequestParamsNames.CONFIDENTIAL	,params.getSecurityLevel() == null?JSON_NULL :new JSONNumber( params.getSecurityLevel().value()));
-		json.put(IRequestParamsNames.DOCUMENT 	 	,AonStringUtils.isBlank(params.getDocumentNumber())? JSON_NULL : new JSONString( params.getDocumentNumber()));
+		json.put(IRequestParamsNames.FROM_DATE,params.getFromDate() == null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
+		json.put(IRequestParamsNames.TO_DATE,params.getToDate() == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
+		json.put(IRequestParamsNames.ACTIVITY,params.getActivity() == null? JSON_NULL : new JSONNumber( params.getActivity()));
+		json.put(IRequestParamsNames.CONFIDENTIAL,params.getSecurityLevel() == null?JSON_NULL :new JSONNumber( params.getSecurityLevel().value()));
+		json.put(IRequestParamsNames.DOCUMENT,AonStringUtils.isBlank(params.getDocumentNumber())? JSON_NULL : new JSONString( params.getDocumentNumber()));
+		
+		json.put(IRequestParamsNames.LEVEL,new JSONNumber( params.getLevel()));
+		json.put(IRequestParamsNames.PREVIOUS_PERIODS,new JSONNumber( params.getPreviousPeriods()));
+		json.put(IRequestParamsNames.LOW_LEVEL_ACCOUNT_VISIBLE,new JSONNumber( params.isLowLevelAccountVisible()?1:0));
+		json.put(IRequestParamsNames.NO_ACTIVITY_ACCOUNT_VISIBLE,new JSONNumber( params.isNoActivityAccountVisible()?1:0));
+		json.put(IRequestParamsNames.PERCENTS_ENABLED,new JSONNumber( params.isPercentsEnabled()?1:0));
+		json.put(IRequestParamsNames.BY_MONTH,new JSONNumber( params.isByMonth()?1:0));
+		if (params.getCostCenters() == null || params.getCostCenters().size() == 0) {
+			json.put(IRequestParamsNames.COST_CENTERS,JSON_NULL);
+		} else {
+			JSONArray costCenters = new JSONArray();
+			int i = 0;
+			for (String cc : params.getCostCenters()) {
+				if (AonStringUtils.isNotBlank(cc)) {
+					costCenters.set(i, new JSONString( cc ));  
+					i++;
+				}
+			}
+			json.put(IRequestParamsNames.COST_CENTERS,costCenters);
+		}
 		return json.toString();
 	}
 
