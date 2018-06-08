@@ -15,6 +15,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -26,7 +27,10 @@ import org.jooq.tools.json.JSONParser;
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.ACCOUNTING;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -119,7 +123,11 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			Date start = new Date();
 			System.out.println( "Journal Report Start " );
 			
-			ExcelAction action = new ExcelAction( );
+			AonConfiguration config = AON.getConfiguration(domainName, domainId, user);
+			Company company = config.getCompany();
+			String companyName = company == null ? "" : company.getName();
+			
+			ExcelAction action = new ExcelAction( companyName );
 			action.initialize("Diario");
 			ACCOUNTING.getFlatAccountEntries(domainName, domainId, user, params)
 					.forEach(action)						
@@ -139,16 +147,26 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 	private class ExcelAction extends AbsExcelAction implements Consumer<FlatAccountEntryDetail>{
 		private XSSFCellStyle entryHeaderStyle;
 		private SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_PATTERN);
+		
+		private String companyName;
+		
+		public ExcelAction(String companyName) {
+			super();
+			this.companyName = companyName;
+		}
+
 		@Override
 		protected void headerRow() {
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape(true);
 			sheet.setMargin(Sheet.LeftMargin, 0.3 );
 			sheet.setMargin(Sheet.RightMargin, 0.3 );
-			sheet.setMargin(Sheet.TopMargin, 0.3 );
+			Header header = sheet.getHeader();
+			header.setLeft("&B" + companyName);
+			header.setRight("&B&D");
 			Footer footer = sheet.getFooter();
-			footer.setLeft("Listado diario de movimientos ");
-			footer.setRight("P\u00E1g: &P/&N");
+			footer.setLeft("&BCuenta de explotaci\u00F3n");
+			footer.setRight("&BP\u00E1g: &P/&N");
 			
 			
 			row = sheet.createRow(rowCount);

@@ -14,6 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -27,11 +28,14 @@ import org.jooq.tools.json.ParseException;
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.ACCOUNTING;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -55,8 +59,11 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
 			AccountingReportParams params = parseParams(accountReportParams);
 
+			AonConfiguration config = AON.getConfiguration(domainName, domainId, user);
+			Company company = config.getCompany();
+			String companyName = company == null ? "" : company.getName();
 			AccountOperatingReport report = ACCOUNTING.getAccountOperatingReport(domainName, user, domainId, params);
-			ExcelAction action = new ExcelAction( report );
+			ExcelAction action = new ExcelAction( companyName, report );
 			action.initialize("Cuenta de explotaci\u00F3n");
 			report.getAccounts()
 				.stream()
@@ -171,9 +178,11 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 		private XSSFCellStyle titleCellStyle;
 		
 		private AccountOperatingReport report;
+		private String companyName; 
 		
-		public ExcelAction(AccountOperatingReport report) {
+		public ExcelAction(String companyName, AccountOperatingReport report) {
 			super();
+			this.companyName = companyName;
 			this.report = report;
 		}
 
@@ -191,10 +200,12 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			printSetup.setLandscape( (report.getIntervals().size() * columns) > 5);
 			sheet.setMargin(Sheet.LeftMargin, 0.3 );
 			sheet.setMargin(Sheet.RightMargin, 0.3 );
-			sheet.setMargin(Sheet.TopMargin, 0.3 );
+			Header header = sheet.getHeader();
+			header.setLeft("&B" + companyName);
+			header.setRight("&B&D");
 			Footer footer = sheet.getFooter();
-			footer.setLeft("Cuenta de explotaci\u00F3n");
-			footer.setRight("P\u00E1g: &P/&N");
+			footer.setLeft("&BCuenta de explotaci\u00F3n");
+			footer.setRight("&BP\u00E1g: &P/&N");
 			
 			row = sheet.createRow(rowCount);
 			CellStyle defaultStyle = workbook.createCellStyle();
@@ -249,7 +260,6 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			
 			for (DateInterval inter : report.getIntervals()) {
 				CellUtil.createCell(row, cellCount, inter.getName(), headerStyle);
-				System.out.print( " cellCount ..: " + cellCount + " ; columns: " + columns + " -----> ");
 				if (report.showIncreasePercent() && cellCount == 1) {
 					sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, cellCount, cellCount+1));
 					cellCount = cellCount + 1;

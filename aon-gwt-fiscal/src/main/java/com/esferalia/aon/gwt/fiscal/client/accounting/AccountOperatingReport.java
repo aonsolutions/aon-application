@@ -1,15 +1,21 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.OperatingPanelReport;
+import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -28,6 +34,15 @@ public class AccountOperatingReport extends MainEntryPoint {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		OperatingPanelReport panel = new OperatingPanelReport(getCurrentDomainName(), getCurrentUser(), getCurrentDomain());
+		panel.addSelectionHandler(new AccountEntrySelectionHandler() {
+			
+			@Override
+			public void onSelection(AccountEntrySelectionEvent event) {
+				AccountEntry entry = event.getSelectedItem();  
+				showEntry(entry.getDomain(), entry.getId(), event.getCallback());
+				
+			}
+		});
 		
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
@@ -69,7 +84,7 @@ public class AccountOperatingReport extends MainEntryPoint {
 		print.setText(AON.MSG.print());
 		print.setTitle(AON.MSG.print());
 		print.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		print.addStyleName(AON.AON_CSS.aonIconPrinter());
+		print.addStyleName(AON.AON_CSS.aonIconExcel());
 		print.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -93,4 +108,38 @@ public class AccountOperatingReport extends MainEntryPoint {
 		root.add(dockLayoutPanel);
 	}
 
+	private void showEntry(int domain,Integer entryId, ModuleCallback<AccountEntry> callback) {
+		CustomPopup entryDialog = new CustomPopup();
+		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+		entryDialog.setAnimationEnabled(true);
+		entryDialog.setGlassEnabled(true);
+		entryDialog.setModal(true);
+		entryDialog.setCaption(AON.MSG.accountEntries());
+		AccountEntryModule module = new AccountEntryModule();
+		module.onModuleLoad(entryDialog, getCurrentDomainName(), getCurrentUser(), domain, entryId, new ModuleCallback<AccountEntry>() {
+			
+			@Override
+			public void onRemove(AccountEntry removed) {
+				entryDialog.hide();
+				callback.onRemove(removed);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+			
+			@Override
+			public void onExit() {
+				entryDialog.hide();
+			}
+			
+			@Override
+			public void onChange(AccountEntry changed) {
+				entryDialog.hide();
+				callback.onRemove(changed);
+			}
+		});
+		entryDialog.center();
+		entryDialog.show();
+	}
 }
