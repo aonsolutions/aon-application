@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -924,8 +925,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 		};
 						
-		if(selectedDates.getSelectedList().size() == 1){
+		if(!selectedDates.getSelectedList().isEmpty()){
+			Collections.sort(selectedDates.getSelectedList());
 			inactivityDialog.setStartDate(selectedDates.getSelectedList().get(0));
+			inactivityDialog.setEndDate(selectedDates.getSelectedList().get(selectedDates.getSelectedList().size()-1));
 		}
 		
 		inactivityDialog.show();
