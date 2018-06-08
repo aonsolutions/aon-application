@@ -409,7 +409,7 @@ public class AttachmentDAO {
 
 	public static void updateRegistryAttach(AONContext ctx, Attach attach){
 		ctx.getDslContext().update(RATTACH)
-			.set(RATTACH.ATTACH_DATE, new Date(attach.getDate().getTime()))
+			.set(RATTACH.ATTACH_DATE, new Date(attach.getDate()!= null ? attach.getDate().getTime() : new java.util.Date().getTime()))
 			.set(RATTACH.CATEGORY,attach.getCategory())
 			.set(RATTACH.DATA, attach.getData())
 			.set(RATTACH.DESCRIPTION, attach.getDescription())

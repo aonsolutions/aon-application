@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -37,11 +38,13 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositPreviousToCurrentConstants;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2PrevioustoD2Current;
@@ -94,6 +97,24 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return AON.getCompany(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getDomainProperty().eq(aonData.getDomain().getId()));
 	}
 	
+	public Map<String, String> getSchemaTextMode(AonData aonData, Integer id){
+		Integer id2 = (id != null) ? id: createSchemaTextMode(aonData, "Plantilla1");
+		
+		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 
+				f -> f.getIdProperty().eq(id2), AttachType.REGISTRY);
+		
+		return getSchema(attach);
+	}
+	
+	public Integer createSchemaTextMode(AonData aonData, String name) {
+		byte[] data = Utils.CreateXml("", name);
+		return DBConsults.insertDepositText(aonData.getDomain().getName(), name, data, aonData.getDomain().getId(), aonData.getUser().getLogin());
+	}
+	
+	public void deleteSchemaTextMode(AonData aonData, Integer id) {
+		AON.deleteAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
+	}
+	
 	public Map<String, String> getSchema(AonData aonData, Company company, Integer year, Boolean textMode){
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getDomainProperty().eq(aonData.getDomain().getId())
 				.and(f.getTypeProperty().eq((byte) 17))
@@ -101,29 +122,38 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			, AttachType.REGISTRY);
 		
 		if(attach.getId() == null) {
-			// TODO CREATE NEW SCHEMA 
-			return createD2Deposit(aonData.getDomain().getId(), company.getId(), company.getName(), "Abreviado", year);	
+	    	ApplicationParameter ap = AON.getApplicationParameter(aonData.getDomain().getName(), aonData.getDomain().getId(),
+	    			aonData.getUser().getLogin(), AppParam.FS_MODEL_CFG_CCAA.getValue());
+			String type = DepositType.ABREVIADO.getLabel();
+	    	if(ap.getValue() != null) {
+	    		type = DepositType.values()[Integer.parseInt(ap.getValue())].getLabel();
+	    	} 
+			return createD2Deposit(aonData.getDomain().getId(), company.getId(), company.getName(), type, year);	
 		} else {
-			Map<String, String> map = new HashMap<String, String>();
-
-			try {
-				Esquema schema = Utils.readXml(attach.getData());		
-				
-				List<Clave> claves = schema.getClaves().getClave();
-				if(schema.getError() != null) {
-					map.put("error", schema.getError());
-				}
-				String type = schema.getCabecera().getTipoCuestionario();
-				map.put(D2DepositConstants.DEPOSIT_TYPE, type);
-				for (Integer i = 0; i < claves.size(); i++) {
-					if(!map.containsKey(claves.get(i).getCodigo().toString()))
-						map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return map;
+			return getSchema(attach);
 		}
+	}
+	
+	public Map<String, String> getSchema(Attach attach){
+		Map<String, String> map = new HashMap<String, String>();
+
+		try {
+			Esquema schema = Utils.readXml(attach.getData());		
+			
+			List<Clave> claves = schema.getClaves().getClave();
+			if(schema.getError() != null) {
+				map.put("error", schema.getError());
+			}
+			String type = schema.getCabecera().getTipoCuestionario();
+			map.put(D2DepositConstants.DEPOSIT_TYPE, type);
+			for (Integer i = 0; i < claves.size(); i++) {
+				if(!map.containsKey(claves.get(i).getCodigo().toString()))
+					map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return map;
 	}
 
 	public void saveDeposit(AonData aonData, Map<String, String> deposit, Integer year) {
@@ -132,6 +162,20 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		try {
 			byte[] b = Utils.writeXml(schema);
 			DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveDepositTextMode(AonData aonData, Map<String, String> deposit, Integer id) {
+		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
+
+		Esquema schema = DBConsults.getDeposit(attach);
+		schema = deposit2Schema(schema, deposit);
+		try {
+			byte[] b = Utils.writeXml(schema);
+			attach.setData(b);
+			AON.updateAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), attach);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -160,14 +204,28 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return map;
 	}
 	
-	public Vector<MemoryTemplate> getDepositTemplates(AonData aonData, Integer year) {
-		return AON.getAttachStream(aonData.getDomain().getName(), aonData.getDomain().getParentId(), aonData.getUser().getLogin(),
-				f -> f.getDomainProperty().eq(aonData.getDomain().getParentId())
+	
+	public Vector<MemoryTemplate> getTemplates(AonData aonData) {
+		Vector<MemoryTemplate> vector = getTemplates(aonData, aonData.getDomain().getId());
+		if(vector.size() == 0) {
+			Integer id = createSchemaTextMode(aonData, "Plantilla1");
+			vector.add(new MemoryTemplate().setId(id).setName("Plantilla1"));
+		}
+		return getTemplates(aonData, aonData.getDomain().getId());
+	}
+	
+	public Vector<MemoryTemplate> getDepositTemplates(AonData aonData) {
+		return getTemplates(aonData, aonData.getDomain().getParentId());
+	}
+	
+	public Vector<MemoryTemplate> getTemplates(AonData aonData, Integer domainId) {
+		return AON.getAttachStream(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(domainId)
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.D2_DEPOSIT.value())),
 			AttachType.REGISTRY, true).map(r -> new MemoryTemplate()
 										.setId(r.getId())
 										.setName(r.getDescription())
-										.setD2Deposit(getD2DepositTreeObject(r.getId(), year, r.getData())))
+					)
 			.collect(Collectors.toCollection(Vector::new));
 	}
 	
@@ -185,7 +243,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		if (schema == null) {
 			// System.out.println(domainId);
 			if (textMode) {
-				schema = DBConsults.getDeposit(domain, domainId, cif);
+				Integer id = Integer.parseInt(cif);
+				Attach attach = AON.getAttach(domain, domainId, this.getUserLogin(), f-> f.getIdProperty().eq(id), AttachType.REGISTRY);
+				schema = DBConsults.getDeposit(attach);
 			} else schema = DBConsults.getDeposit(domain, domainId, year, this.getUserLogin());
 			request.getSession().setAttribute(D2_DEPOSIT_SCHEMA + cif + year, schema);
 		}
@@ -311,8 +371,6 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return s;
 	}
 	
-	
-	
 	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId, Integer year) {
 			
 		HttpServletRequest request = getThreadLocalRequest();
@@ -368,8 +426,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	}
 	
 	public Map<String, String> updateTexts(AonData aonData, MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif, Map<String, String> map) {
-
-		Esquema schema = DBConsults.getDeposit(aonData.getDomain().getName(), domainId, mt.getId().toString());
+		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(mt.getId()), AttachType.REGISTRY);
+		Esquema schema = DBConsults.getDeposit(attach);
 		
 		for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
 			if (freeTextMap.get(D2DepositKey.MAT19019001) && schema.getClaves().getClave().get(i).getCodigo().toString()
@@ -447,6 +505,42 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		}
 		return map;
 	}
+	
+	public Map<String, String> updateTexts(AonData aonData, MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map) {
+		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(mt.getId()), AttachType.REGISTRY);
+		Esquema schema = DBConsults.getDeposit(attach);
+		
+		for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
+			if (schema.getClaves().getClave().get(i).getCodigo().toString()	.equals(D2DepositKey.MAT19019001.getCode())) { 
+				map.put(D2DepositKey.MAT19019001.getCode(),  schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT29029001.getCode())) { 
+				map.put(D2DepositKey.MAT29029001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT39039001.getCode())) { 
+				map.put(D2DepositKey.MAT39039001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT49049001.getCode())) { 
+				map.put(D2DepositKey.MAT49049001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT59059001.getCode())) { 
+	 			map.put(D2DepositKey.MAT59059001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT69069001.getCode())) {
+				map.put(D2DepositKey.MAT69069001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT79079001.getCode())) {	
+				map.put(D2DepositKey.MAT79079001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT89089001.getCode())) { 
+				map.put(D2DepositKey.MAT89089001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT99099001.getCode())) { 
+				map.put(D2DepositKey.MAT99099001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT119119001.getCode())) { 
+				map.put(D2DepositKey.MAT119119001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT129129001.getCode())) { 
+				map.put(D2DepositKey.MAT129129001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT139139001.getCode())) { 
+				map.put(D2DepositKey.MAT139139001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			} else if (schema.getClaves().getClave().get(i).getCodigo().toString().equals(D2DepositKey.MAT149149001.getCode())) { 
+				map.put(D2DepositKey.MAT149149001.getCode(), schema.getClaves().getClave().get(i).getValor());
+			}
+		}
+		return map;
+	}
 
 	public String getDateStr(Date date) {
 		return "";
@@ -464,11 +558,10 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return date;
 	}
 
-	public Map<String, String> importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map, Integer year) {
-		String domainName = aonData.getDomain().getName();
-		if ("Balance (I.S.)".equals(type)) {
+	public Map<String, String> importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, String cif, Map<String, String> map, Integer year) {
+		if ("Balance (I.S.)".equals(type) || "Balance".equals(type)) {
 			if("2013".equals(ejercicio)) {
-				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
+				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillBalance(ctx, mod2002013);
 
@@ -479,7 +572,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2014".equals(ejercicio)) {
-				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
+				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillBalance(ctx, mod2002014, year);
 
@@ -490,7 +583,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2015".equals(ejercicio)){
-				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(domainName, domainId, getUserLogin(), 2015);
+				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2015);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002015toD2.fillBalance(ctx, mod2002015, year.toString().equals(ejercicio));
 
@@ -501,7 +594,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2016".equals(ejercicio)){
-				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
+				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2016);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002016toD2.fillBalance(ctx, mod2002016, year.toString().equals(ejercicio));
 
@@ -511,10 +604,10 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 					map.put(key.getCode(), ctx.get(key)
 							.toString());
 				}
-			}
-		} else if("Perdidas y ganancias (I.S.)".equals(type)) {
+			} 
+		} else if("Perdidas y ganancias (I.S.)".equals(type) || "Perdidas y Ganancias".equals(type) ) {
 			if("2013".equals(ejercicio)) {
-				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
+				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillPyg(ctx, mod2002013);
 
@@ -525,7 +618,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2014".equals(ejercicio)) {
-				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
+				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillPyg(ctx, mod2002014, year);
 
@@ -536,7 +629,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2015".equals(ejercicio)){
-				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(domainName, domainId, getUserLogin(), 2015);
+				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2015);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002015toD2.fillPyg(ctx, mod2002015, year.toString().equals(ejercicio));
 
@@ -547,7 +640,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2016".equals(ejercicio)){
-				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
+				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2016);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002016toD2.fillPyg(ctx, mod2002016, year.toString().equals(ejercicio));
 
@@ -560,7 +653,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			}
 		} else if("ECPN (I.S.)".equals(type)) {
 			if ("2013".equals(ejercicio)) {
-				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
+				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillEcpn(ctx, mod2002013);
 				Mod2002013toD2.fillEcpn2(ctx, mod2002013);
@@ -572,7 +665,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2014".equals(ejercicio)) {
-				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
+				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillEcpn(ctx, mod2002014, year);
 				Mod2002014toD2.fillEcpn2(ctx, mod2002014, year);
@@ -584,7 +677,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2015".equals(ejercicio)){
-				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(domainName, domainId, getUserLogin(), 2015);
+				Mod2002015 mod2002015 = FISCAL.getMod2002015ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2015);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002015toD2.fillEcpn(ctx, mod2002015, year.toString().equals(ejercicio));
 				Mod2002015toD2.fillEcpn2(ctx, mod2002015, year.toString().equals(ejercicio));
@@ -596,7 +689,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 							.toString());
 				}
 			} else if("2016".equals(ejercicio)){
-				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(domainName, domainId, getUserLogin(), 2016);
+				Mod2002016 mod2002016 = FISCAL.getMod2002016ByYear(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 2016);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002016toD2.fillEcpn(ctx, mod2002016, year.toString().equals(ejercicio));
 				Mod2002016toD2.fillEcpn2(ctx, mod2002016, year.toString().equals(ejercicio));
@@ -609,7 +702,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 				}
 			}
 		} else if ("Memoria (Deposito.xml)".equals(type)) {
-			byte[] b = getFile(domainId);
+			byte[] b = getFile(aonData.getDomain().getId());
 			try {
 				Esquema schema = Utils.readXml(b);
 				if(schema.getCabecera().getCIF().equals(cif)){

@@ -25,4 +25,7 @@ public enum DepositType implements Serializable {
 		throw new IllegalArgumentException("No existe el tipo " + label);
 	}
 	
+	public String getLabel() {
+		return label;
+	}
 }

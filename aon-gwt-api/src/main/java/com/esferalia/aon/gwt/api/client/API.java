@@ -84,6 +84,6 @@ public class API {
 	}
 	
 	public Fiscal getFiscal() {
-		return new Fiscal(url, accessToken, domainId);
+		return new Fiscal(url, accessToken, domainName, domainId, userName);
 	}
 }

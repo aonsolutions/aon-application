@@ -554,7 +554,7 @@ public class NormalizedMemory extends ResizeComposite {
 								ListBox ej = (ListBox) flex_table.getWidget(1, 1);
 								ejercicio = ej.getSelectedItemText();
 							}
-							inma.importAll(aonData, t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), getYear(), new AsyncCallback<Map<String, String>>() {	
+							inma.importAll(aonData, t, ejercicio, null, enterprise.getDocument(), d2Deposit.getMapDraft(), getYear(), new AsyncCallback<Map<String, String>>() {	
 								
 								@Override public void onFailure(Throwable caught) {}
 							

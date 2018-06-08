@@ -1,14 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.nuevo;
 
-import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
-
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DepositEntryPoint implements EntryPoint {
 	
@@ -42,6 +38,8 @@ public class DepositEntryPoint implements EntryPoint {
 	public void onModuleLoad(String entryPoint){
 		if("deposit_new".equals(entryPoint)) {
 			new Deposit(getAonData()).onModuleLoad();
+		} else if("deposit_text_mode".equals(entryPoint)){
+			new DepositTextMode(getAonData()).onModuleLoad();
 		} else {
 			new com.esferalia.aon.gwt.fiscal.deposit.client.Deposit(getAonData()).onModuleLoad();
 		}

@@ -18,7 +18,6 @@ import javax.xml.bind.JAXBException;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
-import org.jooq.Record5;
 import org.jooq.Record7;
 import org.jooq.Result;
 
@@ -317,35 +316,14 @@ public class DBConsults {
 		}
 	}
 
-	public static Esquema getDeposit(String domain, Integer domainId,
-			String idstr) {
-		Integer id = Integer.parseInt(idstr);
-		AONContext ctx = null;
+	public static Esquema getDeposit(Attach attach) {
+		Esquema schema = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
-
-			// DOMAIN + DOMAIN SON
-			Record5<Integer, String, Byte, String, byte[]> record = ctx
-					.getDslContext()
-					.select(RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.MIMETYPE,
-							RATTACH.DRIVE_ID, RATTACH.DATA).from(RATTACH)
-					.where(RATTACH.ID.eq(id))
-					.orderBy(RATTACH.ID).limit(1).fetchOne();
-
-			byte[] data;
-			Esquema schema = null;
-			data = record.value5();
-
-			try {
-				schema = Utils.readXml(data);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return schema;
-		} finally {
-			if (ctx != null)
-				ctx.close();
+			schema = Utils.readXml(attach.getData());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return schema;
 	}
 
 	public static String getCIF(String domain, Integer domainId) {
@@ -390,8 +368,7 @@ public class DBConsults {
 
 	}
 
-	public static Integer insertDeposit(String domain, byte[] b,
-			Integer domainId, Integer year, String login) {
+	public static Integer insertDeposit(String domain, byte[] b, Integer domainId, Integer year, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);

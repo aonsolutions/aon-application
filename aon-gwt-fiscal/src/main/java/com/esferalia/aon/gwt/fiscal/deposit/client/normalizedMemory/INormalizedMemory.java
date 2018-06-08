@@ -40,11 +40,11 @@ public interface INormalizedMemory extends RemoteService{
 	public void saveDeposit(String cif, Integer domainId, D2Deposit d2Deposit, Boolean textMode, Integer year);
 	
 	public Vector<MemoryTemplate> getDigitalDepositTemplates(Integer domainId, Integer year);
-
-	public Vector<MemoryTemplate> getDepositTemplates(AonData aonData, Integer year);
 	
 	public MemoryTemplate createTextMemory(Integer domainId, String name, Integer year);
 
+	Map<String, String> updateTexts(AonData aonData, MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map);
+	
 	Map<String, String> updateTexts(AonData aonData, MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap,
 			Integer domainId, String cif, Map<String, String> map);
 		
@@ -52,8 +52,8 @@ public interface INormalizedMemory extends RemoteService{
 			
 	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name, String type, Integer year);
 	
-	public Map<String, String> importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt,
-			Integer domainId, String cif, Map<String, String> map, Integer year);
+	Map<String, String> importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, String cif,
+			Map<String, String> map, Integer year);
 	
 	public void delete(Integer domainId, String document, Integer year);
 
@@ -77,5 +77,18 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public String[] getDepositExercises(AonData aonData);
 	public String[] getDepositExercises(Integer domainId);
+
+	public Vector<MemoryTemplate> getDepositTemplates(AonData aonData);
 	
+	// text mode
+	
+	public Integer createSchemaTextMode(AonData aonData, String name);
+	
+	public void deleteSchemaTextMode(AonData aonData, Integer id);
+	
+	public Vector<MemoryTemplate> getTemplates(AonData aonData);
+
+	public Map<String, String> getSchemaTextMode(AonData aonData, Integer id);
+	
+	public void saveDepositTextMode(AonData aonData, Map<String, String> deposit, Integer id);
 }

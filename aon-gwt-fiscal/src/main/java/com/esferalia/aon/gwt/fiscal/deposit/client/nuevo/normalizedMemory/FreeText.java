@@ -4,6 +4,7 @@ import java.text.ParseException;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.Deposit;
+import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositTextMode;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -34,6 +35,20 @@ public class FreeText extends PageAbs {
 			.create(FreeTextBinder.class);
 
 	public FreeText(Deposit deposit, String pageHeader, String part, Boolean textMode) {
+		super(deposit);
+		
+		this.part = part;
+		this.textMode = textMode;
+		
+		Widget ui = binder.createAndBindUi(this);
+		initWidget(ui);
+		
+		title1.setText(pageHeader);
+		
+		initializeTable();
+	}
+	
+	public FreeText(DepositTextMode deposit, String pageHeader, String part, Boolean textMode) {
 		super(deposit);
 		
 		this.part = part;
@@ -94,14 +109,8 @@ public class FreeText extends PageAbs {
 						String str = s.replace("\n", "\r\n");
 						onEdit(key.getCode(), str);
 					}else {
-					/* TODO textmode!
-						inma.updateSchema(enterprise.getDocument(),enterprise.getDomain(),key.getCode(), s, year, new AsyncCallback<Void>() {
-							@Override
-							public void onFailure(Throwable caught) {}
-							@Override
-							public void onSuccess(Void result) {}
-						});
-						*/
+						String str = s.replace("\n", "\r\n");
+						onEditTextMode(key.getCode(), str);
 					}
 				} catch (ParseException e) {
 					// nothing.
@@ -109,16 +118,13 @@ public class FreeText extends PageAbs {
 			}
 		});
 		if(textMode){
+			if(getMapTextMode().containsKey(key.getCode())){
+				text.setValue(getMapTextMode().get(key.getCode()));
+			} else text.setValue("");
+		} else {
 			if(getMap().containsKey(key.getCode())){
 				text.setValue(getMap().get(key.getCode()));
-			}
-			else text.setValue("");
-		}
-		else {
-			if(getMap().containsKey(key.getCode())){
-				text.setValue(getMap().get(key.getCode()));
-			}
-			else text.setValue("");
+			} else text.setValue("");
 		}
 		
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());

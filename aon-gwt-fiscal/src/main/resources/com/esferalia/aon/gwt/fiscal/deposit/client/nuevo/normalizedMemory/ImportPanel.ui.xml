@@ -1,0 +1,33 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'>
+
+<ui:style>
+	
+</ui:style>
+
+<g:HTMLPanel ui:field="panel" addStyleNames="paper-tabs">
+   		<style is="custom-style">
+        	paper-tabs{
+        		background: #fff
+        	}
+        			
+       		paper-tabs ::shadow #selectionBar {
+       			background:#2e9afe
+       		}
+       	    .header-panel-sample .content {
+               	height: 2000px;
+            }
+    	</style>
+		<p:PaperTabs ui:field="tabs">
+			<paper-tab>Memoria</paper-tab>
+       		<paper-tab>Sociedades</paper-tab>
+       		<paper-tab>D2</paper-tab>	
+    	</p:PaperTabs>
+    	<g:HTMLPanel ui:field="tabContent"/>
+	</g:HTMLPanel>	
+</ui:UiBinder>

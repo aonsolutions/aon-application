@@ -22,6 +22,8 @@ public interface INormalizedMemoryAsync {
 	void getSchema(AonData aonData, Company company, Integer year, Boolean textMode,
 			AsyncCallback<Map<String, String>> callback);
 	
+	void getSchemaTextMode(AonData aonData, Integer id, AsyncCallback<Map<String, String>> callback);
+	
 	void getSchema(String cif, Integer domainId, Boolean textMode, Integer year, AsyncCallback<Map<String, String>> callback);
 
 	void updateSchema(String cif, Integer domainId, String key, String value, Integer year,
@@ -41,13 +43,15 @@ public interface INormalizedMemoryAsync {
 
 	void createTextMemory(Integer domainId, String name, Integer year, AsyncCallback<MemoryTemplate> callback);
 
+	
+	void updateTexts(AonData aonData, MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map, AsyncCallback<Map<String, String>> callback);
+	
 	void updateTexts(AonData aonData, MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif,
 			Map<String, String> map, AsyncCallback<Map<String, String>> callback);
 
-
 	void getDate(String str, AsyncCallback<Date> callback);
 
-	void importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, Integer domainId, String cif,
+	void importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, String cif,
 			Map<String, String> map, Integer year, AsyncCallback<Map<String, String>> callback);
 
 	void delete(Integer domainId, String document, Integer year,
@@ -83,6 +87,16 @@ public interface INormalizedMemoryAsync {
 	
 	void getDepositExercises(Integer domainId, AsyncCallback<String[]> callback);
 
-	void getDepositTemplates(AonData aonData, Integer year, AsyncCallback<Vector<MemoryTemplate>> callback);
+	void getDepositTemplates(AonData aonData, AsyncCallback<Vector<MemoryTemplate>> callback);
+	
+	// text mode
+
+	void getTemplates(AonData aonData, AsyncCallback<Vector<MemoryTemplate>> callback);
+
+	void saveDepositTextMode(AonData aonData, Map<String, String> deposit, Integer id, AsyncCallback<Void> callback);
+
+	void createSchemaTextMode(AonData aonData, String name, AsyncCallback<Integer> callback);
+
+	void deleteSchemaTextMode(AonData aonData, Integer id, AsyncCallback<Void> callback);
 	
 }

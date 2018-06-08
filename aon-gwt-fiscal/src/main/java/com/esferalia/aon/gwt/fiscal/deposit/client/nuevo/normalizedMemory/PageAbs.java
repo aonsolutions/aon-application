@@ -9,9 +9,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
-import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.Deposit;
+import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositTextMode;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositBehaviour;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
@@ -20,7 +19,6 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,9 +46,14 @@ public abstract class PageAbs extends ResizeComposite {
 	protected static final int NUMERIC_VISIBLE_LENGTH = 10;
 	
 	private Deposit deposit;
+	private DepositTextMode depositTextMode;
 	
 	public Deposit getDeposit() {
 		return deposit;
+	}
+	
+	public DepositTextMode getDepositTextMode() {
+		return depositTextMode;
 	}
 	
 	protected AonData getAonData() {
@@ -63,6 +66,14 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	protected void setMap(Map<String, String> map) {
 		getDeposit().setDeposit(map);
+	}
+	
+	protected Map<String, String> getMapTextMode() {
+		return getDepositTextMode().getDeposit();
+	}
+	
+	protected void setMapTextMode(Map<String, String> map) {
+		getDepositTextMode().setDeposit(map);
 	}
 	
 	protected Company getCompany() {
@@ -81,8 +92,12 @@ public abstract class PageAbs extends ResizeComposite {
 	@UiField(provided = true)
 	FlexTable table;
 	
+	public PageAbs(DepositTextMode depositTextMode) {
+		table = new FlexTable();
+		this.depositTextMode = depositTextMode;
+	}
 
-
+	
 	public PageAbs(Deposit deposit) {
 		table = new FlexTable();
 		this.deposit = deposit;
@@ -580,6 +595,27 @@ public abstract class PageAbs extends ResizeComposite {
 			public void onSuccess(Map<String, String> result) {
 				setMap(result);
 				getDeposit().refreshPage();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	protected void onEditTextMode(String key, String value){
+		Map<String, String> m = new HashMap<String, String>();
+		for (String k : getMapTextMode().keySet()) {
+			m.put(k, getMapTextMode().get(k));
+		}
+		getDepositTextMode().getUndoStack().push(m);
+		getDepositTextMode().getRedoStack().clear();
+		
+		getMapTextMode().put(key, value);
+		getDepositTextMode().getInma().calculate(getAonData(), getMap(), getYear(), new AsyncCallback<Map<String,String>>() {
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				setMapTextMode(result);
+				getDepositTextMode().refreshPage();
 			}
 
 			@Override
