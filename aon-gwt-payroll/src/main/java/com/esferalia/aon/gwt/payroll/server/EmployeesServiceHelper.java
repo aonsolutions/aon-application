@@ -580,7 +580,7 @@ public class EmployeesServiceHelper {
 				.findAny();
 				
 				if ( !salary.isPresent() )
-					return super.br(endDate);
+					return super.br(date);
 				
 				Date contractStart = super.getDate(CONTRACT, ContractColumns.START_DATE);
 				if ( contractStart.before(getFirstDayOfMonth(date)))
