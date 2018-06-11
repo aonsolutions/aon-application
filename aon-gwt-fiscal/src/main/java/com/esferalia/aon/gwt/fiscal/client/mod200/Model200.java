@@ -20,11 +20,14 @@ import com.esferalia.aon.gwt.fiscal.client.mod200.e2015.Mod2002015Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2015.Model2002015;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Mod2002016Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2017.Mod2002017Object;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2017.Model2002017;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -54,6 +57,7 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002014ServiceAsync mod2002014Service;
 	static Mod2002015ServiceAsync mod2002015Service;
 	static Mod2002016ServiceAsync mod2002016Service;
+	static Mod2002017ServiceAsync mod2002017Service;
 	static FiscalServiceAsync fiscalService;
 	static CommonServiceAsync commonService;
 	
@@ -75,6 +79,14 @@ public class Model200 extends MainEntryPoint {
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		}
 		return commonService;
+	}
+
+	public static Mod2002017ServiceAsync getMod2002017Service() {
+		if (mod2002017Service == null) {
+			Mod2002017ServiceAsync mod2002017ServiceRaw = GWT.create(Mod2002017Service.class);
+			mod2002017Service = new Mod2002017ServiceAsyncDecorator(mod2002017ServiceRaw);
+		}
+		return mod2002017Service;
 	}
 	
 	public static Mod2002016ServiceAsync getMod2002016Service() {
@@ -217,19 +229,19 @@ public class Model200 extends MainEntryPoint {
 		toolbar.setWidget(0, 2, buttonContainer);
 		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
 		
-		final Button new2016 = new Button();
-		new2016.setText(AON.MSG.newSomething("2016"));
-		new2016.setTitle(new2016.getText());
-		new2016.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		new2016.addStyleName(AON.AON_CSS.aonIconReset());
-		new2016.addClickHandler(new ClickHandler() {
+		final Button new2017 = new Button();
+		new2017.setText(AON.MSG.newSomething("2017"));
+		new2017.setTitle(new2017.getText());
+		new2017.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		new2017.addStyleName(AON.AON_CSS.aonIconReset());
+		new2017.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				new2016();
+				new2017();
 			}
 		});
-		buttonContainer.add(new2016);
+		buttonContainer.add(new2017);
 		
 		final NewContextMenu newContextMenu = new NewContextMenu();
 		final Button newButton = new Button();
@@ -274,6 +286,13 @@ public class Model200 extends MainEntryPoint {
 				@Override
 				public void execute() {
 					new2015();
+				}
+			});
+			super.addItem("200", AON.MSG.newSomething("2016"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2016();
 				}
 			});
 			addStyleName(AON.AON_CSS.aonSelector());
@@ -338,6 +357,20 @@ public class Model200 extends MainEntryPoint {
 						public void onFailure(Throwable caught) {
 						}
 					});
+		} else if (mod.getYear() == 2017) {
+			getMod2002017Service().getMod2002017ById(Model200.getCurrentDomainName()
+					, getCurrentDomain(), mod.getId()
+					, new AsyncCallback<Mod2002017>() {
+
+						@Override
+						public void onSuccess(Mod2002017 mod200) {
+							changeView2017(mod200);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+					});
 		} else {
 			Window.alert(AON.MSG.unableToShowData( AON.MSG.noModuleForYear()));
 		}
@@ -379,6 +412,15 @@ public class Model200 extends MainEntryPoint {
 		deckPanel.showWidget(i);
 	}
 
+	private void changeView2017(Mod2002017 mod200) {
+		Mod2002017Object mod200Obj = new Mod2002017Object(getCurrentDomainName(), mod200);
+		Model2002017 model2002017 = new Model2002017( new Model200Callback() );
+		model2002017.startModel( mod200Obj );
+		container.setWidget(model2002017);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
+	}
+	
 	protected void new2013() {
 		getMod2002013Service().createMod2002013(Model200.getCurrentDomainName()
 		, getCurrentDomain(), 2013
@@ -439,4 +481,20 @@ public class Model200 extends MainEntryPoint {
 			}
 		});
 	}
+	protected void new2017() {
+		getMod2002017Service().createMod2002017(Model200.getCurrentDomainName()
+		, getCurrentDomain(), 2017
+		, new AsyncCallback<Mod2002017>() {
+
+			@Override
+			public void onSuccess(Mod2002017 mod200) {
+				changeView2017(mod200);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+	}
+	
 }

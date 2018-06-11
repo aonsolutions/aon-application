@@ -14,6 +14,7 @@ public class CompanyParticipation implements Serializable {
 	private int province;
 	private String country;
 	private boolean representative;
+	private String fjo; // F/J/O
 	private double percent;
 	private double nominalValue;
 	private double bookValue;
@@ -71,6 +72,15 @@ public class CompanyParticipation implements Serializable {
 		return this;
 	}
 
+	public String getNotary() {
+		return fjo; // F/J/Otra
+	}
+
+	public CompanyParticipation setNotary(String fjo) {
+		this.fjo = fjo; // F/J/Otra
+		return this;
+	}
+	
 	public double getPercent() {
 		return percent;
 	}

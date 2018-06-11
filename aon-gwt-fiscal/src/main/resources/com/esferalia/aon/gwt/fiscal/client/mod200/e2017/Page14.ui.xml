@@ -1,0 +1,48 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonFiscalContainer}">
+			<g:SimplePanel ui:field="headerPanel"/>
+		 	<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.incomeDistribution}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					
+					
+		 			<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.distributionBases}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<g:FlexTable ui:field="table"/>
+						</div>
+					</div>
+	
+		 			<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.aplication}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<g:FlexTable ui:field="table1"/>
+						</div>
+					</div>
+					
+		 			<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.documentsElectronicSede}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<g:FlexTable ui:field="table2"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>
