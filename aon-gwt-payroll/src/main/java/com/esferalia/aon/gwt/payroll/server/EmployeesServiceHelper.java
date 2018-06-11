@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Supplier;
@@ -41,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -559,6 +561,35 @@ public class EmployeesServiceHelper {
 				super(connection, startDate, endDate, issueDate, criteria);
 			}
 
+			@Override
+			public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
+				
+				Date today = resetTime(Calendar.getInstance().getTime());
+				Date endDate = AonDateUtils.add(getEndDate(), Calendar.DAY_OF_MONTH,1); // TODO: +1?
+				if ( endDate.after(today) )
+					return super.br(date);
+				
+				// delay
+				int contractId = getId();
+				Optional<Salary> salary = 
+						AON.getSalaries(new AONContext(connection),
+						p -> p.getIsSalaryProperty().eq(true)
+						.and(p.getContractProperty().eq(contractId))
+						.and(p.getStartDateProperty().le(getEnd()))
+						.and(p.getEndDateProperty().ge(getStart())))
+				.findAny();
+				
+				if ( !salary.isPresent() )
+					return super.br(endDate);
+				
+				Date contractStart = super.getDate(CONTRACT, ContractColumns.START_DATE);
+				if ( contractStart.before(getFirstDayOfMonth(date)))
+					date = AonDateUtils.add(date, Calendar.MONTH, -1);
+				
+				return super.calculateBr(date);
+				
+			}
+			
 			@Override
 			protected IIrpfCalculatorContext getIrpfCalculatorContext(
 					Connection conn, Date startDate, Date endDate,

@@ -47,13 +47,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.jooq.Configuration;
-import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.TransactionalCallable;
 import org.junit.After;
@@ -61,8 +59,6 @@ import org.junit.Before;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.config.enumeration.Administration;
-import net.aonsolutions.core.dbutils.AonSQLException;
-import com.code.aon.master.CreateDB;
 import com.code.aon.master.VersionManager;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -70,17 +66,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.jooq.tables.AgreementData;
-import com.esferalia.aon.jooq.tables.AgreementExtra;
-import com.esferalia.aon.jooq.tables.AgreementLevelData;
-import com.esferalia.aon.jooq.tables.AgreementPayment;
-import com.esferalia.aon.jooq.tables.BonusConcept;
-import com.esferalia.aon.jooq.tables.ContractBonus;
-import com.esferalia.aon.jooq.tables.ContractEmbargo;
-import com.esferalia.aon.jooq.tables.Holiday;
-import com.esferalia.aon.jooq.tables.HolidayDetail;
-import com.esferalia.aon.jooq.tables.SystemDeduction;
-import com.esferalia.aon.jooq.tables.SystemPayment;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
@@ -94,7 +79,6 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
-import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.HolidayRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
@@ -103,17 +87,22 @@ import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.EmbargableType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.watson.util.AonDateUtils;
+
+import net.aonsolutions.core.dbutils.AonSQLException;
 
 public abstract class AbstractSQLTestCase {
 	
@@ -1016,17 +1005,23 @@ public abstract class AbstractSQLTestCase {
 
 	public static final PaymentConceptRecord addConcept(AONContext aonContext, String code) {
 		DomainRecord domain = newDomain(aonContext);
+		return addConcept(aonContext, code, PaymentType.CRA_0001);
+	}
+
+	public static final PaymentConceptRecord addConcept(AONContext aonContext, String code, PaymentType type) {
+		DomainRecord domain = newDomain(aonContext);
 		return aonContext.getDslContext()
 				.insertInto(PAYMENT_CONCEPT)
 				.set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
 				.set(PAYMENT_CONCEPT.CODE, code)
-				.set(PAYMENT_CONCEPT.TYPE, (byte) PaymentType.CRA_0001.ordinal())
+				.set(PAYMENT_CONCEPT.TYPE, (byte) type.ordinal())
 				.set(PAYMENT_CONCEPT.DESCRIPTION, code)
 				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P").returning()
 				.fetchOne();
 
 	}
+
 
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
 			String expression) {
@@ -1244,5 +1239,16 @@ public abstract class AbstractSQLTestCase {
 				.returning().fetchOne();
 
 	}
+	
+	public static int smartCalculateAndSave(Connection connection,
+			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
+				d -> Math.round(d*100.00)/100.00);
+		
+		new SmartContractSalaryCalculator<ISalary>(roundSalaryBuilder).calculate(ctx);
+		return jooqSalaryBuilder.execute();
+	}
+	
 
 }

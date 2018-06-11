@@ -2,7 +2,6 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
@@ -32,8 +31,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -41,6 +40,7 @@ import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -259,7 +259,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					{
 						this.expression = "P";
 						this.month = Month.DECEMBER;
-						this.start = "01/12";
+						this.start = "01/01";
 						this.end = "31/12";
 						this.issue = "15/12";
 					}
@@ -284,7 +284,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					new Payment() {
 						{
 							this.concept = conceptP.getId();
-							this.expression = "TRACE('%f\r\n',(SALARIO * DIAS_TRABAJADOS/DIAS_MES)); 0.00";
+							this.expression = "TRACE('SALARIO:%f\r\n',(SALARIO * DIAS_TRABAJADOS/DIAS_MES)); 0.00";
 						}
 					}
 				},
@@ -310,7 +310,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for ( int i = 0 ; i < 10 ; i++ ) {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 			calculator.setSalaryBuilder(jooqSalaryBuilder);
 			calculator.calculate(ctx);
@@ -334,7 +334,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<Salary> delayCalculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new SalaryBuilder());
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
@@ -625,6 +625,322 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	public void testCommonDiseaseITIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		
+		//@formatter:on
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+		Date startITDate = 
+				add(endDate, DAY_OF_MONTH,-5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		ContractSalaryCalculator<Salary> delayCalculator = new ContractSalaryCalculator<Salary>();
+		SalaryBuilder delayBuilder = new SalaryBuilder();
+		
+		delayCalculator.setSalaryBuilder(delayBuilder);
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		Assert.assertEquals(10.00,delay.getIrpfBase());
+		Assert.assertEquals(10.00,delay.getTotalPayment());
+		Assert.assertEquals(10.00,delay.getCommonBase());
+	}
+
+	@Test
+	public void testCommonDiseaseITV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+		Date startITDate = 
+				add(endDate, DAY_OF_MONTH,-5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		SalaryBuilder delayBuilder = new SalaryBuilder();
+		
+		delayCalculator.setSalaryBuilder(delayBuilder);
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		Assert.assertEquals(10.00,delay.getIrpfBase());
+		Assert.assertEquals(10.00,delay.getTotalPayment());
+		Assert.assertEquals(10.00,delay.getCommonBase());
+	}
+
+	@Test
+	public void testCommonDiseaseITVI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+
+		PaymentConceptRecord guarenteed = addConcept(aonContext, GUARENTEED);
+		addPayment(aonContext, contract, guarenteed, 
+				"250.00",
+				"0.00"
+				);
+		//@formatter:on
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+		Date startITDate = 
+				add(endDate, DAY_OF_MONTH,-5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		SalaryBuilder delayBuilder = new SalaryBuilder();
+		
+		delayCalculator.setSalaryBuilder(delayBuilder);
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		Assert.assertEquals(10.00,delay.getIrpfBase());
+		Assert.assertEquals(10.00,delay.getTotalPayment());
+		Assert.assertEquals(10.00,delay.getCommonBase());
+	}
+
+	@Test
+	public void testCommonDiseaseITVII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+
+		PaymentConceptRecord guarenteed = addConcept(aonContext, GUARENTEED, PaymentType.CRA_0055);
+		addPayment(aonContext, contract, guarenteed, 
+				"isdef DIAS_ENFERMEDAD_COMUN ?/*user*/250.00/**/: HIDE()",
+				"TRACE('DIAS_ENFERMEDAD_COMUN:%d\r\n', DIAS_ENFERMEDAD_COMUN);0.00"
+				, PaymentType.CRA_0055);
+		//@formatter:on
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+		Date startITDate = 
+				add(endDate, DAY_OF_MONTH,-5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		SalaryBuilder delayBuilder = new SalaryBuilder();
+		
+		delayCalculator.setSalaryBuilder(delayBuilder);
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		Assert.assertEquals(10.00,delay.getIrpfBase());
+		Assert.assertEquals(10.00,delay.getTotalPayment());
+		Assert.assertEquals(10.00,delay.getCommonBase());
+	}
+
+
+	@Test
 	public void testCommonDiseaseITAndGtzdo() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -793,4 +1109,182 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testCommonDiseaseITAndGtzdoConstant() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"S_0 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"S_1 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "S_0", "250.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "S_1", "1500.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		
+		PaymentConceptRecord gtzdo = addConcept(aonContext, GUARENTEED);
+		addPayment(aonContext, contract, gtzdo, 
+				"99.99",
+				"0.00"
+				);
+		//@formatter:on
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		startDate = add(startDate, MONTH,1);
+		endDate = getLastDayOfMonth(startDate);
+		Date startITDate = add(startDate, DAY_OF_MONTH,6);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
+
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new ContractSalaryCalculator<ISalary>();
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		
+		addData(aonContext, contract, startDate, null, "S_0", "250.00 + 66.00");
+		addData(aonContext, contract, startDate, null, "S_1", "1500.00 + 166.00");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		ContractSalaryCalculator<ISalary> delayCalculator = new ContractSalaryCalculator<ISalary>();
+		
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				if ( startDate.compareTo(startITDate) >= 0 ) {
+					Assert.assertEquals(0.00, amount);
+					Assert.assertEquals(0.00, quote);
+					Assert.assertEquals(0.00, tax);
+					
+				}
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		};
+		delayCalculator.setSalaryBuilder(jooqSalaryBuilder);
+		delayCalculator.calculate(delayCtx);
+		jooqSalaryBuilder.execute();
+		
+		
+		try {
+			AON.getSalaries(aonContext, props -> 
+				props.getContractProperty().eq(contract.getId())
+				.and(props.getIsDelayProperty().eq(true)))
+				.forEach( delay -> {
+					System.out.println("DELAY CGC_BASE :" + delay.getCommonContingenciesBase() );
+					System.out.println("DELAY IRPF_BASE :" + delay.getIrpfBase() );
+					System.out.println("DELAY TOTAL_PAYMENT :" + delay.getTotalPayment() );
+					
+					Assert.assertEquals((166.00+66.00) * 6 / 30, delay.getCommonContingenciesBase() );
+					Assert.assertEquals((166.00+66.00) * 6 / 30, delay.getIrpfBase() );
+					Assert.assertEquals((166.00+66.00) * 6 / 30, delay.getTotalPayment() );
+					
+				}
+			);
+			
+			AON.getSalaryData(aonContext, props -> 
+					props.getContractProperty().eq(contract.getId())
+					.and(props.getIsDelayProperty().eq(true)))
+			.forEach( delay -> 
+				{
+					
+					System.out.println(delay.getTotalPayment());
+					
+					System.out.println(delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.joining(",") ));
+					
+					Double cgcBase = delay.getContextData(ContextVariable.CGC_BASE.getName(), Collectors.summingDouble(expression-> Double.parseDouble(expression)));
+					Assert.assertEquals((166.00+66.00) * 6 / 30, cgcBase, DELTA);
+					
+					List<ContextData> cgcBases = delay.getContextData().get(ContextVariable.CGC_BASE.getName());
+					Assert.assertEquals(5, cgcBases.size());
+					
+					Date startCreta = add(getFirstDayOfMonth(getToday()), MONTH,1);
+					Date endCreta = add(startITDate, DAY_OF_MONTH,-1); //getLastDayOfMonth(startCreta);
+					
+					Assert.assertEquals(startCreta, cgcBases.get(0).getStartDate());
+					Assert.assertEquals(endCreta, cgcBases.get(0).getEndDate());
+					Assert.assertEquals((166.00+66.00) * 6 / 30, Double.parseDouble(cgcBases.get(0).getExpression()) );
+					
+					startCreta = startITDate;
+					endCreta = add(startCreta, DAY_OF_MONTH,2);
+					Assert.assertEquals(startCreta, cgcBases.get(1).getStartDate());
+					Assert.assertEquals(endCreta, cgcBases.get(1).getEndDate());
+					Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(1).getExpression()) );
+
+					startCreta = add(endCreta, DAY_OF_MONTH, 1);
+					endCreta = add(startCreta, DAY_OF_MONTH,11);
+					Assert.assertEquals(startCreta, cgcBases.get(2).getStartDate());
+					Assert.assertEquals(endCreta, cgcBases.get(2).getEndDate());
+					Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(2).getExpression()) );
+					
+					startCreta = add(endCreta, DAY_OF_MONTH, 1);
+					endCreta = add(startCreta, DAY_OF_MONTH,4);
+					Assert.assertEquals(startCreta, cgcBases.get(3).getStartDate());
+					Assert.assertEquals(endCreta, cgcBases.get(3).getEndDate());
+					Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(3).getExpression()) );
+
+					startCreta = add(endCreta, DAY_OF_MONTH, 1);
+					endCreta = getLastDayOfMonth(startCreta);
+					Assert.assertEquals(startCreta, cgcBases.get(4).getStartDate());
+					Assert.assertEquals(endCreta, cgcBases.get(4).getEndDate());
+					Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(4).getExpression()) );
+
+					throw new Sucessfull();
+				}
+			);
+		} catch ( Sucessfull sucessfull ) {
+			return;
+		} 
+		
+		Assert.fail("No delay!!!!!!!!!!!!!!!!!");
+
+	}
 }

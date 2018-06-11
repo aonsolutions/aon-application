@@ -2,9 +2,11 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
+import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT_LEAVE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_DATA;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_PAYMENT;
+import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,13 +14,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
@@ -26,11 +31,14 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.CompositeIterator;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.QuoteCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
@@ -41,9 +49,12 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -75,10 +86,91 @@ public class SQLContractDelayCalculatorContext extends
 		protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(Connection conn, Date startDate,
 				Date endDate, Date issueDate, Criteria criteria, int start, int end) {
 			ISQLContractSalaryCalculatorContext ctx =  super.getNoItCalculatorContext(conn, startDate, endDate, issueDate, criteria, start, end);
+			if ( AonDateUtils.getDay(startDate) == 1 )
+				return ctx;
 			ctx.getExpressionContext().setVariable(ContextVariable.ACTIVE_DAYS.getName(), prevDays, startDate, endDate);
 			return ctx;
 		}
 		
+	}
+	
+	private static class SmartContractDelayCalculator<T extends ISalary>  extends SmartContractSalaryCalculator<T> {
+
+		private Collection<Period> its;
+		private Map<Integer, Integer> itDays;
+		private Map<Integer, Integer> monthDays;
+		
+		public SmartContractDelayCalculator(Map<Integer, Integer> monthDays, Map<Integer, Integer> itDays, Collection<Period> its) {
+			super();
+			this.its = its;
+			this.itDays = itDays;
+			this.monthDays = monthDays;
+		}
+
+		@Override
+		protected List<ITimedResult<Double>> fixConstantResult(IContractPayment contractPayment,
+				ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
+				throws UnsupportedOperationException {
+			
+			if ( isITPayment(contractPayment))
+				return Collections.singletonList( isInIT(result.getPeriod()) ? fixItResult(result) : new TimedResult<Double>(0.00, result.getPeriod(), result.getContext()));
+			
+			
+			int resultDays = AonDateUtils.getDay(result.getPeriod().getEnd()) 
+					- AonDateUtils.getDay(result.getPeriod().getStart()) + 1;
+			int month = AonDateUtils.getMonth(result.getPeriod().getStart());
+			int activeDays = monthDays.get(month) - itDays.get(month);
+			double value = result.getValue() / activeDays * resultDays;
+			
+			return Collections.singletonList(new TimedResult<Double>(value, result.getPeriod(), result.getContext()));
+		}
+		
+		@Override
+		protected List<ITimedResult<Double>> fixItResults(IContractPayment contractPayment,
+				List<ITimedResult<Double>> results, List<Period> its, Date start, Date end,
+				ExpressionContext expressionContext) throws UnsupportedOperationException {
+			
+			if ( !isITPayment(contractPayment))  
+				return results.stream().map( r-> new TimedResult<Double>(0.00, r.getPeriod(), r.getContext()) ).collect(Collectors.toList());
+
+			if (results.size() > 1 || !results.get(0).getContext().isEmpty() )
+				super.fixItResults(contractPayment, results, its, start, end, expressionContext);
+				
+			
+			List<ITimedResult<Double>>  fixedResults = new LinkedList<ITimedResult<Double>>(); 
+			for ( ITimedResult<Double> result: results ) {
+				fixedResults.add(fixItResult(result));
+			}
+
+			return fixedResults; // super.fixItResults(contractPayment, results, its, start, end, expressionContext);
+		}
+		
+		private ITimedResult<Double> fixItResult(ITimedResult<Double> result) {
+			int resultDays = AonDateUtils.getDay(result.getPeriod().getEnd()) 
+					- AonDateUtils.getDay(result.getPeriod().getStart()) + 1;
+			int month = AonDateUtils.getMonth(result.getPeriod().getStart());
+			double value = result.getValue() / itDays.get(month) * resultDays;
+			return new TimedResult<Double>(value, result.getPeriod(), result.getContext());
+			
+		}
+		
+		private boolean isInIT(Period p) {
+			return Period.intersects(its.iterator(), Collections.singletonList(p).iterator());
+		}
+
+		private static boolean isITPayment(IContractPayment contractPayment) {
+			PaymentType type = contractPayment.getType();
+			if ( PaymentType.CRA_0055 == type )
+				return true;
+			if ( PaymentType.CRA_0054 == type )
+				return true;
+			String name = contractPayment.getName();
+			if ( ContextVariable.PREST_IT.equals(name))
+				return true;
+			if ( ContextVariable.GUARENTEED.equals(name))
+				return true;
+			return false;
+		}
 	}
 	
 
@@ -166,7 +258,7 @@ public class SQLContractDelayCalculatorContext extends
 		}
 	};
 
-		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		
 		DelayPaymentBuilder delayPaymentBuilder = new DelayPaymentBuilder(
 				getConnection(), salaryPaymentDecorator);
 
@@ -176,9 +268,15 @@ public class SQLContractDelayCalculatorContext extends
 		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeBuilder = 
 				new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(delayPaymentBuilder, extrasDelayPaymentBuilder);
 		
-		calculator.setSalaryBuilder(compositeBuilder);
 
 		Collection<Period> periods = getCgcPeriods(connection, getId(), startDate, endDate);//split(startDate, endDate);
+		Collection<Period> itPeriods = getItPeriods(connection, getId(), startDate, endDate);
+		Map<Integer, Integer> itDays = getItDays(connection, itPeriods, startDate, endDate);
+		Map<Integer, Integer> monthDays = getMonthDays(startDate, endDate);
+
+		//	ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractDelayCalculator<ISalary>(monthDays, itDays, itPeriods);
+		calculator.setSalaryBuilder(compositeBuilder);
 		
 		long prevDays = 0;
 		
@@ -304,6 +402,101 @@ public class SQLContractDelayCalculatorContext extends
 
 	}
 
+	private static Collection<Period> getItPeriods(Connection connection, Integer contract, Date startDate, Date endDate) 
+	throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null ;
+
+		Collection<Period> itPeriods = new LinkedList<Period>();
+		try {
+			stmt = connection.prepareStatement(
+				"SELECT" 
+				+" " + CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE 
+				+"," + CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE 
+				+" FROM " + CONTRACT_LEAVE
+				+" WHERE " + CONTRACT_LEAVE + "." + ContractLeaveColumns.CONTRACT + " = ? "
+				+" AND " + CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE + " <= ? " 
+				+" AND (" + CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE + " >= ? "
+				+"  OR " + CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE + " IS NULL )"
+				+" GROUP BY 1, 2"
+				); 
+			stmt.setInt(1, contract);
+			stmt.setDate(2, toSqlDate(endDate));
+			stmt.setDate(3, toSqlDate(startDate));
+			rs = stmt.executeQuery();
+			
+			while ( rs.next() ) {
+				java.sql.Date start = rs.getDate(CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
+				java.sql.Date end = rs.getDate(CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
+				itPeriods.add(new Period(start,end));
+			}
+			
+		}catch ( SQLException e ) {
+			//e.printStackTrace();
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+		
+		return itPeriods;
+
+	}
+	
+	private static Collection<Period> getMonthPeriods(Date startDate, Date endDate){
+		Collection<Period> monthPeriods = new LinkedList<Period>();
+		
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(startDate);
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(endDate);
+		
+		while ( startCalendar.compareTo(endCalendar) <= 0 ) {
+			Date start = startCalendar.getTime();
+			startCalendar.set(DAY_OF_MONTH, startCalendar.getActualMaximum(DAY_OF_MONTH));
+			Date end = startCalendar.compareTo(endCalendar) < 0 ? startCalendar.getTime(): endCalendar.getTime();
+			
+			monthPeriods.add(new Period(start,end));
+			
+			startCalendar.add(DAY_OF_MONTH, 1);
+		}
+		
+		return monthPeriods;
+	}
+
+	private static Map<Integer,Integer> getMonthDays(Date startDate, Date endDate){
+		Map<Integer,Integer> monthDays = new HashMap<Integer,Integer>();
+		
+		Collection<Period> monthPeriods = getMonthPeriods(startDate, endDate);
+		for ( Period p: monthPeriods) { 
+			int days = AonDateUtils.getDay(p.getEnd()) - AonDateUtils.getDay(p.getStart()) +1;
+			monthDays.put(AonDateUtils.getMonth(p.getStart()), days);
+		}
+		
+		
+		return monthDays;
+	}
+
+	private static Map<Integer,Integer> getItDays(Connection connection, Collection<Period> itPeriods , Date startDate, Date endDate) throws SQLException{
+		Map<Integer,Integer> itDays = new HashMap<Integer,Integer>();
+		
+		Collection<Period> monthPeriods = getMonthPeriods(startDate, endDate);
+		for ( Period p: monthPeriods) 
+			itDays.put(AonDateUtils.getMonth(p.getStart()), 0);
+		
+		
+		List<Period> itPeriodsByMonth = Period.intersect(itPeriods, monthPeriods);
+		for ( Period p: itPeriodsByMonth ) {
+			int month = AonDateUtils.getMonth(p.getStart());
+			int days = itDays.get(month) + AonDateUtils.getDay(p.getEnd()) - AonDateUtils.getDay(p.getStart()) +1;
+			itDays.put(month , days );
+		}
+
+		return itDays;
+	}
+	
 	public interface IDelayPaymentDecorator {
 		int getOrdinal(IContractPayment payment);
 		String getDescriptionFor(IContractPayment payment);
@@ -397,7 +590,9 @@ public class SQLContractDelayCalculatorContext extends
 		private static final String SALARY_SQL = 
 				"SELECT " 
 				
-				+ "@GTZDO:=" + GARANTIZADO_AMOUNT_SQL +  ""
+				+ SALARY_PAYMENT +"." + SalaryPaymentColumns.ID
+				
+				+ ", @GTZDO:=" + GARANTIZADO_AMOUNT_SQL +  ""
 				+ " AS GTZDO" 
 
 				+ ", @GTZDOIT:=IFNULL((@GTZDO / " + ALL_IT_DAYS + " * " + IT_DAYS+"),0.00)"
@@ -437,6 +632,8 @@ public class SQLContractDelayCalculatorContext extends
 		private Date endDate;
 		private Integer contract;
 
+		private Set<Integer> prestIts;
+
 		private PreparedStatement stmt;
 
 		private Map<String, Double> values;
@@ -448,6 +645,7 @@ public class SQLContractDelayCalculatorContext extends
 			this.paymentDecorator = paymentDecorator;
 			this.values = new HashMap<String, Double>();
 			this.stmt = initStatement(connection);
+			this.prestIts = new HashSet<Integer>();
 		}
 
 		@Override
@@ -557,7 +755,9 @@ public class SQLContractDelayCalculatorContext extends
 				}
 
 				while (rs.next()) {
-					
+					Integer id = rs.getInt(SALARY_PAYMENT + "." + SalaryPaymentColumns.ID);
+					if ( id != 0 && !prestIts.add(id) )
+						continue;
 					for (String field : fields) {
 						Double value = values.get(field);
 						value += rs.getDouble(field) ;
@@ -643,7 +843,8 @@ public class SQLContractDelayCalculatorContext extends
 
 		private static final String EXTRA_PAYMENTS_SQL = 
 				"SELECT " 
-				+ " 0.00 AS " + SalaryColumns.CGC_BASE
+				+ SALARY_PAYMENT +"." + SalaryPaymentColumns.ID
+				+ ", 0.00 AS " + SalaryColumns.CGC_BASE
 				+ ", SUM(" + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + ") AS " + SalaryColumns.IRPF_BASE
 				+ ", SUM(" + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + ") AS " + SalaryColumns.TOTAL_PAYMENT 
 

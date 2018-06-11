@@ -106,7 +106,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
@@ -3007,7 +3006,17 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
+		
+		double br = getSavedBr(date);
 
+		if (br > 0.00)
+			return br;
+
+		// No salaries are present.
+		return calculateBr(date.before(contractStartDate) ? contractStartDate: date);
+	}
+
+	public double getSavedBr(Date date) {
 		int contractId = getId();
 		
 		boolean fullTime = true ;
@@ -3055,12 +3064,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			salaries.close();
 
 		}
-
-		if (br > 0.00)
-			return br;
-
-		// No salaries are present.
-		return calculateBr(date.before(contractStartDate) ? contractStartDate: date);
+		return br;
 	}
 
 	public Object calculateBr(Date date) throws ExpressionException, SQLException, SalaryException {
