@@ -1157,8 +1157,8 @@ public class EmployeeCalendarDraftObjectData {
 					List<Quartet<java.sql.Date, java.sql.Date, String, String>> inactivityTypeList) {
 				for(Quartet<java.sql.Date, java.sql.Date, String, String> entry : inactivityTypeList){
 					Date startDate = entry.getStartDate();
-					while(startDate.before(entry.getEndDate())){
-						mapInactivityDays.put(startDate, entry.getExpression());
+					while(startDate.before(entry.getEndDate()) || startDate.equals(entry.getEndDate())){
+						mapInactivityDays.put(DateUtils.copyDateOnly(startDate), entry.getExpression());
 						DateUtils.addDays2Date(startDate, 1);
 					}
 				}

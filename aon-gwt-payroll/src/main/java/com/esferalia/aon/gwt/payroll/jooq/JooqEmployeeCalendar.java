@@ -558,7 +558,8 @@ public class JooqEmployeeCalendar {
 				  ,ContextVariable.HOLIDAYS.getName()
 				  ,ContextVariable.ERE_FACTOR.getName()
 				  ,ContextVariable.STRIKE_FACTOR.getName()
-				  ,"DIAS_INACTIVIDAD"))
+				  ,"DIAS_INACTIVIDAD"
+				  ,"CAUSA_INACTIVIDAD"))
 		   .execute();
 		
 		HashMap<java.util.Date, DayType> updateDaysTypeMap = updateInfo.getDaysTypeMap();
