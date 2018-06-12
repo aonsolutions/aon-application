@@ -2233,6 +2233,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	CheckBox costsCheck;
 	@UiField
+	CheckBox eventsCheck;
+	@UiField
 	CheckBox dbSalaryCheck;
 
 	@UiField
@@ -2297,6 +2299,7 @@ public class SalaryDraft extends ResizeComposite
 		showContextTable();
 
 		zoom = Constants.DEFAULT_ZOOM;
+		initEvents();
 		initEventsStyles(style);
 		initSalaryDb();
 		export2JS(this);
@@ -2598,7 +2601,7 @@ public class SalaryDraft extends ResizeComposite
 		printPreviewButton.setVisible(true);
 		tgssCheck.setVisible(isSalary());
 		dbSalaryCheck.setVisible(hasDbSalary());
-		
+		eventsCheck.setVisible(hasEvents());
 	}
 
 
@@ -2938,7 +2941,7 @@ public class SalaryDraft extends ResizeComposite
 		insertBlankPaymentRow();
 		
 		Scope nextScope = null;
-		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
+		boolean show = false; //scope.compareTo(Scope.CONTRACT) >= 0;
 
 		variableChangeHandlers = new ArrayList<VariableChangeHandler<?>>();
 
@@ -2969,9 +2972,11 @@ public class SalaryDraft extends ResizeComposite
 		redoButton.setEnabled(salaryDraftObject.canRedo());
 		if (costsCheck.getValue())
 			showCosts(true);
-
+		
+		initEventsCheck();
 		dumpEvents(salaryDraftObject.getEvents());
-		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
+		eventsTable.setVisible(eventsCheck.isVisible() && eventsCheck.getValue());
+		eventsTableSpace.setVisible(eventsTable.isVisible()/*eventsTable.getRowCount() > 0*/);
 	}
 
 	
@@ -2980,6 +2985,10 @@ public class SalaryDraft extends ResizeComposite
 		tgssCheck.setVisible(isSalary());
 	}
 
+
+	private void initEventsCheck(){
+		eventsCheck.setVisible(hasEvents());
+	}
 
 	private void initDbSalaryCheck(){
 		dbSalaryCheck.setVisible(hasDbSalary());
@@ -3165,6 +3174,16 @@ public class SalaryDraft extends ResizeComposite
 			}
 		});
 		dbUIObjects = new LinkedList<HasVisibility>();
+	}
+
+	private void initEvents() {
+		eventsCheck.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				eventsTable.setVisible(event.getValue());
+				eventsTableSpace.setVisible(eventsTable.isVisible());
+			}
+		});
 	}
 
 	private void initPaymentsTable() {
@@ -4973,6 +4992,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private boolean hasDbSalary(){
 		return salaryDraftObject != null  && salaryDraftObject.hasDbSalary();
+	}
+	
+	private boolean hasEvents() {
+		return salaryDraftObject != null && salaryDraftObject.hasEvents();
 	}
 	
 	private Widget getDiffsWithDbSalary(){

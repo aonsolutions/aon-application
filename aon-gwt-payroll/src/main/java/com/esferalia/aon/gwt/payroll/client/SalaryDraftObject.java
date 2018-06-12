@@ -748,6 +748,11 @@ public class SalaryDraftObject implements IContextProvider {
 		return salaryDraft.hasDbSalary();
 	}
 
+	public boolean hasEvents() {
+		return salaryDraft.getEvents() != null 
+				&& !salaryDraft.getEvents().isEmpty();
+	}
+
 	public boolean hasDrafts() {
 		return salaryDraft.hasDrafts() || !isDraftPeriodSet(getDraftStartDate(),
 				getDraftEndDate(), salaryDraft);

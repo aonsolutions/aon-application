@@ -311,6 +311,9 @@
 								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="DIFERENCIAS" checked="false" />
+								<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
+									styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
+									text="AVISOS Y NOTIFICACIONES" checked="false" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
