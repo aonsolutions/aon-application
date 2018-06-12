@@ -1099,6 +1099,7 @@ public class SalaryDraft extends ResizeComposite
 		I item;
 		T expressionWidget;
 		T descriptionWidget;
+		UIObject editButton;
 
 		public ItemChangeHandler(I item) {
 			this.item = item;
@@ -1151,7 +1152,8 @@ public class SalaryDraft extends ResizeComposite
 			});
 		}
 
-		public void setEditButton(HasClickHandlers editButton) {
+		public <B extends UIObject & HasClickHandlers>  void setEditButton(B editButton) {
+			this.editButton = editButton;
 			editButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -2975,8 +2977,10 @@ public class SalaryDraft extends ResizeComposite
 		
 		initEventsCheck();
 		dumpEvents(salaryDraftObject.getEvents());
+		// Events visible
 		eventsTable.setVisible(eventsCheck.isVisible() && eventsCheck.getValue());
 		eventsTableSpace.setVisible(eventsTable.isVisible()/*eventsTable.getRowCount() > 0*/);
+		showPaymentsEvents(eventsTable.isVisible());
 	}
 
 	
@@ -3182,6 +3186,7 @@ public class SalaryDraft extends ResizeComposite
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				eventsTable.setVisible(event.getValue());
 				eventsTableSpace.setVisible(eventsTable.isVisible());
+				showPaymentsEvents(eventsTable.isVisible());
 			}
 		});
 	}
@@ -3382,18 +3387,51 @@ public class SalaryDraft extends ResizeComposite
 			} else if (payment.getId() != null ) {
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(payment);
 				String styles[] = eventStyles.get(event == null ? Event.Type.WARNING : event.getType());
-				dumpPayment(payment, row, styles[0], handler);
+				//dumpPayment(payment, row, styles[0], handler);
+				dumpPayment(payment, row, getIconRowStyle(payment), handler);
 				handlers.add(handler);
-				addStyle(paymentsTable, row, styles[1]);
+				//addStyle(paymentsTable, row, styles[1]);
 
 			} else {
 				String styles[] = eventStyles.get(event == null ? Event.Type.ERROR : event.getType());
-				dumpDbItem(payment, row, styles[0], styles[1],
+				//dumpDbItem(payment, row, styles[0], styles[1],
+				//		new RecoverPaymentHandler(payment), false);
+				dumpDbItem(payment, row,getIconRowStyle(payment), "",
 						new RecoverPaymentHandler(payment), false);
 			}
 		}
 
 		return handlers;
+
+	}
+
+	private void showPaymentsEvents(boolean show) {
+		
+		int row = 0;
+
+		for (PaymentChangeHandler<?> handler : paymentChangeHandlers) {
+			
+			row++;
+			
+			Payment payment = handler.item;
+			Event event = getEvent4(payment);
+			
+			if (payment.getAmount() != null && event == null) {
+
+			} else if (payment.getId() != null ) {
+				String styles[] = eventStyles.get(event == null ? Event.Type.WARNING : event.getType());
+				addStyle(paymentsTable, row, styles[1], show);
+				handler.editButton.setStyleName(styles[0], show);
+				handler.editButton.setStyleName(getIconRowStyle(payment), !show);
+
+			} else {
+				String styles[] = eventStyles.get(event == null ? Event.Type.ERROR : event.getType());
+				addStyle(paymentsTable, row, styles[1], show);
+				handler.editButton.setStyleName(styles[0], show);
+				handler.editButton.setStyleName(getIconRowStyle(payment), !show);
+			}
+		}
+
 
 	}
 
@@ -5492,6 +5530,26 @@ public class SalaryDraft extends ResizeComposite
 		CellFormatter fomatter = table.getCellFormatter();
 		for (int col = 0; col < table.getCellCount(row); col++)
 			fomatter.addStyleName(row, col, style);
+	}
+
+	private static void removeStyle(FlexTable table, int row, String style) {
+		CellFormatter fomatter = table.getCellFormatter();
+		for (int col = 0; col < table.getCellCount(row); col++)
+			fomatter.removeStyleName(row, col, style);
+	}
+
+	private static void addStyle(FlexTable table, int row, String style, boolean add) {
+		if ( add )
+			addStyle(table, row, style);
+		else 
+			removeStyle(table, row, style);
+	}
+
+	private static void setIconStyle(FlexTable table, int row, String style) {
+		
+//		CellFormatter fomatter = table.getCellFormatter();
+//		for (int col = 0; col < table.getCellCount(row); col++)
+//			fomatter.addStyleName(row, col, style);
 	}
 
 	private static <T extends Item<?>> boolean isReadOnly(T item) {
