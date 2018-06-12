@@ -174,8 +174,8 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 	}
 
 	private class ExcelAction extends AbsExcelAction implements Consumer<AccountOperatingAccount>{
-		private XSSFCellStyle entryHeaderStyle;
 		private XSSFCellStyle titleCellStyle;
+		private CellStyle wrappedCellStyle;
 		
 		private AccountOperatingReport report;
 		private String companyName; 
@@ -188,12 +188,17 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 
 		@Override
 		protected void headerRow() {
-			int columns = 2;
+			int intervals = report.getIntervals().size();
+			int columnsPerInterval = 2;
 			if (report.showRatios() ) {
-				columns = 5;	
+				columnsPerInterval = 5;	
 			}
 			if (report.showIncreasePercent() ) {
-				columns = 3;
+				columnsPerInterval = 3;
+			}
+			int columns = 2 + (intervals * columnsPerInterval);
+			if (intervals > 1 && report.showIncreasePercent()) {
+				columns = columns - 1; 
 			}
 			
 			PrintSetup printSetup = sheet.getPrintSetup();
@@ -211,6 +216,10 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			CellStyle defaultStyle = workbook.createCellStyle();
 			defaultStyle.setFont(smallFont);
 			
+			wrappedCellStyle = workbook.createCellStyle();
+			wrappedCellStyle.cloneStyleFrom(defaultStyle);
+			wrappedCellStyle.setWrapText(true);
+			
 			decimalStyle.setFont(smallFont);
 
 			Font journalHeaderFont = workbook.createFont();
@@ -224,28 +233,19 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 		    headerStyle.setFillForegroundColor(AON_LIGHT_GRAY);
 		    headerStyle.setFont(journalHeaderFont);
 		    headerStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    headerStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		    headerStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		    headerStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		    headerStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 		    
-		    
-			entryHeaderStyle = (XSSFCellStyle) workbook.createCellStyle();
-			entryHeaderStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
-			entryHeaderStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
-			entryHeaderStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-			entryHeaderStyle.setFont(defaulFont);
-
-			
-		    
-			titleCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-			titleCellStyle.cloneStyleFrom(decimalStyle);
-			titleCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
-			
 			Font smallBoldFont= workbook.createFont();
 			smallBoldFont.setFontHeightInPoints((short) 8);
 			smallBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
+			titleCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+			titleCellStyle.cloneStyleFrom(decimalStyle);
+			titleCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 			titleCellStyle.setFont(smallBoldFont);
+			titleCellStyle.setWrapText(true);
 
 			CellUtil.createCell(row, 0, "CUENTA DE EXPLOTACI\u00D3N", headerStyle);
 			row.setHeight((short) 500);
@@ -254,18 +254,20 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			row = sheet.createRow(rowCount);
 			cellCount = 0;
 			
-			CellUtil.createCell(row, cellCount, "-----------", headerStyle);
+			CellUtil.createCell(row, cellCount, "", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 9 * 256);
 			sheet.setColumnWidth(cellCount++, 40 * 256);
-			
+
 			for (DateInterval inter : report.getIntervals()) {
-				CellUtil.createCell(row, cellCount, inter.getName(), headerStyle);
-				if (report.showIncreasePercent() && cellCount == 1) {
+				if (report.showIncreasePercent() && cellCount == 2) {
 					sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, cellCount, cellCount+1));
+					CellUtil.createCell(row, cellCount, inter.getName(), headerStyle);
 					cellCount = cellCount + 1;
 				} else {
-					sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, cellCount, cellCount+columns-1));
-					cellCount = cellCount + columns-1;
+					sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, cellCount, cellCount+columnsPerInterval-1));
+					CellUtil.createCell(row, cellCount, inter.getName(), headerStyle);
+					cellCount = cellCount + columnsPerInterval-1;
 				}
 				cellCount++;
 			}
@@ -273,42 +275,39 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
+			sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns-1));
+			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1));
+			sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 1));
 			CellUtil.createCell(row, cellCount, "CUENTA", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			cellCount++;
+			cellCount++;
 			
-			int col = 0;
+			int iter = 0;
 			for (@SuppressWarnings("unused") DateInterval inter : report.getIntervals()) {
 				CellUtil.createCell(row, cellCount, "S. Deudor", headerStyle);
 				sheet.setColumnWidth(cellCount++, 12 * 256);
-				col++;
 				
 				CellUtil.createCell(row, cellCount, "S. Acreed", headerStyle);
 				sheet.setColumnWidth(cellCount++, 12 * 256);
-				col++;
 				
 				if (report.showRatios() ) {
 					CellUtil.createCell(row, cellCount, "% S/Vta.", headerStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
-					col++;
 					
 					CellUtil.createCell(row, cellCount, "% S/Com.", headerStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
-					col++;	
 					
 					CellUtil.createCell(row, cellCount, "% S/Gst.", headerStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
-					col++;
 
 				}
-				if (report.showIncreasePercent() && col != 2) {
+				if (report.showIncreasePercent() && iter != 0) {
 					CellUtil.createCell(row, cellCount, "% Incrm.", headerStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
-					col++;
-
 				}
+				iter++;
 			}
-			sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, col));
 			sheet.setRepeatingRows(new CellRangeAddress(0, 2, 0, 6));
 		}
 
@@ -318,9 +317,15 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			boolean title = account.getId() == null;
 			cellCount = 0;
 			
-			String label = (title?"":account.getCode()) + " " + account.getDescription();
+			String label = (title?"":account.getCode()) + " ";
 			Cell cell = addCell(label);
 			if (title) cell.setCellStyle(titleCellStyle);
+			cell = addCell(account.getDescription());
+			if (title) {
+				cell.setCellStyle(titleCellStyle);
+			} else {
+				cell.setCellStyle(wrappedCellStyle);				
+			}
 			int col = 0;
 			for (DateInterval inter : report.getIntervals()) {
 				AccountOperatingStatement aos = report.get(account.getCode(),inter);

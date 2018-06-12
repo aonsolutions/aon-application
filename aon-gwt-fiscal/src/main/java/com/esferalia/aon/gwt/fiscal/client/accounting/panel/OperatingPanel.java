@@ -67,56 +67,64 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 					tab.addStyleName(AON.AON_CSS.aonReportTableFontBig());
 				}
 
-				tab.getColumnFormatter().setWidth( 0, "auto");
 				
 				if (report.isEmpty()) {
 					tab.setWidget(0, 0, new Label(AON.MSG.noData()));
 				} else {
+					tab.setWidget(0, 0, new Label());
+					tab.getFlexCellFormatter().setColSpan(0, 0, 2);
+
 					tab.setWidget(1, 0, new Label(AON.MSG.account()));
 					tab.getCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonReportTableHeader());
+					tab.getFlexCellFormatter().setColSpan(1, 0, 2);
 	
-					int columns = 2;
+					int intervals = report.getIntervals().size();
+					int columnsPerInterval = 2;
 					if (report.showRatios() ) {
-						columns = 5;	
+						columnsPerInterval = 5;	
 					}
 					if (report.showIncreasePercent() ) {
-						columns = 3;
+						columnsPerInterval = 3;
 					}
-	
+					int columns = 2 + (intervals * columnsPerInterval);
+					if (intervals > 1 && report.showIncreasePercent()) {
+						columns = columns - 1; 
+					}
+					
+					for (int i = 0; i < columns; i++) {
+						tab.getColumnFormatter().setWidth( i,   "90px");
+					}
+					tab.getColumnFormatter().setWidth( 1, "auto");
+
 					int iter = 1;
 					int col = 1;
 					for (DateInterval inter : report.getIntervals()) {
 						tab.setWidget(0, iter, new Label(inter.getName()));
-						if (report.showIncreasePercent() && col == 1) {
-							tab.getFlexCellFormatter().setColSpan(0, iter, 2);	
+						if (report.showIncreasePercent() && iter == 1) {
+							tab.getFlexCellFormatter().setColSpan(0, iter, 2);
 						} else {
-							tab.getFlexCellFormatter().setColSpan(0, iter, columns);
+							tab.getFlexCellFormatter().setColSpan(0, iter, columnsPerInterval);
 						}
 						tab.getCellFormatter().setStyleName(0, iter, AON.AON_CSS.aonReportTableHeader());
 						tab.getCellFormatter().addStyleName(0, iter, AON.AON_CSS.aonTextCenter());
-//						int col = (iter * columns) - (columns -1);
 	
 						tab.setWidget(1, col  , new Label("S. Deudor"));
-						tab.getColumnFormatter().setWidth( col,   "90px");
 						tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
 						tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
 						col++;
 						
 						tab.setWidget(1, col, new Label("S. Acreed."));
-						tab.getColumnFormatter().setWidth( col, "90px");
 						tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
 						tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
 						col++;
 						
 						if (report.showRatios() ) {
 							tab.setWidget(1, col, new Label(" % S/Vta."));	
-							tab.getColumnFormatter().setWidth( col,  "60px");
 							tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
 							tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
 							col++;
 							
 							tab.setWidget(1, col, new Label(" % S/Com."));
-							tab.getColumnFormatter().setWidth( col,  "60px");
 							tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
 							tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
 							col++;	
@@ -130,7 +138,6 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 						}
 						if (report.showIncreasePercent() && col != 3) {
 							tab.setWidget(1, col, new Label(" % Incrm."));
-							tab.getColumnFormatter().setWidth( col,  "60px");
 							tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
 							tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
 							col++;
@@ -143,7 +150,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 					
 					for (AccountOperatingAccount account : report.getAccounts()) {
 						boolean title = account.getId() == null;
-						Label codeLabel = new Label((title?"":account.getCode()) + " " + account.getDescription());
+						Label codeLabel = new Label(title?"":account.getCode());
 						if (!title) {
 							codeLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
 							codeLabel.addClickHandler(new ClickHandler() {
@@ -152,8 +159,8 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 								public void onClick(ClickEvent event) {
 									AccountingReportParams newParams = params.clone();
 									newParams.setAccount( new Account()
-										.setId(account.getId())
-										.setCode(account.getCode()));
+											.setId(account.getId())
+											.setCode(account.getCode()));
 									SelectionEvent.fire(OperatingPanel.this, newParams );						
 								}
 							});
@@ -161,17 +168,20 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 						tab.setWidget(row, 0, codeLabel);
 						tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
 						
+						Label descriptionLabel = new Label(account.getDescription());
+						tab.setWidget(row, 1, descriptionLabel);
+						tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
+						
 						if (title) {
-							tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextRight());
-							tab.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonReportTableBold());
-							tab.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonFiscalPaddingRight());
+							tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonTextRight());
+							tab.getCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonReportTableBold());
+							tab.getCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonFiscalPaddingRight());
 						}
 	
-						col = 1;
-						
-						int intervals = 0;
+						col = 2;
+						int oddIntervals = 0;
 						for (DateInterval inter : report.getIntervals()) {
-							String backgroundStyle = (intervals%2==0)? AON.AON_CSS.aonBackgroundDisabled() : AON.AON_CSS.aonBackgroundLightYellow();
+							String backgroundStyle = (oddIntervals%2==0)? AON.AON_CSS.aonBackgroundDisabled() : AON.AON_CSS.aonBackgroundLightYellow();
 							AccountOperatingStatement aos = report.get(account.getCode(),inter);
 							Double db = (aos != null)?aos.getDebitBalance() : 0.0;
 							Double ub = (aos != null)?aos.getUnpaidBalance() : 0.0;
@@ -211,7 +221,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 								tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
 								col++;
 							}
-							if (report.showIncreasePercent() && col != 3) {
+							if (report.showIncreasePercent() && col != 4) {
 								double percent = (aos != null)?aos.getIncreasePercent() : 0.0;
 								String percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
 								tab.setWidget(row, col, new Label(percentText));
@@ -223,7 +233,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 								}
 								col++;
 							}
-							intervals++;
+							oddIntervals++;
 						}
 						row++;	
 					}
