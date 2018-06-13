@@ -521,10 +521,8 @@ public class NormalizedMemory extends ResizeComposite {
 								if (mt.getName().equals(text))
 									m = mt;
 							}
-							
-							
-							inma.updateTexts(aonData, m, getFreeTextMap(), enterprise.getDomain(), enterprise.getDocument(), d2Deposit.getMapDraft(), new AsyncCallback<Map<String, String>>() {	
-
+							inma.updateTexts(aonData, m, d2Deposit.getMapDraft(),new AsyncCallback<Map<String, String>>() {
+						
 								@Override	
 								public void onFailure(
 										Throwable caught) {
@@ -606,8 +604,7 @@ public class NormalizedMemory extends ResizeComposite {
 							if (mt.getName().equals(t))
 								m = mt;
 						}
-						inma.updateTexts(aonData, m, getFreeTextMap(), enterprise.getDomain(),
-								enterprise.getDocument(), d2Deposit.getMapDraft(),
+						inma.updateTexts(aonData, m, d2Deposit.getMapDraft(),
 								new AsyncCallback<Map<String, String>>() {
 							
 							@Override

@@ -107,7 +107,7 @@ public class FreeText extends PageAbs {
 					
 					if(!textMode) {
 						String str = s.replace("\n", "\r\n");
-						onEdit(key.getCode(), str);
+						onEdit(key.getCode(), str, false);
 					}else {
 						String str = s.replace("\n", "\r\n");
 						onEditTextMode(key.getCode(), str);

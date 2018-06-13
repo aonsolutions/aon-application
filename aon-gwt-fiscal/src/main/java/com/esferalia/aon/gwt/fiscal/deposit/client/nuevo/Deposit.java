@@ -192,8 +192,25 @@ public class Deposit extends AonTemplate2 {
 	}
 	
 	private void updateType(String type) {
-		// TODO
-		updateHeader(type, getYear());
+		getInma().updateType(getAonData(), getYear(), type, new AsyncCallback<Map<String,String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				Map<String, String> m = new HashMap<String, String>();
+				for (String k : getDeposit().keySet()) {
+					m.put(k, getDeposit().get(k));
+				}
+				getUndoStack().push(m);
+				getRedoStack().clear();
+				setDeposit(result);
+				
+				updateHeader(type, getYear());
+				updatePage(getDepositMenu());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
 	}
 	
 	private void deposit() {
@@ -447,6 +464,7 @@ public class Deposit extends AonTemplate2 {
 						
 						@Override
 						public void onSuccess(Void result) {
+							updateHeader(getDeposit().get(D2DepositConstants.DEPOSIT_TYPE), getYear());
 							refreshPage();
 						}
 						
@@ -473,6 +491,7 @@ public class Deposit extends AonTemplate2 {
 						
 						@Override
 						public void onSuccess(Void result) {
+							updateHeader(getDeposit().get(D2DepositConstants.DEPOSIT_TYPE), getYear());
 							refreshPage();
 						}
 						

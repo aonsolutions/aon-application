@@ -231,7 +231,7 @@ public abstract class PageAbs extends ResizeComposite {
 					}
 					Double d = text.getValueOrThrow();
 					
-					onEdit(key.getCode(), Double.toString(AonMathUtils.round(d)));
+					onEdit(key.getCode(), Double.toString(AonMathUtils.round(d)), true);
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -285,7 +285,7 @@ public abstract class PageAbs extends ResizeComposite {
 						text.setValue(0.0,false);
 					}
 					Double d = text.getValueOrThrow();
-					onEdit(key.getCode(), Double.toString(AonMathUtils.round(d)));
+					onEdit(key.getCode(), Double.toString(AonMathUtils.round(d)), true);
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -326,7 +326,7 @@ public abstract class PageAbs extends ResizeComposite {
 						text.setValue(0.0,false);
 					}
 					Double d = text.getValueOrThrow();
-					onEdit(key.getCode(), Double.toString(AonMathUtils.round(d)));
+					onEdit(key.getCode(), Double.toString(AonMathUtils.round(d)), true);
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -377,7 +377,7 @@ public abstract class PageAbs extends ResizeComposite {
 					}
 					Double d = text.getValueOrThrow();					
 					
-					onEdit(key.getCode(), Double.toString(AonMathUtils.round(d)));
+					onEdit(key.getCode(), Double.toString(AonMathUtils.round(d)), true);
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -515,7 +515,7 @@ public abstract class PageAbs extends ResizeComposite {
 					}
 					String d = text.getValueOrThrow();
 				
-					onEdit(key.getCode(), d);
+					onEdit(key.getCode(), d, true);
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -555,7 +555,7 @@ public abstract class PageAbs extends ResizeComposite {
 					}
 					String d = text.getValueOrThrow();					
 					
-					onEdit(key.getCode(), d);
+					onEdit(key.getCode(), d, true);
 					
 				} catch (ParseException e) {
 					// nothing.
@@ -581,7 +581,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	
-	protected void onEdit(String key, String value){
+	protected void onEdit(String key, String value, Boolean calculate){
 		Map<String, String> m = new HashMap<String, String>();
 		for (String k : getMap().keySet()) {
 			m.put(k, getMap().get(k));
@@ -590,16 +590,29 @@ public abstract class PageAbs extends ResizeComposite {
 		getDeposit().getRedoStack().clear();
 		
 		getMap().put(key, value);
-		getDeposit().getInma().calculate(getAonData(), getMap(), getYear(), new AsyncCallback<Map<String,String>>() {
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				setMap(result);
-				getDeposit().refreshPage();
-			}
+		if(calculate) {
+			getDeposit().getInma().calculate(getAonData(), getMap(), getYear(), new AsyncCallback<Map<String,String>>() {
+				@Override
+				public void onSuccess(Map<String, String> result) {
+					setMap(result);
+					getDeposit().refreshPage();
+				}
 
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		} else {
+			getDeposit().getInma().saveDeposit(getAonData(), getMap(), getYear(), new AsyncCallback<Void>() {
+			
+				@Override
+				public void onSuccess(Void result) {
+					
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		}
+	
 	}
 	
 	protected void onEditTextMode(String key, String value){

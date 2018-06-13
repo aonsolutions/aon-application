@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.Deposit;
@@ -415,24 +413,8 @@ public class PageF2 extends PageAbs {
 		}
 	}
 	
-	@Override
+	
 	protected void onEdit(String key, String value) {
-		Map<String, String> m = new HashMap<String, String>();
-		for (String k : getMap().keySet()) {
-			m.put(k, getMap().get(k));
-		}
-		getDeposit().getUndoStack().push(m);
-		getDeposit().getRedoStack().clear();
-		
-		getMap().put(key, value);
-		getDeposit().getInma().saveDeposit(getAonData(), getMap(), getYear(), new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
-				getDeposit().refreshPage();
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
+		onEdit(key, value, false);
 	}
 }

@@ -48,28 +48,13 @@ public class DBConsults {
 	private static final String D2_FILE_SICAV_2015 = "SICAV";
 
 
-	public static Boolean isDigitalDeposit(String domain, Integer domainId,Integer year) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId);
-
-			Record2<Integer, byte[]> record = ctx
-					.getDslContext()
-					.select(RATTACH.ID, RATTACH.DATA)
-					.from(RATTACH)
-					.join(REGISTRY)
-					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
-					.where(RATTACH.TYPE.eq((byte) 17)
-						.and(RATTACH.DOMAIN.eq(domainId)))
-						.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year)))
-						.limit(1).fetchOne();
-
-			return record != null && record.value2() != null;
-
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static Boolean isDigitalDeposit(String domainName, Integer domainId, String login, Integer year) {
+		Attach attach = AON.getAttach(domainName, domainId, login,
+				f-> f.getDomainProperty().eq(domainId)
+				.and(f.getAttachDateProperty().eq(newAttachDate(year)))
+				.and(f.getTypeProperty().eq((byte) 17)), AttachType.REGISTRY, false);
+		
+		return attach.getId() != null;
 	}
 
 	// Devuelve el xml file d2
@@ -234,7 +219,7 @@ public class DBConsults {
 	
 	public static Esquema getSchema(D2Deposit d2Deposit, String user){
 		// return getSchema(d2Deposit.getDomain().getName(), d2Deposit.getDomain().getId(), user, d2Deposit.getId());
-		return getDeposit(d2Deposit.getDomain().getName(), d2Deposit.getDomain().getId(),d2Deposit.getYear(),user);
+		return getDeposit(d2Deposit.getDomain().getName(), d2Deposit.getDomain().getId(), user, d2Deposit.getYear());
 	}
 
 	public static Esquema getSchema(String domainName, Integer domainId, String user, 
@@ -248,7 +233,7 @@ public class DBConsults {
 		}
 		return schema;
 	}
-	public static Esquema getDeposit(String domain, Integer domainId, Integer year, String login) {
+	public static Esquema getDeposit(String domain, Integer domainId, String login, Integer year) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);

@@ -182,7 +182,7 @@ public class ImportPanel extends Composite {
     	}
     	if(m != null)
     	
-    	parent.getInma().updateTexts(parent.getAonData(),m, parent.getAonData().getDomain().getId(), parent.getCompany().getDocument(), parent.getDeposit(), new AsyncCallback<Map<String, String>>() {
+    	parent.getInma().updateTexts(parent.getAonData(),m, parent.getDeposit(), new AsyncCallback<Map<String, String>>() {
 
 			@Override public void onFailure(Throwable caught) {}
 

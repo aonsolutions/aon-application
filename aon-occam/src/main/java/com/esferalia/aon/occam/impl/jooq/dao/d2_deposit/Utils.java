@@ -402,6 +402,38 @@ public class Utils {
 		return b;
 	}
 	
+	public static Esquema changeType(Esquema schema, String type) {
+		schema.getCabecera().setTipoCuestionario(type);
+		schema.getClaves().getClave().stream().forEach(c ->{
+			if(c.getCodigo().equals(BigInteger.valueOf(8080805))){
+				c.setValor(ABREVIATE.equals(type) ? "1" : "0");
+			}
+			if(c.getCodigo().equals(BigInteger.valueOf(8080852))){
+				c.setValor(PYMES.equals(type) ? "1" : "0");
+			}
+			if(c.getCodigo().equals(BigInteger.valueOf(8080854))){
+				c.setValor(ABREVIATE.equals(type) ? "1" : "0");
+			}
+			if(c.getCodigo().equals(BigInteger.valueOf(8080855))){
+				c.setValor(PYMES.equals(type) ? "1" : "0");
+			}
+			if(c.getCodigo().equals(BigInteger.valueOf(8080801))){
+				c.setValor(ABREVIATE.equals(type) ? "1" : "0");
+			}
+			if(c.getCodigo().equals(BigInteger.valueOf(8080803))){
+				c.setValor(ABREVIATE.equals(type) ? "1" : "0");
+			}
+			if(c.getCodigo().equals(BigInteger.valueOf(8080850))){
+				c.setValor(PYMES.equals(type) ? "1" : "0");
+			}
+			if(c.getCodigo().equals(BigInteger.valueOf(8080851))){
+				c.setValor(PYMES.equals(type) ? "1" : "0");
+			}
+		});
+		
+		return schema;
+	}
+	
 	public static Esquema createXml(Enterprise enterprise, String name, String type , String domain, Integer year){
 		Esquema schema = new Esquema();
 		Cabecera header = new Cabecera();

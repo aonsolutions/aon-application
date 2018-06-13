@@ -44,10 +44,7 @@ public interface INormalizedMemoryAsync {
 	void createTextMemory(Integer domainId, String name, Integer year, AsyncCallback<MemoryTemplate> callback);
 
 	
-	void updateTexts(AonData aonData, MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map, AsyncCallback<Map<String, String>> callback);
-	
-	void updateTexts(AonData aonData, MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif,
-			Map<String, String> map, AsyncCallback<Map<String, String>> callback);
+	void updateTexts(AonData aonData, MemoryTemplate mt, Map<String, String> map, AsyncCallback<Map<String, String>> callback);
 
 	void getDate(String str, AsyncCallback<Date> callback);
 
@@ -78,8 +75,7 @@ public interface INormalizedMemoryAsync {
 			String type, Integer year,
 			AsyncCallback<Map<String, String>> callback);
 
-	void getParentEnterprises(AonData aonData, String query,
-			AsyncCallback<LinkedList<Enterprise>> callback);
+	void getParentEnterprises(AonData aonData, String query, AsyncCallback<LinkedList<Enterprise>> callback);
 	
 	void getCompany(AonData aonData, AsyncCallback<Company> callback);
 
@@ -89,6 +85,8 @@ public interface INormalizedMemoryAsync {
 
 	void getDepositTemplates(AonData aonData, AsyncCallback<Vector<MemoryTemplate>> callback);
 	
+	void updateType(AonData aonData, Integer year, String type, AsyncCallback<Map<String, String>> callback);
+
 	// text mode
 
 	void getTemplates(AonData aonData, AsyncCallback<Vector<MemoryTemplate>> callback);
@@ -98,5 +96,6 @@ public interface INormalizedMemoryAsync {
 	void createSchemaTextMode(AonData aonData, String name, AsyncCallback<Integer> callback);
 
 	void deleteSchemaTextMode(AonData aonData, Integer id, AsyncCallback<Void> callback);
+
 	
 }

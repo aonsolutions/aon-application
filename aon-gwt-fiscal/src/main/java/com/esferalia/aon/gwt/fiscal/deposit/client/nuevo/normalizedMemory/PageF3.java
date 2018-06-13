@@ -72,7 +72,7 @@ public class PageF3 extends PageAbs {
 						text.setValue("",false);
 					}
 					String d = text.getValueOrThrow();
-					onEdit(code, d);
+					onEdit(code, d, false);
 				} catch (ParseException e) {
 					// nothing.
 				}

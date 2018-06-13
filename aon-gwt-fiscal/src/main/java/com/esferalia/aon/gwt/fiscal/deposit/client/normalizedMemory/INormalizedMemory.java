@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
@@ -12,7 +11,6 @@ import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -43,11 +41,8 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public MemoryTemplate createTextMemory(Integer domainId, String name, Integer year);
 
-	Map<String, String> updateTexts(AonData aonData, MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map);
-	
-	Map<String, String> updateTexts(AonData aonData, MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap,
-			Integer domainId, String cif, Map<String, String> map);
-		
+	Map<String, String> updateTexts(AonData aonData, MemoryTemplate mt, Map<String, String> map);
+
 	public Date getDate(String str);
 			
 	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name, String type, Integer year);
@@ -79,6 +74,8 @@ public interface INormalizedMemory extends RemoteService{
 	public String[] getDepositExercises(Integer domainId);
 
 	public Vector<MemoryTemplate> getDepositTemplates(AonData aonData);
+	
+	public Map<String, String> updateType(AonData aonData, Integer year, String type);
 	
 	// text mode
 	

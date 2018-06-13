@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.google.gwt.core.client.GWT;
@@ -10,7 +7,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -99,25 +95,8 @@ public class PageH5 extends PageAbs {
 	protected void initializeTable() {
 		init();
 	}
-
-	@Override
+	
 	protected void onEdit(String key, String value) {
-		Map<String, String> m = new HashMap<String, String>();
-		for (String k : getMap().keySet()) {
-			m.put(k, getMap().get(k));
-		}
-		getDeposit().getUndoStack().push(m);
-		getDeposit().getRedoStack().clear();
-		
-		getMap().put(key, value);
-		getDeposit().getInma().saveDeposit(getAonData(), getMap(), getYear(), new AsyncCallback<Void>() {
-			
-			@Override
-			public void onSuccess(Void result) {
-				getDeposit().refreshPage();
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
+		onEdit(key, value, false);
 	}
 }
