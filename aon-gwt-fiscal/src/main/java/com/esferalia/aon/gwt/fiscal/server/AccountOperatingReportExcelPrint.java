@@ -71,7 +71,7 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 				.forEach(action)						
 			;
 			resp.setContentType(MimeType.MS_EXCEL.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			resp.setHeader("Content-disposition", "attachment; filename=\"PyG."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
 		} catch (Throwable e) {
