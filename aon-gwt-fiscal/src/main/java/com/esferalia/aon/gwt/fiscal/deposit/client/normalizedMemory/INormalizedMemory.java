@@ -25,6 +25,8 @@ public interface INormalizedMemory extends RemoteService{
 	
 	void updateSchema(String cif, Integer domainId, String key, String value, Integer year);
 	
+	public Map<String, String> reset(AonData aonData, Company company, Integer year);
+	
 	public Boolean isDigitalDeposit(Integer domainId, Integer year);
 	
 	public Boolean isModify(String cif, Integer year);
@@ -50,7 +52,7 @@ public interface INormalizedMemory extends RemoteService{
 	Map<String, String> importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, String cif,
 			Map<String, String> map, Integer year);
 	
-	public void delete(Integer domainId, String document, Integer year);
+	public void delete(AonData aonData, Integer year);
 
 	public void deleteFreeText(Integer domainId, Integer rattachId, Integer year);
 	

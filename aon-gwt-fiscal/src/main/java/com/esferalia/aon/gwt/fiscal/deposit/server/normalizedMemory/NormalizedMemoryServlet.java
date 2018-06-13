@@ -134,6 +134,17 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		}
 	}
 	
+	public Map<String, String> reset(AonData aonData, Company company, Integer year) {
+		delete(aonData, year);
+		ApplicationParameter ap = AON.getApplicationParameter(aonData.getDomain().getName(), aonData.getDomain().getId(),
+    			aonData.getUser().getLogin(), AppParam.FS_MODEL_CFG_CCAA.getValue());
+		String type = DepositType.ABREVIADO.getLabel();
+    	if(ap.getValue() != null) {
+    		type = DepositType.values()[Integer.parseInt(ap.getValue())].getLabel();
+    	} 
+		return createD2Deposit(aonData, company.getId(), company.getName(), type, year);	
+	}
+	
 	public Map<String, String> getSchema(Attach attach){
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -484,7 +495,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return map;
 	}
 	
-	public void delete(AonData aonData, String document, Integer year) {
+	public void delete(AonData aonData, Integer year) {
 		String domainName = aonData.getDomain().getName();
 		Integer domainId = aonData.getDomain().getId();
 		
@@ -1030,20 +1041,6 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return new MemoryTemplate().setId(id).setName(name)
 				.setD2Deposit(getD2DepositTreeObject(id, year, data));
 	}
-	
-	public void delete(Integer domainId, String document, Integer year) {
-		HttpServletRequest request = getThreadLocalRequest();
-		String domain = AonServletUtils.getRequestDomainName(request);
-		clearSession(document, year);
-		DBConsults.deleteDeposit(domain, domainId, year);
-		
-		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_MEMORY);
-		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_AUTOCARTERA_MODEL);
-		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_GESTION);
-		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_AUDIT);
-		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_CONVOC);
-		DBConsults.deleteMemoryFile(domain, domainId, D2_FILE_SICAV);
-	}
 
 	public void deleteFreeText(Integer domainId, Integer rattachId, Integer year) {
 		HttpServletRequest request = getThreadLocalRequest();
@@ -1075,6 +1072,4 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		}
 		return mf;
 	}
-	
-	
 }

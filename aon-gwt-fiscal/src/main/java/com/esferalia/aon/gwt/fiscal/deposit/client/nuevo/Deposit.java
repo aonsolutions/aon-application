@@ -139,6 +139,7 @@ public class Deposit extends AonTemplate2 {
 		toolbar.addButton("Exportar",AON.AON_CSS.aonIconAeat()).addClickHandler(exportClickHandler());
 		toolbar.addButton("Importar","aon-icon-file-upload").addClickHandler(importClickHandler());
 		toolbar.addButton("Descargar",AON.AON_CSS.aonIconExcel()).addClickHandler(downloadClickHandler());
+		toolbar.addButton("Resetear", "aon-icon-refresh").addClickHandler(resetClickHandler());
 		setToolbar(toolbar);
 	}
 	
@@ -530,6 +531,48 @@ public class Deposit extends AonTemplate2 {
 			@Override
 			public void onClick(ClickEvent event) {
 				download("excel");
+			}
+		};
+	}
+
+	private ClickHandler resetClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				AonDialog dialog = new AonDialog("Resetear", new Label("Est\u00e1 seguro de resetear el dep\u00f3sito de cuentas Anuales del ejercicio " + getYear() + ". Se perder\u00e1n todos los datos almacenados hasta ahora.")) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override protected void onAccept() {
+						hide();
+						getInma().reset(getAonData(), getCompany(), getYear(), new AsyncCallback<Map<String,String>>() {
+							
+							@Override
+							public void onSuccess(Map<String, String> result) {
+								Map<String, String> m = new HashMap<String, String>();
+								for (String k : getDeposit().keySet()) {
+									m.put(k, getDeposit().get(k));
+								}
+								getUndoStack().push(m);
+								getRedoStack().clear();
+								
+								setDeposit(result);
+								refreshPage();
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+
+					}
+				};
+				dialog.setAutoHideEnabled(true);
+				dialog.getElement().getStyle().setWidth(310, Unit.PX);
+				dialog.center();
+				
 			}
 		};
 	}

@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
@@ -12,7 +11,6 @@ import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INormalizedMemoryAsync {
@@ -51,8 +49,7 @@ public interface INormalizedMemoryAsync {
 	void importAll(AonData aonData, String type, String ejercicio, MemoryTemplate mt, String cif,
 			Map<String, String> map, Integer year, AsyncCallback<Map<String, String>> callback);
 
-	void delete(Integer domainId, String document, Integer year,
-			AsyncCallback<Void> callback);
+	void delete(AonData aonData, Integer year, AsyncCallback<Void> callback);
 
 	void deleteFreeText(Integer domainId, Integer rattachId, Integer year, AsyncCallback<Void> callback);
 
@@ -96,6 +93,8 @@ public interface INormalizedMemoryAsync {
 	void createSchemaTextMode(AonData aonData, String name, AsyncCallback<Integer> callback);
 
 	void deleteSchemaTextMode(AonData aonData, Integer id, AsyncCallback<Void> callback);
+
+	void reset(AonData aonData, Company company, Integer year, AsyncCallback<Map<String, String>> callback);
 
 	
 }

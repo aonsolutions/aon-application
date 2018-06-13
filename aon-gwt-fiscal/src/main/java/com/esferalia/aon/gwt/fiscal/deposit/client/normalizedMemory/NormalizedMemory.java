@@ -648,7 +648,7 @@ public class NormalizedMemory extends ResizeComposite {
 				@Override
 				protected void onAccept() {
 					hide();
-					inma.delete(enterprise.getDomain(), enterprise.getDocument(), year, new AsyncCallback<Void>() {
+					inma.delete(aonData, year, new AsyncCallback<Void>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							
