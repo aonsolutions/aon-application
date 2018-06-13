@@ -14,13 +14,14 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
@@ -164,10 +165,10 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			params.setByMonth(byMonth.intValue() == 1);	
 		}
 		// *******************  COSTCENTERS *******************
-		String [] costCenters = (String[]) jsonParams.get(IRequestParamsNames.COST_CENTERS);
-		if (costCenters != null) {
-			for (String cc : costCenters) {
-				params.addCostCenter(cc);
+		JSONArray costCenters = (JSONArray) jsonParams.get(IRequestParamsNames.COST_CENTERS);
+		if (costCenters != null && costCenters.size() > 0) {
+			for (int i = 0; i < costCenters.size(); i++) {
+				params.addCostCenter(costCenters.get(i).toString());
 			}
 		}
 		return params;
@@ -212,7 +213,6 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			footer.setLeft("&BCuenta de explotaci\u00F3n");
 			footer.setRight("&BP\u00E1g: &P/&N");
 			
-			row = sheet.createRow(rowCount);
 			CellStyle defaultStyle = workbook.createCellStyle();
 			defaultStyle.setFont(smallFont);
 			
@@ -237,9 +237,25 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 		    headerStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		    headerStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 		    
+			Font titleFont= workbook.createFont();
+			titleFont.setFontHeightInPoints((short) 10);
+			titleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+			XSSFCellStyle titleStyle = (XSSFCellStyle) workbook.createCellStyle();
+		    titleStyle.cloneStyleFrom(headerStyle);
+		    titleStyle.setFont(titleFont);
+		    
 			Font smallBoldFont= workbook.createFont();
 			smallBoldFont.setFontHeightInPoints((short) 8);
 			smallBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+		    XSSFCellStyle headerParamsStyle = (XSSFCellStyle) workbook.createCellStyle();
+		    headerParamsStyle.cloneStyleFrom(headerStyle);
+		    headerParamsStyle.setFont(smallBoldFont);
+			headerParamsStyle.setAlignment( HSSFCellStyle.ALIGN_LEFT );
+			headerParamsStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
+			headerParamsStyle.setWrapText(true);
+			headerParamsStyle.setIndention((short) 1);
 
 			titleCellStyle = (XSSFCellStyle) workbook.createCellStyle();
 			titleCellStyle.cloneStyleFrom(decimalStyle);
@@ -247,13 +263,21 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			titleCellStyle.setFont(smallBoldFont);
 			titleCellStyle.setWrapText(true);
 
-			CellUtil.createCell(row, 0, "CUENTA DE EXPLOTACI\u00D3N", headerStyle);
+			row = sheet.createRow(rowCount);
+			CellUtil.createCell(row, 0, "CUENTA DE EXPLOTACI\u00D3N", titleStyle);
 			row.setHeight((short) 500);
 			++rowCount;
 			
+			row = sheet.createRow(rowCount++);
+			String paramsToString = print( report );
+			CellUtil.createCell(row, cellCount, paramsToString, headerParamsStyle);
+			if (AonStringUtils.length( paramsToString ) > 70) {
+				row.setHeight((short) 400);
+			}
+			sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns-1));
+
 			row = sheet.createRow(rowCount);
 			cellCount = 0;
-			
 			CellUtil.createCell(row, cellCount, "", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 9 * 256);
@@ -275,9 +299,11 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
-			sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns-1));
-			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1));
+			CellUtil.createCell(row, cellCount, "PARAMS", headerStyle);
+			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, columns-1));
+			
 			sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 1));
+			sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 1));
 			CellUtil.createCell(row, cellCount, "CUENTA", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			cellCount++;
@@ -308,7 +334,52 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 				}
 				iter++;
 			}
-			sheet.setRepeatingRows(new CellRangeAddress(0, 2, 0, 6));
+			sheet.setRepeatingRows(new CellRangeAddress(0, 3, 0, 6));
+		}
+
+		private String print(AccountOperatingReport report) {
+			StringBuilder buf = new StringBuilder();
+			AccountingReportParams params = report.getParams();
+			if (report.getSelectedPeriod() != null) {
+				buf.append("EJERCICIO: (");
+				buf.append(report.getSelectedPeriod().getName());
+				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
+				buf.append(AonStringUtils.SPACE);
+			}
+			if (params.getFromDate()  != null) {
+				buf.append("DESDE: (");
+				buf.append(FORMATTER.format( params.getFromDate() ));
+				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
+				buf.append(AonStringUtils.SPACE);
+			}
+			if (params.getToDate()  != null) {
+				buf.append("HASTA: (");
+				buf.append(FORMATTER.format( params.getToDate() ));
+				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
+				buf.append(AonStringUtils.SPACE);
+			}
+			if (params.getActivity() != null && params.getActivity() < 0) {
+				buf.append("ACTIVIDAD: (Sin Actividad) ");
+			}
+			if (report.getSelectedActivity() != null) {
+				buf.append("ACTIVIDAD: (");
+				buf.append(report.getSelectedActivity().getDescription());
+				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
+				buf.append(AonStringUtils.SPACE);
+			}
+			if (params.getCostCenters() != null && !params.getCostCenters().isEmpty()) {
+				buf.append("CENTRO COSTO: (");
+				boolean first = true;
+				for (String cc : params.getCostCenters()) {
+					if (!first) buf.append(", ");
+					buf.append(cc);
+					first = false;
+				}
+				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
+			}
+//			private HashSet<String> costCenters;
+			
+			return buf.toString();
 		}
 
 		@Override

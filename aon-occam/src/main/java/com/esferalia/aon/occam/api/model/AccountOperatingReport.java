@@ -243,11 +243,10 @@ public class AccountOperatingReport implements Serializable {
 	}
 
 	private AccountingReportParams params;
-	
+	private AccountPeriod selectedPeriod;
+	private EnterpriseActivity selectedActivity;
 	private LinkedHashSet<AccountOperatingAccount> accounts = new LinkedHashSet<AccountOperatingAccount>();
-	
 	private TreeSet<DateInterval> intervals = new TreeSet<DateInterval>();
-	
 	private TreeMap<String, TreeMap<DateInterval, AccountOperatingStatement>> map = 
 			new TreeMap<String, TreeMap<DateInterval, AccountOperatingStatement>>();
 
@@ -256,7 +255,22 @@ public class AccountOperatingReport implements Serializable {
 	}
 	public AccountOperatingReport setParams(AccountingReportParams params) {
 		this.params = params;
-		
+		return this;
+	}
+	
+	public AccountPeriod getSelectedPeriod() {
+		return selectedPeriod;
+	}
+	public AccountOperatingReport setSelectedPeriod(AccountPeriod period) {
+		this.selectedPeriod = period;
+		return this;
+	}
+	
+	public EnterpriseActivity getSelectedActivity() {
+		return selectedActivity;
+	}
+	public AccountOperatingReport setSelectedActivity(EnterpriseActivity selectedActivity) {
+		this.selectedActivity = selectedActivity;
 		return this;
 	}
 	

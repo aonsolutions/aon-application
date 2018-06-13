@@ -296,6 +296,32 @@ public class CompanyDAO {
 					);
 	}
 
+	public static EnterpriseActivity getEnterpriseActivity(AONContext ctx,Integer id) {
+		if (id == null) return null;
+		return ctx.getDslContext()
+				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,
+						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID,IAE.EPIGRAPH)
+				.from(ENTERPRISE_ACTIVITY)
+				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
+				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
+				.where(ENTERPRISE_ACTIVITY.DOMAIN.equal(ctx.getDomainId()))
+				.and(ENTERPRISE_ACTIVITY.ID.equal(id))
+				.fetch()
+				.stream()
+				.map( rec -> new EnterpriseActivity()
+						.setId(rec.getValue(ENTERPRISE_ACTIVITY.ID) )
+						.setDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
+						.setPrincipal( rec.getValue(ENTERPRISE_ACTIVITY.PRINCIPAL) == 1)
+						.setIae( rec.getValue(IAE.ID))
+						.setEpigraph( rec.getValue(IAE.EPIGRAPH))
+						.setCnae( rec.getValue(CNAE2009.ID) )
+						.setCnaeCode( rec.getValue(CNAE2009.CODE) )
+						.setCnaeDescription( rec.getValue(CNAE2009.TITLE) )
+						)
+				.findFirst()
+				.orElse(null);
+	}
+
 	public static Stream<InvestAsset> getInvestAssets(AONContext ctx, int domainId, Date atDate) {
 		return ctx.getDslContext()
 				.select(INVEST_ASSET.ID,INVEST_ASSET.DESCRIPTION,INVEST_ASSET.VAT_PERCENT)

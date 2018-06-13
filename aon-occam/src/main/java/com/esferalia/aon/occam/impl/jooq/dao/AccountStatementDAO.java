@@ -259,6 +259,12 @@ public class AccountStatementDAO {
 		ctx.checkRead();
 		AccountOperatingReport report = new AccountOperatingReport();
 		report.setParams(params);
+		if (params.getPeriod() != null) {
+			report.setSelectedPeriod( AccountPeriodDAO.getPeriod(ctx, params.getPeriod()) );
+		}
+		if (params.getActivity() != null) {
+			report.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
+		}
 		LinkedHashMap<DateInterval,AccountingReportParams> intervals = getDateIntervals(ctx,params);
 		for (DateInterval inter : intervals.keySet()) {
 			operatingAccount(ctx, intervals.get(inter)).forEach(aos -> report.put(inter, aos) ); 
