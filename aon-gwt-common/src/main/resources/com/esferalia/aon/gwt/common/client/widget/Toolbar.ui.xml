@@ -17,7 +17,7 @@
 					<g:Label></g:Label>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTMLPanel width="400px" styleName="{aonResources.css.aonFindingToolbar}">
+			<g:HTMLPanel width="100%" styleName="{aonResources.css.aonFindingToolbar}">
 				<g:HTMLPanel ui:field="buttonPanel" styleName="{aonResources.css.aonFindingToolbarItemGroup} {aonResources.css.aonWidthAll}">
 				
 				</g:HTMLPanel>
