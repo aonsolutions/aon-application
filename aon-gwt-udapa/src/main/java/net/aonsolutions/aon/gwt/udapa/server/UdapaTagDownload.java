@@ -144,7 +144,6 @@ public class UdapaTagDownload extends HttpServlet{
 				t.addCell(cell);
 				pos++;
 				if(pos.equals(8)) pos = 0;
-
 			}
 			
 			for(Integer c2 = 0; c2 < calibers[1]; c2++) {
@@ -282,6 +281,7 @@ public class UdapaTagDownload extends HttpServlet{
 			String str = map.get("product_description");
 			Integer pos = str.lastIndexOf("#");
 			code.setCode(str.substring(pos + 1));
+			code.setSize(10);
 			Image img = code.createImageWithBarcode(pdfWriter.getDirectContent(), BaseColor.BLACK, BaseColor.BLACK);
 			
 			PdfPCell c8 = new PdfPCell(img);
