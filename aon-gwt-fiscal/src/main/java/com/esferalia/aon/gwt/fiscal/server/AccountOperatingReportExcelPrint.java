@@ -229,13 +229,17 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			XSSFCellStyle headerStyle = (XSSFCellStyle) workbook.createCellStyle();
 			headerStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
 			headerStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
-		    headerStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-		    headerStyle.setFillForegroundColor(AON_LIGHT_GRAY);
 		    headerStyle.setFont(journalHeaderFont);
-		    headerStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    headerStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		    headerStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		    headerStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		    
+		    XSSFCellStyle columnHeaderStyle = (XSSFCellStyle) workbook.createCellStyle();
+		    columnHeaderStyle.cloneStyleFrom(headerStyle);
+		    columnHeaderStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		    columnHeaderStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		    columnHeaderStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		    columnHeaderStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		    columnHeaderStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		    columnHeaderStyle.setFillForegroundColor(AON_LIGHT_GRAY);
+		    
 		    
 			Font titleFont= workbook.createFont();
 			titleFont.setFontHeightInPoints((short) 10);
@@ -244,142 +248,150 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			XSSFCellStyle titleStyle = (XSSFCellStyle) workbook.createCellStyle();
 		    titleStyle.cloneStyleFrom(headerStyle);
 		    titleStyle.setFont(titleFont);
+		    titleStyle.setBorderBottom(HSSFCellStyle.BORDER_NONE);
 		    
+			Font subTitleFont= workbook.createFont();
+			subTitleFont.setFontHeightInPoints((short) 8);
+			subTitleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			
+			XSSFCellStyle subTitleStyle = (XSSFCellStyle) workbook.createCellStyle();
+			subTitleStyle.cloneStyleFrom(headerStyle);
+			subTitleStyle.setFont(subTitleFont);
+			subTitleStyle.setBorderBottom(HSSFCellStyle.BORDER_NONE);
+
 			Font smallBoldFont= workbook.createFont();
 			smallBoldFont.setFontHeightInPoints((short) 8);
 			smallBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-
-		    XSSFCellStyle headerParamsStyle = (XSSFCellStyle) workbook.createCellStyle();
-		    headerParamsStyle.cloneStyleFrom(headerStyle);
-		    headerParamsStyle.setFont(smallBoldFont);
-			headerParamsStyle.setAlignment( HSSFCellStyle.ALIGN_LEFT );
-			headerParamsStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
-			headerParamsStyle.setWrapText(true);
-			headerParamsStyle.setIndention((short) 1);
 
 			titleCellStyle = (XSSFCellStyle) workbook.createCellStyle();
 			titleCellStyle.cloneStyleFrom(decimalStyle);
 			titleCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 			titleCellStyle.setFont(smallBoldFont);
 			titleCellStyle.setWrapText(true);
-
+			
+			sheet.setColumnWidth(0, 9 * 256);
+			sheet.setColumnWidth(1, 40 * 256);
+			
+			
+			// ----------------------------------------------- ROW 1 - Title
 			row = sheet.createRow(rowCount);
-			CellUtil.createCell(row, 0, "CUENTA DE EXPLOTACI\u00D3N", titleStyle);
+			mergeHeaderRegion(0, 0, 0, columns-1);
+			String title = "CUENTA DE EXPLOTACI\u00D3N";
+			if (report.getSelectedPeriod() != null) {
+				title = title + " - " + report.getSelectedPeriod().getName();
+			}
+			CellUtil.createCell(row, 0, title, titleStyle);
 			row.setHeight((short) 500);
 			++rowCount;
 			
-			row = sheet.createRow(rowCount++);
-			String paramsToString = print( report );
-			CellUtil.createCell(row, cellCount, paramsToString, headerParamsStyle);
-			if (AonStringUtils.length( paramsToString ) > 70) {
-				row.setHeight((short) 400);
+			// ----------------------------------------------- ROW 2 - Activity
+			String activityDescription = null;
+			if (report.getParams().getActivity() != null && report.getParams().getActivity() < 0) {
+				activityDescription = "Actividad: Sin Actividad";
 			}
-			sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns-1));
-
+			if (report.getSelectedActivity() != null) {
+				activityDescription = "Actividad: " + report.getSelectedActivity().getDescription();
+			}
+			if (AonStringUtils.isNotBlank(activityDescription)) {
+				row = sheet.createRow(rowCount);
+				mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
+				CellUtil.createCell(row, 0, activityDescription, subTitleStyle);
+				++rowCount;
+			}
+			
+			// ----------------------------------------------- ROW 3 - Centro de costo
+			if (report.getParams().getCostCenters() != null && !report.getParams().getCostCenters().isEmpty()) {
+				StringBuilder buf = new StringBuilder("Centro costo: ");
+				boolean first = true;
+				for (String cc : report.getParams().getCostCenters()) {
+					if (!first) buf.append(", ");
+					buf.append(cc);
+					first = false;
+				}
+				row = sheet.createRow(rowCount);
+				mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
+				CellUtil.createCell(row, 0, buf.toString(), subTitleStyle);
+				++rowCount;
+			}
+			
+			// ----------------------------------------------- ROW 4 - Dates
+			StringBuilder buf = new StringBuilder();
+			AccountingReportParams params = report.getParams();
+			if (params.getFromDate()  != null) {
+				buf.append("Desde el ");
+				buf.append(FORMATTER.format( params.getFromDate() ));
+			}
+			if (params.getToDate()  != null) {
+				buf.append(" hasta el ");
+				buf.append(FORMATTER.format( params.getToDate() ));
+			}
 			row = sheet.createRow(rowCount);
-			cellCount = 0;
+			mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
+			CellUtil.createCell(row, cellCount, buf.toString(), subTitleStyle);
+			++rowCount;
+			
+			// ----------------------------------------------- ROW 5 - Intervals
+			row = sheet.createRow(rowCount);
+			mergeHeaderRegion(rowCount, rowCount, 0, 1);
 			CellUtil.createCell(row, cellCount, "", headerStyle);
-			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
-			sheet.setColumnWidth(cellCount++, 9 * 256);
-			sheet.setColumnWidth(cellCount++, 40 * 256);
-
+			cellCount = 2;
 			for (DateInterval inter : report.getIntervals()) {
 				if (report.showIncreasePercent() && cellCount == 2) {
-					sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, cellCount, cellCount+1));
-					CellUtil.createCell(row, cellCount, inter.getName(), headerStyle);
+					mergeHeaderRegion(rowCount, rowCount, cellCount, cellCount+1);
+					CellUtil.createCell(row, cellCount, inter.getName(), columnHeaderStyle);
+					CellUtil.createCell(row, cellCount+1, "", columnHeaderStyle);
 					cellCount = cellCount + 1;
 				} else {
-					sheet.addMergedRegion(new CellRangeAddress(rowCount, rowCount, cellCount, cellCount+columnsPerInterval-1));
-					CellUtil.createCell(row, cellCount, inter.getName(), headerStyle);
+					mergeHeaderRegion(rowCount, rowCount, cellCount, cellCount+columnsPerInterval-1);
+					CellUtil.createCell(row, cellCount, inter.getName(), columnHeaderStyle);
+					CellUtil.createCell(row, cellCount+1, "", columnHeaderStyle);
 					cellCount = cellCount + columnsPerInterval-1;
 				}
 				cellCount++;
 			}
 			++rowCount;
 			
-			row = sheet.createRow(rowCount++);
+			// ----------------------------------------------- ROW 6 - Co9lumn Header
+			row = sheet.createRow(rowCount);
 			cellCount = 0;
-			CellUtil.createCell(row, cellCount, "PARAMS", headerStyle);
-			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, columns-1));
-			
-			sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 1));
-			sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 1));
-			CellUtil.createCell(row, cellCount, "CUENTA", headerStyle);
-			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
-			cellCount++;
-			cellCount++;
-			
+			mergeHeaderRegion(rowCount, rowCount, 0, 1);
+			CellUtil.createCell(row, cellCount, "CUENTA", columnHeaderStyle);
+			cellCount = 2;
 			int iter = 0;
 			for (@SuppressWarnings("unused") DateInterval inter : report.getIntervals()) {
-				CellUtil.createCell(row, cellCount, "S. Deudor", headerStyle);
+				CellUtil.createCell(row, cellCount, "S. Deudor", columnHeaderStyle);
 				sheet.setColumnWidth(cellCount++, 12 * 256);
 				
-				CellUtil.createCell(row, cellCount, "S. Acreed", headerStyle);
+				CellUtil.createCell(row, cellCount, "S. Acreed", columnHeaderStyle);
 				sheet.setColumnWidth(cellCount++, 12 * 256);
 				
 				if (report.showRatios() ) {
-					CellUtil.createCell(row, cellCount, "% S/Vta.", headerStyle);
+					CellUtil.createCell(row, cellCount, "% S/Vta.", columnHeaderStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
 					
-					CellUtil.createCell(row, cellCount, "% S/Com.", headerStyle);
+					CellUtil.createCell(row, cellCount, "% S/Com.", columnHeaderStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
 					
-					CellUtil.createCell(row, cellCount, "% S/Gst.", headerStyle);
+					CellUtil.createCell(row, cellCount, "% S/Gst.", columnHeaderStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
 
 				}
 				if (report.showIncreasePercent() && iter != 0) {
-					CellUtil.createCell(row, cellCount, "% Incrm.", headerStyle);
+					CellUtil.createCell(row, cellCount, "% Incrm.", columnHeaderStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
 				}
 				iter++;
 			}
-			sheet.setRepeatingRows(new CellRangeAddress(0, 3, 0, 6));
+			++rowCount;
+			sheet.setRepeatingRows(new CellRangeAddress(0, rowCount - 1 , 0, columns-1));
+			
+			
 		}
 
-		private String print(AccountOperatingReport report) {
-			StringBuilder buf = new StringBuilder();
-			AccountingReportParams params = report.getParams();
-			if (report.getSelectedPeriod() != null) {
-				buf.append("EJERCICIO: (");
-				buf.append(report.getSelectedPeriod().getName());
-				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
-				buf.append(AonStringUtils.SPACE);
-			}
-			if (params.getFromDate()  != null) {
-				buf.append("DESDE: (");
-				buf.append(FORMATTER.format( params.getFromDate() ));
-				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
-				buf.append(AonStringUtils.SPACE);
-			}
-			if (params.getToDate()  != null) {
-				buf.append("HASTA: (");
-				buf.append(FORMATTER.format( params.getToDate() ));
-				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
-				buf.append(AonStringUtils.SPACE);
-			}
-			if (params.getActivity() != null && params.getActivity() < 0) {
-				buf.append("ACTIVIDAD: (Sin Actividad) ");
-			}
-			if (report.getSelectedActivity() != null) {
-				buf.append("ACTIVIDAD: (");
-				buf.append(report.getSelectedActivity().getDescription());
-				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
-				buf.append(AonStringUtils.SPACE);
-			}
-			if (params.getCostCenters() != null && !params.getCostCenters().isEmpty()) {
-				buf.append("CENTRO COSTO: (");
-				boolean first = true;
-				for (String cc : params.getCostCenters()) {
-					if (!first) buf.append(", ");
-					buf.append(cc);
-					first = false;
-				}
-				buf.append(AonStringUtils.CLOSE_PARENTHESIS);
-			}
-//			private HashSet<String> costCenters;
-			
-			return buf.toString();
+		private CellRangeAddress mergeHeaderRegion(int firstRow, int lastRow, int firstCol, int lastCol) {
+			CellRangeAddress secondRowRange = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+			sheet.addMergedRegion(secondRowRange);
+			return secondRowRange;
 		}
 
 		@Override
@@ -390,13 +402,11 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			
 			String label = (title?"":account.getCode()) + " ";
 			Cell cell = addCell(label);
-			if (title) cell.setCellStyle(titleCellStyle);
+			cell.setCellStyle((title)?titleCellStyle:wrappedCellStyle);
+			
 			cell = addCell(account.getDescription());
-			if (title) {
-				cell.setCellStyle(titleCellStyle);
-			} else {
-				cell.setCellStyle(wrappedCellStyle);				
-			}
+			cell.setCellStyle((title)?titleCellStyle:wrappedCellStyle);
+			
 			int col = 0;
 			for (DateInterval inter : report.getIntervals()) {
 				AccountOperatingStatement aos = report.get(account.getCode(),inter);
