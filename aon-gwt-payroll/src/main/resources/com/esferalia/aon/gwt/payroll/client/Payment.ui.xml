@@ -1,6 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
 	<ui:Style>
 	.form {
@@ -219,7 +221,23 @@
 					<g:ListBox debugId="monthListBox" ui:field="monthListBox" />
 				</g:customCell>
 			</g:row>
+
+
 		</g:Grid>
+		
+		<g:Grid width="100%" debugId="paymentsGrid" ui:field="paymentsGrid">
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label>Selecciona los conceptos:</g:Label>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.field}">
+					<cell:DataGrid debugId="paymentsDataGrid" ui:field="paymentsDataGrid" title="Conceptos" />
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+		
 
 	</g:HTMLPanel>
 

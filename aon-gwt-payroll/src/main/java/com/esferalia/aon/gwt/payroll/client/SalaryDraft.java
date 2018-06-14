@@ -1263,6 +1263,8 @@ public class SalaryDraft extends ResizeComposite
 			paymentDialog.setPaymentExpression(item.getExpression()); //
 			paymentDialog.setIrpfExpression(item.getIrpfExpression());
 			paymentDialog.setQuoteExpression(item.getQuoteExpression());
+			
+			paymentDialog.setAvailablePayments(salaryDraftObject.getPayments());
 
 			paymentDialog.center();
 			paymentDialog.show(this);

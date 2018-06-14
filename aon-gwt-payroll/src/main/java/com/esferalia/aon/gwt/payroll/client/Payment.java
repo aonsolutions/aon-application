@@ -3,7 +3,12 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.hibernate.property.Getter;
+
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.common.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.common.shared.EvalWarning;
@@ -14,26 +19,36 @@ import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.ui.Button;
@@ -48,6 +63,11 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.DefaultSelectionEventManager;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 
 public class Payment extends ResizeComposite {
 
@@ -67,9 +87,81 @@ public class Payment extends ResizeComposite {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	private class PaymentsSelectionModel extends AbstractSelectionModel<com.esferalia.aon.gwt.payroll.shared.Payment> {
+
+		private Timer synchronizer = new Timer() {
+			
+			@Override
+			public void run() {
+				PaymentsSelectionModel.this.fireSelectionChangeEvent();
+			}
+		};
+		
+		public PaymentsSelectionModel(ProvidesKey<com.esferalia.aon.gwt.payroll.shared.Payment> keyProvider) {
+			super(keyProvider);
+			paymentTextBox.addKeyUpHandler( e -> synchronizer.schedule(2000));
+		}
+
+		@Override
+		public boolean isSelected(com.esferalia.aon.gwt.payroll.shared.Payment payment) {
+			String expression =  paymentTextBox.getCurrentExpression();//getExpression();
+			//indow.alert("expression :" + expression );
+			if ( AonStringUtils.isBlank(expression))
+				return false;
+
+			String var = getVariableName(payment);
+			if ( AonStringUtils.isBlank(var))
+				return false;
+			
+			return RegExp.compile("\\b"+var+"\\b").test(expression);
+		}
+
+		@Override
+		public void setSelected(com.esferalia.aon.gwt.payroll.shared.Payment payment, boolean selected) {
+			String expression = getExpression();
+			if ( AonStringUtils.isBlank(expression))
+				return;
+
+			String var = getVariableName(payment);
+			if ( AonStringUtils.isBlank(var))
+				return;
+			
+			RegExp varRegExp = RegExp.compile("\\b"+var+"\\b");
+			
+			if ( selected ) {
+				if ( !varRegExp.test(expression) ) { 
+					RegExp userReadOnlyRegExp = RegExp.compile("(.*/\\*.*\\*/)(.*)(/\\*\\*/.*)");
+					if ( userReadOnlyRegExp.test(expression ))
+						expression = userReadOnlyRegExp.replace(expression, "$1$2"+"+"+var+"$3");
+					else 	
+						expression += "+" + var;
+				}
+			} else {
+				// first of all remove variable. 
+				expression = varRegExp.replace(expression, ""); 
+
+				// now remove empty parenthesis.
+				expression = RegExp.compile("\\(\\s*\\)").replace(expression, "");
+				// now remove operators at begin.
+				expression = RegExp.compile("^[\\+\\*]").replace(expression, "");
+				// now remove operators at end.
+				expression = RegExp.compile("[\\+\\*]$").replace(expression, "");
+				// now remove consecutive operators.
+				//expression = RegExp.compile("[\\s\\+\\*]+").replace(expression, "");
+				
+			}
+			
+			paymentTextBox.setExpression(expression,false);
+			fireSelectionChangeEvent();
+		}
+		
+	}
 
 	private class MyExpressionBox extends ExpressionBox implements BlurHandler,
 			FocusHandler, AsyncCallback<List<Result>> {
+
+		private boolean hasFocus;
 
 		private String result;
 		private String expression;
@@ -88,11 +180,13 @@ public class Payment extends ResizeComposite {
 		@Override
 		public void onBlur(BlurEvent event) {
 			setExpression(getText(), true);
+			hasFocus = false;
 		}
 
 		@Override
 		public void onFocus(FocusEvent event) {
 			setText(expression);
+			hasFocus = true;
 		}
 
 		@Override
@@ -143,6 +237,10 @@ public class Payment extends ResizeComposite {
 			} else {
 				setText(result != null ? result : expression);
 			}
+		}
+
+		public String getCurrentExpression() {
+			return !hasFocus ? getExpression() : getText();
 		}
 
 		String format(Double d) {
@@ -205,6 +303,9 @@ public class Payment extends ResizeComposite {
 
 	@UiField
 	Grid mainGrid;
+	@UiField
+	Grid paymentsGrid;
+	
 
 	@UiField
 	ListBox typeListBox;
@@ -267,6 +368,10 @@ public class Payment extends ResizeComposite {
 	@UiField
 	DeckPanel quoteDeckPanel;
 	
+	@UiField(provided = true)
+	DataGrid<com.esferalia.aon.gwt.payroll.shared.Payment> paymentsDataGrid;
+
+	
 	private int taxFullPanelIndex;
 	private int taxEditPanelIndex;
 	private int taxNonePanelIndex;
@@ -281,6 +386,9 @@ public class Payment extends ResizeComposite {
 	private MultiWordSuggestOracle descriptionSuggestOracle;
 	private MultiWordSuggestOracle expressionSuggestOracle;
 	private com.esferalia.aon.gwt.payroll.shared.Payment concept;
+	
+	private List<com.esferalia.aon.gwt.payroll.shared.Payment> payments;
+	private PaymentsSelectionModel paymentsSelectionModel;
 
 	public Payment() {
 		initProvided();
@@ -366,6 +474,7 @@ public class Payment extends ResizeComposite {
 		showOrHideResetTypeButton();
 		enableOrDisableTaxAndQuote();
 		enableOrDisableMonth();
+		enableOrDisablePayments();
 	}
 
 	public com.esferalia.aon.gwt.payroll.shared.Payment.Type getType() {
@@ -385,10 +494,10 @@ public class Payment extends ResizeComposite {
 		return com.esferalia.aon.gwt.payroll.shared.Salary.Type.values()[index];
 	}
 
-	public void setAvailablePaymens(
-			List<com.esferalia.aon.gwt.payroll.shared.Payment> availablePaymens) {
+	public void setAvailableConcepts(
+			List<com.esferalia.aon.gwt.payroll.shared.Payment> availableConcepts) {
 
-		for (com.esferalia.aon.gwt.payroll.shared.Payment payment : availablePaymens) {
+		for (com.esferalia.aon.gwt.payroll.shared.Payment payment : availableConcepts) {
 			String name = payment.getName();
 			if (!StringUtils.isEmpty(name)) {
 				conceptSuggestOracle.add(name);
@@ -444,6 +553,12 @@ public class Payment extends ResizeComposite {
 	
 	public void setEnabledMonthListBox(boolean enabled){
 		monthListBox.setEnabled(enabled);
+	}
+	
+	
+	public void setAvailablePayments(List<com.esferalia.aon.gwt.payroll.shared.Payment> payments) {
+		this.payments = payments;
+		enableOrDisablePayments();
 	}
 	
 	// ------------------------------------------
@@ -513,6 +628,7 @@ public class Payment extends ResizeComposite {
 		showOrHideResetTypeButton();
 		enableOrDisableTaxAndQuote();
 		enableOrDisableMonth();
+		enableOrDisablePayments();
 	}
 
 	@UiHandler("resetTypeButton")
@@ -534,7 +650,8 @@ public class Payment extends ResizeComposite {
 	void onFxQuoteButtonClick(ClickEvent event) {
 		showFxDialog((MyExpressionBox) quoteTextBox);
 	}
-
+	
+	
 	// ------------------------------------------
 	// Private members
 	// ------------------------------------------
@@ -592,6 +709,72 @@ public class Payment extends ResizeComposite {
 		descriptionSuggestBox = new SuggestBox(descriptionSuggestOracle);
 
 		expressionSuggestOracle = new MultiWordSuggestOracle();
+		
+		paymentsDataGrid = providePaymentsDataGrid();
+		
+	}
+
+	protected CustomDataGrid<com.esferalia.aon.gwt.payroll.shared.Payment> providePaymentsDataGrid() {
+		
+		payments = Collections.emptyList();
+		
+		/*
+		 * Creates Payments DataGrid
+		 * Set a key provider that provides a unique key for each payment.
+		 */
+		ProvidesKey<com.esferalia.aon.gwt.payroll.shared.Payment> keyProvider = HasIdKeyProvider.getKeyProvider();
+		CustomDataGrid<com.esferalia.aon.gwt.payroll.shared.Payment> paymentsDataGrid = new CustomDataGrid<com.esferalia.aon.gwt.payroll.shared.Payment>(10, keyProvider);
+
+		/*
+		 * Do not refresh the headers every time the dataGrid is updated. The
+		 * footer depends on the current dataGrid, so we do not disable auto
+		 * refresh on the footer.
+		 */
+		paymentsDataGrid.setAutoHeaderRefreshDisabled(true);
+		
+		// Set the message to display when the table is empty.
+		// TODO : selectDataGrid.setEmptyTableWidget(new Label());
+
+		// Add a selection model to handle user selection.
+//		paymentsSelectionModel = 
+//				new MultiSelectionModel<com.esferalia.aon.gwt.payroll.shared.Payment>(keyProvider);
+		paymentsSelectionModel = 
+				new PaymentsSelectionModel(keyProvider);
+		paymentsDataGrid.setSelectionModel(paymentsSelectionModel,
+				DefaultSelectionEventManager.<com.esferalia.aon.gwt.payroll.shared.Payment> createCheckboxManager(0));
+		
+
+		// Checkbox column. This table will uses a checkbox column for  selection.
+		Column<com.esferalia.aon.gwt.payroll.shared.Payment, Boolean> checkColumn = 
+				new Column<com.esferalia.aon.gwt.payroll.shared.Payment, Boolean>(
+				new CheckboxCell()) {
+			@Override
+			public Boolean getValue(com.esferalia.aon.gwt.payroll.shared.Payment payment) {
+				return paymentsSelectionModel.isSelected(payment);
+			}
+		};
+
+		paymentsDataGrid.addColumn(checkColumn);
+		paymentsDataGrid.setColumnWidth(checkColumn, "40px");
+		
+		Column<com.esferalia.aon.gwt.payroll.shared.Payment, String> nameColumn =
+				new Column<com.esferalia.aon.gwt.payroll.shared.Payment, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(com.esferalia.aon.gwt.payroll.shared.Payment payment) {
+				if (AonStringUtils.isBlank(payment.getName()))
+					return payment.getDescription();
+				return payment.getDescription() + " (" + payment.getName() + ")";
+			}
+		};
+		paymentsDataGrid.addColumn(nameColumn);
+		
+		paymentsDataGrid.addStyleName(AON.AON_WIDTH_ALL);
+		paymentsDataGrid.getElement().getStyle()
+				.setPropertyPx("minHeight", Window.getClientHeight() / 6);
+		paymentsDataGrid.setWidth("100%");
+		
+		return paymentsDataGrid;
 	}
 
 	private String getListValue(String expression) {
@@ -755,6 +938,25 @@ public class Payment extends ResizeComposite {
 		}
 	}
 	
+	private void enableOrDisablePayments() {
+		Type type = getType();
+		boolean visible = type == Type.CRA_0004 
+				|| type == Type.CRA_0055
+				|| type == Type.CRA_0056 ;
+		paymentsGrid.setVisible(visible);
+		if ( !visible )
+			return;
+
+		filterAvailablePayments();
+	}
+	
+	private void filterAvailablePayments() {
+		List<com.esferalia.aon.gwt.payroll.shared.Payment> availablePayments = 
+				payments.stream().filter(p -> p.getType() != getType()).collect(Collectors.toList());
+		new ListDataProvider<com.esferalia.aon.gwt.payroll.shared.Payment>(availablePayments).addDataDisplay(paymentsDataGrid);
+	}
+
+
 	private boolean taxAndQuoteFull() {
 		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
 		return ( type.isBBCCIncluded() && !type.isBBCCExcluded() );
@@ -784,4 +986,29 @@ public class Payment extends ResizeComposite {
 		;
 		contextProvider.getContext(new ContextCallback());
 	}
-}
+	
+
+
+	private static String getVariableName(com.esferalia.aon.gwt.payroll.shared.Payment payment) {
+		String name = payment.getName();
+		if ( AonStringUtils.isNotBlank(name))
+			return name;
+		
+		String description = payment.getDescription();
+		if ( AonStringUtils.isNotBlank(description) )
+			return description.toUpperCase()
+					.replaceAll("\\s", "_")
+					.replaceAll("\u00c1", "A")
+					.replaceAll("\u00c9", "E")
+					.replaceAll("\u00cd", "I")
+					.replaceAll("\u00d3", "O")
+					.replaceAll("\u00da", "U")
+					.replaceAll("\u00dc", "U")
+
+					.replaceAll("\u00d1", "N")
+					;
+		return null;
+	}
+	
+	
+ }

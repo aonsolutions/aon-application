@@ -739,6 +739,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					dialog.setIrpfExpression(payment.getIrpfExpression());
 					dialog.setQuoteExpression(payment.getQuoteExpression());
 					dialog.setEnabledMonthListBox(!isExtraPayment(payment));
+					dialog.setAvailablePayments(agreementDraftObject.getPayments());
 					
 
 					dialog.center();

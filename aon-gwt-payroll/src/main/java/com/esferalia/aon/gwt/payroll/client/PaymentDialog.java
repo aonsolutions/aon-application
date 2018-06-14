@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0000;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
@@ -36,9 +38,9 @@ public class PaymentDialog extends CustomDialog {
 		setWidget(binder.createAndBindUi(this));
 	}
 
-	public void setAvailablePaymens(
+	public void setAvailableConcepts(
 			List<com.esferalia.aon.gwt.payroll.shared.Payment> availablePaymens) {
-		payment.setAvailablePaymens(availablePaymens);
+		payment.setAvailableConcepts(availablePaymens);
 	}
 
 	public Short getMonth() {
@@ -123,6 +125,14 @@ public class PaymentDialog extends CustomDialog {
 	
 	public void setEnabledMonthListBox(boolean enabled) {
 		payment.setEnabledMonthListBox(enabled);
+	}
+	
+	public void setAvailablePayments(Set<com.esferalia.aon.gwt.payroll.shared.Payment> payments) {
+		payment.setAvailablePayments(payments.stream().collect(Collectors.toList()));
+	}
+
+	public void setAvailablePayments(List<com.esferalia.aon.gwt.payroll.shared.Payment> payments) {
+		payment.setAvailablePayments(payments);
 	}
 
 	public void show(Callback cb) {
