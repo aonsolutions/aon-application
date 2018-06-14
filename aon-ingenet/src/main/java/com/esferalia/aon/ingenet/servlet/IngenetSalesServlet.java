@@ -324,6 +324,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 				pedido.setCOMENTARIOS(sales.getComments());
 				pedido.setREFERENCIACOMPRA(sales.getPurchaseReference());				
 				if(customer!=null && customer.getId()!=null){
+					customer = AON.getCustomer(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), customer.getId());
 					pedido.setDATOSCLIENTE(obtainDATOSCLIENTE(ctx, customer));
 				}
 				pedido.setDATOSDIRECCIONENTREGA(obtainDATOSDIRECCIONENTREGA(ctx, sales));
