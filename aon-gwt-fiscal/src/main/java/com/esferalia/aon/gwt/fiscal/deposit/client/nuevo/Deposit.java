@@ -37,6 +37,7 @@ import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH2
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH3;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH4;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH5;
+import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageITR;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageM10;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageM11_2;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageM12_2;
@@ -235,6 +236,7 @@ public class Deposit extends AonTemplate2 {
 	public void updatePage(DepositMenu depositMenu) {
 		setDepositMenu(depositMenu);
 		if(DepositMenu.HIS.equals(depositMenu)) getPage().setWidget(new PageH1(thiz));
+		if(DepositMenu.ITR.equals(depositMenu)) getPage().setWidget(new PageITR(thiz));
 		if(DepositMenu.AR.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
 		if(DepositMenu.BS.equals(depositMenu)) getPage().setWidget(new PageH2(thiz));
 		if(DepositMenu.CPG.equals(depositMenu)) getPage().setWidget(new PageH3(thiz));

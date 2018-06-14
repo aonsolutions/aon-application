@@ -17,6 +17,57 @@ public class D2DepositConstants {
 		D2DepositHeaderKey.IDA041239, D2DepositHeaderKey.IDA09001, D2DepositHeaderKey.IDA09002, D2DepositHeaderKey.IDA09003
 	};
 	
+	public static D2DepositHeaderKey[] ITR_KEYS_1 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.ITR8210000, D2DepositHeaderKey.ITR8211000, D2DepositHeaderKey.ITR8212000,
+		D2DepositHeaderKey.ITR8213000, D2DepositHeaderKey.ITR8214000, D2DepositHeaderKey.ITR8215000,
+		D2DepositHeaderKey.ITR8216000,
+		
+		D2DepositHeaderKey.ITR8210001, D2DepositHeaderKey.ITR8211001, D2DepositHeaderKey.ITR8212001,
+		D2DepositHeaderKey.ITR8213001, D2DepositHeaderKey.ITR8214001, D2DepositHeaderKey.ITR8215001,
+		D2DepositHeaderKey.ITR8216001,
+		
+		D2DepositHeaderKey.ITR8210002, D2DepositHeaderKey.ITR8211002, D2DepositHeaderKey.ITR8212002,
+		D2DepositHeaderKey.ITR8213002, D2DepositHeaderKey.ITR8214002, D2DepositHeaderKey.ITR8215002,
+		D2DepositHeaderKey.ITR8216002,
+		
+		D2DepositHeaderKey.ITR8210003, D2DepositHeaderKey.ITR8211003, D2DepositHeaderKey.ITR8212003,
+		D2DepositHeaderKey.ITR8213003, D2DepositHeaderKey.ITR8214003, D2DepositHeaderKey.ITR8215003,
+		D2DepositHeaderKey.ITR8216003,
+		
+	};
+	
+	public static D2DepositHeaderKey[] ITR_KEYS_2 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.ITR8210005, D2DepositHeaderKey.ITR8211005, D2DepositHeaderKey.ITR8212005,
+		D2DepositHeaderKey.ITR8213005, D2DepositHeaderKey.ITR8214005,
+		
+		D2DepositHeaderKey.ITR8210006, D2DepositHeaderKey.ITR8211006, D2DepositHeaderKey.ITR8212006,
+		D2DepositHeaderKey.ITR8213006, D2DepositHeaderKey.ITR8214006,
+		
+		D2DepositHeaderKey.ITR8210007, D2DepositHeaderKey.ITR8211007, D2DepositHeaderKey.ITR8212007,
+		D2DepositHeaderKey.ITR8213007, D2DepositHeaderKey.ITR8214007,
+		
+		D2DepositHeaderKey.ITR8210008, D2DepositHeaderKey.ITR8211008, D2DepositHeaderKey.ITR8212008,
+		D2DepositHeaderKey.ITR8213008, D2DepositHeaderKey.ITR8214008		
+	};
+	
+	public static D2DepositHeaderKey[] ITR_KEYS_3 = new D2DepositHeaderKey[]{
+		D2DepositHeaderKey.ITR8210020, D2DepositHeaderKey.ITR8211020, D2DepositHeaderKey.ITR8212020,
+		D2DepositHeaderKey.ITR8213020, D2DepositHeaderKey.ITR8214020, D2DepositHeaderKey.ITR8215020,
+		D2DepositHeaderKey.ITR8216020,
+			
+		D2DepositHeaderKey.ITR8210021, D2DepositHeaderKey.ITR8211021, D2DepositHeaderKey.ITR8212021,
+		D2DepositHeaderKey.ITR8213021, D2DepositHeaderKey.ITR8214021, D2DepositHeaderKey.ITR8215021,
+		D2DepositHeaderKey.ITR8216021,
+		
+		D2DepositHeaderKey.ITR8210022, D2DepositHeaderKey.ITR8211022, D2DepositHeaderKey.ITR8212022,
+		D2DepositHeaderKey.ITR8213022, D2DepositHeaderKey.ITR8214022, D2DepositHeaderKey.ITR8215022,
+		D2DepositHeaderKey.ITR8216022,
+		
+		D2DepositHeaderKey.ITR8210023, D2DepositHeaderKey.ITR8211023, D2DepositHeaderKey.ITR8212023,
+		D2DepositHeaderKey.ITR8213023, D2DepositHeaderKey.ITR8214023, D2DepositHeaderKey.ITR8215023,
+		D2DepositHeaderKey.ITR8216023,	
+	};
+	
 	public static D2DepositHeaderKey[] IMA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.IMA8099000, D2DepositHeaderKey.IMA8099010
 	};

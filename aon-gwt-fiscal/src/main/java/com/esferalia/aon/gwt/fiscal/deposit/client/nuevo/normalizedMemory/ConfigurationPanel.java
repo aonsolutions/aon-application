@@ -128,8 +128,12 @@ public class ConfigurationPanel extends Composite {
     	PaperItem his = buildItem(DepositMenu.HIS.getDescription(), null, false);
     	his.addClickHandler(menuClickHandler(DepositMenu.HIS, year));
     	vp.add(his);
-    	
-    	if(year >= 2016) {
+    	if(year >= 2017) {
+    		PaperItem itr = buildItem(DepositMenu.ITR.getDescription(), null, false);
+    		itr.addClickHandler(menuClickHandler(DepositMenu.ITR, year));
+    		vp.add(itr);
+    	}
+    	if(year == 2016) {
     		PaperItem ar = buildItem(DepositMenu.AR.getDescription(), null, false);
     		ar.addClickHandler(menuClickHandler(DepositMenu.AR, year));
     		vp.add(ar);

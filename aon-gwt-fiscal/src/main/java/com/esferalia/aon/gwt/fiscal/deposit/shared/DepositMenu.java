@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.deposit.shared;
 public enum DepositMenu {
 
 	HIS("Hoja Identificativa de la Sociedad"),
+	ITR("Identificador del titular real"),
 	BS("Balance de Situaci\u00F3n"),
 	CPG("Cuenta de P\u00e9rdidas y Ganancias"),
 	ECPN("Estado de Cambios en el Patrimonio Neto"),
