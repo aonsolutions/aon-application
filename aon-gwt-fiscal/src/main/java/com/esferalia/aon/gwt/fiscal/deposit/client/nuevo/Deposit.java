@@ -137,7 +137,7 @@ public class Deposit extends AonTemplate2 {
 		Toolbar toolbar = new Toolbar("Cuentas Anuales");
 		toolbar.addButton("Deshacer","aon-icon-undo").addClickHandler(undoClickHandler());
 		toolbar.addButton("Rehacer","aon-icon-redo").addClickHandler(redoClickHandler());
-		toolbar.addButton("Exportar",AON.AON_CSS.aonIconAeat()).addClickHandler(exportClickHandler());
+		toolbar.addButton("Exportar","aon-icon-registradores").addClickHandler(exportClickHandler());
 		toolbar.addButton("Importar","aon-icon-file-upload").addClickHandler(importClickHandler());
 		toolbar.addButton("Descargar",AON.AON_CSS.aonIconExcel()).addClickHandler(downloadClickHandler());
 		toolbar.addButton("Resetear", "aon-icon-refresh").addClickHandler(resetClickHandler());
