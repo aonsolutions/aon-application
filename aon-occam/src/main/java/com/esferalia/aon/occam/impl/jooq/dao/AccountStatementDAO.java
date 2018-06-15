@@ -497,13 +497,15 @@ public class AccountStatementDAO {
 		
 		
 		AccountTrialBalanceReport report = new AccountTrialBalanceReport()
-			.setPeriod(ap)
+			.setSelectedPeriod(ap)
 			.setParams(params)
 			.setHasBeforePeriodAmounts(hasBeforePeriodAmounts)
 			.setHasOpeningAmounts(hasOpeningAmounts)
 			.setHasInPeriodPreviousAmounts( hasInPeriodPreviousAmounts )
 			;
-
+		if (params.getActivity() != null) {
+			report.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
+		}
 
 		// Configuramos los periodos de fechas:
 		EnumMap<AccountStatementPeriod,Condition> conditions = new EnumMap<AccountStatementPeriod,Condition>(AccountStatementPeriod.class);

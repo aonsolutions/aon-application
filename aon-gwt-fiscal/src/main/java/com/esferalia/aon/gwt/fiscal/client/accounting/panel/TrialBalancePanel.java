@@ -112,8 +112,8 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					colPlus++;
 					
 					if (report.hasBeforePeriodAmounts()) {
-						String msg = report.getPeriod() != null
-								?"Saldos anter. al " + AON.DATE_FORMAT.format(report.getPeriod().getInitiationDate())
+						String msg = report.getSelectedPeriod() != null
+								?"Saldos anter. al " + AON.DATE_FORMAT.format(report.getSelectedPeriod().getInitiationDate())
 								:"Saldos anteriores";
 						tab.setWidget(row, col, new Label(msg));
 						tab.getFlexCellFormatter().setColSpan(row, col, 2);

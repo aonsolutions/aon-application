@@ -42,6 +42,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 	
 	private SimpleLayoutPanel centerPanel;
 	private TabLayoutPanel tabPanel;
+	private TrialBalancePanelFilter filter;
 	
 	public TrialBalancePanelReport(String domainName,String user, int domainId) {
 		this(domainName,user,domainId,Integer.MAX_VALUE,null,null);
@@ -88,32 +89,10 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 			tabPanel = new TabLayoutPanel(30, Unit.PX);
 			tabPanel.add(new SimpleLayoutPanel(),new CloseTab("Resultados", false));
 			
-//			PlusTab plusTab = new PlusTab();
-//			plusTab.addClickHandler(new ClickHandler() {
-//				
-//				@Override
-//				public void onClick(ClickEvent event) {
-//					onNewTab();
-//					tabPanel.selectTab(tabPanel.getWidgetCount() - 2);
-//				}
-//			});
-//			tabPanel.add(new SimpleLayoutPanel(),plusTab);
-//			tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
-//				
-//				@Override
-//				public void onSelection(SelectionEvent<Integer> event) {
-//					int count = tabPanel.getWidgetCount()-1;
-//					int selected = tabPanel.getSelectedIndex();
-//					if (selected == count) {
-//						tabPanel.selectTab(selected - 1);	 
-//					}
-//				}
-//			});
-			
 			centerPanel.setWidget(tabPanel);
 			add(centerPanel);
 			
-			TrialBalancePanelFilter filter = new TrialBalancePanelFilter(getCurrentDomainName(),getCurrentUser(),getCurrentDomainId(), config, params);
+			filter = new TrialBalancePanelFilter(getCurrentDomainName(),getCurrentUser(),getCurrentDomainId(), config, params);
 			filter.addMaximizeHandler(new MaximizeHandler() {
 				
 				@Override
@@ -231,6 +210,10 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 			}
 		});
 		return resultsPanel;
+	}
+
+	public AccountingReportParams getWidgetParams() {
+		return filter.getWidgetParams();
 	}
 
 }
