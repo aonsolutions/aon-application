@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -437,21 +438,12 @@ public class PageITR extends PageAbs {
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 	}
 	
-	private void conceptListBox(ListBox lb ){
+	private void conceptListBox(ListBox lb){
 		lb.addItem("");
-		lb.addItem("AO");
-		lb.addItem("AD");
-		lb.addItem("AI");
-		lb.addItem("AL");
-		lb.addItem("ED");
-		lb.addItem("EL");
-		lb.addItem("RD");
-		lb.addItem("RL");
-		lb.addItem("AG");
-		lb.addItem("AG");
-		lb.addItem("PR");
+		for(Integer i = 0 ; i < Country.values().length; i++) {
+			lb.addItem(Country.values()[i].getIso2());
+		}
 	}
-	
 	
 	protected void onEdit(String key, String value) {
 		onEdit(key, value, false);

@@ -57,7 +57,7 @@ public interface INormalizedMemoryAsync {
 
 	void calculate(Map<String, String> map, Integer year, AsyncCallback<Map<String, String>> callback);
 
-	void getMemoryFiles(AonData aonData, AsyncCallback<Vector<MemoryFiles>> callback);
+	void getMemoryFiles(AonData aonData, Integer year, AsyncCallback<Vector<MemoryFiles>> callback);
 
 	void deleteMemoryFile(AonData aonData, Integer id, AsyncCallback<Void> callback);
 

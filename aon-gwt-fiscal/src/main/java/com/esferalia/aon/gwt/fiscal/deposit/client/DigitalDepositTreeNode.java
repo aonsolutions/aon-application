@@ -86,7 +86,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2Deposit> {
 						d2Deposit.setMap(result);
 						d2Deposit.setMapDraft(result);
 						
-						inma.getMemoryFiles(deposit.getAonData(), new AsyncCallback<Vector<MemoryFiles>>() {
+						inma.getMemoryFiles(deposit.getAonData(), d2Deposit.getYear(), new AsyncCallback<Vector<MemoryFiles>>() {
 							
 							@Override
 							public void onSuccess(Vector<MemoryFiles> result) {

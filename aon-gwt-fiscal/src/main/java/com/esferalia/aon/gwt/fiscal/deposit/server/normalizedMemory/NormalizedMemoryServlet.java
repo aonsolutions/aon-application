@@ -552,12 +552,12 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return map;
 	}
 	
-	public Vector<MemoryFiles> getMemoryFiles(AonData aonData){
+	public Vector<MemoryFiles> getMemoryFiles(AonData aonData, Integer year){
 		Vector<MemoryFiles> ms = new Vector<MemoryFiles>();
 		
 		MemoryFiles m = new MemoryFiles();
-		Vector<Integer> id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_MEMORY);
-		m.setId(id.get(0));m.setBool(id.get(0) != -1);m.setName(D2_FILE_MEMORY);
+		Vector<Integer> id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_MEMORY + year);
+		m.setId(id.get(0));m.setBool(id.get(0) != -1);m.setName(D2_FILE_MEMORY + year);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
 			m.setMimeTypeName(mimeType.getName());
@@ -566,8 +566,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m);
 		
 		MemoryFiles m2 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_AUTOCARTERA_MODEL);
-		m2.setId(id.get(0));m2.setBool(id.get(0) != -1);m2.setName(D2_FILE_AUTOCARTERA_MODEL);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_AUTOCARTERA_MODEL + year);
+		m2.setId(id.get(0));m2.setBool(id.get(0) != -1);m2.setName(D2_FILE_AUTOCARTERA_MODEL + year);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
 			m2.setMimeTypeName(mimeType.getName());
@@ -576,8 +576,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m2);
 		
 		MemoryFiles m3 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_GESTION);
-		m3.setId(id.get(0));m3.setBool(id.get(0) != -1);m3.setName(D2_FILE_GESTION);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_GESTION + year);
+		m3.setId(id.get(0));m3.setBool(id.get(0) != -1);m3.setName(D2_FILE_GESTION + year);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
 			m3.setMimeTypeName(mimeType.getName());
@@ -586,8 +586,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m3);
 
 		MemoryFiles m4 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_AUDIT);
-		m4.setId(id.get(0));m4.setBool(id.get(0) != -1);m4.setName(D2_FILE_AUDIT);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_AUDIT + year);
+		m4.setId(id.get(0));m4.setBool(id.get(0) != -1);m4.setName(D2_FILE_AUDIT + year);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
 			m4.setMimeTypeName(mimeType.getName());
@@ -596,8 +596,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m4);
 
 		MemoryFiles m5 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_CONVOC);
-		m5.setId(id.get(0));m5.setBool(id.get(0) != -1);m5.setName(D2_FILE_CONVOC);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_CONVOC + year);
+		m5.setId(id.get(0));m5.setBool(id.get(0) != -1);m5.setName(D2_FILE_CONVOC + year);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
 			m5.setMimeTypeName(mimeType.getName());
@@ -606,8 +606,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		ms.add(m5);
 
 		MemoryFiles m6 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_SICAV);
-		m6.setId(id.get(0));m6.setBool(id.get(0) != -1);m6.setName(D2_FILE_SICAV);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_SICAV + year);
+		m6.setId(id.get(0));m6.setBool(id.get(0) != -1);m6.setName(D2_FILE_SICAV + year);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
 			m6.setMimeTypeName(mimeType.getName());

@@ -74,7 +74,7 @@ public class MemoryDocuments extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		inma.getMemoryFiles(aonData, new AsyncCallback<Vector<MemoryFiles>>() {
+		inma.getMemoryFiles(aonData, normalizedMemory.getYear(), new AsyncCallback<Vector<MemoryFiles>>() {
 			
 			@Override
 			public void onSuccess(Vector<MemoryFiles> result) {

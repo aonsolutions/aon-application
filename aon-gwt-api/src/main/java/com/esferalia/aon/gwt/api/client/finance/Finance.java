@@ -61,7 +61,6 @@ public class Finance extends Methods{
 		});
 	}
 	
-	
 	public void getInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsInvoice>> callback){	
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "finance/"+getDomainName()+"/"+getUserName()+"/invoice" + filter, callback);

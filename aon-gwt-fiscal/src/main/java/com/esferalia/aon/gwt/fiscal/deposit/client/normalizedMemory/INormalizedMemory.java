@@ -60,7 +60,7 @@ public interface INormalizedMemory extends RemoteService{
 	
 	public Map<String, String> calculate(Map<String, String> map, Integer year);
 	
-	public Vector<MemoryFiles> getMemoryFiles(AonData aonData);
+	public Vector<MemoryFiles> getMemoryFiles(AonData aonData, Integer year);
 	
 	public void deleteMemoryFile(AonData aonData, Integer id);
 	
