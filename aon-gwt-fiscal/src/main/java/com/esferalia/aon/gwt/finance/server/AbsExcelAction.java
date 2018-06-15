@@ -129,6 +129,16 @@ public abstract class AbsExcelAction  {
 		return cell;
 	}
 	
+	protected Cell addCell(Integer value) {
+		Cell cell = row.createCell(cellCount++);
+		cell.setCellStyle(numberStyle);
+		if ( value != null ) {
+			cell.setCellValue(value);
+		}
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		return cell;
+	}
+
 	protected Cell addCell(Date value) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellStyle(dateStyle);

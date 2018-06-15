@@ -8,30 +8,36 @@ public class AccountStatementReport implements Serializable {
 	
 	private static final long serialVersionUID = -3255950085921957296L;
 	
-	private Account account;
-	private Date from;
-	private Date to;
+	private EnterpriseActivity selectedActivity;
+	private AccountingReportParams params;
 	
 	private LinkedList<AccountStatement> summary;
 	private LinkedList<AccountStatement> details;
 	
-	public Account getAccount() {
-		return account;
+	public AccountingReportParams  getParams() {
+		return params;
 	}
-	public void setAccount(Account account) {
-		this.account = account;
+	public AccountStatementReport setParams(AccountingReportParams params) {
+		this.params = params;
+		return this; 
+	}
+	
+	public EnterpriseActivity getSelectedActivity() {
+		return selectedActivity;
+	}
+	public AccountStatementReport setSelectedActivity(EnterpriseActivity selectedActivity) {
+		this.selectedActivity = selectedActivity;
+		return this;
+	}
+	
+	public Account getAccount() {
+		return params != null?params.getAccount():null;
 	}
 	public Date getFrom() {
-		return from;
-	}
-	public void setFrom(Date from) {
-		this.from = from;
+		return params != null?params.getFromDate():null;
 	}
 	public Date getTo() {
-		return to;
-	}
-	public void setTo(Date to) {
-		this.to = to;
+		return params != null?params.getToDate():null;
 	}
 	public LinkedList<AccountStatement> getSummary() {
 		return summary;

@@ -146,7 +146,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 				tab.getFlexCellFormatter().setColSpan(row, 0, 10);
 				row++;
 				
-				String[] columns = new String[]{"","DIARIO","FECHA","CONCEPTO","DEBE","HABER","SALDO DEUDOR","SALDO ACREDOR","CONTRAPARTIDA","NUM.DOCUMENTO"};
+				String[] columns = new String[]{"","DIARIO","FECHA","CONCEPTO","DEBE","HABER","SALDO DEUDOR","SALDO ACREEDOR","CONTRAPARTIDA","NUM.DOCUMENTO"};
 				for (int col = 0; col <  columns.length; col++) {
 					tab.setWidget(row, col, new Label(columns[col]));
 					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
