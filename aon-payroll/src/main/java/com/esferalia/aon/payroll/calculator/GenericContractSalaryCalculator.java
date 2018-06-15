@@ -63,6 +63,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
@@ -984,6 +985,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				contractPayment.getExpression())); 
 	}
 
+	protected List<ITimedResult<Double>> fixExtraResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) 
+	{
+		return results;
+	}
+
 	protected void resolvePayment(IContractPayment contractPayment,
 			Date start,
 			Date end,
@@ -1043,6 +1049,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
+			} 
+			
+			if ( !results.isEmpty() && 
+					contractPayment.getType() == PaymentType.CRA_0004 && 
+					contractPayment.getSalaryType() == SalaryType.SALARY ) {
+				if ( !results.get(0).getContext().containsKey(ContextVariable.PRORATION))
+					results = fixExtraResults(contractPayment, results, start, end, expressionContext);
 			}
 			
 			

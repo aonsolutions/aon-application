@@ -33,9 +33,12 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 import junit.framework.Assert;
@@ -1465,6 +1468,129 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testAutoProrrationI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addBaseCgcMin(aonContext);
+		
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String, String>() {
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION", "\"04\"");
+					}
+				}, 
+				new String[] {},
+				new String[] {}, 
+				null
+				);
+		//@formatter:off
+		
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, conceptSalarioBase, String.format("1000 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		addPayment(aonContext, contract, conceptPlusSalarial, String.format("500 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, conceptPlusSalarial, String.format("250 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		PaymentConceptRecord conceptAntiguedad = addConcept(aonContext, "ANTIGUEDAD");
+		addPayment(aonContext, contract, conceptAntiguedad, String.format("125 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA");
+		addPayment(aonContext, contract, conceptPagaExtra, "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD", "_P/12", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, conceptPagaExtra, "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD", "_P/12", PaymentType.CRA_0004);
+		
+		
+		Date startDate =getFirstDayOfMonth(getToday());
+		Date endDate =getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract))
+		;
+		
+		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
+		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
+		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
+	}
+
+	@Test
+	public void testAutoProrrationII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addBaseCgcMin(aonContext);
+		
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String, String>() {
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION", "\"04\"");
+					}
+				}, 
+				new String[] {},
+				new String[] {}, 
+				null
+				);
+		//@formatter:off
+		
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, conceptSalarioBase, String.format("1000 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		addPayment(aonContext, contract, conceptPlusSalarial, String.format("500 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, conceptPlusSalarial, String.format("250 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		PaymentConceptRecord conceptAntiguedad = addConcept(aonContext, "ANTIGUEDAD");
+		addPayment(aonContext, contract, conceptAntiguedad, String.format("125 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA");
+		addPayment(aonContext, contract, conceptPagaExtra, "(1000.00 + 500.00 + 250.00 + 125.00)", "_P/12", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, conceptPagaExtra, "(1000.00 + 500.00 + 250.00 + 125.00)", "_P/12", PaymentType.CRA_0004);
+		
+		
+		Date startDate =getFirstDayOfMonth(getToday());
+		Date endDate =getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract))
+		;
+		
+		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
+		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
+		Assert.assertEquals((1000.00 + 500.00 + 250.00 + 125.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
+	}
+
+	protected void addBaseCgcMin(AONContext aonContext) {
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null,
+				new HashMap() {
+					{
+						put("BASE_CGC_MIN",
+							"[ \"01\":(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA), "
+							+"\"02\":(TIEMPO_COMPLETO ? 876.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.28 * HORAS_NOMINA), "
+							+"\"03\":(TIEMPO_COMPLETO ? 762.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.59 * HORAS_NOMINA), "
+							+"\"04\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), "
+							+"\"05\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), "
+							+"\"06\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), "
+							+"\"07\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), "
+							+"\"08\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA), \"09\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA), "
+							+"\"10\":(TIEMPO_COMPLETO ? 25.22* DIAS_NOMINA : 4.56 * HORAS_NOMINA), \"11\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA) ] [GRUPO_COTIZACION]");
+					}
+				});
+	}
 	// ------------------------------------------------------------------------
 	
 	protected ContextVariable getPeriodVariable() {

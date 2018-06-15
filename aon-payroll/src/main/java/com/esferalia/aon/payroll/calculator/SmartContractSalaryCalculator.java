@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.jooq.DSLContext;
@@ -303,6 +304,32 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 		throw new UnsupportedOperationException(String.format(IT_PAY_MSG, contractPayment.getDescription(),
 					contractPayment.getExpression())); 
+	}
+	
+	@Override
+	protected List<ITimedResult<Double>> fixExtraResults(IContractPayment contractPayment,
+			List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) {
+		// TODO Auto-generated method stub
+		List<ITimedResult<Double>> fixed  = new ArrayList<ITimedResult<Double>>(); 
+		for ( ITimedResult<Double> result : results ) {
+			Period period = result.getPeriod();
+			Double value = result.getValue(result.getPeriod());
+			
+			try {
+				double cgcBaseMin = expressionContext.eval(ContextVariable.CGC_BASE_MIN.getName(), period.getStart(), period.getEnd()).stream()
+				.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
+				.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
+				if ( value == null || value == 0.00 || value < cgcBaseMin )
+					fixed.add( result );
+				else
+					fixed.add( new TimedResult<Double>(value/12, period, result.getContext())); // TODO: 12?
+			} catch (ExpressionException e) {
+				fixed.add( result );
+			}
+			
+		}
+		
+		return fixed; //super.fixExtraResults(contractPayment, results, start, end, expressionContext);
 	}
 	
 	@Override
