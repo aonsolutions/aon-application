@@ -99,7 +99,7 @@ public class Page14 extends PageAbs {
 		paintDescription(table2, AON.MSG.nrsAnexoIV(), 1, 0, false);
 		table2.setWidget(1, 1, nrsAnexoIV);
 		
-		paintDescription(table2, AON.MSG.nrsAnexoV(), 2, 0, false);
+		paintDescription(table2, "Documento normalizado presentada por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)", 2, 0, false);
 		table2.setWidget(2, 1, nrsAnexoV);
 
 		paintDescription(table2, AON.MSG.justCanarias(), 3, 0, false);

@@ -40,14 +40,14 @@ public enum Mod2002017CorrectionKey implements Serializable  {
 	,C24(Mod2002017Key.I0335,Mod2002017Key.D0336,"Gastos y provisiones por pensiones no afectados por el art. 11.12 LIS (arts. 14.1, 14.6 y 14.8 LIS)")
 	,C25(Mod2002017Key.I0337,Mod2002017Key.D0338,"Otras provisiones no deducibles fiscalmente (art. 14 LIS) no afectadas por el art. 11.12 LIS")
 	,C26(null				,Mod2002017Key.D0368,"Subvenciones p\u00FAblicas incluidas en el resultado del ejercicio, no integrables en la base imponible (art. 14.8 LIS)")
-	,C27(Mod2002017Key.I1002,null				,"Gastos no deducibles por considerarse retrubuci\u00F3n de fondos propioes (art. 15 a) LIS)")
+	,C27(Mod2002017Key.I1002,null				,"Gastos no deducibles por considerarse retribuci\u00F3n de fondos propios (art. 15 a) LIS)")
 	,C28(Mod2002017Key.I0339,null				,"Gastos por donativos y liberalidades (art. 15 e) LIS)")
 	,C29(Mod2002017Key.I0341,Mod2002017Key.D0342,"Operaciones realizadas con para\u00EDsos fiscales (art. 15 g) LIS)")
 	,C30(Mod2002017Key.I0508,null				,"Gastos financieros derivados de deudas con entidades del grupo (art. 15 h) LIS)")
 	,C31(Mod2002017Key.I1009,Mod2002017Key.D1010,"Gastos correspondientes a operaciones realizadas con personas o entidades vinculadas (art. 15 j) LIS)")
 	
 	,C32(Mod2002017Key.I1807,null				,"P\u00E9rdidas por deterioro de valorres repr. de partic. en el capital o fondos propios (art. 15 k) LIS)")
-	,C33(Mod2002017Key.I1808,null				,"")
+	,C33(Mod2002017Key.I1808,null				,"Disminuci\u00F3n de valor originada por criterio de valor razonable (art. 15 l) LIS)")
 		
 	,C34(Mod2002017Key.I0343,null				,"Otros gastos no deducibles (arts. 15 a), c), d), f) e i) LIS)")
 	,C35(Mod2002017Key.I0363,Mod2002017Key.D0364,"Ajustes por la limitaci\u00F3n en la deducibilidad en gastos financieros (art. 16 LIS)")

@@ -508,7 +508,7 @@ public class Mod2002017Description {
 		DESCRIPTION_MAP.put(Mod2002017Key.BN1234B,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). TOTAL");
 		DESCRIPTION_MAP.put(Mod2002017Key.BN083, "Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). (Estado)");
 		DESCRIPTION_MAP.put(Mod2002017Key.BN1332,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS). (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod2002017Key.BN1200,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). TOTAL");
+		DESCRIPTION_MAP.put(Mod2002017Key.BN1200,"Abono de deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 39.3 LIS). TOTAL");
 		DESCRIPTION_MAP.put(Mod2002017Key.BN1042,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). (Estado)");
 		DESCRIPTION_MAP.put(Mod2002017Key.BN1333,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). (D. Forales / Navarra)");
 		

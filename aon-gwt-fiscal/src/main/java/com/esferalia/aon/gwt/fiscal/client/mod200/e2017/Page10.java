@@ -28,7 +28,7 @@ public class Page10 extends PageAbs {
 	private static final String[] HEADERS_1 = new String[]{null,
 		AON.MSG.pendingDeduction(),
 		AON.MSG.taxType(),
-		AON.MSG.pendingDeduction2016(),/*********/
+		"2017 deducci\u00F3n pendiente",/*********/
 		AON.MSG.appliedDeduction(),
 		AON.MSG.futureDeduction()};
 	
@@ -79,12 +79,12 @@ public class Page10 extends PageAbs {
 					table.getFlexCellFormatter().addStyleName((row-2), 0, AON.AON_CSS.aonPadding2Left());
 				} 
 				if (key == Mod2002017Key.BN571) {
-					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionNational2016()/*****/
+					row = paintKeyBreakdownLink(table,row,"Deducciones doble imposici\u00F3n interna 2017"/*****/
 							,Mod2002017BN571Key.values(),HEADERS_1);
 					table.getFlexCellFormatter().addStyleName((row-2), 0, AON.AON_CSS.aonPadding2Left());
 				} 
 				if (key == Mod2002017Key.BN573) {
-					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionInternational2016()/*****/
+					row = paintKeyBreakdownLink(table,row,"Deducciones doble imposici\u00F3n internacional 2017"/*****/
 							,Mod2002017BN573Key.values(),HEADERS_2);
 					table.getFlexCellFormatter().addStyleName((row-2), 0, AON.AON_CSS.aonPadding2Left());
 				}

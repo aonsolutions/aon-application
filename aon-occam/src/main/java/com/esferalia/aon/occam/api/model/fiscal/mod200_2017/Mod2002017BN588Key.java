@@ -112,7 +112,7 @@ public enum Mod2002017BN588Key implements Serializable, IMod200KeysProvider {
 	,C102(new Mod2002017Key[]{Mod2002017Key.BN1683,Mod2002017Key.BN1684,Mod2002017Key.BN1685},"2018(****): Resto deducciones relativas a programas de apoyo a acontecimientos de excepcional inter\u00E9s p\u00FAblico")
 	
 	,C103(new Mod2002017Key[]{Mod2002017Key.BN634 ,Mod2002017Key.BN635 ,Mod2002017Key.BN636 },"Total deducciones relativas a programas de apoyo acontecimientos de excepcional inter\u00E9s p\u00FAblico")
-	,C104(new Mod2002017Key[]{Mod2002017Key.BN828 ,Mod2002017Key.BN829 ,Mod2002017Key.BN830 },"2016: Diferimiento deducciones Cap. IV T\u00EDt. VI Ley 43/95, RDL 4/2004 y LIS")	 
+	,C104(new Mod2002017Key[]{Mod2002017Key.BN828 ,Mod2002017Key.BN829 ,Mod2002017Key.BN830 },"2017: Diferimiento deducciones Cap. IV T\u00EDt. VI Ley 43/95, RDL 4/2004 y LIS")	 
 	,C105(new Mod2002017Key[]{Mod2002017Key.BN831 ,null /* BN588 */    ,Mod2002017Key.BN832 },"Total")
 	; 
 
