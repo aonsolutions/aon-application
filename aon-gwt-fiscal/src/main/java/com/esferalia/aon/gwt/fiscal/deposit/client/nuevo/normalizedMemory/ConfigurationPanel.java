@@ -99,7 +99,7 @@ public class ConfigurationPanel extends Composite {
 		for(Integer y = AonDateUtils.getCurrentYear() - 1; y > 2013 ; y--) {
 			PaperItem ej = buildItem("Ejercicio " + y, y.equals(parent.getYear()) ? "arrow-drop-down":"arrow-drop-up", true);
 			VerticalPanel ejContent = buildSubEjercicio(y);
-			ej.addClickHandler(submenuClickHandler(ej, ejContent));
+			ej.addClickHandler(submenuClickHandler(DepositMenu.HIS, ej, ejContent, y));
 			vp.add(ej);
 			vp.add(ejContent);
 		}
@@ -159,7 +159,7 @@ public class ConfigurationPanel extends Composite {
     	
     	PaperItem m = buildItem(DepositMenu.M.getDescription(), "arrow-drop-down", false);
     	VerticalPanel mContent = buildMemory(year);    
-    	m.addClickHandler(submenuClickHandler(m, mContent));
+    	m.addClickHandler(submenuClickHandler(DepositMenu.M, m, mContent, year));
     	vp.add(m);
     	vp.add(mContent);
     	
@@ -169,7 +169,7 @@ public class ConfigurationPanel extends Composite {
     	
     	PaperItem ma = buildItem(DepositMenu.MA.getDescription(), "arrow-drop-down", false);
     	VerticalPanel maContent = buildMa(year);    
-    	ma.addClickHandler(submenuClickHandler(ma, maContent));
+    	ma.addClickHandler(submenuClickHandler(DepositMenu.MA, ma, maContent, year));
     	vp.add(ma);
     	vp.add(maContent);
     	
@@ -203,7 +203,7 @@ public class ConfigurationPanel extends Composite {
     	if(year < 2016) {
         	PaperItem ar = buildItem("Apartado " + ap + ": " + DepositMenu.AR.getDescription(), "arrow-drop-down", false);
     		VerticalPanel arContent = buildMemoryItem(DepositMenu.AR_TL, DepositMenu.AR_CN, year);
-        	ar.addClickHandler(submenuClickHandler(ar, arContent));
+        	ar.addClickHandler(submenuClickHandler(DepositMenu.AR, ar, arContent, year));
         	vp.add(ar);
         	vp.add(arContent);
         	ap++;
@@ -216,21 +216,21 @@ public class ConfigurationPanel extends Composite {
 
     	PaperItem imiii = buildItem("Apartado " + ap + ": " + DepositMenu.IMIII.getDescription(), "arrow-drop-down", false);
 		VerticalPanel imiiiContent = buildMemoryItem(DepositMenu.IMIII_TL, DepositMenu.IMIII_CN, year);
-    	imiii.addClickHandler(submenuClickHandler(imiii, imiiiContent));
+    	imiii.addClickHandler(submenuClickHandler(DepositMenu.IMIII, imiii, imiiiContent, year));
     	vp.add(imiii);
     	vp.add(imiiiContent);
     	ap++;
     	
     	PaperItem af = buildItem("Apartado " + ap + ": " + DepositMenu.AF.getDescription(), "arrow-drop-down", false);
 		VerticalPanel afContent = buildMemoryItem(DepositMenu.AF_TL, DepositMenu.AF_CN, year);
-    	af.addClickHandler(submenuClickHandler(af, afContent));
+    	af.addClickHandler(submenuClickHandler(DepositMenu.AF, af, afContent, year));
     	vp.add(af);
     	vp.add(afContent);
     	ap++;
     	
     	PaperItem pf = buildItem("Apartado " + ap + ": " + DepositMenu.PF.getDescription(), "arrow-drop-down", false);
 		VerticalPanel pfContent = buildMemoryItem(DepositMenu.PF_TL, DepositMenu.PF_CN, year);
-    	pf.addClickHandler(submenuClickHandler(pf, pfContent));
+    	pf.addClickHandler(submenuClickHandler(DepositMenu.PF, pf, pfContent, year));
     	vp.add(pf);
     	vp.add(pfContent);
     	ap++;
@@ -251,10 +251,9 @@ public class ConfigurationPanel extends Composite {
     		vp.add(ig);
     		ap++;
     	
-
     		PaperItem sdl = buildItem("Apartado " + ap + ": " + DepositMenu.SDL.getDescription(), "arrow-drop-down", false);
     		VerticalPanel sdlContent = buildMemoryItem(DepositMenu.SDL_TL, DepositMenu.SDL_CN, year);
-    		sdl.addClickHandler(submenuClickHandler(sdl, sdlContent));
+    		sdl.addClickHandler(submenuClickHandler(DepositMenu.SDL, sdl, sdlContent, year));
     		vp.add(sdl);
     		vp.add(sdlContent);
     		ap++;
@@ -262,14 +261,14 @@ public class ConfigurationPanel extends Composite {
     	
     	PaperItem opv = buildItem("Apartado " + ap + ": " + DepositMenu.OPV.getDescription(), "arrow-drop-down", false);
 		VerticalPanel opvContent = buildMemoryItem(DepositMenu.OPV_TL, DepositMenu.OPV_CN, year);
-    	opv.addClickHandler(submenuClickHandler(opv, opvContent));
+    	opv.addClickHandler(submenuClickHandler(DepositMenu.OPV, opv, opvContent, year));
     	vp.add(opv);
     	vp.add(opvContent);
     	ap++;
     	
     	PaperItem oi = buildItem("Apartado " + ap + ": " + DepositMenu.OI.getDescription(), "arrow-drop-down", false);
 		VerticalPanel oiContent = buildMemoryItem(DepositMenu.OI_TL, DepositMenu.OI_CN, year);
-    	oi.addClickHandler(submenuClickHandler(oi, oiContent));
+    	oi.addClickHandler(submenuClickHandler(DepositMenu.OI, oi, oiContent, year));
     	vp.add(oi);
     	vp.add(oiContent);
     	ap++;
@@ -277,7 +276,7 @@ public class ConfigurationPanel extends Composite {
     	if(year < 2016) {
     		PaperItem im = buildItem("Apartado " + ap + ": " + DepositMenu.IM.getDescription(), "arrow-drop-down", false);
     		VerticalPanel imContent = buildMemoryItem(DepositMenu.IM_TL, DepositMenu.IM_CN, year);
-    		im.addClickHandler(submenuClickHandler(im, imContent));
+    		im.addClickHandler(submenuClickHandler(DepositMenu.IM, im, imContent, year));
     		vp.add(im);
     		vp.add(imContent);
     		ap++;
@@ -358,28 +357,32 @@ public class ConfigurationPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				if(year.equals(parent.getYear())) {
-					parent.updatePage(depositMenu);
-				} else {
-					parent.getUndoStack().clear();
-					parent.getRedoStack().clear();
-					parent.setYear(year);
-					parent.getInma().getSchema(parent.getAonData(), parent.getCompany(), parent.getYear(), false, new AsyncCallback<Map<String, String>>() {
-						@Override
-						public void onSuccess(Map<String, String> result) {
-							parent.setDeposit(result);
-							parent.updateHeader(parent.getDeposit().get(D2DepositConstants.DEPOSIT_TYPE), parent.getYear());
-							parent.updatePage(depositMenu);
-						}
-						
-						@Override public void onFailure(Throwable caught) {}
-					});
-				}
+				menuClick(depositMenu, year);
 			}
 		};
 	}
 	
-	private ClickHandler submenuClickHandler(PaperItem item, VerticalPanel content) {
+    private void menuClick(DepositMenu depositMenu, Integer year) {
+    	if(year.equals(parent.getYear())) {
+			parent.updatePage(depositMenu);
+		} else {
+			parent.getUndoStack().clear();
+			parent.getRedoStack().clear();
+			parent.setYear(year);
+			parent.getInma().getSchema(parent.getAonData(), parent.getCompany(), parent.getYear(), false, new AsyncCallback<Map<String, String>>() {
+				@Override
+				public void onSuccess(Map<String, String> result) {
+					parent.setDeposit(result);
+					parent.updateHeader(parent.getDeposit().get(D2DepositConstants.DEPOSIT_TYPE), parent.getYear());
+					parent.updatePage(depositMenu);
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		}
+	}
+    
+	private ClickHandler submenuClickHandler(DepositMenu depositMenu, PaperItem item, VerticalPanel content, Integer year) {
 		return new ClickHandler() {
 			
 			@Override
@@ -387,6 +390,9 @@ public class ConfigurationPanel extends Composite {
 				content.setVisible(!content.isVisible());
 				IronIcon ironIcon = (IronIcon) item.getWidget(0);
 				ironIcon.setIcon(content.isVisible() ? "arrow-drop-down" : "arrow-drop-up");
+				if(DepositMenu.MA.equals(depositMenu)) {
+					menuClick(depositMenu, year);
+				}
 			}
 		};
 	}

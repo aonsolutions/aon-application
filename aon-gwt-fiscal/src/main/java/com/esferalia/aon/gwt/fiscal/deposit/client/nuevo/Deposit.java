@@ -15,8 +15,6 @@ import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
-import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.ConfigurationPanel;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.FreeText;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.ImportPanel;

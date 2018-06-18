@@ -2698,10 +2698,10 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Cuentas Anuales")
  	String digitalDeposit();
  	
- 	@DefaultMessage("Apartado 3: Aplicaci\u00F3n de resultados")
+ 	@DefaultMessage("Aplicaci\u00F3n de resultados")
  	String memory3_2Title();
  	
- 	@DefaultMessage("Apartado 5: Inmovilizado material, intangible e inversiones inmobiliarias")
+ 	@DefaultMessage("Inmovilizado material, intangible e inversiones inmobiliarias")
  	String memory5_2Title();
  	
  	@DefaultMessage("Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio actual")
@@ -2713,7 +2713,7 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Arrendamientos financieros y otras operaciones de naturaleza similar sobre activos no corrientes")
  	String memory5_2Table3();
  	
- 	@DefaultMessage("Apartado 6: Activos financieros")
+ 	@DefaultMessage("Activos financieros")
  	String memory6_2Title();
  	
  	@DefaultMessage("Activos financieros a largo plazo, salvo inversiones en el patrimonio de empresas del grupo, multigrupo y asociadas.")
@@ -2734,7 +2734,7 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Correcciones valorativas por deterioro registradas en las distintas participaciones")
  	String memory6_2Table6();
  	
- 	@DefaultMessage("Apartado 7: Pasivos Financieros")
+ 	@DefaultMessage("Pasivos Financieros")
  	String memory7_2Title();
  	
  	@DefaultMessage("Pasivos financieros a largo plazo")
@@ -2785,13 +2785,13 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Disponible")
  	String memory7_2Header6();
  	
- 	@DefaultMessage("Apartado 10: Ingresos y gastos")
+ 	@DefaultMessage("Ingresos y gastos")
  	String memory10_2Title();
  	
  	@DefaultMessage("Detalle de la cuenta de p\u00e9rdidas y ganancias")
  	String memory10_2Table();
  	
- 	@DefaultMessage("Apartado 11: Subvenciones, donaciones y legados")
+ 	@DefaultMessage("Subvenciones, donaciones y legados")
  	String memory11_2Title();
  	
  	@DefaultMessage("Subvenciones, donaciones y legados recibidos, otorgados por terceros distintos de los socios.")
@@ -2827,19 +2827,19 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Otras partes vinculadas")
  	String memory12_2Header7();
  	
- 	@DefaultMessage("Apartado 12.1")
+ 	@DefaultMessage("Op. Partes Vinculantes 1")
  	String memory12_2Title1();
  	
- 	@DefaultMessage("Apartado 12.2")
+ 	@DefaultMessage("Op. Partes Vinculantes 2")
  	String memory12_2Title2();
  	
- 	@DefaultMessage("Apartado 12.3")
+ 	@DefaultMessage("Op. Partes Vinculantes 3")
  	String memory12_2Title3();
  	
- 	@DefaultMessage("Apartado 12.4")
+ 	@DefaultMessage("Op. Partes Vinculantes 4")
  	String memory12_2Title4();
  	
- 	@DefaultMessage("Apartado 12.5")
+ 	@DefaultMessage("Op. Partes Vinculantes 5")
  	String memory12_2Title5();
 
  	
