@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -189,16 +188,16 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 		protected void headerRow() {
 			int columns = 9;
 			
+			sheet.setDisplayZeros(false);
+			
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape( true );
+			sheet.setMargin(Sheet.TopMargin, 0.3 );
 			sheet.setMargin(Sheet.LeftMargin, 0.3 );
 			sheet.setMargin(Sheet.RightMargin, 0.3 );
-			Header header = sheet.getHeader();
-			header.setLeft("&B" + companyName);
-			header.setRight("&B&D");
 			Footer footer = sheet.getFooter();
-			footer.setLeft("&BExtracto de cuenta");
-			footer.setRight("&BP\u00E1g: &P/&N");
+			footer.setLeft("Generado el &D");
+			footer.setRight("P\u00E1g: &P/&N");
 			
 			defaultStyle = workbook.createCellStyle();
 			defaultStyle.setFont(smallFont);
@@ -256,9 +255,16 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 			titleCellStyle.setFont(smallBoldFont);
 			titleCellStyle.setWrapText(true);
 			
-			// ----------------------------------------------- ROW 1 - Title
+			// ----------------------------------------------- ROW 1 - Company
 			row = sheet.createRow(rowCount);
-			mergeHeaderRegion(0, 0, 0, columns-1);
+			mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
+			CellUtil.createCell(row, 0, companyName, titleStyle);
+			row.setHeight((short) 500);
+			++rowCount;
+
+			// ----------------------------------------------- ROW 2 - Title
+			row = sheet.createRow(rowCount);
+			mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
 			String title = "EXTRACTO DE CUENTA";
 			if (report.getParams().getAccount() != null) {
 				title = title + " - " + report.getParams().getAccount().getFullName();
@@ -267,7 +273,7 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 			row.setHeight((short) 500);
 			++rowCount;
 			
-			// ----------------------------------------------- ROW 2 - Activity
+			// ----------------------------------------------- ROW 3 - Activity
 			String activityDescription = null;
 			if (report.getParams().getActivity() != null && report.getParams().getActivity() < 0) {
 				activityDescription = "Actividad: Sin Actividad";
@@ -282,7 +288,7 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 				++rowCount;
 			}
 			
-			// ----------------------------------------------- ROW 3 - Centro de costo
+			// ----------------------------------------------- ROW 4 - Centro de costo
 			if (report.getParams().getCostCenters() != null && !report.getParams().getCostCenters().isEmpty()) {
 				StringBuilder buf = new StringBuilder("Centro costo: ");
 				boolean first = true;
@@ -297,7 +303,7 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 				++rowCount;
 			}
 			
-			// ----------------------------------------------- ROW 4 - Dates
+			// ----------------------------------------------- ROW 5 - Dates
 			StringBuilder buf = new StringBuilder();
 			AccountingReportParams params = report.getParams();
 			if (params.getFromDate()  != null) {
@@ -314,7 +320,7 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 			++rowCount;
 			
 
-			// ----------------------------------------------- ROW 5 - TOTALES
+			// ----------------------------------------------- ROW 6 - TOTALES
 			for (AccountStatement st : report.getSummary() ) {
 				row = sheet.createRow(rowCount);
 				cellCount = 0;
@@ -329,7 +335,7 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 			}
 			row = sheet.createRow(rowCount++);
 			
-			// ----------------------------------------------- ROW 6 - Co9lumn Header
+			// ----------------------------------------------- ROW 7 - Column Header
 			row = sheet.createRow(rowCount);
 			cellCount = 0;
 
@@ -339,6 +345,7 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 
 			sheet.setColumnWidth(cellCount, 9 * 256);
 			CellUtil.createCell(row, cellCount, "FECHA", columnHeaderStyle);
+			
 			cellCount++;
 
 			sheet.setColumnWidth(cellCount, 25 * 256);
@@ -361,12 +368,12 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, "S. ACREED.", columnHeaderStyle);
 			cellCount++;
 			
-			sheet.setColumnWidth(cellCount, 15 * 256);
-			CellUtil.createCell(row, cellCount, "CONTRAPARTIDA", columnHeaderStyle);
+			sheet.setColumnWidth(cellCount, 9 * 256);
+			CellUtil.createCell(row, cellCount, "CONTRAPT.", columnHeaderStyle);
 			cellCount++;
 			
 			sheet.setColumnWidth(cellCount, 15 * 256);
-			CellUtil.createCell(row, cellCount, "NUM.DOCUMENTO", columnHeaderStyle);
+			CellUtil.createCell(row, cellCount, "DOCUMENTO", columnHeaderStyle);
 			cellCount++;
 			
 			++rowCount;
@@ -387,7 +394,7 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 			Cell cell = addCell(st.getJournal());
 			cell.setCellStyle(defaultStyle);
 			cell = addCell(st.getEntryDate());
-			cell.setCellStyle(defaultStyle);
+			cell.setCellStyle(smallDateStyle);
 			cell = addCell(st.getConcept());
 			cell.setCellStyle(wrappedCellStyle);
 			

@@ -37,6 +37,7 @@ public abstract class AbsExcelAction  {
 	protected int cellCount;
 	protected DataFormat dataFormat;
 	protected CellStyle dateStyle;
+	protected CellStyle smallDateStyle;
 	protected CellStyle decimalStyle;
 	protected CellStyle numberStyle;
 	protected CellStyle centerCellStyle;
@@ -78,7 +79,12 @@ public abstract class AbsExcelAction  {
 		smallFont = workbook.createFont();
 		smallFont.setFontHeightInPoints((short) 8);
 
-		boldFont= workbook.createFont();
+	    smallDateStyle = workbook.createCellStyle();
+	    smallDateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
+	    smallDateStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+	    smallDateStyle.setFont( smallFont );
+
+	    boldFont= workbook.createFont();
 		boldFont.setFontHeightInPoints((short) 9);
 		boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 

@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -202,16 +201,16 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 				columns = columns - 1; 
 			}
 			
+			sheet.setDisplayZeros(false);
+			
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape( (report.getIntervals().size() * columns) > 5);
+			sheet.setMargin(Sheet.TopMargin, 0.3 );
 			sheet.setMargin(Sheet.LeftMargin, 0.3 );
 			sheet.setMargin(Sheet.RightMargin, 0.3 );
-			Header header = sheet.getHeader();
-			header.setLeft("&B" + companyName);
-			header.setRight("&B&D");
 			Footer footer = sheet.getFooter();
-			footer.setLeft("&BCuenta de explotaci\u00F3n");
-			footer.setRight("&BP\u00E1g: &P/&N");
+			footer.setLeft("Generado el &D");
+			footer.setRight("P\u00E1g: &P/&N");
 			
 			CellStyle defaultStyle = workbook.createCellStyle();
 			defaultStyle.setFont(smallFont);
@@ -273,9 +272,16 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			sheet.setColumnWidth(1, 40 * 256);
 			
 			
-			// ----------------------------------------------- ROW 1 - Title
+			// ----------------------------------------------- ROW 1 - Company
 			row = sheet.createRow(rowCount);
-			mergeHeaderRegion(0, 0, 0, columns-1);
+			mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
+			CellUtil.createCell(row, 0, companyName, titleStyle);
+			row.setHeight((short) 500);
+			++rowCount;
+
+			// ----------------------------------------------- ROW 2 - Title
+			row = sheet.createRow(rowCount);
+			mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
 			String title = "CUENTA DE EXPLOTACI\u00D3N";
 			if (report.getSelectedPeriod() != null) {
 				title = title + " - " + report.getSelectedPeriod().getName();
@@ -284,7 +290,7 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			row.setHeight((short) 500);
 			++rowCount;
 			
-			// ----------------------------------------------- ROW 2 - Activity
+			// ----------------------------------------------- ROW 3 - Activity
 			String activityDescription = null;
 			if (report.getParams().getActivity() != null && report.getParams().getActivity() < 0) {
 				activityDescription = "Actividad: Sin Actividad";
@@ -299,7 +305,7 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 				++rowCount;
 			}
 			
-			// ----------------------------------------------- ROW 3 - Centro de costo
+			// ----------------------------------------------- ROW 4 - Centro de costo
 			if (report.getParams().getCostCenters() != null && !report.getParams().getCostCenters().isEmpty()) {
 				StringBuilder buf = new StringBuilder("Centro costo: ");
 				boolean first = true;
@@ -314,7 +320,7 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 				++rowCount;
 			}
 			
-			// ----------------------------------------------- ROW 4 - Dates
+			// ----------------------------------------------- ROW 5 - Dates
 			StringBuilder buf = new StringBuilder();
 			AccountingReportParams params = report.getParams();
 			if (params.getFromDate()  != null) {
@@ -330,7 +336,7 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, buf.toString(), subTitleStyle);
 			++rowCount;
 			
-			// ----------------------------------------------- ROW 5 - Intervals
+			// ----------------------------------------------- ROW 6 - Intervals
 			row = sheet.createRow(rowCount);
 			mergeHeaderRegion(rowCount, rowCount, 0, 1);
 			CellUtil.createCell(row, cellCount, "", headerStyle);
@@ -351,11 +357,13 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			}
 			++rowCount;
 			
-			// ----------------------------------------------- ROW 6 - Co9lumn Header
+			// ----------------------------------------------- ROW 7 - Co9lumn Header
 			row = sheet.createRow(rowCount);
 			cellCount = 0;
-			mergeHeaderRegion(rowCount, rowCount, 0, 1);
 			CellUtil.createCell(row, cellCount, "CUENTA", columnHeaderStyle);
+			CellUtil.createCell(row, cellCount+1, "", columnHeaderStyle);
+			mergeHeaderRegion(rowCount, rowCount, 0, 1);
+			//CellUtil.createCell(row, cellCount, "", columnHeaderStyle);
 			cellCount = 2;
 			int iter = 0;
 			for (@SuppressWarnings("unused") DateInterval inter : report.getIntervals()) {
@@ -389,9 +397,9 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 		}
 
 		private CellRangeAddress mergeHeaderRegion(int firstRow, int lastRow, int firstCol, int lastCol) {
-			CellRangeAddress secondRowRange = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-			sheet.addMergedRegion(secondRowRange);
-			return secondRowRange;
+			CellRangeAddress range = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+			sheet.addMergedRegion(range);
+			return range;
 		}
 
 		@Override

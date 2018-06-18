@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -195,17 +194,16 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 				+ (report.hasOpeningAmounts()?2:0)
 				+ (report.hasInPeriodPreviousAmounts()?2:0)
 			;
+			sheet.setDisplayZeros(false);
 			
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape( true );
+			sheet.setMargin(Sheet.TopMargin, 0.3 );
 			sheet.setMargin(Sheet.LeftMargin, 0.3 );
 			sheet.setMargin(Sheet.RightMargin, 0.3 );
-			Header header = sheet.getHeader();
-			header.setLeft("&B" + companyName);
-			header.setRight("&B&D");
 			Footer footer = sheet.getFooter();
-			footer.setLeft("&BCuenta de explotaci\u00F3n");
-			footer.setRight("&BP\u00E1g: &P/&N");
+			footer.setLeft("Generado el &D");
+			footer.setRight("P\u00E1g: &P/&N");
 			
 			CellStyle defaultStyle = workbook.createCellStyle();
 			defaultStyle.setFont(smallFont);
@@ -263,9 +261,16 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 			titleCellStyle.setFont(smallBoldFont);
 			titleCellStyle.setWrapText(true);
 			
-			// ----------------------------------------------- ROW 1 - Title
+			// ----------------------------------------------- ROW 1 - Company
 			row = sheet.createRow(rowCount);
-			mergeHeaderRegion(0, 0, 0, columns-1);
+			mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
+			CellUtil.createCell(row, 0, companyName, titleStyle);
+			row.setHeight((short) 500);
+			++rowCount;
+
+			// ----------------------------------------------- ROW 2 - Title
+			row = sheet.createRow(rowCount);
+			mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
 			String title = "BALANCE DE SUMAS Y SALDOS";
 			if (report.getSelectedPeriod() != null) {
 				title = title + " - " + report.getSelectedPeriod().getName();
@@ -274,7 +279,7 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 			row.setHeight((short) 500);
 			++rowCount;
 			
-			// ----------------------------------------------- ROW 2 - Activity
+			// ----------------------------------------------- ROW 3 - Activity
 			String activityDescription = null;
 			if (report.getParams().getActivity() != null && report.getParams().getActivity() < 0) {
 				activityDescription = "Actividad: Sin Actividad";
@@ -289,7 +294,7 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 				++rowCount;
 			}
 			
-			// ----------------------------------------------- ROW 3 - Centro de costo
+			// ----------------------------------------------- ROW 4 - Centro de costo
 			if (report.getParams().getCostCenters() != null && !report.getParams().getCostCenters().isEmpty()) {
 				StringBuilder buf = new StringBuilder("Centro costo: ");
 				boolean first = true;
@@ -304,7 +309,7 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 				++rowCount;
 			}
 			
-			// ----------------------------------------------- ROW 4 - Dates
+			// ----------------------------------------------- ROW 5 - Dates
 			StringBuilder buf = new StringBuilder();
 			AccountingReportParams params = report.getParams();
 			if (params.getFromDate()  != null) {
@@ -320,7 +325,7 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, buf.toString(), subTitleStyle);
 			++rowCount;
 			
-			// ----------------------------------------------- ROW 5 - Intervals
+			// ----------------------------------------------- ROW 6 - Intervals
 			row = sheet.createRow(rowCount);
 			mergeHeaderRegion(rowCount, rowCount, 0, 1);
 			CellUtil.createCell(row, cellCount, "", headerStyle);
@@ -360,7 +365,7 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 			cellCount = cellCount + 2;
 			++rowCount;
 			
-			// ----------------------------------------------- ROW 6 - Co9lumn Header
+			// ----------------------------------------------- ROW 7 - Column Header
 			row = sheet.createRow(rowCount);
 			sheet.setColumnWidth(0, 9 * 256);
 			sheet.setColumnWidth(1, 25 * 256);
