@@ -27,7 +27,6 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
-import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.DisabiltyLevel;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -91,7 +90,7 @@ public class ContractServlet extends HttpServlet{
 			if(list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).count() > 0){ 
 				list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).forEach(c -> {
 					Date start = AonDateUtils.getYear(c.getStartDate()) == year ? c.getStartDate() : ejInitDate;
-					Date end = c.getEndDate() != null && AonDateUtils.getYear(c.getEndDate()) == year ? c.getStartDate() : ejFinalDate;
+					Date end = c.getEndDate() != null && AonDateUtils.getYear(c.getEndDate()) == year ? c.getEndDate() : ejFinalDate;
 					Double coef = (Double) MVEL.eval(c.getExpression());
 					list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0).forEach(h -> {
 						Date start2 = h.getStartDate().compareTo(start) > 0 ? h.getStartDate() : start;
