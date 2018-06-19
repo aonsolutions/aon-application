@@ -3398,7 +3398,7 @@ public class SalaryDraft extends ResizeComposite
 				String styles[] = eventStyles.get(event == null ? Event.Type.ERROR : event.getType());
 				//dumpDbItem(payment, row, styles[0], styles[1],
 				//		new RecoverPaymentHandler(payment), false);
-				dumpDbItem(payment, row,getIconRowStyle(payment), "",
+				dumpDbItem(payment, row,getIconRowStyle(payment), "none",
 						new RecoverPaymentHandler(payment), false);
 			}
 		}
