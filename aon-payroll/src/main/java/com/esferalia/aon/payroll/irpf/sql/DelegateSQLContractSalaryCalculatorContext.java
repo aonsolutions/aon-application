@@ -68,6 +68,9 @@ implements ISQLContractSalaryCalculatorContext {
 		return ctx.liquid(liquid, start, end);
 	}
 	
-	
+	@Override
+	public ISQLContractSalaryCalculatorContext getNoItContractSalaryCalculatorContext() {
+		return ctx.getNoItContractSalaryCalculatorContext();
+	}
 	
 }

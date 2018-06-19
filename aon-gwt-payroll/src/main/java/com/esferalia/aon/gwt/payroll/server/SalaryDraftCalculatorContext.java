@@ -45,6 +45,7 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.NextHook;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -542,6 +543,9 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				super.getContractBonus().iterator());
 	}
 	
+	public ISQLContractSalaryCalculatorContext getNoItContractSalaryCalculatorContext() {
+		return ctx.getNoItContractSalaryCalculatorContext();
+	}
 	
 
 	protected SalaryDraft getDraft() {

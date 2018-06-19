@@ -18,6 +18,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedResult;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class ContractSalaryCalculator4Dummies<T extends ISalary> extends ContractSalaryCalculator<T> implements IContractSalaryCalculatorContext.IListener{
 	
@@ -94,7 +95,7 @@ public class ContractSalaryCalculator4Dummies<T extends ISalary> extends Contrac
 			List<Period> its, 
 			Date start, 
 			Date end, 
-			ExpressionContext expressionContext) throws UnsupportedOperationException {
+			ExpressionContext expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
 		
 		if (results.size() == 1 
 				&& ( contractPayment.getType() == PaymentType.CRA_0002 
@@ -118,7 +119,7 @@ public class ContractSalaryCalculator4Dummies<T extends ISalary> extends Contrac
 			ITimedResult<Double> result, 
 			Date start, 
 			Date end, 
-			ExpressionContext expressionContext) throws UnsupportedOperationException {
+			ExpressionContext expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
 		
 		if ( Period.compare(contractPayment.getStartDate(), start) < 0 ||
 				Period.compare(contractPayment.getEndDate(), end) > 0 ){

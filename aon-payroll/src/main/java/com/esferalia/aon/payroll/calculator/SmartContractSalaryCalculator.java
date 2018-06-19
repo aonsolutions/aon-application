@@ -3,12 +3,12 @@ package com.esferalia.aon.payroll.calculator;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -24,8 +23,10 @@ import org.jooq.Result;
 import com.code.aon.common.AonException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -39,6 +40,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
@@ -114,6 +116,18 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		}
 		
+	}
+	
+	private static class DoubleReturnException extends RuntimeException{
+		private double number;
+		
+		public DoubleReturnException(double number) {
+			this.number = number;
+		}
+		
+		public double getNumber() {
+			return number;
+		}
 	}
 
 	private class SmartQuoteCalculator extends QuoteCalculator {
@@ -247,6 +261,25 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	// IContractSalaryCalculatorContext.IListener -----------------------------
 	
 	// ------------------------------------------------------------------------
+	
+	@Override
+	protected List<ITimedResult<Double>> fixConstantResult(IContractPayment contractPayment,
+			ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
+			throws UnsupportedOperationException, UndefinedVariablesException {
+		
+		if ( PaymentType.CRA_0055 == contractPayment.getType() ) {
+			List<Period> its = expressionContext.getPeriods(ContextVariable.LEAVE_DAYS);
+			wait4PREST_IT(its, expressionContext);
+			try {
+				double gtzdo = result.getValue();
+				List<ITimedResult<Double>> results = Collections.singletonList(result);
+				return fixGtzdo(results , its, expressionContext, gtzdo);
+			} catch (ExpressionException e) {
+			}
+		}
+		
+		return super.fixConstantResult(contractPayment, result, start, end, expressionContext);
+	}
 
 	@Override
 	protected List<ITimedResult<Double>> fixItResults(
@@ -255,7 +288,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			List<Period> its, 
 			Date start, 
 			Date end, 
-			ExpressionContext expressionContext) throws UnsupportedOperationException {
+			ExpressionContext expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
 		
 		if (results.size() == 1 
 				&& ( contractPayment.getType() == PaymentType.CRA_0002 
@@ -316,9 +349,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			Double value = result.getValue(result.getPeriod());
 			
 			try {
-				double cgcBaseMin = expressionContext.eval(ContextVariable.CGC_BASE_MIN.getName(), period.getStart(), period.getEnd()).stream()
-				.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
-				.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
+				double cgcBaseMin = getCgcBaseMin(expressionContext, period);
 				if ( value == null || value == 0.00 || value < cgcBaseMin )
 					fixed.add( result );
 				else
@@ -331,6 +362,67 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		return fixed; //super.fixExtraResults(contractPayment, results, start, end, expressionContext);
 	}
+
+	@Override
+	protected List<ITimedResult<Double>> fixGuaranteedResults(IContractPayment contractPayment,
+			List<ITimedResult<Double>> results, List<Period> its, Date start, Date end,
+			ExpressionContext expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
+
+		wait4PREST_IT(its, expressionContext);
+
+		try {
+			 ;
+			ISQLContractSalaryCalculatorContext noItContractSalaryCalculatorContext = 
+					ctx.getNoItContractSalaryCalculatorContext();
+			double gtzdo = 0.00;
+			try {
+				new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()){
+					@Override
+					protected List<ITimedResult<Double>> fixGuaranteedResults(IContractPayment _contractPayment,
+							List<ITimedResult<Double>> _results, List<Period> _its, Date _start, Date _end,
+							ExpressionContext _expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
+						
+						if ( _contractPayment.getId().equals(contractPayment.getId() ))
+							throw new  DoubleReturnException( _results.stream().collect(Collectors.summingDouble(r->r.getValue())));
+						
+						return super.fixGuaranteedResults(_contractPayment, _results, _its, _start, _end, _expressionContext);
+					}
+				}.calculate(noItContractSalaryCalculatorContext)
+				;
+			} catch ( DoubleReturnException e ) {
+				gtzdo = e.getNumber();
+			}
+			
+			
+			return fixGtzdo(results, its, expressionContext, gtzdo);
+			
+		} catch ( ClassCastException | ExpressionException | SalaryException e ) {
+			
+			return super.fixGuaranteedResults(contractPayment, results, its, start, end, expressionContext);
+		}
+	}
+
+	protected List<ITimedResult<Double>> fixGtzdo(List<ITimedResult<Double>> results, List<Period> its,
+			ExpressionContext expressionContext, double gtzdo) throws ExpressionException {
+		if ( gtzdo <= 0.00 ) 
+			return Collections.emptyList();
+		
+		double cgcBaseMin = getCgcBaseMin(expressionContext, ctx.getStartDate(), ctx.getEndDate());
+		if ( gtzdo >= cgcBaseMin ) {
+			double totalPayment = getTotalPayment(expressionContext, ctx.getStartDate(), ctx.getEndDate());
+			gtzdo -= totalPayment;
+		}
+		if ( gtzdo <= 0.00 ) 
+			return Collections.emptyList();
+			
+		double gtzdo4Day = gtzdo / getDays(its)  ;
+		
+		Map<String, ITimedVariable<?>>  finalContext = new HashMap<String, ITimedVariable<?>>(); 
+		results.forEach(r->finalContext.putAll(r.getContext()));
+
+		return its.stream().map(it -> new  TimedResult<Double>(gtzdo4Day * getDays(it), it, finalContext)).collect(Collectors.toList());
+	}
+
 	
 	@Override
 	protected List<ITimedResult<Double>> fixStrikeResults(
@@ -408,7 +500,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return new TimedResult<Double>(value, result.getPeriod(), result.getContext());
 	}
 	
-	// ------------------------------------------------------------------------
 
 	private Date getStartIT(ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
 		
@@ -420,8 +511,51 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		throw new ExpressionException();
 	}
+	
+	
+	protected void wait4PREST_IT(List<Period> its, ExpressionContext expressionContext)
+			throws UndefinedVariablesException {
+		if (its.isEmpty())
+			throw new UndefinedContextVariablesException(ContextVariable.LEAVE_DAYS);
+		
+		Double totalPayment = expressionContext.getVariable(ContextVariable.TOTAL_PAYMENT, ctx.getStartDate(), ctx.getEndDate(), Double.class);
+
+		if (totalPayment == null)
+			throw new UndefinedTotalPaymentException();
+	}
+	
+	protected double getCgcBaseMin(ExpressionContext expressionContext, Period period) throws ExpressionException {
+		double cgcBaseMin = expressionContext.eval(ContextVariable.CGC_BASE_MIN.getName(), period.getStart(), period.getEnd()).stream()
+		.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
+		.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
+		return cgcBaseMin;
+	}
+	
+	protected double getTotalPayment(ExpressionContext expressionContext, Period period) throws ExpressionException {
+		double cgcBaseMin = expressionContext.eval(ContextVariable.TOTAL_PAYMENT.getName(), period.getStart(), period.getEnd()).stream()
+		.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
+		.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
+		return cgcBaseMin;
+	}
+
+	protected double getTotalPayment(ExpressionContext expressionContext, Date start, Date end) throws ExpressionException {
+		return getTotalPayment(expressionContext, new Period(start,end));
+	}
+
+	protected double getCgcBaseMin(ExpressionContext expressionContext, Date start, Date end) throws ExpressionException {
+		return getCgcBaseMin(expressionContext, new Period(start,end));
+	}
+	
 	// ------------------------------------------------------------------------
 	
+	private static long getDays(Period period){
+		return period.daysStream().count();
+	}
+
+	private static long getDays(List<Period> periods){
+		return periods.stream().collect(Collectors.summingLong(p->p.daysStream().count()));
+	}
+
 	private static double getDays(Period period, ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
 
 		List<ITimedResult<Number>> results = expressionContext.eval(ContextVariable.QUOTE_DAYS.getName(), period.getStart(), period.getEnd(), Number.class);
