@@ -55,6 +55,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedResult;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -110,7 +111,7 @@ public class SQLContractDelayCalculatorContext extends
 		@Override
 		protected List<ITimedResult<Double>> fixConstantResult(IContractPayment contractPayment,
 				ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
-				throws UnsupportedOperationException {
+				throws UnsupportedOperationException, UndefinedVariablesException {
 			
 			if ( isITPayment(contractPayment))
 				return Collections.singletonList( isInIT(result.getPeriod()) ? fixItResult(result) : new TimedResult<Double>(0.00, result.getPeriod(), result.getContext()));
@@ -128,7 +129,7 @@ public class SQLContractDelayCalculatorContext extends
 		@Override
 		protected List<ITimedResult<Double>> fixItResults(IContractPayment contractPayment,
 				List<ITimedResult<Double>> results, List<Period> its, Date start, Date end,
-				ExpressionContext expressionContext) throws UnsupportedOperationException {
+				ExpressionContext expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
 			
 			if ( !isITPayment(contractPayment))  
 				return results.stream().map( r-> new TimedResult<Double>(0.00, r.getPeriod(), r.getContext()) ).collect(Collectors.toList());

@@ -1576,7 +1576,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 	protected void addBaseCgcMin(AONContext aonContext) {
 		addSystemData(aonContext, getFirstDayOfYear(getToday()), null,
-				new HashMap() {
+				new HashMap<String,String>() {
 					{
 						put("BASE_CGC_MIN",
 							"[ \"01\":(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA), "

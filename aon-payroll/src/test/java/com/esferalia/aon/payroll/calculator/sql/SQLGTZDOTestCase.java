@@ -9,6 +9,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static java.util.Calendar.DATE;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
@@ -37,6 +39,7 @@ import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -3200,6 +3203,74 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	@Ignore("Not implemented")
+	public void testGtzdoArguments() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap()
+				, new String[] { 
+						"GTZDO(P_2,P_3,P_4)" ,
+						"125.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getToday();
+		Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount());
+		
+		double workedDays = get(startIt, DATE) -1 ;
+		double monthDays = AonDateUtils.getMax(getToday(), DATE);
+		double itDays = AonDateUtils.getMax(getToday(), DATE);
+		//@formatter:off
+		Assert.assertEquals(
+				1750.00 + ( 125.00 * workedDays / monthDays ), 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
 	
 	@Test
 	public void testGtzdoOneDay() throws ExpressionException, SQLException,
@@ -3322,6 +3393,228 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		
+	}
+
+	@Test
+	public void testAutoGtzdoI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		addSystemData(aonContext, 
+					getFirstDayOfYear(getToday()), 
+					null,
+					new HashMap<String,String>() {
+					{
+						put("BASE_CGC_MIN","756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+					}
+					}
+		);
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		PaymentConceptRecord conceptGarantizado = addConcept(aonContext, "GARANTIZADO");
+		addPayment(aonContext, contract, conceptGarantizado, "P_0 + P_1", "_P",  PaymentType.CRA_0055);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getFirstDayOfMonth(getToday());
+		//Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() );
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00, 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+	}
+
+	@Test
+	public void testAutoGtzdoII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		addSystemData(aonContext, 
+					getFirstDayOfYear(getToday()), 
+					null,
+					new HashMap<String,String>() {
+					{
+						put("BASE_CGC_MIN","756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+					}
+					}
+		);
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		PaymentConceptRecord conceptGarantizado = addConcept(aonContext, "GARANTIZADO");
+		addPayment(aonContext, contract, conceptGarantizado, "1000.00", "_P",  PaymentType.CRA_0055);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getFirstDayOfMonth(getToday());
+		//Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() );
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00, 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+	}
+
+	@Test
+	public void testAutoGtzdoIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		addSystemData(aonContext, 
+					getFirstDayOfYear(getToday()), 
+					null,
+					new HashMap<String,String>() {
+					{
+						put("BASE_CGC_MIN","756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+					}
+					}
+		);
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		PaymentConceptRecord conceptGarantizado = addConcept(aonContext, "GARANTIZADO");
+		addPayment(aonContext, contract, conceptGarantizado, "100.00", "_P",  PaymentType.CRA_0055);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getFirstDayOfMonth(getToday());
+		//Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() );
+		
+		//@formatter:off
+		Assert.assertEquals(
+				875.00, 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
 	}
 	// ----------------------------------------------------------------------------------
 

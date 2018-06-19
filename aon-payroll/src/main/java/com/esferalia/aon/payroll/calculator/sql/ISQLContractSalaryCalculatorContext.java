@@ -4,13 +4,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 
-import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 public interface ISQLContractSalaryCalculatorContext extends
@@ -36,7 +34,6 @@ public interface ISQLContractSalaryCalculatorContext extends
 			throws ExpressionException, SQLException, SalaryException;
 
 	boolean next() throws SQLException, ExpressionException;
-	
 	
 	/*
 	ISalaryCalculatorContext getLiquidCalculatorContext(
@@ -75,5 +72,8 @@ public interface ISQLContractSalaryCalculatorContext extends
 					true));
 		}
 	};
+	
+	ISQLContractSalaryCalculatorContext getNoItContractSalaryCalculatorContext();
+;
 
 }

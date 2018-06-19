@@ -66,6 +66,10 @@ public class DelegateSQLContractSalaryCalculatorContext<T extends ISQLContractSa
 	public boolean next() throws SQLException, ExpressionException {
 		return ctx.next();
 	}
-	
 
+	@Override
+	public ISQLContractSalaryCalculatorContext getNoItContractSalaryCalculatorContext() {
+		return ctx.getNoItContractSalaryCalculatorContext();
+	}
+	
 }

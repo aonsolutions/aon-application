@@ -329,6 +329,13 @@ public class SQLExtraSalaryCalculatorContext implements
 	public Connection getConnection() {
 		return ctx.getConnection();
 	}
+	
+	
+	@Override
+	public ISQLContractSalaryCalculatorContext getNoItContractSalaryCalculatorContext() {
+		return ctx.getNoItContractSalaryCalculatorContext();
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	

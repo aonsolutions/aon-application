@@ -206,6 +206,7 @@ import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -2105,6 +2106,17 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Date endDate = getLastDayOfMonth(date);
 		return getNoItCalculatorContext(connection, startDate, endDate, endDate, contractCriteria, -1,
 				Integer.MAX_VALUE - 1);
+	}
+
+	public ISQLContractSalaryCalculatorContext getNoItContractSalaryCalculatorContext() {
+
+		final Criteria contractCriteria = new Criteria();
+		contractCriteria.addExpression(criteria.getExpression());
+		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
+
+		ISQLContractSalaryCalculatorContext ctx = getNoItCalculatorContext(connection, startDate, endDate, endDate, contractCriteria, -1,
+				Integer.MAX_VALUE - 1);
+		return ctx;
 	}
 
 	public Object gross(double gross, Date start, Date end) throws ExpressionException, SQLException, SalaryException {
