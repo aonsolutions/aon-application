@@ -20,7 +20,6 @@ public class XMLtoMod2002017 {
 		fillPagina09(mod,mod200);
 		fillPagina10(mod,mod200);
 		fillPagina11(mod,mod200);
-		fillPagina33(mod,mod200);
 	}
 
 	private static void fillPagina03(MOD2002017 mod, Mod2002017 mod200) {
@@ -516,72 +515,6 @@ public class XMLtoMod2002017 {
 		addVariable(mod200,Mod2002017Key.TC739, pag.getT00739());
 		addVariable(mod200,Mod2002017Key.TC740, pag.getT00740());
 		addVariable(mod200,Mod2002017Key.TC741, pag.getT00741());
-	}
-	
-	private static void fillPagina33(MOD2002017 mod, Mod2002017 mod200) {
-		
-		if (mod.getBancoEspana().getCambiosPN()==null) return;
-		TipoPagina33 pag = mod.getBancoEspana().getCambiosPN().getPagina33();
-		if (pag==null) return;
-		
- 		addVariable(mod200,Mod2002017Key.PG299, pag.getT00299());
- 		addVariable(mod200,Mod2002017Key.PG300, pag.getT00300());
- 		addVariable(mod200,Mod2002017Key.PG301, pag.getT00301());
- 		addVariable(mod200,Mod2002017Key.PG302, pag.getT00302());
- 		addVariable(mod200,Mod2002017Key.PG303, pag.getT00303());
- 		addVariable(mod200,Mod2002017Key.PG311, pag.getT00311());
- 		addVariable(mod200,Mod2002017Key.PG312, pag.getT00312());
- 		addVariable(mod200,Mod2002017Key.PG313, pag.getT00313());
- 		addVariable(mod200,Mod2002017Key.PG314, pag.getT00314());
- 		addVariable(mod200,Mod2002017Key.PG315, pag.getT00315());
- 		addVariable(mod200,Mod2002017Key.PG323, pag.getT00323());
- 		addVariable(mod200,Mod2002017Key.PG324, pag.getT00324());
- 		addVariable(mod200,Mod2002017Key.PG325, pag.getT00325());
- 		addVariable(mod200,Mod2002017Key.PG326, pag.getT00326());
- 		addVariable(mod200,Mod2002017Key.PG327, pag.getT00327());
- 		addVariable(mod200,Mod2002017Key.I0335, pag.getT00335());
- 		addVariable(mod200,Mod2002017Key.D0336, pag.getT00336());
- 		addVariable(mod200,Mod2002017Key.I0337, pag.getT00337());
- 		addVariable(mod200,Mod2002017Key.D0338, pag.getT00338());
- 		addVariable(mod200,Mod2002017Key.I0339, pag.getT00339());
- 		addVariable(mod200,Mod2002017Key.I0347, pag.getT00347());
- 		addVariable(mod200,Mod2002017Key.T0349, pag.getT00349());
- 		addVariable(mod200,Mod2002017Key.T0351, pag.getT00351());
- 		addVariable(mod200,Mod2002017Key.I0359, pag.getT00359());
- 		addVariable(mod200,Mod2002017Key.D0360, pag.getT00360());
- 		addVariable(mod200,Mod2002017Key.I0361, pag.getT00361());
- 		addVariable(mod200,Mod2002017Key.D0362, pag.getT00362());
- 		addVariable(mod200,Mod2002017Key.I0363, pag.getT00363());
- 		addVariable(mod200,Mod2002017Key.I0371, pag.getT00371());
- 		addVariable(mod200,Mod2002017Key.I0383, pag.getT00383());
- 		addVariable(mod200,Mod2002017Key.TC395, pag.getT00395());
- 		addVariable(mod200,Mod2002017Key.TC407, pag.getT00407());
- 		addVariable(mod200,Mod2002017Key.TC419, pag.getT00419());
- 		addVariable(mod200,Mod2002017Key.TC420, pag.getT00420());
- 		addVariable(mod200,Mod2002017Key.TC431, pag.getT00431());
- 		addVariable(mod200,Mod2002017Key.TC432, pag.getT00432());
- 		addVariable(mod200,Mod2002017Key.TC433, pag.getT00433());
- 		addVariable(mod200,Mod2002017Key.TC443, pag.getT00443());
- 		addVariable(mod200,Mod2002017Key.TC444, pag.getT00444());
- 		addVariable(mod200,Mod2002017Key.TC446, pag.getT00446());
- 		addVariable(mod200,Mod2002017Key.TC455, pag.getT00455());
- 		addVariable(mod200,Mod2002017Key.TC456, pag.getT00456());
- 		addVariable(mod200,Mod2002017Key.TC467, pag.getT00467());
- 		addVariable(mod200,Mod2002017Key.TC468, pag.getT00468());
- 		addVariable(mod200,Mod2002017Key.TC503, pag.getT00503());
- 		addVariable(mod200,Mod2002017Key.TC505, pag.getT00505());
- 		addVariable(mod200,Mod2002017Key.TC506, pag.getT00506());
- 		addVariable(mod200,Mod2002017Key.TC507, pag.getT00507());
- 		addVariable(mod200,Mod2002017Key.TC515, pag.getT00515());
- 		addVariable(mod200,Mod2002017Key.TC516, pag.getT00516());
- 		addVariable(mod200,Mod2002017Key.TC519, pag.getT00519());
- 		addVariable(mod200,Mod2002017Key.TC528, pag.getT00528());
- 		addVariable(mod200,Mod2002017Key.TC539, pag.getT00539());
- 		addVariable(mod200,Mod2002017Key.TC540, pag.getT00540());
- 		addVariable(mod200,Mod2002017Key.TC541, pag.getT00541());
- 		addVariable(mod200,Mod2002017Key.TC542, pag.getT00542());
- 		addVariable(mod200,Mod2002017Key.TC543, pag.getT00543());
- 		addVariable(mod200,Mod2002017Key.TC551, pag.getT00551());
 	}
 	
 	private static void addVariable(Mod2002017 mod200, Mod2002017Key key, Number d) {
