@@ -199,7 +199,7 @@ public class SIIBuilt {
 	 * @param vatList
 	 */
 	protected SuministroLRFacturasEmitidas suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList
-			, byte[] cert, String pass, Boolean mod, String terceros, String auth) {
+			, byte[] cert, String pass, Boolean mod, String terceros) {
 		this.cert = cert;
 		this.pass = pass;
     	SuministroLRFacturasEmitidas suministro = new SuministroLRFacturasEmitidas();
@@ -304,7 +304,7 @@ public class SIIBuilt {
 			//fet.setClaveRegimenEspecialOTrascendenciaAdicional2("");//TODO OPTIONAL
 	
 			// NUMERO REGISTRO AUTORIZACION
-			fet.setNumRegistroAcuerdoFacturacion("");//auth);//TODO TIENE K DARLO EL CLIENTE
+			fet.setNumRegistroAcuerdoFacturacion("");// TODO TIENE K DARLO EL CLIENTE
 			
 			// IMPORTE TOTAL 
 			//Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
@@ -504,7 +504,7 @@ public class SIIBuilt {
 		return suministro;
 	}
 	
-	protected BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
+	protected BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRFacturasEmitidas baja = new BajaLRFacturasEmitidas();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		
@@ -654,7 +654,7 @@ public class SIIBuilt {
 	 * @param invoiceList
 	 */
 	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, 
-			byte[] cert, String pass, Boolean mod, String terceros, String auth) {
+			byte[] cert, String pass, Boolean mod, String terceros) {
 		this.cert = cert;
 		this.pass = pass;
 		SuministroLRFacturasRecibidas suministro = new SuministroLRFacturasRecibidas();
@@ -782,7 +782,7 @@ public class SIIBuilt {
 			frt.setImporteTotal(Double.toString(AonMathUtils.round(total)));//TODO
 			
 			// NUM REGISTRO ACUERDO FACTURACION
-			frt.setNumRegistroAcuerdoFacturacion("");//auth);//TODO
+			frt.setNumRegistroAcuerdoFacturacion("");// TODO
 			// TIPO FACTURA
 			frt.setTipoFactura(ClaveTipoFacturaType.F_1);//TODO De momento a piñon fijo!!!
 			if(vat.isIntracommunity()){
@@ -888,7 +888,7 @@ public class SIIBuilt {
 		return suministro;
 	}
 		
-	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company,LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
+	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company,LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRFacturasRecibidas baja = new BajaLRFacturasRecibidas();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		
@@ -1062,7 +1062,7 @@ public class SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRBienesInversion suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, Boolean mod, String terceros, String auth) {
+	protected SuministroLRBienesInversion suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
 		SuministroLRBienesInversion suministro = new SuministroLRBienesInversion();
 		
 		// CABECERA
@@ -1119,7 +1119,7 @@ public class SIIBuilt {
 		return suministro;
 	}
 	
-	protected BajaLRBienesInversion bajaBienesInversion(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
+	protected BajaLRBienesInversion bajaBienesInversion(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRBienesInversion baja = new BajaLRBienesInversion();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		
@@ -1200,7 +1200,7 @@ public class SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRDetOperacionIntracomunitaria suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, Boolean mod, String terceros, String auth) {
+	protected SuministroLRDetOperacionIntracomunitaria suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, Boolean mod, String terceros) {
 		SuministroLRDetOperacionIntracomunitaria suministro = new SuministroLRDetOperacionIntracomunitaria();
 		
 		// CABECERA
@@ -1267,7 +1267,7 @@ public class SIIBuilt {
 		return suministro;
 	}
 		
-	protected BajaLRDetOperacionIntracomunitaria bajaOperacionesIntracomunitarias(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
+	protected BajaLRDetOperacionIntracomunitaria bajaOperacionesIntracomunitarias(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRDetOperacionIntracomunitaria baja = new BajaLRDetOperacionIntracomunitaria();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		

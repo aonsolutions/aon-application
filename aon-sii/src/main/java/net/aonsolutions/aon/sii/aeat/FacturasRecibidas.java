@@ -58,6 +58,7 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaType.IDEmisorFactura;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDOtroType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.MacrodatoType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PagosType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaType;
@@ -135,288 +136,275 @@ public class FacturasRecibidas extends SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company,
-			LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, Boolean mod, String terceros, String auth) {
+	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
 		SuministroLRFacturasRecibidas suministro = new SuministroLRFacturasRecibidas();
 
 		// CABECERA
 		suministro.setCabecera(cabecera(company, mod, terceros));
 
 		// BODY
-		invoiceList.stream().forEach(invoice -> {
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst()
-					.orElse(new VatContext());
+		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
 
-			LinkedList<VatData> noExenta = new LinkedList<>();
-			LinkedList<VatData> pasivoList = new LinkedList<>();
-			if (!vat.isIntracommunity()) {
-				noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && !f.isOtherISP())
-						.map(h -> new VatData().setBase(h.getBase()).setPercentage(h.getPercentage())
-								.setQuota(h.getQuota()).setSurchargePercent(h.getSurchargePercent())
-								.setSurchargeQuota(h.getSurchargeQuota()))
-						.collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<VatData> noExenta = new LinkedList<>();
+		LinkedList<VatData> pasivoList = new LinkedList<>();
+		if (!vat.isIntracommunity()) {
+			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && !f.isOtherISP())
+					.map(h -> new VatData().setBase(h.getBase()).setPercentage(h.getPercentage())
+							.setQuota(h.getQuota()).setSurchargePercent(h.getSurchargePercent())
+							.setSurchargeQuota(h.getSurchargeQuota()))
+					.collect(Collectors.toCollection(LinkedList::new));
 
-				pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.isOtherISP())
-						.map(f -> new VatData().setBase(f.getBase()).setPercentage(f.getPercentage())
-								.setQuota(f.getQuota()).setSurchargePercent(f.getSurchargePercent())
-								.setSurchargeQuota(f.getSurchargeQuota()))
-						.collect(Collectors.toCollection(LinkedList::new));
-			} else {
-				noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice))
-						.map(f -> new VatData().setBase(f.getBase()).setPercentage(f.getPercentage())
-								.setQuota(f.getQuota()).setSurchargePercent(f.getSurchargePercent())
-								.setSurchargeQuota(f.getSurchargeQuota()))
-						.collect(Collectors.toCollection(LinkedList::new));
-			}
+			pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.isOtherISP())
+					.map(f -> new VatData().setBase(f.getBase()).setPercentage(f.getPercentage())
+							.setQuota(f.getQuota()).setSurchargePercent(f.getSurchargePercent())
+							.setSurchargeQuota(f.getSurchargeQuota()))
+					.collect(Collectors.toCollection(LinkedList::new));
+		} else {
+			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId))
+					.map(f -> new VatData().setBase(f.getBase()).setPercentage(f.getPercentage())
+							.setQuota(f.getQuota()).setSurchargePercent(f.getSurchargePercent())
+							.setSurchargeQuota(f.getSurchargeQuota()))
+					.collect(Collectors.toCollection(LinkedList::new));
+		}
 
-			LRFacturasRecibidasType factura = new LRFacturasRecibidasType();
+		LRFacturasRecibidasType factura = new LRFacturasRecibidasType();
 
-			// PeriodoLiquidacion || PeriodoImpositivo
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		// PeriodoLiquidacion || PeriodoImpositivo
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		
+		// IDFactura
+		IDFacturaRecibidaType f = new IDFacturaRecibidaType();
+		
+		IDEmisorFactura emisor = new IDEmisorFactura();
+		
+		if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
+			emisor.setNIF(vat.getRegistryDocument());
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setID(vat.getRegistryDocument());
+			otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
+			emisor.setIDOtro(otro);
+		}
+		f.setIDEmisorFactura(emisor);
 
-			// IDFactura
-			IDFacturaRecibidaType f = new IDFacturaRecibidaType();
+		f.setNumSerieFacturaEmisor(vat.getReferenceCode());// nº serie + nº factura
+		// (optional) f.setNumSerieFacturaEmisorResumenFin("");
+		f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
 
-			IDEmisorFactura emisor = new IDEmisorFactura();
+		factura.setIDFactura(f);
 
-			if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
-				emisor.setNIF(vat.getRegistryDocument());
-			} else {
-				IDOtroType otro = new IDOtroType();
-				otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
-				otro.setID(vat.getRegistryDocument());
-				otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
-				emisor.setIDOtro(otro);
-			}
-			f.setIDEmisorFactura(emisor);
+		FacturaRecibidaType frt = new FacturaRecibidaType();
+		// CONTRAPARTE
+		frt.setContraparte(contraparte(vat));
 
-			f.setNumSerieFacturaEmisor(vat.getReferenceCode());// nº serie + nº factura
-			// (optional) f.setNumSerieFacturaEmisorResumenFin("");
-			f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+		// CLAVE REGIMEN IVA || TRANSCENDENCIA
+		frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._01.getName()); // TODO
 
-			factura.setIDFactura(f);
+		if (vat.isVatAccrualRegime()) {
+			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._07.getName());// TODO OPTIONAL
+		}
 
-			FacturaRecibidaType frt = new FacturaRecibidaType();
-			// CONTRAPARTE
-			frt.setContraparte(contraparte(vat));
+		if (vat.isIntracommunity()) {
+			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._09.getName());
+		}
+		ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
+		Boolean isRegistro = "R".equals(ap.getValue());
+		Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
+		if (opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0) {
+			// frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
+		}
 
-			// CLAVE REGIMEN IVA || TRANSCENDENCIA
-			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._01.getName()); // TODO
+		// BASE IMPONIBLE A COSTE (OPTIONAL)
+		if (frt.getClaveRegimenEspecialOTrascendencia().equals("06")
+				|| (frt.getClaveRegimenEspecialOTrascendenciaAdicional1() != null
+				&& frt.getClaveRegimenEspecialOTrascendenciaAdicional1().equals("06"))
+				|| (frt.getClaveRegimenEspecialOTrascendenciaAdicional2() != null
+				&& frt.getClaveRegimenEspecialOTrascendenciaAdicional2().equals("06"))) {
+			Double base = noExenta.stream().mapToDouble(h -> h.getBase()).sum()
+					+ pasivoList.stream().mapToDouble(h -> h.getBase()).sum();
+			frt.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
+		}
 
-			if (vat.isVatAccrualRegime()) {
-				frt.setClaveRegimenEspecialOTrascendencia(
-						ClaveRegimenEspecialOTrascendenciaRecibidasType._07.getName());// TODO OPTIONAL
-			}
-
-			if (vat.isIntracommunity()) {
-				frt.setClaveRegimenEspecialOTrascendencia(
-						ClaveRegimenEspecialOTrascendenciaRecibidasType._09.getName());
-			}
-			ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
-					AppParam.FS_MODEL_CFG_SII);
-			Boolean isRegistro = "R".equals(ap.getValue());
-			Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
-			if (opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0) {
-				// frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
-			}
-
-			// BASE IMPONIBLE A COSTE (OPTIONAL)
-			if (frt.getClaveRegimenEspecialOTrascendencia().equals("06")
-					|| (frt.getClaveRegimenEspecialOTrascendenciaAdicional1() != null
-							&& frt.getClaveRegimenEspecialOTrascendenciaAdicional1().equals("06"))
-					|| (frt.getClaveRegimenEspecialOTrascendenciaAdicional2() != null
-							&& frt.getClaveRegimenEspecialOTrascendenciaAdicional2().equals("06"))) {
-				Double base = noExenta.stream().mapToDouble(h -> h.getBase()).sum()
-						+ pasivoList.stream().mapToDouble(h -> h.getBase()).sum();
-				frt.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
-			}
-
-			// CUOTA DEDUCIBLE
-			frt.setCuotaDeducible(AonMathUtils.round(contextList.stream().filter(a -> a.getInvoice().equals(invoice))
-					.mapToDouble(a -> a.getDeductibleQuota()).sum()) + ""); // TODO
+		// CUOTA DEDUCIBLE
+		frt.setCuotaDeducible(AonMathUtils.round(contextList.stream().filter(a -> a.getInvoice().equals(invoiceId))
+				.mapToDouble(a -> a.getDeductibleQuota()).sum()) + ""); // TODO
 
 			// DESCRIPCION OPERACION
-			AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login,
-					invoice);
-			String str = "";
-			if (ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null) {
-				for (AccountEntryDetail aed : ai.getAccountEntry().getDetails()) {
-					Account a = ACCOUNTING.getAccount(domain.getName(), domain.getId(), login, aed.getAccount());
-					if (a.getCode().substring(0, 1).equals("6") || a.getCode().substring(0, 1).equals("7")) {
-						str = str + a.getDescription() + "-";
-					}
+		AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoiceId);
+		String str = "";
+		if (ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null) {
+			for (AccountEntryDetail aed : ai.getAccountEntry().getDetails()) {
+				Account a = ACCOUNTING.getAccount(domain.getName(), domain.getId(), login, aed.getAccount());
+				if (a.getCode().substring(0, 1).equals("6") || a.getCode().substring(0, 1).equals("7")) {
+					str = str + a.getDescription() + "-";
 				}
 			}
-			frt.setDescripcionOperacion(str + vat.getDetailDescription());
+		}
+		frt.setDescripcionOperacion(str + vat.getDetailDescription());
 
-			// FECHA OPERACION
-			frt.setFechaOperacion(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));// TODO
+		// FECHA OPERACION
+		frt.setFechaOperacion(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));// TODO
 
-			// FECHA REGISTRO CONTABLE
-			// frt.setFechaRegContable(AonDateUtils.format(vat.getRegContableDate(),
-			// "dd-MM-yyyy"));
-			frt.setFechaRegContable(AonDateUtils.format(opDate, "dd-MM-yyyy"));
+		// FECHA REGISTRO CONTABLE
+		// frt.setFechaRegContable(AonDateUtils.format(vat.getRegContableDate(),
+		// "dd-MM-yyyy"));
+		frt.setFechaRegContable(AonDateUtils.format(opDate, "dd-MM-yyyy"));
 
-			// IMPORTE TOTAL
-			Double total = noExenta.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum()
-					+ pasivoList.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum();
-			frt.setImporteTotal(Double.toString(AonMathUtils.round(total)));// TODO
+		// IMPORTE TOTAL
+		Double total = noExenta.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum()
+				+ pasivoList.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum();
+		frt.setImporteTotal(Double.toString(AonMathUtils.round(total)));// TODO
+		frt.setMacrodato(total >= 100000000 ? MacrodatoType.S: MacrodatoType.N);
 
-			// NUM REGISTRO ACUERDO FACTURACION
-			frt.setNumRegistroAcuerdoFacturacion("");// auth);//TODO
-			// TIPO FACTURA
-			frt.setTipoFactura(ClaveTipoFacturaType.F_1);// TODO De momento a piñon fijo!!!
-			if (vat.isIntracommunity()) {
-				frt.setTipoFactura(ClaveTipoFacturaType.F_5);
-			}
+		// NUM REGISTRO ACUERDO FACTURACION
+		frt.setNumRegistroAcuerdoFacturacion("");// TODO
+		// TIPO FACTURA
+		frt.setTipoFactura(ClaveTipoFacturaType.F_1);// TODO De momento a piñon fijo!!!
+		if (vat.isIntracommunity()) {
+			frt.setTipoFactura(ClaveTipoFacturaType.F_5);
+		}
 
-			if (vat.isRectification()) {
-				frt.setTipoFactura(ClaveTipoFacturaType.R_1); // TODO R_1 || R_2 || R_3 || R_4 || R_4. De momento a
+		if (vat.isRectification()) {
+			frt.setTipoFactura(ClaveTipoFacturaType.R_1); // TODO R_1 || R_2 || R_3 || R_4 || R_4. De momento a
 																// piñon fijo!!!
-				frt.setTipoRectificativa("I"); // TODO S (por sustitucion) || I (por diferencia). De momento a piñon
+			frt.setTipoRectificativa("I"); // TODO S (por sustitucion) || I (por diferencia). De momento a piñon
 												// fijo!!!
 
-				// FACTURA RECTIFICADAS
-				FacturasRectificadas fr = new FacturasRectificadas();
-				Invoice rectificada = AON.getInvoice(domain.getName(), domain.getId(), login,
-						h -> h.getIdProperty().eq(vat.getRectificationInvoice()));
-				// SOLO 1 RECTIFICADA PARA CADA RECTIFICATIVA!
-				IDFacturaARType a2 = new IDFacturaARType();
-				a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getIssueDate(), "dd-MM-yyyy")); // TODO
-				a2.setNumSerieFacturaEmisor(rectificada.getReferenceCode());
-				fr.getIDFacturaRectificada().add(a2);
-				frt.setFacturasRectificadas(fr);
+			// FACTURA RECTIFICADAS
+			FacturasRectificadas fr = new FacturasRectificadas();
+			Invoice rectificada = AON.getInvoice(domain.getName(), domain.getId(), login,
+					h -> h.getIdProperty().eq(vat.getRectificationInvoice()));
+			// SOLO 1 RECTIFICADA PARA CADA RECTIFICATIVA!
+			IDFacturaARType a2 = new IDFacturaARType();
+			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getIssueDate(), "dd-MM-yyyy")); // TODO
+			a2.setNumSerieFacturaEmisor(rectificada.getReferenceCode());
+			fr.getIDFacturaRectificada().add(a2);
+			frt.setFacturasRectificadas(fr);
 
-				// IMPORTE RECTIFICACION
-				if ("S".equalsIgnoreCase(frt.getTipoRectificativa())) {
-					DesgloseRectificacionType drt = new DesgloseRectificacionType();
-					drt.setBaseRectificada(Double.toString(AonMathUtils.round(rectificada.getTaxableBase())));
-					// TODO
-					// drt.setCuotaRecargoRectificado(Double.toString(vat.getRectified().getSurchargeQuota()));
-					drt.setCuotaRectificada(Double.toString(AonMathUtils.round(rectificada.getVatQuota()))); // TODO ¿?
-					frt.setImporteRectificacion(drt);
+			// IMPORTE RECTIFICACION
+			if ("S".equalsIgnoreCase(frt.getTipoRectificativa())) {
+				DesgloseRectificacionType drt = new DesgloseRectificacionType();
+				drt.setBaseRectificada(Double.toString(AonMathUtils.round(rectificada.getTaxableBase())));
+				// TODO
+				// drt.setCuotaRecargoRectificado(Double.toString(vat.getRectified().getSurchargeQuota()));
+				drt.setCuotaRectificada(Double.toString(AonMathUtils.round(rectificada.getVatQuota()))); // TODO ¿?
+				frt.setImporteRectificacion(drt);
+			}
+		}
+
+		// for!!!
+		if (ClaveTipoFacturaType.F_3.equals(frt.getTipoFactura())) {
+			// TODO FACTURAS AGRUPADAS
+			FacturasAgrupadas fa = new FacturasAgrupadas();
+				
+			// FOR
+			IDFacturaARType a = new IDFacturaARType();
+			a.setFechaExpedicionFacturaEmisor("0.0");
+			a.setNumSerieFacturaEmisor("0.0");
+			fa.getIDFacturaAgrupada().add(a);
+			frt.setFacturasAgrupadas(fa);
+		}
+
+		DesgloseFacturaRecibidasType dfrt = new DesgloseFacturaRecibidasType();
+		if (!noExenta.isEmpty()) {
+			HashMap<Double, VatData> noExentaMap = new HashMap<>();
+			LinkedList<VatData> noExentaAux = noExenta;
+			noExentaAux.stream().forEach(r -> {
+				if (noExentaMap.containsKey(r.getPercentage())) {
+					VatData vd = noExentaMap.get(r.getPercentage());
+					noExentaMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
+					noExentaMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
+					noExentaMap.get(r.getPercentage()).setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());
+				} else noExentaMap.put(r.getPercentage(), r);
+			});	
+
+			DesgloseIVA diva = new DesgloseIVA();
+			noExentaMap.keySet().stream().forEach(key -> {
+				DetalleIVARecibidaType diet = new DetalleIVARecibidaType();
+				diet.setBaseImponible(Double.toString(AonMathUtils.round(noExentaMap.get(key).getBase()))); // TODO
+				diet.setCuotaSoportada(Double.toString(AonMathUtils.round(noExentaMap.get(key).getQuota())));
+				diet.setTipoImpositivo(Double.toString(AonMathUtils.round(noExentaMap.get(key).getPercentage())));
+				if (noExentaMap.get(key).getSurchargePercent() > 0.0
+						&& noExentaMap.get(key).getSurchargeQuota() > 0.0) {
+					diet.setCuotaRecargoEquivalencia(
+							Double.toString(AonMathUtils.round(noExentaMap.get(key).getSurchargeQuota())));
+					diet.setTipoRecargoEquivalencia(
+							Double.toString(AonMathUtils.round(noExentaMap.get(key).getSurchargePercent())));
 				}
-			}
+				diva.getDetalleIVA().add(diet);
+			});
+			dfrt.setDesgloseIVA(diva);
+		}
 
-			// for!!!
-			if (ClaveTipoFacturaType.F_3.equals(frt.getTipoFactura())) {
-				// TODO FACTURAS AGRUPADAS
-				FacturasAgrupadas fa = new FacturasAgrupadas();
+		if (!pasivoList.isEmpty()) {
+			HashMap<Double, VatData> pasivoMap = new HashMap<>();
+			pasivoList.stream().forEach(r -> {
+				if (pasivoMap.containsKey(r.getPercentage())) {
+					VatData vd = pasivoMap.get(r.getPercentage());
+					pasivoMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
+					pasivoMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
+					pasivoMap.get(r.getPercentage())
+							.setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());
+				} else pasivoMap.put(r.getPercentage(), r);
+			});
 
-				// FOR
-				IDFacturaARType a = new IDFacturaARType();
-				a.setFechaExpedicionFacturaEmisor("0.0");
-				a.setNumSerieFacturaEmisor("0.0");
-				fa.getIDFacturaAgrupada().add(a);
-				frt.setFacturasAgrupadas(fa);
-			}
+			InversionSujetoPasivo isp = new InversionSujetoPasivo();
+			pasivoMap.keySet().stream().forEach(key -> {
+				DetalleIVARecibida2Type diet = new DetalleIVARecibida2Type();
+				diet.setBaseImponible(Double.toString(AonMathUtils.round(pasivoMap.get(key).getBase()))); // TODO
+				diet.setCuotaSoportada(Double.toString(AonMathUtils.round(pasivoMap.get(key).getQuota())));
+				diet.setTipoImpositivo(Double.toString(AonMathUtils.round(pasivoMap.get(key).getPercentage())));
+				if (pasivoMap.get(key).getSurchargePercent() > 0.0
+						&& pasivoMap.get(key).getSurchargeQuota() > 0.0) {
+					diet.setCuotaRecargoEquivalencia(
+							Double.toString(AonMathUtils.round(pasivoMap.get(key).getSurchargeQuota())));
+					diet.setTipoRecargoEquivalencia(
+							Double.toString(AonMathUtils.round(pasivoMap.get(key).getSurchargePercent())));
+				}
+				isp.getDetalleIVA().add(diet);
+			});
+			dfrt.setInversionSujetoPasivo(isp);
+		}
+		frt.setDesgloseFactura(dfrt); // TODO
+		factura.setFacturaRecibida(frt);
 
-			DesgloseFacturaRecibidasType dfrt = new DesgloseFacturaRecibidasType();
-			if (!noExenta.isEmpty()) {
-				HashMap<Double, VatData> noExentaMap = new HashMap<>();
-				LinkedList<VatData> noExentaAux = noExenta;
-				noExentaAux.stream().forEach(r -> {
-					if (noExentaMap.containsKey(r.getPercentage())) {
-						VatData vd = noExentaMap.get(r.getPercentage());
-						noExentaMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
-						noExentaMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
-						noExentaMap.get(r.getPercentage())
-								.setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());
-					} else
-						noExentaMap.put(r.getPercentage(), r);
-				});
-
-				DesgloseIVA diva = new DesgloseIVA();
-				noExentaMap.keySet().stream().forEach(key -> {
-					DetalleIVARecibidaType diet = new DetalleIVARecibidaType();
-					diet.setBaseImponible(Double.toString(AonMathUtils.round(noExentaMap.get(key).getBase()))); // TODO
-					diet.setCuotaSoportada(Double.toString(AonMathUtils.round(noExentaMap.get(key).getQuota())));
-					diet.setTipoImpositivo(Double.toString(AonMathUtils.round(noExentaMap.get(key).getPercentage())));
-					if (noExentaMap.get(key).getSurchargePercent() > 0.0
-							&& noExentaMap.get(key).getSurchargeQuota() > 0.0) {
-						diet.setCuotaRecargoEquivalencia(
-								Double.toString(AonMathUtils.round(noExentaMap.get(key).getSurchargeQuota())));
-						diet.setTipoRecargoEquivalencia(
-								Double.toString(AonMathUtils.round(noExentaMap.get(key).getSurchargePercent())));
-					}
-					diva.getDetalleIVA().add(diet);
-				});
-				dfrt.setDesgloseIVA(diva);
-			}
-
-			if (!pasivoList.isEmpty()) {
-				HashMap<Double, VatData> pasivoMap = new HashMap<>();
-				pasivoList.stream().forEach(r -> {
-					if (pasivoMap.containsKey(r.getPercentage())) {
-						VatData vd = pasivoMap.get(r.getPercentage());
-						pasivoMap.get(r.getPercentage()).setBase(vd.getBase() + r.getBase());
-						pasivoMap.get(r.getPercentage()).setQuota(vd.getQuota() + r.getQuota());
-						pasivoMap.get(r.getPercentage())
-								.setSurchargeQuota(vd.getSurchargeQuota() + r.getSurchargeQuota());
-					} else
-						pasivoMap.put(r.getPercentage(), r);
-				});
-
-				InversionSujetoPasivo isp = new InversionSujetoPasivo();
-				pasivoMap.keySet().stream().forEach(key -> {
-					DetalleIVARecibida2Type diet = new DetalleIVARecibida2Type();
-					diet.setBaseImponible(Double.toString(AonMathUtils.round(pasivoMap.get(key).getBase()))); // TODO
-					diet.setCuotaSoportada(Double.toString(AonMathUtils.round(pasivoMap.get(key).getQuota())));
-					diet.setTipoImpositivo(Double.toString(AonMathUtils.round(pasivoMap.get(key).getPercentage())));
-					if (pasivoMap.get(key).getSurchargePercent() > 0.0
-							&& pasivoMap.get(key).getSurchargeQuota() > 0.0) {
-						diet.setCuotaRecargoEquivalencia(
-								Double.toString(AonMathUtils.round(pasivoMap.get(key).getSurchargeQuota())));
-						diet.setTipoRecargoEquivalencia(
-								Double.toString(AonMathUtils.round(pasivoMap.get(key).getSurchargePercent())));
-					}
-					isp.getDetalleIVA().add(diet);
-				});
-				dfrt.setInversionSujetoPasivo(isp);
-			}
-			frt.setDesgloseFactura(dfrt); // TODO
-
-			factura.setFacturaRecibida(frt);
-
-			suministro.getRegistroLRFacturasRecibidas().add(factura);
-		});
+		suministro.getRegistroLRFacturasRecibidas().add(factura);
 		return suministro;
 	}
 
-	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company, LinkedList<Integer> invoiceList,
-			LinkedList<VatContext> vatList, String terceros, String auth) {
+	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company, Integer invoiceId,
+			LinkedList<VatContext> vatList, String terceros) {
 		BajaLRFacturasRecibidas baja = new BajaLRFacturasRecibidas();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 
-		invoiceList.stream().forEach(i -> {
-			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(i)).findFirst()
-					.orElse(new VatContext());
+		VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
 
-			LRBajaRecibidasType factura = new LRBajaRecibidasType();
+		LRBajaRecibidasType factura = new LRBajaRecibidasType();
 
-			IDFacturaRecibidaNombreBCType idFactura = new IDFacturaRecibidaNombreBCType();
-			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-			idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
-			https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
+		IDFacturaRecibidaNombreBCType idFactura = new IDFacturaRecibidaNombreBCType();
+		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+		idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
+		https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
 
-			emisor.setNombreRazon(vat.getRegistryName());
-			if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
-				emisor.setNIF(vat.getRegistryDocument());
-			} else {
-				IDOtroType otro = new IDOtroType();
-				otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
-				otro.setID(vat.getRegistryDocument());
-				otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
-				emisor.setIDOtro(otro);
-			}
+		emisor.setNombreRazon(vat.getRegistryName());
+		if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
+			emisor.setNIF(vat.getRegistryDocument());
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			otro.setID(vat.getRegistryDocument());
+			otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
+			emisor.setIDOtro(otro);
+		}
 
-			idFactura.setIDEmisorFactura(emisor);
-			factura.setIDFactura(idFactura);
+		idFactura.setIDEmisorFactura(emisor);
+		factura.setIDFactura(idFactura);
 
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 
-			baja.getRegistroLRBajaRecibidas().add(factura);
-		});
+		baja.getRegistroLRBajaRecibidas().add(factura);
+
 		return baja;
 	}
 
@@ -451,8 +439,7 @@ public class FacturasRecibidas extends SIIBuilt {
 	 * 
 	 * @param company
 	 */
-	protected SuministroLRPagosRecibidas suministroFacturasRecibidasPagos(Domain domain, String login, Company company,
-			LinkedList<Finance> financeList, LinkedList<Integer> invoiceList) {
+	protected SuministroLRPagosRecibidas suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) {
 		SuministroLRPagosRecibidas suministro = new SuministroLRPagosRecibidas();
 
 		// CABECERA
@@ -460,47 +447,43 @@ public class FacturasRecibidas extends SIIBuilt {
 
 		// FOR PAGOS
 
-		invoiceList.stream().forEach(i -> {
-			LRPagosEmitidasType pagos = new LRPagosEmitidasType();
-			PagosType pt = new PagosType();
+		LRPagosEmitidasType pagos = new LRPagosEmitidasType();
+		PagosType pt = new PagosType();
 
-			financeList.stream().filter(f -> f.getInvoice().getId().equals(i)).forEach(f -> {
-				DatosPagoCobroType dpct = new DatosPagoCobroType();
-				dpct.setFecha(AonDateUtils.format(f.getDueDate(), "dd-MM-yyyy"));
-				dpct.setImporte(Double.toString(AonMathUtils.round(f.getAmount())));
-				if (f.getPayMethodType().equals(PayMethodType.BANK_TRANSFER)) {
-					dpct.setMedio("01");
-				} else if (f.getPayMethodType().equals(PayMethodType.CHEQUE)) {
-					dpct.setMedio("02");
-				} else
-					dpct.setMedio("04");
-				pt.getPago().add(dpct);
-			});
-			pagos.setPagos(pt);
-			Invoice invoice = financeList.stream().filter(f -> f.getInvoice().getId().equals(i)).findFirst().get()
-					.getInvoice();
-
-			IDFacturaRecibidaNombreBCType f = new IDFacturaRecibidaNombreBCType();
-			f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
-
-			https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
-			emisor.setNombreRazon(invoice.getRegistryName());
-			if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
-				emisor.setNIF(invoice.getRegistryDocument());
-			} else {
-				IDOtroType otro = new IDOtroType();
-				otro.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-				otro.setID(invoice.getRegistryDocument());
-				otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
-				emisor.setIDOtro(otro);
-			}
-			f.setIDEmisorFactura(emisor);
-			f.setNumSerieFacturaEmisor(invoice.getReferenceCode());
-			pagos.setIDFactura(f);
-
-			suministro.getRegistroLRPagos().add(pagos);
+		financeList.stream().filter(f -> f.getInvoice().getId().equals(invoiceId)).forEach(f -> {
+			DatosPagoCobroType dpct = new DatosPagoCobroType();
+			dpct.setFecha(AonDateUtils.format(f.getDueDate(), "dd-MM-yyyy"));
+			dpct.setImporte(Double.toString(AonMathUtils.round(f.getAmount())));
+			if (f.getPayMethodType().equals(PayMethodType.BANK_TRANSFER)) {
+				dpct.setMedio("01");
+			} else if (f.getPayMethodType().equals(PayMethodType.CHEQUE)) {
+				dpct.setMedio("02");
+			} else
+				dpct.setMedio("04");
+			pt.getPago().add(dpct);
 		});
+		pagos.setPagos(pt);
+		Invoice invoice = financeList.stream().filter(f -> f.getInvoice().getId().equals(invoiceId)).findFirst().get().getInvoice();
 
+		IDFacturaRecibidaNombreBCType f = new IDFacturaRecibidaNombreBCType();
+		f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
+
+		https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
+		emisor.setNombreRazon(invoice.getRegistryName());
+		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
+			emisor.setNIF(invoice.getRegistryDocument());
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			otro.setID(invoice.getRegistryDocument());
+			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
+			emisor.setIDOtro(otro);
+		}
+		f.setIDEmisorFactura(emisor);
+		f.setNumSerieFacturaEmisor(invoice.getReferenceCode());
+		pagos.setIDFactura(f);
+
+		suministro.getRegistroLRPagos().add(pagos);
 		return suministro;
 	}
 	

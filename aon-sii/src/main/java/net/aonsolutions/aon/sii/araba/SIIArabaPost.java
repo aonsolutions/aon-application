@@ -1,8 +1,6 @@
 package net.aonsolutions.aon.sii.araba;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBElement;
 
@@ -15,23 +13,21 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 
 import https.sii_araba_eus.documentos.respuestasuministro.EstadoRegistroType;
-import https.sii_araba_eus.documentos.respuestasuministro.RespuestaExpedidaBajaType;
-import https.sii_araba_eus.documentos.respuestasuministro.RespuestaExpedidaType;
-import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRAgenciasViajesType;
-import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRBajaFEmitidasType;
-import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRFEmitidasType;
-import https.sii_araba_eus.documentos.suministrolr.BajaLRFacturasEmitidas;
-import https.sii_araba_eus.documentos.suministrolr.SuministroLRFacturasEmitidas;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaBienBajaType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaBienType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaComunitariaBajaType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaComunitariaType;
+import https.sii_araba_eus.documentos.respuestasuministro.RespuestaExpedidaBajaType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaExpedidaCobroType;
+import https.sii_araba_eus.documentos.respuestasuministro.RespuestaExpedidaType;
+import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRAgenciasViajesType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRBajaBienesInversionType;
+import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRBajaFEmitidasType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRBajaFRecibidasType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRBajaOComunitariasType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRBienesInversionType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRCobrosEmitidasType;
+import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRFEmitidasType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRFRecibidasType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLRIMetalicoType;
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaLROComunitariasType;
@@ -42,12 +38,14 @@ import https.sii_araba_eus.documentos.respuestasuministro.RespuestaRecibidaPagoT
 import https.sii_araba_eus.documentos.respuestasuministro.RespuestaRecibidaType;
 import https.sii_araba_eus.documentos.suministrolr.BajaLRBienesInversion;
 import https.sii_araba_eus.documentos.suministrolr.BajaLRDetOperacionIntracomunitaria;
+import https.sii_araba_eus.documentos.suministrolr.BajaLRFacturasEmitidas;
 import https.sii_araba_eus.documentos.suministrolr.BajaLRFacturasRecibidas;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRAgenciasViajes;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRBienesInversion;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRCobrosEmitidas;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRCobrosMetalico;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRDetOperacionIntracomunitaria;
+import https.sii_araba_eus.documentos.suministrolr.SuministroLRFacturasEmitidas;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRFacturasRecibidas;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLROperacionesSeguros;
 import https.sii_araba_eus.documentos.suministrolr.SuministroLRPagosRecibidas;
@@ -70,44 +68,43 @@ public class SIIArabaPost extends SIIPost2{
 	
 	// -------------------- FACTURAS EMITIDAS
 	
-    @SuppressWarnings("unchecked")
-	public JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList,
-    		LinkedList<VatContext> contextList, String terceros, String auth, String uri, LinkedList<VatContext> list, SendType type) {
+	@SuppressWarnings("unchecked")
+	public JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, 
+			LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) {
 		JSONArray array = new JSONArray();
-		
-   		byte[] requestXml = null;
+			
+	   	byte[] requestXml = null;
 		byte[] responseXml = null;
-		LinkedList<String> status = new LinkedList<>();
 		
-		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, list, false, terceros, auth);
-    	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
-    		
-    	RespuestaLRFEmitidasType respuesta = (RespuestaLRFEmitidasType) response.getValue();
-    	for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
-    		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    		array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
-    				correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
-    				r.getIDFactura().getNumSerieFacturaEmisor()));
-        }
-    			
-    	requestXml = FacturasEmitidas.getInstance().getSuministroFacturasEmitidas((SuministroLRFacturasEmitidas) suministro);
-    	responseXml = FacturasEmitidas.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
-    	status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceId, list, false, terceros);
+	    JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
+	    		
+	    RespuestaLRFEmitidasType respuesta = (RespuestaLRFEmitidasType) response.getValue();
+	    for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
+	    	Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+	    	array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+	    			correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
+	    		r.getIDFactura().getNumSerieFacturaEmisor()));
+	    }
+	  			
+	   	requestXml = FacturasEmitidas.getInstance().getSuministroFacturasEmitidas((SuministroLRFacturasEmitidas) suministro);
+	   	responseXml = FacturasEmitidas.getInstance().getRespuestaSuministroFacturasEmitidas(respuesta);
 
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, type);
-    	
-    	return array;
+	   	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
+	   	
+	   	SIIDB.getInstance().insertSuministro(domain, login, invoiceId, requestXml, responseXml, status, contextList, type);
+	   	
+	   	return array;
 	}
     
     @SuppressWarnings("unchecked")
-	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {
+	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
     	JSONArray array = new JSONArray();
     	
     	byte[] requestXml = null;
     	byte[] responseXml = null;
-    	LinkedList<String> statusList = new LinkedList<>();
     	
-    	BajaLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros, auth);     	
+    	BajaLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().bajaFacturasEmitidas(company, invoiceId, contextList, terceros);     	
         JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
         RespuestaLRBajaFEmitidasType respuesta = (RespuestaLRBajaFEmitidasType) response.getValue();
         for(RespuestaExpedidaBajaType rect : respuesta.getRespuestaLinea()){
@@ -118,26 +115,21 @@ public class SIIArabaPost extends SIIPost2{
         }
         requestXml = FacturasEmitidas.getInstance().getBajaFacturasEmitidas(suministro);
        	responseXml = FacturasEmitidas.getInstance().getRespuestaBajaFacturasEmitidas(respuesta);
-    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    	
-    	HashMap<Integer, String> status = new HashMap<>();
-    	for(Integer i = 0; i < invoiceList.size(); i ++){
-    		status.put(invoiceList.get(i), statusList.get(i));
-    	}
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, SendType.BAJA_EMITIDAS);
+    	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
+       	
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceId, requestXml, responseXml, status, SendType.BAJA_EMITIDAS);
     	
     	return array;
 	}
     
     @SuppressWarnings("unchecked")
-    public JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, LinkedList<Integer> invoiceList, String uri) {    	
+    public JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId, String uri) {    	
     	JSONArray array = new JSONArray();
 
     	byte[] requestXml = null;
     	byte[] responseXml = null;
-    	LinkedList<String> statusList = new LinkedList<>();
     	
-    	SuministroLRCobrosEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidasCobros(domain, login, company, financeList, invoiceList);     	
+    	SuministroLRCobrosEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidasCobros(domain, login, company, financeList, invoiceId);     	
     	JAXBElement<RespuestaLRCobrosEmitidasType> response = (JAXBElement<RespuestaLRCobrosEmitidasType>) post(uri, suministro);
     	RespuestaLRCobrosEmitidasType respuesta = response.getValue();
     	
@@ -150,13 +142,10 @@ public class SIIArabaPost extends SIIPost2{
     	
     	requestXml = FacturasEmitidas.getInstance().getSuministroFacturasEmitidasCobros(suministro);
     	responseXml = FacturasEmitidas.getInstance().getRespuestaSuministroFacturasEmitidasCobros(respuesta);
-    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-        	
-    	HashMap<Integer, String> status = new HashMap<>();
-    	for(Integer i = 0; i < invoiceList.size(); i ++){
-    		status.put(invoiceList.get(i), statusList.get(i));
-    	}
-    	SIIDB.getInstance().insertSuministroCobrosPagos(domain, login, invoiceList, requestXml, responseXml, financeList, status);
+    	
+    	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
+    	
+    	SIIDB.getInstance().insertSuministroCobrosPagos(domain, login, invoiceId, requestXml, responseXml, financeList, status);
     	
     	return array;
     }
@@ -164,15 +153,13 @@ public class SIIArabaPost extends SIIPost2{
 	// -------------------- FACTURAS RECIBIDAS
     
     @SuppressWarnings("unchecked")
-	public JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList,
-    		LinkedList<VatContext> contextList, String terceros, String auth, String uri, LinkedList<VatContext> list, SendType type) {
+	public JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) {
 		JSONArray array = new JSONArray();
 		
    		byte[] requestXml = null;
 		byte[] responseXml = null;
-		LinkedList<String> status = new LinkedList<>();
 		
-		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, list, false, terceros, auth);
+		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, false, terceros);
     	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
     		
     	RespuestaLRFRecibidasType respuesta = (RespuestaLRFRecibidasType) response.getValue();
@@ -185,76 +172,69 @@ public class SIIArabaPost extends SIIPost2{
     			
     	requestXml = FacturasRecibidas.getInstance().getSuministroFacturasRecibidas((SuministroLRFacturasRecibidas) suministro);
     	responseXml = FacturasRecibidas.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
-    	status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
+    	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, type);
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceId, requestXml, responseXml, status, contextList, type);
     	
     	return array;
 	}
-    @SuppressWarnings("unchecked")
-   	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {    
-    	JSONArray array = new JSONArray();
+
+	@SuppressWarnings("unchecked")
+	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId,
+			LinkedList<VatContext> contextList, String terceros, String uri) {
+		JSONArray array = new JSONArray();
+
+		byte[] requestXml = null;
+		byte[] responseXml = null;
+
+		BajaLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().bajaFacturasRecibidas(company, invoiceId,
+				contextList, terceros);
+
+		JAXBElement<RespuestaLRBajaFRecibidasType> response = (JAXBElement<RespuestaLRBajaFRecibidasType>) post(uri,
+				suministro);
+		RespuestaLRBajaFRecibidasType respuesta = response.getValue();
+
+		for (RespuestaRecibidaBajaType rect : respuesta.getRespuestaLinea()) {
+			Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(),
+					correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
+					rect.getIDFactura().getNumSerieFacturaEmisor()));
+		}
+
+		requestXml = FacturasRecibidas.getInstance().getBajaFacturasRecibidas(suministro);
+		responseXml = FacturasRecibidas.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
+
+		String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst()
+				.orElse("Incorrecto");
+		SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceId, requestXml, responseXml, status,
+				SendType.BAJA_RECIBIDAS);
+
+		return array;
+	}
     	
+    @SuppressWarnings("unchecked")
+    public JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId, String uri) {    	
+    	JSONArray array = new JSONArray();
     	byte[] requestXml = null;
     	byte[] responseXml = null;
-    	LinkedList<String> statusList = new LinkedList<>();
     	
-    	BajaLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
-
-    		JAXBElement<RespuestaLRBajaFRecibidasType> response = (JAXBElement<RespuestaLRBajaFRecibidasType>) post(uri, suministro);
-    		RespuestaLRBajaFRecibidasType respuesta = response.getValue();
-    	
-    		for(RespuestaRecibidaBajaType rect : respuesta.getRespuestaLinea()){
-    			Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    			array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
-        	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
-        	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
-    		}
-    	
-    		requestXml = FacturasRecibidas.getInstance().getBajaFacturasRecibidas(suministro);
-    		responseXml = FacturasRecibidas.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
-    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-
-    	
-    	HashMap<Integer, String> status = new HashMap<>();
-    	for(Integer i = 0; i < invoiceList.size(); i ++){
-    		status.put(invoiceList.get(i), statusList.get(i));
-    	}
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, SendType.BAJA_RECIBIDAS);
-    	
-    	return array;
-    }
-    	
-    @SuppressWarnings("unchecked")
-    public JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, LinkedList<Integer> invoiceList, String uri) {    	
-    	JSONArray array = new JSONArray();
-    	byte[] requestXml = null;
-    	byte[] responseXml = null;
-    	LinkedList<String> statusList = new LinkedList<>();
-    	
-    		SuministroLRPagosRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceList);     	
+   		SuministroLRPagosRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceId);     	
     
-    		JAXBElement<RespuestaLRPagosRecibidasType> response = (JAXBElement<RespuestaLRPagosRecibidasType>) post(uri, suministro);
-    		RespuestaLRPagosRecibidasType respuesta = response.getValue();
+   		JAXBElement<RespuestaLRPagosRecibidasType> response = (JAXBElement<RespuestaLRPagosRecibidasType>) post(uri, suministro);
+   		RespuestaLRPagosRecibidasType respuesta = response.getValue();
     	
-    		for(RespuestaRecibidaPagoType rrpt : respuesta.getRespuestaLinea()){
-    			Boolean correcto = rrpt.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    			array.put(json(correcto ? 200 : rrpt.getCodigoErrorRegistro().intValue(), 
-        	    	correcto ? "Envio realizado correctamente" : rrpt.getDescripcionErrorRegistro(),
-        	    			rrpt.getIDFactura().getNumSerieFacturaEmisor()));
-    		}
+   		for(RespuestaRecibidaPagoType rrpt : respuesta.getRespuestaLinea()){
+   			Boolean correcto = rrpt.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+   			array.put(json(correcto ? 200 : rrpt.getCodigoErrorRegistro().intValue(), 
+       	    	correcto ? "Envio realizado correctamente" : rrpt.getDescripcionErrorRegistro(),
+       	    			rrpt.getIDFactura().getNumSerieFacturaEmisor()));
+   		}
     	
-    		requestXml = FacturasRecibidas.getInstance().getSuministroFacturasRecibidasPagos(suministro);
-    		responseXml = FacturasRecibidas.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
+   		requestXml = FacturasRecibidas.getInstance().getSuministroFacturasRecibidasPagos(suministro);
+   		responseXml = FacturasRecibidas.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
+       	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
-    		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    	
-    	
-    	HashMap<Integer, String> status = new HashMap<>();
-    	for(Integer i = 0; i < invoiceList.size(); i ++){
-    		status.put(invoiceList.get(i), statusList.get(i));
-    	}
-    	SIIDB.getInstance().insertSuministroCobrosPagos(domain, login, invoiceList, requestXml, responseXml, financeList, status);
+    	SIIDB.getInstance().insertSuministroCobrosPagos(domain, login, invoiceId, requestXml, responseXml, financeList, status);
 
     	return array;
     }
@@ -262,21 +242,20 @@ public class SIIArabaPost extends SIIPost2{
     // -------------------- BIENES INVERSION
 	
     @SuppressWarnings("unchecked")
-    public JSONArray suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri, SendType type) {
+    public JSONArray suministroBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri, SendType type) {
     	JSONArray array = new JSONArray();
 
     	byte[] requestXml = null;
     	byte[] responseXml = null;
-    	LinkedList<String> status = new LinkedList<>();
     	
-    	SuministroLRBienesInversion suministro = BienesInversion.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+    	SuministroLRBienesInversion suministro = BienesInversion.getInstance().suministroBienesInversion(domain, login, company, invoiceId, contextList, false, terceros);     	
     	JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
     	RespuestaLRBienesInversionType respuesta = response.getValue();
     	
     	requestXml = BienesInversion.getInstance().getSuministroBienesInversion(suministro);
     	responseXml = BienesInversion.getInstance().getRespuestaSuministroBienesInversion(respuesta);
-    	status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, type);
+    	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceId, requestXml, responseXml, status, contextList, type);
     	
     	for (RespuestaBienType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -288,13 +267,12 @@ public class SIIArabaPost extends SIIPost2{
     }
     
     @SuppressWarnings("unchecked")
-    public JSONArray bajaBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {
+    public JSONArray bajaBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
     	JSONArray array = new JSONArray();
     	byte[] requestXml = null;
     	byte[] responseXml = null;
-    	LinkedList<String> statusList = new LinkedList<>();
     	
-    	BajaLRBienesInversion suministro = BienesInversion.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+    	BajaLRBienesInversion suministro = BienesInversion.getInstance().bajaBienesInversion(company, invoiceId, contextList, terceros);     	
 
     	JAXBElement<RespuestaLRBajaBienesInversionType> response = (JAXBElement<RespuestaLRBajaBienesInversionType>) post(uri, suministro);
     	RespuestaLRBajaBienesInversionType respuesta = response.getValue();
@@ -308,13 +286,8 @@ public class SIIArabaPost extends SIIPost2{
     	
 	    requestXml = BienesInversion.getInstance().getBajaBienesInversion(suministro);
 	    responseXml = BienesInversion.getInstance().getRespuestaBajaBienesInversion(respuesta);
-	    statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    	
-	    HashMap<Integer, String> status = new HashMap<>();
-    	for(Integer i = 0; i < invoiceList.size(); i ++){
-    		status.put(invoiceList.get(i), statusList.get(i));
-    	}
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, SendType.BAJA_INVERSION);
+	    String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceId, requestXml, responseXml, status, SendType.BAJA_INVERSION);
     	
     	return array;
     }
@@ -322,21 +295,20 @@ public class SIIArabaPost extends SIIPost2{
   // -------------------- OPERACIONES INTRACOMUNITARIAS
 	
     @SuppressWarnings("unchecked")
-    public JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, String terceros, String auth, String uri, SendType type) {
+    public JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String tipoOp, String terceros, String uri, SendType type) {
 
 		JSONArray array = new JSONArray();
 		byte[] requestXml = null;
     	byte[] responseXml = null;
-    	LinkedList<String> status = new LinkedList<>();
-    	SuministroLRDetOperacionIntracomunitaria suministro = OperacionesIntracomunitarias.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    	SuministroLRDetOperacionIntracomunitaria suministro = OperacionesIntracomunitarias.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, false, terceros);     	
     	
     	JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
     	RespuestaLROComunitariasType respuesta = response.getValue();
     		
     	requestXml = OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
     	responseXml = OperacionesIntracomunitarias.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
-    	status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    	SIIDB.getInstance().insertSuministro(domain, login, invoiceList, requestXml, responseXml, status, contextList, type);
+       	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
+    	SIIDB.getInstance().insertSuministro(domain, login, invoiceId, requestXml, responseXml, status, contextList, type);
     	
     	for (RespuestaComunitariaType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -349,14 +321,13 @@ public class SIIArabaPost extends SIIPost2{
     }
     
     @SuppressWarnings("unchecked")
-    public JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {    	
+    public JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {    	
 		JSONArray array = new JSONArray();
 
 		byte[] requestXml = null;
     	byte[] responseXml = null;
-    	LinkedList<String> statusList = new LinkedList<>();
     	
-    	BajaLRDetOperacionIntracomunitaria suministro = OperacionesIntracomunitarias.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+    	BajaLRDetOperacionIntracomunitaria suministro = OperacionesIntracomunitarias.getInstance().bajaOperacionesIntracomunitarias(company, invoiceId, contextList, terceros);     	
     	
     	JAXBElement<RespuestaLRBajaOComunitariasType> response = (JAXBElement<RespuestaLRBajaOComunitariasType>) post(uri, suministro);
     	RespuestaLRBajaOComunitariasType respuesta = response.getValue();
@@ -367,17 +338,11 @@ public class SIIArabaPost extends SIIPost2{
     				correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
     						rect.getIDFactura().getNumSerieFacturaEmisor()));
     	}
-    	
+    	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
     	requestXml = OperacionesIntracomunitarias.getInstance().getBajaOperacionesIntracomunitarias(suministro);
     	responseXml = OperacionesIntracomunitarias.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta);
     	
-    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
-    
-    	HashMap<Integer, String> status = new HashMap<>();
-    	for(Integer i = 0; i < invoiceList.size(); i ++){
-    		status.put(invoiceList.get(i), statusList.get(i));
-    	}
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceList, requestXml, responseXml, status, SendType.BAJA_INTRACOMUNITARIAS);
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceId, requestXml, responseXml, status, SendType.BAJA_INTRACOMUNITARIAS);
     	
     	return array;
     }
@@ -386,8 +351,8 @@ public class SIIArabaPost extends SIIPost2{
     // -------------------- COBROS METALICO
 	
     @SuppressWarnings("unchecked")
-    public JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {
-    	SuministroLRCobrosMetalico suministro = OperacionesTrascendenciaTributaria.getInstance().suministroCobrosMetalico(domain, login, company, invoiceList, contextList);     	
+    public JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
+    	SuministroLRCobrosMetalico suministro = OperacionesTrascendenciaTributaria.getInstance().suministroCobrosMetalico(domain, login, company, invoiceId, contextList);     	
     	
    		JAXBElement<RespuestaLRIMetalicoType> response = (JAXBElement<RespuestaLRIMetalicoType>) post(uri, suministro);
    		RespuestaLRIMetalicoType respuesta = response.getValue();
@@ -401,7 +366,7 @@ public class SIIArabaPost extends SIIPost2{
     	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(), "");
     }
     
-    public JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {
+    public JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
     	//RespuestaLRBajaIMetalicoType
     	return new JSONObject();
     }
@@ -409,8 +374,8 @@ public class SIIArabaPost extends SIIPost2{
     // -------------------- OPERACIONES SEGUROS
 	
     @SuppressWarnings("unchecked")
-    public JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth,String uri) {
-    	SuministroLROperacionesSeguros suministro = OperacionesTrascendenciaTributaria.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceList, contextList);     	
+    public JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
+    	SuministroLROperacionesSeguros suministro = OperacionesTrascendenciaTributaria.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceId, contextList);     	
     	
     	JAXBElement<RespuestaLROperacionesSegurosType> response = (JAXBElement<RespuestaLROperacionesSegurosType>) post(uri, suministro);
     	RespuestaLROperacionesSegurosType respuesta = response.getValue();
@@ -424,7 +389,7 @@ public class SIIArabaPost extends SIIPost2{
     	   	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(), "");
     }
     
-    public JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {
+    public JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
     	//RespuestaLRBajaOperacionesSegurosType
     	return new JSONObject();
     }
@@ -432,8 +397,8 @@ public class SIIArabaPost extends SIIPost2{
     // -------------------- AGENCIAS VIAJES
 	
     @SuppressWarnings("unchecked")
-    public JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {
-   		SuministroLRAgenciasViajes suministro = OperacionesTrascendenciaTributaria.getInstance().suministroAgenciasViajes(domain, login, company, invoiceList, contextList);     	
+    public JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
+   		SuministroLRAgenciasViajes suministro = OperacionesTrascendenciaTributaria.getInstance().suministroAgenciasViajes(domain, login, company, invoiceId, contextList);     	
    		JAXBElement<RespuestaLRAgenciasViajesType> response = (JAXBElement<RespuestaLRAgenciasViajesType>) post(uri, suministro);
    		RespuestaLRAgenciasViajesType respuesta = response.getValue();
    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -446,7 +411,7 @@ public class SIIArabaPost extends SIIPost2{
    	    	correcto ? "Envio realizado correctamente" : respuesta.getRespuestaLinea().get(0).getDescripcionErrorRegistro(), "");
     }
     
-    public JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, String uri) {
+    public JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
     	//RespuestaLRBajaAgenciasViajesType
     	return new JSONObject();
     }

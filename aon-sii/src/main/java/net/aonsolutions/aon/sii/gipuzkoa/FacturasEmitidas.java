@@ -60,6 +60,7 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDF
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaType.IDEmisorFactura;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDOtroType;
+import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.MacrodatoType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.NoSujetaType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.PersonaFisicaJuridicaType;
@@ -148,20 +149,19 @@ public class FacturasEmitidas extends SIIBuilt {
 	 * @param company
 	 * @param vatList
 	 */
-	protected SuministroLRFacturasEmitidas suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList
-			, Boolean mod, String terceros, String auth) {
+	protected SuministroLRFacturasEmitidas suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList
+			, Boolean mod, String terceros) {
     	SuministroLRFacturasEmitidas suministro = new SuministroLRFacturasEmitidas();
 
 		// CABECERA
 		suministro.setCabecera(cabecera(company, mod, terceros));
 		
 		// BODY
-		invoiceList.stream().forEach(invoice -> {	
-			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
-			Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoice) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+			Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.mapToDouble(f -> f.getBase()).sum();
-			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoice) && f.getPercentage() > 0  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.getPercentage() > 0  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.map(f -> new VatData().setBase(f.getBase())
 							.setPercentage(f.getPercentage())
 							.setQuota(f.getQuota())
@@ -169,7 +169,7 @@ public class FacturasEmitidas extends SIIBuilt {
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 			
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
+			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 			
@@ -251,23 +251,23 @@ public class FacturasEmitidas extends SIIBuilt {
 			//fet.setClaveRegimenEspecialOTrascendenciaAdicional2("");//TODO OPTIONAL
 	
 			// NUMERO REGISTRO AUTORIZACION
-			fet.setNumRegistroAcuerdoFacturacion("");//auth);//TODO TIENE K DARLO EL CLIENTE
+			fet.setNumRegistroAcuerdoFacturacion("");// TODO TIENE K DARLO EL CLIENTE
 			
 			// IMPORTE TOTAL 
 			//Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
 			Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota()).sum();
 			fet.setImporteTotal(Double.toString(AonMathUtils.round(total)));
-
+			fet.setMacrodato(total >= 100000000 ? MacrodatoType.S: MacrodatoType.N);
 			// BASE IMPONIBLE A COSTE (OPTIONAL)
 			if(fet.getClaveRegimenEspecialOTrascendencia().equals("06")
 					|| (fet.getClaveRegimenEspecialOTrascendenciaAdicional1() != null && fet.getClaveRegimenEspecialOTrascendenciaAdicional1().equals("06"))
 					|| (fet.getClaveRegimenEspecialOTrascendenciaAdicional2() != null && fet.getClaveRegimenEspecialOTrascendenciaAdicional2().equals("06"))){
-				Double base = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase()).sum();
+				Double base = contextList.stream().filter(g -> g.getInvoice().equals(invoiceId)).mapToDouble(g -> g.getBase()).sum();
 				fet.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
 			}			
 			// DESCRIPCION OPERACION 
 			
-			AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoice);
+			AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoiceId);
 			String str = "";
 			if(ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null){
 				for(AccountEntryDetail aed : ai.getAccountEntry().getDetails()){
@@ -448,30 +448,27 @@ public class FacturasEmitidas extends SIIBuilt {
 			
 			factura.setFacturaExpedida(fet);
 			suministro.getRegistroLRFacturasEmitidas().add(factura);
-		});
 		return suministro;
 	}
 	
-	protected BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
+	protected BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, Integer invoiceId, LinkedList<VatContext> vatList, String terceros) {
 		BajaLRFacturasEmitidas baja = new BajaLRFacturasEmitidas();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 		
-		invoiceList.stream().forEach(i -> {
-			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(i)).findFirst().orElse(new VatContext());
-			LRBajaExpedidasType factura = new LRBajaExpedidasType();
+		VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
+		LRBajaExpedidasType factura = new LRBajaExpedidasType();
 			
-			IDFacturaExpedidaBCType idFactura = new IDFacturaExpedidaBCType();
-			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-			idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
-			https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura emisor = new https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura();
-			emisor.setNIF(company.getDocument());
-			idFactura.setIDEmisorFactura(emisor);
-			factura.setIDFactura(idFactura);
+		IDFacturaExpedidaBCType idFactura = new IDFacturaExpedidaBCType();
+		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+		idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
+		https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura emisor = new https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura();
+		emisor.setNIF(company.getDocument());
+		idFactura.setIDEmisorFactura(emisor);
+		factura.setIDFactura(idFactura);
 			
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 		
-			baja.getRegistroLRBajaExpedidas().add(factura);
-		});
+		baja.getRegistroLRBajaExpedidas().add(factura);
 		
 		return baja;
 	}
@@ -507,38 +504,36 @@ public class FacturasEmitidas extends SIIBuilt {
 	 *  
 	 * @param company
 	 */
-	protected SuministroLRCobrosEmitidas suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, LinkedList<Integer> invoiceList) {
+	protected SuministroLRCobrosEmitidas suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) {
 		SuministroLRCobrosEmitidas suministro = new SuministroLRCobrosEmitidas();
 		
 		suministro.setCabecera(cabeceraCobrosPagos(company));
 
-		invoiceList.stream().forEach(i -> {
-			LRCobrosEmitidasType cobros = new LRCobrosEmitidasType();
-			CobrosType ct = new CobrosType();
-			financeList.stream().filter(f -> f.getInvoice().getId().equals(i)).forEach(f -> {
-				DatosPagoCobroType dpct = new DatosPagoCobroType();
-				dpct.setFecha(AonDateUtils.format(f.getDueDate(), "dd-MM-yyyy"));
-				dpct.setImporte(Double.toString(AonMathUtils.round(f.getAmount())));
-				if(f.getPayMethodType().equals(PayMethodType.BANK_TRANSFER)){
-					dpct.setMedio("01");
-				} else if(f.getPayMethodType().equals(PayMethodType.CHEQUE)){
-					dpct.setMedio("02");
-				} else dpct.setMedio("04");
-				ct.getCobro().add(dpct);
-			});
-			
-			Invoice invoice = financeList.stream().filter(f -> f.getInvoice().getId().equals(i)).findFirst().get().getInvoice();
-			cobros.setCobros(ct);
-			IDFacturaExpedidaBCType f = new IDFacturaExpedidaBCType();
-			f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
-			https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura emisor = new https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura();
-			emisor.setNIF(company.getDocument());
-			f.setIDEmisorFactura(emisor);
-			f.setNumSerieFacturaEmisor(invoice.getReferenceCode());
-			cobros.setIDFactura(f);
-			
-			suministro.getRegistroLRCobros().add(cobros);
+		LRCobrosEmitidasType cobros = new LRCobrosEmitidasType();
+		CobrosType ct = new CobrosType();
+		financeList.stream().filter(f -> f.getInvoice().getId().equals(invoiceId)).forEach(f -> {
+			DatosPagoCobroType dpct = new DatosPagoCobroType();
+			dpct.setFecha(AonDateUtils.format(f.getDueDate(), "dd-MM-yyyy"));
+			dpct.setImporte(Double.toString(AonMathUtils.round(f.getAmount())));
+			if(f.getPayMethodType().equals(PayMethodType.BANK_TRANSFER)){
+				dpct.setMedio("01");
+			} else if(f.getPayMethodType().equals(PayMethodType.CHEQUE)){
+				dpct.setMedio("02");
+			} else dpct.setMedio("04");
+			ct.getCobro().add(dpct);
 		});
+		
+		Invoice invoice = financeList.stream().filter(f -> f.getInvoice().getId().equals(invoiceId)).findFirst().get().getInvoice();
+		cobros.setCobros(ct);
+		IDFacturaExpedidaBCType f = new IDFacturaExpedidaBCType();
+		f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
+		https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura emisor = new https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura();
+		emisor.setNIF(company.getDocument());
+		f.setIDEmisorFactura(emisor);
+		f.setNumSerieFacturaEmisor(invoice.getReferenceCode());
+		cobros.setIDFactura(f);
+		
+		suministro.getRegistroLRCobros().add(cobros);
 
 		return suministro;
 	}

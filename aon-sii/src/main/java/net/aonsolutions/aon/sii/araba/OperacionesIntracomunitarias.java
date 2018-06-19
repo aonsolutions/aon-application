@@ -106,114 +106,112 @@ public class OperacionesIntracomunitarias extends SIIBuilt {
 		 * @param company
 		 * @param invoiceList
 		 */
-		protected SuministroLRDetOperacionIntracomunitaria suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, Boolean mod, String terceros, String auth) {
+		protected SuministroLRDetOperacionIntracomunitaria suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String tipoOp, Boolean mod, String terceros) {
 			SuministroLRDetOperacionIntracomunitaria suministro = new SuministroLRDetOperacionIntracomunitaria();
 			
 			// CABECERA
 			suministro.setCabecera(cabecera(company, mod, terceros));
 			
 			// BODY
-			invoiceList.stream().forEach(invoice -> {
-				VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
+			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
 				
-				LROperacionIntracomunitariaType opIntracomunitaria = new LROperacionIntracomunitariaType();
+			LROperacionIntracomunitariaType opIntracomunitaria = new LROperacionIntracomunitariaType();
 				
-				opIntracomunitaria.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+			opIntracomunitaria.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 				
-				IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
-				idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+			IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
+			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
 				
-				IDEmisorFactura emisor = new IDEmisorFactura();
-				if(vat.getInvoiceType().equals(InvoiceType.SALES)){
-					emisor.setNIF(company.getDocument());
-					emisor.setNombreRazon(company.getName());
+			IDEmisorFactura emisor = new IDEmisorFactura();
+			if(vat.getInvoiceType().equals(InvoiceType.SALES)){
+				emisor.setNIF(company.getDocument());
+				emisor.setNombreRazon(company.getName());
+			} else {
+				emisor.setNombreRazon(vat.getRegistryName());
+				if(vat.getRegistryDocumentCountry().equals(Country.ES)){
+					emisor.setNIF(vat.getRegistryDocument());
 				} else {
-					emisor.setNombreRazon(vat.getRegistryName());
-					if(vat.getRegistryDocumentCountry().equals(Country.ES)){
-						emisor.setNIF(vat.getRegistryDocument());
-					} else {
-						IDOtroType otro = new IDOtroType();
-						otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+					IDOtroType otro = new IDOtroType();
+					otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
 						
-						String document = vat.getRegistryDocument();
-						if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
-							document = vat.getRegistryDocumentCountry().getIso2() + document;
-						}
-						otro.setID(document);				
-						
-						otro.setIDType(IDType.NIF_IVA.getName()); 
-						emisor.setIDOtro(otro);
+					String document = vat.getRegistryDocument();
+					if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+						document = vat.getRegistryDocumentCountry().getIso2() + document;
 					}
+					otro.setID(document);				
+						
+					otro.setIDType(IDType.NIF_IVA.getName()); 
+					emisor.setIDOtro(otro);
 				}
-				idFactura.setIDEmisorFactura(emisor);
+			}
+			idFactura.setIDEmisorFactura(emisor);
 				
-				idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
-				opIntracomunitaria.setIDFactura(idFactura);
+			idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
+			opIntracomunitaria.setIDFactura(idFactura);
 
-				opIntracomunitaria.setContraparte(contraparteIntracomunitario(vat));
+			opIntracomunitaria.setContraparte(contraparteIntracomunitario(vat));
 
-				OperacionIntracomunitariaType oit = new OperacionIntracomunitariaType();
-				oit.setTipoOperacion(tipoOp);// A(art 70) || B (art 16, 9)
-				oit.setClaveDeclarado(vat.getInvoiceType().equals(InvoiceType.SALES) ? "D" : "R");
-				oit.setEstadoMiembro(CountryMiembroType.valueOf(vat.getRegistryDocumentCountry().getIso2()));
-				//oit.setPlazoOperacion(""); //OPTIONAL
-				String desc = "";
-				for (VatContext vatContext : contextList) {
-					desc = desc + vatContext.getDetailDescription();
-				}
-				oit.setDescripcionBienes(desc.length() > 39 ? desc.substring(0, 39) : desc);// TODO
-				RAddress address = AON.getRAddres(domain.getName(), domain.getId(), login, vat.getRegistry());
-				oit.setDireccionOperador(address.getFullAddress() != null && !address.getFullAddress().equals("") ? address.getFullAddress() : "Sin direcci\u00f3n");
-				//oit.setFacturasODocumentacion(""); // OPTIONAL
+			OperacionIntracomunitariaType oit = new OperacionIntracomunitariaType();
+			oit.setTipoOperacion(tipoOp);// A(art 70) || B (art 16, 9)
+			oit.setClaveDeclarado(vat.getInvoiceType().equals(InvoiceType.SALES) ? "D" : "R");
+			oit.setEstadoMiembro(CountryMiembroType.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			//oit.setPlazoOperacion(""); //OPTIONAL
+			String desc = "";
+			for (VatContext vatContext : contextList) {
+				desc = desc + vatContext.getDetailDescription();
+			}
+			oit.setDescripcionBienes(desc.length() > 39 ? desc.substring(0, 39) : desc);// TODO
+			RAddress address = AON.getRAddres(domain.getName(), domain.getId(), login, vat.getRegistry());
+			oit.setDireccionOperador(address.getFullAddress() != null && !address.getFullAddress().equals("") ? address.getFullAddress() : "Sin direcci\u00f3n");
+			//oit.setFacturasODocumentacion(""); // OPTIONAL
 				
-				opIntracomunitaria.setOperacionIntracomunitaria(oit);
-				
-				suministro.getRegistroLRDetOperacionIntracomunitaria().add(opIntracomunitaria);
-			});
+			opIntracomunitaria.setOperacionIntracomunitaria(oit);
+			
+			suministro.getRegistroLRDetOperacionIntracomunitaria().add(opIntracomunitaria);
+			
 			return suministro;
 		}
 			
-		protected BajaLRDetOperacionIntracomunitaria bajaOperacionesIntracomunitarias(Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> vatList, String terceros, String auth) {
+		protected BajaLRDetOperacionIntracomunitaria bajaOperacionesIntracomunitarias(Company company, Integer invoiceId, LinkedList<VatContext> vatList, String terceros) {
 			BajaLRDetOperacionIntracomunitaria baja = new BajaLRDetOperacionIntracomunitaria();
 			baja.setCabecera(cabeceraBaja(company, terceros));
 			
-			invoiceList.stream().forEach(invoice -> {
-				VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext()); 
+			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext()); 
 			
-				LRBajaOperacionIntracomunitariaType factura = new LRBajaOperacionIntracomunitariaType();
+			LRBajaOperacionIntracomunitariaType factura = new LRBajaOperacionIntracomunitariaType();
 				
-				IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
-				idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-				idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
-				IDEmisorFactura emisor = new IDEmisorFactura();
-				if(vat.getInvoiceType().equals(InvoiceType.SALES)){
-					emisor.setNIF(company.getDocument());
-					emisor.setNombreRazon(company.getName());
+			IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
+			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+			idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
+			IDEmisorFactura emisor = new IDEmisorFactura();
+			if(vat.getInvoiceType().equals(InvoiceType.SALES)){
+				emisor.setNIF(company.getDocument());
+				emisor.setNombreRazon(company.getName());
+			} else {
+				emisor.setNombreRazon(vat.getRegistryName());
+				if(vat.getRegistryDocumentCountry().equals(Country.ES)){
+					emisor.setNIF(vat.getRegistryDocument());
 				} else {
-					emisor.setNombreRazon(vat.getRegistryName());
-					if(vat.getRegistryDocumentCountry().equals(Country.ES)){
-						emisor.setNIF(vat.getRegistryDocument());
-					} else {
-						IDOtroType otro = new IDOtroType();
-						otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
-						
-						String document = vat.getRegistryDocument();
-						if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
-							document = vat.getRegistryDocumentCountry().getIso2() + document;
-						}
-						otro.setID(document);
-						otro.setIDType(IDType.NIF_IVA.getName()); //valueOf(vat.getRegistryDocumentType()).getName());
-						emisor.setIDOtro(otro);
+					IDOtroType otro = new IDOtroType();
+					otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+					
+					String document = vat.getRegistryDocument();
+					if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+						document = vat.getRegistryDocumentCountry().getIso2() + document;
 					}
+					otro.setID(document);
+					otro.setIDType(IDType.NIF_IVA.getName()); //valueOf(vat.getRegistryDocumentType()).getName());
+					emisor.setIDOtro(otro);
 				}
-				idFactura.setIDEmisorFactura(emisor);
-				
-				factura.setIDFactura(idFactura);
-				
-				factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
-				
-				baja.getRegistroLRBajaDetOperacionIntracomunitaria().add(factura);
-			});
+			}
+			idFactura.setIDEmisorFactura(emisor);
+			
+			factura.setIDFactura(idFactura);
+			
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+			
+			baja.getRegistroLRBajaDetOperacionIntracomunitaria().add(factura);
+			
 			return baja;
 		}
 			

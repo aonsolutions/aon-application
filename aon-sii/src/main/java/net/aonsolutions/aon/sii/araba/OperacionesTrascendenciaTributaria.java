@@ -79,24 +79,25 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRCobrosMetalico suministroCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+	protected SuministroLRCobrosMetalico suministroCobrosMetalico(Domain domain, String login, Company company,
+			Integer invoiceId, LinkedList<VatContext> contextList) {
 		SuministroLRCobrosMetalico suministro = new SuministroLRCobrosMetalico();
-		
+
 		// CABECERA
 		suministro.setCabecera(cabecera(company));
-					
+
 		// BODY
-		invoiceList.stream().forEach(invoice -> {
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());
-			
-			LRCobrosMetalicoType metalico = new LRCobrosMetalicoType();	
+		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst()
+				.orElse(new VatContext());
 
-			metalico.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
-			metalico.setContraparte(contraparte(vat));
-			metalico.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));	
+		LRCobrosMetalicoType metalico = new LRCobrosMetalicoType();
 
-			suministro.getRegistroLRCobrosMetalico().add(metalico);
-		});
+		metalico.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		metalico.setContraparte(contraparte(vat));
+		metalico.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
+
+		suministro.getRegistroLRCobrosMetalico().add(metalico);
+
 		return suministro;
 	}
 		
@@ -132,29 +133,29 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLROperacionesSeguros suministroOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+	protected SuministroLROperacionesSeguros suministroOperacionesSeguros(Domain domain, String login, Company company,
+			Integer invoiceId, LinkedList<VatContext> contextList) {
 		SuministroLROperacionesSeguros suministro = new SuministroLROperacionesSeguros();
-		
+
 		// CABECERA
 		suministro.setCabecera(cabecera(company));
-		
+
 		// BODY
-		invoiceList.stream().forEach(invoice -> {
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());		
-			
-			LROperacionesSegurosType seguros = new LROperacionesSegurosType();
-			
-			seguros.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
-			seguros.setContraparte(contraparte(vat));
-			seguros.setClaveOperacion(ClaveOperacionType.A); // TODO 
-			seguros.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
-			
-			suministro.getRegistroLROperacionesSeguros().add(seguros);
-		});
-		
+		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst()
+				.orElse(new VatContext());
+
+		LROperacionesSegurosType seguros = new LROperacionesSegurosType();
+
+		seguros.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		seguros.setContraparte(contraparte(vat));
+		seguros.setClaveOperacion(ClaveOperacionType.A); // TODO
+		seguros.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
+
+		suministro.getRegistroLROperacionesSeguros().add(seguros);
+
 		return suministro;
 	}
-			
+
 	// ------------------- SUMINISTRO AGENCIAS VIAJES	
 		
 	protected byte[] getSuministroAgenciasViajes(SuministroLRAgenciasViajes suministro){
@@ -188,24 +189,23 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRAgenciasViajes suministroAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList) {
+	protected SuministroLRAgenciasViajes suministroAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList) {
 		SuministroLRAgenciasViajes suministro = new SuministroLRAgenciasViajes();
 		
 		// CABECERA
 		suministro.setCabecera(cabecera(company));
 		
 		// BODY
-		invoiceList.stream().forEach(invoice -> {
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst().orElse(new VatContext());			
+		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());			
 
-			LRAgenciasViajesType agencias = new LRAgenciasViajesType();	
+		LRAgenciasViajesType agencias = new LRAgenciasViajesType();	
 
-			agencias.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
-			agencias.setContraparte(contraparte(vat));
-			agencias.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
-			
-			suministro.getRegistroLRAgenciasViajes().add(agencias);
-		});
+		agencias.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		agencias.setContraparte(contraparte(vat));
+		agencias.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
+		
+		suministro.getRegistroLRAgenciasViajes().add(agencias);
+
 		return suministro;
 	}
 

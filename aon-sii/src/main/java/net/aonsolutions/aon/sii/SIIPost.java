@@ -148,7 +148,7 @@ public class SIIPost extends WebServiceGatewaySupport{
 	// -------------------- FACTURAS EMITIDAS
 	
 	@SuppressWarnings("unchecked")
-    protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+    protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
     	
     	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
@@ -168,10 +168,10 @@ public class SIIPost extends WebServiceGatewaySupport{
     	// ALTA
     	if(newList.size() > 0){
     		Object suministroNew = null;
-    		if(isAeat() || isNavarra()) suministroNew = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
-    		else if(isAraba()) suministroNew = SIIArabaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
-    		else if(isGipuzkoa()) suministroNew = SIIGipuzkoaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
-    		else if(isBizkaia()) suministroNew = SIIBizkaiaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);
+    		if(isAeat() || isNavarra()) suministroNew = SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);
+    		else if(isAraba()) suministroNew = SIIArabaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);
+    		else if(isGipuzkoa()) suministroNew = SIIGipuzkoaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);
+    		else if(isBizkaia()) suministroNew = SIIBizkaiaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);
     		
 			JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministroNew);
     		
@@ -233,10 +233,10 @@ public class SIIPost extends WebServiceGatewaySupport{
     	if(modList.size() > 0){
     		Object suministroMod = null;
     		
-    		if(isAeat() || isNavarra()) suministroMod = (SuministroLRFacturasEmitidas) SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros, auth);
-    		if(isAraba()) suministroMod = (net.aonsolutions.core.araba.sii.SuministroLRFacturasEmitidas) SIIArabaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros, auth);
-    		if(isGipuzkoa()) suministroMod = (net.aonsolutions.core.gipuzkoa.sii.SuministroLRFacturasEmitidas) SIIGipuzkoaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros, auth);
-    		if(isBizkaia()) suministroMod = (net.aonsolutions.core.bizkaia.sii.SuministroLRFacturasEmitidas) SIIBizkaiaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros, auth);
+    		if(isAeat() || isNavarra()) suministroMod = (SuministroLRFacturasEmitidas) SIIBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
+    		if(isAraba()) suministroMod = (net.aonsolutions.core.araba.sii.SuministroLRFacturasEmitidas) SIIArabaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
+    		if(isGipuzkoa()) suministroMod = (net.aonsolutions.core.gipuzkoa.sii.SuministroLRFacturasEmitidas) SIIGipuzkoaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
+    		if(isBizkaia()) suministroMod = (net.aonsolutions.core.bizkaia.sii.SuministroLRFacturasEmitidas) SIIBizkaiaBuilt.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
     		
     		JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministroMod);
     		
@@ -296,7 +296,7 @@ public class SIIPost extends WebServiceGatewaySupport{
 	}
 	
 	@SuppressWarnings("unchecked")
-    protected JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+    protected JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
     	byte[] requestXml = null;
     	byte[] responseXml = null;
@@ -304,7 +304,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	JSONArray array = new JSONArray();
 
     	if(isAeat() || isNavarra()) {
-    		BajaLRFacturasEmitidas suministro = SIIBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros, auth);     	
+    		BajaLRFacturasEmitidas suministro = SIIBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros);     	
         	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
         	RespuestaLRBajaFEmitidasType respuesta = (RespuestaLRBajaFEmitidasType) response.getValue();
         	for(RespuestaExpedidaBajaType rect : respuesta.getRespuestaLinea()){
@@ -317,7 +317,7 @@ public class SIIPost extends WebServiceGatewaySupport{
        		responseXml = SIIBuilt.getInstance().getRespuestaBajaFacturasEmitidas(respuesta);
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	}else if(isAraba()) {
-    		net.aonsolutions.core.araba.sii.BajaLRFacturasEmitidas suministro = SIIArabaBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.araba.sii.BajaLRFacturasEmitidas suministro = SIIArabaBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros);     	
         	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
         	net.aonsolutions.core.araba.sii.RespuestaLRBajaFEmitidasType respuesta = (net.aonsolutions.core.araba.sii.RespuestaLRBajaFEmitidasType) response.getValue();
         	for(net.aonsolutions.core.araba.sii.RespuestaExpedidaBajaType rect : respuesta.getRespuestaLinea()){
@@ -330,7 +330,7 @@ public class SIIPost extends WebServiceGatewaySupport{
        		responseXml = SIIArabaBuilt.getInstance().getRespuestaBajaFacturasEmitidas(respuesta);
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isGipuzkoa()) {
-    		net.aonsolutions.core.gipuzkoa.sii.BajaLRFacturasEmitidas suministro = SIIGipuzkoaBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.gipuzkoa.sii.BajaLRFacturasEmitidas suministro = SIIGipuzkoaBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros);     	
         	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
         	net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaFEmitidasType respuesta = (net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaFEmitidasType) response.getValue();
         	for(net.aonsolutions.core.gipuzkoa.sii.RespuestaExpedidaBajaType rect : respuesta.getRespuestaLinea()){
@@ -343,7 +343,7 @@ public class SIIPost extends WebServiceGatewaySupport{
        		responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaBajaFacturasEmitidas(respuesta);
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isBizkaia()) {
-    		net.aonsolutions.core.bizkaia.sii.BajaLRFacturasEmitidas suministro = SIIBizkaiaBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.bizkaia.sii.BajaLRFacturasEmitidas suministro = SIIBizkaiaBuilt.getInstance().bajaFacturasEmitidas(company, invoiceList, contextList, terceros);     	
         	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
         	net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaFEmitidasType respuesta = (net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaFEmitidasType) response.getValue();
         	for(net.aonsolutions.core.bizkaia.sii.RespuestaExpedidaBajaType rect : respuesta.getRespuestaLinea()){
@@ -369,7 +369,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- FACTURAS EMITIDAS COBROS
 	
     @SuppressWarnings("unchecked")
-    protected JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, LinkedList<Integer> invoiceList, String terceros, String auth, Administration administration) {
+    protected JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, LinkedList<Integer> invoiceList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS_COBROS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS, administration);
     	
     	JSONArray array = new JSONArray();
@@ -455,7 +455,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- FACTURAS RECIBIDAS
 	
     @SuppressWarnings("unchecked")
-	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS, administration);
     	LinkedList<VatContext> modList = contextList.stream().filter(v-> v.getSiiStatus().equals("Correcto")
     			|| v.getSiiStatus().equals("AceptadoConErrores")
@@ -471,7 +471,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	// ALTA
     	if(newList.size()>0){
     		if(isAeat() || isNavarra()) {
-    			SuministroLRFacturasRecibidas suministroNew = SIIBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);     	
+    			SuministroLRFacturasRecibidas suministroNew = SIIBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);     	
     	    
     			JAXBElement<RespuestaLRFRecibidasType> response = (JAXBElement<RespuestaLRFRecibidasType>) post(uri, suministroNew);
     			RespuestaLRFRecibidasType respuesta = response.getValue();	
@@ -486,7 +486,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     			responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
     			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     		} else if(isAraba()) {
-    			net.aonsolutions.core.araba.sii.SuministroLRFacturasRecibidas suministroNew = SIIArabaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);     	
+    			net.aonsolutions.core.araba.sii.SuministroLRFacturasRecibidas suministroNew = SIIArabaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);     	
     	    
     			JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRFRecibidasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRFRecibidasType>) post(uri, suministroNew);
     			net.aonsolutions.core.araba.sii.RespuestaLRFRecibidasType respuesta = response.getValue();	
@@ -501,7 +501,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     			responseXml = SIIArabaBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
     			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     		} else if(isGipuzkoa()) {
-    			net.aonsolutions.core.gipuzkoa.sii.SuministroLRFacturasRecibidas suministroNew = SIIGipuzkoaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);     	
+    			net.aonsolutions.core.gipuzkoa.sii.SuministroLRFacturasRecibidas suministroNew = SIIGipuzkoaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);     	
     	    
     			JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRFRecibidasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRFRecibidasType>) post(uri, suministroNew);
     			net.aonsolutions.core.gipuzkoa.sii.RespuestaLRFRecibidasType respuesta = response.getValue();	
@@ -516,7 +516,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     			responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
     			status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     		} else if(isBizkaia()) {
-    			net.aonsolutions.core.bizkaia.sii.SuministroLRFacturasRecibidas suministroNew = SIIBizkaiaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros, auth);     	
+    			net.aonsolutions.core.bizkaia.sii.SuministroLRFacturasRecibidas suministroNew = SIIBizkaiaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, newList, cert, pass, false, terceros);     	
     	    
     			JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRFRecibidasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRFRecibidasType>) post(uri, suministroNew);
     			net.aonsolutions.core.bizkaia.sii.RespuestaLRFRecibidasType respuesta = response.getValue();	
@@ -539,7 +539,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	// MODIFICACI�N
     	if(modList.size() > 0){
         	if(isAeat() || isNavarra()) {
-        		SuministroLRFacturasRecibidas suministroMod = SIIBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros, auth);
+        		SuministroLRFacturasRecibidas suministroMod = SIIBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
         		JAXBElement<RespuestaLRFRecibidasType> response = (JAXBElement<RespuestaLRFRecibidasType>) post(uri, suministroMod);
         		RespuestaLRFRecibidasType respuesta = response.getValue();	
     
@@ -554,7 +554,7 @@ public class SIIPost extends WebServiceGatewaySupport{
         		responseXml = SIIBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
         		status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
         	} else if(isAraba()) {
-        		net.aonsolutions.core.araba.sii.SuministroLRFacturasRecibidas suministroMod = SIIArabaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros, auth);
+        		net.aonsolutions.core.araba.sii.SuministroLRFacturasRecibidas suministroMod = SIIArabaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
         		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRFRecibidasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRFRecibidasType>) post(uri, suministroMod);
         		net.aonsolutions.core.araba.sii.RespuestaLRFRecibidasType respuesta = response.getValue();	
     
@@ -569,7 +569,7 @@ public class SIIPost extends WebServiceGatewaySupport{
         		responseXml = SIIArabaBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
         		status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
         	} else if(isGipuzkoa()) {
-        		net.aonsolutions.core.gipuzkoa.sii.SuministroLRFacturasRecibidas suministroMod = SIIGipuzkoaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros, auth);
+        		net.aonsolutions.core.gipuzkoa.sii.SuministroLRFacturasRecibidas suministroMod = SIIGipuzkoaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
         		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRFRecibidasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRFRecibidasType>) post(uri, suministroMod);
         		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRFRecibidasType respuesta = response.getValue();	
     
@@ -584,7 +584,7 @@ public class SIIPost extends WebServiceGatewaySupport{
         		responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
         		status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
         	} else if(isBizkaia()) {
-        		net.aonsolutions.core.bizkaia.sii.SuministroLRFacturasRecibidas suministroMod = SIIBizkaiaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros, auth);
+        		net.aonsolutions.core.bizkaia.sii.SuministroLRFacturasRecibidas suministroMod = SIIBizkaiaBuilt.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceList, modList, cert, pass, true, terceros);
         		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRFRecibidasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRFRecibidasType>) post(uri, suministroMod);
         		net.aonsolutions.core.bizkaia.sii.RespuestaLRFRecibidasType respuesta = response.getValue();	
     
@@ -607,7 +607,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     }
     
     @SuppressWarnings("unchecked")
-   	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+   	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS, administration);
     
     	JSONArray array = new JSONArray();
@@ -616,7 +616,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	LinkedList<String> statusList = new LinkedList<>();
     	
     	if(isAeat() || isNavarra()) {
-    		BajaLRFacturasRecibidas suministro = SIIBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
+    		BajaLRFacturasRecibidas suministro = SIIBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<RespuestaLRBajaFRecibidasType> response = (JAXBElement<RespuestaLRBajaFRecibidasType>) post(uri, suministro);
     		RespuestaLRBajaFRecibidasType respuesta = response.getValue();
@@ -632,7 +632,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		responseXml = SIIBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isAraba()) {
-    		net.aonsolutions.core.araba.sii.BajaLRFacturasRecibidas suministro = SIIArabaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.araba.sii.BajaLRFacturasRecibidas suministro = SIIArabaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaFRecibidasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaFRecibidasType>) post(uri, suministro);
     		net.aonsolutions.core.araba.sii.RespuestaLRBajaFRecibidasType respuesta = response.getValue();
@@ -648,7 +648,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		responseXml = SIIArabaBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isGipuzkoa()) {
-    		net.aonsolutions.core.gipuzkoa.sii.BajaLRFacturasRecibidas suministro = SIIGipuzkoaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.gipuzkoa.sii.BajaLRFacturasRecibidas suministro = SIIGipuzkoaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaFRecibidasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaFRecibidasType>) post(uri, suministro);
     		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaFRecibidasType respuesta = response.getValue();
@@ -664,7 +664,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     		responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isBizkaia()) {
-    		net.aonsolutions.core.bizkaia.sii.BajaLRFacturasRecibidas suministro = SIIBizkaiaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.bizkaia.sii.BajaLRFacturasRecibidas suministro = SIIBizkaiaBuilt.getInstance().bajaFacturasRecibidas(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaFRecibidasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaFRecibidasType>) post(uri, suministro);
     		net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaFRecibidasType respuesta = response.getValue();
@@ -693,7 +693,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- FACTURAS RECIBIDAS PAGOS
 	
     @SuppressWarnings("unchecked")
-    protected JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, LinkedList<Integer> invoiceList, String terceros, String auth, Administration administration) {
+    protected JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, LinkedList<Integer> invoiceList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS_PAGOS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS_PAGOS, administration);
     	
     	JSONArray array = new JSONArray();
@@ -783,7 +783,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- BIENES INVERSION
 	
     @SuppressWarnings("unchecked")
-    protected JSONArray suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+    protected JSONArray suministroBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION, administration) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION, administration);
     	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
     			|| "AceptadoConErrores".equals(v.getSiiStatus())
@@ -800,7 +800,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	// ALTA
     	if(newList.size() > 0){
     		if(isAeat() || isNavarra()) {
-    			SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+    			SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros);     	
     			JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
     			RespuestaLRBienesInversionType respuesta = response.getValue();
     		
@@ -816,7 +816,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isAraba()) {
-     			net.aonsolutions.core.araba.sii.SuministroLRBienesInversion suministro = SIIArabaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+     			net.aonsolutions.core.araba.sii.SuministroLRBienesInversion suministro = SIIArabaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros);     	
     			JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
     			net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
     		
@@ -832,7 +832,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isGipuzkoa()) {
-     			net.aonsolutions.core.gipuzkoa.sii.SuministroLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+     			net.aonsolutions.core.gipuzkoa.sii.SuministroLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros);     	
     			JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
     			net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
     		
@@ -848,7 +848,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isBizkaia()) {
-     			net.aonsolutions.core.bizkaia.sii.SuministroLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros, auth);     	
+     			net.aonsolutions.core.bizkaia.sii.SuministroLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, false, terceros);     	
     			JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
     			net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
     		
@@ -869,7 +869,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	// MODIFICACI�N
     	if(modList.size() > 0){
         	if(isAeat() || isNavarra()) {
-        		SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
+        		SuministroLRBienesInversion suministro = SIIBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros);     	
         		JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
         		RespuestaLRBienesInversionType respuesta = response.getValue();
         	
@@ -885,7 +885,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
         		}
         	} else if(isAraba()) {
-        		net.aonsolutions.core.araba.sii.SuministroLRBienesInversion suministro = SIIArabaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
+        		net.aonsolutions.core.araba.sii.SuministroLRBienesInversion suministro = SIIArabaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros);     	
         		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
         		net.aonsolutions.core.araba.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
         	
@@ -901,7 +901,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
         		}
         	} else if(isGipuzkoa()) {
-        		net.aonsolutions.core.gipuzkoa.sii.SuministroLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
+        		net.aonsolutions.core.gipuzkoa.sii.SuministroLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros);     	
         		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
         		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
         	
@@ -917,7 +917,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
         		}
         	} else if(isBizkaia()) {
-        		net.aonsolutions.core.bizkaia.sii.SuministroLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros, auth);     	
+        		net.aonsolutions.core.bizkaia.sii.SuministroLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().suministroBienesInversion(domain, login, company, invoiceList, contextList, true, terceros);     	
         		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType>) post(uri, suministro);
         		net.aonsolutions.core.bizkaia.sii.RespuestaLRBienesInversionType respuesta = response.getValue();
         	
@@ -938,7 +938,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     }
     
     @SuppressWarnings("unchecked")
-    protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+    protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION, administration) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION, administration);
 
     	JSONArray array = new JSONArray();
@@ -947,7 +947,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	LinkedList<String> statusList = new LinkedList<>();
     	
     	if(isAeat() || isNavarra()) {
-    		BajaLRBienesInversion suministro = SIIBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+    		BajaLRBienesInversion suministro = SIIBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<RespuestaLRBajaBienesInversionType> response = (JAXBElement<RespuestaLRBajaBienesInversionType>) post(uri, suministro);
     		RespuestaLRBajaBienesInversionType respuesta = response.getValue();
@@ -963,7 +963,7 @@ public class SIIPost extends WebServiceGatewaySupport{
 	    	responseXml = SIIBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
 	    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isAraba()) {
-    		net.aonsolutions.core.araba.sii.BajaLRBienesInversion suministro = SIIArabaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.araba.sii.BajaLRBienesInversion suministro = SIIArabaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaBienesInversionType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaBienesInversionType>) post(uri, suministro);
     		net.aonsolutions.core.araba.sii.RespuestaLRBajaBienesInversionType respuesta = response.getValue();
@@ -979,7 +979,7 @@ public class SIIPost extends WebServiceGatewaySupport{
 	    	responseXml = SIIArabaBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
 	    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isGipuzkoa()) {
-    		net.aonsolutions.core.gipuzkoa.sii.BajaLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.gipuzkoa.sii.BajaLRBienesInversion suministro = SIIGipuzkoaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaBienesInversionType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaBienesInversionType>) post(uri, suministro);
     		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaBienesInversionType respuesta = response.getValue();
@@ -995,7 +995,7 @@ public class SIIPost extends WebServiceGatewaySupport{
 	    	responseXml = SIIGipuzkoaBuilt.getInstance().getRespuestaBajaBienesInversion(respuesta);
 	    	statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));    		
     	} else if(isBizkaia()) {
-    		net.aonsolutions.core.bizkaia.sii.BajaLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.bizkaia.sii.BajaLRBienesInversion suministro = SIIBizkaiaBuilt.getInstance().bajaBienesInversion(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaBienesInversionType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaBienesInversionType>) post(uri, suministro);
     		net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaBienesInversionType respuesta = response.getValue();
@@ -1024,7 +1024,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- OPERACIONES INTRACOMUNITARIAS
 	
     @SuppressWarnings("unchecked")
-    protected JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, String terceros, String auth, Administration administration) {
+    protected JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String tipoOp, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration);
     	
     	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
@@ -1041,7 +1041,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	// ALTA
     	if(newList.size() > 0){
     		if(isAeat() || isNavarra()) {
-    			SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    			SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros);     	
     	
     			JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
     			RespuestaLROComunitariasType respuesta = response.getValue();
@@ -1058,7 +1058,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isAraba()) {
-    			net.aonsolutions.core.araba.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    			net.aonsolutions.core.araba.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros);     	
     	    	
     			JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType>) post(uri, suministro);
     			net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType respuesta = response.getValue();
@@ -1075,7 +1075,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isGipuzkoa()) {
-    			net.aonsolutions.core.gipuzkoa.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    			net.aonsolutions.core.gipuzkoa.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros);     	
     	    	
     			JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType>) post(uri, suministro);
     			net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType respuesta = response.getValue();
@@ -1092,7 +1092,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isBizkaia()) {
-    			net.aonsolutions.core.bizkaia.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros, auth);     	
+    			net.aonsolutions.core.bizkaia.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, false, terceros);     	
     	    	
     			JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType>) post(uri, suministro);
     			net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType respuesta = response.getValue();
@@ -1114,7 +1114,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	// MODIFICACI�N
     	if(modList.size() > 0){
     		if(isAeat() || isNavarra()) {
-    			SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
+    			SuministroLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros);     	
     	
     			JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
     			RespuestaLROComunitariasType respuesta = response.getValue();
@@ -1131,7 +1131,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isAraba()) {
-    			net.aonsolutions.core.araba.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
+    			net.aonsolutions.core.araba.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros);     	
     	    	
     			JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType>) post(uri, suministro);
     			net.aonsolutions.core.araba.sii.RespuestaLROComunitariasType respuesta = response.getValue();
@@ -1148,7 +1148,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isGipuzkoa()) {
-    			net.aonsolutions.core.gipuzkoa.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
+    			net.aonsolutions.core.gipuzkoa.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros);     	
     	    	
     			JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType>) post(uri, suministro);
     			net.aonsolutions.core.gipuzkoa.sii.RespuestaLROComunitariasType respuesta = response.getValue();
@@ -1165,7 +1165,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     						r.getIDFactura().getNumSerieFacturaEmisor()));
     			}
     		} else if(isBizkaia()) {
-    			net.aonsolutions.core.bizkaia.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros, auth);     	
+    			net.aonsolutions.core.bizkaia.sii.SuministroLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceList, contextList, tipoOp, true, terceros);     	
     	    	
     			JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType>) post(uri, suministro);
     			net.aonsolutions.core.bizkaia.sii.RespuestaLROComunitariasType respuesta = response.getValue();
@@ -1187,7 +1187,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     }
     
     @SuppressWarnings("unchecked")
-    protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+    protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration);
     	
 		JSONArray array = new JSONArray();
@@ -1196,7 +1196,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	LinkedList<String> statusList = new LinkedList<>();
     	
     	if(isAeat() || isNavarra()) {
-    		BajaLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+    		BajaLRDetOperacionIntracomunitaria suministro = SIIBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<RespuestaLRBajaOComunitariasType> response = (JAXBElement<RespuestaLRBajaOComunitariasType>) post(uri, suministro);
     		RespuestaLRBajaOComunitariasType respuesta = response.getValue();
@@ -1213,7 +1213,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isAraba()) {
-    		net.aonsolutions.core.araba.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.araba.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIArabaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaOComunitariasType> response = (JAXBElement<net.aonsolutions.core.araba.sii.RespuestaLRBajaOComunitariasType>) post(uri, suministro);
     		net.aonsolutions.core.araba.sii.RespuestaLRBajaOComunitariasType respuesta = response.getValue();
@@ -1230,7 +1230,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isGipuzkoa()) {
-    		net.aonsolutions.core.gipuzkoa.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.gipuzkoa.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIGipuzkoaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaOComunitariasType> response = (JAXBElement<net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaOComunitariasType>) post(uri, suministro);
     		net.aonsolutions.core.gipuzkoa.sii.RespuestaLRBajaOComunitariasType respuesta = response.getValue();
@@ -1247,7 +1247,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	
     		statusList = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).collect(Collectors.toCollection(LinkedList::new));
     	} else if(isBizkaia()) {
-    		net.aonsolutions.core.bizkaia.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros, auth);     	
+    		net.aonsolutions.core.bizkaia.sii.BajaLRDetOperacionIntracomunitaria suministro = SIIBizkaiaBuilt.getInstance().bajaOperacionesIntracomunitarias(company, invoiceList, contextList, terceros);     	
 
     		JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaOComunitariasType> response = (JAXBElement<net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaOComunitariasType>) post(uri, suministro);
     		net.aonsolutions.core.bizkaia.sii.RespuestaLRBajaOComunitariasType respuesta = response.getValue();
@@ -1276,7 +1276,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- COBROS METALICO
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+    protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.COBROS_METALICO, administration) : SIIUri.getInstance().getURI(SIIType.COBROS_METALICO, administration);
     	
     	if(isAeat() || isNavarra()) {
@@ -1339,7 +1339,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	return new JSONObject();
     }
     
-    protected JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth) {
+    protected JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	//RespuestaLRBajaIMetalicoType
     	return new JSONObject();
     }
@@ -1347,7 +1347,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- OPERACIONES SEGUROS
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+    protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_SEGUROS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_SEGUROS, administration);
     		
     	if(isAeat() || isNavarra()) {
@@ -1412,7 +1412,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	return new JSONObject();
     }
     
-    protected JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth) {
+    protected JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	//RespuestaLRBajaOperacionesSegurosType
     	return new JSONObject();
     }
@@ -1420,7 +1420,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     // -------------------- AGENCIAS VIAJES
 	
     @SuppressWarnings("unchecked")
-    protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth, Administration administration) {
+    protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, Administration administration) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.AGENCIAS_VIAJES, administration) : SIIUri.getInstance().getURI(SIIType.AGENCIAS_VIAJES, administration);
     	if(isAeat() || isNavarra()) {
     		SuministroLRAgenciasViajes suministro = SIIBuilt.getInstance().suministroAgenciasViajes(domain, login, company, invoiceList, contextList);     	
@@ -1478,7 +1478,7 @@ public class SIIPost extends WebServiceGatewaySupport{
     	return new JSONObject();
     }
     
-    protected JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros, String auth) {
+    protected JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, String terceros) {
     	//RespuestaLRBajaAgenciasViajesType
     	return new JSONObject();
     }

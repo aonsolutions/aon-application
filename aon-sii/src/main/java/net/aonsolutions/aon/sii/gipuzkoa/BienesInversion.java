@@ -101,88 +101,83 @@ public class BienesInversion extends SIIBuilt{
 	 * @param invoiceList
 	 */
 	protected SuministroLRBienesInversion suministroBienesInversion(Domain domain, String login, Company company,
-			LinkedList<Integer> invoiceList, LinkedList<VatContext> contextList, Boolean mod, String terceros,
-			String auth) {
+			Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
 		SuministroLRBienesInversion suministro = new SuministroLRBienesInversion();
 
 		// CABECERA
 		suministro.setCabecera(cabecera(company, mod, terceros));
 
 		// BODY
-		invoiceList.stream().forEach(invoice -> {
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst()
-					.orElse(new VatContext());
+		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst()
+				.orElse(new VatContext());
 
-			LRBienesInversionType bien = new LRBienesInversionType();
+		LRBienesInversionType bien = new LRBienesInversionType();
 
-			bien.setPeriodoLiquidacion(periodoLiquidacion(vat, true));
+		bien.setPeriodoLiquidacion(periodoLiquidacion(vat, true));
 
-			IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
+		IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
 
-			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
 
-			IDEmisorFactura emisor = new IDEmisorFactura();
-			emisor.setNombreRazon(vat.getRegistryName());
-			if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
-				emisor.setNIF(vat.getRegistryDocument());
-			} else {
-				IDOtroType otro = new IDOtroType();
-				otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+		IDEmisorFactura emisor = new IDEmisorFactura();
+		emisor.setNombreRazon(vat.getRegistryName());
+		if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
+			emisor.setNIF(vat.getRegistryDocument());
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
 
-				String document = vat.getRegistryDocument();
-				if (!document.substring(0, 2).equals(vat.getRegistryDocumentCountry().getIso2())) {
-					document = vat.getRegistryDocumentCountry().getIso2() + document;
-				}
-				otro.setID(document);
-				otro.setIDType(IDType.NIF_IVA.getName());
-				emisor.setIDOtro(otro);
+			String document = vat.getRegistryDocument();
+			if (!document.substring(0, 2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+				document = vat.getRegistryDocumentCountry().getIso2() + document;
 			}
+			otro.setID(document);
+			otro.setIDType(IDType.NIF_IVA.getName());
+			emisor.setIDOtro(otro);
+		}
 
-			idFactura.setIDEmisorFactura(emisor);
+		idFactura.setIDEmisorFactura(emisor);
 
-			idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
+		idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
 
-			bien.setIDFactura(idFactura);
+		bien.setIDFactura(idFactura);
 
-			BienDeInversionType bdit = new BienDeInversionType();
+		BienDeInversionType bdit = new BienDeInversionType();
 
-			bdit.setFechaInicioUtilizacion(AonDateUtils.format(vat.getAmortizationInitialDate(), "dd-MM-yyyy"));
-			bdit.setIdentificacionBien(vat.getAmortizationDescription());
-			bdit.setProrrataAnualDefinitiva(vat.getAmortizationPercentage().toString());
-			// bdit.setRegularizacionAnualDeduccion(""); // OPTIONAL
-			// bdit.setIdentificacionEntrega(""); // OPTIONAL
-			// bdit.setRegularizacionDeduccionEfectuada(""); // OPTIONAL
-			bien.setBienesInversion(bdit);
+		bdit.setFechaInicioUtilizacion(AonDateUtils.format(vat.getAmortizationInitialDate(), "dd-MM-yyyy"));
+		bdit.setIdentificacionBien(vat.getAmortizationDescription());
+		bdit.setProrrataAnualDefinitiva(vat.getAmortizationPercentage().toString());
+		// bdit.setRegularizacionAnualDeduccion(""); // OPTIONAL
+		// bdit.setIdentificacionEntrega(""); // OPTIONAL
+		// bdit.setRegularizacionDeduccionEfectuada(""); // OPTIONAL
+		bien.setBienesInversion(bdit);
 
-			suministro.getRegistroLRBienesInversion().add(bien);
-		});
+		suministro.getRegistroLRBienesInversion().add(bien);
 		return suministro;
 	}
 
-	protected BajaLRBienesInversion bajaBienesInversion(Company company, LinkedList<Integer> invoiceList,
-			LinkedList<VatContext> vatList, String terceros, String auth) {
+	protected BajaLRBienesInversion bajaBienesInversion(Company company, Integer invoiceId,
+			LinkedList<VatContext> vatList, String terceros) {
 		BajaLRBienesInversion baja = new BajaLRBienesInversion();
 		baja.setCabecera(cabeceraBaja(company, terceros));
 
-		invoiceList.stream().forEach(invoice -> {
-			VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoice)).findFirst()
-					.orElse(new VatContext());
+		VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst()
+				.orElse(new VatContext());
 
-			LRBajaBienesInversionType factura = new LRBajaBienesInversionType();
+		LRBajaBienesInversionType factura = new LRBajaBienesInversionType();
 
-			factura.setIdentificacionBien(""); // TODO
-			IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
-			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-			idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
-			IDEmisorFactura emisor = new IDEmisorFactura();
-			emisor.setNIF(company.getDocument());
-			idFactura.setIDEmisorFactura(emisor);
-			factura.setIDFactura(idFactura);
+		factura.setIdentificacionBien(""); // TODO
+		IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
+		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
+		idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
+		IDEmisorFactura emisor = new IDEmisorFactura();
+		emisor.setNIF(company.getDocument());
+		idFactura.setIDEmisorFactura(emisor);
+		factura.setIDFactura(idFactura);
 
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
 
-			baja.getRegistroLRBajaBienesInversion().add(factura);
-		});
+		baja.getRegistroLRBajaBienesInversion().add(factura);
 		return baja;
 	}
 

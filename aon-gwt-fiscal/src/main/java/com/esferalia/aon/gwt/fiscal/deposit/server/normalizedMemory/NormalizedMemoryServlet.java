@@ -138,7 +138,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return createD2Deposit(aonData, company.getId(), company.getName(), type, year);	
 	}
 	
-	public Map<String, String> getSchema(Attach attach){
+	private Map<String, String> getSchema(Attach attach){
 		Map<String, String> map = new HashMap<String, String>();
 
 		try {
