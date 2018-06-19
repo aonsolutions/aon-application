@@ -297,7 +297,7 @@ public class OperationReportPanel extends ScrollPanel{
 		builder.appendEscaped( AonStringUtils.rightPad(i, 5));
 		builder.appendEscaped( AonStringUtils.rightPad(entryDate,15) );
 		builder.appendEscaped( AonStringUtils.rightPad(taxDate,15) );
-		builder.appendEscaped( AonStringUtils.rightPad(op.getConcept(), 50));
+		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(op.getConcept(), 50), 50) );
 		builder.appendEscaped( AonStringUtils.rightPad(op.getDocumentNumber(),15));
 		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(
 				  AonStringUtils.defaultIfBlank(op.getRegistryDocument(), AonStringUtils.EMPTY)
@@ -322,7 +322,7 @@ public class OperationReportPanel extends ScrollPanel{
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.appendEscaped( AonStringUtils.rightPad(i, 5));
 		builder.appendEscaped( AonStringUtils.rightPad(entryDate,15) );
-		builder.appendEscaped( AonStringUtils.rightPad(op.getConcept(), 50));
+		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(op.getConcept(), 50), 50) );
 		builder.appendEscaped( AonStringUtils.rightPad(op.getDocumentNumber(),15));
 		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(
 			  AonStringUtils.defaultIfBlank(op.getRegistryDocument(), AonStringUtils.EMPTY)
