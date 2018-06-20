@@ -159,7 +159,7 @@ public class DepositTextMode extends AonTemplate2 {
     	vp.add(bp);
     	
     	PaperItem ar = buildItem(DepositMenu.AR.getDescription(), null, false);
-    	ar.addClickHandler(menuClickHandler(DepositMenu.AR, id, name));
+    	ar.addClickHandler(menuClickHandler(DepositMenu.AR_TL, id, name));
     	vp.add(ar);
     	
     	PaperItem nrv = buildItem(DepositMenu.NRV.getDescription(), null, false);
@@ -171,7 +171,7 @@ public class DepositTextMode extends AonTemplate2 {
     	vp.add(imiii);
     	
     	PaperItem af = buildItem(DepositMenu.AF.getDescription(), null, false);
-    	af.addClickHandler(menuClickHandler(DepositMenu.PF_TL, id, name));
+    	af.addClickHandler(menuClickHandler(DepositMenu.AF_TL, id, name));
     	vp.add(af);
     
     	PaperItem pf = buildItem(DepositMenu.PF.getDescription(), null, false);

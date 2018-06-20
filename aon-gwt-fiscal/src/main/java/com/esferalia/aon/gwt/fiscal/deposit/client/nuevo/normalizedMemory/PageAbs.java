@@ -622,17 +622,18 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		getDepositTextMode().getUndoStack().push(m);
 		getDepositTextMode().getRedoStack().clear();
-		
 		getMapTextMode().put(key, value);
-		getDepositTextMode().getInma().calculate(getAonData(), getMap(), getYear(), new AsyncCallback<Map<String,String>>() {
+		getDepositTextMode().getInma().saveDepositTextMode(getDepositTextMode().getAonData(), getMapTextMode(), getDepositTextMode().getId(), new AsyncCallback<Void>() {
+			
 			@Override
-			public void onSuccess(Map<String, String> result) {
-				setMapTextMode(result);
+			public void onSuccess(Void result) {
 				getDepositTextMode().refreshPage();
 			}
-
+			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				
+			}
 		});
 	}
 	
