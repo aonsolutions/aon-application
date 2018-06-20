@@ -79,6 +79,8 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
+import net.aonsolutions.gwt.pdfjs.client.Viewer;
+
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
@@ -1590,6 +1592,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			logEvent("jsfWidgetCreated");
 		} catch ( Throwable t){
 			//TODO:
+		}
+		
+		try {
+			new Viewer();
+		} catch ( Throwable t ) {
+			
 		}
 	}
 

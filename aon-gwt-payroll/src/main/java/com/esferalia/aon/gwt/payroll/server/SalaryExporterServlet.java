@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 public class SalaryExporterServlet extends HttpServlet {
@@ -74,7 +75,8 @@ public class SalaryExporterServlet extends HttpServlet {
 			
 			int enterpriseId = AonRemoteServiceServlet.getEnterpriseID();
 			// TODO : SalaryType????
-			String salaryReport = PayrollServletUtils.getSalaryReport(enterpriseId, SalaryType.SALARY); 
+			SalaryType salaryType = getSalaryType(req);
+			String salaryReport = PayrollServletUtils.getSalaryReport(enterpriseId, salaryType); 
 			
 			reportManager.execute(os, salaryReport);
 			
@@ -98,6 +100,20 @@ public class SalaryExporterServlet extends HttpServlet {
 	
 	private static Pattern MONTH_PATTERN = 
 			Pattern.compile("(\\d{1,2})_(\\d{4})_(\\d+)_(\\d+)");
+
+	private static SalaryType getSalaryType(HttpServletRequest req) {
+		String queryString = req.getQueryString();
+		if ( AonStringUtils.isBlank(queryString) ) 
+			return SalaryType.SALARY;
+
+		String typeName = queryString.trim();
+		try {
+			return SalaryType.valueOf(typeName);
+		} catch ( Throwable t ) {
+		}
+		
+		return SalaryType.SALARY;
+	}
 
 	private static Criteria getCriteria(String request) throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager

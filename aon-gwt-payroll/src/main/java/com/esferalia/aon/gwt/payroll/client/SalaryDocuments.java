@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Arrays;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
@@ -48,9 +49,7 @@ class SalaryDocuments extends AbstractSpinnable<IDocument> implements IDocument 
 
 	@Override
 	public void download(String format) {
-		Salary salary = salaries.get(getCurrentIndex());
-		String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/"
-				+ salary.getId() + "." + format);
+		String printURL = getDownloadURL(format);
 		Window.open(printURL, "_blank", null);
 	}
 
@@ -90,7 +89,20 @@ class SalaryDocuments extends AbstractSpinnable<IDocument> implements IDocument 
 		return salaries;
 	}
 
+	public Salary getCurrent() {
+		return salaries.get(getCurrentIndex());
+	}
+
 	public void setCurrent(Salary salary) {
 		setCurrentIndex(salaries.indexOf(salary));
 	}
+	
+
+	public String getDownloadURL(String format) {
+		Salary salary = salaries.get(getCurrentIndex());
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/"
+				+ salary.getId() + "." + format +"?" + salary.getType().name() );
+		return printURL;
+	}
+	
 }

@@ -1,5 +1,8 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client" 
+	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
+	>
 
 
 	<ui:style>
@@ -59,7 +62,8 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='deleteButton'
 									styleName='aon-finding-toolbar-item aon-icon-delete' text="Borrar"/>
-								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
+								<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /-->
+								<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-mail-save' text="DESCARGAR" />
 								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="Publicar" />
 								<g:ListBox ui:field='salaryTypeListBox' styleName=''  />
 								<g:ListBox ui:field='dateListBox' styleName=''  />
@@ -75,7 +79,9 @@
 		<g:center>
 			<g:ScrollPanel styleName="{style.editor}" >
 				<g:VerticalPanel styleName="{style.document}">
-					<g:HTML styleName="reset" ui:field='container' wordWrap='true' />
+					<!--  g:HTML styleName="reset" ui:field='container' wordWrap='true' /-->
+					<p:Viewer styleName="reset" ui:field='pdfViewer' />
+					
 				</g:VerticalPanel>
 			</g:ScrollPanel>
 		</g:center>
