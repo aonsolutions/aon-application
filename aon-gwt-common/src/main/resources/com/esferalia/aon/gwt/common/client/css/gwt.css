@@ -314,6 +314,10 @@ select {
 	border: 1px solid #D4CFC7;
 }
 
+.dateBoxPopup {
+    z-index: 69;
+}
+
 .datePickerMonthSelector  { 
 	background-color: #D4CFC7;	
 }
