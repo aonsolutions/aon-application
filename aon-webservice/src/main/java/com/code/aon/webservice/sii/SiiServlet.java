@@ -16,7 +16,10 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
@@ -42,6 +45,9 @@ public class SiiServlet extends HttpServlet{
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
+				case "invoiceHistory":
+					object = getSiiInvoiceHistory(domain, userName,  Integer.parseInt(req.getParameter("id")));
+					break;
 				case "history": // INVOICE
 					Integer page = Integer.parseInt(req.getParameter("page"));
 					Integer perPage = Integer.parseInt(req.getParameter("per_page"));
@@ -90,6 +96,23 @@ public class SiiServlet extends HttpServlet{
     	.forEach(r -> {
     		array.put(ToJSON.dataResponseToJSON(r));
     	});
+    	return array;
+    }
+    
+    private JSONArray getSiiInvoiceHistory(Domain domain, String login, Integer id){
+    	DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE, f -> f.getSourceIdProperty().eq(id));
+    
+    	JSONArray array = new JSONArray();
+    	if(dr != null && dr.getId() != null) {
+    		
+    		AON.getAttachStream(domain.getName(), domain.getId(), login, f -> 
+    			f.getDomainProperty().eq(domain.getId())
+    			.and(f.getSourceTypeProperty().eq(DataAttachSource.SII.value()))
+    			.and(f.getSourceBatchProperty().eq(dr.getId())), AttachType.DATA, false)
+    		.forEach(r -> {
+    			array.put(ToJSON.objectToJSON(r.getId(), r.getDescription(), r.getCreationDate()));
+    		});
+    	}
     	return array;
     }
 

@@ -13,10 +13,17 @@ import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.sii.JsSiiConfiguration;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.ActionCell.Delegate;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -59,6 +66,9 @@ import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.vaadin.polymer.iron.widget.IronIcon;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
+import com.vaadin.polymer.paper.widget.PaperItem;
 
 import net.aonsolutions.aon.gwt.sii.client.ISii;
 import net.aonsolutions.aon.gwt.sii.client.ISiiAsync;
@@ -361,7 +371,97 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.getColumnSortList().push(statusColumn);
 		dataGrid.addColumn(statusColumn, "Estado");
 		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
+		
+		/** Info Column **/
+		
+		List<HasCell<JsInvoice, ?>> cells = new LinkedList<HasCell<JsInvoice, ?>>();
+	    
+		cells.add(new ActionHasCell("info", new Delegate<JsInvoice>() {
+	        @Override public void execute(JsInvoice object) {
+	        	info(object.getId(), object.getReferenceCode());
+	        }
+	    }));
+	   
+		CompositeCell<JsInvoice> cell = new CompositeCell<JsInvoice>(cells);
+		
+		Column<JsInvoice,JsInvoice> infoColumn = 	new Column<JsInvoice, JsInvoice>(cell){
+
+			@Override
+			public JsInvoice getValue(JsInvoice object) {
+				return object;
+			}
+		};
+		infoColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+		dataGrid.addColumn(infoColumn, " ");
+		dataGrid.setColumnWidth(infoColumn, 3, Unit.PCT);
 	}
+
+	private void info(Integer invoice, String reference) {
+		getAPI().getSii().getSiiInvoiceHistory(invoice, new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsObject> result) {
+				
+				VerticalPanel vp = new VerticalPanel();
+				if(result.getData().length() > 0)
+					result.getData().stream().forEach(r -> {
+						vp.add(buildHistory(r));
+					});
+				else vp.add(new Label("No se ha realizado ning\u00fan env\u00edo a la Agencia Tributaria de la factura " + reference +" a partir del 01/07/2018."));
+				
+				AonDialog dialog = new AonDialog("Informaci\u00f3n SII", vp) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						hide();
+					}
+				};
+				dialog.setAutoHideEnabled(true);
+				dialog.getCancel().setVisible(false);
+				dialog.center();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});		
+	}
+	
+    public HorizontalPanel buildHistory(JsObject js){
+    	HorizontalPanel hp = new HorizontalPanel();
+    	PaperItem pi = new PaperItem();
+    	IronIcon ironIcon = new IronIcon();
+    	ironIcon.setIcon("schedule");
+    	pi.add(ironIcon);
+    	String str = AonDateUtils.formatDate(AonDateUtils.parseDateTime(js.getDate())) + " - " + js.getName();
+    	Label label = new Label(str);
+    	pi.add(label);
+    	
+    	pi.setStyle("min-height:24px;height:24px;font-size:12px;padding:0px;");
+    	
+    	hp.add(pi);
+    	PaperIconButton downloadButton = new PaperIconButton();
+    	downloadButton.setIcon("file-download");
+    	downloadButton.setTitle("Descargar");
+    	downloadButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				getAPI().getSii().downloadSiiXml(js.getId());
+			}
+		});
+  
+    	downloadButton.setStyle("min-height:24px;height:24px;font-size:12px;padding:0px;");
+    	    	
+    	hp.add(downloadButton);
+    	return hp;
+    }
 	
 	public final class CheckboxHeader extends Header {
 
@@ -637,5 +737,42 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			}
 		};
 		dialog.center();
+	}
+	
+	private class ActionHasCell implements HasCell<JsInvoice, JsInvoice> {
+	    private ActionCell<JsInvoice> cell;
+	    String s;
+	    
+	    public ActionHasCell(String text, Delegate<JsInvoice> delegate) {
+	    	s = text;
+	        cell = new ActionCell<JsInvoice>(text, delegate){
+	        	String text = s;
+	        	@Override
+	        	public void render(com.google.gwt.cell.client.Cell.Context context,JsInvoice value, SafeHtmlBuilder sb) {
+	        		if(text.equals("info")){	
+	        			String icon = "aon-icon-info";	
+	        			sb.appendHtmlConstant("<button  alt=\""+ "Información SII" +"\" type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");		
+	        		}
+	        	}
+	        };
+	        
+	    }
+
+		@Override
+		public JsInvoice getValue(JsInvoice object) {
+			return object;
+		}
+
+
+		@Override
+		public Cell<JsInvoice> getCell() {
+			return cell;
+		}
+
+		@Override
+		public FieldUpdater<JsInvoice, JsInvoice> getFieldUpdater() {
+			return null;
+		}
 	}
 }

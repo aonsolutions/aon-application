@@ -554,6 +554,14 @@ public class ToJSON {
 			.put(MSG.NAME, name);
 	}
 	
+	public static JSONObject objectToJSON(Integer id, String name, Date date) {
+		return new JSONObject()
+			.put(MSG.ID, id)
+			.put(MSG.NAME, name)
+			.put(MSG.DATE, AonDateUtils.dateTimeFormat(date));
+		
+	}
+	
 	public static String getPeriod(BillingPeriod period){
 		if(period.equals(BillingPeriod.YEARLY))
 			return "Anual";
