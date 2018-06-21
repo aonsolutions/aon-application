@@ -5,9 +5,8 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.js.payroll.client.Reports;
 
-public class Payment extends Item<Payment.Type> implements Reports.Payment{
+public class Payment extends Item<Payment.Type> {
 
 	
 	Double irpf;
@@ -15,9 +14,12 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 
 	String irpfExpression;
 	String quoteExpression;
+	
+	
 
 	public static enum Type implements HasDescription {
 		//@formatter:off
+		@Deprecated
 		CRA_0000,
 		CRA_0001,
 		CRA_0002,

@@ -200,10 +200,6 @@ public class SQLExtraSalaryCalculatorContext implements
 		return ctx.getCcc();
 	}
 
-	public String getEnterpriseCity() {
-		return ctx.getEnterpriseCity();
-	}
-
 	public String getEnterpriseName() {
 		return ctx.getEnterpriseName();
 	}
@@ -227,19 +223,9 @@ public class SQLExtraSalaryCalculatorContext implements
 	public String getQuoteGroup() {
 		return ctx.getQuoteGroup();
 	}
-	
-	@Override
-	public String getEmployeeCity() {
-		return ctx.getEmployeeCity();
-	}
-	
+
 	public String getEmployeeName() {
 		return ctx.getEmployeeName();
-	}
-	
-	@Override
-	public String getEmployeeAddress() {
-		return ctx.getEmployeeAddress();
 	}
 
 	public String getEmployeeDocument() {
@@ -332,7 +318,7 @@ public class SQLExtraSalaryCalculatorContext implements
 	public double getIrpf() {
 		return ctx.getIrpf();
 	}
-
+	
 	@Override
 	public Object liquid(double liquid, Date start, Date end)
 			throws ExpressionException, SQLException, SalaryException {

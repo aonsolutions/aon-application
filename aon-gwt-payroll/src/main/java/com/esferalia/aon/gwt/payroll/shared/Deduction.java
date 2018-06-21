@@ -3,9 +3,9 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.esferalia.aon.js.payroll.client.Reports;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 
-public class Deduction extends Item<Deduction.Type> implements Reports.Deduction {
+public class Deduction extends Item<Deduction.Type> {
 
 	public static enum Type {
 		COMMON_CONTINGENCY, 

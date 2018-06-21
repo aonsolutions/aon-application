@@ -47,12 +47,6 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 	}
 
 	@Override
-	public void setEnterpriseCity(String enterpriseCity) {
-		for (ISalaryBuilder<E> builder : builders)
-			builder.setEnterpriseCity(enterpriseCity);
-	}
-
-	@Override
 	public void setEnterpriseName(String enterpriseName) {
 		for (ISalaryBuilder<E> builder : builders)
 			builder.setEnterpriseName(enterpriseName);
@@ -77,21 +71,9 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 	}
 
 	@Override
-	public void setEmployeeCity(String employeeCity) {
-		for (ISalaryBuilder<E> builder : builders)
-			builder.setEmployeeCity(employeeCity);
-	}
-
-	@Override
 	public void setEmployeeName(String employeeName) {
 		for (ISalaryBuilder<E> builder : builders)
 			builder.setEmployeeName(employeeName);
-	}
-
-	@Override
-	public void setEmployeeAddress(String employeeAddress) {
-		for (ISalaryBuilder<E> builder : builders)
-			builder.setEmployeeAddress(employeeAddress);
 	}
 
 	@Override

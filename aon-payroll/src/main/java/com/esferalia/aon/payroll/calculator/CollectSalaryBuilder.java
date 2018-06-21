@@ -30,15 +30,12 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 
 	private Object contract;
 	private String ccc;
-	private String enterpriseCity;
 	private String enterpriseName;
 	private String enterpriseAddress;
 	private String category;
 	private String socialSecurityNumber;
 	private String employeeDocument;
 	private String employeeName;
-	private String employeeCity;
-	private String employeeAddress;
 	private String quoteGroup;
 	private Integer registration;
 	private String enterpriseDocument;
@@ -653,11 +650,6 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	}
 	
 	@Override
-	public void setEnterpriseCity(String enterpriseCity) {
-		this.enterpriseCity = enterpriseCity;
-	}
-	
-	@Override
 	public void setEnterpriseName(String enterpriseName) {
 		this.enterpriseName = enterpriseName;
 	}
@@ -675,16 +667,6 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	@Override
 	public void setRegistration(Integer registration) {
 		this.registration = registration;
-	}
-	
-	@Override
-	public void setEmployeeCity(String employeeCity) {
-		this.employeeCity = employeeCity;
-	}
-	
-	@Override
-	public void setEmployeeAddress(String employeeAddress) {
-		this.employeeAddress = employeeAddress;
 	}
 
 	@Override

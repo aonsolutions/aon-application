@@ -12,7 +12,6 @@
 	<inherits name='com.esferalia.aon.gwt.common.Common'/>
 	<inherits name="com.esferalia.aon.occam.api.Occam" />	
 	<inherits name='com.esferalia.aon.gwt.codemirror.CodeMirror'/>
-	<inherits name='com.esferalia.aon.js.payroll.Payroll'/>
 	
 	<inherits name="com.google.gwt.json.JSON" />
 	
@@ -28,7 +27,6 @@
 	<stylesheet src="codemirror/addon/dialog/dialog.css"/>
 	<!-- stylesheets search on scrollbar  -->
 	<stylesheet src="codemirror/addon/search/matchesonscrollbar.css"/>
-
 
 	<!-- Chart Tools -->
 	<inherits name='com.google.gwt.visualization.Visualization'/>

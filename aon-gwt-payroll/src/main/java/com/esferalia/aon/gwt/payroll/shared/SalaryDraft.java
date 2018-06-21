@@ -20,13 +20,10 @@ public class SalaryDraft extends SalaryPreview {
 	private Integer dbId;
 
 	private String enterpriseName;
-	private String enterpriseCity;
 	private String enterpriseAddress;
 	private String enterpriseDocument;
 	private String enterpriseCCC;
 
-	private String employeeCity;
-	private String employeeAddress;
 	private String employeeName;
 	private String employeeSS;
 	private String employeeDocument;
@@ -501,24 +498,6 @@ public class SalaryDraft extends SalaryPreview {
 		return dbId;
 	}
 
-	public String getEmployeeCity() {
-		return employeeCity;
-	}
-
-	public SalaryDraft setEmployeeCity(String employeeCity) {
-		this.employeeCity = employeeCity;
-		return this;
-	}
-
-	public String getEmployeeAddress() {
-		return employeeSS;
-	}
-
-	public SalaryDraft setEmployeeAddress(String employeeAddress) {
-		this.employeeAddress = employeeAddress;
-		return this;
-	}
-	
 	public String getEmployeeSS() {
 		return employeeSS;
 	}
@@ -785,15 +764,6 @@ public class SalaryDraft extends SalaryPreview {
 
 	public SalaryDraft setTotalDeduction(Double totalDeduction) {
 		this.totalDeduction = totalDeduction;
-		return this;
-	}
-
-	public String getEnterpriseCity() {
-		return enterpriseCity;
-	}
-
-	public SalaryDraft setEnterpriseCity(String enterpriseCity) {
-		this.enterpriseCity = enterpriseCity;
 		return this;
 	}
 

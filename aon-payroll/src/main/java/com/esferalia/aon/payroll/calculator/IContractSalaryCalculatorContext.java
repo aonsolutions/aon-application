@@ -45,8 +45,6 @@ public interface IContractSalaryCalculatorContext extends
 	public String getCcc();
 
 	public String getEnterpriseName();
-	
-	public String getEnterpriseCity();
 
 	public String getEnterpriseAddress();
 
@@ -59,10 +57,6 @@ public interface IContractSalaryCalculatorContext extends
 	public String getQuoteGroup();
 
 	public String getEmployeeName();
-
-	public String getEmployeeCity();
-
-	public String getEmployeeAddress();
 
 	public String getEmployeeDocument();
 

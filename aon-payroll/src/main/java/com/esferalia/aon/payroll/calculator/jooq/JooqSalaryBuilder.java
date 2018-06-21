@@ -124,12 +124,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	public void setCcc(String ccc) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.CCC, ccc);
 	}
-	
-	@Override
-	public void setEnterpriseCity(String enterpriseCity) {
-		// TODO Auto-generated method stub
-	}
-	
+
 	@Override
 	public void setEnterpriseName(String enterpriseName) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.ENTERPRISE_NAME, enterpriseName);
@@ -150,17 +145,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	public void setRegistration(Integer registration) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.REGISTRATION, registration);
 	}
-	
-	@Override
-	public void setEmployeeCity(String employeeCity) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void setEmployeeAddress(String employeeAddress) {
-		// TODO Auto-generated method stub
-	}
-	
+
 	@Override
 	public void setEmployeeName(String employeeName) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.EMPLOYEE_NAME, employeeName);

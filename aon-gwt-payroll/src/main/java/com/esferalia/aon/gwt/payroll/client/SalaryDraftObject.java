@@ -31,7 +31,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.js.payroll.client.Reports.Payroll;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -39,7 +38,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class SalaryDraftObject implements IContextProvider , Payroll{
+public class SalaryDraftObject implements IContextProvider {
 
 	public static Date NULL_DATE = new Date() {
 	};
@@ -575,13 +574,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public List<Bonus> getBonuses() {
 		return salaryDraft.getBonuses();
 	}
-	
-	@Override
+
 	public List<Payment> getPayments() {
 		return salaryDraft.getPayments();
 	}
 
-	@Override
 	public List<Deduction> getDeductions() {
 		return salaryDraft.getDeductions();
 	}
@@ -594,7 +591,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getContext();
 	}
 
-	@Override
 	public Date getIssueDate() {
 		return salaryDraft.getIssueDate();
 	}
@@ -605,16 +601,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 
 	public List<Event> getEvents() {
 		return salaryDraft.getEvents();
-	}
-	
-	@Override
-	public String getEmployeeCity() {
-		return salaryDraft.getEmployeeCity();
-	}
-	
-	@Override
-	public String getEmployeeAddress() {
-		return salaryDraft.getEmployeeAddress();
 	}
 
 	public String getEmployeeSS() {
@@ -673,38 +659,27 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public Double getRemuneration() {
 		return salaryDraft.getRemuneration();
 	}
-	
-	@Override
+
 	public Double getTotalLiquid() {
 		return salaryDraft.getTotalLiquid();
 	}
 
-	@Override
 	public Double getTotalPayment() {
 		return salaryDraft.getTotalPayment();
 	}
 
-	@Override
 	public Double getTotalDeduction() {
 		return salaryDraft.getTotalDeduction();
 	}
 
-	@Override
 	public String getEnterpriseName() {
 		return salaryDraft.getEnterpriseName();
 	}
-	
-	@Override
-	public String getEnterpriseCity() {
-		return salaryDraft.getEnterpriseCity();
-	}
 
-	@Override
 	public String getEnterpriseAddress() {
 		return salaryDraft.getEnterpriseAddress();
 	}
 
-	@Override
 	public String getEnterpriseDocument() {
 		return salaryDraft.getEnterpriseDocument();
 	}
@@ -713,7 +688,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getEnterpriseCCC();
 	}
 
-	@Override
 	public String getEmployeeName() {
 		return salaryDraft.getEmployeeName();
 	}
@@ -721,8 +695,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public String getEmployeeQuoteGroup() {
 		return salaryDraft.getEmployeeQuoteGroup();
 	}
-	
-	@Override
+
 	public String getEmployeeAgreementCategory() {
 		return salaryDraft.getEmployeeAgreementCategory();
 	}
@@ -792,13 +765,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public Integer getTimeUnits() {
 		return salaryDraft.getTimeUnits();
 	}
-
-	
-	// ------------------------------------------
-	// Payroll
-	//
-	
-	
 
 	// ------------------------------------------
 	//

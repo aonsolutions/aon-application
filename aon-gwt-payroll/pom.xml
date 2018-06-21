@@ -180,11 +180,6 @@
 
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.js.payroll</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>

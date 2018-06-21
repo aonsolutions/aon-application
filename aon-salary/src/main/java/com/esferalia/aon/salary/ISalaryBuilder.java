@@ -22,8 +22,6 @@ public interface ISalaryBuilder<T extends ISalary> {
 
 	public void setCcc(String ccc);
 
-	public void setEnterpriseCity(String enterpriseCity);
-
 	public void setEnterpriseName(String enterpriseName);
 
 	public void setEnterpriseAddress(String enterpriseAddress);
@@ -34,10 +32,6 @@ public interface ISalaryBuilder<T extends ISalary> {
 	// Employee related data
 
 	public void setRegistration(Integer registration);
-
-	public void setEmployeeCity(String employeeCity);
-
-	public void setEmployeeAddress(String employeeAddress);
 
 	public void setEmployeeName(String employeeName);
 

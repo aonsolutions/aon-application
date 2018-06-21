@@ -28,11 +28,7 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 	@Override
 	public void setCcc(String ccc) {
 	}
-	
-	@Override
-	public void setEnterpriseCity(String enterpriseCity) {
-	}
-	
+
 	@Override
 	public void setEnterpriseName(String enterpriseName) {
 	}
@@ -48,17 +44,9 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 	@Override
 	public void setRegistration(Integer registration) {
 	}
-	
-	@Override
-	public void setEmployeeCity(String employeeCity) {
-	}
-	
-	@Override
-	public void setEmployeeName(String employeeName) {
-	}
 
 	@Override
-	public void setEmployeeAddress(String employeeAddress) {
+	public void setEmployeeName(String employeeName) {
 	}
 
 	@Override

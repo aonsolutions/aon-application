@@ -177,7 +177,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PayrollWorkplaceColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.RaddressColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.salary.ISalary;
@@ -217,7 +216,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public static final String PERSON_REGISTRY = "person_registry";
 	public static final String ENTERPRISE_REGISTRY = "enterprise_registry";
-	public static final String WORKPLACE_RADDRESS = "workplace_raddress";
 
 	public static final String EMBARGO_PAID = "embargo_paid";
 	public static final String EMPTY = "";
@@ -239,17 +237,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //			+ " LEFT JOIN agreement_level_category ON (contract.agreement_level_category = agreement_level_category.id)"
 //			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
 			+ " LEFT JOIN agreement ON (agreement.id = agreement_level.agreement)" + ", person" + ", registry AS "
-			+ PERSON_REGISTRY + " LEFT JOIN raddress ON ( person_registry.id = raddress.registry  "
-			+ "AND raddress.id = ( SELECT id  FROM raddress WHERE registry =  person_registry.id ORDER BY id DESC LIMIT 1 ))"
-			+ ", workplace" + " LEFT JOIN payroll_workplace ON (payroll_workplace.workplace = workplace.id)"
-			+ ", enterprise" + ", registry AS " + ENTERPRISE_REGISTRY + " LEFT JOIN customer ON (customer.registry = "
-			+ ENTERPRISE_REGISTRY + ".id)" + ", raddress AS " + WORKPLACE_RADDRESS
-			+ " WHERE contract.person = person.registry"// INNER
-														// JOIN:
-														// person
-														// is
-														// NOT
-														// NULL
+			+ PERSON_REGISTRY + ", workplace"
+			+ " LEFT JOIN payroll_workplace ON (payroll_workplace.workplace = workplace.id)" + ", enterprise"
+			+ ", registry AS " + ENTERPRISE_REGISTRY + " LEFT JOIN customer ON (customer.registry = "
+			+ ENTERPRISE_REGISTRY + ".id)" + ", raddress" + " WHERE contract.person = person.registry" // INNER
+																										// JOIN:
+																										// person
+																										// is
+																										// NOT
+																										// NULL
 			+ " AND person.registry = person_registry.id" // INNER JOIN: //
 															// registry is NOT
 															// NULL
@@ -262,11 +258,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 																	// registry
 																	// is NOT
 																	// NULL
-			+ " AND workplace.address = " + WORKPLACE_RADDRESS + ".id" // INNER JOIN: address is
-																		// NOT NULL
-			+ " AND contract.start_date <= ? "
-
-			+ " AND ( contract.end_date  IS NULL" + " OR contract.end_date >= ? )";
+			+ " AND workplace.address = raddress.id" // INNER JOIN: address is
+														// NOT NULL
+			+ " AND contract.start_date <= ? " + " AND ( contract.end_date  IS NULL" + " OR contract.end_date >= ? )";
 	// @formatter:on
 
 	private static final String PAYMENT_SQL = "SELECT * " + ", " + ExpressionScope.CONTRACT.ordinal() + " AS "
@@ -1299,78 +1293,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public String getEnterpriseAddress() {
 		/* TODO A\F1adir la tabla y columnas a las constantes. */
 
-		String streetType = getString(WORKPLACE_RADDRESS, SQLConstants.RaddressColumns.STREET_TYPE);
-		String address = getString(WORKPLACE_RADDRESS, SQLConstants.RaddressColumns.ADDRESS);
-		String number = getString(WORKPLACE_RADDRESS, SQLConstants.RaddressColumns.NUMBER);
-		String address2 = getString(WORKPLACE_RADDRESS, SQLConstants.RaddressColumns.ADDRESS2);
-		String address3 = getString(WORKPLACE_RADDRESS, SQLConstants.RaddressColumns.ADDRESS3);
-		String zip = getString(WORKPLACE_RADDRESS, SQLConstants.RaddressColumns.ZIP);
-		String city = getString(WORKPLACE_RADDRESS, SQLConstants.RaddressColumns.CITY);
-		String geozone = getString(WORKPLACE_RADDRESS, SQLConstants.RaddressColumns.GEOZONE);
-
-		StringBuffer buf = new StringBuffer();
-		buf.append(streetType == null ? EMPTY : streetType);
-		buf.append(streetType == null ? EMPTY : DOT);
-		buf.append(streetType == null ? EMPTY : SPACE);
-		buf.append(StringUtils.isEmpty(address) ? EMPTY : address);
-		buf.append(StringUtils.isEmpty(number) ? EMPTY : SPACE);
-		buf.append(StringUtils.isEmpty(number) ? EMPTY : number);
-		buf.append(StringUtils.isEmpty(address2) ? EMPTY : COMMA);
-		buf.append(StringUtils.isEmpty(address2) ? EMPTY : SPACE);
-		buf.append(StringUtils.isEmpty(address2) ? EMPTY : address2);
-		buf.append(StringUtils.isEmpty(address3) ? EMPTY : SPACE);
-		buf.append(StringUtils.isEmpty(address3) ? EMPTY : OPEN_BRACKET);
-		buf.append(StringUtils.isEmpty(address3) ? EMPTY : address3);
-		buf.append(StringUtils.isEmpty(address3) ? EMPTY : CLOSE_BRACKET);
-		buf.append(StringUtils.isEmpty(zip) ? EMPTY : SPACE);
-		buf.append(StringUtils.isEmpty(zip) ? EMPTY : OPEN_BRACKET);
-		buf.append(StringUtils.isEmpty(zip) ? EMPTY : zip);
-		buf.append(StringUtils.isEmpty(zip) ? EMPTY : CLOSE_BRACKET);
-		buf.append(StringUtils.isEmpty(city) ? EMPTY : SPACE);
-		buf.append(StringUtils.isEmpty(city) ? EMPTY : city);
-
-		return StringUtils.abbreviate(buf.toString(), 64); // Avoid truncate
-	}
-
-	@Override
-	public String getEnterpriseCity() {
-		return getString(WORKPLACE_RADDRESS, RaddressColumns.CITY);
-	}
-
-	@Override
-	public String getEnterpriseDocument() {
-		return getString(ENTERPRISE_REGISTRY, RegistryColumns.DOCUMENT);
-	}
-
-	@Override
-	public SSRegimeType getSSRegime() {
-		int ordinal = getInt(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
-		return SSRegimeType.values()[ordinal];
-	}
-
-	@Override
-	public String getCategory() {
-		String category = getString(SQLConstants.CONTRACT, ContractColumns.CATEGORY_DESCRIPTION);
-//		if (AonStringUtils.isNotBlank(category))
-		return category;
-
-//		return getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.DESCRIPTION);
-	}
-
-	@Override
-	public String getQuoteGroup() {
-		return contractExpressionContext.getVariable(ContextVariable.QUOTE_GROUP, startDate, getEnd(), String.class);
-	}
-
-	@Override
-	public String getEmployeeCity() {
-		return getString(SQLConstants.RADDRESS, RaddressColumns.CITY);
-	}
-
-	@Override
-	public String getEmployeeAddress() {
-		/* TODO A\F1adir la tabla y columnas a las constantes. */
-
 		String streetType = getString(SQLConstants.RADDRESS, SQLConstants.RaddressColumns.STREET_TYPE);
 		String address = getString(SQLConstants.RADDRESS, SQLConstants.RaddressColumns.ADDRESS);
 		String number = getString(SQLConstants.RADDRESS, SQLConstants.RaddressColumns.NUMBER);
@@ -1402,6 +1324,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		buf.append(StringUtils.isEmpty(city) ? EMPTY : city);
 
 		return StringUtils.abbreviate(buf.toString(), 64); // Avoid truncate
+	}
+
+	@Override
+	public String getEnterpriseDocument() {
+		return getString(ENTERPRISE_REGISTRY, RegistryColumns.DOCUMENT);
+	}
+
+	@Override
+	public SSRegimeType getSSRegime() {
+		int ordinal = getInt(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
+		return SSRegimeType.values()[ordinal];
+	}
+
+	@Override
+	public String getCategory() {
+		String category = getString(SQLConstants.CONTRACT, ContractColumns.CATEGORY_DESCRIPTION);
+//		if (AonStringUtils.isNotBlank(category))
+		return category;
+
+//		return getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.DESCRIPTION);
+	}
+
+	@Override
+	public String getQuoteGroup() {
+		return contractExpressionContext.getVariable(ContextVariable.QUOTE_GROUP, startDate, getEnd(), String.class);
 	}
 
 	@Override

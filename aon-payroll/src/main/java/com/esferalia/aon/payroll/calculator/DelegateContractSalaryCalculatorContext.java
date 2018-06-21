@@ -59,10 +59,6 @@ public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCa
 		return ctx.getCcc();
 	}
 
-	public String getEnterpriseCity() {
-		return ctx.getEnterpriseCity();
-	}
-
 	public String getEnterpriseName() {
 		return ctx.getEnterpriseName();
 	}
@@ -85,16 +81,6 @@ public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCa
 
 	public String getQuoteGroup() {
 		return ctx.getQuoteGroup();
-	}
-	
-	@Override
-	public String getEmployeeCity() {
-		return ctx.getEmployeeCity();
-	}
-	
-	@Override
-	public String getEmployeeAddress() {
-		return ctx.getEmployeeAddress();
 	}
 
 	public String getEmployeeName() {
