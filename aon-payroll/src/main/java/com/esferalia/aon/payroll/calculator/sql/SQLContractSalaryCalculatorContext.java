@@ -1325,6 +1325,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		return StringUtils.abbreviate(buf.toString(), 64); // Avoid truncate
 	}
+	
+	@Override
+	public String getEmployeeCity() {
+		return "-";
+	}
+
+	@Override
+	public String getEmployeeAddress() {
+		return "-";
+	}
+
+	@Override
+	public String getEnterpriseCity() {
+		return "-";
+	}
 
 	@Override
 	public String getEnterpriseDocument() {

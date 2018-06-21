@@ -154,6 +154,11 @@ public class ContractSalaryCalculatorContext extends
 	}
 
 	@Override
+	public String getEnterpriseCity() {
+		return ctx.getEnterpriseCity();
+	}
+
+	@Override
 	public String getEnterpriseName() {
 		return ctx.getEnterpriseName();
 	}
@@ -183,6 +188,16 @@ public class ContractSalaryCalculatorContext extends
 		return ctx.getQuoteGroup();
 	}
 
+	@Override
+	public String getEmployeeCity() {
+		return ctx.getEmployeeCity();
+	}
+	
+	@Override
+	public String getEmployeeAddress() {
+		return ctx.getEmployeeAddress();
+	}
+	
 	@Override
 	public String getEmployeeName() {
 		return ctx.getEmployeeName();

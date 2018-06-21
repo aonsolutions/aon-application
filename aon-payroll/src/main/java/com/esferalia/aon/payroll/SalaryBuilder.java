@@ -42,6 +42,11 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	}
 
 	@Override
+	public void setEnterpriseCity(String enterpriseCity) {
+		//TODO: salary.setEnterpriseCity(enterpriseCity);
+	}
+
+	@Override
 	public void setEnterpriseName(String enterpriseName) {
 		this.salary.setEnterpriseName(enterpriseName);
 
@@ -69,6 +74,16 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	public void setEmployeeName(String employeeName) {
 		this.salary.setEmployeeName(employeeName);
 
+	}
+
+	@Override
+	public void setEmployeeCity(String employeeCity) {
+		//TODO: salary.setEmployeeCity(employeeCity);
+	}
+
+	@Override
+	public void setEmployeeAddress(String employeeAddress) {
+		//TODO: salary.setEmployeeAddress(employeeAddress);
 	}
 
 	@Override

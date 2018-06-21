@@ -314,6 +314,13 @@
 								<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
 									styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
 									text="AVISOS Y NOTIFICACIONES" checked="false" />
+								
+								<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
+									<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>
+									<g:item value="{A3}">TABULADA (BETA)</g:item>
+									<g:item value="{LETTER}">CARTA (BETA)</g:item>
+								</g:ListBox>
+								
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>

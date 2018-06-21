@@ -59,6 +59,7 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
+import com.esferalia.aon.js.payroll.client.Reports;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -158,12 +159,23 @@ public class SalaryDraft extends ResizeComposite
 	public static final String CUSTOM = "CUSTOM";
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
 	public static final String FROM_THIS_MONTH = "FROM_THIS_MONTH";
+	
+	public static final String A3 = SettleType.A3.name();
+	public static final String LETTER = SettleType.LETTER.name();
+	public static final String JASPER = SettleType.JASPER.name();
 
 	private static final DateTimeFormat DATE_SHORT = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
 	
-
+	
+	
+	
+	public static enum SettleType {
+		A3,
+		LETTER,
+		JASPER
+	}
 
 	private static Map<String, String> IRPF_ICONS = new HashMap<String, String>() {
 		private static final long serialVersionUID = 784424826829639284L;
@@ -2257,9 +2269,10 @@ public class SalaryDraft extends ResizeComposite
 	
 	@UiField
 	Button saveButton;
-//	@UiField
-//	Button printButton;
 
+	@UiField
+	ListBox settlePreviewListBox;
+	
 	private int zoom;
 	private Scope scope;
 	private List<HasVisibility> dbUIObjects;
@@ -2565,6 +2578,11 @@ public class SalaryDraft extends ResizeComposite
 		totalPaymentsLabel
 				.setText(String.valueOf(NumberUtils.isNotValid(totalPayment) ? 0.00 : AON.round(totalPayment)));
 	}
+	
+	@UiHandler("settlePreviewListBox")
+	void onSettlePreviewChange(ChangeEvent event) {
+		printSettle();
+	}
 
 	private void setDbVisible(boolean visible) {
 		dbCgcBaseLabel.setVisible(visible);
@@ -2589,9 +2607,9 @@ public class SalaryDraft extends ResizeComposite
 		showWidget(draftPanel);
 
 		saveButton.setVisible(false);
-//		printButton.setVisible(false);
 		zoomListBox.setVisible(false);
 		closePreviewButton.setVisible(false);
+		settlePreviewListBox.setVisible(false);
 		
 		fxButton.setVisible(true);
 		undoButton.setVisible(true);
@@ -2613,31 +2631,32 @@ public class SalaryDraft extends ResizeComposite
 		showWidget(pdfViewer);
 
 		saveButton.setVisible(true);
-//		printButton.setVisible(true);
 		zoomListBox.setVisible(true);
 		closePreviewButton.setVisible(true);
+		settlePreviewListBox.setVisible(isSettle());
+
 
 		fxButton.setVisible(false);
 		costsCheck.setVisible(false);
 		salarySelect.setVisible(false);
 		tgssCheck.setVisible(false);
+		eventsCheck.setVisible(false);
 		dbSalaryCheck.setVisible(false);
 		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
 	}
 
-
 	private void showIrpfPreview() {
 		showWidget(pdfViewer);
 
 		saveButton.setVisible(true);
-//		printButton.setVisible(true);
 		zoomListBox.setVisible(true);
 		closePreviewButton.setVisible(true);
-
+		
 		fxButton.setVisible(false);
 		undoButton.setVisible(false);
 		redoButton.setVisible(false);
+		eventsCheck.setVisible(false);
 		undoAllButton.setVisible(false);
 		costsCheck.setVisible(false);
 		salarySelect.setVisible(false);
@@ -2647,6 +2666,8 @@ public class SalaryDraft extends ResizeComposite
 		dbSalaryCheck.setVisible(false);
 		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
+		settlePreviewListBox.setVisible(false);
+
 	}
 
 	boolean isPreviewVisible() {
@@ -2667,6 +2688,10 @@ public class SalaryDraft extends ResizeComposite
 		contextDeckPanel.showWidget(contextDeckPanel.getWidgetIndex(contextTable));
 		contextTableButton.addStyleName(style.contextTabButtonSelected());
 		contextTimeLineButton.removeStyleName(style.contextTabButtonSelected());
+	}
+
+	protected boolean isSettle() {
+		return salaryDraftObject.getType() == Type.SETTLE;
 	}
 
 	private void showContextTimeLine() {
@@ -3859,7 +3884,7 @@ public class SalaryDraft extends ResizeComposite
 		paymentsTable.setWidget(row, 5, recoverButton);
 		paymentsTable.getCellFormatter().addStyleName(row, 5, AON.AON_TEXT_RIGHT);
 		recoverButton.addClickHandler(handler);
-
+		
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
 		for (int col = 0; col < paymentsTable.getCellCount(row); col++) {
 			fomatter.addStyleName(row, col, textStyleName);
@@ -4235,6 +4260,30 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}
 
+	private void printSettle() {
+		
+		SettleType type = SettleType.valueOf(settlePreviewListBox.getSelectedValue());
+		switch (type) {
+		case A3:
+			Reports.a3Letter(salaryDraftObject,  dataURI -> {
+				SalaryDraft.this.showPreview();
+				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+			});
+			break;
+		case LETTER:
+			Reports.defLetter(salaryDraftObject,  dataURI -> {
+				SalaryDraft.this.showPreview();
+				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+			});
+			break;
+		default:
+			print();
+			break;
+		}
+
+		
+	}
+
 	private void irpfPrint() {
 
 		salaryDraftObject.downloadIrpf("application/pdf", new AsyncCallback<String>() {
@@ -4276,7 +4325,7 @@ public class SalaryDraft extends ResizeComposite
 			
 			@Override
 			public Void visitSettle(Type type) {
-				print();
+				printSettle();
 				return null;
 			}
 

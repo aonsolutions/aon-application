@@ -1599,6 +1599,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		} catch ( Throwable t ) {
 			
 		}
+		try {
+			new com.esferalia.aon.js.payroll.client.Reports();
+		} catch ( Throwable t ) {
+			
+		}
 	}
 
 	// --------------------------------------------------- Cost.Listener methods
