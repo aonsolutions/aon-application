@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<script src="../src/main/resources/com/esferalia/aon/js/payroll/public/payroll/lib/bundle.js" ></script>
+		<script src="http://payroll-test.aonsolutions.org:8080/aon-aio/aon_gwt_payroll/payroll/lib/bundle.js" ></script>
+		<script type="text/javascript">
+		var stream = payroll.blobStream();
+		payroll.reports.a3Letter(
+			{
+				net: 596.71,
+				payment: 596.71,
+				deduction: 0.00,
+				place: 'ÁLAVA/ARABA',
+				date: new Date('2016-04-06'),
+				reason: 'FIN CONTRATO TEMPORAL',
+				enterprise: {
+					cif: 'B01487271',
+					name : 'AON SOLUTIONS, SL',
+					city : 'VITORIA-GASTEIZ',
+					address: 'CALLE DEL DUQUE DE WELLINGTON, 52'
+				},
+				employee: {
+					nif: '44679529MM',
+					fullname : 'TREPIANA ZÁRATE, RAÚL',
+					city : 'VITORIA-GASTEIZ',
+					address: 'AVENIDA JUAN CARLOS I, 7 5ºA',
+					category: 'PROGRAMADOR',
+				},
+				payments: [
+					{
+						amount : 596.71,
+						description: 'INDEMNIZACIÓN POR FIN DE CONTRATO TEMPORAL'
+					}
+				],
+				deductions: [
+					{
+						amount : 96.71,
+						description: 'I.R.P.F'
+					}
+				],
+				logo : ''
+			},stream);
+
+			stream.on('finish', function() {
+				iframe.src = this.toBlobURL('application/pdf');
+	  	});
+		</script>
+	</head>
+	<body>
+		<iframe id='iframe' style='width: 100%; height:99%'>
+		</iframe>
+	</body>
+</html>

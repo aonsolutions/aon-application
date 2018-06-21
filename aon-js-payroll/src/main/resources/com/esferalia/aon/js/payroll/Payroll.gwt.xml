@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='aon_js_payroll' >
+
+	<inherits name="com.google.gwt.core.Core"/>
+
+	<source path="client"/>
+
+</module>

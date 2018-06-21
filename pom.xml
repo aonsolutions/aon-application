@@ -150,6 +150,9 @@
 		<module>aon-ui-pms</module>
 		<module>aon-ui-sepe</module>
 
+		<!-- JS MODULES -->
+		<module>aon-js-payroll</module>
+
 		<!-- GWT MODULES -->
 		<module>aon-gwt-pdfjs</module>
 		<module>aon-gwt-aio</module>

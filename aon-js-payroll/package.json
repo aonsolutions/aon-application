@@ -1,0 +1,22 @@
+{
+  "name": "aon-js-payroll",
+  "version": "1.0.0",
+  "description": "Payroll Software",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "author": "AON SOLUTIONS, SL",
+  "license": "ISC",
+  "dependencies": {
+    "blob-stream": "^0.1.3",
+    "brfs": "^1.6.1",
+    "browserify": "^16.2.0",
+    "pdfkit": "^0.8.3",
+    "written-number": "^0.8.1"
+  }
+}
