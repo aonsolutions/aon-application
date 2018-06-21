@@ -3114,6 +3114,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						// e.printStackTrace();
 					}
 				};
+				@Override
+				protected java.util.List<com.esferalia.aon.salary.expression.ITimedResult<Double>> fixGuaranteedResults(
+						IContractPayment contractPayment,
+						java.util.List<com.esferalia.aon.salary.expression.ITimedResult<Double>> results,
+						java.util.List<Period> its, Date start, Date end, ExpressionContext expressionContext)
+						throws UnsupportedOperationException {
+					return Collections.emptyList();
+				};
+
 			}.calculate(ctx);
 			Object br =  salary.getCommonBase() / ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(),
 					ctx.getEndDate(), Double.class);
