@@ -39,13 +39,7 @@ public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		// TODO Auto-generated method stub
 
 	}
-	
-	@Override
-	public void setEnterpriseCity(String enterpriseCity) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+
 	@Override
 	public void setEnterpriseName(String enterpriseName) {
 		// TODO Auto-generated method stub
@@ -75,19 +69,7 @@ public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		// TODO Auto-generated method stub
 
 	}
-	
-	@Override
-	public void setEmployeeCity(String employeeCity) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void setEmployeeAddress(String employeeAddress) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+
 	@Override
 	public void setEmployeeDocument(String employeeDocument) {
 		// TODO Auto-generated method stub
