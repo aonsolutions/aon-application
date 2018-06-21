@@ -265,6 +265,11 @@ public class SalaryDraftBuilder
 		salaryDraft.setEnterpriseName(enterpriseName);
 
 	}
+	
+	@Override
+	public void setEnterpriseCity(String enterpriseCity) {
+		salaryDraft.setEnterpriseCity(enterpriseCity);
+	}
 
 	@Override
 	public void setEnterpriseAddress(String enterpriseAddress) {
@@ -280,6 +285,16 @@ public class SalaryDraftBuilder
 	public void setRegistration(Integer registration) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void setEmployeeCity(String employeeCity) {
+		salaryDraft.setEmployeeCity(employeeCity);
+	}
+	
+	@Override
+	public void setEmployeeAddress(String employeeAddress) {
+		salaryDraft.setEmployeeAddress(employeeAddress);
 	}
 
 	@Override

@@ -60,6 +60,11 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	public void setCcc(String ccc) {
 		salary.setCcc(ccc);
 	}
+	
+	@Override
+	public void setEnterpriseCity(String enterpriseCity) {
+		//TODO: salary.setEnterpriseCity(enterpriseCity);
+	}
 
 	@Override
 	public void setEnterpriseName(String enterpriseName) {
@@ -84,6 +89,16 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	@Override
 	public void setEmployeeName(String employeeName) {
 		salary.setEmployeeName(employeeName);
+	}
+
+	@Override
+	public void setEmployeeCity(String employeeCity) {
+		//TODO: salary.setEmployeeCity(employeeCity);
+	}
+
+	@Override
+	public void setEmployeeAddress(String employeeAddress) {
+		//TODO: salary.setEmployeeAddress(employeeAddress);
 	}
 
 	@Override
