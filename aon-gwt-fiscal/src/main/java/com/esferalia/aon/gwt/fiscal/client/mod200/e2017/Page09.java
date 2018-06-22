@@ -256,6 +256,11 @@ public class Page09 extends PageAbs {
 				|| callback.getMod200Object().getMod200().isChecked(Mod2002017Key.C0010))) {
 			return false;
 		}
+		if (key == Mod2002017Key.LQ562 
+				&& (callback.getMod200Object().getMod200().isChecked(Mod2002017Key.C0030) 
+				|| callback.getMod200Object().getMod200().isChecked(Mod2002017Key.C0047))) {
+			return false;
+		}
 		return super.isDisabled(key);
 	}
 	
