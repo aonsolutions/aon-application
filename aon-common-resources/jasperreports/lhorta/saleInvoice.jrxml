@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f858721f-98cb-4637-9c9f-37c12a007093">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="720"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="com.code.aon.product.enumeration.ProductType"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<scriptlet name="invoiceReportScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceReportScriptlet"/>
+	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
+	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getCompany()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logoImageFile" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLogoFile()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintRecordData()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getAddress()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="phone" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPhone()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getFax()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getEmail()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getWeb()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
+	<parameter name="nestedReports" class="java.util.Map"/>
+	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintHeader()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printLogo" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintLogo()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printName" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintName()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printNif" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintNif()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printAddress" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintAddress()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printInternetData" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getPrintInternetData()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="invoiceFooterText" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printDiscountPriceApplied" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.isPrintDiscountPriceApplied()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="leftSideText" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getLeftSideText()]]></defaultValueExpression>
+	</parameter>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="domain" class="java.lang.Integer"/>
+	<field name="referenceCode" class="java.lang.String"/>
+	<field name="issueDate" class="java.util.Date"/>
+	<field name="registryDocument" class="java.lang.String"/>
+	<field name="registryDocumentCountry" class="com.code.aon.common.enumeration.Country"/>
+	<field name="registryName" class="java.lang.String"/>
+	<field name="address" class="com.code.aon.registry.IAddress"/>
+	<field name="comments" class="java.lang.String"/>
+	<field name="rectificationType" class="com.code.aon.finance.enumeration.RectificationType"/>
+	<field name="rectificationInvoice" class="com.code.aon.finance.Invoice"/>
+	<field name="rectifier" class="java.lang.Boolean"/>
+	<field name="rectified" class="java.lang.Boolean"/>
+	<field name="rectificationInvoicesString" class="java.lang.String"/>
+	<field name="project" class="com.code.aon.project.Project"/>
+	<field name="lines" class="java.util.Set"/>
+	<field name="finances" class="java.util.Set"/>
+	<field name="vatAccrualPayment" class="java.lang.Boolean"/>
+	<variable name="comments" class="java.lang.String">
+		<variableExpression><![CDATA[(($F{comments}!=null) ? $F{comments} : "") + (($F{rectifier}||$F{rectified}) ? (($F{comments}!=null && !"".equals($F{comments}.trim())) ? "\n" : "") + (($F{rectifier}) ? ($R{finance_invoice_rectifier_message} + " " + $F{rectificationInvoice}.getReferenceCode()) : ($F{rectified}) ? ($R{finance_invoice_rectified_message} + " " + $F{rectificationInvoicesString}) : "") : "")]]></variableExpression>
+	</variable>
+	<variable name="currentInvoice" class="com.code.aon.finance.Invoice" resetType="Group" resetGroup="invoiceGroup">
+		<variableExpression><![CDATA[(com.code.aon.finance.Invoice)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
+	</variable>
+	<variable name="prepaymentTotal" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[$P{invoiceDetailPrinter}.getPrepaymentsTotal($F{id}, false)]]></variableExpression>
+	</variable>
+	<variable name="increaseTotal" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[$P{invoiceDetailPrinter}.getIncreaseTotal($F{id}, false)]]></variableExpression>
+	</variable>
+	<group name="invoiceGroup" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="842" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="0" y="0" width="595" height="421" uuid="38ba6abf-078e-4e97-b026-d606c7e5b7bb">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{nestedReports}.get("saleInvoiceA5")]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="0" y="421" width="595" height="421" isRemoveLineWhenBlank="true" uuid="443095c1-ee1d-4de7-9d67-318606b5d50d">
+					<printWhenExpression><![CDATA[$V{increaseTotal}!=null]]></printWhenExpression>
+				</reportElement>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{nestedReports}.get("saleInvoiceA5")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>
