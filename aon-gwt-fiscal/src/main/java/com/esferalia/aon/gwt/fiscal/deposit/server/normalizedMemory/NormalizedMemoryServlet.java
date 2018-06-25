@@ -74,8 +74,13 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
 	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
 	
-	/***** NEW GWT DEPOSIT *****/
 	
+	public static NormalizedMemoryServlet getInstance() {
+		return new NormalizedMemoryServlet();
+	}
+	
+	/***** NEW GWT DEPOSIT *****/
+		
 	public AonData getAonData(String domainName, Integer domainId, String login){
 		Domain domain = AON.getDomain(domainName, domainId, login);
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
@@ -96,7 +101,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), 
 				f -> f.getIdProperty().eq(id2), AttachType.REGISTRY);
 		
-		return getSchema(attach);
+		return getSchema(aonData, attach, -1);
 	}
 	
 	public Integer createSchemaTextMode(AonData aonData, String name) {
@@ -123,7 +128,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	    	} 
 			return createD2Deposit(aonData, company.getId(), company.getName(), type, year);	
 		} else {
-			return getSchema(attach);
+			return getSchema(aonData, attach, year);
 		}
 	}
 	
@@ -138,12 +143,12 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		return createD2Deposit(aonData, company.getId(), company.getName(), type, year);	
 	}
 	
-	private Map<String, String> getSchema(Attach attach){
+	private Map<String, String> getSchema(AonData aonData, Attach attach, Integer year){
 		Map<String, String> map = new HashMap<String, String>();
 
 		try {
 			Esquema schema = Utils.readXml(attach.getData());		
-			
+				
 			List<Clave> claves = schema.getClaves().getClave();
 			if(schema.getError() != null) {
 				map.put("error", schema.getError());
@@ -154,6 +159,10 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 				if(!map.containsKey(claves.get(i).getCodigo().toString()))
 					map.put(claves.get(i).getCodigo().toString(), claves.get(i).getValor());
 			}
+			
+			if(year != null && year != -1  && !schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
+				saveDeposit(aonData, map, year);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -161,7 +170,10 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	}
 
 	public Map<String, String>  updateType(AonData aonData, Integer year, String type) {
-		Esquema schema = DBConsults.getDeposit(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), year);
+		Esquema schema = getSchema(aonData, year);
+		if(!schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
+			schema.getCabecera().setEjercicio(BigInteger.valueOf(year));
+		}
 		schema = Utils.changeType(schema, type);
 		
 		try {
@@ -181,7 +193,10 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	}
 	
 	public void saveDeposit(AonData aonData, Map<String, String> deposit, Integer year) {
-		Esquema schema = DBConsults.getDeposit(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), year);
+		Esquema schema = getSchema(aonData, year);
+		if(!schema.getCabecera().getEjercicio().equals(BigInteger.valueOf(year))) {
+			schema.getCabecera().setEjercicio(BigInteger.valueOf(year));
+		}
 		schema = deposit2Schema(schema, deposit);
 		try {
 			byte[] b = Utils.writeXml(schema);
@@ -620,7 +635,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	}
 
 	public void updateSchemaMemory(AonData aonData, Boolean bool, String key, Integer year){
-		Esquema schema = DBConsults.getDeposit(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), year);
+		Esquema schema = getSchema(aonData, year);
+	
 		if(D2DepositFooterKey.PR8080805.getCode().equals(key))
 			schema.getCabecera().setMemoriaNormalizada(!bool);
 		
@@ -672,11 +688,22 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		
 		Integer id = DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, this.getUserLogin());
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
-		return getSchema(attach);
+		return getSchema(aonData, attach, year);
 	}
 
-	private Esquema getSchema(AonData aonData, Integer year){
-		return DBConsults.getDeposit(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), year);
+	public Esquema getSchema(AonData aonData, Integer year){
+		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getDomainProperty().eq(aonData.getDomain().getId())
+				.and(f.getTypeProperty().eq((byte) 17))
+				.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
+			, AttachType.REGISTRY);
+		
+		Esquema schema = null;
+		try {
+			schema = Utils.readXml(attach.getData());
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		return schema;
 	}	
 	
 	private Map<D2DepositHeaderKey, Double> getHeaderKeySchema(Esquema schema) {

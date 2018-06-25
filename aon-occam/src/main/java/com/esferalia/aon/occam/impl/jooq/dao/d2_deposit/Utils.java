@@ -404,33 +404,67 @@ public class Utils {
 	
 	public static Esquema changeType(Esquema schema, String type) {
 		schema.getCabecera().setTipoCuestionario(type);
+		Integer[] arr = {8080805, 8080852, 8080854, 8080855, 8080801, 8080803, 8080850, 8080851};
+		
 		schema.getClaves().getClave().stream().forEach(c ->{
 			if(c.getCodigo().equals(BigInteger.valueOf(8080805))){
 				c.setValor(ABREVIATE.equals(type) ? "1" : "0");
+				arr[0] = 1;
 			}
 			if(c.getCodigo().equals(BigInteger.valueOf(8080852))){
 				c.setValor(PYMES.equals(type) ? "1" : "0");
+				arr[1] = 1;
 			}
 			if(c.getCodigo().equals(BigInteger.valueOf(8080854))){
 				c.setValor(ABREVIATE.equals(type) ? "1" : "0");
+				arr[2] = 1;
 			}
 			if(c.getCodigo().equals(BigInteger.valueOf(8080855))){
 				c.setValor(PYMES.equals(type) ? "1" : "0");
+				arr[3] = 1;
 			}
 			if(c.getCodigo().equals(BigInteger.valueOf(8080801))){
 				c.setValor(ABREVIATE.equals(type) ? "1" : "0");
+				arr[4] = 1;
 			}
 			if(c.getCodigo().equals(BigInteger.valueOf(8080803))){
 				c.setValor(ABREVIATE.equals(type) ? "1" : "0");
+				arr[5] = 1;
 			}
 			if(c.getCodigo().equals(BigInteger.valueOf(8080850))){
 				c.setValor(PYMES.equals(type) ? "1" : "0");
+				arr[6] = 1;
 			}
 			if(c.getCodigo().equals(BigInteger.valueOf(8080851))){
 				c.setValor(PYMES.equals(type) ? "1" : "0");
+				arr[7] = 1;
 			}
 		});
 		
+		for(Integer i : arr) {
+			if(i != 1) {
+				Clave clave = new Clave();
+				clave.setCodigo(BigInteger.valueOf(i));
+				if(clave.getCodigo().equals(BigInteger.valueOf(8080805))){
+					clave.setValor(ABREVIATE.equals(type) ? "1" : "0");
+				} else if(clave.getCodigo().equals(BigInteger.valueOf(8080852))){
+					clave.setValor(PYMES.equals(type) ? "1" : "0");
+				} else if(clave.getCodigo().equals(BigInteger.valueOf(8080854))){
+					clave.setValor(ABREVIATE.equals(type) ? "1" : "0");
+				} else if(clave.getCodigo().equals(BigInteger.valueOf(8080855))){
+					clave.setValor(PYMES.equals(type) ? "1" : "0");
+				} else if(clave.getCodigo().equals(BigInteger.valueOf(8080801))){
+					clave.setValor(ABREVIATE.equals(type) ? "1" : "0");
+				} else if(clave.getCodigo().equals(BigInteger.valueOf(8080803))){
+					clave.setValor(ABREVIATE.equals(type) ? "1" : "0");
+				} else if(clave.getCodigo().equals(BigInteger.valueOf(8080850))){
+					clave.setValor(PYMES.equals(type) ? "1" : "0");
+				} else if(clave.getCodigo().equals(BigInteger.valueOf(8080851))){
+					clave.setValor(PYMES.equals(type) ? "1" : "0");
+				}
+				schema.getClaves().getClave().add(clave);
+			}
+		}
 		return schema;
 	}
 	

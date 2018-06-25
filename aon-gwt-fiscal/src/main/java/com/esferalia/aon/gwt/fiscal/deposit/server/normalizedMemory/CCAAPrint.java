@@ -14,12 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryItem;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -54,7 +55,10 @@ public class CCAAPrint extends HttpServlet {
 			Boolean isPdf = "pdf".equals(format);
 			Domain domain = new Domain().setName(domainName).setId(domainId);
 			D2Deposit d2Deposit = new D2Deposit(domain, cif, razonSocial).setId(id).setYear(year).setType(type);
-			d2Deposit.setMap(getSchema(req, d2Deposit, user));
+
+			AonData aonData = new AonData().setDomain(d2Deposit.getDomain()).setUser(new User().setLogin(user));
+		
+			d2Deposit.setMap(getSchema(aonData, year));
 			
 			if(isPdf){ // PRINT PDF
 				pdf(d2Deposit, options, isMemory, doget, resp);
@@ -147,8 +151,8 @@ public class CCAAPrint extends HttpServlet {
 		}
 	}
 
-	public Map<String, String> getSchema(HttpServletRequest req, D2Deposit d2Deposit, String user) {
-		Esquema schema = DBConsults.getSchema(d2Deposit, user);
+	public Map<String, String> getSchema(AonData aonData, Integer year) {
+		Esquema schema = NormalizedMemoryServlet.getInstance().getSchema(aonData, year);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put(D2DepositConstants.DEPOSIT_TYPE, schema.getCabecera().getTipoCuestionario());
 		schema.getClaves().getClave().stream().forEach(clave ->{

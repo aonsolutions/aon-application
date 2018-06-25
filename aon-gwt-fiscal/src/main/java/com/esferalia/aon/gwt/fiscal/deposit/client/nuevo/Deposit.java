@@ -561,6 +561,7 @@ public class Deposit extends AonTemplate2 {
 								getRedoStack().clear();
 								
 								setDeposit(result);
+								updateHeader(getDeposit().get(D2DepositConstants.DEPOSIT_TYPE), getYear());
 								refreshPage();
 							}
 							

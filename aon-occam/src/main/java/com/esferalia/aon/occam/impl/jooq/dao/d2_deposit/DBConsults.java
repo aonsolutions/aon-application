@@ -27,7 +27,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -217,10 +216,6 @@ public class DBConsults {
 		return schema;
 	}
 	
-	public static Esquema getSchema(D2Deposit d2Deposit, String user){
-		// return getSchema(d2Deposit.getDomain().getName(), d2Deposit.getDomain().getId(), user, d2Deposit.getId());
-		return getDeposit(d2Deposit.getDomain().getName(), d2Deposit.getDomain().getId(), user, d2Deposit.getYear());
-	}
 
 	public static Esquema getSchema(String domainName, Integer domainId, String user, 
 			Integer id){
@@ -232,73 +227,6 @@ public class DBConsults {
 			e.printStackTrace();
 		}
 		return schema;
-	}
-	public static Esquema getDeposit(String domain, Integer domainId, String login, Integer year) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-
-			// DOMAIN + DOMAIN SON
-			Record7<Integer, String, Byte, String, byte[], String, String> record = ctx
-					.getDslContext()
-					.select(RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.MIMETYPE,
-							RATTACH.DRIVE_ID, RATTACH.DATA, REGISTRY.DOCUMENT,
-							REGISTRY.NAME)
-					.from(RATTACH)
-					.join(REGISTRY)
-					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
-					.where(RATTACH.TYPE.eq((byte) 17).and(
-							RATTACH.DOMAIN.eq(domainId)))
-							.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year)))
-							.orderBy(RATTACH.ID).limit(1).fetchOne();
-
-			byte[] data;
-			Esquema schema = null;
-			if (record != null) {
-				data = record.value5();
-			} else {
-				Record3<Integer, String, String> reg = ctx
-						.getDslContext()
-						.select(ENTERPRISE.REGISTRY, REGISTRY.DOCUMENT,
-								REGISTRY.NAME)
-						.from(ENTERPRISE.join(REGISTRY).on(
-								REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
-						.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
-				Integer registry = reg.value1();
-				String document = reg.value2();
-				String name = reg.value3();
-				data = Utils.CreateXml(document, name);
-				insertDeposit(ctx, domain, data, domainId, name, document,
-						registry, year, login);
-
-			}
-			try {
-				schema = Utils.readXml(data);
-			} catch (Exception e) {
-				// TODO error
-				Record3<Integer, String, String> reg = ctx
-						.getDslContext()
-						.select(ENTERPRISE.REGISTRY, REGISTRY.DOCUMENT,
-								REGISTRY.NAME)
-						.from(ENTERPRISE.join(REGISTRY).on(
-								REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
-						.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
-				String document = reg.value2();
-				String name = reg.value3();
-				data = Utils.CreateXml(document, name);
-				try {
-					schema = Utils.readXml(data);
-					schema.setError("El fichero del deposito esta dañado \n " + e.getLocalizedMessage());
-				} catch (JAXBException e1) {
-					e1.printStackTrace();
-				}
-				e.printStackTrace();
-			}
-			return schema;
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
 	}
 
 	public static Esquema getDeposit(Attach attach) {
