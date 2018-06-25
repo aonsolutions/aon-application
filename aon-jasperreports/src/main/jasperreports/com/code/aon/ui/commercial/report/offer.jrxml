@@ -598,19 +598,20 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
+				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{address}.getFullAddress()
-+ "\\n" + (($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity()))
-+ "\\n" + ($F{address}.getGeozone().getName()
-	+((!$F{address}.getGeozone().getGeoZoneCountry().getId().equals($P{reportScriptlet_SCRIPTLET}.getAddress().getGeozone().getGeoZoneCountry().getId()))
-		?($F{address}.getGeozone().getGeoZoneCountry()!=null?" - "+$F{address}.getGeozone().getGeoZoneCountry().getName():"")
-		:""))
-+ "\\n" + (
++ "\n" + (($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity()))
++ ($F{address}.getGeozone()!=null?
+"\n" + $F{address}.getGeozone().getName()
+	+(($F{address}.getGeozone().getGeoZoneCountry()!=null && (!$F{address}.getGeozone().getGeoZoneCountry().getId().equals($P{reportScriptlet_SCRIPTLET}.getAddress().getGeozone().getGeoZoneCountry().getId()))?" - "+$F{address}.getGeozone().getGeoZoneCountry().getName():"")
+		):"")
++ "\n" + (
 	($F{target}.getRegistry().getPhone()!=null && $F{target}.getRegistry().getPhone().getValue()!=null?$R{aon_telephone} + ": " : "") +
 	($F{target}.getRegistry().getPhone()!=null && $F{target}.getRegistry().getPhone().getValue()!=null?$F{target}.getRegistry().getPhone().getValue():"") +
 	($F{target}.getRegistry().getPhone()!=null && $F{target}.getRegistry().getPhone().getValue()!=null && $F{target}.getRegistry().getCellular()!=null && $F{target}.getRegistry().getCellular().getValue()!=null?" - ":"") +
+	($F{target}.getRegistry().getCellular()!=null && $F{target}.getRegistry().getCellular().getValue()!=null?$R{aon_cellular} + ": " : "") +
 	($F{target}.getRegistry().getCellular()!=null && $F{target}.getRegistry().getCellular().getValue()!=null?$F{target}.getRegistry().getCellular().getValue():""))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
