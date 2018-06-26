@@ -108,6 +108,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		String passDocumentStyle();
 		String passNSSStyle();
 		String passNationalityStyle();
+		String nieDocumentStyle();
 		String nieNSSStyle();
 		String nieNationalityStyle();
 		
@@ -966,9 +967,11 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 		
 		if(document_type_str == "NIE"){
+			this.document.addStyleName(style.nieDocumentStyle());
 			this.nationality.addStyleName(style.nieNationalityStyle());
 			this.security_social_num.addStyleName(style.nieNSSStyle());
 		}else{
+			this.document.removeStyleName(style.nieDocumentStyle());
 			this.nationality.removeStyleName(style.nieNationalityStyle());
 			this.security_social_num.removeStyleName(style.nieNSSStyle());
 		}
