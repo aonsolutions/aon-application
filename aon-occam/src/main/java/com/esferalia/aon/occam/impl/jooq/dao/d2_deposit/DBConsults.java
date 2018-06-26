@@ -13,8 +13,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Vector;
 
-import javax.xml.bind.JAXBException;
-
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
@@ -207,13 +205,7 @@ public class DBConsults {
 	}
 	
 	public static Esquema readXml(byte[] data){
-		Esquema schema = null;
-		try {
-			schema = Utils.readXml(data);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		return schema;
+		return Utils.readXml(data);
 	}
 	
 

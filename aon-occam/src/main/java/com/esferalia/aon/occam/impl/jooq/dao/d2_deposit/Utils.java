@@ -4,7 +4,6 @@ import static com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositInitiali
 import static com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositInitialization.INITIALIZE_EXPRESSION_MAP_D2;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,14 +20,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -72,13 +65,18 @@ public class Utils {
 		return AonIOUtils.toByteArray(fis);
 	}
 	
-	public static Esquema readXml(byte[] xmlFile) throws JAXBException{
-		JAXBContext ctx = JAXBContext.newInstance(Esquema.class);
+	public static Esquema readXml(byte[] xmlFile){
+		Esquema schema = new Esquema();
+		try {
+			JAXBContext ctx = JAXBContext.newInstance(Esquema.class);
+			Unmarshaller unmarshaller = ctx.createUnmarshaller();
+			InputStream input = new ByteArrayInputStream(xmlFile);
+			schema = (Esquema) unmarshaller.unmarshal(input);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			schema.setError("El archivo xml no es legible.\n" + e.getLocalizedMessage());
+		}
 		
-		Unmarshaller unmarshaller = ctx.createUnmarshaller();
-	
-		InputStream input = new ByteArrayInputStream(xmlFile);
-		Esquema schema = (Esquema) unmarshaller.unmarshal(input);
 		
 		return schema;
 	}
@@ -113,104 +111,6 @@ public class Utils {
 		schema.setCabecera(header);
 		schema.setClaves(keys);
 		return schema;
-	}
-	
-	public static byte[] writeXmlFile(Esquema schema){
-		/*<?xml version="1.0" encoding="UTF-8"?>
-		<Esquema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-			<Cabecera>
-				....
-			</Cabecera>
-			<Claves>
-				<Clave>
-					<Codigo></Codigo>
-					<Valor></Valor>
-				</Clave>
-				.....
-				<Clave>
-					<Codigo></Codigo>
-					<Valor></Valor>
-				</Clave>
-			</Claves>
-		</Esquema>*/
-		
-		byte[] b = null;
-		try {
-	 
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-	 
-			// root elements
-			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("Esquema");
-			doc.appendChild(rootElement);
-	 
-			// firstname elements
-			Element cabecera = doc.createElement("Cabecera");
-			rootElement.appendChild(cabecera);
-			
-			Element cif = doc.createElement("CIF");
-			cif.setTextContent(schema.getCabecera().getCIF());
-			cabecera.appendChild(cif);
-			
-			Element razonSocial = doc.createElement("RazonSocial"); 
-			razonSocial.setTextContent(schema.getCabecera().getRazonSocial());
-			cabecera.appendChild(razonSocial);
-			
-			Element descripcion = doc.createElement("Descripcion");
-			descripcion.setTextContent("registry.name");
-			cabecera.appendChild(descripcion);
-			
-			Element tipoCuestionario = doc.createElement("TipoCuestionario");
-			tipoCuestionario.setTextContent(schema.getCabecera().getTipoCuestionario());
-			cabecera.appendChild(tipoCuestionario);
-			
-			Element idiomaCuestionario = doc.createElement("IdiomaCuestionario");
-			idiomaCuestionario.setTextContent(schema.getCabecera().getIdiomaCuestionario());
-			cabecera.appendChild(idiomaCuestionario);
-			
-			Element memoriaNormalizada = doc.createElement("MemoriaNormalizada");
-			memoriaNormalizada.setTextContent("True");
-			cabecera.appendChild(memoriaNormalizada);
-			
-			Element ejercicio = doc.createElement("Ejercicio");
-			ejercicio.setTextContent(schema.getCabecera().getEjercicio().toString());
-			cabecera.appendChild(ejercicio);
-			
-			Element claves = doc.createElement("Claves");
-			rootElement.appendChild(claves);
-			
-			for(Clave c : schema.getClaves().getClave()){
-				Element clave = doc.createElement("Clave");
-				claves.appendChild(clave);
-				Element codigo = doc.createElement("Codigo");
-				codigo.setTextContent(c.getCodigo().toString());
-				clave.appendChild(codigo);
-				Element valor = doc.createElement("Valor");
-				valor.setTextContent(c.getValor());
-				clave.appendChild(valor);
-			}
-			
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-						
-							
-						
-			ByteArrayOutputStream bos=new ByteArrayOutputStream();
-			StreamResult result = new StreamResult(bos);
-				 
-			transformer.transform(source, result);
-						
-			b = bos.toByteArray();
-						
-		} catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		} catch (TransformerException tfe) {
-			tfe.printStackTrace();
-		}
-		return b;
 	}
 	
 	public static byte[] CreateXml(String document, String name) {

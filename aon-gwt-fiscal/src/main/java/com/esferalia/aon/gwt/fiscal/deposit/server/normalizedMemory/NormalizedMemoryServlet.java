@@ -178,7 +178,10 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		
 		try {
 			byte[] b = Utils.writeXml(schema);
-			DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
+			Esquema sch = Utils.readXml(b);
+			if(sch.getError() != null || !sch.getError().isEmpty()) {
+				// TODO 
+			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -200,7 +203,10 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		schema = deposit2Schema(schema, deposit);
 		try {
 			byte[] b = Utils.writeXml(schema);
-			DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
+			Esquema sch = Utils.readXml(b);
+			if(sch.getError() != null || !sch.getError().isEmpty()) {
+				// TODO
+			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -213,8 +219,13 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		schema = deposit2Schema(schema, deposit);
 		try {
 			byte[] b = Utils.writeXml(schema);
-			attach.setData(b);
-			AON.updateAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), attach);
+			Esquema sch = Utils.readXml(b);
+			if(sch.getError() != null || !sch.getError().isEmpty()) {
+				// TODO
+			} else {
+				attach.setData(b);
+				AON.updateAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), attach);
+			}
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -661,7 +672,10 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		
 		try {
 			byte[] b = Utils.writeXml(schema);
-			DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, this.getUserLogin());
+			Esquema sch = Utils.readXml(b);
+			if(sch.getError() != null || !sch.getError().isEmpty()) {
+				// TODO
+			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, this.getUserLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -696,14 +710,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 				.and(f.getTypeProperty().eq((byte) 17))
 				.and(f.getAttachDateProperty().eq(DBConsults.newAttachDate(year)))
 			, AttachType.REGISTRY);
-		
-		Esquema schema = null;
-		try {
-			schema = Utils.readXml(attach.getData());
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		return schema;
+	
+		return Utils.readXml(attach.getData());
 	}	
 	
 	private Map<D2DepositHeaderKey, Double> getHeaderKeySchema(Esquema schema) {
