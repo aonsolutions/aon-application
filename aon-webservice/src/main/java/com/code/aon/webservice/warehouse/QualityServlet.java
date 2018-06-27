@@ -59,6 +59,12 @@ public class QualityServlet extends HttpServlet{
 				case MSG.DATA_RESPONSE: 
 					object = getDataResponseList(domain, userName, req.getParameterMap());
 					break;
+				case MSG.PATURPAT: 
+					object = getPaturpatQualityList(domain, userName, req.getParameterMap());
+					break;
+				case MSG.UDAPA: 
+					object = getUdapaQualityList(domain, userName, req.getParameterMap());
+					break;
 				default:
 					break;
 				}
@@ -72,6 +78,41 @@ public class QualityServlet extends HttpServlet{
 		
 	}
 	
+	private JSONArray getUdapaQualityList(Domain domain, String login, Map<String, String[]> map) {
+		JSONArray array = new JSONArray();
+		AON.getUdapaQualityStream(domain.getName(), domain.getId(), login, map)
+		.forEach(r -> array.put(new JSONObject()
+				.put(MSG.ID, r.getDataResponse().getId())
+				.put(MSG.DOMAIN, r.getDataResponse().getDomain())
+				.put(MSG.CODE, r.getDataResponse().getCode())
+				.put(MSG.DATE,  r.getDataResponse().getResponseDate() != null ? AonDateUtils.dateTimeFormat(r.getDataResponse().getResponseDate()) : MSG.EMPTY)
+				.put(MSG.CREATION_USER, r.getDataResponse().getCreationUser())
+				.put(MSG.CREATION_DATE,  r.getDataResponse().getCreationDate() != null ? AonDateUtils.dateTimeFormat(r.getDataResponse().getCreationDate()) : MSG.EMPTY)
+				.put(MSG.MODIFICATION_USER, r.getDataResponse().getModificationUser())
+				.put(MSG.MODIFICATION_DATE, r.getDataResponse().getModificationDate() != null ? AonDateUtils.dateTimeFormat(r.getDataResponse().getModificationDate()) : MSG.EMPTY)
+				.put(MSG.PRODUCT, r.getProduct())
+				.put(MSG.PRODUCT, ToJSON.objectToJSON(r.getSupplier().getId(), r.getSupplier().getName()))));
+		return array;
+	}
+	
+	private JSONArray getPaturpatQualityList(Domain domain, String login, Map<String, String[]> map) {
+		JSONArray array = new JSONArray();
+		AON.getPaturpatQualityStream(domain.getName(), domain.getId(), login, map)
+		.forEach(r -> array.put(new JSONObject()
+				.put(MSG.ID, r.getDataResponse().getId())
+				.put(MSG.DOMAIN, r.getDataResponse().getDomain())
+				.put(MSG.CODE, r.getDataResponse().getCode())
+				.put(MSG.DATE,  r.getDataResponse().getResponseDate() != null ? AonDateUtils.dateTimeFormat(r.getDataResponse().getResponseDate()) : MSG.EMPTY)
+				.put(MSG.CREATION_USER, r.getDataResponse().getCreationUser())
+				.put(MSG.CREATION_DATE,  r.getDataResponse().getCreationDate() != null ? AonDateUtils.dateTimeFormat(r.getDataResponse().getCreationDate()) : MSG.EMPTY)
+				.put(MSG.MODIFICATION_USER, r.getDataResponse().getModificationUser())
+				.put(MSG.MODIFICATION_DATE, r.getDataResponse().getModificationDate() != null ? AonDateUtils.dateTimeFormat(r.getDataResponse().getModificationDate()) : MSG.EMPTY)
+				.put(MSG.PRODUCT, r.getProduct())
+				.put(MSG.SUPPLIER, ToJSON.objectToJSON(1, "a"))));
+		return array;
+	}
+
+	
 	private JSONArray getDataResponseList(Domain domain, String login, Map<String, String[]> map) {
 		AONContext ctx = null;
 		try {
@@ -83,13 +124,13 @@ public class QualityServlet extends HttpServlet{
 			.join(Registry.REGISTRY).on(Income.INCOME.SUPPLIER.eq(Registry.REGISTRY.ID))
 			.where(DataResponse.DATA_RESPONSE.DOMAIN.eq(ctx.getDomainId()));
 			
-			if(map.containsKey("from")) {
+			if(map.containsKey(MSG.FROM)) {
 				String from = map.get(MSG.FROM)[0];
 				Date d = new Date(Long.parseLong(from));
 				a = a.and(DataResponse.DATA_RESPONSE.RESPONSE_DATE.ge(AonDateUtils.toSql(d)));
 			}
 			
-			if(map.containsKey("to")){
+			if(map.containsKey(MSG.TO)){
 				String to = map.get(MSG.TO)[0];
 				Date d = new Date(Long.parseLong(to));
 				a = a.and(DataResponse.DATA_RESPONSE.RESPONSE_DATE.le(AonDateUtils.toSql(d)));
@@ -103,8 +144,8 @@ public class QualityServlet extends HttpServlet{
 				a = a.and(c);
 			} 
 			
-			if(map.containsKey("code")){
-				a =  a.and(DataResponse.DATA_RESPONSE.CODE.like("%" + map.get("code")[0] + "%"));
+			if(map.containsKey(MSG.CODE)){
+				a =  a.and(DataResponse.DATA_RESPONSE.CODE.like("%" + map.get(MSG.CODE)[0] + "%"));
 			} 
 
 			if(map.containsKey("source")){
@@ -163,5 +204,6 @@ public class QualityServlet extends HttpServlet{
 			if(ctx != null) ctx.close();
 		}
 	}
+	
 
 }

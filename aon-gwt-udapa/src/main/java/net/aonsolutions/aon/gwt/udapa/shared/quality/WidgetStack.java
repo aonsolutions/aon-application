@@ -10,11 +10,16 @@ public class WidgetStack {
 	String value;
 	String prevValue;
 	WidgetType widgetType;
-	QualitySheetCode code;
+	String code;
 	
 	public WidgetStack(Widget widget, QualitySheetCode code) {
 		this.widget = widget;
-		this.code = code;
+		this.code = code.getName();
+	}
+	
+	public WidgetStack(Widget widget, net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.QualitySheetCode code) {
+		this.widget = widget;
+		this.code = code.getName();
 	}
 	
 	public WidgetStack() {
@@ -85,11 +90,11 @@ public class WidgetStack {
 		this.widgetType = widgetType;
 	}
 
-	public QualitySheetCode getCode() {
+	public String getCode() {
 		return code;
 	}
 
-	public void setCode(QualitySheetCode code) {
+	public void setCode(String code) {
 		this.code = code;
 	}
 	

@@ -1,0 +1,108 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client"
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+
+<g:SplitLayoutPanel ui:field="contentSplitLayoutPanel">
+	<g:center>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
+			<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
+				<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
+					<tr>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Almacén"/>
+						</td>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="warehouse"></g:Label>
+						</td>
+						
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="{msg.number}"/>
+						</td>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="number"></g:Label>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="{msg.issueDate}"/>
+						</td>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="date"></g:Label>
+						</td>
+						
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Hora"/>
+						</td>
+						<td style="width: 65px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="hour"></g:Label>
+						</td>
+					</tr>
+				</table>
+				<table class="{aonResources.css.aonWidthAll}">
+					<!-- DATOS PRODUCTO -->
+					
+					<tr>
+						<td>
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="Datos Producto" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<g:FlexTable ui:field="productData" styleName="{aonResources.css.aonWidthAll}"></g:FlexTable>
+								</div>
+							</div>
+						</td>
+					</tr>
+				
+					
+					<!-- ANALISIS CALIDAD -->
+					
+					<tr>
+						<td>
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="Análisis Calidad" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<g:FlexTable ui:field="qualityTest" styleName="{aonResources.css.aonWidthAll}"></g:FlexTable>
+								</div>
+							</div>
+						</td>
+					</tr>
+					
+			
+					<!-- OBSERVACIONES -->
+					<tr>
+						<td>
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="Observaciones" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<g:FlexTable ui:field="observation" styleName="{aonResources.css.aonWidthAll}"></g:FlexTable>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<g:FlexTable ui:field="table"
+					styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginTop}" />
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</g:center>
+
+</g:SplitLayoutPanel>
+
+</ui:UiBinder>

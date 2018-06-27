@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
@@ -95,11 +97,11 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				
 			if(map.get(QualitySheetCode.UFQCC01.getName()).equals("0.0") || Double.parseDouble(map.get(QualitySheetCode.UFQCC01.getName())) > id.getQuantity()) {
 				map.put(QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "");
-				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCC01, id.getQuantity() + "", map);
+				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "", map);
 			}
 			if(map.get(QualitySheetCode.UFQCD01.getName()).equals("0.0") || Double.parseDouble(map.get(QualitySheetCode.UFQCD01.getName())) > id.getQuantity()) {
 				map.put(QualitySheetCode.UFQCD01.getName(), id.getQuantity() + "");
-				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCD01, id.getQuantity() + "", map);
+				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCD01.getName(), id.getQuantity() + "", map);
 			}
 			if(!map.containsKey("product_price")) {
 				DataResponseDetail drd = new DataResponseDetail();
@@ -142,23 +144,50 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
  		}
 		return compute(map);
 	}
+
+	public HashMap<String, String> getPaturpatValues(String domainName, Integer domainId, Integer drId){
+		String login = "";
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.PATURPAT_QUALITY, f -> f.getIdProperty().eq(drId));
+		
+		HashMap<String, String> map = new HashMap<>();
+		net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.QualitySheetCode.valueLinkedList().stream()
+		.forEach(key -> map.put(key, "0.0"));
+		map.put(net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.QualitySheetCode.PFQO.getName(), "ABC");
+		
+		AON.getDataResponseDetailStream(domainName, domainId, login, 
+				f -> f.getDataResponseProperty().eq(drId))
+		.forEach(drd -> {
+			map.put(drd.getDataVariable(), drd.getDataValue());
+		});
+					
+		ElaborationDetail ed = AON.getFullElaborationDetail(domainName, domainId, login, dr.getSourceId());
+		map.put("warehouse", ed.getWarehouse().getName());
+		map.put("product_description", "A");
+		map.put("product_quantity", "B");
+		map.put("product_supplier", "D");
+		map.put("full_address", "E");
+		map.put("end_address", "F");
+
+		return map;
+	}
+
 	
-	public HashMap<String, String> updateValue(String domainName, Integer domainId, Integer drId, QualitySheetCode code, String value, HashMap<String, String> map){
+	public HashMap<String, String> updateValue(String domainName, Integer domainId, Integer drId, String code, String value, HashMap<String, String> map){
 		String login = "";
 		DataResponseDetail drd = new DataResponseDetail();
 		drd.setDomain(domainId);
 		drd.setDataResponse(drId);
-		drd.setDataVariable(code.getName());
+		drd.setDataVariable(code);
 		drd.setDataValue(value);
 		Optional<DataResponseDetail> opt = AON.getDataResponseDetail(domainName, domainId, login, f ->
-			f.getDomainProperty().eq(domainId).and(f.getDataVariableProperty().eq(code.getName()))
+			f.getDomainProperty().eq(domainId).and(f.getDataVariableProperty().eq(code))
 			.and(f.getDataResponseProperty().eq(drId)));
 		if(opt.isPresent()){			
 			AON.updateDataResponseDetail(domainName, domainId, login, drd, f -> f.getIdProperty().eq(opt.get().getId()));
 		} else AON.insertDataResponseDetail(domainName, domainId, login, drd);
-		map.put(code.getName(), value);
+		map.put(code, value);
 
-		if(QualitySheetCode.UFQC2.equals(code)) {
+		if(QualitySheetCode.UFQC2.getName().equals(code)) {
 			AON.insertApplicationParameter(domainName, domainId, login, AppParam.QUALITY_PFONDO, value);
 		}
 		return compute(map);
@@ -221,4 +250,5 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			AON.updateIncomeDetail(domainName, domainId, "", incomeDetail.get());
 		}
 	}
+
 }

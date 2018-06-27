@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
@@ -24,6 +25,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
@@ -37,8 +39,6 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
-import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.util.function.Function;
 
@@ -113,6 +113,8 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
+import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -1065,6 +1067,60 @@ public class FillerDAO {
 					.setSubject(r.getValue(MK_TEMPLATE.SUBJECT))
 					.setTitleColor(r.getValue(MK_TEMPLATE.TITLE_COLOR))
 					.setWidth(r.getValue(MK_TEMPLATE.WIDTH));
+		}
+	}
+	
+	public static class UdapaQualityFiller implements Function<Record, UdapaQuality> {
+		
+		@Override
+		public UdapaQuality apply(Record r) {
+			Supplier supplier = new Supplier();
+			supplier.setAlias(r.getValue(REGISTRY.ALIAS));
+			supplier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
+			supplier.setDocument(r.getValue(REGISTRY.DOCUMENT));
+			supplier.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			supplier.setDomain(r.getValue(REGISTRY.DOMAIN));
+			supplier.setId(r.getValue(REGISTRY.ID));
+			supplier.setName(r.getValue(REGISTRY.NAME));
+			supplier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			supplier.setType(r.getValue(REGISTRY.TYPE));
+			return new UdapaQuality()
+					.setDataResponse(new DataResponse()
+							.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
+							.setId(r.getValue(DATA_RESPONSE.ID))
+							.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
+							.setCode(r.getValue(DATA_RESPONSE.CODE))
+							.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
+							.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
+							.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
+							.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
+							.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
+							.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER)))
+					.setSupplier(supplier)
+					.setProduct(r.getValue(INCOME_DETAIL.DESCRIPTION));
+			
+		}
+	}
+
+	public static class PaturpatQualityFiller implements Function<Record, PaturpatQuality> {
+		
+		@Override
+		public PaturpatQuality apply(Record r) {
+
+			return new PaturpatQuality()
+				.setDataResponse(new DataResponse()
+							.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
+							.setId(r.getValue(DATA_RESPONSE.ID))
+							.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
+							.setCode(r.getValue(DATA_RESPONSE.CODE))
+							.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
+							.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
+							.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
+							.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
+							.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
+							.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER)))
+				.setProduct(r.getValue(PRODUCT.NAME) + " #" + r.getValue(ITEM.SERIAL_NUMBER));
+			
 		}
 	}
 

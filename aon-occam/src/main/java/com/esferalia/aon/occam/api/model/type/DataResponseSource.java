@@ -23,7 +23,8 @@ public enum DataResponseSource implements Serializable{
 	MOD130,
 	MOD131,
 	MOD390,
-	INGENET_SALES
+	INGENET_SALES,
+	PATURPAT_QUALITY
 	;
 
 

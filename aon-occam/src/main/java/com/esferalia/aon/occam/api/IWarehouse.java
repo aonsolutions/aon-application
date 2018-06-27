@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -24,7 +25,6 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
-import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -34,8 +34,10 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
+import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
@@ -152,6 +154,7 @@ public interface IWarehouse {
 	// 	***********************************************
 	// 	****************************** ELABORATION ****
 	// 	***********************************************
+	
 	Elaboration getElaboration(AONContext ctx, Integer id);
 	Stream<Elaboration> getElaborationStream(AONContext ctx, ElaborationFilter filter);
 	ElaborationDetail getElaborationDetail(AONContext ctx, Integer id);
@@ -173,5 +176,16 @@ public interface IWarehouse {
 	
 	Integer getElaborationNextNumber(AONContext ctx, String serie);
 
+
+	// 	***********************************************
+	// 	**************************** UDAPA QUALITY ****
+	// 	***********************************************
 	
+	Stream<UdapaQuality> getUdapaQualityStream(AONContext ctx, Map<String, String[]> map);
+
+	// 	***********************************************
+	// 	************************* PATURPAT QUALITY ****
+	// 	***********************************************
+	
+	Stream<PaturpatQuality> getPaturpatQualityStream(AONContext ctx, Map<String, String[]> map);	
 }

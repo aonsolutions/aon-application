@@ -8,13 +8,16 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
+import com.esferalia.aon.gwt.common.client.widget.FilterPanel;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -48,8 +51,9 @@ public class UdapaQuality extends AonTemplate2{
 	final IUdapaAsync impl = GWT.create(IUdapa.class);
 	private API API;
 	private UdapaQuality me = this;
-	HashMap<String, LinkedList<String>> filterMap;
+	
 	private AonData aonData;
+	private FilterPanel filterPanel;
 	
 	public API getAPI() {
 		return API;
@@ -59,12 +63,20 @@ public class UdapaQuality extends AonTemplate2{
 		return aonData;
 	}
 	
-	public HashMap<String, LinkedList<String>> getFilterMap() {
-		return filterMap;
+	public FilterPanel getFilterPanel() {
+		return filterPanel;
 	}
 	
-	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
-		this.filterMap = filterMap;
+	public void setFilterPanel(FilterPanel filterPanel) {
+		this.filterPanel = filterPanel;
+	}
+	
+    public HashMap<String, LinkedList<String>> getFilterMap() {
+		return getFilterPanel().getFilterMap();
+	}
+    
+    public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
+		getFilterPanel().setFilterMap(filterMap);
 	}
 	
 	public UdapaQuality(AonData aonData) {
@@ -101,13 +113,6 @@ public class UdapaQuality extends AonTemplate2{
 	}
 	
 	private void startApplication() {
-		initializeFilterMap();
-		toolbar();
-		westContent();
-		principalContent();
-	}
-	
-	private void backApplication() {
 		toolbar();
 		westContent();
 		principalContent();
@@ -151,9 +156,33 @@ public class UdapaQuality extends AonTemplate2{
 		setContent(new QualityPrincipal(me));
 	}
 	
+	public FilterPanel filterPanel() {
+		FilterPanel fp = new FilterPanel(initializeFilterMap()) {
+			
+			@Override
+			protected void refresh() {
+				QualityPrincipal qp = (QualityPrincipal) getContent().getWidget();
+				qp.gridContent();
+			}
+		};
+		fp.addDateFilter("Desde", "from");
+		fp.addDateFilter("Hasta", "to");
+		fp.addTextFilter("N\u00BA Pedido", "code");
+		getAPI().getRegistry().getSuppliers(new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsObject> result) {
+				fp.addPaperButton("Proveedor", result.getData().cast(), "supplier");
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		setFilterPanel(fp);
+		return getFilterPanel();
+	}
 	
 	public void sheetContent(JsDataResponse js, HashMap<String, LinkedList<String>> map) {
-		this.filterMap = map;
+		setFilterMap(map);
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		
 		toolbar.getButtonPanel().getWidget(0).setVisible(true);// toolbar.setBackVisible(true);
@@ -169,10 +198,11 @@ public class UdapaQuality extends AonTemplate2{
 	}
 
 	public HashMap<String, LinkedList<String>> initializeFilterMap() {
-		filterMap = new HashMap<>();
+		HashMap<String, LinkedList<String>> filterMap = new HashMap<>();
 		LinkedList<String> list = new LinkedList<>();
 		list.add("quality");
 		filterMap.put("type", list);
+		if(getFilterPanel() != null) setFilterMap(filterMap);
 		return filterMap;
 	}
 	
@@ -197,7 +227,7 @@ public class UdapaQuality extends AonTemplate2{
 			@Override protected void onCancel() {hide();}
 			
 			@Override 
-			protected void onAccept() {	
+			protected void onAccept() {
 				QualitySheet sheet = (QualitySheet) getContent().getWidget();
 				String idStr = sheet.getDataResponse().getId() + "";
 				Integer id = Integer.parseInt(idStr);
@@ -319,7 +349,7 @@ public class UdapaQuality extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				backApplication();
+				startApplication();
 			}
 		};
 	}
@@ -389,16 +419,16 @@ public class UdapaQuality extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Integer page = Integer.parseInt(filterMap.get("page").get(0));
+				Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
 				
 				if(page > 1 ){
 					page = page - 1;
 					LinkedList<String> list = new LinkedList<>();
 					list.add(page.toString());
-					filterMap.put("page", list);
+					getFilterMap().put("page", list);
 					list = new LinkedList<>();
 					list.add("1");
-					filterMap.put("per_page", list);
+					getFilterMap().put("per_page", list);
 					getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 						
 						@Override
@@ -418,27 +448,27 @@ public class UdapaQuality extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Integer page = Integer.parseInt(filterMap.get("page").get(0));
+				Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
 				page = page + 1;
 				LinkedList<String> list = new LinkedList<>();
 				list.add(page.toString());
-				filterMap.put("page", list);
+				getFilterMap().put("page", list);
 				list = new LinkedList<>();
 				list.add("1");
-				filterMap.put("per_page", list);
+				getFilterMap().put("per_page", list);
 				getAPI().getCommon().getDataResponseQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsDataResponse> result) {
 						if(result.getData().length() == 0){
-							Integer page = Integer.parseInt(filterMap.get("page").get(0));
+							Integer page = Integer.parseInt(getFilterMap().get("page").get(0));
 							page = page < 2 ? 1 : page - 1;
 							LinkedList<String> list = new LinkedList<>();
 							list.add(page.toString());
-							filterMap.put("page", list);
+							getFilterMap().put("page", list);
 						}
 						setContent(new QualitySheet(me, result.getData().get(0)));						
-				}
+					}
 					
 					@Override public void onFailure(Throwable caught) {}
 				});

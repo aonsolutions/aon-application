@@ -84,15 +84,15 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_udapa</from-outcome>
-			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/udapa.xhtml</to-view-id>
+			<from-outcome>gwt_udapa_quality</from-outcome>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/udapa_quality.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_paturpat</from-outcome>
-			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/udapa.xhtml</to-view-id>
+			<from-outcome>gwt_paturpat_quality</from-outcome>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/paturpat_quality.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -35,8 +36,10 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
+import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
@@ -44,6 +47,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.QualityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -445,6 +449,18 @@ public class WarehouseImpl implements IWarehouse {
 			ProductFilter productFilter, ItemFilter itemFilter) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			DeliveryDAO.getDeliveryDetailStream(ctx, deliveryFilter, detailFilter, productFilter, itemFilter));
+	}
+
+	@Override
+	public Stream<UdapaQuality> getUdapaQualityStream(AONContext ctx, Map<String, String[]> map) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			QualityDAO.getUdapaQualityStream(ctx,map));
+	}
+
+	@Override
+	public Stream<PaturpatQuality> getPaturpatQualityStream(AONContext ctx, Map<String, String[]> map) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			QualityDAO.getPaturpatQualityStream(ctx, map));
 	}
 	
 }

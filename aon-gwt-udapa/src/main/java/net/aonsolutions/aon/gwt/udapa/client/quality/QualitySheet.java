@@ -514,7 +514,7 @@ public class QualitySheet extends Composite{
 				String domainName = parent.getAonData().getDomain().getName();
 				Integer domainId = parent.getAonData().getDomain().getId();
 				
-				impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQO,ta.getValue(), map, new AsyncCallback<HashMap<String, String>>() {
+				impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQO.getName(),ta.getValue(), map, new AsyncCallback<HashMap<String, String>>() {
 					@Override public void onFailure(Throwable caught) {}
 					@Override public void onSuccess(HashMap<String, String> result) {
 						map = result;
@@ -528,7 +528,7 @@ public class QualitySheet extends Composite{
 	private void calculated() {
 		calculated.stream().forEach(ws -> {
 			Label label = (Label) ws.getWidget();
-			label.setText(map.get(ws.getCode().getName()));
+			label.setText(map.get(ws.getCode()));
 		});
 	}
 	
@@ -552,7 +552,7 @@ public class QualitySheet extends Composite{
 				String domainName = parent.getAonData().getDomain().getName();
 				Integer domainId = parent.getAonData().getDomain().getId();
 				
-				impl.updateValue(domainName, domainId, Integer.parseInt(id), code, cb.getValue() ? "1" : "0", map, new AsyncCallback<HashMap<String, String>>() {
+				impl.updateValue(domainName, domainId, Integer.parseInt(id), code.getName(), cb.getValue() ? "1" : "0", map, new AsyncCallback<HashMap<String, String>>() {
 					@Override public void onFailure(Throwable caught) {}
 					@Override public void onSuccess(HashMap<String, String> result) {
 						map = result;
@@ -587,7 +587,7 @@ public class QualitySheet extends Composite{
 				String id = dataResponse.getId() + "";
 				String domainName = parent.getAonData().getDomain().getName();
 				Integer domainId = parent.getAonData().getDomain().getId();
-				impl.updateValue(domainName, domainId,Integer.parseInt(id), code, Integer.toString(listBox.getSelectedIndex()), map, new AsyncCallback<HashMap<String, String>>() {
+				impl.updateValue(domainName, domainId,Integer.parseInt(id), code.getName(), Integer.toString(listBox.getSelectedIndex()), map, new AsyncCallback<HashMap<String, String>>() {
 
 					@Override public void onFailure(Throwable caught) {}
 
@@ -641,7 +641,7 @@ public class QualitySheet extends Composite{
 				String id = dataResponse.getId() + "";
 				String domainName = parent.getAonData().getDomain().getName();
 				Integer domainId = parent.getAonData().getDomain().getId();
-				impl.updateValue(domainName, domainId,Integer.parseInt(id), code, value, map, new AsyncCallback<HashMap<String, String>>() {
+				impl.updateValue(domainName, domainId,Integer.parseInt(id), code.getName(), value, map, new AsyncCallback<HashMap<String, String>>() {
 
 					@Override public void onFailure(Throwable caught) {}
 
@@ -680,7 +680,7 @@ public class QualitySheet extends Composite{
 				String id = dataResponse.getId() + "";
 				String domainName = parent.getAonData().getDomain().getName();
 				Integer domainId = parent.getAonData().getDomain().getId();
-				impl.updateValue(domainName, domainId, Integer.parseInt(id), code, value.toString(), map, new AsyncCallback<HashMap<String, String>>() {
+				impl.updateValue(domainName, domainId, Integer.parseInt(id), code.getName(), value.toString(), map, new AsyncCallback<HashMap<String, String>>() {
 
 					@Override public void onFailure(Throwable caught) {}
 

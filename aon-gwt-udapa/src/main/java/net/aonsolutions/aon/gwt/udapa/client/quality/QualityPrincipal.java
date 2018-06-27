@@ -35,14 +35,13 @@ public class QualityPrincipal extends Composite{
 		return parent.getAPI();
 	}
 	
-	public HashMap<String, LinkedList<String>> getFilterMap(){
+	public HashMap<String, LinkedList<String>> getFilterMap() {
 		return parent.getFilterMap();
 	}
 	
-	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap){
+	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
 		parent.setFilterMap(filterMap);
 	}
-	
 	public void sheetContent(JsDataResponse js, HashMap<String, LinkedList<String>> map) {
 		parent.sheetContent(js, map);
 	}
@@ -56,8 +55,12 @@ public class QualityPrincipal extends Composite{
 		southContent();
 	}
 	
+	
 	public void filterContent(){			
-		northContent.setWidget(new FilterPanel(this));
+		// TODO
+		com.esferalia.aon.gwt.common.client.widget.FilterPanel fp = parent.filterPanel();
+		northContent.setWidget(fp);
+		// northContent.setWidget(new FilterPanel(this));
 	}
 	
 	public void southContent(){

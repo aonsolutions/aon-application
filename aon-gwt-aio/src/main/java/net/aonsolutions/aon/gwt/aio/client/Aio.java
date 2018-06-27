@@ -155,7 +155,7 @@ public class Aio implements EntryPoint {
 				}
 			});		
 			break;
-		case Modules.UDAPA:
+		case Modules.QUALITY:
 			GWT.runAsync(Udapa.class, new RunAsyncCallback() {
 
 				@Override
@@ -165,7 +165,7 @@ public class Aio implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					new Udapa(aonData).onModuleLoad();
+					new Udapa(aonData).onModuleLoad(getSubEntryPoint());
 				}
 			});		
 			break;

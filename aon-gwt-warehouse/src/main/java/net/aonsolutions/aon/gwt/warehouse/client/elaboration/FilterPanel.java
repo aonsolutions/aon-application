@@ -150,6 +150,7 @@ public class FilterPanel extends Composite {
 		
 		final TextBox seriesInput = new TextBox();
 		seriesInput.setWidth("70px");
+		seriesInput.setStyleName(AON.AON_CSS.aonInputText());
 		seriesInput.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {

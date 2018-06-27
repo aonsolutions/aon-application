@@ -25,6 +25,7 @@ public class MSG {
 	public static final String CONFIDENTIAL = "confidential";
 	public static final String CLOSE = "close";
 	public static final String CLOSED = "closed";
+	public static final String CODE = "code";
 	public static final String COLOR = "color";	
 	public static final String CREATION_DATE = "creation_date";
 	public static final String CREATION_USER = "creation_user";
@@ -84,6 +85,7 @@ public class MSG {
 	public static final String ORDER_OPTIONS = "order_options"; 
 	public static final String ORDER_TYPE = "order_type";
 	public static final String PARAMS = "params";
+	public static final String PATURPAT = "paturpat";
 	public static final String PAY_METHOD = "pay_method";
 	public static final String PDF = "pdf";
 	public static final String PRICE = "price";
@@ -122,6 +124,7 @@ public class MSG {
 	public static final String TO = "to";
 	public static final String TYPE = "type";
 	public static final String TYPES = "types";
+	public static final String UDAPA = "udapa";
 	public static final String UPDATE = "update";
 	public static final String USER = "user";
 	public static final String VALUE = "value";

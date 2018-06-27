@@ -413,7 +413,7 @@ public class FootPanel extends Composite {
 					String id = parent.dataResponse.getId() + "";
 					String domainName = parent.getAonData().getDomain().getName();
 					Integer domainId = parent.getAonData().getDomain().getId();
-					parent.impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQC2, dbPFondo.getValue().toString(), parent.getMap(), new AsyncCallback<HashMap<String, String>>() {
+					parent.impl.updateValue(domainName, domainId, Integer.parseInt(id), QualitySheetCode.UFQC2.getName(), dbPFondo.getValue().toString(), parent.getMap(), new AsyncCallback<HashMap<String, String>>() {
 						@Override public void onFailure(Throwable caught) {}
 						@Override public void onSuccess(HashMap<String, String> result) {}
 					});

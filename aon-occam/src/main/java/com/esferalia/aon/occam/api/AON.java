@@ -190,8 +190,10 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Stock;
+import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
@@ -5098,5 +5100,33 @@ public class AON {
 		}
 	}
 	
+	/*
+	 * UDAPA QUALITY
+	 */
 	
+	public static Stream<UdapaQuality> getUdapaQualityStream(String domainName, Integer domainId, String login, Map<String, String[]> map){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getUdapaQualityStream(ctx, map);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	/*
+	 * PATURPAT QUALITY
+	 */
+	
+	public static Stream<PaturpatQuality> getPaturpatQualityStream(String domainName, Integer domainId, String login, Map<String, String[]> map){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getPaturpatQualityStream(ctx, map);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }

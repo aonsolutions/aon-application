@@ -122,7 +122,16 @@ public class CommonServlet extends HttpServlet{
 				} else {
 					object = insertDataResponse(domain, userName, json);
 				}
+			} else if((MSG.DATA_RESPONSE + "2").equals(pathInfo[3])){
+				if(pathInfo.length > 4){
+					if(MSG.DETAIL.equals(pathInfo[4])){
+						object = insertDataResponseDetail(domain, userName, json);
+					}
+				} else {
+					object = insertDataResponse2(domain, userName, json);
+				}
 			}
+			
 			
 			resp.setContentType("application/json;charset=UTF-8");
 			Utils.addCorsHeader(resp);
@@ -340,6 +349,19 @@ public class CommonServlet extends HttpServlet{
 		String value = json.getString("value");
 		AON.insertApplicationParameter(domain.getName(), domain.getId(), login, parameter, value);
 		return new JSONObject();
+	}
+	
+	
+	private JSONObject insertDataResponse2(Domain domain, String login, JSONObject json) {
+		DataResponse dataResponse = new DataResponse()
+				.setDomain(domain.getId())
+				.setCode(json.optString("code").isEmpty() ? "" : json.getString("code"))
+				.setResponseDate(json.optString("date").isEmpty() ? new Date() : AonDateUtils.dateTimeParse(json.getString("date")))
+				.setSource(DataResponseSource.values()[json.getInt("source")])
+				.setSourceId(json.getInt("source_id"));
+		
+		DataResponse dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dataResponse);
+		return ToJSON.dataResponseToJSON(dr);
 	}
 	
 	private JSONObject insertDataResponse(Domain domain, String login, JSONObject json) {
