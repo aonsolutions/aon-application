@@ -229,16 +229,16 @@ public class XMLtoMod2002017 {
 		addVariable(mod200,Mod2002017Key.PG294, pag.getT00294());
 		addVariable(mod200,Mod2002017Key.PG295, pag.getT00295());
 //		addVariable(mod200,Mod2002017Key.PG298, pag.getT00298());
-	}
-	
-	private static void fillPagina08(MOD2002017 mod, Mod2002017 mod200) {
-		TipoPagina08 pag = mod.getNormal().getCuentaPyG().getPagina08();
-		if (pag==null) return;
 		addVariable(mod200,Mod2002017Key.PG299, pag.getT00299());
 		addVariable(mod200,Mod2002017Key.PG300, pag.getT00300());
 		addVariable(mod200,Mod2002017Key.PG302, pag.getT00302());
 		addVariable(mod200,Mod2002017Key.PG303, pag.getT00303());
 		addVariable(mod200,Mod2002017Key.PG304, pag.getT00304());
+	}
+	
+	private static void fillPagina08(MOD2002017 mod, Mod2002017 mod200) {
+		TipoPagina08 pag = mod.getNormal().getCuentaPyG().getPagina08();
+		if (pag==null) return;
 		addVariable(mod200,Mod2002017Key.PG306, pag.getT00306());
 		addVariable(mod200,Mod2002017Key.PG307, pag.getT00307());
 		addVariable(mod200,Mod2002017Key.PG308, pag.getT00308());
