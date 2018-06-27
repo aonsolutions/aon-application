@@ -165,11 +165,11 @@ public class Mod2002017Validation {
 		// ------------------------------------------------------------------------
 		// --------------------------- LIQUIDACIÓN (I) ----------------------------
 		// ------------------------------------------------------------------------
-		,V_LQ301  ( mod -> isPositive(mod,PG258) && isNotZero(mod,LQ301),
+		,V_LQ301  ( mod -> mod.isChecked(C0024) && isPositive(mod,PG258) && isNotZero(mod,LQ301),
 				new ValidationMessage2017(PAGE08,LQ301, "La clave [00258] es positiva a la vez que la clave [00301] no es igual a cero."))
-		,V_LQ301B ( mod -> isNegative(mod,PG258) && isNotZero(mod,LQ302),
+		,V_LQ301B ( mod -> mod.isChecked(C0024) && isNegative(mod,PG258) && isNotZero(mod,LQ302),
 				new ValidationMessage2017(PAGE08,LQ302, "La clave [00258] es negativa a la vez que la clave [00302] no es igual a cero."))
-		,V_LQ302  ( mod -> isPositive(mod,PG258) && isNotEqual(mod,LQ302,PG258),
+		,V_LQ302  ( mod -> mod.isChecked(C0024) && isPositive(mod,PG258) && isNotEqual(mod,LQ302,PG258),
 				new ValidationMessage2017(PAGE08,LQ302, "La clave [00258] es positiva a la vez que la clave [00302] no es igual a la clave [00258]."))
 		
 		,V_LQ1230 ( mod -> isNegative(mod,LQ1230),new ValidationMessage2017(PAGE08,LQ1230, mustPositiveMsg(LQ1230)))
