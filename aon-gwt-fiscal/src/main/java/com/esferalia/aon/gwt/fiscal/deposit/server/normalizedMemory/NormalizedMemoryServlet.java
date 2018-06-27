@@ -179,7 +179,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		try {
 			byte[] b = Utils.writeXml(schema);
 			Esquema sch = Utils.readXml(b);
-			if(sch.getError() != null || !sch.getError().isEmpty()) {
+			if(sch.getError() != null ) {
 				// TODO 
 			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		} catch (JAXBException | IOException e) {
@@ -204,7 +204,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		try {
 			byte[] b = Utils.writeXml(schema);
 			Esquema sch = Utils.readXml(b);
-			if(sch.getError() != null || !sch.getError().isEmpty()) {
+			if(sch.getError() != null) {
 				// TODO
 			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		} catch (JAXBException | IOException e) {
@@ -220,7 +220,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		try {
 			byte[] b = Utils.writeXml(schema);
 			Esquema sch = Utils.readXml(b);
-			if(sch.getError() != null || !sch.getError().isEmpty()) {
+			if(sch.getError() != null) {
 				// TODO
 			} else {
 				attach.setData(b);
@@ -673,7 +673,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		try {
 			byte[] b = Utils.writeXml(schema);
 			Esquema sch = Utils.readXml(b);
-			if(sch.getError() != null || !sch.getError().isEmpty()) {
+			if(sch.getError() != null) {
 				// TODO
 			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, this.getUserLogin());
 		} catch (JAXBException | IOException e) {
