@@ -705,6 +705,7 @@ public class Mod2002017Behaviour {
 	static { // APLICACIÓN DE RESULTADOS
 		BEHAVIOUR_KEYS_MAP.put(Mod2002017Key.ID650, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002017Key.ID653, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002017Key.ID654, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002017Key.ID666, new Boolean[]{FALSE,TRUE});
 	}
 
