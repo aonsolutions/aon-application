@@ -407,13 +407,13 @@ public class Utils {
 		c1010.setValor(enterprise.getDocument());
 		keys.getClave().add(c1010);
 	
-		if(enterprise.getDocument().contains("A")){
+		if(enterprise.getDocument() != null && enterprise.getDocument().contains("A")){
 			Clave c1011 = new Clave();
 			c1011.setCodigo(BigInteger.valueOf(1011));
 			c1011.setValor("1");
 			keys.getClave().add(c1011);
 		}
-		else if(enterprise.getDocument().contains("B")){
+		else if(enterprise.getDocument() != null && enterprise.getDocument().contains("B")){
 			Clave c1012 = new Clave();
 			c1012.setCodigo(BigInteger.valueOf(1012));
 			c1012.setValor("1");
