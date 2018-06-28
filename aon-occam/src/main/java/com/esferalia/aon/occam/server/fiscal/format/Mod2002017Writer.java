@@ -309,13 +309,22 @@ public class Mod2002017Writer {
 		line.append( AonFiscalFileUtils.signedZero(deduction,DS,DD) );		
 	}
 	
-	// Cifra de Negocios - Nif Entidades y Nif establecimientos permanentes
+	// Cifra de Negocios - Nif establecimientos permanentes
 	private static void addNIF(Writer line, LinkedList<String> list, int index) throws IOException {
 		String document = "";		
 		if (index < list.size()) {
 			document = list.get(index);
 		}
 		line.append( AonFiscalFileUtils.text(document,9) );		
+	}
+
+	// Cifra de Negocios - Nif Entidades de grupo
+	private static void addGroupNIF(Writer line, LinkedList<String> list, int index) throws IOException {
+		String document = "";		
+		if (index < list.size()) {
+			document = list.get(index);
+		}
+		line.append( AonFiscalFileUtils.text(document,20) );		
 	}
 	
 	// **** FIN VARIABLES Y METODOS ESTATICOS DE UTILIDAD ****
@@ -387,8 +396,8 @@ public class Mod2002017Writer {
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0022, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0028, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0047, 1, 0 )
-				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0035, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0049, 1, 0 )
+				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0035, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0029, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0033, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0034, 1, 0 )
@@ -397,8 +406,8 @@ public class Mod2002017Writer {
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0012, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0064, 1, 0 )			
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0057, 1, 0 )
-				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0020, 1, 0 )
-				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0062, 1, 0 )				
+				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0062, 1, 0 )
+				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0020, 1, 0 )				
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0007, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0009, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002017Key.C0010, 1, 0 )
@@ -1394,6 +1403,8 @@ public class Mod2002017Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM506)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1021)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1044)
+			,(line,mod200, label) -> line.append(AonFiscalFileUtils.spaces(200))  // Reservado para la AEAT
+			,(line,mod200, label) -> addEndLabel(line,label)
 		})
 		
 		,PAG15 ("T20015000", new IPropertyFiller[] {
@@ -1731,12 +1742,6 @@ public class Mod2002017Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1778)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1779)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1780)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN852)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN853)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN856)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN852)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN853)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN856)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN194)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN195)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN868)
@@ -1796,6 +1801,9 @@ public class Mod2002017Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1781)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1782)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1783)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN852)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN853)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN856)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN886)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN590)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN887)
@@ -1998,12 +2006,6 @@ public class Mod2002017Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1405)	
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1406)	
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1407)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1408)	
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1409)	
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1410)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1411)	
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1412)	
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1413)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1414)	
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1415)	
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1416)
@@ -2157,7 +2159,6 @@ public class Mod2002017Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN081)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN082)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.BN1234B)
-
    			,(line,mod200, label) -> line.append(AonFiscalFileUtils.spaces(200))  // Reservado para la AEAT			
 			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
 		})
@@ -2261,6 +2262,7 @@ public class Mod2002017Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LQ1731)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LQ1147)
 			//,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LQ1148)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LQ1033)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LQ1149)
 				
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LQ1150)
@@ -2432,6 +2434,7 @@ public class Mod2002017Writer {
 			
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM890)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM891)
+			,(line,mod200, label) -> line.append(AonFiscalFileUtils.spaces(17))  // Reservado para la AEAT
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM503)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM522)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM523)
@@ -2520,7 +2523,7 @@ public class Mod2002017Writer {
 			
 		})
 
-		,PAG20T("T20020C00", new IPropertyFiller[] {
+		,PAG20C("T20020C00", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)
 			,(line,mod200, label) -> line.append(" ")				
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM1524)         
@@ -2664,15 +2667,15 @@ public class Mod2002017Writer {
 						
 						addSignedKey(line, mod200, Mod2002017Key.CN987, isComplementary); 
 						
-						addNIF(line, mod200.getGroupEntities(), i1++);
-						addNIF(line, mod200.getGroupEntities(), i1++);
-						addNIF(line, mod200.getGroupEntities(), i1++);
-						addNIF(line, mod200.getGroupEntities(), i1++);
-						addNIF(line, mod200.getGroupEntities(), i1++);
-						addNIF(line, mod200.getGroupEntities(), i1++);
-						addNIF(line, mod200.getGroupEntities(), i1++);
-						addNIF(line, mod200.getGroupEntities(), i1++);
-						addNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
+						addGroupNIF(line, mod200.getGroupEntities(), i1++);
 						
 						addSignedKey(line, mod200, Mod2002017Key.CN988, isComplementary);
 						addUnSignedKey(line, mod200, Mod2002017Key.CNEST, 3, 0, isComplementary);
@@ -3210,7 +3213,7 @@ public class Mod2002017Writer {
 			m.put(Pages2017.PAG19.tag, 1999);
 			m.put(Pages2017.PAG20.tag, 1397);
 			m.put(Pages2017.PAG20B.tag, 939);
-			m.put(Pages2017.PAG20T.tag, 1312);
+			m.put(Pages2017.PAG20C.tag, 1312);
 			m.put(Pages2017.PAG21.tag, 476);
 			m.put(Pages2017.PAG22.tag, 1907);
 			m.put(Pages2017.PAG23.tag, 1014);
