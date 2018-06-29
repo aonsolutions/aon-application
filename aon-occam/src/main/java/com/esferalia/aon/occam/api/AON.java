@@ -3315,6 +3315,29 @@ public class AON {
 		}
 	}
 	
+	public static Stream<ElaborationDetail> getElaborationDetailStream(String domainName, Integer domainId, String login, ElaborationDetailFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			List<ElaborationDetail> list = getWarehouse().getElaborationDetailList(ctx, filter);
+			
+			list.forEach(detail -> {
+				detail.setItem(AON.getItem(domainName, domainId, login, detail
+						.getItem().getId()));
+				detail.setWarehouse(getWarehouse(
+						domainName,
+						domainId,
+						login,
+						f -> f.getIdProperty().eq(
+								detail.getWarehouse().getId())));
+			});
+			return list.stream();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static List<ElaborationDetail> getElaborationDetailList(
 			String domainName, Integer domainId, String login,
 			Integer elaborationId) {

@@ -196,6 +196,20 @@ public class Warehouse extends Methods{
 		});
 	}
 	
+	public void downloadPaturpatQualityList(HashMap<String, LinkedList<String>> filterMap){
+		String filter = filterMap.size() > 0 ? getFilter(filterMap) : "";
+		String str = filter + "&domain="+ getDomainName() + "&login="+getUserName();
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "download_paturpat_quality_list/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
 	public void downloadUdapaLiqList(HashMap<String, LinkedList<String>> filterMap, String type){
 		String filter = filterMap.size() > 0 ? getFilter(filterMap) : "";
 		String str = filter + "&domain="+ getDomainName() + "&login="+getUserName() + "&option=list&type=" + type;
@@ -250,6 +264,10 @@ public class Warehouse extends Methods{
 	}
 	public void getElaborationDetail(Integer id, AsyncCallback<JSON<JsElaborationDetail>> callback){
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/" + id, callback);
+	}
+	public void getElaborationDetail(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsElaborationDetail>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail" + filter, callback);
 	}
 	public void getElaborationDetailComposition(Integer id, AsyncCallback<JSON<JsElaborationDetailComposition>> callback){
 		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/" + id, callback);

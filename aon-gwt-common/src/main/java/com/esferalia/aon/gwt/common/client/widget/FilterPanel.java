@@ -65,7 +65,7 @@ public abstract class FilterPanel extends Composite {
     	refresh();
 	}
     
-    private void onClean(){
+    protected void onClean(){
     	setFilterMap(new HashMap<>());
     	refresh();
     }

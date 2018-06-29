@@ -3,15 +3,17 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat;
 import java.util.LinkedList;
 
 public enum Textura {
-	C("Cremosa"),
-	H("Harinosa"),
-	F("Firme"),
-	D("Dura");
+	EMPTY("-", "-"),
+	C("Cremosa", "C"),
+	H("Harinosa", "H"),
+	F("Firme", "F"),
+	D("Dura", "D");
 	
 	String name;
-	
-	private Textura(String name) {
+	String key;
+	private Textura(String name, String key) {
 		this.name = name;
+		this.key = key;
 	}
 	
 	public String getName() {
@@ -20,6 +22,14 @@ public enum Textura {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 	
 	public static LinkedList<String> valueLinkedList(){

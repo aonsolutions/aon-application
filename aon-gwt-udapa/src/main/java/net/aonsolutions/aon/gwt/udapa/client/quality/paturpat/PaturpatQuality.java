@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaboration;
 import com.esferalia.aon.gwt.api.client.warehouse.JsElaborationDetail;
 import com.esferalia.aon.gwt.api.client.warehouse.JsOrder;
-import com.esferalia.aon.gwt.api.client.warehouse.JsOrderDetail;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
@@ -27,13 +26,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperButtonElement;
@@ -127,6 +124,8 @@ public class PaturpatQuality extends AonTemplate2{
 		Toolbar toolbar = new Toolbar("Ficha de calidad");
 		toolbar.addButton("Volver", AON.AON_CSS.aonIconCancel(), false).addClickHandler(backClickHandler());
 		toolbar.addButton(AON.MSG.newAction(), AON.AON_CSS.aonIconReset()).addClickHandler(resetClickHandler());
+		toolbar.addButton(AON.MSG.deleteAction(), AON.AON_CSS.aonIconDelete(), false).addClickHandler(deleteClickHandler());
+		toolbar.addButton(AON.MSG.download(), AON.AON_CSS.aonIconExcel()).addClickHandler(downloadClickHandler());
 		
 		setToolbar(toolbar);
 	}
@@ -153,15 +152,38 @@ public class PaturpatQuality extends AonTemplate2{
 			@Override public void onFailure(Throwable caught) {}
 		});
 		dlp.add(center);
+		
+		SimpleLayoutPanel south = new SimpleLayoutPanel();
+		south.setWidget(new PrincipalFootPanel(this));
+		dlp.addSouth(south, 30);
+		
 		setContent(dlp);
 	}
 	
 	public FilterPanel filterPanel() {
-		FilterPanel fp = new FilterPanel() {
+		return filterPanel(new HashMap<>());
+	}
+	
+	public FilterPanel filterPanel(HashMap<String, LinkedList<String>> map) {
+		FilterPanel fp = new FilterPanel(map) {
+			@Override
+			protected void onClean() {
+				content();
+			}
 			
 			@Override
 			protected void refresh() {
-				Window.alert("REFRESH");
+				DockLayoutPanel dlp = (DockLayoutPanel) getContent().getWidget();
+				SimpleLayoutPanel center = (SimpleLayoutPanel) dlp.getWidget(1);
+				getAPI().getCommon().getDataResponsePaturpatQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsDataResponse> result) {
+						center.setWidget(gridPanel(result));
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
 			}
 		};
 		fp.getElement().getStyle().setLeft(10, Unit.PX);
@@ -181,11 +203,41 @@ public class PaturpatQuality extends AonTemplate2{
 		setFilterMap(map);
 		Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 		
-		toolbar.getButtonPanel().getWidget(0).setVisible(true);// toolbar.setBackVisible(true);
+		toolbar.getButtonPanel().getWidget(0).setVisible(true);
+		toolbar.getButtonPanel().getWidget(2).setVisible(true);
+		toolbar.getButtonPanel().getWidget(3).setVisible(false);
 
 		setContent(new PaturpatQualitySheet(this, js));
 	}
 	
+	private void deleteQuality() {
+		Label label = new Label("Est\u00e1 seguro que quiere borrar el Carrier Packing ");
+		
+		AonDialog dialog = new AonDialog("Borrar Carrier Packing", label) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {
+				PaturpatQualitySheet sheet = (PaturpatQualitySheet) getContent().getWidget();
+				String idStr = sheet.getDataResponse().getId() + "";
+				Integer id = Integer.parseInt(idStr);
+				impl.deleteQuality(getAonData().getDomain().getName(), getAonData().getDomain().getId(),
+					id, new AsyncCallback<Void>() {
+					
+					@Override public void onSuccess(Void result) {
+						hide();
+						startApplication();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});							
+			}
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();	
+	}
 	private void resetQuality() {
 		VerticalPanel panel = new VerticalPanel();
 		panel.setStyleName(AON.AON_CSS.aonWidthAll());
@@ -221,8 +273,11 @@ public class PaturpatQuality extends AonTemplate2{
 			@Override
 			public void onSelectedItemChanged(SelectedItemChangedEvent event) {
 				JsOrder order = (JsOrder) incomeBox.getSelectedItem();
-		
-				getAPI().getWarehouse().getElaborationDetail(order.getId(), new AsyncCallback<JSON<JsElaborationDetail>>() {
+
+				LinkedList<String>list = new LinkedList<>();
+				list.add(order.getId() + "");
+				map.put("id", list);
+				getAPI().getWarehouse().getElaborationDetail(map, new AsyncCallback<JSON<JsElaborationDetail>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsElaborationDetail> result) {
@@ -290,5 +345,29 @@ public class PaturpatQuality extends AonTemplate2{
 		};
 	}
 	
-
+	private ClickHandler deleteClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				deleteQuality();
+			}
+		};
+	}
+	
+	private ClickHandler downloadClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				getAPI().getWarehouse().downloadPaturpatQualityList(getFilterMap());	
+			}
+		};
+	}
+	
+	public void southContentSize(Double value) {
+		DockLayoutPanel dlp = (DockLayoutPanel) getContent().getWidget();
+		dlp.setWidgetSize(dlp.getWidget(2), value);	
+		dlp.animate(500);
+	}
 }

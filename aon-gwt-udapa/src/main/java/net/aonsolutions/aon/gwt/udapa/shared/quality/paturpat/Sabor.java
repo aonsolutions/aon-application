@@ -3,14 +3,16 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat;
 import java.util.LinkedList;
 
 public enum Sabor {
-	A("Agradable"),
-	D("Desagradable");
+	EMPTY("-", "-"),
+	A("Agradable", "A"),
+	D("Desagradable", "D");
 	;
 	
 	String name;
-	
-	private Sabor(String name) {
+	String key;
+	private Sabor(String name, String key) {
 		this.name = name;
+		this.key = key;
 	}
 	
 	public String getName() {
@@ -19,6 +21,14 @@ public enum Sabor {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 	
 	public static LinkedList<String> valueLinkedList(){

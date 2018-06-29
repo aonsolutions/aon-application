@@ -17,7 +17,6 @@ import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.FilterPanel;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -158,6 +157,13 @@ public class UdapaQuality extends AonTemplate2{
 	
 	public FilterPanel filterPanel() {
 		FilterPanel fp = new FilterPanel(initializeFilterMap()) {
+			
+			@Override
+			protected void onClean() {
+				super.onClean();
+				QualityPrincipal qp = (QualityPrincipal) getContent().getWidget();
+				qp.northContent.setWidget(filterPanel());	
+			}
 			
 			@Override
 			protected void refresh() {

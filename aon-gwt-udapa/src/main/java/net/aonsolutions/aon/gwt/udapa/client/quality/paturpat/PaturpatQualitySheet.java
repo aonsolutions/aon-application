@@ -17,7 +17,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -26,16 +25,12 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.datepicker.client.DateBox;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.client.IUdapaAsync;
 import net.aonsolutions.aon.gwt.udapa.client.Utils;
 import net.aonsolutions.aon.gwt.udapa.client.quality.AonListBoxChangeHandler;
 import net.aonsolutions.aon.gwt.udapa.client.quality.AonValueChangeHandler;
-import net.aonsolutions.aon.gwt.udapa.client.quality.FootPanel;
-import net.aonsolutions.aon.gwt.udapa.shared.quality.WidgetStack;
-import net.aonsolutions.aon.gwt.udapa.shared.quality.WidgetType;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.Color;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.Olor;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.QualitySheetCode;
@@ -221,6 +216,7 @@ public class PaturpatQualitySheet extends Composite{
 			? map.get(QualitySheetCode.PFQO.getName()) : "");
 		ta.setWidth("100%");
 		ta.setHeight("50px");
+		ta.getElement().getStyle().setBorderColor("#CCC");
 		ta.addValueChangeHandler(new AonValueChangeHandler<String>(ta) {
 
 			@Override
@@ -282,8 +278,7 @@ public class PaturpatQualitySheet extends Composite{
 	protected DateBoxEx dateBox(QualitySheetCode code){
 		DateBoxEx dateBox = new DateBoxEx();
 		dateBox.setStyleName(AON.AON_CSS.aonTextBox());
-		Window.alert(map.get(QualitySheetCode.PFQAC12.getName()));
-		Window.alert(!"0.0".equals(map.get(QualitySheetCode.PFQAC12.getName())) +"");
+
 		if(!"0.0".equals(map.get(QualitySheetCode.PFQAC12.getName()))) {
 			dateBox.setValue(AonDateUtils.parseDate(map.get(QualitySheetCode.PFQAC12.getName())));
 		}

@@ -22,7 +22,8 @@ public class SecurityUtils {
 		String[] parameters = decode(value.getBytes()).split("&");
 		for(String parameter : parameters){
 			String[] values = parameter.split("=");
-			map.put(values[0], values[1]);
+			if(values.length > 1)
+				map.put(values[0], values[1]);
 		}
 		return map;
 	}
@@ -32,14 +33,16 @@ public class SecurityUtils {
 		String[] parameters = decode(value.getBytes()).split("&");
 		for(String parameter : parameters){
 			String[] values = parameter.split("=");
-			if(map.containsKey(values[0])) {
-				String[] strs = new String[map.get(values[0]).length + 1]; 
-				for(Integer i = 0; i < map.get(values[0]).length; i++) {
-					strs[i] = map.get(values[0])[i];
-				}
-				strs[map.get(values[0]).length] = values[1];
-				map.put(values[0], strs);
-			} else map.put(values[0], new String[]{values[1]});
+			if(values.length > 1) {
+				if(map.containsKey(values[0])) {
+					String[] strs = new String[map.get(values[0]).length + 1]; 
+					for(Integer i = 0; i < map.get(values[0]).length; i++) {
+						strs[i] = map.get(values[0])[i];
+					}
+					strs[map.get(values[0]).length] = values[1];
+					map.put(values[0], strs);
+				} else map.put(values[0], new String[]{values[1]});
+			}
 		}
 		return map;
 	}

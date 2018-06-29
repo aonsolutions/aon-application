@@ -3,13 +3,16 @@ package net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat;
 import java.util.LinkedList;
 
 public enum Olor {
-	A("Agradable"),
-	D("Desagradable");
+	EMPTY("-", "-"),
+	A("Agradable", "A"),
+	D("Desagradable", "D");
 	
 	String name;
+	String key;
 	
-	private Olor(String name) {
+	private Olor(String name, String key) {
 		this.name = name;
+		this.key = key;
 	}
 	
 	public String getName() {
@@ -18,6 +21,14 @@ public enum Olor {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 	
 	public static LinkedList<String> valueLinkedList(){

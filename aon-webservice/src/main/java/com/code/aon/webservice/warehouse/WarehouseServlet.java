@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.type.CarrierStatus;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -133,7 +134,9 @@ public class WarehouseServlet extends HttpServlet{
 						} else if(MSG.STATUS.equals(pathInfo[4])){
 							object = getElaborationStatusList();
 						} else if(MSG.DETAIL.equals(pathInfo[4])){
-							object = getElaborationDetailList(domain, userName, Integer.parseInt(pathInfo[5]));
+							if(pathInfo.length > 5){
+								object = getElaborationDetailList(domain, userName, Integer.parseInt(pathInfo[5]));
+							} else object = getElaborationDetailList(domain, userName, req.getParameterMap()); 
 						} else if(MSG.DETAIL_COMPOSITION.equals(pathInfo[4])){
 							object = getElaborationDetailCompositionList(domain, userName, Integer.parseInt(pathInfo[5]));
 						} else {
@@ -745,6 +748,28 @@ public class WarehouseServlet extends HttpServlet{
     		.forEach(detail -> array.put(ToJSON.elaborationDetailToJSON(detail)));
     	return array;
     }
+    
+    public static JSONArray getElaborationDetailList(Domain domain,String login,  Map<String, String[]> map){
+		JSONArray array = new JSONArray();
+		Integer[] ids = AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.PATURPAT_QUALITY, f -> f.getDomainProperty().eq(domain.getId()).and(f.getSourceIdProperty().isNotNull()))
+				.map(g -> g.getSourceId()).toArray(Integer[]::new);
+		
+		if(map.containsKey("id")) {
+			Integer id = Integer.parseInt(map.get("id")[0]);
+			
+			AON.getElaborationDetailStream(domain.getName(), domain.getId(), login, f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getElaborationProperty().eq(id))
+				.and(f.getIdProperty().notIn(ids)))
+				.forEach(detail -> array.put(ToJSON.elaborationDetailToJSON(detail)));
+		} else {
+			AON.getElaborationDetailStream(domain.getName(), domain.getId(), login, f -> 
+				f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().notIn(ids)))
+				.forEach(detail -> array.put(ToJSON.elaborationDetailToJSON(detail)));
+		}
+		return array;
+	}
+    
     
     private JSONArray getElaborationDetailCompositionList(Domain domain,String login, Integer elaborationDetail){
     	JSONArray array = new JSONArray();

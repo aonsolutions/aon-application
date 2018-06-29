@@ -500,6 +500,7 @@ public class QualitySheet extends Composite{
 			? map.get(QualitySheetCode.UFQO.getName()) : "");
 		ta.setWidth("100%");
 		ta.setHeight("50px");
+		ta.getElement().getStyle().setBorderColor("#CCC");
 		ta.addValueChangeHandler(new AonValueChangeHandler<String>(ta) {
 
 			@Override
