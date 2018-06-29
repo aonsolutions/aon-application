@@ -1,0 +1,44 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'>
+
+    <ui:style type="com.esferalia.aon.gwt.payroll.client.WarningDialog.MyStyle">
+
+		.paddingLabels{
+			padding-left: 5px;
+    		padding-right: 5px;
+		}
+
+		.paddingBlocks{
+			padding-bottom: 5px;
+		}
+
+		.form {
+			padding: 10px;
+		}
+
+		.closeButton {
+			position: relative;
+    		left: 200px;
+			border: 1px solid #bbb;
+			border-radius: 3px;
+			cursor: pointer;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:VerticalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Label ui:field="label" styleName="{style.paddingLabels}"></g:Label> 
+		    </g:HorizontalPanel> 
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
+		    </g:HorizontalPanel>
+		</g:VerticalPanel>
+			
+	</g:HTMLPanel>
+
+</ui:UiBinder>

@@ -19,6 +19,9 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
+import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -35,6 +38,8 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
+import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
+import com.esferalia.aon.jooq.tables.records.RbankRecord;
 
 public class JooqEmployee {
 
@@ -116,6 +121,34 @@ public class JooqEmployee {
 				employee.setRmedia_table_email_id(record.get(RMEDIA.ID));
 				employee.setEmail(record.get(RMEDIA.VALUE));
 				
+			}
+		}
+		
+		//PAYMETHOD TABLE (can be null)
+		Record payMethodTable = dslContext.select().from(PAY_METHOD)
+			.where(PAY_METHOD.ID.in(
+				dslContext.select(RPAYMETHOD.PAY_METHOD)
+					.from(RPAYMETHOD)
+					.where(RPAYMETHOD.REGISTRY.eq(employee_registry))
+			))
+			.fetchOne();
+		
+		if(payMethodTable != null){
+			employee.setTypePayMethod(payMethodTable.get(PAY_METHOD.NAME));
+			employee.setPayMethodTableId(payMethodTable.get(PAY_METHOD.ID));
+			
+			Record rBankTable = dslContext.select().from(RBANK)
+					.where(RBANK.ID.in(
+						dslContext.select(RPAYMETHOD.RBANK)
+							.from(RPAYMETHOD)
+							.where(RPAYMETHOD.REGISTRY.eq(employee_registry))
+					))
+					.fetchOne();
+			
+			if(rBankTable != null){
+				employee.setRBankTableId(rBankTable.get(RBANK.ID));
+				employee.setBankAccount(rBankTable.get(RBANK.BANK_ACCOUNT));
+				employee.setBIC(rBankTable.get(RBANK.BIC));
 			}
 		}
 		
@@ -361,6 +394,79 @@ public class JooqEmployee {
 					.set(RMEDIA.VALUE, newEmployeeInfo.getEmail())
 					.set(RMEDIA.RADDRESS, newEmployeeInfo.getRaddress_table_id())
 					.execute();
+		}
+		
+		if(newEmployeeInfo.getRBankTableId() == null && newEmployeeInfo.getPayMethodTableId() == null){
+			if(newEmployeeInfo.getTypePayMethod() != null && newEmployeeInfo.getTypePayMethod() != ""){
+				byte typePayMethod = getType(newEmployeeInfo.getTypePayMethod());
+				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
+						.set(PAY_METHOD.DOMAIN, newEmployeeInfo.getDomain())
+						.set(PAY_METHOD.NAME, newEmployeeInfo.getTypePayMethod())
+						.set(PAY_METHOD.TYPE, typePayMethod)
+						.returning(PAY_METHOD.ID)
+						.fetchOne();
+				
+				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
+				Integer rbankTableId = null;
+				if(newEmployeeInfo.getBankAccount() != null && newEmployeeInfo.getBankAccount() != ""){
+					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+							.set(RBANK.DOMAIN, newEmployeeInfo.getDomain())
+							.set(RBANK.REGISTRY, newEmployeeInfo.getRegistry_table_id())
+							.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
+							.set(RBANK.BIC, newEmployeeInfo.getBIC())
+							.set(RBANK.ALIAS, "CUENTA")
+							.set(RBANK.ACTIVE, (byte) 1)
+							.returning(RBANK.ID)
+							.fetchOne();
+					 
+					 rbankTableId = rbankRecord.get(RBANK.ID); 
+				}
+				
+				dslContext.insertInto(RPAYMETHOD)
+					.set(RPAYMETHOD.DOMAIN, newEmployeeInfo.getDomain())
+					.set(RPAYMETHOD.REGISTRY, newEmployeeInfo.getRegistry_table_id())
+					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
+					.set(RPAYMETHOD.RBANK, rbankTableId)
+					.execute();
+			}
+		}
+		
+		if(newEmployeeInfo.getRBankTableId() != null){
+			dslContext.update(RBANK)
+			.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
+			.set(RBANK.BIC, newEmployeeInfo.getBIC())
+			.where(RBANK.ID.eq(newEmployeeInfo.getRBankTableId()))
+			.execute();
+		}else{
+			RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+				.set(RBANK.DOMAIN, newEmployeeInfo.getDomain())
+				.set(RBANK.REGISTRY, newEmployeeInfo.getRegistry_table_id())
+				.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
+				.set(RBANK.BIC, newEmployeeInfo.getBIC())
+				.set(RBANK.ALIAS, "CUENTA")
+				.set(RBANK.ACTIVE, (byte) 1)
+				.returning(RBANK.ID)
+				.fetchOne();
+			
+			Record rpayMethodTableRecord = dslContext.select()
+					.from(RPAYMETHOD)
+					.where(RPAYMETHOD.REGISTRY.eq(newEmployeeInfo.getRegistry_table_id()))
+					.fetchOne();
+			
+			dslContext.update(RPAYMETHOD)
+			.set(RPAYMETHOD.RBANK, rbankRecord.get(RBANK.ID))
+			.where(RPAYMETHOD.ID.eq(rpayMethodTableRecord.get(RPAYMETHOD.ID)))
+			.execute();
+			
+		}
+		
+		if(newEmployeeInfo.getPayMethodTableId() != null){
+			byte typePayMethod = getType(newEmployeeInfo.getTypePayMethod());
+			dslContext.update(PAY_METHOD)
+				.set(PAY_METHOD.NAME, newEmployeeInfo.getTypePayMethod())
+				.set(PAY_METHOD.TYPE, typePayMethod)
+				.where(PAY_METHOD.ID.eq(newEmployeeInfo.getPayMethodTableId()))
+				.execute();
 		}
 		
 		// ------------------------------------------------------------------------------------------------------------------------
@@ -694,6 +800,21 @@ public class JooqEmployee {
 		System.out.println(updateInfo);
 			
 		return newEmployeeInfo;
+	}
+
+	private static byte getType(String typePayMethod) {
+		switch (typePayMethod) {
+		case "EFECTIVO":
+			return (byte) 0;
+		case "GIRO":
+			return (byte) 1;
+		case "CHEQUE":
+			return (byte) 4;
+		case "TRANSFERENCIA":
+			return (byte) 5;
+		default:
+			return (byte) -1;
+		}
 	}
 
 }

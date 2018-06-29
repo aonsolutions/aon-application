@@ -47,6 +47,13 @@ public class EmployeeInfoDataBase implements Serializable {
 	private Integer rmedia_table_email_id = null;	//ID Rmedia Table Email
 	private String email = null;					//Person Email
 	
+	//RBANK & PAYMETHOD
+	private Integer payMethodTableId = null;
+	private String payMethodType = null;
+	private Integer rbankTableId = null;
+	private String rbankAccount = null;
+	private String rbankBIC = null;
+	
 	// ------------------------------------------------ CONTRACT INFO ---------------------------------------------------------
 	
 	//CONTRACT TABLE
@@ -140,6 +147,12 @@ public class EmployeeInfoDataBase implements Serializable {
 		this.mobile = employeeInfo.getMobile();
 		this.rmedia_table_email_id = employeeInfo.getRmedia_table_email_id();
 		this.email = employeeInfo.getEmail();
+		
+		this.payMethodType = employeeInfo.getTypePayMethod();
+		this.rbankAccount = employeeInfo.getBankAccount();
+		this.rbankBIC = employeeInfo.getBIC();
+		this.payMethodTableId = employeeInfo.getPayMethodTableId();
+		this.rbankTableId = employeeInfo.getRBankTableId();
 		
 	
 		// -------------------------------------------------------------------
@@ -627,6 +640,46 @@ public class EmployeeInfoDataBase implements Serializable {
 	
 	public Byte getSSRegime(){
 		return this.regime;
+	}
+	
+	public String getTypePayMethod() {
+		return this.payMethodType; 	
+	}
+	
+	public void setTypePayMethod(String payMethodType) {
+		this.payMethodType = payMethodType; 	
+	}
+
+	public String getBankAccount() {
+		return this.rbankAccount;
+	}
+	
+	public void setBankAccount(String rbankAccount) {
+		this.rbankAccount = rbankAccount;
+	}
+	
+	public String getBIC() {
+		return this.rbankBIC;
+	}
+
+	public void setBIC(String rbankBIC) {
+		this.rbankBIC = rbankBIC;
+	}
+
+	public Integer getPayMethodTableId() {
+		return this.payMethodTableId;
+	}
+	
+	public void setPayMethodTableId(Integer payMethodTableId) {
+		this.payMethodTableId = payMethodTableId;
+	}
+
+	public Integer getRBankTableId() {
+		return this.rbankTableId;
+	}
+	
+	public void setRBankTableId(Integer rbankTableId) {
+		this.rbankTableId = rbankTableId;
 	}
 	
 }

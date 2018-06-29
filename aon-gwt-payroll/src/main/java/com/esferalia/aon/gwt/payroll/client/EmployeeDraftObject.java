@@ -368,6 +368,18 @@ public class EmployeeDraftObject {
 	public void setEmployeeEmail(String mobile) {
 		newEmployeeInfo.setEmail(mobile);
 	}
+
+	public void setEmployeePayMethod(String payMethodType) {
+		newEmployeeInfo.setTypePayMethod(payMethodType);
+	}
+
+	public void setEmployeeAccount(String rbankAccount) {
+		newEmployeeInfo.setBankAccount(rbankAccount);
+	}
+
+	public void setEmployeeBIC(String rbankBIC) {
+		newEmployeeInfo.setBIC(rbankBIC);
+	}
 	
 	
 }
