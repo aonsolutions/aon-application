@@ -2434,7 +2434,7 @@ public class Mod2002017Writer {
 			
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM890)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM891)
-			,(line,mod200, label) -> line.append(AonFiscalFileUtils.spaces(17))  // Reservado para la AEAT
+			,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))  // Reservado para la AEAT
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM503)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM522)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002017Key.LM523)

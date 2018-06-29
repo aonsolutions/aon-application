@@ -249,17 +249,17 @@ public class Mod2002017toMOD2002017 {
 	    pagina07.setT00294(getKey(mod200,Mod2002017Key.PG294));
 	    pagina07.setT00295(getKey(mod200,Mod2002017Key.PG295));
 //	    pagina07.setT00298(getKey(mod200,Mod2002017Key.PG298));
-	    pagina07.setT00299(getKey(mod200,Mod2002017Key.PG299));
-	    pagina07.setT00300(getKey(mod200,Mod2002017Key.PG300));
-//	    pagina07.setT00301(getKey(mod200,Mod2002017Key.PG301));
-	    pagina07.setT00302(getKey(mod200,Mod2002017Key.PG302));
-	    pagina07.setT00303(getKey(mod200,Mod2002017Key.PG303));
-	    pagina07.setT00304(getKey(mod200,Mod2002017Key.PG304));
 		return pagina07;
 	}
 
 	private static TipoPagina08 getPagina08(Mod2002017 mod200) {
 		TipoPagina08 pagina08 = new TipoPagina08();
+	    pagina08.setT00299(getKey(mod200,Mod2002017Key.PG299));
+	    pagina08.setT00300(getKey(mod200,Mod2002017Key.PG300));
+//	    pagina08.setT00301(getKey(mod200,Mod2002017Key.PG301));
+	    pagina08.setT00302(getKey(mod200,Mod2002017Key.PG302));
+	    pagina08.setT00303(getKey(mod200,Mod2002017Key.PG303));
+	    pagina08.setT00304(getKey(mod200,Mod2002017Key.PG304));
 	    pagina08.setT00306(getKey(mod200,Mod2002017Key.PG306));
 	    pagina08.setT00307(getKey(mod200,Mod2002017Key.PG307));
 	    pagina08.setT00308(getKey(mod200,Mod2002017Key.PG308));

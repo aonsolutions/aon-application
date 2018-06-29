@@ -81,17 +81,17 @@ public class Mod2002017Print extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		String urlParameters = "HID=SOV6200A"  
+		String urlParameters = "HID=SOV7200A"  
 				+"&IDI=ES" 
 				+"&LEV=000000000000"
 				+"&FIC=" + encodedFile  
 				+"&RUT="  
-				+"&PRG=PTLINKI7"  
+				+"&PRG=PTLINKP0"  
 				+"&FIN="  
 				+"&EJF=2017"  
 				+"&MOD=200";
 		
-		//String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
+//		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
 		String request = "https://www6.aeat.es/l/zi22zilk0022";
 
 		URL url = new URL(request);

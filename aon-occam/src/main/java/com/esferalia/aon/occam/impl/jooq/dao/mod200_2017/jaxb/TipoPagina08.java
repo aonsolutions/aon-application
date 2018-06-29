@@ -25,6 +25,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="T00299" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00300" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00302" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00303" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00304" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00306" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00307" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00308" type="{}tipo_ImpNegativo" minOccurs="0"/>
@@ -57,6 +62,11 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tipo_Pagina08", propOrder = {
+    "t00299",
+    "t00300",
+    "t00302",
+    "t00303",
+    "t00304",
     "t00306",
     "t00307",
     "t00308",
@@ -82,6 +92,16 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class TipoPagina08 {
 
+	@XmlElement(name = "T00299")
+	protected BigDecimal t00299;
+	@XmlElement(name = "T00300")
+	protected BigDecimal t00300;
+	@XmlElement(name = "T00302")
+	protected BigDecimal t00302;
+	@XmlElement(name = "T00303")
+	protected BigDecimal t00303;
+	@XmlElement(name = "T00304")
+	protected BigDecimal t00304;
     @XmlElement(name = "T00306")
     protected BigDecimal t00306;
     @XmlElement(name = "T00307")
@@ -127,7 +147,126 @@ public class TipoPagina08 {
     @XmlElement(name = "T00332")
     protected BigDecimal t00332;
 
-
+    /**
+    * Obtiene el valor de la propiedad t00299.
+    * 
+    * @return
+    *     possible object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public BigDecimal getT00299() {
+    	return t00299;
+    }
+    
+    /**
+    * Define el valor de la propiedad t00299.
+    * 
+    * @param value
+    *     allowed object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public void setT00299(BigDecimal value) {
+    	this.t00299 = value;
+    }
+    
+    /**
+    * Obtiene el valor de la propiedad t00300.
+    * 
+    * @return
+    *     possible object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public BigDecimal getT00300() {
+    	return t00300;
+    }
+    
+    /**
+    * Define el valor de la propiedad t00300.
+    * 
+    * @param value
+    *     allowed object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public void setT00300(BigDecimal value) {
+    	this.t00300 = value;
+    }
+    
+    /**
+    -     * Obtiene el valor de la propiedad t00302.
+    -     * 
+    -     * @return
+    -     *     possible object is
+    -     *     {@link BigDecimal }
+    -     *     
+    -     */
+    public BigDecimal getT00302() {
+    	return t00302;
+    }
+    
+    /**
+    * Define el valor de la propiedad t00302.
+    *
+    * @param value
+    *     allowed object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public void setT00302(BigDecimal value) {
+    	this.t00302 = value;
+    }
+    
+    /**
+    * Obtiene el valor de la propiedad t00303.
+    * 
+    * @return
+    *     possible object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public BigDecimal getT00303() {
+    	return t00303;
+    }
+    
+    /**
+    * Define el valor de la propiedad t00303.
+    * 
+    * @param value
+    *     allowed object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public void setT00303(BigDecimal value) {
+    	this.t00303 = value;
+    }
+    
+    /**
+    * Obtiene el valor de la propiedad t00304.
+    * 
+    * @return
+    *     possible object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public BigDecimal getT00304() {
+    	return t00304;
+    }
+    
+    /**
+    * Define el valor de la propiedad t00304.
+    * 
+    * @param value
+    *     allowed object is
+    *     {@link BigDecimal }
+    *     
+    */
+    public void setT00304(BigDecimal value) {
+         this.t00304 = value;
+    }
+    
     /**
      * Obtiene el valor de la propiedad t00306.
      * 
