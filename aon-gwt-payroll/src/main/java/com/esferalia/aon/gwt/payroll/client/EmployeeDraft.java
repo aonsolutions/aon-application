@@ -37,6 +37,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -228,6 +229,15 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	TextBox email;
+	
+	@UiField
+	ListBox payMethod;
+	
+	@UiField
+	TextBox account;
+	
+	@UiField
+	TextBox bic;
 	
 // ------------------------------------------------------------ VARIABLES DE LA CLASE ----------------------------------------------------
 		
@@ -491,6 +501,21 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		employeeDraftObject.setEmployeeEmail(email.getValue());
 	}
 	
+	@UiHandler("payMethod")
+	void onPayMethodChangeValue(ChangeEvent event) {
+		employeeDraftObject.setEmployeePayMethod(payMethod.getSelectedItemText());
+	}
+	
+	@UiHandler("account")
+	void onAccountChangeValue(ChangeEvent event) {
+		employeeDraftObject.setEmployeeAccount(account.getValue());
+	}
+	
+	@UiHandler("bic")
+	void onBIClChangeValue(ChangeEvent event) {
+		employeeDraftObject.setEmployeeBIC(bic.getValue());
+	}
+	
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
 		String countryIso2 = getIso2(nationality.getValue());
@@ -500,12 +525,18 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		Boolean journey_type = (journeyTypeIndex == 0) ? true : false;
 		employeeDraftObject.setContractJourneyType(journey_type);
 		
-		employeeDraftObject.updateEmployee(
-			r -> {
-				setEmployeeDraftObject(employeeDraftObject);
-			},
-			t -> {}
-		);
+		if(payMethod.getSelectedItemText() == "TRANSFERENCIA" && (account.getValue() == "" || bic.getValue() == "")){
+			WarningDialog dialog = new WarningDialog("Aviso", "HAY QUE RELLENAR LA CUENTA Y EL BIC");
+			dialog.center();
+			dialog.show();
+		}else{
+			employeeDraftObject.updateEmployee(
+					r -> {
+						setEmployeeDraftObject(employeeDraftObject);
+					},
+					t -> {}
+				);
+		}
 	}
 
 // -------------------------------------------------------------- METODOS DE LA CLASE ----------------------------------------------------
@@ -570,6 +601,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.phone.setValue("");
 		this.mobile.setValue("");
 		this.email.setValue("");
+		this.payMethod.clear();
+		this.account.setValue("");
+		this.bic.setValue("");
 	}
 
 	private void initializeListBox() {
@@ -620,6 +654,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.gender.addItem("Hombre");
 		this.gender.addItem("Mujer");
 		this.gender.addItem("Desconocido");
+		
+		//TIPO DE PAGO
+		this.payMethod.addItem("-");
+		this.payMethod.addItem("EFECTIVO");
+		this.payMethod.addItem("GIRO");
+		this.payMethod.addItem("CHEQUE");
+		this.payMethod.addItem("TRANSFERENCIA");
 	}
 	
 	private void initializeSuugestBox() {
@@ -923,8 +964,30 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.mobile.setText(mobile);
 		String email =  (employeeInfo.getEmail() == null) ? "" : employeeInfo.getEmail();
 		this.email.setText(email);
+		
+		String payMethodType = (employeeInfo.getTypePayMethod() == null) ? "" : employeeInfo.getTypePayMethod();
+		this.payMethod.setSelectedIndex(getPayMethodIndex(payMethodType));
+		String account = (employeeInfo.getBankAccount() == null) ? "" : employeeInfo.getBankAccount();
+		this.account.setText(account);
+		String bic = (employeeInfo.getBIC() == null) ? "" : employeeInfo.getBIC();
+		this.bic.setText(bic);
 	}
 	
+	private int getPayMethodIndex(String payMethodType) {
+		switch (payMethodType) {
+		case "EFECTIVO":
+			return 1;
+		case "GIRO":
+			return 2;
+		case "CHEQUE":
+			return 3;
+		case "TRANSFERENCIA":
+			return 4;
+		default:
+			return 0;
+		}
+	}
+
 	private void addStyleFirstColumnTable() {
 		contractDataTable.getColumnFormatter().addStyleName(0, style.backgroundColorFirstColumn());
 		employeeDataTable.getColumnFormatter().addStyleName(0, style.backgroundColorFirstColumn());

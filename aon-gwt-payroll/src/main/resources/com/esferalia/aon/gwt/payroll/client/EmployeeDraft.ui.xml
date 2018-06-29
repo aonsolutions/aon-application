@@ -254,9 +254,40 @@
 		<g:center> 
 		    <g:ScrollPanel>
 		        <g:HTMLPanel> 
-			    	<g:Label styleName='{style.headerStyle}'>Datos de contrato</g:Label>
+			    	<g:Label width="105px" styleName='{style.headerStyle}'>Datos de contrato</g:Label>
 					<g:HorizontalPanel>
 						<g:Grid ui:field="contractDataTable" styleName='{style.paddingTable} {style.marginTopTable}'>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Nombre Completo</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:TextBox ui:field="name" styleName='{style.paddingLabel} {style.textAlignCenter}' width="176px"></g:TextBox>
+									    <g:Label ui:field="firstSurnameLabel" styleName='{style.paddingLabel} {style.paddingLeft} {style.requiredColor}' width="75px">1er Apellido</g:Label>
+									    <g:TextBox ui:field="first_surname" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="175px"></g:TextBox>
+									    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}' width="62px">2º Apellido</g:Label>
+									    <g:TextBox ui:field="second_surname" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="184px"></g:TextBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Documentos</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:Label ui:field="document_type" styleName='{style.paddingLabel}'></g:Label>
+									    <g:TextBox ui:field="document" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="139px"></g:TextBox> 
+									    <g:HorizontalPanel ui:field="nationalityPanel" styleName='{style.horizontalPanel}'>
+									        <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Nacionalidad</g:Label>
+									    	<g:SuggestBox ui:field="nationality" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="164px"></g:SuggestBox>
+									    </g:HorizontalPanel>
+								     	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Nº S.S.</g:Label>
+								    	<g:TextBox ui:field="security_social_num" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="207px"></g:TextBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
 							<g:row>
 								<g:customCell>
 									<g:Label styleName='{style.paddingLeft}'>Actividad</g:Label>
@@ -364,42 +395,11 @@
 									</g:HorizontalPanel>
 								</g:customCell>
 							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Nombre Completo</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:TextBox ui:field="name" styleName='{style.paddingLabel} {style.textAlignCenter}' width="176px"></g:TextBox>
-									    <g:Label ui:field="firstSurnameLabel" styleName='{style.paddingLabel} {style.paddingLeft} {style.requiredColor}'>1er Apellido</g:Label>
-									    <g:TextBox ui:field="first_surname" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="175px"></g:TextBox>
-									    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>2º Apellido</g:Label>
-									    <g:TextBox ui:field="second_surname" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="184px"></g:TextBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Documentos</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:Label ui:field="document_type" styleName='{style.paddingLabel}'></g:Label>
-									    <g:TextBox ui:field="document" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="139px"></g:TextBox> 
-									    <g:HorizontalPanel ui:field="nationalityPanel" styleName='{style.horizontalPanel}'>
-									        <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Nacionalidad</g:Label>
-									    	<g:SuggestBox ui:field="nationality" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="164px"></g:SuggestBox>
-									    </g:HorizontalPanel>
-								     	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Nº S.S.</g:Label>
-								    	<g:TextBox ui:field="security_social_num" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="207px"></g:TextBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
 						</g:Grid>
 					</g:HorizontalPanel>
 					
 				 
-					<g:Label styleName='{style.headerStyle2}'>Datos personales</g:Label>
+					<g:Label styleName='{style.headerStyle2}' width="103px">Datos personales</g:Label>
 					<g:HorizontalPanel>
 					    <g:HTMLPanel>
 							<g:Grid ui:field="employeeDataTable" styleName='{style.paddingTable}  {style.marginTopTable2}'>     
@@ -438,6 +438,20 @@
 										    <g:TextBox ui:field="phone" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="187px"></g:TextBox>
 										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>eMail</g:Label>
 										    <g:TextBox ui:field="email" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="205px"></g:TextBox>
+										</g:HorizontalPanel>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell>
+										<g:Label styleName='{style.paddingLeft}'>Método de pago</g:Label>
+									</g:customCell>
+									<g:customCell styleName='{style.secondColumnWidth}'>
+										<g:HorizontalPanel>
+										    <g:ListBox ui:field="payMethod" width="185px"></g:ListBox>
+										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Cuenta</g:Label>
+										    <g:TextBox ui:field="account" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="195px"></g:TextBox>
+										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>BIC</g:Label>
+										    <g:TextBox ui:field="bic" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="215px"></g:TextBox>
 										</g:HorizontalPanel>
 									</g:customCell>
 								</g:row> 
