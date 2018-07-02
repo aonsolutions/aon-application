@@ -18,7 +18,7 @@ import net.aonsolutions.aon.sii.bizkaia.SIIBizkaiaPost;
 import net.aonsolutions.aon.sii.gipuzkoa.SIIGipuzkoaPost;
 
 public class SIIManager {
-	private Boolean pruebas = true;
+	private Boolean pruebas = false;
 	private Administration administration;
 	private byte[] cert;
 	private String pass;
