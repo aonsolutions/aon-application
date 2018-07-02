@@ -696,8 +696,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCalculator.setSalaryBuilder(delayBuilder);
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		Assert.assertEquals(10.00,delay.getIrpfBase());
-		Assert.assertEquals(10.00,delay.getTotalPayment());
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		double adjust = + ((monthDays-30) * 10.00/30.00 );
+		Assert.assertEquals(10.00 + adjust,delay.getIrpfBase(), DELTA);
+		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
 		Assert.assertEquals(10.00,delay.getCommonBase());
 	}
 
@@ -772,9 +774,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCalculator.setSalaryBuilder(delayBuilder);
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		Assert.assertEquals(10.00,delay.getIrpfBase());
-		Assert.assertEquals(10.00,delay.getTotalPayment());
-		Assert.assertEquals(10.00,delay.getCommonBase());
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		double adjust = + ((monthDays-30) * 10.00/30.00 );
+		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
+		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(10.00 + adjust,delay.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -853,9 +857,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCalculator.setSalaryBuilder(delayBuilder);
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		Assert.assertEquals(10.00,delay.getIrpfBase());
-		Assert.assertEquals(10.00,delay.getTotalPayment());
-		Assert.assertEquals(10.00,delay.getCommonBase());
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		double adjust = + ((monthDays-30) * 10.00/30.00 );
+		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
+		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(10.00 + adjust ,delay.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -934,9 +940,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCalculator.setSalaryBuilder(delayBuilder);
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		Assert.assertEquals(10.00,delay.getIrpfBase());
-		Assert.assertEquals(10.00,delay.getTotalPayment());
-		Assert.assertEquals(10.00,delay.getCommonBase());
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		double adjust = + ((monthDays-30) * 10.00/30.00 );
+		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
+		Assert.assertEquals(10.00 + adjust ,delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(10.00 + adjust ,delay.getCommonBase(), DELTA);
 	}
 
 
