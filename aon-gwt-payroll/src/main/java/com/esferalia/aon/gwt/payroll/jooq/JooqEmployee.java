@@ -438,26 +438,27 @@ public class JooqEmployee {
 			.where(RBANK.ID.eq(newEmployeeInfo.getRBankTableId()))
 			.execute();
 		}else{
-			RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-				.set(RBANK.DOMAIN, newEmployeeInfo.getDomain())
-				.set(RBANK.REGISTRY, newEmployeeInfo.getRegistry_table_id())
-				.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
-				.set(RBANK.BIC, newEmployeeInfo.getBIC())
-				.set(RBANK.ALIAS, "CUENTA")
-				.set(RBANK.ACTIVE, (byte) 1)
-				.returning(RBANK.ID)
-				.fetchOne();
-			
-			Record rpayMethodTableRecord = dslContext.select()
-					.from(RPAYMETHOD)
-					.where(RPAYMETHOD.REGISTRY.eq(newEmployeeInfo.getRegistry_table_id()))
-					.fetchOne();
-			
-			dslContext.update(RPAYMETHOD)
-			.set(RPAYMETHOD.RBANK, rbankRecord.get(RBANK.ID))
-			.where(RPAYMETHOD.ID.eq(rpayMethodTableRecord.get(RPAYMETHOD.ID)))
-			.execute();
-			
+			if(newEmployeeInfo.getBankAccount() != null && newEmployeeInfo.getBIC() != null){
+				RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+						.set(RBANK.DOMAIN, newEmployeeInfo.getDomain())
+						.set(RBANK.REGISTRY, newEmployeeInfo.getRegistry_table_id())
+						.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
+						.set(RBANK.BIC, newEmployeeInfo.getBIC())
+						.set(RBANK.ALIAS, "CUENTA")
+						.set(RBANK.ACTIVE, (byte) 1)
+						.returning(RBANK.ID)
+						.fetchOne();
+					
+					Record rpayMethodTableRecord = dslContext.select()
+							.from(RPAYMETHOD)
+							.where(RPAYMETHOD.REGISTRY.eq(newEmployeeInfo.getRegistry_table_id()))
+							.fetchOne();
+					
+					dslContext.update(RPAYMETHOD)
+					.set(RPAYMETHOD.RBANK, rbankRecord.get(RBANK.ID))
+					.where(RPAYMETHOD.ID.eq(rpayMethodTableRecord.get(RPAYMETHOD.ID)))
+					.execute();
+			}	
 		}
 		
 		if(newEmployeeInfo.getPayMethodTableId() != null){
