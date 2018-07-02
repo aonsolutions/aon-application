@@ -84,7 +84,7 @@ node {
 	sh "git push https://j3nk1ns:aon945121010@github.com/aonsolutions/aon-application.git ${rolling_version}"
 
 	// Run the maven build
-        sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -DskipTests=true -Dmaven.test.failure.ignore=true clean deploy"
+        sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -DskipTests=true -Dmaven.test.failure.ignore=true clean install"
 
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine ./aon-db-up2date"
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
