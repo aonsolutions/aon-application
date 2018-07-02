@@ -62,7 +62,9 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -194,13 +196,15 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		int year = get(getToday(), Calendar.YEAR);
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
-
+		
+		if ( get(getToday(), Calendar.MONTH) >= Calendar.JULY ) year++;
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
 		jooqSalaryBuilder.execute();
 		
+		year = get(getToday(), Calendar.YEAR);
 		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, getToday(), getToday());
 		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -269,13 +273,16 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		int year = get(getToday(), Calendar.YEAR);
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
-
+		
+		
+		if ( get(getToday(), Calendar.MONTH) >= Calendar.JULY ) year++;
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
 		jooqSalaryBuilder.execute();
 		
+		year = get(getToday(), Calendar.YEAR);
 		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, getToday(), getToday());
 		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -348,12 +355,14 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		int year = get(getToday(), Calendar.YEAR);
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 
+		if ( get(getToday(), Calendar.MONTH) >= Calendar.JULY ) year++;
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
 		jooqSalaryBuilder.execute();
 		
+		year = get(getToday(), Calendar.YEAR);
 		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, getToday(), getToday());
 		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -434,12 +443,14 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		int year = get(getToday(), Calendar.YEAR);
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 
+		if( get(getToday(), Calendar.MONTH) >= Calendar.JULY) year++;
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
 		jooqSalaryBuilder.execute();
 		
+		year = get(getToday(), Calendar.YEAR);
 		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, getToday(), getToday());
 		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -549,12 +560,14 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		int year = get(getToday(), Calendar.YEAR);
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 
+		if( get(getToday(), Calendar.MONTH) >= Calendar.JULY) year++;
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
 		jooqSalaryBuilder.execute();
 		
+		year = get(getToday(), Calendar.YEAR);
 		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, getToday(), getToday());
 		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -628,6 +641,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemDeductions(aonContext);
+		cleanSystemPayments(aonContext);
 
 		// @formatter:on
 		Date contractStart = add(getToday(), Calendar.MONTH, -2);
@@ -640,7 +657,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 						put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
 					}
 				}, 
-				new String[] { "1000.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
+				new String[] {"1000.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
 				new String[] {"BASE_CGC * PORCENTAJE_CGC / 100.00 "}, 
 				null);
 		//@formatter:off
@@ -667,7 +684,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) , settle.getCommonBase());
-		Assert.assertEquals(( 1000.00 * 12 / 365  * 10.00 ) * (4.70/100.00), settle.getTotalDeduction());
+		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) * (4.70/100.00), settle.getTotalDeduction());
 		
 		
 	}
@@ -908,16 +925,22 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		settleCtx.getExpressionContext().eval("TRACE('SALARIO_DIA:%f\r\n', SALARIO_DIA)", contractStart, getToday())
 		;
 		
-		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println( description + ":" + amount);
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		}).calculate(settleCtx);
 		
 		
 		int months = get(getToday(), Calendar.MONTH );
 		int days = get(getToday(), Calendar.DAY_OF_MONTH );
-				
-		
-		
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
-		double julyExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360 ;
+		int julyExtraMonths = (months >= 6 ? months -6 : months );
+		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths  * 30) + days ) / 360 ;
 		
 		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
@@ -988,7 +1011,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
-		double julyExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360 ;
+		int julyExtraMonths = (months >= Calendar.JULY ? months - Calendar.JULY : months );
+		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360 ;
 		
 		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
@@ -1043,11 +1067,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		//@formatter:off		
 		
 		addSSRegimeStuff(aonContext);
-		
 		int year = get(getToday(), Calendar.YEAR);
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		
+		if ( get(getToday(), Calendar.MONTH) >= Calendar.JULY ) year++; 
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
@@ -1121,11 +1145,14 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		
+		if ( get(getToday(), Calendar.MONTH ) >= Calendar.JULY ) year++;
 		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
 		jooqSalaryBuilder.execute();
 		
+
+		year = get(getToday(), Calendar.YEAR);
 		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
 		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, getToday(), getToday());
 		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -1137,8 +1164,6 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
 		
-		int months = get(getToday(), Calendar.MONTH );
-		int days = get(getToday(), Calendar.DAY_OF_MONTH );
 		
 		
 		Assert.assertEquals( 0.00 , settle.getTotalPayment(), DELTA);
@@ -1220,7 +1245,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
-		double julyExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360 ;
+		int julyExtraMonths = (months >= Calendar.JULY ? months - Calendar.JULY : months );
+		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360 ;
 		double bonusExtra = months == 11 ? ( 1750.00 * 1.10 ) * days  / 30 : 0.00;
 		
 		Assert.assertEquals( decemberExtra + julyExtra + bonusExtra, settle.getTotalPayment(), DELTA);
