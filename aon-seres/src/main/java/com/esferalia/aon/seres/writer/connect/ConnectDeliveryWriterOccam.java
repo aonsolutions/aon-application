@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -56,6 +57,8 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("CCYYMMDD");
 	
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(ConnectDeliveryWriterOccam.class);
@@ -446,7 +449,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			record.setUnidadDeMedidaCantidadEnviada(null);
 			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
-		record.setFechaDeCaducidad_36__102_203_(null);
+		record.setFechaDeCaducidad_36__102_203_(dateFormat.format(item.getSerialDate()));
 		record.setCalificadorReferencia1(null);
 		record.setNumeroReferencia1(null);
 		record.setFecha_horaReferencia1_102_203_(null);

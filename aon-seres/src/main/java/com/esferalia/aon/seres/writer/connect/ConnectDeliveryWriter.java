@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -51,6 +52,8 @@ public class ConnectDeliveryWriter {
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(ConnectDeliveryWriter.class);
+	
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("CCYYMMDD");
 
 
 	public FileOutput createFile(Delivery delivery, String packageData, String companyEdiCode,
@@ -459,7 +462,7 @@ public class ConnectDeliveryWriter {
 			record.setCantidadEnviada_12_(quantity);
 			record.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
-		record.setFechaDeCaducidad_36__102_203_(null);
+		record.setFechaDeCaducidad_36__102_203_(dateFormat.format(item.getSerialDate()));
 		record.setCalificadorReferencia1(null);
 		record.setNumeroReferencia1(null);
 		record.setFecha_horaReferencia1_102_203_(null);
