@@ -36,21 +36,25 @@ public class ItemCompositionControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		ItemCompositionController controller = (ItemCompositionController)event.getController();
-		ItemComposition itemComposition = (ItemComposition)controller.getTo();
-		Item item = (Item)controller.getMasterController().getTo();
-		if (!item.getProduct().isManufactured() && itemComposition.getCompositionItem().getProduct().isSerializable()) {
-			throw new ControllerListenerException(AonUtil.getMessage(ITEM_COMPOSITION_SERIALIZABLE_ERROR));
-		}
+		checkSerializable(event);
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		checkSerializable(event);
+	}
+	
+	private void checkSerializable(ControllerEvent event) throws ControllerListenerException {
 		ItemCompositionController controller = (ItemCompositionController)event.getController();
 		ItemComposition itemComposition = (ItemComposition)controller.getTo();
 		Item item = (Item)controller.getMasterController().getTo();
-		if (!item.getProduct().isManufactured() && itemComposition.getCompositionItem().getProduct().isSerializable()) {
-			throw new ControllerListenerException(AonUtil.getMessage(ITEM_COMPOSITION_SERIALIZABLE_ERROR));
+		try {
+			if (!item.getProduct().isManufactured() && itemComposition.getCompositionItem().getProduct().isSerializable()
+					&& !itemComposition.getCompositionItem().isWildCard()) {
+				throw new ControllerListenerException(AonUtil.getMessage(ITEM_COMPOSITION_SERIALIZABLE_ERROR));
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
