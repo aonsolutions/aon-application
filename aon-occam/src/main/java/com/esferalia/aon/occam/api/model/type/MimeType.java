@@ -42,7 +42,9 @@ public enum MimeType implements Serializable {
     RSS ("application/rss+xml", "rss"),
     OCTECT_STREAM ("application/octet-stream",""),
     XSIG ("text/xml", "xsig"),
-    SIGNED_FACTURAE ("text/xml", "xml");
+    SIGNED_FACTURAE ("text/xml", "xml"),
+    JSON("application/json","js")
+    ;
     
     
 	private String name;

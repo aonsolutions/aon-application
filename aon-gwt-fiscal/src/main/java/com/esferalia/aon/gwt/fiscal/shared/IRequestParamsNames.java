@@ -8,6 +8,9 @@ public interface IRequestParamsNames {
 	String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
 	String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 
+	String OFFSET = "offset";
+	String LIMIT = "limit";
+	
 	String DOMAIN = "domain";
 	String REGISTRY = "registry";
 	String ACTIVITY = "activity";

@@ -70,7 +70,7 @@ public class AccountEntryPrinter {
 		buf.append(AON.MSG.journal());
 		buf.append(AonStringUtils.COLON);
 		buf.append(AonStringUtils.SPACE);
-		buf.append(AonStringUtils.rightPad(entry.getJournal(),10));
+		buf.append(AonStringUtils.rightPad(("" + entry.getJournal()),10));
 		buf.append(AonStringUtils.SPACE);
 		if (AonStringUtils.isNotBlank(entry.getComments())) {
 			buf.append("[");

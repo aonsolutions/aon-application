@@ -9,5 +9,7 @@
 	<!-- 
 	<extend-property name="user.agent" values="safari" />
 	 -->
-	
+  	<set-property name="gwt.logging.logLevel" value="INFO"/>          # To change the  default logLevel
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>  # To disable a default Handler
+    <set-property name="gwt.logging.enabled" value="TRUE"/>            # To disable logging FirebugLogHandler	
 </module>

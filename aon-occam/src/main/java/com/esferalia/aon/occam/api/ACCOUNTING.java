@@ -170,6 +170,19 @@ public class ACCOUNTING {
 	}
 
 	// ------------------------------ ACCOUNT ENTRY
+	public static Stream<AccountEntry> getAccountEntriesStream(String domainName,
+			int domain, String user, final AccountEntryParams params,
+			int offset, int limit) throws AonCoreException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getAccountEntries(ctx, params, offset, limit);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static LinkedList<AccountEntry> getAccountEntries(String domainName,
 			int domain, String user, final AccountEntryParams params,
 			int offset, int limit) throws AonCoreException {

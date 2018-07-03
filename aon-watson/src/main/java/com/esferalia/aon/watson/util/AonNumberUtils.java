@@ -118,5 +118,10 @@ public class AonNumberUtils {
 	public static double zeroIfNull(Double value) {
 		return (value==null?0:value);
 	}
+	
+	public static int zeroIfNull(Integer value) {
+		return (value==null?0:value);
+	}
+
 
 }
