@@ -23,7 +23,7 @@ node {
     stage 'Build'
 
     // Run the maven build
-    sh "echo yes | ${mvnHome}/bin/mvn  -Dmaven.test.failure.ignore=true -Drpm.release=false -Dgwt.working=true -DSNAPSHOT clean install"
+    sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -Dgwt.working=true -DSNAPSHOT clean install"
 
     // Recording fingerprints of files to track usage
     fingerprint '**/target/*SNAPSHOT.jar'
