@@ -15,6 +15,7 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.product.util.DetailCompositeHandler;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
@@ -30,11 +31,24 @@ public class IncomeDetailController extends LinesController implements IWarehous
 	private double quantityAdjust;
 	private IncomeDetail incomeDetail;
 	
+	private DetailCompositeHandler compositeHandler;
+	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+	
+	public DetailCompositeHandler getCompositeHandler() {
+		if (compositeHandler == null) {
+			compositeHandler = new DetailCompositeHandler();
+		}
+		return compositeHandler;
+	}
+	
+	public void onItemCompositionSelect(ActionEvent event) {
+		getCompositeHandler().load(this, ((IncomeDetail)this.getTo()).getItem());
 	}
 
 	public boolean isLongDescription() {

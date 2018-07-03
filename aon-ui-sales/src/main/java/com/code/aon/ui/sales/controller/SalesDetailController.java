@@ -46,6 +46,7 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.product.util.DetailCompositeHandler;
 import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -72,12 +73,25 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	
 	private Map<Integer, PurchaseDetail> purchaseDetailMap = new HashMap<>();
 	private Map<Integer, Integer> elaborationMap = new HashMap<>();
+	
+	private DetailCompositeHandler compositeHandler;
 
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+	
+	public DetailCompositeHandler getCompositeHandler() {
+		if (compositeHandler == null) {
+			compositeHandler = new DetailCompositeHandler();
+		}
+		return compositeHandler;
+	}
+	
+	public void onItemCompositionSelect(ActionEvent event) {
+		getCompositeHandler().load(this, ((SalesDetail)this.getTo()).getItem());
 	}
 
 	public boolean isLongDescription() {

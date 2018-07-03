@@ -446,6 +446,9 @@
 		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
 			<ui:param name="controller" value="#{deliveryDetail}" />
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/detailCompositeModal.xhtml">
+			<ui:param name="controller" value="#{deliveryDetail.compositeHandler}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalQuantity.xhtml">
 			<ui:param name="controller" value="#{deliveryDetail}" />
 		</ui:include>

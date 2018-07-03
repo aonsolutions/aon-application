@@ -154,6 +154,17 @@
 											rendered="#{!controller.longDescription and controller.to.item.product.code != null}"
 											actionListener="#{controller.onLongDescription}"
 											reRender="invoiceDetailItemNew" ajaxSingle="true" />
+										<aon:if test="#{domainSwitcher.betaDomain}">
+											<aon:commandButton id="itemCompositionEdit" value="&#160;"
+												title="#{bundle.aon_to_specify} #{bundle.product_composition}"
+												styleClass="aon-icon-alternative aon-vertical-align-top"
+												rendered="#{controller.to.item.product.composition}"
+												actionListener="#{controller.onItemCompositionSelect}" 
+												reRender="showItemCompositionWindow">
+												<f:setPropertyActionListener target="#{controller.compositeHandler.showItemCompositionWindow}"
+													value="#{true}" />								
+											</aon:commandButton>
+										</aon:if>
 									</aon:panelGroup>
 								</aon:div>
 							</f:facet>

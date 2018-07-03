@@ -583,6 +583,9 @@
 		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
 			<ui:param name="controller" value="#{salesDetail}" />
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/detailCompositeModal.xhtml">
+			<ui:param name="controller" value="#{salesDetail.compositeHandler}" />
+		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/carrier/facelet/carrier/modalDeliveryDate.xhtml">
 			<ui:param name="controller" value="#{salesDetail}" />
 			<ui:param name="deliveryDateValue" value="#{salesDetail.salesDetail.deliveryDate}" />

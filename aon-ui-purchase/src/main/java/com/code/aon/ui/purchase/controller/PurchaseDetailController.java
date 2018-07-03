@@ -49,6 +49,7 @@ import com.code.aon.sales.SalesDetail;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.product.util.DetailCompositeHandler;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -75,12 +76,25 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	private boolean showDeliveryDateWindow;
 	private boolean showCarrierWindow;
 	private CarrierPacking carrierPacking;
+	
+	private DetailCompositeHandler compositeHandler;
 
 	public IPriceStrategy getPriceStrategy() {
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+	
+	public DetailCompositeHandler getCompositeHandler() {
+		if (compositeHandler == null) {
+			compositeHandler = new DetailCompositeHandler();
+		}
+		return compositeHandler;
+	}
+	
+	public void onItemCompositionSelect(ActionEvent event) {
+		getCompositeHandler().load(this, ((PurchaseDetail)this.getTo()).getItem());
 	}
 
 	public boolean isLongDescription() {

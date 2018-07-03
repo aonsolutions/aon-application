@@ -21,6 +21,7 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.product.util.DetailCompositeHandler;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -39,11 +40,24 @@ public class DeliveryDetailController extends LinesController implements IWareho
 	private double quantityAdjust;
 	private DeliveryDetail deliveryDetail;
 	
+	private DetailCompositeHandler compositeHandler;
+	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public DetailCompositeHandler getCompositeHandler() {
+		if (compositeHandler == null) {
+			compositeHandler = new DetailCompositeHandler();
+		}
+		return compositeHandler;
+	}
+	
+	public void onItemCompositionSelect(ActionEvent event) {
+		getCompositeHandler().load(this, ((DeliveryDetail)this.getTo()).getItem());
 	}
 
 	public boolean isStockWarning() {
