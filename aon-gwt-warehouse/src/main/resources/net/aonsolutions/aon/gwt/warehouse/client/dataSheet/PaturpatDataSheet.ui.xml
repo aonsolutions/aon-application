@@ -1,0 +1,135 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client"
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+
+<g:SplitLayoutPanel ui:field="contentSplitLayoutPanel">
+	<g:center>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
+			<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
+				<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
+					<tr>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Codigo Producto"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="productCode" ></g:Label>
+						</td>
+						
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Nombre Producto"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:Label ui:field="productName" ></g:Label>
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Film"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="film" styleName="aon-inputText"></g:TextBox>
+						</td>
+						
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Caducidad"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="expiration" styleName="aon-inputText"></g:TextBox>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Tipo"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="type" styleName="aon-inputText"></g:TextBox>
+						</td>
+						
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Calibre"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="caliber" styleName="aon-inputText"></g:TextBox>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Corte"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="cut" styleName="aon-inputText"></g:TextBox>
+						</td>
+						
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Criba"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="criba" styleName="aon-inputText"></g:TextBox>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Escaldado"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="escaldado" styleName="aon-inputText"></g:TextBox>
+						</td>
+						
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Sal en Balsa"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="sal" styleName="aon-inputText"></g:TextBox>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Programa Codificador"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="cod" styleName="aon-inputText"></g:TextBox>
+						</td>
+						
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Liquido Gobierno"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="liqGob" styleName="aon-inputText"></g:TextBox>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Pasteurización"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="past" styleName="aon-inputText"></g:TextBox>
+						</td>
+						
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridOdd}">
+							<g:InlineLabel text="Cliente"/>
+						</td>
+						<td style="width: 65px;height:20px;" class="{aonResources.css.aonPanelGridEven}">
+							<g:TextBox ui:field="client" styleName="aon-inputText"></g:TextBox>
+						</td>
+					</tr>
+				</table>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</g:center>
+
+</g:SplitLayoutPanel>
+
+</ui:UiBinder>

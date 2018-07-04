@@ -6,11 +6,13 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IProduct;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -220,6 +222,28 @@ public class ProductImpl implements IProduct{
 	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory){
 		return ctx.getDslContext().transactionResult(configuration ->
 			ProductDAO.insertProductCategory(ctx, productCategory));
+	}
+
+	// ------------------------------------- ITEM ADD INFO
+	
+	@Override
+	public Stream<ItemAddInfo> getItemAddInfoStream(AONContext ctx, ItemAddInfoFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ProductDAO.getItemAddInfoStream(ctx, filter));
+	}
+
+	@Override
+	public void insertItemAddInfo(AONContext ctx, ItemAddInfo i) {
+		ctx.getDslContext().transaction(configuration -> {
+			ProductDAO.insertItemAddInfo(ctx, i);
+		} );		
+	}
+	
+	@Override
+	public void updateItemAddInfo(AONContext ctx, ItemAddInfo i) {
+		ctx.getDslContext().transaction(configuration -> {
+			ProductDAO.updateItemAddInfo(ctx, i);
+		} );		
 	}
 
 }

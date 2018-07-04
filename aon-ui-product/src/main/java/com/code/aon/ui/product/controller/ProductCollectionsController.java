@@ -202,7 +202,8 @@ public class ProductCollectionsController implements Serializable {
 		Projection projection = Projection.group(addInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_ATTRIBUTE));
 		for (Object ito : addInfoBean.getList(new ProjectionList(projection), criteria)) {
     		String addInfo = (String)ito;
-    		addInfos.add(addInfo);
+    		if(!addInfo.contains("system_"))
+    			addInfos.add(addInfo);
     	}
     	return addInfos;
     }

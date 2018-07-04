@@ -46,6 +46,8 @@ import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
+import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
+
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -79,6 +81,7 @@ import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
@@ -120,6 +123,7 @@ import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.ItemAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
@@ -1345,5 +1349,27 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getFooterTemplateProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.FOOTER_TEMPLATE);}
 	}
 
+	protected static class ItemAddInfoPropertiesDAO implements ItemAddInfoProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, ItemAddInfoFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ItemAddInfoFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.DOMAIN);}
+		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.PRODUCT);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.ITEM);} 
+		@Override public Property<String> getAttributeProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.ATTRIBUTE);}
+		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.VALUE);}
+		@Override public Property<Date> getValueDate() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.VALUE_DATE);}
+	}
 	
 }

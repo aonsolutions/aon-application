@@ -4,11 +4,13 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -56,4 +58,11 @@ public interface IProduct {
 	// PRODUCT CATEGORY
 	public Stream<ProductCategory> getProductCategoryStream(AONContext ctx, ProductCategoryFilter filter);
 	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory); 
+	
+	// ITEM ADD INFO
+	
+	public Stream<ItemAddInfo> getItemAddInfoStream(AONContext ctx, ItemAddInfoFilter filter);
+	public void insertItemAddInfo(AONContext ctx, ItemAddInfo i);
+	public void updateItemAddInfo(AONContext ctx, ItemAddInfo i);
+
 }

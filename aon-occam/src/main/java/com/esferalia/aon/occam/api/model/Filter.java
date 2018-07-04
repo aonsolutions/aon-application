@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.ItemAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
@@ -149,6 +150,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface ItemFilter{
 		Filter filter(ItemProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ItemAddInfoFilter {
+		Filter filter(ItemAddInfoProperties properties);
 	}
 	
 	@FunctionalInterface

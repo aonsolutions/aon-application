@@ -41,7 +41,7 @@ public class Product extends Methods{
 		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/item/"+id , callback);
 	}
 	
-	public void insertItem( String requestData, AsyncCallback<JsItem> callback){
+	public void insertItem(String requestData, AsyncCallback<JsItem> callback){
 		post(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/item", requestData, callback);
 	}
 	
@@ -49,5 +49,21 @@ public class Product extends Methods{
 		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() + "/product/", callback);
 	}
 	
+	public void getProductList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsProduct>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() + "/products" + filter, callback);
+	}
+	
+	/**
+	 * PATURPAT DATA SHEET
+	 */
+	
+	public void getPaturpatItemInfo(Integer id, AsyncCallback<JSON<JsPaturpatProductInfo>> callback) {
+		get(getUrl() + "product/" + getDomainName() + "/" + getUserName() + "/dataSheet/"+id, callback);
+	}
+
+	public void insertPaturpatItemInfo(String requestData) {
+		post(getUrl() + "product/" + getDomainName() + "/" + getUserName() +"/dataSheet", requestData);
+	}
 	
 }

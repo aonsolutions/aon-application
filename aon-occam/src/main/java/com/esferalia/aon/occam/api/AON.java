@@ -61,6 +61,7 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
@@ -143,6 +144,7 @@ import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -1081,6 +1083,45 @@ public class AON {
 
 	public static void deleteItem(AONContext ctx, Stream<Item> is) {
 		getProduct().deleteItem(ctx, is);
+	}
+	
+	// ------------------------------------ ITEM ADD INFO
+	
+	public static Optional<ItemAddInfo> getItemAddInfo(String domainName, Integer domainId, String login, ItemAddInfoFilter filter){
+		return getItemAddInfoStream(domainName, domainId, login, filter).findFirst();
+	}
+	
+	public static Stream<ItemAddInfo> getItemAddInfoStream(String domainName, Integer domainId, String login, ItemAddInfoFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProduct().getItemAddInfoStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void insertItemAddInfo(String domainName, Integer domainId, String login, ItemAddInfo i) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getProduct().insertItemAddInfo(ctx, i);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void updateItemAddInfo(String domainName, Integer domainId, String login, ItemAddInfo i) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getProduct().updateItemAddInfo(ctx, i);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 
 	// ------------------------------------ BRAND

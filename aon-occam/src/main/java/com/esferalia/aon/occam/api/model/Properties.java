@@ -222,6 +222,16 @@ public interface Properties {
 		Property<Integer> getStockUnitTagProperty();
 	}
 	
+	public interface ItemAddInfoProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProductProperty();
+		Property<Integer> getItemProperty();
+		Property<String> getAttributeProperty();
+		Property<String> getValueProperty();
+		Property<Date> getValueDate();
+	}
+	
 	public interface DomainProperties extends AuditProperties{
 		Property<Byte> getActiveProperty();
 		Property<String> getDescriptionProperty();

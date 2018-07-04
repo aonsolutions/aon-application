@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
 import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -36,6 +37,7 @@ import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.jooq.tables.records.ProductTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -49,12 +51,16 @@ import com.esferalia.aon.occam.api.model.Properties.ProductTagProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ItemAddInfoFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ItemAddInfoPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class ProductDAO {
@@ -64,8 +70,14 @@ public class ProductDAO {
 	private static final BrandPropertiesDAO BRAND_PROPERTIES = new BrandPropertiesDAO();
 	private static final ProductCategoryPropertiesDAO PRODUCT_CATEGORY_PROPERTIES = new ProductCategoryPropertiesDAO();
 	private static final ProductTagPropertiesDAO PRODUCT_TAG_PROPERTIES = new ProductTagPropertiesDAO();
+	private static final ItemAddInfoPropertiesDAO INFO_ADDINFO_PROPERTIES = new ItemAddInfoPropertiesDAO();
 
 	protected static class ProductPropertiesDAO implements ProductProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select,ProductFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		protected Condition[] getConditions(ProductFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
@@ -275,8 +287,10 @@ public class ProductDAO {
 	}
 	
 	public static Stream<Product> getProductStream(AONContext ctx, ProductFilter filter){
-		return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT_PROPERTIES.getConditions(filter))
+		return PRODUCT_PROPERTIES.build(ctx.getDslContext().select().from(PRODUCT), filter)
 				.fetchInto(PRODUCT).stream().map(new FullProductFiller());
+	//	return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT_PROPERTIES.getConditions(filter))
+	//			.fetchInto(PRODUCT).stream().map(new FullProductFiller());
 	}
 	
 	@Deprecated
@@ -892,7 +906,27 @@ public class ProductDAO {
 		.values(productCategory.getDomain(), productCategory.getName(), productCategory.getDetail(), productCategory.getDetail2(), productCategory.getDetail3())
 		.returning().fetch().stream().map(new FullProductCategoryFiller()).findFirst().orElse(new ProductCategory());
 	}
+	
+	// ------------------------------------- ITEM ADD INFO
 
+	public static Stream<ItemAddInfo> getItemAddInfoStream(AONContext ctx, ItemAddInfoFilter filter){
+		return ctx.getDslContext().select().from(ITEM_ADDINFO).where(INFO_ADDINFO_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new ItemAddInfoFiller());
+	}
+	
+	public static void insertItemAddInfo(AONContext ctx, ItemAddInfo i) {
+		ctx.getDslContext().insertInto(ITEM_ADDINFO, ITEM_ADDINFO.DOMAIN, ITEM_ADDINFO.PRODUCT, ITEM_ADDINFO.ITEM, ITEM_ADDINFO.ATTRIBUTE, ITEM_ADDINFO.VALUE, ITEM_ADDINFO.VALUE_DATE)
+				.values(i.getDomain(), i.getProduct(), i.getItem(), i.getAttribute(), i.getValue(), AonDateUtils.toSql(i.getDate())).execute();
+	}
+	
+	public static void updateItemAddInfo(AONContext ctx, ItemAddInfo i) {
+		ctx.getDslContext().update(ITEM_ADDINFO)
+			.set(ITEM_ADDINFO.VALUE, i.getValue())
+			.set(ITEM_ADDINFO.VALUE_DATE, AonDateUtils.toSql(i.getDate()))
+			.where(ITEM_ADDINFO.ID.eq(i.getId()))
+		.execute();
+	}
+	
 	private static class FullProductCategoryFiller implements Function<PcategoryRecord, ProductCategory> {
 		@Override
 		public ProductCategory apply(PcategoryRecord r) {

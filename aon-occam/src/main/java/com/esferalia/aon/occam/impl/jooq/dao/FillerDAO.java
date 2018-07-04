@@ -25,6 +25,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
 import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
@@ -72,6 +73,7 @@ import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -1121,6 +1123,22 @@ public class FillerDAO {
 							.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER)))
 				.setProduct(r.getValue(PRODUCT.NAME) + " #" + r.getValue(ITEM.SERIAL_NUMBER));
 			
+		}
+	}
+	
+	public static class ItemAddInfoFiller implements Function<Record, ItemAddInfo> {
+		
+		@Override
+		public ItemAddInfo apply(Record r) {
+
+			return new ItemAddInfo()
+				.setDomain(r.getValue(ITEM_ADDINFO.DOMAIN))
+				.setId(r.getValue(ITEM_ADDINFO.ID))
+				.setProduct(r.getValue(ITEM_ADDINFO.PRODUCT))
+				.setItem(r.getValue(ITEM_ADDINFO.ITEM))
+				.setAttribute(r.getValue(ITEM_ADDINFO.ATTRIBUTE))
+				.setValue(r.getValue(ITEM_ADDINFO.VALUE))
+				.setDate(r.getValue(ITEM_ADDINFO.VALUE_DATE));
 		}
 	}
 

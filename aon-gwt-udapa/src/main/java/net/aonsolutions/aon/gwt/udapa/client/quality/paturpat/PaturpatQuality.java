@@ -72,7 +72,7 @@ public class PaturpatQuality extends AonTemplate2{
 	}
 	
 	public HashMap<String, LinkedList<String>> getFilterMap() {
-		return getFilterPanel().getFilterMap();
+		return  getFilterPanel() != null ? getFilterPanel().getFilterMap() : new HashMap<>();
 	}
 	
 	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
@@ -142,6 +142,12 @@ public class PaturpatQuality extends AonTemplate2{
 		dlp.addNorth(north, 85);
 		SimpleLayoutPanel center = new SimpleLayoutPanel();
 		center.addStyleName("aon-margin-left10 aon-margin-right10");
+		LinkedList<String> list = new LinkedList<>();
+		list.add("1");
+		getFilterMap().put("page", list);
+		list = new LinkedList<>();
+		list.add("40");
+		getFilterMap().put("per_page", list);
 		getAPI().getCommon().getDataResponsePaturpatQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 			
 			@Override
@@ -161,7 +167,7 @@ public class PaturpatQuality extends AonTemplate2{
 	}
 	
 	public FilterPanel filterPanel() {
-		return filterPanel(new HashMap<>());
+		return filterPanel(getFilterMap());
 	}
 	
 	public FilterPanel filterPanel(HashMap<String, LinkedList<String>> map) {
@@ -175,6 +181,12 @@ public class PaturpatQuality extends AonTemplate2{
 			protected void refresh() {
 				DockLayoutPanel dlp = (DockLayoutPanel) getContent().getWidget();
 				SimpleLayoutPanel center = (SimpleLayoutPanel) dlp.getWidget(1);
+				LinkedList<String> list = new LinkedList<>();
+				list.add("1");
+				getFilterMap().put("page", list);
+				list = new LinkedList<>();
+				list.add("40");
+				getFilterMap().put("per_page", list);
 				getAPI().getCommon().getDataResponsePaturpatQuality(getFilterMap(), new AsyncCallback<JSON<JsDataResponse>>() {
 					
 					@Override

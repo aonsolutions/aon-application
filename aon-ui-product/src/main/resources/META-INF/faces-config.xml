@@ -4,6 +4,16 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
 	<!--  **** PRODUCT COLLECTIONS ****	-->
+	
+	<managed-bean>
+		<managed-bean-name>systemAddInfo</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.controller.SystemAddInfoController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!--  **** PRODUCT COLLECTIONS ****	-->
 	<managed-bean>
 		<managed-bean-name>productCollections</managed-bean-name>
 		<managed-bean-class>

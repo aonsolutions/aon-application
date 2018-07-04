@@ -93,6 +93,17 @@
 								<aon:outputText value="#{bundle.warehouse_manufacture_module}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+								<aon:if test="#{domainSwitcher.paturpat}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_dataSheet"
+											action="gwt_dataSheet"
+											title="Ficha Técnica">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Ficha Técnica" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>			
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_elaboration"
 										action="gwt_elaboration"

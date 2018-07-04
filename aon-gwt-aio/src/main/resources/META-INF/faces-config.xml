@@ -79,6 +79,12 @@
 			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/warehouse/movementList.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_dataSheet</from-outcome>
+			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/warehouse/dataSheet.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- AON GWT UDAPA -->
 	

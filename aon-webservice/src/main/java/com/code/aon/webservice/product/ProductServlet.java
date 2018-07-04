@@ -1,7 +1,9 @@
 package com.code.aon.webservice.product;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 
@@ -65,6 +68,13 @@ public class ProductServlet extends HttpServlet{
 				case MSG.PRODUCT:
 					object = getProductList(domain, userName);
 					break;
+				case "products": 
+					object = getProductList(domain, userName, req.getParameterMap());
+					break;
+				case "dataSheet":
+					if(pathInfo.length >4) {
+						object = getPaturpatProductInfo(domain, userName, Integer.parseInt(pathInfo[4]));
+					}
 				default:
 					break;
 				}
@@ -88,6 +98,8 @@ public class ProductServlet extends HttpServlet{
 			Object object = new Object();
 			if(MSG.ITEM.equals(pathInfo[3])){
 				object = insertItem(domain, userName, json);	
+			} else if("dataSheet".equals(pathInfo[3])) {
+				object = insertPaturpatProductInfo(domain, userName,json);
 			}
 			resp.setContentType("application/json;charset=UTF-8");
 			Utils.addCorsHeader(resp);
@@ -119,9 +131,92 @@ public class ProductServlet extends HttpServlet{
 				JSONObject json = new JSONObject();
 				json.put("id", product.getId());
 				json.put("name", product.getName());
+				json.put("code", product.getCode());
 				array.put(json);
     	});
     	return array;    	
+    }
+    
+    private JSONArray getProductList(Domain domain, String login, Map<String, String[]> map){
+    	JSONArray array = new JSONArray();
+    	AON.getProductList(domain.getName(), domain.getId(), login,
+    			f -> productFilter(domain, map, f))
+    		.forEach(product -> {
+				JSONObject json = new JSONObject();
+				json.put("id", product.getId());
+				json.put("name", product.getName());
+				json.put("code", product.getCode());
+				array.put(json);
+    	});
+    	return array;    	
+    }
+    
+    private JSONArray getPaturpatProductInfo(Domain domain, String login, Integer product){
+    	JSONArray array = new JSONArray();
+    	JSONObject json = new JSONObject();
+    	Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getProductProperty().eq(product)
+    			.and(f.getSerialDateProperty().isNull()).and(f.getSerialNumberProperty().isNull()));
+    	AON.getItemAddInfoStream(domain.getName(), domain.getId(), login, f -> f.getProductProperty().eq(product)
+    			.and(f.getItemProperty().eq(item.getId())).and(f.getDomainProperty().eq(domain.getId()))
+    			.and(f.getAttributeProperty().like("system_%")))
+    	.forEach(i -> {
+    		String attr = i.getAttribute().replace("system_", "");
+    		json.put(attr, i.getValue());
+    	});
+    	json.put("product", product);
+    	json.put("item", item.getId());
+    	array.put(json);
+    	return array;
+    }
+    
+    private JSONObject insertPaturpatProductInfo(Domain domain, String login, JSONObject json) {
+    	String attr = json.getString("attribute");
+    	String value = json.getString("value");
+    	Integer item = Integer.parseInt(json.getString("item"));
+    	Integer product = Integer.parseInt(json.getString("product"));
+    	
+    	ItemAddInfo iai = new ItemAddInfo()
+    			.setAttribute("system_" + attr)
+    			.setDate(new Date())
+    			.setDomain(domain.getId())
+    			.setItem(item)
+    			.setProduct(product)
+    			.setValue(value);
+    	
+    	Optional<ItemAddInfo> o = AON.getItemAddInfo(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
+    			.and(f.getProductProperty().eq(iai.getProduct()))
+    			.and(f.getItemProperty().eq(iai.getItem()))
+    			.and(f.getAttributeProperty().eq(iai.getAttribute())));
+    	if((o.isPresent())) {
+    		AON.updateItemAddInfo(domain.getName(), domain.getId(), login, iai.setId(o.get().getId()));
+    	} else AON.insertItemAddInfo(domain.getName(), domain.getId(), login, iai);
+    	
+    	return new JSONObject();
+    }
+    
+    private Filter productFilter(Domain domain, Map<String, String[]> filterMap, ProductProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId())
+				.and(f.getStatusProperty().eq(ProductStatus.ACTIVE.value()));
+
+		if(filterMap.containsKey("text")){
+			filter = filter.and(
+					f.getNameProperty().like("%" + filterMap.get("text")[0] + "%")
+					.or(f.getCodeProperty().like("%" + filterMap.get("text")[0] + "%"))
+				);
+		}
+
+		if(filterMap.containsKey("per_page")){
+			String per_page = filterMap.get("per_page")[0];
+			Integer perPage = Integer.parseInt(per_page);
+			filter.perPage(perPage);
+		}
+		if(filterMap.containsKey("page")){
+			String page_str = filterMap.get("page")[0];
+			Integer page = Integer.parseInt(page_str);
+			filter.page(page);
+		}
+
+		return filter;
     }
     
     private JSONArray getElaborableItemList(Domain domain, String login, Map<String, String[]> map){

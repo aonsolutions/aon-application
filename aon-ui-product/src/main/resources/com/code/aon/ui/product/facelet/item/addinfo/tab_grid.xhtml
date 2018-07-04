@@ -16,11 +16,12 @@
 				<f:facet name="header">
 					<aon:outputLabel for="ItemAddInfo_attribute" value="#{bundle.aon_name}" />
 				</f:facet>
-				<aon:outputText value="#{to.attribute}"
-					rendered="#{formList}" />
+				<aon:outputText value="#{systemAddInfo.getAttr(to.attribute)}"
+					rendered="#{ systemAddInfo.isSystem(controller.to.attribute) or formList}" />
+				
 				<aon:inputText id="ItemAddInfo_attribute"
 					value="#{controller.to.attribute}"
-					rendered="#{formEdit}" required="true" 
+					rendered="#{ !systemAddInfo.isSystem(controller.to.attribute) and formEdit }" required="true" 
 					size="40" maxlength="32" />
 				<f:facet name="footer">
 					<aon:div>

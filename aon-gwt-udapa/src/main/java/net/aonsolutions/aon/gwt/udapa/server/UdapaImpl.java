@@ -152,7 +152,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 		HashMap<String, String> map = new HashMap<>();
 		net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.QualitySheetCode.valueLinkedList().stream()
 		.forEach(key -> map.put(key, "0.0"));
-		map.put(net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.QualitySheetCode.PFQO.getName(), "ABC");
+		map.put(net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.QualitySheetCode.PFQO.getName(), "");
 		
 		AON.getDataResponseDetailStream(domainName, domainId, login, 
 				f -> f.getDataResponseProperty().eq(drId))
