@@ -25,15 +25,12 @@ node {
     // Run the maven build
     sh "echo yes | ${mvnHome}/bin/mvn -Dmaven.test.failure.ignore=true -Drpm.release=false -Dgwt.working=true -DSNAPSHOT clean install"
 
+    echo "currentBuild.currentResult = ${currentBuild.currentResult}"
+
     // Recording fingerprints of files to track usage
     fingerprint '**/target/*SNAPSHOT.jar'
 
-    // Recording test results
-    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-
-    echo "currentBuild.result = ${currentBuild.result}"
-
-    if ( currentBuild.result != 'UNSTABLE' ) {
+    if ( currentBuild.currentResult != 'UNSTABLE' ) {
 
     	// Docker
     	stage 'Docker Build'
