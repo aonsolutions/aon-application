@@ -28,6 +28,9 @@ node {
     // Recording fingerprints of files to track usage
     fingerprint '**/target/*SNAPSHOT.jar'
 
+    // Recording test results
+    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+
     echo "currentBuild.result = ${currentBuild.result}"
 
     if ( currentBuild.result != 'UNSTABLE' ) {
