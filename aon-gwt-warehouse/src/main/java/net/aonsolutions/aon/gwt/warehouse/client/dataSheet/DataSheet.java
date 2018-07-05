@@ -123,6 +123,7 @@ public class DataSheet extends AonTemplate2{
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
 		getFilterMap().put("page", list);
+		getFilterMap().put("manufactured", list);
 		list = new LinkedList<>();
 		list.add("40");
 		getFilterMap().put("per_page", list);

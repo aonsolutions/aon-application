@@ -204,7 +204,12 @@ public class ProductServlet extends HttpServlet{
 					.or(f.getCodeProperty().like("%" + filterMap.get("text")[0] + "%"))
 				);
 		}
-
+		
+		if(filterMap.containsKey("manufactured")) {
+			Integer manufactured = Integer.parseInt(filterMap.get("manufactured")[0]);
+			filter = filter.and(f.getManufacturedProperty().eq(manufactured.byteValue()));
+		}
+		
 		if(filterMap.containsKey("per_page")){
 			String per_page = filterMap.get("per_page")[0];
 			Integer perPage = Integer.parseInt(per_page);
