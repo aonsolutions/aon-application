@@ -36,7 +36,7 @@ phases:
   build:
     commands:
       - echo Build SNAPSH0T started on `date`
-      - mvn -DbuildNumber=666 -DskipTests -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
+      - mvn -T 1C -DbuildNumber=666 -DskipTests -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
       - echo Building SNAPSH0T Docker images...
       - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8 .
       - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine ./aon-db-up2date
@@ -52,7 +52,7 @@ phases:
       - echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
       - mvn -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/  -f aon-htmlunit/pom.xml integration-test
       - echo Build RELEASE started on `date`
-      - mvn -DbuildNumber=666 -DskipTests -Drpm.release=false clean install
+      - mvn -T 1C -DbuildNumber=666 -DskipTests -Drpm.release=false clean install
       - echo Building RELEASE Docker images...
       - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8 .
       - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine ./aon-db-up2date
