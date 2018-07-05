@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -43,6 +44,7 @@ import com.esferalia.aon.entity.master.ItemDB;
 public class Item extends ItemDB implements IPriceable, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	private static Logger LOGGER = Logger.getLogger(Item.class.getName()); 
 
 	private double packFormatQuantity;
 	private double packUnitsQuantity;
@@ -121,23 +123,32 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
 	public String getFullName() {
 		String details = getDetails();
 		StringBuffer sb = new StringBuffer();
-		if (StringUtils.isNotEmpty(getProduct().getName())) {
-			sb.append(getProduct().getName());
+		if (getProduct() != null) {
+			if (StringUtils.isNotEmpty(getProduct().getName())) {
+				sb.append(getProduct().getName());
+			}
+			if (getPackFormatTag() != null && getPackFormatTag().getId() != null) {
+				sb.append(" " + getPackFormatTag().getName());
+			}
+			if (getProduct().isPackaged()) {
+				sb.append(" " + getPackUnits());
+				sb.append(" " + getPackUnitsTag().getName());
+				sb.append(" (" + getPackMeasurement());
+				sb.append(" " + getPackMeasurementTag().getName() + ")");
+			}
 		}
-		if (getPackFormatTag() != null && getPackFormatTag().getId() != null) {
-			sb.append(" " + getPackFormatTag().getName());
-		}
-		if (getProduct().isPackaged()) {
-			sb.append(" " + getPackUnits());
-			sb.append(" " + getPackUnitsTag().getName());
-			sb.append(" (" + getPackMeasurement());
-			sb.append(" " + getPackMeasurementTag().getName() + ")");
-		}
+			
 		if (StringUtils.isNotEmpty(details)) {
 			sb.append(" [" + details + "]");
 		}
-		if (getProduct().isSerializable() && StringUtils.isNotEmpty(getSerialNumber())) {
-			sb.append(" #" + getSerialNumber());
+			
+		if (getProduct() != null) {
+			if (getProduct().isSerializable() && StringUtils.isNotEmpty(getSerialNumber())) {
+				sb.append(" #" + getSerialNumber());
+			}
+		}
+		if (getProduct() == null) {
+			LOGGER.warning("Atributo 'product' es nulo. POSIBLE ERROR DE LOOKUP?");
 		}
 		return (sb.length() > 0) ? sb.toString() : "";
 	}
