@@ -1,32 +1,78 @@
 version: 0.2
 
-env:
-  variables:
-    JAVA_HOME: "/usr/lib/jvm/java-8-openjdk-amd64"
+#env:
+  #variables:
+     # key: "value"
+     # key: "value"
+  #parameter-store:
+     # key: "value"
+     # key: "value"
 
 phases:
   install:
     commands:
-      - echo Entered the install phase...
-      - apt-get update -y
-      - apt-get install -y maven
+      - apt-get update
+      - echo Install MariaDB on `date`
+      - echo 'mariadb-server mysql-server/root_password password pass' | debconf-set-selections
+      - echo 'mariadb-server mysql-server/root_password_again password pass' | debconf-set-selections
+      - DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-client mariadb-server
+      - sed -i -r -e 's/bind-address.*$/bind-address = 0.0.0.0/' $(grep -l -R bind-address /etc/mysql/*)
+      - service mysql start
+      - echo MariaDB started on `date`
+      - echo "GRANT ALL ON *.* TO 'dbuser'@'%' IDENTIFIED BY 'serubd2000'" | mysql -u root --password=pass
+      - DOCKER0_IP=$(ip -f inet -o addr show docker0|cut -d\  -f 7 | cut -d/ -f 1)
+      - echo Docker started at $DOCKER0_IP
+      - echo "SELECT 'MariaDB listening in $DOCKER0_IP for root'" | mysql -u root --password=pass -h $DOCKER0_IP
+      - echo "SELECT 'MariaDB listening in $DOCKER0_IP for dbuser'" | mysql -u dbuser --password=serubd2000 -h $DOCKER0_IP
   pre_build:
     commands:
-      - echo Entered the pre_build phase...
-      - docker run --name mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=serubd2000 -p 3306:3306 -d mariadb:10.0
+      - export LC_ALL="en_US.UTF-8"
+      - locale-gen en_US en_US.UTF-8
+      - dpkg-reconfigure locales
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - IMAGE_TAG=$(date +%Y.%m.%d-%H.%M.%S)
   build:
     commands:
-      - echo Entered the build phase...
-      - echo Build started on `date`
-      - mvn -Dmaven.test.failure.ignore=true -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
+      - echo Build SNAPSH0T started on `date`
+      - mvn -DbuildNumber=666 -DskipTests -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
+      - echo Building SNAPSH0T Docker images...
+      - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8 .
+      - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine ./aon-db-up2date
+      - echo Build SNAPSH0T completed on `date`
+      - echo Testing SNAPSH0T  Docker images...
+      - echo "DROP DATABASE IF EXISTS \`test-aonsolutions-org\`" | mysql -u root --password=pass
+      - mysql -u root --password=pass < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
+      - docker stop aon-application && docker rm aon-application || echo 'No previous aon-application running'
+      - docker run -e DB_HOST=${DOCKER0_IP} -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine
+      - docker run --name aon-application -d -p 8080:8080 -e DB_HOST=${DOCKER0_IP} -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8
+      - echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
+      - echo 127.0.0.1 home-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
+      - echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
+      - mvn -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/  -f aon-htmlunit/pom.xml integration-test
+      - echo Build RELEASE started on `date`
+      - mvn -DbuildNumber=666 -DskipTests -Drpm.release=false clean install
+      - echo Building RELEASE Docker images...
+      - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8 .
+      - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine ./aon-db-up2date
+      - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile .
+      #-$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
-      - echo Entered the post_build phase...
-      - echo Build completed on `date`
+      - docker tag aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8
+      - docker tag aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine
+      - docker tag aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8
+      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8
+      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine
+      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8
+
 artifacts:
   files:
-  discard-paths: yes
-cache:
-  paths:
-    - '/root/.m2/**/*'
-
+    - aon-web-aio/target/aon-aio.war
+    # - location
+  #discard-paths: yes
+  #base-directory: location
+#cache:
+  #paths:
+    # - paths
