@@ -52,7 +52,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
@@ -688,6 +687,7 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 		} else sp.setVisible(!sp.isVisible());
 	}
 
+	HashMap<Integer, Double> receptionMap = new HashMap<>();  
 	private VerticalPanel buildDetail(JsOrder order, JSON<JsOrderDetail> details, String panl) {
 		VerticalPanel vp = new VerticalPanel();
 		if(!isShipment() && isSelected(panl)){
@@ -716,17 +716,31 @@ public class SelectionPanel extends ResizeComposite implements RequiresResize {
 					@Override
 					public void onChange(com.google.gwt.event.dom.client.ChangeEvent event) {
 						if("income".equals(order.getOrderType())){
-							JSONObject rJson = new JSONObject();
+							receptionMap.remove(detail.getId());
+							
+							JSONObject rJson = new JSONObject();							
+							Double neto = getCarrierPacking().getNet();
+							Integer c = 0;
+							LinkedList<Integer> list = new LinkedList<>(receptionMap.keySet());
+							for (Integer i = 0; i < list.size(); i++) {
+								neto = neto - receptionMap.get(list.get(i));
+								rJson.put("income" + c , new JSONString(list.get(i) + ""));
+								c++;
+							}
+							
+							rJson.put("size", new JSONNumber(receptionMap.size()));
 							rJson.put("income", new JSONString(detail.getId()+ ""));
 							rJson.put("quantity", new JSONNumber(db.getValue()));
-							rJson.put("net", new JSONString(getCarrierPacking().getNet() + ""));
+							rJson.put("net", new JSONString(neto + "")); //new JSONString(getCarrierPacking().getNet() + ""));
 							rJson.put("carrier_packing", new JSONString(getCarrierPacking().getId() + ""));
 							String rd = JsonUtils.stringify(rJson.getJavaScriptObject());
+
 							getAPI().getWarehouse().updateReceptionDetailQuantity(rd, new AsyncCallback<JsObject>() {
 								@Override public void onFailure(Throwable caught) {}
 
 								@Override
 								public void onSuccess(JsObject result) {
+									receptionMap.put(detail.getId(), db.getValue());
 									SimpleLayoutPanel w = (SimpleLayoutPanel) receptionVerticalPanel.getParent();
 									receptionVerticalPanel.removeFromParent();
 									receptionPanel();

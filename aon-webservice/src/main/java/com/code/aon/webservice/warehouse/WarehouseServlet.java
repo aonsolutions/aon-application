@@ -1171,11 +1171,20 @@ public class WarehouseServlet extends HttpServlet{
     	Integer cpId = Integer.parseInt(json.getString("carrier_packing"));
     	Integer incomeId =  Integer.parseInt(json.getString("income"));
     	Double quantity = json.getDouble("quantity");
-    
+    	
+    	LinkedList<Integer> list = new LinkedList<>();
+    	Integer size = json.getInt("size");
+    	for(Integer i = 0 ; i < size ; i++) {
+    		Integer id = Integer.parseInt(json.getString("income" + i));
+    		list.add(id);
+    	}
+    	Integer[] array = list.toArray(new Integer[list.size()]);
+    	
     	HashMap<Integer, IncomeDetail> map = new HashMap<>();
     	AON.getIncomeStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(cpId))
     	.forEach(income -> {
-    		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
+    		AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId())
+    				.and(f.getIdProperty().notIn(array)))
     		.forEach(detail -> {
     			map.put(detail.getId(), detail);
     		});
@@ -1197,13 +1206,13 @@ public class WarehouseServlet extends HttpServlet{
         		pd.setDelivered(q);
         		AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, pd);
     		} else {
-    			AonMathUtils.round(quantity);
+    			Double q = map.size() > 1 ? AonMathUtils.round(quantity) : AonMathUtils.round(neto);
     			IncomeDetail id = map.get(key);
-    			id.setQuantity(quantity);
+    			id.setQuantity(q);
         		AON.updateIncomeDetail(domain.getName(), domain.getId(), login, id);
         		PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
-        		pd.setQuantity(quantity);
-        		pd.setDelivered(quantity);
+        		pd.setQuantity(q);
+        		pd.setDelivered(q);
         		AON.updatePurchaseDetail(domain.getName(), domain.getId(), login, pd);
     		}
     	}
