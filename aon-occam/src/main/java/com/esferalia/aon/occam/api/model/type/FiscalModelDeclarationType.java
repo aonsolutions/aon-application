@@ -5,7 +5,7 @@ public enum FiscalModelDeclarationType {
 	//-------------------------------------------------- FINANCE    -ASK BANK		
 	 NEGATIVE 	("N","Negativa, cero \u00F3 sin. act."	,false		,false)
 	,DEPOSIT  	("I","Ingreso"							,true		,true )
-	,BANK     	("U","Domicializaci\u00F3n"				,true		,true )
+	,BANK     	("U","Domiciliaci\u00F3n"				,true		,true )
 	,DEPOSIT_CCT("G","Ingreso a anotar en CCT"			,false		,false)
 	,TO_DEDUCE	("B","A deducir"						,false		,false)
 	
