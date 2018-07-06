@@ -69,7 +69,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.CONFIDENTIAL	,new JSONNumber( params.isConfidential()?1:0));
 		json.put(IRequestParamsNames.ACCOUNT   		,params.getAccount()			== null? JSON_NULL : new JSONNumber( params.getAccount()));
 		json.put(IRequestParamsNames.DEBIT 			,params.getDebit()  			== null? JSON_NULL : new JSONNumber( params.getDebit()));
-		json.put(IRequestParamsNames.CREDIT			,params.getDebit()  			== null? JSON_NULL : new JSONNumber( params.getCredit()));
+		json.put(IRequestParamsNames.CREDIT			,params.getCredit()  			== null? JSON_NULL : new JSONNumber( params.getCredit()));
 		json.put(IRequestParamsNames.CONCEPT  	 	,AonStringUtils.isBlank(params.getConcept())? JSON_NULL : new JSONString( params.getConcept()));
 		json.put(IRequestParamsNames.DOCUMENT 	 	,AonStringUtils.isBlank(params.getDocument())? JSON_NULL : new JSONString( params.getDocument()));
 		json.put(IRequestParamsNames.BALANCING_ACCOUNT,params.getBalancingAccount() == null? JSON_NULL : new JSONNumber( params.getBalancingAccount()));
