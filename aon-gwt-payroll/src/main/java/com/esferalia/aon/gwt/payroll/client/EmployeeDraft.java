@@ -671,12 +671,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void hideElementsFreelancerTable() {
-		this.contractDataTable.getRowFormatter().addStyleName(0, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(1, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(2, style.hide());
 		this.contractDataTable.getRowFormatter().addStyleName(3, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(6, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(7, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(8, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(5, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(8, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(9, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(10, style.hide());
 		
 		this.contractType.addStyleName(style.hide());
 		this.contractTypeFreelance.removeStyleName(style.hide());	
@@ -719,12 +719,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void showElementsContractTable() {
-		this.contractDataTable.getRowFormatter().removeStyleName(0, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(1, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(2, style.hide());
 		this.contractDataTable.getRowFormatter().removeStyleName(3, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(6, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(7, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(8, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(5, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(8, style.hide());
+		this.contractDataTable.getRowFormatter().removeStyleName(9, style.hide());
+		this.contractDataTable.getRowFormatter().addStyleName(10, style.hide());
 		
 		this.contractType.removeStyleName(style.hide());
 		this.contractTypeFreelance.addStyleName(style.hide());
