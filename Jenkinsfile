@@ -25,9 +25,6 @@ node {
     // Run the maven build
     sh "echo yes | ${mvnHome}/bin/mvn -Dmaven.test.failure.ignore=true -Drpm.release=false -Dgwt.working=true -DSNAPSHOT clean install"
 
-		// Recording test results
-    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-
     echo "currentBuild.currentResult = ${currentBuild.currentResult}"
 
     // Recording fingerprints of files to track usage
