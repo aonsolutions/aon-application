@@ -1873,6 +1873,7 @@ public class Mod131DAO extends FiscalModelDAO {
 						}
 					}
 					if (addActivity) {
+						prevAct.setPeriod(mod.getPeriod());
 						prevAct.setDia((int) (AonDateUtils.getDaysBetweenDates(
 								FiscalUtils.getPeriodStart(mod)
 								,FiscalUtils.getPeriodEnd(mod)) + 1));

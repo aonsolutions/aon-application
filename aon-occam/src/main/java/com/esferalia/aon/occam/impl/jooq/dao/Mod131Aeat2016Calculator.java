@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod131Aeat2016Calculator  {
 	
@@ -32,10 +33,10 @@ public class Mod131Aeat2016Calculator  {
 	
 	private static void calculateModules(AONContext ctx, Mod131Activity act) {
 		for (Mod131ActivityModule mod : act.getModules()) {
-			if (mod.isSalariedStaff()) {
+			if (mod.isSalariedStaff() || AonStringUtils.contains(mod.getDescription(),"PERSONAL ASALARIADO")) {
 				calculateSalariedStaff(ctx,mod);
 			}
-			if (mod.isNoSalariedStaff()) {
+			if (mod.isNoSalariedStaff() || AonStringUtils.contains(mod.getDescription(),"PERSONAL NO ASALARIADO")) {
 				calculateNoSalariedStaff(ctx,act,mod);		
 			}
 			mod.setResult( AonMathUtils.round(mod.getValue() * mod.getFactor() ) );
@@ -124,7 +125,7 @@ public class Mod131Aeat2016Calculator  {
 	private static void calcIncentivosAlEmpleo(AONContext ctx, Mod131Activity act) {
 		double salariedStaff = 0.0;
 		for (Mod131ActivityModule mod : act.getModules()) {
-			if (mod.isSalariedStaff()) {
+			if (mod.isSalariedStaff() || AonStringUtils.contains(mod.getDescription(),"PERSONAL ASALARIADO")) {
 				salariedStaff = AonMathUtils.round(salariedStaff + mod.getValue());
 			}
 		}
@@ -159,7 +160,7 @@ public class Mod131Aeat2016Calculator  {
 		
 		if (coef != 0 ) {
 			for (Mod131ActivityModule mod : act.getModules()) {
-				if (mod.isSalariedStaff()) {
+				if (mod.isSalariedStaff() || AonStringUtils.contains(mod.getDescription(),"PERSONAL ASALARIADO")) {
 					double m01 = mod.getValue();
 					double ratioPersonalAsalariado = (salariedStaff != 0 )?m01 / salariedStaff:1;
 					iem = AonMathUtils.round(iem + (coef * ratioPersonalAsalariado * mod.getFactor())); 
