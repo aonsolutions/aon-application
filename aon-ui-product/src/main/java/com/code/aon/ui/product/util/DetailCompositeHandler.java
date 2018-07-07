@@ -6,6 +6,9 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
@@ -24,30 +27,114 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.IncomeDetail;
 
-public class DetailCompositeHandler implements Serializable {
+public class DetailCompositeHandler extends DataScrollerState implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(DetailCompositeHandler.class.getName());
+
 	
 	private IPriceStrategy priceStrategy;
 	
 	private LinesController controller;
 	
-	private Item composeItem;
-	
-	private List<ItemComposition> compositionList;
-	
-	private SerializableListDataModel compositionModel;
-	
 	private boolean showItemCompositionWindow;
 	
-		
+	private boolean showSerialNumberWindow;
+	
+	private Item composeItem;
+	
+	/*
+	 * GRID OBJECTS
+	 */
+	private boolean nevv;
+	
+	private List<ItemComposition> list;
+	
+	private ItemComposition to;
+	
+	
+	public DetailCompositeHandler() {
+		setBeanName("compositeHandler");
+		setPageLimit(-1);
+	}
+	
+	/*
+	 * GRID METHODS
+	 */
+	public boolean isNevv() {
+		return nevv;
+	}
+	
+	public void onSelect(ActionEvent event) {
+		if (getDirectModel().isRowAvailable())
+			setTo((ItemComposition) getDirectModel().getRowData());
+		this.nevv = false;
+	}
+	
+	public void onAccept(ActionEvent event) {
+		if (getDirectModel().isRowAvailable())
+			list.set(getDirectModel().getRowIndex(), this.to);
+		else
+			this.list.add(this.to);
+		this.to = null;
+		this.nevv = false;
+	}
+
+	public void onCancel(ActionEvent event) {
+		this.to = null;
+		this.nevv = false;
+	}
+	
+	public void onReset(ActionEvent event) throws ManagerBeanException {
+		this.nevv = true;
+		this.to = (ItemComposition) BeanManager.getManagerBean(ItemComposition.class).createNewTo();
+	}
+	
+	public void onRemove(ActionEvent event) {
+		if (getDirectModel().isRowAvailable())
+			list.remove(getDirectModel().getRowIndex());
+		this.to = null;
+	}
+	
+	public void onCompositionItemChanged(LookupChangeEvent event) {
+		ItemComposition itemComposition = (ItemComposition)getTo();
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			Item item = (Item)event.getNewValue();
+			itemComposition.setCompositionItem(item);
+			itemComposition.setDescription(item.getFullName());
+			if (itemComposition.getQuantity() == 0) {
+				itemComposition.setQuantity(1);
+			}
+		}
+	}
+	////
+	////
+	
+	// TODO onAssignSerialNumberShow
+	public void onAssignSerialNumberShow(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+//			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+//			setSalesDetail(salesDetail);
+//			setSerializableItem(salesDetail.getItem());
+//			setSerializableQuantity(salesDetail.getItem().getProduct().isLotable() ? salesDetail.getQuantity() : 1);
+//			setSerialNumber(null);
+//			setSerialDate(null);
+//			setSerialNumbers(obtainItemSerialNumbers(salesDetail.getItem().getProduct()));
+//			setSelectedBreakdown(null);
+		} else {
+			setShowSerialNumberWindow(false);
+		}
+	}
+	
 	
 	public boolean isShowItemCompositionWindow() {
 		return showItemCompositionWindow;
@@ -56,26 +143,38 @@ public class DetailCompositeHandler implements Serializable {
 	public void setShowItemCompositionWindow(boolean showItemCompositionWindow) {
 		this.showItemCompositionWindow = showItemCompositionWindow;
 	}
+	
+	public boolean isShowSerialNumberWindow() {
+		return showSerialNumberWindow;
+	}
 
+	public void setShowSerialNumberWindow(boolean value) {
+		this.showSerialNumberWindow = value;
+	}
+
+	public ItemComposition getTo() {
+		return to;
+	}
+	public void setTo(ItemComposition to) {
+		this.to = to;
+	}
+	////
+	////
+	
 	public Item getComposeItem() {
 		return composeItem;
 	}
-
-	public SerializableListDataModel getCompositionModel() {
-		if(compositionModel==null)
-			compositionModel = new SerializableListDataModel(compositionList);
-		return compositionModel;
-	}
-
+	
 	public void load(LinesController controller, Item item) {
 		this.priceStrategy = null;
-		this.compositionList = null;
-		this.compositionModel = null;
+		this.list = null;
+		this.nevv = false;
 		
 		this.controller = controller;
 		this.composeItem = item;
 		try {
-			compositionList = item.getItemCompositionList();
+			list = item.getItemCompositionList();
+			setModel(new SerializableListDataModel(list));
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("No se han podido localizar los componentes.");
 		}
@@ -83,38 +182,37 @@ public class DetailCompositeHandler implements Serializable {
 	
 	public void discard(ActionEvent event) {
 		try {
-			compositionList = this.composeItem.getItemCompositionList();
+			list = this.composeItem.getItemCompositionList();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("No se han podido localizar los componentes.");
 		}
 	}
 	
-	public void accept() {
+	public void acceptItemComposition() {
 		if(controller==null || composeItem==null)
 			throw new AbortProcessingException("Precarga de datos incorrecta, no se puede continuar.");
 		
-		if("offerDetail".equals(controller.getBeanName()))
-			afterOfferDetailAdded();
-		else if("invoiceDetail".equals(controller.getBeanName()))
-			afterInvoiceDetailAdded();
+		if("saleInvoiceDetail".equals(controller.getBeanName())
+				|| "purchaseInvoiceDetail".equals(controller.getBeanName()))
+			addInvoiceDetailItems();
+		else if("offerDetail".equals(controller.getBeanName()))
+			addOfferDetailItems();
 		else if("purchaseDetail".equals(controller.getBeanName()))
-			afterPurchaseDetailAdded();
+			addPurchaseDetailItems();
 		else if("salesDetail".equals(controller.getBeanName()))
-			afterSalesDetailAdded();
+			addSalesDetailItems();
 		else if("deliveryDetail".equals(controller.getBeanName()))
-			afterDeliveryDetailAdded();
+			addDeliveryDetailItems();
 		else if("incomeDetail".equals(controller.getBeanName()))
-			afterIncomeDetailAdded();
+			addIncomeDetailItems();
 	}
 	
 	private IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null) {
-			if("invoiceDetail".equals(controller.getBeanName())) {
+		if(priceStrategy == null)
+			if("invoiceDetail".equals(controller.getBeanName()))
 				priceStrategy = new InvoicePriceStrategy();
-			} else {
+			else
 				priceStrategy = PriceStrategyFactory.getPriceStrategy();
-			}
-		}
 		return priceStrategy;
 	}
 	
@@ -122,30 +220,158 @@ public class DetailCompositeHandler implements Serializable {
 	/*
 	 * OFFER DETAIL
 	 */
-	private void afterOfferDetailAdded() {
-//		OfferDetailController controller = (OfferDetailController)event.getController();
+	private void addOfferDetailItems() {
 		Offer offer = (Offer)controller.getMasterController().getTo();
 		OfferDetail offerDetail = (OfferDetail)controller.getTo();
 		if (offerDetail.getItem() != null && offerDetail.getItem().getId() != null && offerDetail.getItem().getProduct().isComposition()) {
 			double quantity = offerDetail.getQuantity();
 			try {
-//				for (ItemComposition composition : compositionList) {
-				for (ItemComposition composition : (List<ItemComposition>)compositionModel.getWrappedData() ) {
-//				for (ItemComposition composition : offerDetail.getItem().getItemCompositionList()) {
+				for (ItemComposition composition : list) {
 					offerDetail.setId(null);
 					offerDetail.setLine(offerDetail.getLine()+1);
 					offerDetail.setItem(composition.getCompositionItem());
 					offerDetail.setDescription(composition.getDescription());
 					offerDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-//					offerDetail.setPrice(obtainCompositionItemPrice(offerDetail, offer, composition, controller.getPriceStrategy()));
 					offerDetail.setPrice(obtainCompositionItemPrice(offerDetail, offer, composition, getPriceStrategy()));
 					offerDetail.setDiscountExpression(obtainCompositionDiscount(composition));
 					offerDetail = (OfferDetail)controller.getManagerBean().insert(offerDetail);
 				}
 			} catch (ManagerBeanException e) {
-//				throw new ControllerListenerException(e.getMessage(), e);
-				AonUtil.addErrorMessage("No me han podido crear los componentes");
-				AonUtil.addErrorMessage(e.getMessage());
+				LOGGER.error("No me han podido crear los componentes");
+				throw new AbortProcessingException(e);
+			}
+		}
+	}
+
+	
+	
+	/*
+	 * INVOICE DETAIL
+	 */
+	private void addInvoiceDetailItems() {
+		Invoice invoice = (Invoice)controller.getMasterController().getTo();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		if (invoiceDetail.getItem().getProduct().isComposition()) {
+			double quantity = invoiceDetail.getQuantity();
+			try {
+				for (ItemComposition composition : list) {
+					invoiceDetail.setId(null);
+					invoiceDetail.setLine(invoiceDetail.getLine()+1);
+					invoiceDetail.setItem(composition.getCompositionItem());
+					invoiceDetail.setDescription(composition.getDescription());
+					invoiceDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
+					invoiceDetail.setPrice(obtainCompositionItemPrice(invoiceDetail, invoice, composition, getPriceStrategy()));
+					invoiceDetail.setDiscountExpression(obtainCompositionDiscount(invoiceDetail, composition));
+					invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+					invoiceDetail = (InvoiceDetail)controller.getManagerBean().insert(invoiceDetail);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("No me han podido crear los componentes");
+				throw new AbortProcessingException(e);
+			}
+		}
+	}
+
+	
+	/*
+	 * PURCHASE DETAIL
+	 */
+	private void addPurchaseDetailItems() {
+		PurchaseDetail purchaseDetail = (PurchaseDetail)controller.getTo();
+		if (purchaseDetail.getItem().getProduct().isComposition()) {
+			double quantity = purchaseDetail.getQuantity();
+			try {
+				for (ItemComposition composition : list) {
+					purchaseDetail.setId(null);
+					purchaseDetail.setLine(purchaseDetail.getLine()+1);
+					purchaseDetail.setItem(composition.getCompositionItem());
+					purchaseDetail.setDescription(composition.getDescription());
+					purchaseDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
+					purchaseDetail.setPrice(obtainCompositionItemPrice(composition));
+					purchaseDetail.setDiscountExpression(new DiscountExpression("0.0"));
+					purchaseDetail = (PurchaseDetail)controller.getManagerBean().insert(purchaseDetail);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("No me han podido crear los componentes");
+				throw new AbortProcessingException(e);
+			}
+		}
+	}
+	
+	
+	/*
+	 * SALES DETAIL
+	 */
+	private void addSalesDetailItems() {
+		Sales sales = (Sales)controller.getMasterController().getTo();
+		SalesDetail salesDetail = (SalesDetail)controller.getTo();
+		if (salesDetail.getItem().getProduct().isComposition()) {
+			double quantity = salesDetail.getQuantity();
+			try {
+				for (ItemComposition composition : list) {
+					salesDetail.setId(null);
+					salesDetail.setLine(salesDetail.getLine()+1);
+					salesDetail.setItem(composition.getCompositionItem());
+					salesDetail.setDescription(composition.getDescription());
+					salesDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
+					salesDetail.setPrice(obtainCompositionItemPrice(salesDetail, sales, composition, getPriceStrategy()));
+					salesDetail.setDiscountExpression(obtainCompositionDiscount(composition));
+					salesDetail = (SalesDetail)controller.getManagerBean().insert(salesDetail);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("No me han podido crear los componentes");
+				throw new AbortProcessingException(e);
+			}
+		}
+	}
+	
+	/*
+	 * DELIVERY DETAIL
+	 */
+	private void addDeliveryDetailItems() {
+		Delivery delivery = (Delivery)controller.getMasterController().getTo();
+		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
+		if (deliveryDetail.getItem().getProduct().isComposition()) {
+			double quantity = deliveryDetail.getQuantity();
+			try {
+				for (ItemComposition composition : list) {
+					deliveryDetail.setId(null);
+					deliveryDetail.setLine(deliveryDetail.getLine()+1);
+					deliveryDetail.setItem(composition.getCompositionItem());
+					deliveryDetail.setDescription(composition.getDescription());
+					deliveryDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
+					deliveryDetail.setPrice(obtainCompositionItemPrice(deliveryDetail, delivery, composition, getPriceStrategy()));
+					deliveryDetail.setDiscountExpression(obtainCompositionDiscount(deliveryDetail, composition));
+					deliveryDetail = (DeliveryDetail)controller.getManagerBean().insert(deliveryDetail);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("No me han podido crear los componentes");
+				throw new AbortProcessingException(e);
+			}
+		}
+	}
+	
+	/*
+	 * INCOME DETAIL
+	 */
+	private void addIncomeDetailItems() {
+		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
+		if (incomeDetail.getItem().getProduct().isComposition()) {
+			double quantity = incomeDetail.getQuantity();
+			try {
+				for (ItemComposition composition : list) {
+					incomeDetail.setId(null);
+					incomeDetail.setLine(incomeDetail.getLine()+1);
+					incomeDetail.setItem(composition.getCompositionItem());
+					incomeDetail.setDescription(composition.getDescription());
+					incomeDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
+					incomeDetail.setPrice(obtainCompositionItemPrice(composition));
+					incomeDetail.setDiscountExpression(new DiscountExpression("0.0"));
+					incomeDetail = (IncomeDetail)controller.getManagerBean().insert(incomeDetail);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("No me han podido crear los componentes");
+				throw new AbortProcessingException(e);
 			}
 		}
 	}
@@ -157,50 +383,7 @@ public class DetailCompositeHandler implements Serializable {
 		}
 		return price;
 	}
-
-	private DiscountExpression obtainCompositionDiscount(ItemComposition composition) {
-		DiscountExpression discountExpr = new DiscountExpression("0.0");
-		if (composition.getItem().getProduct().isCompositionPrice() && composition.getDiscountExpression() != null) {
-			discountExpr = composition.getDiscountExpression();
-		}
-		return discountExpr;
-	}
 	
-	
-	
-	/*
-	 * INVOICE DETAIL
-	 */
-	private void afterInvoiceDetailAdded() {
-//		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		Invoice invoice = (Invoice)controller.getMasterController().getTo();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		if (invoiceDetail.getItem().getProduct().isComposition()) {
-			double quantity = invoiceDetail.getQuantity();
-			try {
-//				for (ItemComposition composition : compositionList) {
-				for (ItemComposition composition : (List<ItemComposition>)compositionModel.getWrappedData() ) {
-//				for (ItemComposition composition : invoiceDetail.getItem().getItemCompositionList()) {
-					invoiceDetail.setId(null);
-					invoiceDetail.setLine(invoiceDetail.getLine()+1);
-					invoiceDetail.setItem(composition.getCompositionItem());
-					invoiceDetail.setDescription(composition.getDescription());
-					invoiceDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-//					invoiceDetail.setPrice(obtainCompositionItemPrice(invoiceDetail, invoice, composition, controller.getPriceStrategy()));
-					invoiceDetail.setPrice(obtainCompositionItemPrice(invoiceDetail, invoice, composition, getPriceStrategy()));
-					invoiceDetail.setDiscountExpression(obtainCompositionDiscount(invoiceDetail, composition));
-//					invoiceDetail.setTaxableBase(controller.getPriceStrategy().getBasePrice(invoiceDetail));
-					invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
-					invoiceDetail = (InvoiceDetail)controller.getManagerBean().insert(invoiceDetail);
-				}
-			} catch (ManagerBeanException e) {
-//				throw new ControllerListenerException(e.getMessage(), e);
-				AonUtil.addErrorMessage("No me han podido crear los componentes");
-				AonUtil.addErrorMessage(e.getMessage());
-			}
-		}
-	}
-
 	private double obtainCompositionItemPrice(InvoiceDetail invoiceDetail, Invoice invoice, ItemComposition composition, IPriceStrategy priceStrategy) {
 		double price = 0;
 		if (composition.getItem().getProduct().isCompositionPrice()) {
@@ -217,7 +400,39 @@ public class DetailCompositeHandler implements Serializable {
 		}
 		return price;
 	}
-
+	
+	private double obtainCompositionItemPrice(ItemComposition composition) {
+		double price = 0;
+		if (composition.getItem().getProduct().isCompositionPrice()) {
+			price = composition.getCompositionItem().getPurchasePrice();
+		}
+		return price;
+	}
+	
+	private double obtainCompositionItemPrice(SalesDetail salesDetail, Sales sales, ItemComposition composition, IPriceStrategy priceStrategy) {
+		double price = 0;
+		if (composition.getItem().getProduct().isCompositionPrice()) {
+			price = priceStrategy.getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer());
+		}
+		return price;
+	}
+	
+	private double obtainCompositionItemPrice(DeliveryDetail deliveryDetail, Delivery delivery, ItemComposition composition, IPriceStrategy priceStrategy) {
+		double price = 0;
+		if (composition.getItem().getProduct().isCompositionPrice()) {
+			price = priceStrategy.getUnitPrice(deliveryDetail, delivery.getIssueTime(), delivery.getCustomer());
+		}
+		return price;
+	}
+	
+	private DiscountExpression obtainCompositionDiscount(ItemComposition composition) {
+		DiscountExpression discountExpr = new DiscountExpression("0.0");
+		if (composition.getItem().getProduct().isCompositionPrice() && composition.getDiscountExpression() != null) {
+			discountExpr = composition.getDiscountExpression();
+		}
+		return discountExpr;
+	}
+	
 	private DiscountExpression obtainCompositionDiscount(InvoiceDetail invoiceDetail, ItemComposition composition) {
 		DiscountExpression discountExpr = new DiscountExpression("0.0");
 		if (composition.getItem().getProduct().isCompositionPrice() && invoiceDetail.getInvoice().isSales()) {
@@ -228,133 +443,6 @@ public class DetailCompositeHandler implements Serializable {
 		return discountExpr;
 	}
 	
-	
-	/*
-	 * PURCHASE DETAIL
-	 */
-	private void afterPurchaseDetailAdded() {
-//		PurchaseDetailController controller = (PurchaseDetailController)event.getController();
-		PurchaseDetail purchaseDetail = (PurchaseDetail)controller.getTo();
-		if (purchaseDetail.getItem().getProduct().isComposition()) {
-			double quantity = purchaseDetail.getQuantity();
-			try {
-//				for (ItemComposition composition : compositionList) {
-				for (ItemComposition composition : (List<ItemComposition>)compositionModel.getWrappedData() ) {
-//				for (ItemComposition composition : purchaseDetail.getItem().getItemCompositionList()) {
-					purchaseDetail.setId(null);
-					purchaseDetail.setLine(purchaseDetail.getLine()+1);
-					purchaseDetail.setItem(composition.getCompositionItem());
-					purchaseDetail.setDescription(composition.getDescription());
-					purchaseDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-					purchaseDetail.setPrice(obtainCompositionItemPrice(composition));
-					purchaseDetail.setDiscountExpression(new DiscountExpression("0.0"));
-					purchaseDetail = (PurchaseDetail)controller.getManagerBean().insert(purchaseDetail);
-				}
-			} catch (ManagerBeanException e) {
-//				throw new ControllerListenerException(e.getMessage(), e);
-				AonUtil.addErrorMessage("No me han podido crear los componentes");
-				AonUtil.addErrorMessage(e.getMessage());
-			}
-		}
-	}
-
-	private double obtainCompositionItemPrice(ItemComposition composition) {
-		double price = 0;
-		if (composition.getItem().getProduct().isCompositionPrice()) {
-			price = composition.getCompositionItem().getPurchasePrice();
-		}
-		return price;
-	}
-	
-	
-	/*
-	 * SALES DETAIL
-	 */
-	private void afterSalesDetailAdded() {
-//		SalesDetailController controller = (SalesDetailController)event.getController();
-		Sales sales = (Sales)controller.getMasterController().getTo();
-		SalesDetail salesDetail = (SalesDetail)controller.getTo();
-		if (salesDetail.getItem().getProduct().isComposition()) {
-			double quantity = salesDetail.getQuantity();
-			try {
-//				for (ItemComposition composition : compositionList) {
-				for (ItemComposition composition : (List<ItemComposition>)compositionModel.getWrappedData() ) {
-//				for (ItemComposition composition : salesDetail.getItem().getItemCompositionList()) {
-					salesDetail.setId(null);
-					salesDetail.setLine(salesDetail.getLine()+1);
-					salesDetail.setItem(composition.getCompositionItem());
-					salesDetail.setDescription(composition.getDescription());
-					salesDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-//					salesDetail.setPrice(obtainCompositionItemPrice(salesDetail, sales, composition, controller.getPriceStrategy()));
-					salesDetail.setPrice(obtainCompositionItemPrice(salesDetail, sales, composition, getPriceStrategy()));
-					salesDetail.setDiscountExpression(obtainCompositionDiscount(composition));
-					salesDetail = (SalesDetail)controller.getManagerBean().insert(salesDetail);
-				}
-			} catch (ManagerBeanException e) {
-//				throw new ControllerListenerException(e.getMessage(), e);
-				AonUtil.addErrorMessage("No me han podido crear los componentes");
-				AonUtil.addErrorMessage(e.getMessage());
-			}
-		}
-	}
-
-	private double obtainCompositionItemPrice(SalesDetail salesDetail, Sales sales, ItemComposition composition, IPriceStrategy priceStrategy) {
-		double price = 0;
-		if (composition.getItem().getProduct().isCompositionPrice()) {
-			price = priceStrategy.getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer());
-		}
-		return price;
-	}
-
-	// TODO check duplicated method
-//	private DiscountExpression obtainCompositionDiscount(ItemComposition composition) {
-//		DiscountExpression discountExpr = new DiscountExpression("0.0");
-//		if (composition.getItem().getProduct().isCompositionPrice() && composition.getDiscountExpression() != null) {
-//			discountExpr = composition.getDiscountExpression();
-//		}
-//		return discountExpr;
-//	}
-
-	
-	/*
-	 * DELIVERY DETAIL
-	 */
-	private void afterDeliveryDetailAdded() {
-//		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
-		Delivery delivery = (Delivery)controller.getMasterController().getTo();
-		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
-		if (deliveryDetail.getItem().getProduct().isComposition()) {
-			double quantity = deliveryDetail.getQuantity();
-			try {
-//				for (ItemComposition composition : compositionList) {
-				for (ItemComposition composition : (List<ItemComposition>)compositionModel.getWrappedData() ) {
-//				for (ItemComposition composition : deliveryDetail.getItem().getItemCompositionList()) {
-					deliveryDetail.setId(null);
-					deliveryDetail.setLine(deliveryDetail.getLine()+1);
-					deliveryDetail.setItem(composition.getCompositionItem());
-					deliveryDetail.setDescription(composition.getDescription());
-					deliveryDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-//					deliveryDetail.setPrice(obtainCompositionItemPrice(deliveryDetail, delivery, composition, controller.getPriceStrategy()));
-					deliveryDetail.setPrice(obtainCompositionItemPrice(deliveryDetail, delivery, composition, getPriceStrategy()));
-					deliveryDetail.setDiscountExpression(obtainCompositionDiscount(deliveryDetail, composition));
-					deliveryDetail = (DeliveryDetail)controller.getManagerBean().insert(deliveryDetail);
-				}
-			} catch (ManagerBeanException e) {
-//				throw new ControllerListenerException(e.getMessage(), e);
-				AonUtil.addErrorMessage("No me han podido crear los componentes");
-				AonUtil.addErrorMessage(e.getMessage());
-			}
-		}
-	}
-
-	private double obtainCompositionItemPrice(DeliveryDetail deliveryDetail, Delivery delivery, ItemComposition composition, IPriceStrategy priceStrategy) {
-		double price = 0;
-		if (composition.getItem().getProduct().isCompositionPrice()) {
-			price = priceStrategy.getUnitPrice(deliveryDetail, delivery.getIssueTime(), delivery.getCustomer());
-		}
-		return price;
-	}
-
 	private DiscountExpression obtainCompositionDiscount(DeliveryDetail deliveryDetail, ItemComposition composition) {
 		DiscountExpression discountExpr = new DiscountExpression("0.0");
 		if (composition.getItem().getProduct().isCompositionPrice()) {
@@ -364,44 +452,6 @@ public class DetailCompositeHandler implements Serializable {
 		}
 		return discountExpr;
 	}
-	
-	
-	/*
-	 * INCOME DETAIL
-	 */
-	private void afterIncomeDetailAdded() {
-//		IncomeDetailController controller = (IncomeDetailController)event.getController();
-		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
-		if (incomeDetail.getItem().getProduct().isComposition()) {
-			double quantity = incomeDetail.getQuantity();
-			try {
-//				for (ItemComposition composition : compositionList) {
-				for (ItemComposition composition : (List<ItemComposition>)compositionModel.getWrappedData() ) {
-//				for (ItemComposition composition : incomeDetail.getItem().getItemCompositionList()) {
-					incomeDetail.setId(null);
-					incomeDetail.setLine(incomeDetail.getLine()+1);
-					incomeDetail.setItem(composition.getCompositionItem());
-					incomeDetail.setDescription(composition.getDescription());
-					incomeDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-					incomeDetail.setPrice(obtainCompositionItemPrice(composition));
-					incomeDetail.setDiscountExpression(new DiscountExpression("0.0"));
-					incomeDetail = (IncomeDetail)controller.getManagerBean().insert(incomeDetail);
-				}
-			} catch (ManagerBeanException e) {
-//				throw new ControllerListenerException(e.getMessage(), e);
-				AonUtil.addErrorMessage("No me han podido crear los componentes");
-				AonUtil.addErrorMessage(e.getMessage());
-			}
-		}
-	}
 
-	// TODO check duplicated method
-//	private double obtainCompositionItemPrice(ItemComposition composition) {
-//		double price = 0;
-//		if (composition.getItem().getProduct().isCompositionPrice()) {
-//			price = composition.getCompositionItem().getPurchasePrice();
-//		}
-//		return price;
-//	}
 	
 }

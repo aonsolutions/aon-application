@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
@@ -10,10 +12,12 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.ItemComposition;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceDetailCompositeListener extends ControllerAdapter {
 	
@@ -22,24 +26,29 @@ public class InvoiceDetailCompositeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		Invoice invoice = (Invoice)controller.getMasterController().getTo();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		if (invoiceDetail.getItem().getProduct().isComposition()) {
-			double quantity = invoiceDetail.getQuantity();
-			try {
-				for (ItemComposition composition : invoiceDetail.getItem().getItemCompositionList()) {
-					invoiceDetail.setId(null);
-					invoiceDetail.setLine(invoiceDetail.getLine()+1);
-					invoiceDetail.setItem(composition.getCompositionItem());
-					invoiceDetail.setDescription(composition.getDescription());
-					invoiceDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-					invoiceDetail.setPrice(obtainCompositionItemPrice(invoiceDetail, invoice, composition, controller.getPriceStrategy()));
-					invoiceDetail.setDiscountExpression(obtainCompositionDiscount(invoiceDetail, composition));
-					invoiceDetail.setTaxableBase(controller.getPriceStrategy().getBasePrice(invoiceDetail));
-					invoiceDetail = (InvoiceDetail)controller.getManagerBean().insert(invoiceDetail);
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		if(ds.isBetaEnabled()){
+			controller.getCompositeHandler().acceptItemComposition();
+		} else {
+			Invoice invoice = (Invoice)controller.getMasterController().getTo();
+			InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+			if (invoiceDetail.getItem().getProduct().isComposition()) {
+				double quantity = invoiceDetail.getQuantity();
+				try {
+					for (ItemComposition composition : invoiceDetail.getItem().getItemCompositionList()) {
+						invoiceDetail.setId(null);
+						invoiceDetail.setLine(invoiceDetail.getLine()+1);
+						invoiceDetail.setItem(composition.getCompositionItem());
+						invoiceDetail.setDescription(composition.getDescription());
+						invoiceDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
+						invoiceDetail.setPrice(obtainCompositionItemPrice(invoiceDetail, invoice, composition, controller.getPriceStrategy()));
+						invoiceDetail.setDiscountExpression(obtainCompositionDiscount(invoiceDetail, composition));
+						invoiceDetail.setTaxableBase(controller.getPriceStrategy().getBasePrice(invoiceDetail));
+						invoiceDetail = (InvoiceDetail)controller.getManagerBean().insert(invoiceDetail);
+					}
+				} catch (ManagerBeanException e) {
+					throw new ControllerListenerException(e.getMessage(), e);
 				}
-			} catch (ManagerBeanException e) {
-				throw new ControllerListenerException(e.getMessage(), e);
 			}
 		}
 	}

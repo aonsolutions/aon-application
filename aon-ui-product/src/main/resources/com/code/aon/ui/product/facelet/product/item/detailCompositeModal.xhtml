@@ -11,8 +11,8 @@
 	<aon:panelGroup id="showItemCompositionWindow">
 		<aon:if test="#{controller.showItemCompositionWindow}">
 			<rich:modalPanel id="itemCompositionModalPanel" minHeight="360"
-				minWidth="780" rendered="#{controller.showItemCompositionWindow}"
-				showWhenRendered="true" zindex="90">
+				minWidth="870" rendered="#{controller.showItemCompositionWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{bundle.aon_to_specify} #{bundle.product_composition}" />
@@ -74,28 +74,124 @@
 											<aon:outputText value="#{bundle.product_composition}" />
 										</f:facet>
 										<aon:div styleClass="aon-margin-top">
-											<aon:dataTable id="compositionData" var="to" rows="10" 
-												value="#{controller.compositionModel}"
-												rendered="#{controller.compositionModel.rowCount > 0}">
-												
-												<aon:column styleClass="aon-editDataTable-textColumn">
-													<f:facet name="header">
-														<aon:outputText value="#{bundle.aon_product}" />
-													</f:facet>
-													<aon:outputText value="#{to.compositionItem.fullName}" />
-												</aon:column>
-												
-												<aon:column styleClass="aon-editDataTable-textColumn">
-													<f:facet name="header">
-														<aon:outputText value="#{bundle.aon_quantity}" />
-													</f:facet>
-													<aon:outputText value="#{to.quantity}" />
-												</aon:column>
-												
-											</aon:dataTable>
+											<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+												<ui:param name="controller" value="#{controller}" />
+												<ui:param name="showNote" value="false" />
+												<ui:param name="showDataScroller" value="false" />
+												<ui:param name="focusOnAdd" value="Item_id-New" />
+												<ui:param name="focusOnSelect" value="Item_id" />
+												<ui:define name="beginFormListContent">
+													<aon:commandLink id="#{dataTableId}-selectButton"
+														styleClass="aon-table-row-link" value="&#160;"
+														immediate="true" ajaxSingle="true" requestDelay="100"
+														actionListener="#{controller.onSelect}"
+														onkeyup="#{dataTableId}KeyUp(this)"
+														onfocus="#{dataTableId}SelectRow(this)"
+														onblur="#{dataTableId}DeselectRow(this)"
+														focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+													</aon:commandLink>
+												</ui:define>
+												<ui:define name="columns">
+													<aon:column styleClass="aon-editDataTable-textColumn">
+														<f:facet name="header">
+															<aon:outputLabel for="Item_id_Composition"
+																value="#{bundle.aon_product}" />
+														</f:facet>
+														<aon:outputText value="#{to.compositionItem.fullName}"
+															rendered="#{formList}">
+															<aon:abbreviateConverter maxWidth="64" />
+														</aon:outputText>
+														<!--  
+														****** TODO *********
+														<aon:commandLink id="DetailComposition_serialNumber" immediate="true"
+															value="&#160;" title="#{bundle.aon_to_specify} #{to.compositionItem.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}"
+															styleClass="aon-icon-version" style="margin-left: 5px; padding-right: 12px;"
+															rendered="#{formList and to.compositionItem.wildCard}"
+															actionListener="#{controller.onAssignSerialNumberShow}" 
+															reRender="showSerialNumberWindow" ajaxSingle="true">
+															<f:setPropertyActionListener target="#{salesDetail.showSerialNumberWindow}"
+																value="#{true}" />
+															<f:setPropertyActionListener target="#{controller.createSerialNumbers}"
+																value="#{false}" />
+														</aon:commandLink>
+														-->
+														<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+															<ui:param name="lookupBean" value="#{allItemLookup}" />
+															<ui:param name="lookupTo" value="#{controller.to.compositionItem}" />
+															<ui:param name="idRequired" value="#{true}" />
+															<ui:param name="skipLabel" value="#{true}" />
+															<ui:param name="skipSuggestText" value="#{controller.to.compositionItem != null and controller.to.compositionItem.id != null}" />
+															<ui:param name="lookupInputOnFocus" value="ItemComposition_description" />
+															<ui:param name="skipNewItemButtonEx" value="#{true}" />
+															<ui:param name="lookupRendered" value="#{formEdit}" />
+															<ui:param name="lookupSuffix" value="_Composition" />
+															<ui:param name="lookupReRender" value="itemCompositionDescription,ItemComposition_quantity" />
+															<aon:methodParam name="lookupChangeListener"
+																value="#{controller.onCompositionItemChanged}" type="lookupChangeListener" />
+														</ui:include>
+														<aon:panelGroup id="itemCompositionDescription" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+															<aon:inputTextarea id="ItemComposition_description"
+																value="#{controller.to.description}"
+																rendered="#{controller.to.compositionItem != null and controller.to.compositionItem.id != null}"
+																cols="50" rows="1" style="overflow-y:hidden;">
+																<f:validateLength maximum="1024" />
+															</aon:inputTextarea>
+														</aon:panelGroup>
+														
+														<f:facet name="footer">
+															<aon:div>
+															<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+																<ui:param name="lookupBean" value="#{allItemLookup}" />
+																<ui:param name="lookupTo" value="#{controller.to.compositionItem}" />
+																<ui:param name="idRequired" value="#{true}" />
+																<ui:param name="skipLabel" value="#{true}" />
+																<ui:param name="skipSuggestText" 
+																	value="#{controller.to.compositionItem != null and controller.to.compositionItem.id != null}" />
+																<ui:param name="skipNewItemButtonEx" value="#{true}" />
+																<ui:param name="lookupInputOnFocus" value="ItemComposition_description-New" />
+																<ui:param name="lookupRendered" value="#{formNew}" />
+																<ui:param name="lookupSuffix" value="_Composition-New" />
+																<ui:param name="lookupReRender" value="itemCompositionDescriptionNew,ItemComposition_quantity-New" />
+																<aon:methodParam name="lookupChangeListener"
+																	value="#{controller.onCompositionItemChanged}" type="lookupChangeListener" />
+															</ui:include>
+															<aon:panelGroup id="itemCompositionDescriptionNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+																<aon:inputTextarea id="ItemComposition_description-New"
+																	value="#{controller.to.description}"
+																	rendered="#{controller.to.compositionItem != null and controller.to.compositionItem.id != null}"
+																	cols="50" rows="1"
+																	style="overflow-y:hidden;">
+																	<f:validateLength maximum="1024" />
+																</aon:inputTextarea>
+															</aon:panelGroup>
+															</aon:div>
+														</f:facet>
+													</aon:column>
+													
+													<aon:column styleClass="aon-editDataTable-textColumn">
+														<f:facet name="header">
+															<aon:outputLabel for="ItemComposite_quantity"
+																value="#{bundle.aon_quantity}" />
+														</f:facet>
+														<aon:outputText value="#{to.quantity}"
+															rendered="#{formList}">
+															<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+														</aon:outputText>
+															<aon:inputText id="ItemComposition_quantity" 
+																value="#{controller.to.quantity}" rendered="#{formEdit}"
+																required="true" size="4" />
+														<f:facet name="footer">
+															<aon:div styleClass="aon-text-right">
+																<aon:inputText id="ItemComposition_quantity-New" 
+																	value="#{controller.to.quantity}" rendered="#{formNew}" 
+																	required="true" size="4" />
+															</aon:div>
+														</f:facet>
+													</aon:column>
+													
+												</ui:define>
+											</ui:decorate>
 											
-											<aon:dataScroller for="compositionData" showNote="true" pageSize="10"
-												rowCount="#{controller.compositionModel.rowCount}" />
 										</aon:div> 
 									</aon:panel>
 								</aon:div>
