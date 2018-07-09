@@ -163,6 +163,11 @@ public class SalaryDraft extends ResizeComposite
 	public static final String A3 = SettleType.A3.name();
 	public static final String LETTER = SettleType.LETTER.name();
 	public static final String JASPER = SettleType.JASPER.name();
+	public static final String STANDARD = SalaryType.STANDARD.name();
+	public static final String STANDARD_NEW = SalaryType.STANDARD_NEW.name();
+	public static final String STANDARD_COLS = SalaryType.STANDARD_COLS.name();
+	public static final String RECIBE = SalaryType.RECIBE.name();
+	public static final String RECIBE_CRA = SalaryType.RECIBE_CRA.name();
 
 	private static final DateTimeFormat DATE_SHORT = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
 
@@ -175,6 +180,15 @@ public class SalaryDraft extends ResizeComposite
 		A3,
 		LETTER,
 		JASPER
+	}
+
+	public static enum SalaryType {
+		JASPER,
+		RECIBE,
+		RECIBE_CRA,
+		STANDARD,
+		STANDARD_NEW,
+		STANDARD_COLS
 	}
 
 	private static Map<String, String> IRPF_ICONS = new HashMap<String, String>() {
@@ -1250,6 +1264,7 @@ public class SalaryDraft extends ResizeComposite
 			item.setScope(Scope.SALARY);
 			item.setType(dialog.getType());
 			item.setMonth(dialog.getMonth());
+			item.setName(dialog.getName());
 			//item.setDescription(dialog.getDescription()); TODO: ???
 			item.setDescriptionTemplate(dialog.getDescription());
 			item.setExpression(dialog.getPaymentExpression());
@@ -1592,6 +1607,8 @@ public class SalaryDraft extends ResizeComposite
 			});
 			
 			this.descriptionBox.getValueBox().addKeyDownHandler( (event) -> {
+//				Window.alert("KeyDown: " + event.getNativeEvent().getKeyCode() 
+//						+ ", " + ( event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode()));
 				if ( KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode() )
 					this.descriptionBox.hideSuggestionList();
 				else if ( event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode())
@@ -2272,7 +2289,9 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiField
 	ListBox settlePreviewListBox;
-	
+	@UiField
+	ListBox salaryPreviewListBox;
+
 	private int zoom;
 	private Scope scope;
 	private List<HasVisibility> dbUIObjects;
@@ -2584,6 +2603,11 @@ public class SalaryDraft extends ResizeComposite
 		printSettle();
 	}
 
+	@UiHandler("salaryPreviewListBox")
+	void onSalaryPreviewChange(ChangeEvent event) {
+		printSalary();
+	}
+
 	private void setDbVisible(boolean visible) {
 		dbCgcBaseLabel.setVisible(visible);
 		dbCgpBaseLabel.setVisible(visible);
@@ -2610,6 +2634,7 @@ public class SalaryDraft extends ResizeComposite
 		zoomListBox.setVisible(false);
 		closePreviewButton.setVisible(false);
 		settlePreviewListBox.setVisible(false);
+		salaryPreviewListBox.setVisible(false);
 		
 		fxButton.setVisible(true);
 		undoButton.setVisible(true);
@@ -2634,6 +2659,7 @@ public class SalaryDraft extends ResizeComposite
 		zoomListBox.setVisible(true);
 		closePreviewButton.setVisible(true);
 		settlePreviewListBox.setVisible(isSettle());
+		salaryPreviewListBox.setVisible(isSalary() || isExtra());
 
 
 		fxButton.setVisible(false);
@@ -2667,6 +2693,7 @@ public class SalaryDraft extends ResizeComposite
 		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
 		settlePreviewListBox.setVisible(false);
+		salaryPreviewListBox.setVisible(false);
 
 	}
 
@@ -4284,6 +4311,48 @@ public class SalaryDraft extends ResizeComposite
 		
 	}
 
+	private void printSalary() {
+		
+		SalaryType type = SalaryType.valueOf(salaryPreviewListBox.getSelectedValue());
+		switch (type) {
+		case STANDARD:
+			Reports.standard(salaryDraftObject,  dataURI -> {
+				SalaryDraft.this.showPreview();
+				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+			});
+			break;
+		case STANDARD_NEW:
+			Reports.standard_new(salaryDraftObject,  dataURI -> {
+				SalaryDraft.this.showPreview();
+				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+			});
+			break;
+		case STANDARD_COLS:
+			Reports.standard_cols(salaryDraftObject,  dataURI -> {
+				SalaryDraft.this.showPreview();
+				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+			});
+			break;
+		case RECIBE:
+			Reports.recibe(salaryDraftObject,  dataURI -> {
+				SalaryDraft.this.showPreview();
+				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+			});
+			break;
+		case RECIBE_CRA:
+			Reports.recibe_cra(salaryDraftObject,  dataURI -> {
+				SalaryDraft.this.showPreview();
+				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+			});
+			break;
+		default:
+			print();
+			break;
+		}
+
+		
+	}
+
 	private void irpfPrint() {
 
 		salaryDraftObject.downloadIrpf("application/pdf", new AsyncCallback<String>() {
@@ -5068,6 +5137,10 @@ public class SalaryDraft extends ResizeComposite
 		return null;
 	}
 	
+	private int getRow4(Payment p) {
+		return 0;
+	}
+
 	private boolean calculated(HasPayment payment) {
 		for ( Payment p: salaryDraftObject.getPayments() )
 				if ( payment.getPayment().equals(p))
@@ -5075,6 +5148,10 @@ public class SalaryDraft extends ResizeComposite
 		return false;
 	}
 	
+	private boolean isExtra(){
+		return salaryDraftObject != null && salaryDraftObject.getType() == Salary.Type.EXTRA;
+	}
+
 	private boolean isSalary(){
 		return salaryDraftObject != null && salaryDraftObject.getType() == Salary.Type.SALARY;
 	}

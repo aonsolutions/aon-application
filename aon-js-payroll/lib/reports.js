@@ -1,5 +1,12 @@
 var PDF = require('pdfkit');
+var PAYSHEET = require('./paysheet');
 var WRITTEN_NUMBER = require('written-number');
+
+module.exports.standard = PAYSHEET.standardPayroll; 
+module.exports.standard_new = PAYSHEET.newStandardPayroll; 
+module.exports.standard_cols = PAYSHEET.standardTwoColumnsPayroll; 
+module.exports.recibe_cra = PAYSHEET.salaryRecibeCRA; 
+module.exports.recibe = PAYSHEET.salaryRecibe; 
 
 module.exports.a3Letter = function (settlement, stream) {
 	var pdf = new PDF();

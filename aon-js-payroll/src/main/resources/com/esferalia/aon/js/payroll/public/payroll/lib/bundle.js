@@ -7,9 +7,3361 @@ module.exports = {
 	blobStream : require('blob-stream')
 };
 
-},{"./lib/reports":2,"blob-stream":30}],2:[function(require,module,exports){
+
+
+},{"./lib/reports":3,"blob-stream":31}],2:[function(require,module,exports){
 var PDF = require('pdfkit');
+
+module.exports.newStandardPayroll = function(payroll, stream){
+  //Initialize pdf object
+  var pdf = new(PDF);
+  pdf.pipe(stream);
+
+  //PDF Styles
+  var pdfWidth = pdf.page.width
+		 - pdf.page.margins.left
+     - pdf.page.margins.right
+	;
+
+  pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
+  pdf.page.margins = {t0p: 50, bottom: 0, left: 72, right: 72}; //Margenes del documento
+
+  //Variables y constants
+  var t0p = 0;
+  var left = 0;
+  var right = 0;
+  
+  textSize = 8;
+  textFont = 'Helvetica';
+
+  titleSize = 8;
+  titleFont = 'Helvetica-Bold';
+
+  headingSize = 4;
+  headingFont = 'Helvetica-Bold';
+
+  signature = 455;
+
+  var salary_perceptions_codes = [0001];
+  var extra_hours_codes = [0002, 0003];
+  var extra_perks_codes = [0004, 0005];
+  var spices_salary_codes = [0013, 0014, 0015, 0016, 0017, 0018, 0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026];
+
+
+  //Aux Methods
+  var formatInputData = function (data, parseData){
+    if(data == null || data == undefined){
+      if(parseData == 'string')
+        return '';
+      else if(parseData == 'number')
+        return '';
+    }else{
+      var typeData = typeof data;
+      //POSIBLE IMPLEMENTACION PARA ALGO MAS INTELIGENTE
+      if(typeData == 'number' && data == 0){
+        return '';
+      }
+      else if(typeData == 'number' && isNaN(data)){
+          return '';
+      }
+      return data;
+    }
+  }
+
+	var formatAmount = function(amount) {
+		return (amount && amount != '' && amount != null && amount != 0) ? amount.toFixed(2) : '';
+	}
+
+  var formatPercent = function(percent) {
+		return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
+	}
+
+  var formatMoney = function(amount) {
+		return (amount && amount != '' && amount != null && amount != 0) ? amount.toFixed(2)+" €" : '';
+	}
+
+  var numberOffset = function(number) {
+    if(number != ''){
+      var formatNumber = formatAmount(number);
+      var split = formatNumber.split('.');
+      switch (split[0].length) {
+        case 1:
+            return 27;
+        case 2:
+            return 22;
+        case 3:
+            return 18;
+        case 4:
+            return 13;
+        case 5:
+            return 9;
+        case 6:
+            return 5;
+        default:
+            return 0;
+      }
+    }else{
+      return 0;
+    }
+  }
+
+  var formatDate = function(date) {
+		var split = date.split('/');
+    return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
+	}
+
+  var getStrMonth = function (numberMonth) {
+    switch (numberMonth) {
+      case '01':
+          return 'enero';
+      case '02':
+          return 'febrero';
+      case '03':
+          return 'marzo';
+      case '04':
+          return 'abril';
+      case '05':
+          return 'mayo';
+      case '06':
+          return 'junio';
+      case '07':
+          return 'julio';
+      case '08':
+          return 'agosto';
+      case '09':
+          return 'septiembre';
+      case '10':
+          return 'octubre';
+      case '11':
+          return 'noviembre';
+      case '12':
+          return 'diciembre';
+      default:
+          return 'error';
+    }
+  }
+
+
+  //Main Methods
+  var newHearderTittle = function(){
+    //PDF drawing position using for lines, starting on the t0p of the page
+    y = pdf.y;
+  	x = pdf.x-50;
+    originalX = pdf.x-50;
+    originalY = pdf.y;
+    ox = pdf.x
+  	t0p = 2;
+  	left = 8;
+  	width = (pdfWidth-30) * 1/2;
+    pdf.lineWidth(1);
+
+    paddingTopTL = 14;  //Padding-t0p text / line
+    paddingTop = 4;     //Padding-t0p line / text, text / text
+    paddingLeft1 = 8;   //Padding-left first text
+    paddingLeft2 = 16;  //Padding-left second text
+    paddingLeft3 = 20;  //Padding-left third text
+    marginTL = 2;       //Margin bettwen text / line, line / text, line / line
+
+    //Start drawing PDF
+    pdf
+  	  .font(titleFont)
+  		.fontSize(titleSize)
+  		.text('RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE SALARIO', x+155, 20)
+  		.moveDown(1);
+  }
+
+  var newEnterpriseBox = function(){
+    y = pdf.y-8;
+    oy = y;
+
+    rightEnterpriseX = ox + width;      //Position X for right line enterprise box
+    maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
+    sizVertivalLineEE = 10;             //Size vertical line for enterprise, employee box
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    pdf
+      .moveTo(x, y).lineTo(rightEnterpriseX, y).stroke()      //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Empresa: ', x + paddingLeft1, y + paddingTop , {continued: true})
+      .text(formatInputData(payroll.enterprise.name, 'string'))
+
+      .text('Domicilio: ', x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.enterprise.address, 'string'))
+      .text(formatInputData(payroll.enterprise.locality , 'string'), x + paddingLeft1 + 41)
+
+      .font(headingFont)
+      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop , {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.enterprise.cif, 'string'))
+
+      .font(headingFont)
+      .text('CCC: ' , x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.enterprise.ccc, 'number'))
+
+      .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE).stroke()                                     //Vertical left line
+  		.moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke()       //Vertical right line
+      .moveTo(x, y + sizVertivalLineEE).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke();  //Horizontal bottom line
+
+  }
+
+  var newEmployeeBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- EMPLOYEE -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    leftEmployeeX = ox + width + left + 5 ;   //Position X for left line employee box
+    employeeY = oy + t0p + 2;                 //Start y for employee box
+    employeeTop = 12;                         //Padding-t0p bettwen text
+
+    pdf
+      .moveTo(leftEmployeeX - left, oy).lineTo(maxRightWidth, oy).stroke()   //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Trabajador: ' , leftEmployeeX, employeeY, {continued: true})
+      .text(formatInputData(payroll.employee.fullname, 'string'))
+
+      .text('NIF: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.nif, 'string'))
+
+      .font(headingFont)
+      .text('Nº S.S.: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.ss, 'number'))
+
+      .font(headingFont)
+      .text('Grupo profesional: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.professional_group, 'string'))
+
+      .font(headingFont)
+      .text('Grupo cotización: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.quote_group, 'string'))
+
+      .font(headingFont)
+      .text('Fecha antigüedad: ', leftEmployeeX + 152, employeeY , {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.seniority_date, 'string'))
+
+      .moveTo(leftEmployeeX - left, oy).lineTo(leftEmployeeX - left, y + sizVertivalLineEE).stroke()              //Vertical left line
+      .moveTo(maxRightWidth, oy).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()                            //Vertical right line
+      .moveTo(leftEmployeeX - left, y + sizVertivalLineEE).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()  //Horizontal bottom line
+      .moveDown(1);
+  }
+
+  var newSettlementBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- SETTLEMENT --------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    start_date = formatDate(payroll.settlement.start_date);
+    end_date = formatDate(payroll.settlement.end_date);
+    settlementWidth = x + pdfWidth + 100;
+    settlementTop = 4;
+    settlementX = ox - 50 + left;
+    settlementY = y + t0p + 12;
+    settlementYHeight = settlementY + 15;
+
+    pdf
+      .moveTo(x, settlementY).lineTo(settlementWidth, settlementY).stroke()   //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Periodo de liquidación: ' , settlementX, settlementY + settlementTop, {continued: true})
+      .font(textFont)
+      .text('del '+ start_date +' al '+ end_date, {continued: true})
+
+      .font(headingFont)
+      .text('Total días: ', settlementX + 238 , settlementY + settlementTop, {continued: true})
+      .font(textFont)
+      .text(payroll.settlement.total_days)
+
+      .moveTo(x, settlementY).lineTo(x, settlementYHeight).stroke()                               //Vertical left line
+      .moveTo(settlementWidth, settlementY).lineTo(settlementWidth, settlementYHeight).stroke()   //Vertical right line
+      .moveTo(x, settlementYHeight).lineTo(settlementWidth, settlementYHeight).stroke();          //Horizontal bottom line
+  }
+
+  var newFooterBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- FOOTER -------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    footer = 518;
+    accrualWidth = x + pdfWidth + 100;
+    pdf
+      .moveTo(originalX, originalY+footer).lineTo(originalX+pdfWidth+100, originalY+footer).undash().stroke()     //Horizontal t0p line
+      .font(textFont)
+      .text('DETERMINACIÓN DE LAS BASES DE COTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTAS Y DE ' +
+          'LA BASE' , originalX + left , originalY + footer + t0p + 2)
+      .font(textFont)
+      .text('SUJETA A RETENCIÓN DEL IRPF Y APORTACIÓN DE LA EMPRESA' , originalX + left , originalY + footer + t0p + 12)
+      .font(textFont)
+      .text('1. Contingencias comunes' , originalX + left + 5 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('BASE', originalX + left + 280 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('TIPO', originalX + left + 325 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('AP. EMPRESA', originalX + left + 355 , originalY + footer + t0p + 25)
+
+      .font(textFont)
+      .text('Importe remuneración mensual' , originalX + left + 10 , originalY + footer + t0p + 39)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), originalX + left + 250 + numberOffset(payroll.footer_ss_quotation.common_contingency.monthly_remuneration) , originalY + footer + t0p + 39)
+      .lineWidth(0.1)
+      .moveTo(originalX + left + 10 , originalY + footer + t0p + 49).lineTo(originalX + left + 300 , originalY + footer + t0p + 49).stroke()
+
+      .font(textFont)
+      .text('Importe prorrata de pagas extraordinarias' , originalX + left + 10 , originalY + footer + t0p + 53)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), originalX + left + 250 + numberOffset(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), originalY + footer + t0p + 53)
+      .moveTo(originalX + left + 10 , originalY + footer + t0p + 63).lineTo(originalX + left + 300 , originalY + footer + t0p + 63).stroke()
+
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.base), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.common_contingency.base) , originalY + footer + t0p + 46)
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , originalY + footer + t0p + 46)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input) , originalX + left + 497 + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input), originalY + footer + t0p + 46)
+      .moveTo(originalX + left + 310 , originalY + footer + t0p + 56).lineTo(originalX + left + 550 , originalY + footer + t0p + 56).stroke()
+
+      .font(textFont)
+      .text('2. Contingencias profesionales' , originalX + left + 5 , originalY + footer + t0p + 80)
+      .font(textFont)
+      .text('conceptos de recaudación' , originalX + left + 5 , originalY + footer + t0p + 90)
+      .font(textFont)
+      .text('conjunta' , originalX + left + 5 , originalY + footer + t0p + 100)
+
+      .font(textFont)
+      .text('AT Y EP' , originalX + left + 160 , originalY + footer + t0p + 67)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 77).lineTo(originalX + left + 301 , originalY + footer + t0p + 77).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at), originalY + footer + t0p + 67)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalY + footer + t0p + 67)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 77).lineTo(originalX + left + 551 , originalY + footer + t0p + 77).stroke()
+
+      .font(textFont)
+      .text('Desempleo' , originalX + left + 160 , originalY + footer + t0p + 81)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 91).lineTo(originalX + left + 301 , originalY + footer + t0p + 91).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), originalY + footer + t0p + 81)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalY + footer + t0p + 81)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 91).lineTo(originalX + left + 551 , originalY + footer + t0p + 91).stroke()
+
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.professional_contingency.base), originalY + footer + t0p + 88)
+      .moveTo(originalX + left + 310 , originalY + footer + t0p + 98).lineTo(originalX + left + 400 , originalY + footer + t0p + 98).stroke()
+
+      .font(textFont)
+      .text('Fromación profesional' , originalX + left + 160 , originalY + footer + t0p + 95)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 105).lineTo(originalX + left + 301 , originalY + footer + t0p + 105).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), originalY + footer + t0p + 95)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalY + footer + t0p + 95)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 105).lineTo(originalX + left + 551 , originalY + footer + t0p + 105).stroke()
+
+      .font(textFont)
+      .text('Fondo de Garantía Salarial' , originalX + left + 160 , originalY + footer + t0p + 109)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 119).lineTo(originalX + left + 301 , originalY + footer + t0p + 119).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), originalY + footer + t0p + 109)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalY + footer + t0p + 109)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 119).lineTo(originalX + left + 551 , originalY + footer + t0p + 119).stroke()
+
+      .font(textFont)
+      .text('3. Cotización adicional por horas extraordinarias' , originalX + left + 5 , originalY + footer + t0p + 123)
+      .font(textFont)
+      .text('Fuerza mayor' , originalX + left + 160 , originalY + footer + t0p + 137)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalY + footer + t0p + 137)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), originalY + footer + t0p + 137)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 147).lineTo(originalX + left + 400 , originalY + footer + t0p + 147).stroke()
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 147).lineTo(originalX + left + 551 , originalY + footer + t0p + 147).stroke()
+
+      .font(textFont)
+      .text('No estructurales' , originalX + left + 160 , originalY + footer + t0p + 151)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), originalY + footer + t0p + 151)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), originalY + footer + t0p + 151)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 161).lineTo(originalX + left + 400 , originalY + footer + t0p + 161).stroke()
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 161).lineTo(originalX + left + 551 , originalY + footer + t0p + 161).stroke();
+
+      taxesS = getDeduction("Especie");
+      if(taxesS.value == 0){
+        pdf
+        .font(textFont)
+        .text('4. Base sujeta a retención del IRPF' , originalX + left + 5 , originalY + footer + t0p + 165)
+        .text(formatAmount(payroll.footer_ss_quotation.base_irpf), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.base_irpf), originalY + footer + t0p + 165)
+        .moveTo(originalX + left + 13 , originalY + footer + t0p + 175).lineTo(originalX + left + 400 , originalY + footer + t0p + 175).stroke();
+      }else{
+        taxesD = getDeduction("Dinerario");
+        pdf
+          .font(textFont)
+          .text('4. Base sujeta a retención del IRPF: ' + taxesS.value + '€  en especie + ' +  taxesD.value + "€  en retribuciones dinerarias", originalX + left + 5 , originalY + footer + t0p + 165)
+          .text(formatAmount(payroll.footer_ss_quotation.base_irpf), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.base_irpf), originalY + footer + t0p + 165)
+          .moveTo(originalX + left + 13 , originalY + footer + t0p + 175).lineTo(originalX + left + 400 , originalY + footer + t0p + 175).stroke()
+          .text('Total aportaciones' , originalX + left + 415 , originalY + footer + t0p + 165)
+          .text(formatAmount(payroll.footer_ss_quotation.total_company), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.total_company), originalY + footer + t0p + 165)
+          .moveTo(originalX + left + 410 , originalY + footer + t0p + 175).lineTo(originalX + left + 551 , originalY + footer + t0p + 175).stroke();
+      }
+
+      pdf
+        .lineWidth(1)
+        .moveTo(originalX, originalY+footer).lineTo(originalX, originalY+footer+180).stroke()                //Vertical left line
+        .moveTo(accrualWidth, originalY+footer).lineTo(accrualWidth, originalY+footer+180).stroke()          //Vertical right line
+        .moveTo(originalX, originalY+footer+180).lineTo(accrualWidth, originalY+footer+180).stroke();        //Horizontal bottom line
+  }
+
+  var newSignatureDate = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    paddingSignature = 15;
+    paddingDate = 10;
+    centerTableHeight = 468;
+
+    pdf
+      .fontSize(titleSize)
+      .text('Firma y sello de la empresa' , originalX + 160 , originalY + signature)
+      .image(payroll.signature_logo, originalX + 160, originalY + signature + paddingSignature, {scale: 0.06})
+
+      .text(end_date,  originalX + 310 , originalY + signature)
+      .fontSize(titleSize)
+      .text('RECIBÍ' , originalX + 310 , originalY + signature + paddingDate)
+
+      .lineWidth(1)
+      .moveTo(originalXCenterTable, originalYCenterTable).lineTo(originalXCenterTable, originalYCenterTable + centerTableHeight).stroke()                //Vertical left line
+      .moveTo(accrualWidth, originalYCenterTable).lineTo(accrualWidth, originalYCenterTable + centerTableHeight).stroke()                                //Vertical right line
+      .moveTo(originalXCenterTable, originalYCenterTable + centerTableHeight).lineTo(accrualWidth, originalYCenterTable + centerTableHeight).stroke();   //Horizontal bottom line
+  }
+
+  var newAccrual = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- ACCRUAL -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    y = settlementY+19;
+    accrualY = settlementY+10;
+    accrualX = x + left;
+    accrualWidth = x + pdfWidth + 100;
+    originalXCenterTable = x;
+    originalYCenterTable = y;
+    paddingTopLine = 10;
+    paddingTopTT = 11;
+    paddingLeftValue = 333;
+    paddingLeftTotal = 503;
+
+    pdf
+      .moveTo(x, y).lineTo(accrualWidth, y).stroke()
+      .font(headingFont)
+      .text('I. DEVENGOS' , accrualX , accrualY = accrualY + paddingTopTL)
+      .text('TOTALES', accrualX + paddingLeftTotal, accrualY)
+      .lineWidth(0.1);
+
+    y = y + 20;
+    firstColumn = 50;
+    secondColumn = 100;
+    thirdColumn = 440;
+    quarterColumn = 440;
+
+    for(i = 0; i < payroll.accruals.length; i++){
+      accrual = payroll.accruals[i];
+      pdf
+        .font(titleFont)
+        .text(accrual.accrual_name , firstColumn , y);
+      craY = y;
+      y = y + 15;
+      craTotal = 0;
+      for(j = 0; j < accrual.types.length; j++){
+        type = accrual.types[j];
+        craTotal += type.type_value;
+        pdf
+          .font(textFont)
+          .text(formatMoney(type.type_value), firstColumn + numberOffset(type.type_value) , y)
+          .text("  por " + type.type_expression , secondColumn , y);
+
+        y = y + 10;
+      }
+      y = y + 2;
+      pdf
+        .text(formatAmount(craTotal) , quarterColumn + numberOffset(craTotal) , craY)
+        .moveTo(firstColumn, craY + 10).lineTo(quarterColumn + 45,  craY + 10).stroke();
+    }
+
+    pdf
+      .fontSize(titleSize)
+      .font(titleFont)
+      .text('A. TOTAL DEVENGADO' , accrualX + 150 , accrualY = y + 5)
+      .text(formatAmount(payroll.total_accrual) , accrualX + paddingLeftTotal + numberOffset(payroll.total_accrual), accrualY)
+      .moveTo(accrualX + 150 , accrualY + paddingTopLine).lineTo(accrualX + 545 , accrualY + paddingTopLine).stroke();
+  }
+
+  var getDeduction = function(nameDeduction){
+    for(i = 0; i < payroll.deductions.length; i++){
+      deduction = payroll.deductions[i];
+      if(deduction.name == nameDeduction){
+        return deduction;
+      }
+    }
+    return {
+    	types : []
+    };
+    //return undefined;
+  }
+
+  var newDeductionFirstPage = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- DEDUCTION ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    y = y + 15;
+    deductionY = y + 15;
+    deductionOY = deductionY;
+    deductionX = x + left;
+    paddingLeftPercent = 250;
+
+    y = y + 30;
+    tittle = 50;
+    firstColumn = 50;
+    secondColumn = 100;
+    thirdColumn = 300;
+    quarterColumn = 440;
+
+    common_contingency = getDeduction("Contingencias comunes");
+    unemployment = getDeduction("Desempleo");
+    professional_formation = getDeduction("Formación profesional");
+    extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
+    extra_hours_ne = getDeduction("No estructurales (HE)");
+    taxesD = getDeduction("Dinerario");
+    taxesS = getDeduction("Especie");
+    advances = getDeduction("Anticipos");
+    spices = getDeduction("Valor de los productos recibidos en especie");
+    other_deductions = getDeduction("Otras deducciones");
+
+    if(deductionOY <= 307){
+      // ----------------------------------------- APORTACIONES ----------------------------------------------------
+      pdf
+        .font(headingFont)
+        .text('II. DEDUCCIONES', deductionX, deductionY)
+        .text('1. Aportaciones del trabajador a las cotizaciones de la Seguridad Social y conceptos de recaudación' , 50, deductionY = deductionY + paddingTopTL)
+        .font(textFont)
+        .text(formatAmount(payroll.total_contributions), quarterColumn + numberOffset(payroll.total_contributions), deductionY)
+        .moveTo(50, deductionY + 10).lineTo(quarterColumn + 45,  deductionY + 10).stroke();
+
+      pdf
+        .font(textFont)
+        .text(formatMoney(common_contingency.value), firstColumn + numberOffset(common_contingency.value), y = y + 15)
+        .text("  por Contigencias comunes", secondColumn, y)
+        .text(formatPercent(common_contingency.percent), thirdColumn + numberOffset(common_contingency.percent), y)
+        .text(formatMoney(unemployment.value), firstColumn + numberOffset(unemployment.value), y = y + 10)
+        .text("  por Desempleo", secondColumn, y)
+        .text(formatPercent(unemployment.percent), thirdColumn + numberOffset(unemployment.percent), y)
+        .text(formatMoney(professional_formation.value), firstColumn + numberOffset(professional_formation.value), y = y + 10)
+        .text("  por Fromación profesional", secondColumn, y)
+        .text(formatPercent(professional_formation.percent), thirdColumn + numberOffset(professional_formation.percent), y)
+        .text("  por Horas extraordinarias (Estruc.)", secondColumn, y = y + 10)
+        .text(formatMoney(extra_hours_e.value), firstColumn + numberOffset(extra_hours_e.value), y)
+        .text("  por Horas extraordinarias (No Estruc.)", secondColumn, y = y + 10)
+        .text(formatMoney(extra_hours_ne.value), firstColumn + numberOffset(extra_hours_ne.value), y);
+
+      // ----------------------------------------- IMPUESTOS ----------------------------------------------------
+      taxes = taxesD.value + taxesS.value;
+      pdf
+        .font(headingFont)
+        .text("2. Impuestos sobre la renta de personas físicas (I.R.P.F.)", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(taxes), quarterColumn + numberOffset(taxes), y)
+        .moveTo(tittle, y = y + 10).lineTo(quarterColumn + 45,  y).stroke()
+        .text("  por Retribuciones dinerarias", secondColumn, y = y + 5)
+        .text(formatMoney(taxesD.value), firstColumn + numberOffset(taxesD.value), y)
+        .text(formatPercent(taxesD.percent), thirdColumn + numberOffset(professional_formation.percent), y)
+        .text("  por Retribuciones en especie", secondColumn, y = y + 10)
+        .text(formatMoney(taxesS.value), firstColumn + numberOffset(taxesS.value), y)
+        .text(formatPercent(taxesD.percent), thirdColumn + numberOffset(professional_formation.percent), y);
+
+      // ----------------------------------------- ANTICIPOS ----------------------------------------------------
+      advancesTOTAL = 0;
+      for(var i = 0; i < advances.types.length; i++){
+        type = advances.types[i];
+        advancesTOTAL += type.value;
+      }
+
+      pdf
+        .font(headingFont)
+        .text("3. Anticipos", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(advancesTOTAL), quarterColumn + numberOffset(advancesTOTAL), y)
+        .moveTo(tittle, y + 10).lineTo(quarterColumn + 45,  y + 10).stroke();
+
+      // ----------------------------------------- ESPECIES ----------------------------------------------------
+      spicesTOTAL = 0;
+      for(var i = 0; i < spices.types.length; i++){
+        type = spices.types[i];
+        spicesTOTAL += type.value;
+      }
+
+      pdf
+        .font(headingFont)
+        .text("4. Valor de los productos recibidos en especie", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(spicesTOTAL), quarterColumn + numberOffset(spicesTOTAL), y)
+        .moveTo(tittle, y + 10).lineTo(quarterColumn + 45,  y + 10).stroke();
+
+      // ------------------------------------- OTRAS DEDUCCIONES -----------------------------------------------
+      pdf
+        .font(headingFont)
+        .text("5. Otras deducciones", tittle, y = y + 12)
+        .font(textFont);
+
+      other_deductionsY = y;
+      other_deductionsTOTAL = 0;
+      y = y + 5;
+
+      for(var i = 0; i < other_deductions.types.length; i++){
+        type = other_deductions.types[i];
+        other_deductionsTOTAL += type.value;
+
+        pdf
+          .text("  por " + type.name, secondColumn, y = y + 10)
+          .text(formatMoney(type.value), firstColumn + numberOffset(type.value), y);
+      }
+
+      pdf
+        .font(textFont)
+        .text(formatAmount(other_deductionsTOTAL), quarterColumn + numberOffset(other_deductionsTOTAL), other_deductionsY)
+        .moveTo(tittle, other_deductionsY + 10).lineTo(quarterColumn + 45,  other_deductionsY + 10).stroke();
+
+
+      // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
+      pdf
+        .fontSize(titleSize)
+        .font(titleFont)
+        .text('B. TOTAL DEDUCIR' ,  deductionX + 150, y = y + 15)
+        .text(formatAmount(payroll.total_deductions) , deductionX + paddingLeftTotal + numberOffset(payroll.total_deductions), y)
+        .moveTo(deductionX + 150 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+      pdf
+        .text('LÍQUIDO TOTAL A PERCIBIR (A-B)' , deductionX + 160, y = y + 10)
+        .text(formatAmount(payroll.liquid_perceive) , deductionX + paddingLeftTotal + numberOffset(payroll.liquid_perceive), y)
+        .moveTo(deductionX + 160 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+        signature = 455;
+    }else{
+      // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
+      pdf
+        .fontSize(titleSize)
+        .font(titleFont)
+        .text('B. TOTAL DEDUCIR (página siguiente)' ,  deductionX + 150, y = y - 20)
+        .text(formatAmount(payroll.total_deductions) , deductionX + paddingLeftTotal + numberOffset(payroll.total_deductions), y)
+        .moveTo(deductionX + 150 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+      pdf
+        .text('LÍQUIDO TOTAL A PERCIBIR (A-B)' , deductionX + 160, y = y + 10)
+        .text(formatAmount(payroll.liquid_perceive) , deductionX + paddingLeftTotal + numberOffset(payroll.liquid_perceive), y)
+        .moveTo(deductionX + 160 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+    }
+  }
+
+  var newDeductionSecondPage = function(){
+    if(deductionOY > 307){
+      //NEW PAGE
+      pdf.addPage();
+      //PDF Styles
+      var pdfWidth = pdf.page.width
+         - pdf.page.margins.left
+         - pdf.page.margins.right
+      ;
+
+      pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
+      pdf.page.margins = {t0p: 50, bottom: 0, left: 72, right: 72}; //Margenes del documento
+
+      newHearderTittle();
+      newEnterpriseBox();
+      newEmployeeBox();
+      newSettlementBox();
+
+      y = accrualY + 15;
+      deductionY = originalYCenterTable + 5;
+      deductionX = x + left;
+      paddingLeftPercent = 250;
+
+      pdf
+        .moveTo(x, deductionY - 5).lineTo(accrualWidth, deductionY - 5).stroke();
+
+      y = deductionY + 15;
+      tittle = 50;
+      firstColumn = 50;
+      secondColumn = 100;
+      thirdColumn = 300;
+      quarterColumn = 440;
+
+      common_contingency = getDeduction("Contingencias comunes");
+      unemployment = getDeduction("Desempleo");
+      professional_formation = getDeduction("Formación profesional");
+      extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
+      extra_hours_ne = getDeduction("No estructurales (HE)");
+      taxesD = getDeduction("Dinerario");
+      taxesS = getDeduction("Especie");
+      advances = getDeduction("Anticipos");
+      spices = getDeduction("Valor de los productos recibidos en especie");
+      other_deductions = getDeduction("Otras deducciones");
+
+      // ----------------------------------------- APORTACIONES ----------------------------------------------------
+      pdf
+        .font(headingFont)
+        .text('II. DEDUCCIONES', deductionX, deductionY)
+        .text('TOTALES', deductionX + paddingLeftTotal, deductionY)
+        .text('1. Aportaciones del trabajador a las cotizaciones de la Seguridad Social y conceptos de recaudación' , 50, deductionY = deductionY + paddingTopTL)
+        .font(textFont)
+        .text(formatAmount(payroll.total_contributions), quarterColumn + numberOffset(payroll.total_contributions), deductionY)
+        .moveTo(50, deductionY + 10).lineTo(quarterColumn + 45,  deductionY + 10).stroke();
+
+      pdf
+        .font(textFont)
+        .text(formatMoney(common_contingency.value), firstColumn + numberOffset(common_contingency.value), y = y + 15)
+        .text("  por Contigencias comunes", secondColumn, y)
+        .text(formatPercent(common_contingency.percent), thirdColumn + numberOffset(common_contingency.percent), y)
+        .text(formatMoney(unemployment.value), firstColumn + numberOffset(unemployment.value), y = y + 10)
+        .text("  por Desempleo", secondColumn, y)
+        .text(formatPercent(unemployment.percent), thirdColumn + numberOffset(unemployment.percent), y)
+        .text(formatMoney(professional_formation.value), firstColumn + numberOffset(professional_formation.value), y = y + 10)
+        .text("  por Fromación profesional", secondColumn, y)
+        .text(formatPercent(professional_formation.percent), thirdColumn + numberOffset(professional_formation.percent), y)
+        .text("  por Horas extraordinarias (Estruc.)", secondColumn, y = y + 10)
+        .text(formatMoney(extra_hours_e.value), firstColumn + numberOffset(extra_hours_e.value), y)
+        .text("  por Horas extraordinarias (No Estruc.)", secondColumn, y = y + 10)
+        .text(formatMoney(extra_hours_ne.value), firstColumn + numberOffset(extra_hours_ne.value), y);
+
+      // ----------------------------------------- IMPUESTOS ----------------------------------------------------
+      taxes = taxesD.value + taxesS.value;
+      pdf
+        .font(headingFont)
+        .text("2. Impuestos sobre la renta de personas físicas (I.R.P.F.)", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(taxes), quarterColumn + numberOffset(taxes), y)
+        .moveTo(tittle, y = y + 10).lineTo(quarterColumn + 45,  y).stroke()
+        .text("  por Retribuciones dinerarias", secondColumn, y = y + 5)
+        .text(formatMoney(taxesD.value), firstColumn + numberOffset(taxesD.value), y)
+        .text(formatPercent(taxesD.percent), thirdColumn + numberOffset(professional_formation.percent), y)
+        .text("  por Retribuciones en especie", secondColumn, y = y + 10)
+        .text(formatMoney(taxesS.value), firstColumn + numberOffset(taxesS.value), y)
+        .text(formatPercent(taxesD.percent), thirdColumn + numberOffset(professional_formation.percent), y);
+
+      // ----------------------------------------- ANTICIPOS ----------------------------------------------------
+      advancesTOTAL = 0;
+      for(var i = 0; i < advances.types.length; i++){
+        type = advances.types[i];
+        advancesTOTAL += type.value;
+      }
+
+      pdf
+        .font(headingFont)
+        .text("3. Anticipos", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(advancesTOTAL), quarterColumn + numberOffset(advancesTOTAL), y)
+        .moveTo(tittle, y + 10).lineTo(quarterColumn + 45,  y + 10).stroke();
+
+      // ----------------------------------------- ESPECIES ----------------------------------------------------
+      spicesTOTAL = 0;
+      for(var i = 0; i < spices.types.length; i++){
+        type = spices.types[i];
+        spicesTOTAL += type.value;
+      }
+
+      pdf
+        .font(headingFont)
+        .text("4. Valor de los productos recibidos en especie", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(spicesTOTAL), quarterColumn + numberOffset(spicesTOTAL), y)
+        .moveTo(tittle, y + 10).lineTo(quarterColumn + 45,  y + 10).stroke();
+
+      // ------------------------------------- OTRAS DEDUCCIONES -----------------------------------------------
+      pdf
+        .font(headingFont)
+        .text("5. Otras deducciones", tittle, y = y + 12)
+        .font(textFont);
+
+      other_deductionsY = y;
+      other_deductionsTOTAL = 0;
+      y = y + 5;
+
+      for(var i = 0; i < other_deductions.types.length; i++){
+        type = other_deductions.types[i];
+        other_deductionsTOTAL += type.value;
+
+        pdf
+          .text("  por " + type.name, secondColumn, y = y + 10)
+          .text(formatMoney(type.value), firstColumn + numberOffset(type.value), y);
+      }
+
+      pdf
+        .font(textFont)
+        .text(formatAmount(other_deductionsTOTAL), quarterColumn + numberOffset(other_deductionsTOTAL), other_deductionsY)
+        .moveTo(tittle, other_deductionsY + 10).lineTo(quarterColumn + 45,  other_deductionsY + 10).stroke();
+
+
+      // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
+      pdf
+        .fontSize(titleSize)
+        .font(titleFont)
+        .text('A. TOTAL DEVENGADO (página anterior)' , deductionX + 150, y = y + 15)
+        .text(formatAmount(payroll.total_accrual) , deductionX + paddingLeftTotal + numberOffset(payroll.total_accrual), y)
+        .moveTo(accrualX + 150 , y = y + 10).lineTo(accrualX + 545 , y).stroke();
+
+      pdf
+        .fontSize(titleSize)
+        .font(titleFont)
+        .text('B. TOTAL DEDUCIR' ,  deductionX + 150, y = y + 10)
+        .text(formatAmount(payroll.total_deductions) , deductionX + paddingLeftTotal + numberOffset(payroll.total_deductions), y)
+        .moveTo(deductionX + 150 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+      pdf
+        .text('LÍQUIDO TOTAL A PERCIBIR (A-B)' , deductionX + 160, y = y + 10)
+        .text(formatAmount(payroll.liquid_perceive) , deductionX + paddingLeftTotal + numberOffset(payroll.liquid_perceive), y)
+        .moveTo(deductionX + 160 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+      signature = 455;
+
+      newSignatureDate();
+      newFooterBox();
+    }
+  }
+  //Main
+  newHearderTittle();
+  newEnterpriseBox();
+  newEmployeeBox();
+  console.log('newSettlementBox');
+  newSettlementBox();
+  console.log('newAccrual');
+  newAccrual();
+  console.log('newDeductionFirstPage');
+  newDeductionFirstPage();
+  console.log('newSignatureDate');
+  newSignatureDate();
+  console.log('newFooterBox');
+  newFooterBox();
+  console.log('newDeductionSecondPage');
+  newDeductionSecondPage();
+
+  //End PDF
+  pdf.end();
+
+}
+
+module.exports.standardPayroll = function(payroll, stream){
+  //Initialize pdf object
+  var pdf = new(PDF);
+  pdf.pipe(stream);
+
+  //PDF Styles
+  var pdfWidth = pdf.page.width
+		 - pdf.page.margins.left
+     - pdf.page.margins.right
+	;
+
+  pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
+  pdf.page.margins = {t0p: 50, bottom: 0, left: 72, right: 72}; //Margenes del documento
+
+  //Variables y constants
+	textSize = 6;
+	textFont = 'Helvetica';
+
+	titleSize = 8;
+	titleFont = 'Helvetica-Bold';
+
+	headingSize = 4;
+	headingFont = 'Helvetica-Bold';
+
+  signature = 450;
+
+  var salary_perceptions_codes = [0001];
+  var extra_hours_codes = [0002, 0003];
+  var extra_perks_codes = [0004, 0005];
+  var spices_salary_codes = [0013, 0014, 0015, 0016, 0017, 0018, 0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026];
+
+
+  //Aux Methods
+  var formatInputData = function (data, parseData){
+    if(data == null || data == undefined){
+      if(parseData == 'string')
+        return '';
+      else if(parseData == 'number')
+        return '';
+    }else{
+      var typeData = typeof data;
+      //POSIBLE IMPLEMENTACION PARA ALGO MAS INTELIGENTE
+      if(typeData == 'number' && data == 0){
+        return '';
+      }
+      return data;
+    }
+  }
+
+	var formatAmount = function(amount) {
+		return (amount && amount != '' && amount != null && amount != 0) ? amount.toFixed(2) : '';
+	}
+
+  var formatPercent = function(percent) {
+		return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
+	}
+
+  var formatMoney = function(amount) {
+		return (amount && amount != '' && amount != null && amount != 0) ? amount.toFixed(2)+" €" : '';
+	}
+
+  var numberOffset = function(number) {
+    if(number != ''){
+      var formatNumber = formatAmount(number);
+      var split = formatNumber.split('.');
+      switch (split[0].length) {
+        case 1:
+            return 27;
+        case 2:
+            return 22;
+        case 3:
+            return 18;
+        case 4:
+            return 13;
+        case 5:
+            return 9;
+        case 6:
+            return 5;
+        default:
+            return 0;
+      }
+    }else{
+      return 0;
+    }
+  }
+
+  var formatDate = function(date) {
+		var split = date.split('/');
+    return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
+	}
+
+  var getStrMonth = function (numberMonth) {
+    switch (numberMonth) {
+      case '01':
+          return 'enero';
+      case '02':
+          return 'febrero';
+      case '03':
+          return 'marzo';
+      case '04':
+          return 'abril';
+      case '05':
+          return 'mayo';
+      case '06':
+          return 'junio';
+      case '07':
+          return 'julio';
+      case '08':
+          return 'agosto';
+      case '09':
+          return 'septiembre';
+      case '10':
+          return 'octubre';
+      case '11':
+          return 'noviembre';
+      case '12':
+          return 'diciembre';
+      default:
+          return 'error';
+    }
+  }
+
+
+  //Main Methods
+  var newHearderTittle = function(){
+    //PDF drawing position using for lines, starting on the t0p of the page
+    y = pdf.y;
+  	x = pdf.x-50;
+    originalX = pdf.x-50;
+    originalY = pdf.y;
+    ox = pdf.x
+  	t0p = 2;
+  	left = 8;
+  	width = (pdfWidth-30) * 1/2;
+    pdf.lineWidth(1);
+
+    paddingTopTL = 14;  //Padding-t0p text / line
+    paddingTop = 4;     //Padding-t0p line / text, text / text
+    paddingLeft1 = 8;   //Padding-left first text
+    paddingLeft2 = 16;  //Padding-left second text
+    paddingLeft3 = 20;  //Padding-left third text
+    marginTL = 2;       //Margin bettwen text / line, line / text, line / line
+
+    //Start drawing PDF
+    pdf
+  	  .font(titleFont)
+  		.fontSize(titleSize)
+  		.text('RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE SALARIO', x+155, 20)
+  		.moveDown(1);
+  }
+
+  var newEnterpriseBox = function(){
+    y = pdf.y-8;
+    oy = y;
+
+    rightEnterpriseX = ox + width;      //Position X for right line enterprise box
+    maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
+    sizVertivalLineEE = 10;             //Size vertical line for enterprise, employee box
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    pdf
+      .moveTo(x, y).lineTo(rightEnterpriseX, y).stroke()      //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Empresa: ', x + paddingLeft1, y + paddingTop , {continued: true})
+      .text(formatInputData(payroll.enterprise.name, 'string'))
+
+      .text('Domicilio: ', x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.enterprise.address, 'string'))
+      .text(formatInputData(payroll.enterprise.locality , 'string'), x + paddingLeft1 + 41)
+
+      .font(headingFont)
+      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop , {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.enterprise.cif, 'string'))
+
+      .font(headingFont)
+      .text('CCC: ' , x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.enterprise.ccc, 'number'))
+
+      .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE).stroke()                                     //Vertical left line
+  		.moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke()       //Vertical right line
+      .moveTo(x, y + sizVertivalLineEE).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke();  //Horizontal bottom line
+
+  }
+
+  var newEmployeeBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- EMPLOYEE -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    leftEmployeeX = ox + width + left + 5 ;   //Position X for left line employee box
+    employeeY = oy + t0p + 2;                 //Start y for employee box
+    employeeTop = 12;                         //Padding-t0p bettwen text
+
+    pdf
+      .moveTo(leftEmployeeX - left, oy).lineTo(maxRightWidth, oy).stroke()   //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Trabajador: ' , leftEmployeeX, employeeY, {continued: true})
+      .text(formatInputData(payroll.employee.fullname, 'string'))
+
+      .text('NIF: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.nif, 'string'))
+
+      .font(headingFont)
+      .text('Nº S.S.: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.ss, 'number'))
+
+      .font(headingFont)
+      .text('Grupo profesional: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.professional_group, 'string'))
+
+      .font(headingFont)
+      .text('Grupo cotización: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.quote_group, 'string'))
+
+      .font(headingFont)
+      .text('Fecha antigüedad: ', leftEmployeeX + 152, employeeY , {continued: true})
+      .font(textFont)
+      .text(formatInputData(payroll.employee.seniority_date, 'string'))
+
+      .moveTo(leftEmployeeX - left, oy).lineTo(leftEmployeeX - left, y + sizVertivalLineEE).stroke()              //Vertical left line
+      .moveTo(maxRightWidth, oy).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()                            //Vertical right line
+      .moveTo(leftEmployeeX - left, y + sizVertivalLineEE).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()  //Horizontal bottom line
+      .moveDown(1);
+  }
+
+  var newSettlementBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- SETTLEMENT --------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    start_date = formatDate(payroll.settlement.start_date);
+    end_date = formatDate(payroll.settlement.end_date);
+    settlementWidth = x + pdfWidth + 100;
+    settlementTop = 4;
+    settlementX = ox - 50 + left;
+    settlementY = y + t0p + 12;
+    settlementYHeight = settlementY + 15;
+
+    pdf
+      .moveTo(x, settlementY).lineTo(settlementWidth, settlementY).stroke()   //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Periodo de liquidación: ' , settlementX, settlementY + settlementTop, {continued: true})
+      .font(textFont)
+      .text('del '+ start_date +' al '+ end_date, {continued: true})
+
+      .font(headingFont)
+      .text('Total días: ', settlementX + 238 , settlementY + settlementTop, {continued: true})
+      .font(textFont)
+      .text(payroll.settlement.total_days)
+
+      .moveTo(x, settlementY).lineTo(x, settlementYHeight).stroke()                               //Vertical left line
+      .moveTo(settlementWidth, settlementY).lineTo(settlementWidth, settlementYHeight).stroke()   //Vertical right line
+      .moveTo(x, settlementYHeight).lineTo(settlementWidth, settlementYHeight).stroke();          //Horizontal bottom line
+  }
+
+  var newFooterBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- FOOTER -------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    footer = 518;
+    accrualWidth = x + pdfWidth + 100;
+    pdf
+      .moveTo(originalX, originalY+footer).lineTo(originalX+pdfWidth+100, originalY+footer).undash().stroke()     //Horizontal t0p line
+      .font(textFont)
+      .text('DETERMINACIÓN DE LAS BASES DE COTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTAS Y DE ' +
+          'LA BASE' , originalX + left , originalY + footer + t0p + 2)
+      .font(textFont)
+      .text('SUJETA A RETENCIÓN DEL IRPF Y APORTACIÓN DE LA EMPRESA' , originalX + left , originalY + footer + t0p + 12)
+      .font(textFont)
+      .text('1. Contingencias comunes' , originalX + left + 5 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('BASE', originalX + left + 280 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('TIPO', originalX + left + 325 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('AP. EMPRESA', originalX + left + 355 , originalY + footer + t0p + 25)
+
+      .font(textFont)
+      .text('Importe remuneración mensual' , originalX + left + 10 , originalY + footer + t0p + 39)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), originalX + left + 250 + numberOffset(payroll.footer_ss_quotation.common_contingency.monthly_remuneration) , originalY + footer + t0p + 39)
+      .lineWidth(0.1)
+      .moveTo(originalX + left + 10 , originalY + footer + t0p + 49).lineTo(originalX + left + 300 , originalY + footer + t0p + 49).stroke()
+
+      .font(textFont)
+      .text('Importe prorrata de pagas extraordinarias' , originalX + left + 10 , originalY + footer + t0p + 53)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), originalX + left + 250 + numberOffset(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), originalY + footer + t0p + 53)
+      .moveTo(originalX + left + 10 , originalY + footer + t0p + 63).lineTo(originalX + left + 300 , originalY + footer + t0p + 63).stroke()
+
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.base), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.common_contingency.base) , originalY + footer + t0p + 46)
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , originalY + footer + t0p + 46)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input) , originalX + left + 497 + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input), originalY + footer + t0p + 46)
+      .moveTo(originalX + left + 310 , originalY + footer + t0p + 56).lineTo(originalX + left + 550 , originalY + footer + t0p + 56).stroke()
+
+      .font(textFont)
+      .text('2. Contingencias profesionales' , originalX + left + 5 , originalY + footer + t0p + 80)
+      .font(textFont)
+      .text('conceptos de recaudación' , originalX + left + 5 , originalY + footer + t0p + 90)
+      .font(textFont)
+      .text('conjunta' , originalX + left + 5 , originalY + footer + t0p + 100)
+
+      .font(textFont)
+      .text('AT Y EP' , originalX + left + 160 , originalY + footer + t0p + 67)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 77).lineTo(originalX + left + 301 , originalY + footer + t0p + 77).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at), originalY + footer + t0p + 67)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalY + footer + t0p + 67)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 77).lineTo(originalX + left + 551 , originalY + footer + t0p + 77).stroke()
+
+      .font(textFont)
+      .text('Desempleo' , originalX + left + 160 , originalY + footer + t0p + 81)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 91).lineTo(originalX + left + 301 , originalY + footer + t0p + 91).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), originalY + footer + t0p + 81)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalY + footer + t0p + 81)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 91).lineTo(originalX + left + 551 , originalY + footer + t0p + 91).stroke()
+
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.professional_contingency.base), originalY + footer + t0p + 88)
+      .moveTo(originalX + left + 310 , originalY + footer + t0p + 98).lineTo(originalX + left + 400 , originalY + footer + t0p + 98).stroke()
+
+      .font(textFont)
+      .text('Fromación profesional' , originalX + left + 160 , originalY + footer + t0p + 95)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 105).lineTo(originalX + left + 301 , originalY + footer + t0p + 105).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), originalY + footer + t0p + 95)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalY + footer + t0p + 95)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 105).lineTo(originalX + left + 551 , originalY + footer + t0p + 105).stroke()
+
+      .font(textFont)
+      .text('Fondo de Garantía Salarial' , originalX + left + 160 , originalY + footer + t0p + 109)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 119).lineTo(originalX + left + 301 , originalY + footer + t0p + 119).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), originalX + left + 408 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), originalY + footer + t0p + 109)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalY + footer + t0p + 109)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 119).lineTo(originalX + left + 551 , originalY + footer + t0p + 119).stroke()
+
+      .font(textFont)
+      .text('3. Cotización adicional por horas extraordinarias' , originalX + left + 5 , originalY + footer + t0p + 123)
+      .font(textFont)
+      .text('Fuerza mayor' , originalX + left + 160 , originalY + footer + t0p + 137)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalY + footer + t0p + 137)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), originalY + footer + t0p + 137)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 147).lineTo(originalX + left + 400 , originalY + footer + t0p + 147).stroke()
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 147).lineTo(originalX + left + 551 , originalY + footer + t0p + 147).stroke()
+
+      .font(textFont)
+      .text('No estructurales' , originalX + left + 160 , originalY + footer + t0p + 151)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), originalY + footer + t0p + 151)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), originalY + footer + t0p + 151)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 161).lineTo(originalX + left + 400 , originalY + footer + t0p + 161).stroke()
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 161).lineTo(originalX + left + 551 , originalY + footer + t0p + 161).stroke();
+
+      taxesS = getDeduction("Especie");
+      if(taxesS.value == 0){
+        pdf
+        .font(textFont)
+        .text('4. Base sujeta a retención del IRPF' , originalX + left + 5 , originalY + footer + t0p + 165)
+        .text(formatAmount(payroll.footer_ss_quotation.base_irpf), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.base_irpf), originalY + footer + t0p + 165)
+        .moveTo(originalX + left + 13 , originalY + footer + t0p + 175).lineTo(originalX + left + 400 , originalY + footer + t0p + 175).stroke();
+      }else{
+        taxesD = getDeduction("Dinerario");
+        pdf
+          .font(textFont)
+          .text('4. Base sujeta a retención del IRPF: ' + taxesS.value + '€  en especie + ' +  taxesD.value + "€  en retribuciones dinerarias", originalX + left + 5 , originalY + footer + t0p + 165)
+          .text(formatAmount(payroll.footer_ss_quotation.base_irpf), originalX + left + 353 + numberOffset(payroll.footer_ss_quotation.base_irpf), originalY + footer + t0p + 165)
+          .moveTo(originalX + left + 13 , originalY + footer + t0p + 175).lineTo(originalX + left + 400 , originalY + footer + t0p + 175).stroke()
+          .text('Total aportaciones' , originalX + left + 415 , originalY + footer + t0p + 165)
+          .text(formatAmount(payroll.footer_ss_quotation.total_company), originalX + left + 497 +  numberOffset(payroll.footer_ss_quotation.total_company), originalY + footer + t0p + 165)
+          .moveTo(originalX + left + 410 , originalY + footer + t0p + 175).lineTo(originalX + left + 551 , originalY + footer + t0p + 175).stroke();
+      }
+
+      pdf
+        .lineWidth(1)
+        .moveTo(originalX, originalY+footer).lineTo(originalX, originalY+footer+180).stroke()                //Vertical left line
+        .moveTo(accrualWidth, originalY+footer).lineTo(accrualWidth, originalY+footer+180).stroke()          //Vertical right line
+        .moveTo(originalX, originalY+footer+180).lineTo(accrualWidth, originalY+footer+180).stroke();        //Horizontal bottom line
+  }
+
+  var newSignatureDate = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    paddingSignature = 15;
+    paddingDate = 10;
+    centerTableHeight = 468;
+
+    pdf
+      .fontSize(titleSize)
+      .text('Firma y sello de la empresa' , originalX + 160 , originalY + signature)
+      .image(payroll.signature_logo, originalX + 160, originalY + signature + paddingSignature, {scale: 0.06})
+
+      .text(end_date,  originalX + 310 , originalY + signature)
+      .fontSize(titleSize)
+      .text('RECIBÍ' , originalX + 310 , originalY + signature + paddingDate)
+
+      .lineWidth(1)
+      .moveTo(originalXCenterTable, originalYCenterTable).lineTo(originalXCenterTable, originalYCenterTable + centerTableHeight).stroke()                //Vertical left line
+      .moveTo(accrualWidth, originalYCenterTable).lineTo(accrualWidth, originalYCenterTable + centerTableHeight).stroke()                                //Vertical right line
+      .moveTo(originalXCenterTable, originalYCenterTable + centerTableHeight).lineTo(accrualWidth, originalYCenterTable + centerTableHeight).stroke();   //Horizontal bottom line
+  }
+
+  var getAccrual = function(accrualName){
+    for(i = 0; i < payroll.accruals.length; i++){
+      accrual = payroll.accruals[i];
+      if(accrual.accrual_name == accrualName)
+        return accrual;
+    }
+    return undefined;
+  }
+
+  var newAccrual = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- ACCRUAL -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    y = settlementY+19;
+    accrualY = settlementY+10;
+    accrualX = x + left;
+    accrualWidth = x + pdfWidth + 100;
+    originalXCenterTable = x;
+    originalYCenterTable = y;
+    paddingTopLine = 8;
+    paddingTopTT = 11;
+    paddingLeftValue = 333;
+    paddingLeftTotal = 503;
+
+    pdf
+      .moveTo(x, y).lineTo(accrualWidth, y).stroke()
+      .font(headingFont)
+      .text('I. DEVENGOS' , accrualX , accrualY = accrualY + paddingTopTL)
+      .text('TOTALES', accrualX + paddingLeftTotal, accrualY)
+
+      .font(textFont)
+      .text('1. Percepciones salariales' , accrualX + paddingLeft1 , accrualY = accrualY + paddingTopTL);
+
+    for(var i = 0; i < payroll.accruals.length; i++){
+      for(var j = 0; j < payroll.accruals[i].types.length; j++){
+        if(salary_perceptions_codes.includes(payroll.accruals[i].types[j].code)){
+          type = payroll.accruals[i].types[j];
+          pdf
+            .text(type.type_expression , accrualX + paddingLeft2,  accrualY = accrualY + paddingTopTT)
+            .text(formatAmount(type.type_value) , accrualX + paddingLeftValue + numberOffset(type.type_value) , accrualY)
+            .lineWidth(0.1)
+            .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+        }
+      }
+    }
+
+    pdf
+      .text('Complementos salariales' , accrualX + paddingLeft2 + 5, accrualY = accrualY + paddingTopTL);
+
+    complements_count = 0;
+    for(var i = 0; i < payroll.accruals.length; i++){
+      for(var j = 0; j < payroll.accruals[i].types.length; j++){
+        if(!salary_perceptions_codes.includes(payroll.accruals[i].types[j].code) &&
+           !extra_hours_codes.includes(payroll.accruals[i].types[j].code) &&
+           !extra_perks_codes.includes(payroll.accruals[i].types[j].code) &&
+           !spices_salary_codes.includes(payroll.accruals[i].types[j].code)){
+          type = payroll.accruals[i].types[j];
+          complements_count++;
+          pdf
+            .text(type.type_expression ,accrualX + paddingLeft3, accrualY = accrualY + paddingTopTT)
+            .text(formatAmount(type.type_value) , accrualX + paddingLeftValue + numberOffset(type.type_value), accrualY)
+            .moveTo(x + left + 20, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+        }
+      }
+    }
+
+    if(complements_count == 0){
+      pdf
+        .moveTo(x + left + 20, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }
+
+    pdf
+      .text('Horas extraordinarias' , accrualX + paddingLeft2, accrualY = accrualY + paddingTopTL);
+
+    extra_hours_total = 0;
+    for(var i = 0; i < payroll.accruals.length; i++){
+      for(var j = 0; j < payroll.accruals[i].types.length; j++){
+        if(extra_hours_codes.includes(payroll.accruals[i].types[j].code)){
+          type = payroll.accruals[i].types[j];
+          extra_hours_total += type.type_value;
+        }
+      }
+    }
+
+    if(extra_hours_total == 0){
+      pdf
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }else{
+      pdf
+        .text(formatAmount(extra_hours_total) , accrualX + paddingLeftValue + numberOffset(extra_hours_total), accrualY)
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }
+
+    pdf
+      .text('Gratificaciones extraordinarias' , accrualX + paddingLeft2, accrualY = accrualY + paddingTopTL);
+
+    extra_perks_total = 0;
+    for(var i = 0; i < payroll.accruals.length; i++){
+      for(var j = 0; j < payroll.accruals[i].types.length; j++){
+        if(extra_perks_codes.includes(payroll.accruals[i].types[j].code)){
+          type = payroll.accruals[i].types[j];
+          extra_perks_total += type.type_value;
+        }
+      }
+    }
+
+    if(extra_perks_total == 0){
+      pdf
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }else{
+      pdf
+        .text(formatAmount(extra_perks_total) , accrualX + paddingLeftValue + numberOffset(extra_perks_total), accrualY)
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }
+
+    pdf
+      .text('Salario en especie' , accrualX + paddingLeft2, accrualY = accrualY + paddingTopTL);
+
+    spices_salary_total = 0;
+    for(var i = 0; i < payroll.accruals.length; i++){
+      for(var j = 0; j < payroll.accruals[i].types.length; j++){
+        if(spices_salary_codes.includes(payroll.accruals[i].types[j].code)){
+          type = payroll.accruals[i].types[j];
+          spices_salary_total += type.type_value;
+        }
+      }
+    }
+
+    if(spices_salary_total == 0){
+      pdf
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }else{
+      pdf
+        .text(formatAmount(spices_salary_total) , accrualX + paddingLeftValue + numberOffset(spices_salary_total), accrualY)
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }
+
+    suplies = getAccrual("Indemnizaciones o suplidos");
+
+    pdf
+      .text('2. Percepciones no salariales' , accrualX + paddingLeft1 , accrualY = accrualY + paddingTopTL)
+      .text('Indemnizaciones o suplidos' , accrualX + paddingLeft2, accrualY = accrualY + paddingTopTT);
+
+    if(suplies == undefined){
+      pdf
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }else{
+      for(i = 0; i < suplies.types.length; i++){
+        suply = suplies.types[i];
+        pdf
+          .text(suply.type_expression , accrualX + paddingLeft3, accrualY = accrualY + paddingTopTT)
+          .text(formatAmount(suply.type_value) , accrualX + paddingLeftValue + numberOffset(suply.type_value), accrualY)
+          .moveTo(accrualX + paddingLeft3, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+      }
+    }
+
+    compensations_SS = getAccrual('Prestaciones e indemnizaciones a la Seguridad Social');
+    pdf
+      .text('Prestaciones e indemnizaciones a la Seguridad Social' , accrualX + paddingLeft2, accrualY = accrualY + paddingTopTL);
+
+    if(compensations_SS == undefined){
+      pdf
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }else{
+      for(i = 0; i < compensations_SS.types.length; i++){
+        compensation = compensations_SS.types[i];
+        pdf
+          .text(compensation.type_expression , accrualX + paddingLeft3, accrualY = accrualY + paddingTopTT)
+          .text(formatAmount(compensation.type_value) , accrualX + paddingLeftValue + numberOffset(compensation.type_value), accrualY)
+          .moveTo(accrualX + paddingLeft3, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+      }
+    }
+
+    other_perceptions = getAccrual('Otras percepciones no salariales');
+    pdf
+      .text('Otras percepciones no salariales' , accrualX + paddingLeft2, accrualY = accrualY + paddingTopTL);
+
+    if(other_perceptions == undefined){
+      pdf
+        .moveTo(accrualX + paddingLeft2, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+    }else{
+      for(i = 0; i < other_perceptions.types.length; i++){
+        perception = other_perceptions.types[i];
+        pdf
+          .text(perception.type_expression , accrualX + paddingLeft3, accrualY = accrualY + paddingTopTT)
+          .text(formatAmount(perception.type_value) , accrualX + paddingLeftValue + numberOffset(perception.type_value), accrualY)
+          .moveTo(accrualX + paddingLeft3, accrualY + paddingTopLine).lineTo(accrualX + 376, accrualY + paddingTopLine).stroke();
+      }
+    }
+
+    pdf
+      .fontSize(titleSize)
+      .font(titleFont)
+      .text('A. TOTAL DEVENGADO' , accrualX + 150 , accrualY = accrualY + paddingTopTL)
+      .text(formatAmount(payroll.total_accrual) , accrualX + paddingLeftTotal + numberOffset(payroll.total_accrual), accrualY)
+      .moveTo(accrualX + 150 , accrualY + paddingTopLine).lineTo(accrualX + 545 , accrualY + paddingTopLine).stroke();
+
+    y = accrualY - 5;
+  }
+
+  var getDeduction = function(nameDeduction){
+    for(i = 0; i < payroll.deductions.length; i++){
+      deduction = payroll.deductions[i];
+      if(deduction.name == nameDeduction){
+        return deduction;
+      }
+    }
+    return {
+    	types : []
+    };
+    //return undefined;
+  }
+
+  var newDeductionFirstPage = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- DEDUCTION ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    y = y + 15;
+    deductionY = y + 15;
+    deductionOY = deductionY;
+    deductionX = x + left;
+    paddingLeftPercent = 250;
+
+    y = y + 30;
+    tittle = 50;
+    firstColumn = 50;
+    secondColumn = 100;
+    thirdColumn = 300;
+    quarterColumn = 440;
+
+    common_contingency = getDeduction("Contingencias comunes");
+    unemployment = getDeduction("Desempleo");
+    professional_formation = getDeduction("Formación profesional");
+    extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
+    extra_hours_ne = getDeduction("No estructurales (HE)");
+    taxesD = getDeduction("Dinerario");
+    taxesS = getDeduction("Especie");
+    advances = getDeduction("Anticipos");
+    spices = getDeduction("Valor de los productos recibidos en especie");
+    other_deductions = getDeduction("Otras deducciones");
+
+    if(deductionOY <= 307){
+      // ----------------------------------------- APORTACIONES ----------------------------------------------------
+      pdf
+        .font(headingFont)
+        .text('II. DEDUCCIONES', deductionX, deductionY)
+        .text('1. Aportaciones del trabajador a las cotizaciones de la Seguridad Social y conceptos de recaudación' , 50, deductionY = deductionY + paddingTopTL)
+        .font(textFont)
+        .text(formatAmount(payroll.total_contributions), quarterColumn + numberOffset(payroll.total_contributions), deductionY)
+        .moveTo(50, deductionY + 10).lineTo(quarterColumn + 45,  deductionY + 10).stroke();
+
+      pdf
+        .font(textFont)
+        .text(formatMoney(common_contingency.value), firstColumn + numberOffset(common_contingency.value), y = y + 15)
+        .text("  por Contigencias comunes", secondColumn, y)
+        .text(formatPercent(common_contingency.percent), thirdColumn + numberOffset(common_contingency.percent), y)
+        .text(formatMoney(unemployment.value), firstColumn + numberOffset(unemployment.value), y = y + 10)
+        .text("  por Desempleo", secondColumn, y)
+        .text(formatPercent(unemployment.percent), thirdColumn + numberOffset(unemployment.percent), y)
+        .text(formatMoney(professional_formation.value), firstColumn + numberOffset(professional_formation.value), y = y + 10)
+        .text("  por Fromación profesional", secondColumn, y)
+        .text(formatPercent(professional_formation.percent), thirdColumn + numberOffset(professional_formation.percent), y)
+        .text("  por Horas extraordinarias (Estruc.)", secondColumn, y = y + 10)
+        .text(formatMoney(extra_hours_e.value), firstColumn + numberOffset(extra_hours_e.value), y)
+        .text("  por Horas extraordinarias (No Estruc.)", secondColumn, y = y + 10)
+        .text(formatMoney(extra_hours_ne.value), firstColumn + numberOffset(extra_hours_ne.value), y);
+
+      // ----------------------------------------- IMPUESTOS ----------------------------------------------------
+      taxes = taxesD.value + taxesS.value;
+      pdf
+        .font(headingFont)
+        .text("2. Impuestos sobre la renta de personas físicas (I.R.P.F.)", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(taxes), quarterColumn + numberOffset(taxes), y)
+        .moveTo(tittle, y = y + 10).lineTo(quarterColumn + 45,  y).stroke()
+        .text("  por Retribuciones dinerarias", secondColumn, y = y + 5)
+        .text(formatMoney(taxesD.value), firstColumn + numberOffset(taxesD.value), y)
+        .text(formatPercent(taxesD.percent), thirdColumn + numberOffset(professional_formation.percent), y)
+        .text("  por Retribuciones en especie", secondColumn, y = y + 10)
+        .text(formatMoney(taxesS.value), firstColumn + numberOffset(taxesS.value), y)
+        .text(formatPercent(taxesD.percent), thirdColumn + numberOffset(professional_formation.percent), y);
+
+      // ----------------------------------------- ANTICIPOS ----------------------------------------------------
+      advancesTOTAL = 0;
+      for(var i = 0; i < advances.types.length; i++){
+        type = advances.types[i];
+        advancesTOTAL += type.value;
+      }
+
+      pdf
+        .font(headingFont)
+        .text("3. Anticipos", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(advancesTOTAL), quarterColumn + numberOffset(advancesTOTAL), y)
+        .moveTo(tittle, y + 10).lineTo(quarterColumn + 45,  y + 10).stroke();
+
+      // ----------------------------------------- ESPECIES ----------------------------------------------------
+      spicesTOTAL = 0;
+      for(var i = 0; i < spices.types.length; i++){
+        type = spices.types[i];
+        spicesTOTAL += type.value;
+      }
+
+      pdf
+        .font(headingFont)
+        .text("4. Valor de los productos recibidos en especie", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(spicesTOTAL), quarterColumn + numberOffset(spicesTOTAL), y)
+        .moveTo(tittle, y + 10).lineTo(quarterColumn + 45,  y + 10).stroke();
+
+      // ------------------------------------- OTRAS DEDUCCIONES -----------------------------------------------
+      pdf
+        .font(headingFont)
+        .text("5. Otras deducciones", tittle, y = y + 12)
+        .font(textFont);
+
+      other_deductionsY = y;
+      other_deductionsTOTAL = 0;
+      y = y + 5;
+
+      for(var i = 0; i < other_deductions.types.length; i++){
+        type = other_deductions.types[i];
+        other_deductionsTOTAL += type.value;
+
+        pdf
+          .text("  por " + type.name, secondColumn, y = y + 10)
+          .text(formatMoney(type.value), firstColumn + numberOffset(type.value), y);
+      }
+
+      pdf
+        .font(textFont)
+        .text(formatAmount(other_deductionsTOTAL), quarterColumn + numberOffset(other_deductionsTOTAL), other_deductionsY)
+        .moveTo(tittle, other_deductionsY + 10).lineTo(quarterColumn + 45,  other_deductionsY + 10).stroke();
+
+
+      // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
+      pdf
+        .fontSize(titleSize)
+        .font(titleFont)
+        .text('B. TOTAL DEDUCIR' ,  deductionX + 150, y = y + 15)
+        .text(formatAmount(payroll.total_deductions) , deductionX + paddingLeftTotal + numberOffset(payroll.total_deductions), y)
+        .moveTo(deductionX + 150 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+      pdf
+        .text('LÍQUIDO TOTAL A PERCIBIR (A-B)' , deductionX + 160, y = y + 10)
+        .text(formatAmount(payroll.liquid_perceive) , deductionX + paddingLeftTotal + numberOffset(payroll.liquid_perceive), y)
+        .moveTo(deductionX + 160 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+        signature = 455;
+    }else{
+      // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
+      pdf
+        .fontSize(titleSize)
+        .font(titleFont)
+        .text('B. TOTAL DEDUCIR (página siguiente)' ,  deductionX + 150, y = y - 20)
+        .text(formatAmount(payroll.total_deductions) , deductionX + paddingLeftTotal + numberOffset(payroll.total_deductions), y)
+        .moveTo(deductionX + 150 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+      pdf
+        .text('LÍQUIDO TOTAL A PERCIBIR (A-B)' , deductionX + 160, y = y + 10)
+        .text(formatAmount(payroll.liquid_perceive) , deductionX + paddingLeftTotal + numberOffset(payroll.liquid_perceive), y)
+        .moveTo(deductionX + 160 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+    }
+  }
+
+  var newDeductionSecondPage = function(){
+    if(deductionOY > 307){
+      //NEW PAGE
+      pdf.addPage();
+      //PDF Styles
+      var pdfWidth = pdf.page.width
+         - pdf.page.margins.left
+         - pdf.page.margins.right
+      ;
+
+      pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
+      pdf.page.margins = {t0p: 50, bottom: 0, left: 72, right: 72}; //Margenes del documento
+
+      newHearderTittle();
+      newEnterpriseBox();
+      newEmployeeBox();
+      newSettlementBox();
+
+      y = accrualY + 15;
+      deductionY = originalYCenterTable + 5;
+      deductionX = x + left;
+      paddingLeftPercent = 250;
+
+      pdf
+        .moveTo(x, deductionY - 5).lineTo(accrualWidth, deductionY - 5).stroke();
+
+      y = deductionY + 15;
+      tittle = 50;
+      firstColumn = 50;
+      secondColumn = 100;
+      thirdColumn = 300;
+      quarterColumn = 440;
+
+      common_contingency = getDeduction("Contingencias comunes");
+      unemployment = getDeduction("Desempleo");
+      professional_formation = getDeduction("Formación profesional");
+      extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
+      extra_hours_ne = getDeduction("No estructurales (HE)");
+      taxesD = getDeduction("Dinerario");
+      taxesS = getDeduction("Especie");
+      advances = getDeduction("Anticipos");
+      spices = getDeduction("Valor de los productos recibidos en especie");
+      other_deductions = getDeduction("Otras deducciones");
+
+      // ----------------------------------------- APORTACIONES ----------------------------------------------------
+      pdf
+        .font(headingFont)
+        .text('II. DEDUCCIONES', deductionX, deductionY)
+        .text('TOTALES', deductionX + paddingLeftTotal, deductionY)
+        .text('1. Aportaciones del trabajador a las cotizaciones de la Seguridad Social y conceptos de recaudación' , 50, deductionY = deductionY + paddingTopTL)
+        .font(textFont)
+        .text(formatAmount(payroll.total_contributions), quarterColumn + numberOffset(payroll.total_contributions), deductionY)
+        .moveTo(50, deductionY + 10).lineTo(quarterColumn + 45,  deductionY + 10).stroke();
+
+      pdf
+        .font(textFont)
+        .text(formatMoney(common_contingency.value), firstColumn + numberOffset(common_contingency.value), y = y + 15)
+        .text("  por Contigencias comunes", secondColumn, y)
+        .text(formatPercent(common_contingency.percent), thirdColumn + numberOffset(common_contingency.percent), y)
+        .text(formatMoney(unemployment.value), firstColumn + numberOffset(unemployment.value), y = y + 10)
+        .text("  por Desempleo", secondColumn, y)
+        .text(formatPercent(unemployment.percent), thirdColumn + numberOffset(unemployment.percent), y)
+        .text(formatMoney(professional_formation.value), firstColumn + numberOffset(professional_formation.value), y = y + 10)
+        .text("  por Fromación profesional", secondColumn, y)
+        .text(formatPercent(professional_formation.percent), thirdColumn + numberOffset(professional_formation.percent), y)
+        .text("  por Horas extraordinarias (Estruc.)", secondColumn, y = y + 10)
+        .text(formatMoney(extra_hours_e.value), firstColumn + numberOffset(extra_hours_e.value), y)
+        .text("  por Horas extraordinarias (No Estruc.)", secondColumn, y = y + 10)
+        .text(formatMoney(extra_hours_ne.value), firstColumn + numberOffset(extra_hours_ne.value), y);
+
+      // ----------------------------------------- IMPUESTOS ----------------------------------------------------
+      taxes = taxesD.value + taxesS.value;
+      pdf
+        .font(headingFont)
+        .text("2. Impuestos sobre la renta de personas físicas (I.R.P.F.)", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(taxes), quarterColumn + numberOffset(taxes), y)
+        .moveTo(tittle, y = y + 10).lineTo(quarterColumn + 45,  y).stroke()
+        .text("  por Retribuciones dinerarias", secondColumn, y = y + 5)
+        .text(formatMoney(taxesD.value), firstColumn + numberOffset(taxesD.value), y)
+        .text(formatPercent(taxesD.percent), thirdColumn + numberOffset(professional_formation.percent), y)
+        .text("  por Retribuciones en especie", secondColumn, y = y + 10)
+        .text(formatMoney(taxesS.value), firstColumn + numberOffset(taxesS.value), y)
+        .text(formatPercent(taxesD.percent), thirdColumn + numberOffset(professional_formation.percent), y);
+
+      // ----------------------------------------- ANTICIPOS ----------------------------------------------------
+      advancesTOTAL = 0;
+      for(var i = 0; i < advances.types.length; i++){
+        type = advances.types[i];
+        advancesTOTAL += type.value;
+      }
+
+      pdf
+        .font(headingFont)
+        .text("3. Anticipos", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(advancesTOTAL), quarterColumn + numberOffset(advancesTOTAL), y)
+        .moveTo(tittle, y + 10).lineTo(quarterColumn + 45,  y + 10).stroke();
+
+      // ----------------------------------------- ESPECIES ----------------------------------------------------
+      spicesTOTAL = 0;
+      for(var i = 0; i < spices.types.length; i++){
+        type = spices.types[i];
+        spicesTOTAL += type.value;
+      }
+
+      pdf
+        .font(headingFont)
+        .text("4. Valor de los productos recibidos en especie", tittle, y = y + 12)
+        .font(textFont)
+        .text(formatAmount(spicesTOTAL), quarterColumn + numberOffset(spicesTOTAL), y)
+        .moveTo(tittle, y + 10).lineTo(quarterColumn + 45,  y + 10).stroke();
+
+      // ------------------------------------- OTRAS DEDUCCIONES -----------------------------------------------
+      pdf
+        .font(headingFont)
+        .text("5. Otras deducciones", tittle, y = y + 12)
+        .font(textFont);
+
+      other_deductionsY = y;
+      other_deductionsTOTAL = 0;
+      y = y + 5;
+
+      for(var i = 0; i < other_deductions.types.length; i++){
+        type = other_deductions.types[i];
+        other_deductionsTOTAL += type.value;
+
+        pdf
+          .text("  por " + type.name, secondColumn, y = y + 10)
+          .text(formatMoney(type.value), firstColumn + numberOffset(type.value), y);
+      }
+
+      pdf
+        .font(textFont)
+        .text(formatAmount(other_deductionsTOTAL), quarterColumn + numberOffset(other_deductionsTOTAL), other_deductionsY)
+        .moveTo(tittle, other_deductionsY + 10).lineTo(quarterColumn + 45,  other_deductionsY + 10).stroke();
+
+
+      // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
+      pdf
+        .fontSize(titleSize)
+        .font(titleFont)
+        .text('A. TOTAL DEVENGADO (página anterior)' , deductionX + 150, y = y + 15)
+        .text(formatAmount(payroll.total_accrual) , deductionX + paddingLeftTotal + numberOffset(payroll.total_accrual), y)
+        .moveTo(accrualX + 150 , y = y + 10).lineTo(accrualX + 545 , y).stroke();
+
+      pdf
+        .fontSize(titleSize)
+        .font(titleFont)
+        .text('B. TOTAL DEDUCIR' ,  deductionX + 150, y = y + 10)
+        .text(formatAmount(payroll.total_deductions) , deductionX + paddingLeftTotal + numberOffset(payroll.total_deductions), y)
+        .moveTo(deductionX + 150 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+      pdf
+        .text('LÍQUIDO TOTAL A PERCIBIR (A-B)' , deductionX + 160, y = y + 10)
+        .text(formatAmount(payroll.liquid_perceive) , deductionX + paddingLeftTotal + numberOffset(payroll.liquid_perceive), y)
+        .moveTo(deductionX + 160 , y = y + 10).lineTo(deductionX + 545 , y).stroke();
+
+      signature = 455;
+
+      newSignatureDate();
+      newFooterBox();
+    }
+  }
+
+  //Main
+  newHearderTittle();
+  newEnterpriseBox();
+  newEmployeeBox();
+  newSettlementBox();
+  newAccrual();
+  newDeductionFirstPage();
+  newSignatureDate();
+  newFooterBox();
+  newDeductionSecondPage();
+
+  //End PDF
+  pdf.end();
+
+}
+
+module.exports.standardTwoColumnsPayroll = function(payroll, stream){
+  //Initialize pdf object
+  var pdf = new(PDF);
+  pdf.pipe(stream);
+
+  //PDF Styles
+  var pdfWidth = pdf.page.width
+		 - pdf.page.margins.left
+     - pdf.page.margins.right
+	;
+
+  pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
+  pdf.page.margins = {t0p: 50, bottom: 0, left: 72, right: 72}; //Margenes del documento
+
+  //Variables y constants
+	textSize = 6;
+	textFont = 'Helvetica';
+
+	titleSize = 8;
+	titleFont = 'Helvetica-Bold';
+
+	headingSize = 4;
+	headingFont = 'Helvetica-Bold';
+
+  signature = 450;
+
+  //Aux Methods
+	var formatText = function( text ) {
+		return text ? text.toUpperCase() : ' ';
+	}
+
+	var formatAmount = function( amount ) {
+		return amount ? amount.toFixed(2) : '0.00';
+	}
+
+  var formatPercent = function( number ) {
+    return number ? number.toFixed(2) : '0.00';
+	}
+
+  var formatDate = function( date ) {
+		var split = date.split('/');
+    return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
+	}
+
+  var getStrMonth = function ( month ) {
+    switch (month) {
+      case '01':
+          return 'enero';
+      case '02':
+          return 'febrero';
+      case '03':
+          return 'marzo';
+      case '04':
+          return 'abril';
+      case '05':
+          return 'mayo';
+      case '06':
+          return 'junio';
+      case '07':
+          return 'julio';
+      case '08':
+          return 'agosto';
+      case '09':
+          return 'septiembre';
+      case '10':
+          return 'octubre';
+      case '11':
+          return 'noviembre';
+      case '12':
+          return 'diciembre';
+      default:
+          return 'error';
+    }
+  }
+
+  var numberOffset = function( number ) {
+    var split = number.split('.');
+    switch (split[0].length) {
+      case 1:
+          return 27;
+      case 2:
+          return 22;
+      case 3:
+          return 18;
+      case 4:
+          return 13;
+      case 5:
+          return 9;
+      case 6:
+          return 5;
+      default:
+          return 0;
+    }
+  }
+
+  var newHearderTittle = function(){
+    //PDF drawing position using for lines, starting on the t0p of the page
+    y = pdf.y;
+  	x = pdf.x-50;
+    originalX = pdf.x-50;
+    originalY = pdf.y;
+    ox = pdf.x
+  	t0p = 2;
+  	left = 8;
+  	width = (pdfWidth-30) * 1/2;
+    pdf.lineWidth(1);
+
+    paddingTopTL = 14;  //Padding-t0p text / line
+    paddingTop = 4;     //Padding-t0p line / text, text / text
+    paddingLeft1 = 8;   //Padding-left first text
+    paddingLeft2 = 16;  //Padding-left second text
+    paddingLeft3 = 20;  //Padding-left third text
+    marginTL = 2;       //Margin bettwen text / line, line / text, line / line
+
+    //Start drawing PDF
+    pdf
+  	  .font(titleFont)
+  		.fontSize(titleSize)
+  		.text('RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE SALARIO', x+155, 0)
+  		.moveDown(1);
+  }
+
+  var newEnterpriseBox = function(){
+    y = pdf.y-8;
+    oy = y;
+
+    rightEnterpriseX = ox + width;      //Position X for right line enterprise box
+    maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
+    sizVertivalLineEE = 10;             //Size vertical line for enterprise, employee box
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    pdf
+      .moveTo(x, y).lineTo(rightEnterpriseX, y).stroke()      //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Empresa: ', x + paddingLeft1, y + paddingTop , {continued: true})
+      .text(payroll.enterprise.name)
+
+      .text('Domicilio: ', x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .font(textFont)
+      .text(payroll.enterprise.address)
+      .text(payroll.enterprise.locality , x + paddingLeft1 + 41)
+
+      .font(headingFont)
+      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop , {continued: true})
+      .font(textFont)
+      .text(payroll.enterprise.cif)
+
+      .font(headingFont)
+      .text('CCC: ' , x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .font(textFont)
+      .text(payroll.enterprise.ccc)
+
+      .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE).stroke()                                     //Vertical left line
+  		.moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke()       //Vertical right line
+      .moveTo(x, y + sizVertivalLineEE).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke();  //Horizontal bottom line
+
+  }
+
+  var newEmployeeBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- EMPLOYEE -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    leftEmployeeX = ox + width + left + 5 ;   //Position X for left line employee box
+    employeeY = oy + t0p + 2;                 //Start y for employee box
+    employeeTop = 12;                         //Padding-t0p bettwen text
+
+    pdf
+      .moveTo(leftEmployeeX - left, oy).lineTo(maxRightWidth, oy).stroke()   //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Trabajador: ' , leftEmployeeX, employeeY, {continued: true})
+      .text(payroll.employee.fullname)
+
+      .text('NIF: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(payroll.employee.nif)
+
+      .font(headingFont)
+      .text('Nº S.S.: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(payroll.employee.ss)
+
+      .font(headingFont)
+      .text('Grupo profesional: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(payroll.employee.professional_group)
+
+      .font(headingFont)
+      .text('Grupo cotización: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .font(textFont)
+      .text(payroll.employee.quote_group)
+
+      .font(headingFont)
+      .text('Fecha antigüedad: ', leftEmployeeX + 152, employeeY , {continued: true})
+      .font(textFont)
+      .text(payroll.employee.seniority_date)
+
+      .moveTo(leftEmployeeX - left, oy).lineTo(leftEmployeeX - left, y + sizVertivalLineEE).stroke()              //Vertical left line
+      .moveTo(maxRightWidth, oy).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()                            //Vertical right line
+      .moveTo(leftEmployeeX - left, y + sizVertivalLineEE).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()  //Horizontal bottom line
+      .moveDown(1);
+  }
+
+  var newSettlementBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- SETTLEMENT --------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    start_date = formatDate(payroll.settlement.start_date);
+    end_date = formatDate(payroll.settlement.end_date);
+    settlementWidth = x + pdfWidth + 100;
+    settlementTop = 4;
+    settlementX = ox - 50 + left;
+    settlementY = y + t0p + 12;
+    settlementYHeight = settlementY + 15;
+
+    pdf
+      .moveTo(x, settlementY).lineTo(settlementWidth, settlementY).stroke()   //Horizontal t0p line
+
+      .font(headingFont)
+      .text('Periodo de liquidación: ' , settlementX, settlementY + settlementTop, {continued: true})
+      .font(textFont)
+      .text('del '+ start_date +' al '+ end_date, {continued: true})
+
+      .font(headingFont)
+      .text('Total días: ', settlementX + 238 , settlementY + settlementTop, {continued: true})
+      .font(textFont)
+      .text(payroll.settlement.total_days)
+
+      .moveTo(x, settlementY).lineTo(x, settlementYHeight).stroke()                               //Vertical left line
+      .moveTo(settlementWidth, settlementY).lineTo(settlementWidth, settlementYHeight).stroke()   //Vertical right line
+      .moveTo(x, settlementYHeight).lineTo(settlementWidth, settlementYHeight).stroke();          //Horizontal bottom line
+  }
+
+  var newFooterBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- FOOTER -------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    footer = 538;
+    pdf
+      .moveTo(originalX, originalY+footer).lineTo(originalX+pdfWidth+100, originalY+footer).undash().stroke()     //Horizontal t0p line
+      .font(textFont)
+      .text('DETERMINACIÓN DE LAS BASES DE COTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTAS Y DE ' +
+          'LA BASE' , originalX + left , originalY + footer + t0p + 2)
+      .font(textFont)
+      .text('SUJETA A RETENCIÓN DEL IRPF Y APORTACIÓN DE LA EMPRESA' , originalX + left , originalY + footer + t0p + 12)
+      .font(textFont)
+      .text('1. Contingencias comunes' , originalX + left + 5 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('BASE', originalX + left + 280 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('TIPO', originalX + left + 325 , originalY + footer + t0p + 25, {continued: true})
+      .font(textFont)
+      .text('AP. EMPRESA', originalX + left + 355 , originalY + footer + t0p + 25)
+
+      .font(textFont)
+      .text('Importe remuneración mensual' , originalX + left + 10 , originalY + footer + t0p + 39)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), originalX + left + 250 + numberOffset(formatAmount(payroll.footer_ss_quotation.common_contingency.monthly_remuneration)) , originalY + footer + t0p + 39)
+      .lineWidth(0.1)
+      .moveTo(originalX + left + 10 , originalY + footer + t0p + 49).lineTo(originalX + left + 300 , originalY + footer + t0p + 49).stroke()
+
+      .font(textFont)
+      .text('Importe prorrata de pagas extraordinarias' , originalX + left + 10 , originalY + footer + t0p + 53)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), originalX + left + 250 + numberOffset(formatAmount(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet)), originalY + footer + t0p + 53)
+      .moveTo(originalX + left + 10 , originalY + footer + t0p + 63).lineTo(originalX + left + 300 , originalY + footer + t0p + 63).stroke()
+
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.base), originalX + left + 353 + numberOffset(formatAmount(payroll.footer_ss_quotation.common_contingency.base)) , originalY + footer + t0p + 46)
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent) + ' %' , originalX + left + 408 + numberOffset(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent)) , originalY + footer + t0p + 46)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input) , originalX + left + 497 + numberOffset(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input)), originalY + footer + t0p + 46)
+      .moveTo(originalX + left + 310 , originalY + footer + t0p + 56).lineTo(originalX + left + 550 , originalY + footer + t0p + 56).stroke()
+
+      .font(textFont)
+      .text('2. Contingencias profesionales' , originalX + left + 5 , originalY + footer + t0p + 80)
+      .font(textFont)
+      .text('conceptos de recaudación' , originalX + left + 5 , originalY + footer + t0p + 90)
+      .font(textFont)
+      .text('conjunta' , originalX + left + 5 , originalY + footer + t0p + 100)
+
+      .font(textFont)
+      .text('AT Y EP' , originalX + left + 160 , originalY + footer + t0p + 67)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 77).lineTo(originalX + left + 301 , originalY + footer + t0p + 77).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at) + ' %', originalX + left + 408 + numberOffset(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at)), originalY + footer + t0p + 67)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalX + left + 497 +  numberOffset(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at)), originalY + footer + t0p + 67)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 77).lineTo(originalX + left + 551 , originalY + footer + t0p + 77).stroke()
+
+      .font(textFont)
+      .text('Desempleo' , originalX + left + 160 , originalY + footer + t0p + 81)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 91).lineTo(originalX + left + 301 , originalY + footer + t0p + 91).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) + ' %', originalX + left + 408 + numberOffset(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment)), originalY + footer + t0p + 81)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalX + left + 497 +  numberOffset(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment)), originalY + footer + t0p + 81)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 91).lineTo(originalX + left + 551 , originalY + footer + t0p + 91).stroke()
+
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), originalX + left + 353 + numberOffset(formatAmount(payroll.footer_ss_quotation.professional_contingency.base)), originalY + footer + t0p + 88)
+      .moveTo(originalX + left + 310 , originalY + footer + t0p + 98).lineTo(originalX + left + 400 , originalY + footer + t0p + 98).stroke()
+
+      .font(textFont)
+      .text('Fromación profesional' , originalX + left + 160 , originalY + footer + t0p + 95)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 105).lineTo(originalX + left + 301 , originalY + footer + t0p + 105).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) + ' %', originalX + left + 408 + numberOffset(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation)), originalY + footer + t0p + 95)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalX + left + 497 +  numberOffset(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation)), originalY + footer + t0p + 95)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 105).lineTo(originalX + left + 551 , originalY + footer + t0p + 105).stroke()
+
+      .font(textFont)
+      .text('Fondo de Garantía Salarial' , originalX + left + 160 , originalY + footer + t0p + 109)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 119).lineTo(originalX + left + 301 , originalY + footer + t0p + 119).stroke()
+      .font(textFont)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) + ' %', originalX + left + 408 + numberOffset(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty)), originalY + footer + t0p + 109)
+      .font(textFont)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalX + left + 497 +  numberOffset(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty)), originalY + footer + t0p + 109)
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 119).lineTo(originalX + left + 551 , originalY + footer + t0p + 119).stroke()
+
+      .font(textFont)
+      .text('3. Cotización adicional por horas extraordinarias' , originalX + left + 5 , originalY + footer + t0p + 123)
+      .font(textFont)
+      .text('Fuerza mayor' , originalX + left + 160 , originalY + footer + t0p + 137)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalX + left + 353 + numberOffset(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force)), originalY + footer + t0p + 137)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), originalX + left + 497 +  numberOffset(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force)), originalY + footer + t0p + 137)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 147).lineTo(originalX + left + 400 , originalY + footer + t0p + 147).stroke()
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 147).lineTo(originalX + left + 551 , originalY + footer + t0p + 147).stroke()
+
+      .font(textFont)
+      .text('No estructurales' , originalX + left + 160 , originalY + footer + t0p + 151)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), originalX + left + 353 + numberOffset(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_non_structural)), originalY + footer + t0p + 151)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), originalX + left + 497 +  numberOffset(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural)), originalY + footer + t0p + 151)
+      .moveTo(originalX + left + 160 , originalY + footer + t0p + 161).lineTo(originalX + left + 400 , originalY + footer + t0p + 161).stroke()
+      .moveTo(originalX + left + 410 , originalY + footer + t0p + 161).lineTo(originalX + left + 551 , originalY + footer + t0p + 161).stroke()
+
+      .font(textFont)
+      .text('4. Base sujeta a retención del IRPF' , originalX + left + 5 , originalY + footer + t0p + 165)
+      .text(formatAmount(payroll.footer_ss_quotation.base_irpf), originalX + left + 353 + numberOffset(formatAmount(payroll.footer_ss_quotation.base_irpf)), originalY + footer + t0p + 165)
+      .moveTo(originalX + left + 13 , originalY + footer + t0p + 175).lineTo(originalX + left + 400 , originalY + footer + t0p + 175).stroke()
+      .lineWidth(1)
+      .moveTo(originalX, originalY+footer).lineTo(originalX, originalY+footer+180).stroke()                //Vertical left line
+      .moveTo(accrualWidth, originalY+footer).lineTo(accrualWidth, originalY+footer+180).stroke()          //Vertical right line
+      .moveTo(originalX, originalY+footer+180).lineTo(accrualWidth, originalY+footer+180).stroke();        //Horizontal bottom line
+  }
+
+  var newSignatureDate = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    paddingSignature = 15;
+    paddingDate = 10;
+    centerTableHeight = 509;
+    signature = 488;
+
+    pdf
+      .fontSize(titleSize)
+      .text('Firma y sello de la empresa' , originalX + 160 , originalY + signature)
+      .image(payroll.signature_logo, originalX + 160, originalY + signature + paddingSignature, {scale: 0.06})
+
+      .text(end_date,  originalX + 310 , originalY + signature)
+      .fontSize(titleSize)
+      .text('RECIBÍ' , originalX + 310 , originalY + signature + paddingDate)
+
+      .lineWidth(1)
+      .moveTo(originalXCenterTable, originalYCenterTable).lineTo(originalXCenterTable, originalYCenterTable + centerTableHeight).stroke()                //Vertical left line
+      .moveTo(accrualWidth, originalYCenterTable).lineTo(accrualWidth, originalYCenterTable + centerTableHeight).stroke()                                //Vertical right line
+      .moveTo(originalXCenterTable, originalYCenterTable + centerTableHeight).lineTo(accrualWidth, originalYCenterTable + centerTableHeight).stroke();   //Horizontal bottom line
+  }
+
+  var getAccrual = function(accrualName){
+    for(i = 0; i < payroll.accruals.length; i++){
+      accrual = payroll.accruals[i];
+      if(accrual.accrual_name == accrualName)
+        return accrual;
+    }
+    return undefined;
+  }
+
+  var newAccrual = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- ACCRUAL -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    y = settlementY+19;
+    accrualY = settlementY+10;
+    accrualX = x + left;
+    accrualWidth = x + pdfWidth + 100;
+    originalXCenterTable = x;
+    originalYCenterTable = y;
+
+    pdf
+      .moveTo(x, y).lineTo(accrualWidth, y).stroke()
+      .moveTo(accrualWidth/2, y).lineTo(accrualWidth/2, 545).stroke();
+
+    firstPaddingX = x + 10;
+    secondPaddingX = x + 20;
+    thirdPaddingX = x + 220;
+    y = y + 10;
+    deductionY = y; //GUARDAMOS LA Y ORIGIANAL PARA EMPEZAR BIEN EN LA COLUMNA DE DEDUCCIONES
+
+    pdf
+      .font(headingFont)
+      .text("I. DEVENGOS" , firstPaddingX , y);
+
+    y = y + 15;
+
+    for(i = 0; i < payroll.accruals.length; i++){
+      accrual = payroll.accruals[i];
+      pdf
+        .font(titleFont)
+        .text(accrual.accrual_name.toUpperCase() , secondPaddingX , y);
+      y = y + 10;
+      for(j = 0; j < accrual.types.length; j++){
+        type = accrual.types[j];
+        pdf
+          .font(textFont)
+          .text(type.type_expression , secondPaddingX + 8 , y)
+          .text(formatAmount(type.type_value) , thirdPaddingX + numberOffset(formatAmount(type.type_value)) , y);
+        y = y + 10;
+      }
+    }
+
+    accrualTotalPadding = x + 90;
+    y = y + 15;
+
+    pdf
+      .font(headingFont)
+      .text("A. TOTAL DEVENGADO" , accrualTotalPadding , y)
+      .text(formatAmount(payroll.total_accrual) , thirdPaddingX + numberOffset(formatAmount(payroll.total_accrual)) , y);;
+
+  }
+
+  var getDeduction = function(nameDeduction){
+    for(i = 0; i < payroll.deductions.length; i++){
+      deduction = payroll.deductions[i];
+      if(deduction.name == nameDeduction){
+        return deduction;
+      }
+    }
+    return {
+    	types : []
+    };
+    //return undefined;
+  }
+
+  var newDeduction = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- DEDUCTION ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    y = deductionY;
+    deductionPaddingX = x + 283;
+
+    common_contingency = getDeduction("Contingencias comunes");
+    unemployment = getDeduction("Desempleo");
+    professional_formation = getDeduction("Formación profesional");
+    extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
+    extra_hours_ne = getDeduction("No estructurales (HE)");
+    taxes = getDeduction("Impuesto sobre la renta de personas físicas");
+    advances = getDeduction("Anticipos");
+    spices = getDeduction("Valor de los productos recibidos en especie");
+    other_deductions = getDeduction("Otras deducciones");
+
+    pdf
+      .text("II. DEDUCCIONES", deductionPaddingX, y);
+
+    deductionPaddingX = deductionPaddingX + 10;
+
+    pdf
+      .text("1. Aportaciones del trabajador a las cotizaciones de la Seguridad Social", deductionPaddingX, y = y + 10)
+      .text("y conceptos de recaudación conjunta", deductionPaddingX, y = y + 10);
+
+    deductionFirstColumn = deductionPaddingX + 10;
+    deductionSecondColumn = deductionFirstColumn + 60;
+    deductionThirdColumn = deductionFirstColumn + 80;
+    deductionFourColumn = deductionFirstColumn + 210;
+
+    pdf
+      .font(textFont)
+      .text(formatAmount(common_contingency.percent) + " %", deductionFirstColumn + numberOffset(formatAmount(common_contingency.percent)), y = y + 15)
+      .text("Contigencias comunes", deductionSecondColumn, y)
+      .text(formatAmount(common_contingency.value), deductionFourColumn + numberOffset(formatAmount(common_contingency.value)), y)
+      .text(formatAmount(unemployment.percent) + " %", deductionFirstColumn + numberOffset(formatAmount(unemployment.percent)), y = y + 10)
+      .text("Desempleo", deductionSecondColumn, y)
+      .text(formatAmount(unemployment.value), deductionFourColumn + numberOffset(formatAmount(unemployment.value)), y)
+      .text(formatAmount(professional_formation.percent) + " %", deductionFirstColumn + numberOffset(formatAmount(professional_formation.percent)), y = y + 10)
+      .text("Fromación profesional", deductionSecondColumn, y)
+      .text(formatAmount(professional_formation.value), deductionFourColumn + numberOffset(formatAmount(professional_formation.value)), y);
+
+    pdf
+      .font(headingFont)
+      .text("Horas extraordinarias", deductionFirstColumn + 10, y = y + 10)
+      .font(textFont)
+      .text("Fuerza mayor o estructurales", deductionSecondColumn, y = y + 10)
+      .text(formatAmount(extra_hours_e.value), deductionFourColumn + numberOffset(formatAmount(extra_hours_e.value)), y)
+      .text("No estructurales", deductionSecondColumn, y = y + 10)
+      .text(formatAmount(extra_hours_ne.value), deductionFourColumn + numberOffset(formatAmount(extra_hours_ne.value)), y)
+      .font(headingFont)
+      .text("TOTAL APORTACIONES", deductionSecondColumn, y = y + 12)
+      .font(textFont)
+      .text(formatAmount(payroll.total_contributions), deductionFourColumn + numberOffset(formatAmount(payroll.total_contributions)), y);
+
+    pdf
+      .font(headingFont)
+      .text("2. Impuestos sobre la renta de personas físicas (I.R.P.F.)", deductionPaddingX, y = y + 12)
+      .font(textFont)
+      .text(formatAmount(taxes.value), deductionFourColumn + numberOffset(formatAmount(taxes.value)), y);
+
+    pdf
+      .font(headingFont)
+      .text("3. Anticipos", deductionPaddingX, y = y + 12)
+      .font(textFont)
+      .text(formatAmount(advances.value), deductionFourColumn + numberOffset(formatAmount(advances.value)), y);
+
+    pdf
+      .font(headingFont)
+      .text("4. Valor de los productos recibidos en especie", deductionPaddingX, y = y + 12)
+      .font(textFont)
+      .text(formatAmount(spices.value), deductionFourColumn + numberOffset(formatAmount(spices.value)), y);
+
+    pdf
+      .font(headingFont)
+      .text("5. Otras deducciones", deductionPaddingX, y = y + 12)
+      .font(textFont)
+      .text(formatAmount(other_deductions.value), deductionFourColumn + numberOffset(formatAmount(other_deductions.value)), y);
+
+    pdf
+      .font(headingFont)
+      .text("B. TOTAL A DEDUCIR", deductionSecondColumn, y = y + 15)
+      .text(formatAmount(payroll.total_deductions), deductionFourColumn + numberOffset(formatAmount(payroll.total_deductions)), y);
+
+    pdf
+      .font(headingFont)
+      .text("LÍQUIDO TOTAL A PERCIBIR (A - B)", deductionPaddingX, y = y + 270)
+      .text(formatAmount(payroll.liquid_perceive), deductionFourColumn + numberOffset(formatAmount(payroll.liquid_perceive)), y)
+      .moveTo(deductionThirdColumn + 45, y = y + 8).lineTo(deductionFourColumn + 45, y).stroke();
+
+  }
+
+  //Main
+  newHearderTittle();
+  newEnterpriseBox();
+  newEmployeeBox();
+  newSettlementBox();
+  newAccrual();
+  newDeduction();
+  newSignatureDate();
+  newFooterBox();
+
+  //End PDF
+  pdf.end();
+
+}
+
+module.exports.salaryRecibeCRA = function(payroll, stream){
+  //Initialize pdf object
+  var pdf = new(PDF);
+  pdf.pipe(stream);
+
+  //PDF Styles
+  var pdfWidth = pdf.page.width
+		 - pdf.page.margins.left
+     - pdf.page.margins.right
+	;
+
+  pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
+  pdf.page.margins = {t0p: 70, bottom: 10, left: 72, right: 72}; //Margenes del documento
+
+  //Variables y constants
+	textSize = 6;
+	textFont = 'Helvetica';
+
+	titleSize = 8;
+	titleFont = 'Helvetica-Bold';
+
+	headingSize = 10;
+	headingFont = 'Helvetica-Bold';
+
+  paddingTop = 4;     //Padding-t0p line / text, text / text
+  paddingLeft1 = 8;   //Padding-left first text
+  paddingLeft2 = 16;  //Padding-left second text
+  paddingLeft3 = 24;  //Padding-left forth text
+  width = (pdfWidth-30) * 1/2;
+
+
+  //Aux Methods
+  var formatInputData = function (data, parseData){
+    if(data == null || data == undefined){
+      if(parseData == 'string')
+        return '';
+      else if(parseData == 'number')
+        return '';
+    }else{
+      var typeData = typeof data;
+      //POSIBLE IMPLEMENTACION PARA ALGO MAS INTELIGENTE
+      if(typeData == 'number' && data == 0){
+        return '';
+      }
+      return data;
+    }
+  }
+
+	var formatAmount = function(amount) {
+		return (amount  && amount != '' && amount != null && amount != 0) ? amount.toFixed(2) : '';
+	}
+
+  var numberOffset = function(number) {
+    if(number != ''){
+      var formatNumber = formatAmount(number);
+      var split = formatNumber.split('.');
+      switch (split[0].length) {
+        case 1:
+            return 27;
+        case 2:
+            return 22;
+        case 3:
+            return 18;
+        case 4:
+            return 13;
+        case 5:
+            return 9;
+        case 6:
+            return 5;
+        default:
+            return 0;
+      }
+    }else{
+      return 0;
+    }
+  }
+
+  var formatDate = function(date) {
+	var split = date.split('/');
+    return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
+	}
+
+  var getStrMonth = function (numberMonth) {
+    switch (numberMonth) {
+      case '01':
+          return 'enero';
+      case '02':
+          return 'febrero';
+      case '03':
+          return 'marzo';
+      case '04':
+          return 'abril';
+      case '05':
+          return 'mayo';
+      case '06':
+          return 'junio';
+      case '07':
+          return 'julio';
+      case '08':
+          return 'agosto';
+      case '09':
+          return 'septiembre';
+      case '10':
+          return 'octubre';
+      case '11':
+          return 'noviembre';
+      case '12':
+          return 'diciembre';
+      default:
+          return 'error';
+    }
+  }
+
+
+  //Main Methods
+  var newHearderTittle = function(){
+    //PDF drawing position using for lines, starting on the t0p of the page
+    y = pdf.y;
+  	x = pdf.x-50;
+    originalX = pdf.x-50;
+    originalY = pdf.y;
+  	pdf.lineWidth(0.1);
+
+    if(payroll.logo != undefined){
+      pdf
+        .image(payroll.logo, x+95, 20, {scale: 0.06})
+        .font(titleFont)
+    		.fontSize(headingSize)
+        .text('RECIBO DE SALARIO', x+370, 20)
+        .moveDown(1);
+    }else{
+      //Start drawing PDF
+      pdf
+    	  .font(titleFont)
+    		.fontSize(headingSize)
+    		.text('RECIBO DE SALARIO', x+80, 35)
+    		.moveDown(1);
+    }
+
+  }
+
+  var newEnterpriseBox = function(){
+    if(payroll.logo == undefined)
+      y = pdf.y;
+    else
+      y = pdf.y + 15;
+
+    oy = y;
+    centerBoxText = 90;
+    rightEnterpriseX = 72 + width;      //Position X for right line enterprise box
+    sizVertivalLineEE = 10;             //Size vertical line for enterprise, employee box
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    pdf
+      .moveTo(x, y).lineTo(rightEnterpriseX, y).stroke()      //Horizontal t0p line
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('EMPRESA', x + paddingLeft1, y = y + paddingTop)
+      .font(headingFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.enterprise.name, 'string'), x + centerBoxText, y = y + paddingTop)
+      .moveTo(x, y = y + paddingTop + 10).lineTo(rightEnterpriseX, y).stroke()
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('DOMICILIO', x + paddingLeft1, y = y + paddingTop)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.enterprise.address, 'string') + ", " + formatInputData(payroll.enterprise.locality, 'string'), x + paddingLeft3, y = y + paddingTop + 8)
+      .moveTo(x, y = y + paddingTop + 15).lineTo(rightEnterpriseX, y).stroke()
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('CIF', x + paddingLeft1, y = y + paddingTop).font(textFont)
+      .text('CCC', x + paddingLeft1 + 130, y).font(textFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.enterprise.cif, 'string'), x + paddingLeft3 + 10, y = y + paddingTop + 8)
+      .text(formatInputData(payroll.enterprise.ccc, 'number'), x + paddingLeft3 + 145, y)
+
+      .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE + 2).stroke()                                     //Vertical left line
+      .moveTo(x + 130, y - paddingTop*2 - 8).lineTo(x + 130, y + sizVertivalLineEE + 2).stroke()       //Vertical center line
+  		.moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE + 2).stroke()       //Vertical right line
+      .moveTo(x, y + sizVertivalLineEE + 2).lineTo(rightEnterpriseX, y + sizVertivalLineEE + 2).stroke();  //Horizontal bottom line
+
+  }
+
+  var newEmployeeBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- EMPLOYEE -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    left = 8;
+    leftEmployeeX = 72 + width + left + 5 ;   //Position X for left line employee box
+    employeeY = 44;                           //Start y for employee box
+    centerBoxText = 80;
+    maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
+
+    pdf
+      .moveTo(leftEmployeeX - left, 35).lineTo(maxRightWidth, 35).stroke()   //Horizontal t0p line
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('TRABAJADOR/A', leftEmployeeX, y = employeeY)
+      .font(headingFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.employee.fullname, 'string'), leftEmployeeX + centerBoxText, y = y + paddingTop)
+      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('NIF', leftEmployeeX, y = y + paddingTop).font(textFont)
+      .text('Nº S.S.',leftEmployeeX + 150, y).font(textFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.employee.nif, 'string'), leftEmployeeX + paddingLeft3 + 10, y = y + paddingTop + 3)
+      .text(formatInputData(payroll.employee.ss, 'number'), leftEmployeeX + paddingLeft3 + 155, y)
+      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
+      .moveTo(leftEmployeeX + 130, y - paddingTop*2 - 15).lineTo(leftEmployeeX + 130, y).stroke()       //Vertical center line
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('G. COTIZ.', leftEmployeeX, y = y + paddingTop).font(textFont)
+      .text('GRUPO PROFESIONAL',leftEmployeeX + 50, y).font(textFont)
+      .text('ANTIGÜEDAD',leftEmployeeX + 220, y).font(textFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.employee.quote_group, 'string'), leftEmployeeX + paddingLeft2, y = y + paddingTop + 5)
+      .text(formatInputData(payroll.employee.professional_group, 'string'), leftEmployeeX + paddingLeft3 + 90, y)
+      .text(formatInputData(payroll.employee.seniority_date, 'string'), leftEmployeeX + paddingLeft3 + 210, y)
+      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
+      .moveTo(leftEmployeeX + 40, y - paddingTop*2 - 17).lineTo(leftEmployeeX + 40, y).stroke()
+      .moveTo(leftEmployeeX + 210, y - paddingTop*2 - 17).lineTo(leftEmployeeX + 210, y).stroke()
+
+      .moveTo(leftEmployeeX - left, 35).lineTo(leftEmployeeX - left, y).stroke()              //Vertical left line
+      .moveTo(maxRightWidth, 35).lineTo(maxRightWidth, y).stroke()                            //Vertical right line
+      .moveDown(1);
+  }
+
+  var newSettlementBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- SETTLEMENT --------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    leftEmployeeX = 72 + width + left + 5 ;   //Position X for left line employee box
+    settlementY = 8;                           //Start y for employee box
+    centerBoxText = 80;
+    settlementWidth = x + pdfWidth + 100;
+
+    pdf
+      .moveTo(leftEmployeeX - left, y = y + settlementY).lineTo(maxRightWidth, y).stroke()   //Horizontal t0p line
+      .font(textFont)
+      .fontSize(textSize)
+      .text('PERIODO DE LIQUIDACIÓN', leftEmployeeX, y = y + paddingTop).font(textFont)
+      .text('TOTAL DÍAS',leftEmployeeX + 210, y).font(textFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.settlement.start_date, 'string') +'  -  '+ formatInputData(payroll.settlement.end_date, 'string'), leftEmployeeX + paddingLeft3 + 10, y = y + paddingTop + 8)
+      .text(formatInputData(payroll.settlement.total_days, 'number'), leftEmployeeX + paddingLeft3 + 220, y)
+      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
+      .moveTo(leftEmployeeX + 190, y - paddingTop*2 - 20).lineTo(leftEmployeeX + 190, y).stroke()       //Vertical center line
+
+      .moveTo(leftEmployeeX - left, y - paddingTop*2 - 20).lineTo(leftEmployeeX - left, y).stroke()         //Vertical right line
+      .moveTo(settlementWidth, y - paddingTop*2 - 20).lineTo(settlementWidth, y).stroke()         //Vertical right line
+      .moveDown(1);
+  }
+
+  var newFooterBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- FOOTER -------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    accrualWidth = x + pdfWidth + 100;
+    t0p = 2;
+    originalX = 22;
+    originalY = 72;
+    footer = 450;
+    pdf
+      .font(textFont)
+      .text('BASES' , originalX + 50 , y = originalY + footer + t0p + 12)
+      .text('AP. EMPRESA' , originalX + 120 , y)
+      .text('DESGLOSE' , originalX + 230 , y)
+      .text('TOTALES' , originalX + 455 , y)
+
+      .text('1. Cont. Comunes' , originalX + 15, y = originalY + footer + t0p + 25)
+      .text('Remuneración Total' , originalX + 210, y)
+      .text('Devengos' , originalX + 400, y)
+      .text('Deducciones' , originalX + 480, y)
+      .moveTo(originalX + 10 , y - 3).lineTo(originalX + 305 , y - 3).stroke()
+      .moveTo(originalX + 390 , y - 3).lineTo(originalX + 555 , y - 3).stroke()
+
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.base), originalX + 35 + numberOffset(payroll.footer_ss_quotation.common_contingency.base) , y = y + 10)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), originalX + 223 + numberOffset(payroll.footer_ss_quotation.common_contingency.monthly_remuneration) , y)
+      .text(formatAmount(payroll.total_accrual), originalX + 425 + numberOffset(payroll.total_accrual) , y)
+      .text(formatAmount(payroll.total_deductions), originalX + 510 + numberOffset(payroll.total_deductions) , y)
+
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.type_percent) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , y = y + 8)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input), originalX + 135 + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input) , y)
+
+      .moveTo(originalX + 200 , y = y + 3).lineTo(originalX + 305 , y).stroke()
+      .moveTo(originalX + 390 , y).lineTo(originalX + 555 , y).stroke()
+
+      .text('Prorrata Pagas Extr.' , originalX + 210, y = y + 3)
+      .text('Líquido a percibir' , originalX + 480, y)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), originalX + 223 + numberOffset(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet) , y = y + 10)
+      .text(formatAmount(payroll.liquid_perceive), originalX + 510 + numberOffset(payroll.liquid_perceive) , y)
+
+      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
+      .moveTo(originalX + 472 , y).lineTo(originalX + 555 , y).stroke()
+
+      .text('2. Cont. Profesionales' , originalX + 15, y = y + 3)
+
+      .text('AT/EP' , originalX + 110, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), originalX + 35 + numberOffset(payroll.footer_ss_quotation.professional_contingency.base) , y = y + 10)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_at) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at) , y)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at) , y)
+      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
+
+      .text('Desempleo' , originalX + 110, y = y + 3)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) , y = y + 10)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment) , y)
+      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
+
+      .text('Formación profesional' , originalX + 110, y = y + 3)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) , y = y + 10)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation) , y)
+      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
+
+      .text('FOGASA' , originalX + 110, y = y + 3)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) , y = y + 10)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty) , y)
+
+      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
+      .text('3. Horas Extras' , originalX + 15, y = y + 3)
+      .text('No Estructurales' , originalX + 110, y)
+      .text('Base HE (NE)' , originalX + 210, y)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), originalX + 95 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force) , y = y + 10)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalX + 223 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force) , y)
+
+      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 305 , y).stroke()
+      .text('Estruc./Fuerza Mayor' , originalX + 110, y = y + 3)
+      .text('Base HE (E/FM)' , originalX + 210, y)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), originalX + 95 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural) , y = y + 10)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), originalX + 223 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_non_structural) , y)
+
+      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
+      .text('4. IRPF' , originalX + 15, y = y + 3)
+      .text(formatAmount(payroll.footer_ss_quotation.base_irpf), originalX + 35 + numberOffset(payroll.footer_ss_quotation.base_irpf) , y = y + 10)
+      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 105 , y).stroke()
+
+      .moveTo(originalX + 10 , originalY + footer + t0p + 22).lineTo(originalX + 10 , y).stroke()
+      .moveTo(originalX + 105 , originalY + footer + t0p + 22).lineTo(originalX + 105 , y).stroke()
+      .moveTo(originalX + 200 , originalY + footer + t0p + 22).lineTo(originalX + 200 , y - 23).stroke()
+      .moveTo(originalX + 305 , originalY + footer + t0p + 22).lineTo(originalX + 305 , y - 161).stroke()
+      .moveTo(originalX + 305 , y - 69).lineTo(originalX + 305 , y - 23).stroke()
+      .moveTo(originalX + 390 , originalY + footer + t0p + 22).lineTo(originalX + 390 , y - 184).stroke()
+      .moveTo(originalX + 472 , originalY + footer + t0p + 22).lineTo(originalX + 472 , y - 161).stroke()
+      .moveTo(originalX + 555 , originalY + footer + t0p + 22).lineTo(originalX + 555 , y - 161).stroke()
+
+      .moveTo(originalX, originalY+footer+240).lineTo(accrualWidth, originalY+footer+240).stroke();        //Horizontal bottom line
+  }
+
+  var newSignatureDate = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    end_date = formatDate(payroll.settlement.end_date);
+    paddingSignature = 15;
+    paddingDate = 10;
+    signatureX = 340;
+    signatureY = 610;
+    signatureDateX = 450;
+    signatureDateY = 680;
+
+    pdf
+      .fontSize(titleSize)
+      .text('SELLO Y FIRMA DE LA EMPRESA' , signatureX , signatureY);
+
+    if(payroll.signature_logo != undefined){
+      pdf
+        .image(payroll.signature_logo, signatureX, signatureY + paddingSignature, {scale: 0.06});
+    }
+
+    pdf
+      .text(end_date,  signatureDateX , signatureDateY)
+      .fontSize(titleSize)
+      .text('RECIBÍ' , signatureDateX , signatureDateY + paddingDate);
+
+  }
+
+  var newAccrual = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- ACCRUAL -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    originalX = 22;
+    originalY = 72;
+    y = settlementY+50;
+    accrualWidth = x + pdfWidth + 100;
+
+    //LINEAS DEL RECTANGULO DEVENGOS Y DEDUCCIONES
+    pdf
+      .moveTo(x, y = y + 95).lineTo(accrualWidth, y).stroke()
+      .moveTo(x, y).lineTo(x, originalY + 690).stroke()
+      .moveTo(accrualWidth, y).lineTo(accrualWidth, originalY + 690).stroke()
+
+      .moveTo(x + 10, y = y + 10).lineTo(x + 558, y).stroke()
+      .moveTo(x + 10, y).lineTo(x + 10, y + 360).stroke()
+      .moveTo(x + 558, y).lineTo(x + 558, y + 360).stroke()
+      .moveTo(x + 10, y + 360).lineTo(x + 558, y + 360).stroke();
+
+    pdf
+      .font(textFont)
+      .text('CUANTÍA' , originalX + 40 , y = 167)
+      .text('CONCEPTO' , originalX + 220 , y)
+      .text('DEVENGOS' , originalX + 410 , y)
+      .text('DEDUCCIONES' , originalX + 485 , y)
+      .moveTo(x + 10, y + 10).lineTo(x + 558, y + 10).stroke()
+      .moveTo(x + 110, y - 5).lineTo(x + 110, y + 355).stroke()
+      .moveTo(x + 390, y - 5).lineTo(x + 390, y + 355).stroke()
+      .moveTo(x + 472, y - 5).lineTo(x + 472, y + 355).stroke();
+
+    y = y + 20;
+    firstColumn = 70;
+    secondColumn = 140;
+    thirdColumn = 440;
+    quarterColumn = 520;
+
+    for(i = 0; i < payroll.accruals.length; i++){
+      accrual = payroll.accruals[i];
+      pdf
+        .font(titleFont)
+        .text(accrual.accrual_name , secondColumn , y);
+      y = y + 10;
+      for(j = 0; j < accrual.types.length; j++){
+        type = accrual.types[j];
+        pdf
+          .font(textFont)
+          .text(type.type_expression , secondColumn + 8 , y)
+          .text(formatAmount(type.type_value) , thirdColumn + numberOffset(type.type_value) , y);
+        y = y + 10;
+      }
+    }
+  }
+
+  var newDeduction = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- DEDUCTION ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    y = y + 20;
+    firstColumn = 70;
+    secondColumn = 140;
+    quarterColumn = 520;
+
+    for(i = 0; i < payroll.deductions.length; i++){
+      deduction = payroll.deductions[i];
+      var total = deduction.value;
+      if(deduction.value != 0){
+        if(deduction.types){
+          var total = 0;
+          for(j = 0; j < deduction.types.length; j++){
+            total += deduction.types[j].value;
+          }
+        }
+        pdf
+          .font(textFont);
+        if(deduction.percent){
+          pdf
+            .text(formatAmount(deduction.percent) + " %" , firstColumn + numberOffset(deduction.percent), y);
+        }
+        pdf
+          .text(deduction.name , secondColumn + 8 , y)
+          .text(formatAmount(total) , quarterColumn + numberOffset(total) , y);
+        y = y + 10;
+      }
+    }
+  }
+
+  //Main
+  newHearderTittle();
+  newEnterpriseBox();
+  newEmployeeBox();
+  newSettlementBox();
+  newAccrual();
+  newDeduction();
+  newSignatureDate();
+  newFooterBox();
+
+  //End PDF
+  pdf.end();
+
+}
+
+module.exports.salaryRecibe = function(payroll, stream){
+  //Initialize pdf object
+  var pdf = new(PDF);
+  pdf.pipe(stream);
+
+  //PDF Styles
+  var pdfWidth = pdf.page.width
+		 - pdf.page.margins.left
+     - pdf.page.margins.right
+	;
+
+  pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
+  pdf.page.margins = {t0p: 70, bottom: 10, left: 72, right: 72}; //Margenes del documento
+
+  //Variables y constants
+	textSize = 6;
+	textFont = 'Helvetica';
+
+	titleSize = 8;
+	titleFont = 'Helvetica-Bold';
+
+	headingSize = 10;
+	headingFont = 'Helvetica-Bold';
+
+  paddingTop = 4;     //Padding-t0p line / text, text / text
+  paddingLeft1 = 8;   //Padding-left first text
+  paddingLeft2 = 16;  //Padding-left second text
+  paddingLeft3 = 24;  //Padding-left forth text
+  width = (pdfWidth-30) * 1/2;
+
+
+  //Aux Methods
+  var formatInputData = function (data, parseData){
+    if(data == null || data == undefined){
+      if(parseData == 'string')
+        return '';
+      else if(parseData == 'number')
+        return '';
+    }else{
+      var typeData = typeof data;
+      //POSIBLE IMPLEMENTACION PARA ALGO MAS INTELIGENTE
+      if(typeData == 'number' && data == 0){
+        return '';
+      }
+      return data;
+    }
+  }
+
+	var formatAmount = function(amount) {
+		return (amount && amount != '' && amount != null && amount != 0) ? amount.toFixed(2) : '';
+	}
+
+  var numberOffset = function(number) {
+    if(number != ''){
+      var formatNumber = formatAmount(number);
+      var split = formatNumber.split('.');
+      switch (split[0].length) {
+        case 1:
+            return 27;
+        case 2:
+            return 22;
+        case 3:
+            return 18;
+        case 4:
+            return 13;
+        case 5:
+            return 9;
+        case 6:
+            return 5;
+        default:
+            return 0;
+      }
+    }else{
+      return 0;
+    }
+  }
+
+  var formatDate = function(date) {
+		var split = date.split('/');
+    return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
+	}
+
+  var getStrMonth = function (numberMonth) {
+    switch (numberMonth) {
+      case '01':
+          return 'enero';
+      case '02':
+          return 'febrero';
+      case '03':
+          return 'marzo';
+      case '04':
+          return 'abril';
+      case '05':
+          return 'mayo';
+      case '06':
+          return 'junio';
+      case '07':
+          return 'julio';
+      case '08':
+          return 'agosto';
+      case '09':
+          return 'septiembre';
+      case '10':
+          return 'octubre';
+      case '11':
+          return 'noviembre';
+      case '12':
+          return 'diciembre';
+      default:
+          return 'error';
+    }
+  }
+
+
+  //Main Methods
+  var newHearderTittle = function(){
+    //PDF drawing position using for lines, starting on the t0p of the page
+    y = pdf.y;
+  	x = pdf.x-50;
+    originalX = pdf.x-50;
+    originalY = pdf.y;
+  	pdf.lineWidth(0.1);
+
+    if(payroll.logo != undefined){
+      pdf
+        .image(payroll.logo, x+95, 20, {scale: 0.06})
+        .font(titleFont)
+    		.fontSize(headingSize)
+        .text('RECIBO DE SALARIO', x+370, 20)
+        .moveDown(1);
+    }else{
+      //Start drawing PDF
+      pdf
+    	  .font(titleFont)
+    		.fontSize(headingSize)
+    		.text('RECIBO DE SALARIO', x+80, 35)
+    		.moveDown(1);
+    }
+
+  }
+
+  var newEnterpriseBox = function(){
+    if(payroll.logo == undefined)
+      y = pdf.y;
+    else
+      y = pdf.y + 15;
+
+    oy = y;
+    centerBoxText = 90;
+    rightEnterpriseX = 72 + width;      //Position X for right line enterprise box
+    sizVertivalLineEE = 10;             //Size vertical line for enterprise, employee box
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    pdf
+      .moveTo(x, y).lineTo(rightEnterpriseX, y).stroke()      //Horizontal t0p line
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('EMPRESA', x + paddingLeft1, y = y + paddingTop)
+      .font(headingFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.enterprise.name, 'string'), x + centerBoxText, y = y + paddingTop)
+      .moveTo(x, y = y + paddingTop + 10).lineTo(rightEnterpriseX, y).stroke()
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('DOMICILIO', x + paddingLeft1, y = y + paddingTop)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.enterprise.address, 'string') + ", " + formatInputData(payroll.enterprise.locality, 'string'), x + paddingLeft3, y = y + paddingTop + 8)
+      .moveTo(x, y = y + paddingTop + 15).lineTo(rightEnterpriseX, y).stroke()
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('CIF', x + paddingLeft1, y = y + paddingTop).font(textFont)
+      .text('CCC', x + paddingLeft1 + 130, y).font(textFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.enterprise.cif, 'string'), x + paddingLeft3 + 10, y = y + paddingTop + 8)
+      .text(formatInputData(payroll.enterprise.ccc, 'number'), x + paddingLeft3 + 145, y)
+
+      .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE + 2).stroke()                                     //Vertical left line
+      .moveTo(x + 130, y - paddingTop*2 - 8).lineTo(x + 130, y + sizVertivalLineEE + 2).stroke()       //Vertical center line
+  		.moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE + 2).stroke()       //Vertical right line
+      .moveTo(x, y + sizVertivalLineEE + 2).lineTo(rightEnterpriseX, y + sizVertivalLineEE + 2).stroke();  //Horizontal bottom line
+
+  }
+
+  var newEmployeeBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- EMPLOYEE -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    left = 8;
+    leftEmployeeX = 72 + width + left + 5 ;   //Position X for left line employee box
+    employeeY = 44;                           //Start y for employee box
+    centerBoxText = 80;
+    maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
+
+    pdf
+      .moveTo(leftEmployeeX - left, 35).lineTo(maxRightWidth, 35).stroke()   //Horizontal t0p line
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('TRABAJADOR/A', leftEmployeeX, y = employeeY)
+      .font(headingFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.employee.fullname, 'string'), leftEmployeeX + centerBoxText, y = y + paddingTop)
+      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('NIF', leftEmployeeX, y = y + paddingTop).font(textFont)
+      .text('Nº S.S.',leftEmployeeX + 150, y).font(textFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.employee.nif, 'string'), leftEmployeeX + paddingLeft3 + 10, y = y + paddingTop + 3)
+      .text(formatInputData(payroll.employee.ss, 'number'), leftEmployeeX + paddingLeft3 + 155, y)
+      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
+      .moveTo(leftEmployeeX + 130, y - paddingTop*2 - 15).lineTo(leftEmployeeX + 130, y).stroke()       //Vertical center line
+
+      .font(textFont)
+      .fontSize(textSize)
+      .text('G. COTIZ.', leftEmployeeX, y = y + paddingTop).font(textFont)
+      .text('GRUPO PROFESIONAL',leftEmployeeX + 50, y).font(textFont)
+      .text('ANTIGÜEDAD',leftEmployeeX + 220, y).font(textFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.employee.quote_group, 'string'), leftEmployeeX + paddingLeft2, y = y + paddingTop + 5)
+      .text(formatInputData(payroll.employee.professional_group, 'string'), leftEmployeeX + paddingLeft3 + 90, y)
+      .text(formatInputData(payroll.employee.seniority_date, 'string'), leftEmployeeX + paddingLeft3 + 210, y)
+      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
+      .moveTo(leftEmployeeX + 40, y - paddingTop*2 - 17).lineTo(leftEmployeeX + 40, y).stroke()
+      .moveTo(leftEmployeeX + 210, y - paddingTop*2 - 17).lineTo(leftEmployeeX + 210, y).stroke()
+
+      .moveTo(leftEmployeeX - left, 35).lineTo(leftEmployeeX - left, y).stroke()              //Vertical left line
+      .moveTo(maxRightWidth, 35).lineTo(maxRightWidth, y).stroke()                            //Vertical right line
+      .moveDown(1);
+  }
+
+  var newSettlementBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- SETTLEMENT --------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    leftEmployeeX = 72 + width + left + 5 ;   //Position X for left line employee box
+    settlementY = 8;                           //Start y for employee box
+    centerBoxText = 80;
+    settlementWidth = x + pdfWidth + 100;
+
+    pdf
+      .moveTo(leftEmployeeX - left, y = y + settlementY).lineTo(maxRightWidth, y).stroke()   //Horizontal t0p line
+      .font(textFont)
+      .fontSize(textSize)
+      .text('PERIODO DE LIQUIDACIÓN', leftEmployeeX, y = y + paddingTop).font(textFont)
+      .text('TOTAL DÍAS',leftEmployeeX + 210, y).font(textFont)
+      .fontSize(titleSize)
+      .text(formatInputData(payroll.settlement.start_date, 'string') +'  -  '+ formatInputData(payroll.settlement.end_date, 'string'), leftEmployeeX + paddingLeft3 + 10, y = y + paddingTop + 8)
+      .text(formatInputData(payroll.settlement.total_days, 'number'), leftEmployeeX + paddingLeft3 + 220, y)
+      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
+      .moveTo(leftEmployeeX + 190, y - paddingTop*2 - 20).lineTo(leftEmployeeX + 190, y).stroke()       //Vertical center line
+
+      .moveTo(leftEmployeeX - left, y - paddingTop*2 - 20).lineTo(leftEmployeeX - left, y).stroke()         //Vertical right line
+      .moveTo(settlementWidth, y - paddingTop*2 - 20).lineTo(settlementWidth, y).stroke()         //Vertical right line
+      .moveDown(1);
+  }
+
+  var newFooterBox = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- FOOTER -------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    accrualWidth = x + pdfWidth + 100;
+    t0p = 2;
+    originalX = 22;
+    originalY = 72;
+    footer = 450;
+    pdf
+      .font(textFont)
+      .text('BASES' , originalX + 50 , y = originalY + footer + t0p + 12)
+      .text('AP. EMPRESA' , originalX + 120 , y)
+      .text('DESGLOSE' , originalX + 230 , y)
+      .text('TOTALES' , originalX + 455 , y)
+
+      .text('1. Cont. Comunes' , originalX + 15, y = originalY + footer + t0p + 25)
+      .text('Remuneración Total' , originalX + 210, y)
+      .text('Devengos' , originalX + 400, y)
+      .text('Deducciones' , originalX + 480, y)
+      .moveTo(originalX + 10 , y - 3).lineTo(originalX + 305 , y - 3).stroke()
+      .moveTo(originalX + 390 , y - 3).lineTo(originalX + 555 , y - 3).stroke()
+
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.base), originalX + 35 + numberOffset(payroll.footer_ss_quotation.common_contingency.base) , y = y + 10)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), originalX + 223 + numberOffset(payroll.footer_ss_quotation.common_contingency.monthly_remuneration) , y)
+      .text(formatAmount(payroll.total_accrual), originalX + 425 + numberOffset(payroll.total_accrual) , y)
+      .text(formatAmount(payroll.total_deductions), originalX + 510 + numberOffset(payroll.total_deductions) , y)
+
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.type_percent) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , y = y + 8)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input), originalX + 135 + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input) , y)
+
+      .moveTo(originalX + 200 , y = y + 3).lineTo(originalX + 305 , y).stroke()
+      .moveTo(originalX + 390 , y).lineTo(originalX + 555 , y).stroke()
+
+      .text('Prorrata Pagas Extr.' , originalX + 210, y = y + 3)
+      .text('Líquido a percibir' , originalX + 480, y)
+      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), originalX + 223 + numberOffset(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet) , y = y + 10)
+      .text(formatAmount(payroll.liquid_perceive), originalX + 510 + numberOffset(payroll.liquid_perceive) , y)
+
+      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
+      .moveTo(originalX + 472 , y).lineTo(originalX + 555 , y).stroke()
+
+      .text('2. Cont. Profesionales' , originalX + 15, y = y + 3)
+
+      .text('AT/EP' , originalX + 110, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), originalX + 35 + numberOffset(payroll.footer_ss_quotation.professional_contingency.base) , y = y + 10)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_at) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at) , y)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at) , y)
+      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
+
+      .text('Desempleo' , originalX + 110, y = y + 3)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) , y = y + 10)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment) , y)
+      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
+
+      .text('Formación profesional' , originalX + 110, y = y + 3)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) , y = y + 10)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation) , y)
+      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
+
+      .text('FOGASA' , originalX + 110, y = y + 3)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) , y = y + 10)
+      .text("|", originalX + 150, y)
+      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty) , y)
+
+      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
+      .text('3. Horas Extras' , originalX + 15, y = y + 3)
+      .text('No Estructurales' , originalX + 110, y)
+      .text('Base HE (NE)' , originalX + 210, y)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), originalX + 95 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force) , y = y + 10)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalX + 223 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force) , y)
+
+      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 305 , y).stroke()
+      .text('Estruc./Fuerza Mayor' , originalX + 110, y = y + 3)
+      .text('Base HE (E/FM)' , originalX + 210, y)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), originalX + 95 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural) , y = y + 10)
+      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), originalX + 223 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_non_structural) , y)
+
+      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
+      .text('4. IRPF' , originalX + 15, y = y + 3)
+      .text(formatAmount(payroll.footer_ss_quotation.base_irpf), originalX + 35 + numberOffset(payroll.footer_ss_quotation.base_irpf) , y = y + 10)
+      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 105 , y).stroke()
+
+      .moveTo(originalX + 10 , originalY + footer + t0p + 22).lineTo(originalX + 10 , y).stroke()
+      .moveTo(originalX + 105 , originalY + footer + t0p + 22).lineTo(originalX + 105 , y).stroke()
+      .moveTo(originalX + 200 , originalY + footer + t0p + 22).lineTo(originalX + 200 , y - 23).stroke()
+      .moveTo(originalX + 305 , originalY + footer + t0p + 22).lineTo(originalX + 305 , y - 161).stroke()
+      .moveTo(originalX + 305 , y - 69).lineTo(originalX + 305 , y - 23).stroke()
+      .moveTo(originalX + 390 , originalY + footer + t0p + 22).lineTo(originalX + 390 , y - 184).stroke()
+      .moveTo(originalX + 472 , originalY + footer + t0p + 22).lineTo(originalX + 472 , y - 161).stroke()
+      .moveTo(originalX + 555 , originalY + footer + t0p + 22).lineTo(originalX + 555 , y - 161).stroke()
+
+      .moveTo(originalX, originalY+footer+240).lineTo(accrualWidth, originalY+footer+240).stroke();        //Horizontal bottom line
+  }
+
+  var newSignatureDate = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    end_date = formatDate(payroll.settlement.end_date);
+    paddingSignature = 15;
+    paddingDate = 10;
+    signatureX = 340;
+    signatureY = 610;
+    signatureDateX = 450;
+    signatureDateY = 680;
+
+    pdf
+      .fontSize(titleSize)
+      .text('SELLO Y FIRMA DE LA EMPRESA' , signatureX , signatureY);
+
+    if(payroll.signature_logo != undefined){
+      pdf
+        .image(payroll.signature_logo, signatureX, signatureY + paddingSignature, {scale: 0.06});
+    }
+
+    pdf
+      .text(end_date,  signatureDateX , signatureDateY)
+      .fontSize(titleSize)
+      .text('RECIBÍ' , signatureDateX , signatureDateY + paddingDate);
+
+  }
+
+  var newAccrual = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- ACCRUAL -----------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    originalX = 22;
+    originalY = 72;
+    y = settlementY+50;
+    accrualWidth = x + pdfWidth + 100;
+
+    //LINEAS DEL RECTANGULO DEVENGOS Y DEDUCCIONES
+    pdf
+      .moveTo(x, y = y + 95).lineTo(accrualWidth, y).stroke()
+      .moveTo(x, y).lineTo(x, originalY + 690).stroke()
+      .moveTo(accrualWidth, y).lineTo(accrualWidth, originalY + 690).stroke()
+
+      .moveTo(x + 10, y = y + 10).lineTo(x + 558, y).stroke()
+      .moveTo(x + 10, y).lineTo(x + 10, y + 360).stroke()
+      .moveTo(x + 558, y).lineTo(x + 558, y + 360).stroke()
+      .moveTo(x + 10, y + 360).lineTo(x + 558, y + 360).stroke();
+
+    pdf
+      .font(textFont)
+      .text('CUANTÍA' , originalX + 40 , y = 167)
+      .text('CONCEPTO' , originalX + 220 , y)
+      .text('DEVENGOS' , originalX + 410 , y)
+      .text('DEDUCCIONES' , originalX + 485 , y)
+      .moveTo(x + 10, y + 10).lineTo(x + 558, y + 10).stroke()
+      .moveTo(x + 110, y - 5).lineTo(x + 110, y + 355).stroke()
+      .moveTo(x + 390, y - 5).lineTo(x + 390, y + 355).stroke()
+      .moveTo(x + 472, y - 5).lineTo(x + 472, y + 355).stroke();
+
+    y = y + 20;
+    secondColumn = 140;
+    thirdColumn = 440;;
+
+    for(i = 0; i < payroll.accruals.length; i++){
+      accrual = payroll.accruals[i];
+      for(j = 0; j < accrual.types.length; j++){
+        type = accrual.types[j];
+        pdf
+          .font(textFont)
+          .text(type.type_expression , secondColumn + 8 , y)
+          .text(formatAmount(type.type_value) , thirdColumn + numberOffset(type.type_value) , y);
+        y = y + 10;
+      }
+    }
+  }
+
+  var newDeduction = function(){
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- DEDUCTION ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    y = y + 20;
+    firstColumn = 70;
+    secondColumn = 140;
+    quarterColumn = 520;
+
+    for(i = 0; i < payroll.deductions.length; i++){
+      deduction = payroll.deductions[i];
+      var total = deduction.value;
+      if(deduction.value != 0){
+        if(deduction.types){
+          var total = 0;
+          for(j = 0; j < deduction.types.length; j++){
+            total += deduction.types[j].value;
+          }
+        }
+        pdf
+          .font(textFont);
+        if(deduction.percent){
+          pdf
+            .text(formatAmount(deduction.percent) + " %" , firstColumn + numberOffset(deduction.percent), y);
+        }
+        pdf
+          .text(deduction.name , secondColumn + 8 , y)
+          .text(formatAmount(total) , quarterColumn + numberOffset(total) , y);
+        y = y + 10;
+      }
+    }
+  }
+
+  //Main
+  newHearderTittle();
+  newEnterpriseBox();
+  newEmployeeBox();
+  newSettlementBox();
+  newAccrual();
+  newDeduction();
+  newSignatureDate();
+  newFooterBox();
+
+  //End PDF
+  pdf.end();
+
+}
+
+},{"pdfkit":200}],3:[function(require,module,exports){
+var PDF = require('pdfkit');
+var PAYSHEET = require('./paysheet');
 var WRITTEN_NUMBER = require('written-number');
+
+module.exports.standard = PAYSHEET.standardPayroll; 
+module.exports.standard_new = PAYSHEET.newStandardPayroll; 
+module.exports.standard_cols = PAYSHEET.standardTwoColumnsPayroll; 
+module.exports.recibe_cra = PAYSHEET.salaryRecibeCRA; 
+module.exports.recibe = PAYSHEET.salaryRecibe; 
 
 module.exports.a3Letter = function (settlement, stream) {
 	var pdf = new PDF();
@@ -472,7 +3824,7 @@ ninguna reclamación posterior, y dando por finiquitado mi contrato con la citad
 	pdf.end();
 };
 
-},{"pdfkit":199,"written-number":276}],3:[function(require,module,exports){
+},{"./paysheet":2,"pdfkit":200,"written-number":277}],4:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -966,41 +4318,41 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"util/":264}],4:[function(require,module,exports){
+},{"util/":265}],5:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
-},{"core-js/library/fn/array/from":60}],5:[function(require,module,exports){
+},{"core-js/library/fn/array/from":61}],6:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
-},{"core-js/library/fn/get-iterator":61}],6:[function(require,module,exports){
+},{"core-js/library/fn/get-iterator":62}],7:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/is-iterable"), __esModule: true };
-},{"core-js/library/fn/is-iterable":62}],7:[function(require,module,exports){
+},{"core-js/library/fn/is-iterable":63}],8:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/map"), __esModule: true };
-},{"core-js/library/fn/map":63}],8:[function(require,module,exports){
+},{"core-js/library/fn/map":64}],9:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/number/epsilon"), __esModule: true };
-},{"core-js/library/fn/number/epsilon":64}],9:[function(require,module,exports){
+},{"core-js/library/fn/number/epsilon":65}],10:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/assign"), __esModule: true };
-},{"core-js/library/fn/object/assign":65}],10:[function(require,module,exports){
+},{"core-js/library/fn/object/assign":66}],11:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/create"), __esModule: true };
-},{"core-js/library/fn/object/create":66}],11:[function(require,module,exports){
+},{"core-js/library/fn/object/create":67}],12:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-properties"), __esModule: true };
-},{"core-js/library/fn/object/define-properties":67}],12:[function(require,module,exports){
+},{"core-js/library/fn/object/define-properties":68}],13:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":68}],13:[function(require,module,exports){
+},{"core-js/library/fn/object/define-property":69}],14:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/freeze"), __esModule: true };
-},{"core-js/library/fn/object/freeze":69}],14:[function(require,module,exports){
+},{"core-js/library/fn/object/freeze":70}],15:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/get-own-property-descriptor"), __esModule: true };
-},{"core-js/library/fn/object/get-own-property-descriptor":70}],15:[function(require,module,exports){
+},{"core-js/library/fn/object/get-own-property-descriptor":71}],16:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/keys"), __esModule: true };
-},{"core-js/library/fn/object/keys":71}],16:[function(require,module,exports){
+},{"core-js/library/fn/object/keys":72}],17:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/set-prototype-of"), __esModule: true };
-},{"core-js/library/fn/object/set-prototype-of":72}],17:[function(require,module,exports){
+},{"core-js/library/fn/object/set-prototype-of":73}],18:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/set"), __esModule: true };
-},{"core-js/library/fn/set":73}],18:[function(require,module,exports){
+},{"core-js/library/fn/set":74}],19:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/string/from-code-point"), __esModule: true };
-},{"core-js/library/fn/string/from-code-point":74}],19:[function(require,module,exports){
+},{"core-js/library/fn/string/from-code-point":75}],20:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol"), __esModule: true };
-},{"core-js/library/fn/symbol":75}],20:[function(require,module,exports){
+},{"core-js/library/fn/symbol":76}],21:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol/iterator"), __esModule: true };
-},{"core-js/library/fn/symbol/iterator":76}],21:[function(require,module,exports){
+},{"core-js/library/fn/symbol/iterator":77}],22:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -1010,7 +4362,7 @@ exports.default = function (instance, Constructor) {
     throw new TypeError("Cannot call a class as a function");
   }
 };
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -1038,7 +4390,7 @@ exports.default = function () {
     return Constructor;
   };
 }();
-},{"../core-js/object/define-property":12}],23:[function(require,module,exports){
+},{"../core-js/object/define-property":13}],24:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -1063,7 +4415,7 @@ exports.default = function (obj, key, value) {
 
   return obj;
 };
-},{"../core-js/object/define-property":12}],24:[function(require,module,exports){
+},{"../core-js/object/define-property":13}],25:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -1097,7 +4449,7 @@ exports.default = function (subClass, superClass) {
   });
   if (superClass) _setPrototypeOf2.default ? (0, _setPrototypeOf2.default)(subClass, superClass) : subClass.__proto__ = superClass;
 };
-},{"../core-js/object/create":10,"../core-js/object/set-prototype-of":16,"../helpers/typeof":27}],25:[function(require,module,exports){
+},{"../core-js/object/create":11,"../core-js/object/set-prototype-of":17,"../helpers/typeof":28}],26:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -1115,7 +4467,7 @@ exports.default = function (self, call) {
 
   return call && ((typeof call === "undefined" ? "undefined" : (0, _typeof3.default)(call)) === "object" || typeof call === "function") ? call : self;
 };
-},{"../helpers/typeof":27}],26:[function(require,module,exports){
+},{"../helpers/typeof":28}],27:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -1167,7 +4519,7 @@ exports.default = function () {
     }
   };
 }();
-},{"../core-js/get-iterator":5,"../core-js/is-iterable":6}],27:[function(require,module,exports){
+},{"../core-js/get-iterator":6,"../core-js/is-iterable":7}],28:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -1189,10 +4541,10 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 } : function (obj) {
   return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
-},{"../core-js/symbol":19,"../core-js/symbol/iterator":20}],28:[function(require,module,exports){
+},{"../core-js/symbol":20,"../core-js/symbol/iterator":21}],29:[function(require,module,exports){
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":235}],29:[function(require,module,exports){
+},{"regenerator-runtime":236}],30:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -1345,7 +4697,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (global){
 var WritableStream = require('stream').Writable;
 var util = require('util');
@@ -1400,7 +4752,7 @@ BlobStream.prototype.toBlobURL = function(type) {
 module.exports = BlobStream;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"blob":31,"stream":255,"util":264}],31:[function(require,module,exports){
+},{"blob":32,"stream":256,"util":265}],32:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -1500,7 +4852,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /* Copyright 2013 Google Inc. All Rights Reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -1626,7 +4978,7 @@ BrotliBitReader.prototype.readBits = function(n_bits) {
 
 module.exports = BrotliBitReader;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /* Copyright 2013 Google Inc. All Rights Reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -1878,7 +5230,7 @@ exports.lookupOffsets = new Uint16Array([
   768, 512,
 ]);
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /* Copyright 2013 Google Inc. All Rights Reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -2818,7 +6170,7 @@ exports.BrotliDecompress = BrotliDecompress;
 
 BrotliDictionary.init();
 
-},{"./bit_reader":32,"./context":33,"./dictionary":37,"./huffman":38,"./prefix":39,"./streams":40,"./transform":41}],35:[function(require,module,exports){
+},{"./bit_reader":33,"./context":34,"./dictionary":38,"./huffman":39,"./prefix":40,"./streams":41,"./transform":42}],36:[function(require,module,exports){
 var base64 = require('base64-js');
 var fs = require('fs');
 
@@ -2835,10 +6187,10 @@ exports.init = function() {
   return BrotliDecompressBuffer(compressed);
 };
 
-},{"./decode":34,"./dictionary.bin.js":36,"base64-js":29,"fs":57}],36:[function(require,module,exports){
+},{"./decode":35,"./dictionary.bin.js":37,"base64-js":30,"fs":58}],37:[function(require,module,exports){
 module.exports="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";
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /* Copyright 2013 Google Inc. All Rights Reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -2876,7 +6228,7 @@ exports.sizeBitsByLength = new Uint8Array([
 exports.minDictionaryWordLength = 4;
 exports.maxDictionaryWordLength = 24;
 
-},{"./dictionary-data":35}],38:[function(require,module,exports){
+},{"./dictionary-data":36}],39:[function(require,module,exports){
 function HuffmanCode(bits, value) {
   this.bits = bits;   /* number of bits used for this symbol */
   this.value = value; /* symbol value or table offset */
@@ -3001,7 +6353,7 @@ exports.BrotliBuildHuffmanTable = function(root_table, table, root_bits, code_le
   return total_size;
 }
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /* Copyright 2013 Google Inc. All Rights Reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -3063,7 +6415,7 @@ exports.kCopyRangeLut = [
   0, 8, 0, 8, 16, 0, 16, 8, 16,
 ];
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 function BrotliInput(buffer) {
   this.buffer = buffer;
   this.pos = 0;
@@ -3099,7 +6451,7 @@ BrotliOutput.prototype.write = function(buf, count) {
 
 exports.BrotliOutput = BrotliOutput;
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /* Copyright 2013 Google Inc. All Rights Reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -3348,12 +6700,12 @@ exports.transformDictionaryWord = function(dst, idx, word, len, transform) {
   return idx - start_idx;
 }
 
-},{"./dictionary":37}],42:[function(require,module,exports){
+},{"./dictionary":38}],43:[function(require,module,exports){
 module.exports = require('./dec/decode').BrotliDecompressBuffer;
 
-},{"./dec/decode":34}],43:[function(require,module,exports){
+},{"./dec/decode":35}],44:[function(require,module,exports){
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (process,Buffer){
 'use strict';
 /* eslint camelcase: "off" */
@@ -3765,7 +7117,7 @@ Zlib.prototype._reset = function () {
 
 exports.Zlib = Zlib;
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":221,"assert":3,"buffer":58,"pako/lib/zlib/constants":48,"pako/lib/zlib/deflate.js":50,"pako/lib/zlib/inflate.js":52,"pako/lib/zlib/zstream":56}],45:[function(require,module,exports){
+},{"_process":222,"assert":4,"buffer":59,"pako/lib/zlib/constants":49,"pako/lib/zlib/deflate.js":51,"pako/lib/zlib/inflate.js":53,"pako/lib/zlib/zstream":57}],46:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -4377,7 +7729,7 @@ util.inherits(DeflateRaw, Zlib);
 util.inherits(InflateRaw, Zlib);
 util.inherits(Unzip, Zlib);
 }).call(this,require('_process'))
-},{"./binding":44,"_process":221,"assert":3,"buffer":58,"stream":255,"util":264}],46:[function(require,module,exports){
+},{"./binding":45,"_process":222,"assert":4,"buffer":59,"stream":256,"util":265}],47:[function(require,module,exports){
 'use strict';
 
 
@@ -4484,7 +7836,7 @@ exports.setTyped = function (on) {
 
 exports.setTyped(TYPED_OK);
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 // Note: adler32 takes 12% for level 0 and 2% for level 6.
@@ -4537,7 +7889,7 @@ function adler32(adler, buf, len, pos) {
 
 module.exports = adler32;
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 // (C) 1995-2013 Jean-loup Gailly and Mark Adler
@@ -4607,7 +7959,7 @@ module.exports = {
   //Z_NULL:                 null // Use -1 or null inline, depending on var type
 };
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 'use strict';
 
 // Note: we can't get significant speed boost here.
@@ -4668,7 +8020,7 @@ function crc32(crc, buf, len, pos) {
 
 module.exports = crc32;
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 // (C) 1995-2013 Jean-loup Gailly and Mark Adler
@@ -6544,7 +9896,7 @@ exports.deflatePrime = deflatePrime;
 exports.deflateTune = deflateTune;
 */
 
-},{"../utils/common":46,"./adler32":47,"./crc32":49,"./messages":54,"./trees":55}],51:[function(require,module,exports){
+},{"../utils/common":47,"./adler32":48,"./crc32":50,"./messages":55,"./trees":56}],52:[function(require,module,exports){
 'use strict';
 
 // (C) 1995-2013 Jean-loup Gailly and Mark Adler
@@ -6891,7 +10243,7 @@ module.exports = function inflate_fast(strm, start) {
   return;
 };
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 // (C) 1995-2013 Jean-loup Gailly and Mark Adler
@@ -8449,7 +11801,7 @@ exports.inflateSyncPoint = inflateSyncPoint;
 exports.inflateUndermine = inflateUndermine;
 */
 
-},{"../utils/common":46,"./adler32":47,"./crc32":49,"./inffast":51,"./inftrees":53}],53:[function(require,module,exports){
+},{"../utils/common":47,"./adler32":48,"./crc32":50,"./inffast":52,"./inftrees":54}],54:[function(require,module,exports){
 'use strict';
 
 // (C) 1995-2013 Jean-loup Gailly and Mark Adler
@@ -8794,7 +12146,7 @@ module.exports = function inflate_table(type, lens, lens_index, codes, table, ta
   return 0;
 };
 
-},{"../utils/common":46}],54:[function(require,module,exports){
+},{"../utils/common":47}],55:[function(require,module,exports){
 'use strict';
 
 // (C) 1995-2013 Jean-loup Gailly and Mark Adler
@@ -8828,7 +12180,7 @@ module.exports = {
   '-6':   'incompatible version' /* Z_VERSION_ERROR (-6) */
 };
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 // (C) 1995-2013 Jean-loup Gailly and Mark Adler
@@ -10050,7 +13402,7 @@ exports._tr_flush_block  = _tr_flush_block;
 exports._tr_tally = _tr_tally;
 exports._tr_align = _tr_align;
 
-},{"../utils/common":46}],56:[function(require,module,exports){
+},{"../utils/common":47}],57:[function(require,module,exports){
 'use strict';
 
 // (C) 1995-2013 Jean-loup Gailly and Mark Adler
@@ -10099,9 +13451,9 @@ function ZStream() {
 
 module.exports = ZStream;
 
-},{}],57:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"dup":43}],58:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"dup":44}],59:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -11839,7 +15191,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":29,"ieee754":190}],59:[function(require,module,exports){
+},{"base64-js":30,"ieee754":191}],60:[function(require,module,exports){
 (function (Buffer){
 var clone = (function() {
 'use strict';
@@ -12009,22 +15361,22 @@ if (typeof module === 'object' && module.exports) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":58}],60:[function(require,module,exports){
+},{"buffer":59}],61:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/es6.array.from');
 module.exports = require('../../modules/_core').Array.from;
 
-},{"../../modules/_core":91,"../../modules/es6.array.from":157,"../../modules/es6.string.iterator":172}],61:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.array.from":158,"../../modules/es6.string.iterator":173}],62:[function(require,module,exports){
 require('../modules/web.dom.iterable');
 require('../modules/es6.string.iterator');
 module.exports = require('../modules/core.get-iterator');
 
-},{"../modules/core.get-iterator":155,"../modules/es6.string.iterator":172,"../modules/web.dom.iterable":182}],62:[function(require,module,exports){
+},{"../modules/core.get-iterator":156,"../modules/es6.string.iterator":173,"../modules/web.dom.iterable":183}],63:[function(require,module,exports){
 require('../modules/web.dom.iterable');
 require('../modules/es6.string.iterator');
 module.exports = require('../modules/core.is-iterable');
 
-},{"../modules/core.is-iterable":156,"../modules/es6.string.iterator":172,"../modules/web.dom.iterable":182}],63:[function(require,module,exports){
+},{"../modules/core.is-iterable":157,"../modules/es6.string.iterator":173,"../modules/web.dom.iterable":183}],64:[function(require,module,exports){
 require('../modules/es6.object.to-string');
 require('../modules/es6.string.iterator');
 require('../modules/web.dom.iterable');
@@ -12034,55 +15386,55 @@ require('../modules/es7.map.of');
 require('../modules/es7.map.from');
 module.exports = require('../modules/_core').Map;
 
-},{"../modules/_core":91,"../modules/es6.map":159,"../modules/es6.object.to-string":169,"../modules/es6.string.iterator":172,"../modules/es7.map.from":174,"../modules/es7.map.of":175,"../modules/es7.map.to-json":176,"../modules/web.dom.iterable":182}],64:[function(require,module,exports){
+},{"../modules/_core":92,"../modules/es6.map":160,"../modules/es6.object.to-string":170,"../modules/es6.string.iterator":173,"../modules/es7.map.from":175,"../modules/es7.map.of":176,"../modules/es7.map.to-json":177,"../modules/web.dom.iterable":183}],65:[function(require,module,exports){
 require('../../modules/es6.number.epsilon');
 module.exports = Math.pow(2, -52);
 
-},{"../../modules/es6.number.epsilon":160}],65:[function(require,module,exports){
+},{"../../modules/es6.number.epsilon":161}],66:[function(require,module,exports){
 require('../../modules/es6.object.assign');
 module.exports = require('../../modules/_core').Object.assign;
 
-},{"../../modules/_core":91,"../../modules/es6.object.assign":161}],66:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.assign":162}],67:[function(require,module,exports){
 require('../../modules/es6.object.create');
 var $Object = require('../../modules/_core').Object;
 module.exports = function create(P, D) {
   return $Object.create(P, D);
 };
 
-},{"../../modules/_core":91,"../../modules/es6.object.create":162}],67:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.create":163}],68:[function(require,module,exports){
 require('../../modules/es6.object.define-properties');
 var $Object = require('../../modules/_core').Object;
 module.exports = function defineProperties(T, D) {
   return $Object.defineProperties(T, D);
 };
 
-},{"../../modules/_core":91,"../../modules/es6.object.define-properties":163}],68:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.define-properties":164}],69:[function(require,module,exports){
 require('../../modules/es6.object.define-property');
 var $Object = require('../../modules/_core').Object;
 module.exports = function defineProperty(it, key, desc) {
   return $Object.defineProperty(it, key, desc);
 };
 
-},{"../../modules/_core":91,"../../modules/es6.object.define-property":164}],69:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.define-property":165}],70:[function(require,module,exports){
 require('../../modules/es6.object.freeze');
 module.exports = require('../../modules/_core').Object.freeze;
 
-},{"../../modules/_core":91,"../../modules/es6.object.freeze":165}],70:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.freeze":166}],71:[function(require,module,exports){
 require('../../modules/es6.object.get-own-property-descriptor');
 var $Object = require('../../modules/_core').Object;
 module.exports = function getOwnPropertyDescriptor(it, key) {
   return $Object.getOwnPropertyDescriptor(it, key);
 };
 
-},{"../../modules/_core":91,"../../modules/es6.object.get-own-property-descriptor":166}],71:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.get-own-property-descriptor":167}],72:[function(require,module,exports){
 require('../../modules/es6.object.keys');
 module.exports = require('../../modules/_core').Object.keys;
 
-},{"../../modules/_core":91,"../../modules/es6.object.keys":167}],72:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.keys":168}],73:[function(require,module,exports){
 require('../../modules/es6.object.set-prototype-of');
 module.exports = require('../../modules/_core').Object.setPrototypeOf;
 
-},{"../../modules/_core":91,"../../modules/es6.object.set-prototype-of":168}],73:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.set-prototype-of":169}],74:[function(require,module,exports){
 require('../modules/es6.object.to-string');
 require('../modules/es6.string.iterator');
 require('../modules/web.dom.iterable');
@@ -12092,46 +15444,46 @@ require('../modules/es7.set.of');
 require('../modules/es7.set.from');
 module.exports = require('../modules/_core').Set;
 
-},{"../modules/_core":91,"../modules/es6.object.to-string":169,"../modules/es6.set":170,"../modules/es6.string.iterator":172,"../modules/es7.set.from":177,"../modules/es7.set.of":178,"../modules/es7.set.to-json":179,"../modules/web.dom.iterable":182}],74:[function(require,module,exports){
+},{"../modules/_core":92,"../modules/es6.object.to-string":170,"../modules/es6.set":171,"../modules/es6.string.iterator":173,"../modules/es7.set.from":178,"../modules/es7.set.of":179,"../modules/es7.set.to-json":180,"../modules/web.dom.iterable":183}],75:[function(require,module,exports){
 require('../../modules/es6.string.from-code-point');
 module.exports = require('../../modules/_core').String.fromCodePoint;
 
-},{"../../modules/_core":91,"../../modules/es6.string.from-code-point":171}],75:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.string.from-code-point":172}],76:[function(require,module,exports){
 require('../../modules/es6.symbol');
 require('../../modules/es6.object.to-string');
 require('../../modules/es7.symbol.async-iterator');
 require('../../modules/es7.symbol.observable');
 module.exports = require('../../modules/_core').Symbol;
 
-},{"../../modules/_core":91,"../../modules/es6.object.to-string":169,"../../modules/es6.symbol":173,"../../modules/es7.symbol.async-iterator":180,"../../modules/es7.symbol.observable":181}],76:[function(require,module,exports){
+},{"../../modules/_core":92,"../../modules/es6.object.to-string":170,"../../modules/es6.symbol":174,"../../modules/es7.symbol.async-iterator":181,"../../modules/es7.symbol.observable":182}],77:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/web.dom.iterable');
 module.exports = require('../../modules/_wks-ext').f('iterator');
 
-},{"../../modules/_wks-ext":152,"../../modules/es6.string.iterator":172,"../../modules/web.dom.iterable":182}],77:[function(require,module,exports){
+},{"../../modules/_wks-ext":153,"../../modules/es6.string.iterator":173,"../../modules/web.dom.iterable":183}],78:[function(require,module,exports){
 module.exports = function (it) {
   if (typeof it != 'function') throw TypeError(it + ' is not a function!');
   return it;
 };
 
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module.exports = function () { /* empty */ };
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module.exports = function (it, Constructor, name, forbiddenField) {
   if (!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)) {
     throw TypeError(name + ': incorrect invocation!');
   } return it;
 };
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function (it) {
   if (!isObject(it)) throw TypeError(it + ' is not an object!');
   return it;
 };
 
-},{"./_is-object":110}],81:[function(require,module,exports){
+},{"./_is-object":111}],82:[function(require,module,exports){
 var forOf = require('./_for-of');
 
 module.exports = function (iter, ITERATOR) {
@@ -12140,7 +15492,7 @@ module.exports = function (iter, ITERATOR) {
   return result;
 };
 
-},{"./_for-of":101}],82:[function(require,module,exports){
+},{"./_for-of":102}],83:[function(require,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = require('./_to-iobject');
@@ -12165,7 +15517,7 @@ module.exports = function (IS_INCLUDES) {
   };
 };
 
-},{"./_to-absolute-index":143,"./_to-iobject":145,"./_to-length":146}],83:[function(require,module,exports){
+},{"./_to-absolute-index":144,"./_to-iobject":146,"./_to-length":147}],84:[function(require,module,exports){
 // 0 -> Array#forEach
 // 1 -> Array#map
 // 2 -> Array#filter
@@ -12211,7 +15563,7 @@ module.exports = function (TYPE, $create) {
   };
 };
 
-},{"./_array-species-create":85,"./_ctx":93,"./_iobject":107,"./_to-length":146,"./_to-object":147}],84:[function(require,module,exports){
+},{"./_array-species-create":86,"./_ctx":94,"./_iobject":108,"./_to-length":147,"./_to-object":148}],85:[function(require,module,exports){
 var isObject = require('./_is-object');
 var isArray = require('./_is-array');
 var SPECIES = require('./_wks')('species');
@@ -12229,7 +15581,7 @@ module.exports = function (original) {
   } return C === undefined ? Array : C;
 };
 
-},{"./_is-array":109,"./_is-object":110,"./_wks":153}],85:[function(require,module,exports){
+},{"./_is-array":110,"./_is-object":111,"./_wks":154}],86:[function(require,module,exports){
 // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
 var speciesConstructor = require('./_array-species-constructor');
 
@@ -12237,7 +15589,7 @@ module.exports = function (original, length) {
   return new (speciesConstructor(original))(length);
 };
 
-},{"./_array-species-constructor":84}],86:[function(require,module,exports){
+},{"./_array-species-constructor":85}],87:[function(require,module,exports){
 // getting tag from 19.1.3.6 Object.prototype.toString()
 var cof = require('./_cof');
 var TAG = require('./_wks')('toStringTag');
@@ -12262,14 +15614,14 @@ module.exports = function (it) {
     : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
 
-},{"./_cof":87,"./_wks":153}],87:[function(require,module,exports){
+},{"./_cof":88,"./_wks":154}],88:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = function (it) {
   return toString.call(it).slice(8, -1);
 };
 
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 'use strict';
 var dP = require('./_object-dp').f;
 var create = require('./_object-create');
@@ -12415,7 +15767,7 @@ module.exports = {
   }
 };
 
-},{"./_an-instance":79,"./_ctx":93,"./_descriptors":95,"./_for-of":101,"./_iter-define":113,"./_iter-step":115,"./_meta":118,"./_object-create":120,"./_object-dp":121,"./_redefine-all":133,"./_set-species":138,"./_validate-collection":150}],89:[function(require,module,exports){
+},{"./_an-instance":80,"./_ctx":94,"./_descriptors":96,"./_for-of":102,"./_iter-define":114,"./_iter-step":116,"./_meta":119,"./_object-create":121,"./_object-dp":122,"./_redefine-all":134,"./_set-species":139,"./_validate-collection":151}],90:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var classof = require('./_classof');
 var from = require('./_array-from-iterable');
@@ -12426,7 +15778,7 @@ module.exports = function (NAME) {
   };
 };
 
-},{"./_array-from-iterable":81,"./_classof":86}],90:[function(require,module,exports){
+},{"./_array-from-iterable":82,"./_classof":87}],91:[function(require,module,exports){
 'use strict';
 var global = require('./_global');
 var $export = require('./_export');
@@ -12487,11 +15839,11 @@ module.exports = function (NAME, wrapper, methods, common, IS_MAP, IS_WEAK) {
   return C;
 };
 
-},{"./_an-instance":79,"./_array-methods":83,"./_descriptors":95,"./_export":99,"./_fails":100,"./_for-of":101,"./_global":102,"./_hide":104,"./_is-object":110,"./_meta":118,"./_object-dp":121,"./_redefine-all":133,"./_set-to-string-tag":139}],91:[function(require,module,exports){
+},{"./_an-instance":80,"./_array-methods":84,"./_descriptors":96,"./_export":100,"./_fails":101,"./_for-of":102,"./_global":103,"./_hide":105,"./_is-object":111,"./_meta":119,"./_object-dp":122,"./_redefine-all":134,"./_set-to-string-tag":140}],92:[function(require,module,exports){
 var core = module.exports = { version: '2.5.5' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 'use strict';
 var $defineProperty = require('./_object-dp');
 var createDesc = require('./_property-desc');
@@ -12501,7 +15853,7 @@ module.exports = function (object, index, value) {
   else object[index] = value;
 };
 
-},{"./_object-dp":121,"./_property-desc":132}],93:[function(require,module,exports){
+},{"./_object-dp":122,"./_property-desc":133}],94:[function(require,module,exports){
 // optional / simple context binding
 var aFunction = require('./_a-function');
 module.exports = function (fn, that, length) {
@@ -12523,20 +15875,20 @@ module.exports = function (fn, that, length) {
   };
 };
 
-},{"./_a-function":77}],94:[function(require,module,exports){
+},{"./_a-function":78}],95:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function (it) {
   if (it == undefined) throw TypeError("Can't call method on  " + it);
   return it;
 };
 
-},{}],95:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 // Thank's IE8 for his funny defineProperty
 module.exports = !require('./_fails')(function () {
   return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
 });
 
-},{"./_fails":100}],96:[function(require,module,exports){
+},{"./_fails":101}],97:[function(require,module,exports){
 var isObject = require('./_is-object');
 var document = require('./_global').document;
 // typeof document.createElement is 'object' in old IE
@@ -12545,13 +15897,13 @@ module.exports = function (it) {
   return is ? document.createElement(it) : {};
 };
 
-},{"./_global":102,"./_is-object":110}],97:[function(require,module,exports){
+},{"./_global":103,"./_is-object":111}],98:[function(require,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 // all enumerable object keys, includes symbols
 var getKeys = require('./_object-keys');
 var gOPS = require('./_object-gops');
@@ -12568,7 +15920,7 @@ module.exports = function (it) {
   } return result;
 };
 
-},{"./_object-gops":126,"./_object-keys":129,"./_object-pie":130}],99:[function(require,module,exports){
+},{"./_object-gops":127,"./_object-keys":130,"./_object-pie":131}],100:[function(require,module,exports){
 var global = require('./_global');
 var core = require('./_core');
 var ctx = require('./_ctx');
@@ -12632,7 +15984,7 @@ $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library`
 module.exports = $export;
 
-},{"./_core":91,"./_ctx":93,"./_global":102,"./_has":103,"./_hide":104}],100:[function(require,module,exports){
+},{"./_core":92,"./_ctx":94,"./_global":103,"./_has":104,"./_hide":105}],101:[function(require,module,exports){
 module.exports = function (exec) {
   try {
     return !!exec();
@@ -12641,7 +15993,7 @@ module.exports = function (exec) {
   }
 };
 
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 var ctx = require('./_ctx');
 var call = require('./_iter-call');
 var isArrayIter = require('./_is-array-iter');
@@ -12668,7 +16020,7 @@ var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) 
 exports.BREAK = BREAK;
 exports.RETURN = RETURN;
 
-},{"./_an-object":80,"./_ctx":93,"./_is-array-iter":108,"./_iter-call":111,"./_to-length":146,"./core.get-iterator-method":154}],102:[function(require,module,exports){
+},{"./_an-object":81,"./_ctx":94,"./_is-array-iter":109,"./_iter-call":112,"./_to-length":147,"./core.get-iterator-method":155}],103:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self
@@ -12676,13 +16028,13 @@ var global = module.exports = typeof window != 'undefined' && window.Math == Mat
   : Function('return this')();
 if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 
-},{}],103:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 module.exports = function (it, key) {
   return hasOwnProperty.call(it, key);
 };
 
-},{}],104:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 var dP = require('./_object-dp');
 var createDesc = require('./_property-desc');
 module.exports = require('./_descriptors') ? function (object, key, value) {
@@ -12692,16 +16044,16 @@ module.exports = require('./_descriptors') ? function (object, key, value) {
   return object;
 };
 
-},{"./_descriptors":95,"./_object-dp":121,"./_property-desc":132}],105:[function(require,module,exports){
+},{"./_descriptors":96,"./_object-dp":122,"./_property-desc":133}],106:[function(require,module,exports){
 var document = require('./_global').document;
 module.exports = document && document.documentElement;
 
-},{"./_global":102}],106:[function(require,module,exports){
+},{"./_global":103}],107:[function(require,module,exports){
 module.exports = !require('./_descriptors') && !require('./_fails')(function () {
   return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
 });
 
-},{"./_descriptors":95,"./_dom-create":96,"./_fails":100}],107:[function(require,module,exports){
+},{"./_descriptors":96,"./_dom-create":97,"./_fails":101}],108:[function(require,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
 // eslint-disable-next-line no-prototype-builtins
@@ -12709,7 +16061,7 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
 
-},{"./_cof":87}],108:[function(require,module,exports){
+},{"./_cof":88}],109:[function(require,module,exports){
 // check on default Array iterator
 var Iterators = require('./_iterators');
 var ITERATOR = require('./_wks')('iterator');
@@ -12719,19 +16071,19 @@ module.exports = function (it) {
   return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
 };
 
-},{"./_iterators":116,"./_wks":153}],109:[function(require,module,exports){
+},{"./_iterators":117,"./_wks":154}],110:[function(require,module,exports){
 // 7.2.2 IsArray(argument)
 var cof = require('./_cof');
 module.exports = Array.isArray || function isArray(arg) {
   return cof(arg) == 'Array';
 };
 
-},{"./_cof":87}],110:[function(require,module,exports){
+},{"./_cof":88}],111:[function(require,module,exports){
 module.exports = function (it) {
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
 
-},{}],111:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 // call something on iterator step with safe closing on error
 var anObject = require('./_an-object');
 module.exports = function (iterator, fn, value, entries) {
@@ -12745,7 +16097,7 @@ module.exports = function (iterator, fn, value, entries) {
   }
 };
 
-},{"./_an-object":80}],112:[function(require,module,exports){
+},{"./_an-object":81}],113:[function(require,module,exports){
 'use strict';
 var create = require('./_object-create');
 var descriptor = require('./_property-desc');
@@ -12760,7 +16112,7 @@ module.exports = function (Constructor, NAME, next) {
   setToStringTag(Constructor, NAME + ' Iterator');
 };
 
-},{"./_hide":104,"./_object-create":120,"./_property-desc":132,"./_set-to-string-tag":139,"./_wks":153}],113:[function(require,module,exports){
+},{"./_hide":105,"./_object-create":121,"./_property-desc":133,"./_set-to-string-tag":140,"./_wks":154}],114:[function(require,module,exports){
 'use strict';
 var LIBRARY = require('./_library');
 var $export = require('./_export');
@@ -12831,7 +16183,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
   return methods;
 };
 
-},{"./_export":99,"./_hide":104,"./_iter-create":112,"./_iterators":116,"./_library":117,"./_object-gpo":127,"./_redefine":134,"./_set-to-string-tag":139,"./_wks":153}],114:[function(require,module,exports){
+},{"./_export":100,"./_hide":105,"./_iter-create":113,"./_iterators":117,"./_library":118,"./_object-gpo":128,"./_redefine":135,"./_set-to-string-tag":140,"./_wks":154}],115:[function(require,module,exports){
 var ITERATOR = require('./_wks')('iterator');
 var SAFE_CLOSING = false;
 
@@ -12855,18 +16207,18 @@ module.exports = function (exec, skipClosing) {
   return safe;
 };
 
-},{"./_wks":153}],115:[function(require,module,exports){
+},{"./_wks":154}],116:[function(require,module,exports){
 module.exports = function (done, value) {
   return { value: value, done: !!done };
 };
 
-},{}],116:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 module.exports = {};
 
-},{}],117:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 module.exports = true;
 
-},{}],118:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 var META = require('./_uid')('meta');
 var isObject = require('./_is-object');
 var has = require('./_has');
@@ -12921,7 +16273,7 @@ var meta = module.exports = {
   onFreeze: onFreeze
 };
 
-},{"./_fails":100,"./_has":103,"./_is-object":110,"./_object-dp":121,"./_uid":149}],119:[function(require,module,exports){
+},{"./_fails":101,"./_has":104,"./_is-object":111,"./_object-dp":122,"./_uid":150}],120:[function(require,module,exports){
 'use strict';
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys = require('./_object-keys');
@@ -12957,7 +16309,7 @@ module.exports = !$assign || require('./_fails')(function () {
   } return T;
 } : $assign;
 
-},{"./_fails":100,"./_iobject":107,"./_object-gops":126,"./_object-keys":129,"./_object-pie":130,"./_to-object":147}],120:[function(require,module,exports){
+},{"./_fails":101,"./_iobject":108,"./_object-gops":127,"./_object-keys":130,"./_object-pie":131,"./_to-object":148}],121:[function(require,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject = require('./_an-object');
 var dPs = require('./_object-dps');
@@ -13000,7 +16352,7 @@ module.exports = Object.create || function create(O, Properties) {
   return Properties === undefined ? result : dPs(result, Properties);
 };
 
-},{"./_an-object":80,"./_dom-create":96,"./_enum-bug-keys":97,"./_html":105,"./_object-dps":122,"./_shared-key":140}],121:[function(require,module,exports){
+},{"./_an-object":81,"./_dom-create":97,"./_enum-bug-keys":98,"./_html":106,"./_object-dps":123,"./_shared-key":141}],122:[function(require,module,exports){
 var anObject = require('./_an-object');
 var IE8_DOM_DEFINE = require('./_ie8-dom-define');
 var toPrimitive = require('./_to-primitive');
@@ -13018,7 +16370,7 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
   return O;
 };
 
-},{"./_an-object":80,"./_descriptors":95,"./_ie8-dom-define":106,"./_to-primitive":148}],122:[function(require,module,exports){
+},{"./_an-object":81,"./_descriptors":96,"./_ie8-dom-define":107,"./_to-primitive":149}],123:[function(require,module,exports){
 var dP = require('./_object-dp');
 var anObject = require('./_an-object');
 var getKeys = require('./_object-keys');
@@ -13033,7 +16385,7 @@ module.exports = require('./_descriptors') ? Object.defineProperties : function 
   return O;
 };
 
-},{"./_an-object":80,"./_descriptors":95,"./_object-dp":121,"./_object-keys":129}],123:[function(require,module,exports){
+},{"./_an-object":81,"./_descriptors":96,"./_object-dp":122,"./_object-keys":130}],124:[function(require,module,exports){
 var pIE = require('./_object-pie');
 var createDesc = require('./_property-desc');
 var toIObject = require('./_to-iobject');
@@ -13051,7 +16403,7 @@ exports.f = require('./_descriptors') ? gOPD : function getOwnPropertyDescriptor
   if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
 };
 
-},{"./_descriptors":95,"./_has":103,"./_ie8-dom-define":106,"./_object-pie":130,"./_property-desc":132,"./_to-iobject":145,"./_to-primitive":148}],124:[function(require,module,exports){
+},{"./_descriptors":96,"./_has":104,"./_ie8-dom-define":107,"./_object-pie":131,"./_property-desc":133,"./_to-iobject":146,"./_to-primitive":149}],125:[function(require,module,exports){
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = require('./_to-iobject');
 var gOPN = require('./_object-gopn').f;
@@ -13072,7 +16424,7 @@ module.exports.f = function getOwnPropertyNames(it) {
   return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
 };
 
-},{"./_object-gopn":125,"./_to-iobject":145}],125:[function(require,module,exports){
+},{"./_object-gopn":126,"./_to-iobject":146}],126:[function(require,module,exports){
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys = require('./_object-keys-internal');
 var hiddenKeys = require('./_enum-bug-keys').concat('length', 'prototype');
@@ -13081,10 +16433,10 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
   return $keys(O, hiddenKeys);
 };
 
-},{"./_enum-bug-keys":97,"./_object-keys-internal":128}],126:[function(require,module,exports){
+},{"./_enum-bug-keys":98,"./_object-keys-internal":129}],127:[function(require,module,exports){
 exports.f = Object.getOwnPropertySymbols;
 
-},{}],127:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has = require('./_has');
 var toObject = require('./_to-object');
@@ -13099,7 +16451,7 @@ module.exports = Object.getPrototypeOf || function (O) {
   } return O instanceof Object ? ObjectProto : null;
 };
 
-},{"./_has":103,"./_shared-key":140,"./_to-object":147}],128:[function(require,module,exports){
+},{"./_has":104,"./_shared-key":141,"./_to-object":148}],129:[function(require,module,exports){
 var has = require('./_has');
 var toIObject = require('./_to-iobject');
 var arrayIndexOf = require('./_array-includes')(false);
@@ -13118,7 +16470,7 @@ module.exports = function (object, names) {
   return result;
 };
 
-},{"./_array-includes":82,"./_has":103,"./_shared-key":140,"./_to-iobject":145}],129:[function(require,module,exports){
+},{"./_array-includes":83,"./_has":104,"./_shared-key":141,"./_to-iobject":146}],130:[function(require,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys = require('./_object-keys-internal');
 var enumBugKeys = require('./_enum-bug-keys');
@@ -13127,10 +16479,10 @@ module.exports = Object.keys || function keys(O) {
   return $keys(O, enumBugKeys);
 };
 
-},{"./_enum-bug-keys":97,"./_object-keys-internal":128}],130:[function(require,module,exports){
+},{"./_enum-bug-keys":98,"./_object-keys-internal":129}],131:[function(require,module,exports){
 exports.f = {}.propertyIsEnumerable;
 
-},{}],131:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 // most Object methods by ES6 should accept primitives
 var $export = require('./_export');
 var core = require('./_core');
@@ -13142,7 +16494,7 @@ module.exports = function (KEY, exec) {
   $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
 };
 
-},{"./_core":91,"./_export":99,"./_fails":100}],132:[function(require,module,exports){
+},{"./_core":92,"./_export":100,"./_fails":101}],133:[function(require,module,exports){
 module.exports = function (bitmap, value) {
   return {
     enumerable: !(bitmap & 1),
@@ -13152,7 +16504,7 @@ module.exports = function (bitmap, value) {
   };
 };
 
-},{}],133:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 var hide = require('./_hide');
 module.exports = function (target, src, safe) {
   for (var key in src) {
@@ -13161,10 +16513,10 @@ module.exports = function (target, src, safe) {
   } return target;
 };
 
-},{"./_hide":104}],134:[function(require,module,exports){
+},{"./_hide":105}],135:[function(require,module,exports){
 module.exports = require('./_hide');
 
-},{"./_hide":104}],135:[function(require,module,exports){
+},{"./_hide":105}],136:[function(require,module,exports){
 'use strict';
 // https://tc39.github.io/proposal-setmap-offrom/
 var $export = require('./_export');
@@ -13194,7 +16546,7 @@ module.exports = function (COLLECTION) {
   } });
 };
 
-},{"./_a-function":77,"./_ctx":93,"./_export":99,"./_for-of":101}],136:[function(require,module,exports){
+},{"./_a-function":78,"./_ctx":94,"./_export":100,"./_for-of":102}],137:[function(require,module,exports){
 'use strict';
 // https://tc39.github.io/proposal-setmap-offrom/
 var $export = require('./_export');
@@ -13208,7 +16560,7 @@ module.exports = function (COLLECTION) {
   } });
 };
 
-},{"./_export":99}],137:[function(require,module,exports){
+},{"./_export":100}],138:[function(require,module,exports){
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
 var isObject = require('./_is-object');
@@ -13235,7 +16587,7 @@ module.exports = {
   check: check
 };
 
-},{"./_an-object":80,"./_ctx":93,"./_is-object":110,"./_object-gopd":123}],138:[function(require,module,exports){
+},{"./_an-object":81,"./_ctx":94,"./_is-object":111,"./_object-gopd":124}],139:[function(require,module,exports){
 'use strict';
 var global = require('./_global');
 var core = require('./_core');
@@ -13251,7 +16603,7 @@ module.exports = function (KEY) {
   });
 };
 
-},{"./_core":91,"./_descriptors":95,"./_global":102,"./_object-dp":121,"./_wks":153}],139:[function(require,module,exports){
+},{"./_core":92,"./_descriptors":96,"./_global":103,"./_object-dp":122,"./_wks":154}],140:[function(require,module,exports){
 var def = require('./_object-dp').f;
 var has = require('./_has');
 var TAG = require('./_wks')('toStringTag');
@@ -13260,14 +16612,14 @@ module.exports = function (it, tag, stat) {
   if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
 };
 
-},{"./_has":103,"./_object-dp":121,"./_wks":153}],140:[function(require,module,exports){
+},{"./_has":104,"./_object-dp":122,"./_wks":154}],141:[function(require,module,exports){
 var shared = require('./_shared')('keys');
 var uid = require('./_uid');
 module.exports = function (key) {
   return shared[key] || (shared[key] = uid(key));
 };
 
-},{"./_shared":141,"./_uid":149}],141:[function(require,module,exports){
+},{"./_shared":142,"./_uid":150}],142:[function(require,module,exports){
 var global = require('./_global');
 var SHARED = '__core-js_shared__';
 var store = global[SHARED] || (global[SHARED] = {});
@@ -13275,7 +16627,7 @@ module.exports = function (key) {
   return store[key] || (store[key] = {});
 };
 
-},{"./_global":102}],142:[function(require,module,exports){
+},{"./_global":103}],143:[function(require,module,exports){
 var toInteger = require('./_to-integer');
 var defined = require('./_defined');
 // true  -> String#at
@@ -13294,7 +16646,7 @@ module.exports = function (TO_STRING) {
   };
 };
 
-},{"./_defined":94,"./_to-integer":144}],143:[function(require,module,exports){
+},{"./_defined":95,"./_to-integer":145}],144:[function(require,module,exports){
 var toInteger = require('./_to-integer');
 var max = Math.max;
 var min = Math.min;
@@ -13303,7 +16655,7 @@ module.exports = function (index, length) {
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
 
-},{"./_to-integer":144}],144:[function(require,module,exports){
+},{"./_to-integer":145}],145:[function(require,module,exports){
 // 7.1.4 ToInteger
 var ceil = Math.ceil;
 var floor = Math.floor;
@@ -13311,7 +16663,7 @@ module.exports = function (it) {
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
 
-},{}],145:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require('./_iobject');
 var defined = require('./_defined');
@@ -13319,7 +16671,7 @@ module.exports = function (it) {
   return IObject(defined(it));
 };
 
-},{"./_defined":94,"./_iobject":107}],146:[function(require,module,exports){
+},{"./_defined":95,"./_iobject":108}],147:[function(require,module,exports){
 // 7.1.15 ToLength
 var toInteger = require('./_to-integer');
 var min = Math.min;
@@ -13327,14 +16679,14 @@ module.exports = function (it) {
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
 
-},{"./_to-integer":144}],147:[function(require,module,exports){
+},{"./_to-integer":145}],148:[function(require,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
 module.exports = function (it) {
   return Object(defined(it));
 };
 
-},{"./_defined":94}],148:[function(require,module,exports){
+},{"./_defined":95}],149:[function(require,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
@@ -13348,21 +16700,21 @@ module.exports = function (it, S) {
   throw TypeError("Can't convert object to primitive value");
 };
 
-},{"./_is-object":110}],149:[function(require,module,exports){
+},{"./_is-object":111}],150:[function(require,module,exports){
 var id = 0;
 var px = Math.random();
 module.exports = function (key) {
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
 
-},{}],150:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function (it, TYPE) {
   if (!isObject(it) || it._t !== TYPE) throw TypeError('Incompatible receiver, ' + TYPE + ' required!');
   return it;
 };
 
-},{"./_is-object":110}],151:[function(require,module,exports){
+},{"./_is-object":111}],152:[function(require,module,exports){
 var global = require('./_global');
 var core = require('./_core');
 var LIBRARY = require('./_library');
@@ -13373,10 +16725,10 @@ module.exports = function (name) {
   if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: wksExt.f(name) });
 };
 
-},{"./_core":91,"./_global":102,"./_library":117,"./_object-dp":121,"./_wks-ext":152}],152:[function(require,module,exports){
+},{"./_core":92,"./_global":103,"./_library":118,"./_object-dp":122,"./_wks-ext":153}],153:[function(require,module,exports){
 exports.f = require('./_wks');
 
-},{"./_wks":153}],153:[function(require,module,exports){
+},{"./_wks":154}],154:[function(require,module,exports){
 var store = require('./_shared')('wks');
 var uid = require('./_uid');
 var Symbol = require('./_global').Symbol;
@@ -13389,7 +16741,7 @@ var $exports = module.exports = function (name) {
 
 $exports.store = store;
 
-},{"./_global":102,"./_shared":141,"./_uid":149}],154:[function(require,module,exports){
+},{"./_global":103,"./_shared":142,"./_uid":150}],155:[function(require,module,exports){
 var classof = require('./_classof');
 var ITERATOR = require('./_wks')('iterator');
 var Iterators = require('./_iterators');
@@ -13399,7 +16751,7 @@ module.exports = require('./_core').getIteratorMethod = function (it) {
     || Iterators[classof(it)];
 };
 
-},{"./_classof":86,"./_core":91,"./_iterators":116,"./_wks":153}],155:[function(require,module,exports){
+},{"./_classof":87,"./_core":92,"./_iterators":117,"./_wks":154}],156:[function(require,module,exports){
 var anObject = require('./_an-object');
 var get = require('./core.get-iterator-method');
 module.exports = require('./_core').getIterator = function (it) {
@@ -13408,7 +16760,7 @@ module.exports = require('./_core').getIterator = function (it) {
   return anObject(iterFn.call(it));
 };
 
-},{"./_an-object":80,"./_core":91,"./core.get-iterator-method":154}],156:[function(require,module,exports){
+},{"./_an-object":81,"./_core":92,"./core.get-iterator-method":155}],157:[function(require,module,exports){
 var classof = require('./_classof');
 var ITERATOR = require('./_wks')('iterator');
 var Iterators = require('./_iterators');
@@ -13420,7 +16772,7 @@ module.exports = require('./_core').isIterable = function (it) {
     || Iterators.hasOwnProperty(classof(O));
 };
 
-},{"./_classof":86,"./_core":91,"./_iterators":116,"./_wks":153}],157:[function(require,module,exports){
+},{"./_classof":87,"./_core":92,"./_iterators":117,"./_wks":154}],158:[function(require,module,exports){
 'use strict';
 var ctx = require('./_ctx');
 var $export = require('./_export');
@@ -13459,7 +16811,7 @@ $export($export.S + $export.F * !require('./_iter-detect')(function (iter) { Arr
   }
 });
 
-},{"./_create-property":92,"./_ctx":93,"./_export":99,"./_is-array-iter":108,"./_iter-call":111,"./_iter-detect":114,"./_to-length":146,"./_to-object":147,"./core.get-iterator-method":154}],158:[function(require,module,exports){
+},{"./_create-property":93,"./_ctx":94,"./_export":100,"./_is-array-iter":109,"./_iter-call":112,"./_iter-detect":115,"./_to-length":147,"./_to-object":148,"./core.get-iterator-method":155}],159:[function(require,module,exports){
 'use strict';
 var addToUnscopables = require('./_add-to-unscopables');
 var step = require('./_iter-step');
@@ -13495,7 +16847,7 @@ addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
 
-},{"./_add-to-unscopables":78,"./_iter-define":113,"./_iter-step":115,"./_iterators":116,"./_to-iobject":145}],159:[function(require,module,exports){
+},{"./_add-to-unscopables":79,"./_iter-define":114,"./_iter-step":116,"./_iterators":117,"./_to-iobject":146}],160:[function(require,module,exports){
 'use strict';
 var strong = require('./_collection-strong');
 var validate = require('./_validate-collection');
@@ -13516,34 +16868,34 @@ module.exports = require('./_collection')(MAP, function (get) {
   }
 }, strong, true);
 
-},{"./_collection":90,"./_collection-strong":88,"./_validate-collection":150}],160:[function(require,module,exports){
+},{"./_collection":91,"./_collection-strong":89,"./_validate-collection":151}],161:[function(require,module,exports){
 // 20.1.2.1 Number.EPSILON
 var $export = require('./_export');
 
 $export($export.S, 'Number', { EPSILON: Math.pow(2, -52) });
 
-},{"./_export":99}],161:[function(require,module,exports){
+},{"./_export":100}],162:[function(require,module,exports){
 // 19.1.3.1 Object.assign(target, source)
 var $export = require('./_export');
 
 $export($export.S + $export.F, 'Object', { assign: require('./_object-assign') });
 
-},{"./_export":99,"./_object-assign":119}],162:[function(require,module,exports){
+},{"./_export":100,"./_object-assign":120}],163:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 $export($export.S, 'Object', { create: require('./_object-create') });
 
-},{"./_export":99,"./_object-create":120}],163:[function(require,module,exports){
+},{"./_export":100,"./_object-create":121}],164:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.3 / 15.2.3.7 Object.defineProperties(O, Properties)
 $export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperties: require('./_object-dps') });
 
-},{"./_descriptors":95,"./_export":99,"./_object-dps":122}],164:[function(require,module,exports){
+},{"./_descriptors":96,"./_export":100,"./_object-dps":123}],165:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
 $export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperty: require('./_object-dp').f });
 
-},{"./_descriptors":95,"./_export":99,"./_object-dp":121}],165:[function(require,module,exports){
+},{"./_descriptors":96,"./_export":100,"./_object-dp":122}],166:[function(require,module,exports){
 // 19.1.2.5 Object.freeze(O)
 var isObject = require('./_is-object');
 var meta = require('./_meta').onFreeze;
@@ -13554,7 +16906,7 @@ require('./_object-sap')('freeze', function ($freeze) {
   };
 });
 
-},{"./_is-object":110,"./_meta":118,"./_object-sap":131}],166:[function(require,module,exports){
+},{"./_is-object":111,"./_meta":119,"./_object-sap":132}],167:[function(require,module,exports){
 // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
 var toIObject = require('./_to-iobject');
 var $getOwnPropertyDescriptor = require('./_object-gopd').f;
@@ -13565,7 +16917,7 @@ require('./_object-sap')('getOwnPropertyDescriptor', function () {
   };
 });
 
-},{"./_object-gopd":123,"./_object-sap":131,"./_to-iobject":145}],167:[function(require,module,exports){
+},{"./_object-gopd":124,"./_object-sap":132,"./_to-iobject":146}],168:[function(require,module,exports){
 // 19.1.2.14 Object.keys(O)
 var toObject = require('./_to-object');
 var $keys = require('./_object-keys');
@@ -13576,14 +16928,14 @@ require('./_object-sap')('keys', function () {
   };
 });
 
-},{"./_object-keys":129,"./_object-sap":131,"./_to-object":147}],168:[function(require,module,exports){
+},{"./_object-keys":130,"./_object-sap":132,"./_to-object":148}],169:[function(require,module,exports){
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
 var $export = require('./_export');
 $export($export.S, 'Object', { setPrototypeOf: require('./_set-proto').set });
 
-},{"./_export":99,"./_set-proto":137}],169:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"dup":43}],170:[function(require,module,exports){
+},{"./_export":100,"./_set-proto":138}],170:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"dup":44}],171:[function(require,module,exports){
 'use strict';
 var strong = require('./_collection-strong');
 var validate = require('./_validate-collection');
@@ -13599,7 +16951,7 @@ module.exports = require('./_collection')(SET, function (get) {
   }
 }, strong);
 
-},{"./_collection":90,"./_collection-strong":88,"./_validate-collection":150}],171:[function(require,module,exports){
+},{"./_collection":91,"./_collection-strong":89,"./_validate-collection":151}],172:[function(require,module,exports){
 var $export = require('./_export');
 var toAbsoluteIndex = require('./_to-absolute-index');
 var fromCharCode = String.fromCharCode;
@@ -13624,7 +16976,7 @@ $export($export.S + $export.F * (!!$fromCodePoint && $fromCodePoint.length != 1)
   }
 });
 
-},{"./_export":99,"./_to-absolute-index":143}],172:[function(require,module,exports){
+},{"./_export":100,"./_to-absolute-index":144}],173:[function(require,module,exports){
 'use strict';
 var $at = require('./_string-at')(true);
 
@@ -13643,7 +16995,7 @@ require('./_iter-define')(String, 'String', function (iterated) {
   return { value: point, done: false };
 });
 
-},{"./_iter-define":113,"./_string-at":142}],173:[function(require,module,exports){
+},{"./_iter-define":114,"./_string-at":143}],174:[function(require,module,exports){
 'use strict';
 // ECMAScript 6 symbols shim
 var global = require('./_global');
@@ -13879,41 +17231,41 @@ setToStringTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
 setToStringTag(global.JSON, 'JSON', true);
 
-},{"./_an-object":80,"./_descriptors":95,"./_enum-keys":98,"./_export":99,"./_fails":100,"./_global":102,"./_has":103,"./_hide":104,"./_is-array":109,"./_is-object":110,"./_library":117,"./_meta":118,"./_object-create":120,"./_object-dp":121,"./_object-gopd":123,"./_object-gopn":125,"./_object-gopn-ext":124,"./_object-gops":126,"./_object-keys":129,"./_object-pie":130,"./_property-desc":132,"./_redefine":134,"./_set-to-string-tag":139,"./_shared":141,"./_to-iobject":145,"./_to-primitive":148,"./_uid":149,"./_wks":153,"./_wks-define":151,"./_wks-ext":152}],174:[function(require,module,exports){
+},{"./_an-object":81,"./_descriptors":96,"./_enum-keys":99,"./_export":100,"./_fails":101,"./_global":103,"./_has":104,"./_hide":105,"./_is-array":110,"./_is-object":111,"./_library":118,"./_meta":119,"./_object-create":121,"./_object-dp":122,"./_object-gopd":124,"./_object-gopn":126,"./_object-gopn-ext":125,"./_object-gops":127,"./_object-keys":130,"./_object-pie":131,"./_property-desc":133,"./_redefine":135,"./_set-to-string-tag":140,"./_shared":142,"./_to-iobject":146,"./_to-primitive":149,"./_uid":150,"./_wks":154,"./_wks-define":152,"./_wks-ext":153}],175:[function(require,module,exports){
 // https://tc39.github.io/proposal-setmap-offrom/#sec-map.from
 require('./_set-collection-from')('Map');
 
-},{"./_set-collection-from":135}],175:[function(require,module,exports){
+},{"./_set-collection-from":136}],176:[function(require,module,exports){
 // https://tc39.github.io/proposal-setmap-offrom/#sec-map.of
 require('./_set-collection-of')('Map');
 
-},{"./_set-collection-of":136}],176:[function(require,module,exports){
+},{"./_set-collection-of":137}],177:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export = require('./_export');
 
 $export($export.P + $export.R, 'Map', { toJSON: require('./_collection-to-json')('Map') });
 
-},{"./_collection-to-json":89,"./_export":99}],177:[function(require,module,exports){
+},{"./_collection-to-json":90,"./_export":100}],178:[function(require,module,exports){
 // https://tc39.github.io/proposal-setmap-offrom/#sec-set.from
 require('./_set-collection-from')('Set');
 
-},{"./_set-collection-from":135}],178:[function(require,module,exports){
+},{"./_set-collection-from":136}],179:[function(require,module,exports){
 // https://tc39.github.io/proposal-setmap-offrom/#sec-set.of
 require('./_set-collection-of')('Set');
 
-},{"./_set-collection-of":136}],179:[function(require,module,exports){
+},{"./_set-collection-of":137}],180:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export = require('./_export');
 
 $export($export.P + $export.R, 'Set', { toJSON: require('./_collection-to-json')('Set') });
 
-},{"./_collection-to-json":89,"./_export":99}],180:[function(require,module,exports){
+},{"./_collection-to-json":90,"./_export":100}],181:[function(require,module,exports){
 require('./_wks-define')('asyncIterator');
 
-},{"./_wks-define":151}],181:[function(require,module,exports){
+},{"./_wks-define":152}],182:[function(require,module,exports){
 require('./_wks-define')('observable');
 
-},{"./_wks-define":151}],182:[function(require,module,exports){
+},{"./_wks-define":152}],183:[function(require,module,exports){
 require('./es6.array.iterator');
 var global = require('./_global');
 var hide = require('./_hide');
@@ -13934,7 +17286,7 @@ for (var i = 0; i < DOMIterables.length; i++) {
   Iterators[NAME] = Iterators.Array;
 }
 
-},{"./_global":102,"./_hide":104,"./_iterators":116,"./_wks":153,"./es6.array.iterator":158}],183:[function(require,module,exports){
+},{"./_global":103,"./_hide":105,"./_iterators":117,"./_wks":154,"./es6.array.iterator":159}],184:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -14045,7 +17397,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":192}],184:[function(require,module,exports){
+},{"../../is-buffer/index.js":193}],185:[function(require,module,exports){
 var pSlice = Array.prototype.slice;
 var objectKeys = require('./lib/keys.js');
 var isArguments = require('./lib/is_arguments.js');
@@ -14141,7 +17493,7 @@ function objEquiv(a, b, opts) {
   return typeof a === typeof b;
 }
 
-},{"./lib/is_arguments.js":185,"./lib/keys.js":186}],185:[function(require,module,exports){
+},{"./lib/is_arguments.js":186,"./lib/keys.js":187}],186:[function(require,module,exports){
 var supportsArgumentsClass = (function(){
   return Object.prototype.toString.call(arguments)
 })() == '[object Arguments]';
@@ -14163,7 +17515,7 @@ function unsupported(object){
     false;
 };
 
-},{}],186:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 exports = module.exports = typeof Object.keys === 'function'
   ? Object.keys : shim;
 
@@ -14174,7 +17526,7 @@ function shim (obj) {
   return keys;
 }
 
-},{}],187:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 'use strict';
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
@@ -14367,7 +17719,7 @@ var StateMachine = function () {
 module.exports = StateMachine;
 
 
-},{"babel-runtime/core-js/get-iterator":5,"babel-runtime/core-js/symbol/iterator":20,"babel-runtime/helpers/classCallCheck":21,"babel-runtime/helpers/createClass":22,"babel-runtime/helpers/defineProperty":23,"babel-runtime/helpers/slicedToArray":26,"babel-runtime/regenerator":28}],188:[function(require,module,exports){
+},{"babel-runtime/core-js/get-iterator":6,"babel-runtime/core-js/symbol/iterator":21,"babel-runtime/helpers/classCallCheck":22,"babel-runtime/helpers/createClass":23,"babel-runtime/helpers/defineProperty":24,"babel-runtime/helpers/slicedToArray":27,"babel-runtime/regenerator":29}],189:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14888,7 +18240,7 @@ function functionBindPolyfill(context) {
   };
 }
 
-},{}],189:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 (function (process,Buffer){
 'use strict';
 function _interopDefault(ex) {
@@ -46090,7 +49442,7 @@ fontkit.registerFormat(TrueTypeCollection);
 fontkit.registerFormat(DFont);
 module.exports = fontkit;
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":221,"babel-runtime/core-js/array/from":4,"babel-runtime/core-js/get-iterator":5,"babel-runtime/core-js/map":7,"babel-runtime/core-js/number/epsilon":8,"babel-runtime/core-js/object/assign":9,"babel-runtime/core-js/object/define-properties":11,"babel-runtime/core-js/object/define-property":12,"babel-runtime/core-js/object/freeze":13,"babel-runtime/core-js/object/get-own-property-descriptor":14,"babel-runtime/core-js/object/keys":15,"babel-runtime/core-js/set":17,"babel-runtime/core-js/string/from-code-point":18,"babel-runtime/helpers/classCallCheck":21,"babel-runtime/helpers/createClass":22,"babel-runtime/helpers/inherits":24,"babel-runtime/helpers/possibleConstructorReturn":25,"babel-runtime/helpers/typeof":27,"brotli/decompress":42,"buffer":58,"clone":59,"deep-equal":184,"dfa":187,"restructure":237,"restructure/src/utils":253,"tiny-inflate":257,"unicode-properties":259,"unicode-trie":260}],190:[function(require,module,exports){
+},{"_process":222,"babel-runtime/core-js/array/from":5,"babel-runtime/core-js/get-iterator":6,"babel-runtime/core-js/map":8,"babel-runtime/core-js/number/epsilon":9,"babel-runtime/core-js/object/assign":10,"babel-runtime/core-js/object/define-properties":12,"babel-runtime/core-js/object/define-property":13,"babel-runtime/core-js/object/freeze":14,"babel-runtime/core-js/object/get-own-property-descriptor":15,"babel-runtime/core-js/object/keys":16,"babel-runtime/core-js/set":18,"babel-runtime/core-js/string/from-code-point":19,"babel-runtime/helpers/classCallCheck":22,"babel-runtime/helpers/createClass":23,"babel-runtime/helpers/inherits":25,"babel-runtime/helpers/possibleConstructorReturn":26,"babel-runtime/helpers/typeof":28,"brotli/decompress":43,"buffer":59,"clone":60,"deep-equal":185,"dfa":188,"restructure":238,"restructure/src/utils":254,"tiny-inflate":258,"unicode-properties":260,"unicode-trie":261}],191:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -46176,7 +49528,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],191:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -46201,7 +49553,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],192:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -46224,14 +49576,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],193:[function(require,module,exports){
+},{}],194:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],194:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -46357,7 +49709,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],195:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var AI, AL, B2, BA, BB, BK, CB, CJ, CL, CM, CP, CR, EX, GL, H2, H3, HL, HY, ID, IN, IS, JL, JT, JV, LF, NL, NS, NU, OP, PO, PR, QU, RI, SA, SG, SP, SY, WJ, XX, ZW;
@@ -46444,7 +49796,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 }).call(this);
 
-},{}],196:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var AI, AL, BA, BK, CB, CI_BRK, CJ, CP_BRK, CR, DI_BRK, ID, IN_BRK, LF, LineBreaker, NL, NS, PR_BRK, SA, SG, SP, UnicodeTrie, WJ, XX, base64, characterClasses, classTrie, data, fs, pairTable, _ref, _ref1;
@@ -46607,7 +49959,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 }).call(this);
 
-},{"./classes":195,"./pairs":197,"base64-js":194,"unicode-trie":260}],197:[function(require,module,exports){
+},{"./classes":196,"./pairs":198,"base64-js":195,"unicode-trie":261}],198:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var CI_BRK, CP_BRK, DI_BRK, IN_BRK, PR_BRK;
@@ -46626,7 +49978,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 }).call(this);
 
-},{}],198:[function(require,module,exports){
+},{}],199:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var Data;
@@ -46820,7 +50172,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 }).call(this);
 
-},{}],199:[function(require,module,exports){
+},{}],200:[function(require,module,exports){
 (function (Buffer){
 // Generated by CoffeeScript 1.12.6
 
@@ -47071,7 +50423,7 @@ By Devon Govett
 }).call(this);
 
 }).call(this,require("buffer").Buffer)
-},{"./mixins/annotations":209,"./mixins/color":210,"./mixins/fonts":211,"./mixins/images":212,"./mixins/text":213,"./mixins/vector":214,"./object":215,"./page":216,"./reference":218,"buffer":58,"stream":255}],200:[function(require,module,exports){
+},{"./mixins/annotations":210,"./mixins/color":211,"./mixins/fonts":212,"./mixins/images":213,"./mixins/text":214,"./mixins/vector":215,"./object":216,"./page":217,"./reference":219,"buffer":59,"stream":256}],201:[function(require,module,exports){
 (function (Buffer){
 // Generated by CoffeeScript 1.12.6
 (function() {
@@ -47150,7 +50502,7 @@ By Devon Govett
 }).call(this);
 
 }).call(this,require("buffer").Buffer)
-},{"./font/embedded":202,"./font/standard":203,"buffer":58,"fontkit":189}],201:[function(require,module,exports){
+},{"./font/embedded":203,"./font/standard":204,"buffer":59,"fontkit":190}],202:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var AFMFont, fs;
@@ -47322,7 +50674,7 @@ By Devon Govett
 
 }).call(this);
 
-},{}],202:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var EmbeddedFont, PDFFont, PDFObject,
@@ -47558,7 +50910,7 @@ By Devon Govett
 
 }).call(this);
 
-},{"../font":200,"../object":215}],203:[function(require,module,exports){
+},{"../font":201,"../object":216}],204:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var AFMFont, PDFFont, StandardFont, fs,
@@ -47684,7 +51036,7 @@ By Devon Govett
 
 }).call(this);
 
-},{"../font":200,"./afm":201}],204:[function(require,module,exports){
+},{"../font":201,"./afm":202}],205:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var PDFGradient, PDFLinearGradient, PDFRadialGradient,
@@ -47926,7 +51278,7 @@ By Devon Govett
 
 }).call(this);
 
-},{}],205:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 (function (Buffer){
 // Generated by CoffeeScript 1.12.6
 
@@ -47983,7 +51335,7 @@ By Devon Govett
 }).call(this);
 
 }).call(this,require("buffer").Buffer)
-},{"./data":198,"./image/jpeg":206,"./image/png":207,"buffer":58}],206:[function(require,module,exports){
+},{"./data":199,"./image/jpeg":207,"./image/png":208,"buffer":59}],207:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var JPEG, fs,
@@ -48063,7 +51415,7 @@ By Devon Govett
 
 }).call(this);
 
-},{}],207:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
 (function (Buffer){
 // Generated by CoffeeScript 1.12.6
 (function() {
@@ -48225,7 +51577,7 @@ By Devon Govett
 }).call(this);
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":58,"png-js":219,"zlib":45}],208:[function(require,module,exports){
+},{"buffer":59,"png-js":220,"zlib":46}],209:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var EventEmitter, LineBreaker, LineWrapper,
@@ -48479,7 +51831,7 @@ By Devon Govett
 
 }).call(this);
 
-},{"events":188,"linebreak":196}],209:[function(require,module,exports){
+},{"events":189,"linebreak":197}],210:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   module.exports = {
@@ -48614,7 +51966,7 @@ By Devon Govett
 
 }).call(this);
 
-},{}],210:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var PDFGradient, PDFLinearGradient, PDFRadialGradient, namedColors, ref;
@@ -48914,7 +52266,7 @@ By Devon Govett
 
 }).call(this);
 
-},{"../gradient":204}],211:[function(require,module,exports){
+},{"../gradient":205}],212:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var PDFFont;
@@ -48987,7 +52339,7 @@ By Devon Govett
 
 }).call(this);
 
-},{"../font":200}],212:[function(require,module,exports){
+},{"../font":201}],213:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var PDFImage;
@@ -49100,7 +52452,7 @@ By Devon Govett
 
 }).call(this);
 
-},{"../image":205}],213:[function(require,module,exports){
+},{"../image":206}],214:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var LineWrapper, number;
@@ -49446,7 +52798,7 @@ By Devon Govett
 
 }).call(this);
 
-},{"../line_wrapper":208,"../object":215}],214:[function(require,module,exports){
+},{"../line_wrapper":209,"../object":216}],215:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var KAPPA, SVGPath, number,
@@ -49750,7 +53102,7 @@ By Devon Govett
 
 }).call(this);
 
-},{"../object":215,"../path":217}],215:[function(require,module,exports){
+},{"../object":216,"../path":218}],216:[function(require,module,exports){
 (function (Buffer){
 // Generated by CoffeeScript 1.12.6
 
@@ -49869,7 +53221,7 @@ By Devon Govett
 }).call(this);
 
 }).call(this,require("buffer").Buffer)
-},{"./reference":218,"buffer":58}],216:[function(require,module,exports){
+},{"./reference":219,"buffer":59}],217:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 
 /*
@@ -50041,7 +53393,7 @@ By Devon Govett
 
 }).call(this);
 
-},{}],217:[function(require,module,exports){
+},{}],218:[function(require,module,exports){
 // Generated by CoffeeScript 1.12.6
 (function() {
   var SVGPath;
@@ -50409,7 +53761,7 @@ By Devon Govett
 
 }).call(this);
 
-},{}],218:[function(require,module,exports){
+},{}],219:[function(require,module,exports){
 (function (Buffer){
 // Generated by CoffeeScript 1.12.6
 
@@ -50522,7 +53874,7 @@ By Devon Govett
 }).call(this);
 
 }).call(this,require("buffer").Buffer)
-},{"./object":215,"buffer":58,"stream":255,"zlib":45}],219:[function(require,module,exports){
+},{"./object":216,"buffer":59,"stream":256,"zlib":46}],220:[function(require,module,exports){
 (function (Buffer){
 // Generated by CoffeeScript 1.4.0
 
@@ -50843,7 +54195,7 @@ By Devon Govett
 }).call(this);
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":58,"fs":57,"zlib":45}],220:[function(require,module,exports){
+},{"buffer":59,"fs":58,"zlib":46}],221:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -50891,7 +54243,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this,require('_process'))
-},{"_process":221}],221:[function(require,module,exports){
+},{"_process":222}],222:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -51077,10 +54429,10 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],222:[function(require,module,exports){
+},{}],223:[function(require,module,exports){
 module.exports = require('./lib/_stream_duplex.js');
 
-},{"./lib/_stream_duplex.js":223}],223:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":224}],224:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -51212,7 +54564,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":225,"./_stream_writable":227,"core-util-is":183,"inherits":191,"process-nextick-args":220}],224:[function(require,module,exports){
+},{"./_stream_readable":226,"./_stream_writable":228,"core-util-is":184,"inherits":192,"process-nextick-args":221}],225:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -51260,7 +54612,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":226,"core-util-is":183,"inherits":191}],225:[function(require,module,exports){
+},{"./_stream_transform":227,"core-util-is":184,"inherits":192}],226:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -52282,7 +55634,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":223,"./internal/streams/BufferList":228,"./internal/streams/destroy":229,"./internal/streams/stream":230,"_process":221,"core-util-is":183,"events":188,"inherits":191,"isarray":193,"process-nextick-args":220,"safe-buffer":254,"string_decoder/":256,"util":43}],226:[function(require,module,exports){
+},{"./_stream_duplex":224,"./internal/streams/BufferList":229,"./internal/streams/destroy":230,"./internal/streams/stream":231,"_process":222,"core-util-is":184,"events":189,"inherits":192,"isarray":194,"process-nextick-args":221,"safe-buffer":255,"string_decoder/":257,"util":44}],227:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -52497,7 +55849,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":223,"core-util-is":183,"inherits":191}],227:[function(require,module,exports){
+},{"./_stream_duplex":224,"core-util-is":184,"inherits":192}],228:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -53187,7 +56539,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":223,"./internal/streams/destroy":229,"./internal/streams/stream":230,"_process":221,"core-util-is":183,"inherits":191,"process-nextick-args":220,"safe-buffer":254,"util-deprecate":261}],228:[function(require,module,exports){
+},{"./_stream_duplex":224,"./internal/streams/destroy":230,"./internal/streams/stream":231,"_process":222,"core-util-is":184,"inherits":192,"process-nextick-args":221,"safe-buffer":255,"util-deprecate":262}],229:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -53267,7 +56619,7 @@ if (util && util.inspect && util.inspect.custom) {
     return this.constructor.name + ' ' + obj;
   };
 }
-},{"safe-buffer":254,"util":43}],229:[function(require,module,exports){
+},{"safe-buffer":255,"util":44}],230:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -53342,13 +56694,13 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":220}],230:[function(require,module,exports){
+},{"process-nextick-args":221}],231:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":188}],231:[function(require,module,exports){
+},{"events":189}],232:[function(require,module,exports){
 module.exports = require('./readable').PassThrough
 
-},{"./readable":232}],232:[function(require,module,exports){
+},{"./readable":233}],233:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -53357,13 +56709,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":223,"./lib/_stream_passthrough.js":224,"./lib/_stream_readable.js":225,"./lib/_stream_transform.js":226,"./lib/_stream_writable.js":227}],233:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":224,"./lib/_stream_passthrough.js":225,"./lib/_stream_readable.js":226,"./lib/_stream_transform.js":227,"./lib/_stream_writable.js":228}],234:[function(require,module,exports){
 module.exports = require('./readable').Transform
 
-},{"./readable":232}],234:[function(require,module,exports){
+},{"./readable":233}],235:[function(require,module,exports){
 module.exports = require('./lib/_stream_writable.js');
 
-},{"./lib/_stream_writable.js":227}],235:[function(require,module,exports){
+},{"./lib/_stream_writable.js":228}],236:[function(require,module,exports){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -53400,7 +56752,7 @@ if (hadRuntime) {
   }
 }
 
-},{"./runtime":236}],236:[function(require,module,exports){
+},{"./runtime":237}],237:[function(require,module,exports){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -54129,7 +57481,7 @@ if (hadRuntime) {
   (function() { return this })() || Function("return this")()
 );
 
-},{}],237:[function(require,module,exports){
+},{}],238:[function(require,module,exports){
 (function () {
     var key, val, _ref, _ref1;
     exports.EncodeStream = require('./src/EncodeStream');
@@ -54156,7 +57508,7 @@ if (hadRuntime) {
         exports[key] = val;
     }
 }.call(this));
-},{"./src/Array":238,"./src/Bitfield":239,"./src/Boolean":240,"./src/Buffer":241,"./src/DecodeStream":242,"./src/EncodeStream":243,"./src/Enum":244,"./src/LazyArray":245,"./src/Number":246,"./src/Optional":247,"./src/Pointer":248,"./src/Reserved":249,"./src/String":250,"./src/Struct":251,"./src/VersionedStruct":252}],238:[function(require,module,exports){
+},{"./src/Array":239,"./src/Bitfield":240,"./src/Boolean":241,"./src/Buffer":242,"./src/DecodeStream":243,"./src/EncodeStream":244,"./src/Enum":245,"./src/LazyArray":246,"./src/Number":247,"./src/Optional":248,"./src/Pointer":249,"./src/Reserved":250,"./src/String":251,"./src/Struct":252,"./src/VersionedStruct":253}],239:[function(require,module,exports){
 (function () {
     var ArrayT, NumberT, utils;
     NumberT = require('./Number').Number;
@@ -54243,7 +57595,7 @@ if (hadRuntime) {
     }();
     module.exports = ArrayT;
 }.call(this));
-},{"./Number":246,"./utils":253}],239:[function(require,module,exports){
+},{"./Number":247,"./utils":254}],240:[function(require,module,exports){
 (function () {
     var Bitfield;
     Bitfield = function () {
@@ -54285,7 +57637,7 @@ if (hadRuntime) {
     }();
     module.exports = Bitfield;
 }.call(this));
-},{}],240:[function(require,module,exports){
+},{}],241:[function(require,module,exports){
 (function () {
     var BooleanT;
     BooleanT = function () {
@@ -54305,7 +57657,7 @@ if (hadRuntime) {
     }();
     module.exports = BooleanT;
 }.call(this));
-},{}],241:[function(require,module,exports){
+},{}],242:[function(require,module,exports){
 (function () {
     var BufferT, NumberT, utils;
     utils = require('./utils');
@@ -54335,7 +57687,7 @@ if (hadRuntime) {
     }();
     module.exports = BufferT;
 }.call(this));
-},{"./Number":246,"./utils":253}],242:[function(require,module,exports){
+},{"./Number":247,"./utils":254}],243:[function(require,module,exports){
 (function (Buffer){
 (function () {
     var DecodeStream, iconv;
@@ -54428,7 +57780,7 @@ if (hadRuntime) {
     module.exports = DecodeStream;
 }.call(this));
 }).call(this,require("buffer").Buffer)
-},{"buffer":58}],243:[function(require,module,exports){
+},{"buffer":59}],244:[function(require,module,exports){
 (function (Buffer){
 (function () {
     var DecodeStream, EncodeStream, iconv, stream, __hasProp = {}.hasOwnProperty, __extends = function (child, parent) {
@@ -54573,7 +57925,7 @@ if (hadRuntime) {
     module.exports = EncodeStream;
 }.call(this));
 }).call(this,require("buffer").Buffer)
-},{"./DecodeStream":242,"buffer":58,"stream":255}],244:[function(require,module,exports){
+},{"./DecodeStream":243,"buffer":59,"stream":256}],245:[function(require,module,exports){
 (function () {
     var Enum;
     Enum = function () {
@@ -54601,7 +57953,7 @@ if (hadRuntime) {
     }();
     module.exports = Enum;
 }.call(this));
-},{}],245:[function(require,module,exports){
+},{}],246:[function(require,module,exports){
 (function () {
     var ArrayT, LazyArray, LazyArrayT, NumberT, inspect, utils, __hasProp = {}.hasOwnProperty, __extends = function (child, parent) {
             for (var key in parent) {
@@ -54692,7 +58044,7 @@ if (hadRuntime) {
     }();
     module.exports = LazyArrayT;
 }.call(this));
-},{"./Array":238,"./Number":246,"./utils":253,"util":264}],246:[function(require,module,exports){
+},{"./Array":239,"./Number":247,"./utils":254,"util":265}],247:[function(require,module,exports){
 (function () {
     var DecodeStream, Fixed, NumberT, __hasProp = {}.hasOwnProperty, __extends = function (child, parent) {
             for (var key in parent) {
@@ -54770,7 +58122,7 @@ if (hadRuntime) {
     exports.fixed32be = exports.fixed32 = new Fixed(32, 'BE');
     exports.fixed32le = new Fixed(32, 'LE');
 }.call(this));
-},{"./DecodeStream":242}],247:[function(require,module,exports){
+},{"./DecodeStream":243}],248:[function(require,module,exports){
 (function () {
     var Optional;
     Optional = function () {
@@ -54814,7 +58166,7 @@ if (hadRuntime) {
     }();
     module.exports = Optional;
 }.call(this));
-},{}],248:[function(require,module,exports){
+},{}],249:[function(require,module,exports){
 (function () {
     var Pointer, VoidPointer, utils;
     utils = require('./utils');
@@ -54975,7 +58327,7 @@ if (hadRuntime) {
     exports.Pointer = Pointer;
     exports.VoidPointer = VoidPointer;
 }.call(this));
-},{"./utils":253}],249:[function(require,module,exports){
+},{"./utils":254}],250:[function(require,module,exports){
 (function () {
     var Reserved, utils;
     utils = require('./utils');
@@ -55000,7 +58352,7 @@ if (hadRuntime) {
     }();
     module.exports = Reserved;
 }.call(this));
-},{"./utils":253}],250:[function(require,module,exports){
+},{"./utils":254}],251:[function(require,module,exports){
 (function (Buffer){
 (function () {
     var NumberT, StringT, utils;
@@ -55074,7 +58426,7 @@ if (hadRuntime) {
     module.exports = StringT;
 }.call(this));
 }).call(this,require("buffer").Buffer)
-},{"./Number":246,"./utils":253,"buffer":58}],251:[function(require,module,exports){
+},{"./Number":247,"./utils":254,"buffer":59}],252:[function(require,module,exports){
 (function () {
     var Struct, utils;
     utils = require('./utils');
@@ -55183,7 +58535,7 @@ if (hadRuntime) {
     }();
     module.exports = Struct;
 }.call(this));
-},{"./utils":253}],252:[function(require,module,exports){
+},{"./utils":254}],253:[function(require,module,exports){
 (function () {
     var Struct, VersionedStruct, __hasProp = {}.hasOwnProperty, __extends = function (child, parent) {
             for (var key in parent) {
@@ -55319,7 +58671,7 @@ if (hadRuntime) {
     }(Struct);
     module.exports = VersionedStruct;
 }.call(this));
-},{"./Struct":251}],253:[function(require,module,exports){
+},{"./Struct":252}],254:[function(require,module,exports){
 (function () {
     var NumberT, PropertyDescriptor;
     NumberT = require('./Number').Number;
@@ -55356,7 +58708,7 @@ if (hadRuntime) {
     }();
     exports.PropertyDescriptor = PropertyDescriptor;
 }.call(this));
-},{"./Number":246}],254:[function(require,module,exports){
+},{"./Number":247}],255:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -55420,7 +58772,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":58}],255:[function(require,module,exports){
+},{"buffer":59}],256:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -55549,7 +58901,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":188,"inherits":191,"readable-stream/duplex.js":222,"readable-stream/passthrough.js":231,"readable-stream/readable.js":232,"readable-stream/transform.js":233,"readable-stream/writable.js":234}],256:[function(require,module,exports){
+},{"events":189,"inherits":192,"readable-stream/duplex.js":223,"readable-stream/passthrough.js":232,"readable-stream/readable.js":233,"readable-stream/transform.js":234,"readable-stream/writable.js":235}],257:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -55846,7 +59198,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":254}],257:[function(require,module,exports){
+},{"safe-buffer":255}],258:[function(require,module,exports){
 var TINF_OK = 0;
 var TINF_DATA_ERROR = -3;
 
@@ -56223,9 +59575,9 @@ length_base[28] = 258;
 
 module.exports = tinf_uncompress;
 
-},{}],258:[function(require,module,exports){
-module.exports={"categories":["Cc","Zs","Po","Sc","Ps","Pe","Sm","Pd","Nd","Lu","Sk","Pc","Ll","So","Lo","Pi","Cf","No","Pf","Lt","Lm","Mn","Me","Mc","Nl","Zl","Zp","Cs","Co"],"combiningClasses":["Not_Reordered","Above","Above_Right","Below","Attached_Above_Right","Attached_Below","Overlay","Iota_Subscript","Double_Below","Double_Above","Below_Right","Above_Left","CCC10","CCC11","CCC12","CCC13","CCC14","CCC15","CCC16","CCC17","CCC18","CCC19","CCC20","CCC21","CCC22","CCC23","CCC24","CCC25","CCC30","CCC31","CCC32","CCC27","CCC28","CCC29","CCC33","CCC34","CCC35","CCC36","Nukta","Virama","CCC84","CCC91","CCC103","CCC107","CCC118","CCC122","CCC129","CCC130","CCC132","Attached_Above","Below_Left","Left","Kana_Voicing","CCC26","Right"],"scripts":["Common","Latin","Bopomofo","Inherited","Greek","Coptic","Cyrillic","Armenian","Hebrew","Arabic","Syriac","Thaana","Nko","Samaritan","Mandaic","Devanagari","Bengali","Gurmukhi","Gujarati","Oriya","Tamil","Telugu","Kannada","Malayalam","Sinhala","Thai","Lao","Tibetan","Myanmar","Georgian","Hangul","Ethiopic","Cherokee","Canadian_Aboriginal","Ogham","Runic","Tagalog","Hanunoo","Buhid","Tagbanwa","Khmer","Mongolian","Limbu","Tai_Le","New_Tai_Lue","Buginese","Tai_Tham","Balinese","Sundanese","Batak","Lepcha","Ol_Chiki","Braille","Glagolitic","Tifinagh","Han","Hiragana","Katakana","Yi","Lisu","Vai","Bamum","Syloti_Nagri","Phags_Pa","Saurashtra","Kayah_Li","Rejang","Javanese","Cham","Tai_Viet","Meetei_Mayek","null","Linear_B","Lycian","Carian","Old_Italic","Gothic","Old_Permic","Ugaritic","Old_Persian","Deseret","Shavian","Osmanya","Elbasan","Caucasian_Albanian","Linear_A","Cypriot","Imperial_Aramaic","Palmyrene","Nabataean","Hatran","Phoenician","Lydian","Meroitic_Hieroglyphs","Meroitic_Cursive","Kharoshthi","Old_South_Arabian","Old_North_Arabian","Manichaean","Avestan","Inscriptional_Parthian","Inscriptional_Pahlavi","Psalter_Pahlavi","Old_Turkic","Old_Hungarian","Brahmi","Kaithi","Sora_Sompeng","Chakma","Mahajani","Sharada","Khojki","Multani","Khudawadi","Grantha","Tirhuta","Siddham","Modi","Takri","Ahom","Warang_Citi","Pau_Cin_Hau","Cuneiform","Egyptian_Hieroglyphs","Anatolian_Hieroglyphs","Mro","Bassa_Vah","Pahawh_Hmong","Miao","Duployan","SignWriting","Mende_Kikakui"],"eaw":["N","Na","A","W","H","F"]}
 },{}],259:[function(require,module,exports){
+module.exports={"categories":["Cc","Zs","Po","Sc","Ps","Pe","Sm","Pd","Nd","Lu","Sk","Pc","Ll","So","Lo","Pi","Cf","No","Pf","Lt","Lm","Mn","Me","Mc","Nl","Zl","Zp","Cs","Co"],"combiningClasses":["Not_Reordered","Above","Above_Right","Below","Attached_Above_Right","Attached_Below","Overlay","Iota_Subscript","Double_Below","Double_Above","Below_Right","Above_Left","CCC10","CCC11","CCC12","CCC13","CCC14","CCC15","CCC16","CCC17","CCC18","CCC19","CCC20","CCC21","CCC22","CCC23","CCC24","CCC25","CCC30","CCC31","CCC32","CCC27","CCC28","CCC29","CCC33","CCC34","CCC35","CCC36","Nukta","Virama","CCC84","CCC91","CCC103","CCC107","CCC118","CCC122","CCC129","CCC130","CCC132","Attached_Above","Below_Left","Left","Kana_Voicing","CCC26","Right"],"scripts":["Common","Latin","Bopomofo","Inherited","Greek","Coptic","Cyrillic","Armenian","Hebrew","Arabic","Syriac","Thaana","Nko","Samaritan","Mandaic","Devanagari","Bengali","Gurmukhi","Gujarati","Oriya","Tamil","Telugu","Kannada","Malayalam","Sinhala","Thai","Lao","Tibetan","Myanmar","Georgian","Hangul","Ethiopic","Cherokee","Canadian_Aboriginal","Ogham","Runic","Tagalog","Hanunoo","Buhid","Tagbanwa","Khmer","Mongolian","Limbu","Tai_Le","New_Tai_Lue","Buginese","Tai_Tham","Balinese","Sundanese","Batak","Lepcha","Ol_Chiki","Braille","Glagolitic","Tifinagh","Han","Hiragana","Katakana","Yi","Lisu","Vai","Bamum","Syloti_Nagri","Phags_Pa","Saurashtra","Kayah_Li","Rejang","Javanese","Cham","Tai_Viet","Meetei_Mayek","null","Linear_B","Lycian","Carian","Old_Italic","Gothic","Old_Permic","Ugaritic","Old_Persian","Deseret","Shavian","Osmanya","Elbasan","Caucasian_Albanian","Linear_A","Cypriot","Imperial_Aramaic","Palmyrene","Nabataean","Hatran","Phoenician","Lydian","Meroitic_Hieroglyphs","Meroitic_Cursive","Kharoshthi","Old_South_Arabian","Old_North_Arabian","Manichaean","Avestan","Inscriptional_Parthian","Inscriptional_Pahlavi","Psalter_Pahlavi","Old_Turkic","Old_Hungarian","Brahmi","Kaithi","Sora_Sompeng","Chakma","Mahajani","Sharada","Khojki","Multani","Khudawadi","Grantha","Tirhuta","Siddham","Modi","Takri","Ahom","Warang_Citi","Pau_Cin_Hau","Cuneiform","Egyptian_Hieroglyphs","Anatolian_Hieroglyphs","Mro","Bassa_Vah","Pahawh_Hmong","Miao","Duployan","SignWriting","Mende_Kikakui"],"eaw":["N","Na","A","W","H","F"]}
+},{}],260:[function(require,module,exports){
 (function (Buffer){
 // Generated by CoffeeScript 1.9.1
 var CATEGORY_BITS, CATEGORY_MASK, CATEGORY_SHIFT, COMBINING_BITS, COMBINING_MASK, COMBINING_SHIFT, EAW_BITS, EAW_MASK, EAW_SHIFT, NUMBER_BITS, NUMBER_MASK, SCRIPT_BITS, SCRIPT_MASK, SCRIPT_SHIFT, UnicodeTrie, bits, data, fs, log2, trie;
@@ -56371,7 +59723,7 @@ exports.isMark = function(codePoint) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./data.json":258,"buffer":58,"unicode-trie":260}],260:[function(require,module,exports){
+},{"./data.json":259,"buffer":59,"unicode-trie":261}],261:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 var UnicodeTrie, inflate;
 
@@ -56464,7 +59816,7 @@ UnicodeTrie = (function() {
 
 module.exports = UnicodeTrie;
 
-},{"tiny-inflate":257}],261:[function(require,module,exports){
+},{"tiny-inflate":258}],262:[function(require,module,exports){
 (function (global){
 
 /**
@@ -56535,16 +59887,16 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],262:[function(require,module,exports){
-arguments[4][191][0].apply(exports,arguments)
-},{"dup":191}],263:[function(require,module,exports){
+},{}],263:[function(require,module,exports){
+arguments[4][192][0].apply(exports,arguments)
+},{"dup":192}],264:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],264:[function(require,module,exports){
+},{}],265:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -57134,7 +60486,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":263,"_process":221,"inherits":262}],265:[function(require,module,exports){
+},{"./support/isBuffer":264,"_process":222,"inherits":263}],266:[function(require,module,exports){
 module.exports={
   "useLongScale": false,
   "baseSeparator": "-",
@@ -57177,7 +60529,7 @@ module.exports={
   },
   "unitExceptions": []
 }
-},{}],266:[function(require,module,exports){
+},{}],267:[function(require,module,exports){
 module.exports={
   "useLongScale": false,
   "baseSeparator": "-",
@@ -57233,7 +60585,7 @@ module.exports={
   ],
   "unitExceptions": []
 }
-},{}],267:[function(require,module,exports){
+},{}],268:[function(require,module,exports){
 module.exports={
   "useLongScale": false,
   "baseSeparator": " ",
@@ -57296,7 +60648,7 @@ module.exports={
   "unitExceptions": []
 }
 
-},{}],268:[function(require,module,exports){
+},{}],269:[function(require,module,exports){
 module.exports={
   "useLongScale": true,
   "baseSeparator": " y ",
@@ -57426,7 +60778,7 @@ module.exports={
   ]
 }
 
-},{}],269:[function(require,module,exports){
+},{}],270:[function(require,module,exports){
 module.exports={
   "useLongScale": false,
   "baseSeparator": "-",
@@ -57556,7 +60908,7 @@ module.exports={
   }
 }
 
-},{}],270:[function(require,module,exports){
+},{}],271:[function(require,module,exports){
 module.exports={
   "useLongScale": true,
   "baseSeparator": "",
@@ -57682,7 +61034,7 @@ module.exports={
   ]
 }
 
-},{}],271:[function(require,module,exports){
+},{}],272:[function(require,module,exports){
 module.exports={
     "useLongScale": false,
     "baseSeparator": "",
@@ -57807,7 +61159,7 @@ module.exports={
     ]
 }
 
-},{}],272:[function(require,module,exports){
+},{}],273:[function(require,module,exports){
 module.exports={
   "useLongScale": true,
   "baseSeparator": " e ",
@@ -57914,7 +61266,7 @@ module.exports={
   ]
 }
 
-},{}],273:[function(require,module,exports){
+},{}],274:[function(require,module,exports){
 module.exports={
   "useLongScale": false,
   "baseSeparator": " e ",
@@ -58033,7 +61385,7 @@ module.exports={
   ]
 }
 
-},{}],274:[function(require,module,exports){
+},{}],275:[function(require,module,exports){
 module.exports={
   "useLongScale": false,
   "baseSeparator": " ",
@@ -58086,7 +61438,7 @@ module.exports={
   ],
   "unitExceptions": []
 }
-},{}],275:[function(require,module,exports){
+},{}],276:[function(require,module,exports){
 module.exports={
   "useLongScale": false,
   "baseSeparator": " ",
@@ -58137,7 +61489,7 @@ module.exports={
   ],
   "unitExceptions": []
 }
-},{}],276:[function(require,module,exports){
+},{}],277:[function(require,module,exports){
 "use strict";
 exports = module.exports = writtenNumber;
 var util = require("./util");
@@ -58332,7 +61684,7 @@ function handleSmallerThan100(n, language, unit, baseCardinals, options) {
   return baseCardinals[dec];
 }
 
-},{"./i18n/en-indian.json":265,"./i18n/en.json":266,"./i18n/eo.json":267,"./i18n/es.json":268,"./i18n/fr.json":269,"./i18n/hu.json":270,"./i18n/it.json":271,"./i18n/pt-PT.json":272,"./i18n/pt.json":273,"./i18n/tr.json":274,"./i18n/vi.json":275,"./util":277}],277:[function(require,module,exports){
+},{"./i18n/en-indian.json":266,"./i18n/en.json":267,"./i18n/eo.json":268,"./i18n/es.json":269,"./i18n/fr.json":270,"./i18n/hu.json":271,"./i18n/it.json":272,"./i18n/pt-PT.json":273,"./i18n/pt.json":274,"./i18n/tr.json":275,"./i18n/vi.json":276,"./util":278}],278:[function(require,module,exports){
 "use strict";
 /**
  * Merges a set of default keys with a target object
