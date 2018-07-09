@@ -1878,6 +1878,7 @@ public class Mod131DAO extends FiscalModelDAO {
 								FiscalUtils.getPeriodStart(mod)
 								,FiscalUtils.getPeriodEnd(mod)) + 1));
 						Epigraph epi = Epigraph.getEpigraph(prevAct.getEpigraph());
+						prevAct.setMaxImport(epi.getLimExceso());
 						int idx = 0;
 						for (Module m : epi.getIRPFModules()) {
 							prevAct.getModules().get(idx).setSalariedStaff(m.isSalariedStaff());
