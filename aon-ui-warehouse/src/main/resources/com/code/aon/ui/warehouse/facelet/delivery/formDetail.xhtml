@@ -181,7 +181,7 @@
 								rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}"
 								actionListener="#{deliveryDetail.onLongDescription}"
 								reRender="deliveryDetailItemNew" ajaxSingle="true" />
-							<aon:if test="#{domainSwitcher.betaDomain}">
+							<aon:if test="#{domainSwitcher.alphaDomain}">
 								<aon:commandButton id="itemCompositionEdit" value="&#160;"
 									title="#{bundle.aon_to_specify} #{bundle.product_composition}"
 									styleClass="aon-icon-version aon-vertical-align-top"

@@ -22,10 +22,16 @@ public class DeliveryDetailCompositeListener extends ControllerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
+	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
+		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
+		controller.getCompositeHandler().reset();;
+	}
+	
+	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		if(ds.isBetaEnabled()){
+		if(ds.isAlphaEnabled()){
 			controller.getCompositeHandler().acceptItemComposition();
 		} else {
 			Delivery delivery = (Delivery)controller.getMasterController().getTo();

@@ -1,11 +1,10 @@
 package com.code.aon.ui.commercial.event;
 
-import com.code.aon.commercial.Offer;
-import com.code.aon.commercial.OfferDetail;
-
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import com.code.aon.AonVersion;
+import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.ItemComposition;
@@ -23,10 +22,16 @@ public class OfferDetailCompositeListener extends ControllerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
+	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
+		OfferDetailController controller = (OfferDetailController)event.getController();
+		controller.getCompositeHandler().reset();;
+	}
+	
+	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		OfferDetailController controller = (OfferDetailController)event.getController();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		if(ds.isBetaEnabled()){
+		if(ds.isAlphaEnabled()){
 			controller.getCompositeHandler().acceptItemComposition();
 		} else {
 			Offer offer = (Offer)controller.getMasterController().getTo();

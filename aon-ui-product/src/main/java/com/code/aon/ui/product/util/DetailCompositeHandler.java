@@ -164,7 +164,7 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 	public Item getComposeItem() {
 		return composeItem;
 	}
-	
+
 	public void load(LinesController controller, Item item) {
 		this.priceStrategy = null;
 		this.list = null;
@@ -180,6 +180,17 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 		}
 	}
 	
+	public void reset() {
+		this.priceStrategy = null;
+		this.list = null;
+		this.nevv = false;
+		
+		this.controller = null;
+		this.composeItem = null;
+		list = null;
+		setModel(null);
+	}
+	
 	public void discard(ActionEvent event) {
 		try {
 			list = this.composeItem.getItemCompositionList();
@@ -189,22 +200,21 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 	}
 	
 	public void acceptItemComposition() {
-		if(controller==null || composeItem==null)
-			throw new AbortProcessingException("Precarga de datos incorrecta, no se puede continuar.");
-		
-		if("saleInvoiceDetail".equals(controller.getBeanName())
-				|| "purchaseInvoiceDetail".equals(controller.getBeanName()))
-			addInvoiceDetailItems();
-		else if("offerDetail".equals(controller.getBeanName()))
-			addOfferDetailItems();
-		else if("purchaseDetail".equals(controller.getBeanName()))
-			addPurchaseDetailItems();
-		else if("salesDetail".equals(controller.getBeanName()))
-			addSalesDetailItems();
-		else if("deliveryDetail".equals(controller.getBeanName()))
-			addDeliveryDetailItems();
-		else if("incomeDetail".equals(controller.getBeanName()))
-			addIncomeDetailItems();
+		if(controller!=null && composeItem!=null) {
+			if("saleInvoiceDetail".equals(controller.getBeanName())
+					|| "purchaseInvoiceDetail".equals(controller.getBeanName()))
+				addInvoiceDetailItems();
+			else if("offerDetail".equals(controller.getBeanName()))
+				addOfferDetailItems();
+			else if("purchaseDetail".equals(controller.getBeanName()))
+				addPurchaseDetailItems();
+			else if("salesDetail".equals(controller.getBeanName()))
+				addSalesDetailItems();
+			else if("deliveryDetail".equals(controller.getBeanName()))
+				addDeliveryDetailItems();
+			else if("incomeDetail".equals(controller.getBeanName()))
+				addIncomeDetailItems();
+		}
 	}
 	
 	private IPriceStrategy getPriceStrategy(){

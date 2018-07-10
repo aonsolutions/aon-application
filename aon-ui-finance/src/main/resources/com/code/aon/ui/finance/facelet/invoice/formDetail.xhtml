@@ -154,7 +154,7 @@
 											rendered="#{!controller.longDescription and controller.to.item.product.code != null}"
 											actionListener="#{controller.onLongDescription}"
 											reRender="invoiceDetailItemNew" ajaxSingle="true" />
-										<aon:if test="#{domainSwitcher.betaDomain}">
+										<aon:if test="#{domainSwitcher.alphaDomain}">
 											<aon:commandButton id="itemCompositionEdit" value="&#160;"
 												title="#{bundle.aon_to_specify} #{bundle.product_composition}"
 												styleClass="aon-icon-version aon-vertical-align-top"

@@ -24,10 +24,16 @@ public class InvoiceDetailCompositeListener extends ControllerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
+	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		controller.getCompositeHandler().reset();;
+	}
+	
+	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		if(ds.isBetaEnabled()){
+		if(ds.isAlphaEnabled()){
 			controller.getCompositeHandler().acceptItemComposition();
 		} else {
 			Invoice invoice = (Invoice)controller.getMasterController().getTo();
