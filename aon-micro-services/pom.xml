@@ -59,7 +59,7 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+	</plugins>
   </build>
   <dependencies>
     <!-- INTERNAL LIBRARIES -->
@@ -125,6 +125,14 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.webservice</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+
     <!-- EXTERNAL LIBRARIES -->
     <dependency>
       <groupId>org.openid4java</groupId>
