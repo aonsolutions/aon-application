@@ -350,7 +350,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 			try {
 				double cgcBaseMin = getCgcBaseMin(expressionContext, period);
-				if ( value == null || value == 0.00 || value < cgcBaseMin )
+				if ( value == null || value == 0.00 || cgcBaseMin <= 0.00 || value < cgcBaseMin )
 					fixed.add( result );
 				else
 					fixed.add( new TimedResult<Double>(value/12, period, result.getContext())); // TODO: 12?

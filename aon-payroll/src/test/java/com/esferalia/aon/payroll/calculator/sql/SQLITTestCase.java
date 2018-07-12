@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
@@ -17,6 +18,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
@@ -38,6 +42,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Ignore;
@@ -3926,6 +3931,152 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1750.00, salary.getTotalPayment(), DELTA);
 	}
 	
+
+	
+	@Test
+	@Ignore("Not yet fixed")
+	public void testITWithConstantIX() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startContract = add(getFirstDayOfMonth(getToday()), MONTH, -2 );
+		//@formatter:off
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				"__P0" ,
+				"__P1"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+		
+		//addData(aonContext, contract, startContract, endDate, "__P0", "250.00");;
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+		
+		Date brEndDate = add(getFirstDayOfMonth(startITDate), DAY_OF_MONTH,-1);
+		Date brStartDate = getFirstDayOfMonth(brEndDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, brStartDate, brEndDate, brEndDate, contract);
+		JooqSalaryBuilder<Salary> builder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(builder).calculate(ctx);
+		builder.execute();
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(); 
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+	}
+
+	@Test
+	public void testITPartialNoHours() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		int lastDayOfMonth = get(getLastDayOfMonth(getToday()), Calendar.DAY_OF_WEEK);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(add(getToday(), Calendar.YEAR, -1)),
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),format("\"%s\"", C200.getValue()));
+						put(AGREEMENT_HOURS.getName(), format("%d", 40));
+						
+						put(SUNDAY_HOURS.getName(), format(Locale.US,"%f", lastDayOfMonth == Calendar.SUNDAY ? 0.00 : 20.00/6.00 ));
+						put(MONDAY_HOURS.getName(), format(Locale.US,"%f", lastDayOfMonth == Calendar.MONDAY ? 0.00 : 20.00/6.00));
+						put(TUESDAY_HOURS.getName(), format(Locale.US,"%f", lastDayOfMonth == Calendar.TUESDAY ? 0.00 : 20.00/6.00));
+						put(WEDNESDAY_HOURS.getName(), format(Locale.US,"%f", lastDayOfMonth == Calendar.WEDNESDAY ? 0.00 : 20.00/6.00));
+						put(THURSDAY_HOURS.getName(), format(Locale.US,"%f", lastDayOfMonth == Calendar.THURSDAY ? 0.00 : 20.00/6.00));
+						put(FRIDAY_HOURS.getName(), format(Locale.US,"%f", lastDayOfMonth == Calendar.FRIDAY ? 0.00 : 20.00/6.00));
+						put(SATURDAY_HOURS.getName(), format(Locale.US,"%f", lastDayOfMonth == Calendar.SATURDAY ? 0.00 : 20.00/6.00));
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"TRACE('HORAS_TRABAJADAS:%f\r\n', HORAS_TRABAJADAS);0.00",
+				"TRACE('DIAS_TRABAJADOS:%f\r\n', DIAS_TRABAJADOS);0.00"
+				}, 
+				new String[] {
+				},
+				null,
+				null);
+		//@formatter:on
+
+		Date startITDate = add(getToday(), Calendar.MONTH,-1);
+		Date endITDate = add(getLastDayOfMonth(getToday()), Calendar.DAY_OF_MONTH,-1);
+		addIT(aonContext, contract, 
+				LeaveType.COMMON_DISEASE, 
+				startITDate,
+				endITDate, null);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		
+		Assert.assertEquals(1750.00 / monthDays * 0.50, salary.getTotalPayment(), DELTA);
+		String workedHours = salary.getSalaryData(ContextVariable.WORKED_HOURS.getName());
+		//Assert.assertEquals(40.00/ 7.00 * 0.50, Double.parseDouble(workedHours), DELTA);
+	}
 
 	// ------------------------------------------------------------------------
 	

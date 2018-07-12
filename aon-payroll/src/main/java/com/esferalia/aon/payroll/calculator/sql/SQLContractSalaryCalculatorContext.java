@@ -110,6 +110,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -3189,12 +3190,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						new ExpressionImpl().setName(getDayHours(day).getName()).setScope(ExpressionScope.SYSTEM), null,
 						day.getTime(), day.getTime(), getDayHours(day).getName()));
 
-		return p.daysStream()
+		double workedHours =  p.daysStream()
 				.map(day -> contractExpressionContext.getVariable(getDayHours(day), day.getTime(), day.getTime(), Number.class))
 				.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
 				.collect(Collectors.summingDouble(hours -> hours.doubleValue()))
 				;
 			
+		if ( workedHours != 0 )
+			return workedHours;
+		
+		Number workedDays = contractExpressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd(), Number.class);
+		if ( workedDays == null  || workedDays.doubleValue() == 0.00  ) 
+			return 0.00;
+		
+		Number agreementHours = contractExpressionContext.getVariable(AGREEMENT_HOURS, p.getStart(), p.getEnd(), Number.class);
+		if ( agreementHours == null  || agreementHours.doubleValue() == 0.00  ) 
+			return 0.00;
+		
+		return agreementHours.doubleValue()  * workedDays.doubleValue() / 7.00 ; 
 				
 	}
 
@@ -3299,6 +3312,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private boolean containsVariable(Object name) {
 		return this.contractExpressionContext.containsVariable(name, this.contractStartDate, this.contractEndDate);
+	}
+
+	private boolean isConstantVariable(Object name) {
+		Object last = null;
+		Date endDate = null;
+		Date startDate = null;
+		List<ITimedVariable<Object>> list =this.contractExpressionContext.getVariables(name, this.contractStartDate, this.contractEndDate);
+		for ( ITimedVariable<Object> var : list  ) {
+			Period p = var.getPeriod();
+			Object v = var.getValue(p);
+			if ( last == null  )
+				last = v;
+			else if ( !last.equals(v) )
+				return false;
+			endDate = endDate == null ? p.getEnd() : Period.max(endDate, p.getEnd());
+			startDate = startDate == null ? p.getStart() : Period.min(startDate, p.getStart());
+		}
+		
+		return ( Period.compare(startDate, contractStartDate) == 0 )
+				&& ( Period.compare(endDate, contractEndDate) == 0 );
 	}
 
 	private boolean containsVariable(Object name, Period p) {
@@ -3640,6 +3673,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 								if (isWholeMonth(p) /* && false */ ) {
 									return wholeFactor;
+								}else if (isAllMonth()  ) {
+									return wholeFactor;
 								} else {
 									
 									ICalendar calendar = getCalendar();
@@ -3875,13 +3910,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public Double getValue(Period p) {
 
-					return p.daysStream()
+					Double workedHours =  p.daysStream()
 							.filter(day -> !isHoliday(day))
 							.filter(day -> getDayType(day) != DayType.HOLIDAY)
 							.map(day -> ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(),
 									day.getTime(), Number.class))
 							.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
 							.collect(Collectors.summingDouble(hours -> hours.doubleValue()));
+					
+					if ( workedHours != 0 )
+						return workedHours;
+					
+					Number workedDays = ctx.getVariable(WORKED_DAYS, p.getStart(), p.getEnd(), Number.class);
+					if ( workedDays == null  || workedDays.doubleValue() == 0.00  ) 
+						return 0.00;
+					
+					Number agreementHours = ctx.getVariable(AGREEMENT_HOURS, p.getStart(), p.getEnd(), Number.class);
+					if ( agreementHours == null  || agreementHours.doubleValue() == 0.00  ) 
+						return 0.00;
+					
+					return agreementHours.doubleValue()  * workedDays.doubleValue() / 7.00 ; 
 				}
 
 			};
@@ -4247,6 +4295,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 	
+	private boolean isAllMonth() {
+		return AonDateUtils.get(contractStartDate, Calendar.DATE ) == 1 
+				&& AonDateUtils.get(contractEndDate, Calendar.DATE ) == AonDateUtils.get(AonDateUtils.getLastDayOfMonth(contractEndDate), Calendar.DATE)
+				&& isConstantVariable(WEEK_HOURS);
+	}
 
 
 	private DayType getDayType ( Calendar day ) {
