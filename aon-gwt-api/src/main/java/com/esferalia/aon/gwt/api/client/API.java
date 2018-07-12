@@ -29,12 +29,6 @@ public class API {
 		this.userName = userName;
 	}
 	
-	public API(String url, String accessToken, Integer domainId) {
-		this.url = url;
-		this.accessToken = accessToken;
-		this.domainId = domainId;
-	}
-	
 	public Finance getFinance() {
 		return new Finance(url, accessToken, domainName, domainId, userName);
 	}
@@ -80,7 +74,7 @@ public class API {
 	}
 	
 	public Commission getCommission() {
-		return new Commission(url, accessToken, domainId);
+		return new Commission(url, accessToken, domainName, domainId, userName);
 	}
 	
 	public Fiscal getFiscal() {

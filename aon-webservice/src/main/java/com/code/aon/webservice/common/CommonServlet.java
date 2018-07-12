@@ -48,39 +48,38 @@ public class CommonServlet extends HttpServlet{
 		
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		
-		String domainName = req.getServerName();
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		String username = req.getRemoteUser().contains("=")
-				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
-				: req.getRemoteUser(); 
-				
-		String md5 = Utils.getMd5(username+domain.getName());
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+		String md5 = Utils.getMd5(userName+domain.getName());
 	
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 		
 		if(accessToken.equals(md5)){
-			switch (req.getPathInfo()) {
-			case "/" + MSG.WORKPLACE:
-				object = getWorkplaceList(domain, username);
+			
+			switch (pathInfo[3]) {
+			case MSG.WORKPLACE:
+				object = getWorkplaceList(domain, userName);
 				break;
-			case "/" + MSG.MAIL_ACCOUNT: 
-				object = getMailAccountList(domain, username);
+			case MSG.MAIL_ACCOUNT: 
+				object = getMailAccountList(domain, userName);
 				break;
-			case "/" + MSG.SIGNATURE: 
-				object = getSignatureList(domain, username);
+			case MSG.SIGNATURE: 
+				object = getSignatureList(domain, userName);
 				break;
-			case "/" + MSG.APP_PARAM: 
+			case MSG.APP_PARAM: 
 				String param = req.getParameter("param");
 				JSONArray array = new JSONArray();
-				AON.getApplicationParameterStream(domain.getName(), domain.getId(), username, f -> 
+				AON.getApplicationParameterStream(domain.getName(), domain.getId(), userName, f -> 
 					f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().like(param+"%")))
 				.forEach(app -> array.put(ToJSON.applicationParameterToJSON(app)));
 				object = array;
 				break;
-			case "/" + MSG.DATA_RESPONSE: 
-				object = getDataResponseList(domain, username, req.getParameterMap());
+			case MSG.DATA_RESPONSE: 
+				object = getDataResponseList(domain, userName, req.getParameterMap());
 				break;
 			default:
 				break;

@@ -38,8 +38,8 @@ public class CommissionCalculate extends AonTemplate2{
 
 	public CommissionCalculate(AonData aonData) {
 		this.aonData = aonData;
-		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getId());
+		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(), aonData.getDomain().getName(),
+				aonData.getDomain().getId(), aonData.getUser().getLogin());
 	}
 	
 	@Override

@@ -45,14 +45,12 @@ public class FinanceServlet extends HttpServlet{
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
 		
-		String domainName = req.getServerName();
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		String username = req.getRemoteUser().contains("=")
-				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
-				: req.getRemoteUser();
+		Domain domain = AON.getDomain(domainName, domainId, userName);
 
-		String md5 = Utils.getMd5(username+domain.getName());
+		String md5 = Utils.getMd5(userName+domain.getName());
 		
 		if(accessToken.equals(md5)){
 			if(pathInfo.length > 3){
@@ -63,35 +61,35 @@ public class FinanceServlet extends HttpServlet{
 					if(pathInfo.length > 4){
 						if (MSG.REGISTRY.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE INVOICE CON REGISTRY X
-								object = getInvoiceList(domain, username, Integer.parseInt(pathInfo[5]));
+								object = getInvoiceList(domain, userName, Integer.parseInt(pathInfo[5]));
 						} else if(pathInfo[4].equals("id")) {
 							if(pathInfo.length > 5) // INVOICE CON ID X
-								object = getInvoice(domain, username, Integer.parseInt(pathInfo[5]));
+								object = getInvoice(domain, userName, Integer.parseInt(pathInfo[5]));
 						} else if(pathInfo[4].equals("movements")) {
-							object = getInvoiceMovements(domain, username, req.getParameterMap());
+							object = getInvoiceMovements(domain, userName, req.getParameterMap());
 						}
 					} else {// LISTA DE INVOICE CONDICION DOMAIN
-						object = getInvoiceList(domain, username, req);
+						object = getInvoiceList(domain, userName, req);
 					}
 					break;
 				case MSG.FEE: // FEE
 					if(pathInfo.length > 4){
 						if (MSG.CUSTOMER.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE FEE CON CUSTOMER X
-								object = getFeeList(domain, username, Integer.parseInt(pathInfo[5]));
+								object = getFeeList(domain, userName, Integer.parseInt(pathInfo[5]));
 						} else if(MSG.ID.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // FEE CON ID X
-								object = getFee(domain, username, Integer.parseInt(pathInfo[5])); 
+								object = getFee(domain, userName, Integer.parseInt(pathInfo[5])); 
 						}
 					} else {// LISTA DE INVOICE CONDICION DOMAIN
-						getFeeList(domain, username);
+						getFeeList(domain, userName);
 					}
 					break;
 				case MSG.BOUGHT_PRODUCT: // INVOICE
 					if(pathInfo.length > 4){
 						if (MSG.REGISTRY.equals(pathInfo[4])) {
 							if(pathInfo.length > 5) // LISTA DE INVOICE CON REGISTRY X
-								object = getBoughtProductList(domain, username, Integer.parseInt(pathInfo[5]));
+								object = getBoughtProductList(domain, userName, Integer.parseInt(pathInfo[5]));
 						}
 					}
 					break;

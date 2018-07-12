@@ -26,22 +26,22 @@ public class Common extends Methods{
 	}
 	
 	public void getWorkplaces(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "common/workplace", callback);
+		get(getUrl() + "common/" + getDomainName() + "/" + getUserName() + "/workplace", callback);
 	}
 	
 	public void getMailAccounts(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "common/mail_account", callback);
+		get(getUrl() + "common/" + getDomainName() + "/" + getUserName() + "/mail_account", callback);
 	}
 	
 	public void getSignatures(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "common/signature", callback);
+		get(getUrl() + "common/" + getDomainName() + "/" + getUserName() + "/signature", callback);
 	}
 	
 	
 	// ------------------- APPLICATION PARAMETER (app_param)
 	
 	public void getAppParam(String appParam, AsyncCallback<JSON<JsAppParam>> callback){
-		get(getUrl() + "common/app_param?param="+appParam, callback);		
+		get(getUrl() + "common/" + getDomainName() + "/" + getUserName() + "/app_param?param="+appParam, callback);		
 	}
 	
 	public void insertAppParam(String requestData){
@@ -69,7 +69,7 @@ public class Common extends Methods{
 	
 	public void getDataResponse(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDataResponse>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "common/data_response" + filter, callback);
+		get(getUrl() + "common/" + getDomainName() + "/" + getUserName() + "/data_response" + filter, callback);
 	}
 	
 	public void getDataResponseQuality(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDataResponse>> callback){
@@ -79,19 +79,19 @@ public class Common extends Methods{
 	
 	public void getDataResponsePaturpatQuality(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDataResponse>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "quality/"+getDomainName()+"/"+getUserName()+"/paturpat" + filter, callback);
+		get(getUrl() + "quality/" + getDomainName() + "/" + getUserName() + "/paturpat" + filter, callback);
 	}
 	
 	public void insertDataResponse(String requestData, AsyncCallback<JsDataResponse> callback){
-		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/data_response", requestData, callback);
+		post(getUrl()+ "common/" + getDomainName() + "/" + getUserName() + "/data_response", requestData, callback);
 	}
 	
 	public void insertDataResponse2(String requestData, AsyncCallback<JsDataResponse> callback){
-		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/data_response2", requestData, callback);
+		post(getUrl()+ "common/" + getDomainName() + "/" + getUserName() + "/data_response2", requestData, callback);
 	}
 	
 	public void insertDataResponseDetail(String requestData){
-		post(getUrl()+ "common/"+getDomainName()+"/"+getUserName()+"/data_response/detail", requestData);
+		post(getUrl()+ "common/" + getDomainName() + "/" + getUserName() + "/data_response/detail", requestData);
 	}
 	
 }

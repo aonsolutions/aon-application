@@ -34,38 +34,37 @@ public class DocumentalServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Documental Servlet - GET METHOD");
-	
-		String domainName = req.getServerName();
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
+
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
-		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		String username = req.getRemoteUser().contains("=")
-				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
-				: req.getRemoteUser();
+		Domain domain = AON.getDomain(domainName, domainId, userName);
 				
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 
-		String md5 = Utils.getMd5(username+domain.getName());
+		String md5 = Utils.getMd5(userName+domain.getName());
 		if(accessToken.equals(md5)){
-			switch (req.getPathInfo()) {
-			case "/files":
-				object = getAttachJSON(domain, username);
+			switch (pathInfo[3]) {
+			case "files":
+				object = getAttachJSON(domain, userName);
 				break;
-			case "/certificates":
-				object = getCertificateAttachJSON(domain, username);
+			case "certificates":
+				object = getCertificateAttachJSON(domain, userName);
 				break;
-			case "/quality":
-				object = getQualityImagesJSON(domain, username, req.getParameter(MSG.ID));
+			case "quality":
+				object = getQualityImagesJSON(domain, userName, req.getParameter(MSG.ID));
 				break;
-			case "/category":
-				object = getCategoryJSON(domain, username);
+			case "category":
+				object = getCategoryJSON(domain, userName);
 				break;
-			case "/tag":
-				object = getTagJSON(domain, username);
+			case "tag":
+				object = getTagJSON(domain, userName);
 				break;
-			case "/scope":
-				object = getScopeJSON(domain, username);
+			case "scope":
+				object = getScopeJSON(domain, userName);
 				break;
 			default:
 				break;

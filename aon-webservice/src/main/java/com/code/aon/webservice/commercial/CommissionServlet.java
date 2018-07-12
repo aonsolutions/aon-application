@@ -40,22 +40,23 @@ public class CommissionServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Commission Servlet - GET METHOD");
-		String domainName = req.getServerName();
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1];
+		String userName = pathInfo[2];
+		 
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		String username = req.getRemoteUser().contains("=")
-				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
-				: req.getRemoteUser(); 
-		
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+	
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 		
-		switch (req.getPathInfo()) {
-		case "/calculated/offer":
-			object = getOfferCalculatedCommission(domain, username, req.getParameterMap());
+		String path = pathInfo[3] + "/" + pathInfo[4];
+		switch (path) {
+		case "calculated/offer":
+			object = getOfferCalculatedCommission(domain, userName, req.getParameterMap());
 			break;
-		case "/calculated/invoice":
-			object = getInvoiceCalculatedCommission(domain, username, req.getParameterMap());
+		case "calculated/invoice":
+			object = getInvoiceCalculatedCommission(domain, userName, req.getParameterMap());
 			break;
 		default:
 			break;
@@ -69,20 +70,21 @@ public class CommissionServlet extends HttpServlet{
 
 		JSONObject json = Utils.getRequestJSON(req);
 
-		String domainName = req.getServerName();
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1];
+		String userName = pathInfo[2];
+		
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		String username = req.getRemoteUser().contains("=")
-				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
-				: req.getRemoteUser(); 
+		Domain domain = AON.getDomain(domainName, domainId, userName);
 		
 		Object object = new Object();
-		switch (req.getPathInfo()) {
-		case "/calculated/offer":
-			object = updateOfferCalculatedCommission(domain, username, json);
+		String path = pathInfo[3] + "/" + pathInfo[4];
+		switch (path) {
+		case "calculated/offer":
+			object = updateOfferCalculatedCommission(domain, userName, json);
 			break;
-		case "/calculated/invoice":
-			object = updateInvoiceCalculatedCommission(domain, username, json);
+		case "calculated/invoice":
+			object = updateInvoiceCalculatedCommission(domain, userName, json);
 			break;
 		default:
 			break;

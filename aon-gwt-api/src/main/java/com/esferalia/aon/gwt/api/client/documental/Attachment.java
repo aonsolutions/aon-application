@@ -29,27 +29,27 @@ public class Attachment extends Methods{
 	}
 	
 	public void getAttachList( AsyncCallback<JSON<JsAttach>> callback){
-		get(url + "attachment/files", callback);
+		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/files", callback);
 	}
 	
 	public void getCertificates( AsyncCallback<JSON<JsAttach>> callback){
-		get(url + "attachment/certificates", callback);
+		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/certificates", callback);
 	}
 	
 	public void getCategories(AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "attachment/category",callback);
+		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/category", callback);
 	}	
 	
 	public void getTags(AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "attachment/tag",callback);
+		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/tag", callback);
 	}	
 
 	public void getScopes(AsyncCallback<JSON<JsObject>> callback){
-		get(url + "attachment/scope",callback);
+		get(url + "attachment/"+ getDomainName() + "/" + getUserName() + "/scope",callback);
 	}	
 
 	public void getQualityImages(Integer id,AsyncCallback<JSON<JsAttach>> callback){
-		get(url + "attachment/quality?id="+id, callback);
+		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/quality?id="+id, callback);
 	}
 	
 	public void removeAttach(String requestData,AsyncCallback<JSON<JsAttach>> callback){
@@ -64,7 +64,7 @@ public class Attachment extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_attachment/" + result, "_blank", null);
+				Window.open(getUrl() + "download_attachment/"  + getDomainName() + "/" + getUserName() + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}

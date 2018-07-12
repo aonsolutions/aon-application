@@ -39,10 +39,11 @@ public class DownloadAttachmentServlet extends HttpServlet {
 		Integer domainId = Integer.parseInt(parameters.get("domain"));
 		Integer id = Integer.parseInt(parameters.get("id"));
 		String attachType = parameters.get("attach_type");
-		String domainName = req.getServerName();
-		String userName = req.getRemoteUser().contains("=")
-				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
-				: req.getRemoteUser();
+	
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
+
 		Domain domain = AON.getDomain(domainName, domainId, userName);
 		
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id), AttachType.getAttachType(attachType), true);

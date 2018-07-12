@@ -14,31 +14,35 @@ public class Commission extends Methods{
 
 	final IApiAsync impl = GWT.create(IApi.class);
 
-	public Commission(String url, String accesToken, Integer domainId) {
+	public Commission(String url, String accesToken, String domainName, Integer domainId, String userName) {
 		this.url = url;
 		this.accessToken = accesToken;
+		this.domainName = domainName;
 		this.domainId = domainId;
+		this.userName = userName;
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
 	
 	public void getOfferCalculatedCommission(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommission>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "commission/calculated/offer" + filter, callback);
+		get(getUrl() + "commission/" + getDomainName() + "/" + getUserName() + "/calculated/offer" + filter, callback);
 	}
 	
 	public void getInvoiceCalculatedCommission(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommission>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "commission/calculated/invoice" + filter, callback);
+		get(getUrl() + "commission/" + getDomainName() + "/" + getUserName() + "/calculated/invoice" + filter, callback);
 	}
 	
 	public void updateOfferCommissionCalculate(String requestData){
-		post(getUrl()+ "commission/calculated/offer", requestData);
+		post(getUrl()+ "commission/"+ getDomainName() + "/" + getUserName() + "/calculated/offer", requestData);
 	}
 	
 	public void updateInvoiceCommissionCalculate(String requestData){
-		post(getUrl()+ "commission/calculated/invoice", requestData);
+		post(getUrl()+ "commission/" + getDomainName() + "/" + getUserName() + "/calculated/invoice", requestData);
 	}
 	
+	
+	// aon-ui-commercial
 	public void offerCommissionCalculate(String requestData){
 		post(getUrl()+ "commission_calculation/offer", requestData);
 	}

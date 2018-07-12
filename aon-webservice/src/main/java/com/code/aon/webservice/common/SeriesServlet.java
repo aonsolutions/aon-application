@@ -27,14 +27,12 @@ public class SeriesServlet extends HttpServlet{
 		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
 		String[] pathInfo = req.getPathInfo().split("/");
 		
-		String domainName = req.getServerName();
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		Domain domain = AON.getDomain(domainName, domainId, req.getRemoteUser());
-		String username = req.getRemoteUser().contains("=")
-				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
-				: req.getRemoteUser();
-				
-		String md5 = Utils.getMd5(username+domain.getName());
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+	
+		String md5 = Utils.getMd5(userName+domain.getName());
 		
 		if(accessToken.equals(md5)){
 			if(pathInfo.length > 3){
@@ -42,10 +40,10 @@ public class SeriesServlet extends HttpServlet{
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
 				case "offer":
-					object = getOfferSeries(domain, username);
+					object = getOfferSeries(domain, userName);
 					break;
 				case "invoice": 
-					object = getInvoiceSeries(domain, username);
+					object = getInvoiceSeries(domain, userName);
 					break;
 				default:
 					break;

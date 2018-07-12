@@ -36,15 +36,14 @@ public class RegistryServlet extends HttpServlet{
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
 
-		String domainName = req.getServerName();
-		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
+		String domainName = pathInfo[1];
+		String userName = pathInfo[2];
 		
-		String username = req.getRemoteUser().contains("=")
-				? req.getRemoteUser().substring(req.getRemoteUser().lastIndexOf("=") + 1)
-				: req.getRemoteUser();		
+		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
+	
 
-		Domain domain = AON.getDomain(domainName, domainId, username);
-		String md5 = Utils.getMd5(username+domain.getName());
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+		String md5 = Utils.getMd5(userName+domain.getName());
 		
 		if(accessToken.equals(md5)){
 			if(pathInfo.length > 3){
@@ -59,7 +58,7 @@ public class RegistryServlet extends HttpServlet{
 							if(pathInfo.length > 5)
 								// LISTA DE RMEDIA CON REGISTRY X
 								if(AonStringUtils.isNumeric(pathInfo[5]))
-									object = getGeneralList(domain, username, Integer.parseInt(pathInfo[5]));
+									object = getGeneralList(domain, userName, Integer.parseInt(pathInfo[5]));
 								else object = new JSONObject();
 						} 
 					}
@@ -70,7 +69,7 @@ public class RegistryServlet extends HttpServlet{
 							if(pathInfo.length > 5)
 								// LISTA DE RMEDIA CON REGISTRY X
 								if(AonStringUtils.isNumeric(pathInfo[5]))
-									object = getProfileList(domain, username, Integer.parseInt(pathInfo[5]));
+									object = getProfileList(domain, userName, Integer.parseInt(pathInfo[5]));
 								else object = new JSONObject();
 						} 
 					}
@@ -81,23 +80,23 @@ public class RegistryServlet extends HttpServlet{
 							if(pathInfo.length > 5)
 								// LISTA DE RMEDIA CON REGISTRY X
 								if(AonStringUtils.isNumeric(pathInfo[5]))
-									object = getRmediaList(domain, username, Integer.parseInt(pathInfo[5]));
+									object = getRmediaList(domain, userName, Integer.parseInt(pathInfo[5]));
 								else object = new JSONObject();
 						} else if(pathInfo[4].equals("id")) {
 							if(pathInfo.length > 5) 
 								// RMEDIA CON ID X
-								object = getRmedia(domain, username, Integer.parseInt(pathInfo[5])); 
+								object = getRmedia(domain, userName, Integer.parseInt(pathInfo[5])); 
 						}
 					} else {
 						// LISTA DE RMEDIA CONDICION DOMAIN
-						object = getRmediaList(domain, username);
+						object = getRmediaList(domain, userName);
 					}
 					break;
 				case "raddress": // RADDRESS
 					if(pathInfo.length > 4){
 						if (pathInfo[4].equals("registry")) {
 							if(pathInfo.length > 5)
-								object = getRaddress(domain, username, Integer.parseInt(pathInfo[5]));
+								object = getRaddress(domain, userName, Integer.parseInt(pathInfo[5]));
 						}
 					}
 					break;
@@ -107,29 +106,29 @@ public class RegistryServlet extends HttpServlet{
 							if(pathInfo.length > 5)
 								// LISTA DE RMEDIA CON REGISTRY X
 								if(AonStringUtils.isNumeric(pathInfo[5]))
-									object = getRnoteList(domain, username, Integer.parseInt(pathInfo[5]));
+									object = getRnoteList(domain, userName, Integer.parseInt(pathInfo[5]));
 								else object = new JSONObject();
 						} else if(pathInfo[4].equals("id")) {
 							if(pathInfo.length > 5) 
 								// RMEDIA CON ID X
-								object = getRnote(domain, username, Integer.parseInt(pathInfo[5])); 
+								object = getRnote(domain, userName, Integer.parseInt(pathInfo[5])); 
 						}
 					} else {
 						// LISTA DE RMEDIA CONDICION DOMAIN
-						object = getRnoteList(domain, username);
+						object = getRnoteList(domain, userName);
 					}
 					break;
 				case "customer": // customer
-					object = getCustomerList(domain, username);
+					object = getCustomerList(domain, userName);
 					break;
 				case "seller": // SELLERS - VENDEDORES
-					object = getSellerList(domain, username);
+					object = getSellerList(domain, userName);
 					break;
 				case "supplier": // SUPPLIERS - PROVEEDORES
-					object = getSupplierList(domain, username);
+					object = getSupplierList(domain, userName);
 					break;
 				case "target": // TARGETS
-					object = getTargetList(domain, username);
+					object = getTargetList(domain, userName);
 					break;
 				default:
 					break;
