@@ -337,8 +337,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 											// puede
 											// ser
 											// NULL
-			+ "	ON payment_concept = payment_concept.id" + " WHERE start_date <= ? " + " AND ( end_date IS NULL"
-			+ " OR end_date >= ? )" + " AND " + SQLContractPayment.PAYMENT_ALIAS + ".domain <= 0 ";
+			+ " ON payment_concept = payment_concept.id" + " WHERE start_date <= ? " + " AND ( end_date IS NULL"
+			+ " OR end_date >= ? )" + " AND " + SQLContractPayment.PAYMENT_ALIAS + ".domain <= 0 "
+			+ " ORDER BY payment_concept.code "
+			;
 
 	private static final String CDATA_SQL = "SELECT * " + " FROM contract_data" + " WHERE contract = ? "
 			+ "AND start_date <= ? " + " AND ( end_date IS NULL " + " OR end_date >= ? )"
@@ -1903,6 +1905,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private void initPaymentStmt() throws SQLException {
 		String paymentSql = CriteriaUtilities.toSQLString(paymentsCriteria, PAYMENT_SQL);
 		paymentSql = orderBy(paymentSql, order == OLDER ? NEWER : OLDER);
+		paymentSql = orderBy(paymentSql, CODE);
 		this.paymentStmt = this.connection.prepareStatement(paymentSql);
 		this.paymentStmt.setDate(2, toSqlDate(this.getEnd()));
 		this.paymentStmt.setDate(3, toSqlDate(this.startDate));

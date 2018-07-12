@@ -42,6 +42,15 @@ public interface ISQLContractSalaryCalculatorContext extends
 			*/
 
 	@SuppressWarnings("serial")
+	static final OrderByList CODE = new OrderByList() {
+		{
+			add(new Order(
+					ExpressionUtilities.getIdentifierExpression("code"),
+					false));
+		}
+	};
+
+	@SuppressWarnings("serial")
 	static final OrderByList OLDER = new OrderByList() {
 		{
 			add(new Order(
