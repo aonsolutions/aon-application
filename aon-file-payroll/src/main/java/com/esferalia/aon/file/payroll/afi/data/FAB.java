@@ -10,7 +10,7 @@ public class FAB {
 	private Integer fechaReal;
 	private Integer grupoCotizacion;
 	private String indicativoGrupoCotizacionDiario;
-	private String gradoDiscapacidad;
+	private Integer gradoDiscapacidad;
 	private Integer claveContrato;
 	private String condicionDesempleado;
 	private String mujerSubrepresentada;
@@ -61,10 +61,10 @@ public class FAB {
 	public void setIndicativoGrupoCotizacionDiario(String indicativoGrupoCotizacionDiario) {
 		this.indicativoGrupoCotizacionDiario = indicativoGrupoCotizacionDiario;
 	}
-	public String getGradoDiscapacidad() {
+	public Integer getGradoDiscapacidad() {
 		return gradoDiscapacidad;
 	}
-	public void setGradoDiscapacidad(String gradoDiscapacidad) {
+	public void setGradoDiscapacidad(Integer gradoDiscapacidad) {
 		this.gradoDiscapacidad = gradoDiscapacidad;
 	}
 	public Integer getClaveContrato() {

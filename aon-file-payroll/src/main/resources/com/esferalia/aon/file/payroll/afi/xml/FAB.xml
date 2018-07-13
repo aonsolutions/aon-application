@@ -7,7 +7,7 @@
 	<field name="fecha_real" value="bean" bean="FAB" property="fechaReal" format="Numeric" pattern="9(8)" />
 	<field name="grupo_cotizacion" value="bean" bean="FAB" property="grupoCotizacion" format="Numeric" pattern="9(2)" />
 	<field name="indicativo_grupo_cotizacion_diario" value="bean" bean="FAB" property="indicativoGrupoCotizacionDiario" format="AlphaNumeric" pattern="X(1)" />
-	<field name="grado_discapacidad" value="bean" bean="FAB" property="gradoDiscapacidad" format="AlphaNumeric" pattern="X(2)" />
+	<field name="grado_discapacidad" value="bean" bean="FAB" property="gradoDiscapacidad" format="Numeric" pattern="9(2)" />
 	<field name="clave_contrato" value="bean" bean="FAB" property="claveContrato" format="Numeric" pattern="9(3)" />
 	<field name="condicion_desempleado" value="bean" bean="FAB" property="condicionDesempleado" format="AlphaNumeric" pattern="X(1)" />
 	<field name="mujer_subrepresentada" value="bean" bean="FAB" property="mujerSubrepresentada" format="AlphaNumeric" pattern="X(1)" />

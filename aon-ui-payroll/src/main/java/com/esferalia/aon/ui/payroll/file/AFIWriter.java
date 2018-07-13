@@ -286,7 +286,7 @@ public class AFIWriter implements Serializable {
 			fab.setGrupoCotizacion(quoteGroup);
 		}
 		// TODO indicativoGrupoCcotizacionDiario
-		fab.setIndicativoGrupoCotizacionDiario(null);
+		fab.setIndicativoGrupoCotizacionDiario("N");
 		// TODO GradoDiscapacidad
 		fab.setGradoDiscapacidad(null);
 		fab.setClaveContrato(Integer.parseInt(getContractCode(detail.getContract()).getValue()));

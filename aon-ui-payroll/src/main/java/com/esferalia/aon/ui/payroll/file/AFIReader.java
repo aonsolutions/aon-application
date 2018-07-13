@@ -118,7 +118,7 @@ public class AFIReader {
 						// nada
 					}
 					fab.setGrupoCotizacion(Integer.parseInt(currentLine.substring(16, 18)));
-					fab.setGradoDiscapacidad(currentLine.substring(18, 20));
+					fab.setGradoDiscapacidad(Integer.parseInt(currentLine.substring(18, 20)));
 					fab.setClaveContrato(Integer.parseInt(currentLine.substring(21, 24)));
 					fab.setCondicionDesempleado(currentLine.substring(24, 25));
 					fab.setMujerSubrepresentada(currentLine.substring(25, 26));
