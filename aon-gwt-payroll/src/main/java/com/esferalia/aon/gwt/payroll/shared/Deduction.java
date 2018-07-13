@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.esferalia.aon.js.payroll.client.Reports;
 
+@SuppressWarnings("serial")
 public class Deduction extends Item<Deduction.Type> implements Reports.Deduction {
 
 	public static enum Type {
@@ -21,6 +22,7 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 		FOGASA, // TODO:
 		EMBARGO // TODO: ???
 		;
+		
 		public String getDescription() {
 			return DESCRIPTIONS.get(this);
 		}
@@ -35,16 +37,22 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 				put(NON_STRUCTURAL_OVERTIME, "Resto Horas Extraordinarias");
 				put(IRPF, "I.R.P.F");
 				put(ADVANCE_PAYMENT, "Anticipo");
-				put(IN_KIND, "valor de productos en especie");
+				put(IN_KIND, "Valor de productos en especie");
 				put(OTHER, "Otras deducciones");
 				put(FOGASA, "FOGASA");
 				put(EMBARGO, "Embargo");
 			}
 		};
-
-
 	}
 
+	@Override
+	public String getTypeName() {
+		return this.type.getDescription();
+	}
 
+	@Override
+	public Double getPercent() {
+		return 0.00;
+	}
 
 }

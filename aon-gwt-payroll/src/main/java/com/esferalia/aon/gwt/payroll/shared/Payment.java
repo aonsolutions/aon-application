@@ -82,6 +82,11 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 			return description != null ? StringUtils.leftPad(getCode() , 4, '0') + " " + description : null;
 		}
 		
+		public String getDescription2() {
+			String description = DESCRIPTIONS.get(this);
+			return description != null ? StringUtils.leftPad(getCode() , 2, '0') + " " + description : null;
+		}
+		
 		public int getCode() {
 			return this.ordinal();
 		}
@@ -332,6 +337,16 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 
 	public void setQuoteExpression(String quoteExpression) {
 		this.quoteExpression = quoteExpression;
+	}
+
+	@Override
+	public int getCode() {
+		return this.type.getCode();
+	}
+
+	@Override
+	public String getCodeDescription() {
+		return this.type.getDescription2();
 	}
 	
 

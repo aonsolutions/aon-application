@@ -580,6 +580,13 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public List<Payment> getPayments() {
 		return salaryDraft.getPayments();
 	}
+	
+	@Override
+	public List<Payment> getPaymentsOrderByCode() {
+		List<Payment> payments = salaryDraft.getPayments();
+		Collections.sort(payments, (p1, p2) -> p1.getCode() - p2.getCode());
+		return payments;
+	}
 
 	@Override
 	public List<Deduction> getDeductions() {
@@ -1246,5 +1253,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public EmployeeEventsDraftObject getEmployeeEventsDraftObjecta() {
 		return employeeEventsDraftObject;
 	}
+
+	
 
 }

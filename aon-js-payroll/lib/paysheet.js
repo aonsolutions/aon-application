@@ -61,7 +61,10 @@ module.exports.newStandardPayroll = function(payroll, stream){
 	}
 
   var formatPercent = function(percent) {
-		return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
+	  	if('string' == typeof percent)
+	  		return percent;
+	  	else
+	  		return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
 	}
 
   var formatMoney = function(amount) {
@@ -69,7 +72,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
 	}
 
   var numberOffset = function(number) {
-    if(number != ''){
+    if(number != '' && 'string' != typeof number){
       var formatNumber = formatAmount(number);
       var split = formatNumber.split('.');
       switch (split[0].length) {
@@ -100,23 +103,23 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
   var getStrMonth = function (numberMonth) {
     switch (numberMonth) {
-      case '01':
+      case '1':
           return 'enero';
-      case '02':
+      case '2':
           return 'febrero';
-      case '03':
+      case '3':
           return 'marzo';
-      case '04':
+      case '4':
           return 'abril';
-      case '05':
+      case '5':
           return 'mayo';
-      case '06':
+      case '6':
           return 'junio';
-      case '07':
+      case '7':
           return 'julio';
-      case '08':
+      case '8':
           return 'agosto';
-      case '09':
+      case '9':
           return 'septiembre';
       case '10':
           return 'octubre';
@@ -148,6 +151,8 @@ module.exports.newStandardPayroll = function(payroll, stream){
     paddingLeft1 = 8;   //Padding-left first text
     paddingLeft2 = 16;  //Padding-left second text
     paddingLeft3 = 20;  //Padding-left third text
+    paddingLeft4 = 60;
+    paddingLeft5 = 80;
     marginTL = 2;       //Margin bettwen text / line, line / text, line / line
 
     //Start drawing PDF
@@ -164,7 +169,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
     rightEnterpriseX = ox + width;      //Position X for right line enterprise box
     maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
-    sizVertivalLineEE = 10;             //Size vertical line for enterprise, employee box
+    sizVertivalLineEE = 20;             //Size vertical line for enterprise, employee box
 
     // -----------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
@@ -173,26 +178,26 @@ module.exports.newStandardPayroll = function(payroll, stream){
       .moveTo(x, y).lineTo(rightEnterpriseX, y).stroke()      //Horizontal t0p line
 
       .font(headingFont)
-      .text('Empresa: ', x + paddingLeft1, y + paddingTop , {continued: true})
-      .text(formatInputData(payroll.enterprise.name, 'string'))
+      .text('Empresa: ', x + paddingLeft1, y = y + paddingTop)
+      .text(formatInputData(payroll.enterprise.name, 'string'), x + paddingLeft4, y)
 
-      .text('Domicilio: ', x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .text('Domicilio: ', x + paddingLeft1, y = pdf.y + paddingTop)
       .font(textFont)
-      .text(formatInputData(payroll.enterprise.address, 'string'))
-      .text(formatInputData(payroll.enterprise.locality , 'string'), x + paddingLeft1 + 41)
-
-      .font(headingFont)
-      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop , {continued: true})
-      .font(textFont)
-      .text(formatInputData(payroll.enterprise.cif, 'string'))
+      .text(formatInputData(payroll.enterprise.address, 'string'), x + paddingLeft4, y)
+      .text(formatInputData(payroll.enterprise.locality , 'string'), x + paddingLeft4, y = y + paddingTop)
 
       .font(headingFont)
-      .text('CCC: ' , x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop*3)
       .font(textFont)
-      .text(formatInputData(payroll.enterprise.ccc, 'number'))
+      .text(formatInputData(payroll.enterprise.cif, 'string'), x + paddingLeft4, y)
+
+      .font(headingFont)
+      .text('CCC: ' , x + paddingLeft1, y = pdf.y + paddingTop*3)
+      .font(textFont)
+      .text(formatInputData(payroll.enterprise.ccc, 'string'), x + paddingLeft4, y)
 
       .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE).stroke()                                     //Vertical left line
-  		.moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke()       //Vertical right line
+  	  .moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke()       //Vertical right line
       .moveTo(x, y + sizVertivalLineEE).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke();  //Horizontal bottom line
 
   }
@@ -209,32 +214,32 @@ module.exports.newStandardPayroll = function(payroll, stream){
       .moveTo(leftEmployeeX - left, oy).lineTo(maxRightWidth, oy).stroke()   //Horizontal t0p line
 
       .font(headingFont)
-      .text('Trabajador: ' , leftEmployeeX, employeeY, {continued: true})
-      .text(formatInputData(payroll.employee.fullname, 'string'))
+      .text('Trabajador: ' , leftEmployeeX, employeeY)
+      .text(formatInputData(payroll.employee.fullname, 'string'), leftEmployeeX + paddingLeft4, employeeY)
 
-      .text('NIF: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .text('NIF: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.nif, 'string'))
-
-      .font(headingFont)
-      .text('Nº S.S.: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
-      .font(textFont)
-      .text(formatInputData(payroll.employee.ss, 'number'))
+      .text(formatInputData(payroll.employee.nif, 'string'), leftEmployeeX + paddingLeft4, employeeY)
 
       .font(headingFont)
-      .text('Grupo profesional: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .text('Nº S.S.: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.professional_group, 'string'))
+      .text(formatInputData(payroll.employee.ss, 'number'), leftEmployeeX + paddingLeft4, employeeY)
 
       .font(headingFont)
-      .text('Grupo cotización: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .text('Grupo profesional: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.quote_group, 'string'))
+      .text(formatInputData(payroll.employee.professional_group, 'string'), leftEmployeeX + paddingLeft5, employeeY)
 
       .font(headingFont)
-      .text('Fecha antigüedad: ', leftEmployeeX + 152, employeeY , {continued: true})
+      .text('Grupo cotización: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.seniority_date, 'string'))
+      .text(formatInputData(payroll.employee.quote_group, 'string'), leftEmployeeX + paddingLeft5, employeeY)
+
+      .font(headingFont)
+      .text('Fecha antigüedad: ', leftEmployeeX + 165, employeeY)
+      .font(textFont)
+      .text(formatInputData(payroll.employee.seniority_date, 'string'), leftEmployeeX + 160 + paddingLeft5, employeeY)
 
       .moveTo(leftEmployeeX - left, oy).lineTo(leftEmployeeX - left, y + sizVertivalLineEE).stroke()              //Vertical left line
       .moveTo(maxRightWidth, oy).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()                            //Vertical right line
@@ -242,6 +247,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
       .moveDown(1);
   }
 
+  
   var newSettlementBox = function(){
     // -----------------------------------------------------------------------------------------------------------------
     // --------------------------------------------- SETTLEMENT --------------------------------------------------------
@@ -251,7 +257,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
     settlementWidth = x + pdfWidth + 100;
     settlementTop = 4;
     settlementX = ox - 50 + left;
-    settlementY = y + t0p + 12;
+    settlementY = y + t0p + 22;
     settlementYHeight = settlementY + 15;
 
     pdf
@@ -263,7 +269,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
       .text('del '+ start_date +' al '+ end_date, {continued: true})
 
       .font(headingFont)
-      .text('Total días: ', settlementX + 238 , settlementY + settlementTop, {continued: true})
+      .text('Total días: ', settlementX + 255 , settlementY + settlementTop, {continued: true})
       .font(textFont)
       .text(payroll.settlement.total_days)
 
@@ -457,26 +463,28 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
     for(i = 0; i < payroll.accruals.length; i++){
       accrual = payroll.accruals[i];
-      pdf
-        .font(titleFont)
-        .text(accrual.accrual_name , firstColumn , y);
-      craY = y;
-      y = y + 15;
-      craTotal = 0;
-      for(j = 0; j < accrual.types.length; j++){
-        type = accrual.types[j];
-        craTotal += type.type_value;
-        pdf
-          .font(textFont)
-          .text(formatMoney(type.type_value), firstColumn + numberOffset(type.type_value) , y)
-          .text("  por " + type.type_expression , secondColumn , y);
-
-        y = y + 10;
+      if(accrual.types.length > 0){
+	      pdf
+	        .font(titleFont)
+	        .text(accrual.accrual_name , firstColumn , y);
+	      craY = y;
+	      y = y + 15;
+	      craTotal = 0;
+	      for(j = 0; j < accrual.types.length; j++){
+	        type = accrual.types[j];
+	        craTotal += type.type_value;
+	        pdf
+	          .font(textFont)
+	          .text(formatMoney(type.type_value), firstColumn + numberOffset(type.type_value) , y)
+	          .text("  por " + type.type_expression , secondColumn , y);
+	
+	        y = y + 10;
+	      }
+	      y = y + 2;
+	      pdf
+	        .text(formatAmount(craTotal) , quarterColumn + numberOffset(craTotal) , craY)
+	        .moveTo(firstColumn, craY + 10).lineTo(quarterColumn + 45,  craY + 10).stroke();
       }
-      y = y + 2;
-      pdf
-        .text(formatAmount(craTotal) , quarterColumn + numberOffset(craTotal) , craY)
-        .moveTo(firstColumn, craY + 10).lineTo(quarterColumn + 45,  craY + 10).stroke();
     }
 
     pdf
@@ -517,15 +525,15 @@ module.exports.newStandardPayroll = function(payroll, stream){
     thirdColumn = 300;
     quarterColumn = 440;
 
-    common_contingency = getDeduction("Contingencias comunes");
+    common_contingency = getDeduction("Contingencias Comunes");
     unemployment = getDeduction("Desempleo");
-    professional_formation = getDeduction("Formación profesional");
-    extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
-    extra_hours_ne = getDeduction("No estructurales (HE)");
+    professional_formation = getDeduction("Formación Profesional");
+    extra_hours_e = getDeduction("Horas Extraordinarias Fuerza Mayor");
+    extra_hours_ne = getDeduction("Resto Horas Extraordinarias");
     taxesD = getDeduction("Dinerario");
     taxesS = getDeduction("Especie");
     advances = getDeduction("Anticipos");
-    spices = getDeduction("Valor de los productos recibidos en especie");
+    spices = getDeduction("Valor de productos en especie");
     other_deductions = getDeduction("Otras deducciones");
 
     if(deductionOY <= 307){
@@ -685,15 +693,15 @@ module.exports.newStandardPayroll = function(payroll, stream){
       thirdColumn = 300;
       quarterColumn = 440;
 
-      common_contingency = getDeduction("Contingencias comunes");
+      common_contingency = getDeduction("Contingencias Comunes");
       unemployment = getDeduction("Desempleo");
-      professional_formation = getDeduction("Formación profesional");
-      extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
-      extra_hours_ne = getDeduction("No estructurales (HE)");
+      professional_formation = getDeduction("Formación Profesional");
+      extra_hours_e = getDeduction("Horas Extraordinarias Fuerza Mayor");
+      extra_hours_ne = getDeduction("Resto Horas Extraordinarias");
       taxesD = getDeduction("Dinerario");
       taxesS = getDeduction("Especie");
       advances = getDeduction("Anticipos");
-      spices = getDeduction("Valor de los productos recibidos en especie");
+      spices = getDeduction("Valor de productos en especie");
       other_deductions = getDeduction("Otras deducciones");
 
       // ----------------------------------------- APORTACIONES ----------------------------------------------------
@@ -892,15 +900,18 @@ module.exports.standardPayroll = function(payroll, stream){
 	}
 
   var formatPercent = function(percent) {
-		return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
-	}
+	  if('string' == typeof percent)
+	  	return percent;
+	  else
+	  	return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
+  }
 
   var formatMoney = function(amount) {
 		return (amount && amount != '' && amount != null && amount != 0) ? amount.toFixed(2)+" €" : '';
 	}
 
   var numberOffset = function(number) {
-    if(number != ''){
+    if(number != '' && 'string' != typeof number){
       var formatNumber = formatAmount(number);
       var split = formatNumber.split('.');
       switch (split[0].length) {
@@ -931,23 +942,23 @@ module.exports.standardPayroll = function(payroll, stream){
 
   var getStrMonth = function (numberMonth) {
     switch (numberMonth) {
-      case '01':
+      case '1':
           return 'enero';
-      case '02':
+      case '2':
           return 'febrero';
-      case '03':
+      case '3':
           return 'marzo';
-      case '04':
+      case '4':
           return 'abril';
-      case '05':
+      case '5':
           return 'mayo';
-      case '06':
+      case '6':
           return 'junio';
-      case '07':
+      case '7':
           return 'julio';
-      case '08':
+      case '8':
           return 'agosto';
-      case '09':
+      case '9':
           return 'septiembre';
       case '10':
           return 'octubre';
@@ -979,6 +990,8 @@ module.exports.standardPayroll = function(payroll, stream){
     paddingLeft1 = 8;   //Padding-left first text
     paddingLeft2 = 16;  //Padding-left second text
     paddingLeft3 = 20;  //Padding-left third text
+    paddingLeft4 = 60;
+    paddingLeft5 = 80;
     marginTL = 2;       //Margin bettwen text / line, line / text, line / line
 
     //Start drawing PDF
@@ -995,7 +1008,7 @@ module.exports.standardPayroll = function(payroll, stream){
 
     rightEnterpriseX = ox + width;      //Position X for right line enterprise box
     maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
-    sizVertivalLineEE = 10;             //Size vertical line for enterprise, employee box
+    sizVertivalLineEE = 20;             //Size vertical line for enterprise, employee box
 
     // -----------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
@@ -1004,26 +1017,26 @@ module.exports.standardPayroll = function(payroll, stream){
       .moveTo(x, y).lineTo(rightEnterpriseX, y).stroke()      //Horizontal t0p line
 
       .font(headingFont)
-      .text('Empresa: ', x + paddingLeft1, y + paddingTop , {continued: true})
-      .text(formatInputData(payroll.enterprise.name, 'string'))
+      .text('Empresa: ', x + paddingLeft1, y = y + paddingTop)
+      .text(formatInputData(payroll.enterprise.name, 'string'), x + paddingLeft4, y)
 
-      .text('Domicilio: ', x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .text('Domicilio: ', x + paddingLeft1, y = pdf.y + paddingTop)
       .font(textFont)
-      .text(formatInputData(payroll.enterprise.address, 'string'))
-      .text(formatInputData(payroll.enterprise.locality , 'string'), x + paddingLeft1 + 41)
-
-      .font(headingFont)
-      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop , {continued: true})
-      .font(textFont)
-      .text(formatInputData(payroll.enterprise.cif, 'string'))
+      .text(formatInputData(payroll.enterprise.address, 'string'), x + paddingLeft4, y)
+      .text(formatInputData(payroll.enterprise.locality , 'string'), x + paddingLeft4, y = y + paddingTop)
 
       .font(headingFont)
-      .text('CCC: ' , x + paddingLeft1, y = pdf.y + paddingTop, {continued: true})
+      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop*3)
       .font(textFont)
-      .text(formatInputData(payroll.enterprise.ccc, 'number'))
+      .text(formatInputData(payroll.enterprise.cif, 'string'), x + paddingLeft4, y)
+
+      .font(headingFont)
+      .text('CCC: ' , x + paddingLeft1, y = pdf.y + paddingTop*3)
+      .font(textFont)
+      .text(formatInputData(payroll.enterprise.ccc, 'string'), x + paddingLeft4, y)
 
       .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE).stroke()                                     //Vertical left line
-  		.moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke()       //Vertical right line
+  	  .moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke()       //Vertical right line
       .moveTo(x, y + sizVertivalLineEE).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke();  //Horizontal bottom line
 
   }
@@ -1040,32 +1053,32 @@ module.exports.standardPayroll = function(payroll, stream){
       .moveTo(leftEmployeeX - left, oy).lineTo(maxRightWidth, oy).stroke()   //Horizontal t0p line
 
       .font(headingFont)
-      .text('Trabajador: ' , leftEmployeeX, employeeY, {continued: true})
-      .text(formatInputData(payroll.employee.fullname, 'string'))
+      .text('Trabajador: ' , leftEmployeeX, employeeY)
+      .text(formatInputData(payroll.employee.fullname, 'string'), leftEmployeeX + paddingLeft4, employeeY)
 
-      .text('NIF: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .text('NIF: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.nif, 'string'))
-
-      .font(headingFont)
-      .text('Nº S.S.: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
-      .font(textFont)
-      .text(formatInputData(payroll.employee.ss, 'number'))
+      .text(formatInputData(payroll.employee.nif, 'string'), leftEmployeeX + paddingLeft4, employeeY)
 
       .font(headingFont)
-      .text('Grupo profesional: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .text('Nº S.S.: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.professional_group, 'string'))
+      .text(formatInputData(payroll.employee.ss, 'number'), leftEmployeeX + paddingLeft4, employeeY)
 
       .font(headingFont)
-      .text('Grupo cotización: ', leftEmployeeX, employeeY = employeeY + employeeTop, {continued: true})
+      .text('Grupo profesional: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.quote_group, 'string'))
+      .text(formatInputData(payroll.employee.professional_group, 'string'), leftEmployeeX + paddingLeft5, employeeY)
 
       .font(headingFont)
-      .text('Fecha antigüedad: ', leftEmployeeX + 152, employeeY , {continued: true})
+      .text('Grupo cotización: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.seniority_date, 'string'))
+      .text(formatInputData(payroll.employee.quote_group, 'string'), leftEmployeeX + paddingLeft5, employeeY)
+
+      .font(headingFont)
+      .text('Fecha antigüedad: ', leftEmployeeX + 165, employeeY)
+      .font(textFont)
+      .text(formatInputData(payroll.employee.seniority_date, 'string'), leftEmployeeX + 160 + paddingLeft5, employeeY)
 
       .moveTo(leftEmployeeX - left, oy).lineTo(leftEmployeeX - left, y + sizVertivalLineEE).stroke()              //Vertical left line
       .moveTo(maxRightWidth, oy).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()                            //Vertical right line
@@ -1082,7 +1095,7 @@ module.exports.standardPayroll = function(payroll, stream){
     settlementWidth = x + pdfWidth + 100;
     settlementTop = 4;
     settlementX = ox - 50 + left;
-    settlementY = y + t0p + 12;
+    settlementY = y + t0p + 22;
     settlementYHeight = settlementY + 15;
 
     pdf
@@ -1094,7 +1107,7 @@ module.exports.standardPayroll = function(payroll, stream){
       .text('del '+ start_date +' al '+ end_date, {continued: true})
 
       .font(headingFont)
-      .text('Total días: ', settlementX + 238 , settlementY + settlementTop, {continued: true})
+      .text('Total días: ', settlementX + 255 , settlementY + settlementTop, {continued: true})
       .font(textFont)
       .text(payroll.settlement.total_days)
 
@@ -1210,7 +1223,7 @@ module.exports.standardPayroll = function(payroll, stream){
       .moveTo(originalX + left + 410 , originalY + footer + t0p + 161).lineTo(originalX + left + 551 , originalY + footer + t0p + 161).stroke();
 
       taxesS = getDeduction("Especie");
-      if(taxesS.value == 0){
+      if(taxesS == undefined || taxesS.value == 0){
         pdf
         .font(textFont)
         .text('4. Base sujeta a retención del IRPF' , originalX + left + 5 , originalY + footer + t0p + 165)
@@ -1488,15 +1501,15 @@ module.exports.standardPayroll = function(payroll, stream){
     thirdColumn = 300;
     quarterColumn = 440;
 
-    common_contingency = getDeduction("Contingencias comunes");
+    common_contingency = getDeduction("Contingencias Comunes");
     unemployment = getDeduction("Desempleo");
-    professional_formation = getDeduction("Formación profesional");
-    extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
-    extra_hours_ne = getDeduction("No estructurales (HE)");
+    professional_formation = getDeduction("Formación Profesional");
+    extra_hours_e = getDeduction("Horas Extraordinarias Fuerza Mayor");
+    extra_hours_ne = getDeduction("Resto Horas Extraordinarias");
     taxesD = getDeduction("Dinerario");
     taxesS = getDeduction("Especie");
     advances = getDeduction("Anticipos");
-    spices = getDeduction("Valor de los productos recibidos en especie");
+    spices = getDeduction("Valor de productos en especie");
     other_deductions = getDeduction("Otras deducciones");
 
     if(deductionOY <= 307){
@@ -1656,15 +1669,15 @@ module.exports.standardPayroll = function(payroll, stream){
       thirdColumn = 300;
       quarterColumn = 440;
 
-      common_contingency = getDeduction("Contingencias comunes");
+      common_contingency = getDeduction("Contingencias Comunes");
       unemployment = getDeduction("Desempleo");
-      professional_formation = getDeduction("Formación profesional");
-      extra_hours_e = getDeduction("Fuerza mayor o estructurales (HE)");
-      extra_hours_ne = getDeduction("No estructurales (HE)");
+      professional_formation = getDeduction("Formación Profesional");
+      extra_hours_e = getDeduction("Horas Extraordinarias Fuerza Mayor");
+      extra_hours_ne = getDeduction("Resto Horas Extraordinarias");
       taxesD = getDeduction("Dinerario");
       taxesS = getDeduction("Especie");
       advances = getDeduction("Anticipos");
-      spices = getDeduction("Valor de los productos recibidos en especie");
+      spices = getDeduction("Valor de productos en especie");
       other_deductions = getDeduction("Otras deducciones");
 
       // ----------------------------------------- APORTACIONES ----------------------------------------------------
@@ -1850,23 +1863,23 @@ module.exports.standardTwoColumnsPayroll = function(payroll, stream){
 
   var getStrMonth = function ( month ) {
     switch (month) {
-      case '01':
+      case '1':
           return 'enero';
-      case '02':
+      case '2':
           return 'febrero';
-      case '03':
+      case '3':
           return 'marzo';
-      case '04':
+      case '4':
           return 'abril';
-      case '05':
+      case '5':
           return 'mayo';
-      case '06':
+      case '6':
           return 'junio';
-      case '07':
+      case '7':
           return 'julio';
-      case '08':
+      case '8':
           return 'agosto';
-      case '09':
+      case '9':
           return 'septiembre';
       case '10':
           return 'octubre';
@@ -2409,13 +2422,20 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
       return data;
     }
   }
+  
+  var formatPercent = function(percent) {
+	  if('string' == typeof percent)
+	  	return percent;
+	  else
+	  	return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
+  }
 
-	var formatAmount = function(amount) {
-		return (amount  && amount != '' && amount != null && amount != 0) ? amount.toFixed(2) : '';
-	}
+  var formatAmount = function(amount) {
+	  return (amount  && amount != '' && amount != null && amount != 0 && 'string' != typeof amount) ? amount.toFixed(2) : '';
+  }
 
   var numberOffset = function(number) {
-    if(number != ''){
+    if(number != '' && 'string' != typeof number){
       var formatNumber = formatAmount(number);
       var split = formatNumber.split('.');
       switch (split[0].length) {
@@ -2446,23 +2466,23 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
 
   var getStrMonth = function (numberMonth) {
     switch (numberMonth) {
-      case '01':
+      case '1':
           return 'enero';
-      case '02':
+      case '2':
           return 'febrero';
-      case '03':
+      case '3':
           return 'marzo';
-      case '04':
+      case '4':
           return 'abril';
-      case '05':
+      case '5':
           return 'mayo';
-      case '06':
+      case '6':
           return 'junio';
-      case '07':
+      case '7':
           return 'julio';
-      case '08':
+      case '8':
           return 'agosto';
-      case '09':
+      case '9':
           return 'septiembre';
       case '10':
           return 'octubre';
@@ -2653,7 +2673,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
       .text(formatAmount(payroll.total_accrual), originalX + 425 + numberOffset(payroll.total_accrual) , y)
       .text(formatAmount(payroll.total_deductions), originalX + 510 + numberOffset(payroll.total_deductions) , y)
 
-      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.type_percent) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , y = y + 8)
+      .text(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent), originalX + 95 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , y = y + 8)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input), originalX + 135 + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input) , y)
 
@@ -2672,25 +2692,25 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
 
       .text('AT/EP' , originalX + 110, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), originalX + 35 + numberOffset(payroll.footer_ss_quotation.professional_contingency.base) , y = y + 10)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_at) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at) , y)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at) , y)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at) , y)
       .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
 
       .text('Desempleo' , originalX + 110, y = y + 3)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) , y = y + 10)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) , y = y + 10)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment) , y)
       .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
 
       .text('Formación profesional' , originalX + 110, y = y + 3)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) , y = y + 10)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) , y = y + 10)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation) , y)
       .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
 
       .text('FOGASA' , originalX + 110, y = y + 3)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) , y = y + 10)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) , y = y + 10)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty) , y)
 
@@ -2791,17 +2811,19 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
 
     for(i = 0; i < payroll.accruals.length; i++){
       accrual = payroll.accruals[i];
-      pdf
-        .font(titleFont)
-        .text(accrual.accrual_name , secondColumn , y);
-      y = y + 10;
-      for(j = 0; j < accrual.types.length; j++){
-        type = accrual.types[j];
-        pdf
-          .font(textFont)
-          .text(type.type_expression , secondColumn + 8 , y)
-          .text(formatAmount(type.type_value) , thirdColumn + numberOffset(type.type_value) , y);
-        y = y + 10;
+      if(accrual.types.length > 0){
+	      pdf
+	        .font(titleFont)
+	        .text(accrual.accrual_name , secondColumn , y);
+	      y = y + 10;
+	      for(j = 0; j < accrual.types.length; j++){
+	        type = accrual.types[j];
+	        pdf
+	          .font(textFont)
+	          .text(type.type_expression , secondColumn + 8 , y)
+	          .text(formatAmount(type.type_value) , thirdColumn + numberOffset(type.type_value) , y);
+	        y = y + 10;
+	      }
       }
     }
   }
@@ -2829,7 +2851,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
           .font(textFont);
         if(deduction.percent){
           pdf
-            .text(formatAmount(deduction.percent) + " %" , firstColumn + numberOffset(deduction.percent), y);
+            .text(formatPercent(deduction.percent), firstColumn + numberOffset(deduction.percent), y);
         }
         pdf
           .text(deduction.name , secondColumn + 8 , y)
@@ -2902,12 +2924,19 @@ module.exports.salaryRecibe = function(payroll, stream){
     }
   }
 
-	var formatAmount = function(amount) {
-		return (amount && amount != '' && amount != null && amount != 0) ? amount.toFixed(2) : '';
-	}
+  var formatPercent = function(percent) {
+	  if('string' == typeof percent)
+	  	return percent;
+	  else
+	  	return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
+  }
+  
+  var formatAmount = function(amount) {
+	  return (amount && amount != '' && amount != null && amount != 0 && 'string' != typeof amount) ? amount.toFixed(2) : '';
+  }
 
   var numberOffset = function(number) {
-    if(number != ''){
+    if(number != '' && 'string' != typeof number){
       var formatNumber = formatAmount(number);
       var split = formatNumber.split('.');
       switch (split[0].length) {
@@ -2938,23 +2967,23 @@ module.exports.salaryRecibe = function(payroll, stream){
 
   var getStrMonth = function (numberMonth) {
     switch (numberMonth) {
-      case '01':
+      case '1':
           return 'enero';
-      case '02':
+      case '2':
           return 'febrero';
-      case '03':
+      case '3':
           return 'marzo';
-      case '04':
+      case '4':
           return 'abril';
-      case '05':
+      case '5':
           return 'mayo';
-      case '06':
+      case '6':
           return 'junio';
-      case '07':
+      case '7':
           return 'julio';
-      case '08':
+      case '8':
           return 'agosto';
-      case '09':
+      case '9':
           return 'septiembre';
       case '10':
           return 'octubre';
@@ -3145,7 +3174,7 @@ module.exports.salaryRecibe = function(payroll, stream){
       .text(formatAmount(payroll.total_accrual), originalX + 425 + numberOffset(payroll.total_accrual) , y)
       .text(formatAmount(payroll.total_deductions), originalX + 510 + numberOffset(payroll.total_deductions) , y)
 
-      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.type_percent) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , y = y + 8)
+      .text(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent), originalX + 95 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , y = y + 8)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input), originalX + 135 + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input) , y)
 
@@ -3164,25 +3193,25 @@ module.exports.salaryRecibe = function(payroll, stream){
 
       .text('AT/EP' , originalX + 110, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), originalX + 35 + numberOffset(payroll.footer_ss_quotation.professional_contingency.base) , y = y + 10)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_at) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at) , y)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at) , y)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at) , y)
       .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
 
       .text('Desempleo' , originalX + 110, y = y + 3)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) , y = y + 10)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) , y = y + 10)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment) , y)
       .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
 
       .text('Formación profesional' , originalX + 110, y = y + 3)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) , y = y + 10)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) , y = y + 10)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation) , y)
       .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
 
       .text('FOGASA' , originalX + 110, y = y + 3)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) + " %", originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) , y = y + 10)
+      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) , y = y + 10)
       .text("|", originalX + 150, y)
       .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty) , y)
 
@@ -3315,7 +3344,7 @@ module.exports.salaryRecibe = function(payroll, stream){
           .font(textFont);
         if(deduction.percent){
           pdf
-            .text(formatAmount(deduction.percent) + " %" , firstColumn + numberOffset(deduction.percent), y);
+            .text(formatPercent(deduction.percent), firstColumn + numberOffset(deduction.percent), y);
         }
         pdf
           .text(deduction.name , secondColumn + 8 , y)
