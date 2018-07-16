@@ -20,10 +20,10 @@ phases:
       - service mysql start
       - echo MariaDB started on `date`
       - echo "GRANT ALL ON *.* TO 'dbuser'@'%' IDENTIFIED BY 'serubd2000'" | mysql -u root --password=pass
-      - DOCKER0_IP=$(ip -f inet -o addr show docker0|cut -d\  -f 7 | cut -d/ -f 1)
-      - echo Docker started at $DOCKER0_IP
-      - echo "SELECT 'MariaDB listening in $DOCKER0_IP for root'" | mysql -u root --password=pass -h $DOCKER0_IP
-      - echo "SELECT 'MariaDB listening in $DOCKER0_IP for dbuser'" | mysql -u dbuser --password=serubd2000 -h $DOCKER0_IP
+      # - DOCKER0_IP=`(ip -f inet -o addr show docker0 2>/dev/null || ip -f inet -o addr show eth0 ) |cut -d\  -f 7 | cut -d/ -f 1`
+      # - echo Docker started at $DOCKER0_IP
+      # - echo "SELECT 'MariaDB listening in $DOCKER0_IP for root'" | mysql -u root --password=pass -h $DOCKER0_IP
+      # - echo "SELECT 'MariaDB listening in $DOCKER0_IP for dbuser'" | mysql -u dbuser --password=serubd2000 -h $DOCKER0_IP
   pre_build:
     commands:
       - export LC_ALL="en_US.UTF-8"
@@ -31,41 +31,41 @@ phases:
       - dpkg-reconfigure locales
       - echo Logging in to Amazon ECR...
       - aws --version
-      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - $(aws ecr get-login --region ${AWS_DEFAULT_REGION:=eu-west-1} --no-include-email)
       - IMAGE_TAG=$(date +%Y.%m.%d-%H.%M.%S)
   build:
     commands:
       - echo Build SNAPSH0T started on `date`
-      - mvn -T 1C -DbuildNumber=666 -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
+      - mvn --fail-at-end  -T 1C -DbuildNumber=666 -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
       - echo Building SNAPSH0T Docker images...
       - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8 .
       - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine ./aon-db-up2date
       - echo Build SNAPSH0T completed on `date`
-      - echo Testing SNAPSH0T  Docker images...
-      - echo "DROP DATABASE IF EXISTS \`test-aonsolutions-org\`" | mysql -u root --password=pass
-      - mysql -u root --password=pass < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
-      - docker stop aon-application && docker rm aon-application || echo 'No previous aon-application running'
-      - docker run -e DB_HOST=${DOCKER0_IP} -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine
-      - docker run --name aon-application -d -p 8080:8080 -e DB_HOST=${DOCKER0_IP} -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8
-      - echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
-      - echo 127.0.0.1 home-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
-      - echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
-      - mvn -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/  -f aon-htmlunit/pom.xml integration-test
-      - echo Build RELEASE started on `date`
-      - mvn -DbuildNumber=666 -DskipTests -Drpm.release=false clean install
-      - echo Building RELEASE Docker images...
-      - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8 .
-      - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine ./aon-db-up2date
-      - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile .
-      #-$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      # - echo Testing SNAPSH0T  Docker images...
+      # - echo "DROP DATABASE IF EXISTS \`test-aonsolutions-org\`" | mysql -u root --password=pass
+      # - mysql -u root --password=pass < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
+      # - docker stop aon-application && docker rm aon-application || echo 'No previous aon-application running'
+      # - docker run -e DB_HOST=${DOCKER0_IP} -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine
+      # - docker run --name aon-application -d -p 8080:8080 -e DB_HOST=${DOCKER0_IP} -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8
+      # - echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
+      # - echo 127.0.0.1 home-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
+      # - echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts
+      # - mvn -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/  -f aon-htmlunit/pom.xml integration-test
+      # - echo Build RELEASE started on `date`
+      # - mvn -DbuildNumber=666 -DskipTests -Drpm.release=false clean install
+      # - echo Building RELEASE Docker images...
+      # - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8 .
+      # - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine ./aon-db-up2date
+      # - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile .
+      # -$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
-      - docker tag aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8
-      - docker tag aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine
-      - docker tag aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8
-      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8
-      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine
-      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8
+      - docker tag aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8
+      - docker tag aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine
+      # - docker tag aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8
+      # - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8
+      # - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine
+      # - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8
 
 artifacts:
   files:
