@@ -35,13 +35,13 @@ phases:
       - IMAGE_TAG=$(date +%Y.%m.%d-%H.%M.%S)
   build:
     commands:
-      - echo Build SNAPSH0T started on `date`
+      - echo Build started on `date`
       - mvn --fail-at-end  -T 1C -DbuildNumber=666 -Drpm.release=false -Dgwt.working=true -DSNAPSHOT install
-      - echo Building SNAPSH0T Docker images...
+      - echo Building Docker images...
       - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8 .
       - docker build --no-cache --build-arg AON_VERSION=9.23-SNAPSHOT -t aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine ./aon-db-up2date
-      - echo Build SNAPSH0T completed on `date`
-      # - echo Testing SNAPSH0T  Docker images...
+      - echo Build completed on `date`
+      # - echo Testing Docker images...
       # - echo "DROP DATABASE IF EXISTS \`test-aonsolutions-org\`" | mysql -u root --password=pass
       # - mysql -u root --password=pass < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
       # - docker stop aon-application && docker rm aon-application || echo 'No previous aon-application running'
@@ -60,10 +60,11 @@ phases:
       # -$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
-      - docker tag aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8
-      - docker tag aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine
-      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8
-      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine
+      - docker tag aonsolutions/aon-application:SNAPSHOT-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:test-tomcat9-jre8
+      - docker tag aonsolutions/aon-db-up2date:SNAPSHOT-jre-alpine 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:test-jre-alpine
+      - echo Pushing SNAPSH0T Docker images...
+      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:test-tomcat9-jre8
+      - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:test-jre-alpine
       # - docker tag aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-micro-services:${IMAGE_TAG}-tomcat9-jre8
       # - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-application:${IMAGE_TAG}-tomcat9-jre8
       # - docker push 083580179390.dkr.ecr.eu-west-1.amazonaws.com/aonsolutions/aon-db-up2date:${IMAGE_TAG}-jre-alpine
@@ -71,7 +72,7 @@ phases:
 
 artifacts:
   files:
-    - aon-web-aio/target/aon-aio.war
+    # - aon-web-aio/target/aon-aio.war
     # - location
   #discard-paths: yes
   #base-directory: location
