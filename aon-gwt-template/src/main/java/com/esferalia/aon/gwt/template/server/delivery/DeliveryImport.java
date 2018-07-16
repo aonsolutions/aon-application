@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DeliveryImport {
 
@@ -101,7 +102,7 @@ public class DeliveryImport {
 					if(hasClientRequiredParameters()) {
 						clientList.add(cli);
 					} else {
-						di.getError().getTextError().add("ERROR! CLIENTES: linea " + row.getRowNum() + " -  Faltan datos obligatorios.");
+						di.getError().getTextError().add("ERROR! CLIENTES: linea " + (row.getRowNum() + 1) + " -  Faltan datos obligatorios.");
 						di.getError().setError(false);
 					}
 				}
@@ -138,7 +139,7 @@ public class DeliveryImport {
 					if(hasAlbvRequiredParameters()) {
 						albvList.add(albv);
 					} else {
-						di.getError().getTextError().add("ERROR! ALBV: linea " + row.getRowNum() + " -  Faltan datos obligatorios.");
+						di.getError().getTextError().add("ERROR! ALBV: linea " + (row.getRowNum() + 1)  + " -  Faltan datos obligatorios.");
 						di.getError().setError(false);
 					}
 				}
@@ -175,7 +176,7 @@ public class DeliveryImport {
 					if(hasAlbvDetRequiredParameters()) {
 						albvDetList.add(albvDet);
 					} else {
-						di.getError().getTextError().add("ERROR! ALBVDET: linea " + row.getRowNum() + " -  Faltan datos obligatorios.");
+						di.getError().getTextError().add("ERROR! ALBVDET: linea " + (row.getRowNum() + 1) + " -  Faltan datos obligatorios.");
 						di.getError().setError(false);
 					}
 				}
@@ -225,26 +226,37 @@ public class DeliveryImport {
 	private void checkClientes(String title, Cell cell) {
 		Object o = getObjectValue(cell);
 		if(o == null) return;
+		String column = getColumn(cell.getColumnIndex());
+		Integer row = cell.getRowIndex() + 1;
 		if("razonSocial".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 				cli.setRazonSocial(o.toString().substring(0,64));
 			} else cli.setRazonSocial(o.toString());
 			return;
 		}
 		if("alias".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
 				cli.setAlias(o.toString().substring(0, 32));
 			} else cli.setAlias(o.toString());
 			return;
 		}
 		if("tipoDocumento".equalsIgnoreCase(title)) {
-			Integer val = ((Double) o).intValue();
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			
+			Integer val = d.intValue();
 			if(val >= 0 && val < 7) {
 				cli.setTipoDocumento(val);
 			} else {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 6 - OTROS");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " +row + " columna " + column + " - " + title + " Fuera de Rango - Por defecto: 6 - OTROS");
 				cli.setTipoDocumento(6); // 6 - OTROS.
 			}
 			return;
@@ -254,14 +266,14 @@ public class DeliveryImport {
 			if(c != null) {
 				cli.setPaisDocumento(cell.getStringCellValue());
 			} else {
-				di.getError().getTextError().add("ERROR! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " incorrecto");
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " incorrecto");
 				di.getError().setError(false);
 			}
 			return;
 		}
 		if("documento".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 16) {
-				di.getError().getTextError().add("ERROR! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 16");
 				di.getError().setError(false);
 			} else cli.setDocumento(o.toString());
 			return;
@@ -271,111 +283,146 @@ public class DeliveryImport {
 			if(c != null) {
 				cli.setNacionalidad(cell.getStringCellValue());
 			} else {
-				di.getError().getTextError().add("ERROR! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " incorrecto");
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " incorrecto");
 				di.getError().setError(false);
 			}
 			return;
 		}
 		if("cuenta".equalsIgnoreCase(title)) {
-			if(o.toString().length() == 9) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea != 9");
+			if(o.toString().length() == 0) return;
+			if(o.toString().length() != 9) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea /= 9");
 			} else cli.setCuenta(cell.getStringCellValue());
 			return;
 		}
 		if("re".equalsIgnoreCase(title)) {
-			Integer val = ((Double) o).intValue();
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			Integer val = d.intValue();
 			if(val.equals(1) || val.equals(0))
 				cli.setRe(val);
 			else {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 0 - No");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Fuera de Rango - Por defecto: 0 - No");
 				cli.setRe(0);
 			}
 			return;
 		}
 		if("transaccion".equalsIgnoreCase(title)) {
-			Integer val = ((Double) o).intValue();
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			Integer val = d.intValue();
 			if(val >= 0 && val < 5) {
 				cli.setTransaccion(val);
 			} else {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 0 - NACIONAL");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Fuera de Rango - Por defecto: 0 - NACIONAL");
 				cli.setTransaccion(0);
 			}
 			return;
 		}
 		if("retencion".equalsIgnoreCase(title)) {
-			Integer val = ((Double) o).intValue();
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			Integer val = d.intValue();
 			if(val.equals(1) || val.equals(0)) {
 				cli.setRetencion(val);
 			} else {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 0 - No");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Fuera de Rango - Por defecto: 0 - No");
 				cli.setRetencion(0);
 			}
 			return;
 		}
 		if("facturarAlbaranesAgrupados".equalsIgnoreCase(title)) {
-			Integer val = ((Double) o).intValue();
+			if(o.toString().length() == 0) return;
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico. - Por defecto: 1 - Si");
+				cli.setFacturarAlbaranesAgrupados(1);
+				return;
+			}
+			Integer val = d.intValue();
 			if(val.equals(1) || val.equals(0)) {
 				cli.setFacturarAlbaranesAgrupados(val);
 			} else {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Fuera de Rango - Por defecto: 1 - Si");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Fuera de Rango - Por defecto: 1 - Si");
 				cli.setFacturarAlbaranesAgrupados(1);
 			}
 			return;
 		}
 		if("aliasDireccion".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 13) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 13");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 13");
 				cli.setAliasDireccion(o.toString().substring(0,13));
 			} else cli.setAliasDireccion(o.toString());
 			return;
 		}
 		if("tipoVia".equalsIgnoreCase(title)) {
+			if(o.toString().length() == 0) return;
 			StreetType st = StreetType.safeValueOf(o.toString());
 			if(st != null) {
 				cli.setTipoVia(st.getAeatCode());
 			} else {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " incorrecto");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " incorrecto");
 			}
 			return;
 		}
 		if("direccion".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 128) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 128");
 				cli.setDireccion(o.toString().substring(0, 128));
 			} else cli.setDireccion(o.toString());
 			return;
 		}
 		if("numero".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 6) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 6");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 6");
 				cli.setNumero(o.toString().substring(0, 6));
 			} else cli.setNumero(o.toString());
 			return;
 		}
 		if("direccion2".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 128) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 128");
 				cli.setDireccion2(o.toString().substring(0, 128));
 			} else cli.setDireccion2(o.toString());
 			return;
 		}
 		if("direccion3".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 128) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 128");
 				cli.setDireccion3(o.toString().substring(0, 128));
 			} else cli.setDireccion3(o.toString());
 			return;
 		}
 		if("cp".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 16) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 16");
 				cli.setCp(o.toString().substring(0, 16));
 			} else cli.setCp(o.toString());
 			return;
 		}
 		if("ciudad".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 				cli.setCiudad(o.toString().substring(0, 64));
 			} else cli.setCiudad(o.toString());
 			return;
@@ -386,7 +433,7 @@ public class DeliveryImport {
 		}
 		if("nombreProvincia".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
 				cli.setNombreProvincia(o.toString().substring(0, 32));		
 			} else cli.setNombreProvincia(o.toString());
 			return;
@@ -398,80 +445,106 @@ public class DeliveryImport {
 		
 		if("telefono1".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 			} else cli.setTelefono1(o.toString());
 			return;
 		}
 		if("telefono2".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 			} else cli.setTelefono2(o.toString());
 			return;
 		}
 		if("fax".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 			} else cli.setFax(o.toString());
 			return;  
 		}
 		if("email".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 			} else cli.setEmail(o.toString());
 			return;
 		}
 		if("web".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 			} else cli.setEmail(o.toString());
 			return;
 		}
 		if("banco".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 				cli.setBanco(o.toString().substring(0,64));
 			} else cli.setBanco(o.toString());
 			return;
 		}
 
 		if("bic".equalsIgnoreCase(title)) {
+			if(o.toString().length() == 0) return;
 			if(o.toString().length() == 11) {
 				cli.setBic(o.toString());
 			} else {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea != 11");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea /= 11");
 			}
 			return;
 		}
 		if("cuentaBanco".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 34) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 34");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 34");
 			} else cli.setCuentaBanco(o.toString());
 			return;
 		}
 		if("formaPago".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
 			} else cli.setFormaPago(o.toString());
 			return;
 		}
 		if("numeroVtos".equalsIgnoreCase(title)) {
-			Integer val = ((Double) o).intValue();
+			if(o.toString().length() == 0) return;
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				return;
+			}
+			Integer val = d.intValue();
 			cli.setNumeroVtos(val);
 			return;
 		}
 		if("diasAlPrimerVto".equalsIgnoreCase(title)) {
-			Integer val = ((Double) o).intValue();
+			if(o.toString().length() == 0) return;
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				return;
+			}
+			Integer val = d.intValue();
 			cli.setDiasAlPrimerVto(val);
 			return;
 		}
 		if("diasEntreVtos".equalsIgnoreCase(title)) {
-			Integer val = ((Double) o).intValue();
+			if(o.toString().length() == 0) return;
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				return;
+			}
+			Integer val = d.intValue();
 			cli.setDiasEntreVtos(val);
 			return;
 		}
 		if("diasPago".equalsIgnoreCase(title)) {
+			if(o.toString().length() == 0) return;
 			if(o.toString().length() > 8) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 8");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 8");
 			} else cli.setDiasPago(o.toString());
 			return;
 		}
@@ -490,69 +563,96 @@ public class DeliveryImport {
 	private void checkAlbv(String title, Cell cell) {
 		Object o = getObjectValue(cell);
 		if(o == null) return;
+		String column = getColumn(cell.getColumnIndex());
+		Integer row = cell.getRowIndex() + 1;
 		if("id".equalsIgnoreCase(title)) {
-			albv.setId(((Double)cell.getNumericCellValue()).intValue());
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			albv.setId(d.intValue());
 			return;
 		}
 		if("serie".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 5) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 5");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 5");
 			} else albv.setSerie(o.toString());
 			return;
 		}
 		if("numero".equalsIgnoreCase(title)) {
-			albv.setNumero(((Double)cell.getNumericCellValue()).intValue());
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			albv.setNumero(d.intValue());
 			return;
 		}
 		if("documento".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 16) {
-				di.getError().getTextWarning().add("ERROR! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 16");
 				di.getError().setError(false);
 			} else albv.setDocumento(o.toString());
 			return;
 		}
 		if("fecha".equalsIgnoreCase(title)) {
-			albv.setFecha(cell.getDateCellValue());
+			Date date = new Date();
+			try{
+				date = cell.getDateCellValue();
+			} catch (Exception e) {
+				date = AonDateUtils.parse(o.toString(), "dd/MM/yyyy");
+			}
+			albv.setFecha(date);
 			return;
 		}
 		if("centroTrabajo".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
+				albv.setAliasDireccion(o.toString().substring(0,32));
 			} else albv.setCentroTrabajo(o.toString());
 			return;
 		}
 		if("almacen".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
-				di.getError().getTextWarning().add("ERROR! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
-				di.getError().setError(false);
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
+				albv.setAliasDireccion(o.toString().substring(0,32));
 			} else albv.setAlmacen(o.toString());
 			return;
 		}
 		if("expediente".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
+				albv.setAliasDireccion(o.toString().substring(0,64));
 			} else albv.setExpediente(o.toString());
 			return;
 		}
 		if("aliasDireccion".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 13) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 13");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 13");
 				albv.setAliasDireccion(o.toString().substring(0,13));
 			} else albv.setAliasDireccion(o.toString());
 			return;
 		}
 		if("tipoVia".equalsIgnoreCase(title)) {
+			if(o.toString().length() == 0) return;
 			StreetType st = StreetType.safeValueOf(o.toString());
 			if(st != null) {
 				albv.setTipoVia(st.getAeatCode());
 			} else {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " incorrecto");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " incorrecto");
 			}
 			return;
 		}
 		if("direccion".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 128) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 128");
 				albv.setDireccion(o.toString().substring(0, 128));
 			} else albv.setDireccion(o.toString());
 			return;
@@ -563,28 +663,28 @@ public class DeliveryImport {
 		}
 		if("direccion2".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 128) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 128");
 				albv.setDireccion2(o.toString().substring(0, 128));
 			} else albv.setDireccion2(o.toString());
 			return;
 		}
 		if("direccion3".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 128) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 128");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 128");
 				albv.setDireccion3(o.toString().substring(0, 128));
 			} else albv.setDireccion3(o.toString());
 			return;
 		}
 		if("cp".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 16) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 16");
 				albv.setCp(o.toString().substring(0, 16));
 			} else albv.setCp(o.toString());
 			return;
 		}
 		if("ciudad".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 				albv.setCiudad(o.toString().substring(0, 64));
 			} else albv.setCiudad(o.toString());
 			return;
@@ -595,52 +695,77 @@ public class DeliveryImport {
 		}
 		if("nombreProvincia".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
 				albv.setCiudad(o.toString().substring(0, 64));
 			} else albv.setNombreProvincia(o.toString());
 			return;
 		}
 		if("banco".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 				albv.setBanco(o.toString().substring(0, 64));
 			} else albv.setBanco(o.toString());
 			albv.setBanco(cell.getStringCellValue());
 			return;
 		}
 		if("bic".equalsIgnoreCase(title)) {
+			if(o.toString().length() == 0) return;
 			if(o.toString().length() != 11) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea != 11");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea /= 11");
 			} else albv.setBic(o.toString());
 			return;
 		}
 		if("cuentaBanco".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 34) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 34");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 34");
 			} else albv.setCuentaBanco(o.toString());
 			return;
 		}
 		if("formaPago".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 32");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
 			} else albv.setFormaPago(o.toString());
 			return;
 		}
 		if("numeroVtos".equalsIgnoreCase(title)) {
-			albv.setNumeroVtos(((Double)cell.getNumericCellValue()).intValue());
+			if(o.toString().length() == 0) return;
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				return;
+			}
+			albv.setNumeroVtos(d.intValue());
 			return;
 		}
 		if("diasAlPrimerVto".equalsIgnoreCase(title)) {
-			albv.setDiasAlPrimerVto(((Double)cell.getNumericCellValue()).intValue());
+			if(o.toString().length() == 0) return;
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				return;
+			}
+			albv.setDiasAlPrimerVto(d.intValue());
 			return;
 		}
 		if("diasEntreVtos".equalsIgnoreCase(title)) {
-			albv.setDiasEntreVtos(((Double)cell.getNumericCellValue()).intValue());
+			if(o.toString().length() == 0) return;
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				return;
+			}
+			albv.setDiasEntreVtos(d.intValue());
 			return;
 		}
 		if("diasPago".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 8) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 8");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 8");
 			} else albv.setDiasPago(o.toString());
 			return;
 		}
@@ -659,69 +784,117 @@ public class DeliveryImport {
 	private void checkAlbvDet(String title, Cell cell) {
 		Object o = getObjectValue(cell);
 		if(o == null) return;
+		String column = getColumn(cell.getColumnIndex());
+		Integer row = cell.getRowIndex() + 1;
 		if("albv".equalsIgnoreCase(title)) {
-			albvDet.setAlbv(((Double)cell.getNumericCellValue()).intValue());
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			albvDet.setAlbv(d.intValue());
 			return;
 		}
 		if("linea".equalsIgnoreCase(title)) {
-			albvDet.setLinea(((Double)cell.getNumericCellValue()).intValue());
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			albvDet.setLinea(d.intValue());
 			return;
 		}
 		if("articulo".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 15) {
-				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 15");
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 15");
 				albvDet.setArticulo(o.toString().substring(0,15));
 			} else albvDet.setArticulo(o.toString());
 			return;
 		}
 		if("detalle".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 15) {
-				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 15");
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 15");
 			} else albvDet.setDetalle(o.toString());
 			return;
 		}
 		if("detalle2".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 15) {
-				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 15");
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 15");
 			} else albvDet.setDetalle2(o.toString());
 			return;
 		}
 		if("detalle3".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 15) {
-				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 15");
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 15");
 			} else albvDet.setDetalle3(o.toString());
 			return;
 		}
 		if("concepto".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
-				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 64");
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 			} else albvDet.setConcepto(o.toString());
 			return;
 		}
 		if("cantidad".equalsIgnoreCase(title)) {
-			albvDet.setCantidad(cell.getNumericCellValue());
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			albvDet.setCantidad(d);
 			return;
 		}
 		if("precio".equalsIgnoreCase(title)) {
-			Double d = Double.parseDouble(o.toString());
-			System.out.println(d);
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
 			if(Double.isNaN(d)){
 				
 			} else albvDet.setPrecio(d);
 			return;
 		}
 		if("precioCoste".equalsIgnoreCase(title)) {
-			albvDet.setPrecioCoste(cell.getNumericCellValue());
+			if(o.toString().length() == 0) return;
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				return;
+			}
+			albvDet.setPrecioCoste(d);
 			return;
 		}
 		if("descuentos".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 16) {
-				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + cell.getRowIndex() + " columna " + cell.getColumnIndex() + " - " + title + " Longitud erronea > 16");
+				di.getError().getTextWarning().add("WARNING! ALBVDET: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 16");
 			} else albvDet.setConcepto(o.toString());
 			return;
 		}
 		if("iva".equalsIgnoreCase(title)) {
-			albvDet.setIva(cell.getNumericCellValue());
+			Double d = -1.0;
+			try {
+				d = Double.parseDouble(o.toString());
+			} catch (Exception e) {
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().setError(false);
+				return;
+			}
+			albvDet.setIva(d);
 			return;
 		}
 	}
@@ -1025,5 +1198,61 @@ public class DeliveryImport {
 				AON.insertDeliveryDetail(domain.getName(), domain.getId(), user.getLogin(), dd);
 			}
 		});
+	}
+	
+	private String getColumn(Integer c) {
+		if(c == 0) return "A";
+		if(c == 1) return "B";
+		if(c == 2) return "C";
+		if(c == 3) return "D";
+		if(c == 4) return "E";
+		if(c == 5) return "F";
+		if(c == 6) return "G";
+		if(c == 7) return "H";
+		if(c == 8) return "I";
+		if(c == 9) return "J";
+		if(c == 10) return "K";
+		if(c == 11) return "L";
+		if(c == 12) return "M";
+		if(c == 13) return "N";
+		if(c == 14) return "O";
+		if(c == 15) return "P";
+		if(c == 16) return "Q";
+		if(c == 17) return "R";
+		if(c == 18) return "S";
+		if(c == 19) return "T";
+		if(c == 20) return "U";
+		if(c == 21) return "V";
+		if(c == 22) return "W";
+		if(c == 23) return "X";
+		if(c == 24) return "Y";
+		if(c == 25) return "Z";
+		if(c == 26) return "AA";
+		if(c == 27) return "AB";
+		if(c == 28) return "AC";
+		if(c == 29) return "AD";
+		if(c == 30) return "AE";
+		if(c == 31) return "AF";
+		if(c == 32) return "AG";
+		if(c == 33) return "AH";
+		if(c == 34) return "AI";
+		if(c == 35) return "AJ";
+		if(c == 36) return "AK";
+		if(c == 37) return "AL";
+		if(c == 38) return "AM";
+		if(c == 39) return "AN";
+		if(c == 40) return "AO";
+		if(c == 41) return "AP";
+		if(c == 42) return "AQ";
+		if(c == 43) return "AR";
+		if(c == 44) return "AS";
+		if(c == 45) return "AT";
+		if(c == 46) return "AU";
+		if(c == 47) return "AV";
+		if(c == 48) return "AW";
+		if(c == 49) return "AX";
+		if(c == 50) return "AY";
+		if(c == 51) return "AZ";
+		return c.toString();
 	}
 }
