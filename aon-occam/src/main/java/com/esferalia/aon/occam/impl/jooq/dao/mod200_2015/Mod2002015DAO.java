@@ -57,6 +57,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -458,19 +459,19 @@ public class Mod2002015DAO  {
 				cp.setName(reg.getName());
 				cp.setProvince( reg.getProvince() );
 				cp.setCountry( reg.getCountry() );
-				cp.setPercent(reg.getPercent());
-				cp.setNominalValue(reg.getNominalValue());
-				cp.setBookValue(reg.getBookValue());
-				cp.setIncomes(reg.getIncomes());
-				cp.setaValue(reg.getAValue());
-				cp.setbValue(reg.getBValue());
-				cp.setccValue(reg.getCcValue());
-				cp.setcValue(reg.getCValue());
-				cp.setdValue(reg.getDValue());
-				cp.setCapital(reg.getCapital());
-				cp.setReserve(reg.getReserve());
-				cp.setOtherAmounts(reg.getOtherAmounts());
-				cp.setResult(reg.getResult());
+				cp.setPercent(AonNumberUtils.zeroIfNull(reg.getPercent()));
+				cp.setNominalValue(AonNumberUtils.zeroIfNull(reg.getNominalValue()));
+				cp.setBookValue(AonNumberUtils.zeroIfNull( reg.getBookValue() ));
+				cp.setIncomes(AonNumberUtils.zeroIfNull(reg.getIncomes()));
+				cp.setaValue(AonNumberUtils.zeroIfNull(reg.getAValue()));
+				cp.setbValue(AonNumberUtils.zeroIfNull(reg.getBValue()));
+				cp.setccValue(AonNumberUtils.zeroIfNull(reg.getCcValue()));
+				cp.setcValue(AonNumberUtils.zeroIfNull(reg.getCValue()));
+				cp.setdValue(AonNumberUtils.zeroIfNull(reg.getDValue()));
+				cp.setCapital(AonNumberUtils.zeroIfNull(reg.getCapital()));
+				cp.setReserve(AonNumberUtils.zeroIfNull(reg.getReserve()));
+				cp.setOtherAmounts(AonNumberUtils.zeroIfNull(reg.getOtherAmounts()));
+				cp.setResult(AonNumberUtils.zeroIfNull(reg.getResult()));
 				mod200.getParticipationsOut().add(cp);
 			} if (reg.getType() == 2) {
 				cp = new CompanyParticipation();					
