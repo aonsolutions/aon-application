@@ -721,6 +721,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	}
 
 	@Override
+	public Integer getEmployeeId() {
+		return getEmployee().getId();
+	}
+	
+	@Override
 	public String getEmployeeName() {
 		return salaryDraft.getEmployeeName();
 	}

@@ -6,9 +6,12 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.ScriptInjector;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class Reports {
 	
@@ -29,7 +32,6 @@ public class Reports {
 		}).inject();
 	}
 	
-	
 	public static interface Payroll {
 		
 		public Date getEndDate();
@@ -49,6 +51,7 @@ public class Reports {
 		public String getEmployeeQuoteGroup();
 		public Date getEmployeeSeniorityDate();
 		public String getEmployeeAgreementCategory();
+		public Integer getEmployeeId();
 
 		public String getEnterpriseName();
 		public String getEnterpriseCity();
@@ -211,6 +214,11 @@ public class Reports {
 			}else
 				return null;
 		}
+		
+		default String getEnterpriseLogo(){
+			String CRETA_URL = URL.encode(GWT.getModuleBaseURL() + "reports");
+			return CRETA_URL + "/Enterprise-Logo?contractid="+getEmployeeId();
+		}
 
 	}
 	
@@ -234,8 +242,32 @@ public class Reports {
 	}
 	
 	public static void standard(Payroll salary, Callback callback) {
-		standard(payroll2JSON(salary), callback);
+		JavaScriptObject json = payroll2JSON(salary);
+		//setEnterpriseLogo(json, callback);
+		standard(json, callback);
 	}
+
+//	private static void setEnterpriseLogo(JavaScriptObject json, Callback callback) {
+//		String LOGO_URL = URL.encode(GWT.getModuleBaseURL() + "reports") + "/Enterprise-Logo?contractid="+getEmployeeId();
+//
+//		XMLHttpRequest xhr = XMLHttpRequest.create();
+//		xhr.open("GET", LOGO_URL);
+//		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+//			
+//			@Override
+//			public void onReadyStateChange(XMLHttpRequest xhr) {
+//				int state = xhr.getReadyState();
+//				
+//				if (state != XMLHttpRequest.DONE)
+//					return;
+//				
+//				xhr.getResponseText();
+//				
+//			}
+//		});
+//		
+//		xhr.send();
+//	}
 
 	public static void standard_new(Payroll salary, Callback callback) {
 		standard_new(payroll2JSON(salary), callback);
@@ -318,8 +350,12 @@ public class Reports {
 	}-*/;
 
 	private static native JavaScriptObject payroll2JSON(Payroll payroll) /*-{
+		var logo_image = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseLogo()();
+		var logo_image2 = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseLogo2()();
 		var blank_image = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==';
 		var json =  {
+			logoEnterprise : logo_image,
+			logoEnterprise2 : logo_image2,
 			net: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalLiquid()(),
 			payment: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalPayment()(),
 			deduction: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalDeduction()(),
