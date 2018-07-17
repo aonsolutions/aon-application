@@ -2,16 +2,20 @@ package com.esferalia.aon.js.payroll.client;
 
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
+import com.gargoylesoftware.htmlunit.javascript.host.fetch.Response;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.typedarrays.shared.ArrayBuffer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
+import com.google.gwt.xhr.client.XMLHttpRequest.ResponseType;
 
 public class Reports {
 	
@@ -215,7 +219,7 @@ public class Reports {
 				return null;
 		}
 		
-		default String getEnterpriseLogo(){
+		default String getEnterpriseLogoURL(){
 			String CRETA_URL = URL.encode(GWT.getModuleBaseURL() + "reports");
 			return CRETA_URL + "/Enterprise-Logo?contractid="+getEmployeeId();
 		}
@@ -241,48 +245,55 @@ public class Reports {
 		public void onSuccess(String dataURI);
 	}
 	
+
 	public static void standard(Payroll salary, Callback callback) {
-		JavaScriptObject json = payroll2JSON(salary);
-		//setEnterpriseLogo(json, callback);
-		standard(json, callback);
+		payroll2JS0N(salary, (json) -> standard(json, callback));
 	}
 
-//	private static void setEnterpriseLogo(JavaScriptObject json, Callback callback) {
-//		String LOGO_URL = URL.encode(GWT.getModuleBaseURL() + "reports") + "/Enterprise-Logo?contractid="+getEmployeeId();
-//
-//		XMLHttpRequest xhr = XMLHttpRequest.create();
-//		xhr.open("GET", LOGO_URL);
-//		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
-//			
-//			@Override
-//			public void onReadyStateChange(XMLHttpRequest xhr) {
-//				int state = xhr.getReadyState();
-//				
-//				if (state != XMLHttpRequest.DONE)
-//					return;
-//				
-//				xhr.getResponseText();
-//				
-//			}
-//		});
-//		
-//		xhr.send();
-//	}
+	private static void getEnterpriseLogo(Payroll salary, Consumer<String> consumer) {
+		String LOGO_URL = URL.encode(GWT.getModuleBaseURL() + "reports") + "/Enterprise-Logo?"+"contractid=" + salary.getEmployeeId();
+
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("GET", LOGO_URL);
+		xhr.setResponseType(ResponseType.ArrayBuffer);
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+			
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+				
+				
+				if (state != XMLHttpRequest.DONE)
+					return;
+				
+				consumer.accept("data:image/jpeg;base64,"+base64ArrayBuffer(xhr.getResponseArrayBuffer()));
+				
+				
+			}
+		});
+		
+		xhr.send("&contractid=" + salary.getEmployeeId());
+	}
 
 	public static void standard_new(Payroll salary, Callback callback) {
-		standard_new(payroll2JSON(salary), callback);
+		//standard_new(payroll2JSON(salary), callback);
+		payroll2JS0N(salary, (json) -> standard_new(json, callback));
 	}
 
 	public static void standard_cols(Payroll salary, Callback callback) {
-		standard_cols(payroll2JSON(salary), callback);
+		//standard_cols(payroll2JSON(salary), callback);
+		payroll2JS0N(salary, (json) -> standard_cols(json, callback));
 	}
 
 	public static void recibe(Payroll salary, Callback callback) {
-		recibe(payroll2JSON(salary), callback);
+		//recibe(payroll2JSON(salary), callback);
+		payroll2JS0N(salary, (json) -> recibe(json, callback));
 	}
 
 	public static void recibe_cra(Payroll salary, Callback callback) {
-		recibe_cra(payroll2JSON(salary), callback);
+		//recibe_cra(payroll2JSON(salary), callback);
+		payroll2JS0N(salary, (json) -> recibe_cra(json, callback));
+
 	}
 
 	public static void a3Letter(Payroll settlement, Callback callback) {
@@ -348,14 +359,27 @@ public class Reports {
 			callback.@com.esferalia.aon.js.payroll.client.Reports.Callback::onSuccess(Ljava/lang/String;)(this.toBlobURL('application/pdf'));
 		});
 	}-*/;
-
+	
+	private static void payroll2JS0N(Payroll payroll, Consumer<JavaScriptObject> consumer){
+		JavaScriptObject json = payroll2JSON(payroll);
+		getEnterpriseLogo(payroll, (dataURI) ->  {
+			setEnterpriseLogo(json, dataURI);
+			consumer.accept(json);
+		} );
+	}
+	
+	private static native void setEnterpriseLogo(JavaScriptObject json, String dataURI) /*-{
+		json.logo = dataURI;
+		json.signature_logo = dataURI;
+		json.logoEnterprise = dataURI;
+		json.logoEnterprise2 = dataURI;
+	}-*/;
+	
 	private static native JavaScriptObject payroll2JSON(Payroll payroll) /*-{
-		var logo_image = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseLogo()();
-		var logo_image2 = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseLogo2()();
 		var blank_image = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==';
 		var json =  {
-			logoEnterprise : logo_image,
-			logoEnterprise2 : logo_image2,
+			logoEnterprise : blank_image,
+			logoEnterprise2 : blank_image,
 			net: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalLiquid()(),
 			payment: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalPayment()(),
 			deduction: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalDeduction()(),
@@ -521,5 +545,57 @@ public class Reports {
 		console.log(json);
 		return json;
 	}-*/;
+
+	private static native String base64ArrayBuffer(ArrayBuffer arrayBuffer) /*-{
+		  var base64    = ''
+		  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+		  var bytes         = new Uint8Array(arrayBuffer)
+		  var byteLength    = bytes.byteLength
+		  var byteRemainder = byteLength % 3
+		  var mainLength    = byteLength - byteRemainder
+
+		  var a, b, c, d
+		  var chunk
+
+		  // Main loop deals with bytes in chunks of 3
+		  for (var i = 0; i < mainLength; i = i + 3) {
+		    // Combine the three bytes into a single integer
+		    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+
+		    // Use bitmasks to extract 6-bit segments from the triplet
+		    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+		    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+		    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+		    d = chunk & 63               // 63       = 2^6 - 1
+
+		    // Convert the raw binary segments to the appropriate ASCII encoding
+		    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+		  }
+
+		  // Deal with the remaining bytes and padding
+		  if (byteRemainder == 1) {
+		    chunk = bytes[mainLength]
+
+		    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+
+		    // Set the 4 least significant bits to zero
+		    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+
+		    base64 += encodings[a] + encodings[b] + '=='
+		  } else if (byteRemainder == 2) {
+		    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+
+		    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+		    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+
+		    // Set the 2 least significant bits to zero
+		    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+
+		    base64 += encodings[a] + encodings[b] + encodings[c] + '='
+		  }
+		  
+		  return base64
+		}-*/;
 
 }
