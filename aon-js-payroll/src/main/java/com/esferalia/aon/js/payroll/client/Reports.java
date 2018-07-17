@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.gargoylesoftware.htmlunit.javascript.host.fetch.Response;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.ScriptInjector;
