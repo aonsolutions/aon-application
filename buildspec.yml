@@ -34,7 +34,7 @@ phases:
       - echo Build started on `date`
       - mvn --fail-at-end  -T 1C -DbuildNumber=666 -Drpm.release=false -Dgwt.working=true -DSNAPSHOT -am -pl aon-rest-api install
       - echo Build completed on `date`
-      - aws cloudformation package --template aon-rest-api/serverless.template --s3-bucket aon-rest-api --output json > serverless-template.json
+      - aws cloudformation package --template aon-rest-api/serverless.template --s3-bucket aon-rest-api --output-template-file serverless-template.json
   post_build:
     commands:
 
