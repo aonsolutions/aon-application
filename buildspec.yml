@@ -26,7 +26,7 @@ phases:
       - locale-gen en_US en_US.UTF-8
       - dpkg-reconfigure locales
       # - echo Logging in to Amazon ECR...
-      # - aws --version
+      - aws --version
       # - $(aws ecr get-login --region ${AWS_DEFAULT_REGION:=eu-west-1} --no-include-email)
       # - IMAGE_TAG=$(date +%Y.%m.%d-%H.%M.%S)
   build:
@@ -34,11 +34,14 @@ phases:
       - echo Build started on `date`
       - mvn --fail-at-end  -T 1C -DbuildNumber=666 -Drpm.release=false -Dgwt.working=true -DSNAPSHOT -am -pl aon-rest-api install
       - echo Build completed on `date`
+      - aws cloudformation package --template aon-rest-api/serverless.template --s3-bucket aon-rest-api --output json > serverless-template.json
   post_build:
     commands:
 
 artifacts:
+  type: zip
   files:
+    - serverless-template.json
     - aon-rest-api/target/aon-rest-api-9.23-SNAPSHOT.jar
     # - location
   #discard-paths: yes
