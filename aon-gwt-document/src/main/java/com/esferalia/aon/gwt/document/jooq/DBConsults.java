@@ -514,7 +514,9 @@ public class DBConsults {
 					tag.setId(record.value2());
 				}
 				if(record.value3()!= null){
-					tag.setDomain(getDomainName(domain.setId(record.getValue(TAG.DOMAIN)), user));
+					Domain d = new Domain().setName(domain.getName())
+							.setId(record.getValue(TAG.DOMAIN));
+					tag.setDomain(getDomainName(d, user));
 				}
 				ts.add(tag);
 			}
