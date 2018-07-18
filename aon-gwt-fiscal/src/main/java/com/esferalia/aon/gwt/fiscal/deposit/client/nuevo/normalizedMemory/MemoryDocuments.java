@@ -6,7 +6,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.Deposit;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -157,12 +159,17 @@ public class MemoryDocuments extends PageAbs {
 					@Override
 					public void onSuccess(Void result){
 						if(mf.getName().equals("Memoria" + getYear())){
-							onEdit(D2DepositFooterKey.PR8080805.getCode(), "1", false);
-							getDeposit().getInma().updateSchemaMemory(getAonData(), false, D2DepositFooterKey.PR8080805.getCode(), getYear(), new AsyncCallback<Void>() {
+							String type = getDeposit().getDeposit().get(D2DepositConstants.DEPOSIT_TYPE);
+							D2DepositFooterKey key= type.equals(DepositType.PYMES.getLabel()) 
+									? D2DepositFooterKey.PR8080805
+									: D2DepositFooterKey.PR8080852;
+							onEdit(key.getCode(), "1", false);
+							getDeposit().getInma().updateSchemaMemory(getAonData(), false, key.getCode(), getYear(), new AsyncCallback<Void>() {
 								@Override
 								public void onFailure(Throwable caught) {}
 								@Override
 								public void onSuccess(Void result) {
+
 								}
 							});
 						}
@@ -242,7 +249,11 @@ public class MemoryDocuments extends PageAbs {
 					protected void onAccept() {
 						hide();
 						if(mf.getName().equals(D2_FILE_MEMORY + getYear())){
-							onEdit(D2DepositFooterKey.PR8080805.getCode(), "0", false);		
+							String type = getDeposit().getDeposit().get(D2DepositConstants.DEPOSIT_TYPE);
+							D2DepositFooterKey key= type.equals(DepositType.PYMES.getLabel()) 
+									? D2DepositFooterKey.PR8080805
+									: D2DepositFooterKey.PR8080852;
+							onEdit(key.getCode(), "0", false);		
 						} else if(mf.getName().equals(D2_FILE_AUTOCARTERA_MODEL + getYear())){
 							onEdit(D2DepositFooterKey.PR8080809.getCode(), "1", false);	
 						} else if(mf.getName().equals(D2_FILE_GESTION + getYear())){

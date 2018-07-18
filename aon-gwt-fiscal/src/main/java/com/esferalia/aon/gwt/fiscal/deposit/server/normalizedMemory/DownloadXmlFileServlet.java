@@ -278,7 +278,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		public static File getFileDocuments2Zip(String domain, Integer domainId,final String name2, File parent, Integer year) throws IOException {
 			String name = name2;
 			Attach attach = AON.getAttach(domain, domainId, "",
-					f -> f.getDescriptionProperty().eq(name2)
+					f -> f.getDescriptionProperty().eq(name2+year)
 						.and(f.getDomainProperty().eq(domainId))
 						.and(f.getTypeProperty().eq((byte)7)),
 					AttachType.REGISTRY);
