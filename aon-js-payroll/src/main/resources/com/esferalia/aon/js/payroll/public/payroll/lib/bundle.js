@@ -397,7 +397,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
       .moveTo(originalX + left + 410 , originalY + footer + t0p + 161).lineTo(originalX + left + 551 , originalY + footer + t0p + 161).stroke();
 
       taxesS = getDeduction("Especie");
-      if(taxesS.value == 0){
+      if(!taxesS.value || taxesS.value == 0){
         pdf
         .font(textFont)
         .text('4. Base sujeta a retención del IRPF' , originalX + left + 5 , originalY + footer + t0p + 165)
@@ -1235,7 +1235,7 @@ module.exports.standardPayroll = function(payroll, stream){
       .moveTo(originalX + left + 410 , originalY + footer + t0p + 161).lineTo(originalX + left + 551 , originalY + footer + t0p + 161).stroke();
 
       taxesS = getDeduction("Especie");
-      if(taxesS == undefined || taxesS.value == 0){
+      if(!taxesS.value || taxesS.value == 0){
         pdf
         .font(textFont)
         .text('4. Base sujeta a retención del IRPF' , originalX + left + 5 , originalY + footer + t0p + 165)

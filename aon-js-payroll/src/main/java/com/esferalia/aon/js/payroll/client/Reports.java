@@ -254,7 +254,7 @@ public class Reports {
 
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("GET", LOGO_URL);
-		xhr.setResponseType(ResponseType.ArrayBuffer);
+		//xhr.setResponseType(ResponseType.ArrayBuffer);
 		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
 			
 			@Override
@@ -265,7 +265,8 @@ public class Reports {
 				if (state != XMLHttpRequest.DONE)
 					return;
 				
-				consumer.accept("data:image/jpeg;base64,"+base64ArrayBuffer(xhr.getResponseArrayBuffer()));
+				//consumer.accept("data:image/jpeg;base64,"+base64ArrayBuffer(xhr.getResponseArrayBuffer()));
+				consumer.accept("data:image/jpeg;base64,"+xhr.getResponseText());
 				
 				
 			}
@@ -521,11 +522,15 @@ public class Reports {
 	           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
 					});
 				}
+				if(paymentsOrdered.@java.util.List::size()() == i+1){
+					json.accruals.push(accrual);
+				}
 			}else{
 				json.accruals.push(accrual);
 				accrual = {};
 				accrual.accrual_name = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCodeDescription()();
 				accrual.types = [];
+				
 				if(paymentsOrdered.@java.util.List::size()() == i+1){
 					var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
 					if( amount ){
@@ -535,6 +540,15 @@ public class Reports {
 		           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
 						});
 						json.accruals.push(accrual);
+					}
+				}else{
+					var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
+					if( amount ){
+						accrual.types.push({
+							type_expression : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
+		           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
+		           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
+						});
 					}
 				}
 			}
