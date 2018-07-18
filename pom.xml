@@ -211,6 +211,7 @@
 		<module>aon-db-up2date</module>
 		
 		<!-- AWS API Gateway & Lambda -->
+		<module>aon-rest-api</module>
 		<module>aon-jasper-report</module>
 		
 	</modules>

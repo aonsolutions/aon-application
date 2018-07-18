@@ -8,6 +8,7 @@
     <version>9.23-SNAPSHOT</version>
   </parent>
 
+  <name>AON-REST-API</name>
   <groupId>net.aonsolutions</groupId>
   <artifactId>aon-rest-api</artifactId>
   <version>9.23-SNAPSHOT</version>
@@ -80,5 +81,12 @@
       <artifactId>aws-lambda-java-core</artifactId>
       <version>1.1.0</version>
     </dependency>
+
+    <!--dependency>
+      <groupId>com.esferalia.aon</groupId>
+      <artifactId>aon.payroll</artifactId>
+      <version>${project.version}</version>
+    </dependency-->
+
   </dependencies>
 </project>
