@@ -1,6 +1,6 @@
 {
   "Transform": "AWS::Serverless-2016-10-31",
-  "Description": "Simple article service.",
+  "Description": "AON SOLUTIONS REST API.",
   "Parameters" : {
     "ArticleBucketName" : {
         "Type" : "String",
@@ -30,6 +30,27 @@
     "CreateArticleTable" : {"Fn::Equals" : [{"Ref" : "ArticleTableName"}, ""]}
   },
   "Resources": {
+    "GetSolicitudTrabajadoresYTramos": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "net.aonsolutions.rest.api.function.GetSolicitudTrabajadoresTramos",
+        "Runtime" : "java8",
+        "CodeUri" : "./target/aon-rest-api-9.23-SNAPSHOT.jar",
+        "Policies": [],
+        "Environment" : {
+          "Variables" : {}
+        },
+        "Events": {
+          "GetResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/seg-social/sld/SolicitudTrabajadoresTramos",
+              "Method": "get"
+            }
+          }
+        }
+      }
+    },
     "GetArticle": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
