@@ -1,31 +1,28 @@
 package net.aonsolutions.rest.api.function;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Month;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos;
 import net.aonsolutions.core.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramosBuilder;
+import net.aonsolutions.rest.api.model.ServerlessInput;
+import net.aonsolutions.rest.api.model.ServerlessOutput;
 
-public class GetSolicitudTrabajadoresTramos implements RequestStreamHandler {
+public class GetSolicitudTrabajadoresTramos implements RequestHandler<ServerlessInput, ServerlessOutput> {
 
     @Override
-    public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
+    public ServerlessOutput handleRequest(ServerlessInput serverlessInput, Context context) {
 
-        // TODO: Implement your stream handler. See https://docs.aws.amazon.com/lambda/latest/dg/java-handler-io-type-stream.html for more information.
-        // This demo implementation capitalizes the characters from the input stream.
-        // int letter = 0;
-        // while((letter = input.read()) >= 0) {
-        //     output.write(Character.toUpperCase(letter));
-        // }
     	
     	String ltype = "L00";
     	String ccc = "1234567890";
@@ -40,7 +37,6 @@ public class GetSolicitudTrabajadoresTramos implements RequestStreamHandler {
     	SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = 
 	    	new SolicitudTrabajadoresTramosBuilder()
 	    	.setCCC(ccc)
-	    	.setTipo(ltype)
 	    	.setAutorizado(666)
 	    	.setAnhoDesde(year)
 	    	.setMesDesde(month)
@@ -48,16 +44,36 @@ public class GetSolicitudTrabajadoresTramos implements RequestStreamHandler {
 	    	.setMesHasta(month)
 	    	.setCCCConcertado(ccc)
 	    	.addLiquidacion()
+
+	    	.setTipo(ltype)
 	    	.setAnhoControl(year)
 	    	.setMesControl(month)
+	    	
 	    	.createSolicitudBorrador()
     	;
+    	StringWriter sw = new StringWriter();
     	
+        ServerlessOutput output = new ServerlessOutput();
+    	Map<String,String> headers = new HashMap<String,String>();
+
     	try {
-			Utils.marshal(solicitudTrabajadoresTramos, output);
+    		Utils.marshal(solicitudTrabajadoresTramos, sw);
+			output.setStatusCode(200);
+            headers.put("Content-Length", "text/xml");
 		} catch (JAXBException e) {
-			e.printStackTrace();
+            e.printStackTrace(new PrintWriter(sw));
+            headers.put("Content-Length", "text/plain");
+		} finally {
+			output.setStatusCode(500);
 		}
+    	
+    	String body = sw.toString();
+        output.setBody(body);
+        headers.put("Content-Length", Integer.toString(body.length()));
+        output.setHeaders(headers);
+        
+        return output;
+    	
     }
     
     
