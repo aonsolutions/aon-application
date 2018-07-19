@@ -327,7 +327,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,0).setIng(mod.getAmount(Mod303Key.CT_SA16))
 			,true)
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,CT_SA17(Mod303Key.CT_SA17,null,null,null,null,null
+		,CT_SA17(Mod303Key.CT_SA17,null,null,null,"(hasFarmerActivity(0) && isLastPeriod())?CT_SA17:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA17,ensureFarmerActivity(mod,0).getSop())
 			,mod -> ensureFarmerActivity(mod,0).setSop(mod.getAmount(Mod303Key.CT_SA17))
 			,true)
@@ -372,7 +372,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,1).setIng(mod.getAmount(Mod303Key.CT_SA26))
 			,true)
 		// (2) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,CT_SA27(Mod303Key.CT_SA27,null,null,null,null,null
+		,CT_SA27(Mod303Key.CT_SA27,null,null,null,"(hasFarmerActivity(1) && isLastPeriod())?CT_SA27:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA27,ensureFarmerActivity(mod,1).getSop())
 			,mod -> ensureFarmerActivity(mod,1).setSop(mod.getAmount(Mod303Key.CT_SA27))
 			,true)
@@ -418,7 +418,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,2).setIng(mod.getAmount(Mod303Key.CT_SA36))
 			,true)
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,CT_SA37(Mod303Key.CT_SA37,null,null,null,null,null
+		,CT_SA37(Mod303Key.CT_SA37,null,null,null,"(hasFarmerActivity(2) && isLastPeriod())?CT_SA37:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA37,ensureFarmerActivity(mod,2).getSop())
 			,mod -> ensureFarmerActivity(mod,2).setSop(mod.getAmount(Mod303Key.CT_SA37))
 			,true)
@@ -464,7 +464,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,3).setIng(mod.getAmount(Mod303Key.CT_SA46))
 			,true)
 		// (4) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,CT_SA47(Mod303Key.CT_SA47,null,null,null,null,null
+		,CT_SA47(Mod303Key.CT_SA47,null,null,null,"(hasFarmerActivity(3) && isLastPeriod())?CT_SA47:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA47,ensureFarmerActivity(mod,3).getSop())
 			,mod -> ensureFarmerActivity(mod,3).setSop(mod.getAmount(Mod303Key.CT_SA47))
 			,true)
