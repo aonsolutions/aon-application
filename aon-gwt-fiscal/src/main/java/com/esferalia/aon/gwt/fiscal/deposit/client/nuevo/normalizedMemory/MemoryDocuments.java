@@ -160,7 +160,7 @@ public class MemoryDocuments extends PageAbs {
 					public void onSuccess(Void result){
 						if(mf.getName().equals("Memoria" + getYear())){
 							String type = getDeposit().getDeposit().get(D2DepositConstants.DEPOSIT_TYPE);
-							D2DepositFooterKey key= type.equals(DepositType.PYMES.getLabel()) 
+							D2DepositFooterKey key= type.equals(DepositType.ABREVIADO.getLabel()) 
 									? D2DepositFooterKey.PR8080805
 									: D2DepositFooterKey.PR8080852;
 							onEdit(key.getCode(), "1", false);
@@ -250,7 +250,7 @@ public class MemoryDocuments extends PageAbs {
 						hide();
 						if(mf.getName().equals(D2_FILE_MEMORY + getYear())){
 							String type = getDeposit().getDeposit().get(D2DepositConstants.DEPOSIT_TYPE);
-							D2DepositFooterKey key= type.equals(DepositType.PYMES.getLabel()) 
+							D2DepositFooterKey key= type.equals(DepositType.ABREVIADO.getLabel()) 
 									? D2DepositFooterKey.PR8080805
 									: D2DepositFooterKey.PR8080852;
 							onEdit(key.getCode(), "0", false);		
