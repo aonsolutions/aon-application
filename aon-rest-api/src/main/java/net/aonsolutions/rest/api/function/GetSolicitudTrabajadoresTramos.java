@@ -37,6 +37,7 @@ public class GetSolicitudTrabajadoresTramos implements RequestHandler<Serverless
     	SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = 
 	    	new SolicitudTrabajadoresTramosBuilder()
 	    	.setCCC(ccc)
+	    	.setTipo(ltype)
 	    	.setAutorizado(666)
 	    	.setAnhoDesde(year)
 	    	.setMesDesde(month)
@@ -45,7 +46,6 @@ public class GetSolicitudTrabajadoresTramos implements RequestHandler<Serverless
 	    	.setCCCConcertado(ccc)
 	    	.addLiquidacion()
 
-	    	.setTipo(ltype)
 	    	.setAnhoControl(year)
 	    	.setMesControl(month)
 	    	
@@ -60,7 +60,7 @@ public class GetSolicitudTrabajadoresTramos implements RequestHandler<Serverless
     		Utils.marshal(solicitudTrabajadoresTramos, sw);
 			output.setStatusCode(200);
             headers.put("Content-Length", "text/xml");
-		} catch (JAXBException e) {
+		} catch (Exception e) {
             e.printStackTrace(new PrintWriter(sw));
             headers.put("Content-Length", "text/plain");
 		} finally {
