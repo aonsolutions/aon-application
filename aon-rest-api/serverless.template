@@ -23,7 +23,13 @@
         "Description" : "Write capacity for the DynamoDB blog table.",
         "Default" : "3",
         "MinValue" : 1
-    }
+    },
+    "StageName" : {
+        "Type" : "String",
+        "Description" : "",
+        "MinLength" : "0",
+        "Default" : "snapshot"
+      }
   },
   "Conditions" : {
     "CreateArticleBucket" : {"Fn::Equals" : [{"Ref" : "ArticleBucketName"}, ""]},
@@ -34,7 +40,7 @@
       "Type" : "AWS::Serverless::Api",
       "Properties": {
         "Name" : "aon-rest-api",
-        "StageName": "snapshot",
+        "StageName": {"Ref" : "StageName"},
         "DefinitionBody" : {
            "swagger": "2.0",
            "info": {
@@ -65,6 +71,7 @@
                  "x-amazon-apigateway-integration" : {
                    "httpMethod": "POST",
                    "type": "aws_proxy",
+                   "timeoutInMillis": "10000",
                    "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetSolicitudTrabajadoresYTramos.Arn}/invocations"}
                  }
                }
