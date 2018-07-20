@@ -71,8 +71,8 @@
                  "x-amazon-apigateway-integration" : {
                    "httpMethod": "POST",
                    "type": "aws_proxy",
-                   "timeoutInMillis": "10000",
-                   "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetSolicitudTrabajadoresYTramos.Arn}/invocations"}
+                   "timeoutInMillis": "30000",
+                   "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCretaFile.Arn}/invocations"}
                  }
                }
              }
@@ -80,11 +80,11 @@
         }
       }
     },
-    "GetSolicitudTrabajadoresYTramos": {
+    "GetCretaFile": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
-        "FunctionName": "get-solicitud-trabajadores-tramos",
-        "Handler": "net.aonsolutions.rest.api.function.GetSolicitudTrabajadoresTramos",
+        "FunctionName": "get-creta-file",
+        "Handler": "net.aonsolutions.rest.api.function.GetCretaFile",
         "Runtime" : "java8",
         "CodeUri" : "./target/aon-rest-api-9.23-SNAPSHOT.jar",
         "Policies": [],

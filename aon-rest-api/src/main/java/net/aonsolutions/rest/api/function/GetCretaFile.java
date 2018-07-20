@@ -4,53 +4,62 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Month;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.JAXBException;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
-import net.aonsolutions.core.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos;
 import net.aonsolutions.core.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramosBuilder;
 import net.aonsolutions.rest.api.model.ServerlessInput;
 import net.aonsolutions.rest.api.model.ServerlessOutput;
 
-public class GetSolicitudTrabajadoresTramos implements RequestHandler<ServerlessInput, ServerlessOutput> {
+public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessOutput> {
+	
+	public static final String FILE = "file";
 
     @Override
     public ServerlessOutput handleRequest(ServerlessInput serverlessInput, Context context) {
-
     	
-    	String ltype = "L00";
-    	String ccc = "1234567890";
-
+    	
+    	String file = serverlessInput.getPathParameters().get(FILE);
+    	
+    	
     	Calendar calendar = Calendar.getInstance();
-    	calendar.add(Calendar.MONTH, -1);
     	
-    	int year = calendar.get(Calendar.YEAR);
-    	Month month = getMonth(calendar);
+		String tipo = "L00";
+		int autorizado= 666;
+		int desdeAnho = calendar.get(Calendar.YEAR);
+		Month desdeMes = getMonth(calendar);
+		int hastaAnho = calendar.get(Calendar.YEAR);
+		Month hastaMes = getMonth(calendar);
+		int ctrlAnho = calendar.get(Calendar.YEAR);
+		Month ctrlMes = getMonth(calendar);
+		String cccs [] = {"00000000000"} ; //Collections.emptyList();
+		
+		
+		
     	
-    	
-    	SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = 
-	    	new SolicitudTrabajadoresTramosBuilder()
-	    	.setCCC(ccc)
-	    	.setTipo(ltype)
-	    	.setAutorizado(666)
-	    	.setAnhoDesde(year)
-	    	.setMesDesde(month)
-	    	.setAnhoHasta(year)
-	    	.setMesHasta(month)
-	    	.setCCCConcertado(ccc)
-	    	.addLiquidacion()
+		SolicitudTrabajadoresTramosBuilder builder = new SolicitudTrabajadoresTramosBuilder()
+				.setAutorizado(autorizado);
 
-	    	.setAnhoControl(year)
-	    	.setMesControl(month)
-	    	
-	    	.createSolicitudBorrador()
-    	;
+		for (String cCC : cccs) {
+			builder.setCCC(cCC)
+			.setTipo(tipo)
+			.setMesDesde(desdeMes)
+			.setAnhoDesde(desdeAnho)
+			.setMesHasta(hastaMes)
+			.setAnhoHasta(hastaAnho)
+			.setMesControl(ctrlMes)
+			.setAnhoControl(ctrlAnho)
+			.addLiquidacion();
+		}
+		net.aonsolutions.core.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramos solicitudTrabajadoresTramos = builder
+				.createSolicitudBorrador();
+
     	StringWriter sw = new StringWriter();
     	
         ServerlessOutput output = new ServerlessOutput();
