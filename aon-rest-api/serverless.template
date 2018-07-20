@@ -40,7 +40,7 @@
       "Type" : "AWS::Serverless::Api",
       "Properties": {
         "Name" : "aon-rest-api",
-        "StageName": {"Ref" : "StageName"},
+        "StageName": "snapshot",
         "DefinitionBody" : {
            "swagger": "2.0",
            "info": {
