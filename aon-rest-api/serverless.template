@@ -46,14 +46,16 @@
                  "responses" : {},
                  "x-amazon-apigateway-integration" : {
                    "httpMethod": "POST",
-                   "type": "aws_proxy"
+                   "type": "aws_proxy",
+                   "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetArticle.Arn}/invocations"}
                  }
                },
                "post" : {
                  "responses" : {},
                  "x-amazon-apigateway-integration" : {
                    "httpMethod": "POST",
-                   "type": "aws_proxy"
+                   "type": "aws_proxy",
+                   "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PutArticle.Arn}/invocations"}
                  }
                }
              },
@@ -62,7 +64,8 @@
                  "responses" : {},
                  "x-amazon-apigateway-integration" : {
                    "httpMethod": "POST",
-                   "type": "aws_proxy"
+                   "type": "aws_proxy",
+                   "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetSolicitudTrabajadoresYTramos.Arn}/invocations"}
                  }
                }
              }
