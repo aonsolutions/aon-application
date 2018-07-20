@@ -30,9 +30,23 @@
     "CreateArticleTable" : {"Fn::Equals" : [{"Ref" : "ArticleTableName"}, ""]}
   },
   "Resources": {
+    "AonRestApi": {
+      "Type" : "AWS::Serverless::Api",
+      "Properties": {
+        "Name" : "aon-rest-api",
+        "StageName": "snapshot",
+        "DefinitionBody" : {
+           "swagger": "2.0",
+           "info": {
+             "title": {"Ref" : "AWS::StackName"}
+           }
+        }
+      }
+    },
     "GetSolicitudTrabajadoresYTramos": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
+        "FunctionName": "get-solicitud-trabajadores-tramos",
         "Handler": "net.aonsolutions.rest.api.function.GetSolicitudTrabajadoresTramos",
         "Runtime" : "java8",
         "CodeUri" : "./target/aon-rest-api-9.23-SNAPSHOT.jar",
@@ -45,7 +59,8 @@
             "Type": "Api",
             "Properties": {
               "Path": "/seg-social/sld/SolicitudTrabajadoresTramos",
-              "Method": "get"
+              "Method": "get",
+              "RestApiId" : {"Ref": "AonRestApi"}
             }
           }
         }
@@ -72,7 +87,8 @@
             "Type": "Api",
             "Properties": {
               "Path": "/",
-              "Method": "get"
+              "Method": "get",
+              "RestApiId" : {"Ref": "AonRestApi"}
             }
           }
         }
@@ -99,7 +115,8 @@
             "Type": "Api",
             "Properties": {
               "Path": "/",
-              "Method": "post"
+              "Method": "post",
+              "RestApiId" : {"Ref": "AonRestApi"}
             }
           }
         }

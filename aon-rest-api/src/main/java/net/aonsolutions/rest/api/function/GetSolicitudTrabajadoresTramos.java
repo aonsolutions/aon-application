@@ -59,10 +59,10 @@ public class GetSolicitudTrabajadoresTramos implements RequestHandler<Serverless
     	try {
     		Utils.marshal(solicitudTrabajadoresTramos, sw);
 			output.setStatusCode(200);
-            headers.put("Content-Length", "text/xml");
+            headers.put("Content-Type", "text/xml");
 		} catch (Exception e) {
             e.printStackTrace(new PrintWriter(sw));
-            headers.put("Content-Length", "text/plain");
+            headers.put("Content-Type", "text/plain");
 		} finally {
 			output.setStatusCode(500);
 		}
