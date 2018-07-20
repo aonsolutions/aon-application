@@ -65,7 +65,7 @@
                  }
                }
              },
-             "/seg-social/sld/SolicitudTrabajadoresTramos" : {
+             "/aon_gwt_payroll/sdl/{file}" : {
                "get" : {
                  "responses" : {},
                  "x-amazon-apigateway-integration" : {
@@ -95,7 +95,7 @@
           "GetResource": {
             "Type": "Api",
             "Properties": {
-              "Path": "/seg-social/sld/SolicitudTrabajadoresTramos",
+              "Path": "/aon_gwt_payroll/sdl/{file}",
               "Method": "get",
               "RestApiId" : {"Ref": "AonRestApi"}
             }
