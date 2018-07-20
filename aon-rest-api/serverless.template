@@ -39,6 +39,21 @@
            "swagger": "2.0",
            "info": {
              "title": {"Ref" : "AWS::StackName"}
+           },
+           "paths" : {
+             "/":{
+               "get" : {
+                 "responses" : {}
+               },
+               "post" : {
+                 "responses" : {}
+               }
+             },
+             "/seg-social/sld/SolicitudTrabajadoresTramos" : {
+               "get" : {
+                 "responses" : {}
+               }
+             }
            }
         }
       }
