@@ -43,15 +43,27 @@
            "paths" : {
              "/":{
                "get" : {
-                 "responses" : {}
+                 "responses" : {},
+                 "x-amazon-apigateway-integration" : {
+                   "httpMethod": "POST",
+                   "type": "aws_proxy"
+                 }
                },
                "post" : {
-                 "responses" : {}
+                 "responses" : {},
+                 "x-amazon-apigateway-integration" : {
+                   "httpMethod": "POST",
+                   "type": "aws_proxy"
+                 }
                }
              },
              "/seg-social/sld/SolicitudTrabajadoresTramos" : {
                "get" : {
-                 "responses" : {}
+                 "responses" : {},
+                 "x-amazon-apigateway-integration" : {
+                   "httpMethod": "POST",
+                   "type": "aws_proxy"
+                 }
                }
              }
            }
