@@ -219,7 +219,7 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 	 */
 	public CabeceraSii cabecera(Company company, Boolean mod, String terceros){
 		CabeceraSii cabecera = new CabeceraSii();
-		cabecera.setIDVersionSii("1.0");
+		cabecera.setIDVersionSii("1.1");
 		cabecera.setTipoComunicacion(mod ? ClaveTipoComunicacionType.A_1 : ClaveTipoComunicacionType.A_0);
 		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
 		titular.setNIF(company.getDocument());
@@ -233,7 +233,7 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 	}
 	public CabeceraSii cabecera(Company company){
 		CabeceraSii cabecera = new CabeceraSii();
-		cabecera.setIDVersionSii("1.0");
+		cabecera.setIDVersionSii("1.1");
 		cabecera.setTipoComunicacion(ClaveTipoComunicacionType.A_0);
 		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
 		titular.setNIF(company.getDocument());

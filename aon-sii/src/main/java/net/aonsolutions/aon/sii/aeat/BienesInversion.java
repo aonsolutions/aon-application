@@ -192,7 +192,7 @@ public class BienesInversion extends SIIBuilt {
 	 */
 	public CabeceraSii cabecera(Company company, Boolean mod, String terceros) {
 		CabeceraSii cabecera = new CabeceraSii();
-		cabecera.setIDVersionSii("1.0");
+		cabecera.setIDVersionSii("1.1");
 		cabecera.setTipoComunicacion(mod ? ClaveTipoComunicacionType.A_1 : ClaveTipoComunicacionType.A_0);
 		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
 		titular.setNIF(company.getDocument());
@@ -206,7 +206,7 @@ public class BienesInversion extends SIIBuilt {
 
 	public CabeceraSii cabecera(Company company) {
 		CabeceraSii cabecera = new CabeceraSii();
-		cabecera.setIDVersionSii("1.0");
+		cabecera.setIDVersionSii("1.1");
 		cabecera.setTipoComunicacion(ClaveTipoComunicacionType.A_0);
 		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
 		titular.setNIF(company.getDocument());
@@ -223,7 +223,7 @@ public class BienesInversion extends SIIBuilt {
 	 */
 	private CabeceraSiiBaja cabeceraBaja(Company company, String terceros) {
 		CabeceraSiiBaja cabecera = new CabeceraSiiBaja();
-		cabecera.setIDVersionSii("1.0");
+		cabecera.setIDVersionSii("1.1");
 		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
 		titular.setNIF(company.getDocument());
 		titular.setNombreRazon(company.getName());
