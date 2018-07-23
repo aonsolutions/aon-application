@@ -8,6 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.aonsolutions</groupId>
   <artifactId>aon-rest-api</artifactId>
+  <name>AON-REST-API</name>
   <version>9.23-SNAPSHOT</version>
   <build>
     <plugins>

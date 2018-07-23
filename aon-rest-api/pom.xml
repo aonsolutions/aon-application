@@ -84,9 +84,9 @@
 	
 	<!-- AON SOLUTIONS -->
     <dependency>
-      <groupId>net.aonsolutions.core</groupId>
-      <artifactId>tgss</artifactId>
-      <version>${project.version}</version>
+        <groupId>com.esferalia.aon</groupId>
+        <artifactId>aon.gwt.payroll</artifactId>
+        <version>${project.version}</version>
     </dependency>
 
   </dependencies>
