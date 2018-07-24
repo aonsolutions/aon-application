@@ -71,6 +71,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	private static final String D2_FILE_AUTOCARTERA_MODEL = "Modelo de Autocartera";
 	private static final String D2_FILE_GESTION = "Informe de Gesti\u00f3n";
 	private static final String D2_FILE_AUDIT = "Informe de Auditor\u00eda";
+	private static final String D2_FILE_TITULAR_REAL = "Informe de Titular Real";
+	private static final String D2_FILE_NO_FINANCIERA= "Informe sobre Informaci\u00f3n no financiera";
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
 	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
 	
@@ -145,10 +147,12 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	
 	private Map<String, String> getSchema(AonData aonData, Attach attach, Integer year){
 		Map<String, String> map = new HashMap<String, String>();
-
+		if(year>=2017) {
+			map.put(D2DepositFooterKey.PR8080827.getCode(), "1");
+		}
 		try {
 			Esquema schema = Utils.readXml(attach.getData());		
-				
+			
 			List<Clave> claves = schema.getClaves().getClave();
 			if(schema.getError() != null) {
 				map.put("error", schema.getError());
@@ -617,26 +621,48 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			m4.setMimeTypeNumber(id.get(1));
 		}		
 		ms.add(m4);
-
-		MemoryFiles m5 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_CONVOC + year);
-		m5.setId(id.get(0));m5.setBool(id.get(0) != -1);m5.setName(D2_FILE_CONVOC + year);
-		if(id.get(0) != -1){
-			MimeType mimeType = MimeType.values()[id.get(1)];
-			m5.setMimeTypeName(mimeType.getName());
-			m5.setMimeTypeNumber(id.get(1));
-		}		
-		ms.add(m5);
+		
+		if(year >= 2017) {
+			MemoryFiles m5 = new MemoryFiles();
+			id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_NO_FINANCIERA + year);
+			m5.setId(id.get(0));m5.setBool(id.get(0) != -1);m5.setName(D2_FILE_NO_FINANCIERA + year);
+			if(id.get(0) != -1){
+				MimeType mimeType = MimeType.values()[id.get(1)];
+				m5.setMimeTypeName(mimeType.getName());
+				m5.setMimeTypeNumber(id.get(1));
+			}		
+			ms.add(m5);
+		} else {
+			MemoryFiles m5 = new MemoryFiles();
+			id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_TITULAR_REAL + year);
+			m5.setId(id.get(0));m5.setBool(id.get(0) != -1);m5.setName(D2_FILE_TITULAR_REAL + year);
+			if(id.get(0) != -1){
+				MimeType mimeType = MimeType.values()[id.get(1)];
+				m5.setMimeTypeName(mimeType.getName());
+				m5.setMimeTypeNumber(id.get(1));
+			}		
+			ms.add(m5);
+		}
 
 		MemoryFiles m6 = new MemoryFiles();
-		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_SICAV + year);
-		m6.setId(id.get(0));m6.setBool(id.get(0) != -1);m6.setName(D2_FILE_SICAV + year);
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_CONVOC + year);
+		m6.setId(id.get(0));m6.setBool(id.get(0) != -1);m6.setName(D2_FILE_CONVOC + year);
 		if(id.get(0) != -1){
 			MimeType mimeType = MimeType.values()[id.get(1)];
 			m6.setMimeTypeName(mimeType.getName());
 			m6.setMimeTypeNumber(id.get(1));
 		}		
 		ms.add(m6);
+
+		MemoryFiles m7 = new MemoryFiles();
+		id = DBConsults.getMemoryFile(aonData.getDomain().getName(), aonData.getDomain().getId(), D2_FILE_SICAV + year);
+		m7.setId(id.get(0));m7.setBool(id.get(0) != -1);m7.setName(D2_FILE_SICAV + year);
+		if(id.get(0) != -1){
+			MimeType mimeType = MimeType.values()[id.get(1)];
+			m7.setMimeTypeName(mimeType.getName());
+			m7.setMimeTypeNumber(id.get(1));
+		}		
+		ms.add(m7);
 		
 		return ms;
 	}

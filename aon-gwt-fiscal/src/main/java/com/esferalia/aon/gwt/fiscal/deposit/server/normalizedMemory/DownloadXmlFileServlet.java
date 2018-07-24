@@ -42,14 +42,18 @@ public class DownloadXmlFileServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String D2_FILE_MEMORY = "Memoria";
 	private static final String D2_FILE_AUTOCARTERA_MODEL = "Modelo de Autocartera";
-	private static final String D2_FILE_GESTION = "Informe de Gestion";
-	private static final String D2_FILE_AUDIT = "Informe de Auditoria";
+	private static final String D2_FILE_GESTION = "Informe de Gesti\u00f3n";
+	private static final String D2_FILE_AUDIT = "Informe de Auditor\u00eda";
+	private static final String D2_FILE_TITULAR_REAL = "Informe de Titular Real";
+	private static final String D2_FILE_NO_FINANCIERA= "Informe sobre Informaci\u00f3n no financiera";
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
-	private static final String D2_FILE_SICAV = "Certificacion SICAV";
+	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
 	
 	private static final String D2_FILE_AUTOCARTERA_MODEL_2015 = "Acciones";
 	private static final String D2_FILE_GESTION_2015 = "Gestion";
 	private static final String D2_FILE_AUDIT_2015 = "Auditoria";
+	private static final String D2_FILE_TITULAR_REAL_2015 = "TitularReal";
+	private static final String D2_FILE_NO_FINANCIERA_2015 = "nofinanciera";
 	private static final String D2_FILE_CONVOC_2015 = "Convocatoria";
 	private static final String D2_FILE_SICAV_2015 = "SICAV";
 	
@@ -240,6 +244,8 @@ public class DownloadXmlFileServlet extends HttpServlet {
 				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, documents, year);
 				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, documents, year);
 				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, documents, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_NO_FINANCIERA, documents, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_TITULAR_REAL, documents, year);
 				//**************************
 				
 				File tmpDocuments = File.createTempFile("Documentos TMP%", "", parent);
@@ -291,6 +297,8 @@ public class DownloadXmlFileServlet extends HttpServlet {
 					if(name.equals(D2_FILE_CONVOC)) name = D2_FILE_CONVOC_2015;
 					if(name.equals(D2_FILE_GESTION)) name = D2_FILE_GESTION_2015;
 					if(name.equals(D2_FILE_SICAV)) name = D2_FILE_SICAV_2015;
+					if(name.equals(D2_FILE_NO_FINANCIERA)) name = D2_FILE_NO_FINANCIERA_2015;
+					if(name.equals(D2_FILE_TITULAR_REAL)) name = D2_FILE_TITULAR_REAL_2015;
 				}					
 				String extension = attach.getMimeType().getExtension();
 				File tempFile = File.createTempFile(name.toUpperCase() +"%", "."+extension, parent);				

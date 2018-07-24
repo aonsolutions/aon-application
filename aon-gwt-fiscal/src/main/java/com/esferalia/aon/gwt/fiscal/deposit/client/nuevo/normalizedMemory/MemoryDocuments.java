@@ -31,6 +31,8 @@ public class MemoryDocuments extends PageAbs {
 	private static final String D2_FILE_AUTOCARTERA_MODEL = "Modelo de Autocartera";
 	private static final String D2_FILE_GESTION = "Informe de Gesti\u00f3n";
 	private static final String D2_FILE_AUDIT = "Informe de Auditor\u00eda";
+	private static final String D2_FILE_TITULAR_REAL = "Informe de Titular Real";
+	private static final String D2_FILE_NO_FINANCIERA= "Informe sobre Informaci\u00f3n no financiera";
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
 	private static final String D2_FILE_SICAV = "Certificaci\u00f3n SICAV";
 	
@@ -81,6 +83,7 @@ public class MemoryDocuments extends PageAbs {
 		if(ms.get(3).getBool()) memoryFiles.add(ms.get(3));
 		if(ms.get(4).getBool()) memoryFiles.add(ms.get(4));
 		if(ms.get(5).getBool()) memoryFiles.add(ms.get(5));
+		if(ms.get(6).getBool()) memoryFiles.add(ms.get(6));
 		
 		tab.setWidth("100%");
 		tab.setCellSpacing(0);
@@ -96,13 +99,18 @@ public class MemoryDocuments extends PageAbs {
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextLeft());
 		
-		paintKey(tab, D2_FILE_MEMORY, 1, ms.get(0));
+	//	if(ms.get(0).getBool()) paintKey(tab, D2_FILE_MEMORY, 1, ms.get(0));
 		paintKey(tab, D2_FILE_AUTOCARTERA_MODEL, 2, ms.get(1));
 		paintKey(tab, D2_FILE_GESTION, 3, ms.get(2));
 		paintKey(tab, D2_FILE_AUDIT, 4, ms.get(3));
-		paintKey(tab, D2_FILE_CONVOC, 5, ms.get(4));
-		paintKey(tab, D2_FILE_SICAV, 6, ms.get(5));
-		
+		if(getYear() >= 2017) {
+			paintKey(tab, D2_FILE_NO_FINANCIERA, 5, ms.get(4));
+		} else {
+			paintKey(tab, D2_FILE_TITULAR_REAL, 5, ms.get(4));
+
+		}
+		paintKey(tab, D2_FILE_CONVOC, 6, ms.get(5));
+		paintKey(tab, D2_FILE_SICAV, 7, ms.get(6));
 	}
 	
 	protected void paintKey(FlexTable tab, String description, int row, MemoryFiles mf) {
@@ -200,6 +208,26 @@ public class MemoryDocuments extends PageAbs {
 								public void onSuccess(Void result) {}
 							});
 						}
+						if(mf.getName().equals(D2_FILE_NO_FINANCIERA + getYear())){
+							// TODO NEW CODE!!!!!!!!!
+							onEdit(D2DepositFooterKey.PR8080825.getCode(), "0", false);
+							getDeposit().getInma().updateSchemaMemory(getAonData(), false, D2DepositFooterKey.PR8080825.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
+						}
+						if(mf.getName().equals(D2_FILE_TITULAR_REAL + getYear())){
+							// TODO NEW CODE!!!!!!!!! 
+							onEdit(D2DepositFooterKey.PR8080827.getCode(), "0", false);
+							getDeposit().getInma().updateSchemaMemory(getAonData(), false, D2DepositFooterKey.PR8080827.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
+						}
 						if(mf.getName().equals(D2_FILE_CONVOC)){
 							onEdit(D2DepositFooterKey.PR8080823.getCode(), "0", false);
 							getDeposit().getInma().updateSchemaMemory(getAonData(), false, D2DepositFooterKey.PR8080823.getCode(), getYear(),new AsyncCallback<Void>() {
@@ -227,6 +255,8 @@ public class MemoryDocuments extends PageAbs {
 		});
 		
 		upload.setStyleName("aon-finding-toolbar-item aon-icon-file-upload");
+		String name = D2_FILE_MEMORY + getYear();
+		upload.setEnabled(!name.equals(mf.getName()));
 		upload.addClickHandler(new ClickHandler() {
 			MemoryFiles mf = mfAux;
 			@Override
@@ -260,6 +290,10 @@ public class MemoryDocuments extends PageAbs {
 							onEdit(D2DepositFooterKey.PR8080807.getCode(), "1", false);	
 						} else if(mf.getName().equals(D2_FILE_AUDIT + getYear())){
 							onEdit(D2DepositFooterKey.PR8080817.getCode(), "1", false);	
+						} else if(mf.getName().equals(D2_FILE_NO_FINANCIERA + getYear())){
+							onEdit(D2DepositFooterKey.PR8080825.getCode(), "1", false);	
+						} else if(mf.getName().equals(D2_FILE_TITULAR_REAL + getYear())){
+							onEdit(D2DepositFooterKey.PR8080827.getCode(), "1", false);	
 						} else if(mf.getName().equals(D2_FILE_CONVOC + getYear())){
 							onEdit(D2DepositFooterKey.PR8080823.getCode(), "1", false);
 						} else if(mf.getName().equals(D2_FILE_SICAV + getYear())){
@@ -281,8 +315,7 @@ public class MemoryDocuments extends PageAbs {
 		view.setStyleName("aon-finding-toolbar-item aon-icon-audit");
 		view.setEnabled(mf.getBool());
 		view.addClickHandler(new ClickHandler() {
-			MemoryFiles mf = mfAux;
-			Integer row = rowAux;
+			
 			@Override
 			public void onClick(ClickEvent event) {
 				

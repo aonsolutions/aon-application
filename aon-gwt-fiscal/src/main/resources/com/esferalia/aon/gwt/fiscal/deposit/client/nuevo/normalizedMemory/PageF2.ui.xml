@@ -157,14 +157,22 @@
 									<td>
 										<g:CheckBox ui:field="PR8080817" enabled="false" text="{msg.footer2Label14}" />
 									</td>
-									<td>
-										<g:CheckBox ui:field="PR8080809" enabled="false" text="{msg.footer1Title}" />
-									</td>
 								</tr>
 								<tr>
 									<td>
+										<g:CheckBox ui:field="PR8080809" enabled="false" text="{msg.footer1Title}" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080825" enabled="false" text="Informe sobre información no financiera" />
+									</td>
+									<td>
+										<g:CheckBox ui:field="PR8080827" enabled="false" text="Declaración de identificación del titular real" />
+									</td>
+									<td>
 										<g:CheckBox ui:field="PR8080823" enabled="false" text="{msg.footer2Label15}" />
 									</td>
+								</tr>
+								<tr>
 									<td>
 										<g:CheckBox ui:field="PR8080821" enabled="false" text="{msg.footer2Label16}" />
 									</td>
@@ -176,7 +184,8 @@
 									</td>
 									<td>
 										<g:Label text="{msg.footer2Label19}"/>
-										<g:Label ui:field="NUM" />									</td>
+										<g:Label ui:field="NUM" />		
+									</td>
 								</tr>
 							</table>
 							

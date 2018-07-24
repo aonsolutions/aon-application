@@ -62,9 +62,11 @@ public class PageF2 extends PageAbs {
 	@UiField CheckBox PR8080809 ; //CHECKBOX  MODELO DE AUTOCARTERA
 	@UiField CheckBox PR8080823 ; //CHECKBOX  ANUNCIOS DE CONVOCATORIA
 	@UiField CheckBox PR8080821 ; //CHECKBOX  SICAV
+	@UiField CheckBox PR8080825 ; //CHECKBOX  no financiera
+	@UiField CheckBox PR8080827 ; //CHECKBOX  titular real
 	
-	@UiField TextBox PR8081201 ; //Nombre y apellidos
-	@UiField TextBox PR8081202 ; //  dni
+	@UiField TextBox PR8081201 ; // Nombre y apellidos
+	@UiField TextBox PR8081202 ; // dni
 	@UiField TextBox PR8081203 ; // domicilio
 	@UiField TextBox PR8081204 ; // ciudad
 	@UiField TextBox PR8081205 ; // codigo postal
@@ -108,6 +110,8 @@ public class PageF2 extends PageAbs {
 		PR8080809 = new CheckBox(); //CHECKBOX  MODELO DE AUTOCARTERA
 		PR8080823 = new CheckBox(); //CHECKBOX  ANUNCIOS DE CONVOCATORIA
 		PR8080821 = new CheckBox(); //CHECKBOX  SICAV
+		PR8080825 = new CheckBox(); //CHECKBOX  no financiera
+		PR8080827 = new CheckBox(); //CHECKBOX  titular real
 
 		PR8081201 = new TextBox(); //Nombre y apellidos
 		PR8081202 = new TextBox(); //  dni
@@ -166,6 +170,9 @@ public class PageF2 extends PageAbs {
 		keyExe(D2DepositFooterKey.PR8080809.getCode(), PR8080809, "check", false);
 		keyExe(D2DepositFooterKey.PR8080823.getCode(), PR8080823, "check", false); 
 		keyExe(D2DepositFooterKey.PR8080821.getCode(), PR8080821, "check", false); 
+		
+		keyExe(D2DepositFooterKey.PR8080825.getCode(), PR8080825, "check", false); 
+		keyExe(D2DepositFooterKey.PR8080827.getCode(), PR8080827, "check", false); 
 
 		PR8081201.setWidth("99%");
 		keyExe("8081201", PR8081201, "text", true);
