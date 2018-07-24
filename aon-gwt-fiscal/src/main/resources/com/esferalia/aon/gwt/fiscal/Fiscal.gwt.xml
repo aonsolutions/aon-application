@@ -6,6 +6,9 @@
 	<inherits name="com.google.gwt.i18n.I18N" />
 	<inherits name='com.google.gwt.visualization.Visualization'/>
 	<inherits name="com.google.gwt.logging.Logging"/>
+	
+	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
+	<inherits name='com.esferalia.aon.js.payroll.Payroll'/>	
 		 
 	<!-- Spanish language, independent of country -->
 	<extend-property name="locale" values="es" />

@@ -83,9 +83,9 @@ public class AccountEntryDAO {
 	}
 	
 	public static enum AccountEntryFlatOrder {
-		 ORDER_PERIOD_JOURNAL( ACCOUNT_ENTRY.ACCOUNT_PERIOD.asc(),ACCOUNT_ENTRY.JOURNAL.asc(),ACCOUNT_ENTRY.ENTRY_DATE.asc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
+		 ORDER_PERIOD_JOURNAL( ACCOUNT_ENTRY.ACCOUNT_PERIOD.asc(),ACCOUNT_ENTRY.JOURNAL.asc(),ACCOUNT_ENTRY.ENTRY_DATE.asc(),ACCOUNT_ENTRY.ID.asc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
 		,ORDER_CREATION_DATE_DESC ( ACCOUNT_ENTRY.ID.desc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
-		,ORDER_MODIFICATION_DATE_DESC ( ACCOUNT_ENTRY.MODIFICATION_DATE.desc(),ACCOUNT_ENTRY.CREATION_DATE.desc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
+		,ORDER_MODIFICATION_DATE_DESC ( ACCOUNT_ENTRY.MODIFICATION_DATE.desc(),ACCOUNT_ENTRY.CREATION_DATE.desc(),ACCOUNT_ENTRY.ID.asc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
 		;
 		SortField<?>[] fields;
 		private AccountEntryFlatOrder( SortField<?> ...fields) {
@@ -181,7 +181,8 @@ public class AccountEntryDAO {
 
 	public static Stream<FlatAccountEntryDetail> fetchFlat(AONContext ctx
 			, AccountEntryFilter filter
-			, AccountEntryOrder orderBy) {
+			, AccountEntryOrder orderBy
+			, int offset, int limit) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
@@ -204,8 +205,9 @@ public class AccountEntryDAO {
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
 				.where(ACCOUNT_ENTRY_PROPERTIES.getConditions(filter))
 				.orderBy(AccountEntryFlatOrder.safeEnum( orderBy.ordinal() ).getFields())
+				.limit(offset,limit)
 				.fetch()
-				.stream()
+ 				.stream()
 				.map( record ->new FlatAccountEntryDetail()
 						.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
 						.setEntryDomain(record.getValue(ACCOUNT_ENTRY.DOMAIN))

@@ -112,20 +112,52 @@
       <scope>provided</scope>
       <classifier>sources</classifier>
     </dependency>
-    
-     <dependency>
-      <groupId>com.esferalia.aon</groupId>
-      <artifactId>aon.gwt.api</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.esferalia.aon</groupId>
-      <artifactId>aon.gwt.api</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-      <classifier>sources</classifier>
-    </dependency>
+
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.js.payroll</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>net.aonsolutions</groupId>
+		<artifactId>aon.gwt.pdfjs</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+	</dependency>
+	
+<!-- 
+
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.js.payroll</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+		<classifier>sources</classifier>
+	</dependency>
+	<dependency>
+		<groupId>net.aonsolutions</groupId>
+		<artifactId>aon.gwt.pdfjs</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+		<classifier>sources</classifier>
+	</dependency>
+	
+ -->
+ 	
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.api</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.api</artifactId>
+		<version>${project.version}</version>
+		<scope>provided</scope>
+		<classifier>sources</classifier>
+	</dependency>
    
 	<dependency>
     	<groupId>com.google.gwt</groupId>
@@ -186,25 +218,6 @@
 		<version>${project.version}</version>
 		<scope>compile</scope>
 	</dependency>
-    
-    <!-- 
-		<dependency>
-      		<groupId>com.code.aon</groupId>
-      		<artifactId>aon.ui.config</artifactId>
-    		<version>${project.version}</version>
-    		<scope>compile</scope>
-    		<exclusions>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm-attrs</artifactId>
-				</exclusion>
-			</exclusions>
-   		</dependency>
- -->
     <dependency>
       <groupId>com.google.gwt.google-apis</groupId>
       <artifactId>gwt-visualization</artifactId>

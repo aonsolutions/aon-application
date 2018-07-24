@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
@@ -13,9 +15,9 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -27,6 +29,7 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -39,20 +42,22 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectionHandlers{
 
-//	private static final Logger LOGGER = Logger.getLogger(JournalPanel.class.getName());
-//	static {
-//		LOGGER.addHandler( new ConsoleLogHandler() );
-//	}
+	private static final Logger LOGGER = Logger.getLogger(JournalPanel.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
 
-	private static final String ACCOUNT_ENTRY_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountEntryStreamServlet");
+	private static final String ACCOUNT_ENTRY_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountEntryFlatStreamServlet");
 	
 	private String domainName;
 	private String user;
 	private int domainId;
-	private final int limit = 20;
+	private final int limit = 200;
+	private Integer oldId = -1;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
-	private final MutableInt searchEnabled = new MutableInt( 0 ); 
+	private final MutableInt searchEnabled = new MutableInt( 0 );
+	private AccountEntry entry = null;
 	private FlowPanel container;
 	private int lastScrollPos = 0;
 	
@@ -126,6 +131,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 	private void search(AccountEntryParams params) {
 		container.clear();
 		offset.setValue(0);
+		oldId = -1;
 		search(offset.getValue(),params);
 	}
 	
@@ -153,15 +159,38 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 							Window.alert("ERROR de evaluación");
 						}
 						JavaScriptObject unk = JsonUtils.safeEval(text);
-						JsArray<JsAccountEntry> array = unk.cast();
-						
+						JsArray<JsFlatAccountEntry> array = unk.cast();
 						for (int i = 0; i < array.length(); i++ ) {
-							JsAccountEntry entry = array.get(i);	
+							JsFlatAccountEntry flatEntry = array.get(i);
+							if (!AonNumberUtils.equals( flatEntry.getEntryId(), oldId)) {
+								if (entry != null) {
+									final FlowPanel entrycontainer = new FlowPanel();
+									container.add(entrycontainer);
+									paintEntry(entrycontainer, entry);
+								}
+								oldId = flatEntry.getEntryId();
+								entry = newAccountEntry(flatEntry);
+							} else {
+								if (entry == null) {
+									entry = newAccountEntry(flatEntry);
+								}
+							}
+							entry.getDetails().add( newAccountEntryDetail(flatEntry));
 							something = true;
-							final FlowPanel entrycontainer = new FlowPanel();
-							container.add(entrycontainer);
-							paintEntry(entrycontainer, toAccountEntry(entry));
 							count++;
+						}
+						if (something) {
+							double sumD = 0.0;
+							double sumC = 0.0;
+							for (AccountEntryDetail aed : entry.getDetails()) {
+								sumD = AonMathUtils.sum(sumD, aed.getDebit());	
+								sumC = AonMathUtils.sum(sumC, aed.getCredit());
+							}
+							if (AonNumberUtils.equals(sumD, sumC)) {
+								final FlowPanel entrycontainer = new FlowPanel();
+								container.add(entrycontainer);
+								paintEntry(entrycontainer, entry);
+							}
 						}
 						offset.setValue(ofs + count);
 						enableMoreData();
@@ -188,46 +217,44 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 			}
 			
 			
-			private AccountEntry toAccountEntry(JsAccountEntry ori) {
-				AccountEntry out = new AccountEntry();
-				out.setDomain(ori.getDomain());
-				out.setId(ori.getId());
-				out.setPeriod(ori.getPeriod());
-				out.setPeriodName(ori.getPeriodName());
-				out.setPeriodStatus(AccountPeriodStatus.safeValueOf( ori.getPeriodStatus()));
-				out.setEntryDate(ori.getEntryDate());
-				out.setEntryType(AccountEntryType.safeValueOf( ori.getEntryType()));
-				out.setActivity(ori.getActivity());
-				out.setActivityDescription(ori.getActivityDescription());
-				out.setJournal(ori.getJournal());
-				out.setSecurityLevel(SecurityLevel.safeValueOf( ori.getSecurityLevel()));
-				out.setComments(ori.getComments());
-				if (ori.getDetails() != null && ori.getDetails().length > 0) {
-					for (JsAccountEntryDetail detail : ori.getDetails()) {
-						out.getDetails().add(toAccountEntryDetail(detail));
-					}
-				}
+			private AccountEntryDetail newAccountEntryDetail(JsFlatAccountEntry flatEntry) {
+				AccountEntryDetail out = new AccountEntryDetail();
+				out.setDomain(flatEntry.getEntryDomain());
+				out.setId(flatEntry.getDetailId());
+				out.setAccountEntry(flatEntry.getEntryId());
+				out.setAccount(flatEntry.getAccount());
+				out.setAccountCode(flatEntry.getAccountCode());
+				out.setAccountDescription(flatEntry.getAccountDescription());
+				out.setLine(flatEntry.getLine());
+				out.setConcept(flatEntry.getConcept());
+				out.setDebit(AonNumberUtils.zeroIfNull(flatEntry.getDebit()));
+				out.setCredit(AonNumberUtils.zeroIfNull(flatEntry.getCredit()));
+				out.setBalancingAccount(flatEntry.getBalancingAccount());
+				out.setBalancingAccountCode(flatEntry.getBalancingAccountCode());
+				out.setBalancingAccountDescription(flatEntry.getBalancingAccountDescription());
+				out.setDocumentNumber(flatEntry.getDocumentNumber());
 				return out;
 			}
 
-			private AccountEntryDetail toAccountEntryDetail(JsAccountEntryDetail detail) {
-				AccountEntryDetail out = new AccountEntryDetail();
-				out.setDomain(detail.getDomain());
-				out.setId(detail.getId());
-				out.setAccountEntry(detail.getAccountEntry());
-				out.setAccount(detail.getAccount());
-				out.setAccountCode(detail.getAccountCode());
-				out.setAccountDescription(detail.getAccountDescription());
-				out.setLine(detail.getLine());
-				out.setConcept(detail.getConcept());
-				out.setDebit(AonNumberUtils.zeroIfNull(detail.getDebit()));
-				out.setCredit(AonNumberUtils.zeroIfNull(detail.getCredit()));
-				out.setBalancingAccount(detail.getBalancingAccount());
-				out.setBalancingAccountCode(detail.getBalancingAccountCode());
-				out.setBalancingAccountDescription(detail.getBalancingAccountDescription());
-				out.setDocumentNumber(detail.getDocumentNumber());
+
+			private AccountEntry newAccountEntry(JsFlatAccountEntry ori) {
+				AccountEntry out = new AccountEntry();
+				out.setDomain(ori.getEntryDomain());
+				out.setId(ori.getEntryId());
+				out.setPeriod(ori.getEntryPeriod());
+				out.setPeriodName(ori.getEntryPeriodName());
+				out.setEntryDate(ori.getEntryDate());
+				out.setEntryType(AccountEntryType.safeValueOf( ori.getEntryType()));
+				out.setActivity(ori.getActivity());
+				out.setActivityDescription(ori.getActivityName());
+				out.setJournal(ori.getJournal());
+				out.setSecurityLevel(SecurityLevel.safeValueOf( ori.getSecurityLevel()));
+				out.setComments(ori.getComments());
 				return out;
 			}
+			public final native String getType( Object o ) /*-{
+				return typeof o;
+			}-*/;
 
 			private FocusPanel paintEntry(final FlowPanel entrycontainer, AccountEntry entry) {
 				final FocusPanel entryPanel = AccountEntryPrinter.print(entry);

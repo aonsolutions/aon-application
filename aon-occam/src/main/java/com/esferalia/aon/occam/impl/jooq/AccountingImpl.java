@@ -147,9 +147,8 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
-	public Stream<FlatAccountEntryDetail> getFlatAccountEntries(AONContext ctx, AccountEntryParams params) {
-		return AccountEntryDAO.fetchFlat(ctx, p -> AccountEntryUtils.getFilter(ctx,p, params),AccountEntryOrder.safeEnum(params.getOrder()))
-			;
+	public Stream<FlatAccountEntryDetail> getFlatAccountEntries(AONContext ctx, AccountEntryParams params, int offset, int limit) {
+		return AccountEntryDAO.fetchFlat(ctx, p -> AccountEntryUtils.getFilter(ctx,p, params),AccountEntryOrder.safeEnum(params.getOrder()),offset, limit);
 	}
 
 	@Override

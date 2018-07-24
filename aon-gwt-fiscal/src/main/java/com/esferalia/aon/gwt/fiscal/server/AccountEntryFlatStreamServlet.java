@@ -9,17 +9,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
 
-@WebServlet(name = "Account Entry Stream Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/AccountEntryStreamServlet" })
-public class AccountEntryStreamServlet extends HttpServlet {
+@WebServlet(name = "Account Entry Flat Stream Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/AccountEntryFlatStreamServlet" })
+public class AccountEntryFlatStreamServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 3774127041151176262L;
+	private static final long serialVersionUID = -5703828624659508582L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -36,12 +37,26 @@ public class AccountEntryStreamServlet extends HttpServlet {
 			AccountEntryParams params = JsonParser.parse(accountEntryParams);
 			resp.setContentType(MimeType.JSON.getName());
 			PrintWriter out = resp.getWriter();
-			final JSONArray entries = new JSONArray();
-			ACCOUNTING.getAccountEntriesStream(domainName, domainId, user, params, offset, limit)
+			out.write('[');
+			final MutableBoolean first = new MutableBoolean(true);
+			
+			ACCOUNTING.getFlatAccountEntries(domainName, domainId, user, params, offset, limit)
 				.map( entry -> JsonWriter.writeToJSON(entry))
-				.forEach(json -> entries.put(json));
+				.forEach(json -> {
+					try {
+						if (first.getValue()) {
+							first.setValue(false);
+						} else {
+							out.write(',');							
+						}
+						json.write(out);
+						out.write('\n');
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				} );
 			;
-			JsonWriter.write(out,entries);
+			out.write(']');
 			resp.flushBuffer();
 		} catch (Throwable e) {
 			throw new ServletException(e);

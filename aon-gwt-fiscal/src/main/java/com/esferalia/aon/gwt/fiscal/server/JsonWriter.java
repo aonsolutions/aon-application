@@ -8,9 +8,45 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class JsonWriter {
+	
+	public static JSONObject writeToJSON(FlatAccountEntryDetail entry) {
+		try {
+			JSONObject json = new JSONObject()
+				.put("entryId", entry.getEntryId())
+				.put("entryDomain", entry.getEntryDomain())
+				.put("entryPeriod", entry.getEntryPeriodName())
+				.put("entryPeriodName", entry.getEntryPeriodName())
+				.put("entryDate", entry.getEntryDate())
+				.put("entryType", entry.getEntryType().ordinal())
+				.put("activity", entry.getActivity())
+				.put("activityName", entry.getActivityName())
+				.put("journal", entry.getJournal())
+				.put("securityLevel", entry.getEntrySecurityLevel().name())
+				.put("comments", entry.getComments())
+				
+				.put("detailId", entry.getDetailId())
+				.put("account", entry.getAccount())
+				.put("accountCode", entry.getAccountCode())
+				.put("accountDescription", entry.getAccountDescription())
+				.put("concept", entry.getConcept())
+				.put("line", entry.getLine())
+				.put("debit", entry.getDebit())
+				.put("credit", entry.getCredit())
+				.put("balancingAccount", entry.getBalancingAccount())
+				.put("balancingAccountCode", entry.getBalancingAccountCode())
+				.put("balancingAccountDescription", entry.getBalancingAccountDescription())
+				.put("documentNumber", entry.getDocumentNumber())
+			;
+			return json;
+		} catch (JSONException e) {
+			throw new AonCoreException(e);
+		}
+	}
+
 	
 	public static JSONObject writeToJSON(AccountEntry entry) {
 		try {

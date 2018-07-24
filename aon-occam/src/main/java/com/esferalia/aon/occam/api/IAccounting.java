@@ -60,7 +60,7 @@ public interface IAccounting {
 			, int offset, int numberOfRows);
 	public Stream<AccountEntry> getAccountEntries(AONContext ctx,AccountEntryFilter filter
 			, int offset, int numberOfRows);
-	public Stream<FlatAccountEntryDetail> getFlatAccountEntries(AONContext ctx, AccountEntryParams params);
+	public Stream<FlatAccountEntryDetail> getFlatAccountEntries(AONContext ctx, AccountEntryParams params, int offset, int limit);
 	public boolean existsAnyEntry(AONContext ctx,Integer period, AccountEntryType accountEntryType);
 	public Integer save(AONContext ctx,AccountEntry ae);
 	public void delete(AONContext ctx,Integer id);

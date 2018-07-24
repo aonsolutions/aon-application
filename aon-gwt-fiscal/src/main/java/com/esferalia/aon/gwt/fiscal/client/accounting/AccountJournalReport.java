@@ -1,20 +1,33 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JsAccountEntry;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
+import com.esferalia.aon.js.payroll.client.AccReports;
+import com.esferalia.aon.js.payroll.client.Reports.Callback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -22,10 +35,21 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
+
+import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class AccountJournalReport extends MainEntryPoint {
 	
+	private static final Logger LOGGER = Logger.getLogger(JournalPanel.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	private static final String ACC_JORNAL_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountJournalReportExcelPrint";
 	private static final String ACC_JORNAL_FLAT_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountJournalFlatReportExcelPrint";
 	
@@ -36,7 +60,12 @@ public class AccountJournalReport extends MainEntryPoint {
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		JournalPanelReport panel = new JournalPanelReport(getCurrentDomainName(), getCurrentUser(), getCurrentDomain());
 		
-		
+		try {
+			new com.esferalia.aon.js.payroll.client.AccReports();
+			new Viewer();
+		} catch ( Throwable t ) {
+		}
+
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -91,7 +120,23 @@ public class AccountJournalReport extends MainEntryPoint {
 			}
 		});
 		buttonContainer.add(print);
-
+/*
+		final Button pdfPrint = new Button();
+		pdfPrint.setText(AON.MSG.print());
+		pdfPrint.setTitle(AON.MSG.print());
+		pdfPrint.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		pdfPrint.addStyleName(AON.AON_CSS.aonIconPdf());
+		pdfPrint.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LOGGER.info("Click pdfPrint");
+				search(panel.getWidgetParams());
+				LOGGER.info("Run Report");
+			}
+		});
+		buttonContainer.add(pdfPrint);
+*/
 		final Button excel = new Button();
 		excel.setText(AON.MSG.export());
 		excel.setTitle(AON.MSG.export());
@@ -130,6 +175,26 @@ public class AccountJournalReport extends MainEntryPoint {
 		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(dockLayoutPanel);
+	}
+	
+	private void showViewer(String dataURI) {
+		CustomPopup viewerDialog = new CustomPopup();
+		String width = (Window.getClientWidth() - 100) + "px";
+		viewerDialog.setWidth(width);
+		viewerDialog.setHeight((Window.getClientHeight() - 100) + "px");
+		viewerDialog.setAnimationEnabled(true);
+		viewerDialog.setGlassEnabled(true);
+		viewerDialog.setModal(true);
+		viewerDialog.setCaption("Visor PDF");
+		Viewer viewer = new Viewer();
+		viewer.setDocument(dataURI, 1.95 );
+		viewerDialog.center();
+		viewerDialog.show();
+		ScrollPanel scrollPanel = new ScrollPanel();
+		viewerDialog.setWidth(width);
+		scrollPanel.add(viewer);
+		viewer.setWidth(width);
+		viewerDialog.add(scrollPanel);
 	}
 
 	private void showEntry(int domain,Integer entryId, ModuleCallback<AccountEntry> moduleCallback) {
@@ -170,4 +235,66 @@ public class AccountJournalReport extends MainEntryPoint {
 		entryDialog.show();
 	}
 	
+// ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
+	private static final String ACCOUNT_ENTRY_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountEntryFlatStreamServlet");
+
+	private void search(AccountEntryParams params) {
+		final AonToast toast = new AonToast();
+		final InlineLabel label =  new InlineLabel("Un momento, por favor ...");
+		toast.show("Cargando ...", label);
+		
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open(FormPanel.METHOD_POST, ACCOUNT_ENTRY_STREAM_SERVLET);
+		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+			
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+				boolean something = false;
+				if (state == XMLHttpRequest.DONE) {
+					String text = xhr.getResponseText();
+					try {
+						if (!JsonUtils.safeToEval(text)) {
+							Window.alert("ERROR de evaluación");
+						}
+						JavaScriptObject metadata = JavaScriptObject.createObject();
+						
+						JavaScriptObject unk = JsonUtils.safeEval(text);
+						JsArray<JsAccountEntry> entries = unk.cast();
+						AccReports.journal(metadata, entries, new Callback() {
+							
+							@Override
+							public void onSuccess(String dataURI) {
+								LOGGER.info("onSuccess");
+								showViewer(dataURI);
+							}
+						});
+						
+					} catch (IndexOutOfBoundsException e) {
+						FlowPanel line = new FlowPanel();
+						InlineLabel label = new InlineLabel(e.getMessage());
+						line.add(label);
+					}
+				}
+				if (state == XMLHttpRequest.DONE) {
+					if (!something) {
+						FlowPanel line = new FlowPanel();
+						InlineLabel label = new InlineLabel(AON.MSG.noData());
+						line.add(label);
+					}
+					toast.hide();
+				}
+			}
+			
+		});
+		StringBuffer requestData = new StringBuffer();
+		requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + getCurrentDomainName() );
+		requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + getCurrentDomain() );
+		requestData.append("&"+IRequestParamsNames.USER					+"=" + getCurrentUser() );
+		requestData.append("&"+IRequestParamsNames.ACCOUNT_ENTRY_PARAMS +"=" + JsonParams.convert( params ));
+		requestData.append("&"+IRequestParamsNames.OFFSET 				+"=" + 0 );
+		requestData.append("&"+IRequestParamsNames.LIMIT				+"=" + Integer.MAX_VALUE);
+		xhr.send(requestData.toString());
+	}
 }

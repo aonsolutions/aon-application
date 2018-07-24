@@ -115,7 +115,7 @@ public class AccountJournalFlatReportExcelPrint extends HttpServlet {
 			}
 			ExcelAction action = new ExcelAction( );
 			action.initialize("Diario");
-			ACCOUNTING.getFlatAccountEntries(domainName, domainId, user, params)
+			ACCOUNTING.getFlatAccountEntries(domainName, domainId, user, params,0,Integer.MAX_VALUE)
 					.forEach(action)						
 			;
 			resp.setContentType(MimeType.MS_EXCEL.getName());

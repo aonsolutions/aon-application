@@ -26,6 +26,7 @@ public class FlatAccountEntryDetail implements Serializable{
 	private String entryModificationUser;
 	private Date entryModificationDate;
 	private Integer detailId;
+	private Integer line;
 	private Integer account;
 	private String accountCode;
 	private String accountDescription;
@@ -147,6 +148,13 @@ public class FlatAccountEntryDetail implements Serializable{
 	}
 	public FlatAccountEntryDetail setDetailId(Integer detailId) {
 		this.detailId = detailId;
+		return this;
+	}
+	public Integer getLine() {
+		return line;
+	}
+	public FlatAccountEntryDetail setLine(Integer line) {
+		this.line = line;
 		return this;
 	}
 	public Integer getAccount() {

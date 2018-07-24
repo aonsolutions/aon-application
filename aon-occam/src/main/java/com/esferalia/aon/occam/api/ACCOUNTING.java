@@ -198,11 +198,12 @@ public class ACCOUNTING {
 	}
 
 	public static Stream<FlatAccountEntryDetail> getFlatAccountEntries(String domainName,
-			int domain, String user, final AccountEntryParams params) throws AonCoreException {
+			int domain, String user, final AccountEntryParams params, int offset,
+			int limit) throws AonCoreException {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getAccounting().getFlatAccountEntries(ctx, params);
+			return getAccounting().getFlatAccountEntries(ctx, params, offset, limit);
 		} finally {
 			if (ctx != null)
 				ctx.close();
