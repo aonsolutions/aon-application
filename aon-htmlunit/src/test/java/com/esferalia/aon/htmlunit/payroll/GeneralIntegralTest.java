@@ -403,6 +403,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2018);
 		assertValue("cgcBaseLabel", 3751.20);
 		assertValue("cgpBaseLabel", 3751.20);
+		calculate(Calendar.JULY,2018);
+		assertValue("cgcBaseLabel", 3751.20);
+		assertValue("cgpBaseLabel", 3751.20);
+		calculate(Calendar.AUGUST,2018);
+		assertValue("cgcBaseLabel", 3803.70);
+		assertValue("cgpBaseLabel", 3803.70);
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 		calculate(Calendar.DECEMBER,2016);
