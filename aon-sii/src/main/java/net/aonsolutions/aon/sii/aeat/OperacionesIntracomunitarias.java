@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.util.LinkedList;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
@@ -69,7 +71,9 @@ public class OperacionesIntracomunitarias extends SIIBuilt{
 			byte[] b = null;
 			try {
 				ctx = JAXBContext.newInstance(RespuestaLROComunitariasType.class);
-				b = writeXml(ctx, suministro);
+				QName qName = new QName("https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro", "RespuestaLROComunitariasType");
+			    JAXBElement<RespuestaLROComunitariasType> root = new JAXBElement<>(qName, RespuestaLROComunitariasType.class, suministro);
+				b = writeXml(ctx, root);
 			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}
@@ -93,7 +97,9 @@ public class OperacionesIntracomunitarias extends SIIBuilt{
 			byte[] b = null;
 			try {
 				ctx = JAXBContext.newInstance(RespuestaLRBajaOComunitariasType.class);
-				b = writeXml(ctx, suministro);
+				QName qName = new QName("https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro", "RespuestaLRBajaOComunitariasType");
+			    JAXBElement<RespuestaLRBajaOComunitariasType> root = new JAXBElement<>(qName, RespuestaLRBajaOComunitariasType.class, suministro);
+				b = writeXml(ctx, root);
 			} catch (JAXBException | IOException e) {
 				e.printStackTrace();
 			}

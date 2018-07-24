@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.util.LinkedList;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -67,7 +69,9 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRIMetalicoType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.sii_araba_eus.documentos.respuestasuministro", "RespuestaLRIMetalicoType");
+		    JAXBElement<RespuestaLRIMetalicoType> root = new JAXBElement<>(qName, RespuestaLRIMetalicoType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -120,7 +124,9 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLROperacionesSegurosType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.sii_araba_eus.documentos.respuestasuministro", "RespuestaLROperacionesSegurosType");
+		    JAXBElement<RespuestaLROperacionesSegurosType> root = new JAXBElement<>(qName, RespuestaLROperacionesSegurosType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -175,7 +181,9 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRAgenciasViajesType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.sii_araba_eus.documentos.respuestasuministro", "RespuestaLRAgenciasViajesType");
+		    JAXBElement<RespuestaLRAgenciasViajesType> root = new JAXBElement<>(qName, RespuestaLRAgenciasViajesType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}

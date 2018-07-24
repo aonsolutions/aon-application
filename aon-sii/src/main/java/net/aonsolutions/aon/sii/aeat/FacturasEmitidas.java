@@ -7,8 +7,10 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -113,7 +115,9 @@ public class FacturasEmitidas extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRFEmitidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro", "RespuestaLRFEmitidasType");
+		    JAXBElement<RespuestaLRFEmitidasType> root = new JAXBElement<>(qName, RespuestaLRFEmitidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -137,7 +141,9 @@ public class FacturasEmitidas extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRBajaFEmitidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro", "RespuestaLRBajaFEmitidasType");
+		    JAXBElement<RespuestaLRBajaFEmitidasType> root = new JAXBElement<>(qName, RespuestaLRBajaFEmitidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -802,7 +808,9 @@ public class FacturasEmitidas extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRCobrosEmitidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro", "RespuestaLRCobrosEmitidasType");
+		    JAXBElement<RespuestaLRCobrosEmitidasType> root = new JAXBElement<>(qName, RespuestaLRCobrosEmitidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}

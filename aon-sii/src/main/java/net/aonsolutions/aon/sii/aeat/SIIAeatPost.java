@@ -55,15 +55,16 @@ import net.aonsolutions.aon.sii.SendType;
 
 public class SIIAeatPost extends SIIPost2{
 	
-	private static final String CONTEXT_PATH = "https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr";
-	
+	private static final String REQUEST_CONTEXT_PATH = "https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr";
+	private static final String RESPONSE_CONTEXT_PATH = "https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro";
+
 	public static SIIAeatPost getInstance(byte[] cert, String pass) {
 		return new SIIAeatPost(cert, pass);
 	}
 	
 
 	public SIIAeatPost(byte[] cert, String pass) {
-		super(cert, pass, CONTEXT_PATH);
+		super(cert, pass, REQUEST_CONTEXT_PATH, RESPONSE_CONTEXT_PATH);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS

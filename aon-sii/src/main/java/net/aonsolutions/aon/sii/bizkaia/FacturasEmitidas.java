@@ -7,8 +7,10 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -47,6 +49,7 @@ import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.CuponType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.DatosInmuebleType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.DatosPagoCobroType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.DesgloseRectificacionType;
+import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.DetalleExentaType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.DetalleIVAEmitidaPrestacionType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.DetalleIVAEmitidaType;
 import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.EmitidaPorTercerosType;
@@ -112,7 +115,9 @@ public class FacturasEmitidas extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRFEmitidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("eus.bizkaia.ogasuna.sii.documentos.respuestasuministro", "RespuestaLRFEmitidasType");
+		    JAXBElement<RespuestaLRFEmitidasType> root = new JAXBElement<>(qName, RespuestaLRFEmitidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -136,7 +141,9 @@ public class FacturasEmitidas extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRBajaFEmitidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("eus.bizkaia.ogasuna.sii.documentos.respuestasuministro", "RespuestaLRBajaFEmitidasType");
+		    JAXBElement<RespuestaLRBajaFEmitidasType> root = new JAXBElement<>(qName, RespuestaLRBajaFEmitidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -415,8 +422,10 @@ public class FacturasEmitidas extends SIIBuilt {
 				SujetaType st = new SujetaType();
 			
 				eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.Exenta exenta1 = new eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.Exenta();
-				exenta1.getDetalleExenta().get(0).setBaseImponible(Double.toString(AonMathUtils.round(exenta))); // TODO
-				exenta1.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_6); // TODO
+				DetalleExentaType detalleExenta = new DetalleExentaType();
+				detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+				detalleExenta.setCausaExencion(CausaExencionType.E_6);
+				exenta1.getDetalleExenta().add(detalleExenta);
 				st.setExenta(exenta1);
 				
 				if(!noExenta.isEmpty()){
@@ -493,7 +502,9 @@ public class FacturasEmitidas extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRCobrosEmitidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("eus.bizkaia.ogasuna.sii.documentos.respuestasuministro", "RespuestaLRCobrosEmitidasType");
+		    JAXBElement<RespuestaLRCobrosEmitidasType> root = new JAXBElement<>(qName, RespuestaLRCobrosEmitidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}

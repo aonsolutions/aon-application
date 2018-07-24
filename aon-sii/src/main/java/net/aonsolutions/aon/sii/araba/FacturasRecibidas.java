@@ -9,9 +9,11 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -99,7 +101,9 @@ public class FacturasRecibidas extends SIIBuilt{
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRFRecibidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.sii_araba_eus.documentos.respuestasuministro", "RespuestaLRFRecibidasType");
+		    JAXBElement<RespuestaLRFRecibidasType> root = new JAXBElement<>(qName, RespuestaLRFRecibidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -123,7 +127,9 @@ public class FacturasRecibidas extends SIIBuilt{
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRBajaFRecibidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.sii_araba_eus.documentos.respuestasuministro", "RespuestaLRBajaFRecibidasType");
+		    JAXBElement<RespuestaLRBajaFRecibidasType> root = new JAXBElement<>(qName, RespuestaLRBajaFRecibidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -424,7 +430,9 @@ public class FacturasRecibidas extends SIIBuilt{
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRPagosRecibidasType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.sii_araba_eus.documentos.respuestasuministro", "RespuestaLRPagosRecibidasType");
+		    JAXBElement<RespuestaLRPagosRecibidasType> root = new JAXBElement<>(qName, RespuestaLRPagosRecibidasType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}

@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.util.LinkedList;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -63,7 +65,9 @@ public class BienesInversion extends SIIBuilt{
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRBienesInversionType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestasuministro", "RespuestaLRBienesInversionType");
+		    JAXBElement<RespuestaLRBienesInversionType> root = new JAXBElement<>(qName, RespuestaLRBienesInversionType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -87,7 +91,9 @@ public class BienesInversion extends SIIBuilt{
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(RespuestaLRBajaBienesInversionType.class);
-			b = writeXml(ctx, suministro);
+			QName qName = new QName("https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestasuministro", "RespuestaLRBajaBienesInversionType");
+		    JAXBElement<RespuestaLRBajaBienesInversionType> root = new JAXBElement<>(qName, RespuestaLRBajaBienesInversionType.class, suministro);
+			b = writeXml(ctx, root);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}

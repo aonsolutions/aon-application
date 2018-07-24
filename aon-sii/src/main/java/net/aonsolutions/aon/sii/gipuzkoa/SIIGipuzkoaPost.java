@@ -55,15 +55,16 @@ import net.aonsolutions.aon.sii.SendType;
 
 public class SIIGipuzkoaPost extends SIIPost2{
 	
-	private static final String CONTEXT_PATH = "https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros";
-	
+	private static final String REQUEST_CONTEXT_PATH = "https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr";
+	private static final String RESPONSE_CONTEXT_PATH = "https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestasuministro";
+
 	public static SIIGipuzkoaPost getInstance(byte[] cert, String pass) {
 		return new SIIGipuzkoaPost(cert, pass);
 	}
 	
 
 	public SIIGipuzkoaPost(byte[] cert, String pass) {
-		super(cert, pass, CONTEXT_PATH);
+		super(cert, pass, REQUEST_CONTEXT_PATH, RESPONSE_CONTEXT_PATH);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS

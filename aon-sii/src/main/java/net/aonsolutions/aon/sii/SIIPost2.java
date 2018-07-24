@@ -23,14 +23,14 @@ import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
 
 public class SIIPost2 extends WebServiceGatewaySupport{
 		
-	public static SIIPost2 getInstance(byte[] cert, String pass, String contextPath) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		return new SIIPost2(cert, pass, contextPath);
+	public static SIIPost2 getInstance(byte[] cert, String pass, String requestContextPath, String responseContextPath) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		return new SIIPost2(cert, pass, requestContextPath, responseContextPath);
 	}
 	
 	byte[] cert;
 	String pass;
 	
-	public SIIPost2(byte[] cert, String pass, String contextPath) {
+	public SIIPost2(byte[] cert, String pass, String requestContextPath, String responseContextPath) {
 		this.cert = cert;
 		this.pass = pass;
 		try {
@@ -51,11 +51,13 @@ public class SIIPost2 extends WebServiceGatewaySupport{
     		setMessageSender(messageSender);
     	
     		CustJaxbUnMarshaller marshaller = new CustJaxbUnMarshaller();
-    	
-    		marshaller.setContextPath(contextPath);
+    		marshaller.setContextPath(requestContextPath);
+    		
+    		CustJaxbUnMarshaller unmarshaller = new CustJaxbUnMarshaller();
+    		unmarshaller.setContextPath(responseContextPath);
 
     		setMarshaller(marshaller);
-    		setUnmarshaller(marshaller);
+    		setUnmarshaller(unmarshaller);
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {

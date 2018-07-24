@@ -55,15 +55,16 @@ import net.aonsolutions.aon.sii.SendType;
 
 public class SIIArabaPost extends SIIPost2{
 	
-	private static final String CONTEXT_PATH = "https.sii_araba_eus.documentos";
-	
+	private static final String REQUEST_CONTEXT_PATH = "https.sii_araba_eus.documentos.suministrolr";
+	private static final String RESPONSE_CONTEXT_PATH = "https.sii_araba_eus.documentos.respuestasuministro";
+
 	public static SIIArabaPost getInstance(byte[] cert, String pass) {
 		return new SIIArabaPost(cert, pass);
 	}
 	
 
 	public SIIArabaPost(byte[] cert, String pass) {
-		super(cert, pass, CONTEXT_PATH);
+		super(cert, pass, REQUEST_CONTEXT_PATH, RESPONSE_CONTEXT_PATH);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS
