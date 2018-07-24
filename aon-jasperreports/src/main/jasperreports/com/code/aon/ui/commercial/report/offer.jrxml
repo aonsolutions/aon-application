@@ -588,7 +588,7 @@
 				<textFieldExpression><![CDATA[$F{target}.getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-115" x="274" y="39" width="246" height="60" isPrintWhenDetailOverflows="true" uuid="a5dae2ec-ff38-4e1f-b366-b72b2ea636bb">
+				<reportElement key="textField-115" x="274" y="39" width="246" height="60" uuid="a5dae2ec-ff38-4e1f-b366-b72b2ea636bb">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
