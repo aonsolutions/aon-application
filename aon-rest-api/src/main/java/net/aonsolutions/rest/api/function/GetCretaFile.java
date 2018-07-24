@@ -1,28 +1,27 @@
 package net.aonsolutions.rest.api.function;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.time.Month;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.payroll.tgss.creta.Borrador;
+import com.esferalia.aon.payroll.tgss.creta.Calculo;
+import com.esferalia.aon.payroll.tgss.creta.Confirmacion;
+import com.esferalia.aon.payroll.tgss.creta.DBA;
 import com.esferalia.aon.payroll.tgss.creta.SolicitudTrabajadoresTramos;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.core.tgss.creta.jaxb.Utils;
-import net.aonsolutions.core.tgss.creta.jaxb.solicitud.trabajadorestramos.SolicitudTrabajadoresTramosBuilder;
 import net.aonsolutions.rest.api.model.ServerlessInput;
 import net.aonsolutions.rest.api.model.ServerlessOutput;
 
@@ -33,17 +32,6 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
     @Override
     public ServerlessOutput handleRequest(ServerlessInput serverlessInput, Context context) {
     	
-		Map<String,String> params = serverlessInput.getQueryStringParameters();
-    	
-		String tipo = params.get(CretaService.Parameter.TIPO.name());
-		String cccs = params.get(CretaService.Parameter.CCC.name());
-		String desdeMes = params.get(CretaService.Parameter.DESDE_MES.name());
-		String desdeAnho = params.get(CretaService.Parameter.DESDE_ANHO.name());
-		String hastaMes = params.get(CretaService.Parameter.HASTA_MES.name());
-		String hastaAnho = params.get(CretaService.Parameter.HASTA_ANHO.name());
-		String ctrlMes = params.get(CretaService.Parameter.CTRL_MES.name());
-		String ctrlAnho = params.get(CretaService.Parameter.CTRL_ANHO.name());
-		String autorizado = params.get(CretaService.Parameter.AUTORIZADO.name());
 		
 		
 
@@ -52,33 +40,21 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
 		
         ServerlessOutput serverlessOutput = new ServerlessOutput();
 
-    	Map<String,String> headers = new HashMap<String,String>();
         try {
 			file.accept(this, serverlessInput, serverlessOutput);
             serverlessOutput.setStatusCode(200);
-            headers.put("Content-Type", "text/plain");
-            serverlessOutput.setBody(
-            		"tipo = '"+ tipo +"',"
-            		+"ccs = '"+ cccs +"',"
-            		+"desdeMes = '"+ desdeMes +"',"
-            		+"desdeAnho = '"+ desdeAnho +"',"
-            		+"hastaMes = '"+ hastaMes +"',"
-            		+"hastaAnho = '"+ hastaAnho +"',"
-            		+"ctrlMes = '"+ ctrlMes +"',"
-            		+"ctrlAnho = '"+ ctrlAnho +"',"
-            		+"autorizado = '"+ autorizado +"',"
-            );
 		} catch (Exception e) {
-            headers.put("Content-Type", "text/plain");
 			
 	    	StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
             String body = sw.toString();
 
+            Map<String, String> headers = new HashMap<String,String>();
             serverlessOutput.setBody(body);
             serverlessOutput.setStatusCode(500);
+            headers.put("Content-Type", "text/plain");
+            serverlessOutput.setHeaders(headers);
 		}
-        serverlessOutput.setHeaders(headers);
 		
     	return serverlessOutput;
     	
@@ -112,61 +88,174 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
 
 	@Override
 	public void visitSolicitudBorrador(ServerlessInput t, ServerlessOutput l) throws Exception {
-		// TODO Auto-generated method stub
+    	String body = t.getBody();
+    	Map<String,List<String>> params = processParams(body);
 		
+    	String tipo = getValue(CretaService.Parameter.TIPO, params);
+		String cccs [] = getValues(CretaService.Parameter.CCC, params);
+		String desdeMes = getValue(CretaService.Parameter.DESDE_MES, params);
+		String desdeAnho = getValue(CretaService.Parameter.DESDE_ANHO, params);
+		String hastaMes = getValue(CretaService.Parameter.HASTA_MES, params);
+		String hastaAnho = getValue(CretaService.Parameter.HASTA_ANHO, params);
+		String autorizado = getValue(CretaService.Parameter.AUTORIZADO, params);
+		boolean aceptarBasesAnteriores = AonStringUtils.equalsIgnoreCase("on",
+				getValue(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES, params));
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		Borrador.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, cccs, os);
+		String charset = Charset.defaultCharset().name();
+		int length = os.size();
+		l.setBody(os.toString(charset));
+		
+        Map<String, String> headers = new HashMap<String,String>();
+        headers.put("Content-Type", "text/xml; charset=" + charset);
+        headers.put("Content-Length", Integer.toString(length));
+		l.setHeaders(headers);
 	}
 
 
 	@Override
 	public void visitSolicitudCalculos(ServerlessInput t, ServerlessOutput l) throws Exception {
-		// TODO Auto-generated method stub
+    	String body = t.getBody();
+    	Map<String,List<String>> params = processParams(body);
+		
+    	String tipo = getValue(CretaService.Parameter.TIPO, params);
+		String cccs [] = getValues(CretaService.Parameter.CCC, params);
+		String desdeMes = getValue(CretaService.Parameter.DESDE_MES, params);
+		String desdeAnho = getValue(CretaService.Parameter.DESDE_ANHO, params);
+		String hastaMes = getValue(CretaService.Parameter.HASTA_MES, params);
+		String hastaAnho = getValue(CretaService.Parameter.HASTA_ANHO, params);
+		String autorizado = getValue(CretaService.Parameter.AUTORIZADO, params);
+		boolean claculosDesglosados = AonStringUtils.equalsIgnoreCase("on",
+				getValue(CretaService.Parameter.CALCULOS_DESGLOSADOS, params));
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		Calculo.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, claculosDesglosados, cccs, os);
+		String charset = Charset.defaultCharset().name();
+		int length = os.size();
+		l.setBody(os.toString(charset));
+		
+        Map<String, String> headers = new HashMap<String,String>();
+        headers.put("Content-Type", "text/xml; charset=" + charset);
+        headers.put("Content-Length", Integer.toString(length));
+		l.setHeaders(headers);
 	}
 
 
 	@Override
 	public void visitSolicitudConfirmacion(ServerlessInput t, ServerlessOutput l) throws Exception {
-		// TODO Auto-generated method stub
+    	String body = t.getBody();
+    	Map<String,List<String>> params = processParams(body);
 		
+    	String tipo = getValue(CretaService.Parameter.TIPO, params);
+		String cccs [] = getValues(CretaService.Parameter.CCC, params);
+		String desdeMes = getValue(CretaService.Parameter.DESDE_MES, params);
+		String desdeAnho = getValue(CretaService.Parameter.DESDE_ANHO, params);
+		String hastaMes = getValue(CretaService.Parameter.HASTA_MES, params);
+		String hastaAnho = getValue(CretaService.Parameter.HASTA_ANHO, params);
+		String ctrlMes = getValue(CretaService.Parameter.CTRL_MES, params);
+		String ctrlAnho = getValue(CretaService.Parameter.CTRL_ANHO, params);
+		String autorizado = getValue(CretaService.Parameter.AUTORIZADO, params);
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		Confirmacion.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, os);
+		String charset = Charset.defaultCharset().name();
+		int length = os.size();
+		l.setBody(os.toString(charset));
+		
+        Map<String, String> headers = new HashMap<String,String>();
+        headers.put("Content-Type", "text/xml; charset=" + charset);
+        headers.put("Content-Length", Integer.toString(length));
+		l.setHeaders(headers);
 	}
 
 
 	@Override
-	public void visitSolicitudTrabajadoresTramos(ServerlessInput t, ServerlessOutput l) throws Exception {
-//		Map<String,String> params = t.getQueryStringParameters();
-//		
-//		String tipo = params.get(CretaService.Parameter.TIPO.name());
-//		String cccs[] = params.get(CretaService.Parameter.CCC.name());
-//		String desdeMes = params.get(CretaService.Parameter.DESDE_MES.name());
-//		String desdeAnho = params.get(CretaService.Parameter.DESDE_ANHO.name());
-//		String hastaMes = params.get(CretaService.Parameter.HASTA_MES.name());
-//		String hastaAnho = params.get(CretaService.Parameter.HASTA_ANHO.name());
-//		String ctrlMes = params.get(CretaService.Parameter.CTRL_MES.name());
-//		String ctrlAnho = params.get(CretaService.Parameter.CTRL_ANHO.name());
-//		String autorizado = params.get(CretaService.Parameter.AUTORIZADO.name());
-//
-//		ByteArrayOutputStream os = new ByteArrayOutputStream();
-//		SolicitudTrabajadoresTramos.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, os);
-//		l.setBody(os.toString(Charset.defaultCharset().name()));
+	public void visitSolicitudTrabajadoresTramos(ServerlessInput input, ServerlessOutput output) throws Exception {
+    	String body = input.getBody();
+    	Map<String,List<String>> params = processParams(body);
+		
+    	String tipo = getValue(CretaService.Parameter.TIPO, params);
+		String cccs [] = getValues(CretaService.Parameter.CCC, params);
+		String desdeMes = getValue(CretaService.Parameter.DESDE_MES, params);
+		String desdeAnho = getValue(CretaService.Parameter.DESDE_ANHO, params);
+		String hastaMes = getValue(CretaService.Parameter.HASTA_MES, params);
+		String hastaAnho = getValue(CretaService.Parameter.HASTA_ANHO, params);
+		String ctrlMes = getValue(CretaService.Parameter.CTRL_MES, params);
+		String ctrlAnho = getValue(CretaService.Parameter.CTRL_ANHO, params);
+		String autorizado = getValue(CretaService.Parameter.AUTORIZADO, params);
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		SolicitudTrabajadoresTramos.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, os);
+		String charset = Charset.defaultCharset().name();
+		int length = os.size();
+		output.setBody(os.toString(charset));
+		
+        Map<String, String> headers = new HashMap<String,String>();
+        headers.put("Content-Type", "text/xml; charset=" + charset);
+        headers.put("Content-Length", Integer.toString(length));
+		output.setHeaders(headers);
 	}
 
 
 	@Override
 	public void visitComunicacionDatosBancarios(ServerlessInput t, ServerlessOutput l) throws Exception {
-		// TODO Auto-generated method stub
+    	String body = t.getBody();
+    	Map<String,List<String>> params = processParams(body);
 		
+		String autorizado = getValue(CretaService.Parameter.AUTORIZADO, params);
+		String cccs[] = getValues(CretaService.Parameter.CCC, params);
+		String tipoMoviento = getValue(CretaService.Parameter.TIPO_MOVIMIENTO, params);
+		String tipoAccion = getValue(CretaService.Parameter.TIPO_ACCION, params);
+		String iban = getValue(CretaService.Parameter.IBAN, params);
+		String titular = getValue(CretaService.Parameter.TITULAR, params);
+		String documento = AonStringUtils.leftPad(getValue(CretaService.Parameter.DOCUMENTO, params), 10, '0');
+		String tipoDocumento = getValue(CretaService.Parameter.TIPO_DOCUMENTO, params);
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		DBA.generate(autorizado, cccs, tipoMoviento, tipoAccion, iban, titular, documento, tipoDocumento, os);
+		String charset = Charset.defaultCharset().name();
+		int length = os.size();
+		l.setBody(os.toString(charset));
+		
+        Map<String, String> headers = new HashMap<String,String>();
+        headers.put("Content-Type", "text/xml; charset=" + charset);
+        headers.put("Content-Length", Integer.toString(length));
+		l.setHeaders(headers);
 	}
 
 
 	@Override
 	public void visitDocumentoCalculoLiquidacion(ServerlessInput t, ServerlessOutput l) throws Exception {
-		// TODO Auto-generated method stub
-		
 	}
     
     
     // ------------------------------------------------------------------------
     // Private 
+	
+	private static Map<String,List<String>> processParams(CharSequence input) {
+		
+		Map<String,List<String>> params = new HashMap<String,List<String>>();
+		
+		Pattern pattern =Pattern.compile("[\\?&]*(?<name>[^&=]+)=(?<value>[^&=]+)");
+		Matcher matcher = pattern.matcher(input);
+		while ( matcher.find() ) {
+			String name = matcher.group("name");
+			String value = matcher.group("value");
+			List<String> values = params.getOrDefault(name, new ArrayList<String>());
+			values.add(value);
+			params.putIfAbsent(name, values);
+		}
+		
+		return params;
+	}
+	
 
+	private static String getValue(CretaService.Parameter param, Map<String,List<String>> params) {
+		return params.get(param.name()).get(0);
+	}
 
-
+	private static String [] getValues(CretaService.Parameter param, Map<String,List<String>> params) {
+		return params.getOrDefault(param.name(), Collections.emptyList()).toArray(new String [] {});
+	}
 }
