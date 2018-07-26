@@ -99,7 +99,7 @@ public class MemoryDocuments extends PageAbs {
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextLeft());
 		
-	//	if(ms.get(0).getBool()) paintKey(tab, D2_FILE_MEMORY, 1, ms.get(0));
+		paintKey(tab, D2_FILE_MEMORY, 1, ms.get(0));
 		paintKey(tab, D2_FILE_AUTOCARTERA_MODEL, 2, ms.get(1));
 		paintKey(tab, D2_FILE_GESTION, 3, ms.get(2));
 		paintKey(tab, D2_FILE_AUDIT, 4, ms.get(3));
@@ -255,8 +255,6 @@ public class MemoryDocuments extends PageAbs {
 		});
 		
 		upload.setStyleName("aon-finding-toolbar-item aon-icon-file-upload");
-		String name = D2_FILE_MEMORY + getYear();
-		upload.setEnabled(!name.equals(mf.getName()));
 		upload.addClickHandler(new ClickHandler() {
 			MemoryFiles mf = mfAux;
 			@Override
@@ -283,21 +281,69 @@ public class MemoryDocuments extends PageAbs {
 							D2DepositFooterKey key= type.equals(DepositType.ABREVIADO.getLabel()) 
 									? D2DepositFooterKey.PR8080805
 									: D2DepositFooterKey.PR8080852;
-							onEdit(key.getCode(), "0", false);		
+							onEdit(key.getCode(), "0", false);	
+							getDeposit().getInma().updateSchemaMemory(getAonData(), true, key.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						} else if(mf.getName().equals(D2_FILE_AUTOCARTERA_MODEL + getYear())){
 							onEdit(D2DepositFooterKey.PR8080809.getCode(), "1", false);	
+							getDeposit().getInma().updateSchemaMemory(getAonData(), true, D2DepositFooterKey.PR8080809.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						} else if(mf.getName().equals(D2_FILE_GESTION + getYear())){
 							onEdit(D2DepositFooterKey.PR8080807.getCode(), "1", false);	
+							getDeposit().getInma().updateSchemaMemory(getAonData(), true, D2DepositFooterKey.PR8080807.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						} else if(mf.getName().equals(D2_FILE_AUDIT + getYear())){
 							onEdit(D2DepositFooterKey.PR8080817.getCode(), "1", false);	
+							getDeposit().getInma().updateSchemaMemory(getAonData(), true, D2DepositFooterKey.PR8080817.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						} else if(mf.getName().equals(D2_FILE_NO_FINANCIERA + getYear())){
 							onEdit(D2DepositFooterKey.PR8080825.getCode(), "1", false);	
+							getDeposit().getInma().updateSchemaMemory(getAonData(), true, D2DepositFooterKey.PR8080825.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						} else if(mf.getName().equals(D2_FILE_TITULAR_REAL + getYear())){
 							onEdit(D2DepositFooterKey.PR8080827.getCode(), "1", false);	
+							getDeposit().getInma().updateSchemaMemory(getAonData(), true, D2DepositFooterKey.PR8080827.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						} else if(mf.getName().equals(D2_FILE_CONVOC + getYear())){
 							onEdit(D2DepositFooterKey.PR8080823.getCode(), "1", false);
+							getDeposit().getInma().updateSchemaMemory(getAonData(), true, D2DepositFooterKey.PR8080823.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						} else if(mf.getName().equals(D2_FILE_SICAV + getYear())){
 							onEdit(D2DepositFooterKey.PR8080821.getCode(), "1", false);		
+							getDeposit().getInma().updateSchemaMemory(getAonData(), true, D2DepositFooterKey.PR8080821.getCode(), getYear(), new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(Throwable caught) {}
+								@Override
+								public void onSuccess(Void result) {}
+							});
 						}
 						download.setEnabled(true);
 						delete.setEnabled(true);
