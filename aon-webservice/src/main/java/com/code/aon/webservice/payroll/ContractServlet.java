@@ -91,7 +91,8 @@ public class ContractServlet extends HttpServlet{
 				list.stream().filter(e -> e.getName().equals("COEFICIENTE_PARCIALIDAD")).forEach(c -> {
 					Date start = AonDateUtils.getYear(c.getStartDate()) == year ? c.getStartDate() : ejInitDate;
 					Date end = c.getEndDate() != null && AonDateUtils.getYear(c.getEndDate()) == year ? c.getEndDate() : ejFinalDate;
-					Double coef = (Double) MVEL.eval(c.getExpression());
+					Number number =(Number) MVEL.eval(c.getExpression());
+					Double coef = number.doubleValue();
 					list.stream().filter(o -> o.getName().equals("TC2") && (o.getEndDate() == null || o.getEndDate().compareTo(start) > 0) && o.getStartDate().compareTo(end) <= 0).forEach(h -> {
 						Date start2 = h.getStartDate().compareTo(start) > 0 ? h.getStartDate() : start;
 						Date end2 = (h.getEndDate() != null && h.getEndDate().compareTo(end) < 0) ? AonDateUtils.addDays(h.getEndDate(),1) : end;
