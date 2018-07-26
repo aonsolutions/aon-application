@@ -81,13 +81,13 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232580.toString(),"sab({400,401,403,404,405})-sdb({406})"); // TODO ¿¿??
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232581.toString(),"sab({40001})"); 	// TODO NECA 6.ª 16 (ABREVIADO)
 																								// TODO NECA 5.ª 11 (PYMES)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232582.toString(),"sab({400,401,405})-sdb({406,40001})"); 
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232582.toString(),"sab({400,401,403,404,405})-sdb({406,40001})"); 
 																						// TODO NECA 6.ª 16 (ABREVIADO)
 																						// TODO NECA 5.ª 11 (PYMES)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232590.toString(),"ABREVIADO?sab({41,438,465,466,475,476,477})"
 																				+ ":sab({41,438,465,475,476,477})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232600.toString(),"sab({485,568})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232700.toString(),"sab({502,507,558})"); 	
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232700.toString(),"sab({502,507})");//  ,558})"); 	
 																						//TODO 502,507; NECA 6.ª 17 (ABREVIADO)
 																						// TODO 502,507;NECA 5.ª 12 (PYMES)
 	}
