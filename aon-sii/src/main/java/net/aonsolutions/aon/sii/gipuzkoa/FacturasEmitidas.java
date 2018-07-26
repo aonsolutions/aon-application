@@ -346,8 +346,10 @@ public class FacturasEmitidas extends SIIBuilt {
 					
 					
 					Exenta exenta3 = new Exenta();
-					exenta3.getDetalleExenta().get(0).setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
-					exenta3.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_6); //TODO  exencion otros a piñon fijo!!
+					DetalleExentaType detalleExenta = new DetalleExentaType();
+					detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+					detalleExenta.setCausaExencion(CausaExencionType.E_6); //TODO  exencion otros a piñon fijo!!
+					exenta3.getDetalleExenta().add(detalleExenta);
 					st3.setExenta(exenta3); 
 					if(!noExenta.isEmpty()){
 						DesgloseIVA diva3 = new DesgloseIVA();
@@ -379,16 +381,18 @@ public class FacturasEmitidas extends SIIBuilt {
 					SujetaType st2 = new SujetaType();
 					
 					https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.SujetaType.Exenta exenta2 = new https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.SujetaType.Exenta();
-					exenta2.getDetalleExenta().get(0).setBaseImponible(Double.toString(AonMathUtils.round(exenta))); // TODO
+					DetalleExentaType detalleExenta = new DetalleExentaType();
+					detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta))); // TODO
 				/* TODO	si es operacion intracomunitaria	
 				 * if(vat.isIntracommunity()){
 						exenta2.setCausaExencion(CausaExencionType.E_5);
 					}else*/ 
 					if(vat.isIntracommunity() || vat.isExtracommunity()){
-						exenta2.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_2);
+						detalleExenta.setCausaExencion(CausaExencionType.E_2);
 					} else {
-						exenta2.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_6);
+						detalleExenta.setCausaExencion(CausaExencionType.E_6);
 					}
+					exenta2.getDetalleExenta().add(detalleExenta);
 					st2.setExenta(exenta2); // TODO
 					if(!noExenta.isEmpty()){
 						https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.SujetaType.NoExenta.DesgloseIVA diva2 = new https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.SujetaType.NoExenta.DesgloseIVA();

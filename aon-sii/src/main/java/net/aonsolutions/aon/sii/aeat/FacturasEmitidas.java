@@ -339,11 +339,13 @@ public class FacturasEmitidas extends SIIBuilt {
 				prestacion.setNoSujeta(nst3);
 				SujetaPrestacionType st3 = new SujetaPrestacionType();
 				
-			
 				Exenta exenta3 = new Exenta();
-				exenta3.getDetalleExenta().get(0).setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
-				exenta3.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_6); //TODO  exencion otros a piñon fijo!!
-				st3.setExenta(exenta3); 
+				DetalleExentaType detalleExenta = new DetalleExentaType();
+				detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+				detalleExenta.setCausaExencion(CausaExencionType.E_6);
+				exenta3.getDetalleExenta().add(detalleExenta);
+				st3.setExenta(exenta3);
+				
 				if(!noExenta.isEmpty()){
 					DesgloseIVA diva3 = new DesgloseIVA();
 					noExentaMap.keySet().stream().forEach(key -> {
@@ -374,16 +376,19 @@ public class FacturasEmitidas extends SIIBuilt {
 				SujetaType st2 = new SujetaType();
 					
 				https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta exenta2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta();
-				exenta2.getDetalleExenta().get(0).setBaseImponible(Double.toString(AonMathUtils.round(exenta))); // TODO
+				DetalleExentaType detalleExenta = new DetalleExentaType();
+				detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+
 			/* TODO	si es operacion intracomunitaria	
 			 * if(vat.isIntracommunity()){
 					exenta2.setCausaExencion(CausaExencionType.E_5);
 				}else*/ 
 				if(vat.isIntracommunity() || vat.isExtracommunity()){
-					exenta2.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_2);
+					detalleExenta.setCausaExencion(CausaExencionType.E_2);
 				} else {
-					exenta2.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_6);
+					detalleExenta.setCausaExencion(CausaExencionType.E_6);
 				}
+				exenta2.getDetalleExenta().add(detalleExenta);
 				st2.setExenta(exenta2); // TODO
 				if(!noExenta.isEmpty()){
 					https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta.DesgloseIVA diva2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta.DesgloseIVA();
@@ -652,9 +657,12 @@ public class FacturasEmitidas extends SIIBuilt {
 					
 					
 					Exenta exenta3 = new Exenta();
-					exenta3.getDetalleExenta().get(0).setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
-					exenta3.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_6); //TODO  exencion otros a piñon fijo!!
-					st3.setExenta(exenta3); 
+					DetalleExentaType detalleExenta = new DetalleExentaType();
+					detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+					detalleExenta.setCausaExencion(CausaExencionType.E_6);
+					exenta3.getDetalleExenta().add(detalleExenta);
+					st3.setExenta(exenta3);
+					
 					if(!noExenta.isEmpty()){
 						DesgloseIVA diva3 = new DesgloseIVA();
 						noExentaMap.keySet().stream().forEach(key -> {
@@ -685,16 +693,19 @@ public class FacturasEmitidas extends SIIBuilt {
 					SujetaType st2 = new SujetaType();
 					
 					https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta exenta2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta();
-					exenta2.getDetalleExenta().get(0).setBaseImponible(Double.toString(AonMathUtils.round(exenta))); // TODO
+					DetalleExentaType detalleExenta = new DetalleExentaType();
+					detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));					
+					
 				/* TODO	si es operacion intracomunitaria	
 				 * if(vat.isIntracommunity()){
 						exenta2.setCausaExencion(CausaExencionType.E_5);
 					}else*/ 
 					if(vat.isIntracommunity() || vat.isExtracommunity()){
-						exenta2.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_2);
+						detalleExenta.setCausaExencion(CausaExencionType.E_2);
 					} else {
-						exenta2.getDetalleExenta().get(0).setCausaExencion(CausaExencionType.E_6);
+						detalleExenta.setCausaExencion(CausaExencionType.E_6);
 					}
+					exenta2.getDetalleExenta().add(detalleExenta);
 					st2.setExenta(exenta2); // TODO
 					if(!noExenta.isEmpty()){
 						https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta.DesgloseIVA diva2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta.DesgloseIVA();
