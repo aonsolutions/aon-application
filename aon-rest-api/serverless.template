@@ -74,6 +74,15 @@
                    "timeoutInMillis": "20000",
                    "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCretaFile.Arn}/invocations"}
                  }
+               },
+               "options" : {
+                 "responses" : {},
+                 "x-amazon-apigateway-integration" : {
+                   "httpMethod": "POST",
+                   "type": "aws_proxy",
+                   "timeoutInMillis": "20000",
+                   "uri" : {"Fn::Sub" : "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCORSPreflightResponse.Arn}/invocations"}
+                 }
                }             
              }
            }
@@ -85,6 +94,7 @@
       "Properties": {
         "FunctionName": "get-creta-file",
         "Handler": "net.aonsolutions.rest.api.function.GetCretaFile",
+        "Timeout" : "90",
         "Runtime" : "java8",
         "CodeUri" : "./target/aon-rest-api-9.23-SNAPSHOT.jar",
         "Policies": [],
@@ -96,7 +106,31 @@
             "Type": "Api",
             "Properties": {
               "Path": "/aon_gwt_payroll/sdl/{file}",
-              "Method": "get",
+              "Method": "post",
+              "RestApiId" : {"Ref": "AonRestApi"}
+            }
+          }
+        }
+      }
+    },
+    "GetCORSPreflightResponse": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "FunctionName": "get-cors-preflight-resonse",
+        "Handler": "net.aonsolutions.rest.api.function.GetCORSPreflightResponse",
+        "Timeout" : "90",
+        "Runtime" : "java8",
+        "CodeUri" : "./target/aon-rest-api-9.23-SNAPSHOT.jar",
+        "Policies": [],
+        "Environment" : {
+          "Variables" : {}
+        },
+        "Events": {
+          "GetResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/aon_gwt_payroll/sdl/{file}",
+              "Method": "options",
               "RestApiId" : {"Ref": "AonRestApi"}
             }
           }
