@@ -160,38 +160,11 @@ public class FiscalUtils {
 			buf.append( DATE_FORMATTER.format(params.getToDate()));
 			buf.append(")");
 		}
-		if (params.getRegistry() != null) {
-			buf.append(" (Titular:");
-			buf.append(params.getRegistry());
-			buf.append(")");
-		}
 		if (params.getActivity() != null) {
 			buf.append(" (Actividad:");
 			buf.append(params.getActivity());
 			buf.append(")");
 		}
-//		if (params.getOutput() != null) {
-//			buf.append(params.getOutput() ?" (Emitidas)":" (Recibidas)");
-//		}
-//		if (params.getWithholdingType() != null) {
-//			buf.append(" (");
-//			buf.append(params.getWithholdingType().getDescription());
-//			buf.append(")");
-//		}
-//		if (params.getPercent() != null) {
-//			buf.append(" (Porc:");
-//			buf.append(params.getPercent());
-//			buf.append(")");
-//		}
-//		if (params.getAccrualRegime()!= null) {
-//			buf.append(params.getAccrualRegime()?" (Crit.Caja. SI)":" (Crit.Caja. NO)");
-//		} 
-//		if (params.getInvestment()!= null) {
-//			buf.append(params.getInvestment()?" (Bien Inv.)":" (Bien Corr.)");
-//		} 
-//		if (params.getService() != null) {
-//			buf.append(params.getService() ?" (Serv. SI)":" (Serv. NO)");
-//		} 
 		return buf.length()>0 ? buf.insert(0,"Filtro:").toString():"";
 	}
 

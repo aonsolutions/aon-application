@@ -58,7 +58,7 @@ public interface IFiscal {
 	public Stream<IrpfBreakdown> getIrpfBreakdownSummary(AONContext ctx, IRPFParams params);
 	public Stream<IrpfBreakdown> getIrpfBreakdown(AONContext ctx, IRPFParams params);
 	
-	//					OPERATION
+	//					OPERATION (PANEL INGRESOS Y GASTOS)
 	public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params);
 	
 	// 			        VAT
@@ -350,5 +350,6 @@ public interface IFiscal {
 	public Mod347 changeStatusMod347(AONContext ctx, Mod347 mod347, FiscalStatus newStatus);
 	public String getMod347Info(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey);
 	public Mod347 duplicateNextYearMod347(AONContext ctx, Integer id);
+	
 	
 }

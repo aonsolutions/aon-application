@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
@@ -17,10 +16,10 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -42,6 +41,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -53,29 +54,37 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class OperationReport extends MainEntryPoint {
 
+	private static final String OPERATION_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/OperationReportExcelPrint";
+	
 	private static CommonServiceAsync commonService;
 	private String currentDomainName;
 	private int currentDomain;
 	private String currentUser;
 	
 	private AonConfiguration configuration;
+	
 	private DockLayoutPanel dockLayoutPanel;
 	private SimpleLayoutPanel content;
 	private TabLayoutPanel tabLayout;
 	private SimpleLayoutPanel ivaContent;
 	private SimpleLayoutPanel irpfContent;
 	
-	private ListBox type;
+	private ListBox type;  // Compras y Gastos / Ventas e Ingresos
 	private IntegerBox year;
 	private PeriodListBox period;
 	private DateBoxEx fromDate;
 	private DateBoxEx toDate;
 
-	private AccountingRegistryBox registry;
-	
 	private ListBox activity;
+	int indexMainActivity = 0;
 	
 	private NumberFormat formatter;
+	
+	FormPanel diskForm;
+	Hidden operationParamsHidden;
+	Hidden domainIdHidden;
+	Hidden domainNameHidden;
+	Hidden userHidden;
 	
 	interface SafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
@@ -142,10 +151,10 @@ public class OperationReport extends MainEntryPoint {
 						});
 
 						ivaContent = new SimpleLayoutPanel();
-						tabLayout.add(ivaContent, template.tab("Panel IVA", AON.AON_CSS.aonIconModel()));
+						tabLayout.add(ivaContent, template.tab("Listado IVA", AON.AON_CSS.aonIconModel()));
 						
 						irpfContent = new SimpleLayoutPanel();
-						tabLayout.add(irpfContent, template.tab("Panel IRPF", AON.AON_CSS.aonIconModel()));
+						tabLayout.add(irpfContent, template.tab("Listado IRPF", AON.AON_CSS.aonIconModel()));
 												
 						content.setWidget(tabLayout);
 						dockLayoutPanel.add(content);
@@ -168,10 +177,9 @@ public class OperationReport extends MainEntryPoint {
 		fillDates();
 		
 		if (configuration != null && configuration.hasActivities()) {
-			activity.setSelectedIndex(0);
+			activity.setSelectedIndex(indexMainActivity);
 		}
-		registry.setValue((AccountingRegistry) null,false);
-				
+		
 		onSearch();
 	}
 
@@ -220,13 +228,36 @@ public class OperationReport extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-//				initialize();
+				submitForm(OPERATION_EXCEL_REPORT_PRINT);
 			}
 		});
 		buttonContainer.add(export);
 		
+		diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		operationParamsHidden = new Hidden("operationParams");
+		formFlowPanel.add(operationParamsHidden);
+		domainIdHidden = new Hidden("domainId");
+		formFlowPanel.add(domainIdHidden);
+		domainNameHidden = new Hidden("domainName");
+		formFlowPanel.add(domainNameHidden);
+		userHidden = new Hidden("user");
+		formFlowPanel.add(userHidden);
+		buttonContainer.add(diskForm);
+		
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
+	}
+	
+	private void submitForm(String action) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		operationParamsHidden.setValue(JsonParams.convert(getWidgetParams()));
+		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+		domainNameHidden.setValue(getCurrentDomainName());		
+		userHidden.setValue(getCurrentUser());
+		diskForm.submit();
 	}
 	
 	private Widget getFilterPanel() {
@@ -283,16 +314,18 @@ public class OperationReport extends MainEntryPoint {
 	
 		if (configuration != null && configuration.hasActivities()) {
 			activity = new ListBox();
-			activity.setWidth("200px");
+			activity.setWidth("300px");
 			int i = 0;
 			for (EnterpriseActivity ea : configuration.getActivities()) {
+				
 				activity.addItem(ea.getDescription() + (ea.getIae() == null?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
+					indexMainActivity = i; // Se quedará marcada la actividad principal, por defecto
 				}
 				i++;
 			}
-			activity.setSelectedIndex(0);
+			activity.setSelectedIndex(indexMainActivity);
 			activity.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -301,16 +334,6 @@ public class OperationReport extends MainEntryPoint {
 			});
 		}
 
-		registry = new AccountingRegistryBox(getDomainName(), getDomain());
-		registry.setRequired(false);
-		registry.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<AccountingRegistry> event) {
-				onSearch();
-			}
-		});
-		
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
 		tab.addStyleName(AON.AON_CSS.aonWidth90Percent());
@@ -350,6 +373,7 @@ public class OperationReport extends MainEntryPoint {
 		dateLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		firstRowPanel.add(dateLabel);
 		firstRowPanel.add(fromDate);
+		
 		InlineLabel to = new InlineLabel(AON.MSG.to());
 		to.setStyleName(AON.AON_CSS.aonItalic());
 		to.addStyleName(AON.AON_CSS.aonMarginRight());
@@ -404,12 +428,12 @@ public class OperationReport extends MainEntryPoint {
 	private OperationParams getWidgetParams() {
 		OperationParams params = new OperationParams()
 			.setDomain(getDomain())
-			.setRegistry(registry.getId())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
 			;
 		if (configuration != null && configuration.hasActivities() ) {
 			params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
+			params.setActivityDescription( activity.getSelectedItemText() == null ? "" : activity.getSelectedItemText().replace("*",""));
 		}
 		if (type.getSelectedIndex() == 0) {
 			params.setExpenses(true);
@@ -430,4 +454,5 @@ public class OperationReport extends MainEntryPoint {
 		params.setIrpf(true);
 		irpfContent.setWidget(new OperationReportPanel(getDomainName(), getUser(), getDomain(), params));
 	}
+		
 }

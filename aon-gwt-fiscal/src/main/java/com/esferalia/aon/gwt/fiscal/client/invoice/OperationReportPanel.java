@@ -98,45 +98,47 @@ public class OperationReportPanel extends ScrollPanel{
 							sumTotal = sumTotal + op.getTotal();
 							if (params.getIrpf() == true) { // IRPF
 								html.add( getIrpfWidget(op, i) );
-								Object[] indexIrpf = mapConceptSummary.get(op.getAccountDescription());
+								Object[] indexIrpf = mapConceptSummary.get(op.getAccount());								  
 								if (indexIrpf != null) {
 									Object[] obj = new Object[2];	
-									obj[0] = op.getAccount();
-									obj[1] = (double) indexIrpf[1] + op.getTotal();
-									mapConceptSummary.put(op.getAccountDescription(), obj);
+									obj[0] = op.getAccountDescription();
+									obj[1] = (double) indexIrpf[1] + op.getBase();
+									mapConceptSummary.put(op.getAccount(), obj);
 								} else {
 									Object[] obj = new Object[2];
-									obj[0] = op.getAccount();
-									obj[1] = op.getTotal();
-									mapConceptSummary.put(op.getAccountDescription(), obj);
+									obj[0] = op.getAccountDescription();
+									obj[1] = op.getBase();
+									mapConceptSummary.put(op.getAccount(), obj);
 								}
 							} else { // IVA
 								html.add( getIvaWidget(op, i) );
 								
 								Double[] indexIva = mapIvaSummary.get(op.getPercent());
 								if (indexIva != null) {
-									Double[] array = {};	
+									Double[] array = {0.0,0.0};	
 									array[0] = indexIva[0] + op.getBase();
 									array[1] = indexIva[1] + op.getQuota();
 									mapIvaSummary.put(op.getPercent(), array);
 								} else {
-									Double[] array = {};
+									Double[] array = {0.0,0.0};
 									array[0] = op.getBase();
 									array[1] = op.getQuota();
 									mapIvaSummary.put(op.getPercent(), array);
 								}
 	
-								Double[] indexSur = mapSurSummary.get(op.getSurchargePercent());
-								if (indexSur != null) {
-									Double[] array = {};	
-									array[0] = indexSur[0] + op.getBase();
-									array[1] = indexSur[1] + op.getQuota();
-									mapSurSummary.put(op.getSurchargePercent(), array);
-								} else {
-									Double[] array = {};	
-									array[0] = op.getBase();
-									array[1] = op.getQuota();
-									mapSurSummary.put(op.getSurchargePercent(), array);
+								if (op.getSurchargePercent() != 0) {								
+									Double[] indexSur = mapSurSummary.get(op.getSurchargePercent());
+									if (indexSur != null) {
+										Double[] array = {0.0,0.0};	
+										array[0] = indexSur[0] + op.getBase();
+										array[1] = indexSur[1] + op.getSurchargeQuota();
+										mapSurSummary.put(op.getSurchargePercent(), array);
+									} else {
+										Double[] array = {0.0,0.0};	
+										array[0] = op.getBase();
+										array[1] = op.getSurchargeQuota();
+										mapSurSummary.put(op.getSurchargePercent(), array);
+									}
 								}
 							}
 							i++;
@@ -174,9 +176,10 @@ public class OperationReportPanel extends ScrollPanel{
 							html.add(bold(summaryIrpfHeader));
 							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 90))));
 							for (Entry<String, Object[]> entry : mapConceptSummary.entrySet()) {
-								html.add(new Label(AonStringUtils.rightPad(entry.getValue()[0].toString(), 15)
-									+ AonStringUtils.rightPad(entry.getKey(), 60)
-									+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format((double) entry.getValue()[1]), 15)));
+								html.add(new Label(AonStringUtils.rightPad(entry.getKey(), 15)
+										+ AonStringUtils.rightPad(entry.getValue()[0]==null?"":entry.getValue()[0].toString(), 60)
+										+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format((double) entry.getValue()[1]), 15)));
+								
 							}
 							html.add(new Label(AonStringUtils.repeat(AonStringUtils.SPACE, HEADER_IVA.length())));
 							html.add(new Label(AonStringUtils.repeat(AonStringUtils.SPACE, HEADER_IVA.length())));
@@ -202,15 +205,15 @@ public class OperationReportPanel extends ScrollPanel{
 						
 							// Resumen por Tipos de IVA
 							html.add(bold(new Label("RESUMEN POR TIPOS DE IVA")));
-							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 40))));
-							Label summaryIvaHeader = new Label(AonStringUtils.rightPad("BASE", 15)
-								+ AonStringUtils.rightPad("TIPO IVA", 15)
+							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 30))));
+							Label summaryIvaHeader = new Label(AonStringUtils.rightPad("BASE", 10)
+								+ AonStringUtils.leftPad("TIPO IVA", 10)
 								+ AonStringUtils.leftPad("CUOTA", 10));
 							html.add(bold(summaryIvaHeader));
-							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 40))));
+							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 30))));
 							for (Entry<Double, Double[]> entry : mapIvaSummary.entrySet()) {
-								html.add(new Label(AonStringUtils.rightPad(AON.CURRENCY_FORMAT.format(entry.getValue()[0]), 15)
-									+ AonStringUtils.rightPad(AON.CURRENCY_FORMAT.format(entry.getKey()) + AonStringUtils.PERCENT, 15)
+								html.add(new Label(AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(entry.getValue()[0]), 10)
+									+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(entry.getKey()) + AonStringUtils.PERCENT, 10)
 									+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(entry.getValue()[1]), 10)));
 							}
 							html.add(new Label(AonStringUtils.repeat(AonStringUtils.SPACE, HEADER_IVA.length())));
@@ -218,15 +221,15 @@ public class OperationReportPanel extends ScrollPanel{
 							
 							// Resumen por Tipos de REq
 							html.add(bold(new Label("RESUMEN POR TIPOS DE RECARGO DE EQUIVALENCIA")));
-							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 40))));
-							Label summaryReqHeader = new Label(AonStringUtils.rightPad("BASE", 15)
-								+ AonStringUtils.rightPad("TIPO REQ", 15)
+							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 30))));
+							Label summaryReqHeader = new Label(AonStringUtils.rightPad("BASE", 10)
+								+ AonStringUtils.leftPad("TIPO REQ", 10)
 								+ AonStringUtils.leftPad("CUOTA", 10));
 							html.add(bold(summaryReqHeader));
-							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 40))));
+							html.add(bold(new Label(AonStringUtils.repeat(AonStringUtils.HYPHEN, 30))));
 							for (Entry<Double, Double[]> entry : mapSurSummary.entrySet()) {
-								html.add(new Label(AonStringUtils.rightPad(AON.CURRENCY_FORMAT.format(entry.getValue()[0]), 15)
-									+ AonStringUtils.rightPad(AON.CURRENCY_FORMAT.format(entry.getKey()) + AonStringUtils.PERCENT, 15)
+								html.add(new Label(AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(entry.getValue()[0]), 10)
+									+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(entry.getKey()) + AonStringUtils.PERCENT, 10)
 									+ AonStringUtils.leftPad(AON.CURRENCY_FORMAT.format(entry.getValue()[1]), 10)));
 							}
 						}
@@ -298,7 +301,7 @@ public class OperationReportPanel extends ScrollPanel{
 		builder.appendEscaped( AonStringUtils.rightPad(entryDate,15) );
 		builder.appendEscaped( AonStringUtils.rightPad(taxDate,15) );
 		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(op.getConcept(), 50), 50) );
-		builder.appendEscaped( AonStringUtils.rightPad(op.getDocumentNumber(),15));
+		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.trimToEmpty(op.getDocumentNumber()),15));
 		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(
 				  AonStringUtils.defaultIfBlank(op.getRegistryDocument(), AonStringUtils.EMPTY)
 				+ (AonStringUtils.isBlank(op.getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
@@ -323,7 +326,7 @@ public class OperationReportPanel extends ScrollPanel{
 		builder.appendEscaped( AonStringUtils.rightPad(i, 5));
 		builder.appendEscaped( AonStringUtils.rightPad(entryDate,15) );
 		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(op.getConcept(), 50), 50) );
-		builder.appendEscaped( AonStringUtils.rightPad(op.getDocumentNumber(),15));
+		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.trimToEmpty(op.getDocumentNumber()),15));
 		builder.appendEscaped( AonStringUtils.rightPad( AonStringUtils.abbreviate(
 			  AonStringUtils.defaultIfBlank(op.getRegistryDocument(), AonStringUtils.EMPTY)
 			+ (AonStringUtils.isBlank(op.getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)

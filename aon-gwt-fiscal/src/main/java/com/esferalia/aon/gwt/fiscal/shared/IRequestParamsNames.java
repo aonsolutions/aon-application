@@ -14,6 +14,7 @@ public interface IRequestParamsNames {
 	String DOMAIN = "domain";
 	String REGISTRY = "registry";
 	String ACTIVITY = "activity";
+	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String FROM_DATE = "fromDate";
 	String TO_DATE = "toDate";
 	String PERCENT = "percent";

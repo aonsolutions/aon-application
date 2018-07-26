@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -78,10 +79,17 @@ public class OperationReportTest {
 		final Date toDate = AonDateUtils.getYearLastDay(2018);		
 		Integer activity = 363;
 		
-		boolean[] exp = {true,false};
+		OperationParams params = new OperationParams();
+        params.setFromDate(fromDate);
+        params.setToDate(toDate);
+        params.setActivity(activity.intValue());
+        
+        boolean[] exp = {true,false};
 		
 		for (boolean expenses : exp) {
-			Stream<OperationBreakdown> stream = OperationDAO.getOperationBreakdownIRPF(ctx, DOMAIN_ID, fromDate, toDate, activity, expenses, true);
+			params.setExpenses(expenses);
+			params.setIrpf(true);
+			Stream<OperationBreakdown> stream = OperationDAO.getOperationBreakdown(ctx, DOMAIN_ID, params);
 			
 			System.out.println(AonStringUtils.repeat('-',220));
 			System.out.println("LISTADO DE "+(expenses?"COMPRAS Y GASTOS":"VENTAS E INGRESOS")+" IRPF");
@@ -111,7 +119,7 @@ public class OperationReportTest {
 						totalImp = AonMathUtils.round(totalImp + p.getDeductibleQuota()+p.getSurchargeQuota());
 						totalTotal = AonMathUtils.round(totalTotal + p.getTotal()); 
 						
-						print(AonStringUtils.isBlank(p.getActivityDescription())?"< Sin Actividad >":p.getActivityDescription(),30);
+//						print(AonStringUtils.isBlank(p.getActivityDescription())?"< Sin Actividad >":p.getActivityDescription(),30);
 						print(p.getEntryDate());
 						print(p.getTaxDate());
 						print(p.getAccount(),9);
@@ -150,10 +158,17 @@ public class OperationReportTest {
 		final Date toDate = AonDateUtils.getYearLastDay(2018);		
 		Integer activity = 363;
 		
+		OperationParams params = new OperationParams();
+        params.setFromDate(fromDate);
+        params.setToDate(toDate);
+        params.setActivity(activity.intValue());
+		
 		boolean[] exp = {true,false};
 		
 		for (boolean expenses : exp) {
-			Stream<OperationBreakdown> stream = OperationDAO.getOperationBreakdownIRPF(ctx, DOMAIN_ID, fromDate, toDate, activity, expenses, false);
+			params.setExpenses(expenses);
+			params.setIrpf(true);
+			Stream<OperationBreakdown> stream = OperationDAO.getOperationBreakdown(ctx, DOMAIN_ID, params);
 			
 			int dash = 244;
 			
@@ -193,7 +208,7 @@ public class OperationReportTest {
 						totalREq = AonMathUtils.round(totalREq + p.getSurchargeQuota());
 						totalTotal = AonMathUtils.round(totalTotal + p.getTotal()); 
 						
-						print(AonStringUtils.isBlank(p.getActivityDescription())?"< Sin Actividad >":p.getActivityDescription(),20);
+//						print(AonStringUtils.isBlank(p.getActivityDescription())?"< Sin Actividad >":p.getActivityDescription(),20);
 						print(p.getEntryDate());
 						print(p.getTaxDate());
 						print(p.getAccount(),9);

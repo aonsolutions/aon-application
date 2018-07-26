@@ -120,25 +120,17 @@ public class JsonParams extends JSONObject {
 		return json.toString();
 	}
 
-	public static String convert(OperationParams params) {
+	public static String convert(OperationParams params) {		
 		JSONObject json = new JSONObject();
 		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
-//		json.put(IRequestParamsNames.ACCOUNT 		,params.getAccount() 			== null? JSON_NULL : new JSONString( params.getAccount()));
-		json.put(IRequestParamsNames.REGISTRY 		,params.getRegistry() 			== null? JSON_NULL : new JSONNumber( params.getRegistry()));
 		json.put(IRequestParamsNames.ACTIVITY 		,params.getActivity() 			== null? JSON_NULL : new JSONNumber( params.getActivity()));
+		json.put(IRequestParamsNames.ACTIVITY_DESCRIPTION, params.getActivityDescription()== null? JSON_NULL : new JSONString( params.getActivityDescription()));		
 		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromDate() 			== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
 		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToDate()   			== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
-		json.put(IRequestParamsNames.PERCENT  		,params.getPercent()  			== null? JSON_NULL : new JSONNumber( params.getPercent()));
-		json.put(IRequestParamsNames.TYPE   	  	,params.getType()				== null? JSON_NULL : new JSONNumber( params.getType()?1:0));
-		json.put(IRequestParamsNames.OUTPUT   		,params.getOutput() 			== null? JSON_NULL : new JSONNumber( params.getOutput()?1:0));
-		json.put(IRequestParamsNames.ACCRUAL_REGIME	,params.getAccrualRegime() 		== null? JSON_NULL : new JSONNumber( params.getAccrualRegime()?1:0));
-		json.put(IRequestParamsNames.INVESTMENT		,params.getInvestment() 		== null? JSON_NULL : new JSONNumber( params.getInvestment()?1:0));
-		json.put(IRequestParamsNames.SERVICE		,params.getService() 			== null? JSON_NULL : new JSONNumber( params.getService()?1:0));
-		json.put(IRequestParamsNames.RECTIFICATION	,params.getRectificationType()	== null? JSON_NULL : new JSONNumber( params.getRectificationType().ordinal()));
-		json.put(IRequestParamsNames.ORDER_BY		,params.getOrderBy()			== null? JSON_NULL : new JSONNumber( params.getOrderBy()));
 		json.put(IRequestParamsNames.EXPENSES		,params.getExpenses()			== null? JSON_NULL : new JSONNumber( params.getExpenses()?1:0));
 		json.put(IRequestParamsNames.IRPF			,params.getIrpf()				== null? JSON_NULL : new JSONNumber( params.getIrpf()?1:0));
 		return json.toString();
 	}
+	
 }

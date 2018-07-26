@@ -7,60 +7,23 @@ public class OperationBreakdown implements Serializable{
 	
 	private static final long serialVersionUID = -7155156494184164721L;
 
-	private Integer activity;  
-	private String activityDescription;
-	private Boolean expenses;
-	private Boolean irpf;
-	
-	private Date entryDate;  // Fecha del apunte 
-	
-	private String account; 
-	private String accountDescription;
-	private String concept;
-	
-	private double total; // Base imponible + iva + req en facturas, y total apunte en el resto de apuntes
-	
-	// ------------------- facturas
-	private Integer invoice;
-	private String docNumber;         // Nº Documento (se coge de la linea del asiento)	
-	private String registryDocument;  // NIF del Titular
-	private String registryName;      // Nombre del Titular
-	private Date taxDate;             // Fecha de IVA	
-	private double base;
-	private double percent;
-	private double quota;	
-	private double deductibleQuota;	
-	private double surchargePercent;
-	private double surchargeQuota;
+	private Date entryDate;            // Fecha del apunte
+	private Date taxDate;              // Fecha de IVA (facturas)	
+	private String account;            // Cuenta contable
+	private String accountDescription; // Descripción cuenta contable
+	private String concept;  		   // Concepto del apunte
+	private Integer invoice;           // ID de la factura (facturas)
+	private String docNumber;          // Nº Documento (se coge de la linea del asiento)  (facturas)	
+	private String registryDocument;   // NIF del Titular  (facturas)
+	private String registryName;       // Nombre del Titular  (facturas)
+	private double base;               // Base imponible en facturas, debe o haber en apuntes
+	private double percent;            // Porcentaje de IVA  (facturas)
+	private double quota;	           // Cuota de IVA  (facturas)
+	private double deductibleQuota;	   // Cuota deducible de IVA  (facturas)
+	private double surchargePercent;   // Porcentaje de Recargo de Equivalencia  (facturas)
+	private double surchargeQuota;     // Cuota de Recargo de Equivalencia  (facturas)
+	private double total;              // Base imponible + iva + req en facturas, y total apunte en el resto de apuntes	
 
-	public Boolean getExpenses() {
-		return expenses;
-	}
-	public OperationBreakdown setExpenses(Boolean expenses) {
-		this.expenses = expenses;
-		return this;
-	}
-	public Boolean getIrpf() {
-		return irpf;
-	}
-	public OperationBreakdown setIrpf(Boolean irpf) {
-		this.irpf = irpf;
-		return this;
-	}
- 	public Integer getActivity() {
-		return activity;
-	}
-	public OperationBreakdown setActivity(Integer activity) {
-		this.activity = activity;
-		return this;
-	}
-	public String getActivityDescription() {
-		return activityDescription;
-	}
-	public OperationBreakdown setActivityDescription(String activityDescription) {
-		this.activityDescription = activityDescription;
-		return this;
-	}
 	public String getRegistryDocument() {
 		return registryDocument;
 	}

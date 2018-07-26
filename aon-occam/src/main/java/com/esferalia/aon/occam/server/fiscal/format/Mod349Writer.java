@@ -118,7 +118,7 @@ public class Mod349Writer {
 		   ,(line, mod349,detail) -> line.append("20") 										            	// Hacienda Foral de Gipuzkoa		   
 		   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(mod349.getDocument(),9))	 		// N.I.F. DEL DECLARANTE
 		   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(Mod349Key.safeValue(detail.getType()),1))	// Clave de Operación
-		   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(detail.getCountry()),2))  // NIF operador intracomunitario - País
+		   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(detail.getCountry()) == "GR" ? "EL" : Country.safeIso2(detail.getCountry()) ,2))  // NIF operador intracomunitario - País (Grecia se pone EL, según las instrucciones del modelo, por que no coincide con el código ISO2)
 		   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(detail.getDocument(),12))	 		// NIF operador intracomunitario - Número
 		   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(detail.getName(),40))	 			// Apellidos y nombre o Razón Social del operador intracomunitario
 		   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.unsigned(detail.getAmount(),13,2))      // Base imponible
@@ -135,7 +135,7 @@ public class Mod349Writer {
 			   ,(line, mod349,detail) -> line.append("20") 										            	// Hacienda Foral de Gipuzkoa		   
 			   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(mod349.getDocument(),9))	 		// N.I.F. DEL DECLARANTE
 			   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(Mod349Key.safeValue(detail.getType()),1))	// Clave de Operación
-			   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(detail.getCountry()),2))  // NIF operador intracomunitario - País
+			   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(detail.getCountry()) == "GR" ? "EL" : Country.safeIso2(detail.getCountry()),2))  // NIF operador intracomunitario - País (Grecia se pone EL, según las instrucciones del modelo, por que no coincide con el código ISO2)
 			   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(detail.getDocument(),12))	 		// NIF operador intracomunitario - Número
 			   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.text(detail.getName(),40))	 			// Apellidos y nombre o Razón Social del operador intracomunitario			   
 			   ,(line, mod349,detail) -> line.append(AonFiscalFileUtils.unsigned(Math.abs(detail.getAmount()),13,2))  // Base imponible: Importe en valor absoluto de la rectificación			   
