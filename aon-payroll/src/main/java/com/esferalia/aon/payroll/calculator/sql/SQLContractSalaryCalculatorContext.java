@@ -2311,7 +2311,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				try {
 					IContractSalaryCalculatorContext ctx = getLiquidCalculatorContext(connection, start, end, issueDate,
 							contractCriteria, solve, liquid);
-					ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+					//ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
 					// TODO: Warning a bit tricky.
@@ -2325,7 +2326,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							expressionCtx.setVariable(ContextVariable.IRPF_PERCENT, 0.00, start, end);
 					});
 
-					ISalary salary = calculator.calculate(ctx);
+					ISalary salary = calculator.calculate(((ISQLContractSalaryCalculatorContext) ctx));
 
 					return liquid - salary.getTotalLiquid();
 
