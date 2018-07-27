@@ -91,9 +91,9 @@ public class FreeText extends PageAbs {
 	@Override
 	protected void paintKeyField(FlexTable tab,final D2DepositKey key,int row, int col) {
 		boolean disabled = isDisabled(key);
-		
 		FlowPanel panel = new FlowPanel();
 		final TextArea text = new TextArea();
+		
 		text.setWidth("100%");
 		text.setVisibleLines(20);
 		text.addChangeHandler(new ChangeHandler() {
@@ -104,12 +104,15 @@ public class FreeText extends PageAbs {
 						text.setValue("",false);
 					}
 					String s = text.getValueOrThrow();
-					
 					if(!textMode) {
-						String str = s.replace("\n", "\r\n");
+						String str = "";
+						if(s != null) 
+							str = s.replace("\n", "\r\n");
 						onEdit(key.getCode(), str, false);
 					}else {
-						String str = s.replace("\n", "\r\n");
+						String str = "";
+						if(s != null) 
+							str = s.replace("\n", "\r\n");
 						onEditTextMode(key.getCode(), str);
 					}
 				} catch (ParseException e) {
