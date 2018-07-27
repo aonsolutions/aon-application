@@ -53,6 +53,7 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
             serverlessOutput.setBody(body);
             serverlessOutput.setStatusCode(500);
             headers.put("Content-Type", "text/plain");
+            CORSUtils.addOriginHeader(serverlessInput, headers);
             serverlessOutput.setHeaders(headers);
 		}
 		
@@ -108,6 +109,7 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
 		l.setBody(os.toString(charset));
 		
         Map<String, String> headers = new HashMap<String,String>();
+        CORSUtils.addOriginHeader(t, headers);
         headers.put("Content-Type", "text/xml; charset=" + charset);
         headers.put("Content-Length", Integer.toString(length));
 		l.setHeaders(headers);
@@ -136,6 +138,7 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
 		l.setBody(os.toString(charset));
 		
         Map<String, String> headers = new HashMap<String,String>();
+        CORSUtils.addOriginHeader(t, headers);
         headers.put("Content-Type", "text/xml; charset=" + charset);
         headers.put("Content-Length", Integer.toString(length));
 		l.setHeaders(headers);
@@ -164,6 +167,7 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
 		l.setBody(os.toString(charset));
 		
         Map<String, String> headers = new HashMap<String,String>();
+        CORSUtils.addOriginHeader(t, headers);
         headers.put("Content-Type", "text/xml; charset=" + charset);
         headers.put("Content-Length", Integer.toString(length));
 		l.setHeaders(headers);
@@ -192,6 +196,7 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
 		output.setBody(os.toString(charset));
 		
         Map<String, String> headers = new HashMap<String,String>();
+        CORSUtils.addOriginHeader(input, headers);
         headers.put("Content-Type", "text/xml; charset=" + charset);
         headers.put("Content-Length", Integer.toString(length));
 		output.setHeaders(headers);
@@ -219,6 +224,7 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
 		l.setBody(os.toString(charset));
 		
         Map<String, String> headers = new HashMap<String,String>();
+        CORSUtils.addOriginHeader(t, headers);
         headers.put("Content-Type", "text/xml; charset=" + charset);
         headers.put("Content-Length", Integer.toString(length));
 		l.setHeaders(headers);
@@ -227,6 +233,34 @@ public class GetCretaFile implements RequestHandler<ServerlessInput, ServerlessO
 
 	@Override
 	public void visitDocumentoCalculoLiquidacion(ServerlessInput t, ServerlessOutput l) throws Exception {
+		
+		try {
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter printWriter = new PrintWriter(stringWriter);
+			
+			printWriter.println("<html>");
+			printWriter.println("<body>");
+			printWriter.println("<script>");
+	
+			printWriter.println("</script>");
+			printWriter.println("</body>");
+			printWriter.println("</html>");
+	
+			printWriter.flush();
+			printWriter.close();
+			stringWriter.flush();
+			stringWriter.close();
+			
+			String body = stringWriter.toString();
+			
+			l.setBody(body);
+			Map<String, String> headers = new HashMap<String,String>();
+	        CORSUtils.addOriginHeader(t, headers);
+	        headers.put("Content-Type", "text/html");
+			l.setHeaders(headers);
+		} finally {
+			
+		}
 	}
     
     

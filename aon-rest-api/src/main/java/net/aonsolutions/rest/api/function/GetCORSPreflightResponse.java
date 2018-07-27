@@ -1,5 +1,7 @@
 package net.aonsolutions.rest.api.function;
 
+import static net.aonsolutions.rest.api.function.CORSUtils.getOrigin;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +9,6 @@ import java.util.stream.Collectors;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.util.StringUtils;
 
 import net.aonsolutions.rest.api.model.ServerlessInput;
 import net.aonsolutions.rest.api.model.ServerlessOutput;
@@ -32,7 +33,7 @@ public class GetCORSPreflightResponse implements RequestHandler<ServerlessInput,
      * see: https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html.
      * and: https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonRequestHeaders.html
      */
-	private static final String []  DEFAULT_ALLOWED_HEADERS = new String [] {
+	public static final String []  DEFAULT_ALLOWED_HEADERS = new String [] {
 		"Content-Type",        // indicates the media type of the resource
 		"X-Amz-Date",          // the current date and time according to the requester (must be present for authorization)
 		"Authorization",       // information required for request authentication
@@ -40,23 +41,12 @@ public class GetCORSPreflightResponse implements RequestHandler<ServerlessInput,
 		"X-Amz-Security-Token" // see link above		
 	};
 
-	private static final String []  DEFAULT_ALLOWED_METHODS = new String [] {
+	public static final String []  DEFAULT_ALLOWED_METHODS = new String [] {
 		"GET",
 		"POST"
 	};
 	
-	private static String getOrigin(ServerlessInput serverlessInput ) {
-		Map<String,String >headers = serverlessInput.getHeaders();
-
-		String origin =headers.get("origin");
-		if ( StringUtils.isNullOrEmpty(origin) )
-			origin =headers.get("Origin");
-		
-		return origin;
-	}
-	
-
-    /**
+	/**
      * Return a ServerlessOutput object that contains a preflight response to be returned
      * from a Lambda function.
      * @param origin The origin to test against the allowed list
