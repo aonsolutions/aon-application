@@ -107,6 +107,41 @@ public class Bases {
 
 	}
 	
+	public static class ConstantDatoBasesCallback implements BasesCallback {
+		
+		private String valor;
+		private String codigo;
+		private String tipoDato;
+		
+		
+		
+		public ConstantDatoBasesCallback(String codigo, String tipoDato, String valor) {
+			this.valor = valor;
+			this.codigo = codigo;
+			this.tipoDato = tipoDato;
+		}
+
+
+
+		@Override
+		public void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo tramo, DatoSolicitado datoSolicitado,
+				TramoBuilder tramoBuilder) {
+			if ( !StringUtils.equalsIgnoreCase(codigo, datoSolicitado.getCodigo()))
+				return;
+			if ( !StringUtils.equalsIgnoreCase(tipoDato, datoSolicitado.getTipoDato()))
+				return;
+			
+			DatoBuilder datoBuilder = new DatoBuilder()
+					.setCodigo(datoSolicitado.getCodigo())
+					.setTipo(datoSolicitado.getTipoDato())
+					.setValor(valor);
+			tramoBuilder.addDato(datoBuilder.create());
+			
+			throw new Cancel();
+			
+		}
+	}
+
 	public static class CustomizeBasesCallback implements BasesCallback {
 		boolean reftificationMark = false;
 		
@@ -177,7 +212,7 @@ public class Bases {
 				if (intersect == null)
 					continue;
 
-				// TODO : More than one unique value ?
+				// TODO : More than one unique valor ?
 				return ExpressionContext.eval(data.getExpression(),
 						Boolean.class);
 			}
@@ -558,7 +593,7 @@ public class Bases {
 				String valor = defaults.get(key);
 
 				System.err.printf(
-						"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] is default value %s \r\n",
+						"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] is default valor %s \r\n",
 						datoSolicitado.getCodigo(),
 						salary.getEmployeeSSNumber(),
 						salary.getEmployeeDocument(),
@@ -593,7 +628,7 @@ public class Bases {
 				datoBuilder.setTipo(datoSolicitado.getTipoDato());
 				datoBuilder.setValor(valor);
 				liquidacionBuilder.addDato(datoBuilder.create());
-				System.err.printf("WARN: %s for %s default value %s \r\n",
+				System.err.printf("WARN: %s for %s default valor %s \r\n",
 						datoSolicitado.getCodigo(),
 						liquidacion.getCcc().getNumero(), valor);
 				throw new Cancel();
@@ -629,7 +664,7 @@ public class Bases {
 
 			if (total == 0.00 && optional) {
 				System.err.printf(
-						"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] fixed value is zero. Not send because is optional  \r\n",
+						"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] fixed valor is zero. Not send because is optional  \r\n",
 						datoSolicitado.getCodigo(),
 						salary.getEmployeeSSNumber(),
 						salary.getEmployeeDocument(),
@@ -646,7 +681,7 @@ public class Bases {
 
 			tramoBuilder.addDato(datoBuilder.create());
 			System.err.printf(
-					"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] fixed value %f \r\n",
+					"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] fixed valor %f \r\n",
 					datoSolicitado.getCodigo(), salary.getEmployeeSSNumber(),
 					salary.getEmployeeDocument(),
 					tramo.getFechaDesde().getDia(),
@@ -667,6 +702,7 @@ public class Bases {
 				put("02", "Número de horas complementarias");
 
 				put("51", "Modalidad de salario");
+				put("54", "Causa que da lugar a la obligación de cotizar");
 
 				put("500", "Base de contingencias comunes");
 				put("509", "Base de contingencias comunes");
@@ -724,14 +760,14 @@ public class Bases {
 		public void rightVariable(String  var, Period p,
 				String right) {
 			System.err.println(String.format(
-					"INFO: '%s' (%s) right value at salary data", var, right));
+					"INFO: '%s' (%s) right valor at salary data", var, right));
 		}
 
 		@Override
 		public void wrongVariable(Salary salary, String  var,
 				Period p, String right, String wrong) {
 			System.err.println(String.format(
-					"ERROR: '%s' (%s) wrong value (%s) at salary data", var,
+					"ERROR: '%s' (%s) wrong valor (%s) at salary data", var,
 					right, wrong));
 		}
 
@@ -1209,7 +1245,7 @@ public class Bases {
 						throw new ZeroValueException(variable);
 					// System.err.println("--- CompositeCContextCretaData " +
 					// contextVariable.getName() + ", " +
-					// salary.getEmployeeName() + " = " + value );
+					// salary.getEmployeeName() + " = " + valor );
 					return value;
 				} catch (NoSuchVariableException e) {
 					// Try next variable
@@ -2093,9 +2129,9 @@ public class Bases {
 
 		Option defaults = OptionBuilder
 				.hasArg()
-				.withArgName("<code>=<value>")
+				.withArgName("<code>=<valor>")
 				.withLongOpt("default")
-				.withDescription("Set a default data value")
+				.withDescription("Set a default data valor")
 				.create('d');
 
 		Option naf = OptionBuilder

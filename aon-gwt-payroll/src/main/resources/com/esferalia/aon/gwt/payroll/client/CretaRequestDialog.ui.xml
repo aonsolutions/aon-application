@@ -140,6 +140,20 @@
 					</g:ListBox>
 				</td>
 			</tr>
+			<tr ui:field="i54TR"   >
+				<td class="{style.label}">
+					<g:Label text="Causa, indicador I 54" />
+				</td>
+				<td class="{style.field}">
+					<g:ListBox styleName="aon-selectOneMenu" ui:field="i54ListBox" >
+						<g:item value="1">1- Atrasos de convenio</g:item>	
+						<g:item value="2">2- Normativa (disposici&oacute;n legal)</g:item>	
+						<g:item value="3">3- Acta de conciliaci&oacute;n</g:item>	
+						<g:item value="4">4- Sentencia judicial</g:item>	
+						<g:item value="5">5- Cualquier otro t&iacute;tulo leg&iacute;timo</g:item>	
+					</g:ListBox>
+				</td>
+			</tr>
 			<tr ui:field="previousBasesTR"  >
 				<td class="{style.label}">
 					<g:Label text="Aceptar Bases Anteriores" />

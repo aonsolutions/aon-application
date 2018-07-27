@@ -205,6 +205,12 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	@UiField
 	CheckBox reftificationMarkCheckBox;
 
+	@UiField
+	Element i54TR;
+
+	@UiField
+	ListBox i54ListBox;
+
 	private Callback<T> callback;
 	
 	public CretaRequestDialog(Callback<T> callback) {
@@ -215,6 +221,8 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		
 		setWidget(binder.createAndBindUi(this));
 		
+		setVisibleI54(false);
+
 		setVisiblePreviousBases(false);
 		
 		setVisibleCalcsDetailed(false);
@@ -434,6 +442,10 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		return reftificationMarkCheckBox.getValue();
 	}
 
+	public String getI54(){
+		return i54ListBox.getSelectedValue();
+	}
+
 	public abstract String getDescription(T t);
 	
 	// ------------------------------------------------------------------------
@@ -477,6 +489,9 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		
 	}
 
+	protected void setVisibleI54(boolean visible){
+		setVisible(visible, i54TR);
+	}
 	// ------------------------------------------------------------------------
 	
 	@Override

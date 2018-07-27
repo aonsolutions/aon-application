@@ -1170,6 +1170,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			long autorizado = dialog.getAuthorized();
 			boolean basesMesAnterior = dialog.previousBases();
 			boolean calcsDetailed = dialog.calcsDetailed();
+			String i54 = dialog.getI54();
 
 			CCC cccCopy  = new CCC();
 			cccCopy.setId(ccc.getId());
@@ -1188,7 +1189,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				tipo, 
 				Collections.singleton(cccCopy), 
 				basesMesAnterior, 
-				calcsDetailed);
+				calcsDetailed,
+				i54);
 
 			return true;
 		}

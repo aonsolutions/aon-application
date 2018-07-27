@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
+import com.esferalia.aon.payroll.tgss.creta.Bases.ConstantDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.CustomizeBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
 import com.esferalia.aon.payroll.tgss.creta.Borrador;
@@ -136,7 +137,8 @@ public class CretaServlet extends HttpServlet
 			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
 	
 			List<String> defaultsList = new ArrayList<String>();
-			defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=1"));
+			//defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=1"));
+			defaultsList.addAll(Arrays.asList("51=M", "737=0"));
 	
 			String paramDefaults[] = req.getParameterValues(CretaService.Parameter.DEFAULTS.name());
 			if (paramDefaults != null && paramDefaults.length > 0)
@@ -147,6 +149,9 @@ public class CretaServlet extends HttpServlet
 			CustomizeBasesCallback customBasesCb = new CustomizeBasesCallback()
 					.setReftificationMark(indicadorReftificacion)
 					;
+			
+			String i54 = req.getParameter(CretaService.Parameter.I54.name() );
+			ConstantDatoBasesCallback i54Callback = new ConstantDatoBasesCallback("54", "I", i54);
 	
 			InfoPickerBasesCallback pickerBasesCb = new InfoPickerBasesCallback();
 	
@@ -177,7 +182,7 @@ public class CretaServlet extends HttpServlet
 			
 			try {
 				os.printf("\"full_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
-						trabajadoresYTramosIss, respuestasIss, customBasesCb, pickerBasesCb));
+						trabajadoresYTramosIss, respuestasIss, customBasesCb, i54Callback, pickerBasesCb));
 			} catch (EmptyBasesException e) {
 				os.printf("\"full_bases\":\"\",\r\n");
 			}
@@ -213,7 +218,7 @@ public class CretaServlet extends HttpServlet
 			
 			try {
 				os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true, true, true, nafs, defaults,
-						trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, skippedCallback));
+						trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, skippedCallback, i54Callback));
 			} catch (EmptyBasesException e) {
 				os.printf("\"draft_request\":\"%s\",\r\n",
 						generateBorrador(e.getAutorizado(), noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),

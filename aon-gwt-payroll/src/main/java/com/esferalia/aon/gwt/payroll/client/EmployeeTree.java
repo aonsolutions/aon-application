@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
@@ -33,6 +32,8 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -41,8 +42,6 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -562,7 +561,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				final String tipo, 
 				final Collection<CCC> cccs,
 				final boolean basesMesAnterior,
-				final boolean calcsDetailed) {
+				final boolean calcsDetailed,
+				final String i54 ) {
 			StringBuffer requestDataBuffer = new StringBuffer();
 
 			requestDataBuffer.append("&" + Parameter.TIPO + "=" + tipo);
@@ -586,6 +586,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			if (calcsDetailed)
 				requestDataBuffer.append(
 						"&" + Parameter.CALCULOS_DESGLOSADOS + "=on");
+
+			requestDataBuffer.append("&" + Parameter.I54 + "=" + i54);
 
 			for (CCC ccc : cccs)
 				for (Employee employee : ccc.getEmployees())
@@ -811,6 +813,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					return CreateRequestCommand.this.getDescription(ccc);
 				}
 			};
+			setUpDialog(file, dialog);
 		}
 
 		// --------------------------------------------------------------------
@@ -838,8 +841,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			Set<CCC> ccs = dialog.getSelectedData();
 			boolean basesMesAnterior = dialog.previousBases();
 			boolean calcsDetailed = dialog.calcsDetailed();
+			String i54 = dialog.getI54();
 
-			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, ccs, basesMesAnterior, calcsDetailed);
+			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, ccs, basesMesAnterior, calcsDetailed, i54);
 
 			return true;
 		}
@@ -856,6 +860,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 				@Override
 				public void visitBases(Void t, Void l) throws RuntimeException {
+					// TODO: add TypeChangeHadler to CretaRequestDialog? 
+					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
 				}
 
 				@Override

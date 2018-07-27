@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import javax.lang.model.type.TypeVisitor;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -50,6 +51,7 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
@@ -201,11 +203,14 @@ public class TrabajadoresTramos {
 		
 		Date fromDate = getFirstDayOf(desdeMes, desdeAnho);
 		Date toDate = getLastDayOf(hastaMes, hastaAnho);
-		for (Date date = fromDate; date.before(toDate); date = AonDateUtils.add(date,Calendar.MONTH,1))
+		for (Date date = fromDate; date.before(toDate); date = AonDateUtils.add(date,Calendar.MONTH,1)) {
+			int anho = AonDateUtils.get(date, Calendar.YEAR);
+			Month  mes = Month.values()[AonDateUtils.get(date, Calendar.MONTH)];
 			for ( String ccc: cccs ) {
 				String ccc_prov_num_dc = ccc.substring(4); // PROVINCIA (2) + Nº (7) + DÍGITOS CONTROL (2)
-				liquidacionMes(aonContext, trabajadoresTramosBuilder, desdeAnho, desdeMes, ccc_prov_num_dc, tipo);
+				liquidacionMes(aonContext, trabajadoresTramosBuilder, anho, mes, ccc_prov_num_dc, tipo);
 			}
+		}
 		
 
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = trabajadoresTramosBuilder
@@ -233,7 +238,8 @@ public class TrabajadoresTramos {
 		
 
 		AON.getSalaryData(aonContext, 
-				props -> props.getCCCProperty().eq(ccc)
+				props -> 
+				props.getCCCProperty().eq(ccc)
 				.and(props.getEndDateProperty().ge(startDate))
 				.and(props.getStartDateProperty().le(endDate))
 				.and(props.getIsDelayProperty().eq(AonStringUtils.equalsIgnoreCase("L03", tipo)))
@@ -289,8 +295,22 @@ public class TrabajadoresTramos {
 										Collectors.summingDouble(Double::parseDouble) );
 						tramoBuilder.setDiasCotizados(diasCotizados.intValue());
 						
+						DatoSolicitadoBuilder dataSolicitadoBuilder  = new DatoSolicitadoBuilder();
+						
+						visit(tipo, new TypeVisitor() {
+
+							@Override
+							public void visitL03() {
+								// La causa que da lugar a la obligación de cotizar.
+								dataSolicitadoBuilder.setTipo("I");
+								dataSolicitadoBuilder.setCodigo("54");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+						});
+
 						visit(salary, p.getStart(), p.getEnd(), new SalaryVisitor() {
-							DatoSolicitadoBuilder dataSolicitadoBuilder  = new DatoSolicitadoBuilder();
 							
 							@Override
 							public void visitTiempoCompletoNormal() {
@@ -509,8 +529,8 @@ public class TrabajadoresTramos {
 				}
 		)
 		;
-		
-		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMesBuilder.create());
+		LiquidacionMes liquidacionMes = liquidacionMesBuilder.create();
+		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMes);
 	}
 	
 	private static List<Period> merge(Salary salary, List<Period> periods) {
@@ -819,6 +839,7 @@ public class TrabajadoresTramos {
 		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
 		
 		
+		
 		boolean iT15primerosDias = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_1_3.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_4_15.getName(), salary, startDate, endDate) 
@@ -874,6 +895,15 @@ public class TrabajadoresTramos {
 		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( Integer.parseInt(quoteGroup ) >= 8 )
 			visitor.visitGrupoCotizacionDiario();
+	}
+
+	private static interface TypeVisitor {
+		void visitL03();
+	}
+
+	private static void visit(String tipo, TypeVisitor visitor) {
+		if ( "L03".equalsIgnoreCase(tipo)) 
+			visitor.visitL03();
 	}
 
 	private static String getContextData(String name, Salary salary, Date startDate, Date endDate) {
