@@ -1,0 +1,52 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+
+    <ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.DeleteDialog.MyStyle">
+
+		.messageStyle{
+			font: 13px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+		}
+
+		.paddingBlocks{
+			padding-bottom: 15px;
+			padding-top: 10px;
+		}
+
+		.form {
+			padding: 10px;
+			width: 310px;
+		}
+
+		.closeButton {
+			position: relative;
+    		left: 160px;
+    		border: 1px solid #bbb;
+    		border-radius: 3px;
+    		margin-left: 5px;
+    		cursor: pointer;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:VerticalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}"> 
+		    	<g:Label ui:field="messageLabel" styleName="{style.messageStyle}"></g:Label>
+		    </g:HorizontalPanel>
+		   	<g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cancelar</g:Button>
+		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">Aceptar</g:Button>
+		    </g:HorizontalPanel>
+		</g:VerticalPanel>
+			
+	</g:HTMLPanel>
+
+</ui:UiBinder>
