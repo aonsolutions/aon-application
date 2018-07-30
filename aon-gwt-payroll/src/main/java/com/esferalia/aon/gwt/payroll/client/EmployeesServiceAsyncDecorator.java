@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -598,6 +599,23 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.setEmployeeInfoDataBase(newEmployeeInfo, 
 				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
 	
+	}
+
+	@Override
+	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeSSBonuses(contractId, 
+				new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+		
+	}
+
+	@Override
+	public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+			AsyncCallback<List<SSBonusData>> callback) {
+		AON.start();
+		employeesServiceAsync.setEmployeeSSBonuses(contractId, ssBonuses,
+				new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+		
 	}
 	
 }

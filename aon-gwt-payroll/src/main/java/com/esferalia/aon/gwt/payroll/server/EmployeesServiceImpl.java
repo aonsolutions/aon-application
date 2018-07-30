@@ -98,6 +98,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
+import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -133,6 +134,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -4902,6 +4904,46 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection();
 			return JooqEmployee.setEmployeeInfo(connection, newEmployeeInfo);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+				releaseFacesContext();
+			}
+		}
+	}
+
+	@Override
+	public List<SSBonusData> getEmployeeSSBonuses(Integer contractId) {
+		Connection connection = null;
+		initFacesContext();
+		try {
+			connection = AonServletUtils.getConnection();
+			return JooqSSBonus.getSSBonus(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+				releaseFacesContext();
+			}
+		}
+	}
+
+	@Override
+	public List<SSBonusData> setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses) {
+		Connection connection = null;
+		initFacesContext();
+		try {
+			connection = AonServletUtils.getConnection();
+			return JooqSSBonus.setSSBonus(connection, contractId, ssBonuses);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

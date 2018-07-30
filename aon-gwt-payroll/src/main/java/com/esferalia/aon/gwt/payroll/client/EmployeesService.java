@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -160,5 +161,9 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 	EmployeeInfoDataBase getEmployeeInfoDataBase(Integer employeeContract);
 
 	EmployeeInfoDataBase setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo);
+
+	List<SSBonusData> getEmployeeSSBonuses(Integer contractId);
+
+	List<SSBonusData> setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses);
 
 }

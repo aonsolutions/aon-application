@@ -1,0 +1,384 @@
+package com.esferalia.aon.gwt.payroll.client;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+
+public class SSBonusDraft extends Composite {
+	
+	// -------------------------------------------------- UiBinder --------------------------------------------------
+
+	private static SSBonusDraftUiBinder uiBinder = GWT.create(SSBonusDraftUiBinder.class);
+
+	interface SSBonusDraftUiBinder extends UiBinder<Widget, SSBonusDraft> {
+	}
+	
+	// -------------------------------------------------- UiFields --------------------------------------------------
+			
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String hide();
+		String buttonTable();
+		String bold();
+	}
+	
+	//ELEMENTOS HTML
+	@UiField
+	Button listBonusesButton;
+	
+	@UiField
+	Button saveButton;
+	
+	@UiField
+	HTMLPanel idPanel;
+	
+	@UiField
+	TextBox idBonus;
+	
+	@UiField
+	DateBoxEx startDateBonus;
+	
+	@UiField
+	DateBoxEx endDateBonus;
+	
+	@UiField
+	TextBox descriptionBonus;
+	
+	@UiField
+	ListBox typeBonus;
+	
+	@UiField
+	TextBox formulaBonus;
+	
+	@UiField
+	HTMLPanel checksPanel;
+	
+	@UiField
+	TextBox percentBonus;
+	
+	@UiField
+	CheckBox checkCommonC;
+	
+	@UiField
+	CheckBox checkCommonE;
+	
+	@UiField
+	CheckBox checkAccidentC;
+	
+	@UiField
+	CheckBox checkAccidentE;
+	
+	@UiField
+	CheckBox checkUnemploymentC;
+	
+	@UiField
+	CheckBox checkUnemploymentE;
+	
+	@UiField
+	CheckBox checkFogasaC;
+	
+	@UiField
+	CheckBox checkFogasaE;
+	
+	@UiField
+	CheckBox checkFormationC;
+	
+	@UiField
+	CheckBox checkFormationE;
+	
+	@UiField
+	Button applyChecks;
+	
+	@UiField
+	HTMLPanel amountPanel;
+	
+	@UiField
+	TextBox amountBonus;
+	
+	@UiField
+	Button applyAmount;
+	
+	@UiField
+	HTMLPanel listBonusesPanel;
+	
+	@UiField
+	Grid listBonusesTable;
+	
+	
+// ------------------------------------------------------------ VARIABLES DE LA CLASE ----------------------------------------------------
+		
+	private SSBonusDraftObject ssBonusDraftObject;
+	
+// ---------------------------------------------------------------- CONSTRUCTOR ----------------------------------------------------------
+	
+	
+	public SSBonusDraft() {
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+	
+
+// ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
+	@UiHandler("endDateBonus")
+	void onEndDateBonusChangeValue(ValueChangeEvent<Date> event) {
+		if(startDateBonus.getValue() != null)
+			if(endDateBonus.getValue().before(startDateBonus.getValue()))
+				endDateBonus.setValue(null);
+	}
+	
+	@UiHandler("typeBonus")
+	void onTypeBonusChangeValue(ChangeEvent event) {
+		int selectedItemIndex = typeBonus.getSelectedIndex();
+		switch (selectedItemIndex) {
+		case 1:
+			hideChecksPanel();
+			break;
+		case 2:
+			hideChecksPanel();
+			break;
+		case 3:
+			hideAmountPanel();
+			break;
+		default:
+			hideAllPanels();;
+		}
+	}
+	
+	@UiHandler("applyChecks")
+	void onApplyChecksButtonClick(ClickEvent event) {
+		ArrayList<String> listCheckTrue = new ArrayList<>();
+		
+		if(checkCommonC.getValue() == true)
+			listCheckTrue.add("CONT_COM_EMPRESA");
+		if(checkCommonE.getValue() == true)
+			listCheckTrue.add("CONT_COM_TRABAJADOR");
+		if(checkAccidentC.getValue() == true)
+			listCheckTrue.add("ACC_TRAB_EMPRESA");
+		if(checkAccidentE.getValue() == true)
+			listCheckTrue.add("ACC_TRAB_TRABAJADOR");
+		if(checkUnemploymentC.getValue() == true)
+			listCheckTrue.add("DESEMPLEO_EMPRESA");
+		if(checkUnemploymentE.getValue() == true)
+			listCheckTrue.add("DESEMPLEO_TRABAJADOR");
+		if(checkFogasaC.getValue() == true)
+			listCheckTrue.add("FOGASA_EMPRESA");
+		if(checkFogasaE.getValue() == true)
+			listCheckTrue.add("FOGASA_TRABAJADOR");
+		if(checkFormationC.getValue() == true)
+			listCheckTrue.add("FORMACION_EMPRESA");
+		if(checkFormationE.getValue() == true)
+			listCheckTrue.add("FORMACION_TRABAJADOR");
+		
+		if(!listCheckTrue.isEmpty()){
+			String result = "(";
+			for(int i=0; i<listCheckTrue.size()-1; i++)
+				result += listCheckTrue.get(i) + " + ";
+			
+			result += listCheckTrue.get(listCheckTrue.size()-1) + ") * (" + percentBonus.getValue() + " / 100)";
+			this.formulaBonus.setValue(result);
+		}	
+	}
+	
+	@UiHandler("applyAmount")
+	void onApplyAmountButtonClick(ClickEvent event) {
+		if("" != amountBonus.getValue()){
+			int type = typeBonus.getSelectedIndex();
+			if(type == 1){
+				this.formulaBonus.setValue(amountBonus.getValue());
+			}else if(type == 2){
+				this.formulaBonus.setValue("("+amountBonus.getValue()+" / 30) * DIAS_ALTA");
+			}
+		}
+		this.amountBonus.setValue("");
+	}
+	
+	@UiHandler("listBonusesButton")
+	void onListBonusesButtonClick(ClickEvent event) {
+		showListBonuses();
+	}
+	
+	@UiHandler("saveButton")
+	void onSaveButtonClick(ClickEvent event) {
+		Date starDate_bonus = startDateBonus.getValue();
+		Date endDate_bonus = endDateBonus.getValue();
+		String description_bonus = descriptionBonus.getValue();
+		Byte type_bonus = (byte) typeBonus.getSelectedIndex();
+		String formula_bonus = formulaBonus.getValue();
+		
+		if(null == starDate_bonus || null == endDate_bonus || "" == description_bonus || 0 == type_bonus || "" == formula_bonus){
+			Window.alert("Faltan campos por rellenar");
+		}else{
+			Window.alert("Modificar Bonus ID : " + idBonus.getText());
+			if(idBonus.getText() != ""){
+				Window.alert("Modificar Bonus");
+				Integer id_bonus = Integer.parseInt(idBonus.getText());
+				Window.alert("Modificar Bonus ID 2 : " + id_bonus);
+				this.ssBonusDraftObject.modifyBonus(id_bonus, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
+			}else{
+				Window.alert("Nuevo Bonus");
+				Integer nextId = this.ssBonusDraftObject.getLastBonusesId() + 1;
+				Window.alert("Nuevo Bonus ID : " + nextId);
+				this.ssBonusDraftObject.newBonus(nextId, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
+			}
+			
+			this.ssBonusDraftObject.updateDBBonuses(r -> 
+			{
+				setSSBonusDraftObject(ssBonusDraftObject);
+			}, t -> {});
+		}	
+	}
+
+
+// -------------------------------------------------------------- METODOS DE LA CLASE ----------------------------------------------------
+	public void setSSBonusDraftObject(SSBonusDraftObject ssBonusDraftObject) {
+		this.ssBonusDraftObject = ssBonusDraftObject;
+		this.ssBonusDraftObject.initializeSSBonuses(
+				r -> {
+					cleanPage();
+					initializeListBox();
+					hideAllPanels();
+					showListBonuses();
+				}, 
+				t -> {});
+	}
+	
+	private void cleanPage() {
+		this.idBonus.setText("");
+		this.startDateBonus.setValue(null);
+		this.endDateBonus.setValue(null);
+		this.descriptionBonus.setText("");
+		this.typeBonus.clear();
+		this.formulaBonus.setText("");
+	}
+
+	private void initializeListBox() {
+		typeBonus.addItem("-");
+		typeBonus.addItem("Cantidad fija");
+		typeBonus.addItem("Cantidad fija / mes");
+		typeBonus.addItem("Porcentaje sobre sumatorio");
+	}
+	
+	private void hideChecksPanel() {
+		this.checksPanel.addStyleName(style.hide());
+		this.amountPanel.removeStyleName(style.hide());
+		this.listBonusesPanel.addStyleName(style.hide());
+	}
+
+	private void hideAmountPanel() {
+		this.checksPanel.removeStyleName(style.hide());
+		this.amountPanel.addStyleName(style.hide());
+		this.listBonusesPanel.addStyleName(style.hide());
+	}
+	
+	private void hideAllPanels() {
+		this.idPanel.addStyleName(style.hide());
+		this.checksPanel.addStyleName(style.hide());
+		this.amountPanel.addStyleName(style.hide());
+	}
+	
+	private void clearListBonuses() {
+		this.listBonusesTable.clear();
+	}
+	
+	private void showListBonuses() {
+		hideAllPanels();
+		clearListBonuses();
+		this.typeBonus.setSelectedIndex(0);
+		this.listBonusesPanel.removeStyleName(style.hide());
+		
+		this.listBonusesTable.resize(this.ssBonusDraftObject.getBonuses().size()+1, 8);
+		
+		//Cabecera
+		this.listBonusesTable.setWidget(0, 0, new Label(""));
+		this.listBonusesTable.setWidget(0, 1, new Label(""));
+		this.listBonusesTable.setWidget(0, 2, new Label("Id"));
+		this.listBonusesTable.setWidget(0, 3, new Label("Fecha Incio"));
+		this.listBonusesTable.setWidget(0, 4, new Label("Fecha Fin"));
+		this.listBonusesTable.setWidget(0, 5, new Label("Descripci"+String.valueOf("\u00F3")+"n"));
+		this.listBonusesTable.setWidget(0, 6, new Label("Tipo"));
+		this.listBonusesTable.setWidget(0, 7, new Label("F"+String.valueOf("\u00F3")+"rmula"));
+		for(int i = 0; i<8; i++)
+			this.listBonusesTable.getWidget(0, i).addStyleName(style.bold());
+		
+		int row = 1;
+		
+		for(SSBonusData bonus : this.ssBonusDraftObject.getBonuses()){
+			Image deleteImage = new Image();
+			deleteImage.setUrl("aonResource/9.23-SNAPSHOT/images/aon-icon/aon-icon-trash.png");
+			deleteImage.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					DeleteDialog dialog = new DeleteDialog("Eliminar Bonificaci"+String.valueOf("\u00F3")+"n",
+							String.valueOf("\u00BF")+"Est"+String.valueOf("\u00E1")+" seguro que desea eliminar la bonificaci"+String.valueOf("\u00F3")+"n?") {
+						
+						@Override
+						protected void onAccept() {
+							cleanPage();
+							ssBonusDraftObject.deleteBonus(bonus.getId());
+							ssBonusDraftObject.updateDBBonuses(r -> 
+								{
+									setSSBonusDraftObject(ssBonusDraftObject);
+								}, t -> {});
+						}
+					};
+					dialog.show();
+					dialog.center();
+				}	
+			});
+			
+			listBonusesTable.setWidget(row, 0, deleteImage);
+			
+			Image editImage = new Image();
+			editImage.setUrl("aonResource/9.23-SNAPSHOT/images/aon-icon/aon-icon-edit-add.png");
+			editImage.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					idBonus.setValue(bonus.getId().toString());
+					startDateBonus.setValue(bonus.getStartDate());
+					endDateBonus.setValue(bonus.getEndDate());
+					descriptionBonus.setValue(bonus.getDescription());
+					typeBonus.setSelectedIndex(bonus.getType());
+					formulaBonus.setValue(bonus.getFormula());	
+				}
+			});
+			listBonusesTable.setWidget(row, 1, editImage);
+			
+			listBonusesTable.setWidget(row, 2, new Label(bonus.getId().toString()));
+			listBonusesTable.setWidget(row, 3, new Label(bonus.getStartDate().toString()));
+			listBonusesTable.setWidget(row, 4, new Label(bonus.getEndDate().toString()));
+			listBonusesTable.setWidget(row, 5, new Label(bonus.getDescription().toString()));
+			listBonusesTable.setWidget(row, 6, new Label(bonus.getType().toString()));
+			listBonusesTable.setWidget(row, 7, new Label(bonus.getFormula().toString()));
+			
+			row++;
+		}
+	}
+
+	
+}

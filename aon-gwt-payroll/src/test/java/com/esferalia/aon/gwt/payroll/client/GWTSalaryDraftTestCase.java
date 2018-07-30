@@ -10,6 +10,7 @@ import static java.lang.Math.random;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 
@@ -19,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -127,6 +129,23 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			@Override
 			public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
 					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+					AsyncCallback<List<SSBonusData>> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}

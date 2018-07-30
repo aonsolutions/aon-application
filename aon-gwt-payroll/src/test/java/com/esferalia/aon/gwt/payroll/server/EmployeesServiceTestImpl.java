@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -586,6 +587,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EmployeeInfoDataBase setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SSBonusData> getEmployeeSSBonuses(Integer contractId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SSBonusData> setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses) {
 		// TODO Auto-generated method stub
 		return null;
 	}

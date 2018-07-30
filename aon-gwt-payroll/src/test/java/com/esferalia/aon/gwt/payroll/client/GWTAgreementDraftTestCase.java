@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.core.client.GWT;
@@ -124,6 +125,19 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
 				AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+				AsyncCallback<List<SSBonusData>> asyncCallback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -232,6 +246,20 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
 							AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getEmployeeSSBonuses(Integer contractId,
+							AsyncCallback<List<SSBonusData>> asyncCallback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+							AsyncCallback<List<SSBonusData>> asyncCallback) {
 						// TODO Auto-generated method stub
 						
 					}

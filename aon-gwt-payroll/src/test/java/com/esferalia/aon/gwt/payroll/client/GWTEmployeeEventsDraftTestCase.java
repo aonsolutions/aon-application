@@ -7,6 +7,7 @@ import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 
@@ -21,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.junit.client.GWTTestCase;
@@ -121,6 +123,23 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			@Override
 			public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
 					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+					AsyncCallback<List<SSBonusData>> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}

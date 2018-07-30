@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -180,5 +181,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
 			AsyncCallback<EmployeeInfoDataBase> asyncCallback);
+
+	void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);
+
+	void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+			AsyncCallback<List<SSBonusData>> asyncCallback);
 
 }
