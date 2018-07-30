@@ -1514,6 +1514,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private EventsDraft eventsDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
 	private EmployeeDraft employeeDraft;
+	private SSBonusDraft ssBonusDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
 	private CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
@@ -1857,8 +1858,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDetail.setWidget(getEmployeeDraft());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 	}
-
 	
+	@Override
+	public void onSSBonusDraftSelected(SSBonusDraftObject ssBonusDraftObject) {
+		employeeDetail.setWidget(getSSBonusDraft());
+		getSSBonusDraft().setSSBonusDraftObject(ssBonusDraftObject);
+		
+	}
 
 	@Override
 	public void onEmployeeCopy(Employee employee) {
@@ -2034,6 +2040,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (employeeDraft == null)
 			employeeDraft = new EmployeeDraft();
 		return employeeDraft;
+	}
+	
+	private SSBonusDraft getSSBonusDraft() {
+		if (ssBonusDraft == null)
+			ssBonusDraft = new SSBonusDraft();
+		return ssBonusDraft;
 	}
 
 	private CategoryDraft getCategoryDraft() {
@@ -2515,5 +2527,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	/*-{
 		return eval(javascript);
 	}-*/;
+
+	
 
 }

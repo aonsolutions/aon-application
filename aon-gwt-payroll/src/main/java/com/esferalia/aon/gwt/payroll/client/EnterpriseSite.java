@@ -297,4 +297,10 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onSSBonusDraftSelected(SSBonusDraftObject ssBonus) {
+		// TODO Auto-generated method stub
+		
+	}
 }
