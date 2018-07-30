@@ -12,7 +12,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryUtils {
 
-	public static Filter getFilter(AONContext ctx, AccountEntryProperties p, AccountEntryParams params) {
+	public static Filter getFilterByHeader(AONContext ctx, AccountEntryProperties p, AccountEntryParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
 		if (params.getPeriod()  != null && params.getPeriod().intValue() != 0 ) {
 			prop = prop.and(p.getAccountPeriodProperty().eq(params.getPeriod()));
@@ -49,7 +49,7 @@ public class AccountEntryUtils {
 	}
 
 	public static Filter getFilterByLines(AONContext ctx, AccountEntryDetailProperties p, AccountEntryParams params) {
-		Filter prop = getFilter(ctx, p, params);
+		Filter prop = getFilterByHeader(ctx, p, params);
 
 		if (params.getAccount() != null) {
 			prop = prop.and(

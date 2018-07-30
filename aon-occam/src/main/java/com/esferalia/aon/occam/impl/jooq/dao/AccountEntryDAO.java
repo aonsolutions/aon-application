@@ -35,6 +35,7 @@ import com.esferalia.aon.jooq.tables.Account;
 import com.esferalia.aon.jooq.tables.records.AccountEntryDetailRecord;
 import com.esferalia.aon.jooq.tables.records.AccountEntryRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
@@ -177,12 +178,60 @@ public class AccountEntryDAO {
 					)
 			;
 	}
-
-
-	public static Stream<FlatAccountEntryDetail> fetchFlat(AONContext ctx
+	
+	public static Stream<FlatAccountEntryDetail> fetchFlatByHeader(AONContext ctx
 			, AccountEntryFilter filter
 			, AccountEntryOrder orderBy
-			, int offset, int limit) {
+			, int offset, int limit, IDAOCallback callback) {
+		Condition[] conditions = ACCOUNT_ENTRY_PROPERTIES.getConditions(filter);
+		return fetchFlat(ctx, conditions, orderBy, offset, limit, callback)
+			.onClose(new Runnable() {
+					@Override
+					public void run() {
+						if (callback != null) {
+							callback.onFinish();
+						}
+					}
+				})
+;
+	}
+	
+	public static Stream<FlatAccountEntryDetail> fetchFlatByLines(AONContext ctx
+			, AccountEntryDetailFilter filter
+			, AccountEntryOrder orderBy
+			, int offset, int limit, IDAOCallback callback) {
+		return ctx.getDslContext()
+				.selectDistinct(ACCOUNT_ENTRY.ID)
+					.from(ACCOUNT_ENTRY)
+					.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+					.where(ACCOUNT_ENTRY_DETAIL_PROPERTIES.getConditions(filter))
+					.orderBy(orderBy.getFields())
+					.limit(offset,limit)
+					.fetch()
+					.stream()
+					.onClose(new Runnable() {
+						@Override
+						public void run() {
+							if (callback != null) {
+								callback.onFinish();
+							}
+						}
+					})
+					.map (rec -> new FlatAccountEntryDetail().setEntryId(rec.getValue(ACCOUNT_ENTRY.ID)))
+					.flatMap(flat -> fetchFlat(ctx
+							, ACCOUNT_ENTRY_PROPERTIES.getConditions(p -> p.getDomainProperty().eq(ctx.getDomainId()).and(p.getIdProperty().eq(flat.getEntryId() ) ))
+							, orderBy
+							, 0
+							, Integer.MAX_VALUE
+							, new IDAOCallback() { @Override public void onFinish() {} } )
+								)
+				;
+	}
+
+	private static Stream<FlatAccountEntryDetail> fetchFlat(AONContext ctx
+			, Condition[] conditions
+			, AccountEntryOrder orderBy
+			, int offset, int limit, IDAOCallback callback) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
@@ -203,12 +252,12 @@ public class AccountEntryDAO {
 				.innerJoin(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
-				.where(ACCOUNT_ENTRY_PROPERTIES.getConditions(filter))
+				.where(conditions)
 				.orderBy(AccountEntryFlatOrder.safeEnum( orderBy.ordinal() ).getFields())
 				.limit(offset,limit)
 				.fetch()
  				.stream()
-				.map( record ->new FlatAccountEntryDetail()
+				.map( record -> new FlatAccountEntryDetail( )
 						.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
 						.setEntryDomain(record.getValue(ACCOUNT_ENTRY.DOMAIN))
 						.setEntryPperiod(record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
@@ -267,7 +316,6 @@ public class AccountEntryDAO {
 							.findFirst().orElse(null) )
 			;
 	}
-		
 	// ------------------------------------------------------------- ESCRITURA
 	public static Integer save(AONContext ctx, AccountEntry ae) {
 		if (ae.getId() == null) {
@@ -781,4 +829,3 @@ public class AccountEntryDAO {
 		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.DESCRIPTION);}
 	}
 }
-

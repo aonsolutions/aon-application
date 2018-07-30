@@ -200,14 +200,18 @@ public class ACCOUNTING {
 	public static Stream<FlatAccountEntryDetail> getFlatAccountEntries(String domainName,
 			int domain, String user, final AccountEntryParams params, int offset,
 			int limit) throws AonCoreException {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getAccounting().getFlatAccountEntries(ctx, params, offset, limit);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	 	final AONContext ctx = AONContext.getAONContext(domainName, domain, user);
+	 	Stream<FlatAccountEntryDetail> stream = getAccounting().getFlatAccountEntries(ctx, params, offset, limit,
+				new IDAOCallback() {			
+					@Override
+					public void onFinish() {
+						if (ctx != null) {
+							ctx.close();
+						}
+					}
+	 			}
+	 	);
+		return stream; 
 	}
 
 	public static AccountEntry save(String domainName, int domain, String user,

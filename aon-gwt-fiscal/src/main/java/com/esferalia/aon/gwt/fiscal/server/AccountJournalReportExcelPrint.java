@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,8 +22,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.jooq.tools.json.JSONObject;
-import org.jooq.tools.json.JSONParser;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -32,17 +31,15 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
-import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "AccountJournalReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/roms/AccountJournalReportExcelPrint" })
 public class AccountJournalReportExcelPrint extends HttpServlet {
 
 	private static final long serialVersionUID = -4737903276711035815L;
-	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+//	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -54,71 +51,9 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			String user = req.getParameter(IRequestParamsNames.USER);
 			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
 			
-			AccountEntryParams params = new AccountEntryParams();
-			JSONParser parser = new JSONParser();
-			JSONObject jsonParams =  (JSONObject) parser.parse(accountEntryParams);
-			Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-			params.setDomain(domain.intValue());
-			Long period = (Long) jsonParams.get(IRequestParamsNames.PERIOD);
-			if (period != null) {
-				params.setPeriod(period.intValue());	
-			}
-			String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
-			if (AonStringUtils.isNotBlank(fromDate)) {
-				params.setFrom( FORMATTER.parse(fromDate));			
-			}
-			String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
-			if (AonStringUtils.isNotBlank(toDate)) {
-				params.setTo( FORMATTER.parse(toDate));			
-			}
-			Long type = (Long) jsonParams.get(IRequestParamsNames.TYPE);
-			if (type != null) {
-				params.setType(AccountEntryType.safeValueOf( type.intValue() ));
-			}
-			Long journal = (Long) jsonParams.get(IRequestParamsNames.JOURNAL);
-			if (journal != null) {
-				params.setJournal(journal.intValue());	
-			}
-			Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
-			if (activity != null) {
-				params.setActivity(activity.intValue());	
-			}
-			Long confidential = (Long) jsonParams.get(IRequestParamsNames.CONFIDENTIAL);
-			if (confidential != null) {
-				params.setConfidential(confidential==1);
-			}
-			Long account = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT);
-			if (account != null) {
-				params.setAccount(account.intValue());	
-			}
-			Double debit = (Double) jsonParams.get(IRequestParamsNames.DEBIT);
-			if (debit != null) {
-				params.setDebit(debit);	
-			}
-			Double credit = (Double) jsonParams.get(IRequestParamsNames.CREDIT);
-			if (credit != null) {
-				params.setCredit(credit);	
-			}
-			String concept = (String) jsonParams.get(IRequestParamsNames.CONCEPT);
-			if (concept != null) {
-				params.setConcept(concept);	
-			}
-			String document = (String) jsonParams.get(IRequestParamsNames.DOCUMENT);
-			if (document != null) {
-				params.setDocument(document);	
-			}
-			Long balancingAccount = (Long) jsonParams.get(IRequestParamsNames.BALANCING_ACCOUNT);
-			if (balancingAccount != null) {
-				params.setBalancingAccount(balancingAccount.intValue());	
-			}
-			String comments = (String) jsonParams.get(IRequestParamsNames.COMMENTS);
-			if (comments != null) {
-				params.setComments(comments);	
-			}
-			Long order = (Long) jsonParams.get(IRequestParamsNames.ORDER);
-			if (order != null) {
-				params.setOrder(order.intValue());	
-			}
+			
+			
+			AccountEntryParams params = JsonParser.parse(accountEntryParams);
 			
 			Date start = new Date();
 			System.out.println( "Journal Report Start " );
@@ -129,14 +64,14 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			
 			ExcelAction action = new ExcelAction( companyName );
 			action.initialize("Diario");
-			ACCOUNTING.getFlatAccountEntries(domainName, domainId, user, params,0,Integer.MAX_VALUE)
-					.forEach(action)						
-			;
+			Stream<FlatAccountEntryDetail> stream = ACCOUNTING.getFlatAccountEntries(domainName, domainId, user, params,0,Integer.MAX_VALUE);
+			stream.forEach(action);
 			resp.setContentType(MimeType.MS_EXCEL.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
 			Date end = new Date();
+			stream.close();
 			System.out.println( "Journal Report END " + (end.getTime() - start.getTime()) + " ms." );;
 		} catch (Throwable e) {
 			throw new ServletException(e);

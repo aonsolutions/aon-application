@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAccounting;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
@@ -141,14 +142,17 @@ public class AccountingImpl implements IAccounting {
 					AccountEntryOrder.safeEnum(params.getOrder())
 					)
 			: AccountEntryDAO.fetch(ctx,
-				p -> AccountEntryUtils.getFilter(ctx,p, params) 
+				p -> AccountEntryUtils.getFilterByHeader(ctx,p, params) 
 				,offset,numberOfRows,AccountEntryOrder.safeEnum(params.getOrder()))
 			;
 	}
 
 	@Override
-	public Stream<FlatAccountEntryDetail> getFlatAccountEntries(AONContext ctx, AccountEntryParams params, int offset, int limit) {
-		return AccountEntryDAO.fetchFlat(ctx, p -> AccountEntryUtils.getFilter(ctx,p, params),AccountEntryOrder.safeEnum(params.getOrder()),offset, limit);
+	public Stream<FlatAccountEntryDetail> getFlatAccountEntries(AONContext ctx, AccountEntryParams params, int offset, int limit, IDAOCallback callback) {
+		return params.hasDetailProperties()
+			?AccountEntryDAO.fetchFlatByLines (ctx, p -> AccountEntryUtils.getFilterByLines(ctx,p, params),AccountEntryOrder.safeEnum(params.getOrder()),offset, limit, callback)
+			:AccountEntryDAO.fetchFlatByHeader(ctx, p -> AccountEntryUtils.getFilterByHeader(ctx,p, params),AccountEntryOrder.safeEnum(params.getOrder()),offset, limit, callback)
+			;
 	}
 
 	@Override

@@ -52,7 +52,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 	private String domainName;
 	private String user;
 	private int domainId;
-	private final int limit = 200;
+	private final int limit = 100;
 	private Integer oldId = -1;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);

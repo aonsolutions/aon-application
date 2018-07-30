@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,6 +15,7 @@ import org.json.JSONException;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 
@@ -39,9 +41,8 @@ public class AccountEntryFlatStreamServlet extends HttpServlet {
 			PrintWriter out = resp.getWriter();
 			out.write('[');
 			final MutableBoolean first = new MutableBoolean(true);
-			
-			ACCOUNTING.getFlatAccountEntries(domainName, domainId, user, params, offset, limit)
-				.map( entry -> JsonWriter.writeToJSON(entry))
+			Stream<FlatAccountEntryDetail> stream =  ACCOUNTING.getFlatAccountEntries(domainName, domainId, user, params, offset, limit);
+			stream.map( entry -> JsonWriter.writeToJSON(entry))
 				.forEach(json -> {
 					try {
 						if (first.getValue()) {
@@ -58,6 +59,7 @@ public class AccountEntryFlatStreamServlet extends HttpServlet {
 			;
 			out.write(']');
 			resp.flushBuffer();
+			stream.close();
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}
