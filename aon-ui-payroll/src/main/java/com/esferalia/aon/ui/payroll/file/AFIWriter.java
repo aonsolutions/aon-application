@@ -341,7 +341,7 @@ public class AFIWriter implements Serializable {
 		// TODO TrabajadorDeAutonomo
 		fab.setTrabajadorDeAutonomo(null);
 		// TODO SemamaSegunConvenio5jr
-		fab.setSemamaSegunConvenio5jr(null);
+		fab.setSemamaSegunConvenio5jr("N");
 		// TODO IndNumTrabajadoresEmpresa
 		fab.setIndNumTrabajadoresEmpresa(null);
 		// TODO ExclusionSocialVictimas
