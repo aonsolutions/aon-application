@@ -173,25 +173,25 @@ public class SSBonusDraft extends Composite {
 		ArrayList<String> listCheckTrue = new ArrayList<>();
 		
 		if(checkCommonC.getValue() == true)
-			listCheckTrue.add("CONT_COM_EMPRESA");
+			listCheckTrue.add("CGC_E");
 		if(checkCommonE.getValue() == true)
-			listCheckTrue.add("CONT_COM_TRABAJADOR");
+			listCheckTrue.add("CGC");
 		if(checkAccidentC.getValue() == true)
 			listCheckTrue.add("ACC_TRAB_EMPRESA");
 		if(checkAccidentE.getValue() == true)
 			listCheckTrue.add("ACC_TRAB_TRABAJADOR");
 		if(checkUnemploymentC.getValue() == true)
-			listCheckTrue.add("DESEMPLEO_EMPRESA");
+			listCheckTrue.add("DESMPL_E");
 		if(checkUnemploymentE.getValue() == true)
-			listCheckTrue.add("DESEMPLEO_TRABAJADOR");
+			listCheckTrue.add("DESMPL");
 		if(checkFogasaC.getValue() == true)
-			listCheckTrue.add("FOGASA_EMPRESA");
+			listCheckTrue.add("FOGASA_E");
 		if(checkFogasaE.getValue() == true)
-			listCheckTrue.add("FOGASA_TRABAJADOR");
+			listCheckTrue.add("FOGASA");
 		if(checkFormationC.getValue() == true)
-			listCheckTrue.add("FORMACION_EMPRESA");
+			listCheckTrue.add("FP_E");
 		if(checkFormationE.getValue() == true)
-			listCheckTrue.add("FORMACION_TRABAJADOR");
+			listCheckTrue.add("FP");
 		
 		if(!listCheckTrue.isEmpty()){
 			String result = "(";
