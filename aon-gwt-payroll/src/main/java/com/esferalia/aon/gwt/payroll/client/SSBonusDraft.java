@@ -14,7 +14,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -230,18 +229,21 @@ public class SSBonusDraft extends Composite {
 		String formula_bonus = formulaBonus.getValue();
 		
 		if(null == starDate_bonus || null == endDate_bonus || "" == description_bonus || 0 == type_bonus || "" == formula_bonus){
-			Window.alert("Faltan campos por rellenar");
+			WarningDialog warning = new WarningDialog("Warning", "Faltan campos por rellenar");
+			warning.show();
+			warning.center();
+			//Window.alert("Faltan campos por rellenar");
 		}else{
-			Window.alert("Modificar Bonus ID : " + idBonus.getText());
+			//Window.alert("Modificar Bonus ID : " + idBonus.getText());
 			if(idBonus.getText() != ""){
-				Window.alert("Modificar Bonus");
+				//Window.alert("Modificar Bonus");
 				Integer id_bonus = Integer.parseInt(idBonus.getText());
-				Window.alert("Modificar Bonus ID 2 : " + id_bonus);
+				//Window.alert("Modificar Bonus ID 2 : " + id_bonus);
 				this.ssBonusDraftObject.modifyBonus(id_bonus, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
 			}else{
-				Window.alert("Nuevo Bonus");
+				//Window.alert("Nuevo Bonus");
 				Integer nextId = this.ssBonusDraftObject.getLastBonusesId() + 1;
-				Window.alert("Nuevo Bonus ID : " + nextId);
+				//Window.alert("Nuevo Bonus ID : " + nextId);
 				this.ssBonusDraftObject.newBonus(nextId, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
 			}
 			

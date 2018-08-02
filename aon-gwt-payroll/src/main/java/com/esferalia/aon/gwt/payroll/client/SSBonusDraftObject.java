@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class SSBonusDraftObject {
@@ -39,15 +38,15 @@ public class SSBonusDraftObject {
 	}
 	
 	public void newBonus(Integer id, Date startDate, Date endDate, String description, Byte type, String expression){
-		Window.alert("ID : " + id + ", startDate : " + startDate + ", endDate : " + endDate + 
-					", description : " + description + ", type : " + type + ", expression : " + expression);
+//		Window.alert("ID : " + id + ", startDate : " + startDate + ", endDate : " + endDate + 
+//					", description : " + description + ", type : " + type + ", expression : " + expression);
 		SSBonusData newBonus = new SSBonusData(id, startDate, endDate, description, type, expression);
 		this.ssBonuses.add(newBonus);
 	}
 	
 	public void modifyBonus(Integer id, Date startDate, Date endDate, String description, Byte type, String expression) {
-		Window.alert("ID : " + id + ", startDate : " + startDate + ", endDate : " + endDate + 
-				", description : " + description + ", type : " + type + ", expression : " + expression);
+//		Window.alert("ID : " + id + ", startDate : " + startDate + ", endDate : " + endDate + 
+//				", description : " + description + ", type : " + type + ", expression : " + expression);
 		for(SSBonusData bonus : ssBonuses){
 			if(id == bonus.getId()){
 				bonus.setStartDate(startDate);
