@@ -3645,7 +3645,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		//@formatter:off
 		Assert.assertEquals(
-				875.00, 
+				850.00, 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
