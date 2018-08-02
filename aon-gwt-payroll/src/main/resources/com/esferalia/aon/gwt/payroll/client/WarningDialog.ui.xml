@@ -10,6 +10,10 @@
     		padding-right: 5px;
 		}
 
+		.width{
+			width: 250px;
+		}
+
 		.paddingBlocks{
 			padding-bottom: 5px;
 		}
@@ -32,7 +36,7 @@
 
 		<g:VerticalPanel>
 		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Label ui:field="label" styleName="{style.paddingLabels}"></g:Label> 
+		    	<g:Label ui:field="label" styleName="{style.paddingLabels} {style.width}"></g:Label> 
 		    </g:HorizontalPanel> 
 		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
 		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>

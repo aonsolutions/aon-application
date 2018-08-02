@@ -309,7 +309,8 @@ public class SSBonusDraft extends Composite {
 	private void showListBonuses() {
 		hideAllPanels();
 		clearListBonuses();
-		this.typeBonus.setSelectedIndex(0);
+		if(this.formulaBonus.getValue() == "")
+			this.typeBonus.setSelectedIndex(0);
 		this.listBonusesPanel.removeStyleName(style.hide());
 		
 		this.listBonusesTable.resize(this.ssBonusDraftObject.getBonuses().size()+1, 8);
