@@ -540,7 +540,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		statusMsg.setText(AonStringUtils.EMPTY);
 		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
 		
-		if (!canEdit) {
+		if (!canEdit && wizardContent.isStatusMsgEnabled() ) {
 			statusMsg.addStyleName(AON.AON_CSS.aonInfoMessage());
 			if (!wizardContent.getMainEntry().isPeriodActive()) {
 				if (!canRemove) {
@@ -549,7 +549,6 @@ public class AccountEntryModule extends MainEntryPoint {
 					statusMsg.setText(AON.MSG.automaticEntryNoUpdateWarning());
 				}
 			} else {
-				
 				if (AonStringUtils.isEmpty(wizardContent.getNoUpdatableCause())) {
 					statusMsg.setText(AON.MSG.entryNoUpdatable());	
 				} else {

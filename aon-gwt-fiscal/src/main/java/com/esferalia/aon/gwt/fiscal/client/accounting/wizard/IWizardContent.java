@@ -34,4 +34,8 @@ public interface IWizardContent extends IsWidget,Focusable {
 	public void entryDateChanged(Date entryDate);
 	public void activityChanged(Integer activty);
 	public void confidentialChanged(boolean confidential);
+	
+	default public boolean isStatusMsgEnabled() {
+		return true;
+	};
 }

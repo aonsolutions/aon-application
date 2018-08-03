@@ -79,6 +79,7 @@ public class Invoice implements Serializable, HasAudit {
 	private String siiStatus;
 
 	private LinkedList<InvoiceDetail> details;
+	private LinkedList<InvoiceBreakdown> breakdown;
 	
 	public Integer getId() {
 		return id;
@@ -485,7 +486,14 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 
-	
+	public LinkedList<InvoiceBreakdown> getBreakdown() {
+		return breakdown;
+	}
+	public Invoice setBreakdown(LinkedList<InvoiceBreakdown> breakdown) {
+		this.breakdown = breakdown;
+		return this;
+	}
+
 	public Byte getStatus() {
 		return status;
 	}

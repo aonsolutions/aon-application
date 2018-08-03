@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
@@ -50,8 +51,10 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -62,9 +65,13 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-
 public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
 	
+	private static final Logger LOGGER = Logger.getLogger(InvoicePanel.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	static final String BACKGROUND_COLOR = "#DDDDDD";
 
 	
@@ -89,6 +96,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private AccountingRegistry lastRegistry;
 
+	private DeckLayoutPanel rootPanel;
+	private SimpleLayoutPanel nonEditablePanel; 
+			
 	private FlexTable regTable;
 	private FlexTable flexTable;
 	private InvoiceVATPanel vatPanel;
@@ -133,7 +143,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		invoicePanelRegistryVisitor = new InvoicePanelRegistryVisitor();
 		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		
-		SplitLayoutPanel rootPanel = new SplitLayoutPanel(4);
+		rootPanel = new DeckLayoutPanel();
+		
+		SplitLayoutPanel editablePanel = new SplitLayoutPanel(4);
 		
 		//  -------------------------- WORKING LOG ------------------------------
 
@@ -169,7 +181,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
 			}
 		});
-		rootPanel.addEast(extraPanel, 380);
+		editablePanel.addEast(extraPanel, 380);
 
 		SimpleLayoutPanel centerContainerPanel = new SimpleLayoutPanel();
 		ScrollPanel scrollCenterContainer = new ScrollPanel();
@@ -237,8 +249,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		scrollCenterContainer.setWidget(centerContainer);
 		centerContainerPanel.setWidget(scrollCenterContainer);
 		centerPanel.setWidget(centerContainerPanel);
-		rootPanel.add(centerPanel);
+		editablePanel.add(centerPanel);
+		
+		rootPanel.add(editablePanel);
+		
+		nonEditablePanel = new SimpleLayoutPanel();
+		rootPanel.add(nonEditablePanel);
 
+		rootPanel.showWidget(0);
 		initWidget(rootPanel);
 	}
 	
@@ -307,7 +325,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 									getCallback().getModule().onBalance(account);
 								}
 								vatPanel.setSuggestedAccounts(getWrapper().getSuggestedAccounts());
-								paint();
+								_paint();
 								extraPanel.invoiceChanged(result);
 								getWrapper().getRegistry().getType().visit(getWrapper().getRegistry(),invoicePanelRegistryVisitor);
 							}
@@ -642,6 +660,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		if (base == null) {
 			getCallback().getModule().onError("[ERROR INTERNO] No hay un apunte base del que crear la factura");
 		}
+		rootPanel.showWidget(0);
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setAccountEntry(new AccountEntry()
 			.setPeriod(base.getPeriod())
@@ -704,23 +723,33 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private void populate(AccountingInvoice result) {
 		setWrapper(result);
-		paint();
-		registryBox.setValue(getWrapper().getRegistry());
-		registryBox.setEnabled(getCallback().getModule().isNew());
-		extraPanel.invoiceChanged(getWrapper());
-		getWrapper().getInvoice().getType().visit(getWrapper(),new InvoicePanelVisitor());
+		_paint();
 	}
 
-	private void paint() {
+	private void _paint() {
 		if (getWrapper() != null && getWrapper().getRegistry() != null) {
-			vatPanel.setVisible(true);
-			extraPanel.setVisible(true);
-			InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
-			fillSalesSeries();
-			extraPanel.paint(invoiceCallback);
-			vatPanel.paint();
-			withholdingPanel.paint();
-			_paintEntry();
+			if (isAccountSource()) {
+				LOGGER.info("Editing invoice as account source");
+				rootPanel.showWidget(0);
+				vatPanel.setVisible(true);
+				extraPanel.setVisible(true);
+				InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
+				fillSalesSeries();
+				extraPanel.paint(invoiceCallback);
+				vatPanel.paint();
+				withholdingPanel.paint();
+				_paintEntry();
+				registryBox.setValue(getWrapper().getRegistry());
+				registryBox.setEnabled(getCallback().getModule().isNew());
+				extraPanel.invoiceChanged(getWrapper());
+				getWrapper().getInvoice().getType().visit(getWrapper(),new InvoicePanelVisitor());
+			} else {
+				LOGGER.info("Viewing invoice as management source");
+				nonEditablePanel.clear();
+				nonEditablePanel.setWidget( new InvoiceViewer(getWrapper().getInvoice()));
+				rootPanel.showWidget(1);
+				_paintEntry();
+			}
 		}
 	}
 	
@@ -894,6 +923,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		boolean sourceAccount = true;
 		if (getWrapper().getInvoice() != null && getWrapper().getInvoice().getDetails() != null) {
 			for (InvoiceDetail detail : getWrapper().getInvoice().getDetails()) {
+				LOGGER.info(detail.getSource().getDescription());
 				if (detail.getSource() != InvoiceSource.ACCOUNT) {
 					sourceAccount = false;
 					break;
@@ -933,6 +963,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			return AON.MSG.managmentInvoice();
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean isStatusMsgEnabled() {
+		return getWrapper() != null && getWrapper().isAccountSource();
 	}
 
 	@Override
@@ -1027,8 +1062,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	@Override
 	public void manageWidgets(boolean canRemove, boolean canEdit) {
-		fastSave.setVisible(canEdit);
-		vatPanel.enableElements(canRemove,canEdit);		
+		if (fastSave != null) fastSave.setVisible(canEdit);
+		if (vatPanel != null) vatPanel.enableElements(canRemove,canEdit);		
 	}
 	
 	private void repeatLastInvoice(final ISelectionCallback cbk) {
@@ -1103,5 +1138,4 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			getWrapper().getInvoice().setConfidential(confidential);
 		}
 	}
-
 }

@@ -789,7 +789,13 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Cantidad")
 	String quantity();
+	
+	@DefaultMessage("Precio")
+	String price();
 
+	@DefaultMessage("descuento")
+	String discount();
+	
 	@DefaultMessage("Mostrar cantidades en lugar de importes")
 	String quantities();
 

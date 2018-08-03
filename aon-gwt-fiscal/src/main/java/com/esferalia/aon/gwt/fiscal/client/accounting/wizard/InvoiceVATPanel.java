@@ -857,8 +857,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 
 	public void enableElements(boolean canRemove, boolean canEdit) {
-		addButton.setVisible(canEdit);
-		saveButton.setVisible(canEdit);
+		if (addButton != null) addButton.setVisible(canEdit);
+		if (saveButton != null) saveButton.setVisible(canEdit);
 	}
 
 	@Override
