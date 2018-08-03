@@ -352,27 +352,27 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, "CONCEPTO", columnHeaderStyle);
 			cellCount++;
 			
-			sheet.setColumnWidth(cellCount, 9 * 256);
+			sheet.setColumnWidth(cellCount, 8 * 256);
 			CellUtil.createCell(row, cellCount, "DEBE", columnHeaderStyle);
 			cellCount++;
 			
-			sheet.setColumnWidth(cellCount, 9 * 256);
+			sheet.setColumnWidth(cellCount, 8 * 256);
 			CellUtil.createCell(row, cellCount, "HABER", columnHeaderStyle);
 			cellCount++;
 			
-			sheet.setColumnWidth(cellCount, 9 * 256);
+			sheet.setColumnWidth(cellCount, 8 * 256);
 			CellUtil.createCell(row, cellCount, "S. DEUDOR", columnHeaderStyle);
 			cellCount++;
 			
-			sheet.setColumnWidth(cellCount, 9 * 256);
+			sheet.setColumnWidth(cellCount, 8 * 256);
 			CellUtil.createCell(row, cellCount, "S. ACREED.", columnHeaderStyle);
 			cellCount++;
 			
-			sheet.setColumnWidth(cellCount, 9 * 256);
+			sheet.setColumnWidth(cellCount, 21 * 256);
 			CellUtil.createCell(row, cellCount, "CONTRAPT.", columnHeaderStyle);
 			cellCount++;
 			
-			sheet.setColumnWidth(cellCount, 15 * 256);
+			sheet.setColumnWidth(cellCount, 12 * 256);
 			CellUtil.createCell(row, cellCount, "DOCUMENTO", columnHeaderStyle);
 			cellCount++;
 			
@@ -402,7 +402,12 @@ public class AccountStatementReportExcelPrint extends HttpServlet {
 			cell = addCell(st.getCredit());
 			cell = addCell(st.getDebitBalance());
 			cell = addCell(st.getUnpaidBalance());
-			cell = addCell(st.getBalancingAccountCode());
+			String balAccount = "";
+			if (st.getBalancingAccount() != null) {
+				balAccount = st.getBalancingAccountCode() + " - " + st.getBalancingAccountDescription();
+				balAccount = AonStringUtils.abbreviate( balAccount, 30);
+			}
+			cell = addCell(balAccount);
 			cell.setCellStyle(wrappedCellStyle);
 			
 			cell = addCell(st.getDocumentNumber());
