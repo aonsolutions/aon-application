@@ -164,12 +164,12 @@ public class AccountingInvoiceDAO {
 							// -----------------
 							
 							fillInvoiceTax(ctx, invoideDetailId, accDet, det, ai, config);
-							if ( !ai.isAccountSource() ) {
-								fillBreakdown(ctx, invoideDetailId, ai.getInvoice());
-							}
 						}
 					);
 				});
+				if ( !ai.isAccountSource() ) {
+					fillBreakdown(ctx, ai.getInvoice());
+				}
 				ai.setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
 				return ai;
 			}
@@ -281,7 +281,7 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
-	private static void fillBreakdown(AONContext ctx, Integer invoideDetailId, Invoice invoice) {
+	private static void fillBreakdown(AONContext ctx, Invoice invoice) {
 		if (invoice.getBreakdown() == null) {
 			invoice.setBreakdown(new LinkedList<InvoiceBreakdown>());
 		}
@@ -299,8 +299,9 @@ public class AccountingInvoiceDAO {
 				INVOICE_TAX.SURCHARGE,
 				INVOICE_TAX.SURCHARGE_QUOTA
 					) 
-		.from( INVOICE_TAX )
-		.where(INVOICE_TAX.INVOICE_DETAIL.eq(invoideDetailId))
+		.from( INVOICE_DETAIL )
+		.innerJoin( INVOICE_TAX ).on( INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
+		.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
 		.and( !vatExempt ? DSL.trueCondition(): INVOICE_TAX.TAX_TYPE.ne(TaxType.VAT.value()) )
 		.fetch()
 		.stream()
