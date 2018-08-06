@@ -339,7 +339,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 											// NULL
 			+ " ON payment_concept = payment_concept.id" + " WHERE start_date <= ? " + " AND ( end_date IS NULL"
 			+ " OR end_date >= ? )" + " AND " + SQLContractPayment.PAYMENT_ALIAS + ".domain <= 0 "
-			+ " ORDER BY payment_concept.code "
+			//+ " ORDER BY payment_concept.code "
 			;
 
 	private static final String CDATA_SQL = "SELECT * " + " FROM contract_data" + " WHERE contract = ? "
@@ -4380,6 +4380,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		try {
 			String sql = CriteriaUtilities.toSQLString(paymentsCriteria, SYSTEM_PAYMENT_SQL);
+			sql = orderBy(sql, CODE);
 			stmt = connection.prepareStatement(sql);
 			java.sql.Date sqlEndDate = new java.sql.Date(this.getEnd().getTime());
 			java.sql.Date sqlStartDate = new java.sql.Date(this.startDate.getTime());
