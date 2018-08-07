@@ -378,8 +378,8 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			@Override
 			public void onClick(ClickEvent event) {
 				period.selectDefaultPeriod();
-				fromDate.setValue(null,false);
-				toDate.setValue(null,false);
+				fromDate.setValue(period.getSelectedInitiationDate(),false);
+				toDate.setValue(period.getSelectedDeadline(),false);
 				confidential.setSelectedIndex(2);
 				level.setSelectedIndex(2);
 				if (activitiesListBoxEnabled) {

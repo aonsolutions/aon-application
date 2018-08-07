@@ -40,6 +40,7 @@ public class AccountPeriodBox extends ListBox {
 			periods.add(p);
 		}
 	}
+	
 	public void selectDefaultPeriod() {
 		setSelectedIndex(0);
 		for (int i = 0; i < periods.size(); i++) {
@@ -49,6 +50,26 @@ public class AccountPeriodBox extends ListBox {
 		}
 	}
 	
+	public Date getSelectedInitiationDate() {
+		if (periods != null 
+			&& periods.size() > 0 
+			&& getSelectedIndex() < periods.size()) {
+			AccountPeriod ap = periods.get(getSelectedIndex());
+			if (ap != null ) return ap.getInitiationDate(); 
+		}
+		return null;
+	}
+	
+	public Date getSelectedDeadline() {
+		if (periods != null 
+			&& periods.size() > 0 
+			&& getSelectedIndex() < periods.size()) {
+			AccountPeriod ap = periods.get(getSelectedIndex());
+			if (ap != null ) return ap.getDeadline(); 
+		}
+		return null;
+	}
+
 	public boolean isOutOfRange(Date date) {
 		if (date == null) return true;
 		AccountPeriod ap = periods.get(getSelectedIndex());
