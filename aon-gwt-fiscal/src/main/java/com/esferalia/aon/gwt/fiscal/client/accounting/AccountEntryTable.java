@@ -40,8 +40,10 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 
 public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Focusable
@@ -361,6 +363,14 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			}
 		});
 		// ----------------------------------------------------------- [CONCEPT]
+		conceptSuggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				ValueChangeEvent.<String>fire(conceptBox, event.getSelectedItem().getReplacementString());
+			}
+		});
+		
 		conceptBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
