@@ -97,6 +97,15 @@ public class InvoiceValidation {
 	};
 
 	/**
+	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> EMPTY_TRANSACTION = (inv,ctx) -> {
+		if (inv.getTransaction() == null) {
+			throw new AonCoreException(AonError.INVOICE_EMPTY_TRANSACTION.getMessage());
+		}
+	};
+
+	/**
 	 * El Domain/Serie/Número/Tipo no puede estar duplicado
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> DUPLICATED_SERIES_NUMBER = (inv,ctx) -> {
@@ -104,7 +113,9 @@ public class InvoiceValidation {
 				ctx.getContext().getDslContext().selectOne()
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
-					.and(inv.getSeries() == null ? DSL.trueCondition() : INVOICE.SERIES.eq(inv.getSeries()))
+					.and(AonStringUtils.isBlank(inv.getSeries())
+							?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
+							:INVOICE.SERIES.eq(inv.getSeries()))
 					.and(INVOICE.NUMBER.eq(inv.getNumber()))
 					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
 					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
@@ -188,6 +199,7 @@ public class InvoiceValidation {
 			.andThen(EMPTY_INVOICE_REGISTRY)
 			.andThen(EMPTY_INVOICE_SCOPE)
 			.andThen(EMPTY_REFERENCE_CODE)
+			.andThen(EMPTY_TRANSACTION)
 			.andThen(DUPLICATED_SERIES_NUMBER)
 			.andThen(DUPLICATED_REFERENCE_CODE)
 			.andThen(OPERATIONS_DEADLINE)

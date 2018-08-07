@@ -120,6 +120,7 @@ public enum AonError implements Serializable{
 	,INVOICE_EMPTY_SOURCE("No se ha indicado un origen (INVOICE_DETAIL.SOURCE) en la l\u00EDnea de factura (Error interno)")
 	,INVOICE_EMPTY_WORKPLACE("No se ha indicado un centro de trabajo en la l\u00EDnea de factura.")
 	,INVOICE_EMPTY_REFERENCE_CODE("No se ha indicado un n\u00FAmero de factura.")
+	,INVOICE_EMPTY_TRANSACTION("No se ha indicado un tipo de transacci\u00F3n de factura (Nacional, Intracom., Extracom, ...")
 	,INVOICE_NOT_FOUND("Factura no encontrada.")
 	,INVOICE_RECTIFIED_NOT_FOUND("Factura rectificada no encontrada.")
 	,INVOICE_INVALID_RECTIFICATION_DATA("Los datos necesarios para rectificar la factura, no son correctos.")
