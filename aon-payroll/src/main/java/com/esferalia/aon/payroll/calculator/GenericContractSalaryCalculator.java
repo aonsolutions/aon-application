@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
@@ -1285,7 +1286,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				SATURDAY_HOURS.getName(),
 				SUNDAY_HOURS.getName(),
 				
-				PREST_IT }) {
+				PREST_IT
+				}) {
 			try {
 				for (ITimedVariable<Object> data : expressionContext.getVariables(name)) {
 					try {

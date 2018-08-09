@@ -375,7 +375,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			
 			@Override
 			public void beforeLoadLeaves(ExpressionContext ctx) throws ExpressionException {
-				loadLeaveFactors(ctx);
+				loadLeaveVars(ctx);
 			}
 			
 			@Override
@@ -459,7 +459,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		}
 	}
 
-	private void loadLeaveFactors(ExpressionContext exprCtx)
+	private void loadLeaveVars(ExpressionContext exprCtx)
 			throws ExpressionException {
 
 		Date ctxStartDate = resetTime(ctx.getStartDate());
@@ -469,6 +469,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		draftData.stream()
 		.filter(v-> v.getName().equals(ContextVariable.PATERNITY_FACTOR.getName() ) 
 				|| v.getName().equals(ContextVariable.MATERNITY_FACTOR.getName())
+				|| v.getName().equals(ContextVariable.DIRECT_PAY_START.getName())
 				)
 		.forEach(v -> {
 			Date varStartDate = resetTime(v.getStartDate());
@@ -483,6 +484,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		});
 		
 	}
+
 
 	private void loadContractLeave(Integer id, Date start, Date end, long days,
 			LeaveType type, ITDataPerson dataPerson, ExpressionContext exprCtx)

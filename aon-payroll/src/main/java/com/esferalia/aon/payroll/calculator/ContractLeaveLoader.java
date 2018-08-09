@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
@@ -11,6 +12,7 @@ import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -103,14 +105,19 @@ public class ContractLeaveLoader {
 	// @formatter:on
 
 	protected static final DaysRange[] getCommonRanges(Date start, ExpressionContext ctx) {
-		Date directPayStart = ctx.getVariable(ContextVariable.DIRECT_PAY_START, start, null, Date.class);
+		
+		Date directPayStart = getDirectPayStart(ctx, start);//ctx.getVariable(DIRECT_PAY_START, start, null, Date.class);
+		
+		if ( directPayStart == null )
+			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365) , start, null);
+		
 
 		long delegatePayDays = directPayStart != null ? AonDateUtils.getDaysBetweenDates(start, directPayStart) : 365;
 
 		DaysRange commonRanges[] = new DaysRange[5];
-		commonRanges[0] = new DaysRange(1, 3);
-		commonRanges[1] = new DaysRange(4, 15);
-		commonRanges[2] = new DaysRange(16, 20);
+		commonRanges[0] = new DaysRange(1, Math.min(delegatePayDays,3));
+		commonRanges[1] = new DaysRange(4, Math.min(delegatePayDays,15));
+		commonRanges[2] = new DaysRange(16, Math.min(delegatePayDays,20));
 		commonRanges[3] = new DaysRange(21, delegatePayDays) {
 			@Override
 			public String getName(ContextVariable variable) {
@@ -129,8 +136,10 @@ public class ContractLeaveLoader {
 	}
 
 	protected static final DaysRange[] getProfessionalRanges(Date start, ExpressionContext ctx) {
-		Date directPayStart = ctx.getVariable(ContextVariable.DIRECT_PAY_START, start, null, Date.class);
-
+		Date directPayStart = getDirectPayStart(ctx, start);//ctx.getVariable(DIRECT_PAY_START, start, null, Date.class);
+		if ( directPayStart == null )
+			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365) , start, null);
+		
 		long delegatePayDays = directPayStart != null ? AonDateUtils.getDaysBetweenDates(start, directPayStart) : 365;
 
 		DaysRange professionalRanges[] = new DaysRange[2];
@@ -284,7 +293,13 @@ public class ContractLeaveLoader {
 					Date rangeEnd = calendar.getTime();
 
 					Date varStart = Period.max(rangeStart, start);
-					exprCtx.setVariable(name, days, varStart, rangeEnd);
+					//exprCtx.setVariable(name, days, varStart, rangeEnd);
+					exprCtx.putVariable(name, new ExpressionContext.TimedConstant<Object>(days, varStart, rangeEnd) {
+						public Object getValue() {
+							exprCtx.readVariable(DIRECT_PAY_START.getName(), varStart, rangeEnd, Date.class);
+							return super.getValue();
+						};
+					});
 					exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
 				}
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
@@ -319,7 +334,13 @@ public class ContractLeaveLoader {
 					Date rangeEnd = calendar.getTime();
 
 					Date varStart = Period.max(rangeStart, start);
-					exprCtx.setVariable(name, days, varStart, rangeEnd);
+					//exprCtx.setVariable(name, days, varStart, rangeEnd);
+					exprCtx.putVariable(name, new ExpressionContext.TimedConstant<Object>(days, varStart, rangeEnd) {
+						public Object getValue() {
+							exprCtx.readVariable(DIRECT_PAY_START.getName(), varStart, rangeEnd, Date.class);
+							return super.getValue();
+						};
+					});
 					exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
 				}
 
@@ -540,6 +561,20 @@ public class ContractLeaveLoader {
 		// X = 30 - NATURAL_DAYS + IT_DAYS
 		// X = IT_DAYS + 30 - NATURAL_DAYS
 		return days + (30 - naturalMonthDays);
+	}
+	
+	private static Date getDirectPayStart(ExpressionContext ctx, Date start) {
+		Date directPayStart = null;
+		
+		List<ITimedVariable<Object>> vars = ctx.getVariables(ContextVariable.DIRECT_PAY_START);
+		Collections.sort(vars, (v1,v2) -> v1.getPeriod().getStart().compareTo(v2.getPeriod().getStart()));
+		for ( ITimedVariable<Object> var : vars ){
+			if ( var.getPeriod().getStart().before(start) )
+				continue;
+			directPayStart = (Date) var.getValue(var.getPeriod());
+		}
+		
+		return directPayStart;
 	}
 
 }

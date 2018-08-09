@@ -1111,7 +1111,6 @@ public class SalaryDraftBuilder
 
 	private void addVariable(String name, Object value, Date startDate, Date endDate ) {
 		
-		
 		Variable vars [] = findVariable(name, value, startDate, endDate).toArray(Variable[]::new);
 		for ( Variable var : vars ){ 
 			salaryDraft.getContext().remove(var);
@@ -1143,7 +1142,6 @@ public class SalaryDraftBuilder
 			endDate = Period.max(endDate,var.getEndDate());
 			startDate = Period.min(startDate,var.getStartDate());
 		}
-
 		salaryDraft.addVariable(
 				name, 
 				value, 

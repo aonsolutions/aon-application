@@ -4,12 +4,14 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -21,10 +23,12 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
+import com.esferalia.aon.gwt.payroll.server.SalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -38,8 +42,10 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator4Dummies;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLITTestCase;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -294,4 +300,71 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 		;
 	}
 
+	@Test
+	public void testCommonDiseaseIT365RedefinedII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemPayments(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Employee employee = new Employee();
+		employee.setId(contract.getId());
+
+		SalaryDraft draft = new SalaryDraft();
+		draft.setEmployee(employee);
+		draft.setStartDate(startDate);
+		draft.setEndDate(endDate);
+		draft.setIssueDate(endDate);
+
+		StringVariable directPayStartVariable = new StringVariable();
+		directPayStartVariable.setName(ContextVariable.DIRECT_PAY_START.getName());
+		directPayStartVariable.setScope(Scope.SALARY);
+		directPayStartVariable.setStartDate(startITDate);
+		directPayStartVariable.setEndDate(null);
+		directPayStartVariable.setValue(String.format("FECHA(%d,%d,%d)", get(startITDate, YEAR),get(startITDate, MONTH)+1, get(startITDate, DAY_OF_MONTH) ));
+		draft.addDraftVariable(directPayStartVariable);
+		
+		
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = 
+				EmployeesServiceHelper.getSalaryCalculatorContext(connection,draft, null);
+		
+
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(draftCtx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+			if ( PREST_IT.equals(payment.getName() ))
+					Assert.assertEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
+		}
+
+		Assert.assertEquals(5, salary.getSalaryPayments().size());
+
+	}
+	
 }

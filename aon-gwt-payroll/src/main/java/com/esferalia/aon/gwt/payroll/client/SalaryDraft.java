@@ -1083,6 +1083,8 @@ public class SalaryDraft extends ResizeComposite
 				editor.setValue(null);
 			else if (value instanceof Double)
 				editor.setValue(SalaryDraft.format((Double) value));
+			else if (value instanceof Date)
+				editor.setValue(AON.DATE_FORMAT.format((Date) value));
 			else
 				editor.setValue(String.valueOf(value));
 		}
@@ -5572,6 +5574,7 @@ public class SalaryDraft extends ResizeComposite
 	private final static VariableEditorFactory VARIABLE_EDITOR_FACTORIES[] = { 
 			new MonthDaysEditorFactory("DIAS_MES"),
 			new DateEditorFactory("FECHA_PREAVISO"),
+			//new DateEditorFactory("INICIO_PAGO_DIRECTO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class),
 			new DismissalFactory("CAUSA_INDEMNIZACION"),
 			new StringsListBoxFactory("GRUPO_COTIZACION",

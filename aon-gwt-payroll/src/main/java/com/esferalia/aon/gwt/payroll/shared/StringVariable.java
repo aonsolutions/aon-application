@@ -83,6 +83,8 @@ public class StringVariable extends Variable {
 			this.value = null;
 		else if ( value instanceof String)
 			this.value = (String) value;
+		else if ( value instanceof Date)
+			this.value = format((Date)value);
 		else 
 			this.value = String.valueOf(value);
 	}
@@ -92,5 +94,8 @@ public class StringVariable extends Variable {
 		return super.equals(obj);
 	}
 	
+	public static String format(Date date) {
+		return date.getDate() + "/" +  (date.getMonth()+1) + "/" +  ( date.getYear() + 1900);		
+	}
 	
 }

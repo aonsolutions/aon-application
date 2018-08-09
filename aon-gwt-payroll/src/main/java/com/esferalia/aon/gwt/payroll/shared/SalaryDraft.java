@@ -224,6 +224,9 @@ public class SalaryDraft extends SalaryPreview {
 		if (value instanceof Number) {
 			var = new NumberVariable();
 			((NumberVariable) var).value = (Number) value;
+		} else if (value instanceof Date) {
+			var = new StringVariable();
+			((StringVariable) var).value = StringVariable.format((Date) value);
 		} else {
 			var = new StringVariable();
 			((StringVariable) var).value = value == null ? null : value
@@ -248,6 +251,9 @@ public class SalaryDraft extends SalaryPreview {
 		} else if (value instanceof Number) {
 			var = new NumberVariable();
 			((NumberVariable) var).value = (Number) value;
+		} else if (value instanceof Date) {
+			var = new StringVariable();
+			((StringVariable) var).value = StringVariable.format((Date) value);
 		} else {
 			var = new StringVariable();
 			((StringVariable) var).value = String.valueOf(value);

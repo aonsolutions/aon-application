@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
@@ -4078,6 +4079,234 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//Assert.assertEquals(40.00/ 7.00 * 0.50, Double.parseDouble(workedHours), DELTA);
 	}
 
+	@Test
+	public void testCommonDiseaseIT365RedefinedII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemPayments(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+		
+		addData(aonContext, contract, startITDate, null, ContextVariable.DIRECT_PAY_START.getName(), 
+				String.format("FECHA(%d,%d,%d)", get(startITDate, YEAR),get(startITDate, MONTH)+1, get(startITDate, DAY_OF_MONTH) ));
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+			if ( PREST_IT.equals(payment.getName() ))
+					Assert.assertEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
+		}
+
+		Assert.assertEquals(5, salary.getSalaryPayments().size());
+
+	}
+
+	@Test
+	public void testCommonDiseaseIT365RedefinedIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemPayments(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+		
+		addData(aonContext, contract, startITDate, null, ContextVariable.DIRECT_PAY_START.getName(), 
+				String.format("FECHA(%d,%d,%d)", get(startITDate, YEAR),get(startITDate, MONTH)+1, get(startITDate, DAY_OF_MONTH) ));
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+			if ( PREST_IT.equals(payment.getName() ))
+					Assert.assertEquals("DIAS_ENFERMEDAD_COMUN_366 * 0.00", payment.getExpression());	
+		}
+
+		Assert.assertEquals(5, salary.getSalaryPayments().size());
+
+		startITDate = add(add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+
+		startDate = getFirstDayOfMonth(startITDate);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+			if ( PREST_IT.equals(payment.getName() ))
+					Assert.assertEquals(String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS), payment.getExpression());	
+		}
+	}
+
+	@Test
+	public void testProfessionalDiseaseIT365RedefinedII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemPayments(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
+				startITDate, null);
+		
+		addData(aonContext, contract, startITDate, null, ContextVariable.DIRECT_PAY_START.getName(), 
+				String.format("FECHA(%d,%d,%d)", get(startITDate, YEAR),get(startITDate, MONTH)+1, get(startITDate, DAY_OF_MONTH) ));
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+			if ( PREST_IT.equals(payment.getName() ))
+					Assert.assertEquals("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00", payment.getExpression());	
+		}
+
+		Assert.assertEquals(5, salary.getSalaryPayments().size());
+
+	}
+
+	@Test
+	public void testProfessionalDiseaseIT365RedefinedIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemPayments(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
+				startITDate, null);
+		
+		addData(aonContext, contract, startITDate, null, ContextVariable.DIRECT_PAY_START.getName(), 
+				String.format("FECHA(%d,%d,%d)", get(startITDate, YEAR),get(startITDate, MONTH)+1, get(startITDate, DAY_OF_MONTH) ));
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+			if ( PREST_IT.equals(payment.getName() ))
+					Assert.assertEquals("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00", payment.getExpression());	
+		}
+
+		Assert.assertEquals(5, salary.getSalaryPayments().size());
+
+		startITDate = add(add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
+				startITDate, null);
+
+		startDate = getFirstDayOfMonth(startITDate);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		Assert.assertEquals(4, salary.getSalaryPayments().size());
+	}
 	// ------------------------------------------------------------------------
 	
 
@@ -4099,6 +4328,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("DIAS_ENFERMEDAD_COMUN_366 * 0.00",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
 		return prestIT;
 	}
+	
+	
 }
