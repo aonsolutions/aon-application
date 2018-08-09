@@ -2,24 +2,18 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 
-import javax.lang.model.type.TypeVisitor;
-
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.esferalia.aon.watson.util.AonDateUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
