@@ -1079,6 +1079,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 							if (!result.getInvoice().isSales()) {
 								result.getInvoice().setReferenceCode(referenceCode.getValue());
 							}
+							if (result.getFinances() != null && result.getFinances().size() > 0) {
+								result.getFinances().get(0).setDueDate(getCallback().getModule().getEntryDate());
+							}
 							populate(result);
 							getCallback().getModule().onBalance(getWrapper().getAccountEntry());
 							if (cbk != null) {
