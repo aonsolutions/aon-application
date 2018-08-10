@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DET
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
@@ -223,6 +224,9 @@ public class AccountStatementDAO {
 				as.setDebitBalance(db);
 				as.setUnpaidBalance(ub); 
 			});
+		if (report.getParams().isReverseOrder()) {
+			Collections.reverse(report.getDetails());
+		}
 		return report;
 	}
 

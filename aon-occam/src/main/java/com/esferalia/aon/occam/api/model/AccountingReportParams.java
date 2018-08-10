@@ -33,6 +33,8 @@ public class AccountingReportParams implements IAccountParams,Cloneable {
 	private boolean operatingEntriesExcluded;
 	private boolean closingEntriesExcluded;
 	
+	private boolean reverseOrder;
+	
 	@Override
 	public int getDomain() {
 		return domain;
@@ -118,7 +120,13 @@ public class AccountingReportParams implements IAccountParams,Cloneable {
 		this.noActivityAccountVisible = noActivityAccountVisible;
 		return this;
 	}
-	
+	public boolean isReverseOrder() {
+		return reverseOrder;
+	}
+	public AccountingReportParams setReverseOrder(boolean reverseOrder) {
+		this.reverseOrder = reverseOrder;
+		return this;
+	}
 	public AccountingReportParams clone() {
 		return new AccountingReportParams()
 			.setDomain(getDomain())
@@ -139,6 +147,7 @@ public class AccountingReportParams implements IAccountParams,Cloneable {
 			.setOperatingEntriesExcluded(areOpeningEntriesExcluded())
 			.setOperatingEntriesExcluded(areOperatingEntriesExcluded())
 			.setClosingEntriesExcluded(areClosingEntriesExcluded())
+			.setReverseOrder(isReverseOrder())
 		;
 	}
 	

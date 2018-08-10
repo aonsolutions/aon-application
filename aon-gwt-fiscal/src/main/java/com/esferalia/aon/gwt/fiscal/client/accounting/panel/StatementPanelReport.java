@@ -40,6 +40,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -68,6 +69,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	private AccountBox account;
 	private ListBox activity;
 	private Button cleanButton;
+	private CheckBox reverseOrder;
 
 	private boolean activitiesListBoxEnabled;
 	
@@ -308,6 +310,17 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonPanelGridOdd());
 		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());	
 		
+		reverseOrder = new CheckBox(AON.MSG.newersFirst());
+		reverseOrder.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onSearch();
+			}
+		});
+		
+		tab.setWidget(0, 4, reverseOrder);
+
 		cleanButton = new Button();
 		cleanButton.setStyleName(AON.AON_CSS.aonIconDelete());
 		cleanButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
@@ -324,6 +337,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				if (activitiesListBoxEnabled) {
 					activity.setSelectedIndex(0);
 				}
+				reverseOrder.setValue(false);
 				period.setFocus(true);
 				centerPanel.clear();
 			}
@@ -523,7 +537,9 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 					.setId(account.getId())
 					.setCode(account.getValue())
 					.setDescription(account.getDescription()))
-			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()));
+			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			.setReverseOrder(reverseOrder.getValue())
+			;
 	}
 	
 }

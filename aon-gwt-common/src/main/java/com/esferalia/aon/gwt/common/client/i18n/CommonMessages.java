@@ -3645,5 +3645,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Centro de costo")
 	String costCenter();
 	
+	@DefaultMessage("M\u00E1s recientes primero")
+	String newersFirst();
 }
 
