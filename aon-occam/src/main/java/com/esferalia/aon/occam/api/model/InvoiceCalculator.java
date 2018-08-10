@@ -84,11 +84,11 @@ public class InvoiceCalculator {
 			if (total == getTotal(vatPercent, surchargePercent , withholdingPerc, base)) {
 				break;
 			} else {
-				base = AonMathUtils.ceil(total / (1 + vatPercent / 100 - withholdingPerc / 100), i);
+				base = AonMathUtils.ceil(total / (1 + (vatPercent / 100) + (surchargePercent / 100) - (withholdingPerc / 100)), i);
 				if (total == getTotal(vatPercent, surchargePercent ,withholdingPerc, base)) {
 					break;
 				} else {
-					base = AonMathUtils.floor(total / (1 + vatPercent / 100 - withholdingPerc / 100), i);
+					base = AonMathUtils.floor(total / (1 + (vatPercent / 100) + (surchargePercent / 100) - (withholdingPerc / 100)), i);
 					if (total == getTotal(vatPercent, surchargePercent ,withholdingPerc, base)) {
 						break;
 					} else if (i < 4) {
