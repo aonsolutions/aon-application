@@ -2742,9 +2742,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		// Skip d/M
 		while (++start < text.length() && !Character.isSpace(text.charAt(start)))
 			;
+		if (start == text.length())
+			return date;
+
 		while (Character.isSpace(text.charAt(start)) && ++start < text.length())
 			;
-
 		if (start == text.length())
 			return date;
 
