@@ -1006,6 +1006,7 @@ public class Payment extends ResizeComposite {
 					.replaceAll("\u00dc", "U")
 
 					.replaceAll("\u00d1", "N")
+					.replaceAll("\\W", "")
 					;
 		return null;
 	}

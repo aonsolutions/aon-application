@@ -50,6 +50,9 @@ import org.mvel2.CompileException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
+import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.jooq.AonMaster;
+import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PaymentVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -68,6 +71,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionException
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.HideException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -106,6 +110,41 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			;
 	
 	
+	private static final class NamedContractPayment extends DelegateContractPayment {
+		private NamedContractPayment(IContractPayment contractPayment) {
+			super(contractPayment);
+		}
+
+		@Override
+		public String getName() {
+			String name = super.getName();
+			if ( AonStringUtils.isNotBlank(name) 
+					&& !name.startsWith("__"))
+				return name;
+			
+			String description = super.getDescription();
+			String expression = super.getExpression();
+			if (getScope() != ExpressionScope.SYSTEM
+				&& getScope() != ExpressionScope.APPLICATION
+				&& AonStringUtils.isNotBlank(description) && 
+				!AonStringUtils.equalsIgnoreCase(description, expression) 
+				)
+				name = description.toUpperCase()
+						.replaceAll("\\s", "_")
+						.replaceAll("\u00c1", "A")
+						.replaceAll("\u00c9", "E")
+						.replaceAll("\u00cd", "I")
+						.replaceAll("\u00d3", "O")
+						.replaceAll("\u00da", "U")
+						.replaceAll("\u00dc", "U")
+						.replaceAll("\u00d1", "N")
+						.replaceAll("\\W", "")
+						;
+
+			return name;
+		}
+	}
+
 	public static interface IListener {
 
 		public void onCheckError(String message);
@@ -428,8 +467,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
 					strikePeriods.add(p);
 
-			for (IContractPayment contractPayment : contractPayments) {
-				
+			for (IContractPayment icontractPayment : contractPayments) {
+				DelegateContractPayment contractPayment = new NamedContractPayment(icontractPayment);
 				try {
 					resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator,
 							quoteCalculator, leavePeriods, strikePeriods);
@@ -1478,5 +1517,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		return fixed;
 	}
+	
+	
 
 }
+
