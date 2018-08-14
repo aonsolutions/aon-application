@@ -1249,6 +1249,35 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		
 	}	
+	
+	@Test
+	public void TestCalculador() throws Exception {
+
+		if (!isDisplayed("conceptos,_sin_nombre"))
+			open("calculador");
+
+
+		wait4Id("conceptos,_sin_nombre");
+
+		draft("CONCEPTOS, SIN NOMBRE");
+		calculate(Calendar.SEPTEMBER, 2018);
+		Double totalPayment = getValue("totalPaymentsLabel");
+		double salarioMensual = 666 * 2 ;
+		double plus = salarioMensual * 0.25;
+		double paga = ( salarioMensual + plus ) / 12;
+		double antiguedad = ( salarioMensual + plus ) * 0.05;
+		Assert.assertEquals((Double) ( salarioMensual + plus + 2 * paga + antiguedad )  , totalPayment, 0.001);
+		
+		
+		draft("CONCEPTOS, APELLIDO");
+		calculate(Calendar.SEPTEMBER, 2018);
+		totalPayment = getValue("totalPaymentsLabel");
+		salarioMensual = 999 ;
+		plus = salarioMensual * 0.10;
+		paga = ( salarioMensual + plus ) / 12;
+		Assert.assertEquals((Double) ( salarioMensual + plus + 2 * paga )  , totalPayment, 0.001);
+		
+	}
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{

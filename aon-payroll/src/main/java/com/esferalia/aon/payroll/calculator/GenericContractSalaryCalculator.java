@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -109,8 +110,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	static final String CONSTANT_PAY_MSG = "Revise el concepto <span style='color:orange;'>%s</span>. ¿ Falta mutiplicar por <span style='color:orange;'>DIAS_TRABAJADOS / DIAS_MES</span> ?."
 			;
 	
+	private static interface INamedContractPayment extends IContractPayment{
+		public String getSurName();
+	}
 	
-	private static final class NamedContractPayment extends DelegateContractPayment {
+	private static final class NamedContractPayment extends DelegateContractPayment implements INamedContractPayment{
 		private NamedContractPayment(IContractPayment contractPayment) {
 			super(contractPayment);
 		}
@@ -122,14 +126,20 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					&& !name.startsWith("__"))
 				return name;
 			
+			return getSurName();
+		}
+		
+		@Override
+		public String getSurName() {
 			String description = super.getDescription();
 			String expression = super.getExpression();
+			
 			if (getScope() != ExpressionScope.SYSTEM
 				&& getScope() != ExpressionScope.APPLICATION
 				&& AonStringUtils.isNotBlank(description) && 
 				!AonStringUtils.equalsIgnoreCase(description, expression) 
 				)
-				name = description.toUpperCase()
+				return description.toUpperCase()
 						.replaceAll("\\s", "_")
 						.replaceAll("\u00c1", "A")
 						.replaceAll("\u00c9", "E")
@@ -140,9 +150,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						.replaceAll("\u00d1", "N")
 						.replaceAll("\\W", "")
 						;
-
-			return name;
+			
+			return super.getName();
 		}
+		
 	}
 
 	public static interface IListener {
@@ -282,18 +293,21 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 	}
 
-	private static class UndefPayment extends SimpleContractPayment implements IHasPayment<IContractPayment> {
+	private static class UndefPayment extends SimpleContractPayment implements IHasPayment<IContractPayment>, INamedContractPayment {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-		private IContractPayment contractPayment;
+		private String surName ;
+		private INamedContractPayment namedContractPayment;
 		
 		private UndefinedVariablesException exception;
+		
 
-		public UndefPayment(IContractPayment contractPayment, UndefinedVariablesException exception) {
-			super(contractPayment);
+		public UndefPayment(INamedContractPayment namedContractPayment, UndefinedVariablesException exception) {
+			super(namedContractPayment);
 			this.exception = exception;
-			this.contractPayment = contractPayment;
+			this.namedContractPayment = namedContractPayment;
+			this.surName = namedContractPayment.getSurName();
 		}
 
 		boolean isSelfUndefined() {
@@ -332,7 +346,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		
 		@Override
 		public IContractPayment getPayment() {
-			return contractPayment;
+			return namedContractPayment;
+		}
+		
+		@Override
+		public String getSurName() {
+			return surName;
 		}
 		
 	}
@@ -468,16 +487,19 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					strikePeriods.add(p);
 
 			for (IContractPayment icontractPayment : contractPayments) {
-				DelegateContractPayment contractPayment = new NamedContractPayment(icontractPayment);
+				INamedContractPayment contractPayment = new NamedContractPayment(icontractPayment);
 				try {
 					resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator,
 							quoteCalculator, leavePeriods, strikePeriods);
 					alreadyDefined.add(contractPayment.getName());
+					alreadyDefined.add(contractPayment.getSurName());
+					copyResults(expressionContext, contractPayment);
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(new UndefPayment(contractPayment, e));
 				} catch (UndefinedContextVariablesException e) {
 					onUndefinedData(contractPayment, e.getMessage(), e.getVariableNames());
 					addResult(expressionContext, contractPayment.getName(), start, end, 0.00);
+					addResult(expressionContext, contractPayment.getSurName(), start, end, 0.00);
 				} catch (UndefinedVariablesException e) {
 					UndefPayment undefPayment = new UndefPayment(contractPayment, e);
 					if (!undefPayment.isSelfUndefined()) {
@@ -487,6 +509,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					}
 				}
 				paymentsVars.add(contractPayment.getName());
+				paymentsVars.add(contractPayment.getSurName());
 			}
 
 			Collections.sort(undefPayments, (p1, p2) -> {
@@ -511,6 +534,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				if (undefPayment.willBeDefined(paymentsVars)) {
 					willBeDefined.addAll(paymentsVars); // ??? Why?
 					willBeDefined.add(undefPayment.getName());
+					willBeDefined.add(undefPayment.getSurName());
 					continue;
 				}
 				// clean undefined ...
@@ -520,6 +544,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				// zero.
 				alreadyDefined.add(undefPayment.getName());
 				addResult(expressionContext, undefPayment.getName(), start, end, 0.00);
+				addResult(expressionContext, undefPayment.getSurName(), start, end, 0.00);
 			}
 			// Many payments can share same variable...
 			paymentsVars.addAll(willBeDefined);
@@ -532,11 +557,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					resolvePayment(undefPayment, start, end, issueDate, expressionContext, taxCalculator,
 							quoteCalculator, leavePeriods, strikePeriods);
 					paymentsVars.add(undefPayment.getName());
+					paymentsVars.add(undefPayment.getSurName());
+					copyResults(expressionContext, undefPayment);
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(undefPayment);
 				} catch (UndefinedContextVariablesException e) {
 					paymentsVars.remove(undefPayment.getName());
 					addResult(expressionContext, undefPayment.getName(), start, end, 0.00);
+					addResult(expressionContext, undefPayment.getSurName(), start, end, 0.00);
 				} catch (UndefinedVariablesException e) {
 
 					if (undefPayment.willBeDefined(paymentsVars)) {
@@ -547,13 +575,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					} else {
 						undefPayment.onUndefinedData(this);
 						paymentsVars.remove(undefPayment.getName());
+						paymentsVars.remove(undefPayment.getSurName());
 					}
 				}
 			}
 
 			for (UndefPayment undefPayment : undefPayments)
 				undefPayment.onUndefinedData(this);
-
+			
 			double totalPayment = taxCalculator.getTotalPayment();
 			expressionContext.setVariable(TOTAL_PAYMENT, totalPayment, start, end);
 
@@ -564,6 +593,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				try {
 					resolvePayment(undefTotalPayment, start, end, issueDate, expressionContext, taxCalculator,
 							quoteCalculator, leavePeriods, strikePeriods);
+					copyResults(expressionContext, undefTotalPayment);
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(undefTotalPayment, e.getMessage(), e.getVariableNames());
 				}
@@ -1227,6 +1257,19 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 		if (valueStart.compareTo(resultEnd) <= 0) {
 			expressionContext.setVariable(name, resultValue, valueStart, resultEnd);
+		}
+	}
+
+	private static void copyResults(ExpressionContext expressionContext, INamedContractPayment namedContractPayment) {
+		copyResults(expressionContext, namedContractPayment.getName(), namedContractPayment.getSurName());
+	}
+	private static void copyResults(ExpressionContext expressionContext, String name, String surName) {
+		if (StringUtils.isBlank(surName))
+			return;
+		if (StringUtils.equals(name, surName))
+			return;
+		for (ITimedVariable<Object> var : expressionContext.getVariables(name)) {
+			expressionContext.putVariable(surName, var);
 		}
 	}
 
