@@ -25,7 +25,8 @@
 			</f:facet>
 			<aon:div style="display:inline;cursor:pointer;"
 				rendered="#{to.comments != null and to.comments!=''	}">
-				<aon:graphicImage url="/css/images/icons/aon-task-comment.gif" />
+				<aon:outputText value="&#160;" 
+					style="padding-left:15px;" styleClass="aon-icon-comment"/>
 				<rich:toolTip value="#{to.comments}" showEvent="onclick"
 					hideDelay="2000">
 					<f:facet name="defaultContent">
