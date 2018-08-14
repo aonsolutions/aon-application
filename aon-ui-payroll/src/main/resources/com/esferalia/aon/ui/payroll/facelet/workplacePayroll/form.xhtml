@@ -24,8 +24,8 @@
 				<f:selectItems value="#{companyCollections.companyAddresses}" />
 			</aon:selectOneMenu>
 		
-			<aon:outputText for="WorkPlace_economicAgreement" value="#{bundle.config_administration}" />
-			<aon:selectOneMenu id="WorkPlace_economicAgreement#{sufix}"
+			<aon:outputLabel for="WorkPlace_economicAgreement" value="#{bundle.config_administration}" />
+			<aon:selectOneMenu id="WorkPlace_economicAgreement#{sufix}" required="true"
 				value="#{payrollWorkPlace.to.workPlace.economicAgreement}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{configCollections.administrations}" />
