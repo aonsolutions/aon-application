@@ -276,6 +276,7 @@ public class ProjectStatEngineController implements Serializable {
 		this.saleInvoicePage = null;
 		this.costInvoicePage = null;
 		this.approvedOfferPage = null;
+		this.deliveryPage = null;
 		this.dailyTrackingPage = null;
 	}
 
@@ -456,7 +457,7 @@ public class ProjectStatEngineController implements Serializable {
 			deliveryPage = new PagedList<Delivery>();
 		}
 		if (deliveryPage.getList() == null) {
-		deliveryPage = new PagedList<Delivery>();
+			deliveryPage = new PagedList<Delivery>();
 			Connection c = null;
 			try {
 				c = DatabaseUtil.getConnection(AonUtil.getDomainName());

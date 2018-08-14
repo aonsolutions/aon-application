@@ -20,4 +20,15 @@ public class ProjectControllerListener extends ControllerAdapter {
 			pc.onProjectHistory(null);
 		}
 	}
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		ProjectController pc = (ProjectController) event.getController();
+		if (pc.getGraphTabId().equals(pc.getSelectedTab())) {
+			pc.onGraphicTab(null);	
+		}
+		if (pc.getGanttTabId().equals(pc.getSelectedTab())) {
+			pc.onProjectHistory(null);
+		}
+	}
+	
 }
