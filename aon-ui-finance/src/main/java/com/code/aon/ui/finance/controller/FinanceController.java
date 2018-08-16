@@ -944,7 +944,7 @@ public class FinanceController extends FinanceListController implements IFinance
 			insertFinances.append(" FROM registry AS r, workplace AS w");
 			insertFinances.append(" LEFT JOIN salary AS s ON " + DomainManager.getSQLWhereClause("s.domain") + " AND s.charge_date BETWEEN ? AND ?");
 			insertFinances.append(" LEFT JOIN contract AS c ON c.id = s.contract");
-			insertFinances.append(" LEFT JOIN finance AS f ON f.source_id = s.id AND f.payroll = 1");
+			insertFinances.append(" LEFT JOIN finance AS f ON " + DomainManager.getSQLWhereClause("f.domain") + " AND f.source_id = s.id AND f.payroll = 1");
 			insertFinances.append(" LEFT JOIN rpaymethod AS rp ON rp.registry = c.person");
 			insertFinances.append(" LEFT JOIN rbank AS rb ON rb.id = rp.rbank");
 			insertFinances.append(" WHERE r.id = c.person");
