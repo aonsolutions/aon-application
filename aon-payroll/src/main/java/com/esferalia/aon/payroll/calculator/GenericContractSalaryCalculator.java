@@ -119,15 +119,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			super(contractPayment);
 		}
 
-		@Override
-		public String getName() {
-			String name = super.getName();
-			if ( AonStringUtils.isNotBlank(name) 
-					&& !name.startsWith("__"))
-				return name;
-			
-			return getSurName();
-		}
+//		@Override
+//		public String getName() {
+//			String name = super.getName();
+//			if ( AonStringUtils.isNotBlank(name) 
+//					&& !name.startsWith("__"))
+//				return name;
+//			
+//			return getSurName();
+//		}
 		
 		@Override
 		public String getSurName() {
@@ -1268,6 +1268,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			return;
 		if (StringUtils.equals(name, surName))
 			return;
+		if (StringUtils.isBlank(name))
+			name = ALL;
 		for (ITimedVariable<Object> var : expressionContext.getVariables(name)) {
 			expressionContext.putVariable(surName, var);
 		}
