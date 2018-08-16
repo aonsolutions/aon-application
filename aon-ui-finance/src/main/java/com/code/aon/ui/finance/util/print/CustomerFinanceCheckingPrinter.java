@@ -17,7 +17,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFinanceConstants, Serializable {
 	
@@ -85,7 +85,7 @@ public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFin
 	}
 
 	private String obtainPrintCondition() { 
-		FinancePrinter printer = (FinancePrinter)FormUtil.getController(FINANCE_PRINTER_CONTROLLER);
+		FinancePrinter printer = (FinancePrinter) AonUtil.getRegisteredBean(FINANCE_PRINTER_CONTROLLER);
 		String condition = "";
 		if (printer.getCustomerStatus() != null) {
 			condition += "AND customer.status = " + printer.getCustomerStatus().ordinal() + " ";
