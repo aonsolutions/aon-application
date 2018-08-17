@@ -38,6 +38,12 @@ public class InvoiceReportServlet extends HttpServlet {
 			String domainName = req.getParameter( IRequestParamsNames.DOMAIN_NAME);
 			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
 			
+			String registryParam = req.getParameter(IRequestParamsNames.REGISTRY_ID);
+			Integer registryId = AonStringUtils.isNotBlank(registryParam)? AonNumberUtils.toint(registryParam) :null;
+			
+			String productParam = req.getParameter(IRequestParamsNames.PRODUCT_ID);
+			Integer productId = AonStringUtils.isNotBlank(productParam)? AonNumberUtils.toint(productParam) :null;
+
 			String fromDateParam = req.getParameter(IRequestParamsNames.FROM_DATE);
 			final Date fromDate = (AonStringUtils.isNotBlank(fromDateParam))
 					?DATE_FORMAT.parse(fromDateParam)
@@ -132,8 +138,10 @@ public class InvoiceReportServlet extends HttpServlet {
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
 							.and(types.length==0?p.getIdProperty().isNotNull():p.getTypeProperty().in(types))
+							.and(registryId == null?p.getRegistryProperty().isNotNull():p.getRegistryProperty().eq(registryId))
 							.and(p.getStartIssueDateProperty().ge(fromDate))
 							.and(p.getEndIssueDateProperty().le(toDate))
+							.and(productId == null?p.getIdProperty().isNotNull():p.getProductProperty().eq(productId))
 							.and(categories.length==0?p.getIdProperty().isNotNull():p.getProductCategoryProperty().in(categories))
 							.and(brands.length==0?p.getIdProperty().isNotNull():p.getProductBrandProperty().in(brands))
 							.and(seller.length==0?p.getIdProperty().isNotNull():p.getSellerProperty().in(seller))

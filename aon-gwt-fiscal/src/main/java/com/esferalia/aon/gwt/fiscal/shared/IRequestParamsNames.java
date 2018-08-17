@@ -18,6 +18,8 @@ public interface IRequestParamsNames {
 	String FROM_DATE = "fromDate";
 	String TO_DATE = "toDate";
 	String PERCENT = "percent";
+	String REGISTRY_ID = "registryId";
+	String PRODUCT_ID = "productId";
 	String TYPE = "type";
 	String EXPENSES = "expenses";
 	String IRPF = "irpf";

@@ -118,6 +118,8 @@ public class StatControlPanel extends MainEntryPoint {
 	Hidden domainName;
 	Hidden user;
 	Hidden statParams;
+	Hidden registryId;
+	Hidden productId;
 	
 	private StatChartTypeVisitor statChartTypeVisitor;
 	private static final ScrollPanel ERROR_PANEL = new ScrollPanel();
@@ -202,6 +204,10 @@ public class StatControlPanel extends MainEntryPoint {
 		formFlowPanel.add(user);
 		statParams = new Hidden("statParams");
 		formFlowPanel.add(statParams);
+		registryId = new Hidden("registryId");
+		formFlowPanel.add(registryId);
+		productId = new Hidden("productId");
+		formFlowPanel.add(productId);
 		toolbarPanel.add(diskForm);
 		root.add(ui);
 		
@@ -282,6 +288,10 @@ public class StatControlPanel extends MainEntryPoint {
 		toDate.setValue("");
 		domainId.setValue("");
 		domainName.setValue("");
+		
+		registryId.setValue(AonNumberUtils.toString( filter.getParams().getRegistry()));
+		productId.setValue(AonNumberUtils.toString( filter.getParams().getProduct()));
+		
 		DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
 		if ( filter.getParams().getFrom() != null) {
 			fromDate.setValue(DATE_FORMAT.format(filter.getParams().getFrom()));
