@@ -31,7 +31,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -81,7 +80,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for ( int i = 0 ; i < 10 ; i++ ) {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 			calculator.setSalaryBuilder(jooqSalaryBuilder);
 			calculator.calculate(ctx);
@@ -100,7 +99,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<Salary> delayCalculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new SalaryBuilder());
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
@@ -139,7 +138,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for ( int i = 0 ; i < 10 ; i++ ) {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 			calculator.setSalaryBuilder(jooqSalaryBuilder);
 			calculator.calculate(ctx);
@@ -160,7 +159,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<Salary> delayCalculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new SalaryBuilder());
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
@@ -202,7 +201,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for ( int i = 0 ; i < 10 ; i++ ) {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 			calculator.setSalaryBuilder(jooqSalaryBuilder);
 			calculator.calculate(ctx);
@@ -225,7 +224,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<Salary> delayCalculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new SalaryBuilder());
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
@@ -406,7 +405,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for ( int i = 0 ; i < 10 ; i++ ) {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 			calculator.setSalaryBuilder(jooqSalaryBuilder);
 			calculator.calculate(ctx);
@@ -426,7 +425,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<Salary> delayCalculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		
 		SalaryBuilder salaryBuilder = new SalaryBuilder() {
 			@Override
@@ -550,7 +549,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for ( int i = 0 ; i < 10 ; i++ ) {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 			calculator.setSalaryBuilder(jooqSalaryBuilder);
 			calculator.calculate(ctx);
@@ -570,7 +569,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<ISalary> delayCalculator = new ContractSalaryCalculator<ISalary>();
+		SmartContractSalaryCalculator<ISalary> delayCalculator = new SmartContractSalaryCalculator<ISalary>();
 		
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		
@@ -674,7 +673,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		calculator.setSalaryBuilder(jooqSalaryBuilder);
 		calculator.calculate(ctx);
@@ -690,7 +689,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<Salary> delayCalculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		SalaryBuilder delayBuilder = new SalaryBuilder();
 		
 		delayCalculator.setSalaryBuilder(delayBuilder);
@@ -778,7 +777,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		double adjust = + ((monthDays-30) * 10.00/30.00 );
 		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
 		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00 + adjust,delay.getCommonBase(), DELTA);
+		Assert.assertEquals(10.00,delay.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -861,7 +860,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		double adjust = + ((monthDays-30) * 10.00/30.00 );
 		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
 		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00 + adjust ,delay.getCommonBase(), DELTA);
+		Assert.assertEquals(10.00,delay.getCommonBase(), DELTA);
 	}
 
 	@Test
@@ -944,7 +943,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		double adjust = + ((monthDays-30) * 10.00/30.00 );
 		Assert.assertEquals(10.00 + adjust ,delay.getIrpfBase(), DELTA);
 		Assert.assertEquals(10.00 + adjust ,delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00 + adjust ,delay.getCommonBase(), DELTA);
+		Assert.assertEquals(10.00,delay.getCommonBase(), DELTA);
 	}
 
 
@@ -1008,7 +1007,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for ( int i = 0 ; i < 10 ; i++ ) {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 			calculator.setSalaryBuilder(jooqSalaryBuilder);
 			calculator.calculate(ctx);
@@ -1041,7 +1040,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<ISalary> delayCalculator = new ContractSalaryCalculator<ISalary>();
+		SmartContractSalaryCalculator<ISalary> delayCalculator = new SmartContractSalaryCalculator<ISalary>();
 		
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		
@@ -1169,7 +1168,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		calculator.setSalaryBuilder(jooqSalaryBuilder);
 		calculator.calculate(ctx);
@@ -1183,8 +1182,16 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		calculator = new ContractSalaryCalculator<ISalary>();
-		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator = new SmartContractSalaryCalculator<ISalary>();
+		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println(description + " = " + amount +", " + quote + "(" + startDate +"..." + endDate + "");
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		};
 		calculator.setSalaryBuilder(jooqSalaryBuilder);
 		calculator.calculate(ctx);
 		jooqSalaryBuilder.execute();
@@ -1201,7 +1208,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
-		ContractSalaryCalculator<ISalary> delayCalculator = new ContractSalaryCalculator<ISalary>();
+		SmartContractSalaryCalculator<ISalary> delayCalculator = new SmartContractSalaryCalculator<ISalary>();
 		
 		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
 			@Override
@@ -1209,6 +1216,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
 					Map<String, ITimedVariable<?>> context) {
 				if ( startDate.compareTo(startITDate) >= 0 ) {
+					//System.out.println(description + " = " + amount +", " + quote + "(" + startDate +"..." + endDate + "");
 					Assert.assertEquals(0.00, amount);
 					Assert.assertEquals(0.00, quote);
 					Assert.assertEquals(0.00, tax);

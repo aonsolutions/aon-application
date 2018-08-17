@@ -30,6 +30,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
+import static com.esferalia.aon.salary.expression.ExpressionScope.APPLICATION;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1095,9 +1096,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			.filter(r->r.getContext().containsKey(name))
 			.findAny().ifPresent( r-> expressionContext.removeVariable(name));
 			
-			
-			if (contractPayment.getType() != PaymentType.CRA_0008
-					&& contractPayment.getType() != PaymentType.CRA_0055
+			if ( contractPayment.getScope() == APPLICATION ) {
+				; // Skip APPLICATION Concepts
+			} else if (contractPayment.getType() != PaymentType.CRA_0008
+					&& contractPayment.getType() != PaymentType.CRA_0055 
+					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
 					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
@@ -1113,6 +1116,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
+			} else  if ((contractPayment.getType() == PaymentType.CRA_0055
+					|| AonStringUtils.equals(ContextVariable.GUARENTEED, name))
+					&& !Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
+							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
+				// MEJORAS... at NO I.T
+				results = fixGuaranteedResults(contractPayment, results, leavePeriods, start, end, expressionContext);
 			} else if ( results.size() == 1 && 
 					results.get(0).getValue() != null && 
 					results.get(0).getValue() > 0.00 && 
@@ -1122,13 +1131,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
-			} else  if ((contractPayment.getType() == PaymentType.CRA_0055
-					|| AonStringUtils.equals(ContextVariable.GUARENTEED, name))
-					&& !Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
-							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
-				// MEJORAS... at NO I.T
-				results = fixGuaranteedResults(contractPayment, results, leavePeriods, start, end, expressionContext);
-			} 
+			}  
 			
 			if ( !results.isEmpty() && 
 					contractPayment.getType() == PaymentType.CRA_0004 && 

@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT_LEAVE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
@@ -51,6 +52,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -120,7 +122,12 @@ public class SQLContractDelayCalculatorContext extends
 			int resultDays = AonDateUtils.getDay(result.getPeriod().getEnd()) 
 					- AonDateUtils.getDay(result.getPeriod().getStart()) + 1;
 			int month = AonDateUtils.getMonth(result.getPeriod().getStart());
-			int activeDays = monthDays.get(month) - itDays.get(month);
+			
+			//expressionContext.getVariable(MONTH_DAYS, start, end, Number.class).doubleValue();
+			
+			double activeDays = expressionContext.getVariable(MONTH_DAYS, start, end, Number.class).doubleValue(); //monthDays.get(month);
+			if ( !result.getContext().isEmpty() )
+				activeDays  -= itDays.get(month);
 			double value = result.getValue() / activeDays * resultDays;
 			
 			return Collections.singletonList(new TimedResult<Double>(value, result.getPeriod(), result.getContext()));
@@ -171,6 +178,10 @@ public class SQLContractDelayCalculatorContext extends
 			if ( ContextVariable.GUARENTEED.equals(name))
 				return true;
 			return false;
+		}
+
+		private static boolean isConstant(List<ITimedResult<?>> results) {
+			return results.size() == 1 && results.get(0).getContext().isEmpty();
 		}
 	}
 	
@@ -628,6 +639,13 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  = '" + CGC_BASE.getName() + "'" 
 				;
 
+		protected static final class DelayContractPayment extends ContractPayment {
+			@Override
+			public ExpressionScope getScope() {
+				return ExpressionScope.APPLICATION;
+			}
+		}
+
 		private SalaryType type;
 		private Date startDate;
 		private Date endDate;
@@ -776,7 +794,7 @@ public class SQLContractDelayCalculatorContext extends
 		protected ContractPayment createContractPayment(double amount,
 				double irpf, double quote) {
 
-			ContractPayment payment = new ContractPayment();
+			ContractPayment payment = new DelayContractPayment();
 			payment.setStartDate(startDate);
 			payment.setEndDate(endDate);
 			payment.setSalaryType(SalaryType.DELAY);
@@ -990,7 +1008,7 @@ public class SQLContractDelayCalculatorContext extends
 		@Override
 		protected ContractPayment createContractPayment(double amount,
 				double irpf, double quote) {
-			ContractPayment payment = new ContractPayment();
+			ContractPayment payment = new DelayContractPayment();
 			payment.setStartDate(chargeDate);
 			payment.setEndDate(chargeDate);
 			payment.setSalaryType(SalaryType.DELAY);

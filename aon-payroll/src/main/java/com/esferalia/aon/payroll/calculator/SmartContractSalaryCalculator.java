@@ -35,12 +35,14 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
@@ -191,6 +193,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(payment, start, end, amount);
 			}
 
+			ExpressionScope scope =  payment.getScope();
+			
+			if ( scope == ExpressionScope.APPLICATION ) {
+				return delegate.quote(payment, start, end, amount);
+			}
 
 			if ( !type.isBBCCIncluded() 
 				&& type.isBBCCExcluded() ) {
@@ -308,21 +315,16 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				// It's a constant that already is included at BR, 
 				// so we'll subtract the proportional part of IT.
 				
-				Period period = results.get(0).getPeriod();
-				double days = getDays(period, expressionContext);
-				Double value = results.get(0).getValue();
-				Map<String,ITimedVariable<?>> context = results.get(0).getContext();
+				return subtractITPart(results, its, expressionContext);
+			} else if (results.size() == 1 
+					&& results.get(0).getContext().isEmpty()  
+					&& notOnly4ThisMonth(startIt, contractPayment)
+					) {
 				
-				List<Period> actives = Period.sub(period, its);
-				List<ITimedResult<Double>> fixed = 
-						new ArrayList<ITimedResult<Double>>(actives.size());
-				
-				for ( Period active : actives  ) {
-					double activeDays = getDays(active, expressionContext );
-					Double activeValue = value / days * activeDays; 
-					fixed.add( new TimedResult<Double>(activeValue, active, context));
-				}
-				return fixed;
+				// It's a constant that already is included at BR, 
+				// so we'll subtract the proportional part of IT.
+
+				return subtractITPart(results, its, expressionContext);
 			}
 			
 			
@@ -337,6 +339,25 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 		throw new UnsupportedOperationException(String.format(IT_PAY_MSG, contractPayment.getDescription(),
 					contractPayment.getExpression())); 
+	}
+
+	private List<ITimedResult<Double>> subtractITPart(List<ITimedResult<Double>> results, List<Period> its,
+			ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
+		Period period = results.get(0).getPeriod();
+		double days = getDays(period, expressionContext);
+		Double value = results.get(0).getValue();
+		Map<String,ITimedVariable<?>> context = results.get(0).getContext();
+		
+		List<Period> actives = Period.sub(period, its);
+		List<ITimedResult<Double>> fixed = 
+				new ArrayList<ITimedResult<Double>>(actives.size());
+		
+		for ( Period active : actives  ) {
+			double activeDays = getDays(active, expressionContext );
+			Double activeValue = value / days * activeDays; 
+			fixed.add( new TimedResult<Double>(activeValue, active, context));
+		}
+		return fixed;
 	}
 	
 	@Override
@@ -583,4 +604,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 	}
 	
+	private static boolean notOnly4ThisMonth ( Date date, IContractPayment payment) {
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
+		Date endDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
+		
+		if ( Period.compare(payment.getStartDate(), firstDayOfMonth) < 0 
+				&& Period.compare(payment.getEndDate(), endDayOfMonth) > 0 )
+			return true;
+				
+		return false;
+	}
 }

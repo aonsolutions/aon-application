@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
@@ -290,7 +289,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				new String[] {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-				"1000.00"
+//				"1000.00"
 							}, 
 				new String[] {						
 				"BASE_CGC * 0.10", 
@@ -306,6 +305,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
 				null, 100.00);
 
+		addPayment(aonContext, contract, getFirstDayOfMonth(startITDate), "1000.00");
 		
 		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
 		Date endDate = getLastDayOfMonth(startDate);
@@ -2627,7 +2627,6 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				new String[] {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-				"666.00"
 				}, 
 				new String[] {
 				}, null);
@@ -2636,7 +2635,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
 				startITDate, null);
-
+		
+		addPayment(aonContext, contract, getFirstDayOfMonth(startITDate), getLastDayOfMonth(startITDate), "666.00");
+		
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -4306,6 +4307,42 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					+ " (" + payment.getExpression() + ")");
 		}
 		Assert.assertEquals(4, salary.getSalaryPayments().size());
+	}
+	@Test
+	public void testUnknowConstantITV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+		Date startITDate = 
+				add(endDate, DAY_OF_MONTH,-5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		
+		Assert.assertEquals( 1750.00 * 25.00/30.00, salary.getTotalPayment());
+
 	}
 	// ------------------------------------------------------------------------
 	
