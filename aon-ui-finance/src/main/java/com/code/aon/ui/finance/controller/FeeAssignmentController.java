@@ -126,6 +126,7 @@ public class FeeAssignmentController extends CustomerListController {
 
 		AonUtil.addInfoMessage("Se han creado " + getCheckedCount() + " Cuotas.");
 		checkNone(event);
+		onEditSearch(null);
 	}
 
 	private int calculateFeeLine(Customer customer) throws ManagerBeanException {
