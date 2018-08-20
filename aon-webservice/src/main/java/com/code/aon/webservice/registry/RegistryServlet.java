@@ -293,7 +293,7 @@ public class RegistryServlet extends HttpServlet{
         		else if(q.getType().equals(QuestionType.NUMBER.value()))
         			json2.put("name", rp.getValueNumber());
         		else if(q.getType().equals(QuestionType.BOOLEAN.value()))
-        			json2.put("name", rp.getValueNumber().equals(1));
+        			json2.put("name", rp.getValueNumber().equals(1.0));
         		else if(q.getType().equals(QuestionType.DATE.value()))
         			json2.put("name", rp.getValueDate());
         		json2.put("date", AonDateUtils.simpleFormat(rp.getLastUpdate()));
