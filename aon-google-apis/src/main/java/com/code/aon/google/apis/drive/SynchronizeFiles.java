@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ContractAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.PayrollBatchAttachmentType;
@@ -71,6 +72,7 @@ public class SynchronizeFiles {
 		if (map.containsKey("payroll")) sync(drive, domain, AttachType.PAYROLL, PayrollBatchAttachmentType.drive());
 		if (map.containsKey("project")) sync(drive, domain, AttachType.PROJECT, ProjectAttachmentType.drive());
 		if (map.containsKey("sepe")) sync(drive, domain, AttachType.SEPE, SepeBatchAttachmentType.drive());
+		if (map.containsKey("data")) sync(drive, domain, AttachType.DATA, DataAttachType.drive());
 		
 		if(numero == 0) LOGGER.log(Level.INFO, "No documents/files found for domain: '"+domain.getName()+"'");
 	}
@@ -96,7 +98,7 @@ public class SynchronizeFiles {
 		if (!parse(args))
 			return;
 		if(types[0].equals("all")){
-			String t[] = new String[8];
+			String t[] = new String[9];
 			t[0] = "registry";
 			t[1] = "contract";
 			t[2] = "item";
@@ -105,6 +107,7 @@ public class SynchronizeFiles {
 			t[5] = "payroll";
 			t[6] = "project";
 			t[7] = "sepe";
+			t[8] = "data";
 			types = t;
 		}
 

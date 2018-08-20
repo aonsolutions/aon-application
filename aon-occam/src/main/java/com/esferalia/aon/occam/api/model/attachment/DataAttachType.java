@@ -27,4 +27,10 @@ public enum DataAttachType implements Serializable {
 		return DataAttachType.values()[i];
 	}
 	
+	public static Byte[] drive(){
+		return new Byte[]{
+			REQUEST.value(), RESPONSE_OK.value(),
+			RESPONSE_ERROR.value()
+		};
+	}
 }
