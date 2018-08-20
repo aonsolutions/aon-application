@@ -31,11 +31,13 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.CompositeIterator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.QuoteCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
+import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -119,15 +121,26 @@ public class SQLContractDelayCalculatorContext extends
 				return Collections.singletonList( isInIT(result.getPeriod()) ? fixItResult(result) : new TimedResult<Double>(0.00, result.getPeriod(), result.getContext()));
 			
 			
-			int resultDays = AonDateUtils.getDay(result.getPeriod().getEnd()) 
-					- AonDateUtils.getDay(result.getPeriod().getStart()) + 1;
 			int month = AonDateUtils.getMonth(result.getPeriod().getStart());
 			
 			//expressionContext.getVariable(MONTH_DAYS, start, end, Number.class).doubleValue();
 			
-			double activeDays = expressionContext.getVariable(MONTH_DAYS, start, end, Number.class).doubleValue(); //monthDays.get(month);
+			double activeDays ;
+			try {
+				activeDays = getMonthDays(expressionContext, start, end); 
+			} catch ( ExpressionException e ) {
+				activeDays = monthDays.get(month);
+			}
+			double resultDays = AonDateUtils.getDay(result.getPeriod().getEnd()) 
+					- AonDateUtils.getDay(result.getPeriod().getStart()) + 1;
+			
+			if ( resultDays == (double) monthDays.get(month) )
+				resultDays = activeDays;
+
 			if ( !result.getContext().isEmpty() )
 				activeDays  -= itDays.get(month);
+
+			
 			double value = result.getValue() / activeDays * resultDays;
 			
 			return Collections.singletonList(new TimedResult<Double>(value, result.getPeriod(), result.getContext()));
@@ -240,6 +253,11 @@ public class SQLContractDelayCalculatorContext extends
 				"Atrasos en la Nómina");
 	}
 	
+	protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder)
+	{
+		return salaryBuilder;
+	}
+	
 	private Collection<IContractPayment> getDifferencePayments()
 			throws ExpressionException, SQLException, SalaryException {
 
@@ -277,8 +295,8 @@ public class SQLContractDelayCalculatorContext extends
 		ExtrasDelayPaymentBuilder extrasDelayPaymentBuilder = new ExtrasDelayPaymentBuilder(
 				getConnection(), extraPaymentDecorator);
 		
-		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeBuilder = 
-				new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(delayPaymentBuilder, extrasDelayPaymentBuilder);
+		ISalaryBuilder<ISalary> compositeBuilder = getSalaryBuilder(
+				new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(delayPaymentBuilder, extrasDelayPaymentBuilder));
 		
 
 		Collection<Period> periods = getCgcPeriods(connection, getId(), startDate, endDate);//split(startDate, endDate);
@@ -1092,6 +1110,14 @@ public class SQLContractDelayCalculatorContext extends
 			}
 		}
 		return candidates.size() == 1 ? candidates.get(0) : null;
+	}
+	
+	private static double getMonthDays(ExpressionContext expressionContext, Date start, Date end ) throws ExpressionException {
+		
+		for ( ITimedResult<Number> monthDays : expressionContext.eval(MONTH_DAYS.getName(), start, end, Number.class) )
+			return monthDays.getValue().doubleValue();
+		
+		throw new UndefinedContextVariablesException(MONTH_DAYS);
 	}
 
 }

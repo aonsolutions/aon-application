@@ -212,6 +212,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
@@ -4285,6 +4286,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		SQLContractSalaryCalculatorContext ctx = new SQLContractDelayCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
 				draft.getIssueDate(), criteria) {
+			
+			@Override
+			protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {
+				return new RoundSalaryBuilder<T>(salaryBuilder, d -> Math.round(d*1000.00)/1000.00) {
+					@Override
+					public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
+							Map<String, ITimedVariable<?>> context) {
+						tax = f.apply(tax);
+						quote = f.apply(quote);
+						super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
+					}
+				};
+			}
 
 		};
 

@@ -985,8 +985,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Date startDate = calendar.getTime();
 		
 		delay(startDate, endDate);
-		assertValue("totalPaymentsLabel", 0.00);
-		assertValue("totalLiquidLabel", 00.00);
+		assertValue("totalPaymentsLabel", 0.00, 0.00);
+		assertValue("totalLiquidLabel", 00.00, 0.00);
 		
 		//visual asserts
 		HtmlButton fxButton = getElementById("fxButton");

@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -1303,4 +1304,113 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.fail("No delay!!!!!!!!!!!!!!!!!");
 
 	}
+
+	@Test
+	public void testNoDelaysAndRoundI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptP = addConcept(aonContext, "P");
+		PaymentConceptRecord conceptA = addConcept(aonContext, "A");
+
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "P + A";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "P + A";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				},
+				new Payment[] {
+					new Payment() {
+						{
+							this.concept = conceptP.getId();
+							this.expression = "SALARIO * DIAS_TRABAJADOS/DIAS_MES";
+						}
+					},
+					new Payment() {
+						{
+							this.concept = conceptA.getId();
+							this.expression = "P * 0.04";
+						}
+					}
+				},
+				new HashMap<String,String>(){
+					{
+						put("SALARIO", "2318.09");
+					}
+				});
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {
+				}, category);
+		//@formatter:on
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+			calculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> Math.round(d*1000.00)/1000.00));
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		AON.getSalaries(aonContext, props -> props.getContractProperty().eq(contract.getId()).and(props.getIsSalaryProperty().eq(true)))
+		.forEach( salary  -> {
+			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getTotalPayment(), 0.001);
+			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getIrpfBase(), 0.001);
+			Assert.assertEquals(2318.09 + 2318.09 *0.04 + (2318.09 + 2318.09 *0.04)/6 , salary.getCommonContingenciesBase(), 0.001);
+		});
+		;
+		
+		//addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> Math.round(d*1000.00)/1000.00));
+		delayCalculator.calculate(delayCtx);
+		jooqSalaryBuilder.execute();
+		
+		
+		AON.getSalaries(aonContext, props -> props.getContractProperty().eq(contract.getId()).and(props.getIsDelayProperty().eq(true)))
+		.forEach( delay  -> {
+			Assert.assertEquals(0.00, delay.getTotalPayment());
+			Assert.assertEquals(0.00, delay.getTotalLiquid());
+			Assert.assertEquals(0.00, delay.getIrpfBase());
+			Assert.assertEquals(0.00, delay.getCommonContingenciesBase());
+		});
+		;
+		
+	}
+
+
 }

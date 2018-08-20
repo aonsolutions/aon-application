@@ -491,6 +491,11 @@ public abstract class BaseIntegralTestCase {
 		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue(), 0.04);
 	}
 
+	protected static void assertValue(String id, double value, double delta) throws ParseException {
+		HtmlInput input = getElementById(id);
+		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue(), delta);
+	}
+
 	protected static void assertDisabled(String id, boolean disabled) throws InterruptedException {
 		HtmlButton button = (HtmlButton)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id);
 		Assert.assertEquals(button.isDisabled(), disabled);
