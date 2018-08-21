@@ -556,8 +556,7 @@ public class DeliveryImport {
 	
 	private Boolean hasAlbvRequiredParameters() {
 		return albv.getId() != null && albv.getNumero() != null
-			&& albv.getDocumento() != null && albv.getFecha() != null
-			&& albv.getAlmacen() != null;
+			&& albv.getDocumento() != null && albv.getFecha() != null;
 	}
 	
 	private void checkAlbv(String title, Cell cell) {
@@ -615,21 +614,21 @@ public class DeliveryImport {
 		if("centroTrabajo".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
 				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
-				albv.setAliasDireccion(o.toString().substring(0,32));
+				albv.setCentroTrabajo(o.toString().substring(0,32));
 			} else albv.setCentroTrabajo(o.toString());
 			return;
 		}
 		if("almacen".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
 				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
-				albv.setAliasDireccion(o.toString().substring(0,32));
+				albv.setAlmacen(o.toString().substring(0,32));
 			} else albv.setAlmacen(o.toString());
 			return;
 		}
 		if("expediente".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
 				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
-				albv.setAliasDireccion(o.toString().substring(0,64));
+				albv.setExpediente(o.toString().substring(0,64));
 			} else albv.setExpediente(o.toString());
 			return;
 		}
