@@ -57,7 +57,10 @@ public class SendNotification {
 		users.stream().forEach(r -> {
 			if(!user.getId().equals(r.getId())) {
 				if(attach.getScope() != null ) {
-					Integer[] scpArr = AON.getUserScopes(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), r.getId());
+					Integer[] scpArr = null;
+					try {
+						scpArr = AON.getUserScopes(attach.getDomain().getName(), attach.getDomain().getId(), user.getLogin(), r.getId());
+					} catch (Exception e) {}
 					LinkedList<Integer> l = new LinkedList<>();
 					if(scpArr != null) {
 						l = new LinkedList<>(Arrays.asList(scpArr));
