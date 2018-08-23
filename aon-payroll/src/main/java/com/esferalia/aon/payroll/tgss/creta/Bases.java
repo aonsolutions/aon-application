@@ -13,7 +13,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
+import static com.esferalia.aon.watson.server.AonDateUtils.getDay;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
+import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.DoubleSupplier;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -168,16 +171,31 @@ public class Bases {
 		public void add(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			try {
-				boolean montly = get(salary,
-						new Period(toDate(tramo.getFechaDesde()),
-								toDate(tramo.getFechaHasta())));
-				if (!montly)
-					return;
-
+				Date fromDate = toDate(tramo.getFechaDesde());
+				Date toDate = toDate(tramo.getFechaHasta());
+				Period period = new Period(fromDate,toDate);
+				
+				
+				double monthDays = getMonthDays(salary, period, 30);
+				if ( monthDays != 30 ) 
+					return;  // daily for sure, skip 
+				
+				
+				int lastDayOfMonth = getLastDayOfMonth(period);
+				
+				// from here MONTH_DAYS == 30, so  
+				boolean monthly = lastDayOfMonth != 30 
+						|| getQuoteDays(salary, period) == 0
+						|| getCotizacionMensual(salary,period);
+				
+				if (!monthly)
+					return; 
+				
 				DatoBuilder datoBuilder = new DatoBuilder()
 						.setCodigo(datoSolicitado.getCodigo())
 						.setTipo(datoSolicitado.getTipoDato()).setValor("M");
 				tramoBuilder.addDato(datoBuilder.create());
+				
 			} catch (NoSuchVariableException e) {
 				try {
 					for (BasesCallback cb : cbs)
@@ -197,12 +215,25 @@ public class Bases {
 			}
 
 		}
+		
 
-		protected boolean get(Salary salary, Period p)
+		protected int getLastDayOfMonth(Period period) {
+			return getDay(getMonthLastDay(period.getEnd()));			
+		}
+
+		protected double getQuoteDays(Salary salary, Period p){
+			return getContextVariable(salary, ContextVariable.QUOTE_DAYS, p, () -> -1) ;
+		}
+
+		protected double getMonthDays(Salary salary, Period p, double def ){
+			return getContextVariable(salary, ContextVariable.MONTH_DAYS, p, () -> def);
+		}
+
+		protected boolean getCotizacionMensual(Salary salary, Period p)
 				throws NoSuchVariableException {
 			List<ContextData> datas = salary.getContextData()
 					.get("COTIZACION_MENSUAL");
-
+			
 			if (datas == null)
 				throw new NoSuchVariableException("COTIZACION_MENSUAL");
 
@@ -218,6 +249,31 @@ public class Bases {
 			}
 
 			throw new NoSuchVariableException("COTIZACION_MENSUAL");
+		}
+		
+		private double getContextVariable(Salary salary, ContextVariable contextVariable, Period p, DoubleSupplier def){
+			List<ContextData> datas = salary.getContextData()
+					.get(contextVariable.getName());
+			
+			if (datas == null)
+				return def.getAsDouble();
+
+			for (ContextData data : datas) {
+				Period intersect = p.intersect(
+						new Period(data.getStartDate(), data.getEndDate()));
+				if (intersect == null)
+					continue;
+
+				// TODO : More than one unique valor ?
+				try {
+					return ExpressionContext.eval(data.getExpression(),
+							Number.class).doubleValue();
+				} catch ( Exception e ) {
+					
+				}
+			}
+
+			return def.getAsDouble();
 		}
 	}
 

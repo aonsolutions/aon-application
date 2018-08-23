@@ -28,13 +28,18 @@ import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static java.util.Calendar.DATE;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -44,6 +49,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -52,7 +59,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.junit.Test;
 
-import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -66,10 +72,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -90,6 +94,7 @@ import com.mchange.util.AssertException;
 
 import junit.framework.Assert;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
 
@@ -2226,6 +2231,141 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testCretaITAdjust1Day()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		
+		String ccc = UUID.randomUUID().toString().substring(0, 11);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "09");
+		
+		Date startIt = getLastDayOfMonth(add(getToday(), MONTH, Calendar.JULY - get(getToday(), MONTH)));
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		
+		
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		//Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
+				.forEach(salary -> {
+					
+					Date endActive = add(startIt, DATE, -1);
+					
+					for ( Entry<String, List<ContextData>> entry : salary.getContextData().entrySet() ) {
+						System.out.print(entry.getKey() + ": " );
+						for ( ContextData data: entry.getValue())
+							System.out.print(data.getExpression() + "(" + data.getStartDate() + ".." + data.getEndDate()  + "),") ;
+						System.out.println();
+					}
+					
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endActive, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+					Assert.assertEquals(endDate, datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(1).getExpression()));
+
+					// 601 o 611 Base de Accidentes de Trabajo.
+					datas = salary.getContextData().get(CGP_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endActive, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+					Assert.assertEquals(endDate, datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(1).getExpression()));
+
+					// 501 Base de Horas Extras Fuerza Mayor
+					datas = salary.getContextData()
+							.get(STRUCTURAL_OVERTIME_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					// 502 Base de Horas Extras
+					datas = salary.getContextData()
+							.get(NON_STRUCTURAL_OVERTIME_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+
+				});
+		;
+		
+		cleanSalaries(aonContext);
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		Assert.assertEquals(2, tramos.size());
+		
+		Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+		Assert.assertEquals("07", tramos.get(0).getFechaDesde().getMes());
+		Assert.assertEquals("30", tramos.get(0).getFechaHasta().getDia());
+		Assert.assertEquals("07", tramos.get(0).getFechaHasta().getMes());
+		Assert.assertEquals("30", tramos.get(0).getDiasCotizados());
+		assertTramoActivoNormalTiempoCompletoDiario( tramos.get(0) );
+		
+		Assert.assertEquals("31", tramos.get(1).getFechaDesde().getDia());
+		Assert.assertEquals("07", tramos.get(1).getFechaDesde().getMes());
+		Assert.assertEquals("31", tramos.get(1).getFechaHasta().getDia());
+		Assert.assertEquals("07", tramos.get(1).getFechaHasta().getMes());
+		Assert.assertEquals("0", tramos.get(1).getDiasCotizados());
+		assertTramoIT15PrimerosDiasDiario( tramos.get(1) );
+		
+		
+		cleanSalaries(aonContext);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, contract, startDate, endDate, ccc);
+		Assert.assertEquals(2, bases.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(0);
+		Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("07", tramo1.getFechaDesde().getMes());
+		Assert.assertEquals("30", tramo1.getFechaHasta().getDia());
+		Assert.assertEquals("07", tramo1.getFechaHasta().getMes());
+		assertDato(tramo1.getDatosTramo().getDato(), "I", "51", "M");
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "175000");
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "601", "175000");
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = bases.get(1);
+		Assert.assertEquals("31", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals("07", tramo2.getFechaDesde().getMes());
+		Assert.assertEquals("31", tramo2.getFechaHasta().getDia());
+		Assert.assertEquals("07", tramo2.getFechaHasta().getMes());
+		assertDato(tramo2.getDatosTramo().getDato(), "I", "51", "M");
+		
+
+	}
+
+
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
 	}
@@ -2275,7 +2415,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				null,
 				new HashMap<String, String>() {
 					{
-						put(MONTH_DAYS.getName(), String.format("%f", 30.00));
+						//put(MONTH_DAYS.getName(), String.format("%f", 30.00));
 						put(QUOTE_GROUP.getName(), String.format("'%s'", quoteGroup));
 						put(TC2.getName(), String.format("\"%s\"", contractCode.getValue()));
 						put(MONTH_DAYS.getName(), String.format("{'%s':30}[%s]", quoteGroup, QUOTE_GROUP.getName()));
@@ -2409,7 +2549,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	// -------------------------------------------------------------------------
-	private List<Tramo> getBases ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	private List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> getBases ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
@@ -2457,7 +2597,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		
+		ByteArrayOutputStream basesOs = new ByteArrayOutputStream();
+
 		Bases.generate(connection, 
 				true, 							//comments, 
 				false,							//skipExisting, 
@@ -2466,11 +2607,33 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				new String [] {},				//defaultsValues, 
 				trabajadoresTramosIs, 
 				null, 							//respuestaIs, 
-				System.out,						//os, 
+				basesOs,						//os, 
 				new Bases.BasesCallback [] {}	//cbs
 				);
-
-		return null;
+		
+		System.out.println(basesOs.toString());
+		
+		ByteArrayInputStream basesIs = new ByteArrayInputStream(basesOs.toByteArray());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = Utils
+				.unmarshal(
+						net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class,
+						basesIs);
+		
+		basesIs.close();
+		basesOs.close();
+		
+		return bases
+				.getLiquidacion()
+				.get(0)
+				.getLiquidacionMes()
+				.get(0)
+				.getTrabajadores()
+				.getTrabajador()
+				.get(0)
+				.getTramos()
+				.getTramo()
+				;
 	}
 	// -------------------------------------------------------------------------
 	
@@ -2483,6 +2646,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		} catch ( AssertException e ) {
 			assertDatosSolicitado(datoSolicitados, "C", "613", "B");
 		}
+	}
+	private static void assertTramoIT15PrimerosDiasDiario(Tramo tramo) {
+		assertTramoIT15PrimerosDias(tramo);
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		assertDatosSolicitado(datoSolicitados, "I", "51", "P");
 	}
 
 	private static void assertTramoITPagoDelegado(Tramo tramo) {
@@ -2574,6 +2742,28 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		throw new AssertException("Dato Solicitado " + codigo + " Not Found");
 	}
 	
+	private static void assertDato( List<Dato> datos, String tipoDato, String codigo, String  valor) {
+		for ( Dato dato: datos ){
+			if ( dato.getCodigo().equals(codigo) ) {
+				Assert.assertEquals(tipoDato, dato.getTipoDato());
+				Assert.assertEquals(valor, dato.getValor());
+				return;
+			}
+		}
+		
+		throw new AssertException("Dato " + codigo + " Not Found");
+	}
+
+	private static void assertNoDato( List<Dato> datos, String tipoDato, String codigo) {
+		for ( Dato dato: datos ){
+			if ( dato.getCodigo().equals(codigo) ) {
+				throw new AssertException("Dato " + codigo + " Found");
+			}
+		}
+		return;
+		
+	}
+
 	private static int calculateAndSave(Connection connection,
 			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();

@@ -924,6 +924,17 @@ public class TrabajadoresTramos {
 		return data;
 	}
 	
+	private static String getContextData(String name, Salary salary, Date startDate, Date endDate, String def ) {
+		String data = getContextData(name, salary, startDate, endDate);
+		try {
+			Map <String,Object> context = ExcelFunctions.load( new HashMap<String,Object>());
+			data = ExpressionContext.eval(data.trim(), context, def.getClass());
+		} catch ( Exception e  ) {
+			// Default?
+		}
+		return data == null ? def : data ;
+	}
+
 	private static <T extends Object > T getContextData(String name, Salary salary, Date startDate, Date endDate, T def ) {
 		Map <String,Object> context = ExcelFunctions.load( new HashMap<String,Object>());
 		List<ContextData> datas= salary.getContextData(name, startDate, endDate);
