@@ -294,7 +294,10 @@ public class FxDialog extends CustomDialog {
 
 		setCaption("Asistente");
 
+		ensureDebugId("fxDialog");
+
 		setWidget(binder.createAndBindUi(this));
+		
 
 		for (Category category : Category.values()) {
 			categoryListBox.addItem(category.getName());

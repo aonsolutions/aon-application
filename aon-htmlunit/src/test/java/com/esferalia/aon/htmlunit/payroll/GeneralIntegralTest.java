@@ -22,6 +22,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
@@ -291,6 +292,39 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 	
+	@Test
+	public void TestDraftUserExpression() throws Exception {
+
+		if (!isDisplayed("user_expression,_/*user*/.../**/"))
+			open("draft");
+
+		wait4Id("user_expression,_/*user*/.../**/");
+
+		draft("USER EXPRESSION, /*user*/.../**/");
+		calculate(Calendar.getInstance().get(Calendar.MONTH));
+
+		getElementById("db-amount-label-1").focus();
+		wait4Value("db-amount-label-1", "PLUS_SALARIAL");
+		click("fxButton");
+		wait4Id("fxExpressionCodeArea");
+		Assert.assertEquals(((HtmlTextArea) getElementById("fxExpressionCodeArea")).getText(),"DIAS_TRABAJADOS / DIAS_MES * /*user*/PLUS_SALARIAL/**/" );
+		click("fxCancelButton");
+		
+		getElementById("db-amount-label-2").focus();
+		wait4Value("db-amount-label-2", "SALARIO_MENSUAL");
+		click("fxButton");
+		wait4Id("fxExpressionCodeArea");
+		Assert.assertEquals(((HtmlTextArea) getElementById("fxExpressionCodeArea")).getText(),"/*user*/SALARIO_MENSUAL/**/ * DIAS_TRABAJADOS / DIAS_MES " );
+		click("fxCancelButton");
+		 
+		
+		getElementById("db-amount-label-3").focus();
+		wait4Value("db-amount-label-3", "PLUS_DISPONIBILIDAD");
+		click("fxButton");
+		wait4Id("fxExpressionCodeArea");
+		Assert.assertEquals(((HtmlTextArea) getElementById("fxExpressionCodeArea")).getText(),"DIAS_TRABAJADOS * /*user*/ PLUS_DISPONIBILIDAD/**/ / DIAS_MES" );
+		click("fxCancelButton");
+	}
 	@Test
 	public void TestFiniquito() throws Exception {
 		

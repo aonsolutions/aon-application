@@ -115,7 +115,7 @@ public class AONMarker extends DocumentChangeHandler {
 	public static Pos getPos(String str, int index) {
 		int line = 0;
 		int ln = 0;
-		for (int i = 0; i <= index; i++) {
+		for (int i = 0; i <= index && i < str.length(); i++) {
 			if (str.charAt(i) == '\n') {
 				line += 1;
 				ln = i + 1;

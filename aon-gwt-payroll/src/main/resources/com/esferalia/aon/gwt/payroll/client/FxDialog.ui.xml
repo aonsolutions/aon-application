@@ -195,7 +195,7 @@
 						</g:row>
 						<g:row styleName="aon-width-al1 aon-height-al1">
 							<g:customCell colspan="3" class="aon-width-al1 aon-height-al1">
-								<aon:ExpressionCodeArea ui:field="expressionCodeArea"
+								<aon:ExpressionCodeArea ui:field="expressionCodeArea" debugId="fxExpressionCodeArea"
 									styleName="aon-width-a11 {style.height-all} gwt-TextArea {style.expression-TextArea}" />
 							</g:customCell>
 						</g:row>
@@ -204,7 +204,7 @@
 			</g:row>
 			<g:row>
 				<g:customCell styleName="aon-width-a11 {style.align-left}">
-					<g:Button ui:field="editButton"
+					<g:Button ui:field="editButton" debugId="fxEditButton"
 						styleName="aon-editDataTable-button aon-icon-edit-add" />
 				</g:customCell>
 				<g:customCell horizontalAlignment='ALIGN_RIGHT' >
@@ -213,10 +213,10 @@
 							<g:InlineLabel>&nbsp;</g:InlineLabel>
 						</g:cell>
 						<g:cell horizontalAlignment='ALIGN_RIGHT'>
-							<g:Button ui:field="cancelButton">Cancelar</g:Button>
+							<g:Button ui:field="cancelButton" debugId="fxCancelButton" >Cancelar</g:Button>
 						</g:cell>
 						<g:cell horizontalAlignment='ALIGN_RIGHT'>
-							<g:Button ui:field="acceptButton">Aceptar</g:Button>
+							<g:Button ui:field="acceptButton" debugId="fxAcceptButton">Aceptar</g:Button>
 						</g:cell>
 					</g:HorizontalPanel>
 				</g:customCell>
