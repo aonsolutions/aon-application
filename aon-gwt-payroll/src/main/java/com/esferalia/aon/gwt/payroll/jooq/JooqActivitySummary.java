@@ -404,7 +404,9 @@ public class JooqActivitySummary {
 					.select(CONTRACT.ID,
 							DSL.sum(DSL.field(
 									CONTRACT_LEAVE.TYPE
-											.eq((byte) LeaveType.COMMON_DISEASE
+											.in((byte) LeaveType.COMMON_DISEASE
+													.ordinal(),
+													(byte) LeaveType.COMMON_DISEASE_AT_LACK
 													.ordinal())).coerce(
 									Integer.class)),
 							DSL.sum(DSL
@@ -423,6 +425,8 @@ public class JooqActivitySummary {
 									.field(CONTRACT_LEAVE.TYPE.notIn(
 											(byte) LeaveType.COMMON_DISEASE
 													.ordinal(),
+											(byte) LeaveType.COMMON_DISEASE_AT_LACK
+												.ordinal(),
 											(byte) LeaveType.OCCUPATIONAL_DISEASE
 													.ordinal(),
 											(byte) LeaveType.MATERNITY
@@ -482,7 +486,9 @@ public class JooqActivitySummary {
 					.select(DOMAIN.ID,
 							DSL.sum(DSL.field(
 									CONTRACT_LEAVE.TYPE
-											.eq((byte) LeaveType.COMMON_DISEASE
+											.in((byte) LeaveType.COMMON_DISEASE
+													.ordinal(),
+													(byte) LeaveType.COMMON_DISEASE_AT_LACK
 													.ordinal())).coerce(
 									Integer.class)),
 							DSL.sum(DSL
@@ -500,6 +506,8 @@ public class JooqActivitySummary {
 							DSL.sum(DSL
 									.field(CONTRACT_LEAVE.TYPE.notIn(
 											(byte) LeaveType.COMMON_DISEASE
+													.ordinal(),
+											(byte) LeaveType.COMMON_DISEASE_AT_LACK
 													.ordinal(),
 											(byte) LeaveType.OCCUPATIONAL_DISEASE
 													.ordinal(),
@@ -593,14 +601,15 @@ public class JooqActivitySummary {
 	private static Condition getItCondition(boolean itCommonDisease,
 			boolean itOccupationalDisease, boolean itMaternity, boolean itOther) {
 		byte itCommonDiseaseType = (byte) LeaveType.COMMON_DISEASE.ordinal();
+		byte itCommonDiseaseAtLackType = (byte) LeaveType.COMMON_DISEASE_AT_LACK.ordinal();
 		byte itOccupationalDiseaseType = (byte) LeaveType.OCCUPATIONAL_DISEASE
 				.ordinal();
 		byte itMaternityType = (byte) LeaveType.MATERNITY.ordinal();
 		byte itPaternityType = (byte) LeaveType.PATERNITY.ordinal();
 
 		Condition cond = null;
-		cond = itCommonDisease ? CONTRACT_LEAVE.TYPE.eq(itCommonDiseaseType)
-				: CONTRACT_LEAVE.TYPE.ne(itCommonDiseaseType);
+		cond = itCommonDisease ? CONTRACT_LEAVE.TYPE.in(itCommonDiseaseType, itCommonDiseaseAtLackType)
+				: CONTRACT_LEAVE.TYPE.notIn(itCommonDiseaseType, itCommonDiseaseAtLackType);
 		cond = itOccupationalDisease ? cond.or(CONTRACT_LEAVE.TYPE
 				.eq(itOccupationalDiseaseType)) : cond.and(CONTRACT_LEAVE.TYPE
 				.ne(itOccupationalDiseaseType));

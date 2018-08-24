@@ -267,13 +267,16 @@ public class SalaryDraft extends ResizeComposite
 			"REDUCCION_CGC_E_01", "REDUCCION_CGC_E_02",
 
 			"BASE_ESTR", "BASE_NESTR", "TOTAL_DEVENGADO", // internals
-			"ECSS", "DIAS_IT", "DIAS_ENFERMEDAD_COMUN_4_15", // internals
-			"DIAS_MATERNIDAD", "DIAS_ENFERMEDAD_PROFESIONAL", // internals
+			"ECSS", "DIAS_IT", 
+			"DIAS_ENFERMEDAD_COMUN_4_15", // internals
+			"DIAS_MATERNIDAD", 
+			"DIAS_ENFERMEDAD_PROFESIONAL", // internals
 			"DIAS_ENFERMEDAD_COMUN_1_3", // internals
 			"DIAS_ENFERMEDAD_COMUN_16_20", // internals
 			"DIAS_ENFERMEDAD_COMUN_21", // internals
 			"DIAS_ENFERMEDAD_COMUN_366", // internals
 			"DIAS_ENFERMEDAD_PROFESIONAL_366", // internals
+			"DIAS_ENFERMEDAD_COMUN_CARENCIA", // internals
 			"DIAS_ERE", "DIAS_PATERNIDAD", // internals
 			"DIAS_TRABAJADOS", 
 

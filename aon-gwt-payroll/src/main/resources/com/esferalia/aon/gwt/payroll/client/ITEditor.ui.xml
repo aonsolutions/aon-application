@@ -145,6 +145,10 @@
 						<g:HTML  styleName="{style.legend-icon} {style.paternity}" 
 						    title="Baja por Paternidad"/>		
 						<g:InlineLabel styleName="{style.legend-caption}" >Paternidad</g:InlineLabel>		
+
+						<g:HTML  styleName="{style.legend-icon} {style.common}" 
+						    title="Enfermedad Com&uacute;n, Periodo de Carencia"/>		
+						<g:InlineLabel styleName="{style.legend-caption}" >Enfermedad Com&uacute;n, Periodo de Carencia</g:InlineLabel>		
 					
 					</g:HorizontalPanel>				
 					

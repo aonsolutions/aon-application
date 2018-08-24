@@ -666,6 +666,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							exprCtx.setVariable(ContextVariable.COMMON_DISEASE_DAYS, 0, guarenteeStart, guarenteeEnd);
 							return null;
 						}
+						
+						@Override
+						public Void visitCommonDiseaseAtLack(LeaveType leaveType) {
+							exprCtx.setVariable(ContextVariable.COMMON_DISEASE_LACK_DAYS, 0, guarenteeStart, guarenteeEnd);
+							return null;
+						}
 
 						@Override
 						public Void visitOcupationalDisease(LeaveType leaveType) {
@@ -4584,7 +4590,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				return null;
 			}
-
+			
+			
+			@Override
+			public Double visitCommonDiseaseAtLack(LeaveType leaveType) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
 			@Override
 			public Double visitOcupationalDisease(LeaveType leaveType) {
 				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente

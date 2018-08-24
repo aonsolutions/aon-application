@@ -4344,6 +4344,51 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals( 1750.00 * 25.00/30.00, salary.getTotalPayment());
 
 	}
+
+	@Test
+	public void testCommonDiseaseAtLackI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGC=%f\r\n', BASE_CGC);BASE_CGC * 4.70 / 100"
+				}, null);
+		//@formatter:on
+		addPrestITs(aonContext, contract);
+		
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE_AT_LACK, startITDate,
+				null, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		Assert.assertEquals( 1750.00 * 10 / monthDays , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+
+		Assert.assertEquals( salary.getCommonBase() * 4.70d/100, salary.getTotalDeduction(), DELTA);
+
+	}
 	// ------------------------------------------------------------------------
 	
 
@@ -4371,6 +4416,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("DIAS_ENFERMEDAD_PROFESIONAL_366 * 0.00",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				"DIAS_ENFERMEDAD_COMUN_CARENCIA * 0.00",
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 		return prestIT;

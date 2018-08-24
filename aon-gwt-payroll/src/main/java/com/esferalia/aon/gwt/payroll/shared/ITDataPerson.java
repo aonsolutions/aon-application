@@ -20,7 +20,9 @@ public class ITDataPerson implements Serializable, Comparable {
 		PATERNITY("Paternidad"),
 		PREGNANCY_RISK("Riesgo Durante Embarazo"),
 		BREASTFEEDING_RISK("Lactancia Materna"),
-		NON_OCCUPATIONAL_DISEASE("Enfermedad No Profesional");
+		NON_OCCUPATIONAL_DISEASE("Enfermedad No Profesional"),
+		COMMON_DISEASE_AT_LACK("Enfermedad Com\u00FAn Periodo de Carencia"),
+		;
 		
 		private String description;
 		

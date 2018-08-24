@@ -1228,7 +1228,10 @@ public class SalaryDraftBuilder
 				.matches(String.format("%s_\\d+_\\d+",
 						ContextVariable.COMMON_DISEASE_DAYS))
 				|| name.matches(String.format("%s_\\d+_\\d+",
-						ContextVariable.OCCUPATIONAL_DISEASE_DAYS));
+						ContextVariable.OCCUPATIONAL_DISEASE_DAYS))
+				|| name.matches(String.format("%s",
+						ContextVariable.COMMON_DISEASE_LACK_DAYS))
+				;
 
 	}
 	

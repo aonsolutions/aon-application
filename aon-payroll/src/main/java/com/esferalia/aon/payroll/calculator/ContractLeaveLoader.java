@@ -308,6 +308,13 @@ public class ContractLeaveLoader {
 
 				return null;
 			}
+			
+			@Override
+			public Void visitCommonDiseaseAtLack(LeaveType leaveType) {
+				exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
+				exprCtx.setVariable(ContextVariable.COMMON_DISEASE_LACK_DAYS, leaveDays, start, end);
+				return null;
+			}
 
 			@Override
 			public Void visitOcupationalDisease(LeaveType leaveType) {

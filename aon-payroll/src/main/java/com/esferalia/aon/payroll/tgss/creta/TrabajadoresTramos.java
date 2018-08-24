@@ -406,6 +406,21 @@ public class TrabajadoresTramos {
 							}
 							
 							@Override
+							public void visitIncapacidadTemporalPagoDirecto() {
+								// 2.2 Situaciones de Incapacidad Temporal  
+								// 2.2.2 Incapacidad Temporal pago directo 
+								// Base de contingencias comunes en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("509");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de IT
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("603");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							@Override
 							public void visitIncapacidadTemporalATEPPagoDelegado() {
 								// 2.2 Situaciones de Incapacidad Temporal  
 								// 2.2.3 Incapacidad Temporal de AT Y EP pago delegado 
@@ -564,6 +579,10 @@ public class TrabajadoresTramos {
 					state = itDelegate;
 				}
 
+				public void visitIncapacidadTemporalPagoDirecto() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
 				@Override
 				public void visitIncapacidadTemporalATEPPagoDelegado() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
@@ -615,6 +634,11 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitIncapacidadTemporalPagoDirecto() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
 				public void visitIncapacidadTemporalATEPPagoDelegado() {
 					visitOthers();
 				}
@@ -662,6 +686,12 @@ public class TrabajadoresTramos {
 				public void visitIncapacidadTemporalPagoDelegado() {
 					Period last = cretaPeriods.removeLast();
 					cretaPeriods.add(new Period(last.getStart(), period.getEnd()));
+				}
+
+
+				@Override
+				public void visitIncapacidadTemporalPagoDirecto() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
 
 				@Override
@@ -715,6 +745,11 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitIncapacidadTemporalPagoDirecto() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
 				public void visitIncapacidadTemporalATEPPagoDelegado() {
 					visitOthers();
 				}
@@ -762,6 +797,11 @@ public class TrabajadoresTramos {
 			@Override
 			public void visitIncapacidadTemporalPagoDelegado() {
 				state.visitIncapacidadTemporalPagoDelegado();
+			}
+
+			@Override
+			public void visitIncapacidadTemporalPagoDirecto() {
+				state.visitIncapacidadTemporalPagoDirecto();
 			}
 
 			@Override
@@ -826,6 +866,7 @@ public class TrabajadoresTramos {
 		void visitGrupoCotizacionDiario();
 		void visitIncapacidadTemporal15PrimerosDias();
 		void visitIncapacidadTemporalPagoDelegado();
+		void visitIncapacidadTemporalPagoDirecto();
 		void visitIncapacidadTemporalATEPPagoDelegado();
 		void visitMaternidadPaternidadTiempoCompleto();
 		void visitMaternidadPaternidadTiempoParcial();
@@ -867,6 +908,10 @@ public class TrabajadoresTramos {
 		boolean partialPaternity = 
 		getContextData(ContextVariable.PATERNITY_FACTOR.getName(), salary, startDate, endDate, 1.00)
 		 < 1.00;
+		
+		boolean iTPagoDirecto = (
+		getSumContextData(ContextVariable.COMMON_DISEASE_LACK_DAYS.getName(), salary, startDate, endDate)
+		) > 0.00;
 
 		boolean tiempoCompleto = fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
 
@@ -884,6 +929,8 @@ public class TrabajadoresTramos {
 			visitor.visitMaternidadPaternidadTiempoParcial();
 		else if ( atEPPagoDelegado )
 			visitor.visitIncapacidadTemporalATEPPagoDelegado();
+		else if ( iTPagoDirecto )
+			visitor.visitIncapacidadTemporalPagoDirecto();
 		else if (tiempoCompleto)
 			visitor.visitTiempoCompletoNormal();
 		else 

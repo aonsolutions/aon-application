@@ -269,7 +269,8 @@ public class FDIWriter implements Serializable {
 		if(dit.getCausa()==null){
 			dit.setCausa("00");
 		}
-		if (detail.getContractLeave().getType() == LeaveType.COMMON_DISEASE) {
+		if (detail.getContractLeave().getType() == LeaveType.COMMON_DISEASE || 
+				detail.getContractLeave().getType() == LeaveType.COMMON_DISEASE_AT_LACK) {
 //			1	Enfermedad común		
 			dit.setContingencia(T35.T35_1.getCode());
 		} else if (detail.getContractLeave().getType() == LeaveType.NON_OCCUPATIONAL_DISEASE) {

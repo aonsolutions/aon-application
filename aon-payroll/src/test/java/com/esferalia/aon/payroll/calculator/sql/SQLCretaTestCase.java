@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_LACK_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -2365,6 +2366,61 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testCretaTrabajadoresYTramosITLack15Days()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, DAY_OF_MONTH, 10);
+		Date endIT = add(startIT, DAY_OF_MONTH, 14);
+		
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE_AT_LACK, 
+				startIT, 
+				endIT, 
+				null/*1750.00/30*/);
+		//@formatter:on
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		
+		Assert.assertEquals(3, tramos.size());
+		
+		//Activo
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("10", tramo0.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo0);
+		
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("25", tramo1.getFechaHasta().getDia());
+		assertTramoITPagoDirecto(tramo1);
+		
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("26", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo2);
+
+		
+
+	}
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
@@ -2465,6 +2521,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s",  COMMON_DISEASE_LACK_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		
 		PaymentConceptRecord mtnad = addConcept(aonContext, "MTNAD");
 
 		addPayment(aonContext, contract, mtnad, 
@@ -2476,6 +2537,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				String.format("0.00 * %s",  PATERNITY_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
+
 		//@formatter:on
 		return contract;
 	}
@@ -2637,6 +2699,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 	// -------------------------------------------------------------------------
 	
+	private static void assertTramoITPagoDirecto(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		
+		assertDatosSolicitado(datoSolicitados, "C", "509", "B");
+		try {
+			assertDatosSolicitado(datoSolicitados, "C", "603", "B");
+		} catch ( AssertException e ) {
+			assertDatosSolicitado(datoSolicitados, "C", "613", "B");
+		}
+	}
+
 	private static void assertTramoIT15PrimerosDias(Tramo tramo) {
 		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
 		
