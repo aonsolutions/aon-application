@@ -2,7 +2,9 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.CRETA_BASES;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,8 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-
-import org.apache.commons.io.IOUtils;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
@@ -40,7 +40,7 @@ public class SaveServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		byte data [] = IOUtils.toByteArray(req.getInputStream());
+		byte data [] = toByteArray(req.getInputStream());
 		try {
 			save(req, CRETA_BASES, data);
 		} catch (SQLException e) {
@@ -52,7 +52,7 @@ public class SaveServlet extends HttpServlet {
 	// ------------------------------------------------------------------------
 	
 	private static void save(HttpServletRequest req, Part part)   throws SQLException, IOException {
-		byte data [] = IOUtils.toByteArray(part.getInputStream());
+		byte data [] = toByteArray(part.getInputStream());
 		save(req,CRETA_BASES,  data);
 	}
 
@@ -109,5 +109,19 @@ public class SaveServlet extends HttpServlet {
 
 		return (attach != null && attach.getId() != null ) ;
 	}
+	
+	
+
+
+	private static byte[] toByteArray(InputStream is) throws IOException {
+	    ByteArrayOutputStream os = new ByteArrayOutputStream(); 
+	    byte[] buffer = new byte[0x0FFF];
+	    for (int len = is.read(buffer); len != -1; len = is.read(buffer)) { 
+	        os.write(buffer, 0, len);
+	    }
+	    return os.toByteArray();
+	}
+
+	
 	
 }
