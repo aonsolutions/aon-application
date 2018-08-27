@@ -2115,7 +2115,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel) {
-		MergeEditor mergeEditor = new MergeEditor();
+		MergeEditor mergeEditor = new MainCreta.BasesMergeEditor();
 		mergeEditor.setOrig(result.getBasesFile());
 		mergeEditor.setMode("text/xml");
 		mergeEditor.setFoldGutter(true);
@@ -2139,7 +2139,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
 			} catch ( NoSuchElementException e2 ){
-				FileEditor basesEditor = new FileEditor();
+				FileEditor basesEditor = new MainCreta.BasesFileEditor();
 				basesEditor.setMode("text/xml");
 				basesEditor.setFoldGutter(true);
 				basesEditor.setLineNumbers(true);

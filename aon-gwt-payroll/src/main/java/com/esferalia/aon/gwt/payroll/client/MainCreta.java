@@ -46,6 +46,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
 import com.esferalia.aon.gwt.payroll.shared.HttpException;
 import com.esferalia.aon.gwt.payroll.shared.Province;
+import com.esferalia.aon.gwt.payroll.shared.SaveService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -222,8 +223,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	@Override
 	public void onModuleLoad() {
-
-
+		
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
@@ -509,15 +509,32 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			MainCreta.this.showResultsPanel();
 		}
 	}
+	
+	protected static class BasesFileEditor extends FileEditor {
+		@Override
+		void onSaveClick(ClickEvent event) {
+			super.onSaveClick(event);
+			submit(SaveService.SAVE_URL+ "/" + CretaService.File.BASES, codeArea.getText());
+		}
+		
+	}
 
+	protected  static class BasesMergeEditor extends MergeEditor {
+		@Override
+		void onSaveClick(ClickEvent event) {
+			super.onSaveClick(event);
+			submit(SaveService.SAVE_URL+ "/" + CretaService.File.BASES, mergeArea.getText());
+		}
+	}
 	private abstract class BaseCretaDetail extends CretaDetail {
 
 		@Override
 		public void onBases(CretaService.JsBasesResult result) {
 			
+			Window.alert("onBases()");
 			
 
-			MergeEditor mergeEditor = new MergeEditor();
+			MergeEditor mergeEditor = new BasesMergeEditor();
 			mergeEditor.setOrig(result.getBasesFile());
 			mergeEditor.setMode("text/xml");
 			mergeEditor.setFoldGutter(true);
@@ -548,7 +565,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
 				} catch ( NoSuchElementException e2 ){
-					FileEditor basesEditor = new FileEditor();
+					FileEditor basesEditor = new BasesFileEditor();
 					basesEditor.setMode("text/xml");
 					basesEditor.setFoldGutter(true);
 					basesEditor.setLineNumbers(true);
@@ -1566,6 +1583,30 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	// ------------------------------------------------------------------------
 
+	protected static void submit(String url, String xml) {
+		XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
+		
+		//be silent
+		//xmlHttpRequest.setOnReadyStateChange(handler); 
+
+		xmlHttpRequest.open("POST", url);
+
+		xmlHttpRequest.setRequestHeader("Content-Type", "text/xml");
+
+		StringBuffer requestBuffer = new StringBuffer();
+		// We said it's form data (it could be something else)
+		requestBuffer.append("Content-Disposition: attachment\r\n");
+		requestBuffer.append("Content-Lengh: "+xml.length()+"\r\n");
+		// There is always a blank line between the meta-data and the data
+		requestBuffer.append("\r\n");
+		requestBuffer.append(xml);
+		requestBuffer.append("\r\n");
+
+
+		xmlHttpRequest.send(requestBuffer.toString());
+	}
+
+
 	protected static void submit(String url, Map<String, Collection<String>> datas, Collection<JsFile> jsFiles,
 			final AsyncCallback<JsBasesResult> cb) {
 
@@ -1648,6 +1689,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		xmlHttpRequest.send(requestBuffer.toString());
 
 	}
+
 
 	protected static void __sync(final AsyncCallback<Void> cb) {
 

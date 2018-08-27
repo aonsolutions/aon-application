@@ -24,7 +24,9 @@ public enum RegistryAttachmentType {
 	REPORT_BACKGROUND,
 	CRETA_RESPUESTA,
 	CRETA_TRABAJADORES_Y_TRAMOS,
-	SYSTEM_MESSAGE;
+	SYSTEM_MESSAGE,
+	CRETA_BASES
+	;
 	
 	public byte value() {
 		return (byte) this.ordinal();
