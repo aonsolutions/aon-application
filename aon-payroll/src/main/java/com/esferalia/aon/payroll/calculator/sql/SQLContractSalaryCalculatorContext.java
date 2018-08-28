@@ -21,6 +21,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EVERYTHING;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GENDER;
@@ -36,6 +37,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
@@ -51,6 +53,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.REGULATORY_B
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SELF;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SENIORITY;
@@ -60,11 +63,15 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SHORT_CONTRA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
@@ -385,6 +392,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			put(THURSDAY, THURSDAY_HOURS);
 			put(FRIDAY, FRIDAY_HOURS);
 			put(SATURDAY, SATURDAY_HOURS);
+		}
+	};
+
+	private static final Map<Integer, ContextVariable> WEEK_DAYS_VARIABLES = new HashMap<Integer, ContextVariable>() {
+		{
+			put(SUNDAY, SUNDAY_DAYS);
+			put(MONDAY, MONDAY_DAYS);
+			put(TUESDAY, TUESDAY_DAYS);
+			put(WEDNESDAY, WEDNESDAY_DAYS);
+			put(THURSDAY, THURSDAY_DAYS);
+			put(FRIDAY, FRIDAY_DAYS);
+			put(SATURDAY, SATURDAY_DAYS);
 		}
 	};
 
@@ -3997,6 +4016,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			} else {
 				onRedefinedImplicit(QUOTE_DAYS.getName(), userActualDays, actualDays);
 			}
+			
+			class WeekDays implements ITimedVariable<Double> {
+				private int dayOfWeek;
+				
+				WeekDays(int weekDay ) {
+					this.dayOfWeek = weekDay;
+				}
+				
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return p.daysStream()
+							.filter(d -> d.get(DAY_OF_WEEK) == dayOfWeek )
+							.collect(Collectors.summingDouble(d -> 1.00));
+				}
+
+			};
+			
+			for ( Map.Entry<Integer, ContextVariable> var : WEEK_DAYS_VARIABLES.entrySet())
+				ctx.putVariable(var.getValue(), new WeekDays(var.getKey()));
+			
 		}
 
 	}
