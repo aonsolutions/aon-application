@@ -60,6 +60,7 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
 import com.esferalia.aon.js.payroll.client.Reports;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -4770,8 +4771,11 @@ public class SalaryDraft extends ResizeComposite
 			Deduction.Type type = cost.getType();
 
 			String description = COSTS_DESCRIPTIONS.get(cost.getName());
-			if (description == null)
-				description = type != null ? type.getDescription() : cost.getDescription();
+			if (AonStringUtils.isBlank(description))
+				description = cost.getDescription();
+			if (AonStringUtils.isBlank(description))
+				description = type != null ? type.getDescription() : Deduction.Type.OTHER.getDescription();
+			
 
 			dumpSystemDeduction(cost, percent, description, beforeRow + i, null, AON.AON_ICON_COST,
 					AON.AON_EDIT_DATA_TABLE_BUTTON, AON.AON_PADDING_LEFT);
@@ -5445,7 +5449,8 @@ public class SalaryDraft extends ResizeComposite
 		for (Deduction.Type type : SYSTEM_DEDUCTION)
 			if (type == deduction.getType())
 				return true;
-		return false;
+		
+		return deduction.getScope() == Scope.SYSTEM;
 	}
 
 	private static Double getDbPercent(Deduction deduction, SalaryDraftObject draftObject) {

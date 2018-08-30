@@ -266,10 +266,12 @@ public abstract class AbstractSQLTestCase {
 			DeductionType type, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
-		aonContext.getDslContext().insertInto(SYSTEM_COST).set(SYSTEM_COST.CODE, code)
+		aonContext.getDslContext().insertInto(SYSTEM_COST)
+				.set(SYSTEM_COST.CODE, code)
 				.set(SYSTEM_COST.START_DATE, startDate)
 				.set(SYSTEM_COST.TYPE, (byte) (type != null ? type.ordinal() : DeductionType.OTHER.ordinal()))
-				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal()).set(SYSTEM_COST.EXPRESSION, expression)
+				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal())
+				.set(SYSTEM_COST.EXPRESSION, expression)
 				.execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
@@ -340,7 +342,8 @@ public abstract class AbstractSQLTestCase {
 
 		aonContext.getDslContext().insertInto(SYSTEM_DEDUCTION)
 
-				.set(SYSTEM_DEDUCTION.START_DATE, startDate).set(SYSTEM_DEDUCTION.EXPRESSION, expression)
+				.set(SYSTEM_DEDUCTION.START_DATE, startDate)
+				.set(SYSTEM_DEDUCTION.EXPRESSION, expression)
 				.set(SYSTEM_DEDUCTION.DOMAIN, (-1) * ssRegimetype.ordinal())
 				.set(SYSTEM_DEDUCTION.TYPE,
 						(byte) (deductionType != null ? deductionType.ordinal() : DeductionType.OTHER.ordinal()))
@@ -348,6 +351,7 @@ public abstract class AbstractSQLTestCase {
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
+
 
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");

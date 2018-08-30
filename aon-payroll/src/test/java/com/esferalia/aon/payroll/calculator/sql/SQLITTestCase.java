@@ -4392,7 +4392,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	// ------------------------------------------------------------------------
 	
 
-	protected PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
+	protected static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
 		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),

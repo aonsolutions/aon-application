@@ -298,6 +298,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String PRORATION = "PRORRATEAR";
 	public static final String FRACTIONATE = "FRACCIONAR";
 	
+	public static final String GEROA = "GEROA";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";
 	public static final String BASE_SALARY = "SALARIO_BASE";
