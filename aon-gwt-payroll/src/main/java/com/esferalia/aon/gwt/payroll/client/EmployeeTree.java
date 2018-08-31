@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.gwt.payroll.client.MainCreta.BasesCCCCretaRequestCommand;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -49,6 +50,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -65,6 +67,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -562,7 +565,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				final Collection<CCC> cccs,
 				final boolean basesMesAnterior,
 				final boolean calcsDetailed,
-				final String i54 ) {
+				final String i54, 
+				final boolean reftificativa) {
 			StringBuffer requestDataBuffer = new StringBuffer();
 
 			requestDataBuffer.append("&" + Parameter.TIPO + "=" + tipo);
@@ -586,6 +590,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			if (calcsDetailed)
 				requestDataBuffer.append(
 						"&" + Parameter.CALCULOS_DESGLOSADOS + "=on");
+
+			if (reftificativa)
+				requestDataBuffer.append(
+						"&" + Parameter.INDICADOR_RECTIFICACION + "=on");
 
 			requestDataBuffer.append("&" + Parameter.I54 + "=" + i54);
 
@@ -842,10 +850,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			boolean basesMesAnterior = dialog.previousBases();
 			boolean calcsDetailed = dialog.calcsDetailed();
 			String i54 = dialog.getI54();
+			boolean reftificationMark = dialog.reftificationMark();
 
-			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, ccs, basesMesAnterior, calcsDetailed, i54);
+			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, ccs, basesMesAnterior, calcsDetailed, i54, reftificationMark);
 
 			return true;
+		}
+
+		// --------------------------------------------------------------------
+		
+		public void reexecute(Consumer<CretaRequestDialog<CCC>> consumer) {
+			consumer.accept(dialog);
+			onAccept(dialog);
 		}
 
 		// --------------------------------------------------------------------
@@ -862,6 +878,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				public void visitBases(Void t, Void l) throws RuntimeException {
 					// TODO: add TypeChangeHadler to CretaRequestDialog? 
 					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
+					dialog.setVisibleReftificationMark(true);
 				}
 
 				@Override
@@ -1275,7 +1292,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 							employeeDetail, fileEditor){
 				
 				protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth, int toYear, String tipo, java.util.Collection<CCC> cccs) {
-					JsBasesResult result = showBases(json, detailPanel);
+					JsBasesResult result = showBases(json, detailPanel, this);
 					showResults(result, 
 							resultsPanel, 
 							r -> { /*TODO: */},  
@@ -2154,6 +2171,70 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		
 	}
 	
+	protected static JsBasesResult showBases(String json , DetailPanel detailPanel, CreateRequestCommand cretaCommand) {
+		JsBasesResult result = eval("(" + json + ")");
+		showBases(result, detailPanel, cretaCommand);
+		return result;
+	}
+
+	protected static JsBasesResult showBases(String json , DetailPanel detailPanel, BasesCCCCretaRequestCommand cretaCommand) {
+		JsBasesResult result = eval("(" + json + ")");
+		showBases(result, detailPanel, cretaCommand);
+		return result;
+	}
+
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, ClickHandler clickHandler) {
+		MergeEditor mergeEditor = new MainCreta.BasesMergeEditor();
+		mergeEditor.setOrig(result.getBasesFile());
+		mergeEditor.setMode("text/xml");
+		mergeEditor.setFoldGutter(true);
+		mergeEditor.setLineNumbers(true);
+		mergeEditor.setOrig(result.getBasesFile());
+
+		try {
+			
+			mergeEditor.setText(result.getChangedBasesFile());
+			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+			detailPanel.setWidget(mergeEditor);
+			mergeEditor.autoRefresh();
+
+		} catch (NoSuchElementException e1) {
+			try {
+				mergeEditor.setShowDifferences(false);
+				mergeEditor.setText(result.getDraftRequestFile());
+				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				detailPanel.setWidget(mergeEditor);
+				mergeEditor.autoRefresh();
+			} catch ( NoSuchElementException e2 ){
+				FileEditor basesEditor = new MainCreta.BasesFileEditor();
+				basesEditor.setMode("text/xml");
+				basesEditor.setFoldGutter(true);
+				basesEditor.setLineNumbers(true);
+				basesEditor.setText(result.getBasesFile());
+				basesEditor.setTitle(CretaService.File.BASES.getFilename());
+				basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				detailPanel.setWidget(basesEditor);
+				basesEditor.autoRefresh();
+
+				CheckBox reftification = new CheckBox("Reftificativa");
+				reftification.setValue(result.isRectifying());
+				reftification.setStyleName("aon-finding-toolbar-item");
+				reftification.addClickHandler(clickHandler );
+				basesEditor.add(reftification);
+			}
+		}	
+	}
+
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, CreateRequestCommand cretaCommand) {
+		showBases(result, detailPanel, e->cretaCommand.reexecute(d-> {d.reftificationMarkCheckBox.setValue(!result.isRectifying());}));
+	}
+
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, BasesCCCCretaRequestCommand cretaCommand) {
+		showBases(result, detailPanel, e->cretaCommand.reexecute(d-> {d.reftificationMarkCheckBox.setValue(!result.isRectifying());}));
+	}
+
 	protected static void showResults(
 			JsBasesResult result, 
 			Set<JsFile> jsFiles, 

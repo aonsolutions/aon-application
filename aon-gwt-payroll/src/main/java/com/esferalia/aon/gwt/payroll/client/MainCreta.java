@@ -773,7 +773,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						@Override
 						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
 								int toYear, String tipo, Collection<CCC> cccs) {
-							JsBasesResult result = showBases(json, detailPanel);
+							JsBasesResult result = showBases(json, detailPanel, this);
 							showResults(result, 
 									resultsPanel, 
 									r -> { /*TODO: */},  
@@ -891,7 +891,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						@Override
 						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
 								int toYear, String tipo, Collection<CCC> cccs) {
-							JsBasesResult result = showBases(json, detailPanel);
+							JsBasesResult result = showBases(json, detailPanel,this);
 							showResults(result, 
 									resultsPanel, 
 									r -> { /*TODO: */},  
@@ -1093,7 +1093,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						@Override
 						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
 								int toYear, String tipo, Collection<CCC> cccs) {
-							JsBasesResult result = showBases(json, detailPanel);
+							JsBasesResult result = showBases(json, detailPanel, this);
 							showResults(result, 
 									resultsPanel, 
 									r -> { /*TODO: */},  
@@ -1139,7 +1139,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class BasesCCCCretaRequestCommand extends CretaCommand
+	protected class BasesCCCCretaRequestCommand extends CretaCommand
 		implements CretaRequestDialog.Callback<Employee>, CCCCommand {
 		
 		private CCC ccc;
@@ -1148,12 +1148,17 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		public BasesCCCCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
 			dialog = new CretaRequestDialog.CretaEmployeeRequestDialog(this) {
+				
+				
+				
 				@Override
 				void onMonthChanged( ChangeEvent e ){
 					BasesCCCCretaRequestCommand.this.onMonthChanged(monthListBox.getSelected());
 				}
 				
 			};
+			dialog.setVisibleReftificationMark(true);
+			dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
 		}
 
 		// ---------------------------------------------------------- CCCCommand
@@ -1188,6 +1193,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			boolean basesMesAnterior = dialog.previousBases();
 			boolean calcsDetailed = dialog.calcsDetailed();
 			String i54 = dialog.getI54();
+			boolean reftificationMark = dialog.reftificationMark();
+			
 
 			CCC cccCopy  = new CCC();
 			cccCopy.setId(ccc.getId());
@@ -1207,11 +1214,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				Collections.singleton(cccCopy), 
 				basesMesAnterior, 
 				calcsDetailed,
-				i54);
+				i54,
+				reftificationMark);
 
 			return true;
 		}
 		
+		// --------------------------------------------------------------------
+		
+		public void reexecute(Consumer<CretaRequestDialog<Employee>> consumer) {
+			consumer.accept(dialog);
+			onAccept(dialog);
+		}
+
 		void onMonthChanged( Date month ){
 			List<Employee> employees = new LinkedList<Employee>();
 			for ( Employee e: ccc.getEmployees() ) {
@@ -1372,7 +1387,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						@Override
 						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
 								int toYear, String tipo, Collection<CCC> cccs) {
-							JsBasesResult result = showBases(json, detailPanel);
+							JsBasesResult result = showBases(json, detailPanel, this);
 							showResults(result, 
 									resultsPanel, 
 									r -> { /*TODO: */},  
