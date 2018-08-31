@@ -617,5 +617,14 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 				new AsyncCallbackWrapper<List<SSBonusData>>(callback));
 		
 	}
+
+	@Override
+	public void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
+			AsyncCallback<EmployeeInfoDataBase> callback) {
+		AON.start();
+		employeesServiceAsync.createEmployeeContract(newEmployeeInfo,
+				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
+		
+	}
 	
 }

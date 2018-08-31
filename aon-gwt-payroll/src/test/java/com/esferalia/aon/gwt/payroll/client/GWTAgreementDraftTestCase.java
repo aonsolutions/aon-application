@@ -142,6 +142,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			
 		}
 
+		@Override
+		public void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
+				AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		
 	}
 
@@ -260,6 +267,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
 							AsyncCallback<List<SSBonusData>> asyncCallback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
+							AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
 						// TODO Auto-generated method stub
 						
 					}

@@ -150,6 +150,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
+					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

@@ -187,4 +187,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
 
+	void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
+			AsyncCallback<EmployeeInfoDataBase> asyncCallback);
+
 }

@@ -165,9 +165,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	class NewEmployeeCommand implements ScheduledCommand {
+		private EmployeesServiceAsync employeesService;
+		private EnterprisesServiceAsync enterprisesService;
+		
 		@Override
 		public void execute() {
-
+			// Create a remote service proxy to talk to the server-side Employees
+			// service.
+			EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
+			employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
+			
+			EnterprisesServiceAsync enterprisesServiceRaw = GWT.create(EnterprisesService.class);
+			enterprisesService = new EnterprisesServiceAsyncDecorator(enterprisesServiceRaw);
+			
+			EmployeeNewDraftObject employeeNewDraftObject = new EmployeeNewDraftObject(workplace, employeesService, enterprisesService);
+			onEmployeeNewDraftSelected(employeeNewDraftObject);
 		}
 	}
 
@@ -1242,7 +1254,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					getHTML("Contrato", AON.AON_ICON_EMPLOYEE,
 							AON.AON_ICON_CMD_BUTTON),
 					true, new NewEmployeeCommand());
-			newEmployeeItem.setEnabled(false);
+			newEmployeeItem.setEnabled(true);
 
 			MenuItem newItem = addItem("Nuevo", newPopup, AON.AON_ICON_RESET,
 					AON.AON_ICON_CMD_BUTTON);
@@ -1531,6 +1543,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private EventsDraft eventsDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
 	private EmployeeDraft employeeDraft;
+	private EmployeeNewDraft employeeNewDraft;
 	private SSBonusDraft ssBonusDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
 	private CategoryDraft categoryDraft;
@@ -1877,6 +1890,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 	
 	@Override
+	public void onEmployeeNewDraftSelected(EmployeeNewDraftObject employeeNewDraftObject) {
+		employeeDetail.setWidget(getEmployeeNewDraft());
+		getEmployeeNewDraft().setEmployeeNewDraftObject(employeeNewDraftObject);
+	}
+	
+	@Override
 	public void onSSBonusDraftSelected(SSBonusDraftObject ssBonusDraftObject) {
 		employeeDetail.setWidget(getSSBonusDraft());
 		getSSBonusDraft().setSSBonusDraftObject(ssBonusDraftObject);
@@ -2057,6 +2076,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (employeeDraft == null)
 			employeeDraft = new EmployeeDraft();
 		return employeeDraft;
+	}
+	
+	private EmployeeNewDraft getEmployeeNewDraft() {
+		if (employeeNewDraft == null)
+			employeeNewDraft = new EmployeeNewDraft();
+		return employeeNewDraft;
 	}
 	
 	private SSBonusDraft getSSBonusDraft() {

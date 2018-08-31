@@ -603,6 +603,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public EmployeeInfoDataBase createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	

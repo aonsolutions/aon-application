@@ -4930,6 +4930,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	@Override
+	public EmployeeInfoDataBase createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo) {
+		Connection connection = null;
+		initFacesContext();
+		try {
+			connection = AonServletUtils.getConnection();
+			return JooqEmployee.createEmployeeContract(connection, newEmployeeInfo);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+				releaseFacesContext();
+			}
+		}
+	}
 
 	@Override
 	public List<SSBonusData> getEmployeeSSBonuses(Integer contractId) {
@@ -4970,6 +4990,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+
+	
 
 
 }

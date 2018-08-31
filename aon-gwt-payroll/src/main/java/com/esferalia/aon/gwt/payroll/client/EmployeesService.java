@@ -166,4 +166,6 @@ public interface EmployeesService extends RemoteService, CalendarService, Employ
 
 	List<SSBonusData> setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses);
 
+	EmployeeInfoDataBase createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo);
+
 }

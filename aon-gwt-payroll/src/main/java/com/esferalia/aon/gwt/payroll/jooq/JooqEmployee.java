@@ -3,25 +3,26 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
+import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
-import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
-import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -37,9 +38,14 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
+import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RbankRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 
 public class JooqEmployee {
 
@@ -51,6 +57,10 @@ public class JooqEmployee {
 	
 	public static EmployeeInfoDataBase setEmployeeInfo(Connection conn, EmployeeInfoDataBase newEmployeeInfo) {
 		return setEmployeeInfoDB(DSL.using(conn, getDefaultSettings()), newEmployeeInfo);
+	}
+	
+	public static EmployeeInfoDataBase createEmployeeContract(Connection conn, EmployeeInfoDataBase newEmployeeInfo) {
+		return createEmployeeContractDB(DSL.using(conn, getDefaultSettings()), newEmployeeInfo);
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -182,7 +192,8 @@ public class JooqEmployee {
 			
 			employee.setEnterprise_activity_table_id((enterpriseActivityTable == null) ? null : enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
 			//TODO: MIRAR EL ACCESO A CNAE2009TABLE
-			employee.setEnterprise_activity(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.DESCRIPTION) + " - " + cnae2009Table.get(CNAE2009.TITLE));
+			String cnae2009Str = (cnae2009Table == null) ? "" : cnae2009Table.get(CNAE2009.TITLE);
+			employee.setEnterprise_activity(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.DESCRIPTION) + " - " + cnae2009Str);
 			employee.setCname2009_table_id((cnae2009Table == null) ? null : cnae2009Table.get(CNAE2009.ID));
 			employee.setCname2009((cnae2009Table == null) ? null : cnae2009Table.get(CNAE2009.TITLE));
 			
@@ -816,6 +827,274 @@ public class JooqEmployee {
 		default:
 			return (byte) -1;
 		}
+	}
+
+	private static EmployeeInfoDataBase createEmployeeContractDB(DSLContext dslContext, EmployeeInfoDataBase newEmployeeInfo) {
+		System.out.println("GUARDAR DB");
+		
+		// ------------------------------------------------------------------------------------------------------------------------
+		// ------------------------------------------------ EMPLOYEE INFO ---------------------------------------------------------
+		// ------------------------------------------------------------------------------------------------------------------------		
+		
+		Record workplaceRecord = dslContext.select()
+									.from(WORKPLACE)
+									.where(WORKPLACE.ID.eq(newEmployeeInfo.getWorkplace_table_id()))
+									.fetchOne();
+		
+		Integer domain = workplaceRecord.get(WORKPLACE.DOMAIN);
+		Integer registryId = 0;
+		
+		Integer workplaceAddressId = workplaceRecord.get(WORKPLACE.ADDRESS);
+		Record raddressRecord = dslContext.select()
+			.from(RADDRESS)
+			.where(RADDRESS.ID.eq(workplaceAddressId))
+			.fetchOne();
+		Integer workplaceGeozoneId = raddressRecord.get(RADDRESS.GEOZONE);
+		
+		if(newEmployeeInfo.getContract_table_id() == null){ //NUEVO EMPLEADO Y NUEVO CONTRATO
+			
+			RegistryRecord registryRecord = dslContext.insertInto(REGISTRY)
+				.set(REGISTRY.DOMAIN, domain)
+				.set(REGISTRY.DOCUMENT, newEmployeeInfo.getDocument())
+				.set(REGISTRY.DOCUMENT_TYPE, newEmployeeInfo.getDocument_type())
+				.set(REGISTRY.DOCUMENT_COUNTRY, newEmployeeInfo.getNationality())
+				.set(REGISTRY.NATIONALITY, newEmployeeInfo.getNationality())
+				.set(REGISTRY.NAME, newEmployeeInfo.getFirst_surname() + " " + newEmployeeInfo.getSecond_surname() + ", " + newEmployeeInfo.getName())
+				.returning(REGISTRY.ID)
+				.fetchOne();
+			
+			registryId = registryRecord.getId();
+			
+			dslContext.insertInto(PERSON)
+				.set(PERSON.REGISTRY, registryId)
+				.set(PERSON.DOMAIN, domain)
+				.set(PERSON.NAME, newEmployeeInfo.getName())
+				.set(PERSON.FIRST_SURNAME, newEmployeeInfo.getFirst_surname())
+				.set(PERSON.SECOND_SURNAME, newEmployeeInfo.getSecond_surname())
+				.set(PERSON.GENDER, newEmployeeInfo.getGender())
+				.set(PERSON.BIRTH_DATE, (newEmployeeInfo.getBirth_date() == null) ? null : new Date(newEmployeeInfo.getBirth_date().getTime()))
+				.set(PERSON.SOCIAL_SECURITY_NUM, newEmployeeInfo.getSocial_security_num())
+				.execute();
+			
+			Record1<Integer> geozone = dslContext.select(GEOZONE.ID)
+					.from(GEOZONE)
+					.where(GEOZONE.NAME.eq(newEmployeeInfo.getProvince()))
+						.and(GEOZONE.DOMAIN.eq(newEmployeeInfo.getDomain()))
+					.fetchOne();
+			
+			Integer geozoneId = null;
+			
+			if(geozone == null){
+				Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
+					.from(GEOZONE)
+					.where(GEOZONE.NAME.like(newEmployeeInfo.getProvince()+"%"))
+					.fetch();
+				
+				GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
+					.set(GEOZONE.DOMAIN, domain)
+					.set(GEOZONE.NAME, newEmployeeInfo.getGeozone_name())
+					.set(GEOZONE.CODE, codes.get(0).value1())
+					.returning(GEOZONE.ID)
+					.fetchOne();
+				
+				geozoneId = geozoneRecord.getId();
+			}else
+				geozoneId = geozone.value1();
+			
+			RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
+				.set(RADDRESS.DOMAIN, domain)
+				.set(RADDRESS.REGISTRY, registryId)
+				.set(RADDRESS.ADDRESS, newEmployeeInfo.getAddress())
+				.set(RADDRESS.NUMBER, newEmployeeInfo.getAddress_number())
+				.set(RADDRESS.ZIP, newEmployeeInfo.getZip_code())
+				.set(RADDRESS.CITY, newEmployeeInfo.getLocality())
+				.set(RADDRESS.GEOZONE, geozoneId)
+				.returning(RADDRESS.ID)
+				.fetchOne();
+			
+			Integer rAddressId = rAddressRecord.getId();
+			
+			dslContext.insertInto(RMEDIA)
+				.set(RMEDIA.DOMAIN, domain)
+				.set(RMEDIA.REGISTRY, registryId)
+				.set(RMEDIA.MEDIA, (byte) 1)
+				.set(RMEDIA.VALUE, newEmployeeInfo.getPhone())
+				.set(RMEDIA.RADDRESS, rAddressId)
+				.execute();
+			
+			dslContext.insertInto(RMEDIA)
+				.set(RMEDIA.DOMAIN, domain)
+				.set(RMEDIA.REGISTRY, registryId)
+				.set(RMEDIA.MEDIA, (byte) 2)
+				.set(RMEDIA.VALUE, newEmployeeInfo.getMobile())
+				.set(RMEDIA.RADDRESS, rAddressId)
+				.execute();
+			
+			dslContext.insertInto(RMEDIA)
+				.set(RMEDIA.DOMAIN, domain)
+				.set(RMEDIA.REGISTRY, registryId)
+				.set(RMEDIA.MEDIA, (byte) 4)
+				.set(RMEDIA.VALUE, newEmployeeInfo.getEmail())
+				.set(RMEDIA.RADDRESS, rAddressId)
+				.execute();
+			
+			if(newEmployeeInfo.getTypePayMethod() != null && newEmployeeInfo.getTypePayMethod() != ""){
+				byte typePayMethod = getType(newEmployeeInfo.getTypePayMethod());
+				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
+						.set(PAY_METHOD.DOMAIN, domain)
+						.set(PAY_METHOD.NAME, newEmployeeInfo.getTypePayMethod())
+						.set(PAY_METHOD.TYPE, typePayMethod)
+						.returning(PAY_METHOD.ID)
+						.fetchOne();
+				
+				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
+				Integer rbankTableId = null;
+				if(newEmployeeInfo.getBankAccount() != null && newEmployeeInfo.getBankAccount() != ""){
+					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+							.set(RBANK.DOMAIN, domain)
+							.set(RBANK.REGISTRY, registryId)
+							.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
+							.set(RBANK.BIC, newEmployeeInfo.getBIC())
+							.set(RBANK.ALIAS, "CUENTA")
+							.set(RBANK.ACTIVE, (byte) 1)
+							.returning(RBANK.ID)
+							.fetchOne();
+					 
+					 rbankTableId = rbankRecord.get(RBANK.ID); 
+				}
+				
+				dslContext.insertInto(RPAYMETHOD)
+					.set(RPAYMETHOD.DOMAIN, domain)
+					.set(RPAYMETHOD.REGISTRY, registryId)
+					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
+					.set(RPAYMETHOD.RBANK, rbankTableId)
+					.execute();
+			}
+			
+		}else{ //EMPLEADO YA EXISTENTE Y NUEVO CONTRATO
+			
+			Record contractTable = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(newEmployeeInfo.getContract_table_id())).fetchOne();
+			registryId = contractTable.get(CONTRACT.PERSON);
+			
+		}
+		
+		// ------------------------------------------------------------------------------------------------------------------------
+		// ------------------------------------------------ CONTRACT INFO ---------------------------------------------------------
+		// ------------------------------------------------------------------------------------------------------------------------
+		
+		ContractRecord contractRecord = dslContext.insertInto(CONTRACT)
+			.set(CONTRACT.DOMAIN, domain)
+			.set(CONTRACT.PERSON, registryId)
+			.set(CONTRACT.WORKPLACE, newEmployeeInfo.getWorkplace_table_id())
+			.set(CONTRACT.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+			.set(CONTRACT.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+			.set(CONTRACT.SENIORITY_DATE, (newEmployeeInfo.getSeniority_date() == null) ? new Date(newEmployeeInfo.getStart_date().getTime()) : new Date(newEmployeeInfo.getSeniority_date().getTime()))
+			.set(CONTRACT.CATEGORY_DESCRIPTION, newEmployeeInfo.getCategory_description())
+			.set(CONTRACT.AGREEMENT_LEVEL, newEmployeeInfo.getAgreement_level_table_id())
+			.returning(CONTRACT.ID)
+			.fetchOne();
+		
+		Integer contractId = contractRecord.getId();
+		
+		if(newEmployeeInfo.getSSRegime() != 3){ //NO ES RETA
+			
+			Record enterpriseRecord = dslContext.select()
+				.from(ENTERPRISE)
+				.where(ENTERPRISE.DOMAIN.eq(domain))
+				.fetchOne();
+			
+			Integer enterpriseId = enterpriseRecord.get(ENTERPRISE.REGISTRY);
+			
+			EnterpriseActivityRecord enterpriseActivityRecord = dslContext.insertInto(ENTERPRISE_ACTIVITY)
+					.set(ENTERPRISE_ACTIVITY.DOMAIN, domain)
+					.set(ENTERPRISE_ACTIVITY.DESCRIPTION, newEmployeeInfo.getEnterprise_activity())
+					.set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterpriseId)
+					.set(ENTERPRISE_ACTIVITY.TYPE, new Byte("0"))
+					.returning(ENTERPRISE_ACTIVITY.ID)
+					.fetchOne();
+				
+			Integer enterpiseActivityId = enterpriseActivityRecord.getId();
+			
+			EnterpriseCccRecord enterpriseCccRecord = dslContext.insertInto(ENTERPRISE_CCC)
+				.set(ENTERPRISE_CCC.DOMAIN, domain)
+				.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
+				.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, enterpiseActivityId)
+				.set(ENTERPRISE_CCC.GEOZONE, workplaceGeozoneId)
+				.returning(ENTERPRISE_CCC.ID)
+				.fetchOne();
+			
+			Integer enterpriseCccId = enterpriseCccRecord.getId();
+		
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "TC2")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, (newEmployeeInfo.getContract_type() == null) ? (String) null : "\""+newEmployeeInfo.getContract_type()+"\"")
+				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.execute();
+		
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domain)
+				.set(CONTRACT_INFO.NAME, "OPCION_CONTRATO")
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.EXPRESSION, (newEmployeeInfo.getContract_model() == null) ? (String) null : "\""+ ModelOption.values()[newEmployeeInfo.getContract_model()].toString()  +"\"")
+				.set(CONTRACT_INFO.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_INFO.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.execute();
+		
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, (newEmployeeInfo.getQuote_group() == null) ? (String) null : newEmployeeInfo.getQuote_group())
+				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.execute();
+		
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "OCUPACION")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, (newEmployeeInfo.getOcupation() == null) ? (String) null : newEmployeeInfo.getOcupation())
+				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.execute();	
+			
+			dslContext.update(CONTRACT)
+				.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccId)
+				.set(CONTRACT.ENTERPRISE_ACTIVITY, enterpiseActivityId)
+				.where(CONTRACT.ID.eq(contractId))
+				.execute();
+			
+		}else{//ES RETA
+		
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, (newEmployeeInfo.getJourneyType() == null) ? (String) null : newEmployeeInfo.getJourneyType().toString())
+				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.execute();
+			
+			dslContext.insertInto(CONTRACT_INFO)
+			.set(CONTRACT_INFO.DOMAIN, domain)
+			.set(CONTRACT_INFO.CONTRACT, contractId)
+			.set(CONTRACT_INFO.NAME, "RETA")
+			.set(CONTRACT_INFO.EXPRESSION, "true")
+			.set(CONTRACT_INFO.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+			.set(CONTRACT_INFO.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+			.execute();
+			
+			dslContext.update(CONTRACT)
+				.set(CONTRACT.SS_REGIME, (byte) 3)
+				.where(CONTRACT.ID.eq(contractId))
+				.execute();
+			
+		}
+		
+		return null;
 	}
 
 }

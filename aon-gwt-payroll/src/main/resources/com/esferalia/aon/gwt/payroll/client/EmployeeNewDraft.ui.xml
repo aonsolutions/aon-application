@@ -1,0 +1,464 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style
+		type="com.esferalia.aon.gwt.payroll.client.EmployeeNewDraft.MyStyle">
+		
+		.noselect {
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /* Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently
+				                                  supported by Chrome and Opera */
+		}
+		
+		@external gwt-Selector;
+		@external gwt-SuggestBoxPopup;
+		.gwt-SuggestBoxPopup {
+			z-index: 105;
+		}
+		
+		.gwt-Selector .gwt-SuggestBoxPopup {
+			z-index: 105;
+			height: inherit;
+		}
+
+		.backgroundColorFirstColumn {
+			background-color: #eaeaea;
+			width: 200px;
+		}
+
+		hr {
+			width: 97%;
+		}
+
+		.paddingTable {
+			border-style: solid;
+    		padding: 10px 10px 10px 10px;
+    		border-width: 1px;
+    		margin-left: 10px;
+    		margin-bottom: 30px;
+		}
+
+		.paddingTable td{
+			font-family: Arial;
+    		font-size: small;
+		}
+
+		.paddingLeft{
+			padding-left: 10px !important;
+		}
+
+		.margingLeft{
+			margin-left: 10px !important;
+		}
+
+		.textAlignCenter{
+			text-align: center;
+		}
+
+		.marginTopTable{
+			margin-top: 20px;
+			width: 950px;
+		}
+		
+		.headerStyle{
+			font-family: Arial;
+    		font-size: 13px;
+    		font-weight: normal;
+			position: absolute;
+    		margin-left: 25px;
+    		background-color: white;
+			padding-top: 10px;
+    		padding-left: 5px;
+    		padding-right: 5px;
+    		width: 105px;
+		}
+
+		.marginTopTable2{
+			margin-top: 10px;
+			width: 950px;
+		}
+		
+		.headerStyle2{
+			font-family: Arial;
+    		font-size: 13px;
+    		font-weight: normal;
+			position: absolute;
+    		margin-left: 25px;
+    		background-color: white;
+    		padding-left: 5px;
+    		padding-right: 5px;
+    		width: 105px;
+		}
+
+		.requiredColor{
+			color: #2152A5;
+			font-weight: bold !important;
+		}
+
+		.secondColumnWidth{
+			width: auto;
+		}
+
+		.secondColumnWidth2{
+			width: auto;
+			padding-left: 0px !important;
+		}
+
+		.hide{
+			display: none;
+		}
+
+		.moreAddress{
+			background: white;
+    		width: 20px;
+			background-color: white;
+    		color: black;
+    		font-weight: bold;
+    		border-color: white;
+    		font-size: large;
+		}
+
+		.paddingLabel{
+			padding: 2px;
+		}
+
+		.paddingConfidecial{
+			padding-left: 0px;
+			padding-top: 3px;
+		}
+
+		.paddingCheckBox{
+			padding-top: 6px;
+		}
+
+		.dateBox{
+			width: 100px;
+    		text-align: center;
+    		padding: 2px;
+    		border: 1px solid #ccc;
+    		border-top: 1px solid #999;
+    		font-size: small;
+    		font-family: Arial Unicode MS, Arial, sans-serif;
+		}
+
+		.dateBox2{
+			width: 141px !important;
+    		text-align: center;
+    		padding: 2px;
+    		border: 1px solid #ccc;
+    		border-top: 1px solid #999;
+    		font-size: small;
+    		font-family: Arial Unicode MS, Arial, sans-serif;
+			margin-left: 10px !important;
+		}
+
+		.horizontalPanel{
+			padding-left: 0px;
+			padding-bottom: 3px;
+		}
+
+		.horizontalPanel2{
+			padding-left: 0px !important;
+		}
+
+
+		.passDocumentStyle{
+			width: 102px !important;
+		}
+
+		.passNSSStyle{
+			width: 203px !important;
+		}
+
+		.passNationalityStyle{
+			width: 177px !important;
+		}
+
+		.nieDocumentStyle{
+			width: 140px !important;
+		}
+
+		.nieNationalityStyle{
+			width: 177px !important;
+		}
+
+		.nieNSSStyle{
+			width: 203px !important;
+		}
+
+		.buttonStyle{
+			border: none;
+    		font-size: 15px;
+			font-weight: bold;
+		}
+
+		
+	</ui:style>
+
+	<g:DockLayoutPanel unit="PX">
+		<g:north size="25">
+			<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<g:HorizontalPanel>
+					<g:HTMLPanel styleName="aon-finding-title">
+						<g:HTMLPanel styleName="aon-finding-title-internal">
+							<g:Label styleName="aon-outputText">Contratos : Nuevo Contrato</g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-subtitle">
+						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+							<g:Label styleName="aon-outputText"></g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+						<g:Button ui:field='saveButton'
+							styleName='aon-finding-toolbar-item aon-icon-accept' text="ACEPTAR"
+							enabled="true" />
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:north>
+		<g:center> 
+		    <g:ScrollPanel>
+		        <g:HTMLPanel> 
+		            <g:Label styleName='{style.headerStyle}' width="103px">Datos personales</g:Label>
+					<g:HorizontalPanel>
+					    <g:HTMLPanel>
+							<g:Grid ui:field="employeeDataTable" styleName='{style.paddingTable}  {style.marginTopTable}'>     
+								<g:row>
+									<g:customCell>
+										<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Empleado</g:Label>
+									</g:customCell>
+									<g:customCell styleName='{style.secondColumnWidth}'>
+										<g:HorizontalPanel>
+										    <g:TextBox ui:field="personId" styleName='{style.paddingLabel} {style.textAlignCenter}' width="76px"></g:TextBox>
+										    <g:Button ui:field="newPerson" styleName='{style.paddingLabel} {style.paddingLeft} {style.buttonStyle}'>+</g:Button>
+										    <g:ListBox ui:field="findPerson" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="605px"></g:ListBox>
+										</g:HorizontalPanel>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell>
+										<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Nombre Completo</g:Label>
+									</g:customCell>
+									<g:customCell styleName='{style.secondColumnWidth}'>
+										<g:HorizontalPanel>
+										    <g:TextBox ui:field="name" styleName='{style.paddingLabel} {style.textAlignCenter}' width="176px"></g:TextBox>
+										    <g:Label ui:field="firstSurnameLabel" styleName='{style.paddingLabel} {style.paddingLeft} {style.requiredColor}' width="78px">1er Apellido</g:Label>
+										    <g:TextBox ui:field="first_surname" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="175px"></g:TextBox>
+										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}' width="62px">2º Apellido</g:Label>
+										    <g:TextBox ui:field="second_surname" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="184px"></g:TextBox>
+										</g:HorizontalPanel>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell>
+										<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Documentos</g:Label>
+									</g:customCell>
+									<g:customCell styleName='{style.secondColumnWidth}'>
+										<g:HorizontalPanel>
+										    <g:Label ui:field="document_type" styleName='{style.paddingLabel}'></g:Label>
+										    <g:TextBox ui:field="document" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="139px"></g:TextBox> 
+										    <g:HorizontalPanel ui:field="nationalityPanel" styleName='{style.horizontalPanel}'>
+										        <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Nacionalidad</g:Label>
+										    	<g:SuggestBox ui:field="nationality" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="164px"></g:SuggestBox>
+										    </g:HorizontalPanel>
+									     	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Nº S.S.</g:Label>
+									    	<g:TextBox ui:field="security_social_num" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="210px"></g:TextBox>
+										</g:HorizontalPanel>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell>
+										<g:Label styleName='{style.paddingLeft}'>Fecha de nacimiento</g:Label>
+									</g:customCell>
+									<g:customCell styleName='{style.secondColumnWidth}'>
+										<g:HorizontalPanel>
+										    <a:DateBoxEx ui:field="birth_date" styleName='{style.dateBox}' width="179px"></a:DateBoxEx>
+										    <g:Label ui:field="age" styleName='{style.paddingLabel} {style.paddingLeft}'></g:Label>
+										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Sexo</g:Label>
+										    <g:ListBox ui:field="gender" styleName='{style.margingLeft}' width="153px"></g:ListBox>
+										</g:HorizontalPanel>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell>
+										<g:Label styleName='{style.paddingLeft}'>Dirección</g:Label>
+									</g:customCell>
+									<g:customCell styleName='{style.secondColumnWidth}'>
+										<g:HorizontalPanel>
+										    <g:TextBox ui:field="address" width="733px"></g:TextBox>
+										</g:HorizontalPanel>
+									</g:customCell>
+								</g:row>      
+								<g:row>
+									<g:customCell>
+										<g:Label styleName='{style.paddingLeft}'>Contacto</g:Label>
+									</g:customCell>
+									<g:customCell styleName='{style.secondColumnWidth}'>
+										<g:HorizontalPanel>
+										    <g:Label styleName='{style.paddingLabel}'>Móvil</g:Label>
+										    <g:TextBox ui:field="mobile" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="132px"></g:TextBox>
+										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Teléfono</g:Label>
+										    <g:TextBox ui:field="phone" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="187px"></g:TextBox>
+										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>eMail</g:Label>
+										    <g:TextBox ui:field="email" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="225px"></g:TextBox>
+										</g:HorizontalPanel>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell>
+										<g:Label styleName='{style.paddingLeft}'>Método de pago</g:Label>
+									</g:customCell>
+									<g:customCell styleName='{style.secondColumnWidth}'>
+										<g:HorizontalPanel>
+										    <g:ListBox ui:field="payMethod" width="185px"></g:ListBox>
+										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Cuenta</g:Label>
+										    <g:TextBox ui:field="account" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="195px"></g:TextBox>
+										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>BIC</g:Label>
+										    <g:TextBox ui:field="bic" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="235px"></g:TextBox>
+										</g:HorizontalPanel>
+									</g:customCell>
+								</g:row> 
+							</g:Grid>
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
+					
+			    	<g:Label width="105px" styleName='{style.headerStyle2}'>Datos de contrato</g:Label>
+					<g:HorizontalPanel>
+						<g:Grid ui:field="contractDataTable" styleName='{style.paddingTable} {style.marginTopTable2}'>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Tipo de cotización</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:ListBox ui:field="ssRegimeType" width="740px"></g:ListBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Actividad</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+								   	<g:TextBox ui:field="activity" width="733px"></g:TextBox>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLabel} {style.paddingLeft} {style.requiredColor}'>Cuenta de cotización</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth2}'>
+									<g:HorizontalPanel styleName='{style.horizontalPanel}' ui:field="quoteAccountPanel">
+									    <g:TextBox ui:field="quotationAccount" styleName='{style.textAlignCenter}' width="180px"></g:TextBox>
+										<g:Label styleName='{style.paddingLabel} {style.paddingLeft}  {style.requiredColor}'>Centro de trabajo</g:Label>
+										<g:TextBox ui:field="workplace" styleName='{style.paddingLabel} {style.paddingLeft} {style.margingLeft}' width="408px"></g:TextBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Tipo de contrato</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:ListBox ui:field="contractType" width="740px"></g:ListBox>
+									    <g:TextBox ui:field="contractTypeFreelance" styleName='{style.paddingLabel}' width="730px">
+									        Régimen especial de trabajadores autónomos
+									    </g:TextBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft}'>Modalidad</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:ListBox ui:field="modality" width="740px"></g:ListBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Periodo contratación</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:Label styleName='{style.paddingLabel} {style.requiredColor}'>Fecha inicio</g:Label>
+									    <a:DateBoxEx ui:field="strat_date" styleName='{style.dateBox2}'></a:DateBoxEx>
+									    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Fecha fin</g:Label>
+									    <a:DateBoxEx ui:field="end_date" styleName='{style.dateBox2}'></a:DateBoxEx>
+									    <g:HorizontalPanel ui:field="seniorityDatePanel">
+									    	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Fecha antigüedad</g:Label>
+									    	<a:DateBoxEx ui:field="seniority_date" styleName='{style.dateBox2}'></a:DateBoxEx>
+										</g:HorizontalPanel>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft}'>Categoría/Nivel retributario</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth2}'>
+									<g:VerticalPanel>
+									    <g:HorizontalPanel styleName='{style.horizontalPanel}'>
+									    	<g:Label styleName='{style.paddingLabel}'>Convenio</g:Label>
+									    	<g:ListBox ui:field="agreement" styleName='{style.margingLeft}' width="670px"></g:ListBox>
+									    </g:HorizontalPanel>
+									    <g:HorizontalPanel>
+									    	<g:Label styleName='{style.paddingLabel}'>Nivel/Categoría</g:Label>
+									    	<g:ListBox ui:field="level" styleName='{style.margingLeft}' width="324px"></g:ListBox>
+									    	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Mostrar como</g:Label>
+									    	<g:TextBox ui:field="category" styleName='{style.textAlignCenter} {style.margingLeft} {style.paddingLabel}' width="202px"></g:TextBox>
+									    </g:HorizontalPanel>
+									</g:VerticalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft}'>Grupo de cotización</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:ListBox ui:field="quote_group" width="740px"></g:ListBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft}'>Ocupación</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:ListBox ui:field="occupation" width="740px"></g:ListBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:Label styleName='{style.paddingLeft}'>Tipo de jornada</g:Label>
+								</g:customCell>
+								<g:customCell styleName='{style.secondColumnWidth}'>
+									<g:HorizontalPanel>
+									    <g:ListBox ui:field="journeyType" width="740px"></g:ListBox>
+									</g:HorizontalPanel>
+								</g:customCell>
+							</g:row>
+						</g:Grid>
+					</g:HorizontalPanel>
+		        </g:HTMLPanel> 
+		    </g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder> 
+
