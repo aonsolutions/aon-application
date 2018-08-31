@@ -86,8 +86,9 @@ public class GeroaInsert implements Update {
 			.set(PAYMENT_CONCEPT.DESCRIPTION, "GEROA PENTSIOAK BGAE/EPSV")
 			.set(PAYMENT_CONCEPT.EXPRESSION, "/*read-only*/TOTAL_DEVENGADO * PORCENTAJE_GEROA * 0.00/**/")
 			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "BASE_CGC * PORCENTAJE_GEROA/100.00")
-			.returning(PAYMENT_CONCEPT.ID)
-			.execute();
+			.returning()
+			.fetchOne()
+			.getId();
 			
 //			dslContext
 //			.update(CONTRACT_PAYMENT)
@@ -111,8 +112,10 @@ public class GeroaInsert implements Update {
 			.set(DEDUCTION_CONCEPT.DOMAIN, 0)
 			.set(DEDUCTION_CONCEPT.TYPE, (byte)9)
 			.set(DEDUCTION_CONCEPT.CODE, "GEROA")
-			.returning(DEDUCTION_CONCEPT.ID)
-			.execute();
+			.returning()
+			.fetchOne()
+			.getId()
+			;
 			
 //			dslContext
 //			.delete(SYSTEM_DEDUCTION)
