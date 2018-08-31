@@ -84,27 +84,27 @@ public class GeroaInsert implements Update {
 			.set(PAYMENT_CONCEPT.TYPE, (byte)33)
 			.set(PAYMENT_CONCEPT.CODE, "GEROA")
 			.set(PAYMENT_CONCEPT.DESCRIPTION, "GEROA PENTSIOAK BGAE/EPSV")
-			.set(PAYMENT_CONCEPT.EXPRESSION, "/*read-only*/TOTAL_DEVENGADO * PORCENTAGE_GEROA * 0.00/**/")
-			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "BASE_CGC * PORCENTAGE_GEROA/100.00")
+			.set(PAYMENT_CONCEPT.EXPRESSION, "/*read-only*/TOTAL_DEVENGADO * PORCENTAJE_GEROA * 0.00/**/")
+			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "BASE_CGC * PORCENTAJE_GEROA/100.00")
 			.returning(PAYMENT_CONCEPT.ID)
 			.execute();
 			
-			dslContext
-			.update(CONTRACT_PAYMENT)
-			.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, newPaymentConcept)
-			.where(CONTRACT_PAYMENT.PAYMENT_CONCEPT.in(oldPaymentConcepts))
-			.execute();
-
-			dslContext
-			.update(AGREEMENT_PAYMENT)
-			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, newPaymentConcept)
-			.where(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.in(oldPaymentConcepts))
-			.execute();
-			
-			dslContext
-			.delete(PAYMENT_CONCEPT)
-			.where(PAYMENT_CONCEPT.ID.in(oldPaymentConcepts))
-			.execute();
+//			dslContext
+//			.update(CONTRACT_PAYMENT)
+//			.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, newPaymentConcept)
+//			.where(CONTRACT_PAYMENT.PAYMENT_CONCEPT.in(oldPaymentConcepts))
+//			.execute();
+//
+//			dslContext
+//			.update(AGREEMENT_PAYMENT)
+//			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, newPaymentConcept)
+//			.where(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.in(oldPaymentConcepts))
+//			.execute();
+//			
+//			dslContext
+//			.delete(PAYMENT_CONCEPT)
+//			.where(PAYMENT_CONCEPT.ID.in(oldPaymentConcepts))
+//			.execute();
 
 			int newDeductionConcept = dslContext
 			.insertInto(DEDUCTION_CONCEPT)
@@ -114,15 +114,15 @@ public class GeroaInsert implements Update {
 			.returning(DEDUCTION_CONCEPT.ID)
 			.execute();
 			
-			dslContext
-			.delete(SYSTEM_DEDUCTION)
-			.where(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.in(oldDeductionConcepts))
-			.execute();
-
-			dslContext
-			.delete(DEDUCTION_CONCEPT)
-			.where(DEDUCTION_CONCEPT.ID.in(oldDeductionConcepts))
-			.execute();
+//			dslContext
+//			.delete(SYSTEM_DEDUCTION)
+//			.where(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.in(oldDeductionConcepts))
+//			.execute();
+//
+//			dslContext
+//			.delete(DEDUCTION_CONCEPT)
+//			.where(DEDUCTION_CONCEPT.ID.in(oldDeductionConcepts))
+//			.execute();
 
 			dslContext
 			.insertInto(SYSTEM_DEDUCTION)
@@ -130,13 +130,13 @@ public class GeroaInsert implements Update {
 			.set(SYSTEM_DEDUCTION.START_DATE, _2010StartDate)
 			.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, newDeductionConcept )
 			.set(SYSTEM_DEDUCTION.DESCRIPTION, "GEROA PENTSIOAK BGAE/EPSV")
-			.set(SYSTEM_DEDUCTION.EXPRESSION, "/*read-only*/ isdef BASE_GEROA ? (BASE_CGC - BASE_GEROA) * PORCENTAGE_GEROA/100.00 : HIDE() /**/")
+			.set(SYSTEM_DEDUCTION.EXPRESSION, "/*read-only*/ isdef BASE_GEROA ? (BASE_CGC - BASE_GEROA) * PORCENTAJE_GEROA/100.00 : HIDE() /**/")
 			.execute();
 			
-			dslContext
-			.delete(SYSTEM_COST)
-			.where(SYSTEM_COST.CODE.eq("GEROA_E"))
-			.execute();
+//			dslContext
+//			.delete(SYSTEM_COST)
+//			.where(SYSTEM_COST.CODE.eq("GEROA_E"))
+//			.execute();
 
 			dslContext
 			.insertInto(SYSTEM_COST)
@@ -145,7 +145,7 @@ public class GeroaInsert implements Update {
 			.set(SYSTEM_COST.CODE, "GEROA_E")
 			.set(SYSTEM_COST.START_DATE, _2010StartDate)
 			.set(SYSTEM_COST.DESCRIPTION, "GEROA PENTSIOAK BGAE/EPSV")
-			.set(SYSTEM_COST.EXPRESSION, "/*read-only*/ isdef BASE_GEROA ? (BASE_CGC - BASE_GEROA) * PORCENTAGE_GEROA/100.00 : HIDE() /**/")
+			.set(SYSTEM_COST.EXPRESSION, "/*read-only*/ isdef BASE_GEROA ? (BASE_CGC - BASE_GEROA) * PORCENTAJE_GEROA/100.00 : HIDE() /**/")
 			.execute();
 			;
 			
@@ -153,7 +153,7 @@ public class GeroaInsert implements Update {
 //			.insertInto(SYSTEM_DATA)
 //			.set(SYSTEM_DATA.DOMAIN, 0)
 //			.set(SYSTEM_DATA.START_DATE, _2010StartDate)
-//			.set(SYSTEM_DATA.NAME, "PORCENTAGE_GEROA")
+//			.set(SYSTEM_DATA.NAME, "PORCENTAJE_GEROA")
 //			.set(SYSTEM_DATA.EXPRESSION, "2.00")
 //			.execute();
 //			;

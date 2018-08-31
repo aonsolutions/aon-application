@@ -44,6 +44,7 @@ import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -54,6 +55,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
@@ -2310,6 +2312,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
 		paymentsTable.setWidget(row, 2, expressionBox);
 		contentAssistManager.addValueBox(expressionBox);
+		enable(expressionBox, !SpecialExpresion.isReadOnly(payment.getExpression()));
 
 		Button deleteButton = new Button();
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
@@ -3462,4 +3465,23 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		return expression;
 	}
+	
+	private static void enable(TextBox textBox, boolean enabled) {
+
+		if (textBox.isEnabled() == enabled)
+			return;
+
+		textBox.setEnabled(enabled);
+
+		if (!enabled) {
+			textBox.getElement().getStyle().setColor("inherit");
+			textBox.getElement().getStyle().setBackgroundColor("inherit");
+			textBox.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		} else {
+			textBox.getElement().getStyle().clearColor();
+			textBox.getElement().getStyle().clearBackgroundColor();
+			textBox.getElement().getStyle().clearBorderStyle();
+		}
+	}
+	
 }
