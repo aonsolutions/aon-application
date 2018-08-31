@@ -34,10 +34,8 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -680,6 +678,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		
 		this.contractType.addStyleName(style.hide());
 		this.contractTypeFreelance.removeStyleName(style.hide());	
+		this.seniorityDatePanel.addStyleName(style.hide());
 	}
 
 	private void fillContractFreelancerTable() {
@@ -728,6 +727,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		
 		this.contractType.removeStyleName(style.hide());
 		this.contractTypeFreelance.addStyleName(style.hide());
+		this.seniorityDatePanel.removeStyleName(style.hide());
 	}
 	
 	private void fillContractTable() {
@@ -1052,7 +1052,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	private static void loadMapsPlacesAPI(Runnable onLoad){
 		String version = "3";
 
-		String otherParms = "&key=AIzaSyCGKYI5xWMYvCUK59jwJbIWnTX5kEQn1mY&libraries=places&lenguage=es";
+		String otherParms = "&key=AIzaSyA_4HinrQ1eWKFwyCJFmD6VE8uzMxtQS3Q&libraries=places&lenguage=es";
 		
 		AjaxLoaderOptions settings = AjaxLoaderOptions.newInstance();
 		settings.setOtherParms(otherParms);
