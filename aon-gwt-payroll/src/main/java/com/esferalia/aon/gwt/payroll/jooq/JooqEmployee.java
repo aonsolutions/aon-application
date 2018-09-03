@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
@@ -879,7 +880,7 @@ public class JooqEmployee {
 			Record1<Integer> geozone = dslContext.select(GEOZONE.ID)
 					.from(GEOZONE)
 					.where(GEOZONE.NAME.eq(newEmployeeInfo.getProvince()))
-						.and(GEOZONE.DOMAIN.eq(newEmployeeInfo.getDomain()))
+						.and(GEOZONE.DOMAIN.eq(domain))
 					.fetchOne();
 			
 			Integer geozoneId = null;
@@ -909,10 +910,36 @@ public class JooqEmployee {
 				.set(RADDRESS.ZIP, newEmployeeInfo.getZip_code())
 				.set(RADDRESS.CITY, newEmployeeInfo.getLocality())
 				.set(RADDRESS.GEOZONE, geozoneId)
-				.returning(RADDRESS.ID)
+				.returning(RADDRESS.ID, RADDRESS.GEOZONE)
 				.fetchOne();
 			
 			Integer rAddressId = rAddressRecord.getId();
+			
+			if(geozone == null){
+				Integer rAddressGeozone = rAddressRecord.getGeozone();
+				
+				GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
+						.set(GEOZONE.DOMAIN, domain)
+						.set(GEOZONE.NAME, "ESPAÑA")
+						.set(GEOZONE.CODE, "ES")
+						.set(GEOZONE.SYSTEM, (byte) 1)
+						.returning(GEOZONE.ID)
+						.fetchOne();
+				
+				Integer geozoneParentId = geozoneParentRecord.getId();
+				
+				dslContext.insertInto(GEOTREE)
+				.set(GEOTREE.DOMAIN, domain)
+				.set(GEOTREE.PARENT, geozoneParentId)
+				.set(GEOTREE.CHILD, rAddressGeozone)
+				.execute();
+				
+				dslContext.insertInto(GEOTREE)
+				.set(GEOTREE.DOMAIN, domain)
+				.set(GEOTREE.PARENT, (Integer) null)
+				.set(GEOTREE.CHILD, geozoneParentId)
+				.execute();
+			}
 			
 			dslContext.insertInto(RMEDIA)
 				.set(RMEDIA.DOMAIN, domain)
