@@ -3606,6 +3606,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				, new String[] { 
 						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
 						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+//						"TRACE('BASE_REGULADORA=%f\r\n',BASE_REGULADORA)",
+//						"TRACE('DIAS_IT=%d\r\n',DIAS_ENFERMEDAD_COMUN_21)"
 						}
 				, new String[] {
 				}, 
@@ -3642,10 +3644,11 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
-		
+		int brDays = get(getLastDayOfMonth(startIt), Calendar.DATE); 
+		int itDays = get(getLastDayOfMonth(startDate), Calendar.DATE); 
 		//@formatter:off
 		Assert.assertEquals(
-				850.00, 
+				(1000.00/brDays * 0.75 * itDays) + 100.00 , //850.00, 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on

@@ -4340,8 +4340,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
-		
-		Assert.assertEquals( 1750.00 * 25.00/30.00, salary.getTotalPayment());
+		int workDays = (get(startITDate, Calendar.DAY_OF_MONTH) -1 );
+		Assert.assertEquals( (1750.0 ) * workDays/30.00, salary.getTotalPayment());
 
 	}
 
