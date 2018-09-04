@@ -22,12 +22,16 @@ import com.google.gwt.ajaxloader.client.AjaxLoader.AjaxLoaderOptions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.regexp.shared.RegExp;
@@ -35,10 +39,12 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -128,7 +134,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	Button newPerson;
 	
 	@UiField
-	ListBox findPerson;
+	SuggestBox findPerson;
 	
 	@UiField
 	TextBox name;
@@ -342,18 +348,34 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 			}
 		});
 		
+		this.findPerson.addKeyPressHandler(new KeyPressHandler() {
+			
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				int c = event.getUnicodeCharCode();
+				if (c == 32)
+	            	findPerson.showSuggestionList();
+			}
+		});
+		
 	}
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
 	
 	@UiHandler("findPerson")
-	void onFindPersonChangeValue(ChangeEvent event) {
-		if(findPerson.getSelectedIndex() != 0){
-			String person = findPerson.getSelectedItemText();
-			Integer personIdNum = Integer.parseInt(person.split(" ")[0]);
-			this.personId.setValue(personIdNum.toString());
-			employeeNewDraftObject.setContractTableId(personIdNum);
-		}
+	void onFindPersonChangeValue(ValueChangeEvent<String> event) {
+//	void onFindPersonChangeValue(ChangeEvent event) {
+//		if(findPerson.getSelectedIndex() != 0){
+//			String person = findPerson.getSelectedItemText();
+//			Integer personIdNum = Integer.parseInt(person.split(" ")[0]);
+//			this.personId.setValue(personIdNum.toString());
+//			employeeNewDraftObject.setContractTableId(personIdNum);
+//		}
+		String person = findPerson.getValue();
+		Integer personIdNum = Integer.parseInt(person.split(" ")[0]);
+		this.personId.setValue(personIdNum.toString());
+		employeeNewDraftObject.setContractTableId(personIdNum);
+		
 	}
 	
 	@UiHandler("newPerson")
@@ -434,7 +456,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	
 	@UiHandler("ssRegimeType")
 	void onssRegimeTypeChangeValue(ChangeEvent event) {
-		if(this.ssRegimeType.getSelectedIndex() == 2){
+		if(this.ssRegimeType.getSelectedIndex() == 1){
 			showRetaForm();
 			employeeNewDraftObject.setSSRegime(3);
 		}else{
@@ -611,7 +633,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 			}
 		}
 		
-		if(ssRegimeType.getSelectedIndex() == 2){
+		if(ssRegimeType.getSelectedIndex() == 1){
 			if(strat_date.getValue() == null){
 				//Window.alert("Existe empleado, pero faltan campos contrato en contrato RETA");
 				return false;
@@ -669,7 +691,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	private void resetElements() {
 		//Clear employee elements
 		this.personId.setValue("");
-		this.findPerson.clear();
+//		this.findPerson.clear();
 		this.document.setValue("");
 		this.name.setValue("");
 		this.first_surname.setValue("");
@@ -704,10 +726,18 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 
 	private void initializeListBox() {
 		//BUSCAR EMPLEADO
+//		WorkplaceEmployees workplaceEmployees = employeeNewDraftObject.getWorkplaceEmployees();
+//		this.findPerson.addItem("-");
+//		for(EmployeeInfo e : workplaceEmployees.getWorkplaceEmployees())
+//			this.findPerson.addItem(e.getEmployeeId() + " - " + e.getSurName() + ", " + e.getName());
+		
 		WorkplaceEmployees workplaceEmployees = employeeNewDraftObject.getWorkplaceEmployees();
-		this.findPerson.addItem("-");
+		List<String> employees = new ArrayList<>();
 		for(EmployeeInfo e : workplaceEmployees.getWorkplaceEmployees())
-			this.findPerson.addItem(e.getEmployeeId() + " - " + e.getSurName() + ", " + e.getName());
+			employees.add(e.getEmployeeId() + " - " + e.getSurName() + ", " + e.getName());
+		
+		MultiWordSuggestOracle orcl = (MultiWordSuggestOracle) findPerson.getSuggestOracle();
+		orcl.addAll(employees);
 		
 		//SEXO
 		this.gender.addItem("Hombre");
@@ -722,7 +752,6 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		this.payMethod.addItem("TRANSFERENCIA");
 		
 		//TIPO DE COTIZACIÓN
-		this.ssRegimeType.addItem("-");
 		this.ssRegimeType.addItem("COMUN");
 		this.ssRegimeType.addItem("RETA");
 		this.ssRegimeType.addItem("SOCIOS COOP");
@@ -781,6 +810,16 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		this.workplace.setValue(this.employeeNewDraftObject.getWorkplaceName());
 		employeeNewDraftObject.setWorkplace(workplace.getValue());
 		employeeNewDraftObject.setSSRegime(0);
+		
+		this.activity.setValue(this.employeeNewDraftObject.getWorkplaceActivity());
+		employeeNewDraftObject.setEnterprise_Activity(activity.getValue());
+		
+		this.quotationAccount.setValue(this.employeeNewDraftObject.getWorkplaceCCC());
+		employeeNewDraftObject.setContractQuoteAccount(quotationAccount.getValue());
+		
+		Integer agreementIndex = this.employeeNewDraftObject.getAgreementIndex(this.employeeNewDraftObject.getWorkplaceAgreement());
+		this.agreement.setSelectedIndex(agreementIndex + 1);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.agreement);
 	}
 
 	private void showPersonForm() {

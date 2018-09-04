@@ -1032,25 +1032,50 @@ public class JooqEmployee {
 			
 			Integer enterpriseId = enterpriseRecord.get(ENTERPRISE.REGISTRY);
 			
-			EnterpriseActivityRecord enterpriseActivityRecord = dslContext.insertInto(ENTERPRISE_ACTIVITY)
-					.set(ENTERPRISE_ACTIVITY.DOMAIN, domain)
-					.set(ENTERPRISE_ACTIVITY.DESCRIPTION, newEmployeeInfo.getEnterprise_activity())
-					.set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterpriseId)
-					.set(ENTERPRISE_ACTIVITY.TYPE, new Byte("0"))
-					.returning(ENTERPRISE_ACTIVITY.ID)
+			Record enterpriseActivity = dslContext.select()
+					.from(ENTERPRISE_ACTIVITY)
+					.where(ENTERPRISE_ACTIVITY.DOMAIN.eq(domain))
+					.and(ENTERPRISE_ACTIVITY.DESCRIPTION.eq(newEmployeeInfo.getEnterprise_activity()))
 					.fetchOne();
-				
-			Integer enterpiseActivityId = enterpriseActivityRecord.getId();
 			
-			EnterpriseCccRecord enterpriseCccRecord = dslContext.insertInto(ENTERPRISE_CCC)
-				.set(ENTERPRISE_CCC.DOMAIN, domain)
-				.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
-				.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, enterpiseActivityId)
-				.set(ENTERPRISE_CCC.GEOZONE, workplaceGeozoneId)
-				.returning(ENTERPRISE_CCC.ID)
-				.fetchOne();
+			Integer enterpiseActivityId = 0;
+			if(enterpriseActivity == null){
+				EnterpriseActivityRecord enterpriseActivityRecord = dslContext.insertInto(ENTERPRISE_ACTIVITY)
+						.set(ENTERPRISE_ACTIVITY.DOMAIN, domain)
+						.set(ENTERPRISE_ACTIVITY.DESCRIPTION, newEmployeeInfo.getEnterprise_activity())
+						.set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterpriseId)
+						.set(ENTERPRISE_ACTIVITY.TYPE, new Byte("0"))
+						.returning(ENTERPRISE_ACTIVITY.ID)
+						.fetchOne();
+					
+				enterpiseActivityId = enterpriseActivityRecord.getId();
+			}else{
+				enterpiseActivityId = enterpriseActivity.get(ENTERPRISE_ACTIVITY.ID);
+			}
 			
-			Integer enterpriseCccId = enterpriseCccRecord.getId();
+			Result<Record> enterpriseCCC = dslContext.select()
+					.from(ENTERPRISE_CCC)
+					.where(ENTERPRISE_CCC.DOMAIN.eq(domain))
+					.and(ENTERPRISE_CCC.CCC.eq(newEmployeeInfo.getQuote_account()))
+					.and(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(enterpiseActivityId))
+					.and(ENTERPRISE_CCC.GEOZONE.eq(workplaceGeozoneId))
+					.fetch();
+			
+			Integer enterpriseCccId = 0;
+			
+			if(enterpriseCCC == null){
+				EnterpriseCccRecord enterpriseCccRecord = dslContext.insertInto(ENTERPRISE_CCC)
+						.set(ENTERPRISE_CCC.DOMAIN, domain)
+						.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
+						.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, enterpiseActivityId)
+						.set(ENTERPRISE_CCC.GEOZONE, workplaceGeozoneId)
+						.returning(ENTERPRISE_CCC.ID)
+						.fetchOne();
+					
+				enterpriseCccId = enterpriseCccRecord.getId();
+			}else{
+				enterpriseCccId = enterpriseCCC.get(0).get(ENTERPRISE_CCC.ID);
+			}
 		
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
