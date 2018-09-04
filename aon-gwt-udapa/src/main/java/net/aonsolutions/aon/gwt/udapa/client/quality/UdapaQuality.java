@@ -53,6 +53,7 @@ public class UdapaQuality extends AonTemplate2{
 	
 	private AonData aonData;
 	private FilterPanel filterPanel;
+	private Boolean isBack = false;
 	
 	public API getAPI() {
 		return API;
@@ -71,7 +72,7 @@ public class UdapaQuality extends AonTemplate2{
 	}
 	
     public HashMap<String, LinkedList<String>> getFilterMap() {
-		return getFilterPanel().getFilterMap();
+		return getFilterPanel() != null ? getFilterPanel().getFilterMap() : new HashMap<>();
 	}
     
     public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
@@ -156,6 +157,7 @@ public class UdapaQuality extends AonTemplate2{
 	}
 	
 	public FilterPanel filterPanel() {
+		HashMap<String, LinkedList<String>> filterMap = getFilterMap();
 		FilterPanel fp = new FilterPanel(initializeFilterMap()) {
 			
 			@Override
@@ -171,6 +173,10 @@ public class UdapaQuality extends AonTemplate2{
 				qp.gridContent();
 			}
 		};
+		if(isBack) {
+			isBack = false;
+			fp.setFilterMap(filterMap);	
+		}
 		fp.addDateFilter("Desde", "from");
 		fp.addDateFilter("Hasta", "to");
 		fp.addTextFilter("N\u00BA Pedido", "code");
@@ -355,6 +361,7 @@ public class UdapaQuality extends AonTemplate2{
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				isBack = true;
 				startApplication();
 			}
 		};
