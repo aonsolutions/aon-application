@@ -1,8 +1,6 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.payroll.GeroaInsert.GEROA_INSERT;
-import static net.aonsolutions.db.up2date.payroll.PrestITCommonDiseaseAtLackInsert.PRESTITCOMMONDISEASEATLACKINSERT;
-import static net.aonsolutions.db.up2date.tgss.Bases2018UpdateII.BASES2018UPDATEII;
+import static net.aonsolutions.db.up2date.payroll.Unemployment.UNEMPLOYMENT;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,9 +19,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.GeroaInsert;
-import net.aonsolutions.db.up2date.payroll.PrestITCommonDiseaseAtLackInsert;
-
 public class Up2Date {
 	
 	
@@ -41,7 +36,8 @@ public class Up2Date {
     		//SYSTEMPAYMENTREADONLYUPDATE
     		//BASES2018UPDATEII
     		//PRESTITCOMMONDISEASEATLACKINSERT,
-    		GEROA_INSERT
+    		//GEROA_INSERT
+    		UNEMPLOYMENT
     }; 
 	
 	

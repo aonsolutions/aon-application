@@ -1312,6 +1312,55 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertEquals((Double) ( salarioMensual + plus + 2 * paga )  , totalPayment, 0.001);
 		
 	}
+
+	@Test
+	public void TestInterinidad() throws Exception {
+
+		if (!isDisplayed("interinidad,_tiempo_completo"))
+			open("interinidad");
+
+
+		wait4Id("interinidad,_tiempo_completo");
+
+		draft("INTERINIDAD, TIEMPO COMPLETO");
+		
+		assertValue("textBox_PORCENTAJE_DESMPL", "1,55 %");
+		click("costsCheck-input");
+		assertValue("textBox_PORCENTAJE_DESMPL_E", "5,50 %");
+		click("costsCheck-input");
+		
+		draft("INTERINIDAD, TIEMPO PARCIAL");
+		
+		assertValue("textBox_PORCENTAJE_DESMPL", "1,55 %");
+		click("costsCheck-input");
+		assertValue("textBox_PORCENTAJE_DESMPL_E", "5,50 %");
+		click("costsCheck-input");
+	}
+
+	@Test
+	public void TestPracticas() throws Exception {
+
+		if (!isDisplayed("practicas,_tiempo_completo"))
+			open("practicas");
+
+
+		wait4Id("practicas,_tiempo_completo");
+
+		draft("PRACTICAS, TIEMPO COMPLETO");
+		
+		assertValue("textBox_PORCENTAJE_DESMPL", "1,55 %");
+		click("costsCheck-input");
+		assertValue("textBox_PORCENTAJE_DESMPL_E", "5,50 %");
+		click("costsCheck-input");
+		
+		draft("PRACTICAS, TIEMPO PARCIAL");
+		
+		assertValue("textBox_PORCENTAJE_DESMPL", "1,55 %");
+		click("costsCheck-input");
+		assertValue("textBox_PORCENTAJE_DESMPL_E", "5,50 %");
+		click("costsCheck-input");
+	}
+	
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
