@@ -706,6 +706,12 @@ public class AccountStatementDAO {
 	
 	private static Condition getOperatingCondition(AONContext ctx , AccountingReportParams params) {
 		Condition condition = getBasicCondition(ctx, params, true);
+		condition = appendCostCenterCondition(condition,params);
+		return condition;
+	}
+	
+	
+	private static Condition appendCostCenterCondition(Condition condition,AccountingReportParams params) {
 		if (params.getCostCenters() != null && params.getCostCenters().size() > 0) {
 			Condition c = null;
 			if (params.getCostCenters().contains(AccountingReportParams.EMPTY_COST_CENTER_ACCOUNT)) {
@@ -720,7 +726,7 @@ public class AccountStatementDAO {
 		}
 		return condition;
 	}
-	
+
 	private static Condition getTrialBalanceCondition(AONContext ctx , AccountingReportParams params) {
 		Condition condition = getBasicCondition(ctx, params, false);
 		if (params.getAccount() != null && AonStringUtils.isNotBlank(params.getAccount().getCode())) {
@@ -744,6 +750,7 @@ public class AccountStatementDAO {
 				}
 			}
 		}
+		condition = appendCostCenterCondition(condition,params);
 		return condition;
 	}
 }
