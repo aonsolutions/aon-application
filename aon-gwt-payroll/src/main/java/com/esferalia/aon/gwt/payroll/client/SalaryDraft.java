@@ -4970,6 +4970,7 @@ public class SalaryDraft extends ResizeComposite
 	private Widget newPercentBox(final String variable, final Deduction deduction, final Double percent) {
 
 		final TextBox percentTexTBox = new ExpressionBox();
+		percentTexTBox.ensureDebugId("textBox_"+variable);
 
 		class PercentHandler implements FocusHandler, BlurHandler, ChangeHandler {
 
