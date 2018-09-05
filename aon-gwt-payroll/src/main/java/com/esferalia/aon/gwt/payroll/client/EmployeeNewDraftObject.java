@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.payroll.shared.Addresses;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -30,7 +29,7 @@ public class EmployeeNewDraftObject {
 	private List<Agreement> agreements;
 	private WorkplaceEmployees workplaceEmployees;
 	
-	private Addresses addresses;
+//	private Addresses addresses;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
@@ -176,9 +175,9 @@ public class EmployeeNewDraftObject {
 		return null;
 	}
 	
-	public Integer getAddressesNumb(){
-		return this.addresses.getAddresses().size();
-	}
+//	public Integer getAddressesNumb(){
+//		return this.addresses.getAddresses().size();
+//	}
 
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	public void getWorkplaceEmployees(Consumer<WorkplaceEmployees> success, Consumer<Throwable> failure) {
@@ -221,21 +220,21 @@ public class EmployeeNewDraftObject {
 		});
 	}
 	
-	public void getAddresses(Consumer<Addresses> success, Consumer<Throwable> failure) {
-		enterprisesService.getAddresses(new AsyncCallback<Addresses>() {
-			
-			@Override
-			public void onSuccess(Addresses result) {
-				addresses = new Addresses(result.getAddresses());
-				success.accept(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-		});
-	}
+//	public void getAddresses(Consumer<Addresses> success, Consumer<Throwable> failure) {
+//		enterprisesService.getAddresses(new AsyncCallback<Addresses>() {
+//			
+//			@Override
+//			public void onSuccess(Addresses result) {
+//				addresses = new Addresses(result.getAddresses());
+//				success.accept(result);
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				// TODO Auto-generated method stub
+//			}
+//		});
+//	}
 	
 	public void createEmployeeContract(Consumer<EmployeeInfoDataBase> success, Consumer<Throwable> failure){
 		employeesService.createEmployeeContract(this.newEmployeeInfo, new AsyncCallback<EmployeeInfoDataBase>() {
