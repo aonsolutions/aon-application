@@ -95,14 +95,11 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			}
 			map.put("product_quantity", id.getQuantity() + "");
 				
-			if(map.get(QualitySheetCode.UFQCC01.getName()).equals("0.0") || Double.parseDouble(map.get(QualitySheetCode.UFQCC01.getName())) > id.getQuantity()) {
+			if(map.get(QualitySheetCode.UFQCC01.getName()).equals("0.0")) {
 				map.put(QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "");
 				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "", map);
 			}
-			if(map.get(QualitySheetCode.UFQCD01.getName()).equals("0.0") || Double.parseDouble(map.get(QualitySheetCode.UFQCD01.getName())) > id.getQuantity()) {
-				map.put(QualitySheetCode.UFQCD01.getName(), id.getQuantity() + "");
-				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCD01.getName(), id.getQuantity() + "", map);
-			}
+			
 			if(!map.containsKey("product_price")) {
 				DataResponseDetail drd = new DataResponseDetail();
 				drd.setDomain(domainId);
@@ -174,6 +171,20 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 	
 	public HashMap<String, String> updateValue(String domainName, Integer domainId, Integer drId, String code, String value, HashMap<String, String> map){
 		String login = "";
+		if(map.containsKey("source")) {
+			String source = map.get("source");
+			System.out.println(source);
+			String[] arr = source.split("@");
+			System.out.println(arr);
+			Integer idId= Integer.parseInt(arr[1]);
+			Optional<IncomeDetail> idOptional = AON.getIncomeDetail(domainName, domainId, login, f-> f.getIdProperty().eq(idId));
+			
+			if(idOptional.isPresent()){
+				IncomeDetail id = idOptional.get();
+				System.out.println(id.getQuantity());
+			}
+		}
+				
 		DataResponseDetail drd = new DataResponseDetail();
 		drd.setDomain(domainId);
 		drd.setDataResponse(drId);

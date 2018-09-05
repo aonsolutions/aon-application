@@ -165,10 +165,7 @@ public enum QualitySheetCode implements IsSerializable{
 	UFQCE021("ufqce021"),
 	
 	
-	//CONTROL DEFECTOS
-	
-	/** CONTROL DEFECTOS - PESO MUESTRA */
-	UFQCD01("ufqcd01"),
+	//CONTROL DEFECTOS	
 	
 	/** CONTROL DEFECTOS - PESO AGUSANADO */
 	UFQCD02("ufqcd02"),

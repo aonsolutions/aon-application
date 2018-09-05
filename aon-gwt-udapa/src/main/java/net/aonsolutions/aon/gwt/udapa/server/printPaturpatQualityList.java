@@ -364,9 +364,8 @@ public class printPaturpatQualityList extends HttpServlet{
 						!Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0]))){
 					Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 					if(incomeDetail.isPresent()){
-						if(!map.containsKey(QualitySheetCode.UFQCC01.getName()) || !map.containsKey(QualitySheetCode.UFQCD01.getName())) {
+						if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) {
 							map.put(QualitySheetCode.UFQCC01.getName(), Double.toString(incomeDetail.get().getQuantity()));
-							map.put(QualitySheetCode.UFQCD01.getName(), Double.toString(incomeDetail.get().getQuantity()));	
 						}
 						map = UdapaImpl.compute((HashMap<String, String>) map);
 						Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getIncome().getId()));
@@ -464,9 +463,8 @@ public class printPaturpatQualityList extends HttpServlet{
 				if(map.containsKey(QualitySheetCode.UFQDP1.getName()) && Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0])){
 					Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 					if(incomeDetail.isPresent()){
-						if(!map.containsKey(QualitySheetCode.UFQCC01.getName()) || !map.containsKey(QualitySheetCode.UFQCD01.getName())) {
+						if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) {
 							map.put(QualitySheetCode.UFQCC01.getName(), Double.toString(incomeDetail.get().getQuantity()));
-							map.put(QualitySheetCode.UFQCD01.getName(), Double.toString(incomeDetail.get().getQuantity()));	
 						}
 						map = UdapaImpl.compute((HashMap<String, String>) map);
 						Optional<Income> income = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getIncome().getId()));
@@ -596,9 +594,8 @@ public class printPaturpatQualityList extends HttpServlet{
  					!Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0]))){
 				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 				if(incomeDetail.isPresent()){
-					if(!map.containsKey(QualitySheetCode.UFQCC01.getName()) || !map.containsKey(QualitySheetCode.UFQCD01.getName())) {
+					if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) {
 						map.put(QualitySheetCode.UFQCC01.getName(), Double.toString(incomeDetail.get().getQuantity()));
-						map.put(QualitySheetCode.UFQCD01.getName(), Double.toString(incomeDetail.get().getQuantity()));	
 					}
 					map = UdapaImpl.compute((HashMap<String, String>) map);
 					
@@ -703,9 +700,8 @@ public class printPaturpatQualityList extends HttpServlet{
 			if(map.containsKey(QualitySheetCode.UFQDP1.getName()) && Destiny.SIEMBRA.equals(Destiny.values()[Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName())) > 0 ? Integer.parseInt(map.get(QualitySheetCode.UFQDP1.getName()))-1 : 0])){
 				Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(r.getSourceId()));
 				if(incomeDetail.isPresent()){
-					if(!map.containsKey(QualitySheetCode.UFQCC01.getName()) || !map.containsKey(QualitySheetCode.UFQCD01.getName())) {
+					if(!map.containsKey(QualitySheetCode.UFQCC01.getName())) {
 						map.put(QualitySheetCode.UFQCC01.getName(), Double.toString(incomeDetail.get().getQuantity()));
-						map.put(QualitySheetCode.UFQCD01.getName(), Double.toString(incomeDetail.get().getQuantity()));	
 					}
 					map = UdapaImpl.compute((HashMap<String, String>) map);
 					
