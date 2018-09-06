@@ -18,7 +18,7 @@ public enum OfferType implements IResourceable {
     INTERNET,
     PROFORMA,
     DEALERSHIP,
-    AUDATEX;
+    OTHER;	//OLD     A U D A T E X;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_offer_type_";

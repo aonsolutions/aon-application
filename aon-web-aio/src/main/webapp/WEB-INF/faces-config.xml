@@ -345,8 +345,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<!--  aon.ui.audabridge -->
-			<value>#{audabridgeOfferControllerListener}</value>
 		</list-entries>
 	</managed-bean>	
 

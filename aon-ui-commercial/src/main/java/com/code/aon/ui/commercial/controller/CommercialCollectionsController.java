@@ -86,7 +86,7 @@ public class CommercialCollectionsController implements Serializable {
 	 */
 	public List<SelectItem> getOfferTypes() {
 		if ( offerTypes == null ) {
-			boolean audatexEnabled = (Boolean)AonUtil.getConfigurationController().getBean()
+			boolean otherEnabled = (Boolean)AonUtil.getConfigurationController().getBean()
 				.get(ICommercialConstants.CONFIG_OFFER_BEAN)
 				.get(ICommercialConstants.SHOW_TAS_DATA);
 			Locale locale = AonUtil.getCurrentLocale();
@@ -94,7 +94,7 @@ public class CommercialCollectionsController implements Serializable {
 			for (OfferType type : OfferType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
-				if ( type!=OfferType.AUDATEX || type==OfferType.AUDATEX && audatexEnabled) {  
+				if ( type!=OfferType.OTHER || type==OfferType.OTHER && otherEnabled) {  
 					offerTypes.add(item);
 				}
 			}

@@ -117,7 +117,6 @@
 
 		<!-- UI MODULES -->
 		<module>aon-ui-academy</module>
-		<module>aon-ui-audabridge</module>
 		<module>aon-ui-carrier</module>
 		<module>aon-ui-company</module>
 		<module>aon-ui-config</module>
@@ -178,7 +177,6 @@
 		<module>aon-gwt-communication</module>
 
 		<!-- GENERATED -->
-		<module>aon-audabridge-api</module>
 		<module>aon-pms-api</module>
 		<module>aon-dex-api</module>
 		<module>aon-sepe-api</module>
@@ -213,7 +211,7 @@
 		<!-- AWS API Gateway & Lambda -->
 		<module>aon-rest-api</module>
 		<module>aon-jasper-report</module>
-		
+
 	</modules>
 
 	<scm>

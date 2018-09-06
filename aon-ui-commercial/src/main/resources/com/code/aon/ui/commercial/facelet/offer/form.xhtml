@@ -39,21 +39,6 @@
 							<f:param name="reportKey" value="#{offer.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-						<aon:if test="#{aonConfiguration.bean.offer.showTasData}">
-							<aon:htmlCommandLink id="audagateCall" value="#{bundle.audabridge_edit_assessment}"
-								rendered="#{!offer.nevv and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" target="_new"
-								actionListener="#{audabridgeOffer.onCallAudaGate}"
-								style="padding-left: 25px;"
-								styleClass="aon-finding-toolbar-item aon-icon-audatex">
-							</aon:htmlCommandLink>
-							<aon:commandButton id="offerCreation" value="#{bundle.audabridge_import_assessment}"
-								rendered="#{!offer.nevv and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" 
-								actionListener="#{audabridgeOffer.onImportAssessment}"
-								onclick="Richfaces.showModalPanel('waitProccess')"
-								oncomplete="Richfaces.hideModalPanel('waitProccess')"
-								styleClass="aon-finding-toolbar-item aon-icon-go">
-							</aon:commandButton>
-						</aon:if>	
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
@@ -255,7 +240,7 @@
 						</aon:selectOneMenu>
 						<aon:outputText styleClass="aon-bold aon-margin-left"
 							value="#{offer.to.externalReference}"
-							rendered="#{!offer.nevv and offer.to.audatexOffer}" />
+							rendered="#{!offer.nevv and offer.to.otherOffer}" />
 					</aon:div>
 
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >

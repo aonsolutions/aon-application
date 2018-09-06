@@ -8,7 +8,7 @@ public enum OfferType implements Serializable {
 	, INTERNET("Internet")
 	, PROFORMA("Proforma")
 	, DEALERSHIP("Representación")
-	, AUDATEX("AudaTex");
+	, OTHER("Otro");
 
 	private String description;
 

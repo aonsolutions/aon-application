@@ -154,8 +154,8 @@ public class Offer extends OfferDB implements IHeaderObject, ICalculableContaine
 		return (OfferType.DEALERSHIP == getType());
 	}
 	@Transient
-	public boolean isAudatexOffer() {
-		return (OfferType.AUDATEX == getType());
+	public boolean isOtherOffer() {
+		return (OfferType.OTHER == getType());
 	}
 
 	@Transient
