@@ -196,6 +196,10 @@
 			width: 203px !important;
 		}
 
+		.paddingTop{
+			padding-top: 5px;
+		}
+
 		
 	</ui:style>
 
@@ -421,9 +425,24 @@
 										<g:Label styleName='{style.paddingLeft}'>Dirección</g:Label>
 									</g:customCell>
 									<g:customCell styleName='{style.secondColumnWidth}'>
-										<g:HorizontalPanel>
+									    <g:VerticalPanel>
+										    <g:HorizontalPanel>
+											    <g:SuggestBox ui:field="address" width="446px"></g:SuggestBox>
+											    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Número</g:Label>
+											    <g:TextBox ui:field="addressNum" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="210px"></g:TextBox>
+											</g:HorizontalPanel>
+											<g:HorizontalPanel styleName='{style.paddingTop}'>
+											    <g:Label styleName='{style.paddingLabel}'>C.P.</g:Label>
+											    <g:TextBox ui:field="addressZip" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="139px"></g:TextBox>
+											    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Localidad</g:Label>
+											    <g:TextBox ui:field="addressCity" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="180px"></g:TextBox>
+											    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Provincia</g:Label>
+											    <g:TextBox ui:field="addressProvince" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="204px"></g:TextBox>
+											</g:HorizontalPanel>
+										</g:VerticalPanel>
+										<!-- g:HorizontalPanel>
 										    <g:TextBox ui:field="address" width="713px"></g:TextBox>
-										</g:HorizontalPanel>
+										</g:HorizontalPanel -->
 									</g:customCell>
 								</g:row>      
 								<g:row>

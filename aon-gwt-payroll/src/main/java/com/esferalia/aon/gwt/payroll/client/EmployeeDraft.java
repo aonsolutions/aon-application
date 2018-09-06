@@ -217,7 +217,19 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	TextBox security_social_num;
 	
 	@UiField
-	TextBox address;
+	SuggestBox address;
+	
+	@UiField
+	TextBox addressNum;
+	
+	@UiField
+	TextBox addressZip;
+	
+	@UiField
+	TextBox addressCity;
+	
+	@UiField
+	TextBox addressProvince;
 	
 	@UiField
 	TextBox phone;
@@ -257,26 +269,26 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		//Init Google Maps Places API
-		loadMapsPlacesAPI(()->{initializeAutocomplete(this.address.getElement(), (js)->{
-				Place place = js.cast();
-				
-				employeeDraftObject.setEmployeeAddress(place.get("route").getLongName());
-				employeeDraftObject.setEmployeeAddressNumber(place.get("street_number").getShortName());
-				employeeDraftObject.setEmployeeAddressZip(place.get("postal_code").getLongName());
-				employeeDraftObject.setEmployeeAddressLacality(place.get("locality").getLongName());
-				employeeDraftObject.setEmployeeAddressProvince(place.get("administrative_area_level_2").getLongName());
-				
-//				Window.alert("route :"+place.get("route").getLongName()); //Calle
-//				Window.alert("route :"+place.get("route").getShortName());
-//				Window.alert("street_number :"+place.get("street_number").getShortName()); //Numero domicilio
-//				Window.alert("locality :"+place.get("locality").getLongName()); //Localidad
-//				Window.alert("administrative_area_level_2 :"+place.get("administrative_area_level_2").getLongName()); //Provincia
-//				Window.alert("administrative_area_level_1 :"+place.get("administrative_area_level_1").getLongName()); //Comunidad autonoma
-//				Window.alert("country :"+place.get("country").getShortName()); //Codigo pais
-//				Window.alert("country :"+place.get("country").getLongName()); //Pais
-//				Window.alert("postal_code :"+place.get("postal_code").getLongName()); //Codigo postal
-			}); 
-		});
+//		loadMapsPlacesAPI(()->{initializeAutocomplete(this.address.getElement(), (js)->{
+//				Place place = js.cast();
+//				
+//				employeeDraftObject.setEmployeeAddress(place.get("route").getLongName());
+//				employeeDraftObject.setEmployeeAddressNumber(place.get("street_number").getShortName());
+//				employeeDraftObject.setEmployeeAddressZip(place.get("postal_code").getLongName());
+//				employeeDraftObject.setEmployeeAddressLacality(place.get("locality").getLongName());
+//				employeeDraftObject.setEmployeeAddressProvince(place.get("administrative_area_level_2").getLongName());
+//				
+////				Window.alert("route :"+place.get("route").getLongName()); //Calle
+////				Window.alert("route :"+place.get("route").getShortName());
+////				Window.alert("street_number :"+place.get("street_number").getShortName()); //Numero domicilio
+////				Window.alert("locality :"+place.get("locality").getLongName()); //Localidad
+////				Window.alert("administrative_area_level_2 :"+place.get("administrative_area_level_2").getLongName()); //Provincia
+////				Window.alert("administrative_area_level_1 :"+place.get("administrative_area_level_1").getLongName()); //Comunidad autonoma
+////				Window.alert("country :"+place.get("country").getShortName()); //Codigo pais
+////				Window.alert("country :"+place.get("country").getLongName()); //Pais
+////				Window.alert("postal_code :"+place.get("postal_code").getLongName()); //Codigo postal
+//			}); 
+//		});
 		
 		this.document.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -482,6 +494,31 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	@UiHandler("security_social_num")
 	void onSocialSecurityNumChangeValue(ChangeEvent event) {
 		employeeDraftObject.setEmployeeSocialSecurityNum(security_social_num.getValue());
+	}
+	
+	@UiHandler("address")
+	void onAddressChangeValue(ValueChangeEvent<String> event) {
+		employeeDraftObject.setEmployeeAddress(address.getValue());
+	}
+	
+	@UiHandler("addressNum")
+	void onAddressNumChangeValue(ChangeEvent event) {
+		employeeDraftObject.setEmployeeAddressNumber(addressNum.getValue());
+	}
+	
+	@UiHandler("addressZip")
+	void onAddressZipChangeValue(ChangeEvent event) {
+		employeeDraftObject.setEmployeeAddressZip(addressZip.getValue());
+	}
+	
+	@UiHandler("addressCity")
+	void onAddressCityChangeValue(ChangeEvent event) {
+		employeeDraftObject.setEmployeeAddressLacality(addressCity.getValue());
+	}
+	
+	@UiHandler("addressProvince")
+	void onAddressProvinceChangeValue(ChangeEvent event) {
+		employeeDraftObject.setEmployeeAddressProvince(addressProvince.getValue());
 	}
 	
 	@UiHandler("phone")
@@ -952,11 +989,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.security_social_num.setText(security_social_num);
 		
 		String address = (employeeInfo.getAddress() == null) ? "" : employeeInfo.getAddress();
+		this.address.setValue(address);
 		String address_number = (employeeInfo.getAddress_number() == null) ? "" : employeeInfo.getAddress_number();
+		this.addressNum.setValue(address_number);
 		String zip = (employeeInfo.getZip_code() == null) ? "" : employeeInfo.getZip_code();
+		this.addressZip.setValue(zip);
 		String locality = (employeeInfo.getLocality() == null) ? "" : employeeInfo.getLocality();
+		this.addressCity.setValue(locality);
 		String province = (employeeInfo.getProvince() == null) ? "" : employeeInfo.getProvince();
-		this.address.setText(address + ", " + address_number + ", " + zip + ", " + locality + ", " + province);
+		this.addressProvince.setValue(province);
+		//this.address.setText(address + ", " + address_number + ", " + zip + ", " + locality + ", " + province);
 		
 		String phone =  (employeeInfo.getPhone() == null) ? "" : employeeInfo.getPhone();
 		this.phone.setText(phone);

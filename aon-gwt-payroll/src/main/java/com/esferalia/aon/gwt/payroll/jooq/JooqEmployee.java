@@ -360,6 +360,45 @@ public class JooqEmployee {
 			.where(RADDRESS.ID.eq(newEmployeeInfo.getRaddress_table_id()))
 			.execute();
 		
+		if(geozone == null){
+			Record geotreeParent = dslContext.select()
+									.from(GEOTREE)
+									.where(GEOTREE.DOMAIN.eq(newEmployeeInfo.getDomain()))
+									.and(GEOTREE.PARENT.isNull())
+									.fetchOne();
+			
+			Integer geozoneParentId = 0;
+			
+			if(geotreeParent == null){
+				GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
+						.set(GEOZONE.DOMAIN, newEmployeeInfo.getDomain())
+						.set(GEOZONE.NAME, "ESPAÑA")
+						.set(GEOZONE.CODE, "ES")
+						.set(GEOZONE.SYSTEM, (byte) 1)
+						.returning(GEOZONE.ID)
+						.fetchOne();
+				
+				geozoneParentId = geozoneParentRecord.getId();
+			}else{
+				geozoneParentId = geotreeParent.get(GEOTREE.CHILD);
+			}
+			
+			
+			dslContext.insertInto(GEOTREE)
+			.set(GEOTREE.DOMAIN, newEmployeeInfo.getDomain())
+			.set(GEOTREE.PARENT, geozoneParentId)
+			.set(GEOTREE.CHILD, geozoneId)
+			.execute();
+			
+			if(geotreeParent == null){
+				dslContext.insertInto(GEOTREE)
+				.set(GEOTREE.DOMAIN, newEmployeeInfo.getDomain())
+				.set(GEOTREE.PARENT, (Integer) null)
+				.set(GEOTREE.CHILD, geozoneParentId)
+				.execute();
+			}
+		}
+		
 		if(newEmployeeInfo.getPhone() != null){
 			if(newEmployeeInfo.getRmedia_table_phone_id() != null) //UPDATE
 				dslContext.update(RMEDIA)

@@ -664,7 +664,9 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	private boolean checkIfUpdateIsPossible() {
 		if(personId.getValue() == ""){
 			if(name.getValue() == "" || first_surname.getValue() == "" || 
-					document.getValue() == "" || security_social_num.getValue() == ""){
+					document.getValue() == "" || security_social_num.getValue() == "" ||
+					address.getValue() == "" || addressNum.getValue() == "" ||
+					addressZip.getValue() == "" || addressCity.getValue() == "" || addressProvince.getValue() == ""){
 				//Window.alert("Empleado nuevo faltan campos");
 				return false;
 			}

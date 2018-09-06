@@ -385,7 +385,7 @@
 									<g:HorizontalPanel styleName='{style.horizontalPanel}' ui:field="quoteAccountPanel">
 									    <g:TextBox ui:field="quotationAccount" styleName='{style.textAlignCenter}' width="180px"></g:TextBox>
 										<g:Label styleName='{style.paddingLabel} {style.paddingLeft}  {style.requiredColor}'>Centro de trabajo</g:Label>
-										<g:TextBox ui:field="workplace" styleName='{style.paddingLabel} {style.paddingLeft} {style.margingLeft}' width="408px"></g:TextBox>
+										<g:TextBox ui:field="workplace" styleName='{style.paddingLabel} {style.paddingLeft} {style.margingLeft}' width="405px"></g:TextBox>
 									</g:HorizontalPanel>
 								</g:customCell>
 							</g:row>
@@ -443,7 +443,7 @@
 									    	<g:Label styleName='{style.paddingLabel}'>Nivel/Categoría</g:Label>
 									    	<g:ListBox ui:field="level" styleName='{style.margingLeft}' width="324px"></g:ListBox>
 									    	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Mostrar como</g:Label>
-									    	<g:TextBox ui:field="category" styleName='{style.textAlignCenter} {style.margingLeft} {style.paddingLabel}' width="202px"></g:TextBox>
+									    	<g:TextBox ui:field="category" styleName='{style.textAlignCenter} {style.margingLeft} {style.paddingLabel}' width="201px"></g:TextBox>
 									    </g:HorizontalPanel>
 									</g:VerticalPanel>
 								</g:customCell>
