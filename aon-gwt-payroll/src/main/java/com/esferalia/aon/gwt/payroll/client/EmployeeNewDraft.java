@@ -39,12 +39,10 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -117,6 +115,8 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		String nieDocumentStyle();
 		String nieNSSStyle();
 		String nieNationalityStyle();
+		String dniDocumentStyle();
+		String dniNSSStyle();
 	}
 	
 	@UiField
@@ -173,7 +173,19 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	ListBox gender;
 	
 	@UiField
-	TextBox address;
+	SuggestBox address;
+	
+	@UiField
+	TextBox addressNum;
+	
+	@UiField
+	TextBox addressZip;
+	
+	@UiField
+	TextBox addressCity;
+	
+	@UiField
+	TextBox addressProvince;
 	
 	@UiField
 	TextBox phone;
@@ -274,26 +286,26 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		//Init Google Maps Places API
-		loadMapsPlacesAPI(()->{initializeAutocomplete(this.address.getElement(), (js)->{
-				Place place = js.cast();
-				
-				employeeNewDraftObject.setEmployeeAddress(place.get("route").getLongName());
-				employeeNewDraftObject.setEmployeeAddressNumber(place.get("street_number").getShortName());
-				employeeNewDraftObject.setEmployeeAddressZip(place.get("postal_code").getLongName());
-				employeeNewDraftObject.setEmployeeAddressLacality(place.get("locality").getLongName());
-				employeeNewDraftObject.setEmployeeAddressProvince(place.get("administrative_area_level_2").getLongName());
-				
-//				Window.alert("route :"+place.get("route").getLongName()); //Calle
-//				Window.alert("route :"+place.get("route").getShortName());
-//				Window.alert("street_number :"+place.get("street_number").getShortName()); //Numero domicilio
-//				Window.alert("locality :"+place.get("locality").getLongName()); //Localidad
-//				Window.alert("administrative_area_level_2 :"+place.get("administrative_area_level_2").getLongName()); //Provincia
-//				Window.alert("administrative_area_level_1 :"+place.get("administrative_area_level_1").getLongName()); //Comunidad autonoma
-//				Window.alert("country :"+place.get("country").getShortName()); //Codigo pais
-//				Window.alert("country :"+place.get("country").getLongName()); //Pais
-//				Window.alert("postal_code :"+place.get("postal_code").getLongName()); //Codigo postal
-			}); 
-		});
+//		loadMapsPlacesAPI(()->{initializeAutocomplete(this.address.getElement(), (js)->{
+//				Place place = js.cast();
+//				
+//				employeeNewDraftObject.setEmployeeAddress(place.get("route").getLongName());
+//				employeeNewDraftObject.setEmployeeAddressNumber(place.get("street_number").getShortName());
+//				employeeNewDraftObject.setEmployeeAddressZip(place.get("postal_code").getLongName());
+//				employeeNewDraftObject.setEmployeeAddressLacality(place.get("locality").getLongName());
+//				employeeNewDraftObject.setEmployeeAddressProvince(place.get("administrative_area_level_2").getLongName());
+//				
+////				Window.alert("route :"+place.get("route").getLongName()); //Calle
+////				Window.alert("route :"+place.get("route").getShortName());
+////				Window.alert("street_number :"+place.get("street_number").getShortName()); //Numero domicilio
+////				Window.alert("locality :"+place.get("locality").getLongName()); //Localidad
+////				Window.alert("administrative_area_level_2 :"+place.get("administrative_area_level_2").getLongName()); //Provincia
+////				Window.alert("administrative_area_level_1 :"+place.get("administrative_area_level_1").getLongName()); //Comunidad autonoma
+////				Window.alert("country :"+place.get("country").getShortName()); //Codigo pais
+////				Window.alert("country :"+place.get("country").getLongName()); //Pais
+////				Window.alert("postal_code :"+place.get("postal_code").getLongName()); //Codigo postal
+//			}); 
+//		});
 		
 		this.document.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -422,6 +434,31 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	@UiHandler("security_social_num")
 	void onSocialSecurityNumChangeValue(ChangeEvent event) {
 		employeeNewDraftObject.setEmployeeSocialSecurityNum(security_social_num.getValue());
+	}
+	
+	@UiHandler("address")
+	void onAddressChangeValue(ValueChangeEvent<String> event) {
+		employeeNewDraftObject.setEmployeeAddress(address.getValue());
+	}
+	
+	@UiHandler("addressNum")
+	void onAddressNumChangeValue(ChangeEvent event) {
+		employeeNewDraftObject.setEmployeeAddressNumber(addressNum.getValue());
+	}
+	
+	@UiHandler("addressZip")
+	void onAddressZipChangeValue(ChangeEvent event) {
+		employeeNewDraftObject.setEmployeeAddressZip(addressZip.getValue());
+	}
+	
+	@UiHandler("addressCity")
+	void onAddressCityChangeValue(ChangeEvent event) {
+		employeeNewDraftObject.setEmployeeAddressLacality(addressCity.getValue());
+	}
+	
+	@UiHandler("addressProvince")
+	void onAddressProvinceChangeValue(ChangeEvent event) {
+		employeeNewDraftObject.setEmployeeAddressProvince(addressProvince.getValue());
 	}
 	
 	@UiHandler("phone")
@@ -677,16 +714,16 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		addStyleFirstColumnTable();
 		
 		//TODO: BORRAR CUANDO FUNCIONE PLACES DE GOOGLE. DE MOMENTO METER AUTOMATICAMENTE MISMA DIRECCION PARA PRUEBAS
-		initializeAddresss();
+//		initializeAddresss();
 	}
 
-	private void initializeAddresss() {
-		employeeNewDraftObject.setEmployeeAddress("Jose Maria Llanos");
-		employeeNewDraftObject.setEmployeeAddressNumber("36");
-		employeeNewDraftObject.setEmployeeAddressZip("28822");
-		employeeNewDraftObject.setEmployeeAddressLacality("Coslada");
-		employeeNewDraftObject.setEmployeeAddressProvince("Madrid");
-	}
+//	private void initializeAddresss() {
+//		employeeNewDraftObject.setEmployeeAddress("Jose Maria Llanos");
+//		employeeNewDraftObject.setEmployeeAddressNumber("36");
+//		employeeNewDraftObject.setEmployeeAddressZip("28822");
+//		employeeNewDraftObject.setEmployeeAddressLacality("Coslada");
+//		employeeNewDraftObject.setEmployeeAddressProvince("Madrid");
+//	}
 
 	private void resetElements() {
 		//Clear employee elements
@@ -964,6 +1001,14 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 			this.document.removeStyleName(style.nieDocumentStyle());
 			this.nationality.removeStyleName(style.nieNationalityStyle());
 			this.security_social_num.removeStyleName(style.nieNSSStyle());
+		}
+		
+		if(document_type_str == "DNI"){
+			this.document.addStyleName(style.dniDocumentStyle());
+			this.security_social_num.addStyleName(style.dniNSSStyle());
+		}else{
+			this.document.removeStyleName(style.dniDocumentStyle());
+			this.security_social_num.removeStyleName(style.dniNSSStyle());
 		}
 		
 		if(document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE")
