@@ -77,10 +77,18 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.APRIL, 2018);
 		assertText("common_contingency", "6,94");
 
-		assertValue("cgcBaseLabel", "858,60");
-		assertValue("cgpBaseLabel", "858,60");
+		//assertValue("cgcBaseLabel", "858,60");
+		//assertValue("cgpBaseLabel", "858,60");
 		wait4Id("common_contingency_cost");
 		assertText("common_contingency_cost", "34,80");
+
+		draft("FORMACION Y APRENDIZAJE, IT");
+		calculate(Calendar.OCTOBER, 2018);
+		assertText("common_contingency", "6,94");
+		assertText("unemployment", "13,31");
+		assertText("job_training", "0,17");
+		assertValue("cgcBaseLabel", "858,60");
+		assertValue("cgpBaseLabel", "858,60");
 	}
 
 

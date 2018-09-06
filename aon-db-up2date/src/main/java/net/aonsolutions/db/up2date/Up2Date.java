@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.payroll.Unemployment.UNEMPLOYMENT;
+import static net.aonsolutions.db.up2date.tgss.FellowBases2018Fix.FELLOWBASES2018FIX;
+import static net.aonsolutions.db.up2date.tgss.TrainingBases2018Fix.TRAININGBASES2018FIX;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -37,7 +38,10 @@ public class Up2Date {
     		//BASES2018UPDATEII
     		//PRESTITCOMMONDISEASEATLACKINSERT,
     		//GEROA_INSERT
-    		UNEMPLOYMENT
+    		//UNEMPLOYMENT
+    		TRAININGBASES2018FIX,
+    		FELLOWBASES2018FIX
+    		
     }; 
 	
 	
