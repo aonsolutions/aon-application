@@ -531,8 +531,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		public void onBases(CretaService.JsBasesResult result) {
 			
-			Window.alert("onBases()");
-			
 
 			MergeEditor mergeEditor = new BasesMergeEditor();
 			mergeEditor.setOrig(result.getBasesFile());
