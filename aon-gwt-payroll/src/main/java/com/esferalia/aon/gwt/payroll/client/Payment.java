@@ -427,10 +427,13 @@ public class Payment extends ResizeComposite {
 	}
 
 	public void setExpression(String payment) {
+		boolean notZero = !SpecialExpresion.isZero(payment);
+		boolean notReadOnly = !SpecialExpresion.isReadOnly(payment);
 		paymentTextBox.setExpression(payment);
-		paymentTextBox.enable(!SpecialExpresion.isReadOnly(payment));
+		paymentTextBox.enable(notReadOnly);
 		showOrHideFxPaymentButton();
 		showOrHideResetPaymentButton();
+		paymentTextBox.setVisible(notReadOnly || notZero);
 	}
 
 	public String getIrpfExpression() {
@@ -440,13 +443,16 @@ public class Payment extends ResizeComposite {
 	}
 
 	public void setIrpfExpression(String expression) {
+		boolean notZero = !SpecialExpresion.isZero(expression);
+		boolean notReadOnly = !SpecialExpresion.isReadOnly(expression);
 		String listValue = getListValue(expression);
 		selectByValue(taxListBox, listValue);
 		onTaxListBoxChange(null);
 		taxTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetTaxButton();
 		//taxTextBox.enable(!SpecialExpresion.isReadOnly(expression));
-		enableCustomTax(listValue.equals(CUSTOM) && !SpecialExpresion.isReadOnly(expression));
+		enableCustomTax(listValue.equals(CUSTOM) && notReadOnly);
+		taxTextBox.setVisible(notReadOnly || notZero);
 	}
 
 	public String getQuoteExpression() {
@@ -455,6 +461,8 @@ public class Payment extends ResizeComposite {
 	}
 
 	public void setQuoteExpression(String expression) {
+		boolean notZero = !SpecialExpresion.isZero(expression);
+		boolean notReadOnly = !SpecialExpresion.isReadOnly(expression);
 		String listValue = getListValue(expression);
 		selectByValue(quoteListBox, listValue);
 		onQuoteListBoxChange(null);
@@ -462,6 +470,7 @@ public class Payment extends ResizeComposite {
 		showOrHideResetQuoteButton();
 		//quoteTextBox.enable(!SpecialExpresion.isReadOnly(expression));
 		enableCustomQuote(listValue.equals(CUSTOM) && !SpecialExpresion.isReadOnly(expression));
+		quoteTextBox.setVisible(notReadOnly || notZero);
 	}
 
 	public void setType(com.esferalia.aon.gwt.payroll.shared.Payment.Type type) {

@@ -1064,6 +1064,7 @@ public class AgreementDraftObject {
 				add("ASIMILADO_REGIMEN_GRAL");
 				add("INGRESO_AC_EMPRESA");
 
+				add("BASE_CGC");
 			}
 		}.contains(var) 
 		|| var.startsWith("DIAS")

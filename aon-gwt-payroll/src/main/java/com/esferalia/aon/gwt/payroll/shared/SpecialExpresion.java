@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 
 public class SpecialExpresion {
 
@@ -72,6 +73,10 @@ public class SpecialExpresion {
 
 		return expresion;
 
+	}
+
+	public static boolean isZero(String expression) {
+		return RegExp.compile("\\*\\s*0\\.00/\\*\\*/").test(expression);
 	}
 
 	public static boolean isReadOnly(String expression) {

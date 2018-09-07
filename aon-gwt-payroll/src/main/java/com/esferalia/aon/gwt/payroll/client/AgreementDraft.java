@@ -79,6 +79,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
 import com.google.gwt.text.shared.Parser;
@@ -2312,7 +2313,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
 		paymentsTable.setWidget(row, 2, expressionBox);
 		contentAssistManager.addValueBox(expressionBox);
-		enable(expressionBox, !SpecialExpresion.isReadOnly(payment.getExpression()));
+		
+		boolean notReadOnly = !SpecialExpresion.isReadOnly(payment.getExpression());
+		enable(expressionBox, notReadOnly);
+		show(expressionBox, notReadOnly || !isZero(payment));
 
 		Button deleteButton = new Button();
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
@@ -3483,5 +3487,19 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			textBox.getElement().getStyle().clearBorderStyle();
 		}
 	}
+	
+	private static void show(TextBox textBox, boolean show) {
+
+		if (textBox.isVisible() == show)
+			return;
+
+		textBox.setVisible(show);
+
+	}
+
+	private static <T extends Item<?>> boolean isZero(T item) {
+		return SpecialExpresion.isZero(item.getExpression());
+	}
+	
 	
 }
