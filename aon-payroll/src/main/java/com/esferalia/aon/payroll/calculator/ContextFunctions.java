@@ -25,6 +25,7 @@ import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -466,8 +467,16 @@ public class ContextFunctions {
 		Period currentPeriod = ExpressionContext.getCurrentBindings().getPeriod();
 		Date currentDate = currentPeriod.getEnd();
 		
-		Calendar extraEndCalendar = parseExtraDate(extraPayment.getExtraEndDate(), currentDate);
-		Calendar extraStartCalendar = parseExtraDate(extraPayment.getExtraStartDate(), currentDate);
+		
+		Calendar extraEndCalendar ;
+		Calendar extraStartCalendar ;
+		try {
+			extraEndCalendar = parseExtraDate(extraPayment.getExtraEndDate(), currentDate);
+			extraStartCalendar = parseExtraDate(extraPayment.getExtraStartDate(), currentDate);
+		} catch(Exception e ) {
+			extraEndCalendar = getExtraEndDate(extraPayment.getMonth(), currentDate);
+			extraStartCalendar = getExtraStartDate(extraPayment.getMonth(), currentDate);
+		}
 		
 		List<Integer> extraMonths = new ArrayList<Integer>();
 		extraStartCalendar.set(Calendar.DATE, 1);
@@ -521,6 +530,26 @@ public class ContextFunctions {
 		calendar.set(Calendar.MONTH, Integer.parseInt(matcher.group("month"))-1);
 		if ( matcher.group("year") != null )
 			calendar.add(Calendar.YEAR, Integer.parseInt(matcher.group("year")));
+		
+		return calendar;	
+	}
+
+	private static Calendar getExtraEndDate(Month month, Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DATE, 1);
+		calendar.set(Calendar.MONTH, month.getValue() );
+		calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+		
+		return calendar;	
+	}
+
+	private static Calendar getExtraStartDate(Month month, Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DATE, 1);
+		calendar.add(Calendar.YEAR, -1);
+		calendar.set(Calendar.MONTH, month.getValue() +1);
 		
 		return calendar;	
 	}

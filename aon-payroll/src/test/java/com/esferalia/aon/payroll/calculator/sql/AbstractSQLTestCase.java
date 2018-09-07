@@ -118,6 +118,7 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	public static class Payment {
+		public Month month;
 		public Integer concept;
 		public String expression;
 		public SalaryType salary = SalaryType.SALARY;
@@ -591,7 +592,9 @@ public abstract class AbstractSQLTestCase {
 			aonContext.getDslContext().insertInto(AGREEMENT_PAYMENT).set(AGREEMENT_PAYMENT.DOMAIN, domainId)
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.concept)
-					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression).set(AGREEMENT_PAYMENT.START_DATE, startDate)
+					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression)
+					.set(AGREEMENT_PAYMENT.START_DATE, startDate)
+					.set(AGREEMENT_PAYMENT.MONTH, payment.month != null ? (byte) payment.month.ordinal() : null )
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.salary.ordinal()).returning().fetchOne();
 		}
 	}
