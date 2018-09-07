@@ -10,6 +10,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
@@ -1360,8 +1361,15 @@ public class Bases {
 					try {
 						return super.get(salary, desde, hasta);
 					} catch (NoSuchVariableException e) {
-						return getWorkedHours(salary, desde, hasta);
 					}
+					
+					try {
+						Period p = new Period(toDate(desde), toDate(hasta));
+						return get(SALARY_HOURS.getName(),salary,  p);
+					} catch (NoSuchVariableException e) {
+					}
+
+					return getWorkedHours(salary, desde, hasta);
 				};
 			});
 			put("02", new OptionalHCretaData(EXTRA_HOURS.getName()));
