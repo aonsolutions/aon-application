@@ -1394,7 +1394,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 								<bottomPen lineWidth="0.0"/>
 								<rightPen lineWidth="0.0"/>
 							</box>
-							<textField pattern="#,##0.00##" isBlankWhenNull="true">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
 								<reportElement key="textField-16" x="0" y="0" width="80" height="15" uuid="2e1c9db6-73cf-4654-a4d4-69277aee21b9"/>
 								<box rightPadding="5">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1405,7 +1405,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{base}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($F{base}.doubleValue())]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
