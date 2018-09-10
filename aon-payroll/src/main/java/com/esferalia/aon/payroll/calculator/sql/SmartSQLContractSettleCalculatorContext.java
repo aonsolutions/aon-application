@@ -119,7 +119,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		.fetchInto(AGREEMENT_EXTRA)
 		;
 		
-		int year = AonDateUtils.get(settleEndDate, Calendar.YEAR );
+		
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
@@ -132,6 +132,8 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		
 		for ( int i = 0; i < extras.size(); i++ ) {
 			
+			int year = AonDateUtils.get(settleEndDate, Calendar.YEAR );
+			
 			AgreementExtraRecord extra = extras.get(i);
 			
 			Date extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
@@ -140,8 +142,11 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 
 			Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
 
-			if ( extraIssueDate.before(settleEndDate))  
-				year++; //continue;  // It must be already calculated
+			if ( extraIssueDate.before(settleEndDate)) {
+				extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+				if ( extraStartDate.after(settleEndDate))  
+					continue;  // Nothing to calculate
+			}
 			
 			
 			// TODO: Extract to method ?
