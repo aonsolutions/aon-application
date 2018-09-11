@@ -14,9 +14,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class DeliveryPackages {
 
@@ -35,6 +39,11 @@ public class DeliveryPackages {
 									.eq(deliveryId)), AttachType.DATA,
 					true);
 			attach.setAttachType(AttachType.DATA);
+			if(attach != null && attach.getData() == null) {
+				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
+				Drive drive = AonDrive.getInstace().serviceInitialize(g);
+				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+			}
 			return attach;
 		}
 		return null;

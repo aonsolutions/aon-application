@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
@@ -171,20 +170,6 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 	
 	public HashMap<String, String> updateValue(String domainName, Integer domainId, Integer drId, String code, String value, HashMap<String, String> map){
 		String login = "";
-		if(map.containsKey("source")) {
-			String source = map.get("source");
-			System.out.println(source);
-			String[] arr = source.split("@");
-			System.out.println(arr);
-			Integer idId= Integer.parseInt(arr[1]);
-			Optional<IncomeDetail> idOptional = AON.getIncomeDetail(domainName, domainId, login, f-> f.getIdProperty().eq(idId));
-			
-			if(idOptional.isPresent()){
-				IncomeDetail id = idOptional.get();
-				System.out.println(id.getQuantity());
-			}
-		}
-				
 		DataResponseDetail drd = new DataResponseDetail();
 		drd.setDomain(domainId);
 		drd.setDataResponse(drId);

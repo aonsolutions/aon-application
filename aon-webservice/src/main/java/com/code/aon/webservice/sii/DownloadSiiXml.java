@@ -14,12 +14,16 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "DownloadSiiXml", urlPatterns = {"/aon_gwt_aio/download_sii_xml/*"})
 public class DownloadSiiXml extends HttpServlet{
@@ -53,6 +57,11 @@ public class DownloadSiiXml extends HttpServlet{
 				AttachType.DATA);
 		}		
 		
+		if(attach != null && attach.getData() == null) {
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+		}
 		if(attach != null && attach.getData() != null){
 			Utils.addCorsHeader(resp);
 			resp.setContentType(MimeType.XML.getName());
