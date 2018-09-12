@@ -132,6 +132,11 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				map.put("tara", cp.getTare() != null ? cp.getTare().toString() : "-");
 				map.put("tara_adicional", cp.getAdditionalTare() != null ? cp.getAdditionalTare().toString() : "-");
 				map.put("neto", cp.getNet() != null ? cp.getNet().toString() : "0.0");
+				
+				if(isPropaco(map) && Double.parseDouble(map.get(QualitySheetCode.UFQCC01.getName())) > cp.getNet()) {
+					map.put(QualitySheetCode.UFQCC01.getName(), cp.getNet() + "");
+					updateValue(domainName, domainId, drId, QualitySheetCode.UFQCC01.getName(), cp.getNet() + "", map);
+				}
 			}
 			
 			if("0.0".equals(map.get(QualitySheetCode.UFQC2.getName()))){
