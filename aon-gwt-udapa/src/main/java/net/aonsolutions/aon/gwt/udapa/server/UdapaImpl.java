@@ -94,7 +94,8 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			}
 			map.put("product_quantity", id.getQuantity() + "");
 				
-			if(map.get(QualitySheetCode.UFQCC01.getName()).equals("0.0")) {
+			if(map.get(QualitySheetCode.UFQCC01.getName()).equals("0.0") 
+					|| (!isPropaco(map) && Double.parseDouble(map.get(QualitySheetCode.UFQCC01.getName())) > id.getQuantity())) {
 				map.put(QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "");
 				updateValue(domainName, domainId, drId, QualitySheetCode.UFQCC01.getName(), id.getQuantity() + "", map);
 			}
