@@ -150,6 +150,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 			@Override
 			public void onReadyStateChange(XMLHttpRequest xhr) {
 				int state = xhr.getReadyState();
+				boolean somethingPrinted = false;
 				boolean something = false;
 				if (state == XMLHttpRequest.DONE) {
 					String text = xhr.getResponseText();
@@ -167,6 +168,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 									final FlowPanel entrycontainer = new FlowPanel();
 									container.add(entrycontainer);
 									paintEntry(entrycontainer, entry);
+									somethingPrinted = true;
 								}
 								oldId = flatEntry.getEntryId();
 								entry = newAccountEntry(flatEntry);
@@ -190,11 +192,16 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 								final FlowPanel entrycontainer = new FlowPanel();
 								container.add(entrycontainer);
 								paintEntry(entrycontainer, entry);
-							}
+							} 
 						}
 						offset.setValue(ofs + count);
 						enableMoreData();
 						
+						// Si el primer apunte tiene más de 100 líneas (más líneas que "limit"), se 
+						// fuerza una nueva búsqueda para mostrar algo puesto que no sale nada al no estar cuadrado.
+						if (something && !somethingPrinted) {
+							search(offset.getValue(),params);						
+						}
 					} catch (IndexOutOfBoundsException e) {
 						FlowPanel line = new FlowPanel();
 						InlineLabel label = new InlineLabel(e.getMessage());
