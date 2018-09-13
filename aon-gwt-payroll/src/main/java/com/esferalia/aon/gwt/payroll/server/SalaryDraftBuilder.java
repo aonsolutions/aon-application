@@ -802,6 +802,9 @@ public class SalaryDraftBuilder
 		
 		ContextVariable var = ContextVariable.getVariableByName(name);
 		
+		if ( var == ContextVariable.IRPF_PERCENT )
+			return;
+		
 		String restoreButton = String.format(Locale.ENGLISH
 		,"Pulse el bot\u00F3n para restaurar el valor del sistema <button class='aon-icon aon-button-goto' onclick='javascript:addDraftVariable(\"%1$s\",\"SISTEMA(\\x27%1$s\\x27)\");javascript:calculate();'></button>"
 		, name

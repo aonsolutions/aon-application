@@ -2011,7 +2011,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				agreementLevelId);
 
 		agreementContextFactory.getImplicitRedefined(agreementAndLevelKey)
-				.forEach((name, pair) -> onRedefinedImplicit(name, pair.getLeft(), pair.getRight()));
+				
+				.entrySet().stream().filter( e -> !ContextVariable.AGREEMENT_HOURS.getName().equals(e.getKey())) // TODO: Only this???
+				
+				.forEach(e -> onRedefinedImplicit(e.getKey(), e.getValue().getLeft(), e.getValue().getRight()));
 	}
 
 	private Collection<IContractCost> getCCCCosts() throws AonException {

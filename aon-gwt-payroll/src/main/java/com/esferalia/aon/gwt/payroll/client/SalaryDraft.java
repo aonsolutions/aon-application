@@ -3052,7 +3052,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private void initEventsCheck(){
 		eventsCheck.setVisible(hasEvents());
+		eventsCheck.setValue(hasAonInfoEvents());
 	}
+	
+	
 
 	private void initDbSalaryCheck(){
 		dbSalaryCheck.setVisible(hasDbSalary());
@@ -3388,9 +3391,9 @@ public class SalaryDraft extends ResizeComposite
 	private void dumpEvent(int row, Event event) {
 		Button headButton = new Button();
 		
-		headButton.setStyleName(( event.getType() == Event.Type.INFO 
-				|| ( event.getMessage() != null && event.getMessage().contains("Solutions") ) ) 
-				? AON.AON_ICON_INFO: AON.AON_ICON_EXCEPTION);
+		headButton.setStyleName( 
+		isAonInfoEvent(event) ? AON.AON_ICON_INFO: AON.AON_ICON_EXCEPTION);
+		
 		headButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
 		eventsTable.setWidget(row, 0, headButton);
@@ -3423,6 +3426,11 @@ public class SalaryDraft extends ResizeComposite
 
 		for (int col = 0; col < eventsTable.getCellCount(row); col++)
 			eventsTable.getCellFormatter().addStyleName(row, col, "aon-panelGrid-odd");
+	}
+	
+	private boolean isAonInfoEvent(Event event) {
+		return event.getType() == Event.Type.INFO 
+		|| ( event.getMessage() != null  && event.getMessage().contains("Solutions") );		
 	}
 
 	private List<PaymentChangeHandler<?>> dumpPayments(List<Payment> payments) {
@@ -5176,6 +5184,16 @@ public class SalaryDraft extends ResizeComposite
 		return salaryDraftObject != null && salaryDraftObject.hasEvents();
 	}
 	
+	private boolean hasAonInfoEvents() {
+		if ( salaryDraftObject == null )
+			return false;
+		for ( Event event: salaryDraftObject.getEvents() )
+			if ( isAonInfoEvent(event))
+				return true;
+		
+		return false;
+	}
+
 	private Widget getDiffsWithDbSalary(){
 		if ( salaryDraftObject == null ) 
 			return null;

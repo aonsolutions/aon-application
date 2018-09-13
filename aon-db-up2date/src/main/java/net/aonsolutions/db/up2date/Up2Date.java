@@ -1,5 +1,6 @@
 package net.aonsolutions.db.up2date;
 
+import static net.aonsolutions.db.up2date.payroll.FundUpvUpdate.FUNDUPV_UPDATE;
 import static net.aonsolutions.db.up2date.tgss.FellowBases2018Fix.FELLOWBASES2018FIX;
 import static net.aonsolutions.db.up2date.tgss.TrainingBases2018Fix.TRAININGBASES2018FIX;
 
@@ -20,6 +21,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.FundUpvUpdate;
+
 public class Up2Date {
 	
 	
@@ -39,8 +42,9 @@ public class Up2Date {
     		//PRESTITCOMMONDISEASEATLACKINSERT,
     		//GEROA_INSERT
     		//UNEMPLOYMENT
-    		TRAININGBASES2018FIX,
-    		FELLOWBASES2018FIX
+    		//TRAININGBASES2018FIX,
+    		//FELLOWBASES2018FIX,
+    		FUNDUPV_UPDATE
     		
     }; 
 	
