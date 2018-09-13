@@ -227,7 +227,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					throw new YesExtraException(tax);
 				}
 				
-			} catch ( Exception e ) {
+			} catch ( ClassCastException e ) {
+			} catch ( NullPointerException e ) {
 			} 
 			throw new ExtraException();
 		}
