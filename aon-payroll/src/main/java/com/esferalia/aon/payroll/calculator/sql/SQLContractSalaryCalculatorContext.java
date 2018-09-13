@@ -4032,6 +4032,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public Double getValue(Period p) {
 					return p.daysStream()
+							.filter(d -> !isHoliday(d) )
 							.filter(d -> d.get(DAY_OF_WEEK) == dayOfWeek )
 							.collect(Collectors.summingDouble(d -> 1.00));
 				}

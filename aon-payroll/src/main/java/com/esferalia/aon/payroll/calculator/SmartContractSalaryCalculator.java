@@ -1,14 +1,18 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,12 +25,16 @@ import org.jooq.Record;
 import org.jooq.Result;
 
 import com.code.aon.common.AonException;
+import com.code.aon.ql.Criteria;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -87,6 +95,27 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 	}
 	
+	private static class SalaryExtraPayment extends DelegateContractPayment{
+		
+		private double amount;
+		
+		private SalaryExtraPayment(IContractPayment contractPayment, double amount) {
+			super(contractPayment);
+			this.amount = amount;
+		}
+		
+		@Override
+		public SalaryType getSalaryType() {
+			return SalaryType.SALARY;
+		}
+		
+		
+		@Override
+		public String getIrpfExpression() {
+			return Double.toString(amount);
+		}
+	}
+
 	private static class PRORATIONContractPayment extends DelegateContractPayment{
 		
 		private PRORATIONContractPayment(IContractPayment contractPayment) {
@@ -130,6 +159,85 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public double getNumber() {
 			return number;
 		}
+	}
+	
+	private static class SmartTaxCalculator extends TaxCalculator {
+		
+		private TaxCalculator delegate; 
+		private ISQLContractSalaryCalculatorContext ctx;
+		
+		public SmartTaxCalculator(TaxCalculator delegate, ISQLContractSalaryCalculatorContext ctx) {
+			super();
+			this.ctx = ctx;
+			this.delegate = delegate;
+		}
+
+		public double getIrpfBase() {
+			return delegate.getIrpfBase();
+		}
+
+		public double getRenumeration() {
+			return delegate.getRenumeration();
+		}
+
+		public double getTotalPayment() {
+			return delegate.getTotalPayment();
+		}
+
+		public double getInKindIrpfBase() {
+			return delegate.getInKindIrpfBase();
+		}
+
+		public double getMoneyIrpfBase() {
+			return delegate.getMoneyIrpfBase();
+		}
+
+		public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount)
+				throws AonException {
+			try {
+				if ( payment.getType() == PaymentType.CRA_0004 
+					&& payment.getMonth() == getMonth(issueDate) 
+					&& payment.getSalaryType() == ctx.getSalaryType() 
+					&& ctx.getSalaryType() == SalaryType.SALARY ) {
+					amount = calculateExtra(ctx, payment, issueDate);
+					payment = new SalaryExtraPayment(payment, amount);
+					double tax = delegate.tax(payment, start, end, issueDate, amount );
+					throw new YesExtraException(tax);
+				}
+				
+				return delegate.tax(payment, start, end, issueDate, amount);
+			
+			} catch (ExtraException e) {
+				return taxExtra(payment, start, end, issueDate, amount);
+			}
+		}
+		
+		private double taxExtra(IContractPayment payment, Date start, Date end, Date issueDate, double amount) 
+				throws AonException {
+			try {
+				IExtraPayment extraPayment = getExtraPayment(payment);
+				Date extraIssueDate = parseExtraDate(extraPayment.getExtraIssueDate(), issueDate).getTime();
+				if ( !extraIssueDate.equals(issueDate) )
+					throw new ExtraException();
+				
+				if ( !extraEmited(extraIssueDate, payment, ctx)) {
+					amount = calculateExtra(ctx, extraPayment, extraIssueDate);
+					payment = new SalaryExtraPayment(payment, amount);
+					double tax = delegate.tax(payment, start, end, extraIssueDate, amount );
+					throw new YesExtraException(tax);
+				}
+				
+			} catch ( ClassCastException e ) {
+			} 
+			throw new ExtraException();
+		}
+		
+		private static IExtraPayment getExtraPayment(IPayment payment) {
+			while ( payment instanceof IHasPayment<?> )
+				payment = ((IHasPayment<?>) payment).getPayment();
+			return ( IExtraPayment) payment;
+		}
+
 	}
 
 	private class SmartQuoteCalculator extends QuoteCalculator {
@@ -460,6 +568,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	@Override
+	protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+		return new SmartTaxCalculator(super.getTaxCalculator(ctx), this.ctx );
+	}
+	
+	@Override
 	protected QuoteCalculator getQuoteCalculator(IContractSalaryCalculatorContext ctx) {
 		return new SmartQuoteCalculator(super.getQuoteCalculator(ctx));
 	}
@@ -507,6 +620,107 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return brResults;
 	}
 	
+	private static Double calculateExtra(ISQLContractSalaryCalculatorContext ctx, IExtraPayment extraPayment, Date issueDate) throws AonException {
+		SQLExtraSalaryCalculatorContext extraCtx = null;
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), ctx.getId());
+			extraCtx =
+			new SQLExtraSalaryCalculatorContext(
+					ctx.getConnection()
+					, extraPayment.getExtraId() 				//extra
+					, AonDateUtils.get(issueDate, YEAR)			//year
+					, issueDate									//chargeDate
+					, criteria);
+			extraCtx.next();
+			return new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
+					@Override
+					protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+						return TaxCalculator.getTaxCalculator(ctx);
+					}
+			}
+			.calculate(extraCtx).getSalary().getTotalPayment();
+		} catch (Exception e) {
+			throw new AonException(e);
+		} 
+		finally {
+			if ( extraCtx != null) {
+				try {
+					extraCtx.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+	
+	private static Double calculateExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate) throws AonException {
+		SQLContractSalaryCalculatorContext extraCtx = null;
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), ctx.getId());
+			Date startDate = add(endDate, Calendar.YEAR, -1);
+			startDate = add(startDate, Calendar.DATE, 1);
+			extraCtx =
+			new SQLContractSalaryCalculatorContext(ctx.getConnection(), startDate, endDate, endDate, criteria);
+			extraCtx.next();
+			return new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
+				private double extra = 0.00;
+				@Override
+				public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+						Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+					if ( contractPayment.getId().equals(((IContractPayment)payment).getId()) ) 
+						extra += quote;
+				}
+				@Override
+				public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
+						Map<String, ITimedVariable<?>> context) {
+					addPayment(0.00, quote, tax, null, startDate, endDate, payment, context);
+				}
+				
+				@Override
+				public Salary getSalary() {
+					salary = super.getSalary();
+					salary.setTotalPayment(extra);
+					return salary;
+				}
+			}){
+				@Override
+				protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+					return TaxCalculator.getTaxCalculator(ctx);
+				}
+			}.calculate(extraCtx).getTotalPayment();
+			
+		} catch (Exception e) {
+			throw new AonException(e);
+		} 
+		finally {
+			if ( extraCtx != null) {
+				try {
+					extraCtx.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private static boolean extraEmited(Date issueDate, IContractPayment payment, ISQLContractSalaryCalculatorContext ctx) {
+		
+		int contractId = ctx.getId();
+		
+		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
+		
+		return dslContext.fetchCount(
+		dslContext
+		.select(SALARY.ID)
+		.from(SALARY)
+		.innerJoin(SALARY_PAYMENT).onKey()
+		.where(SALARY.CONTRACT.eq(contractId))
+		.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
+		.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
+		.and(SALARY.ISSUE_DATE.eq(new java.sql.Date(issueDate.getTime())))) > 0;
+		
+	}
+
 	private ITimedResult<Double> quote(ITimedResult<Double> result, IContractPayment contractPayment) throws ExpressionException {
 		ExpressionContext expressionContext = new ExpressionContext();
 		expressionContext.putVariable(ContextVariable.ALL, result);

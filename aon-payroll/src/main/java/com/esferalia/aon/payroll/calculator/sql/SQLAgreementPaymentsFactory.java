@@ -29,18 +29,27 @@ public class SQLAgreementPaymentsFactory
 	
 	public interface IExtraPayment extends ISystemPayment {
 		
+		int getExtraId();
 		String getExtraStartDate();
 		String getExtraEndDate();
+		String getExtraIssueDate();
 	}
 
 	public static class SimpleExtraPayment extends SimpleSystemPayment implements IExtraPayment  {
 		
 		
+		private int extraId;
 		private String extraStartDate;
 		private String extraEndDate;
+		private String extraIssueDate;
 
 		public SimpleExtraPayment(IContractPayment contractPayment, int domain) {
 			super(contractPayment, domain);
+		}
+		
+		@Override
+		public int getExtraId() {
+			return extraId;
 		}
 		
 		@Override
@@ -53,6 +62,14 @@ public class SQLAgreementPaymentsFactory
 			return extraEndDate;
 		}
 		
+		@Override
+		public String getExtraIssueDate() {
+			return extraIssueDate;
+		}
+		
+		public void setExtraId(int extraId) {
+			this.extraId = extraId;
+		}
 		
 		public void setExtraStartDate(String extraStartDate) {
 			this.extraStartDate = extraStartDate;
@@ -62,7 +79,9 @@ public class SQLAgreementPaymentsFactory
 			this.extraEndDate = extraEndDate;
 		}
 		
-		
+		public void setExtraIssueDate(String extraIssueDate) {
+			this.extraIssueDate = extraIssueDate;
+		}
 		
 	}
 	
@@ -158,8 +177,10 @@ public class SQLAgreementPaymentsFactory
 				SimpleExtraPayment extraPayment = 
 					new SimpleExtraPayment(sqlContractPayment, rs.getInt(SystemPaymentColumns.DOMAIN));
 				
+				extraPayment.setExtraId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.ID));
 				extraPayment.setExtraStartDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.START_DATE));
 				extraPayment.setExtraEndDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.END_DATE));
+				extraPayment.setExtraIssueDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.ISSUE_DATE));
 				
 				systemPaymentList.add(extraPayment);
 			}

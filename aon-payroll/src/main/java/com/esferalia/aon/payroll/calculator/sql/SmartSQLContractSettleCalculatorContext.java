@@ -119,7 +119,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		.fetchInto(AGREEMENT_EXTRA)
 		;
 		
-		
+		Date contractStartDate = getContractStartate();
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
@@ -142,7 +142,8 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 
 			Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
 
-			if ( extraIssueDate.before(settleEndDate)) {
+			if ( extraIssueDate.before(settleEndDate)
+				 && extraIssueDate.after(contractStartDate) ) {
 				extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
 				if ( extraStartDate.after(settleEndDate))  
 					continue;  // Nothing to calculate

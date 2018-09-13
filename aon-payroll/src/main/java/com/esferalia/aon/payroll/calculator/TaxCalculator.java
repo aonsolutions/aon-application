@@ -54,6 +54,28 @@ public abstract class TaxCalculator {
 		
 	}
 	
+	public static class ExtraException extends  NotNowException {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+	}
+	
+	public static class YesExtraException extends  AonException {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
+		private Double tax;
+		
+		public YesExtraException(Double tax) {
+			this.tax = tax;
+		}
+		
+		public Double getTax() {
+			return tax;
+		}
+		
+	}
+	
 	
 	private static class DefaultTaxCalculator extends TaxCalculator {
 		
@@ -92,6 +114,9 @@ public abstract class TaxCalculator {
 			
 			SalaryType salaryType = contractPayment.getSalaryType();
 			if ( salaryType != context.getSalaryType() ) {
+				if ( salaryType == SalaryType.EXTRA)
+					throw new ExtraException();
+					
 				throw new NotNowException();
 			}
 			

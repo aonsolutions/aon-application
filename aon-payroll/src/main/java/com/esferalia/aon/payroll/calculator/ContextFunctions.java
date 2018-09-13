@@ -519,7 +519,7 @@ public class ContextFunctions {
 		return amount * currentWorkedDays / totalWorkedDays;
 	}
 
-	private static Calendar parseExtraDate(String str, Date date) {
+	public static Calendar parseExtraDate(String str, Date date) {
 		Matcher matcher =  Pattern.compile("(?<date>\\d+)/(?<month>\\d+)(\\s+(?<year>[-+]?\\d+))?").matcher(str);
 		matcher.matches();
 		

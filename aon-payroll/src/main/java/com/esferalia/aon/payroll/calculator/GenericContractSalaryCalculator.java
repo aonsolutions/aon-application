@@ -56,6 +56,7 @@ import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
+import com.esferalia.aon.payroll.calculator.TaxCalculator.YesExtraException;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PaymentVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
@@ -1172,7 +1173,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				}
 
 				try {
-					Double tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue);
+					Double tax ;
+					try {
+						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue);
+					} catch ( YesExtraException e ) {
+						tax = e.getTax();
+						resultValue = e.getTax();
+					}
 					String description = null;
 					try {
 						description = expressionContext.evalTemplate(contractPayment.getDescription(), resultStart,
@@ -1187,7 +1194,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						onCheckError(contractPayment, String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0]));
 					} catch (Exception e) {
 						onCheckError(contractPayment, DESCRIPTION_UNKNOWN_ERROR);
-					}
+					} 
 					salaryBuilder.addPayment(resultValue, quote, tax, description, resultStart, resultEnd,
 							contractPayment, result.getContext());
 
@@ -1195,7 +1202,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					salaryBuilder.addZeroPayment(quote, 0.00, resultStart, resultEnd, contractPayment,
 							result.getContext());
 
-				}
+				} 
 
 			}
 
