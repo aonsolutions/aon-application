@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showEdiFtpWindow">
 		<aon:if test="#{sales.ftpEdiDownloader.showEdiFtpWindow}">
 			<rich:modalPanel id="ediFtpModalPanel" minHeight="650"
-				minWidth="800" rendered="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
+				minWidth="980" rendered="#{sales.ftpEdiDownloader.showEdiFtpWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -175,19 +175,11 @@
 										<f:facet name="header">
 											<aon:outputText value="Opciones adicionales" />
 										</f:facet>
-										<aon:panelGrid columns="2" dir="true" style="width: 100%;">
+										<aon:panelGrid columns="4" dir="true" style="width: 100%;">
 											<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
 												<ui:param name="controller" value="#{sales}" />
 												<ui:param name="skipSeriesLabel" value="#{false}" />
 											</ui:include>
-											
-											<aon:outputLabel for="EdiFtp_date"
-												value="#{bundle.aon_date}" />
-											<aon:selectInputDate id="EdiFtp_date"
-												value="#{sales.ftpEdiDownloader.date}"
-												required="#{true}"
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}"/>
 																				
 											<aon:outputText value="&#160;" />
 											<aon:div>
@@ -196,6 +188,14 @@
 												<aon:outputLabel for="EdiFtp_deleteOnComplete"
 													value="Borrar del servidor remoto tras importar" />
 											</aon:div>
+											
+											<aon:outputLabel for="EdiFtp_date"
+												value="#{bundle.aon_date}" />
+											<aon:selectInputDate id="EdiFtp_date"
+												value="#{sales.ftpEdiDownloader.date}"
+												required="#{true}"
+												timeZone="#{timeZoneController.timeZone}"
+												popupDateFormat="#{bundle.aon_date_pattern}"/>
 											
 											<aon:outputText value="&#160;" />
 											<aon:div>
@@ -209,76 +209,74 @@
 									</aon:panel>
 									
 									<aon:div styleClass="aon-margin-top">
+										<aon:panel>
+											<f:facet name="header">
+												<aon:outputText value="Opciones adicionales" />
+											</f:facet>
+											
+											<c:forEach items="#{to.orders}" var="order">
+											</c:forEach>
+											
+											<a4j:repeat value="#{to.orders}" var="order">
+												<h:panelGrid columns="5" dir="true" style="width: 100%;">
+												</h:panelGrid>
+											</a4j:repeat>
+											
+										</aon:panel>
+									
+									
 										<aon:dataTable id="ftpOrdersData" var="to" rows="10" 
 											value="#{sales.ftpEdiDownloader.unreadSalesModel}"
 											rendered="#{sales.ftpEdiDownloader.unreadSalesModel.rowCount > 0}">
-	
+											
+											<f:facet name="header">
+												<rich:columnGroup>
+													<rich:column>
+														<aon:outputText value="&#160;" />
+													</rich:column>
+													<rich:column>
+														<aon:outputText value="EDI PTO ENTREGA" />
+													</rich:column>
+													<rich:column>
+														<aon:outputText value="#{bundle.aon_name}" />
+													</rich:column>
+													<rich:column>
+														<aon:outputText value="#{bundle.aon_address}" />
+													</rich:column>
+													<rich:column>
+														<aon:outputText value="#{bundle.aon_date}" />
+													</rich:column>
+													<rich:column>
+														<aon:outputText value="&#160;" />
+													</rich:column>
+												</rich:columnGroup>
+											</f:facet>
+											
 											<aon:column styleClass="aon-editDataTable-iconColumn">
-												<f:facet name="header">
-													<aon:outputText value="&#160;" />
-												</f:facet>
 												<aon:div id="ftpSales-import">
+													<aon:outputText value="&#160;"
+														title="Direccion necesaria"
+														rendered="#{empty to.orders[0].registryNote}" 
+														styleClass=" aon-finding-toolbar-item aon-noborder aon-icon-errorwarning"/>
 													<aon:commandButton id="ftpSales-importButton"
 														value="&#160;"
 														title="#{bundle.aon_import}"
-														rendered="#{not empty to.registryNote}"
+														rendered="#{not empty to.orders[0].registryNote}"
 														actionListener="#{sales.ftpEdiDownloader.onImportFile}"
-														reRender="showEdiFtpWindow, salesForm"
+														reRender="showEdiFtpWindow, salesForm, salesList}"
 														styleClass=" aon-finding-toolbar-item aon-noborder aon-icon-file-entrance" >
 														<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 													</aon:commandButton>
 												</aon:div>
 											</aon:column>
 											
-											<aon:column styleClass="aon-editDataTable-textColumn">
-												<f:facet name="header">
-													<aon:outputText value="EDI PTO ENTREGA" />
-												</f:facet>
-												<aon:outputText value="#{to.customerCode}" />
-											</aon:column>
-											
-											<aon:column styleClass="aon-editDataTable-textColumn">
-												<f:facet name="header">
-													<aon:outputText value="#{bundle.aon_name}" />
-												</f:facet>
-												<aon:div id="customerName">
-													<aon:outputText value="***no registrado***"
-														rendered="#{empty to.registryNote}" />
-													<aon:outputText value="#{to.registryNote.registry.fullName}"
-														rendered="#{not empty to.registryNote}" />
-												</aon:div>
-											</aon:column>
-											
-											<aon:column styleClass="aon-editDataTable-textColumn">
-												<f:facet name="header">
-													<aon:outputText value="#{bundle.aon_address}" />
-												</f:facet>
-												<aon:div>
-													<aon:outputText value="#{to.address.fullAddress}"
-														rendered="#{to.registryNoteListCount == 1}" />
-													<aon:selectOneMenu value="#{to.registryNote}"
-														rendered="#{to.registryNoteListCount != 1}"
-														reRender="customerName, ftpSales-import" >
-														<f:selectItem itemLabel="-" itemValue="#{null}" />
-														<f:selectItems value="#{to.registryNotes}" />
-													</aon:selectOneMenu>
-												</aon:div>
-											</aon:column>
-											
-											<aon:column styleClass="aon-editDataTable-buttonsColumn">
-												<f:facet name="header">
-													<aon:outputText value="#{bundle.aon_date}" />
-												</f:facet>
-												<aon:outputText value="#{to.chargeDate}">
-													<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-														timeZone="#{timeZoneController.timeZoneId}" />
-												</aon:outputText>
-											</aon:column>
+											<rich:column colspan="4">
+												<aon:outputText value="Fichero:  #{to.ftpFile.name}" />
+												<aon:outputText value=" | " styleClass="aon-margin-left aon-margin-right" />
+												<aon:outputText value="Pedidos contenidos: #{to.orders.size()}" />
+											</rich:column>
 											
 											<aon:column styleClass="aon-editDataTable-iconColumn">
-												<f:facet name="header">
-													<aon:outputText value="&#160;" />
-												</f:facet>
 												<aon:htmlCommandLink id="ftpSales-download" 
 													value="&#160;" target="_blank"
 													title="#{bundle.webmail_download}"
@@ -293,6 +291,49 @@
 													styleClass="aon-finding-toolbar-item aon-noborder aon-icon-rubber">
 												</aon:commandButton>
 											</aon:column>
+											
+											<rich:subTable var="order" value="#{to.orders}">
+									            
+									            <aon:column styleClass="aon-editDataTable-numberColumn aon-highlight">
+													<aon:outputText value="#{to.orders.indexOf(order)+1}" />
+												</aon:column>
+												
+												<aon:column styleClass="aon-editDataTable-textColumn aon-highlight">
+													<aon:outputText value="#{order.customerCode}" />
+												</aon:column>
+												
+												<aon:column styleClass="aon-editDataTable-textColumn aon-highlight">
+													<aon:div id="customerName">
+														<aon:outputText value="***no registrado***"
+															rendered="#{empty order.registryNote}" />
+														<aon:outputText value="#{order.registryNote.registry.fullName}"
+															rendered="#{not empty order.registryNote}" />
+													</aon:div>
+												</aon:column>
+												
+												<aon:column styleClass="aon-editDataTable-textColumn aon-highlight">
+													<aon:outputText value="#{to.orders[0].address.fullAddress}"
+														rendered="#{to.orders[0].registryNoteListCount == 1}" />
+													<aon:selectOneMenu value="#{to.orders[0].registryNote}"
+														rendered="#{to.orders[0].registryNoteListCount != 1}"
+														reRender="customerName, ftpSales-import" >
+														<f:selectItem itemLabel="-" itemValue="#{null}" />
+														<f:selectItems value="#{to.orders[0].registryNotes}" />
+													</aon:selectOneMenu>
+												</aon:column>
+												
+												<aon:column styleClass="aon-editDataTable-buttonsColumn aon-highlight">
+													<aon:outputText value="#{order.chargeDate}">
+														<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+															timeZone="#{timeZoneController.timeZoneId}" />
+													</aon:outputText>
+												</aon:column>
+												
+												<aon:column styleClass="aon-editDataTable-iconColumn aon-highlight">
+												</aon:column>
+									 
+									        </rich:subTable>
+											
 										</aon:dataTable>
 										
 										<aon:dataScroller for="ftpOrdersData" showNote="true" pageSize="10"

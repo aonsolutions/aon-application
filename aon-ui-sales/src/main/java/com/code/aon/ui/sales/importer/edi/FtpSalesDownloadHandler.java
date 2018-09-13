@@ -17,6 +17,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 	
 	private boolean showFtpServerConnectionData;
 	
-	private List<FtpFileOrder> unreadSalesList;
+	private List<FtpFileItem> unreadSalesList;
 			
 	private SerializableListDataModel unreadSalesModel;
 	
@@ -267,7 +268,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			unreadSalesList = new LinkedList<>();
 			if(list!=null && !list.isEmpty()){
 				list.forEach(ftpFile -> {
-					unreadSalesList.add(obtainStrippedOrder(reader, connectHandler, ftpFile));
+					unreadSalesList.add(obtainStrippedItem(reader, connectHandler, ftpFile));
 				});
 			}
 		} catch (FtpLoginException e) {
@@ -278,9 +279,9 @@ public class FtpSalesDownloadHandler implements Serializable {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 		if(unreadSalesList!=null) {
-			unreadSalesList.sort(new Comparator<FtpFileOrder>() {
+			unreadSalesList.sort(new Comparator<FtpFileItem>() {
 				@Override
-				public int compare(FtpFileOrder file0, FtpFileOrder file1) {
+				public int compare(FtpFileItem file0, FtpFileItem file1) {
 					return file1.getFtpFile().getModificationDate().compareTo(
 							file0.getFtpFile().getModificationDate());
 				}
@@ -289,34 +290,52 @@ public class FtpSalesDownloadHandler implements Serializable {
 		unreadSalesModel = null;
 	}
 	
-	private FtpFileOrder obtainStrippedOrder(ConnectSalesReader reader, EdiSalesImporterHandler connectHandler, FtpFile ftpFile) {
-		FtpFileOrder order = new FtpFileOrder();
-		order.setFtpFile(ftpFile);
+	private FtpFileItem obtainStrippedItem(ConnectSalesReader reader, EdiSalesImporterHandler connectHandler, FtpFile ftpFile) {
+		FtpFileItem ftpFileItem = new FtpFileItem();
+		ftpFileItem.setFtpFile(ftpFile);
+		ftpFileItem.setOrders(new LinkedList<>());
 		
 		byte[] byteFile = obtainFtpFile(ftpFile.getName());
-		RECTL rectl = null;
+		List<RECTL> rectlList = null;
 		try {
-			AonFile aonFile  = (new AonFile());
-			aonFile.setData(byteFile);
-			rectl = reader.readFile(aonFile.openStream());
+			rectlList = obtainStrippedFileOrders(reader, byteFile);
 			
-			String customerCode = connectHandler.obtainCustomerCodeSales(rectl);
-			List<RegistryNote> customerEdiRNoteList = connectHandler.searchCustomerRNote(customerCode);
-			order.setCustomerCode(customerCode);
-			if(customerEdiRNoteList!=null && customerEdiRNoteList.size()>0){
-				order.setRegistryNoteList(customerEdiRNoteList);
-				if(customerEdiRNoteList!=null && customerEdiRNoteList.size()==1){
-					order.setRegistryNote(customerEdiRNoteList.get(0));
+			for(RECTL rectl: rectlList) {
+				FtpFileOrder order = new FtpFileOrder();
+				order.setRectl(rectl);
+				String customerCode = connectHandler.obtainCustomerCodeSales(rectl);
+				List<RegistryNote> customerEdiRNoteList = connectHandler.searchCustomerRNote(customerCode);
+				order.setCustomerCode(customerCode);
+				if(customerEdiRNoteList!=null && customerEdiRNoteList.size()>0){
+					order.setRegistryNoteList(customerEdiRNoteList);
+					if(customerEdiRNoteList!=null && customerEdiRNoteList.size()==1){
+						order.setRegistryNote(customerEdiRNoteList.get(0));
+					}
 				}
+				order.setChargeDate(connectHandler.getDateTimeFormatter().parse(rectl.getFecha_horaDelMensaje()));
+				ftpFileItem.getOrders().add(order);
 			}
-			order.setChargeDate(connectHandler.getDateTimeFormatter().parse(rectl.getFecha_horaDelMensaje()));
 			
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage());
 		}
-		return order;
+		return ftpFileItem;
+	}
+
+
+	private List<RECTL> obtainStrippedFileOrders(ConnectSalesReader reader, byte[] byteFile) throws IOException {
+		List<RECTL> rectlList = new LinkedList<>();
+		String[] result = StringUtils.splitByWholeSeparator(new String(byteFile), "RECTL");
+		
+		for(String value: result) {
+			AonFile aonFile  = new AonFile();
+			aonFile.setData(("RECTL"+value).getBytes());
+			RECTL rectl = reader.readFile(aonFile.openStream());	
+			rectlList.add(rectl);
+		}		
+		return rectlList;
 	}
 
 
@@ -340,9 +359,9 @@ public class FtpSalesDownloadHandler implements Serializable {
 			
 	public String onDownloadFile(ActionEvent event) {
 		if(getUnreadSalesModel().isRowAvailable()){
-			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
+			FtpFileItem ftpFileItem = (FtpFileItem) getUnreadSalesModel().getRowData();
 			
-			byte[] byteFile = obtainFtpFile(ftpFileOrder.getFtpFile().getName());
+			byte[] byteFile = obtainFtpFile(ftpFileItem.getFtpFile().getName());
 			
 			FileOutput output = null;
 			HttpServletResponse response = null;
@@ -355,7 +374,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 				byte[] data = output.getContent();
 				int size = data.length;
 				response = DownloadUtil.getResponse();
-				out = DownloadUtil.initDownload(response, ftpFileOrder.getFtpFile().getName(), null, size);
+				out = DownloadUtil.initDownload(response, ftpFileItem.getFtpFile().getName(), null, size);
 				InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
 				IOUtils.copy( fileIn, out );
 				IOUtils.closeQuietly(fileIn);
@@ -379,19 +398,13 @@ public class FtpSalesDownloadHandler implements Serializable {
 				setShowEdiFtpWindow(false);
 			}
 			
-			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
-			
-			byte[] byteFile = obtainFtpFile(ftpFileOrder.getFtpFile().getName());
-			RegistryNote ediRNote = ftpFileOrder.getRegistryNote();
-			
+			FtpFileItem ftpFileItem = (FtpFileItem) getUnreadSalesModel().getRowData();
 			getLogPanel()
 					.info("Iniciando importacion de fichero EDI (CONNECT)");
 			com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler connectHandler = new com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler(
 					controller);
-			connectHandler.setAonFile(new AonFile());
-			connectHandler.getAonFile().setData(byteFile);
 			try {
-				connectHandler.importFile(event, ediRNote, isTesting());
+				connectHandler.importFile(event, ftpFileItem, isTesting());
 				if( !connectHandler.isSuccess() ){
 					setDeleteOnComplete(false);
 				}
@@ -403,7 +416,6 @@ public class FtpSalesDownloadHandler implements Serializable {
 				com.code.aon.ui.sales.udapa.EdiSalesImporterHandler udapaHandler = new com.code.aon.ui.sales.udapa.EdiSalesImporterHandler(
 						controller);
 				udapaHandler.setAonFile(new AonFile());
-				udapaHandler.getAonFile().setData(byteFile);
 				try {
 					udapaHandler.importFile(event, isTesting());
 				} catch (Throwable th2) {
@@ -413,7 +425,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 				}
 			}
 			if(isDeleteOnComplete()){
-				deleteFile(ftpFileOrder.getFtpFile());
+				deleteFile(ftpFileItem.getFtpFile());
 			}
 		}
 		
@@ -421,9 +433,9 @@ public class FtpSalesDownloadHandler implements Serializable {
 	
 	public void onDeleteFile(ActionEvent event) {
 		if (getUnreadSalesModel().isRowAvailable()) {
-			FtpFileOrder ftpFileOrder = (FtpFileOrder) getUnreadSalesModel().getRowData();
-			deleteFile(ftpFileOrder.getFtpFile());
-			unreadSalesList.remove(ftpFileOrder);
+			FtpFileItem ftpFileItem = (FtpFileItem) getUnreadSalesModel().getRowData();
+			deleteFile(ftpFileItem.getFtpFile());
+			unreadSalesList.remove(ftpFileItem);
 			getUnreadSalesModel().setWrappedData(unreadSalesList);
 		}
 	}
@@ -456,19 +468,36 @@ public class FtpSalesDownloadHandler implements Serializable {
 	}
 
 
-	public class FtpFileOrder implements Serializable {
+	public class FtpFileItem implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private FtpFile ftpFile;
-		private String customerCode;
-		private List<RegistryNote> registryNoteList;
-		private RegistryNote registryNote;
-		private Date chargeDate;
-		
+		private List<FtpFileOrder> orders;
 		public FtpFile getFtpFile() {
 			return ftpFile;
 		}
 		public void setFtpFile(FtpFile ftpFile) {
 			this.ftpFile = ftpFile;
+		}
+		public List<FtpFileOrder> getOrders() {
+			return orders;
+		}
+		public void setOrders(List<FtpFileOrder> orders) {
+			this.orders = orders;
+		}
+	}
+	
+	public class FtpFileOrder implements Serializable {
+		private static final long serialVersionUID = 1L;
+		private RECTL rectl;
+		private String customerCode;
+		private List<RegistryNote> registryNoteList;
+		private RegistryNote registryNote;
+		private Date chargeDate;
+		public RECTL getRectl() {
+			return rectl;
+		}
+		public void setRectl(RECTL rectl) {
+			this.rectl = rectl;
 		}
 		public String getCustomerCode() {
 			return customerCode;
@@ -501,7 +530,8 @@ public class FtpSalesDownloadHandler implements Serializable {
 			List<SelectItem> list = new LinkedList<>();
 			if(registryNoteList!=null){
 				registryNoteList.forEach(rNote -> {
-					list.add(new SelectItem(rNote, getAddress(Integer.parseInt(rNote.getDescription())).getFullAddress()));
+					String label = getAddress(Integer.parseInt(rNote.getDescription())).getFullAddress();
+					list.add(new SelectItem(rNote, StringUtils.abbreviate(label, 50)));
 				});
 			}
 			return list;

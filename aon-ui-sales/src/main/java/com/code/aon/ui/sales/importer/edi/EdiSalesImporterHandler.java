@@ -1,6 +1,5 @@
 package com.code.aon.ui.sales.importer.edi;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,7 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,12 +47,12 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.controller.SalesController;
 import com.code.aon.ui.sales.controller.SalesDetailController;
+import com.code.aon.ui.sales.importer.edi.FtpSalesDownloadHandler.FtpFileItem;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1L;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1P;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.ERE1T;
 import com.esferalia.aon.file.seres.connect.sales.v2.data.RECTL;
-import com.esferalia.aon.seres.reader.connect.ConnectSalesReader;
 
 public class EdiSalesImporterHandler implements Serializable {
 	
@@ -118,19 +116,22 @@ public class EdiSalesImporterHandler implements Serializable {
 		importFile(event, null, false);
 	}
 		
-	public void importFile(ActionEvent event, RegistryNote customerRegistryNote, boolean testing) {
-		ConnectSalesReader reader = new ConnectSalesReader();
+	public void importFile(ActionEvent event, FtpFileItem ftpFileItem, boolean testing) {
 		success = true;
-		RECTL rectl = null;
-		try {
-			rectl = reader.readFile(aonFile.openStream());
-			getLogPanel().info("Fichero leido correctamente");
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
+		String series = ((Sales) controller.getTo()).getSeries();
 		getLogPanel().info("Inicio del proceso.");
-		createSales(event, rectl, customerRegistryNote, testing);
+		if(ftpFileItem.getOrders()!=null && ftpFileItem.getOrders().size()>0) {
+			for(int idx = 0; idx<ftpFileItem.getOrders().size(); idx++) {
+				RECTL rectl = ftpFileItem.getOrders().get(idx).getRectl();
+				RegistryNote customerRegistryNote = ftpFileItem.getOrders().get(idx).getRegistryNote();
+				if(ftpFileItem.getOrders().size()>1)
+					getLogPanel().info("Procesando pedido " + (idx+1) + " de " + ftpFileItem.getOrders().size());
+				createSales(event, rectl, customerRegistryNote, series, testing);
+			}
+			controller.onSelect(event);
+		} else {
+			getLogPanel().info("No se han detectado pedidos.");	
+		}
 		getLogPanel().info("Proceso finalizado.");
 		setAonFile(null);
 		setShowImportFileWindow(false);
@@ -145,7 +146,7 @@ public class EdiSalesImporterHandler implements Serializable {
 				.orElse(rectl.getCodigoEmisor());	
 	}
 	
-	public void createSales(ActionEvent event, RECTL rectl, RegistryNote customerRegistryNote, boolean testing) {
+	public void createSales(ActionEvent event, RECTL rectl, RegistryNote customerRegistryNote, String series, boolean testing) {
 //		System.out.println(ere1c.toString());
 //		System.out.println(ere1c.ere1lList.get(0).toString());
 		
@@ -189,7 +190,9 @@ public class EdiSalesImporterHandler implements Serializable {
 			&& customerRegistryNote.getRegistry()!=null 
 				&& customerRegistryNote.getRegistry().getId()!=null){
 		
+			controller.onReset(event);
 			Sales sales = (Sales) controller.getTo();
+			sales.setSeries(series);
 			try {
 				Customer customer = obtainCustomer(customerRegistryNote.getRegistry().getId());
 				getLogPanel().info("Cliente detectado: " + customer.getRegistry().getFullName());

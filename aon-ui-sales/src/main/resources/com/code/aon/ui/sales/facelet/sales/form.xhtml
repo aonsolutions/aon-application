@@ -51,12 +51,12 @@
 							</aon:commandButton>
 						</aon:if>
 						<aon:if test="#{domainSwitcher.udapa}">
-							<aon:commandButton id="sales-ingenet" value="INGENET"
+							<aon:commandButton id="sales-ingenet" value="&#160;&#160;&#160;&#160;&#160;&#160;"
 								rendered="#{!sales.nevv and salesDetail.model.rowCount > 0}"
 								title="Informacion de estado en Ingenet"
-								styleClass="aon-finding-toolbar-item aon-icon-ingenet"
+								styleClass="aon-finding-toolbar-item aon-ingenet aon-padding-left aon-padding-right"
 								ajaxSingle="#{true}"
-								action="sales_form">
+								action="sales_list">
 								<f:setPropertyActionListener target="#{sales.ingenetHandler.showIngenetWindow}"
 									value="#{true}" />
 								<f:setPropertyActionListener target="#{sales.ingenetHandler.sales}"
