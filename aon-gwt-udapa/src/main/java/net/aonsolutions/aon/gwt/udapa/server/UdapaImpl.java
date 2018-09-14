@@ -1,8 +1,11 @@
 package net.aonsolutions.aon.gwt.udapa.server;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -138,13 +141,78 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 					updateValue(domainName, domainId, drId, QualitySheetCode.UFQCC01.getName(), cp.getNet() + "", map);
 				}
 			}
+
+			ApplicationParameter pfondoFixed = AON.getApplicationParameter(domainName, domainId, login, "QUALITY_PFONDO_FIXED");
+			if(pfondoFixed == null || pfondoFixed.getId() == null) {
+				System.out.println("QUALITY_PFONDO_FIXED");
+				LinkedList<DataResponseDetail> ll = AON.getDataResponseDetailStream(domainName, domainId, login, f -> f.getDataVariableProperty().eq("ufqc2"))
+				.sorted((e1, e2) -> e1.getModificationDate().compareTo(e2.getModificationDate()))
+				.collect(Collectors.toCollection(LinkedList::new));
+				
+				for(Integer h = 0; h < ll.size(); h++) {
+					DataResponseDetail dd = ll.get(h);
+				
+					if(!isEmpty(dd.getDataValue())) {
+						if(ll.size() == h+1) {
+							AON.getDataResponseStream(domainName, domainId, login, null, f -> f
+									.getDomainProperty().eq(domainId)
+									.and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value()))
+									.and(f.getCreationDateProperty().ge(new Timestamp(dd.getModificationDate().getTime()))))
+							.forEach(r -> {
+								Optional<DataResponseDetail> drdx = AON.getDataResponseDetail(domainName, domainId, login, f -> f.getDataVariableProperty().eq("ufqc2").and(f.getDataResponseProperty().eq(r.getId())));
+								if(!drdx.isPresent()) {
+									DataResponseDetail drdY = new DataResponseDetail()
+											.setDataResponse(r.getId())
+											.setDataVariable(dd.getDataVariable())
+											.setDataValue(dd.getDataValue())
+											.setDomain(domainId);
+									AON.insertDataResponseDetail(domainName, domainId, login, drdY);
+								}
+							});
+						} else {
+							DataResponseDetail dd2 = ll.get(h+1);
+							AON.getDataResponseStream(domainName, domainId, login, null, f -> f
+									.getDomainProperty().eq(domainId)
+									.and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value()))
+									.and(f.getCreationDateProperty().ge(new Timestamp(dd.getModificationDate().getTime())))
+									.and(f.getCreationDateProperty().le(new Timestamp(dd2.getModificationDate().getTime()))))
+							.forEach(r -> {
+								Optional<DataResponseDetail> drdx = AON.getDataResponseDetail(domainName, domainId, login, f -> f.getDataVariableProperty().eq("ufqc2").and(f.getDataResponseProperty().eq(r.getId())));
+								if(!drdx.isPresent()) {
+									DataResponseDetail drdY = new DataResponseDetail()
+											.setDataResponse(r.getId())
+											.setDataVariable(dd.getDataVariable())
+											.setDataValue(dd.getDataValue())
+											.setDomain(domainId);
+									AON.insertDataResponseDetail(domainName, domainId, login, drdY);
+								}
+							});
+						}	
+					}
+				}
+				ApplicationParameter pff = new ApplicationParameter()
+						.setDomain(domainId)
+						.setName("QUALITY_PFONDO_FIXED")
+						.setValue("QUALITY_PFONDO_FIXED");
+				AON.insertApplicationParameter(domainName, domainId, login, pff);
+			}
 			
 			if("0.0".equals(map.get(QualitySheetCode.UFQC2.getName()))){
 				ApplicationParameter app = AON.getApplicationParameter(domainName, domainId, login, AppParam.QUALITY_PFONDO);
 				map.put(QualitySheetCode.UFQC2.getName(), app != null ? app.getValue(): "0.0");
+				updateValue(domainName, domainId, drId, QualitySheetCode.UFQC2.getName(), map.get(QualitySheetCode.UFQC2.getName()), map);
 			}
  		}
 		return compute(map);
+	}
+	
+	private Boolean isEmpty(String s) {
+		try{
+			Double d = Double.parseDouble(s);
+			return d == 0.0;
+		} catch (Exception e) {
+			return true;
+		}
 	}
 
 	public HashMap<String, String> getPaturpatValues(String domainName, Integer domainId, Integer drId){
