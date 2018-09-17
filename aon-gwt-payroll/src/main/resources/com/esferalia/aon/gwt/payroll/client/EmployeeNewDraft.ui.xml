@@ -246,7 +246,7 @@
 		}
 
 		.dateBoxStyle{
-		width: 96% !important;
+		width: 99% !important;
 		text-align: center !important;
 		}
 
@@ -264,11 +264,15 @@
 		}
 
 		.topLabelContract{
-		top: 260px !important;
+		top: 280px !important;
 		}
 
 		.topLabelContractMinus{
 			top: 100px;
+		}
+
+		.nssWidht{
+			width: 96%;
 		}
 
 	</ui:style>
@@ -324,7 +328,7 @@
 									<td style="width: 10%;">
 										<g:TextBox ui:field="personId" styleName='{style.maxWidthTextBox3}'></g:TextBox>
 									</td>
-									<td>
+									<td style="width: 5%;">
 										<g:Button ui:field="newPerson" styleName='{style.buttonStyle}'>+</g:Button>
 									</td>
 									<td colspan="6">
@@ -342,13 +346,13 @@
 										<g:Label ui:field="firstSurnameLabel"
 											styleName='{style.alignTextCenter} {style.requiredColor}'>1er Apellido</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="first_surname" styleName='{style.maxWidthTextBox}'></g:TextBox>
 									</td>
-									<td>
+									<td style="width: 10%;">
 										<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="second_surname" styleName='{style.maxWidthTextBox3}'></g:TextBox>
 									</td>
 								</tr>
@@ -357,21 +361,21 @@
 										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Documentos</g:Label>
 									</td>
 									<td ui:field="documentTypeCell">
-										<g:Label ui:field="document_type"></g:Label>
+										<g:Label styleName='{style.alignTextCenter}' ui:field="document_type"></g:Label>
 									</td>
 									<td>
 										<g:TextBox ui:field="document" styleName='{style.maxWidthTextBox}'></g:TextBox>
 									</td>
-									<td ui:field="nationalityLabelCell">
+									<td style="width: 10%;" ui:field="nationalityLabelCell">
 										<g:Label ui:field="nationalityLabel" styleName='{style.alignTextCenter}'>Nacionalidad</g:Label>
 									</td>
-									<td ui:field="nationalityCell">
+									<td colspan="2" ui:field="nationalityCell">
 										<g:SuggestBox ui:field="nationality" styleName='{style.maxWidthTextBox}'></g:SuggestBox>
 									</td>
-									<td>
+									<td style="width: 10%;">
 										<g:Label styleName='{style.alignTextCenter}'>Nº S.S.</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="security_social_num" styleName='{style.maxWidthTextBox}'></g:TextBox>
 									</td>
 								</tr>
@@ -388,7 +392,7 @@
 											<g:Label styleName='{style.alignTextCenter}'>Sexo</g:Label>
 										</g:HorizontalPanel>
 									</td>
-									<td colspan="3">
+									<td colspan="2">
 										<g:ListBox ui:field="gender" styleName='{style.maxWidth}'></g:ListBox>
 									</td>
 								</tr>
@@ -396,33 +400,33 @@
 									<td rowspan="2" style="background-color: #eaeaea; width: 200px;">
 										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
 									</td>
-									<td colspan="4">
+									<td colspan="5">
 										<g:SuggestBox ui:field="address" styleName='{style.maxWidth}'></g:SuggestBox>
 									</td>
 									<td>
 										<g:Label styleName='{style.alignTextCenter}'>Número</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="addressNum" styleName='{style.maxWidthTextBox3}'></g:TextBox>
 									</td>
 								</tr>
 								<tr>
-									<td>
-										<g:Label>C.P.</g:Label>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>C.P.</g:Label>
 									</td>
 									<td>
 										<g:TextBox ui:field="addressZip" styleName='{style.maxWidthTextBox}'></g:TextBox>
 									</td>
-									<td>
+									<td style="width: 10%;">
 										<g:Label styleName='{style.alignTextCenter}'>Localidad</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="addressCity" styleName='{style.maxWidthTextBox}'></g:TextBox>
 									</td>
 									<td>
 										<g:Label styleName='{style.alignTextCenter}'>Provincia</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="addressProvince" styleName='{style.maxWidthTextBox3}'></g:TextBox>
 									</td>
 								</tr>
@@ -431,7 +435,7 @@
 										<g:Label styleName="{style.firstColumnTextStyle}">Contacto</g:Label>
 									</td>
 									<td>
-										<g:Label>Móvil</g:Label>
+										<g:Label styleName='{style.alignTextCenter}'>Móvil</g:Label>
 									</td>
 									<td>
 										<g:TextBox ui:field="mobile" styleName='{style.maxWidthTextBox}'></g:TextBox>
@@ -439,13 +443,13 @@
 									<td>
 										<g:Label styleName='{style.alignTextCenter}'>Teléfono</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="phone" styleName='{style.maxWidthTextBox}'></g:TextBox>
 									</td>
 									<td>
 										<g:Label styleName='{style.alignTextCenter}'>eMail</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="email" styleName='{style.maxWidthTextBox3}'></g:TextBox>
 									</td>
 								</tr>
@@ -453,10 +457,10 @@
 									<td style="background-color: #eaeaea; width: 200px;">
 										<g:Label styleName="{style.firstColumnTextStyle}">Método de pago</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:ListBox ui:field="payMethod" styleName='{style.maxWidth}'></g:ListBox>
 									</td>
-									<td>
+									<td style="width: 10%;">
 										<g:Label styleName='{style.alignTextCenter}'>Cuenta</g:Label>
 									</td>
 									<td colspan="2">
@@ -465,7 +469,7 @@
 									<td>
 										<g:Label styleName='{style.alignTextCenter}'>BIC</g:Label>
 									</td>
-									<td>
+									<td colspan="2">
 										<g:TextBox ui:field="bic" styleName='{style.maxWidthTextBox3}'></g:TextBox>
 									</td>
 								</tr>

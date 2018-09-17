@@ -122,6 +122,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		String dniNSSStyle();
 		String topLabelContract();
 		String topLabelContractMinus();
+		String nssWidht();
 	}
 	
 	@UiField
@@ -884,7 +885,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void showPersonForm() {
-		this.employeeDataTable.getRows().getItem(0).getStyle().setDisplay(Display.NONE);
+		//this.employeeDataTable.getRows().getItem(0).getStyle().setDisplay(Display.NONE);
 		this.employeeDataTable.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
 		this.employeeDataTable.getRows().getItem(2).getStyle().clearDisplay();
 		this.employeeDataTable.getRows().getItem(3).getStyle().clearDisplay();
@@ -894,12 +895,15 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		this.employeeDataTable.getRows().getItem(7).getStyle().clearDisplay();
 		this.employeeDataTable.getRows().getItem(8).getStyle().clearDisplay();
 		
-		contractDataTable.getStyle().setTop(240, Unit.PX);
+		this.nationalityLabelCell.getStyle().setDisplay(Display.NONE);
+		this.nationalityCell.getStyle().setDisplay(Display.NONE);
+		
+		contractDataTable.getStyle().setTop(260, Unit.PX);
 		labelContractDataTable.addStyleName(style.topLabelContract());
 	}
 	
 	private void hidePersonForm() {
-		this.employeeDataTable.getRows().getItem(0).getStyle().clearDisplay();
+		//this.employeeDataTable.getRows().getItem(0).getStyle().clearDisplay();
 		this.employeeDataTable.getRows().getItem(1).getStyle().clearDisplay();
 		this.employeeDataTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
 		this.employeeDataTable.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
@@ -1049,9 +1053,11 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		if(document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE"){
 			nationalityLabelCell.getStyle().clearDisplay();
 			nationalityCell.getStyle().clearDisplay();
+			security_social_num.addStyleName(style.nssWidht());
 //			nationalityPanel.removeStyleName(style.hide());
 		}else{
 //			nationalityPanel.addStyleName(style.hide());
+			security_social_num.removeStyleName(style.nssWidht());
 			nationalityLabelCell.getStyle().setDisplay(Display.NONE);
 			nationalityCell.getStyle().setDisplay(Display.NONE);
 			nationality.setValue("ESPA\u00D1A");
