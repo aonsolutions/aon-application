@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_EXTRA;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_LEVEL;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.AGREEMENT;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.END_DATE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.ISSUE_DATE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.START_DATE;
@@ -21,6 +22,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.google.sql.SQLConstants;
 import com.esferalia.aon.jooq.tables.Agreement;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -28,6 +30,7 @@ import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.salary.ISalaryProxy;
@@ -136,6 +139,8 @@ public class SQLExtraSalaryCalculatorContext implements
 						AGREEMENT_LEVEL + "." + AGREEMENT, 
 						rs.getInt(AGREEMENT));
 		
+		int paymentId = rs.getInt(AGREEMENT_PAYMENT);
+		
 		this.ctx = new SQLContractExtraCalculatorContext(
 				this.connection, 
 				extraStartDate, 
@@ -146,6 +151,11 @@ public class SQLExtraSalaryCalculatorContext implements
 			@Override
 			protected Date getContractEndDate() {
 				return Period.min(endDate, super.getContractEndDate());
+			}
+			
+			@Override
+			protected Filter<IContractPayment> getExtraPaymentFilter() {
+				return e -> e.getId() == paymentId;
 			}
 		}; 
 		

@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.sql.Connection;
@@ -24,7 +23,7 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -56,6 +55,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		super(connection, startDate, endDate, issueDate, chargeDate, criteria, OLDER);
 	}
 
+
 	// -------------------------------------------------------------------------
 
 	@Override
@@ -68,9 +68,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 		addSalaryContractPayments();
 
-		int issueMonth = getIssueMonth();
 		Collection<IContractPayment> extraPayments = new FilterCollection<IContractPayment>(
-				new ExtraPaymentFilter(issueMonth), super.getContractPayments());
+				getExtraPaymentFilter(), super.getContractPayments());
 		return extraPayments;
 	}
 
@@ -112,10 +111,13 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	}
 	// -------------------------------------------------------------------------
 
-	private int getIssueMonth() {
+	protected FilterCollection.Filter<IContractPayment>  getExtraPaymentFilter() {
 		Date issueDate = getIssueDate();
-		return CommonUtil.getMonth(issueDate);
+		return new ExtraPaymentFilter(issueDate);
 	}
+
+	// -------------------------------------------------------------------------
+
 
 	private void addSalaryContractPayments() throws ExpressionException, AonException {
 		ExpressionContext expressionContext = super.getExpressionContext();
@@ -305,15 +307,28 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	}
 
 	private static class ExtraPaymentFilter implements FilterCollection.Filter<IContractPayment> {
+		
 		private Month month;
-
-		public ExtraPaymentFilter(int month) {
+		private String issueDate;
+		
+		public ExtraPaymentFilter(Date issueDate) {
+			int month = CommonUtil.getMonth(issueDate);
 			this.month = Month.getMonthByValue(month);
+			this.issueDate = String.format("%1$td/%1$tm", issueDate);
 		}
 
 		@Override
 		public boolean accept(IContractPayment e) {
-			return e.getSalaryType() == SalaryType.EXTRA && e.getMonth() == this.month;
+			try {
+			IExtraPayment p = (IExtraPayment) e;
+			return  p.getSalaryType() == SalaryType.EXTRA 
+					&& p.getMonth() == this.month 
+					&& AonStringUtils.equals(p.getExtraIssueDate(),issueDate);
+			} catch ( ClassCastException c ) {
+				return  e.getSalaryType() == SalaryType.EXTRA 
+						&& e.getMonth() == this.month; 
+			}
+			
 		}
 	}
 
