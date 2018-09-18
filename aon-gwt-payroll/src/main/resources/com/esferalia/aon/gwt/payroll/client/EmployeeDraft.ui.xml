@@ -30,45 +30,6 @@
 			height: inherit;
 		}
 
-		.backgroundColorFirstColumn {
-			background-color: #eaeaea;
-			width: 200px;
-		}
-
-		hr {
-			width: 97%;
-		}
-
-		.paddingTable {
-			border-style: solid;
-    		padding: 10px 10px 10px 10px;
-    		border-width: 1px;
-    		margin-left: 10px;
-    		margin-bottom: 40px;
-		}
-
-		.paddingTable td{
-			font-family: Arial;
-    		font-size: small;
-		}
-
-		.paddingLeft{
-			padding-left: 10px !important;
-		}
-
-		.margingLeft{
-			margin-left: 10px !important;
-		}
-
-		.textAlignCenter{
-			text-align: center;
-		}
-
-		.marginTopTable{
-			margin-top: 30px;
-			width: 950px;
-		}
-		
 		.headerStyle{
 			font-family: Arial;
     		font-size: 13px;
@@ -81,11 +42,6 @@
     		padding-right: 5px;
     		width: 105px;
 			z-index: 1;
-		}
-
-		.marginTopTable2{
-			margin-top: 13px;
-			width: 950px;
 		}
 		
 		.headerStyle2{
@@ -108,99 +64,8 @@
 			font-weight: bold !important;
 		}
 
-		.secondColumnWidth{
-			width: auto;
-		}
-
-		.secondColumnWidth2{
-			width: auto;
-			padding-left: 0px !important;
-		}
-
 		.hide{
 			display: none;
-		}
-
-		.moreAddress{
-			background: white;
-    		width: 20px;
-			background-color: white;
-    		color: black;
-    		font-weight: bold;
-    		border-color: white;
-    		font-size: large;
-		}
-
-		.paddingLabel{
-			padding: 2px;
-		}
-
-		.paddingConfidecial{
-			padding-left: 0px;
-			padding-top: 3px;
-		}
-
-		.paddingCheckBox{
-			padding-top: 6px;
-		}
-
-		.dateBox{
-			width: 100px;
-    		text-align: center;
-    		padding: 2px;
-    		border: 1px solid #ccc;
-    		border-top: 1px solid #999;
-    		font-size: small;
-    		font-family: Arial Unicode MS, Arial, sans-serif;
-		}
-
-		.dateBox2{
-			width: 141px !important;
-    		text-align: center;
-    		padding: 2px;
-    		border: 1px solid #ccc;
-    		border-top: 1px solid #999;
-    		font-size: small;
-    		font-family: Arial Unicode MS, Arial, sans-serif;
-			margin-left: 10px !important;
-		}
-
-		.horizontalPanel{
-			padding-left: 0px;
-			padding-bottom: 3px;
-		}
-
-		.horizontalPanel2{
-			padding-left: 0px !important;
-		}
-
-
-		.passDocumentStyle{
-			width: 102px !important;
-		}
-
-		.passNSSStyle{
-			width: 203px !important;
-		}
-
-		.passNationalityStyle{
-			width: 174px !important;
-		}
-
-		.nieDocumentStyle{
-			width: 140px !important;
-		}
-
-		.nieNationalityStyle{
-			width: 174px !important;
-		}
-
-		.nieNSSStyle{
-			width: 203px !important;
-		}
-
-		.paddingTop{
-			padding-top: 5px;
 		}
 
 		.maxWidth{
@@ -228,21 +93,9 @@
 		text-align: center;
 		}
 
-		.alignTextCenter{
-		text-align: center;
-		}
-
 		.firstColumnTextStyle{
 		padding:
 		5px !important;
-		}
-
-		.topLabelContract{
-		top: 280px !important;
-		}
-
-		.topLabelContractMinus{
-			top: 100px;
 		}
 
 		.nssWidht{
@@ -392,7 +245,7 @@
 									</td>
 									<td colspan="2">
 										<g:TextBox ui:field="quotationAccount"
-											styleName='{style.maxWidthTextBox} {style.textAlignCenter}'></g:TextBox>
+											styleName='{style.maxWidthTextBox} {style.alignTextCenter}'></g:TextBox>
 									</td>
 									<td style="width: 12%;">
 										<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Centro de trabajo</g:Label>
